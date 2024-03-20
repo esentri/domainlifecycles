@@ -48,6 +48,12 @@ jobs:
       with:
         path: ./*/build/
         warn: Output a warning but do not fail the action
- 
+    #- name: Publish with Gradle
+    #  env:
+    #    ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
+    #    ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
+    #    ORG_GRADLE_PROJECT_signingKey: ${{ secrets.PGP_KEY }}
+    #    ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.PGP_PASSPHRASE }}
+    #  run: ./gradlew publishToSonatype --no-daemon
     
           
