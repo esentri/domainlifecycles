@@ -71,7 +71,4 @@ hs_err_pid*
 ### TEMP DIR
 tmp/
 
-
-gradlew
-gradlew.bat
 gradle/
