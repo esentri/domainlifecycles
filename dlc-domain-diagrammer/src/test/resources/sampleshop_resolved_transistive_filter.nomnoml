@@ -1,0 +1,107 @@
+#.AggregateFrame:visual=frame align=left
+#.AggregateRoot:fill=#8f8f bold
+#.Entity:fill=#88AAFF bold
+#.ValueObject:fill=#FFFFCC bold
+#.Enum:fill=#FFFFCC bold
+#.Identity:fill=#FFFFCC bold
+#.DomainCommand:fill=#FFB266 bold
+#.DomainEvent:fill=#CCFFFF bold
+#.ApplicationService:bold
+#.DomainService:fill=#E0E0E0 bold
+#.Repository:fill=#C0C0C0 bold
+#.OutboundService:fill=#C0C0C0 bold
+#.ReadModelProvider:fill=#C0C0C0 bold
+#.ReadModel:fill=#FFCCE5 bold
+#font:Courier
+#direction:down
+#acycler: greedy
+#ranker: longest-path
+
+// !!! sampleshop.core.domain.order.CancelOrder !!!
+[<DomainCommand> CancelOrder <<DomainCommand>> ]
+// !!! sampleshop.core.domain.order.PlaceOrder !!!
+[<DomainCommand> PlaceOrder <<DomainCommand>> ]
+// !!! sampleshop.core.domain.order.ShipOrder !!!
+[<DomainCommand> ShipOrder <<DomainCommand>> ]
+// !!! sampleshop.inbound.driver.OrderService !!!
+[<ApplicationService> OrderDriver <<Driver>> |
++ Optional<Order> cancel(CancelOrder)
++ List<Order> find(int,int,OrderStatus\[\])
++ Order place(PlaceOrder)
++ Optional<Order> ship(ShipOrder)
+]
+// !!! sampleshop.core.domain.order.OrderPlacementService !!!
+[<DomainService> OrderPlacementService <<DomainService>> |
++ Order placeOrder(PlaceOrder)
+]
+// !!! sampleshop.core.domain.order.NewOrderPlaced !!!
+[<DomainEvent> NewOrderPlaced <<DomainEvent>> ]
+// !!! {Frame} sampleshop.core.domain.order.Order !!!
+[<AggregateFrame> Order <<Aggregate>>|
+// !!! sampleshop.core.domain.order.Order !!!
+[<AggregateRoot> Order <<AggregateRoot>> |
+\# +- id:<ID> Order$OrderId
+o +- creation:Instant
+\# +- customerId:<IDREF> Customer$CustomerId
+\# +- status:<ENUM> OrderStatus
+|
++ Order add(Product$ProductId)
++ Order addItem(\# Product$ProductId,int{>0})
++ Order cancel()
++ boolean hasStatus(OrderStatus)
++ Order ship()
++ Price totalPrice()
+]
+// !!! sampleshop.core.domain.order.OrderItem !!!
+[<Entity> OrderItem <<Entity>> |
+\# +- id:<ID> OrderItem$OrderItemId
+\# +- productId:<IDREF> Product$ProductId
+\# +- productPrice:<VO> Price
+o +- quantity:int{>0}
+|
++ OrderItem addQuantity(int)
++ Price itemPrice()
+]
+[<AggregateRoot>Order <<AggregateRoot>>]  +-[<label> items 0..*] - [<Entity>OrderItem <<Entity>>]
+]
+// !!! {Frame} sampleshop.core.domain.product.Product !!!
+[<AggregateFrame> Product <<Aggregate>>|
+// !!! sampleshop.core.domain.product.Product !!!
+[<AggregateRoot> Product <<AggregateRoot>> |
+\# +- id:<ID> Product$ProductId
+o +- description:Optional<String\[0,1000\]>
+o +- image:Optional<URI>
+\# +- name:String\[0,200\]{notEmpty}
+\# +- price:<VO> Price
+|
+]
+]
+// !!! sampleshop.outbound.JooqProductRepository !!!
+[<Repository> ProductRepository <<Repository>> |
++ Optional<Product> deleteById(Product$ProductId)
++ Optional<Product> findById(Product$ProductId)
++ Product insert(Product)
++ Product$ProductId newProductId()
++ void removeAll()
++ Product update(Product)
+]
+// !!! sampleshop.outbound.JooqOrderRepository !!!
+[<Repository> OrderRepository <<Repository>> |
++ Optional<Order> deleteById(Order$OrderId)
++ Stream<Order> find(int,int,OrderStatus\[\])
++ Optional<Order> findById(Order$OrderId)
++ Order insert(Order)
++ Order$OrderId newOrderId()
++ OrderItem$OrderItemId newOrderItemId()
++ Order update(Order)
+]
+[<DomainCommand>CancelOrder <<DomainCommand>>]  --> [<ApplicationService>OrderDriver <<Driver>>]
+[<DomainCommand>PlaceOrder <<DomainCommand>>]  --> [<ApplicationService>OrderDriver <<Driver>>]
+[<DomainCommand>ShipOrder <<DomainCommand>>]  --> [<ApplicationService>OrderDriver <<Driver>>]
+[<DomainService>OrderPlacementService <<DomainService>>]  --> [<DomainEvent>NewOrderPlaced <<DomainEvent>>]
+[<ApplicationService>OrderDriver <<Driver>>]  -- [<DomainService>OrderPlacementService <<DomainService>>]
+[<ApplicationService>OrderDriver <<Driver>>]  -- [<Repository>OrderRepository <<Repository>>]
+[<DomainService>OrderPlacementService <<DomainService>>]  -- [<Repository>OrderRepository <<Repository>>]
+[<DomainService>OrderPlacementService <<DomainService>>]  -- [<Repository>ProductRepository <<Repository>>]
+[<Repository>ProductRepository <<Repository>>]  -- [<AggregateFrame> Product <<Aggregate>>]
+[<Repository>OrderRepository <<Repository>>]  -- [<AggregateFrame> Order <<Aggregate>>]

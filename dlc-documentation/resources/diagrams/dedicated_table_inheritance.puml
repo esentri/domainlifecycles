@@ -1,0 +1,26 @@
+@startuml
+
+title Types - Class Diagram
+
+skinparam componentStyle uml2
+
+interface Entity
+
+abstract class Vehicle<T extends Identity> << AbstractEntity >>
+
+Entity <|--- Vehicle
+
+class Bike << Entity >>
+{
+  +BikeId id
+}
+
+class Car << Entity >>
+{
+  +CarId id
+}
+
+Vehicle <|--- Bike
+Vehicle <|--- Car
+
+@enduml

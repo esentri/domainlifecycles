@@ -1,0 +1,170 @@
+#  Template Java Gradle build
+
+#  This template allows you to test and build your Java project with Gradle.
+#  The workflow allows running tests, code checkstyle and security scans on the default branch.
+
+# Prerequisites: appropriate project structure should exist in the repository.
+
+image: gradle:7.6.3-jdk17
+
+definitions:
+  steps:
+    - step: &BuildAndTest
+        name: Build and Test
+        caches:
+          - gradle
+        script:
+#          - bash configure-maven.sh
+          - java -version
+          - gradle -version
+          - locale
+          - gradle check
+        artifacts:
+          - '**/build/**'
+          - '**/bin/**'
+
+pipelines:
+  branches:
+    main:
+      - step: *BuildAndTest
+#      - step:
+#          name: Deploy assertions 2 Downloads
+#          script:
+#            - pipe: atlassian/bitbucket-upload-file:0.4.0
+#              variables:
+#                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+#                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+#                FILENAME: 'dlc-assertions/build/libs/dlc-assertions.jar'
+#      - step:
+#          name: Deploy bean-validations 2 Downloads
+#          script:
+#            - pipe: atlassian/bitbucket-upload-file:0.4.0
+#              variables:
+#                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+#                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+#                FILENAME: 'dlc-bean-validations/build/libs/dlc-bean-validations.jar'
+#      - step:
+#          name: Deploy core 2 Downloads
+#          script:
+#            - pipe: atlassian/bitbucket-upload-file:0.4.0
+#              variables:
+#                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+#                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+#                FILENAME: 'dlc-core/build/libs/dlc-core.jar'
+#      - step:
+#          name: Deploy domain diagrammer 2 Downloads
+#          script:
+#            - pipe: atlassian/bitbucket-upload-file:0.4.0
+#              variables:
+#                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+#                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+#                FILENAME: 'dlc-domain-diagrammer/build/libs/dlc-domain-diagrammer.jar'
+#      - step:
+#          name: Deploy jackson 2 Downloads
+#          script:
+#            - pipe: atlassian/bitbucket-upload-file:0.4.0
+#              variables:
+#                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+#                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+#                FILENAME: 'dlc-jackson/build/libs/dlc-jackson.jar'
+#      - step:
+#          name: Deploy jooq 2 Downloads
+#          script:
+#            - pipe: atlassian/bitbucket-upload-file:0.4.0
+#              variables:
+#                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+#                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+#                FILENAME: 'dlc-jackson/build/libs/dlc-jooq.jar'
+#      - step:
+#          name: Deploy mirror 2 Downloads
+#          script:
+#            - pipe: atlassian/bitbucket-upload-file:0.4.0
+#              variables:
+#                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+#                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+#                FILENAME: 'dlc-mirror/build/libs/dlc-mirror.jar'
+#      - step:
+#          name: Deploy persistence 2 Downloads
+#          script:
+#            - pipe: atlassian/bitbucket-upload-file:0.4.0
+#              variables:
+#                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+#                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+#                FILENAME: 'dlc-persistence/build/libs/dlc-persistence.jar'
+#      - step:
+#          name: Deploy dlc spring boot 2 complete 2 Downloads
+#          script:
+#            - pipe: atlassian/bitbucket-upload-file:0.4.0
+#              variables:
+#                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+#                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+#                FILENAME: 'dlc-spring-boot-2-jooq-complete/build/libs/dlc-spring-boot-2-jooq-complete.jar'
+#      - step:
+#          name: Deploy dlc spring boot 3 complete 2 Downloads
+#          script:
+#            - pipe: atlassian/bitbucket-upload-file:0.4.0
+#              variables:
+#                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+#                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+#                FILENAME: 'dlc-spring-boot-3-jooq-complete/build/libs/dlc-spring-boot-3-jooq-complete.jar'
+#      - step:
+#          name: Deploy dlc spring doc 2 Downloads
+#          script:
+#            - pipe: atlassian/bitbucket-upload-file:0.4.0
+#              variables:
+#                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+#                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+#                FILENAME: 'dlc-spring-doc/build/libs/dlc-spring-doc.jar'
+#      - step:
+#          name: Deploy dlc spring doc 2 2 Downloads
+#          script:
+#            - pipe: atlassian/bitbucket-upload-file:0.4.0
+#              variables:
+#                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+#                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+#                FILENAME: 'dlc-spring-doc-2/build/libs/dlc-spring-doc-2.jar'
+#      - step:
+#          name: Deploy dlc spring web 2 Downloads
+#          script:
+#            - pipe: atlassian/bitbucket-upload-file:0.4.0
+#              variables:
+#                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+#                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+#                FILENAME: 'dlc-spring-web/build/libs/dlc-spring-web.jar'
+#      - step:
+#          name: Deploy dlc spring web 6 2 Downloads
+#          script:
+#            - pipe: atlassian/bitbucket-upload-file:0.4.0
+#              variables:
+#                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+#                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+#                FILENAME: 'dlc-spring-web-6/build/libs/dlc-spring-web-6.jar'
+#      - step:
+#          name: Deploy dlc swagger 2 Downloads
+#          script:
+#            - pipe: atlassian/bitbucket-upload-file:0.4.0
+#              variables:
+#                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+#                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+#                FILENAME: 'dlc-swagger-v3/build/libs/dlc-swagger-v3.jar'
+#      - step:
+#          name: Deploy dlc test shared 2 Downloads
+#          script:
+#            - pipe: atlassian/bitbucket-upload-file:0.4.0
+#              variables:
+#                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+#                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+#                FILENAME: 'dlc-test-shared-impl/build/libs/dlc-test-shared-impl.jar'
+#      - step:
+#          name: Deploy dlc validation extender 2 Downloads
+#          script:
+#            - pipe: atlassian/bitbucket-upload-file:0.4.0
+#              variables:
+#                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+#                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+#                FILENAME: 'dlc-validation-extender/build/libs/dlc-validation-extender.jar'
+  pull-requests:
+    '**': # strange default
+      - step: *BuildAndTest
+  default:
+    - step: *BuildAndTest

@@ -1,0 +1,29 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.quiltmc.gradle.licenser' version "${quiltmcLicenserVersion}"
+    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+}
+
+dependencies {
+    api project(":dlc-types")
+    api project(":dlc-builder")
+    api project(":dlc-access")
+    api project(":dlc-type-utils")
+    api project(":dlc-mirror")
+    api project(":dlc-validation-extender")
+    api project(":dlc-assertions")
+    api project(":dlc-bean-validations")
+    api project(":dlc-persistence")
+    api project(":dlc-jooq")
+    api project(":dlc-jackson")
+    api project(":dlc-spring-web")
+    api project(":dlc-spring-doc")
+    compileOnly "org.jooq:jooq:3.19.6"
+
+}
+
+
+
+
+

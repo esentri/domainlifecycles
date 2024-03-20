@@ -1,0 +1,16 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.quiltmc.gradle.licenser' version "${quiltmcLicenserVersion}"
+    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+}
+
+
+
+dependencies {
+    testImplementation project(":dlc-types")
+    testImplementation project(":dlc-persistence")
+    testImplementation "org.assertj:assertj-core:${assertJVersion}"
+}
+
+

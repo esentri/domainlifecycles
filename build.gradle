@@ -1,0 +1,172 @@
+ext {
+    dlcGroup = 'nitrox'
+    dlcVersion = '2.0.0'
+    slf4jVersion = '2.0.9'
+    bytebuddyVersion = '1.14.9'
+    reflectionsVersion = '0.9.12'
+    openAPIVersion = '1.7.0'
+    openAPIVersion2 = '2.2.0'
+    jacksonVersion = '2.15.3'
+    javaxValidationApiVersion = '2.0.1.Final'
+    jakartaValidationApiVersion = '3.0.2'
+    jakartaTransactionApiVersion = '2.0.1'
+    springTxVersion = '6.1.3'
+    springJdbcVersion = '6.1.3'
+    assertJVersion = '3.24.2'
+    slf4jVersion = '1.7.36'
+    lombokVersion = '1.18.30'
+    logbackClassicVersion = '1.4.14'
+    typeResolverVersion = '1.0.3'
+    quiltmcLicenserVersion = '2.0.1'
+    nuStuderJooqVersion = '7.1.1'
+    flywayVersion = '9.22.1'
+    jaredsburrowsLicenseVersion = '0.9.3'
+}
+
+allprojects {
+
+    plugins.withType(JavaPlugin) {
+        repositories {
+            mavenCentral()
+        }
+        dependencies {
+            testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+            testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+        }
+        test {
+            useJUnitPlatform()
+            testLogging {
+                for (def level : LogLevel.values()) {
+                    def testLogging = get(level)
+                    testLogging.exceptionFormat = 'full'
+                    testLogging.events = ["FAILED", "STANDARD_OUT", "STANDARD_ERROR"]
+                }
+            }
+            maxParallelForks(1)
+        }
+        java {
+            toolchain {
+                languageVersion = JavaLanguageVersion.of(17)
+            }
+        }
+        tasks.withType(Jar) {
+            includeEmptyDirs = false
+            enabled = true
+        }
+        tasks.withType(JavaCompile) {
+            options.encoding = "UTF-8"
+        }
+        javadoc {
+            title = '<h1>NitroX - DomainLifecycles</h1>'
+            options.bottom = '<i>NitroX provided by esentri.</i>'
+            options.encoding = 'UTF-8'
+            options.docEncoding = 'UTF-8'
+            options.charSet = 'UTF-8'
+            //options.links("https://docs.oracle.com/en/java/javase/${buildJavaVersion}/docs/api/")
+            options.addBooleanOption 'html5', true
+            options.tags(
+                    'apiNote:a:API Note:',
+                    'implSpec:a:Implementation Requirements:',
+                    'implNote:a:Implementation Note:'
+            )
+
+        }
+
+        task sourceJar(type: Jar) {
+            from sourceSets.main.allJava
+        }
+
+        task myJavadocs(type: Javadoc) {
+            source = sourceSets.main.allJava
+        }
+    }
+
+    plugins.withId('maven-publish') {
+
+        publishing {
+            publications {
+                mavenJava(MavenPublication) {
+                    groupId = dlcGroup
+                    version = dlcVersion
+                    from components.java
+                    pom {
+                        name = 'NitroX Domain Lifecycles'
+                        description = 'A Java library for building DDD applications'
+
+                        licenses {
+                            license {
+                                name = 'The Apache License, Version 2.0'
+                                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            }
+                        }
+                        developers {
+                            developer {
+                                id = 'mherb'
+                                name = 'Mario Herb'
+                                email = 'mario.herb@esentri.com'
+                                organization = 'esentri AG'
+                                organizationUrl = 'https://www.esentri.com'
+                            }
+                            developer {
+                                id = 'dgaller'
+                                name = 'Dominik Galler'
+                                email = 'dominik.galler@esentri.com'
+                                organization = 'esentri AG'
+                                organizationUrl = 'https://www.esentri.com'
+                            }
+                        }
+                        scm {
+                            connection = 'scm:git@github.com:esentri/nitrox-dlc.git'
+                            url = 'https://github.com/esentri/nitrox-dlc/'
+                        }
+
+                    }
+                }
+
+            }
+            repositories {
+                maven {
+                    name = 'nitroxRepository'
+                    // change URLs to point to your repos, e.g. http://my.org/repo
+                    def releasesRepoUrl = 'https://repo.esentri.com/artifactory/libs-release'
+                    def snapshotsRepoUrl = 'https://repo.esentri.com/artifactory/libs-snapshot'
+                    url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                    credentials(PasswordCredentials)
+                }
+            }
+        }
+
+    }
+
+    plugins.withId('checkstyle') {
+        checkstyle {
+            toolVersion = '10.12.4'
+            configFile = rootProject.file('./checkstyle/checkstyle.xml')
+            ignoreFailures = true
+            showViolations = true
+        }
+    }
+
+    plugins.withId('org.quiltmc.gradle.licenser') {
+        license {
+            checkLicenseMain.enabled(false)
+            checkLicenseTest.enabled(false)
+            // Add a license header rule, at least one must be present.
+            rule file("./copyright/HEADER")
+            // Apply license header ONLY to Java files
+            include '**/*.java'
+        }
+    }
+
+
+}
+
+// ----------------------------------------------------------
+//  GRADLE.WRAPPER
+// ----------------------------------------------------------
+
+wrapper {
+    gradleVersion = '8.1.1'
+    distributionType = 'ALL'
+}
+

@@ -1,0 +1,217 @@
+#.AggregateFrame:visual=frame align=left
+#.AggregateRoot:fill=#8f8f bold
+#.Entity:fill=#88AAFF bold
+#.ValueObject:fill=#FFFFCC bold
+#.Enum:fill=#FFFFCC bold
+#.Identity:fill=#FFFFCC bold
+#.DomainCommand:fill=#FFB266 bold
+#.DomainEvent:fill=#CCFFFF bold
+#.ApplicationService:bold
+#.DomainService:fill=#E0E0E0 bold
+#.Repository:fill=#C0C0C0 bold
+#.OutboundService:fill=#C0C0C0 bold
+#.ReadModelProvider:fill=#C0C0C0 bold
+#.ReadModel:fill=#FFCCE5 bold
+#font:Courier
+#direction:down
+#acycler: greedy
+#ranker: longest-path
+
+// !!! sampleshop.core.domain.customer.ChangeCustomerAddress !!!
+[<DomainCommand> ChangeCustomerAddress <<DomainCommand>> ]
+// !!! sampleshop.core.domain.order.CancelOrder !!!
+[<DomainCommand> CancelOrder <<DomainCommand>> ]
+// !!! sampleshop.core.domain.customer.ChangeCreditCard !!!
+[<DomainCommand> ChangeCreditCard <<DomainCommand>> ]
+// !!! sampleshop.core.domain.order.PlaceOrder !!!
+[<DomainCommand> PlaceOrder <<DomainCommand>> ]
+// !!! sampleshop.core.domain.order.ShipOrder !!!
+[<DomainCommand> ShipOrder <<DomainCommand>> ]
+// !!! sampleshop.core.domain.customer.AddNewCustomer !!!
+[<DomainCommand> AddNewCustomer <<DomainCommand>> ]
+// !!! sampleshop.inbound.driver.OrderService !!!
+[<ApplicationService> OrderDriver <<Driver>> |
++ Optional<Order> cancel(CancelOrder)
++ List<Order> find(int,int,OrderStatus\[\])
++ Order place(PlaceOrder)
++ Optional<Order> ship(ShipOrder)
+]
+// !!! sampleshop.inbound.driver.ProductService !!!
+[<ApplicationService> ProductDriver <<Driver>> |
++ Product create(Product)
++ Optional<Product> find(Product$ProductId)
++ void removeAll()
+]
+// !!! sampleshop.inbound.driver.CustomerService !!!
+[<ApplicationService> CustomerDriver <<Driver>> |
++ Customer add(AddNewCustomer)
++ Optional<Customer> changeAddress(ChangeCustomerAddress)
++ Optional<Customer> changeCreditCard(ChangeCreditCard)
++ List<Customer> find(int,int)
++ List<OrdersByCustomer> reportOrders(String,int,int)
+]
+// !!! sampleshop.core.domain.customer.CustomerNotificationService !!!
+[<DomainService> CustomerNotificationService <<DomainService>> |
++ void notifyNewOrderPlaced(NewOrderPlaced)
++ void notifyOrderCanceled(OrderCanceled)
++ void notifyOrderShipped(OrderShipped)
+]
+// !!! sampleshop.core.domain.order.OrderPlacementService !!!
+[<DomainService> OrderPlacementService <<DomainService>> |
++ Order placeOrder(PlaceOrder)
+]
+// !!! sampleshop.core.domain.customer.CustomerCreditCardChanged !!!
+[<DomainEvent> CustomerCreditCardChanged <<DomainEvent>> ]
+// !!! sampleshop.core.domain.customer.NewCustomerAdded !!!
+[<DomainEvent> NewCustomerAdded <<DomainEvent>> ]
+// !!! sampleshop.core.domain.order.NewOrderPlaced !!!
+[<DomainEvent> NewOrderPlaced <<DomainEvent>> ]
+// !!! sampleshop.core.domain.order.OrderCanceled !!!
+[<DomainEvent> OrderCanceled <<DomainEvent>> ]
+// !!! sampleshop.core.domain.customer.FraudDetected !!!
+[<DomainEvent> FraudDetected <<DomainEvent>> ]
+// !!! sampleshop.core.domain.customer.CustomerAdressChanged !!!
+[<DomainEvent> CustomerAdressChanged <<DomainEvent>> ]
+// !!! sampleshop.core.domain.order.OrderShipped !!!
+[<DomainEvent> OrderShipped <<DomainEvent>> ]
+// !!! {Frame} sampleshop.core.domain.customer.Customer !!!
+[<AggregateFrame> Customer <<Aggregate>>|
+// !!! sampleshop.core.domain.customer.Customer !!!
+[<AggregateRoot> Customer <<AggregateRoot>> |
+\# +- id:<ID> Customer$CustomerId
+o +- blocked:boolean
+\# +- userName:String\[0,100\]{notEmpty}
+|
++ Customer block()
++ void onFraudDetected(FraudDetected)
++ Customer setUsername(String)
+]
+// !!! sampleshop.core.domain.customer.Address !!!
+[<ValueObject> Address <<ValueObject>> |
+\# +- city:String\[0,50\]{notEmpty}
+\# +- country:String\[0,50\]{notEmpty}
+\# +- state:String\[0,50\]{notEmpty}
+\# +- street:String\[0,50\]{notEmpty}
+\# +- zipcode:String\[0,10\]{notEmpty}
+|
+]
+// !!! sampleshop.core.domain.customer.CreditCard !!!
+[<ValueObject> CreditCard <<ValueObject>> |
+\# +- cardNumber:String\[0,19\]{notEmpty}
+\# +- ccvNumber:String\[0,4\]{notEmpty}
+\# +- expiration:LocalDate
+\# +- ownerName:String\[0,100\]{notEmpty}
+\# +- type:<ENUM> CreditCardType
+|
+]
+[<AggregateRoot>Customer <<AggregateRoot>>]  o-[<label> address 1] - [<ValueObject>Address <<ValueObject>>]
+[<AggregateRoot>Customer <<AggregateRoot>>]  o-[<label> creditCard 0..1] - [<ValueObject>CreditCard <<ValueObject>>]
+]
+// !!! {Frame} sampleshop.core.domain.order.Order !!!
+[<AggregateFrame> Order <<Aggregate>>|
+// !!! sampleshop.core.domain.order.Order !!!
+[<AggregateRoot> Order <<AggregateRoot>> |
+\# +- id:<ID> Order$OrderId
+o +- creation:Instant
+\# +- customerId:<IDREF> Customer$CustomerId
+\# +- status:<ENUM> OrderStatus
+|
++ Order add(Product$ProductId)
++ Order addItem(\# Product$ProductId,int{>0})
++ Order cancel()
++ boolean hasStatus(OrderStatus)
++ Order ship()
++ Price totalPrice()
+]
+// !!! sampleshop.core.domain.order.OrderItem !!!
+[<Entity> OrderItem <<Entity>> |
+\# +- id:<ID> OrderItem$OrderItemId
+\# +- productId:<IDREF> Product$ProductId
+\# +- productPrice:<VO> Price
+o +- quantity:int{>0}
+|
++ OrderItem addQuantity(int)
++ Price itemPrice()
+]
+[<AggregateRoot>Order <<AggregateRoot>>]  +-[<label> items 0..*] - [<Entity>OrderItem <<Entity>>]
+]
+// !!! {Frame} sampleshop.core.domain.product.Product !!!
+[<AggregateFrame> Product <<Aggregate>>|
+// !!! sampleshop.core.domain.product.Product !!!
+[<AggregateRoot> Product <<AggregateRoot>> |
+\# +- id:<ID> Product$ProductId
+o +- description:Optional<String\[0,1000\]>
+o +- image:Optional<URI>
+\# +- name:String\[0,200\]{notEmpty}
+\# +- price:<VO> Price
+|
+]
+]
+// !!! sampleshop.outbound.JooqCustomerRepository !!!
+[<Repository> CustomerRepository <<Repository>> |
++ Optional<A> deleteById(Identity)
++ Stream<Customer> find(int,int)
++ Optional<A> findById(Identity)
++ AggregateRoot insert(AggregateRoot)
++ Customer$CustomerId newCustomerId()
++ AggregateRoot update(AggregateRoot)
+]
+// !!! sampleshop.outbound.JooqProductRepository !!!
+[<Repository> ProductRepository <<Repository>> |
++ Optional<A> deleteById(Identity)
++ Optional<A> findById(Identity)
++ AggregateRoot insert(AggregateRoot)
++ Product$ProductId newProductId()
++ void removeAll()
++ AggregateRoot update(AggregateRoot)
+]
+// !!! sampleshop.outbound.JooqOrderRepository !!!
+[<Repository> OrderRepository <<Repository>> |
++ Optional<A> deleteById(Identity)
++ Stream<Order> find(int,int,OrderStatus\[\])
++ Optional<A> findById(Identity)
++ AggregateRoot insert(AggregateRoot)
++ Order$OrderId newOrderId()
++ OrderItem$OrderItemId newOrderItemId()
++ AggregateRoot update(AggregateRoot)
+]
+// !!! sampleshop.core.outport.OrdersByCustomer !!!
+[<ReadModel> OrdersByCustomer <<ReadModel>> |
+o +- canceledOrders:int
+o +- customerName:String
+o +- pendingOrders:int
+o +- shippedOrders:int
+]
+// !!! sampleshop.outbound.JooqOrdersByCustomerProvider !!!
+[<ReadModelProvider> OrdersByCustomerProvider <<ReadModelProvider>> ]
+// !!! sampleshop.outbound.EmailNotifierImpl !!!
+[<OutboundService> EmailNotifierService <<OutboundService>> ]
+[<DomainCommand>ChangeCustomerAddress <<DomainCommand>>]  --> [<ApplicationService>CustomerDriver <<Driver>>]
+[<DomainCommand>CancelOrder <<DomainCommand>>]  --> [<ApplicationService>OrderDriver <<Driver>>]
+[<DomainCommand>ChangeCreditCard <<DomainCommand>>]  --> [<ApplicationService>CustomerDriver <<Driver>>]
+[<DomainCommand>PlaceOrder <<DomainCommand>>]  --> [<ApplicationService>OrderDriver <<Driver>>]
+[<DomainCommand>ShipOrder <<DomainCommand>>]  --> [<ApplicationService>OrderDriver <<Driver>>]
+[<DomainCommand>AddNewCustomer <<DomainCommand>>]  --> [<ApplicationService>CustomerDriver <<Driver>>]
+[<AggregateFrame> Customer <<Aggregate>>]  --> [<DomainEvent>CustomerCreditCardChanged <<DomainEvent>>]
+[<ApplicationService>CustomerDriver <<Driver>>]  --> [<DomainEvent>NewCustomerAdded <<DomainEvent>>]
+[<DomainEvent>NewOrderPlaced <<DomainEvent>>]  --> [<DomainService>CustomerNotificationService <<DomainService>>]
+[<DomainService>OrderPlacementService <<DomainService>>]  --> [<DomainEvent>NewOrderPlaced <<DomainEvent>>]
+[<DomainEvent>OrderCanceled <<DomainEvent>>]  --> [<DomainService>CustomerNotificationService <<DomainService>>]
+[<AggregateFrame> Order <<Aggregate>>]  --> [<DomainEvent>OrderCanceled <<DomainEvent>>]
+[<DomainEvent>FraudDetected <<DomainEvent>>]  --> [Customer <<Aggregate>>]
+[<AggregateFrame> Customer <<Aggregate>>]  --> [<DomainEvent>CustomerAdressChanged <<DomainEvent>>]
+[<DomainEvent>OrderShipped <<DomainEvent>>]  --> [<DomainService>CustomerNotificationService <<DomainService>>]
+[<AggregateFrame> Order <<Aggregate>>]  --> [<DomainEvent>OrderShipped <<DomainEvent>>]
+[<ApplicationService>OrderDriver <<Driver>>]  -- [<DomainService>OrderPlacementService <<DomainService>>]
+[<ApplicationService>OrderDriver <<Driver>>]  -- [<Repository>OrderRepository <<Repository>>]
+[<ApplicationService>ProductDriver <<Driver>>]  -- [<Repository>ProductRepository <<Repository>>]
+[<ApplicationService>CustomerDriver <<Driver>>]  -- [<Repository>CustomerRepository <<Repository>>]
+[<ApplicationService>CustomerDriver <<Driver>>]  -- [<ReadModelProvider>OrdersByCustomerProvider <<ReadModelProvider>>]
+[<DomainService>CustomerNotificationService <<DomainService>>]  -- [<Repository>CustomerRepository <<Repository>>]
+[<DomainService>OrderPlacementService <<DomainService>>]  -- [<Repository>OrderRepository <<Repository>>]
+[<DomainService>OrderPlacementService <<DomainService>>]  -- [<Repository>ProductRepository <<Repository>>]
+[<DomainService>CustomerNotificationService <<DomainService>>]  -- [<OutboundService>EmailNotifierService <<OutboundService>>]
+[<Repository>CustomerRepository <<Repository>>]  -- [<AggregateFrame> Customer <<Aggregate>>]
+[<Repository>ProductRepository <<Repository>>]  -- [<AggregateFrame> Product <<Aggregate>>]
+[<Repository>OrderRepository <<Repository>>]  -- [<AggregateFrame> Order <<Aggregate>>]
+[<ReadModelProvider>OrdersByCustomerProvider <<ReadModelProvider>>]  -- [<ReadModel>OrdersByCustomer <<ReadModel>>]

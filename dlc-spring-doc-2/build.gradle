@@ -1,0 +1,13 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'checkstyle'
+    id 'org.quiltmc.gradle.licenser' version "${quiltmcLicenserVersion}"
+    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+}
+
+dependencies {
+    compileOnly "org.springdoc:springdoc-openapi-starter-webmvc-ui:${openAPIVersion2}"
+    implementation project(":dlc-swagger-v3")
+    implementation project(":dlc-access")
+}

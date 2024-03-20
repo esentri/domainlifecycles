@@ -1,0 +1,19 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.quiltmc.gradle.licenser' version "${quiltmcLicenserVersion}"
+    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+}
+
+dependencies {
+    implementation project(":dlc-mirror")
+    implementation project(":dlc-types")
+    implementation project(":dlc-builder")
+    implementation project(":dlc-access")
+
+    testImplementation project(":dlc-assertions")
+    testImplementation project(":dlc-test-shared-impl")
+    testImplementation "org.assertj:assertj-core:${assertJVersion}"
+    testImplementation "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+}

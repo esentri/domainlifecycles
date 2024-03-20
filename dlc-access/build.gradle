@@ -1,0 +1,12 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.quiltmc.gradle.licenser' version "${quiltmcLicenserVersion}"
+    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+}
+
+dependencies {
+    implementation project(":dlc-mirror")
+    implementation project(":dlc-types")
+    implementation project(":dlc-reflect")
+}

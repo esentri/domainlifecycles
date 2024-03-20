@@ -1,0 +1,33 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.quiltmc.gradle.licenser' version "${quiltmcLicenserVersion}"
+    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+}
+
+dependencies {
+    compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
+
+    implementation 'io.github.classgraph:classgraph:4.8.163'
+    implementation "javax.validation:validation-api:${javaxValidationApiVersion}"
+    implementation "jakarta.validation:jakarta.validation-api:${jakartaValidationApiVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.module:jackson-module-parameter-names:${jacksonVersion}"
+    implementation ("com.github.vladislavsevruk:type-resolver:${typeResolverVersion}") {
+        exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
+    }
+    implementation project(":dlc-types")
+    implementation project(":dlc-reflect")
+    testImplementation "ch.qos.logback:logback-classic:${logbackClassicVersion}"
+    testImplementation project(":dlc-test-shared-impl")
+    testImplementation project(":dlc-builder")
+    testImplementation project(":dlc-type-utils")
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.0"
+    testImplementation "org.projectlombok:lombok:${lombokVersion}"
+    testImplementation "org.assertj:assertj-core:${assertJVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+
+}

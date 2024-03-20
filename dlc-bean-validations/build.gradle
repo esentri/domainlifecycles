@@ -1,0 +1,13 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.quiltmc.gradle.licenser' version "${quiltmcLicenserVersion}"
+    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+}
+
+dependencies {
+    implementation "javax.validation:validation-api:${javaxValidationApiVersion}"
+    implementation "jakarta.validation:jakarta.validation-api:${jakartaValidationApiVersion}"
+    compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation project(":dlc-assertions")
+}
