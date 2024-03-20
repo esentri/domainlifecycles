@@ -6,7 +6,7 @@ plugins {
     id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
 }
 
-def springWebVersion = '6.0.13'
+def springWebVersion = '6.0.18'
 
 dependencies {
     implementation project(":dlc-types")
