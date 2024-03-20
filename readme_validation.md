@@ -94,9 +94,9 @@ logic will only be executed if `Optional.isPresent()` is `true`.
 NitroX DLC explicitly supports the features of
 of [Jakarta Bean Validation Standards 2.0](https://beanvalidation.org/2.0-jsr380/):
 
-- [Unterstützte Annotations](https://beanvalidation.org/2.0-jsr380/spec/#builtinconstraints)
-- [Field & Property Validation](https://beanvalidation.org/2.0-jsr380/spec/#constraintdeclarationvalidationprocess-requirements-objectvalidation)
-- [Method & Constructor Level Constraints](https://beanvalidation.org/2.0-jsr380/spec/#constraintdeclarationvalidationprocess-methodlevelconstraints)
+- [supported annotations](https://beanvalidation.org/2.0-jsr380/spec/#builtinconstraints)
+- [field & property validation](https://beanvalidation.org/2.0-jsr380/spec/#constraintdeclarationvalidationprocess-requirements-objectvalidation)
+- [method & constructor level constraints](https://beanvalidation.org/2.0-jsr380/spec/#constraintdeclarationvalidationprocess-methodlevelconstraints)
 
 The use of bean validation annotations is completely optional.
 Alternatively, all business rules can also be expressed imperatively via `DomainAssertions`!

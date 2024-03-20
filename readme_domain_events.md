@@ -53,7 +53,7 @@ public final class Order extends AggregateRootBase<Order.OrderId> {
 }
 ```
 
-NitroX DLC DomainEvents also provides options to customize or enhance to technical event publishing mechnisms hidden behind
+NitroX DLC DomainEvents also provides options to customize or enhance to technical event publishing mechanisms hidden behind
 this simple interface, see [Configuration](#Configuration).
 
 Additionally, NitroX DLC provides the option to add metadata annotations on methods that publish DomainEvents (``@Publishes``, see nitrox.dlc.domain.types.Publishes). 
