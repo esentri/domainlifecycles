@@ -72,18 +72,29 @@ allprojects {
 
         }
 
-        task sourceJar(type: Jar) {
+        task sourcesJar(type: Jar) {
             from sourceSets.main.allJava
+            archiveClassifier = 'sources'
         }
 
-        task myJavadocs(type: Javadoc) {
-            source = sourceSets.main.allJava
+        task javadocJar(type: Jar) {
+            from javadoc
+            archiveClassifier = 'javadoc'
+        }
+    }
+
+    plugins.withId('signing') {
+        signing {
+            def signingKey = findProperty("signingKey")
+            def signingPassword = findProperty("signingPassword")
+            useInMemoryPgpKeys(signingKey, signingPassword)
+            sign publishing.publications
         }
     }
 
     plugins.withId('maven-publish') {
-
         publishing {
+
             publications {
                 mavenJava(MavenPublication) {
                     groupId = dlcGroup
@@ -119,11 +130,12 @@ allprojects {
                             connection = 'scm:git@github.com:esentri/nitrox-dlc.git'
                             url = 'https://github.com/esentri/nitrox-dlc/'
                         }
-
+                        artifact sourcesJar
+                        artifact javadocJar
                     }
                 }
-
             }
+
             repositories {
                 maven {
                     name = 'nitroxRepository'

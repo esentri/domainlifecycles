@@ -1,7 +1,7 @@
 plugins {
     id 'org.springframework.boot' version '3.2.3'
     id 'java'
-
+    id 'checkstyle'
     // Plugin that handles database migration.
     id 'org.flywaydb.flyway' version "${flywayVersion}"
     // Plugin that integrates the jOOQ code generation tool.
