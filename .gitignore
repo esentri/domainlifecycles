@@ -1,0 +1,77 @@
+### GITIGNORE - SPECIFIES INTENTIONALLY UNTRACKED FILES TO IGNORE
+### https://git-scm.com/docs/gitignore
+
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+
+### MAC OS
+.DS_Store
+*.bak
+
+### INTELLIJ IDEA
+.idea/
+out/
+.idea
+*.iws
+*.iml
+*.ipr
+
+### GRADLE
+gradle/
+.gradle/
+build/
+.gradle/**
+
+### VS CODE
+.vscode/
+
+### EMACS
+.#*
+
+### NET-BEANS
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### STS
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### CLASS FILES
+*.class
+
+### LOG FILES
+*.log
+
+### PACKAGE FILES
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+### VIRTUAL MACHINE CRASH LOGS
+hs_err_pid*
+
+### LOCAL H2 DATABASE
+/dlc-tests/h2-db/
+
+### TEMP DIR
+tmp/
+
+
+gradlew
+gradlew.bat
+gradle/
