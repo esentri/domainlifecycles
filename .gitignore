@@ -19,11 +19,7 @@ out/
 *.iml
 *.ipr
 
-### GRADLE
-gradle/
-.gradle/
-build/
-.gradle/**
+
 
 ### VS CODE
 .vscode/
@@ -71,4 +67,9 @@ hs_err_pid*
 ### TEMP DIR
 tmp/
 
-gradle/
+### GRADLE
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+.gradle/
+build/
+.gradle/**
