@@ -54,22 +54,22 @@ jobs:
 
     - name: Build with Gradle
       run: ./gradlew build
-    - uses: actions-ecosystem/action-regex-match@v2
+    - uses: tmelliottjr/extract-regex-action@v1.4.0
       id: regex-match
       with:
-        text: ${{ steps.read_changelog.outputs.contents }}
         regex: '^##[ ].*$'
-        flags: 'gm'
+        flags: "gm"
+        input: ${{ steps.read_changelog.outputs.contents }}
     - uses: bhowell2/github-substring-action@1.0.2
       id: release_notes_start
       with:
         value: ${{ steps.read_changelog.outputs.contents }}
-        index_of_str: ${{ steps.regex-match.outputs.group1 }}
+        index_of_str: ${{ steps.regex-match.outputs.resultArray[0] }}
     - uses: winterjung/split@v2
       id: split
       with:
         msg: ${{steps.release_notes_start.outputs.substring}}
-        separator: ${{ steps.regex-match.outputs.group2 }}
+        separator: ${{ steps.regex-match.outputs..resultArray[1] }}
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
