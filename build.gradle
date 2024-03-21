@@ -129,11 +129,13 @@ allprojects {
     }
 
     plugins.withId('signing') {
-        signing {
-            def signingKey = findProperty("signingKey")
-            def signingPassword = findProperty("signingPassword")
-            useInMemoryPgpKeys(signingKey, signingPassword)
-            sign publishing.publications
+        if (!repositories.mavenLocal()) {
+            signing {
+                def signingKey = findProperty("signingKey")
+                def signingPassword = findProperty("signingPassword")
+                useInMemoryPgpKeys(signingKey, signingPassword)
+                sign publishing.publications
+            }
         }
     }
 
@@ -175,9 +177,14 @@ allprojects {
                             connection = 'scm:git@github.com:esentri/nitrox-dlc.git'
                             url = 'https://github.com/esentri/nitrox-dlc/'
                         }
-                        artifact sourcesJar
-                        artifact javadocJar
                     }
+                    artifacts {
+                        if(!repositories.mavenLocal()){
+                            artifact sourcesJar
+                            artifact javadocJar
+                        }
+                    }
+
                 }
             }
 
