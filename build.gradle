@@ -11,6 +11,10 @@ task printVersion {
     }
 }
 
+task applyLicenses {
+    subprojects { pr -> applyLicenses.dependsOn("${pr.path}:applyLicenses") }
+}
+
 release {
     failOnCommitNeeded = true
     failOnPublishNeeded = true
@@ -179,18 +183,14 @@ allprojects {
 
             repositories {
                 maven {
-                    name = 'nitroxRepository'
-                    // change URLs to point to your repos, e.g. http://my.org/repo
-                    def releasesRepoUrl = 'https://repo.esentri.com/artifactory/libs-release'
-                    def snapshotsRepoUrl = 'https://repo.esentri.com/artifactory/libs-snapshot'
+                    name = 'sonatype'
+                    def releasesRepoUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+                    def snapshotsRepoUrl = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
                     url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
                     credentials(PasswordCredentials)
                 }
             }
         }
-
-
-
     }
 
     plugins.withId('checkstyle') {
@@ -212,9 +212,9 @@ allprojects {
             include '**/*.java'
         }
     }
-
-
 }
+
+tasks.release.dependsOn('applyLicenses')
 
 // ----------------------------------------------------------
 //  GRADLE.WRAPPER
