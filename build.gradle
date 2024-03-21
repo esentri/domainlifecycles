@@ -30,6 +30,7 @@ release {
     versionPropertyFile = 'version.properties'
     versionProperties = ['version']
     snapshotSuffix = '-SNAPSHOT'
+    pushReleaseVersionBranch = '${version}'
     scmAdapters = [
             net.researchgate.release.GitAdapter
     ]
@@ -37,6 +38,7 @@ release {
     git {
         requireBranch.set('main')
         pushToRemote.set('origin')
+        pushToBranchPrefix.set('releases/')
         commitVersionFileOnly.set(true)
         signTag.set(false)
     }
