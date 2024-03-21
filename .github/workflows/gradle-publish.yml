@@ -11,7 +11,7 @@ on:
   push:
     # Pattern matched against refs/tags
     tags:
-      - '**'           # Push events to every tag including hierarchical tags like v1.0/beta
+      - '[0-9]+.[0-9]+.[0-9]+'         
 #  workflow_dispatch:
 
 jobs:
@@ -44,7 +44,7 @@ jobs:
       uses: andstor/file-reader-action@v1
       with:
         path: "CHANGELOG.md"
-    - name: "check_changelog
+    - name: check_changelog
       if: ${{ !contains(steps.read_changelog.outputs.contents, steps.version.outputs.substring) }}
       run: |
         echo 'Changelog does not contain new version'
