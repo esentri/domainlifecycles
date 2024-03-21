@@ -22,7 +22,7 @@ release {
     preTagCommitMessage = '[Gradle Release Plugin] - pre tag commit: '
     tagCommitMessage = '[Gradle Release Plugin] - creating tag: '
     newVersionCommitMessage = '[Gradle Release Plugin] - new version commit: '
-    tagTemplate = '${version}'
+    tagTemplate = '${dlcVersion}'
     versionPropertyFile = 'version.properties'
     versionProperties = ['dlcVersion']
     snapshotSuffix = '-SNAPSHOT'
@@ -40,7 +40,7 @@ release {
 
 ext {
     dlcGroup = 'nitrox'
-    dlcVersion = '2.0.0-SNAPSHOT'
+    dlcVersion =  versionProps.getProperty("dlcVersion")
     slf4jVersion = '2.0.9'
     bytebuddyVersion = '1.14.9'
     reflectionsVersion = '0.9.12'
