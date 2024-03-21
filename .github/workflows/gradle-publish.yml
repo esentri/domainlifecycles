@@ -64,12 +64,12 @@ jobs:
       id: release_notes_start
       with:
         value: ${{ steps.read_changelog.outputs.contents }}
-        index_of_str: ${{ steps.regex-match.outputs.resultArray[0] }}
+        index_of_str: ${{ steps.regex-match.outputs._0 }}
     - uses: winterjung/split@v2
       id: split
       with:
         msg: ${{steps.release_notes_start.outputs.substring}}
-        separator: ${{ steps.regex-match.outputs.resultArray[1] }}
+        separator: ${{ steps.regex-match.outputs._1 }}
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -78,7 +78,7 @@ jobs:
       with:
         tag_name: ${{ github.ref }}
         release_name: Release ${{ github.ref }}
-        body: ${{ format('{0}{1}', steps.regex-match.outputs.resultArray[0], steps.split.outputs._0 )}}
+        body: ${{ format('{0}{1}', steps.regex-match.outputs._0, steps.split.outputs._0 )}}
         draft: false
         prerelease: false
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
