@@ -47,14 +47,40 @@ jobs:
     - name: check_changelog
       if: ${{ !contains(steps.read_changelog.outputs.contents, steps.version.outputs.substring) }}
       run: |
-        echo 'Changelog does not contain new version'
+        echo ${{ format('Changelog does not contain new version {0} ', steps.version.outputs.substring) }}
         exit 1
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
 
     - name: Build with Gradle
       run: ./gradlew build
-
+    - uses: actions-ecosystem/action-regex-match@v2
+      id: regex-match
+      with:
+        text: ${{ steps.read_changelog.outputs.contents }}
+        regex: '^##[ ].*$'
+        flags: 'gm'
+    - uses: bhowell2/github-substring-action@1.0.2
+      id: release_notes_start
+      with:
+        value: ${{ steps.read_changelog.outputs.contents }}
+        index_of_str: ${{ steps.regex-match.outputs.group1 }}
+    - uses: winterjung/split@v2
+      id: split
+      with:
+        msg: ${{steps.release_notes_start.outputs.substring}}
+        separator: ${{ steps.regex-match.outputs.group2 }}
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: ${{ format('{0}{1}', steps.regex-match.outputs.group1, steps.split.outputs._0 )}}
+        draft: false
+        prerelease: false
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
     # the publishing section of your build.gradle
     #- name: Publish to GitHub Packages
