@@ -1,6 +1,46 @@
+plugins {
+    id 'net.researchgate.release' version '3.0.2'
+}
+
+def versionProps = new Properties()
+file("version.properties").withInputStream { versionProps.load(it) }
+
+task printVersion {
+    doFirst {
+        println ('DLC Version: ' + versionProps.getProperty("dlcVersion"))
+    }
+}
+
+release {
+    failOnCommitNeeded = true
+    failOnPublishNeeded = true
+    failOnSnapshotDependencies = true
+    failOnUnversionedFiles = true
+    failOnUpdateNeeded = true
+    revertOnFail = true
+    preCommitText = ''
+    preTagCommitMessage = '[Gradle Release Plugin] - pre tag commit: '
+    tagCommitMessage = '[Gradle Release Plugin] - creating tag: '
+    newVersionCommitMessage = '[Gradle Release Plugin] - new version commit: '
+    tagTemplate = '${version}'
+    versionPropertyFile = 'version.properties'
+    versionProperties = ['dlcVersion']
+    snapshotSuffix = '-SNAPSHOT'
+    scmAdapters = [
+            net.researchgate.release.GitAdapter
+    ]
+
+    git {
+        requireBranch.set('main')
+        pushToRemote.set('origin')
+        commitVersionFileOnly.set(true)
+        signTag.set(false)
+    }
+}
+
 ext {
     dlcGroup = 'nitrox'
-    dlcVersion = '2.0.0'
+    dlcVersion = '2.0.0-SNAPSHOT'
     slf4jVersion = '2.0.9'
     bytebuddyVersion = '1.14.9'
     reflectionsVersion = '0.9.12'
@@ -19,6 +59,7 @@ ext {
     typeResolverVersion = '1.0.3'
     quiltmcLicenserVersion = '2.0.1'
     nuStuderJooqVersion = '7.1.1'
+    releasePluginVersion = '3.0.2'
     flywayVersion = '9.22.1'
     jaredsburrowsLicenseVersion = '0.9.3'
 }
@@ -147,6 +188,8 @@ allprojects {
                 }
             }
         }
+
+
 
     }
 
