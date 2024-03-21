@@ -38,7 +38,7 @@ jobs:
     - uses: bhowell2/github-substring-action@1.0.2
       id: version
       with:
-        value: "${steps.read_version.outputs.contents}"
+        value: ${{steps.read_version.outputs.contents}}
         index_of_str: "version="
     - id: read_changelog
       uses: andstor/file-reader-action@v1
