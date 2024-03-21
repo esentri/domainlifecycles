@@ -7,7 +7,7 @@ file("version.properties").withInputStream { versionProps.load(it) }
 
 task printVersion {
     doFirst {
-        println ('DLC Version: ' + versionProps.getProperty("dlcVersion"))
+        println ('DLC Version: ' + versionProps.getProperty("version"))
     }
 }
 
@@ -22,9 +22,9 @@ release {
     preTagCommitMessage = '[Gradle Release Plugin] - pre tag commit: '
     tagCommitMessage = '[Gradle Release Plugin] - creating tag: '
     newVersionCommitMessage = '[Gradle Release Plugin] - new version commit: '
-    tagTemplate = '${dlcVersion}'
+    tagTemplate = '${version}'
     versionPropertyFile = 'version.properties'
-    versionProperties = ['dlcVersion']
+    versionProperties = ['version']
     snapshotSuffix = '-SNAPSHOT'
     scmAdapters = [
             net.researchgate.release.GitAdapter
@@ -40,7 +40,7 @@ release {
 
 ext {
     dlcGroup = 'nitrox'
-    dlcVersion =  versionProps.getProperty("dlcVersion")
+    dlcVersion =  versionProps.getProperty("version")
     slf4jVersion = '2.0.9'
     bytebuddyVersion = '1.14.9'
     reflectionsVersion = '0.9.12'
