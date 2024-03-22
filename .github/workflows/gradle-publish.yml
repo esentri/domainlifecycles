@@ -72,6 +72,12 @@ jobs:
        # msg: ${{steps.release_notes_start.outputs.substring}}
        # separator: ${{ steps.regex-match.outputs._1 }}
         separator: '## '
+    - name: Echo Ref
+      run: echo ${{ github.ref }}
+    - name: Echo Split
+      run: echo ${{ steps.split.outputs._1 }}
+    - name: Echo Github token
+      run: echo ${{ secrets.GITHUB_TOKEN }}
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -91,6 +97,10 @@ jobs:
     #  env:
     #    USERNAME: ${{ github.actor }}
     #    TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Echo secret pw
+      run: echo ${secrets.SONATYPE_PASSWORD}
+    - name: Echo secret user
+      run: echo ${secrets.SONATYPE_USERNAME}
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.1
       with:
