@@ -221,7 +221,7 @@ allprojects {
     }
 }
 
-//tasks.release.dependsOn('applyLicenses')
+tasks.release.dependsOn('applyLicenses')
 
 // ----------------------------------------------------------
 //  GRADLE.WRAPPER

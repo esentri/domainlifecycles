@@ -111,15 +111,31 @@ NitroX DLC provides several JARs which enable the NitroX DLC core features indep
 | General Swagger / Open API v3 support                               | only internally used   | nitrox:dlc-swagger-v3           | 
 | Spring Web support (Spring Boot 2 compatible)                       | application developers | nitrox:dlc-spring-web           | 
 | Spring Web support (Spring Boot 3 compatible)                       | application developers | nitrox:dlc-spring-web-6         |
-| Nomnoml based diagrams (experimental)                               | application developers | nitrox:dlc-domain diagrammer    | 
+| Nomnoml based domain diagrams                                       | application developers | nitrox:dlc-domain-diagrammer    | 
 
 To simplify the dependency management using all features in a Spring Boot app using jOOQ for the relational
 database persistence management, we provide JARs for a Spring Boot 2 or Spring Boot 3 setup by adding just a single dependency:
 
-| Application setup                                        | Dependency                             | 
-|----------------------------------------------------------|----------------------------------------|
-| Spring Boot 2 app with all NitroX DLC features available | nitrox:dlc-spring-boot-2-jooq-complete |
- | Spring Boot 2 app with all NitroX DLC features available | nitrox:dlc-spring-boot-3-jooq-complete |
+| Application setup                                        | Dependency                              | 
+|----------------------------------------------------------|-----------------------------------------|
+| Spring Boot 2 app with all NitroX DLC features available | nitrox:dlc-spring-boot-2-jooq-complete  |
+| Spring Boot 3 app with all NitroX DLC features available | nitrox:dlc-spring-boot-3-jooq-complete  |
+
+Gradle setup for a Spring Boot 3 app:
+```Groovy
+dependencies{
+    implementation 'nitrox:dlc-spring-boot-3-jooq-complete:2.0.0'
+}
+```
+
+Maven setup for a Spring Boot 3 app:
+```XML
+<dependency>
+    <groupId>nitrox</groupId>
+    <artifactId>dlc-spring-boot-3-jooq-complete</artifactId>
+    <version>2.0.0</version>
+</dependency>
+```
 
 Have a look at the sample project mentioned below.
 

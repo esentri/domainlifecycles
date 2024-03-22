@@ -13,15 +13,33 @@ There are several options to adjust the diagram settings, have a look at `nitrox
 
 ## Example how to use it
 
-1. Add `nitrox:dlc-domain diagrammer` dependency to your project (in your test setup) 
+1. Add `nitrox:dlc-domain-diagrammer` dependency to your project (in your test setup)
+Gradle setup:
+```Groovy
+dependencies{
+    testImplementation 'nitrox:dlc-domain-diagrammer:2.0.0'
+}
+```
+
+Maven setup:
+```XML
+<dependency>
+    <groupId>nitrox</groupId>
+    <artifactId>dlc-domain diagrammer</artifactId>
+    <version>2.0.0</version>
+    <scope>test</scope>
+</dependency>
+```
+
 2. Add a test like the following
 ```Java
 class NomnomlDomainDiagramGeneratorTest {
     
     @Test
     void generateSampleApp() throws Exception {
-        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleshop"));
-        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withContextPackageName("sampleshop").build();
+        Domain.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(new ReflectiveDomainMirrorFactory("yourdomain"));
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withContextPackageName("yourdomain").build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
                 diagramConfig);
         
@@ -46,3 +64,30 @@ Then render any nomnoml file into an image.
 - $ cat graph.nomnoml | nomnoml > graph.png
 
 More on the usage of `nomnoml-cli`: https://github.com/prantlf/nomnoml-cli
+
+## Requirements
+
+To render something useful, your domain implementation must implement/use the marker interfaces and annotations from [DLC Domain types](./dlc-types).  
+Also we at least need the [domain mirror](./dlc-mirror), to be able to provide all the needed domain metadata within the rendering process.
+
+Those dependencies are provided like:
+```Groovy
+dependencies{
+    implementation 'nitrox:dlc-mirror:2.0.0'
+    implementation 'nitrox:dlc-types:2.0.0'
+}
+```
+
+Maven setup:
+```XML
+<dependency>
+    <groupId>nitrox</groupId>
+    <artifactId>dlc-mirror</artifactId>
+    <version>2.0.0</version>
+</dependency>
+<dependency>
+    <groupId>nitrox</groupId>
+    <artifactId>dlc-types</artifactId>
+    <version>2.0.0</version>
+</dependency>
+```
