@@ -73,9 +73,9 @@ jobs:
     - name: Echo Ref
       run: echo ${{ github.ref }}
     - name: Echo Split
-      run: echo "${ steps.split.outputs._1 }"
+      run: echo "${{ steps.split.outputs._1 }}"
     - name: Echo Github token
-      run: echo "${ secrets.GITHUB_TOKEN }"
+      run: echo "${{ secrets.GITHUB_TOKEN }}"
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -85,7 +85,7 @@ jobs:
         tag_name: ${{ github.ref }}
         release_name: Release ${{ github.ref }}
         #body: ${{ format('{0}{1}', steps.regex-match.outputs._0, steps.split.outputs._0 )}}
-        body: "${ steps.split.outputs._1 }"
+        body: ${{ steps.split.outputs._1 }}
         draft: false
         prerelease: false
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
