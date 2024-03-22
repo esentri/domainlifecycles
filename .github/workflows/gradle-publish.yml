@@ -68,7 +68,7 @@ jobs:
     - uses: winterjung/split@v2
       id: split
       with:
-        msg: "${ steps.read_changelog.outputs.contents }"
+        msg: ${{ steps.read_changelog.outputs.contents }}
        # msg: ${{steps.release_notes_start.outputs.substring}}
        # separator: ${{ steps.regex-match.outputs._1 }}
         separator: '## '
@@ -87,7 +87,7 @@ jobs:
         tag_name: ${{ github.ref }}
         release_name: Release ${{ github.ref }}
         #body: ${{ format('{0}{1}', steps.regex-match.outputs._0, steps.split.outputs._0 )}}
-        body: "${ steps.split.outputs._1 }"
+        body: ${{ steps.split.outputs._1 }}
         draft: false
         prerelease: false
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
