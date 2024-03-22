@@ -65,13 +65,11 @@ jobs:
     #    value: |
     #      ${{ steps.read_changelog.outputs.contents }}
     #    index_of_str: ${{ steps.regex-match.outputs._0 }}
-    - uses: winterjung/split@v2
+    - uses: rishabhgupta/split-by@v1
       id: split
       with:
-        msg: ${{ steps.read_changelog.outputs.contents }}
-       # msg: ${{steps.release_notes_start.outputs.substring}}
-       # separator: ${{ steps.regex-match.outputs._1 }}
-        separator: '## '
+        string: ${{ steps.read_changelog.outputs.contents }}
+        split-by: '## '
     - name: Echo Ref
       run: echo ${{ github.ref }}
     - name: Echo Split
