@@ -19,7 +19,7 @@ jobs:
 
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -75,7 +75,7 @@ jobs:
     - name: Echo Ref
       run: echo ${{ github.ref }}
     - name: Echo Split
-      run: echo ${{ steps.split.outputs._1 }}
+      run: echo ${{ steps.split.outputs._0 }}
     - name: Echo Github token
       run: echo ${{ secrets.GITHUB_TOKEN }}
     - name: Create Release
