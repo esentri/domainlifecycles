@@ -24,7 +24,7 @@ dependencies {
     testImplementation "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     testImplementation "org.assertj:assertj-core:${assertJVersion}"
-    testImplementation "ch.qos.logback:logback-classic:1.4.11"
+    testImplementation "ch.qos.logback:logback-classic:${logbackClassicVersion}"
     testImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${jacksonVersion}"
     testImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
     testImplementation "com.fasterxml.jackson.module:jackson-module-parameter-names:${jacksonVersion}"
