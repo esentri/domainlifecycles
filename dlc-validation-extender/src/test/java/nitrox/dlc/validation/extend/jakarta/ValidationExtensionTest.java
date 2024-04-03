@@ -54,7 +54,17 @@ public class ValidationExtensionTest {
     @BeforeAll
     static void beforeAll() {
         Locale.setDefault(Locale.ENGLISH);
-        ValidationDomainClassExtender.extend("tests");
+        ValidationDomainClassExtender.extend("tests", "nitrox.dlc.validation.extend");
+    }
+
+    @Test
+    public void testInstrumentStatic(){
+        DomainAssertionException ex = assertThrows( DomainAssertionException.class, ()-> {
+            VOStaticMethod root = new VOStaticMethod(null);
+        });
+        var msg = ex.getLocalizedMessage();
+        log.info(msg);
+        Assertions.assertThat(ex).hasMessageContaining("'value'");
     }
 
     @Test

@@ -202,6 +202,7 @@ public class ValidationDomainClassExtender {
                                 .and(
                                     ElementMatchers.isMethod()
                                         .and(ElementMatchers.not(ElementMatchers.takesNoArguments()))
+                                        .and(ElementMatchers.not(ElementMatchers.isStatic()))
                                         .and(ElementMatchers.not(ElementMatchers.hasMethodName("validate").and(ElementMatchers.takesNoArguments())))
                                         .and(ElementMatchers.not(ElementMatchers.hasMethodName("concurrencyVersion").and(ElementMatchers.takesNoArguments())))
                                         .and(ElementMatchers.not(ElementMatchers.hasMethodName(domainBuilderConfiguration.builderMethodName())))
