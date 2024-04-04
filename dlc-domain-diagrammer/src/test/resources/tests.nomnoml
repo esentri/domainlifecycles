@@ -796,6 +796,22 @@ o +- optionalText:Optional<String\[0,10\]>
 + String{notBlank} textSetzenReturnVal(String)
 ]
 ]
+[<AggregateFrame> TestRoot <<Aggregate>>]  <-[<label> TestEntity1.testRootId] - [<AggregateFrame> TestRoot <<Aggregate>>]
+[<AggregateFrame> TestRoot <<Aggregate>>]  -[<label> TestEntity2.testRootId] -> [<AggregateFrame> TestRoot <<Aggregate>>]
+[<AggregateFrame> TestRoot <<Aggregate>>]  <-[<label> TestEntity3.testRootId] - [<AggregateFrame> TestRoot <<Aggregate>>]
+[<AggregateFrame> TestRoot <<Aggregate>>]  -[<label> TestEntity5.testRootId] -> [<AggregateFrame> TestRoot <<Aggregate>>]
+[<AggregateFrame> AnotherConfiguration <<Aggregate>>]  <-[<label> TangibleConfigurationTableEntry.anotherConfigurationId] - [<AggregateFrame> AnotherConfiguration <<Aggregate>>]
+[<AggregateFrame> AutoMappedVoAggregateRoot <<Aggregate>>]  <-[<label> AutoMappedVoEntity.rootId] - [<AggregateFrame> AutoMappedVoAggregateRoot <<Aggregate>>]
+[<AggregateFrame> TreeRoot <<Aggregate>>]  <-[<label> TreeNode.rootId] - [<AggregateFrame> TreeRoot <<Aggregate>>]
+[<AggregateFrame> Configuration <<Aggregate>>]  <-[<label> GlobalConfigurationTableEntry.configurationId] - [<AggregateFrame> Configuration <<Aggregate>>]
+[<AggregateFrame> TestRootOneToMany <<Aggregate>>]  <-[<label> TestEntityOneToMany.testRootId] - [<AggregateFrame> TestRootOneToMany <<Aggregate>>]
+[<AggregateFrame> TestRootOneToOneFollowing <<Aggregate>>]  <-[<label> TestEntityOneToOneFollowing.testRootId] - [<AggregateFrame> TestRootOneToOneFollowing <<Aggregate>>]
+[<AggregateFrame> VoAggregateRoot <<Aggregate>>]  <-[<label> VoEntity.rootId] - [<AggregateFrame> VoAggregateRoot <<Aggregate>>]
+[<AggregateFrame> TestRootHierarchical <<Aggregate>>]  <-[<label> TestRootHierarchical.parentId] - [<AggregateFrame> TestRootHierarchical <<Aggregate>>]
+[<AggregateFrame> OptionalAggregate <<Aggregate>>]  -[<label> OptionalAggregate.optionalRefId] -> [<AggregateFrame> RefAgg <<Aggregate>>]
+[<AggregateFrame> OptionalAggregate <<Aggregate>>]  -[<label> RefValueObject.optionalRef] -> [<AggregateFrame> RefAgg <<Aggregate>>]
+[<AggregateFrame> TestRootOneToOneFollowingLeading <<Aggregate>>]  <-[<label> TestEntityAOneToOneFollowingLeading.testRootId] - [<AggregateFrame> TestRootOneToOneFollowingLeading <<Aggregate>>]
+[<AggregateFrame> TestRootOneToOneFollowingLeading <<Aggregate>>]  -[<label> TestEntityBOneToOneFollowingLeading.testRootId] -> [<AggregateFrame> TestRootOneToOneFollowingLeading <<Aggregate>>]
 // !!! tests.shared.complete.onlinehandel.bestellung.BestellungRepository !!!
 [<Repository> BestellungRepository <<Repository>> |
 + BestellungIdBv3 create(\# BestellungBv3)

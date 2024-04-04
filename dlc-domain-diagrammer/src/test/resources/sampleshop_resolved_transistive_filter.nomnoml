@@ -76,6 +76,7 @@ o +- image:Optional<URI>
 |
 ]
 ]
+[<AggregateFrame> Order <<Aggregate>>]  -[<label> OrderItem.productId] -> [<AggregateFrame> Product <<Aggregate>>]
 // !!! sampleshop.outbound.JooqProductRepository !!!
 [<Repository> ProductRepository <<Repository>> |
 + Optional<Product> deleteById(Product$ProductId)

@@ -147,6 +147,8 @@ o +- image:Optional<URI>
 |
 ]
 ]
+[<AggregateFrame> Order <<Aggregate>>]  -[<label> Order.customerId] -> [<AggregateFrame> Customer <<Aggregate>>]
+[<AggregateFrame> Order <<Aggregate>>]  -[<label> OrderItem.productId] -> [<AggregateFrame> Product <<Aggregate>>]
 // !!! sampleshop.outbound.JooqCustomerRepository !!!
 [<Repository> CustomerRepository <<Repository>> |
 + Optional<Customer> deleteById(Customer$CustomerId)
