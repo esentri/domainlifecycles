@@ -39,7 +39,6 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
-@Builder
 @Getter
 public class NomnomlRelationship implements DiagramElement {
     private final String fromName;
@@ -50,6 +49,8 @@ public class NomnomlRelationship implements DiagramElement {
     private final String toMultiplicity;
     private final String label;
     private final RelationshipType relationshiptype;
+    private boolean transposed; //declare relationship in the transposed way (semantics stay the same)
+
 
     /**
      * Initializes the relationship.
@@ -63,6 +64,7 @@ public class NomnomlRelationship implements DiagramElement {
      * @param label for relationship
      * @param relationshiptype for relationship
      */
+    @Builder
     public NomnomlRelationship(String fromName,
                                String fromStyleClassifier,
                                String fromMultiplicity,
@@ -88,23 +90,47 @@ public class NomnomlRelationship implements DiagramElement {
     public String getDiagramText() {
         StringBuilder builder = new StringBuilder();
         builder.append("[");
-        builder.append(fromStyleClassifier);
-        builder.append(fromName);
+        if(!transposed){
+            builder.append(fromStyleClassifier);
+            builder.append(fromName);
+        }else{
+            builder.append(toStyleClassifier);
+            builder.append(toName);
+        }
         builder.append("] ");
-        builder.append(fromMultiplicity);
+        if(!transposed) {
+            builder.append(fromMultiplicity);
+        }else{
+            builder.append(toMultiplicity);
+        }
         builder.append(" ");
-        builder.append(relationshiptype.lineStart);
+        if(!transposed) {
+            builder.append(relationshiptype.lineStart);
+        }else{
+            builder.append(relationshiptype.transposedLineStart);
+        }
         if(!"".equals(label)){
             builder.append("[<label> ");
             builder.append(label);
             builder.append("] ");
         }
-        builder.append(relationshiptype.lineEnd);
-        builder.append(toMultiplicity);
+        if(!transposed) {
+            builder.append(relationshiptype.lineEnd);
+            builder.append(toMultiplicity);
+        }else{
+            builder.append(relationshiptype.transposedLineEnd);
+            builder.append(fromMultiplicity);
+        }
+
         builder.append(" ");
         builder.append("[");
-        builder.append(toStyleClassifier);
-        builder.append(toName);
+        if(!transposed) {
+            builder.append(toStyleClassifier);
+            builder.append(toName);
+        }else{
+            builder.append(fromStyleClassifier);
+            builder.append(fromName);
+        }
         builder.append("]");
         builder.append(System.lineSeparator());
         return builder.toString();
@@ -119,40 +145,48 @@ public class NomnomlRelationship implements DiagramElement {
         /**
          * inheritance.
          */
-        INHERITANCE("<:", "-"),
+        INHERITANCE("<:", "-", "-", ":>"),
 
         /**
          * realization.
          */
-        REALIZATION("--", ":>"),
+        REALIZATION("--", ":>", "<:", "--"),
 
         /**
          * composition (not used so far).
          */
-        COMPOSITION("+-", "-"),
+        COMPOSITION("+-", "-", "-", "-+"),
 
         /**
          * aggregation.
          */
-        AGGREGATION("o-", "-"),
+        AGGREGATION("o-", "-", "-", "-o"),
 
         /**
          * association.
          */
-        ASSOCIATION("-", "-"),
+        ASSOCIATION("-", "-", "-", "-"),
 
         /**
          * directed association.
          */
-        DIRECTED_ASSOCIATION("-", "->");
+        DIRECTED_ASSOCIATION("-", "->", "<-", "-");
 
         private final String lineStart;
         private final String lineEnd;
+        private final String transposedLineStart;
+        private final String transposedLineEnd;
 
 
-        RelationshipType(String lineStart, String lineEnd) {
+        RelationshipType(String lineStart, String lineEnd, String transposedLineStart, String transposedLineEnd) {
             this.lineStart = lineStart;
             this.lineEnd = lineEnd;
+            this.transposedLineStart = transposedLineStart;
+            this.transposedLineEnd = transposedLineEnd;
         }
+    }
+
+    public void transpose(){
+        this.transposed = !transposed;
     }
 }

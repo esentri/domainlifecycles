@@ -217,6 +217,16 @@ public class DomainRelationshipMapper {
                 };
                 visitor.start();
             });
+        for (NomnomlRelationship rel : relationShips){
+            var startIndex = relationShips.indexOf(rel);
+            for(var i=startIndex; i<relationShips.size(); i++){
+                var compared = relationShips.get(i);
+                if(compared.getFromName().equals(rel.getToName()) && compared.getToName().equals(rel.getFromName())){
+                    compared.transpose();
+                }
+            }
+        }
+
         return relationShips;
     }
 
@@ -817,18 +827,11 @@ public class DomainRelationshipMapper {
             .getAggregateRoots()
             .stream()
             .filter(aggregateRootMirror -> {
-                final var isIdentityWithin = new AtomicBoolean(false);
-                var visitor = new ContextDomainTypeVisitor(aggregateRootMirror){
-                    @Override
-                    public void visitValueReference(ValueReferenceMirror valueReferenceMirror) {
-                        if(valueReferenceMirror.isIdentityField()
-                            && valueReferenceMirror.getValue().getTypeName().equals(idReferenceMirror.getValue().getTypeName())){
-                            isIdentityWithin.set(true);
-                        }
-                    }
-                };
-                visitor.start();
-                return isIdentityWithin.get();
+                var identity = aggregateRootMirror.getIdentityField();
+                if(identity.isPresent()){
+                    return identity.get().getType().getTypeName().equals(idReferenceMirror.getValue().getTypeName());
+                }
+                return false;
             })
             .findFirst();
         if(!declaringAggregates.isEmpty() && targetAggregate.isPresent()){
