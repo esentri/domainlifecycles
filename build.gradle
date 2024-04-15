@@ -177,13 +177,14 @@ allprojects {
                             url = 'https://github.com/esentri/nitrox-dlc/'
                         }
                     }
-                    artifacts {
-                        if(!repositories.mavenLocal()){
-                            artifact sourcesJar
-                            artifact javadocJar
+                    if (!repositories.mavenLocal()) {
+                        artifact(sourcesJar) {
+                            classifier = 'sources'
+                        }
+                        artifact(javadocJar) {
+                            classifier = 'javadoc'
                         }
                     }
-
                 }
             }
 
