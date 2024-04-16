@@ -468,6 +468,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
             .filter(rp -> this.valuePathToRecordProperty.getInverse(rp) == null)
             .filter(rp -> (!domainType.equals(DomainType.ENTITY) && !domainType.equals(DomainType.AGGREGATE_ROOT)) || !rp.isNonNullForeignKey())
             .filter(rp -> !(domainType.equals(DomainType.VALUE_OBJECT) && (rp.getName().equals("id") || rp.getName().equals("containerId"))))
+            .filter(rp -> this.ignoredRecordPropertyProvider == null || !this.ignoredRecordPropertyProvider.isIgnored(rp))
             .toList();
         if(nonMappedRecordProperties.size()>0){
             throw DLCPersistenceException.fail(String.format("The record properties '%s' of '%s' were not matched within the DomainObject" +

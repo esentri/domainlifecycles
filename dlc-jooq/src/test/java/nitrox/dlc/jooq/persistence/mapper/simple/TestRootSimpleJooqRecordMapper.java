@@ -36,7 +36,7 @@ import tests.shared.persistence.domain.simple.TestRootSimple;
 import tests.shared.persistence.domain.simple.TestRootSimpleId;
 
 /**
- * Mapping JOOQ TestRootSimple records.
+ * Mapping JOOQ TestRootSimpleIgnoring records.
  */
 public class TestRootSimpleJooqRecordMapper extends AbstractRecordMapper<TestRootSimpleRecord, TestRootSimple, TestRootSimple> {
 

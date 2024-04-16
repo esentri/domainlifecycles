@@ -304,6 +304,16 @@ o +- y:int
 [<AggregateRoot>Configuration <<AggregateRoot>>]  +-[<label> classA 0..1] - [<Entity>GlobalConfigurationTableEntry <<Entity>>]
 [<Entity>Entry <<Entity>>]  <:- [<Entity>GlobalConfigurationTableEntry <<Entity>>]
 ]
+// !!! {Frame} tests.shared.persistence.domain.ignoring.TestRootSimpleIgnoring !!!
+[<AggregateFrame> TestRootSimpleIgnoring <<Aggregate>>|
+// !!! tests.shared.persistence.domain.ignoring.TestRootSimpleIgnoring !!!
+[<AggregateRoot> TestRootSimpleIgnoring <<AggregateRoot>> |
+\# +- id:<ID> TestRootSimpleIgnoringId
+o +- ignoredField:String
+o +- name:String
+|
+]
+]
 // !!! {Frame} tests.shared.persistence.domain.inheritanceGenericId.ConcreteRoot !!!
 [<AggregateFrame> ConcreteRoot <<Aggregate>>|
 // !!! tests.shared.persistence.domain.inheritanceGenericId.ConcreteRoot !!!

@@ -209,6 +209,11 @@ public class BaseNitroxTestPersistenceConfiguration {
             .withRecordPackage("nitrox.dlc.test.tables.records")
             .withIgnoredDomainObjectFields(f -> {
                 if (f.getName().equals("gesamtPreis")) return true;
+                if (f.getName().equals("ignoredField")) return true;
+                return false;
+            })
+            .withIgnoredRecordProperties(p -> {
+                if(p.getName().equals("ignoredColumn")) return true;
                 return false;
             })
             .withEntityValueObjectRecordClassProvider(

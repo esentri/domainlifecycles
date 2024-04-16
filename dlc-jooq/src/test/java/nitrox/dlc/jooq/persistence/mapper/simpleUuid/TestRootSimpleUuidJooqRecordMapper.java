@@ -38,7 +38,7 @@ import tests.shared.persistence.domain.simpleUuid.TestRootSimpleUuidId;
 import java.util.UUID;
 
 /**
- * Mapping JOOQ TestRootSimple records.
+ * Mapping JOOQ TestRootSimpleIgnoring records.
  */
 public class TestRootSimpleUuidJooqRecordMapper extends AbstractRecordMapper<TestRootSimpleUuidRecord, TestRootSimpleUuid, TestRootSimpleUuid> {
 

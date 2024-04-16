@@ -114,13 +114,14 @@ public abstract class DomainPersistenceProvider<BASE_RECORD> {
             if (instance instanceof Entity) {
                 nitrox.dlc.mirror.api.EntityMirror em = Domain.entityMirrorFor((Entity<?>) instance);
 
-                em.getEntityReferences().forEach(er -> addChildrenToBuilder(position, er, builder));
-                em.getAggregateRootReferences().forEach(ar -> addChildrenToBuilder(position, ar, builder));
-                em.getValueReferences().stream().filter(vr -> vr.getValue().isValueObject()).forEach(voc -> addChildrenToBuilder(position, voc, builder));
+                em.getEntityReferences().stream().filter(er -> !er.isStatic()).forEach(er -> addChildrenToBuilder(position, er, builder));
+                em.getAggregateRootReferences().stream().filter(ar -> !ar.isStatic()).forEach(ar -> addChildrenToBuilder(position, ar, builder));
+                em.getValueReferences().stream().filter(vr -> !vr.isStatic()).filter(vr -> vr.getValue().isValueObject()).forEach(voc -> addChildrenToBuilder(position, voc, builder));
             } else {
                 ValueObjectMirror vm = Domain.valueObjectMirrorFor((ValueObject) instance);
                 vm.getValueReferences()
                     .stream()
+                    .filter(vr -> !vr.isStatic())
                     .filter(vr -> vr.getValue().isValueObject())
                     .forEach(voc -> addChildrenToBuilder(position, voc, builder));
             }

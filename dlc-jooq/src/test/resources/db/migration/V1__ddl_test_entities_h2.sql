@@ -841,6 +841,13 @@ CREATE SEQUENCE test_domain.vo_aggregate_primitive_record_mapped_simple_seq  MIN
 CREATE SEQUENCE test_domain.vo_aggregate_primitive_record_mapped_complex_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
 CREATE SEQUENCE test_domain.vo_aggregate_primitive_record_mapped_nested_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
 
+CREATE TABLE test_domain.test_root_simple_ignoring (
+                                              id NUMBER(18) PRIMARY KEY,
+                                              concurrency_version NUMBER(18) NOT NULL,
+                                              name VARCHAR2(200),
+                                              ignored_column VARCHAR2(200)
+);
+
 /*
 CREATE TABLE test_domain.root_id_enum_list (
                                                     id NUMBER(18) PRIMARY KEY,

@@ -36,7 +36,7 @@ import tests.shared.persistence.domain.valueobjects.VoAggregateRoot;
 import tests.shared.persistence.domain.valueobjects.VoOneToManyEntity2;
 
 /**
- * Mapping JOOQ TestRootSimple records.
+ * Mapping JOOQ TestRootSimpleIgnoring records.
  */
 public class VoOneToManyEntity2JooqRecordMapper extends AbstractRecordMapper<VoOneToManyEntity_2Record, VoOneToManyEntity2, VoAggregateRoot> {
 

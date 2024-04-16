@@ -77,6 +77,8 @@ import tests.shared.persistence.domain.hierarchical.TestRootHierarchical;
 import tests.shared.persistence.domain.hierarchical.TestRootHierarchicalId;
 import tests.shared.persistence.domain.hierarchicalBackRef.TestRootHierarchicalBackref;
 import tests.shared.persistence.domain.hierarchicalBackRef.TestRootHierarchicalBackrefId;
+import tests.shared.persistence.domain.ignoring.TestRootSimpleIgnoring;
+import tests.shared.persistence.domain.ignoring.TestRootSimpleIgnoringId;
 import tests.shared.persistence.domain.manyToManyWithJoinEntity.TestEntityManyToManyA;
 import tests.shared.persistence.domain.manyToManyWithJoinEntity.TestEntityManyToManyAId;
 import tests.shared.persistence.domain.manyToManyWithJoinEntity.TestEntityManyToManyB;
@@ -864,6 +866,13 @@ public class TestDataGenerator {
     public static TestRootSimple buildTestRootSimple() {
         return TestRootSimple.builder()
             .setId(new TestRootSimpleId(1L))
+            .setName("TestRoot")
+            .build();
+    }
+
+    public static TestRootSimpleIgnoring buildTestRootSimpleIgnoring() {
+        return TestRootSimpleIgnoring.builder()
+            .setId(new TestRootSimpleIgnoringId(1L))
             .setName("TestRoot")
             .build();
     }

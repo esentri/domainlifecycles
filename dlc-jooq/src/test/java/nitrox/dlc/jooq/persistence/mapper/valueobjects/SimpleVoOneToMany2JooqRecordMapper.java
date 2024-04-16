@@ -37,7 +37,7 @@ import tests.shared.persistence.domain.valueobjects.VoAggregateRoot;
 import nitrox.dlc.test.Tables;
 
 /**
- * Mapping JOOQ TestRootSimple records.
+ * Mapping JOOQ TestRootSimpleIgnoring records.
  */
 public class SimpleVoOneToMany2JooqRecordMapper extends AbstractRecordMapper<SimpleVoOneToMany_2Record, SimpleVoOneToMany2, VoAggregateRoot> {
 
