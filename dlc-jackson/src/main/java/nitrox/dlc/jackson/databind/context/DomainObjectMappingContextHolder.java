@@ -92,7 +92,9 @@ public class DomainObjectMappingContextHolder {
 
         if (DomainType.ENTITY.equals(dtm.getDomainType()) || DomainType.AGGREGATE_ROOT.equals(dtm.getDomainType())) {
             EntityMirror em = (EntityMirror)dtm;
-            em.getEntityReferences().forEach(
+            em.getEntityReferences().stream()
+                .filter(erm -> !erm.isStatic())
+                .forEach(
                 erm -> {
                     var refNode = node.get(erm.getName());
                     if ( refNode != null && !refNode.isNull()) {
@@ -108,6 +110,7 @@ public class DomainObjectMappingContextHolder {
 
             em.getValueReferences()
                 .stream()
+                .filter(vrm -> !vrm.isStatic())
                 .filter(vrm -> vrm.getValue().isValueObject())
                 .forEach(vrm -> {
                     var refNode = node.get(vrm.getName());
@@ -126,6 +129,7 @@ public class DomainObjectMappingContextHolder {
             ValueObjectMirror vm = (ValueObjectMirror) dtm;
 
             vm.getValueReferences().stream()
+                .filter(vrm -> !vrm.isStatic())
                 .filter(vrm -> vrm.getValue().isValueObject())
                 .forEach(vrm -> {
                     var refNode = node.get(vrm.getName());
