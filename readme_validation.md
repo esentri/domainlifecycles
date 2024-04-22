@@ -85,8 +85,8 @@ The following possibilities are provided by
 | isPositiveOrZero     | checking a number value whether it is positive or `0`.                                                                                             | `java.math.BigDecimal`, `java.math.BigInteger` or double, float, long, int, byte, short and their wrapper types and `java.util.Optional` with corresponding content                                                                                                                                                                 |
 | isNegativeOrZero     | checking a number value whether it is negative or `0`.                                                                                             | `java.math.BigDecimal`, `java.math.BigInteger` or double, float, long, int, byte, short and their wrapper types and `java.util.Optional` with corresponding content                                                                                                                                                                |
 
-ATTENTION: For all checks, where the value to be checked is passed in a
-in a `java.lang.Optional`, the respective `DomainAssertion`
+ATTENTION: For all checks, where the value to be checked is passed 
+in an `java.lang.Optional`, the respective `DomainAssertion`
 logic will only be executed if `Optional.isPresent()` is `true`.
 
 ### Java Bean Validation Support

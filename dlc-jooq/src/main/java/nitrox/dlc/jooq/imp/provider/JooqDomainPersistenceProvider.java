@@ -32,6 +32,7 @@ import nitrox.dlc.mirror.api.Domain;
 import nitrox.dlc.mirror.api.DomainType;
 import nitrox.dlc.mirror.api.EntityMirror;
 import nitrox.dlc.mirror.api.FieldMirror;
+import nitrox.dlc.mirror.api.ValueMirror;
 import nitrox.dlc.mirror.api.ValueReferenceMirror;
 import nitrox.dlc.mirror.visitor.ContextDomainTypeVisitor;
 import nitrox.dlc.persistence.exception.DLCPersistenceException;
@@ -137,49 +138,55 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
                                 && !context.isAlreadyVisited(context.startingTypeName);
                         }
 
-                        @Override
-                        public void visitValueReference(ValueReferenceMirror valueReferenceMirror) {
-                        var context = getVisitorContext();
-                        var valueObjectRecordDefinition =
-                           findCustomValueObjectRecordDefinition(
-                               em.getTypeName(),
-                               valueReferenceMirror.getType().getTypeName(),
-                               context.getCurrentPath().stream().map(FieldMirror::getName).toList(),
-                               jooqPersistenceConfiguration
-                           );
+                    @Override
+                    public boolean visitEnterValue(ValueMirror valueMirror) {
+                        return valueMirror.isValueObject();
+                    }
 
-                        if (valueObjectRecordDefinition == null && valueReferenceMirror.getType().hasCollectionContainer()) {
-                           //if we have no custom record and record mapper definition and we have a to-many relationship,
-                           // we need to build a valueObjectRecordDefinition for the auto mapping of the value object
-                           valueObjectRecordDefinition = createAutoMappingValueObjectRecordDefinition(
-                               em.getTypeName(),
-                               valueReferenceMirror.getType().getTypeName(),
-                               context.getCurrentPath().stream().map(FieldMirror::getName).toList(),
-                               jooqPersistenceConfiguration);
-                        }
-
-                        if (valueObjectRecordDefinition != null) {
-                            addRecordToDomainObjectTypeEntry(
-                                valueObjectRecordDefinition.valueObjectRecordType().getName(),
-                                valueObjectRecordDefinition.containedValueObjectTypeName(),
-                                recordCanonicalNameToDomainObjectTypeMap
-                            );
-                            ValueObjectRecordMirror<UpdatableRecord<?>> vorm = jooqPersistenceConfiguration
-                                .recordMirrorInstanceProvider
-                                .provideValueObjectRecordMirror(
-                                    valueObjectRecordDefinition.containingEntityTypeName,
-                                    valueObjectRecordDefinition.containedValueObjectTypeName,
-                                    (Class<? extends UpdatableRecord<?>>) valueObjectRecordDefinition.valueObjectRecordType(),
-                                    Arrays.asList(valueObjectRecordDefinition.pathFromEntityToValueObject),
-                                    getValueObjectRecordMapperFor(
-                                       valueObjectRecordDefinition,
-                                       jooqPersistenceConfiguration
-                                   ),
-                                   recordCanonicalNameToDomainObjectTypeMap
+                    @Override
+                    public void visitValueReference(ValueReferenceMirror valueReferenceMirror) {
+                        if(valueReferenceMirror.getType().getDomainType().equals(DomainType.VALUE_OBJECT)) {
+                            var context = getVisitorContext();
+                            var valueObjectRecordDefinition =
+                                findCustomValueObjectRecordDefinition(
+                                    em.getTypeName(),
+                                    valueReferenceMirror.getType().getTypeName(),
+                                    context.getCurrentPath().stream().map(FieldMirror::getName).toList(),
+                                    jooqPersistenceConfiguration
                                 );
 
-                           valueObjectRecordMirrors.add(vorm);
+                            if (valueObjectRecordDefinition == null && valueReferenceMirror.getType().hasCollectionContainer()) {
+                                //if we have no custom record and record mapper definition and we have a to-many relationship,
+                                // we need to build a valueObjectRecordDefinition for the auto mapping of the value object
+                                valueObjectRecordDefinition = createAutoMappingValueObjectRecordDefinition(
+                                    em.getTypeName(),
+                                    valueReferenceMirror.getType().getTypeName(),
+                                    context.getCurrentPath().stream().map(FieldMirror::getName).toList(),
+                                    jooqPersistenceConfiguration);
+                            }
 
+                            if (valueObjectRecordDefinition != null) {
+                                addRecordToDomainObjectTypeEntry(
+                                    valueObjectRecordDefinition.valueObjectRecordType().getName(),
+                                    valueObjectRecordDefinition.containedValueObjectTypeName(),
+                                    recordCanonicalNameToDomainObjectTypeMap
+                                );
+                                ValueObjectRecordMirror<UpdatableRecord<?>> vorm = jooqPersistenceConfiguration
+                                    .recordMirrorInstanceProvider
+                                    .provideValueObjectRecordMirror(
+                                        valueObjectRecordDefinition.containingEntityTypeName,
+                                        valueObjectRecordDefinition.containedValueObjectTypeName,
+                                        (Class<? extends UpdatableRecord<?>>) valueObjectRecordDefinition.valueObjectRecordType(),
+                                        Arrays.asList(valueObjectRecordDefinition.pathFromEntityToValueObject),
+                                        getValueObjectRecordMapperFor(
+                                            valueObjectRecordDefinition,
+                                            jooqPersistenceConfiguration
+                                        ),
+                                        recordCanonicalNameToDomainObjectTypeMap
+                                    );
+
+                                valueObjectRecordMirrors.add(vorm);
+                            }
                         }
                     }
                };

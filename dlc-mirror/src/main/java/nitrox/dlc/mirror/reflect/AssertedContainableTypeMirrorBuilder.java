@@ -77,7 +77,7 @@ public class AssertedContainableTypeMirrorBuilder {
         var assertions = containerType.isEmpty() ? buildAssertionMirrors() : buildContainedAssertionMirrors();
         List<AssertionMirror> containerAssertions = containerType.isPresent() ? buildAssertionMirrors() : Collections.emptyList();
         return new AssertedContainableTypeModel(
-            getBasicType().getTypeName(),
+            getTypeName(),
             DomainType.of(getBasicType()),
             assertions,
             Optional.class.isAssignableFrom(type),
@@ -138,5 +138,16 @@ public class AssertedContainableTypeMirrorBuilder {
             return type.componentType();
         }
         return type;
+    }
+
+    private String getTypeName(){
+        if(resolvedGenericType == null){
+            return getBasicType().getTypeName();
+        }else{
+            if(Optional.class.isAssignableFrom(type) || Collection.class.isAssignableFrom(type) || Stream.class.isAssignableFrom(type)){
+                return resolvedGenericType.genericTypes().get(0).typeName();
+            }
+            return resolvedGenericType.typeName();
+        }
     }
 }

@@ -35,6 +35,8 @@ import nitrox.dlc.domain.types.Identity;
 import nitrox.dlc.domain.types.ValueObject;
 import nitrox.dlc.domain.types.internal.DomainObject;
 import nitrox.dlc.mirror.api.Domain;
+import nitrox.dlc.mirror.api.DomainType;
+import nitrox.dlc.mirror.api.EntityMirror;
 import nitrox.dlc.mirror.api.FieldMirror;
 import nitrox.dlc.mirror.api.ValueObjectMirror;
 import nitrox.dlc.persistence.configuration.DomainPersistenceConfiguration;
@@ -112,17 +114,19 @@ public abstract class DomainPersistenceProvider<BASE_RECORD> {
         builder.withRecordMirror(getRecordMirror(position));
         if (!position.isBackReference) {
             if (instance instanceof Entity) {
-                nitrox.dlc.mirror.api.EntityMirror em = Domain.entityMirrorFor((Entity<?>) instance);
+                EntityMirror em = Domain.entityMirrorFor((Entity<?>) instance);
 
                 em.getEntityReferences().stream().filter(er -> !er.isStatic()).forEach(er -> addChildrenToBuilder(position, er, builder));
                 em.getAggregateRootReferences().stream().filter(ar -> !ar.isStatic()).forEach(ar -> addChildrenToBuilder(position, ar, builder));
-                em.getValueReferences().stream().filter(vr -> !vr.isStatic()).filter(vr -> vr.getValue().isValueObject()).forEach(voc -> addChildrenToBuilder(position, voc, builder));
+                em.getValueReferences().stream().filter(vr -> !vr.isStatic())
+                    .filter(vr -> DomainType.VALUE_OBJECT.equals(vr.getType().getDomainType()))
+                    .forEach(voc -> addChildrenToBuilder(position, voc, builder));
             } else {
                 ValueObjectMirror vm = Domain.valueObjectMirrorFor((ValueObject) instance);
                 vm.getValueReferences()
                     .stream()
                     .filter(vr -> !vr.isStatic())
-                    .filter(vr -> vr.getValue().isValueObject())
+                    .filter(vr -> DomainType.VALUE_OBJECT.equals(vr.getType().getDomainType()))
                     .forEach(voc -> addChildrenToBuilder(position, voc, builder));
             }
         }

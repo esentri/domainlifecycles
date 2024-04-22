@@ -27,6 +27,7 @@
 
 package nitrox.dlc.mirror.visitor;
 
+import nitrox.dlc.domain.types.Identity;
 import nitrox.dlc.mirror.api.AggregateRootMirror;
 import nitrox.dlc.mirror.api.AggregateRootReferenceMirror;
 import nitrox.dlc.mirror.api.Domain;
@@ -168,10 +169,12 @@ public abstract class ContextDomainTypeVisitor implements DomainTypeVisitor{
             visitValueReference(valueReferenceMirror);
         }
         if(!visitTypesOnlyOnce || !visitorContext.isAlreadyVisited(valueReferenceMirror.getType().getTypeName())){
-            try {
-                walkType(valueReferenceMirror.getValue());
-            }catch (Throwable t){
-                log.warn("Couldn't walk down " + valueReferenceMirror.getType().getTypeName() + "." + valueReferenceMirror.getName(), t);
+            if(!Identity.class.getName().equals(valueReferenceMirror.getType().getTypeName())) {
+                try {
+                    walkType(valueReferenceMirror.getValue());
+                } catch (Throwable t) {
+                    log.warn("Couldn't walk down " + valueReferenceMirror.getType().getTypeName() + "." + valueReferenceMirror.getName(), t);
+                }
             }
         }
     }

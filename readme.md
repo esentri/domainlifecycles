@@ -30,11 +30,10 @@ NitroX DLC provides following core features:
     * Base for Java typesystem backed meta-data (see below Domain
       Mirror)
 
-- `DLC Domain Mirror`: Mirrors the metamodel of the tactical design structures within the bounded contexts 
+- [`DLC Domain Mirror`](./readme_mirror.md): Mirrors the metamodel of the tactical design structures within bounded contexts 
     * Provides structural queries and navigation through a bounded contexts structural metamodel as well as simplified reflective access
       on values of instances of a domain's `Aggregates`, `Entities`
-      and `ValueObjects` 
-    * Typically irrelevant for application developers
+      and `ValueObjects`
 
 - [`DLC DomainObject Builders`](./readme_builder_pattern.md): Builder pattern support
     * Complements the DDD Factory pattern
