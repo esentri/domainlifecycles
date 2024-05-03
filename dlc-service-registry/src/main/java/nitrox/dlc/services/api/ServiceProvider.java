@@ -32,7 +32,7 @@ import nitrox.dlc.domain.types.ApplicationService;
 import nitrox.dlc.domain.types.DomainService;
 import nitrox.dlc.domain.types.Identity;
 import nitrox.dlc.domain.types.OutboundService;
-import nitrox.dlc.domain.types.ReadModelProvider;
+import nitrox.dlc.domain.types.QueryClient;
 import nitrox.dlc.domain.types.Repository;
 
 /**
@@ -68,18 +68,18 @@ public interface ServiceProvider {
     DomainService getDomainServiceInstance(String typeName);
 
     /**
-     * Retrieves an instance of {@link ReadModelProvider} based on the given type name.
+     * Retrieves an instance of {@link QueryClient} based on the given type name.
      *
-     * @param typeName The full qualified name of the type representing the ReadModelProvider.
-     * @return An instance of ReadModelProvider based on the given type name.
+     * @param typeName The full qualified name of the type representing the QueryClient.
+     * @return An instance of QueryClient based on the given type name.
      */
-    ReadModelProvider getReadModelProviderInstance(String typeName);
+    QueryClient getQueryClientInstance(String typeName);
 
     /**
      * Retrieves an instance of {@link OutboundService} based on the given type name.
      *
      * @param typeName The full qualified name of the type representing the OutboundService.
-     * @return An instance of ReadModelProvider based on the given type name.
+     * @return An instance of QueryClient based on the given type name.
      */
     OutboundService getOutboundServiceInstance(String typeName);
 

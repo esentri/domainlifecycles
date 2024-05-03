@@ -35,8 +35,8 @@ import nitrox.dlc.domain.types.DomainService;
 import nitrox.dlc.domain.types.Entity;
 import nitrox.dlc.domain.types.Identity;
 import nitrox.dlc.domain.types.OutboundService;
+import nitrox.dlc.domain.types.QueryClient;
 import nitrox.dlc.domain.types.ReadModel;
-import nitrox.dlc.domain.types.ReadModelProvider;
 import nitrox.dlc.domain.types.Repository;
 import nitrox.dlc.domain.types.ValueObject;
 
@@ -59,7 +59,7 @@ public enum DomainType {
     REPOSITORY,
     READ_MODEL,
     APPLICATION_SERVICE,
-    READ_MODEL_PROVIDER,
+    QUERY_CLIENT,
     OUTBOUND_SERVICE,
     NON_DOMAIN;
 
@@ -92,8 +92,8 @@ public enum DomainType {
                 return DomainType.READ_MODEL;
             } else if (ApplicationService.class.isAssignableFrom(c)) {
                 return DomainType.APPLICATION_SERVICE;
-            } else if (ReadModelProvider.class.isAssignableFrom(c)) {
-                return DomainType.READ_MODEL_PROVIDER;
+            } else if (QueryClient.class.isAssignableFrom(c)) {
+                return DomainType.QUERY_CLIENT;
             } else if (OutboundService.class.isAssignableFrom(c)) {
                 return DomainType.OUTBOUND_SERVICE;
             }

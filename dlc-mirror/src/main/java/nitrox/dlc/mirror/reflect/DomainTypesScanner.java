@@ -39,8 +39,8 @@ import nitrox.dlc.domain.types.DomainServiceCommand;
 import nitrox.dlc.domain.types.Entity;
 import nitrox.dlc.domain.types.Identity;
 import nitrox.dlc.domain.types.OutboundService;
+import nitrox.dlc.domain.types.QueryClient;
 import nitrox.dlc.domain.types.ReadModel;
-import nitrox.dlc.domain.types.ReadModelProvider;
 import nitrox.dlc.domain.types.Repository;
 import nitrox.dlc.domain.types.ValueObject;
 import org.slf4j.Logger;
@@ -83,7 +83,7 @@ public class DomainTypesScanner {
 
     private final List<Class<? extends ReadModel>> readModels;
 
-    private final List<Class<? extends ReadModelProvider<?>>> readModelProviders;
+    private final List<Class<? extends QueryClient<?>>> queryClients;
 
     private final List<Class<? extends OutboundService>> outboundServices;
 
@@ -103,7 +103,7 @@ public class DomainTypesScanner {
         domainEvents = new ArrayList<>();
         domainCommands = new ArrayList<>();
         readModels = new ArrayList<>();
-        readModelProviders = new ArrayList<>();
+        queryClients = new ArrayList<>();
         outboundServices = new ArrayList<>();
     }
 
@@ -202,11 +202,11 @@ public class DomainTypesScanner {
                             .map(r -> (Class<? extends ReadModel>)r.loadClass())
                             .toList()
                     );
-                    readModelProviders.addAll(
-                        scanResult.getClassesImplementing(ReadModelProvider.class)
+                    queryClients.addAll(
+                        scanResult.getClassesImplementing(QueryClient.class)
                             .stream()
-                            .filter(c -> !ReadModelProvider.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends ReadModelProvider<?>>)r.loadClass())
+                            .filter(c -> !QueryClient.class.getName().equals(c.getName()))
+                            .map(r -> (Class<? extends QueryClient<?>>)r.loadClass())
                             .toList()
                     );
                     outboundServices.addAll(
@@ -311,10 +311,10 @@ public class DomainTypesScanner {
     }
 
     /**
-     * Returns the list of scanned {@link ReadModelProvider} classes
+     * Returns the list of scanned {@link QueryClient} classes
      */
-    public List<Class<? extends ReadModelProvider<?>>> getScannedReadModelProviders() {
-        return readModelProviders;
+    public List<Class<? extends QueryClient<?>>> getScannedQueryClients() {
+        return queryClients;
     }
 
     /**

@@ -25,14 +25,9 @@
  *  limitations under the License.
  */
 
-package nitrox.dlc.domain.types;
+package tests.mirror;
 
-/**
- * This is the common supertype (marker interface) to represent a service
- * providing {@link ReadModel} instances.
- *
- * @author Mario Herb
- *
- */
-public interface ReadModelProvider<RM extends ReadModel> {
+import nitrox.dlc.domain.types.ReadModel;
+
+public class QueryClientSubGeneric<T1, T2 extends ReadModel> implements GenericQueryClientInterface<T2> {
 }

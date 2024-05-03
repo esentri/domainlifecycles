@@ -31,10 +31,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import nitrox.dlc.domain.types.ApplicationService;
 import nitrox.dlc.domain.types.DomainService;
 import nitrox.dlc.domain.types.OutboundService;
-import nitrox.dlc.domain.types.ReadModelProvider;
+import nitrox.dlc.domain.types.QueryClient;
 import nitrox.dlc.domain.types.Repository;
 import nitrox.dlc.events.ADomainService;
-import nitrox.dlc.events.AReadModelProvider;
+import nitrox.dlc.events.AQueryClient;
 import nitrox.dlc.events.ARepository;
 import nitrox.dlc.events.AnApplicationService;
 import nitrox.dlc.events.AnOutboundService;
@@ -90,8 +90,8 @@ public class OutboxTestApplication {
     }
 
     @Bean
-    public AReadModelProvider aReadModelProvider(){
-        return new AReadModelProvider();
+    public AQueryClient aQueryClient(){
+        return new AQueryClient();
     }
 
     /**
@@ -102,13 +102,13 @@ public class OutboxTestApplication {
                                            List<ApplicationService> applicationServices,
                                            List<DomainService> domainServices,
                                            List<OutboundService> outboundServices,
-                                           List<ReadModelProvider<?>> readModelProviders){
+                                           List<QueryClient<?>> queryClients){
         var services = new Services();
         repositories.forEach(services::registerRepositoryInstance);
         applicationServices.forEach(services::registerApplicationServiceInstance);
         domainServices.forEach(services::registerDomainServiceInstance);
         outboundServices.forEach(services::registerOutboundServiceInstance);
-        readModelProviders.forEach(services::registerReadModelProviderInstance);
+        queryClients.forEach(services::registerQueryClientInstance);
         return services;
     }
 

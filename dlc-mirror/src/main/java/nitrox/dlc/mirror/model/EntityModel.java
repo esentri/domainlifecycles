@@ -42,7 +42,7 @@ import nitrox.dlc.mirror.api.FieldMirror;
 import nitrox.dlc.mirror.api.MethodMirror;
 import nitrox.dlc.mirror.api.ValueReferenceMirror;
 import nitrox.dlc.mirror.exception.MirrorException;
-import nitrox.dlc.mirror.visitor.ContextDomainTypeVisitor;
+import nitrox.dlc.mirror.visitor.ContextDomainObjectVisitor;
 
 import java.util.List;
 import java.util.Objects;
@@ -178,7 +178,7 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
     @Override
     public boolean publishes(DomainEventMirror domainEvent) {
         AtomicBoolean publishes = new AtomicBoolean(false);
-        var visitor = new ContextDomainTypeVisitor(this){
+        var visitor = new ContextDomainObjectVisitor(this){
             @Override
             public void visitEnterAnyDomainType(DomainTypeMirror domainTypeMirror) {
                 if(!publishes.get()) {
@@ -199,7 +199,7 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
     @Override
     public boolean listensTo(DomainEventMirror domainEvent) {
         AtomicBoolean listensTo = new AtomicBoolean(false);
-        var visitor = new ContextDomainTypeVisitor(this){
+        var visitor = new ContextDomainObjectVisitor(this){
             @Override
             public void visitEnterAnyDomainType(DomainTypeMirror domainTypeMirror) {
                 if(!listensTo.get()) {
@@ -220,7 +220,7 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
     @Override
     public boolean processes(DomainCommandMirror command) {
         AtomicBoolean processes = new AtomicBoolean(false);
-        var visitor = new ContextDomainTypeVisitor(this){
+        var visitor = new ContextDomainObjectVisitor(this){
             @Override
             public void visitEnterAnyDomainType(DomainTypeMirror domainTypeMirror) {
                 if(!processes.get()) {

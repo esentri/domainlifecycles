@@ -25,30 +25,21 @@
  *  limitations under the License.
  */
 
-package nitrox.dlc.mirror.api;
+package sampleshop.core.outport;
+
+import nitrox.dlc.domain.types.QueryClient;
 
 import java.util.List;
-import java.util.Optional;
-
 /**
- * A ReadModelProviderMirror mirrors {@link nitrox.dlc.domain.types.ReadModelProvider} instances.
+ * Defines {@link OrdersByCustomer} readmodel database access.
  *
  * @author Mario Herb
  */
-public interface ReadModelProviderMirror extends DomainTypeMirror, DomainCommandProcessingMirror, DomainEventProcessingMirror{
+public interface OrdersByCustomerQueryClient extends QueryClient<OrdersByCustomer> {
 
     /**
-     * Returns an Optional containing the mirror the provided ReadModel.
-     * Every ReadModelProvider is supposed to provide exactly one ReadModel.
-     * If no ReadModelMirror could be detected the Optional is empty,
+     * Returns a list of the {@link OrdersByCustomer} read model, filtered by customer name, paginated.
      */
-    Optional<ReadModelMirror> getProvidedReadModel();
+    public List<OrdersByCustomer> listAll(String customerNameFilter, int offset, int limit);
 
-
-    /**
-     * Returns the interface type name (full qualified class name) that the mirrored ReadModelProvider implements.
-     * The interfaces therefore must extend {@link nitrox.dlc.domain.types.ReadModelProvider}.
-     * If separation of concerns is respected, we have at most only one interface, which fulfills that condition.
-     */
-    List<String> getReadModelProviderInterfaceTypeNames();
 }

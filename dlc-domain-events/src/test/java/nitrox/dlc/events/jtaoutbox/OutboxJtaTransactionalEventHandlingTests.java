@@ -33,7 +33,7 @@ import com.atomikos.icatch.jta.UserTransactionManager;
 import nitrox.dlc.domain.types.DomainEvent;
 import nitrox.dlc.events.ADomainEvent;
 import nitrox.dlc.events.ADomainService;
-import nitrox.dlc.events.AReadModelProvider;
+import nitrox.dlc.events.AQueryClient;
 import nitrox.dlc.events.ARepository;
 import nitrox.dlc.events.AnAggregate;
 import nitrox.dlc.events.AnAggregateDomainEvent;
@@ -60,7 +60,7 @@ public class OutboxJtaTransactionalEventHandlingTests {
     private static ADomainService domainService;
     private static ARepository repository;
     private static AnApplicationService applicationService;
-    private static AReadModelProvider readModelProvider;
+    private static AQueryClient queryClient;
     private static AnOutboundService outboundService;
     private static UserTransactionManager userTransactionManager;
     private static MockOutbox transactionalOutbox;
@@ -81,7 +81,7 @@ public class OutboxJtaTransactionalEventHandlingTests {
         domainService = new ADomainService();
         repository = new ARepository();
         applicationService = new AnApplicationService();
-        readModelProvider = new AReadModelProvider();
+        queryClient = new AQueryClient();
         outboundService = new AnOutboundService();
 
         var services = new Services();
@@ -89,7 +89,7 @@ public class OutboxJtaTransactionalEventHandlingTests {
         services.registerRepositoryInstance(repository);
         services.registerApplicationServiceInstance(applicationService);
         services.registerOutboundServiceInstance(outboundService);
-        services.registerReadModelProviderInstance(readModelProvider);
+        services.registerQueryClientInstance(queryClient);
 
         var configBuilder = new DomainEventsConfiguration.DomainEventsConfigurationBuilder();
 
@@ -134,7 +134,7 @@ public class OutboxJtaTransactionalEventHandlingTests {
         assertThat(repository.received).contains(evt);
         assertThat(applicationService.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
-        assertThat(readModelProvider.received).contains(evt);
+        assertThat(queryClient.received).contains(evt);
     }
 
     @Test
@@ -161,7 +161,7 @@ public class OutboxJtaTransactionalEventHandlingTests {
         assertThat(repository.received).doesNotContain(evt);
         assertThat(applicationService.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
-        assertThat(readModelProvider.received).doesNotContain(evt);
+        assertThat(queryClient.received).doesNotContain(evt);
     }
 
     @Test
@@ -185,7 +185,7 @@ public class OutboxJtaTransactionalEventHandlingTests {
         assertThat(repository.received).contains(evt);
         assertThat(applicationService.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
-        assertThat(readModelProvider.received).contains(evt);
+        assertThat(queryClient.received).contains(evt);
 
     }
 
@@ -210,7 +210,7 @@ public class OutboxJtaTransactionalEventHandlingTests {
         assertThat(domainService.received).doesNotContain(evt);
         assertThat(applicationService.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
-        assertThat(readModelProvider.received).doesNotContain(evt);
+        assertThat(queryClient.received).doesNotContain(evt);
         var root = repository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).contains(evt);
     }
@@ -236,7 +236,7 @@ public class OutboxJtaTransactionalEventHandlingTests {
         assertThat(domainService.received).doesNotContain(evt);
         assertThat(applicationService.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
-        assertThat(readModelProvider.received).doesNotContain(evt);
+        assertThat(queryClient.received).doesNotContain(evt);
         var root = repository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).doesNotContain(evt);
     }
@@ -262,7 +262,7 @@ public class OutboxJtaTransactionalEventHandlingTests {
         assertThat(domainService.received).doesNotContain(evt);
         assertThat(applicationService.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
-        assertThat(readModelProvider.received).contains(evt);
+        assertThat(queryClient.received).contains(evt);
         var root = repository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).doesNotContain(evt);
     }

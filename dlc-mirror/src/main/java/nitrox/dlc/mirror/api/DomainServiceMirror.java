@@ -60,8 +60,8 @@ public interface DomainServiceMirror extends DomainTypeMirror, DomainCommandProc
     List<OutboundServiceMirror> getReferencedOutboundServices();
 
     /**
-     * Returns the list of referenced {@link ReadModelProviderMirror} instances.
+     * Returns the list of referenced {@link QueryClientMirror} instances.
      */
-    List<ReadModelProviderMirror> getReferencedReadModelProviders();
+    List<QueryClientMirror> getReferencedQueryClients();
 
 }

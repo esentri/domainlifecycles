@@ -35,8 +35,8 @@ import nitrox.dlc.domain.types.DomainService;
 import nitrox.dlc.domain.types.Entity;
 import nitrox.dlc.domain.types.Identity;
 import nitrox.dlc.domain.types.OutboundService;
+import nitrox.dlc.domain.types.QueryClient;
 import nitrox.dlc.domain.types.ReadModel;
-import nitrox.dlc.domain.types.ReadModelProvider;
 import nitrox.dlc.domain.types.Repository;
 import nitrox.dlc.domain.types.ValueObject;
 import nitrox.dlc.mirror.api.AggregateRootMirror;
@@ -53,7 +53,7 @@ import nitrox.dlc.mirror.api.IdentityMirror;
 import nitrox.dlc.mirror.api.InitializedDomain;
 import nitrox.dlc.mirror.api.OutboundServiceMirror;
 import nitrox.dlc.mirror.api.ReadModelMirror;
-import nitrox.dlc.mirror.api.ReadModelProviderMirror;
+import nitrox.dlc.mirror.api.QueryClientMirror;
 import nitrox.dlc.mirror.api.RepositoryMirror;
 import nitrox.dlc.mirror.api.ValueObjectMirror;
 import nitrox.dlc.mirror.model.BoundedContextModel;
@@ -126,8 +126,8 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
         buildReadModelMirrors(domainTypesScanner.getScannedReadModels())
             .forEach(rm -> builtTypeMirrors.put(rm.getTypeName(), rm));
 
-        buildReadModelProviderMirrors(domainTypesScanner.getScannedReadModelProviders())
-            .forEach(rmp -> builtTypeMirrors.put(rmp.getTypeName(), rmp));
+        buildQueryClientMirrors(domainTypesScanner.getScannedQueryClients())
+            .forEach(qc -> builtTypeMirrors.put(qc.getTypeName(), qc));
 
         buildOutboundServiceMirrors(domainTypesScanner.getScannedOutboundServices())
             .forEach(om -> builtTypeMirrors.put(om.getTypeName(), om));
@@ -231,10 +231,10 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
             .toList();
     }
 
-    private List<ReadModelProviderMirror> buildReadModelProviderMirrors(List<Class<? extends ReadModelProvider<?>>> readModelProviderClassList){
-        return readModelProviderClassList
+    private List<QueryClientMirror> buildQueryClientMirrors(List<Class<? extends QueryClient<?>>> queryClientClassList){
+        return queryClientClassList
             .stream()
-            .map(r -> new ReadModelProviderMirrorBuilder(r).build()
+            .map(r -> new QueryClientMirrorBuilder(r).build()
             )
             .toList();
     }

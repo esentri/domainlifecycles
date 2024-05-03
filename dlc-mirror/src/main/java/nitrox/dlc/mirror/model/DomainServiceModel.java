@@ -38,7 +38,7 @@ import nitrox.dlc.mirror.api.DomainType;
 import nitrox.dlc.mirror.api.FieldMirror;
 import nitrox.dlc.mirror.api.MethodMirror;
 import nitrox.dlc.mirror.api.OutboundServiceMirror;
-import nitrox.dlc.mirror.api.ReadModelProviderMirror;
+import nitrox.dlc.mirror.api.QueryClientMirror;
 import nitrox.dlc.mirror.api.RepositoryMirror;
 import nitrox.dlc.mirror.exception.MirrorException;
 
@@ -63,7 +63,7 @@ public class DomainServiceModel extends DomainTypeModel implements DomainService
     private final List<String> referencedOutboundServiceTypeNames;
 
     @JsonProperty
-    private final List<String> referencedReadModelProviderTypeNames;
+    private final List<String> referencedQueryClientTypeNames;
 
     @JsonProperty
     private final List<String> domainServiceInterfaceTypeNames;
@@ -76,7 +76,7 @@ public class DomainServiceModel extends DomainTypeModel implements DomainService
                               @JsonProperty("referencedRepositoryTypeNames") List<String> referencedRepositoryTypeNames,
                               @JsonProperty("referencedDomainServiceTypeNames") List<String> referencedDomainServiceTypeNames,
                               @JsonProperty("referencedOutboundServiceTypeNames") List<String> referencedOutboundServiceTypeNames,
-                              @JsonProperty("referencedReadModelProviderTypeNames") List<String> referencedReadModelProviderTypeNames,
+                              @JsonProperty("referencedQueryClientTypeNames") List<String> referencedQueryClientTypeNames,
                               @JsonProperty("domainServiceInterfaceTypeNames") List<String> domainServiceInterfaceTypeNames,
                               @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
                               @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
@@ -87,7 +87,7 @@ public class DomainServiceModel extends DomainTypeModel implements DomainService
         this.domainServiceInterfaceTypeNames = Collections.unmodifiableList(domainServiceInterfaceTypeNames);
         this.referencedDomainServiceTypeNames = Collections.unmodifiableList(referencedDomainServiceTypeNames);
         this.referencedOutboundServiceTypeNames = Collections.unmodifiableList(referencedOutboundServiceTypeNames);
-        this.referencedReadModelProviderTypeNames = Collections.unmodifiableList(referencedReadModelProviderTypeNames);
+        this.referencedQueryClientTypeNames = Collections.unmodifiableList(referencedQueryClientTypeNames);
 
     }
 
@@ -132,10 +132,10 @@ public class DomainServiceModel extends DomainTypeModel implements DomainService
      */
     @JsonIgnore
     @Override
-    public List<ReadModelProviderMirror> getReferencedReadModelProviders() {
-        return referencedReadModelProviderTypeNames
+    public List<QueryClientMirror> getReferencedQueryClients() {
+        return referencedQueryClientTypeNames
             .stream()
-            .map(n -> (ReadModelProviderMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("ReadModelProviderMirror not found for '%s'", n)))
+            .map(n -> (QueryClientMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("QueryClientMirror not found for '%s'", n)))
             .collect(Collectors.toList());
     }
 
@@ -193,7 +193,7 @@ public class DomainServiceModel extends DomainTypeModel implements DomainService
             "referencedRepositoryTypeNames=" + referencedRepositoryTypeNames +
             "referencedDomainServiceTypeNames=" + referencedDomainServiceTypeNames +
             "referencedOutboundServiceTypeNames=" + referencedOutboundServiceTypeNames +
-            "referencedReadModelProviderTypeNames=" + referencedReadModelProviderTypeNames +
+            "referencedQueryClientTypeNames=" + referencedQueryClientTypeNames +
             "referencedDomainServiceTypeNames=" + referencedDomainServiceTypeNames +
             ", domainServiceInterfaceTypeNames=" + domainServiceInterfaceTypeNames +
             "} " + super.toString();
@@ -211,7 +211,7 @@ public class DomainServiceModel extends DomainTypeModel implements DomainService
         return referencedRepositoryTypeNames.equals(that.referencedRepositoryTypeNames)
             && referencedDomainServiceTypeNames.equals(that.referencedDomainServiceTypeNames)
             && referencedOutboundServiceTypeNames.equals(that.referencedOutboundServiceTypeNames)
-            && referencedReadModelProviderTypeNames.equals(that.referencedReadModelProviderTypeNames)
+            && referencedQueryClientTypeNames.equals(that.referencedQueryClientTypeNames)
             && domainServiceInterfaceTypeNames.equals(that.domainServiceInterfaceTypeNames)
             ;
     }
@@ -226,7 +226,7 @@ public class DomainServiceModel extends DomainTypeModel implements DomainService
             referencedRepositoryTypeNames,
             referencedDomainServiceTypeNames,
             referencedOutboundServiceTypeNames,
-            referencedReadModelProviderTypeNames,
+            referencedQueryClientTypeNames,
             domainServiceInterfaceTypeNames
         );
     }

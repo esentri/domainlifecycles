@@ -27,5 +27,5 @@
 
 package tests.mirror;
 
-public class ReadModelProviderImplSub extends ReadModelProviderImpl{
+public class QueryClientImpl implements QueryClientInterface {
 }

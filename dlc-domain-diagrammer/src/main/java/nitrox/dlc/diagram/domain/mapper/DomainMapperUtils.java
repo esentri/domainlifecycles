@@ -37,7 +37,7 @@ import nitrox.dlc.mirror.api.DomainTypeMirror;
 import nitrox.dlc.mirror.api.EntityReferenceMirror;
 import nitrox.dlc.mirror.api.FieldMirror;
 import nitrox.dlc.mirror.api.OutboundServiceMirror;
-import nitrox.dlc.mirror.api.ReadModelProviderMirror;
+import nitrox.dlc.mirror.api.QueryClientMirror;
 import nitrox.dlc.mirror.api.RepositoryMirror;
 import nitrox.dlc.mirror.api.ValueObjectMirror;
 import nitrox.dlc.mirror.api.ValueReferenceMirror;
@@ -76,10 +76,10 @@ public class DomainMapperUtils {
             if(outboundServiceMirror.getOutboundServiceInterfaceTypeNames().size()>0 && !outboundServiceMirror.isAbstract()){
                 name = DomainMapperUtils.mapTypeName(outboundServiceMirror.getOutboundServiceInterfaceTypeNames().get(0), domainDiagramConfig);
             }
-        } else if(domainTypeMirror.getDomainType().equals(DomainType.READ_MODEL_PROVIDER)){
-            var readModelProviderMirror = (ReadModelProviderMirror) domainTypeMirror;
-            if(readModelProviderMirror.getReadModelProviderInterfaceTypeNames().size()>0 && !readModelProviderMirror.isAbstract()){
-                name = DomainMapperUtils.mapTypeName(readModelProviderMirror.getReadModelProviderInterfaceTypeNames().get(0), domainDiagramConfig);
+        } else if(domainTypeMirror.getDomainType().equals(DomainType.QUERY_CLIENT)){
+            var queryClientMirror = (QueryClientMirror) domainTypeMirror;
+            if(queryClientMirror.getQueryClientInterfaceTypeNames().size()>0 && !queryClientMirror.isAbstract()){
+                name = DomainMapperUtils.mapTypeName(queryClientMirror.getQueryClientInterfaceTypeNames().get(0), domainDiagramConfig);
             }
         }
         return name;
@@ -104,7 +104,7 @@ public class DomainMapperUtils {
                 || DomainType.DOMAIN_EVENT.equals(domainTypeMirror.getDomainType())
                 || DomainType.DOMAIN_COMMAND.equals(domainTypeMirror.getDomainType())
                 || DomainType.READ_MODEL.equals(domainTypeMirror.getDomainType())
-                || DomainType.READ_MODEL_PROVIDER.equals(domainTypeMirror.getDomainType())
+                || DomainType.QUERY_CLIENT.equals(domainTypeMirror.getDomainType())
                 || DomainType.DOMAIN_SERVICE.equals(domainTypeMirror.getDomainType())
                 || DomainType.OUTBOUND_SERVICE.equals(domainTypeMirror.getDomainType())
         ){
@@ -147,7 +147,7 @@ public class DomainMapperUtils {
             case READ_MODEL -> "<"+DomainDiagramGenerator.READ_MODEL_STYLE_TAG+">";
             case IDENTITY -> "<"+DomainDiagramGenerator.IDENTITY_STYLE_TAG+">";
             case APPLICATION_SERVICE -> "<"+DomainDiagramGenerator.APPLICATION_SERVICE_STYLE_TAG+">";
-            case READ_MODEL_PROVIDER -> "<"+DomainDiagramGenerator.READ_MODEL_PROVIDER_STYLE_TAG+">";
+            case QUERY_CLIENT -> "<"+DomainDiagramGenerator.QUERY_CLIENT_STYLE_TAG +">";
             case OUTBOUND_SERVICE -> "<"+DomainDiagramGenerator.OUTBOUND_SERVICE_STYLE_TAG+">";
             default -> "";
         };
@@ -187,7 +187,7 @@ public class DomainMapperUtils {
             case DOMAIN_EVENT -> "DomainEvent";
             case IDENTITY -> "Identity";
             case READ_MODEL-> "ReadModel";
-            case READ_MODEL_PROVIDER-> "ReadModelProvider";
+            case QUERY_CLIENT -> "QueryClient";
             case OUTBOUND_SERVICE-> "OutboundService";
             default -> "";
         };

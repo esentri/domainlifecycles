@@ -37,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### dlc-domain-diagrammer
 - Little refactorings due to changes in dlc-mirror
-- Added rendering for ReadModelProviders and OutboundServices
+- Added rendering for QueryClients and OutboundServices
 - Added TransitiveDomainTypeFilter option
 - Added more configuration options
 

@@ -65,7 +65,7 @@ public class DomainDiagramGenerator implements Diagram {
 
     public static final String READ_MODEL_STYLE_TAG = "ReadModel";
 
-    public static final String READ_MODEL_PROVIDER_STYLE_TAG = "ReadModelProvider";
+    public static final String QUERY_CLIENT_STYLE_TAG = "QueryClient";
     public static final String OUTBOUND_SERVICE_STYLE_TAG = "OutboundService";
 
     public static final String IDENTITY_STYLE_TAG = "Identity";
@@ -100,7 +100,7 @@ public class DomainDiagramGenerator implements Diagram {
         builder.append(domainServiceStyleDeclaration());
         builder.append(repositoryStyleDeclaration());
         builder.append(outboundServiceStyleDeclaration());
-        builder.append(readModelProviderStyleDeclaration());
+        builder.append(queryClientStyleDeclaration());
         builder.append(readModelStyleDeclaration());
         builder.append(fontStyleDeclaration());
         builder.append(directionStyleDeclaration());
@@ -130,8 +130,8 @@ public class DomainDiagramGenerator implements Diagram {
         if(diagramConfig.isShowReadModels()) {
             domainMapper.getReadModels().forEach(f -> builder.append(f.getDiagramText()));
         }
-        if(diagramConfig.isShowReadModelProviders()) {
-            domainMapper.getReadModelProviders().forEach(f -> builder.append(f.getDiagramText()));
+        if(diagramConfig.isShowQueryClients()) {
+            domainMapper.getQueryClients().forEach(f -> builder.append(f.getDiagramText()));
         }
         if(diagramConfig.isShowOutboundServices()) {
             domainMapper.getOutboundServices().forEach(f -> builder.append(f.getDiagramText()));
@@ -147,18 +147,18 @@ public class DomainDiagramGenerator implements Diagram {
             .forEach(f -> builder.append(f.getDiagramText()));
         domainMapper.getDomainRelationshipMapper().mapAllApplicationServiceOutboundServiceRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllApplicationServiceReadModelProviderRelationships()
+        domainMapper.getDomainRelationshipMapper().mapAllApplicationServiceQueryClientRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
         domainMapper.getDomainRelationshipMapper().mapAllDomainServiceRepositoryRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllDomainServiceReadModelProviderRelationships()
+        domainMapper.getDomainRelationshipMapper().mapAllDomainServiceQueryClientRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
         domainMapper.getDomainRelationshipMapper().mapAllDomainServiceOutboundServiceRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
 
         domainMapper.getDomainRelationshipMapper().mapAllAggregateRepositoryRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllReadModelProviderReadModelRelationships()
+        domainMapper.getDomainRelationshipMapper().mapAllQueryClientReadModelRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
 
 
@@ -248,9 +248,9 @@ public class DomainDiagramGenerator implements Diagram {
         return "";
     }
 
-    private String readModelProviderStyleDeclaration(){
-        if(diagramConfig.getReadModelProviderStyle()!= null){
-            return styleDeclaration(diagramConfig.getReadModelProviderStyle(), READ_MODEL_PROVIDER_STYLE_TAG);
+    private String queryClientStyleDeclaration(){
+        if(diagramConfig.getQueryClientStyle()!= null){
+            return styleDeclaration(diagramConfig.getQueryClientStyle(), QUERY_CLIENT_STYLE_TAG);
         }
         return "";
     }

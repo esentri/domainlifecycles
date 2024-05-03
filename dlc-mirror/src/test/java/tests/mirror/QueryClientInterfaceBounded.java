@@ -25,21 +25,9 @@
  *  limitations under the License.
  */
 
-package sampleshop.core.outport;
+package tests.mirror;
 
-import nitrox.dlc.domain.types.ReadModelProvider;
+import nitrox.dlc.domain.types.QueryClient;
 
-import java.util.List;
-/**
- * Defines {@link OrdersByCustomer} readmodel database access.
- *
- * @author Mario Herb
- */
-public interface OrdersByCustomerProvider extends ReadModelProvider<OrdersByCustomer> {
-
-    /**
-     * Returns a list of the {@link OrdersByCustomer} read model, filtered by customer name, paginated.
-     */
-    public List<OrdersByCustomer> listAll(String customerNameFilter, int offset, int limit);
-
+public interface QueryClientInterfaceBounded<VM extends MyReadModel> extends QueryClient<VM> {
 }

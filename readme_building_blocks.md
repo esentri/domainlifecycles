@@ -27,7 +27,7 @@ The Building Blocks supported by NitroX DLC are:
 - [DomainCommand](#DomainCommand)
 - [ApplicationService](#ApplicationService)
 - [ReadModel](#ReadModel)
-- [ReadModelProvider](#ReadModelProvider)
+- [QueryClient](#QueryClient)
 - [OutboundService](#OutboundService)
 - [Validatable](#Validatable)
 
@@ -535,7 +535,7 @@ Further information:
 + Make sure not to mix up or get confused about ApplicationServices and DomainServices.
 + Keep the Drivers/ApplicationServices slim. 
 + Make sure Drivers/ApplicationServices do not contain any domain logic. No domain specific decisions should be implemented here,
-  only orchestration to domain logic in Aggregates or DomainServices (or OutboundServices or ReadModelProviders).
+  only orchestration to domain logic in Aggregates or DomainServices (or OutboundServices or QueryClients).
 
 ### Example
 
@@ -624,28 +624,27 @@ public record OrdersByCustomer(
 ) implements ReadModel {}
 ```
 
-<a name="ReadModelProvider"></a>
-## ReadModelProvider
+<a name="QueryClient"></a>
+## QueryClient
 
 ### Pattern description
 
 ReadModels must be provided by some kind of service classes. Because ReadModels are not part of the core domain, 
-it's better to have a special kind of service class being responsible for the provisioning of ReadModels 
+it's better to have a special kind of service class being responsible for the delivery of ReadModels 
 (that are likely to be used in within some kind of read request / read use case in an ApplicationService/Driver).
-ReadModelProviders do not represent a DDD concept, but they might interact with ApplicationService or they might 
-listen to DomainEvents (for example in order to update the ReadModel datasource).
+QueryClients do not represent a DDD concept, but they might interact with ApplicationService instances.
 
 ### Implementation suggestions with NitroX DLC
 
-+ ReadModelProviders require implementing `nitrox.dlc.domain.types.ReadModelProvider`.
-+ Make sure ReadModelProviders are not used in write operations of core domain aggregates.
-+ Typically ReadModelProvider instances implement a secondary/driven port interface, 
++ QueryClients require implementing `nitrox.dlc.domain.types.QueryClient`.
++ Make sure QueryClients are not used in write operations of core domain aggregates.
++ Typically QueryClients instances represent a secondary/driven port adapter, 
   if Ports&Adapters architecture is applied
 
 ### Example
 
 ```Java
-public class OrdersByCustomerProvider implements ReadModelProvider<OrdersByCustomer> {
+public class OrdersByCustomerProvider implements QueryClient<OrdersByCustomer> {
 
     @Override
     public List<OrdersByCustomer> listAll(String customerNameFilter, int offset, int limit) {

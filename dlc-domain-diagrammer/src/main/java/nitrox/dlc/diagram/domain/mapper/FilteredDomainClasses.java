@@ -37,8 +37,8 @@ import nitrox.dlc.mirror.api.DomainCommandMirror;
 import nitrox.dlc.mirror.api.DomainEventMirror;
 import nitrox.dlc.mirror.api.DomainServiceMirror;
 import nitrox.dlc.mirror.api.OutboundServiceMirror;
+import nitrox.dlc.mirror.api.QueryClientMirror;
 import nitrox.dlc.mirror.api.ReadModelMirror;
-import nitrox.dlc.mirror.api.ReadModelProviderMirror;
 import nitrox.dlc.mirror.api.RepositoryMirror;
 import java.util.List;
 
@@ -46,7 +46,7 @@ import java.util.List;
  * The FilteredDomainClasses class represents a collection of filtered domain classes based on certain criteria
  * (based on the given diagram configuration).
  * It provides separate lists for various types of domain classes like application services, domain commands, domain events,
- * domain services, repositories, aggregate roots, and read models.
+ * domain services, repositories, aggregate roots, query clients and read models.
  *
  * @author Mario Herb
  */
@@ -78,7 +78,7 @@ public class FilteredDomainClasses {
     private final List<ReadModelMirror> readModels;
 
     @Getter
-    private final List<ReadModelProviderMirror> readModelProviders;
+    private final List<QueryClientMirror> queryClients;
 
     @Getter
     private final List<OutboundServiceMirror> outboundServices;
@@ -104,7 +104,7 @@ public class FilteredDomainClasses {
         this.domainServices = initFilteredDomainServices();
         this.repositories = initFilteredRepositories();
         this.readModels = initFilteredReadModels();
-        this.readModelProviders = initFilteredReadModelProviders();
+        this.queryClients = initFilteredQueryClients();
         this.outboundServices = initFilteredOutboundServices();
 
     }
@@ -179,9 +179,9 @@ public class FilteredDomainClasses {
             .toList();
     }
 
-    private List<ReadModelProviderMirror> initFilteredReadModelProviders(){
+    private List<QueryClientMirror> initFilteredQueryClients(){
         return boundedContextMirror
-            .getReadModelProviders()
+            .getQueryClients()
             .stream()
             .filter(r -> !r.isAbstract())
             .filter(transitiveDomainTypeFilter::filter)

@@ -37,12 +37,12 @@ import nitrox.dlc.mirror.api.ValueMirror;
 import nitrox.dlc.mirror.api.ValueReferenceMirror;
 
 /**
- * A {@link DomainTypeVisitor} visits the complete object tree (types and fields) of any domain type that
+ * A {@link DomainObjectVisitor} visits the complete object tree (types and fields) of any domain type that
  * is mirrored by an instance of {@link DomainTypeMirror}.
  *
  * @author Mario Herb
  */
-public interface DomainTypeVisitor {
+public interface DomainObjectVisitor {
 
     /**
      * Called when entering any domain type {@link DomainTypeMirror}

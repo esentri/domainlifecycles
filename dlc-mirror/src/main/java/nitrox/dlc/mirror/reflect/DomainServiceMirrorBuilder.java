@@ -29,7 +29,7 @@ package nitrox.dlc.mirror.reflect;
 
 import nitrox.dlc.domain.types.DomainService;
 import nitrox.dlc.domain.types.OutboundService;
-import nitrox.dlc.domain.types.ReadModelProvider;
+import nitrox.dlc.domain.types.QueryClient;
 import nitrox.dlc.domain.types.Repository;
 import nitrox.dlc.mirror.api.DomainServiceMirror;
 import nitrox.dlc.mirror.model.DomainServiceModel;
@@ -66,7 +66,7 @@ public class DomainServiceMirrorBuilder extends DomainTypeMirrorBuilder {
                 getReferencedRepositoryNames(),
                 getReferencedDomainServiceNames(),
                 getReferencedOutboundServiceNames(),
-                getReferencedReadModelProviderNames(),
+                getReferencedQueryClientNames(),
                 domainServiceInterfaceTypeNames(),
                 buildInheritanceHierarchy(),
                 buildInterfaceTypes()
@@ -100,11 +100,11 @@ public class DomainServiceMirrorBuilder extends DomainTypeMirrorBuilder {
             .toList();
     }
 
-    private List<String> getReferencedReadModelProviderNames(){
+    private List<String> getReferencedQueryClientNames(){
         return JavaReflect
             .fields(this.domainServiceClass, MemberSelect.HIERARCHY)
             .stream()
-            .filter(f -> isReadModelProvider(f.getType()))
+            .filter(f -> isQueryClient(f.getType()))
             .map(f -> f.getType().getName())
             .toList();
     }
@@ -121,8 +121,8 @@ public class DomainServiceMirrorBuilder extends DomainTypeMirrorBuilder {
         return OutboundService.class.isAssignableFrom(fieldClass);
     }
 
-    private boolean isReadModelProvider(Class<?> fieldClass){
-        return ReadModelProvider.class.isAssignableFrom(fieldClass);
+    private boolean isQueryClient(Class<?> fieldClass){
+        return QueryClient.class.isAssignableFrom(fieldClass);
     }
 
     private List<String> domainServiceInterfaceTypeNames(){

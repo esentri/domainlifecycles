@@ -30,7 +30,7 @@ package nitrox.dlc.services;
 import nitrox.dlc.domain.types.ApplicationService;
 import nitrox.dlc.domain.types.DomainService;
 import nitrox.dlc.domain.types.OutboundService;
-import nitrox.dlc.domain.types.ReadModelProvider;
+import nitrox.dlc.domain.types.QueryClient;
 import nitrox.dlc.domain.types.Repository;
 import nitrox.dlc.mirror.api.Domain;
 import nitrox.dlc.reflect.JavaReflect;
@@ -52,7 +52,7 @@ public class Services implements ServiceRegistrator, ServiceProvider {
     private final Map<String, DomainService> domainServices = new HashMap<>();
     private final Map<String, Repository<?, ?>> repositories = new HashMap<>();
 
-    private final Map<String, ReadModelProvider<?>> readModelProviders = new HashMap<>();
+    private final Map<String, QueryClient<?>> queryClients = new HashMap<>();
 
     private final Map<String, OutboundService> outboundServices  = new HashMap<>();
 
@@ -84,8 +84,8 @@ public class Services implements ServiceRegistrator, ServiceProvider {
      * {@inheritDoc}
      */
     @Override
-    public ReadModelProvider<?> getReadModelProviderInstance(String typeName) {
-        return readModelProviders.get(typeName);
+    public QueryClient<?> getQueryClientInstance(String typeName) {
+        return queryClients.get(typeName);
     }
 
     /**
@@ -143,14 +143,14 @@ public class Services implements ServiceRegistrator, ServiceProvider {
      * {@inheritDoc}
      */
     @Override
-    public void registerReadModelProviderInstance(ReadModelProvider<?> readModelProvider) {
+    public void registerQueryClientInstance(QueryClient<?> queryClient) {
         //check of mirrored types is needed, because in some frameworks like spring the concrete service instances
         // are extended and so the class of the concrete instance at runtime is not known by the mirror
-        JavaReflect.allSupertypes(readModelProvider.getClass(), true)
+        JavaReflect.allSupertypes(queryClient.getClass(), true)
             .stream()
             .filter(superType -> Domain.typeMirror(superType.getName()).isPresent())
             .findFirst()
-            .ifPresent(mirroredType -> readModelProviders.put(mirroredType.getName(), readModelProvider));
+            .ifPresent(mirroredType -> queryClients.put(mirroredType.getName(), queryClient));
     }
 
     /**

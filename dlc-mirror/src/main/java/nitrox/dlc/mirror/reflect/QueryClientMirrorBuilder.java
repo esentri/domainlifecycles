@@ -28,54 +28,54 @@
 package nitrox.dlc.mirror.reflect;
 
 import nitrox.dlc.domain.types.ReadModel;
-import nitrox.dlc.domain.types.ReadModelProvider;
-import nitrox.dlc.mirror.api.ReadModelProviderMirror;
+import nitrox.dlc.domain.types.QueryClient;
+import nitrox.dlc.mirror.api.QueryClientMirror;
 import nitrox.dlc.mirror.api.RepositoryMirror;
-import nitrox.dlc.mirror.model.ReadModelProviderModel;
+import nitrox.dlc.mirror.model.QueryClientModel;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Builder to create {@link ReadModelProviderMirror}. Uses Java reflection.
+ * Builder to create {@link QueryClientMirror}. Uses Java reflection.
  *
  * @author Mario Herb
  */
-public class ReadModelProviderMirrorBuilder extends DomainTypeMirrorBuilder{
-    private final Class<? extends ReadModelProvider<?>> readModelProviderClass;
+public class QueryClientMirrorBuilder extends DomainTypeMirrorBuilder{
+    private final Class<? extends QueryClient<?>> queryClientClass;
 
-    public ReadModelProviderMirrorBuilder(Class<? extends ReadModelProvider<?>> readModelProviderClass) {
-        super(readModelProviderClass);
-        this.readModelProviderClass = readModelProviderClass;
+    public QueryClientMirrorBuilder(Class<? extends QueryClient<?>> queryClientClass) {
+        super(queryClientClass);
+        this.queryClientClass = queryClientClass;
     }
 
     /**
      * Creates a new {@link RepositoryMirror}.
      */
-    public ReadModelProviderMirror build(){
-        return new ReadModelProviderModel(
+    public QueryClientMirror build(){
+        return new QueryClientModel(
             getTypeName(),
             isAbstract(),
             buildFields(),
             buildMethods(),
-            readModelProviderInterfaceTypeNames(),
+            queryClientInterfaceTypeNames(),
             buildInheritanceHierarchy(),
             buildInterfaceTypes(),
-            getProvidedReadModelType(readModelProviderClass).map(Class::getName).orElse(Object.class.getName())
+            getProvidedReadModelType(queryClientClass).map(Class::getName).orElse(Object.class.getName())
         );
     }
 
     @SuppressWarnings("unchecked")
-    private static Optional<Class<? extends ReadModel>> getProvidedReadModelType(Class<? extends ReadModelProvider<?>> c)   {
+    private static Optional<Class<? extends ReadModel>> getProvidedReadModelType(Class<? extends QueryClient<?>> c)   {
         var resolver = new GenericInterfaceTypeResolver(c);
-        var resolved = resolver.resolveFor(ReadModelProvider.class, 0);
+        var resolved = resolver.resolveFor(QueryClient.class, 0);
         return Optional.ofNullable((Class<? extends ReadModel>) resolved);
     }
 
-    private List<String> readModelProviderInterfaceTypeNames(){
-        return Arrays.stream(readModelProviderClass.getInterfaces())
-            .filter(i -> ReadModelProvider.class.isAssignableFrom(i) && !i.getName().equals(ReadModelProvider.class.getName()))
+    private List<String> queryClientInterfaceTypeNames(){
+        return Arrays.stream(queryClientClass.getInterfaces())
+            .filter(i -> QueryClient.class.isAssignableFrom(i) && !i.getName().equals(QueryClient.class.getName()))
             .map(Class::getName)
             .toList();
     }

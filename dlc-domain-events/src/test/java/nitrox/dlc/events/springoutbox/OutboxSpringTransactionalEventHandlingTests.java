@@ -30,7 +30,7 @@ package nitrox.dlc.events.springoutbox;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nitrox.dlc.events.ADomainEvent;
 import nitrox.dlc.events.ADomainService;
-import nitrox.dlc.events.AReadModelProvider;
+import nitrox.dlc.events.AQueryClient;
 import nitrox.dlc.events.ARepository;
 import nitrox.dlc.events.AnAggregate;
 import nitrox.dlc.events.AnAggregateDomainEvent;
@@ -51,7 +51,6 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -77,7 +76,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
     private AnOutboundService outboundService;
 
     @Autowired
-    private AReadModelProvider readModelProvider;
+    private AQueryClient queryClient;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -132,7 +131,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
         assertThat(aRepository.received).contains(evt);
         assertThat(anApplicationService.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
-        assertThat(readModelProvider.received).contains(evt);
+        assertThat(queryClient.received).contains(evt);
     }
 
     @Test
@@ -156,7 +155,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
-        assertThat(readModelProvider.received).doesNotContain(evt);
+        assertThat(queryClient.received).doesNotContain(evt);
 
     }
 
@@ -179,7 +178,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
-        assertThat(readModelProvider.received).doesNotContain(evt);
+        assertThat(queryClient.received).doesNotContain(evt);
     }
 
     @Test
@@ -197,7 +196,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
         assertThat(aRepository.received).contains(evt);
         assertThat(anApplicationService.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
-        assertThat(readModelProvider.received).contains(evt);
+        assertThat(queryClient.received).contains(evt);
     }
 
     @Test
@@ -216,7 +215,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
-        assertThat(readModelProvider.received).doesNotContain(evt);
+        assertThat(queryClient.received).doesNotContain(evt);
         var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).contains(evt);
     }
@@ -238,7 +237,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
-        assertThat(readModelProvider.received).doesNotContain(evt);
+        assertThat(queryClient.received).doesNotContain(evt);
         var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).doesNotContain(evt);
     }
@@ -259,7 +258,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(anApplicationService.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
-        assertThat(readModelProvider.received).contains(evt);
+        assertThat(queryClient.received).contains(evt);
         var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).doesNotContain(evt);
     }

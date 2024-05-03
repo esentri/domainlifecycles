@@ -29,7 +29,7 @@ package nitrox.dlc.mirror.reflect;
 
 import nitrox.dlc.domain.types.AggregateRoot;
 import nitrox.dlc.domain.types.OutboundService;
-import nitrox.dlc.domain.types.ReadModelProvider;
+import nitrox.dlc.domain.types.QueryClient;
 import nitrox.dlc.domain.types.Repository;
 import nitrox.dlc.mirror.api.RepositoryMirror;
 import nitrox.dlc.mirror.model.RepositoryModel;
@@ -64,7 +64,7 @@ public class RepositoryMirrorBuilder extends DomainTypeMirrorBuilder{
             buildMethods(),
             getManagedAggregateType(repositoryClass).map(Class::getName).orElse(Object.class.getName()),
             getReferencedOutboundServiceNames(),
-            getReferencedReadModelProviderNames(),
+            getReferencedQueryClientNames(),
             repositoryInterfaceTypeNames(),
             buildInheritanceHierarchy(),
             buildInterfaceTypes()
@@ -80,11 +80,11 @@ public class RepositoryMirrorBuilder extends DomainTypeMirrorBuilder{
             .toList();
     }
 
-    private List<String> getReferencedReadModelProviderNames(){
+    private List<String> getReferencedQueryClientNames(){
         return JavaReflect
             .fields(this.repositoryClass, MemberSelect.HIERARCHY)
             .stream()
-            .filter(f -> isReadModelProvider(f.getType()))
+            .filter(f -> isQueryClient(f.getType()))
             .map(f -> f.getType().getName())
             .toList();
     }
@@ -93,8 +93,8 @@ public class RepositoryMirrorBuilder extends DomainTypeMirrorBuilder{
         return OutboundService.class.isAssignableFrom(fieldClass);
     }
 
-    private boolean isReadModelProvider(Class<?> fieldClass){
-        return ReadModelProvider.class.isAssignableFrom(fieldClass);
+    private boolean isQueryClient(Class<?> fieldClass){
+        return QueryClient.class.isAssignableFrom(fieldClass);
     }
 
     @SuppressWarnings("unchecked")

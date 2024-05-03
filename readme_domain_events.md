@@ -61,16 +61,16 @@ Those annotations have no functional impact, but they currently make it more tra
 information is also rendered in NitroX DLC domain diagrams (see [NitroX DLC Domain Diagrammer](./readme_diagrammer.md))  
 
 #### Listening to DomainEvents
-Domain Events are typically listened to by ApplicationServices, DomainServices, Repositories, OutboundServices, ReadModelProviders or directly by Aggregate instances. 
+Domain Events are typically listened to by ApplicationServices, DomainServices, Repositories, OutboundServices, QueryClients or directly by Aggregate instances. 
 NitroX DLC reduces the technical boilerplate normally needed to route consumed DomainEvents to the addressed handler methods.
 Therefor the annotation ``@ListensTo`` (see nitrox.dlc.domain.types.ListensTo) is used.
 
-Every method (inside an ApplicationService, a DomainService, an OutboundService, a ReadModelProvider or a Repository) that has only one parameter (the consumed DomainEvent) and which is annotated with
+Every method (inside an ApplicationService, a DomainService, an OutboundService, a QueryClient or a Repository) that has only one parameter (the consumed DomainEvent) and which is annotated with
 ```@ListensTo``` is automatically called, when a new DomainEvent is consumed by the central NitroX DLC event handler (see ``nitrox.dlc.events.receive.ReceivingDomainEventHander``).
 
 Depending on the transaction configuration of NitroX DLC DomainEvents, every handler call might also be automatically wrapped in an independent transaction.
 
-Example of a service event handler methods (applicable on ApplicationServices (aka Drivers), DomainServices, OutboundServices, ReadModelProviders or Repositories):
+Example of a service event handler methods (applicable on ApplicationServices (aka Drivers), DomainServices, OutboundServices, QueryClients or Repositories):
 ```Java
 public class CustomerNotificationDriver implements Driver {
     ...
@@ -157,7 +157,7 @@ var services = new Services();
 services.registerDomainServiceInstance(domainService);
 services.registerRepositoryInstance(repository);
 services.registerApplicationServiceInstance(applicationService);
-services.registerReadModelProviderInstance(readModelProvider);
+services.registerQueryClientInstance(queryClient);
 services.registerOutboundServiceInstance(outboundService);
 
 var configBuilder = new DomainEventsConfiguration.DomainEventsConfigurationBuilder();
@@ -219,14 +219,14 @@ public class OutboxTestApplication {
         List<Repository<?,?>> repositories, 
         List<ApplicationService> applicationServices, 
         List<DomainService> domainServices,
-        List<ReadModelProvider<?>> readModelProviders,
+        List<QueryClient<?>> queryClients,
         List<OutboundService> outboundServices
     ){
         var services = new Services();
         repositories.forEach(services::registerRepositoryInstance);
         applicationServices.forEach(services::registerApplicationServiceInstance);
         domainServices.forEach(services::registerDomainServiceInstance);
-        readModelProviders.forEach(services::registerReadModelProviderInstance);
+        queryClients.forEach(services::registerQueryClientInstance);
         outboundServices.forEach(services::registerOutboundServiceInstance);
         return services;
     }
@@ -295,14 +295,14 @@ public class NitroxDomainEventsConfiguration {
             List<Repository<?,?>> repositories, 
             List<ApplicationService> applicationServices, 
             List<DomainService> domainServices,
-            List<ReadModelProvider<?>> readModelProviders,
+            List<QueryClient<?>> queryClients,
             List<OutboundService> outboundServices
     ){
         var services = new Services();
         repositories.forEach(services::registerRepositoryInstance);
         applicationServices.forEach(services::registerApplicationServiceInstance);
         domainServices.forEach(services::registerDomainServiceInstance);
-        readModelProviders.forEach(services::registerReadModelProviderInstance);
+        queryClients.forEach(services::registerQueryClientInstance);
         outboundServices.forEach(services::registerOutboundServiceInstance);
         return services;
     }

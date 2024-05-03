@@ -29,7 +29,7 @@ package nitrox.dlc.events.spring;
 
 import nitrox.dlc.events.ADomainEvent;
 import nitrox.dlc.events.ADomainService;
-import nitrox.dlc.events.AReadModelProvider;
+import nitrox.dlc.events.AQueryClient;
 import nitrox.dlc.events.ARepository;
 import nitrox.dlc.events.AnAggregate;
 import nitrox.dlc.events.AnAggregateDomainEvent;
@@ -64,7 +64,7 @@ public class DirectSpringTransactionalEventHandlingTests {
     private AnApplicationService anApplicationService;
 
     @Autowired
-    private AReadModelProvider readModelProvider;
+    private AQueryClient queryClient;
 
     @Autowired
     private AnOutboundService outboundService;
@@ -81,7 +81,7 @@ public class DirectSpringTransactionalEventHandlingTests {
         assertThat(aDomainService.received).contains(evt);
         assertThat(aRepository.received).contains(evt);
         assertThat(anApplicationService.received).contains(evt);
-        assertThat(readModelProvider.received).contains(evt);
+        assertThat(queryClient.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
     }
 
@@ -97,7 +97,7 @@ public class DirectSpringTransactionalEventHandlingTests {
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
-        assertThat(readModelProvider.received).doesNotContain(evt);
+        assertThat(queryClient.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
     }
 
@@ -113,7 +113,7 @@ public class DirectSpringTransactionalEventHandlingTests {
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
-        assertThat(readModelProvider.received).doesNotContain(evt);
+        assertThat(queryClient.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
 
     }
@@ -129,7 +129,7 @@ public class DirectSpringTransactionalEventHandlingTests {
         assertThat(aDomainService.received).contains(evt);
         assertThat(aRepository.received).contains(evt);
         assertThat(anApplicationService.received).contains(evt);
-        assertThat(readModelProvider.received).contains(evt);
+        assertThat(queryClient.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
     }
 
@@ -145,7 +145,7 @@ public class DirectSpringTransactionalEventHandlingTests {
         assertThat(aDomainService.received).contains(evt);
         assertThat(aRepository.received).contains(evt);
         assertThat(anApplicationService.received).contains(evt);
-        assertThat(readModelProvider.received).contains(evt);
+        assertThat(queryClient.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
 
 
@@ -163,7 +163,7 @@ public class DirectSpringTransactionalEventHandlingTests {
         assertThat(aDomainService.received).contains(evt);
         assertThat(aRepository.received).contains(evt);
         assertThat(anApplicationService.received).contains(evt);
-        assertThat(readModelProvider.received).contains(evt);
+        assertThat(queryClient.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
 
     }
@@ -180,7 +180,7 @@ public class DirectSpringTransactionalEventHandlingTests {
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
-        assertThat(readModelProvider.received).doesNotContain(evt);
+        assertThat(queryClient.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
         var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).contains(evt);
@@ -198,7 +198,7 @@ public class DirectSpringTransactionalEventHandlingTests {
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
-        assertThat(readModelProvider.received).doesNotContain(evt);
+        assertThat(queryClient.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
         var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).doesNotContain(evt);
@@ -216,7 +216,7 @@ public class DirectSpringTransactionalEventHandlingTests {
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
-        assertThat(readModelProvider.received).doesNotContain(evt);
+        assertThat(queryClient.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
         var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).doesNotContain(evt);
@@ -234,7 +234,7 @@ public class DirectSpringTransactionalEventHandlingTests {
         assertThat(aRepository.received).contains(evt);
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(anApplicationService.received).contains(evt);
-        assertThat(readModelProvider.received).contains(evt);
+        assertThat(queryClient.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
         var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).doesNotContain(evt);

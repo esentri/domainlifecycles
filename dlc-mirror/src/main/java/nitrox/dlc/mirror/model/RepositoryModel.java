@@ -38,7 +38,7 @@ import nitrox.dlc.mirror.api.DomainType;
 import nitrox.dlc.mirror.api.FieldMirror;
 import nitrox.dlc.mirror.api.MethodMirror;
 import nitrox.dlc.mirror.api.OutboundServiceMirror;
-import nitrox.dlc.mirror.api.ReadModelProviderMirror;
+import nitrox.dlc.mirror.api.QueryClientMirror;
 import nitrox.dlc.mirror.api.RepositoryMirror;
 import nitrox.dlc.mirror.exception.MirrorException;
 
@@ -63,7 +63,7 @@ public class RepositoryModel extends DomainTypeModel implements RepositoryMirror
     @JsonProperty
     private final List<String> referencedOutboundServiceTypeNames;
     @JsonProperty
-    private final List<String> referencedReadModelProviderTypeNames;
+    private final List<String> referencedQueryClientTypeNames;
 
     @JsonCreator
     public RepositoryModel(@JsonProperty("typeName") String typeName,
@@ -72,7 +72,7 @@ public class RepositoryModel extends DomainTypeModel implements RepositoryMirror
                            @JsonProperty("methods") List<MethodMirror> methods,
                            @JsonProperty("managedAggregateTypeName") String managedAggregateTypeName,
                            @JsonProperty("referencedOutboundServiceTypeNames") List<String> referencedOutboundServiceTypeNames,
-                           @JsonProperty("referencedReadModelProviderTypeNames") List<String> referencedReadModelProviderTypeNames,
+                           @JsonProperty("referencedQueryClientTypeNames") List<String> referencedQueryClientTypeNames,
                            @JsonProperty("repositoryInterfaceTypeNames") List<String> repositoryInterfaceTypeNames,
                            @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
                            @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
@@ -80,7 +80,7 @@ public class RepositoryModel extends DomainTypeModel implements RepositoryMirror
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
         this.managedAggregateTypeName = Objects.requireNonNull(managedAggregateTypeName);
         this.referencedOutboundServiceTypeNames = Collections.unmodifiableList(referencedOutboundServiceTypeNames);
-        this.referencedReadModelProviderTypeNames = Collections.unmodifiableList(referencedReadModelProviderTypeNames);
+        this.referencedQueryClientTypeNames = Collections.unmodifiableList(referencedQueryClientTypeNames);
         this.repositoryInterfaceTypeNames = Collections.unmodifiableList(repositoryInterfaceTypeNames);
 
     }
@@ -111,10 +111,10 @@ public class RepositoryModel extends DomainTypeModel implements RepositoryMirror
      */
     @JsonIgnore
     @Override
-    public List<ReadModelProviderMirror> getReferencedReadModelProviders() {
-        return referencedReadModelProviderTypeNames
+    public List<QueryClientMirror> getReferencedQueryClients() {
+        return referencedQueryClientTypeNames
             .stream()
-            .map(n -> (ReadModelProviderMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("ReadModelProviderMirror not found for '%s'", n)))
+            .map(n -> (QueryClientMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("QueryClientMirror not found for '%s'", n)))
             .collect(Collectors.toList());
     }
 
@@ -171,7 +171,7 @@ public class RepositoryModel extends DomainTypeModel implements RepositoryMirror
         return "RepositoryModel{" +
             "managedAggregateTypeName='" + managedAggregateTypeName + '\'' +
             "referencedOutboundServiceTypeNames=" + referencedOutboundServiceTypeNames +
-            "referencedReadModelProviderTypeNames=" + referencedReadModelProviderTypeNames +
+            "referencedQueryClientTypeNames=" + referencedQueryClientTypeNames +
             ", repositoryInterfaceTypeNames=" + repositoryInterfaceTypeNames +
             "} " + super.toString();
     }
@@ -188,7 +188,7 @@ public class RepositoryModel extends DomainTypeModel implements RepositoryMirror
         return managedAggregateTypeName.equals(that.managedAggregateTypeName)
             && repositoryInterfaceTypeNames.equals(that.repositoryInterfaceTypeNames)
             && referencedOutboundServiceTypeNames.equals(that.referencedOutboundServiceTypeNames)
-            && referencedReadModelProviderTypeNames.equals(that.referencedReadModelProviderTypeNames);
+            && referencedQueryClientTypeNames.equals(that.referencedQueryClientTypeNames);
     }
 
     /**
@@ -196,6 +196,6 @@ public class RepositoryModel extends DomainTypeModel implements RepositoryMirror
      */
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), managedAggregateTypeName, referencedOutboundServiceTypeNames, referencedReadModelProviderTypeNames, repositoryInterfaceTypeNames);
+        return Objects.hash(super.hashCode(), managedAggregateTypeName, referencedOutboundServiceTypeNames, referencedQueryClientTypeNames, repositoryInterfaceTypeNames);
     }
 }

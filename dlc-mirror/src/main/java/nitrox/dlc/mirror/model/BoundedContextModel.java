@@ -39,8 +39,8 @@ import nitrox.dlc.mirror.api.DomainEventMirror;
 import nitrox.dlc.mirror.api.DomainServiceMirror;
 import nitrox.dlc.mirror.api.DomainType;
 import nitrox.dlc.mirror.api.OutboundServiceMirror;
+import nitrox.dlc.mirror.api.QueryClientMirror;
 import nitrox.dlc.mirror.api.ReadModelMirror;
-import nitrox.dlc.mirror.api.ReadModelProviderMirror;
 import nitrox.dlc.mirror.api.RepositoryMirror;
 
 import java.util.List;
@@ -185,15 +185,15 @@ public class BoundedContextModel implements BoundedContextMirror {
      */
     @JsonIgnore
     @Override
-    public List<ReadModelProviderMirror> getReadModelProviders(){
+    public List<QueryClientMirror> getQueryClients(){
         return Domain
             .getInitializedDomain()
             .allTypeMirrors()
             .values()
             .stream()
             .filter(dt -> dt.getTypeName().startsWith(packageName)
-                && DomainType.READ_MODEL_PROVIDER.equals(dt.getDomainType()))
-            .map(dt -> (ReadModelProviderMirror) dt)
+                && DomainType.QUERY_CLIENT.equals(dt.getDomainType()))
+            .map(dt -> (QueryClientMirror) dt)
             .toList();
     }
 

@@ -35,8 +35,8 @@ import nitrox.dlc.mirror.api.DomainEventMirror;
 import nitrox.dlc.mirror.api.DomainType;
 import nitrox.dlc.mirror.api.FieldMirror;
 import nitrox.dlc.mirror.api.MethodMirror;
+import nitrox.dlc.mirror.api.QueryClientMirror;
 import nitrox.dlc.mirror.api.ReadModelMirror;
-import nitrox.dlc.mirror.api.ReadModelProviderMirror;
 
 import java.util.Collections;
 import java.util.List;
@@ -44,31 +44,31 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Model implementation of a {@link ReadModelProviderMirror}.
+ * Model implementation of a {@link QueryClientMirror}.
  *
  * @author Mario Herb
  */
-public class ReadModelProviderModel extends DomainTypeModel implements ReadModelProviderMirror {
+public class QueryClientModel extends DomainTypeModel implements QueryClientMirror {
 
     @JsonProperty
     private final String providedReadModelTypeName;
     @JsonProperty
-    private final List<String> readModelProviderInterfaceTypeNames;
+    private final List<String> queryClientInterfaceTypeNames;
 
     @JsonCreator
-    public ReadModelProviderModel(
+    public QueryClientModel(
         @JsonProperty("typeName") String typeName,
         @JsonProperty("abstract") boolean isAbstract,
         @JsonProperty("allFields") List<FieldMirror> allFields,
         @JsonProperty("methods") List<MethodMirror> methods,
-        @JsonProperty("readModelProviderInterfaceTypeNames") List<String> readModelProviderInterfaceTypeNames,
+        @JsonProperty("queryClientInterfaceTypeNames") List<String> queryClientInterfaceTypeNames,
         @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
         @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames,
         @JsonProperty("providedReadModelTypeName") String providedReadModelTypeName
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
         this.providedReadModelTypeName = Objects.requireNonNull(providedReadModelTypeName);
-        this.readModelProviderInterfaceTypeNames = Collections.unmodifiableList(readModelProviderInterfaceTypeNames);
+        this.queryClientInterfaceTypeNames = Collections.unmodifiableList(queryClientInterfaceTypeNames);
     }
 
     /**
@@ -111,8 +111,8 @@ public class ReadModelProviderModel extends DomainTypeModel implements ReadModel
      * {@inheritDoc}
      */
     @Override
-    public List<String> getReadModelProviderInterfaceTypeNames() {
-        return readModelProviderInterfaceTypeNames;
+    public List<String> getQueryClientInterfaceTypeNames() {
+        return queryClientInterfaceTypeNames;
     }
 
     /**
@@ -120,7 +120,7 @@ public class ReadModelProviderModel extends DomainTypeModel implements ReadModel
      */
     @Override
     public DomainType getDomainType() {
-        return DomainType.READ_MODEL_PROVIDER;
+        return DomainType.QUERY_CLIENT;
     }
 
     /**
@@ -128,9 +128,9 @@ public class ReadModelProviderModel extends DomainTypeModel implements ReadModel
      */
     @Override
     public String toString() {
-        return "ReadModelProviderModel{" +
+        return "QueryClientModel{" +
             "providedReadModelTypeName='" + providedReadModelTypeName + '\'' +
-            ", readModelProviderInterfaceTypeNames=" + readModelProviderInterfaceTypeNames +
+            ", queryClientInterfaceTypeNames=" + queryClientInterfaceTypeNames +
             "} " + super.toString();
     }
 
@@ -142,8 +142,8 @@ public class ReadModelProviderModel extends DomainTypeModel implements ReadModel
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        ReadModelProviderModel that = (ReadModelProviderModel) o;
-        return providedReadModelTypeName.equals(that.providedReadModelTypeName) && readModelProviderInterfaceTypeNames.equals(that.readModelProviderInterfaceTypeNames);
+        QueryClientModel that = (QueryClientModel) o;
+        return providedReadModelTypeName.equals(that.providedReadModelTypeName) && queryClientInterfaceTypeNames.equals(that.queryClientInterfaceTypeNames);
     }
 
     /**
@@ -151,6 +151,6 @@ public class ReadModelProviderModel extends DomainTypeModel implements ReadModel
      */
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), providedReadModelTypeName, readModelProviderInterfaceTypeNames);
+        return Objects.hash(super.hashCode(), providedReadModelTypeName, queryClientInterfaceTypeNames);
     }
 }

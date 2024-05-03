@@ -45,7 +45,7 @@ import nitrox.dlc.mirror.api.EntityReferenceMirror;
 import nitrox.dlc.mirror.api.FieldMirror;
 import nitrox.dlc.mirror.api.ValueMirror;
 import nitrox.dlc.mirror.api.ValueReferenceMirror;
-import nitrox.dlc.mirror.visitor.ContextDomainTypeVisitor;
+import nitrox.dlc.mirror.visitor.ContextDomainObjectVisitor;
 import nitrox.dlc.persistence.mapping.converter.ConverterRegistry;
 import nitrox.dlc.persistence.mapping.converter.TypeConverter;
 import nitrox.dlc.persistence.mapping.util.BiMap;
@@ -290,7 +290,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
 
     private BiMap<ValuePath, RecordProperty> initializeMappedValuePaths(){
         var biMap = new BiMap<ValuePath, RecordProperty>();
-        var visitor = new ContextDomainTypeVisitor(typeName, false){
+        var visitor = new ContextDomainObjectVisitor(typeName, false){
             @Override
             public void visitBasic(FieldMirror basicFieldMirror) {
                 if(isFieldMapped()) {

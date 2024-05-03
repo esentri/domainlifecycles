@@ -34,7 +34,7 @@ import nitrox.dlc.mirror.api.EntityMirror;
 import nitrox.dlc.mirror.api.FieldMirror;
 import nitrox.dlc.mirror.api.ValueMirror;
 import nitrox.dlc.mirror.api.ValueReferenceMirror;
-import nitrox.dlc.mirror.visitor.ContextDomainTypeVisitor;
+import nitrox.dlc.mirror.visitor.ContextDomainObjectVisitor;
 import nitrox.dlc.persistence.exception.DLCPersistenceException;
 import nitrox.dlc.persistence.mapping.AutoRecordMapper;
 import nitrox.dlc.persistence.mapping.RecordMapper;
@@ -130,7 +130,7 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
             .stream()
             .map(em -> {
                 List<ValueObjectRecordMirror<UpdatableRecord<?>>> valueObjectRecordMirrors = new ArrayList<>();
-                var v = new ContextDomainTypeVisitor(em.getTypeName(), true){
+                var v = new ContextDomainObjectVisitor(em.getTypeName(), true){
                         @Override
                         public boolean visitEnterEntity(EntityMirror entityMirror) {
                             var context = getVisitorContext();

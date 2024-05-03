@@ -28,12 +28,14 @@
 package nitrox.dlc.events.receive.execution.detector;
 
 import nitrox.dlc.domain.types.DomainEvent;
+import nitrox.dlc.domain.types.QueryClient;
+
 import java.util.Objects;
 
 /**
  * Represents the execution context for a domain event handler within a service
  * ({@link nitrox.dlc.domain.types.DomainService}, {@link nitrox.dlc.domain.types.ApplicationService}, {@link nitrox.dlc.domain.types.OutboundService},
- * {@link nitrox.dlc.domain.types.ReadModelProvider} or {@link nitrox.dlc.domain.types.Repository}).
+ * {@link QueryClient} or {@link nitrox.dlc.domain.types.Repository}).
  *
  * It holds the handler object (the service instance), handler method name, and the domain event being dispatched.
  *

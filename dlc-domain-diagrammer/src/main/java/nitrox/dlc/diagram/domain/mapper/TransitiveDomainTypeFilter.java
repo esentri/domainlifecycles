@@ -38,7 +38,7 @@ import nitrox.dlc.mirror.api.DomainServiceMirror;
 import nitrox.dlc.mirror.api.DomainTypeMirror;
 import nitrox.dlc.mirror.api.OutboundServiceMirror;
 import nitrox.dlc.mirror.api.ReadModelMirror;
-import nitrox.dlc.mirror.api.ReadModelProviderMirror;
+import nitrox.dlc.mirror.api.QueryClientMirror;
 import nitrox.dlc.mirror.api.RepositoryMirror;
 
 import java.util.ArrayList;
@@ -75,7 +75,7 @@ public class TransitiveDomainTypeFilter {
 
     private final Set<ReadModelMirror> filteredReadModels;
 
-    private final Set<ReadModelProviderMirror> filteredReadModelProviders;
+    private final Set<QueryClientMirror> filteredQueryClients;
 
     private final Set<OutboundServiceMirror> filteredOutboundServices;
 
@@ -88,7 +88,7 @@ public class TransitiveDomainTypeFilter {
         this.filteredDomainCommands = new HashSet<>();
         this.filteredDomainEvents = new HashSet<>();
         this.filteredAggregates = new HashSet<>();
-        this.filteredReadModelProviders = new HashSet<>();
+        this.filteredQueryClients = new HashSet<>();
         this.filteredOutboundServices = new HashSet<>();
         this.filteredReadModels = new HashSet<>();
         this.boundedContextMirror = boundedContextMirror;
@@ -134,7 +134,7 @@ public class TransitiveDomainTypeFilter {
             .stream()
             .filter(as -> seedTypeNames.contains(as.getTypeName()))
             .toList());
-        this.filteredReadModelProviders.addAll(boundedContextMirror.getReadModelProviders()
+        this.filteredQueryClients.addAll(boundedContextMirror.getQueryClients()
             .stream()
             .filter(as -> seedTypeNames.contains(as.getTypeName()))
             .toList());
@@ -146,7 +146,7 @@ public class TransitiveDomainTypeFilter {
                 addCommandsFor(as);
                 addReferencedDomainServices(as.getReferencedDomainServices());
                 addReferencedRepositories(as.getReferencedRepositories());
-                addReferencedReadModelProviders(as.getReferencedReadModelProviders());
+                addReferencedQueryClients(as.getReferencedQueryClients());
                 addReferencedOutboundServices(as.getReferencedOutboundServices());
             }
         );
@@ -163,7 +163,7 @@ public class TransitiveDomainTypeFilter {
                 addEventsFor(ds);
                 addCommandsFor(ds);
                 addReferencedRepositories(ds.getReferencedRepositories());
-                addReferencedReadModelProviders(ds.getReferencedReadModelProviders());
+                addReferencedQueryClients(ds.getReferencedQueryClients());
                 addReferencedOutboundServices(ds.getReferencedOutboundServices());
 
             }
@@ -184,7 +184,7 @@ public class TransitiveDomainTypeFilter {
             }
         );
 
-        filteredReadModelProviders.forEach(
+        filteredQueryClients.forEach(
             r -> {
                 addEventsFor(r);
                 addCommandsFor(r);
@@ -216,13 +216,13 @@ public class TransitiveDomainTypeFilter {
             });
     }
 
-    private void addReferencedReadModelProviders(List<ReadModelProviderMirror> ref){
-        filteredReadModelProviders.addAll(ref);
+    private void addReferencedQueryClients(List<QueryClientMirror> ref){
+        filteredQueryClients.addAll(ref);
         ref.stream().filter(DomainTypeMirror::isAbstract)
             .forEach(abstractDs -> {
-                boundedContextMirror.getReadModelProviders().stream()
+                boundedContextMirror.getQueryClients().stream()
                     .filter(ds -> ds.getAllInterfaceTypeNames().contains(abstractDs.getTypeName()))
-                    .forEach(filteredReadModelProviders::add);
+                    .forEach(filteredQueryClients::add);
             });
     }
 
@@ -266,7 +266,7 @@ public class TransitiveDomainTypeFilter {
                 case DOMAIN_EVENT -> filteredDomainEvents.contains(dtm);
                 case DOMAIN_COMMAND -> filteredDomainCommands.contains(dtm);
                 case READ_MODEL -> filteredReadModels.contains(dtm);
-                case READ_MODEL_PROVIDER -> filteredReadModelProviders.contains(dtm);
+                case QUERY_CLIENT -> filteredQueryClients.contains(dtm);
                 case OUTBOUND_SERVICE -> filteredOutboundServices.contains(dtm);
                 default -> false;
             };

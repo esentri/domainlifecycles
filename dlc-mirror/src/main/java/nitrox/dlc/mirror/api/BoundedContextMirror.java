@@ -68,9 +68,9 @@ public interface BoundedContextMirror {
     List<ReadModelMirror> getReadModels();
 
     /**
-     * Returns the list of {@link ReadModelProviderMirror} instances, associated with the BoundedContext.
+     * Returns the list of {@link QueryClientMirror} instances, associated with the BoundedContext.
      */
-    List<ReadModelProviderMirror> getReadModelProviders();
+    List<QueryClientMirror> getQueryClients();
 
     /**
      * Returns the list of {@link OutboundServiceMirror} instances, associated with the BoundedContext.

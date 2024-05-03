@@ -32,7 +32,7 @@ import nitrox.dlc.domain.types.ApplicationService;
 import nitrox.dlc.domain.types.DomainService;
 import nitrox.dlc.domain.types.Driver;
 import nitrox.dlc.domain.types.OutboundService;
-import nitrox.dlc.domain.types.ReadModelProvider;
+import nitrox.dlc.domain.types.QueryClient;
 import nitrox.dlc.domain.types.Repository;
 import nitrox.dlc.mirror.api.ApplicationServiceMirror;
 import nitrox.dlc.mirror.model.ApplicationServiceModel;
@@ -70,7 +70,7 @@ public class ApplicationServiceMirrorBuilder extends DomainTypeMirrorBuilder {
                 getReferencedRepositoryNames(),
                 getReferencedDomainServiceNames(),
                 getReferencedOutboundServiceNames(),
-                getReferencedReadModelProviderNames(),
+                getReferencedQueryClientNames(),
                 applicationServiceInterfaceTypeNames(),
                 buildInheritanceHierarchy(),
                 buildInterfaceTypes()
@@ -104,11 +104,11 @@ public class ApplicationServiceMirrorBuilder extends DomainTypeMirrorBuilder {
             .toList();
     }
 
-    private List<String> getReferencedReadModelProviderNames(){
+    private List<String> getReferencedQueryClientNames(){
         return JavaReflect
             .fields(this.applicationServiceClass, MemberSelect.HIERARCHY)
             .stream()
-            .filter(f -> isReadModelProvider(f.getType()))
+            .filter(f -> isQueryClientProvider(f.getType()))
             .map(f -> f.getType().getName())
             .toList();
     }
@@ -125,8 +125,8 @@ public class ApplicationServiceMirrorBuilder extends DomainTypeMirrorBuilder {
         return OutboundService.class.isAssignableFrom(fieldClass);
     }
 
-    private boolean isReadModelProvider(Class<?> fieldClass){
-        return ReadModelProvider.class.isAssignableFrom(fieldClass);
+    private boolean isQueryClientProvider(Class<?> fieldClass){
+        return QueryClient.class.isAssignableFrom(fieldClass);
     }
 
     private List<String> applicationServiceInterfaceTypeNames(){

@@ -43,12 +43,12 @@ import nitrox.dlc.mirror.api.EntityMirror;
 import nitrox.dlc.mirror.api.EntityReferenceMirror;
 import nitrox.dlc.mirror.api.FieldMirror;
 import nitrox.dlc.mirror.api.OutboundServiceMirror;
+import nitrox.dlc.mirror.api.QueryClientMirror;
 import nitrox.dlc.mirror.api.ReadModelMirror;
-import nitrox.dlc.mirror.api.ReadModelProviderMirror;
 import nitrox.dlc.mirror.api.RepositoryMirror;
 import nitrox.dlc.mirror.api.ValueReferenceMirror;
 import nitrox.dlc.mirror.model.AssertionType;
-import nitrox.dlc.mirror.visitor.ContextDomainTypeVisitor;
+import nitrox.dlc.mirror.visitor.ContextDomainObjectVisitor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -107,14 +107,14 @@ public class DomainRelationshipMapper {
     }
 
     /**
-     * Derives a {@link NomnomlRelationship} for all ApplicationServices that use a ReadModelProvider.
+     * Derives a {@link NomnomlRelationship} for all ApplicationServices that use a QueryClient.
      */
-    public List<NomnomlRelationship> mapAllApplicationServiceReadModelProviderRelationships(){
+    public List<NomnomlRelationship> mapAllApplicationServiceQueryClientRelationships(){
         var relationShips = new ArrayList<NomnomlRelationship>();
-        if(diagramConfig.isShowApplicationServices() && diagramConfig.isShowReadModelProviders()) {
+        if(diagramConfig.isShowApplicationServices() && diagramConfig.isShowQueryClients()) {
             filteredDomainClasses.getApplicationServices()
-                .forEach(as -> as.getReferencedReadModelProviders().forEach(
-                    ds -> relationShips.add(mapApplicationServiceReadModelProviderRelationship(as, ds))
+                .forEach(as -> as.getReferencedQueryClients().forEach(
+                    ds -> relationShips.add(mapApplicationServiceQueryClientRelationship(as, ds))
                 ));
         }
         return relationShips;
@@ -149,14 +149,14 @@ public class DomainRelationshipMapper {
     }
 
     /**
-     * Derives a {@link NomnomlRelationship} for all DomainServices that use a ReadModelProvider.
+     * Derives a {@link NomnomlRelationship} for all DomainServices that use a QueryClient.
      */
-    public List<NomnomlRelationship> mapAllDomainServiceReadModelProviderRelationships(){
+    public List<NomnomlRelationship> mapAllDomainServiceQueryClientRelationships(){
         var relationShips = new ArrayList<NomnomlRelationship>();
-        if(diagramConfig.isShowRepositories() && diagramConfig.isShowReadModelProviders()) {
+        if(diagramConfig.isShowRepositories() && diagramConfig.isShowQueryClients()) {
             filteredDomainClasses.getDomainServices()
-                .forEach(ds -> ds.getReferencedReadModelProviders().forEach(
-                    r -> relationShips.add(mapDomainServiceReadModelProviderRelationship(ds, r))
+                .forEach(ds -> ds.getReferencedQueryClients().forEach(
+                    r -> relationShips.add(mapDomainServiceQueryClientRelationship(ds, r))
                 ));
         }
         return relationShips;
@@ -189,13 +189,13 @@ public class DomainRelationshipMapper {
     }
 
     /**
-     * Derives a {@link NomnomlRelationship} for all ReadModelProviders to their ReadModels.
+     * Derives a {@link NomnomlRelationship} for all QueryClients to their ReadModels.
      */
-    public List<NomnomlRelationship> mapAllReadModelProviderReadModelRelationships(){
+    public List<NomnomlRelationship> mapAllQueryClientReadModelRelationships(){
         var relationShips = new ArrayList<NomnomlRelationship>();
-        if(diagramConfig.isShowReadModelProviders()&&diagramConfig.isShowReadModels()) {
-            filteredDomainClasses.getReadModelProviders()
-                .forEach(r -> relationShips.add(mapReadModelProviderReadModelRelationship(r)));
+        if(diagramConfig.isShowQueryClients()&&diagramConfig.isShowReadModels()) {
+            filteredDomainClasses.getQueryClients()
+                .forEach(r -> relationShips.add(mapQueryClientReadModelRelationship(r)));
         }
         return relationShips;
     }
@@ -207,7 +207,7 @@ public class DomainRelationshipMapper {
         var relationShips = new ArrayList<NomnomlRelationship>();
         filteredDomainClasses.getAggregateRoots()
             .forEach(ar -> {
-                var visitor = new ContextDomainTypeVisitor(ar){
+                var visitor = new ContextDomainObjectVisitor(ar){
                     @Override
                     public void visitValueReference(ValueReferenceMirror valueReferenceMirror) {
                         if(valueReferenceMirror.getValue().isIdentity() && !valueReferenceMirror.isIdentityField()){
@@ -275,13 +275,13 @@ public class DomainRelationshipMapper {
                                 }
                             );
                     }
-                    if (diagramConfig.isShowReadModelProviders()) {
-                        filteredDomainClasses.getReadModelProviders()
+                    if (diagramConfig.isShowQueryClients()) {
+                        filteredDomainClasses.getQueryClients()
                             .forEach(
                                 as -> {
                                     if (as.processes(c)) {
                                         if(!diagramConfig.isShowOnlyTopLevelDomainCommandRelations() || isTopLevelConsumerForCommand(as, c)){
-                                            relationShips.add(mapDomainCommandReadModelProviderRelationship(c, as));
+                                            relationShips.add(mapDomainCommandQueryClientRelationship(c, as));
                                         }
                                     }
                                 }
@@ -348,8 +348,8 @@ public class DomainRelationshipMapper {
                 case OUTBOUND_SERVICE -> {
                     return !((OutboundServiceMirror) referencingType).processes(domainCommandMirror);
                 }
-                case READ_MODEL_PROVIDER -> {
-                    return !((ReadModelProviderMirror) referencingType).processes(domainCommandMirror);
+                case QUERY_CLIENT -> {
+                    return !((QueryClientMirror) referencingType).processes(domainCommandMirror);
                 }
                 default -> {
                     return true;
@@ -415,9 +415,9 @@ public class DomainRelationshipMapper {
                             }
                         });
                 }
-                if(diagramConfig.isShowReadModelProviders()) {
+                if(diagramConfig.isShowQueryClients()) {
                     filteredDomainClasses
-                        .getReadModelProviders()
+                        .getQueryClients()
                         .forEach(ds -> {
                             if (ds.publishes(de)) {
                                 relationShips.add(mapPublishesDomainEvent(ds, de));
@@ -455,17 +455,17 @@ public class DomainRelationshipMapper {
             .build();
     }
 
-    private NomnomlRelationship mapReadModelProviderReadModelRelationship(ReadModelProviderMirror readModelProviderMirror){
+    private NomnomlRelationship mapQueryClientReadModelRelationship(QueryClientMirror queryClientMirror){
         return NomnomlRelationship
             .builder()
-            .fromName(relationConnectorName(readModelProviderMirror))
+            .fromName(relationConnectorName(queryClientMirror))
             .fromMultiplicity("")
-            .fromStyleClassifier(DomainMapperUtils.styleClassifier(readModelProviderMirror.getTypeName()))
+            .fromStyleClassifier(DomainMapperUtils.styleClassifier(queryClientMirror.getTypeName()))
             .label("")
             .relationshiptype(NomnomlRelationship.RelationshipType.ASSOCIATION)
-            .toStyleClassifier(DomainMapperUtils.styleClassifier(readModelProviderMirror.getProvidedReadModel().map(ReadModelMirror::getTypeName).orElse("java.lang.Object")))
+            .toStyleClassifier(DomainMapperUtils.styleClassifier(queryClientMirror.getProvidedReadModel().map(ReadModelMirror::getTypeName).orElse("java.lang.Object")))
             .toMultiplicity("")
-            .toName(relationConnectorName(readModelProviderMirror.getProvidedReadModel().map(ReadModelMirror::getTypeName).orElse("java.lang.Object")))
+            .toName(relationConnectorName(queryClientMirror.getProvidedReadModel().map(ReadModelMirror::getTypeName).orElse("java.lang.Object")))
             .build();
     }
 
@@ -486,9 +486,9 @@ public class DomainRelationshipMapper {
             .build();
     }
 
-    private NomnomlRelationship mapDomainServiceReadModelProviderRelationship(
+    private NomnomlRelationship mapDomainServiceQueryClientRelationship(
         DomainServiceMirror domainServiceMirror,
-        ReadModelProviderMirror readModelProviderMirror
+        QueryClientMirror queryClientMirror
     ){
         return NomnomlRelationship
             .builder()
@@ -497,9 +497,9 @@ public class DomainRelationshipMapper {
             .fromStyleClassifier(DomainMapperUtils.styleClassifier(domainServiceMirror.getTypeName()))
             .label("")
             .relationshiptype(NomnomlRelationship.RelationshipType.ASSOCIATION)
-            .toName(relationConnectorName(readModelProviderMirror))
+            .toName(relationConnectorName(queryClientMirror))
             .toMultiplicity("")
-            .toStyleClassifier(DomainMapperUtils.styleClassifier(readModelProviderMirror.getTypeName()))
+            .toStyleClassifier(DomainMapperUtils.styleClassifier(queryClientMirror.getTypeName()))
             .build();
     }
 
@@ -554,9 +554,9 @@ public class DomainRelationshipMapper {
             .build();
     }
 
-    private NomnomlRelationship mapApplicationServiceReadModelProviderRelationship(
+    private NomnomlRelationship mapApplicationServiceQueryClientRelationship(
         ApplicationServiceMirror applicationServiceMirror,
-        ReadModelProviderMirror readModelProviderMirror
+        QueryClientMirror queryClientMirror
     ){
         return NomnomlRelationship
             .builder()
@@ -565,9 +565,9 @@ public class DomainRelationshipMapper {
             .fromStyleClassifier(DomainMapperUtils.styleClassifier(applicationServiceMirror.getTypeName()))
             .label("")
             .relationshiptype(NomnomlRelationship.RelationshipType.ASSOCIATION)
-            .toName(relationConnectorName(readModelProviderMirror))
+            .toName(relationConnectorName(queryClientMirror))
             .toMultiplicity("")
-            .toStyleClassifier(DomainMapperUtils.styleClassifier(readModelProviderMirror.getTypeName()))
+            .toStyleClassifier(DomainMapperUtils.styleClassifier(queryClientMirror.getTypeName()))
             .build();
     }
 
@@ -686,7 +686,7 @@ public class DomainRelationshipMapper {
             .build();
     }
 
-    private NomnomlRelationship mapDomainCommandReadModelProviderRelationship(DomainCommandMirror domainCommandMirror, ReadModelProviderMirror readModelProviderMirror){
+    private NomnomlRelationship mapDomainCommandQueryClientRelationship(DomainCommandMirror domainCommandMirror, QueryClientMirror queryClientMirror){
         return NomnomlRelationship
             .builder()
             .fromName(relationConnectorName(domainCommandMirror))
@@ -694,9 +694,9 @@ public class DomainRelationshipMapper {
             .fromStyleClassifier(DomainMapperUtils.styleClassifier(domainCommandMirror.getTypeName()))
             .label("")
             .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_ASSOCIATION)
-            .toName(relationConnectorName(readModelProviderMirror))
+            .toName(relationConnectorName(queryClientMirror))
             .toMultiplicity("")
-            .toStyleClassifier(DomainMapperUtils.styleClassifier(readModelProviderMirror.getTypeName()))
+            .toStyleClassifier(DomainMapperUtils.styleClassifier(queryClientMirror.getTypeName()))
             .build();
     }
 
@@ -716,7 +716,7 @@ public class DomainRelationshipMapper {
 
     public List<NomnomlRelationship> mapAllAggregateRelationships(AggregateRootMirror aggregateRootMirror){
         var relationShips = new ArrayList<NomnomlRelationship>();
-        var visitor = new ContextDomainTypeVisitor(aggregateRootMirror){
+        var visitor = new ContextDomainObjectVisitor(aggregateRootMirror){
 
             @Override
             public void visitEntityReference(EntityReferenceMirror entityReferenceMirror) {
@@ -811,7 +811,7 @@ public class DomainRelationshipMapper {
             .stream()
             .filter(aggregateRootMirror -> {
                 final var contained = new AtomicBoolean(false);
-                var visitor = new ContextDomainTypeVisitor(aggregateRootMirror){
+                var visitor = new ContextDomainObjectVisitor(aggregateRootMirror){
                     @Override
                     public void visitValueReference(ValueReferenceMirror valueReferenceMirror) {
                         if(idReferenceMirror.equals(valueReferenceMirror)){

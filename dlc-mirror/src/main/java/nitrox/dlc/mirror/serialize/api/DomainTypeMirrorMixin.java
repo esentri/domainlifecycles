@@ -38,7 +38,7 @@ import nitrox.dlc.mirror.model.EntityModel;
 import nitrox.dlc.mirror.model.EnumModel;
 import nitrox.dlc.mirror.model.IdentityModel;
 import nitrox.dlc.mirror.model.OutboundServiceModel;
-import nitrox.dlc.mirror.model.ReadModelProviderModel;
+import nitrox.dlc.mirror.model.QueryClientModel;
 import nitrox.dlc.mirror.model.RepositoryModel;
 import nitrox.dlc.mirror.model.ValueObjectModel;
 
@@ -59,7 +59,7 @@ import nitrox.dlc.mirror.model.ValueObjectModel;
     @JsonSubTypes.Type(value = EnumModel.class),
     @JsonSubTypes.Type(value = DomainCommandModel.class),
     @JsonSubTypes.Type(value = ApplicationServiceModel.class),
-    @JsonSubTypes.Type(value = ReadModelProviderModel.class),
+    @JsonSubTypes.Type(value = QueryClientModel.class),
     @JsonSubTypes.Type(value = OutboundServiceModel.class),
 })
 public interface DomainTypeMirrorMixin {}

@@ -58,7 +58,7 @@ public interface RepositoryMirror extends DomainTypeMirror, DomainCommandProcess
     List<OutboundServiceMirror> getReferencedOutboundServices();
 
     /**
-     * Returns the list of referenced {@link ReadModelProviderMirror} instances.
+     * Returns the list of referenced {@link QueryClientMirror} instances.
      */
-    List<ReadModelProviderMirror> getReferencedReadModelProviders();
+    List<QueryClientMirror> getReferencedQueryClients();
 }

@@ -38,7 +38,7 @@ import nitrox.dlc.mirror.api.Domain;
 import nitrox.dlc.mirror.api.EntityReferenceMirror;
 import nitrox.dlc.mirror.api.FieldMirror;
 import nitrox.dlc.mirror.api.ValueReferenceMirror;
-import nitrox.dlc.mirror.visitor.ContextDomainTypeVisitor;
+import nitrox.dlc.mirror.visitor.ContextDomainObjectVisitor;
 import nitrox.dlc.persistence.exception.DLCPersistenceException;
 import nitrox.dlc.persistence.fetcher.simple.FetchedRecord;
 import nitrox.dlc.persistence.mapping.RecordMapper;
@@ -108,7 +108,7 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
         }
 
         var correctPropertyCoordinates = new AtomicBoolean(false);
-        var visitor = new ContextDomainTypeVisitor(containingEntityClass.getName()){
+        var visitor = new ContextDomainObjectVisitor(containingEntityClass.getName()){
 
             @Override
             public void visitAggregateRootReference(AggregateRootReferenceMirror aggregateRootReferenceMirror) {

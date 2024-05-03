@@ -120,11 +120,11 @@ public class DomainMapper {
     }
 
     /**
-     * Returns all ReadModelProviders connected to the Bounded Context as {@link NomnomlClass}.
+     * Returns all QueryClients connected to the Bounded Context as {@link NomnomlClass}.
      */
-    public List<NomnomlClass> getReadModelProviders(){
-        return filteredDomainClasses.getReadModelProviders().stream()
-            .map(domainClassMapper::mapReadModelProviderClass)
+    public List<NomnomlClass> getQueryClients(){
+        return filteredDomainClasses.getQueryClients().stream()
+            .map(domainClassMapper::mapQueryClientClass)
             .toList();
     }
 

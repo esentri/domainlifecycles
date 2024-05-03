@@ -29,20 +29,20 @@ package nitrox.dlc.mirror;
 
 import nitrox.dlc.domain.types.Entity;
 import nitrox.dlc.domain.types.Identity;
+import nitrox.dlc.domain.types.QueryClient;
 import nitrox.dlc.domain.types.ReadModel;
-import nitrox.dlc.domain.types.ReadModelProvider;
 import nitrox.dlc.mirror.reflect.GenericInterfaceTypeResolver;
 import org.junit.jupiter.api.Test;
 import tests.mirror.BaseEntityWithHidden;
-import tests.mirror.DirectReadModelProvider;
-import tests.mirror.DirectReadModelProviderBounded;
+import tests.mirror.DirectQueryClient;
+import tests.mirror.DirectQueryClientBounded;
 import tests.mirror.MyReadModel;
-import tests.mirror.ReadModelProviderImpl;
-import tests.mirror.ReadModelProviderImplSub;
-import tests.mirror.ReadModelProviderInterface;
-import tests.mirror.ReadModelProviderInterfaceBounded;
-import tests.mirror.ReadModelProviderSubGeneric;
-import tests.mirror.ReadModelProviderSubSub;
+import tests.mirror.QueryClientImpl;
+import tests.mirror.QueryClientImplSub;
+import tests.mirror.QueryClientSubGeneric;
+import tests.mirror.QueryClientInterface;
+import tests.mirror.QueryClientInterfaceBounded;
+import tests.mirror.QueryClientSubSub;
 import tests.mirror.SubEntityHiding;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -71,58 +71,58 @@ public class GenericInterfaceTypeResolverTests {
     }
 
     @Test
-    public void testReadModelProviderInterface(){
-        var resolver = new GenericInterfaceTypeResolver(ReadModelProviderInterface.class);
-        var resolved = resolver.resolveFor(ReadModelProvider.class, 0);
+    public void testQueryClientInterfaceInterface(){
+        var resolver = new GenericInterfaceTypeResolver(QueryClientInterface.class);
+        var resolved = resolver.resolveFor(QueryClient.class, 0);
         assertThat(resolved).isEqualTo(MyReadModel.class);
     }
 
     @Test
-    public void testReadModelProviderImpl(){
-        var resolver = new GenericInterfaceTypeResolver(ReadModelProviderImpl.class);
-        var resolved = resolver.resolveFor(ReadModelProvider.class, 0);
+    public void testQueryClientInterfaceImpl(){
+        var resolver = new GenericInterfaceTypeResolver(QueryClientImpl.class);
+        var resolved = resolver.resolveFor(QueryClient.class, 0);
         assertThat(resolved).isEqualTo(MyReadModel.class);
     }
 
     @Test
-    public void testReadModelProviderImplSub(){
-        var resolver = new GenericInterfaceTypeResolver(ReadModelProviderImplSub.class);
-        var resolved = resolver.resolveFor(ReadModelProvider.class, 0);
+    public void testQueryClientInterfaceImplSub(){
+        var resolver = new GenericInterfaceTypeResolver(QueryClientImplSub.class);
+        var resolved = resolver.resolveFor(QueryClient.class, 0);
         assertThat(resolved).isEqualTo(MyReadModel.class);
     }
 
     @Test
-    public void testReadModelProviderInterfaceBounded(){
-        var resolver = new GenericInterfaceTypeResolver(ReadModelProviderInterfaceBounded.class);
-        var resolved = resolver.resolveFor(ReadModelProvider.class, 0);
+    public void testQueryClientInterfaceInterfaceBounded(){
+        var resolver = new GenericInterfaceTypeResolver(QueryClientInterfaceBounded.class);
+        var resolved = resolver.resolveFor(QueryClient.class, 0);
         assertThat(resolved).isEqualTo(MyReadModel.class);
     }
 
     @Test
-    public void testDirectReadModelProvider(){
-        var resolver = new GenericInterfaceTypeResolver(DirectReadModelProvider.class);
-        var resolved = resolver.resolveFor(ReadModelProvider.class, 0);
+    public void testDirectQueryClient(){
+        var resolver = new GenericInterfaceTypeResolver(DirectQueryClient.class);
+        var resolved = resolver.resolveFor(QueryClient.class, 0);
         assertThat(resolved).isEqualTo(MyReadModel.class);
     }
 
     @Test
-    public void testDirectReadModelProviderBounded(){
-        var resolver = new GenericInterfaceTypeResolver(DirectReadModelProviderBounded.class);
-        var resolved = resolver.resolveFor(ReadModelProvider.class, 0);
+    public void testDirectQueryClientBounded(){
+        var resolver = new GenericInterfaceTypeResolver(DirectQueryClientBounded.class);
+        var resolved = resolver.resolveFor(QueryClient.class, 0);
         assertThat(resolved).isEqualTo(MyReadModel.class);
     }
 
     @Test
-    public void testReadModelProviderSubSub(){
-        var resolver = new GenericInterfaceTypeResolver(ReadModelProviderSubSub.class);
-        var resolved = resolver.resolveFor(ReadModelProvider.class, 0);
+    public void testQueryClientSubSub(){
+        var resolver = new GenericInterfaceTypeResolver(QueryClientSubSub.class);
+        var resolved = resolver.resolveFor(QueryClient.class, 0);
         assertThat(resolved).isEqualTo(MyReadModel.class);
     }
 
     @Test
-    public void testReadModelProviderSubGeneric(){
-        var resolver = new GenericInterfaceTypeResolver(ReadModelProviderSubGeneric.class);
-        var resolved = resolver.resolveFor(ReadModelProvider.class, 0);
+    public void testQueryClientSubGeneric(){
+        var resolver = new GenericInterfaceTypeResolver(QueryClientSubGeneric.class);
+        var resolved = resolver.resolveFor(QueryClient.class, 0);
         assertThat(resolved).isEqualTo(ReadModel.class);
     }
 

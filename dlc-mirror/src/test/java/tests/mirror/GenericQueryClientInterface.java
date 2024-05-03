@@ -27,5 +27,8 @@
 
 package tests.mirror;
 
-public class ReadModelProviderSubSub extends ReadModelProviderSubGeneric<String, MyReadModel>{
+import nitrox.dlc.domain.types.ReadModel;
+import nitrox.dlc.domain.types.QueryClient;
+
+public interface GenericQueryClientInterface<T extends ReadModel> extends QueryClient<T> {
 }

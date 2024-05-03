@@ -37,7 +37,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Holds the context information of a {@link ContextDomainTypeVisitor}.
+ * Holds the context information of a {@link ContextDomainObjectVisitor}.
  * Enables to query the current path of a field being visited, or to query the currently visited domain type.
  *
  * @author Mario Herb

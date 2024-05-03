@@ -41,7 +41,7 @@ import nitrox.dlc.mirror.api.EntityReferenceMirror;
 import nitrox.dlc.mirror.api.FieldMirror;
 import nitrox.dlc.mirror.api.MethodMirror;
 import nitrox.dlc.mirror.api.OutboundServiceMirror;
-import nitrox.dlc.mirror.api.ReadModelProviderMirror;
+import nitrox.dlc.mirror.api.QueryClientMirror;
 import nitrox.dlc.mirror.api.RepositoryMirror;
 import nitrox.dlc.mirror.api.ValueReferenceMirror;
 
@@ -260,14 +260,14 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
      */
     @JsonIgnore
     @Override
-    public List<ReadModelProviderMirror> getListeningReadModelProviders() {
+    public List<QueryClientMirror> getListeningQueryClients() {
         return Domain
             .getInitializedDomain()
             .allTypeMirrors()
             .values()
             .stream()
-            .filter(m -> m instanceof ReadModelProviderMirror)
-            .map(a -> (ReadModelProviderMirror)a)
+            .filter(m -> m instanceof QueryClientMirror)
+            .map(a -> (QueryClientMirror)a)
             .filter(a -> a.listensTo(this))
             .collect(Collectors.toList());
     }

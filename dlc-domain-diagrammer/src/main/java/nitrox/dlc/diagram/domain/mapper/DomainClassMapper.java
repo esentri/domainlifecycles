@@ -52,11 +52,11 @@ import nitrox.dlc.mirror.api.MethodMirror;
 import nitrox.dlc.mirror.api.OutboundServiceMirror;
 import nitrox.dlc.mirror.api.ParamMirror;
 import nitrox.dlc.mirror.api.ReadModelMirror;
-import nitrox.dlc.mirror.api.ReadModelProviderMirror;
+import nitrox.dlc.mirror.api.QueryClientMirror;
 import nitrox.dlc.mirror.api.RepositoryMirror;
 import nitrox.dlc.mirror.api.ValueObjectMirror;
 import nitrox.dlc.mirror.model.AssertionType;
-import nitrox.dlc.mirror.visitor.ContextDomainTypeVisitor;
+import nitrox.dlc.mirror.visitor.ContextDomainObjectVisitor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -144,12 +144,12 @@ public class DomainClassMapper {
     }
 
     /**
-     * Maps ReadModelProvider structure to a {@link NomnomlClass} representation.
+     * Maps QueryClient structure to a {@link NomnomlClass} representation.
      */
-    public NomnomlClass mapReadModelProviderClass(ReadModelProviderMirror readModelProviderMirror){
-        return mapToNomnomlClass(readModelProviderMirror,
-            domainDiagramConfig.isShowReadModelProviderFields() && domainDiagramConfig.isShowFields(),
-            domainDiagramConfig.isShowReadModelProviderMethods()&& domainDiagramConfig.isShowMethods()
+    public NomnomlClass mapQueryClientClass(QueryClientMirror queryClientMirror){
+        return mapToNomnomlClass(queryClientMirror,
+            domainDiagramConfig.isShowQueryClientFields() && domainDiagramConfig.isShowFields(),
+            domainDiagramConfig.isShowQueryClientMethods()&& domainDiagramConfig.isShowMethods()
         );
     }
 
@@ -169,7 +169,7 @@ public class DomainClassMapper {
     public List<NomnomlClass> mapAllAggregateClasses(AggregateRootMirror aggregateRootMirror){
         var aggregateClasses = new ArrayList<NomnomlClass>();
 
-        var visitor = new ContextDomainTypeVisitor(aggregateRootMirror){
+        var visitor = new ContextDomainObjectVisitor(aggregateRootMirror){
             @Override
             public void visitEnterAnyDomainType(DomainTypeMirror domainTypeMirror) {
                 if(List.of(

@@ -38,7 +38,7 @@ import nitrox.dlc.mirror.api.Domain;
 import nitrox.dlc.mirror.api.DomainEventMirror;
 import nitrox.dlc.mirror.api.DomainServiceMirror;
 import nitrox.dlc.mirror.api.OutboundServiceMirror;
-import nitrox.dlc.mirror.api.ReadModelProviderMirror;
+import nitrox.dlc.mirror.api.QueryClientMirror;
 import nitrox.dlc.mirror.api.RepositoryMirror;
 import nitrox.dlc.services.api.ServiceProvider;
 import org.slf4j.Logger;
@@ -111,9 +111,9 @@ public class MirrorBasedExecutionContextDetector implements ExecutionContextDete
             );
 
             detectedContexts.addAll(
-                dem.getListeningReadModelProviders()
+                dem.getListeningQueryClients()
                     .stream()
-                    .flatMap(rmp -> detectReadModelProviderExecutionContexts(rmp, dem, domainEvent).stream())
+                    .flatMap(rmp -> detectQueryClientExecutionContexts(rmp, dem, domainEvent).stream())
                     .toList()
             );
         }
@@ -170,17 +170,17 @@ public class MirrorBasedExecutionContextDetector implements ExecutionContextDete
 
     }
 
-    private List<ServiceExecutionContext> detectReadModelProviderExecutionContexts(ReadModelProviderMirror rmpm, DomainEventMirror dem, DomainEvent de){
-        log.debug("Detecting ExecutionContext for DomainEvent {} on ReadModelProvider {}", de, rmpm.getTypeName());
-        var rmp = serviceProvider.getReadModelProviderInstance(rmpm.getTypeName());
+    private List<ServiceExecutionContext> detectQueryClientExecutionContexts(QueryClientMirror qcm, DomainEventMirror dem, DomainEvent de){
+        log.debug("Detecting ExecutionContext for DomainEvent {} on QueryClient {}", de, qcm.getTypeName());
+        var rmp = serviceProvider.getQueryClientInstance(qcm.getTypeName());
         if(rmp != null) {
-            return rmpm.getMethods()
+            return qcm.getMethods()
                 .stream()
                 .filter(m -> m.listensTo(dem))
                 .map(m -> new ServiceExecutionContext(rmp, m.getName(), de))
                 .toList();
         }else{
-            var msg = String.format("No ReadModelProvider instance found for %s", rmpm.getTypeName());
+            var msg = String.format("No QueryClient instance found for %s", qcm.getTypeName());
             log.error(msg);
             throw DLCEventsException.fail(msg);
         }

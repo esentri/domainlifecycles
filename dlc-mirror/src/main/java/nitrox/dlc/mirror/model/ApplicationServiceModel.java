@@ -39,7 +39,7 @@ import nitrox.dlc.mirror.api.DomainType;
 import nitrox.dlc.mirror.api.FieldMirror;
 import nitrox.dlc.mirror.api.MethodMirror;
 import nitrox.dlc.mirror.api.OutboundServiceMirror;
-import nitrox.dlc.mirror.api.ReadModelProviderMirror;
+import nitrox.dlc.mirror.api.QueryClientMirror;
 import nitrox.dlc.mirror.api.RepositoryMirror;
 import nitrox.dlc.mirror.exception.MirrorException;
 
@@ -61,7 +61,7 @@ public class ApplicationServiceModel extends DomainTypeModel implements Applicat
     @JsonProperty
     private final List<String> referencedOutboundServiceTypeNames;
     @JsonProperty
-    private final List<String> referencedReadModelProviderTypeNames;
+    private final List<String> referencedQueryClientTypeNames;
     @JsonProperty
     private final List<String> applicationServiceInterfaceTypeNames;
 
@@ -73,7 +73,7 @@ public class ApplicationServiceModel extends DomainTypeModel implements Applicat
                                    @JsonProperty("referencedRepositoryTypeNames") List<String> referencedRepositoryTypeNames,
                                    @JsonProperty("referencedDomainServiceTypeNames") List<String> referencedDomainServiceTypeNames,
                                    @JsonProperty("referencedOutboundServiceTypeNames") List<String> referencedOutboundServiceTypeNames,
-                                   @JsonProperty("referencedReadModelProviderTypeNames") List<String> referencedReadModelProviderTypeNames,
+                                   @JsonProperty("referencedQueryClientTypeNames") List<String> referencedQueryClientTypeNames,
                                    @JsonProperty("applicationServiceInterfaceTypeNames") List<String> applicationServiceInterfaceTypeNames,
                                    @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
                                    @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
@@ -83,7 +83,7 @@ public class ApplicationServiceModel extends DomainTypeModel implements Applicat
         this.referencedRepositoryTypeNames = Collections.unmodifiableList(referencedRepositoryTypeNames);
         this.referencedDomainServiceTypeNames = Collections.unmodifiableList(referencedDomainServiceTypeNames);
         this.referencedOutboundServiceTypeNames = Collections.unmodifiableList(referencedOutboundServiceTypeNames);
-        this.referencedReadModelProviderTypeNames = Collections.unmodifiableList(referencedReadModelProviderTypeNames);
+        this.referencedQueryClientTypeNames = Collections.unmodifiableList(referencedQueryClientTypeNames);
         this.applicationServiceInterfaceTypeNames = Collections.unmodifiableList(applicationServiceInterfaceTypeNames);
     }
 
@@ -128,10 +128,10 @@ public class ApplicationServiceModel extends DomainTypeModel implements Applicat
      */
     @JsonIgnore
     @Override
-    public List<ReadModelProviderMirror> getReferencedReadModelProviders() {
-        return referencedReadModelProviderTypeNames
+    public List<QueryClientMirror> getReferencedQueryClients() {
+        return referencedQueryClientTypeNames
             .stream()
-            .map(n -> (ReadModelProviderMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("ReadModelProviderMirror not found for '%s'", n)))
+            .map(n -> (QueryClientMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("QueryClientMirror not found for '%s'", n)))
             .collect(Collectors.toList());
     }
 
@@ -189,7 +189,7 @@ public class ApplicationServiceModel extends DomainTypeModel implements Applicat
             "referencedRepositoryTypeNames=" + referencedRepositoryTypeNames +
             "referencedDomainServiceTypeNames=" + referencedDomainServiceTypeNames +
             "referencedOutboundServiceTypeNames=" + referencedOutboundServiceTypeNames +
-            "referencedReadModelProviderTypeNames=" + referencedReadModelProviderTypeNames +
+            "referencedQueryClientTypeNames=" + referencedQueryClientTypeNames +
             ", applicationServiceInterfaceTypeNames=" + applicationServiceInterfaceTypeNames +
             "} " + super.toString();
     }
@@ -206,7 +206,7 @@ public class ApplicationServiceModel extends DomainTypeModel implements Applicat
         return referencedRepositoryTypeNames.equals(that.referencedRepositoryTypeNames)
             && referencedDomainServiceTypeNames.equals(that.referencedDomainServiceTypeNames)
             && referencedOutboundServiceTypeNames.equals(that.referencedOutboundServiceTypeNames)
-            && referencedReadModelProviderTypeNames.equals(that.referencedReadModelProviderTypeNames)
+            && referencedQueryClientTypeNames.equals(that.referencedQueryClientTypeNames)
             && applicationServiceInterfaceTypeNames.equals(that.applicationServiceInterfaceTypeNames);
     }
 
@@ -220,7 +220,7 @@ public class ApplicationServiceModel extends DomainTypeModel implements Applicat
             referencedRepositoryTypeNames,
             referencedDomainServiceTypeNames,
             referencedOutboundServiceTypeNames,
-            referencedReadModelProviderTypeNames,
+            referencedQueryClientTypeNames,
             applicationServiceInterfaceTypeNames);
     }
 }

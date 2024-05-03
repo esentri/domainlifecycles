@@ -27,7 +27,7 @@
 
 package tests.mirror;
 
-import nitrox.dlc.domain.types.ReadModelProvider;
+import nitrox.dlc.domain.types.QueryClient;
 
-public class DirectReadModelProviderBounded<R extends MyReadModel> implements ReadModelProvider<R> {
+public interface QueryClientInterface extends QueryClient<MyReadModel> {
 }

@@ -38,7 +38,7 @@ import sampleshop.core.domain.customer.Customer;
 import sampleshop.core.domain.customer.NewCustomerAdded;
 import sampleshop.core.inport.CustomerDriver;
 import sampleshop.core.outport.CustomerRepository;
-import sampleshop.core.outport.OrdersByCustomerProvider;
+import sampleshop.core.outport.OrdersByCustomerQueryClient;
 import sampleshop.core.outport.OrdersByCustomer;
 
 import java.util.List;
@@ -56,12 +56,12 @@ public class CustomerService implements CustomerDriver {
 
     private final CustomerRepository repository;
 
-    private final OrdersByCustomerProvider ordersByCustomerRepository;
+    private final OrdersByCustomerQueryClient ordersByCustomerQueries;
 
 
-    public CustomerService(CustomerRepository repository, OrdersByCustomerProvider ordersByCustomerRepository) {
+    public CustomerService(CustomerRepository repository, OrdersByCustomerQueryClient ordersByCustomerQueries) {
         this.repository = repository;
-        this.ordersByCustomerRepository = ordersByCustomerRepository;
+        this.ordersByCustomerQueries = ordersByCustomerQueries;
     }
 
     /**
@@ -119,7 +119,7 @@ public class CustomerService implements CustomerDriver {
      */
     @Override
     public List<OrdersByCustomer> reportOrders(String customerFilter, int offset, int limit){
-        return ordersByCustomerRepository.listAll(customerFilter, offset, limit);
+        return ordersByCustomerQueries.listAll(customerFilter, offset, limit);
     }
 
 }

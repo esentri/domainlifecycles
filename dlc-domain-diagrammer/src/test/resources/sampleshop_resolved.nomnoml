@@ -10,7 +10,7 @@
 #.DomainService:fill=#E0E0E0 bold
 #.Repository:fill=#C0C0C0 bold
 #.OutboundService:fill=#C0C0C0 bold
-#.ReadModelProvider:fill=#C0C0C0 bold
+#.QueryClient:fill=#C0C0C0 bold
 #.ReadModel:fill=#FFCCE5 bold
 #font:Courier
 #direction:down
@@ -184,8 +184,8 @@ o +- customerName:String
 o +- pendingOrders:int
 o +- shippedOrders:int
 ]
-// !!! sampleshop.outbound.JooqOrdersByCustomerProvider !!!
-[<ReadModelProvider> OrdersByCustomerProvider <<ReadModelProvider>> ]
+// !!! sampleshop.outbound.JooqOrdersByCustomerQueryClient !!!
+[<QueryClient> OrdersByCustomerQueryClient <<QueryClient>> ]
 // !!! sampleshop.outbound.EmailNotifierImpl !!!
 [<OutboundService> EmailNotifierService <<OutboundService>> ]
 [<DomainCommand>ChangeCustomerAddress <<DomainCommand>>]  --> [<ApplicationService>CustomerDriver <<Driver>>]
@@ -208,7 +208,7 @@ o +- shippedOrders:int
 [<ApplicationService>OrderDriver <<Driver>>]  -- [<Repository>OrderRepository <<Repository>>]
 [<ApplicationService>ProductDriver <<Driver>>]  -- [<Repository>ProductRepository <<Repository>>]
 [<ApplicationService>CustomerDriver <<Driver>>]  -- [<Repository>CustomerRepository <<Repository>>]
-[<ApplicationService>CustomerDriver <<Driver>>]  -- [<ReadModelProvider>OrdersByCustomerProvider <<ReadModelProvider>>]
+[<ApplicationService>CustomerDriver <<Driver>>]  -- [<QueryClient>OrdersByCustomerQueryClient <<QueryClient>>]
 [<DomainService>CustomerNotificationService <<DomainService>>]  -- [<Repository>CustomerRepository <<Repository>>]
 [<DomainService>OrderPlacementService <<DomainService>>]  -- [<Repository>OrderRepository <<Repository>>]
 [<DomainService>OrderPlacementService <<DomainService>>]  -- [<Repository>ProductRepository <<Repository>>]
@@ -216,4 +216,4 @@ o +- shippedOrders:int
 [<Repository>CustomerRepository <<Repository>>]  -- [<AggregateFrame> Customer <<Aggregate>>]
 [<Repository>ProductRepository <<Repository>>]  -- [<AggregateFrame> Product <<Aggregate>>]
 [<Repository>OrderRepository <<Repository>>]  -- [<AggregateFrame> Order <<Aggregate>>]
-[<ReadModelProvider>OrdersByCustomerProvider <<ReadModelProvider>>]  -- [<ReadModel>OrdersByCustomer <<ReadModel>>]
+[<QueryClient>OrdersByCustomerQueryClient <<QueryClient>>]  -- [<ReadModel>OrdersByCustomer <<ReadModel>>]

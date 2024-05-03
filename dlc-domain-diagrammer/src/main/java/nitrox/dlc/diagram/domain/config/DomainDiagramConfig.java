@@ -111,10 +111,10 @@ public class DomainDiagramConfig implements DiagramConfig {
     @Builder.Default
     private String readModelStyle = "fill=#FFCCE5 bold";
     /**
-     * Style declaration for ReadModelProviders  (see Nomnoml style options)
+     * Style declaration for QueryClients  (see Nomnoml style options)
      */
     @Builder.Default
-    private String readModelProviderStyle = "fill=#C0C0C0 bold";
+    private String queryClientStyle = "fill=#C0C0C0 bold";
     /**
      * Style declaration for OutboundServices  (see Nomnoml style options)
      */
@@ -270,20 +270,20 @@ public class DomainDiagramConfig implements DiagramConfig {
     @Builder.Default
     private boolean showReadModelMethods = false;
     /**
-     * If true, ReadModelProvider classes are included
+     * If true, QueryClient classes are included
      */
     @Builder.Default
-    private boolean showReadModelProviders = true;
+    private boolean showQueryClients = true;
     /**
-     * If true, fields of ReadModelProviders are included
+     * If true, fields of QueryClients are included
      */
     @Builder.Default
-    private boolean showReadModelProviderFields = false;
+    private boolean showQueryClientFields = false;
     /**
-     * If true, methods of ReadModelProviders are included
+     * If true, methods of QueryClients are included
      */
     @Builder.Default
-    private boolean showReadModelProviderMethods = false;
+    private boolean showQueryClientMethods = false;
     /**
      * If true, OutboundService classes are included
      */

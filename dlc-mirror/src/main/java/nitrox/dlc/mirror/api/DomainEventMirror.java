@@ -28,6 +28,8 @@
 package nitrox.dlc.mirror.api;
 
 
+import nitrox.dlc.domain.types.QueryClient;
+
 import java.util.List;
 /**
  * A DomainCommandMirror mirrors a {@link nitrox.dlc.domain.types.DomainEvent}.
@@ -97,9 +99,9 @@ public interface DomainEventMirror extends DomainTypeMirror{
     List<OutboundServiceMirror> getListeningOutboundServices();
 
     /**
-     * Returns a list mirrors for the {@link nitrox.dlc.domain.types.ReadModelProvider} instances listening to the mirrored event.
-     * Therefor the ReadModelProvider must have a method being annotated with {@link nitrox.dlc.domain.types.ListensTo}.
+     * Returns a list mirrors for the {@link QueryClient} instances listening to the mirrored event.
+     * Therefor the QueryClient must have a method being annotated with {@link nitrox.dlc.domain.types.ListensTo}.
      */
-    List<ReadModelProviderMirror> getListeningReadModelProviders();
+    List<QueryClientMirror> getListeningQueryClients();
 
 }

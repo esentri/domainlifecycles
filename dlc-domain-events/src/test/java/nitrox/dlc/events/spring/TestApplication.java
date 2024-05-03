@@ -30,10 +30,10 @@ package nitrox.dlc.events.spring;
 import nitrox.dlc.domain.types.ApplicationService;
 import nitrox.dlc.domain.types.DomainService;
 import nitrox.dlc.domain.types.OutboundService;
-import nitrox.dlc.domain.types.ReadModelProvider;
+import nitrox.dlc.domain.types.QueryClient;
 import nitrox.dlc.domain.types.Repository;
 import nitrox.dlc.events.ADomainService;
-import nitrox.dlc.events.AReadModelProvider;
+import nitrox.dlc.events.AQueryClient;
 import nitrox.dlc.events.ARepository;
 import nitrox.dlc.events.AnApplicationService;
 import nitrox.dlc.events.AnOutboundService;
@@ -85,8 +85,8 @@ public class TestApplication {
     }
 
     @Bean
-    public AReadModelProvider aReadModelProvider(){
-        return new AReadModelProvider();
+    public AQueryClient aQueryClient(){
+        return new AQueryClient();
     }
 
     @Bean
@@ -103,14 +103,14 @@ public class TestApplication {
         List<Repository<?,?>> repositories,
         List<ApplicationService> applicationServices,
         List<DomainService> domainServices,
-        List<ReadModelProvider<?>> readModelProviders,
+        List<QueryClient<?>> queryClients,
         List<OutboundService> outboundServices
     ){
         var services = new Services();
         repositories.forEach(services::registerRepositoryInstance);
         applicationServices.forEach(services::registerApplicationServiceInstance);
         domainServices.forEach(services::registerDomainServiceInstance);
-        readModelProviders.forEach(services::registerReadModelProviderInstance);
+        queryClients.forEach(services::registerQueryClientInstance);
         outboundServices.forEach(services::registerOutboundServiceInstance);
         return services;
     }

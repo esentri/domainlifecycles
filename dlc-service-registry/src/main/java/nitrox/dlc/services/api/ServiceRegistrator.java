@@ -30,7 +30,7 @@ package nitrox.dlc.services.api;
 import nitrox.dlc.domain.types.ApplicationService;
 import nitrox.dlc.domain.types.DomainService;
 import nitrox.dlc.domain.types.OutboundService;
-import nitrox.dlc.domain.types.ReadModelProvider;
+import nitrox.dlc.domain.types.QueryClient;
 import nitrox.dlc.domain.types.Repository;
 
 /**
@@ -63,11 +63,11 @@ public interface ServiceRegistrator {
     void registerRepositoryInstance(Repository<?, ?> repository);
 
     /**
-     * Registers an instance of {@link ReadModelProvider} with the {@link ServiceRegistrator}.
+     * Registers an instance of {@link QueryClient} with the {@link ServiceRegistrator}.
      *
-     * @param readModelProvider The {@link ReadModelProvider} instance to register.
+     * @param queryClient The {@link QueryClient} instance to register.
      */
-    void registerReadModelProviderInstance(ReadModelProvider<?> readModelProvider);
+    void registerQueryClientInstance(QueryClient<?> queryClient);
 
     /**
      * Registers an instance of {@link OutboundService} with the {@link ServiceRegistrator}.
