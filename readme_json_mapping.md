@@ -195,7 +195,7 @@ Example:
 The Entity `DeliveryAddress` contains the Identity `DeliveryAddressId`:
 
 ```Java
-public class DeliveryAddress extends Entity.Base<DeliveryAddressId> {
+public class DeliveryAddress extends EntityBase<DeliveryAddressId> {
     ...
 }
 ```

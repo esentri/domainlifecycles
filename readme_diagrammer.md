@@ -53,7 +53,7 @@ class NomnomlDomainDiagramGeneratorTest {
     - You can also save images from there
     - On Nomnoml projects page, you can find information on how to generate images directly or to host your own Nomnoml drawer instance via Docker.
 
-![What a pity you cannot see it](./dlc-documentation/resources/images/nomnoml.png "Nomnoml based DDD class diagram")
+![What a pity you cannot see it](./dlc-documentation/resources/images/sample_diagram.png "Nomnoml based DDD class diagram")
 
 ## Rendering from commandline to image
 
