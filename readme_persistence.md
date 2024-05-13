@@ -39,6 +39,7 @@ Here is an overview of more details about NitroX DLC Persistence and some additi
     - [jOOQ build configuration for NitroX DLC](#jooq-build-configuration)
         - [Maven](#maven-setup")
         - [Gradle](#gradle-setup)
+        - [Flyway](#flyway-setup)
     - [jOOQ runtime configuration with NitroX DLC](#jooq-runtime-configuration)
 - [NitroX DLC Persistence configuration](#persistence-configuration)
     - [Minimal persistence configuration](#minimal-persistence-configuration)
@@ -50,8 +51,8 @@ Here is an overview of more details about NitroX DLC Persistence and some additi
     - [Object relational mapping](#or-mapping)
         - [AutoMapping](#automapping)
         - [RecordMapper](#recordmapper)
-        - [EntityValueObjectRecordTypeConfiguration](#entityvalueobjectrecordtypeconfiguration)
         - [record mapped ValueObjects](#record-mapped-valueobjects)
+        - [EntityValueObjectRecordTypeConfiguration](#entityvalueobjectrecordtypeconfiguration)
         - [TypeConverter](#typeconverter)
         - [Working with inheritance](#inheritance)
             - [Inheritance of Entities or AggregateRoots](#inheritance-entities)
@@ -171,6 +172,18 @@ The maven example can found [here](https://bitbucket.org/esentri/nitrox-dlc-demo
 ##### Gradle
 
 A similar example for Gradle can be found in our [sample project](./dlc-sample).
+
+<a name="flyway-setup"></a>
+#### Flyway
+
+To use be able to use NitroX DLC Persistence currently only jOOQ is available as NitroX persistence provider.
+Therefore, it is necessary to generate jOOQ classes representing the database tables and other database objects.
+
+The build setup of jOOQ in connection with Flyway is our recommended setup. As it's a bit tricky, you can refer to the sample project linked below,
+to see the setup working with Maven as well as with Gradle.
+
+The use of [Flyway](https://flywaydb.org/) is not necessary for NitroX DLC, but we nonetheless recommend the use of
+a tool for database structure version control.
 
 <a name="jooq-runtime-configuration"></a>
 #### jOOQ runtime configuration with NitroX DLC
@@ -718,6 +731,38 @@ Custom RecordMappers must be made known to Nitrox DLC Persistence by configurati
         .make();
  ```
 
+
+
+<a name="record-mapped-valueobjects"></a>
+##### record mapped ValueObjects
+
+Each ValueObject, which is in 1:n relation to its containing Entity
+is relationally mapped in an own table. These ValueObjects are called
+called 'record mapped' ValueObjects. But NitroX DLC persistence provides mechanisms to define 
+explicit ValueObject-to-database-table mappings (see above "EntityValueObjectRecordTypeConfiguration").
+'Record mapped' ValueObjects must also fulfill certain requirements in their
+relational structures (database definition):
+
+- They must have a technical ID (as `PRIMARY KEY`) which is not represented on the
+  Java side
+- A `SEQUENCE` is required for the assignment of the ID Values, which conforms to the
+  naming convention '&lt;Name of the ValueObject table&gt;_SEQ'.
+- A `FOREIGN KEY` definition must be created, which refers to the ID of the
+  parent `Entity.
+
+The database-side requirements therefore are exemplary:
+
+```SQL
+CREATE TABLE test_domain.action_code (
+                                          id NUMBER(18) PRIMARY KEY,
+                                          container_id NUMBER(18) NOT NULL,
+                                          value VARCHAR2(10) NOT NULL,
+                                          FOREIGN KEY (container_id) REFERENCES test_domain.order(id)
+);
+
+CREATE SEQUENCE test_domain.action_code_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
+```
+
 <a name="entityvalueobjectrecordtypeconfiguration"></a>
 ##### EntityValueObjectRecordTypeConfiguration
 
@@ -748,36 +793,6 @@ A corresponding configuration must be specified in the persistence configuration
         ...
         .make();
         
-```
-
-<a name="record-mapped-valueobjects"></a>
-##### record mapped ValueObjects
-
-Each ValueObject, which is in 1:n relation to its containing Entity
-is relationally mapped in an own table. These ValueObjects are called
-called 'record mapped' ValueObjects. But NitroX DLC persistence provides mechanisms to define 
-explicit ValueObject-to-database-table mappings (see above "EntityValueObjectRecordTypeConfiguration").
-'Record mapped' ValueObjects must also fulfill certain requirements in their
-relational structures (database definition):
-
-- They must have a technical ID (as `PRIMARY KEY`) which is not represented on the
-  Java side
-- A `SEQUENCE` is required for the assignment of the ID Values, which conforms to the
-  naming convention '&lt;Name of the ValueObject table&gt;_SEQ'.
-- A `FOREIGN KEY` definition must be created, which refers to the ID of the
-  parent `Entity.
-
-The database-side requirements therefore are exemplary:
-
-```SQL
-CREATE TABLE test_domain.action_code (
-                                          id NUMBER(18) PRIMARY KEY,
-                                          container_id NUMBER(18) NOT NULL,
-                                          value VARCHAR2(10) NOT NULL,
-                                          FOREIGN KEY (container_id) REFERENCES test_domain.order(id)
-);
-
-CREATE SEQUENCE test_domain.action_code_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
 ```
 
 <a name="typeconverter"></a>

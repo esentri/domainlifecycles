@@ -163,17 +163,6 @@ Newer or even older versions which are not tested might still work! Just try it.
 NitroX DLC logging is based on SLF4J.
 Remember to provide a SLF4J-Provider in your classpath.
 
-### Build management
-
-To use be able to use NitroX DLC Persistence currently only jOOQ is available as NitroX persistence provider.
-Therefore, it is necessary to generate jOOQ classes representing the database tables and other database objects.
-
-The build setup of jOOQ in connection with Flyway is our recommended setup. As it's a bit tricky, you can refer to the sample project linked below,
-to see the setup working with Maven as well as with Gradle.
-
-The use of [Flyway](https://flywaydb.org/) is not necessary for NitroX DLC, but we nonetheless recommend the use of
-a tool for database structure version control.
-
 ### Sample projects
 
 A Gradle based sample project that demonstrates all NitroX features can be found [here](./dlc-sample)

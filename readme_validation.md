@@ -25,21 +25,11 @@ Besides invariants, it makes sense to check certain state transitions for their 
 Pre-conditions are checked before a change of state. Post-conditions after the execution of a 
 state change. They ensure the correctness of the previously executed operation.
 
-### Basis - the interface 'Validatable`
-
-The interface `nitrox.dlc.domain.types.Validatable` defines a
-method `validate()`. This method can be used in every `DomainObject`
-(= any `Entity`, any `ValueObject`) to validate invariants via`DomainAssertion`.
-
-With enabled `always-valid` strategy (see below), 
-NitroX DLC will call `validate()` at appropriate times (e.g. after construction of DomainObjects) 
-and thus ensures the implemented invariants. Then developers don't have to take care of that.
-
 ### DomainAssertions
 
 A possibility to check business rules of any kind (no matter, if they are
 invariants, pre or post conditions) in imperative form.
-is given in NitroX DLC by `DomainAssertions`. 
+is given in NitroX DLC by `DomainAssertions`.
 
 The following possibilities are provided by
 `nitrox.dlc.domain.types.assertion.DomainAssertions`:
@@ -85,7 +75,7 @@ The following possibilities are provided by
 | isPositiveOrZero     | checking a number value whether it is positive or `0`.                                                                                             | `java.math.BigDecimal`, `java.math.BigInteger` or double, float, long, int, byte, short and their wrapper types and `java.util.Optional` with corresponding content                                                                                                                                                                 |
 | isNegativeOrZero     | checking a number value whether it is negative or `0`.                                                                                             | `java.math.BigDecimal`, `java.math.BigInteger` or double, float, long, int, byte, short and their wrapper types and `java.util.Optional` with corresponding content                                                                                                                                                                |
 
-ATTENTION: For all checks, where the value to be checked is passed 
+ATTENTION: For all checks, where the value to be checked is passed
 in an `java.lang.Optional`, the respective `DomainAssertion`
 logic will only be executed if `Optional.isPresent()` is `true`.
 
@@ -161,11 +151,21 @@ public class Order extends AggregateRootBase<OrderNumber> {
 }
 ```
 
+### Basis for automagic 'always-valid' - the interface 'Validatable`
+
+The interface `nitrox.dlc.domain.types.Validatable` defines a
+method `validate()`. This method can be used in every `DomainObject`
+(= any `Entity`, any `ValueObject`) to validate invariants via`DomainAssertion`.
+
+With enabled `always-valid` strategy (see below),
+NitroX DLC will call `validate()` at appropriate times (e.g. after construction of DomainObjects)
+and thus ensures the implemented invariants. Then developers don't have to take care of that.
+
 <a name="always-valid"></a>
 ### Always Valid
 
 This feature uses [ByteBuddy](https://bytebuddy.net/#/) to extend methods and the
-constructor of domain classes at runtime.
+constructor of validatable domain classes (implementing `nitrox.dlc.domain.types.Validatable`) at runtime.
 A developer must substantially less effort to decide, at which
 the state of the program a domain object is generated/manipulated 
 and if that action requires a validation call.
@@ -299,7 +299,7 @@ ATTENTION:
 #### Activation of the byte code extension
 
 The byte code extension is activated by Java call and should be done as soon as 
-possible after application start:
+possible after application start. It is deactivated by default:
 
 - The activation is done via `ValidationDomainClassExtender.extend(...);`
 - As parameter a list of packages is to be passed, in which the classes
