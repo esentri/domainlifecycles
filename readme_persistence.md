@@ -739,7 +739,7 @@ Custom RecordMappers must be made known to Nitrox DLC Persistence by configurati
 Each ValueObject, which is in 1:n relation to its containing Entity
 is relationally mapped in an own table. These ValueObjects are called
 called 'record mapped' ValueObjects. But NitroX DLC persistence provides mechanisms to define 
-explicit ValueObject-to-database-table mappings (see above "EntityValueObjectRecordTypeConfiguration").
+explicit ValueObject-to-database-table mappings (see below "EntityValueObjectRecordTypeConfiguration").
 'Record mapped' ValueObjects must also fulfill certain requirements in their
 relational structures (database definition):
 
@@ -748,7 +748,7 @@ relational structures (database definition):
 - A `SEQUENCE` is required for the assignment of the ID Values, which conforms to the
   naming convention '&lt;Name of the ValueObject table&gt;_SEQ'.
 - A `FOREIGN KEY` definition must be created, which refers to the ID of the
-  parent `Entity.
+  parent Entity or the containing record mapped ValueObject.
 
 The database-side requirements therefore are exemplary:
 
