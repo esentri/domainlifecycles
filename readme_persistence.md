@@ -306,9 +306,11 @@ NitroX DLC Repositories provide by default the following methods:
   The repository emits PersistenceActions for every deleted DomainObject (=each object in the Aggregates object tree).
 
 - Loading Aggregates by Id:
-  > public FetcherResult<A, UpdatableRecord<?>> findById(I rootId)
+  > public FetcherResult<A, UpdatableRecord<?>> findResultById(I id)
+  
+  > public Optional&lt;A&gt; findById(I id)
 
-  Via `findById(Identity id)` the complete Aggregate is loaded from the database.
+  Via `findByResultId(Identity id)` the complete Aggregate is loaded from the database.
   The `FetcherResult` contains the `resultValue` (= the Aggregate as
   Java DomainObject) as well as the `FetcherContext`,
   which allows to access the loaded data in form of jOOQ-`UpdatableRecords`.
