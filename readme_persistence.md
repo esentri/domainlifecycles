@@ -807,12 +807,13 @@ functions can be added to NitroX DLC Persistence:
 - They provide only one conversion direction. If the opposite direction is required, a corresponding additional  TypeConverter must be created and registered.
 - The registration of a new TypeConverter is done via the persistence
   configuration:
-  ``Java
+  ```Java
   var jooqDomainPersistenceConfiguration = JooqDomainPersistenceConfiguration
   .jooqPersistenceConfigurationBuider
   .newConfig()
   ...
   .withTypeConverterProvider(new MyTypeConverterProvider())
+  ...
   ```
 - A TypeConverterProvider should be created by
   extending `nitrox.dlc.persistence.mapping.converter.def.DefaultTypeConverterProvider`
