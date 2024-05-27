@@ -503,9 +503,14 @@ The Fetcher loads the complete Aggregate given an Aggregate-Id or given an Aggre
 Corresponding `SELECT`-statements for subordinate Entities and possibly ValueObjects are performed via `getFetcher.fetchDeep()`.
 This is not necessarily always the optimal way regarding performance behavior.
 In most cases, however, the performance is sufficient, in other
-cases `nitrox.dlc.core.persistence.fetcher.RecordProvider` can be used to retrieve records using an optimized `SELECT` statement. 
+cases `nitrox.dlc.core.persistence.fetcher.RecordProvider` can be used to retrieve database records using an optimized `SELECT` statement. 
 The Fetcher will then only execute `SELECTs` to load records for missing DomainObject types not passed to the RecordProvider. 
 In any case it maps the passed or additionally fetched `Records` into the appropriate object structure composes them into the resulting object tree.
+
+ATTENTION: When using a RecordProvider, it is recommended, that a new Fetcher is created for each query execution, 
+where the record provider is involved. The RecordProviders must provide the records for each single request based on the current query conditions. 
+To make sure that, the fetcher instance used, uses the correctly provided records, it's more safe to create a new
+fetcher instance for each request.
 
 The more complex, but in sense of fewer `SELECT` statements
 optimized alternative, is demonstrated here:
