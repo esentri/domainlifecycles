@@ -28,7 +28,7 @@ configurations {
 dependencies {
     compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
     compileOnly "org.jooq:jooq:${jooqVersion}"
-    implementation "org.reflections:reflections:${reflectionsVersion}"
+    implementation "io.github.classgraph:classgraph:${classGraphVersion}"
     implementation project(":dlc-types")
     implementation project(":dlc-reflect")
     implementation project(":dlc-access")

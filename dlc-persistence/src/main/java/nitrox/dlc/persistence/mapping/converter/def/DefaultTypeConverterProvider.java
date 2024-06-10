@@ -27,10 +27,14 @@
 
 package nitrox.dlc.persistence.mapping.converter.def;
 
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ScanResult;
 import nitrox.dlc.persistence.exception.DLCPersistenceException;
 import nitrox.dlc.persistence.mapping.converter.TypeConverter;
 import nitrox.dlc.persistence.mapping.converter.TypeConverterProvider;
-import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -43,23 +47,36 @@ import java.util.stream.Collectors;
  */
 public class DefaultTypeConverterProvider implements TypeConverterProvider {
 
+    public static final String DEFAULT_CONVERTERS_PACKAGE = "nitrox.dlc.persistence.mapping.converter.def";
+
+    private static final Logger log = LoggerFactory.getLogger(DefaultTypeConverterProvider.class);
+
     /**
      * {@inheritDoc}
      */
     @Override
     public List<TypeConverter<?,?>> provideConverters() {
-        var rfDefaultConverters = new Reflections("nitrox.dlc.persistence.mapping.converter.def");
-        //noinspection unchecked
-        return (List<TypeConverter<?, ?>>) rfDefaultConverters.getSubTypesOf(TypeConverter.class)
-            .stream()
-            .map(tcc -> {
-                try {
-                    return tcc.getDeclaredConstructor().newInstance();
-                } catch (InstantiationException | IllegalAccessException |
-                         InvocationTargetException | NoSuchMethodException e) {
-                    throw DLCPersistenceException.fail("Couldn't provide default converters!");
-                }
-            })
-            .collect(Collectors.toList());
+        try (ScanResult scanResult =
+                 new ClassGraph()
+                     .acceptPackages(DEFAULT_CONVERTERS_PACKAGE)
+                     .scan()) {
+            return (List<TypeConverter<?, ?>>) scanResult.getAllClasses()
+                .stream()
+                .map(ClassInfo::loadClass)
+                .filter(TypeConverter.class::isAssignableFrom)
+                .map(tcc -> {
+                    try {
+                        return tcc.getDeclaredConstructor().newInstance();
+                    } catch (InstantiationException | IllegalAccessException |
+                             InvocationTargetException | NoSuchMethodException e) {
+                        throw DLCPersistenceException.fail("Couldn't provide default converters!");
+                    }
+                })
+                .collect(Collectors.toList());
+        } catch (Throwable t) {
+            String msg = String.format("Scanning package '%s' failed!", DEFAULT_CONVERTERS_PACKAGE);
+            log.error(msg);
+            throw DLCPersistenceException.fail(msg, t);
+        }
     }
 }

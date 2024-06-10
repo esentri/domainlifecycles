@@ -47,7 +47,7 @@ ext {
     dlcVersion =  versionProps.getProperty("version")
     slf4jVersion = '2.0.12'
     bytebuddyVersion = '1.14.9'
-    reflectionsVersion = '0.9.12'
+    classGraphVersion = '4.8.163'
     openAPIVersion = '1.8.0'
     openAPIVersion2 = '2.4.0'
     jacksonVersion = '2.17.0'
@@ -183,6 +183,14 @@ allprojects {
                         }
                         artifact(javadocJar) {
                             classifier = 'javadoc'
+                        }
+                    }
+                    versionMapping {
+                        usage('java-api') {
+                            fromResolutionOf('runtimeClasspath')
+                        }
+                        usage('java-runtime') {
+                            fromResolutionResult()
                         }
                     }
                 }

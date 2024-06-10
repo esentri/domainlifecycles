@@ -10,7 +10,7 @@ plugins {
 dependencies {
     compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
 
-    implementation 'io.github.classgraph:classgraph:4.8.163'
+    implementation "io.github.classgraph:classgraph:${classGraphVersion}"
     implementation "javax.validation:validation-api:${javaxValidationApiVersion}"
     implementation "jakarta.validation:jakarta.validation-api:${jakartaValidationApiVersion}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"

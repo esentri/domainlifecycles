@@ -27,11 +27,15 @@
 
 package nitrox.dlc.jooq.configuration.def;
 
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
+import nitrox.dlc.persistence.exception.DLCPersistenceException;
+import nitrox.dlc.persistence.mapping.converter.def.DefaultTypeConverterProvider;
 import nitrox.dlc.persistence.records.RecordClassProvider;
 import nitrox.dlc.reflect.JavaReflect;
 import org.jooq.UpdatableRecord;
-import org.reflections.Reflections;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -43,6 +47,8 @@ import java.util.stream.Collectors;
 public class JooqRecordClassProvider implements RecordClassProvider<UpdatableRecord<?>> {
 
     private final String recordPackage;
+
+    private static final Logger log = LoggerFactory.getLogger(DefaultTypeConverterProvider.class);
 
     public JooqRecordClassProvider(String recordPackage) {
         if(!JavaReflect.isValidPackage(recordPackage)){
@@ -58,8 +64,18 @@ public class JooqRecordClassProvider implements RecordClassProvider<UpdatableRec
     @Override
     @SuppressWarnings("unchecked")
     public Set<Class<? extends UpdatableRecord<?>>> provideRecordClasses() {
-        final var rfRecord = new Reflections(recordPackage);
-        var recordTypes = rfRecord.getSubTypesOf(UpdatableRecord.class);
-        return recordTypes.stream().map(c -> (Class<? extends UpdatableRecord<?>>) c).collect(Collectors.toSet());
+        try (ScanResult scanResult =
+                 new ClassGraph()
+                     .acceptPackages(recordPackage)
+                     .scan()) {
+            return scanResult.getClassesImplementing(UpdatableRecord.class)
+                .stream()
+                .map(tcc -> (Class<? extends UpdatableRecord<?>>) tcc.loadClass())
+                .collect(Collectors.toSet());
+        } catch (Throwable t) {
+            String msg = String.format("Scanning package '%s' failed!", recordPackage);
+            log.error(msg);
+            throw DLCPersistenceException.fail(msg, t);
+        }
     }
 }
