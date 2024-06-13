@@ -503,7 +503,7 @@ The Fetcher loads the complete Aggregate given an Aggregate-Id or given an Aggre
 Corresponding `SELECT`-statements for subordinate Entities and possibly ValueObjects are performed via `getFetcher.fetchDeep()`.
 This is not necessarily always the optimal way regarding performance behavior.
 In most cases, however, the performance is sufficient, in other
-cases `nitrox.dlc.core.persistence.fetcher.RecordProvider` can be used to retrieve database records using an optimized `SELECT` statement. 
+cases `nitrox.dlc.core.persistence.fetcher.RecordProvider` can be used to retrieve database records using optimized `SELECT` statements defined by the programmer. 
 The Fetcher will then only execute `SELECTs` to load records for missing DomainObject types not passed to the RecordProvider. 
 In any case it maps the passed or additionally fetched `Records` into the appropriate object structure composes them into the resulting object tree.
 
@@ -512,16 +512,18 @@ where the record provider is involved. The RecordProviders must provide the reco
 To make sure that, the fetcher instance used, uses the correctly provided records, it's more safe to create a new
 fetcher instance for each request.
 
-The more complex, but in sense of fewer `SELECT` statements
+The more complex, but in the sense of fewer `SELECT` statements
 optimized alternative, is demonstrated here:
 
 ```Java
     public Stream<Order> findOrdersOptimized(int offset, int pageSize) {
+        // we define a new fetcher to fetch complete Order aggregates
         var fetcher = new JooqAggregateFetcher<Order, OrderId>(Order.class, dslContext, jooqDomainPersistenceProvider);
 
         nitrox.dlc.test.tables.Order o = ORDER.as("o");
 
-        var joinedRecords = dslContext.select()
+        //we fetch the records for Orders and OrderPositions for the paged resultset in one query
+        var joinedRecordsSelect = dslContext.select()
                 .from(
                     dslContext.select()
                     .from(ORDER)
@@ -533,24 +535,33 @@ optimized alternative, is demonstrated here:
               .leftJoin(ORDER_POSITION)
               .on(o.ID.eq(ORDER_POSITION.ORDER_ID)));
 
-        var records = dslContext.fetch(joinedRecords);
+        var records = dslContext.fetch(joinedRecordsSelect);
         
+        //now split Order records and OrderPosition records in two distinct sets
         var orderRecords = records.into(ORDER).stream().filter(r -> r.getId()!=null).collect(Collectors.toSet());
         var orderPositionRecords = records.into(ORDER_POSITION).stream().filter(r -> r.getId()!=null).collect(Collectors.toSet());
 
+        //here we assign a record provider that delivers the order positions which belong to a given parent order record 
         fetcher.withRecordProvider(
             new RecordProvider<OrderPositionRecord, OrderRecord>() {
                 @Override
                 public Collection<OrderPositionRecord> provideCollection(OrderRecord parentRecord) {
+                    //from all order positions we return the ones which belong to the given parent Order (parentRecord)
                     return orderPositionRecords
                         .stream()
                         .filter(p -> p.getOrderId().equals(parentRecord.getId()))
                         .collect(Collectors.toList());
                 }
             },
-            Order.class,
-            OrderPosition.class,
-            List.of("orderPositions"));
+            Order.class, //this is the containing entity type for which the record provider provides child records 
+            OrderPosition.class, // this is the domain object type in which the child record should be mapped
+            List.of("orderPositions")); // "orderPositions" is the property name under which the positions should be added to the containing order
+        // the record provider delivers prefetched records into the process of the fetcher that still provides the functionality of mapping those records into domain objects 
+        // and composing them into valid, complete aggregates 
+    
+        //with a regular fetcher the following statement would issue multiple SELECTs to fetch ORDER_POSITION records for each ORDER.
+        // But as we provided all ORDER_POSITION records with the attached record provider, the statement only maps the records into 
+        // their corresponding types (Order or OrderPosition) and composes them into Order aggregates, which are finally returned. 
         var orders = orderRecords.stream().map(br->fetcher.fetchDeep(br).resultValue().get());
 
         return orders;
