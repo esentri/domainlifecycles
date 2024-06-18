@@ -10,7 +10,7 @@ behaviour. For example automapping Aggregates into the underlying database table
 DomainService or Aggregate instances, ... .
 
 The Domain Mirror provides several options to query the implementation's DDD meta model 
-via a central static interface `nitrox.dlc.mirror.api.Domain`.
+via a central static interface `api.io.domainlifecycles.mirror.Domain`.
 
 ## Domain Mirror initialization
 
@@ -33,7 +33,7 @@ public class ShopApplication {
 
 ATTENTION: If generics and deeper nested inheritance structures are used, the default initialization of the mirror as described above
 does sometimes not provide all necessary type information (because of Java's type erasure). NitroX DLC provides a way to work around that problem by
-setting a special type resolver (`nitrox.dlc.mirror.resolver.TypeMetaResolver`), that does deep type resolving.
+setting a special type resolver (`resolver.io.domainlifecycles.mirror.TypeMetaResolver`), that does deep type resolving.
 
 ```Java
 public class ShopApplication {

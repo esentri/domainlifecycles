@@ -7,7 +7,7 @@ file("version.properties").withInputStream { versionProps.load(it) }
 
 task printVersion {
     doFirst {
-        println ('DLC Version: ' + versionProps.getProperty("version"))
+        println ('Domain Lifecycles Version: ' + versionProps.getProperty("version"))
     }
 }
 
@@ -43,7 +43,7 @@ release {
 }
 
 ext {
-    dlcGroup = 'nitrox'
+    dlcGroup = 'io.domainlifecycles'
     dlcVersion =  versionProps.getProperty("version")
     slf4jVersion = '2.0.12'
     bytebuddyVersion = '1.14.9'
@@ -101,8 +101,8 @@ allprojects {
             options.encoding = "UTF-8"
         }
         javadoc {
-            title = '<h1>NitroX - DomainLifecycles</h1>'
-            options.bottom = '<i>NitroX provided by esentri.</i>'
+            title = '<h1>DomainLifecycles</h1>'
+            options.bottom = '<i>provided by esentri.</i>'
             options.encoding = 'UTF-8'
             options.docEncoding = 'UTF-8'
             options.charSet = 'UTF-8'
@@ -147,7 +147,7 @@ allprojects {
                     version = dlcVersion
                     from components.java
                     pom {
-                        name = 'NitroX Domain Lifecycles'
+                        name = 'Domain Lifecycles'
                         description = 'A Java library for building DDD applications'
 
                         licenses {

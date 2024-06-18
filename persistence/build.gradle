@@ -1,0 +1,24 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+    id 'checkstyle'
+    id 'org.quiltmc.gradle.licenser' version "${quiltmcLicenserVersion}"
+    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+}
+
+def commonsCollectionsVersion = '3.2.2'
+
+dependencies {
+    compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation "io.github.classgraph:classgraph:${classGraphVersion}"
+    implementation project(":types")
+    implementation project(":type-utils")
+    implementation project(":mirror")
+    implementation project(":access")
+    implementation project(":builder")
+
+    implementation "commons-collections:commons-collections:${commonsCollectionsVersion}"
+
+    testImplementation "org.assertj:assertj-core:${assertJVersion}"
+}

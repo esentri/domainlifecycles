@@ -170,5 +170,5 @@ Therefore, the following classes must be implemented.
 * `DomainBuilderConfiguration` to provide the custom builder configuration.
 
 Further information, on how to implement the classes above, can be found by examining the default
-inner builder class implementation located in the package `nitrox.dlc.builder.innerclass` alongside
+inner builder class implementation located in the package `io.domainlifecycles.builder.innerclass` alongside
 with the provided documentation.

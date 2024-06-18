@@ -1,0 +1,30 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+    id 'org.quiltmc.gradle.licenser' version "${quiltmcLicenserVersion}"
+    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+}
+
+dependencies {
+    api project(":types")
+    api project(":builder")
+    api project(":access")
+    api project(":type-utils")
+    api project(":mirror")
+    api project(":validation-extender")
+    api project(":assertions")
+    api project(":bean-validations")
+    api project(":persistence")
+    api project(":jooq-integration")
+    api project(":jackson-integration")
+    api project(":spring-web-integration")
+    api project(":spring-doc-integration")
+    compileOnly "org.jooq:jooq:3.19.6"
+
+}
+
+
+
+
+

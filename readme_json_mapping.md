@@ -70,7 +70,7 @@ NitroX DLC JSON Mapping offers various customization options.
 #### MappingCustomizer
 
 Default mapping behaviour of NitroX DLC can be customized in various ways via 
-`nitrox.dlc.jackson.api.JacksonMappingCustomizer`.
+`api.io.domainlifecycles.jackson.JacksonMappingCustomizer`.
 A MappingCustomizer offers various callback methods, which provide multiple entry points for customizations. 
 
 The entry-points for callbacks are explained in the following.
@@ -169,7 +169,7 @@ to the application from the outside (e.g. via REST endpoint), then a value for t
 in the mapping process, if the client does not do this (e.g. via client-side generated UUID). Especially with relational
 database systems, the assignment of ID values from e.g. a 'SEQUENCE' is common practice.
 
-By providing a `nitrox.dlc.jackson.api.EntityIdentityProvider` Jackson can tell how new IDs are generated for Entities
+By providing a `io.domainlifecycles.jackson.api.EntityIdentityProvider` Jackson can tell how new IDs are generated for Entities
 in the context of the mapping process, so that they can be assigned when the Entity is created from 'outside' and 
 thus, the always-valid principle is not violated.
 
@@ -217,7 +217,7 @@ this is Camel-Case in Java to lower-case pascal-case in SQL with the suffix `_se
 ### Activation of the Jackson extension
 
 Common extensions are typically included in Jackson as Jackson modules. NitroX DLC offers
-the `nitrox.dlc.jackson.module.DlcJacksonModule` for this purpose.
+the `module.io.domainlifecycles.jackson.DlcJacksonModule` for this purpose.
 
 In Spring or SpringBoot projects, Jackson modules can simply be declared as beans in order to include them:
 

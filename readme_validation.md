@@ -32,7 +32,7 @@ invariants, pre or post conditions) in imperative form.
 is given in NitroX DLC by `DomainAssertions`.
 
 The following possibilities are provided by
-`nitrox.dlc.domain.types.assertion.DomainAssertions`:
+`io.domainlifecycles.domain.types.assertion.DomainAssertions`:
 
 | DomainAssertion      | description                                                                                                                                        | available for                                                                                                                                                                                                                                                                                                                          | 
 |----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -153,7 +153,7 @@ public class Order extends AggregateRootBase<OrderNumber> {
 
 ### Basis for automagic 'always-valid' - the interface 'Validatable`
 
-The interface `nitrox.dlc.domain.types.Validatable` defines a
+The interface `io.domainlifecycles.domain.types.Validatable` defines a
 method `validate()`. This method can be used in every `DomainObject`
 (= any `Entity`, any `ValueObject`) to validate invariants via`DomainAssertion`.
 
@@ -165,7 +165,7 @@ and thus ensures the implemented invariants. Then developers don't have to take 
 ### Always Valid
 
 This feature uses [ByteBuddy](https://bytebuddy.net/#/) to extend methods and the
-constructor of validatable domain classes (implementing `nitrox.dlc.domain.types.Validatable`) at runtime.
+constructor of validatable domain classes (implementing `io.domainlifecycles.domain.types.Validatable`) at runtime.
 A developer must substantially less effort to decide, at which
 the state of the program a domain object is generated/manipulated 
 and if that action requires a validation call.
@@ -178,8 +178,8 @@ The following places are extended:
 - Any method that does not follow the getter convention (getter =
   method name starts with `get...` (boolean `is...`), without parameters, but with a return value): `validate()` (and `BeanValidations.validate(this);`) is inserted at the end of the affected methods,
   before returning a potential return value
-- Any method being annotated with either `nitrox.dlc.core.validation.Query`
-  or with `nitrox.dlc.core.validation.ExcludeValidation` will be
+- Any method being annotated with either `io.domainlifecycles.core.validation.Query`
+  or with `io.domainlifecycles.core.validation.ExcludeValidation` will be
   excluded from the ByteCode extension
 
 Example of a class with ByteCode extension enabled. The places where the

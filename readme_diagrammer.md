@@ -9,7 +9,7 @@ Most of the meta-information needed is derived from the used Nitrox DLC marker i
 Have a look at our [sample project](./dlc-sample), and diagram text generated [here](./dlc-domain-diagrammer/src/test/java/nomnoml/generator/NomnomlDomainDiagramGeneratorTest.java) 
 by executing the test `generateSampleApp()` to the standard output. 
 
-There are several options to adjust the diagram settings, have a look at `nitrox.dlc.diagram.domain.config.DomainDiagramConfig`.
+There are several options to adjust the diagram settings, have a look at `config.domain.io.domainlifecycles.diagram.DomainDiagramConfig`.
 
 ## Example how to use it
 
@@ -53,7 +53,7 @@ class NomnomlDomainDiagramGeneratorTest {
     - You can also save images from there
     - On Nomnoml projects page, you can find information on how to generate images directly or to host your own Nomnoml drawer instance via Docker.
 
-![What a pity you cannot see it](./dlc-documentation/resources/images/sample_diagram.png "Nomnoml based DDD class diagram")
+![What a pity you cannot see it](documentation/resources/images/sample_diagram.png "Nomnoml based DDD class diagram")
 
 ## Rendering from commandline to image
 

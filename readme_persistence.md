@@ -16,7 +16,7 @@ of an in‐memory collection of all objects of that Aggregate’s root type.
 NitroX DLC persistence provides means to achieve exactly that behaviour with less effort. 
 It helps to overcome the natural impedance mismatches that exist between the Aggregates technical representations.
 
-![Impedance mismatch](./dlc-documentation/resources/images/impedance.png "Impedance mismatch")
+![Impedance mismatch](documentation/resources/images/impedance.png "Impedance mismatch")
 
 An Aggregate typically is composed of several different Entities and ValueObjects in form of a hierarchical object tree.
 These objects have to mapped into jOOQ records which then are mapped into their table representations via jOOQ.
@@ -29,7 +29,7 @@ NitroX DLC Persistence provides:
 - [Fetchers](#fetcher) to simplify read operations and read mapping on Aggregates
 - [Base Repository implementations](#dlc-repositories) to simplify write operations on Aggregates
 
-In most cases it is sufficient just to extend `nitrox.dlc.jooq.imp.JooqAggregateRepository` for an adequate DDD style 
+In most cases it is sufficient just to extend `io.domainlifecycles.jooq.imp.JooqAggregateRepository` for an adequate DDD style 
 repository implementation, without needing to implement additional mapper classes or the need to declare object relational mapping behaviour in detail.
 Have a look at the repositories within our [sample project](./dlc-sample), to see how NitroX DLC persistence works. 
 
@@ -225,8 +225,8 @@ Watch out: Don't forget to set the appropriate SQL dialect!
 <a name="minimal-persistence-configuration"></a>
 #### Minimal persistence configuration
 
-A minimal configuration example of a `nitrox.dlc.persistence.provider.DomainPersistenceProvider`
-(`nitrox.dlc.jooq.imp.provider.JooqDomainPersistenceProvider`) looks as follows :
+A minimal configuration example of a `io.domainlifecycles.persistence.provider.DomainPersistenceProvider`
+(`io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider`) looks as follows :
 
 ```Java
 @Bean
@@ -259,13 +259,13 @@ The DomainPersistenceProvider instance must finally be injected into all reposit
 
 NitroX DLC persistence provides many more options to customize the persistence behaviour, by implementing and passing instances of the following interfaces:
 
-- `nitrox.dlc.persistence.mapping.converter.TypeConverterProvider`: Enables customizing of generic type conversions between jOOQ record properties and DomainObject properties, see [TypeConverter](#typeconverter).
-- `nitrox.dlc.persistence.records.EntityValueObjectRecordTypeConfiguration`: Enables customizing of the jOOQ record class that should be mapped to a ValueObject class (for example, if NitroX DLC naming conventions don't work), see [EntityValueObjectRecordTypeConfiguration](#entityvalueobjectrecordtypeconfiguration).
-- `nitrox.dlc.persistence.records.RecordTypeToEntityTypeMatcher`: To adjust matching strategy between Entity types to Jooq record types (if NitroX DLC naming conventions are not sufficient).
-- `nitrox.dlc.persistence.mapping.RecordPropertyMatcher`: To adjust matching strategy between field mirrors to Jooq record properties (if NitroX DLC naming conventions are not sufficient).
-- `nitrox.dlc.persistence.records.RecordPropertyAccessor`: To adjust the way values of record properties are accessed (by default via reflection).
-- `nitrox.dlc.persistence.mapping.IgnoredFieldProvider`: To define fields of DomainObjects, that should be ignored in persistence mapping process.
-- `nitrox.dlc.persistence.mapping.IgnoredRecordPropertyProvider`: To define record properties of jooq records, that should be ignored in persistence mapping process.
+- `io.domainlifecycles.persistence.mapping.converter.TypeConverterProvider`: Enables customizing of generic type conversions between jOOQ record properties and DomainObject properties, see [TypeConverter](#typeconverter).
+- `io.domainlifecycles.persistence.records.EntityValueObjectRecordTypeConfiguration`: Enables customizing of the jOOQ record class that should be mapped to a ValueObject class (for example, if NitroX DLC naming conventions don't work), see [EntityValueObjectRecordTypeConfiguration](#entityvalueobjectrecordtypeconfiguration).
+- `io.domainlifecycles.persistence.records.RecordTypeToEntityTypeMatcher`: To adjust matching strategy between Entity types to Jooq record types (if NitroX DLC naming conventions are not sufficient).
+- `io.domainlifecycles.persistence.mapping.RecordPropertyMatcher`: To adjust matching strategy between field mirrors to Jooq record properties (if NitroX DLC naming conventions are not sufficient).
+- `io.domainlifecycles.persistence.records.RecordPropertyAccessor`: To adjust the way values of record properties are accessed (by default via reflection).
+- `io.domainlifecycles.persistence.mapping.IgnoredFieldProvider`: To define fields of DomainObjects, that should be ignored in persistence mapping process.
+- `io.domainlifecycles.persistence.mapping.IgnoredRecordPropertyProvider`: To define record properties of jooq records, that should be ignored in persistence mapping process.
 
 <a name="dlc-repositories"></a>
 ### NitroX DLC Repositories
@@ -387,7 +387,7 @@ This mechanism works for any kind of change tracking logic.
 It could be used as a base mechanism for CQRS, extended logging, 
 auditing or for example to keep an external search index in sync.
 
-Every Repository allows to pass a `nitrox.dlc.core.persistence.repository.PersistenceEventPublisher`, 
+Every Repository allows to pass a `io.domainlifecycles.core.persistence.repository.PersistenceEventPublisher`, 
 that enables to pass the PersistenceActions to any kind of event bus.
 
 The following example shows the constructor of a Repository using a 'customized' EventPublisher:
@@ -503,7 +503,7 @@ The Fetcher loads the complete Aggregate given an Aggregate-Id or given an Aggre
 Corresponding `SELECT`-statements for subordinate Entities and possibly ValueObjects are performed via `getFetcher.fetchDeep()`.
 This is not necessarily always the optimal way regarding performance behavior.
 In most cases, however, the performance is sufficient, in other
-cases `nitrox.dlc.core.persistence.fetcher.RecordProvider` can be used to retrieve database records using optimized `SELECT` statements defined by the programmer. 
+cases `io.domainlifecycles.core.persistence.fetcher.RecordProvider` can be used to retrieve database records using optimized `SELECT` statements defined by the programmer. 
 The Fetcher will then only execute `SELECTs` to load records for missing DomainObject types not passed to the RecordProvider. 
 In any case it maps the passed or additionally fetched `Records` into the appropriate object structure composes them into the resulting object tree.
 
@@ -520,7 +520,7 @@ optimized alternative, is demonstrated here:
         // we define a new fetcher to fetch complete Order aggregates
         var fetcher = new JooqAggregateFetcher<Order, OrderId>(Order.class, dslContext, jooqDomainPersistenceProvider);
 
-        nitrox.dlc.test.tables.Order o = ORDER.as("o");
+        io.domainlifecycles.test.tables.Order o = ORDER.as("o");
 
         //we fetch the records for Orders and OrderPositions for the paged resultset in one query
         var joinedRecordsSelect = dslContext.select()
@@ -679,8 +679,8 @@ NitroX DLC Persistence uses RecordMappers internally.
 As a rule RecordMappers are never called directly by the application developer. 
 However, they must be registered as part of the Nitrox DLC configuration (see below).
 
-Custom RecordMappers must implement `nitrox.dlc.persistence.mapping.RecordMapper` or
-extend `nitrox.dlc.persistence.mapping.AbstractRecordMapper`.
+Custom RecordMappers must implement `io.domainlifecycles.persistence.mapping.RecordMapper` or
+extend `io.domainlifecycles.persistence.mapping.AbstractRecordMapper`.
 
 It must be taken care that all table columns 
 in the mapping methods are mapped to the properties of the respective class!
@@ -821,7 +821,7 @@ form,
 so that for special frequently used data types (which may not be jOOQ compatible) simple conversion 
 functions can be added to NitroX DLC Persistence:
 
-- TypeConverters must implement `nitrox.dlc.core.persistence.mapping.converter.TypeConverter`.
+- TypeConverters must implement `io.domainlifecycles.core.persistence.mapping.converter.TypeConverter`.
 - They provide only one conversion direction. If the opposite direction is required, a corresponding additional  TypeConverter must be created and registered.
 - The registration of a new TypeConverter is done via the persistence
   configuration:
@@ -834,9 +834,9 @@ functions can be added to NitroX DLC Persistence:
   ...
   ```
 - A TypeConverterProvider should be created by
-  extending `nitrox.dlc.persistence.mapping.converter.def.DefaultTypeConverterProvider`
+  extending `io.domainlifecycles.persistence.mapping.converter.def.DefaultTypeConverterProvider`
   or implementing the
-  interface `nitrox.dlc.persistence.mapping.converter.TypeConverterProvider`
+  interface `io.domainlifecycles.persistence.mapping.converter.TypeConverterProvider`
 - NitroX DLC Persistence adds several default TypeConverters to support mapping
   between Java data types and jOOQ types (i.e. SQL data types, in the end)
   more flexible without having to interfere with jOOQ/JDBC configurations.
@@ -920,12 +920,12 @@ For this it is necessary that on DomainObject level the superclass defines no co
 inheriting entity defines its own identity (corresponding to the one of the associated database table Primary Key).
 
 In this case it is not necessary to use a dedicated
-RecordMapper (`nitrox.dlc.persistence.mapping.RecordMapper`). 
+RecordMapper (`io.domainlifecycles.persistence.mapping.RecordMapper`). 
 AutoMapping can be applied without any problems.
 
 Class diagram for the "dedicated tables inheritance" case:
 
-![What a pity you cannot see it](./dlc-documentation/resources/images/dedicated_table_inheritance.png "Dedicated Tables Inheritance")
+![What a pity you cannot see it](documentation/resources/images/dedicated_table_inheritance.png "Dedicated Tables Inheritance")
 
 <a name="single-table-inheritance"></a>
 ###### Single table inheritance
@@ -1011,13 +1011,13 @@ public class VehicleRecordMapper extends AbstractRecordMapper<VehicleRecord, Veh
 
 Class diagram for the "single table inheritance" case:
 
-![What a pity you cannot see it](./dlc-documentation/resources/images/single_table_inheritance.png "Single Table Inheritance")
+![What a pity you cannot see it](documentation/resources/images/single_table_inheritance.png "Single Table Inheritance")
 
 <a name="inheritance-of-valueobjects"></a>
 ###### Inheritance of ValueObjects
 
 In principle, NitroX DLC supports inheritance structures in ValueObjects.
 A class is recognized by NitroX DLC as a ValueObject as soon as in the
-class hierarchy the interface `nitrox.dlc.domain.types.ValueObject` is implemented.
+class hierarchy the interface `io.domainlifecycles.domain.types.ValueObject` is implemented.
 The inheritance structure of ValueObjects has no influence on the
 persistence mapping already described [above](#automapping).

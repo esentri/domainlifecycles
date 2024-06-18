@@ -48,15 +48,15 @@ Further information: [Design Reference - Value Objects](https://www.domainlangua
 
 ### Implementation suggestions with NitroX DLC
 
-+ All ValueObjects must implement `nitrox.dlc.domain.types.ValueObject` (except of Enums, see below).
++ All ValueObjects must implement `io.domainlifecycles.domain.types.ValueObject` (except of Enums, see below).
 + ValueObjects should be immutable, so we suggest declaring all internal properties `final`
   (or using Lomboks `@Value`).
 + References to Aggregates or Entities should never be a direct Java object reference, instead we suggest 
   using references by id (as described in Vaughn Vernon's Red Book).
 + We suggest to take care of appropriate `equals` and `hashCode` implementations. If ValueObjects are implemented as regular Java classes 
-  using NitroX' `nitrox.dlc.domain.types.base.ValueObjectBase` or as Java records, automatically correct `equals` and `hashCode` will be provided.
+  using NitroX' `base.io.domainlifecycles.domain.types.ValueObjectBase` or as Java records, automatically correct `equals` and `hashCode` will be provided.
 + Since Java 17, we suggest that ValueObjects should be declared as Java records (`java.lang.Record`).
-+ ValueObjects, that are expressed as Java Enums must not implement `nitrox.dlc.domain.types.ValueObject` 
++ ValueObjects, that are expressed as Java Enums must not implement `io.domainlifecycles.domain.types.ValueObject` 
   (even though from a DDD Building Block perspective they fulfill all required characteristics of a ValueObject).
 + We encourage the programmer to put as much logic as possible into methods declared inside a ValueObject.
 
@@ -95,9 +95,9 @@ Information: [Design Reference - Entities](https://www.domainlanguage.com/wp-con
 
  + Entities should implement domain logic and behaviour in an object-oriented way. 
    Domain logic that refers only to an Entity should be implemented within the Entity not in services. 
- + NitroX DLC requires Entities to implement `nitrox.dlc.domain.types.Entity`.
+ + NitroX DLC requires Entities to implement `io.domainlifecycles.domain.types.Entity`.
  + We suggest to take care of appropriate `equals` and `hashCode` implementations, to depend only on the Entities Identity. 
-   If Entities are implemented using NitroX' `nitrox.dlc.domain.types.base.EntityBase` automatically correct `equals` and `hashCode` are provided.
+   If Entities are implemented using NitroX' `base.io.domainlifecycles.domain.types.EntityBase` automatically correct `equals` and `hashCode` are provided.
  + Entities should take care to stay valid in terms of domain rules and their invariants. Therefore, 
    we suggest implementing them in a self-validating manner (see [Validatable](#Validatable)).  
  + Prefer ValueObjects to express the Entities attributes over basic Java types.  
@@ -168,10 +168,10 @@ Information:
 
 ### Implementation suggestions with NitroX DLC
 
- + NitroX DLC requires AggregateRoots to implement `nitrox.dlc.domain.types.AggregateRoot`.
+ + NitroX DLC requires AggregateRoots to implement `io.domainlifecycles.domain.types.AggregateRoot`.
  + All other implementation suggestions for Entities also apply to AggregateRoots, because AggregateRoots are Entities themselves. 
  + NitroX DLC requires appropriate `equals` and `hashCode` implementations. They must depend only on the AggregateRoots Identity.
-   If Entities are implemented using NitroX' `nitrox.dlc.domain.types.base.AggregateRootBase` automatically correct `equals` and `hashCode` are provided.
+   If Entities are implemented using NitroX' `base.io.domainlifecycles.domain.types.AggregateRootBase` automatically correct `equals` and `hashCode` are provided.
  + Never reference Aggregates or their internals form other Aggregates as Java Object references. 
    Always use references by Identity (Id references).
 
@@ -272,7 +272,7 @@ Further information:
 ### Implementation suggestions with NitroX DLC
 
 + Identities should behave like ValueObjects concerning immutability, value equality and self-validation.
-+ NitroX DLC requires Identities to implement `nitrox.dlc.domain.types.Identity`.
++ NitroX DLC requires Identities to implement `io.domainlifecycles.domain.types.Identity`.
 + NitroX DLC currently only supports single-valued Identities, that means each Identity must have exactly one
   property carrying the Identities value.
 + We suggest implementing Identities as Java records (`java.lang.Record`) alongside with the Entity in an embedded manner.
@@ -297,7 +297,7 @@ Information: [Design Reference - Repositories](https://www.domainlanguage.com/wp
 
 ### Implementation suggestions with NitroX DLC
 
-+ NitroX DLC requires Repositories to implement `nitrox.dlc.domain.types.Repository`.
++ NitroX DLC requires Repositories to implement `io.domainlifecycles.domain.types.Repository`.
 + Keep application logic focused on the model, delegating all object storage and access to the Repositories.
 + Make sure Repository operations do not break the Aggregate`s consistency rules, 
   e.g. load only parts of an Aggregate or update parts of an Aggregate without concurrency control.
@@ -386,7 +386,7 @@ Information:
 
 ### Implementation suggestions with NitroX DLC
 
-+ NitroX DLC requires DomainServices to implement `nitrox.dlc.domain.types.DomainService`.
++ NitroX DLC requires DomainServices to implement `io.domainlifecycles.domain.types.DomainService`.
 + Ideally a DomainService should only call write operations on at most one Aggregate/Repository. 
   If other Aggregates have to be modified by the same service operation, think of using DomainEvents instead.
 
@@ -473,7 +473,7 @@ Information:
 ### Implementation suggestions with NitroX DLC
 
 + DomainEvents should be named in a meaningful way (noun + verb in past tense).
-+ DomainEvents require implementing `nitrox.dlc.domain.types.DomainEvent`.
++ DomainEvents require implementing `io.domainlifecycles.domain.types.DomainEvent`.
 + DomainEvents should be implemented immutable (like ValueObjects). We suggest using Java records.
 + Consider using [`DLC Domain Events`](./readme_domain_events.md) for appropriate transactional DomainEvent handling.
 
@@ -504,7 +504,7 @@ Information:
 ### Implementation suggestions with NitroX DLC
 
 + DomainCommands should be named in a meaningful way (imperative + noun).
-+ DomainCommands require implementing `nitrox.dlc.domain.types.DomainCommand`.
++ DomainCommands require implementing `io.domainlifecycles.domain.types.DomainCommand`.
 + DomainCommands should be implemented immutable (like ValueObjects). We suggest using Java records.
 + DomainCommand are not to be confused with the GOF "Command Object" pattern, as we suggest not to implement 
   an explicit `execute()` method within the command class. Rather, we suggest implementing the corresponding domain logic 
@@ -531,7 +531,7 @@ Further information:
 
 ### Implementation suggestions with NitroX DLC
 
-+ Drivers/ApplicationServices should implement `nitrox.dlc.domain.types.ApplicationService` or `nitrox.dlc.domain.types.Driver`.
++ Drivers/ApplicationServices should implement `io.domainlifecycles.domain.types.ApplicationService` or `io.domainlifecycles.domain.types.Driver`.
 + Make sure not to mix up or get confused about ApplicationServices and DomainServices.
 + Keep the Drivers/ApplicationServices slim. 
 + Make sure Drivers/ApplicationServices do not contain any domain logic. No domain specific decisions should be implemented here,
@@ -609,7 +609,7 @@ Further information:
 
 ### Implementation suggestions with NitroX DLC
 
-+ ReadModels require implementing `nitrox.dlc.domain.types.ReadModel`.
++ ReadModels require implementing `io.domainlifecycles.domain.types.ReadModel`.
 + ReadModels should be implemented immutable (like ValueObjects). We suggest using Java records.
 + Make sure ReadModels are not used in write operations.
 
@@ -636,7 +636,7 @@ QueryClients do not represent a DDD concept, but they might interact with Applic
 
 ### Implementation suggestions with NitroX DLC
 
-+ QueryClients require implementing `nitrox.dlc.domain.types.QueryClient`.
++ QueryClients require implementing `io.domainlifecycles.domain.types.QueryClient`.
 + Make sure QueryClients are not used in write operations of core domain aggregates.
 + Typically QueryClients instances represent a secondary/driven port adapter, 
   if Ports&Adapters architecture is applied
@@ -666,7 +666,7 @@ within the domain.
 
 ### Implementation suggestions with NitroX DLC
 
-+ OutboundService require implementing `nitrox.dlc.domain.types.OutboundService`.
++ OutboundService require implementing `io.domainlifecycles.domain.types.OutboundService`.
 + Typically OutboundService instances implement a secondary/driven port interface,
     if Ports&Adapters architecture is applied
 
@@ -687,21 +687,21 @@ public class EmailNotifierImpl implements OutboundService {
 
 ### Pattern description
 
-Several of NitroX DLCs types extend `nitrox.dlc.domain.types.Validatable`:
-- `nitrox.dlc.domain.types.ValueObject`
-- `nitrox.dlc.domain.types.Entity`
-- `nitrox.dlc.domain.types.AggregateRoot`
-- `nitrox.dlc.domain.types.Identity`
-- `nitrox.dlc.domain.types.DomainObject`
-- `nitrox.dlc.domain.types.DomainCommand`
-- `nitrox.dlc.domain.types.DomainEvent`
+Several of NitroX DLCs types extend `io.domainlifecycles.domain.types.Validatable`:
+- `io.domainlifecycles.domain.types.ValueObject`
+- `io.domainlifecycles.domain.types.Entity`
+- `io.domainlifecycles.domain.types.AggregateRoot`
+- `io.domainlifecycles.domain.types.Identity`
+- `io.domainlifecycles.domain.types.DomainObject`
+- `io.domainlifecycles.domain.types.DomainCommand`
+- `io.domainlifecycles.domain.types.DomainEvent`
 
 All the corresponding Building Blocks should implement invariants or domain rules within their type. 
 We suggest an "always-valid" approach, which means that these objects should be validated after construction and on every mutating operation.
 
 ### Implementation suggestions with NitroX DLC
 
-+ Implement all invariants or validated domain rules that belong to that building block in `validate()`, if you use `nitrox.dlc.assertion.DomainAssertions`.
++ Implement all invariants or validated domain rules that belong to that building block in `validate()`, if you use `io.domainlifecycles.assertion.DomainAssertions`.
 + The corresponding building blocks can use Bean Validation Annotations on their properties, method parameters or return values (see [NitroX DLC Validation](./readme_validation.md))
 + Remember, that Bean Validation Annotations or DomainAssertions are completely optional, you can also use any other mechanism for validating your building blocks. 
 + To simplify the "always-valid" approach make use of the NitroX DLC Validation Extender (see [NitroX DLC Validation](./readme_validation.md)).

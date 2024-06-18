@@ -56,17 +56,17 @@ public final class Order extends AggregateRootBase<Order.OrderId> {
 NitroX DLC DomainEvents also provides options to customize or enhance to technical event publishing mechanisms hidden behind
 this simple interface, see [Configuration](#Configuration).
 
-Additionally, NitroX DLC provides the option to add metadata annotations on methods that publish DomainEvents (``@Publishes``, see nitrox.dlc.domain.types.Publishes). 
+Additionally, NitroX DLC provides the option to add metadata annotations on methods that publish DomainEvents (``@Publishes``, see io.domainlifecycles.domain.types.Publishes). 
 Those annotations have no functional impact, but they currently make it more transparent to developers, where DomainEvents are published. The ``@Publishes`` metadata 
 information is also rendered in NitroX DLC domain diagrams (see [NitroX DLC Domain Diagrammer](./readme_diagrammer.md))  
 
 #### Listening to DomainEvents
 Domain Events are typically listened to by ApplicationServices, DomainServices, Repositories, OutboundServices, QueryClients or directly by Aggregate instances. 
 NitroX DLC reduces the technical boilerplate normally needed to route consumed DomainEvents to the addressed handler methods.
-Therefor the annotation ``@ListensTo`` (see nitrox.dlc.domain.types.ListensTo) is used.
+Therefor the annotation ``@ListensTo`` (see io.domainlifecycles.domain.types.ListensTo) is used.
 
 Every method (inside an ApplicationService, a DomainService, an OutboundService, a QueryClient or a Repository) that has only one parameter (the consumed DomainEvent) and which is annotated with
-```@ListensTo``` is automatically called, when a new DomainEvent is consumed by the central NitroX DLC event handler (see ``nitrox.dlc.events.receive.ReceivingDomainEventHander``).
+```@ListensTo``` is automatically called, when a new DomainEvent is consumed by the central NitroX DLC event handler (see ``io.domainlifecycles.events.receive.ReceivingDomainEventHander``).
 
 Depending on the transaction configuration of NitroX DLC DomainEvents, every handler call might also be automatically wrapped in an independent transaction.
 
@@ -91,7 +91,7 @@ public class CustomerNotificationDriver implements Driver {
 }
 ```
 
-To route DomainEvents directly to an Aggregate instance, the DomainEvent must implement a special interface ```nitrox.dlc.domain.types.AggregateDomainEvent```.
+To route DomainEvents directly to an Aggregate instance, the DomainEvent must implement a special interface ```io.domainlifecycles.domain.types.AggregateDomainEvent```.
 The interface requires the implementor to provide the ``targetId`` of the target AggregateRoot. In this case fetching the AggregateRoot instance by the specified targetId 
 from it's corresponding Repository and calling the event handler method directly on the AggregateRoot instance is done directly by the NitroX DLC framework in the background.
 The complete described operation is done in a separate transaction. This case requires a transactional setup of NitroX DLC DomainEvents!
@@ -130,8 +130,8 @@ public final class Customer extends AggregateRootBase<Customer.CustomerId> {
 DomainEvent handling provides a rich set of configuration options. There are several preconfigured options that are provided out-of-the-box (especially with transactional support for Spring/Spring Boot 3.0).
 But it's also possible to override some of the interfaces to add customized publishing or listening behaviour.
 
-The configuration typically is done via creating an instance of the ``nitrox.dlc.events.api.DomainEventsConfiguration``class. 
-At least for the automatic routing functionality an instance of a ``nitrox.dlc.services.ServiceProvider`` must be provided (typically ``nitrox.dlc.services.Services`` is used).
+The configuration typically is done via creating an instance of the ``io.domainlifecycles.events.api.DomainEventsConfiguration``class. 
+At least for the automatic routing functionality an instance of a ``io.domainlifecycles.services.ServiceProvider`` must be provided (typically ``io.domainlifecycles.services.Services`` is used).
 
 ##### Out-of-the-box configuration options
 
@@ -198,11 +198,11 @@ var config =  new DomainEventsConfiguration.DomainEventsConfigurationBuilder()
 Adding a transactional outbox avoids DomainEvent loss on the publishing side. The setup involves an "outbox" database table, but it's a reliable way of not loosing any DomainEvents 
 and comes into play if a relational database is involved as a part of the main technical infrastructure.
 The main disadvantage of that setup is a reduced throughput in high volume scenarios due to the database involvement. 
-NitroX DLC provides an interface for custom Outbox implementations ``nitrox.dlc.events.publish.outbox.api.TransactionalOutbox``.
+NitroX DLC provides an interface for custom Outbox implementations ``io.domainlifecycles.events.publish.outbox.api.TransactionalOutbox``.
 
 For more information on the "transactional outbox pattern" have a look at [Transactional Outbox Pattern](https://microservices.io/patterns/data/transactional-outbox.html)
 
-A tested implementation is available especially for Spring based on Spring transactions, Spring JDBC and Jackson, see ``nitrox.dlc.events.publish.outbox.impl.SpringJdbcOutbox``.
+A tested implementation is available especially for Spring based on Spring transactions, Spring JDBC and Jackson, see ``io.domainlifecycles.events.publish.outbox.impl.SpringJdbcOutbox``.
 
 Example setup with the NitroX DLC provided Spring based outbox implementation is shown below. This setup routes polled DomainEvents from the outbox directly to consuming handlers 
 within the pollers process, the consuming handlers are executed asynchronously in separate transactions. If DomainEvents were processed successfully by the handlers,
@@ -261,7 +261,7 @@ CREATE TABLE IF NOT EXISTS outbox (
 );
 ```
 
-The outbox table name might be customized via ``setOutboxTableName(String tableName)`` of ``nitrox.dlc.events.publish.outbox.impl.SpringJdbcOutbox``. 
+The outbox table name might be customized via ``setOutboxTableName(String tableName)`` of ``io.domainlifecycles.events.publish.outbox.impl.SpringJdbcOutbox``. 
 Have a look at the implementation and Javadoc of this class to gain more insights in other configuration options (timeout settings, batch sizes, etc).
 Performance improvements might be gained by:
 - ``outbox.setStrictBatchOrder(false);`` 
@@ -274,15 +274,15 @@ A typical customization might consist of plugging in a third-party message bus f
 ###### Third party message bus DomainEvent publishing
 A third party event bus might be used with or without an Outbox involved. If the event bus supports 2PC / XA transactions, the guarantees of an outbox can be achieved by just using 2PC.
 
-To route DomainEvents from an Outbox to a message bus, consider extending ``nitrox.dlc.events.publish.outbox.poll.AbstractOutboxPoller``.
-To route DomainEvents without using an Outbox to a message bus, consider implementing a custom ``nitrox.dlc.events.publish.DomainEventPublisher``. 
-Those custom implementations must be configured via ``nitrox.dlc.events.api.DomainEventsConfiguration`` to activate them.
+To route DomainEvents from an Outbox to a message bus, consider extending ``io.domainlifecycles.events.publish.outbox.poll.AbstractOutboxPoller``.
+To route DomainEvents without using an Outbox to a message bus, consider implementing a custom ``io.domainlifecycles.events.publish.DomainEventPublisher``. 
+Those custom implementations must be configured via ``io.domainlifecycles.events.api.DomainEventsConfiguration`` to activate them.
 
 ###### Third party message bus Domain Event consumption
 
 To consume DomainEvents from a third party event bus and route them directly to handler services or Aggregates as described before, consider implementing a 
-message bus technology dependent consumer service and then provide those events directly to the configured ``nitrox.dlc.events.receive.ReceivingDomainEventHandler`` via it's
-``handleReceived()`` method. The ReceivingDomainEventHandler instance could be acquired via a ``nitrox.dlc.events.api.DomainEventsConfiguration`` instance. 
+message bus technology dependent consumer service and then provide those events directly to the configured ``io.domainlifecycles.events.receive.execution.ReceivingDomainEventHandler`` via it's
+``handleReceived()`` method. The ReceivingDomainEventHandler instance could be acquired via a ``io.domainlifecycles.events.api.DomainEventsConfiguration`` instance. 
 
 #### Typical Spring Boot setup
 

@@ -12,7 +12,7 @@ of [NitroX DLC JSON Mapping](./readme_json_mapping.md).
 
 ### Swagger UI example
 
-![What a pity you cannot see it](./dlc-documentation/resources/images/open-api-doc.png "Open API")
+![What a pity you cannot see it](documentation/resources/images/open-api-doc.png "Open API")
 
 In the previous image you can see a snippet of the Swagger UI, which provides an API endpoint for creating `Orders` in a sample application.
 
@@ -94,10 +94,10 @@ For explicitly `nullable` fields, consider using the corresponding Java Object W
 
 Extensions are registered with SpringDoc via
 via an `org.springdoc.core.customizers.OpenApiCustomizer`.
-The `nitrox.dlc.springdoc2.openapi.DlcOpenApiCustomizer` does that for NitroX DLC Spring Doc.
+The `io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer` does that for NitroX DLC Spring Doc.
 
 In the context of a SpringBoot application, it is sufficient to
-configure a `nitrox.dlc.springdoc2.openapi.DlcOpenApiCustomizer` Spring bean:
+configure a `io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer` Spring bean:
 
 ``` Java
     @Bean
@@ -111,4 +111,4 @@ configure a `nitrox.dlc.springdoc2.openapi.DlcOpenApiCustomizer` Spring bean:
 ```
 
 We currently support both Spring Doc and Spring Doc 2, despite breaking API changes in Version 2.  
-For Spring Doc (< Version 2) please use `nitrox.dlc.springdoc.openapi.DlcOpenApiCustomizer` instead.
+For Spring Doc (< Version 2) please use `io.domainlifecycles.springdoc.openapi.DlcOpenApiCustomizer` instead.

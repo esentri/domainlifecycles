@@ -15,7 +15,7 @@ adaptability, expandability and maintainability as well as a consistently high d
 [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 ).
 
-![Added value](./dlc-documentation/resources/images/added_value.png "NitroX DLC added value")
+![Added value](documentation/resources/images/added_value.png "NitroX DLC added value")
 
 NitroX DLC should enable developers to focus on the domain model and the true added value of the solution (the business value)
 instead of "getting lost" in pure technical concerns. Despite the quick implementation of typical default structures, the developer 
