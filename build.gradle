@@ -173,8 +173,8 @@ allprojects {
                             }
                         }
                         scm {
-                            connection = 'scm:git@github.com:esentri/nitrox-dlc.git'
-                            url = 'https://github.com/esentri/nitrox-dlc/'
+                            connection = 'scm:git@github.com:esentri/domainlifecycles.git'
+                            url = 'https://github.com/esentri/domainlifecycles/'
                         }
                     }
                     if (!repositories.mavenLocal()) {
