@@ -58,13 +58,13 @@ import sampleshop.outbound.event.SpringPersistenceEventPublisher;
 import java.util.List;
 import java.util.Set;
 /**
- * Spring configuration for NitroX DLC.
+ * Spring configuration for DLC.
  *
  * @author Tobias Herb
  * @author Mario Herb
  */
 @Configuration
-public class NitroxConfiguration {
+public class DLCConfiguration {
 
     private static final String DOMAIN_PKG = "sampleshop";
 
@@ -91,7 +91,7 @@ public class NitroxConfiguration {
     }
 
     /**
-     * Default configuration to make NitroX DLC work with inner builders or Lombok builders.
+     * Default configuration to make DLC work with inner builders or Lombok builders.
      */
     @Bean
     DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
@@ -103,7 +103,7 @@ public class NitroxConfiguration {
      * from outside (via a REST controller) and that for new instances new IDs are fetched from the corresponding database sequences or other ID providers.
      * The identity provider assignes the new id values within the deserialization process. We need that because we only want to valid instances with nonnull IDs within our domain.
      *
-     * Only used together with NitroX DLC Jackson integration, see below...
+     * Only used together with DLC Jackson integration, see below...
      */
     @Bean
     EntityIdentityProvider identityProvider(DSLContext dslContext) {
@@ -111,7 +111,7 @@ public class NitroxConfiguration {
     }
 
     /**
-     * NitroX DLC Jackson integration
+     * DLC Jackson integration
      */
     @Bean
     DlcJacksonModule dlcModuleConfiguration(List<? extends JacksonMappingCustomizer<?>> customizers,
@@ -125,7 +125,7 @@ public class NitroxConfiguration {
 
 
     /**
-     * Using the Spring event bus to publish NitroX DLC persistence actions.
+     * Using the Spring event bus to publish DLC persistence actions.
      */
     @Bean
     public SpringPersistenceEventPublisher springPersistenceEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
@@ -154,7 +154,7 @@ public class NitroxConfiguration {
     }
 
     /**
-     * Using the Spring event bus to publish NitroX DLC domain events.
+     * Using the Spring event bus to publish DLC domain events.
      */
     @Bean
     public DomainEventsConfiguration domainEventsConfiguration(ServiceProvider serviceProvider, PlatformTransactionManager transactionManager) {
@@ -165,7 +165,7 @@ public class NitroxConfiguration {
     }
 
     /**
-     * Spring Doc Open API integration of NitroX DLC
+     * Spring Doc Open API integration of DLC
      */
     @Bean
     public DlcOpenApiCustomizer openApiCustomizer(SpringDocConfigProperties springDocConfigProperties) {

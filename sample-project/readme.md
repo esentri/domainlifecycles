@@ -3,13 +3,13 @@
 ## Introduction
 
 A simple Spring Boot based online store application implemented with the Domain
-Driven Design approach using NitroX technology.
+Driven Design approach using Domainlifecycles technology.
 
 This is for demo purposes to show the DDD concepts and technical implementation
 in a practical way and to provide a basic understanding of the structure,
-architectural concepts and configuration of a NitroX-based application.
+architectural concepts and configuration of a DLC-based application.
 
-All NitroX DLC features are demonstrated, see [Demonstrated NitroX DLC features](#Features).
+All DLC features are demonstrated, see [Demonstrated DLC features](#Features).
 
 ## Project Layout
 
@@ -55,11 +55,11 @@ Flyway is a database migration tool that
   migration process.
 + Flyway can save time and reduce errors when migrating databases to new
   versions or systems.
-+ Flyway is compatible with NitroX DLC, but not mandatory
++ Flyway is compatible with DLC, but not mandatory
 
-### NitroX Domain Lifecycles
+### Domain Lifecyclesn(DLC)
 
-NitroX constructs the mechanics for the 
+DLC constructs the mechanics for the 
 control of a proper domain model implementation in Java together with its relational persistence. 
 This constitutes a technical lifecycle which, in a nutshell, consists of 3 phases:
 
@@ -82,7 +82,7 @@ concepts and other patterns](./../readme_building_blocks.md), which are commonly
         │   ├── domain
         │   │   └── domain wiring
         │   └── system
-        │       └── data-source and persistence / web config / NitroX specific configuration
+        │       └── data-source and persistence / web config / DLC specific configuration
         ├── core
         │   ├── domain
         │   │   ├── customer
@@ -101,7 +101,7 @@ concepts and other patterns](./../readme_building_blocks.md), which are commonly
         │   └── rest
         │       └── API / rest controllers
         └── outbound (outbound adapters --> ports & adapters architecture)
-                └── JOOQ and NitroX DLC based repository implementations and EmailNotifier outbound service
+                └── JOOQ and DLC based repository implementations and EmailNotifier outbound service
 ```
 
 ## Ports & Adapters (hexagonal architecture)
@@ -123,7 +123,7 @@ More information on that: [Ports & Adapters by Alistair Cockburn](https://alista
 
 ## DDD patterns and techniques used in this project
 
-The implementation in this demo application shows, that NitroX DLC is very well suited to implement 
+The implementation in this demo application shows, that DLC is very well suited to implement 
 rich domain model structures instead of an anemic model working as a pure data container.
 
 Invariants of the aggregates, entities and value objects are taken care by assertions and bean validation annotations.
@@ -239,31 +239,31 @@ The diagram shows relationships between the entities:
   multiple times, but each order item corresponds to only one product. 
 
 The mapping between the tables described in [V1__ddl_shop_entities.sql](./src/main/resources/db/migration/V1__ddl_shop_entities.sql)
-and the corresponding aggregates is completely done by the NitroX DLC Persistence automapping features, relying on 
+and the corresponding aggregates is completely done by the DLC Persistence automapping features, relying on 
 the typical structural and naming conventions.
 
 <a name="Features"></a>
-## Demonstrated NitroX DLC features
+## Demonstrated DLC features
 
-Several features of NitroX DLC simplify the implementation of an application with common DDD patterns
+Several features of DLC simplify the implementation of an application with common DDD patterns
 based on the well known tactical design building blocks:
 
-- NitroX DLC provides several base (marker) interfaces and base types, that mark classes as 
+- DLC provides several base (marker) interfaces and base types, that mark classes as 
   `AggregateRoot`, `Entity` or `ValueObject`. The ID of an `Entity` has to be an `Identity` and forms a typed ID.
-- Based on these base interfaces NitroX DLC provides support for Jackson serialization, which reduces the need to declare 
+- Based on these base interfaces DLC provides support for Jackson serialization, which reduces the need to declare 
   annotations or custom de-/serializers for domain objects.
-- NitroX DLC provides persistence support for several types of relational databases (based on JOOQ). It reduces the need 
+- DLC provides persistence support for several types of relational databases (based on JOOQ). It reduces the need 
   for writing mapper classes or adding ORM specific annotations to manage persistence behaviour. So the amount 
-  of boilerplate code in the persistence layer is reduced in a great way. NitroX DLC persistence relies therefore 
+  of boilerplate code in the persistence layer is reduced in a great way. DLC persistence relies therefore 
   on the type information of the already mentioned base interfaces and natural naming and structure conventions. 
-  NitroX DLC persistence works well with immutability (Java records and final field modifiers) and has no need for default constructors.
+  DLC persistence works well with immutability (Java records and final field modifiers) and has no need for default constructors.
   Java Optional fields are also supported.
-- Furthermore, NitroX DLC provides an integration for Spring (Spring Boot 2 and Spring Boot 3, Spring Boot 3 being demonstrated here)
+- Furthermore, DLC provides an integration for Spring (Spring Boot 2 and Spring Boot 3, Spring Boot 3 being demonstrated here)
   and Spring Doc Open API to simplify correct API documentation (Open API/Swagger).
-- NitroX DLC works well with Lombok.
-- NitroX DLC provides support for DomainAssertions an integration with Jakarta Bean Validation annotations, 
+- DLC works well with Lombok.
+- DLC provides support for DomainAssertions an integration with Jakarta Bean Validation annotations, 
   what simplifies the definition of invariants in our domain classes, which are met at any point in their lifecycle (always valid domain objects).
-- NitroX DLC provides support to reduce boilerplate code around DomainEvent handling being demonstrated here. Have a look 
+- DLC provides support to reduce boilerplate code around DomainEvent handling being demonstrated here. Have a look 
   at the [Customer aggregate](./src/main/java/sampleshop/core/domain/customer/Customer.java) to see how Domain Events this way 
   are represented as "first class citizens" of the aggregates interface.
 
@@ -271,16 +271,16 @@ More details and even more features can be found in our [`documentation`](./../r
 
 ## Important requirements and restrictions
 
-- NitroX DLC requires Java 17 or above
-- NitroX DLC needs constructors that set all(!) fields of a domain object. 
+- DLC requires Java 17 or above
+- DLC needs constructors that set all(!) fields of a domain object. 
   The constructor parameters must be named exactly like the fields.  
-- NitroX DLC relies on inner builders (easily simplified by Lombok builders). 
+- DLC relies on inner builders (easily simplified by Lombok builders). 
 
 ## Run the demo app
 
 - Run the `sampleshop.ShopApplication` with your IDE like any other Spring Boot app
 - The Swagger endpoints are available under `http://localhost:8080/swagger-ui.html`
 - You can access the database via H2 Web console via `http://localhost:8080/h2-console/`
-  - Make sure to use `jdbc:h2:./dlc-sample/build/h2-db/test` as JDBC URL (application should be started, with the general NitroX DLC repository as root path)
+  - Make sure to use `jdbc:h2:./dlc-sample/build/h2-db/test` as JDBC URL (application should be started, with the general DLC repository as root path)
   - Some default test data is already available
 - You might also have a look at (or run) the tests to study the demonstrated features

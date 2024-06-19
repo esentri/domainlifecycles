@@ -1,31 +1,31 @@
-# NitroX Domain Lifecycles Diagrammer (EXPERIMENTAL)
+# Domain Lifecycles Diagrammer
 
-The NitroX DLC Diagrammer currently generates [Nomnoml](https://nomnoml.com/) diagram texts.
+The DLC Diagrammer currently generates [Nomnoml](https://nomnoml.com/) diagram texts.
 Nomnoml is tool for drawing UML diagrams based on a simple syntax. 
 
 The generated diagram text currently describes UML class diagram, which sets the focus on the used DDD patterns.
-Most of the meta-information needed is derived from the used Nitrox DLC marker interfaces for the DDD [Building Blocks](./readme_building_blocks.md). 
+Most of the meta-information needed is derived from the used DLC marker interfaces for the DDD [Building Blocks](./readme_building_blocks.md). 
 
 Have a look at our [sample project](./dlc-sample), and diagram text generated [here](./dlc-domain-diagrammer/src/test/java/nomnoml/generator/NomnomlDomainDiagramGeneratorTest.java) 
 by executing the test `generateSampleApp()` to the standard output. 
 
-There are several options to adjust the diagram settings, have a look at `config.domain.io.domainlifecycles.diagram.DomainDiagramConfig`.
+There are several options to adjust the diagram settings, have a look at `io.domainlifecycles.diagram.domain.config.DomainDiagramConfig`.
 
 ## Example how to use it
 
-1. Add `nitrox:dlc-domain-diagrammer` dependency to your project (in your test setup)
+1. Add `io.domainlifecycles:domain-diagrammer` dependency to your project (in your test setup)
 Gradle setup:
 ```Groovy
 dependencies{
-    testImplementation 'nitrox:dlc-domain-diagrammer:2.0.0'
+    testImplementation 'io.domainlifecycles:domain-diagrammer:2.0.0'
 }
 ```
 
 Maven setup:
 ```XML
 <dependency>
-    <groupId>nitrox</groupId>
-    <artifactId>dlc-domain diagrammer</artifactId>
+    <groupId>io.domainlifecycles</groupId>
+    <artifactId>domain-diagrammer</artifactId>
     <version>2.0.0</version>
     <scope>test</scope>
 </dependency>
@@ -73,21 +73,21 @@ Also we at least need the [domain mirror](./dlc-mirror), to be able to provide a
 Those dependencies are provided like:
 ```Groovy
 dependencies{
-    implementation 'nitrox:dlc-mirror:2.0.0'
-    implementation 'nitrox:dlc-types:2.0.0'
+    implementation 'io.domainlifecycles:mirror:2.0.0'
+    implementation 'io.domainlifecycles:types:2.0.0'
 }
 ```
 
 Maven setup:
 ```XML
 <dependency>
-    <groupId>nitrox</groupId>
-    <artifactId>dlc-mirror</artifactId>
+    <groupId>io.domainlifecycles</groupId>
+    <artifactId>mirror</artifactId>
     <version>2.0.0</version>
 </dependency>
 <dependency>
-    <groupId>nitrox</groupId>
-    <artifactId>dlc-types</artifactId>
+    <groupId>io.domainlifecycles</groupId>
+    <artifactId>types</artifactId>
     <version>2.0.0</version>
 </dependency>
 ```

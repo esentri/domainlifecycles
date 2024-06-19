@@ -28,7 +28,7 @@
 package io.domainlifecycles.swagger.v3;
 
 /**
- * Constants used by the NitroX DLC Open API extension (SpringDoc / Open API specific constants).
+ * Constants used by the DLC Open API extension (SpringDoc / Open API specific constants).
  *
  * @author Mario Herb
  */

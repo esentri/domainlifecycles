@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Implementation wrapping inner class domain object builders, so that NitroX DCL can use them internally.
+ * Implementation wrapping inner class domain object builders, so that DLC can use them internally.
  *
  * @param <T> type for which the domain object builder delivers new domain object instances
  *

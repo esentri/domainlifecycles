@@ -45,7 +45,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import java.util.Locale;
 
 /**
- * NitroX DLC demo application.
+ * DLC demo application.
  *
  * @author Tobias Herb
  * @author Mario Herb
@@ -66,7 +66,7 @@ public class ShopApplication {
     }
 
     /**
-     * Enable NitroX DLC byte code extension for the domain model of the "sampleshop"
+     * Enable DLC byte code extension for the domain model of the "sampleshop"
      */
     @PostConstruct
     public void postConstruct() {

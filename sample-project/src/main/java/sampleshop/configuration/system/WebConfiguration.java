@@ -51,7 +51,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     private final ObjectMapper objectMapper;
 
     /**
-     * Create a new simple web configuration for Spring working with NitroX DLC.
+     * Create a new simple web configuration for Spring working with DLC.
      */
     public WebConfiguration(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
@@ -68,7 +68,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     }
 
     /**
-     * Optional NitroX DLC response format.
+     * Optional DLC response format.
      */
     @Bean
     public ResponseEntityBuilder defaultResponseEntityBuilder(){

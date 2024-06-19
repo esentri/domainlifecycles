@@ -101,7 +101,7 @@ public class DefaultTests {
     }
 
     /**
-     * This test demonstrates several features of NitroX DLC:
+     * This test demonstrates several features of DLC:
      * <br/>
      * The JSON mapping extension for Jackson automatically translates the numerical id values of the request
      * into typed ids expected on the Java side {@link Customer.CustomerId} or {@link sampleshop.core.domain.product.Product.ProductId}.
@@ -148,7 +148,7 @@ public class DefaultTests {
     }
 
     /**
-     * This test demonstrates the NitroX DLC validation extension. The extension validates fields of domain objects or return values or parameters of their methods
+     * This test demonstrates the DLC validation extension. The extension validates fields of domain objects or return values or parameters of their methods
      * with bean validation annotations directly upon object creation or when the values are set. That helps keeping domain objects "always-valid" as well simplifying
      * the declaration invariants/business rules on domain objects.
      */

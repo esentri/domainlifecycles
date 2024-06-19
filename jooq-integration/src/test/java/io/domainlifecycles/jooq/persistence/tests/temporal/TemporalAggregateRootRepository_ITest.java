@@ -73,7 +73,6 @@ public class TemporalAggregateRootRepository_ITest extends BasePersistence_ITest
 
     @Test
     public void testInsertTemporalEntity() {
-        //ToDo https://esentri.atlassian.net/browse/NITROX-271
         var now = OffsetDateTime.now(Clock.tickMillis(OffsetDateTime.now().toZonedDateTime().getZone()));
         //given
         TestRootTemporal trs = TestDataGenerator.buildTestRootTemporal(now);

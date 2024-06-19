@@ -1,8 +1,8 @@
-## NitroX Domain Lifecycles validation
+## Domain Lifecycles validation
 
 Many frameworks are based on the idea that the validation of objects always takes place
 at certain phase transitions, e.g. before these objects are stored (that means somehow in the persistence layer).
-There is nothing wrong with this in principle, but NitroX DLC focuses on
+There is nothing wrong with this in principle, but DLC focuses on
 a strong compliance with the business rules within the domain (in the domain core).
 
 The goal here is, that all DomainObjects follow the business rules associated with the domain or bounded context at all times.
@@ -29,7 +29,7 @@ state change. They ensure the correctness of the previously executed operation.
 
 A possibility to check business rules of any kind (no matter, if they are
 invariants, pre or post conditions) in imperative form.
-is given in NitroX DLC by `DomainAssertions`.
+is given in DLC by `DomainAssertions`.
 
 The following possibilities are provided by
 `io.domainlifecycles.domain.types.assertion.DomainAssertions`:
@@ -81,7 +81,7 @@ logic will only be executed if `Optional.isPresent()` is `true`.
 
 ### Java Bean Validation Support
 
-NitroX DLC explicitly supports the features of
+DLC explicitly supports the features of
 of [Jakarta Bean Validation Standards 2.0](https://beanvalidation.org/2.0-jsr380/):
 
 - [supported annotations](https://beanvalidation.org/2.0-jsr380/spec/#builtinconstraints)
@@ -97,9 +97,9 @@ ATTENTION:
   checks will not be performed and only a log warning will be issued!
 - The use of `@Valid` (
   see [GraphValidation](https://beanvalidation.org/2.0-jsr380/spec/#constraintdeclarationvalidationprocess-validationroutine-graphvalidation))
-  is not needed, since Nitrox DLC always performs a validation of the complete object graph for all DomainTypes.
+  is not needed, since DLC always performs a validation of the complete object graph for all DomainTypes.
   validation of the complete object graph!
-- Without using the [NitroX DLC Byte Code Extension for Validation](#always-valid), 
+- Without using the [DLC Byte Code Extension for Validation](#always-valid), 
   the developer must take care to start bean validation annotation evaluation (e.g. by calling `BeanValidations.validate(thisObject);`). 
   He also needs to take care that `validate()` is called at appropriate places.
 
@@ -107,7 +107,7 @@ ATTENTION:
 ...
 @Override
 public void validate() {
-        BeanValidations.validate(this); // only needed, if BeansValidations are used without the Nitrox DLC ValidationExtender
+        BeanValidations.validate(this); // only needed, if BeansValidations are used without the DLC ValidationExtender
         long numberOfCurrenciesUsed = positions
         .stream()
         .map(p -> p.getUnitPrice().getCurrency())
@@ -158,7 +158,7 @@ method `validate()`. This method can be used in every `DomainObject`
 (= any `Entity`, any `ValueObject`) to validate invariants via`DomainAssertion`.
 
 With enabled `always-valid` strategy (see below),
-NitroX DLC will call `validate()` at appropriate times (e.g. after construction of DomainObjects)
+DLC will call `validate()` at appropriate times (e.g. after construction of DomainObjects)
 and thus ensures the implemented invariants. Then developers don't have to take care of that.
 
 <a name="always-valid"></a>
@@ -318,7 +318,7 @@ public class DemoApplication {
 
     @PostConstruct
     public void postConstruct(){
-        ValidationDomainClassExtender.extend(List.of("nitrox.demo"));
+        ValidationDomainClassExtender.extend(List.of("io.domainlifecycles.demo"));
     }
 }
 ```

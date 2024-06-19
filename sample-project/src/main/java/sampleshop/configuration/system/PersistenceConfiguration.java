@@ -54,7 +54,7 @@ public class PersistenceConfiguration {
     }
 
     /**
-     * NitroX DLC requires optimistic locking in JOOQ Config
+     * DLC requires optimistic locking in JOOQ Config
      */
     @Bean
     public DefaultConfiguration configuration(DataSource dataSource) {
@@ -66,7 +66,7 @@ public class PersistenceConfiguration {
     }
 
     /**
-     * All NitroX DLC repository implementations need a {@link org.jooq.DSLContext} instance.
+     * All DLC repository implementations need a {@link org.jooq.DSLContext} instance.
      */
     @Bean
     public DefaultDSLContext dslContext(DataSource dataSource) {

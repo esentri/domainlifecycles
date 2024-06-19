@@ -116,7 +116,7 @@ public class TestApplication {
     }
 
     /**
-     * Using DLC Events to publish NitroX DLC domain events.
+     * Using DLC Events to publish DLC domain events.
      */
     @Bean
     public DomainEventsConfiguration domainEventsConfiguration(ServiceProvider serviceProvider, PlatformTransactionManager transactionManager) {

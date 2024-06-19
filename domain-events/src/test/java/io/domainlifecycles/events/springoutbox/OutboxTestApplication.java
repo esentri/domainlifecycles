@@ -113,7 +113,7 @@ public class OutboxTestApplication {
     }
 
     /**
-     * Using DLC Events to publish NitroX DLC domain events.
+     * Using DLC Events to publish DLC domain events.
      */
     @Bean
     public DomainEventsConfiguration domainEventsConfiguration(TransactionalOutbox transactionalOutbox, ServiceProvider serviceProvider, PlatformTransactionManager transactionManager) {

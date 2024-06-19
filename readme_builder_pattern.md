@@ -1,16 +1,16 @@
 # Builder Pattern Necessity and Support
 
-NitroX DLC internally heavily relies on the Builder Pattern for the creation of DomainObjects. This is due to the fact
+DLC internally heavily relies on the Builder Pattern for the creation of DomainObjects. This is due to the fact
 that we emphasize an always valid strategy on the one hand and on the other hand ValueObjects are by definition immutable. 
 Thus, DomainObjects created from JSON Input or by querying a database must be created by a builder. 
 For developers, the usage of Builder Pattern is encouraged, since Domain Classes do often have many arguments
 which bloats constructor calls unnecessarily.
 
-NitroX DLC supports the Builder Pattern as suggested by Joshua Bloch in his book "Effective Java" (3rd Edition, 2018).
+DLC supports the Builder Pattern as suggested by Joshua Bloch in his book "Effective Java" (3rd Edition, 2018).
 
 The specific implementation of the Builder Pattern as suggested by Joshua Bloch is described in the following.
 
-The simplest way to work with NitroX DLC regarding the builder necessity is to use [Lombok Builders](#lombok-builder-support).
+The simplest way to work with DLC regarding the builder necessity is to use [Lombok Builders](#lombok-builder-support).
 
 ```java
 public class SampleClass {
@@ -51,9 +51,9 @@ public class SampleClass {
 }
 ```
 
-## NitroX DLC Builder Pattern requirements
+## DLC Builder Pattern requirements
 
-The Builder Pattern implementation provided above is compliant to the default Builder Pattern support of NitroX DLC.
+The Builder Pattern implementation provided above is compliant to the default Builder Pattern support of DLC.
 
 The classes `InnerClassDOmainObjectBuilderProvider`,
 `InnerClassDomainObjectBuilder` and `InnerClassDomainObjectBuilderConfiguration` are used by default. 
@@ -62,8 +62,8 @@ The required implementations are (alongside the implementation example above)
 
 ### Static Builder Access in the parent class
 
-The tangible Builder is fetched by accessing the type of the parents class `builder` method. Thus, the method
-named `builder` is necessary for NitroX DLC to fetch that builder.
+The tangible builder is fetched by accessing the type of the parents class `builder` method. Thus, the method
+named `builder` is necessary for DLC to fetch that builder.
 
 ```java
 public class SampleClass
@@ -79,7 +79,7 @@ public class SampleClass
 
 ### Provide default builder configuration
 
-To provide the default builder configuration, the NitroX DLC configuration must be extended by the following
+To provide the default builder configuration, the DLC configuration must be extended by the following
 `Bean` in the manner of a classical Spring Configuration Bean. 
 
 ```java

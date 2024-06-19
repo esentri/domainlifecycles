@@ -47,7 +47,7 @@ public final class SpringPersistenceEventPublisher implements PersistenceEventPu
     }
 
     /**
-     * Publishes NitroX DLC persistence actions on the Spring application event bus.
+     * Publishes DLC persistence actions on the Spring application event bus.
      * For every DML operation applied an action is emitted.
      *
      * @param pa the {@link PersistenceAction}

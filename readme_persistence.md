@@ -1,19 +1,18 @@
-## NitroX Domain Lifecycles Persistence
+## Domain Lifecycles Persistence
 
-NitroX DLC Persistence is all about object relational mapping and Aggregate persistence via Repositories.
+DLC Persistence is all about object relational mapping and Aggregate persistence via Repositories.
 The DDD recommendation is to implement the persistence related access on Aggregates within a Repository.
 Each Aggregate and each of the contained Entities or ValueObjects need to be mapped to corresponding 
 tables or columns in the course of the object relational mapping.
 
-The current NitroX DLC Persistence implementation is technically based on [jOOQ](https://www.jooq.org/)). 
+The current DLC Persistence implementation is technically based on [jOOQ](https://www.jooq.org/)). 
 jOOQ provides Java Wrappers for relational Database Objects (e.g. tables, sequences,...). 
 That enables a simple 1-1 mapping between tables and jOOQ records (don't mix up jOOQ records with Java records). 
 
 With DDD in mind, we want to abstract from these rather technical representations. 
 Repositories should provide interfaces to query complete Aggregates or to pass complete 
 Aggregates to be inserted, updated or deleted. Ideally a repository provides the illusion 
-of an in‐memory collection of all objects of that Aggregate’s root type. 
-NitroX DLC persistence provides means to achieve exactly that behaviour with less effort. 
+of an in‐memory collection of all objects of that Aggregate’s root type. DLC persistence provides means to achieve exactly that behaviour with less effort. 
 It helps to overcome the natural impedance mismatches that exist between the Aggregates technical representations.
 
 ![Impedance mismatch](documentation/resources/images/impedance.png "Impedance mismatch")
@@ -22,7 +21,7 @@ An Aggregate typically is composed of several different Entities and ValueObject
 These objects have to mapped into jOOQ records which then are mapped into their table representations via jOOQ.
 The mapping must be consistent in each direction either when reading from or writing to the underlying datastore.
 
-NitroX DLC Persistence provides: 
+DLC Persistence provides: 
 
 - [Automatic mapping of Aggregates from/into jOOQ records](#automapping)
 - [RecordMappers](#recordmapper) to customize that mapping if needed
@@ -31,20 +30,20 @@ NitroX DLC Persistence provides:
 
 In most cases it is sufficient just to extend `io.domainlifecycles.jooq.imp.JooqAggregateRepository` for an adequate DDD style 
 repository implementation, without needing to implement additional mapper classes or the need to declare object relational mapping behaviour in detail.
-Have a look at the repositories within our [sample project](./dlc-sample), to see how NitroX DLC persistence works. 
+Have a look at the repositories within our [sample project](./dlc-sample), to see how DLC persistence works. 
 
-Here is an overview of more details about NitroX DLC Persistence and some additional features:
+Here is an overview of more details about DLC Persistence and some additional features:
 
 - [jOOQ](#jooq)
-    - [jOOQ build configuration for NitroX DLC](#jooq-build-configuration)
+    - [jOOQ build configuration for DLC](#jooq-build-configuration)
         - [Maven](#maven-setup")
         - [Gradle](#gradle-setup)
         - [Flyway](#flyway-setup)
-    - [jOOQ runtime configuration with NitroX DLC](#jooq-runtime-configuration)
-- [NitroX DLC Persistence configuration](#persistence-configuration)
+    - [jOOQ runtime configuration with DLC](#jooq-runtime-configuration)
+- [DLC Persistence configuration](#persistence-configuration)
     - [Minimal persistence configuration](#minimal-persistence-configuration)
     - [Extended persistence configuration](#extended-persistence-configuration)
-- [NitroX DLC Repositories](#dlc-repositories)
+- [DLC Repositories](#dlc-repositories)
     - [Optimistic Locking](#optimistic-locking)
     - [Change Tracking with Persistence Actions](#change-tracking)
     - [Queries via Fetcher](#fetcher)
@@ -71,10 +70,10 @@ jOOQ provides many functions for accessing relational databases in a type-safe-m
 Jooq simplifies and harmonizes the way Java applications access relational databases.
 
 <a name="jooq-build-configuration"></a>
-#### jOOQ Build configuration for NitroX DLC
+#### jOOQ Build configuration for DLC
 
-NitroX relies on jOOQ generated classes which represent the accessed database objects.
-NitroX DLC projects can work with either Maven or Gradle. We show how to configure jOOQ 
+DLC relies on jOOQ generated classes which represent the accessed database objects.
+DLC projects can work with either Maven or Gradle. We show how to configure jOOQ 
 class generation in the build process in the following sections. 
 
 <a name="maven-setup"></a>
@@ -162,11 +161,9 @@ Maven setup regarding jOOQ:
 </project>
 ```
 
-Watch out: NitroX DLC requires the use of optimistic locking. 
+Watch out: DLC requires the use of optimistic locking. 
 To use the optimistic locking feature in an appropriate way, define:
  `<recordVersionFields>CONCURRENCY_VERSION</recordVersionFields>`!
-
-The maven example can found [here](https://bitbucket.org/esentri/nitrox-dlc-demoapp/src/master/).
 
 <a name="gradle-setup"></a>
 ##### Gradle
@@ -176,17 +173,17 @@ A similar example for Gradle can be found in our [sample project](./dlc-sample).
 <a name="flyway-setup"></a>
 #### Flyway
 
-To use be able to use NitroX DLC Persistence currently only jOOQ is available as NitroX persistence provider.
+To use be able to use DLC Persistence currently only jOOQ is available as persistence provider.
 Therefore, it is necessary to generate jOOQ classes representing the database tables and other database objects.
 
 The build setup of jOOQ in connection with Flyway is our recommended setup. As it's a bit tricky, you can refer to the sample project linked below,
 to see the setup working with Maven as well as with Gradle.
 
-The use of [Flyway](https://flywaydb.org/) is not necessary for NitroX DLC, but we nonetheless recommend the use of
+The use of [Flyway](https://flywaydb.org/) is not necessary for DLC, but we nonetheless recommend the use of
 a tool for database structure version control.
 
 <a name="jooq-runtime-configuration"></a>
-#### jOOQ runtime configuration with NitroX DLC
+#### jOOQ runtime configuration with DLC
 
 A typical runtime configuration for jOOQ using Spring Boot looks like that:
 ```Java
@@ -199,7 +196,7 @@ public class PersistenceConfiguration {
     }
 
     /**
-     * NitroX DLC requires optimistic locking in JOOQ Config
+     * DLC requires optimistic locking in JOOQ Config
      */
     @Bean
     public DefaultConfiguration configuration(DataSource dataSource) {
@@ -220,7 +217,7 @@ public class PersistenceConfiguration {
 Watch out: Don't forget to set the appropriate SQL dialect!
 
 <a name="persistence-configuration"></a>
-### NitroX DLC Persistence configuration
+### DLC Persistence configuration
 
 <a name="minimal-persistence-configuration"></a>
 #### Minimal persistence configuration
@@ -247,9 +244,9 @@ public JooqDomainPersistenceProvider domainPersistenceProvider(
 
 For a minimal setup:
 
-- A DomainObjectBuilderProvider instance is required for NitroX DLCs internal automapping functionality.
+- A DomainObjectBuilderProvider instance is required for DLCs internal automapping functionality.
 - We can add a list of custom RecordMappers (optionally).
-- Also, the full qualified package name where NitroX DLC persistence can expect to find all corresponding jOOQ record classes 
+- Also, the full qualified package name where DLC persistence can expect to find all corresponding jOOQ record classes 
   must be defined. 
 
 The DomainPersistenceProvider instance must finally be injected into all repository instances.
@@ -257,20 +254,20 @@ The DomainPersistenceProvider instance must finally be injected into all reposit
 <a name="extended-persistence-configuration"></a>
 #### Extended persistence configuration
 
-NitroX DLC persistence provides many more options to customize the persistence behaviour, by implementing and passing instances of the following interfaces:
+DLC persistence provides many more options to customize the persistence behaviour, by implementing and passing instances of the following interfaces:
 
 - `io.domainlifecycles.persistence.mapping.converter.TypeConverterProvider`: Enables customizing of generic type conversions between jOOQ record properties and DomainObject properties, see [TypeConverter](#typeconverter).
-- `io.domainlifecycles.persistence.records.EntityValueObjectRecordTypeConfiguration`: Enables customizing of the jOOQ record class that should be mapped to a ValueObject class (for example, if NitroX DLC naming conventions don't work), see [EntityValueObjectRecordTypeConfiguration](#entityvalueobjectrecordtypeconfiguration).
-- `io.domainlifecycles.persistence.records.RecordTypeToEntityTypeMatcher`: To adjust matching strategy between Entity types to Jooq record types (if NitroX DLC naming conventions are not sufficient).
-- `io.domainlifecycles.persistence.mapping.RecordPropertyMatcher`: To adjust matching strategy between field mirrors to Jooq record properties (if NitroX DLC naming conventions are not sufficient).
+- `io.domainlifecycles.persistence.records.EntityValueObjectRecordTypeConfiguration`: Enables customizing of the jOOQ record class that should be mapped to a ValueObject class (for example, if DLC naming conventions don't work), see [EntityValueObjectRecordTypeConfiguration](#entityvalueobjectrecordtypeconfiguration).
+- `io.domainlifecycles.persistence.records.RecordTypeToEntityTypeMatcher`: To adjust matching strategy between Entity types to Jooq record types (if DLC naming conventions are not sufficient).
+- `io.domainlifecycles.persistence.mapping.RecordPropertyMatcher`: To adjust matching strategy between field mirrors to Jooq record properties (if DLC naming conventions are not sufficient).
 - `io.domainlifecycles.persistence.records.RecordPropertyAccessor`: To adjust the way values of record properties are accessed (by default via reflection).
 - `io.domainlifecycles.persistence.mapping.IgnoredFieldProvider`: To define fields of DomainObjects, that should be ignored in persistence mapping process.
 - `io.domainlifecycles.persistence.mapping.IgnoredRecordPropertyProvider`: To define record properties of jooq records, that should be ignored in persistence mapping process.
 
 <a name="dlc-repositories"></a>
-### NitroX DLC Repositories
+### DLC Repositories
 
-In NitroX DLC the type signature of a Repository shows for which Aggregate it is responsible.
+In DLC the type signature of a Repository shows for which Aggregate it is responsible.
 The AggregateRoot class as well as the AggregateRoots Identity class have to be passed as type parameters:
 
 ```Java
@@ -279,13 +276,13 @@ public class MyAggregateRepository extends JooqAggregateRepository<MyAggregateRo
 }
 ```
 
-NitroX DLC Repositories provide by default the following methods:
+DLC Repositories provide by default the following methods:
 
 - Inserting of new Aggregates
   > public A insert(A root)
 
   By calling `insert(MyAggregateRoot a)` the complete Aggregate will be inserted in the database (throwing unique key exceptions, if already inserted) 
-  NitroX DLC takes care of the correct insert order (depending on the defined Foreign Key Constraints).
+  DLC takes care of the correct insert order (depending on the defined Foreign Key Constraints).
   The repository emits PersistenceActions for every inserted DomainObject (=each object in the Aggregates object tree).
 
 - Updating existing Aggregates:
@@ -351,13 +348,13 @@ Watch out: You need a jOOQ `DSLContext` instance and provide it to the Repositor
 #### Optimistic Locking
 
 Write operations on Aggregates are protected from concurrent accesses by
-[optimistic locking](#optimistic-locking). NitroX DLC protects the complete Aggregate, as each write operation
+[optimistic locking](#optimistic-locking). DLC protects the complete Aggregate, as each write operation
 increases the AggregateRoot's `concurrencyVersion`. That way the transactional guarantees of an Aggregate
 are always satisfied.
 
-The optimistic locking of NitroX DLC is based on the [optimistic locking feature of jOOQ](https://www.jooq.org/doc/latest/manual/sql-execution/crud-with-updatablerecords/optimistic-locking/).
+The optimistic locking of DLC is based on the [optimistic locking feature of jOOQ](https://www.jooq.org/doc/latest/manual/sql-execution/crud-with-updatablerecords/optimistic-locking/).
 
-NitroX DLC requires each Entity and each AggregateRoot to define a `concurrencyVersion` property. 
+DLC requires each Entity and each AggregateRoot to define a `concurrencyVersion` property. 
 The corresponding tables need to provide appropriately mapped `concurrency_version` columns.
 
 The jOOQ configuration must enable optimistic locking. See the following Java/Spring Boot based example:
@@ -366,10 +363,10 @@ The jOOQ configuration must enable optimistic locking. See the following Java/Sp
     @Bean
     public DefaultConfiguration configuration(DataSource dataSource) {
         DefaultConfiguration jooqConfiguration = new DefaultConfiguration();
-        //Optimistic locking is required for NitroX DLC Persistence
+        //Optimistic locking is required for DLC Persistence
         jooqConfiguration.settings().setExecuteWithOptimisticLocking(true);
         jooqConfiguration.setConnectionProvider(connectionProvider(dataSource));
-        //The jOOQ SQL Dialect is required for NitroX DLC Persistence
+        //The jOOQ SQL Dialect is required for DLC Persistence
         jooqConfiguration.set(SQLDialect.H2);
         return jooqConfiguration;
     }
@@ -378,7 +375,7 @@ The jOOQ configuration must enable optimistic locking. See the following Java/Sp
 <a name="change-tracking"></a>
 #### Change Tracking with Persistence Actions
 
-Like already mentioned, emit NitroX DLC Repositories PersistenceActions for every
+Like already mentioned, emit DLC Repositories PersistenceActions for every
 SQL DML operation applied to the tables of a 
 Domain Object (AggregateRoot, Entity or ValueObject). 
 These persistence events announce, which DML operation (`INSERT`, `UPDATE` oder `DELETE`) were performed.
@@ -571,10 +568,10 @@ optimized alternative, is demonstrated here:
 <a name="or-mapping"></a>
 #### Object relational mapping
 
-Part of the object-relational mapping in NitroX DLC Persistence is done by jOOQ
+Part of the object-relational mapping in DLC Persistence is done by jOOQ
 (see [jOOQ](#jooq)), especially at the level of mapping between columns and properties.
 The jOOQ mapping functionality, which is based on JDBC and unifies SQL dialect
-specific features. It is further extended by NitroX DLC Persistence, 
+specific features. It is further extended by DLC Persistence, 
 which automatically derives a mapping, that maps the object tree of an Aggregate from/into a set of table rows.
 
 This mapping takes place in a nearly transparent way for the developer (AutoMapping).
@@ -582,9 +579,8 @@ This mapping takes place in a nearly transparent way for the developer (AutoMapp
 <a name="automapping"></a>
 ##### AutoMapping
 
-NitroX DLC AutoMapping
-uses naming and structure conventions to map table structures
-to NitroX DLC object structures. Complex DDD objects can thus be mapped to
+DLC AutoMapping uses naming and structure conventions to map table structures
+to DLC object structures. Complex DDD objects can thus be mapped to
 complex table structures without writing any mapping boilerplate code (neither the mapping needs to be explicitly declared).
 
 The following conventions must be followed:
@@ -665,19 +661,19 @@ regarding data types:
   then an alternative table name can be defined by configuration
   [EntityValueObjectRecordTypeConfiguration](#entityvalueobjectrecordtypeconfiguration)
 
-In the [NitroX Sample App](./dlc-sample) you can view a fully AutoMapping capable complex example.
+In the [Sample App](./dlc-sample) you can view a fully AutoMapping capable complex example.
 
-If the conventions for property-level auto-mapping are not followed, Nitrox DLC will issue an error message when the application is started and terminates. 
+If the conventions for property-level auto-mapping are not followed, DLC will issue an error message when the application is started and terminates. 
 In this case it is possible define a RecordMapper to intervene.
 
 <a name="recordmapper"></a>
 ##### RecordMapper
 
 RecordMappers map tables to class structures as mentioned before. 
-They are part of the object-relational mapping of NitroX DLC Persistence. 
-NitroX DLC Persistence uses RecordMappers internally. 
+They are part of the object-relational mapping of DLC Persistence. 
+DLC Persistence uses RecordMappers internally. 
 As a rule RecordMappers are never called directly by the application developer. 
-However, they must be registered as part of the Nitrox DLC configuration (see below).
+However, they must be registered as part of the DLC configuration (see below).
 
 Custom RecordMappers must implement `io.domainlifecycles.persistence.mapping.RecordMapper` or
 extend `io.domainlifecycles.persistence.mapping.AbstractRecordMapper`.
@@ -737,7 +733,7 @@ public class TestOneToManyJooqRecordMapper extends AbstractRecordMapper<TestEnti
 }
 
 ```
-Custom RecordMappers must be made known to Nitrox DLC Persistence by configuration:
+Custom RecordMappers must be made known to DLC Persistence by configuration:
 
  ```Java
     var jooqDomainPersistenceConfiguration = JooqDomainPersistenceConfiguration
@@ -756,7 +752,7 @@ Custom RecordMappers must be made known to Nitrox DLC Persistence by configurati
 
 Each ValueObject, which is in 1:n relation to its containing Entity
 is relationally mapped in an own table. These ValueObjects are called
-called 'record mapped' ValueObjects. But NitroX DLC persistence provides mechanisms to define 
+called 'record mapped' ValueObjects. But DLC persistence provides mechanisms to define 
 explicit ValueObject-to-database-table mappings (see below "EntityValueObjectRecordTypeConfiguration").
 'Record mapped' ValueObjects must also fulfill certain requirements in their
 relational structures (database definition):
@@ -819,7 +815,7 @@ A corresponding configuration must be specified in the persistence configuration
 TypeConverters' offer the possibility of data type conversions in a general
 form,
 so that for special frequently used data types (which may not be jOOQ compatible) simple conversion 
-functions can be added to NitroX DLC Persistence:
+functions can be added to DLC Persistence:
 
 - TypeConverters must implement `io.domainlifecycles.core.persistence.mapping.converter.TypeConverter`.
 - They provide only one conversion direction. If the opposite direction is required, a corresponding additional  TypeConverter must be created and registered.
@@ -837,10 +833,10 @@ functions can be added to NitroX DLC Persistence:
   extending `io.domainlifecycles.persistence.mapping.converter.def.DefaultTypeConverterProvider`
   or implementing the
   interface `io.domainlifecycles.persistence.mapping.converter.TypeConverterProvider`
-- NitroX DLC Persistence adds several default TypeConverters to support mapping
+- DLC Persistence adds several default TypeConverters to support mapping
   between Java data types and jOOQ types (i.e. SQL data types, in the end)
   more flexible without having to interfere with jOOQ/JDBC configurations.
-  The following converters are already predefined by NitroX DLC.
+  The following converters are already predefined by DLC.
   The name describes the conversion function:
 
     - DefaultBigDecimalToDoubleConverter
@@ -896,15 +892,15 @@ functions can be added to NitroX DLC Persistence:
 ##### Working with inheritance
 
 The inheritance hierarchy of AggregateRoots, Entities or ValueObjects has
-in NitroX DLC only a deeper impact on their persistence mapping.
-Otherwise, DomainObjects will be recognized as such in NitroX DLC as soon as they have
+in DLC only a deeper impact on their persistence mapping.
+Otherwise, DomainObjects will be recognized as such in DLC as soon as they have
 the corresponding marker interfaces somewhere in their inheritance hierarchy.
 That means, whether a concrete DomainObject has several levels of inheritance hierarchies has no effect except for persistence.
 
 <a name="inheritance-of-entities"></a>
 ###### Inheritance of Entities or AggregateRoots
 
-Entities with an inheritance hierarchy can be created in NitroX DLC in two different ways.
+Entities with an inheritance hierarchy can be created in DLC in two different ways.
 
 Either each top-level Entity is mapped to its own table (default - dedicated tables inheritance) 
 or all Entity occurrences are mapped to a common table (single table inheritance).
@@ -1016,8 +1012,8 @@ Class diagram for the "single table inheritance" case:
 <a name="inheritance-of-valueobjects"></a>
 ###### Inheritance of ValueObjects
 
-In principle, NitroX DLC supports inheritance structures in ValueObjects.
-A class is recognized by NitroX DLC as a ValueObject as soon as in the
+In principle, DLC supports inheritance structures in ValueObjects.
+A class is recognized by DLC as a ValueObject as soon as in the
 class hierarchy the interface `io.domainlifecycles.domain.types.ValueObject` is implemented.
 The inheritance structure of ValueObjects has no influence on the
 persistence mapping already described [above](#automapping).

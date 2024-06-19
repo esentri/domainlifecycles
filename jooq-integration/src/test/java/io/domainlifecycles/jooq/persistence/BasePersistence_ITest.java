@@ -35,7 +35,7 @@ import tests.shared.persistence.PersistenceEventTestHelper;
 @Slf4j
 public class BasePersistence_ITest {
 
-    protected BaseNitroxTestPersistenceConfiguration persistenceConfiguration = new BaseNitroxTestPersistenceConfiguration();
+    protected BaseDLCTestPersistenceConfiguration persistenceConfiguration = new BaseDLCTestPersistenceConfiguration();
     protected PersistenceEventTestHelper persistenceEventTestHelper = new PersistenceEventTestHelper();
 
     @BeforeEach

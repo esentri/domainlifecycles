@@ -111,7 +111,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class BaseNitroxTestPersistenceConfiguration {
+public class BaseDLCTestPersistenceConfiguration {
 
     public final JooqDomainPersistenceProvider domainPersistenceProvider;
     public final DSLContext dslContext;
@@ -121,7 +121,7 @@ public class BaseNitroxTestPersistenceConfiguration {
     private Connection currentConnection;
 
 
-    public BaseNitroxTestPersistenceConfiguration() {
+    public BaseDLCTestPersistenceConfiguration() {
         dataSource = initDatasource();
         dslContext = initDslContext();
         initDomainMirror();

@@ -38,7 +38,7 @@ import org.springdoc.core.SpringDocConfigProperties;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 
 /**
- * Open API customizations and extensions for NitroX DLC.
+ * Open API customizations and extensions for DLC.
  * <p>
  * Provides additional temporal type support, which reflects the Jackson default behaviour.
  * The extension adds Open API schemata for several additional temporal types {@link OpenAPITemporalTypeExtension}.
@@ -50,8 +50,8 @@ import org.springdoc.core.customizers.OpenApiCustomiser;
  * this customization extends all classes which have bean validation annotations on their properties (also non dlc domain object classes, like DTOs)
  * with a corresponding additional open api description, if they are used in controller interfaces which additionally provide Open API documentation {@link OpenAPIPropertyBeanValidationExtension}.
  * <p>
- * Additionally, for all special NitroX DLC domain object types (entities, valueObject, identities) some Open API extensions are performed, to make the
- * Open API description of controller interfaces match the default mapping behaviour of the NitroX DLC Jackson extension {@link MirrorBasedOpenApiExtension}.
+ * Additionally, for all special DLC domain object types (entities, valueObject, identities) some Open API extensions are performed, to make the
+ * Open API description of controller interfaces match the default mapping behaviour of the DLC Jackson extension {@link MirrorBasedOpenApiExtension}.
  * <p>
  * A note for the application of the error management of this extension: Any exception or error which happens when trying to
  * modify or extend the Open API behaviour of any class, results in an error log message without, stooping the extension or
@@ -72,7 +72,7 @@ public class DlcOpenApiCustomizer implements OpenApiCustomiser {
     private final String[] entitiesWithExternallyProvidedIds;
 
     /**
-     * Constructor of the Nitrox Spring Doc based Open API extension.
+     * Constructor of the Spring Doc based Open API extension.
      *
      * To work correctly, the spring doc configuration property 'springdoc.use-fqn' must be 'true',
      * as this extension relies on full qualified path names of the extended classes.
@@ -82,17 +82,17 @@ public class DlcOpenApiCustomizer implements OpenApiCustomiser {
         this.springDocConfigProperties = springDocConfigProperties;
         this.entitiesWithExternallyProvidedIds = entitiesWithExternallyProvidedIds;
         if (!this.springDocConfigProperties.isUseFqn()) {
-            throw new RuntimeException("NitroX DLC Open API extension requires the spring doc config property 'springdoc.use-fqn' to be 'true'!");
+            throw new RuntimeException("DLC Open API extension requires the spring doc config property 'springdoc.use-fqn' to be 'true'!");
         }
         this.mirrorBasedOpenApiExtension = new MirrorBasedOpenApiExtension();
     }
 
     /**
-     * Central entry point for Nitrox DLC Open API extensions.
+     * Central entry point for DLC Open API extensions.
      */
     @Override
     public void customise(OpenAPI openApi) {
-        log.debug("Customizing Open API informations with NitroX DLC specifica!");
+        log.debug("Customizing Open API informations with DLC specifica!");
         OpenAPITemporalTypeExtension.extendOpenAPISchemaForTemporalTypes(openApi);
         OpenAPIPrimitivePropertyExtension.extendPrimitiveProperties(openApi);
         OpenAPIPropertyBeanValidationExtension.extendWithBeanValidationInformation(openApi);

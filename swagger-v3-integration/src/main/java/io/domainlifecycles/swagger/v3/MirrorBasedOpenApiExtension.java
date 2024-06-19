@@ -48,10 +48,10 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * For all special NitroX DLC domain object types (entities, valueObject, identities) some Open API extensions are performed, to make the
- * Open API description of controller interfaces match the default mapping behaviour of the NitroX DLC Jackson extension.
+ * For all special DLC domain object types (entities, valueObject, identities) some Open API extensions are performed, to make the
+ * Open API description of controller interfaces match the default mapping behaviour of the DLC Jackson extension.
  * <p>
- * Identity types which are referenced from entities or value objects are "folded" in their mapping behaviour by the NitroX DLC
+ * Identity types which are referenced from entities or value objects are "folded" in their mapping behaviour by the DLC
  * Jackson extension. Jackson default behaviour would read and write only structures like:
  * </p>
  * <p>
@@ -87,7 +87,7 @@ public class MirrorBasedOpenApiExtension {
 
 
     /**
-     * This extension modifies and extends the Open API description for all NitroX DLC specific domain object classes, which are
+     * This extension modifies and extends the Open API description for all DLC specific domain object classes, which are
      * managed by the given {@link Domain}.
      *
      */

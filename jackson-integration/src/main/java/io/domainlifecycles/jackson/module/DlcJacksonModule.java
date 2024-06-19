@@ -41,7 +41,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * NitroX DLC Jackson extension
+ * DLC Jackson extension
  * @see SimpleModule
  *
  * @author Mario Herb
@@ -88,7 +88,7 @@ public class DlcJacksonModule extends SimpleModule {
      */
     @Override
     public Version version() {
-        return new Version(1, 0, 21, "", "nitrox", "dlc");
+        return new Version(2, 0, 0, "", "io.domainlifecycles", "jackson-integration");
     }
 
     /**

@@ -42,7 +42,7 @@ import static io.domainlifecycles.swagger.v3.Constants.IGNORED_RESPONSE_OBJECT_F
 
 /**
  * If omitted, primitive properties are initialized by Jackson with primitive default values.
- * That's ok, but it can lead to unintended behaviour. So in case of NitroX DLC we want to make the
+ * That's ok, but it can lead to unintended behaviour. So in case of DLC we want to make the
  * requested behaviour explicit. Therefore, we mark primitive values as required in the API documentation.
  * So the API user is requested to provide explicit value for the initialization of primitive field, when
  * deserializing.

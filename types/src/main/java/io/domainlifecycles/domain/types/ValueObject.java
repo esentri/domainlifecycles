@@ -25,19 +25,6 @@
  *  limitations under the License.
  */
 
-//    ____                _
-//   |    \ ___ _____ ___|_|___
-//   |  |  | . |     | .'| |   |
-//  _|____/|___|_|_|_|__,|_|_|_|_
-// |  |  |_|  _|___ ___ _ _ ___| |___ ___
-// |  |__| |  _| -_|  _| | |  _| | -_|_ -|
-// |_____|_|_| |___|___|_  |___|_|___|___|
-//                     |___|
-// Copyright (C) esentri.NitroX - All Rights Reserved.
-//
-// Unauthorized copying of this file, via any medium
-// is strictly prohibited. Proprietary and confidential.
-
 package io.domainlifecycles.domain.types;
 
 import io.domainlifecycles.domain.types.internal.DomainObject;
