@@ -90,9 +90,9 @@ public class VoAggregatePrimitive extends AggregateRootBase<VoAggregatePrimitive
         this.recordMappedSimple = recordMappedSimple;
         this.recordMappedComplex = recordMappedComplex;
         this.recordMappedNested = recordMappedNested;
-        this.optionalSimple = Optional.ofNullable(simple);
-        this.optionalComplex = Optional.ofNullable(complex);
-        this.optionalNested = Optional.ofNullable(nested);
+        this.optionalSimple = Optional.ofNullable(optionalSimple);
+        this.optionalComplex = Optional.ofNullable(optionalComplex);
+        this.optionalNested = Optional.ofNullable(optionalNested);
     }
 
 }

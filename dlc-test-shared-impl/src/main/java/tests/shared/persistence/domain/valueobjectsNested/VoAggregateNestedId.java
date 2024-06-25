@@ -25,25 +25,8 @@
  *  limitations under the License.
  */
 
-package nitrox.dlc.mirror.api;
+package tests.shared.persistence.domain.valueobjectsNested;
 
-import java.util.Optional;
+import nitrox.dlc.domain.types.Identity;
 
-/**
- * A ValueObjectMirror mirrors {@link nitrox.dlc.domain.types.ValueObject} instances.
- *
- * @author Mario Herb
- */
-public interface ValueObjectMirror extends DomainObjectMirror, ValueMirror{
-
-    /**
-     * Returns true, if the ValueObject contains only exactly one basic, enum or identity field that contains the associated value or another singled valued value object.
-     */
-    boolean isSingledValued();
-
-    /**
-     * Returns the field mirror for the only field that might contain a value. If the ValueObject is not singleValued
-     * the returned Optional is empty.
-     */
-    Optional<FieldMirror> singledValuedField();
-}
+public record VoAggregateNestedId(Long value) implements Identity<Long> {}

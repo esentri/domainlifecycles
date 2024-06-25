@@ -164,7 +164,13 @@ import tests.shared.persistence.domain.valueobjects.VoEntityId;
 import tests.shared.persistence.domain.valueobjects.VoIdentityRef;
 import tests.shared.persistence.domain.valueobjects.VoOneToManyEntity;
 import tests.shared.persistence.domain.valueobjects.VoOneToManyEntity2;
+import tests.shared.persistence.domain.valueobjectsNested.NestedSimpleVo;
+import tests.shared.persistence.domain.valueobjectsNested.VoAggregateNested;
+import tests.shared.persistence.domain.valueobjectsNested.VoAggregateNestedId;
 import tests.shared.persistence.domain.valueobjectsPrimitive.ComplexVoPrimitive;
+import tests.shared.persistence.domain.valueobjectsNested.MyEnum;
+import tests.shared.persistence.domain.valueobjectsNested.NestedEnumSingleValued;
+import tests.shared.persistence.domain.valueobjectsNested.NestedId;
 import tests.shared.persistence.domain.valueobjectsPrimitive.NestedVoPrimitive;
 import tests.shared.persistence.domain.valueobjectsPrimitive.SimpleVoPrimitive;
 import tests.shared.persistence.domain.valueobjectsPrimitive.VoAggregatePrimitive;
@@ -1678,6 +1684,41 @@ public class TestDataGenerator {
                     .setNum(4l)
                     .build())
                 .build())
+            .setOptionalSimple(SimpleVoPrimitive.builder().setVal(7).build())
+            .setOptionalComplex(ComplexVoPrimitive
+                .builder()
+                .setVal(111l)
+                .setNum(44l)
+                .build())
+            .setOptionalNested(NestedVoPrimitive
+                .builder()
+                .setSimple(SimpleVoPrimitive.builder()
+                    .setVal(88l)
+                    .build())
+                .setComplex(ComplexVoPrimitive
+                    .builder()
+                    .setVal(99l)
+                    .setNum(111l)
+                    .build())
+                .build())
+            .build();
+    }
+
+    public static VoAggregateNested buildVoNestedEmpty(){
+        return VoAggregateNested.builder()
+            .setId(new VoAggregateNestedId(1l))
+            .build();
+    }
+
+    public static VoAggregateNested buildVoNestedComplete(){
+        return VoAggregateNested.builder()
+            .setId(new VoAggregateNestedId(2l))
+            .setNestedEnumSingleValued(NestedEnumSingleValued.builder().setEnumValue(MyEnum.A).build())
+            .setNestedSimpleVo(NestedSimpleVo.builder().setNested(tests.shared.persistence.domain.valueobjectsNested.SimpleVo.builder().setVal(9l).build()).build())
+            .setNestedId(NestedId.builder().setIdRef(new VoAggregateNestedId(55l)).build())
+            .setNestedEnumSingleValuedList(List.of(NestedEnumSingleValued.builder().setEnumValue(MyEnum.B).build()))
+            .setNestedSimpleVoList(List.of(NestedSimpleVo.builder().setNested(tests.shared.persistence.domain.valueobjectsNested.SimpleVo.builder().setVal(90l).build()).build()))
+            .setNestedIdList(List.of(NestedId.builder().setIdRef(new VoAggregateNestedId(550l)).build()))
             .build();
     }
 

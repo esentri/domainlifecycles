@@ -76,7 +76,6 @@ public class ValueObjectSerializer extends StdSerializer<ValueObject> {
                 Object value = DlcAccess.accessorFor(valueObject).peek(valueObjectMirror.singledValuedField().get().getName());
                 jsonGenerator.writeObject(value);
             } else {
-
                 jsonGenerator.writeStartObject();
                 writeBasicFields(jsonGenerator, valueObjectMirror, valueObject);
                 writeValues(jsonGenerator, valueObjectMirror, valueObject);
