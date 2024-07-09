@@ -25,27 +25,11 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.mirror.api;
+package tests.shared.persistence.domain.valueobjectsNested;
 
+import lombok.Builder;
 import io.domainlifecycles.domain.types.ValueObject;
 
-import java.util.Optional;
-
-/**
- * A ValueObjectMirror mirrors {@link ValueObject} instances.
- *
- * @author Mario Herb
- */
-public interface ValueObjectMirror extends DomainObjectMirror, ValueMirror{
-
-    /**
-     * Returns true, if the ValueObject contains only exactly one basic, enum or identity field that contains the associated value or another singled valued value object.
-     */
-    boolean isSingledValued();
-
-    /**
-     * Returns the field mirror for the only field that might contain a value. If the ValueObject is not singleValued
-     * the returned Optional is empty.
-     */
-    Optional<FieldMirror> singledValuedField();
+@Builder(setterPrefix = "set")
+public record SimpleVo(Long val) implements ValueObject {
 }

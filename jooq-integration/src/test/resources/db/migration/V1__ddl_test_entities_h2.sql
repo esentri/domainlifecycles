@@ -841,6 +841,39 @@ CREATE SEQUENCE test_domain.vo_aggregate_primitive_record_mapped_simple_seq  MIN
 CREATE SEQUENCE test_domain.vo_aggregate_primitive_record_mapped_complex_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
 CREATE SEQUENCE test_domain.vo_aggregate_primitive_record_mapped_nested_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
 
+CREATE TABLE test_domain.vo_aggregate_nested (
+                                                    id NUMBER(18) PRIMARY KEY,
+                                                    concurrency_version NUMBER(18) NOT NULL,
+                                                    nested_enum_single_valued_enum_value CHAR(1),
+                                                    nested_simple_vo_nested_val NUMBER(18),
+                                                    nested_id_id_ref NUMBER(18)
+);
+
+CREATE TABLE test_domain.vo_aggregate_nested_nested_enum_single_valued_list (
+                                                                         id NUMBER(18) PRIMARY KEY,
+                                                                         container_id NUMBER(18) NOT NULL,
+                                                                         enum_value CHAR(1),
+                                                                         FOREIGN KEY (container_id) REFERENCES test_domain.vo_aggregate_nested(id)
+);
+
+CREATE TABLE test_domain.vo_aggregate_nested_nested_simple_vo_list (
+                                                                          id NUMBER(18) PRIMARY KEY,
+                                                                          container_id NUMBER(18) NOT NULL,
+                                                                          nested_val NUMBER(18),
+                                                                          FOREIGN KEY (container_id) REFERENCES test_domain.vo_aggregate_nested(id)
+);
+
+CREATE TABLE test_domain.vo_aggregate_nested_nested_id_list (
+                                                                         id NUMBER(18) PRIMARY KEY,
+                                                                         container_id NUMBER(18) NOT NULL,
+                                                                         id_ref NUMBER(18),
+                                                                         FOREIGN KEY (container_id) REFERENCES test_domain.vo_aggregate_nested(id)
+);
+
+CREATE SEQUENCE test_domain.vo_aggregate_nested_nested_enum_single_valued_list_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
+CREATE SEQUENCE test_domain.vo_aggregate_nested_nested_simple_vo_list_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
+CREATE SEQUENCE test_domain.vo_aggregate_nested_nested_id_list_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
+
 CREATE TABLE test_domain.test_root_simple_ignoring (
                                               id NUMBER(18) PRIMARY KEY,
                                               concurrency_version NUMBER(18) NOT NULL,

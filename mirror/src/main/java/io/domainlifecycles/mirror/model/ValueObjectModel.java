@@ -65,13 +65,24 @@ public class ValueObjectModel extends DomainObjectModel implements ValueObjectMi
     @JsonIgnore
     @Override
     public boolean isSingledValued() {
-        var noValueReferences = getValueReferences()
-                .stream().noneMatch(vr -> !vr.isStatic() && !vr.isHidden());
-        var exactlyOneBasicReference = getBasicFields()
+        var valueReferences = getValueReferences()
+                .stream().filter(vr -> !vr.isStatic() && !vr.isHidden()).toList();
+
+        var basicReferencesCount = getBasicFields()
                 .stream()
                 .filter(f -> !f.isStatic() && !f.isHidden())
-            .count() == 1;
-        return noValueReferences && exactlyOneBasicReference;
+            .count();
+
+        if(valueReferences.isEmpty()){
+            return basicReferencesCount == 1;
+        }else{
+            if (valueReferences.size() == 1 && basicReferencesCount == 0){
+                var value = valueReferences.get(0).getValue();
+                return value.isSingledValued() || value.isEnum() || value.isIdentity();
+            }else{
+                return false;
+            }
+        }
     }
 
     /**
@@ -80,14 +91,27 @@ public class ValueObjectModel extends DomainObjectModel implements ValueObjectMi
     @JsonIgnore
     @Override
     public Optional<FieldMirror> singledValuedField() {
-        if(isSingledValued()){
+        var valueReferences = getValueReferences()
+            .stream().filter(vr -> !vr.isStatic() && !vr.isHidden()).toList();
+
+        var basicReferencesCount = getBasicFields()
+            .stream()
+            .filter(f -> !f.isStatic() && !f.isHidden())
+            .count();
+        if(valueReferences.isEmpty() && basicReferencesCount == 1){
             return
                 getBasicFields()
                     .stream()
                     .filter(f -> !f.isStatic() && !f.isHidden())
                     .findFirst();
+        }else{
+            if (valueReferences.size() == 1 && basicReferencesCount == 0){
+                return Optional.of(valueReferences.get(0));
+            }else{
+                return Optional.empty();
+            }
         }
-        return Optional.empty();
+
     }
 
     /**
