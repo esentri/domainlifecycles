@@ -136,7 +136,7 @@ public class MirrorBasedOpenApiExtension {
                 log.warn("Wasn't able to extend Identity Open API schema of '{}'! Identity value field not found!", identityMirror.getTypeName());
             }
         } catch (Throwable t) {
-            log.error("Extending Open API schema of identity type '{}' failed", identityMirror.getTypeName(), t);
+            log.warn("Extending Open API schema of identity type '{}' failed", identityMirror.getTypeName(), t);
         }
     }
 
@@ -176,7 +176,7 @@ public class MirrorBasedOpenApiExtension {
                             );
                         }
                     } catch (Throwable t) {
-                        log.error("Extending Open API schema of entity type '{}' failed", em.getTypeName(), t);
+                        log.warn("Extending Open API schema of entity type '{}' failed", em.getTypeName(), t);
                     }
                 }
             );
@@ -213,7 +213,7 @@ public class MirrorBasedOpenApiExtension {
                         });
                     }
                 } catch (Throwable t) {
-                    log.error("Extending Open API schema of value object type '{}' failed", vo.getTypeName(), t);
+                    log.warn("Extending Open API schema of value object type '{}' failed", vo.getTypeName(), t);
                 }
             }
         );
@@ -237,7 +237,7 @@ public class MirrorBasedOpenApiExtension {
                 }
             }
         }
-        log.error("Wasn't able to set correct value type for property '" + propertyName + "' on schema'" + targetSchema.getName() + "'!");
+        log.warn("Wasn't able to set correct value type for property '" + propertyName + "' on schema'" + targetSchema.getName() + "'!");
     }
 
     private void modifySingleValuedValueObjectSchemaReference(OpenAPI openAPI, String voReferencePropertyName, String voTypeName, Schema<?> targetSchema) {
@@ -259,7 +259,7 @@ public class MirrorBasedOpenApiExtension {
                 }
             }
         }
-        log.error("Wasn't able to set correct value type for property '" + voReferencePropertyName + "' on '" + voTypeName + "'!");
+        log.warn("Wasn't able to set correct value type for property '" + voReferencePropertyName + "' on '" + voTypeName + "'!");
     }
 
     private Schema<?> copyValueSchema(Schema<?> source, String newName) {
@@ -319,7 +319,7 @@ public class MirrorBasedOpenApiExtension {
                     modifySingleValuedTypeSchema(param, refTypeSchema, referencedTypeFqn);
                 }
             }else{
-                log.error("Wasn't able to modify param schema for '{}'!", referencedTypeFqn);
+                log.warn("Wasn't able to modify param schema for '{}'!", referencedTypeFqn);
             }
         }
     }
@@ -338,7 +338,7 @@ public class MirrorBasedOpenApiExtension {
                 return;
             }
         }
-        log.error("Wasn't able to modify param schema for '{}'!", referencedTypeFqn);
+        log.warn("Wasn't able to modify param schema for '{}'!", referencedTypeFqn);
     }
 
     private void modifyExternalDomainObjectReferences(OpenAPI openAPI) {
