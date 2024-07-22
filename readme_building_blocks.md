@@ -25,6 +25,8 @@ The classic DDD Building Blocks supported by DLC are:
 - [DomainService](#DomainService)
 - [DomainEvent](#DomainEvent)
 
+Parts of the structures defined by those type interfaces are inspired by the JMolecules project: https://github.com/xmolecules/jmolecules/tree/main/jmolecules-ddd.
+
 Additionally, DLC provides support for supplementary Building Blocks / patterns often used, when tactical DDD is applied: 
 - [DomainCommand](#DomainCommand)
 - [ApplicationService](#ApplicationService)
