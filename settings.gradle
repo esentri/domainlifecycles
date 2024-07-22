@@ -26,3 +26,5 @@ include 'access'
 include 'type-utils'
 include 'domain-events'
 include 'service-registry'
+include 'domain-validator'
+
