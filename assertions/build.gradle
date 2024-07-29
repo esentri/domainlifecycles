@@ -5,6 +5,7 @@ plugins {
     id 'checkstyle'
     id 'org.quiltmc.gradle.licenser' version "${quiltmcLicenserVersion}"
     id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+    id 'jacoco'
 }
 
 def commonsValidatorVersion = '1.7'
@@ -15,4 +16,9 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.0"
 }
 
-
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
