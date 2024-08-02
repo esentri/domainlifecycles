@@ -239,8 +239,18 @@ public class TestAssertionsFutureOrPresent {
         }
 
         @Test
+        public void testOptionalIsFutureOrPresentLocalDateTimeOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsFutureOrPresent(Optional.of(LocalDateTime.now().plusSeconds(1)), "Failed"));
+        }
+
+        @Test
         public void testOptionalIsFutureOrPresentLocalDateTimeFail(){
             Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsFutureOrPresent(Optional.of(LocalDateTime.now().minusSeconds(1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsFutureOrPresentLocalDateOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsFutureOrPresent(Optional.of(LocalDate.now().plusDays(1)), "Failed"));
         }
 
         @Test
@@ -249,8 +259,34 @@ public class TestAssertionsFutureOrPresent {
         }
 
         @Test
+        public void testOptionalIsFutureOrPresentDateOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsFutureOrPresent(Optional.of(Date.from(Instant.now().plusSeconds(1))), "Failed"));
+        }
+
+        @Test
         public void testOptionalIsFutureOrPresentDateFail(){
             Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsFutureOrPresent(Optional.of(Date.from(Instant.now().minusSeconds(1))), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsFutureOrPresentCalendarOk(){
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(Date.from(Instant.now().plusSeconds(1)));
+
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsFutureOrPresent(Optional.of(calendar), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsFutureOrPresentCalendarFail(){
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(Date.from(Instant.now().minusSeconds(1)));
+
+            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsFutureOrPresent(Optional.of(calendar), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsFutureOrPresentYearOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsFutureOrPresent(Optional.of(Year.now().plusYears(1)), "Failed"));
         }
 
         @Test
@@ -259,8 +295,18 @@ public class TestAssertionsFutureOrPresent {
         }
 
         @Test
+        public void testOptionalIsFutureOrPresentZonedDateTimeOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsFutureOrPresent(Optional.of(ZonedDateTime.now().plusSeconds(1)), "Failed"));
+        }
+
+        @Test
         public void testOptionalIsFutureOrPresentZonedDateTimeFail(){
             Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsFutureOrPresent(Optional.of(ZonedDateTime.now().minusSeconds(1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsFutureOrPresentYearMonthOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsFutureOrPresent(Optional.of(YearMonth.now().plusMonths(1)), "Failed"));
         }
 
         @Test
@@ -269,8 +315,22 @@ public class TestAssertionsFutureOrPresent {
         }
 
         @Test
+        public void testOptionalIsFutureOrPresentMonthDayOk(){
+            if (!Month.from(LocalDate.now()).minus(1).equals(Month.JANUARY)) {
+                Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsFutureOrPresent(Optional.of(MonthDay.from(LocalDate.now().plus(1, ChronoUnit.MONTHS))), "Failed"));
+            }
+        }
+
+        @Test
         public void testOptionalIsFutureOrPresentMonthDayFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsFutureOrPresent(Optional.of(MonthDay.now().atYear(2020)), "Failed"));
+            if (!Month.from(LocalDate.now()).minus(1).equals(Month.JANUARY)) {
+                Assertions.assertThrows(DomainAssertionException.class, () -> DomainAssertions.optionalIsFutureOrPresent(Optional.of(MonthDay.from(LocalDate.now().minus(1, ChronoUnit.MONTHS))), "Failed"));
+            }
+        }
+
+        @Test
+        public void testOptionalIsFutureOrPresentOffsetDateTimeOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsFutureOrPresent(Optional.of(OffsetDateTime.now().plusSeconds(1)), "Failed"));
         }
 
         @Test
@@ -279,8 +339,18 @@ public class TestAssertionsFutureOrPresent {
         }
 
         @Test
+        public void testOptionalIsFutureOrPresentOffsetTimeOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsFutureOrPresent(Optional.of(OffsetTime.now().plusSeconds(1)), "Failed"));
+        }
+
+        @Test
         public void testOptionalIsFutureOrPresentOffsetTimeFail(){
             Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsFutureOrPresent(Optional.of(OffsetTime.now().minusSeconds(1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsFutureOrPresentInstantOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsFutureOrPresent(Optional.of(Instant.now().plusSeconds(1)), "Failed"));
         }
 
         @Test

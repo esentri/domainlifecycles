@@ -219,8 +219,68 @@ public class TestAssertionsPastOrPresent {
         }
 
         @Test
-        public void testOptionalIsPastOrPresentOk(){
+        public void testOptionalIsPastOrPresentLocalTimeOk(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPastOrPresent(Optional.of(LocalTime.now().minusHours(1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPastOrPresentDateOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPastOrPresent(Optional.of(Date.from(Instant.now().minusSeconds(1))), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPastOrPresentLocalDateTimeOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPastOrPresent(Optional.of(LocalDateTime.now().minusSeconds(1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPastOrPresentLocalDateOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPastOrPresent(Optional.of(LocalDate.now().minusDays(1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPastOrPresentCalendarOk(){
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(Date.from(Instant.now().minusSeconds(1)));
+
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPastOrPresent(Optional.of(calendar), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPastOrPresentInstantOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPastOrPresent(Optional.of(Instant.now().minusSeconds(1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPastOrPresentYearOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPastOrPresent(Optional.of(Year.now().minusYears(1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPastOrPresentZonedDateTimeOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPastOrPresent(Optional.of(ZonedDateTime.now().minusSeconds(1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPastOrPresentYearMonthOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPastOrPresent(Optional.of(YearMonth.now().minusMonths(1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPastOrPresentMonthDayOk(){
+            if (!Month.from(LocalDate.now()).minus(1).equals(Month.JANUARY)) {
+                Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPastOrPresent(Optional.of(MonthDay.from(LocalDate.now().minus(1, ChronoUnit.MONTHS))), "Failed"));
+            }
+        }
+
+        @Test
+        public void testOptionalIsPastOrPresentOffsetDateTimeOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPastOrPresent(Optional.of(OffsetDateTime.now().minusSeconds(1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPastOrPresentOffsetTimeOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPastOrPresent(Optional.of(OffsetTime.now().minusSeconds(1)), "Failed"));
         }
 
         @Test

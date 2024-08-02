@@ -14,7 +14,7 @@ public class TestAssertionsNegative {
 
         @Test
         public void testIsNegativeBigIntegerOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isNegative(BigInteger.valueOf(-1l), "Failed"));
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isNegative(BigInteger.valueOf(-1L), "Failed"));
         }
 
         @Test
@@ -24,7 +24,7 @@ public class TestAssertionsNegative {
 
         @Test
         public void testIsNegativeBigIntegerFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isNegative(BigInteger.valueOf(0l), "Failed"));
+            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isNegative(BigInteger.valueOf(0L), "Failed"));
         }
 
         @Test
@@ -59,12 +59,12 @@ public class TestAssertionsNegative {
 
         @Test
         public void testIsNegativeLongPrimitiveOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isNegative(-1l, "Failed"));
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isNegative(-1L, "Failed"));
         }
 
         @Test
         public void testIsNegativeLongPrimitiveFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isNegative(0l, "Failed"));
+            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isNegative(0L, "Failed"));
         }
 
         @Test
@@ -134,7 +134,7 @@ public class TestAssertionsNegative {
 
         @Test
         public void testIsNegativeLongOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isNegative(Long.valueOf(-1l), "Failed"));
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isNegative(Long.valueOf(-1L), "Failed"));
         }
 
         @Test
@@ -144,7 +144,7 @@ public class TestAssertionsNegative {
 
         @Test
         public void testIsNegativeLongFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isNegative(Long.valueOf(0l), "Failed"));
+            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isNegative(Long.valueOf(0L), "Failed"));
         }
 
         @Test
@@ -197,8 +197,43 @@ public class TestAssertionsNegative {
     class TestOptionalIsNegative {
 
         @Test
-        public void testOptionalIsNegativeOk(){
+        public void testOptionalIsNegativeOkByte(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegative(Optional.of(Byte.valueOf((byte)-1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsNegativeOkShort(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegative(Optional.of(Short.valueOf((short)-1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsNegativeOkInteger(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegative(Optional.of(Integer.valueOf(-1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsNegativeOkLong(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegative(Optional.of(Long.valueOf(-1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsNegativeOkBigDecimal(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegative(Optional.of(BigDecimal.valueOf(-1.0)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsNegativeOkBigInteger(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegative(Optional.of(BigInteger.valueOf(-1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsNegativeOkDouble(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegative(Optional.of(Double.valueOf(-1.0)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsNegativeOkFloat(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegative(Optional.of(Float.valueOf(-1.0F)), "Failed"));
         }
 
         @Test

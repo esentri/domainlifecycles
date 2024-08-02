@@ -197,8 +197,83 @@ public class TestAssertionsNegativeOrZero {
     class TestOptionalIsNegativeOrZero {
 
         @Test
-        public void testOptionalIsNegativeOrZeroOk(){
+        public void testOptionalIsZeroOkByte(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegativeOrZero(Optional.of(Byte.valueOf((byte)0)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsZeroOkShort(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegativeOrZero(Optional.of(Short.valueOf((short)0)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsZeroOkInteger(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegativeOrZero(Optional.of(Integer.valueOf(0)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsZeroOkLong(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegativeOrZero(Optional.of(Long.valueOf(0)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsZeroOkBigDecimal(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegativeOrZero(Optional.of(BigDecimal.valueOf(0.0)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsZeroOkBigInteger(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegativeOrZero(Optional.of(BigInteger.valueOf(0)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsZeroOkDouble(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegativeOrZero(Optional.of(Double.valueOf(0.0)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsZeroOkFloat(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegativeOrZero(Optional.of(Float.valueOf((float)0.0)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsNegativeOkByte(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegativeOrZero(Optional.of(Byte.valueOf((byte)-1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsNegativeOkShort(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegativeOrZero(Optional.of(Short.valueOf((short)-1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsNegativeOkInteger(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegativeOrZero(Optional.of(Integer.valueOf(-1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsNegativeOkLong(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegativeOrZero(Optional.of(Long.valueOf(-1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsNegativeOkBigDecimal(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegativeOrZero(Optional.of(BigDecimal.valueOf(-1.0)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsNegativeOkBigInteger(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegativeOrZero(Optional.of(BigInteger.valueOf(-1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsNegativeOkDouble(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegativeOrZero(Optional.of(Double.valueOf(-1.0)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsNegativeOkFloat(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNegativeOrZero(Optional.of(Float.valueOf((float)-1.0)), "Failed"));
         }
 
         @Test

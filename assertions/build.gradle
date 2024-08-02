@@ -22,3 +22,5 @@ test {
 jacocoTestReport {
     dependsOn test
 }
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport

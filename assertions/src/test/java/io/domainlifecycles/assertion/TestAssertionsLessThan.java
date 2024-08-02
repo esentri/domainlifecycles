@@ -18,8 +18,13 @@ public class TestAssertionsLessThan {
         }
 
         @Test
-        public void testIsLessThanBigIntegerOkNull(){
+        public void testIsLessThanBigIntegerOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessThan((BigInteger)null, BigInteger.valueOf(2l) ,"Failed"));
+        }
+
+        @Test
+        public void testIsLessThanBigIntegerOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessThan(BigInteger.valueOf(2l), (BigInteger)null,"Failed"));
         }
 
         @Test
@@ -93,8 +98,13 @@ public class TestAssertionsLessThan {
         }
 
         @Test
-        public void testIsLessThanByteOkNull(){
+        public void testIsLessThanByteOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessThan((Byte)null, Byte.valueOf((byte)2) ,"Failed"));
+        }
+
+        @Test
+        public void testIsLessThanByteOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessThan( Byte.valueOf((byte)2), (Byte)null,"Failed"));
         }
 
         @Test
@@ -108,8 +118,13 @@ public class TestAssertionsLessThan {
         }
 
         @Test
-        public void testIsLessThanShortOkNull(){
+        public void testIsLessThanShortOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessThan((Short)null, Short.valueOf((short)2) ,"Failed"));
+        }
+
+        @Test
+        public void testIsLessThanShortOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessThan(Short.valueOf((short)2), (Short)null,"Failed"));
         }
 
         @Test
@@ -123,8 +138,13 @@ public class TestAssertionsLessThan {
         }
 
         @Test
-        public void testIsLessThanIntegerOkNull(){
+        public void testIsLessThanIntegerOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessThan((Integer)null, Integer.valueOf(2) ,"Failed"));
+        }
+
+        @Test
+        public void testIsLessThanIntegerOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessThan(Integer.valueOf(2), (Integer)null,"Failed"));
         }
 
         @Test
@@ -138,8 +158,13 @@ public class TestAssertionsLessThan {
         }
 
         @Test
-        public void testIsLessThanLongOkNull(){
+        public void testIsLessThanLongOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessThan((Long)null, Long.valueOf(2l) ,"Failed"));
+        }
+
+        @Test
+        public void testIsLessThanLongOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessThan(Long.valueOf(2l), (Long)null,"Failed"));
         }
 
         @Test
@@ -153,8 +178,13 @@ public class TestAssertionsLessThan {
         }
 
         @Test
-        public void testIsLessThanDoubleOkNull(){
+        public void testIsLessThanDoubleOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessThan((Double)null, Double.valueOf(2.0) ,"Failed"));
+        }
+
+        @Test
+        public void testIsLessThanDoubleOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessThan(Double.valueOf(2.0), (Double)null ,"Failed"));
         }
 
         @Test
@@ -168,8 +198,13 @@ public class TestAssertionsLessThan {
         }
 
         @Test
-        public void testIsLessThanFloatOkNull(){
+        public void testIsLessThanFloatOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessThan((Float)null, Float.valueOf(2.0f) ,"Failed"));
+        }
+
+        @Test
+        public void testIsLessThanFloatOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessThan(Float.valueOf(2.0f), (Float)null ,"Failed"));
         }
 
         @Test
@@ -183,8 +218,13 @@ public class TestAssertionsLessThan {
         }
 
         @Test
-        public void testIsLessThanBigDecimalOkNull(){
+        public void testIsLessThanBigDecimalOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessThan((BigDecimal)null, BigDecimal.valueOf(2.0) ,"Failed"));
+        }
+
+        @Test
+        public void testIsLessThanBigDecimalOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessThan(BigDecimal.valueOf(2.0), (BigDecimal)null ,"Failed"));
         }
 
         @Test

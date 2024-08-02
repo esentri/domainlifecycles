@@ -54,6 +54,11 @@ public class TestAssertionsArraySize {
         }
 
         @Test
+        public void testHasSizeOptionalArrayMaxFail(){
+            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalArrayHasSizeMax(Optional.of(new String[2]), 1, "Failed"));
+        }
+
+        @Test
         public void testHasSizeArrayMaxNullFail(){
             Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalArrayHasSizeMax(null, 1,  "Failed"));
         }

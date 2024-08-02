@@ -78,8 +78,13 @@ public class TestAssertionsGreaterOrEqual {
         }
 
         @Test
-        public void testIsGreaterOrEqualByteOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterOrEqual((Byte)null, Byte.valueOf((byte)2) ,"Failed"));
+        public void testIsGreaterOrEqualByteOkFirstArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterOrEqual((Byte) null, Byte.valueOf((byte)2) ,"Failed"));
+        }
+
+        @Test
+        public void testIsGreaterOrEqualByteOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterOrEqual(Byte.valueOf((byte)2), (Byte) null ,"Failed"));
         }
 
         @Test
@@ -93,8 +98,13 @@ public class TestAssertionsGreaterOrEqual {
         }
 
         @Test
-        public void testIsGreaterOrEqualShortOkNull(){
+        public void testIsGreaterOrEqualShortOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterOrEqual((Short)null, Short.valueOf((short)2) ,"Failed"));
+        }
+
+        @Test
+        public void testIsGreaterOrEqualShortOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterOrEqual(Short.valueOf((short)2), (Short)null ,"Failed"));
         }
 
         @Test
@@ -108,8 +118,13 @@ public class TestAssertionsGreaterOrEqual {
         }
 
         @Test
-        public void testIsGreaterOrEqualIntegerOkNull(){
+        public void testIsGreaterOrEqualIntegerOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterOrEqual((Integer)null, Integer.valueOf(2) ,"Failed"));
+        }
+
+        @Test
+        public void testIsGreaterOrEqualIntegerOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterOrEqual(Integer.valueOf(2), (Integer)null ,"Failed"));
         }
 
         @Test
@@ -123,8 +138,13 @@ public class TestAssertionsGreaterOrEqual {
         }
 
         @Test
-        public void testIsGreaterOrEqualLongOkNull(){
+        public void testIsGreaterOrEqualLongOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterOrEqual((Long)null, Long.valueOf(2l) ,"Failed"));
+        }
+
+        @Test
+        public void testIsGreaterOrEqualLongOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterOrEqual(Long.valueOf(2l), (Long)null ,"Failed"));
         }
 
         @Test
@@ -138,8 +158,13 @@ public class TestAssertionsGreaterOrEqual {
         }
 
         @Test
-        public void testIsGreaterOrEqualDoubleOkNull(){
+        public void testIsGreaterOrEqualDoubleOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterOrEqual((Double)null, Double.valueOf(2.0) ,"Failed"));
+        }
+
+        @Test
+        public void testIsGreaterOrEqualDoubleOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterOrEqual(Double.valueOf(2.0), (Double)null,"Failed"));
         }
 
         @Test
@@ -153,8 +178,13 @@ public class TestAssertionsGreaterOrEqual {
         }
 
         @Test
-        public void testIsGreaterOrEqualFloatOkNull(){
+        public void testIsGreaterOrEqualFloatOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterOrEqual((Float)null, Float.valueOf(2.0f) ,"Failed"));
+        }
+
+        @Test
+        public void testIsGreaterOrEqualFloatOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterOrEqual(Float.valueOf(2.0f) ,(Float)null,"Failed"));
         }
 
         @Test
@@ -168,8 +198,13 @@ public class TestAssertionsGreaterOrEqual {
         }
 
         @Test
-        public void testIsGreaterOrEqualBigDecimalOkNull(){
+        public void testIsGreaterOrEqualBigDecimalOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterOrEqual((BigDecimal)null, BigDecimal.valueOf(2.0) ,"Failed"));
+        }
+
+        @Test
+        public void testIsGreaterOrEqualBigDecimalOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterOrEqual(BigDecimal.valueOf(2.0), (BigDecimal)null,"Failed"));
         }
 
         @Test
@@ -183,8 +218,13 @@ public class TestAssertionsGreaterOrEqual {
         }
 
         @Test
-        public void testIsGreaterOrEqualBigIntegerOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterOrEqual((BigInteger)null, BigInteger.valueOf(2l) ,"Failed"));
+        public void testIsGreaterOrEqualBigIntegerOkFirstArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterOrEqual((BigInteger)null, BigInteger.valueOf(2l),"Failed"));
+        }
+
+        @Test
+        public void testIsGreaterOrEqualBigIntegerOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterOrEqual(BigInteger.valueOf(2l), (BigInteger)null,"Failed"));
         }
 
         @Test

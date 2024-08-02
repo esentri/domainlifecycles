@@ -36,8 +36,13 @@ public class TestAssertionsPast {
         }
 
         @Test
-        public void testIsPastLocalDateFail(){
+        public void testIsPastLocalDateFailFuture(){
             Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPast(LocalDate.now().plusDays(1), "Failed"));
+        }
+
+        @Test
+        public void testIsPastLocalDateFailPresent(){
+            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPast(LocalDate.now(), "Failed"));
         }
 
         @Test
@@ -52,7 +57,7 @@ public class TestAssertionsPast {
 
         @Test
         public void testIsPastLocalTimeFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPast(LocalTime.now().plusHours(1), "Failed"));
+            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPast(LocalTime.now().plusSeconds(1), "Failed"));
         }
 
         @Test
@@ -67,7 +72,7 @@ public class TestAssertionsPast {
 
         @Test
         public void testIsPastLocalDateTimeFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPast(LocalDateTime.now().plusDays(1), "Failed"));
+            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPast(LocalDateTime.now().plusSeconds(1), "Failed"));
         }
 
         @Test
@@ -113,10 +118,15 @@ public class TestAssertionsPast {
         }
 
         @Test
-        public void testIsPastMonthDayFail() {
+        public void testIsPastMonthDayFailFuture() {
             if (!Month.from(LocalDate.now()).equals(Month.DECEMBER)) {
                 Assertions.assertThrows(DomainAssertionException.class, () -> DomainAssertions.isPast(MonthDay.from(LocalDate.now().plus(1, ChronoUnit.MONTHS)), "Failed"));
             }
+        }
+
+        @Test
+        public void testIsPastMonthDayFailPresent() {
+            Assertions.assertThrows(DomainAssertionException.class, () -> DomainAssertions.isPast(MonthDay.from(LocalDate.now()), "Failed"));
         }
 
         @Test
@@ -190,8 +200,13 @@ public class TestAssertionsPast {
         }
 
         @Test
-        public void testIsPastYearFail(){
+        public void testIsPastYearFailFuture(){
             Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPast(Year.now().plusYears(1), "Failed"));
+        }
+
+        @Test
+        public void testIsPastYearFailPresent(){
+            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPast(Year.now(), "Failed"));
         }
 
         @Test
@@ -205,8 +220,13 @@ public class TestAssertionsPast {
         }
 
         @Test
-        public void testIsPastYearMonthFail(){
+        public void testIsPastYearMonthFailFuture(){
             Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPast(YearMonth.now().plusMonths(1), "Failed"));
+        }
+
+        @Test
+        public void testIsPastYearMonthFailPresent(){
+            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPast(YearMonth.now(), "Failed"));
         }
     }
 
@@ -214,13 +234,24 @@ public class TestAssertionsPast {
     class TestOptionalIsPast {
 
         @Test
-        public void testOptionalIsPastFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsPast(Optional.of(LocalTime.now().plusHours(1)), "Failed"));
+        public void testOptionalIsPastLocalTimeFail(){
+            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsPast(Optional.of(LocalTime.now().plusSeconds(1)), "Failed"));
         }
+
+        @Test
+        public void testOptionalIsPastLocalTimeOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPast(Optional.of(LocalTime.now().minusSeconds(1)), "Failed"));
+        }
+
 
         @Test
         public void testOptionalIsPastLocalDateOk(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPast(Optional.of(LocalDate.now().minusDays(1)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPastLocalDateTimeOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPast(Optional.of(LocalDateTime.now().minusSeconds(1)), "Failed"));
         }
 
         @Test
@@ -258,7 +289,9 @@ public class TestAssertionsPast {
 
         @Test
         public void testOptionalIsPastMonthDayOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPast(Optional.of(MonthDay.now().atYear(2020)), "Failed"));
+            if (!Month.from(LocalDate.now()).minus(1).equals(Month.JANUARY)) {
+                Assertions.assertDoesNotThrow(() -> DomainAssertions.optionalIsPast(Optional.of(MonthDay.from(LocalDate.now().minus(1, ChronoUnit.MONTHS))), "Failed"));
+            }
         }
 
         @Test

@@ -18,8 +18,13 @@ public class TestAssertionsGreaterThan {
         }
 
         @Test
-        public void testIsGreaterThanBigIntegerOkNull(){
+        public void testIsGreaterThanBigIntegerOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterThan((BigInteger)null, BigInteger.valueOf(1l) ,"Failed"));
+        }
+
+        @Test
+        public void testIsGreaterThanBigIntegerOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterThan(BigInteger.valueOf(1l), (BigInteger)null,"Failed"));
         }
 
         @Test
@@ -93,8 +98,13 @@ public class TestAssertionsGreaterThan {
         }
 
         @Test
-        public void testIsGreaterThanByteOkNull(){
+        public void testIsGreaterThanByteOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterThan((Byte)null, Byte.valueOf((byte)1) ,"Failed"));
+        }
+
+        @Test
+        public void testIsGreaterThanByteOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterThan(Byte.valueOf((byte)1), (Byte)null ,"Failed"));
         }
 
         @Test
@@ -108,8 +118,13 @@ public class TestAssertionsGreaterThan {
         }
 
         @Test
-        public void testIsGreaterThanShortOkNull(){
+        public void testIsGreaterThanShortOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterThan((Short)null, Short.valueOf((short)1) ,"Failed"));
+        }
+
+        @Test
+        public void testIsGreaterThanShortOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterThan(Short.valueOf((short)1), (Short)null,"Failed"));
         }
 
         @Test
@@ -123,8 +138,13 @@ public class TestAssertionsGreaterThan {
         }
 
         @Test
-        public void testIsGreaterThanIntegerOkNull(){
+        public void testIsGreaterThanIntegerOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterThan((Integer)null, Integer.valueOf(1) ,"Failed"));
+        }
+
+        @Test
+        public void testIsGreaterThanIntegerOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterThan(Integer.valueOf(1),  (Integer)null,"Failed"));
         }
 
         @Test
@@ -138,8 +158,13 @@ public class TestAssertionsGreaterThan {
         }
 
         @Test
-        public void testIsGreaterThanLongOkNull(){
+        public void testIsGreaterThanLongOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterThan((Long)null, Long.valueOf(1l) ,"Failed"));
+        }
+
+        @Test
+        public void testIsGreaterThanLongOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterThan(Long.valueOf(1l) , (Long)null,"Failed"));
         }
 
         @Test
@@ -153,8 +178,13 @@ public class TestAssertionsGreaterThan {
         }
 
         @Test
-        public void testIsGreaterThanDoubleOkNull(){
+        public void testIsGreaterThanDoubleOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterThan((Double)null, Double.valueOf(1.0) ,"Failed"));
+        }
+
+        @Test
+        public void testIsGreaterThanDoubleOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterThan(Double.valueOf(1.0), (Double)null ,"Failed"));
         }
 
         @Test
@@ -168,8 +198,13 @@ public class TestAssertionsGreaterThan {
         }
 
         @Test
-        public void testIsGreaterThanFloatOkNull(){
+        public void testIsGreaterThanFloatOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterThan((Float)null, Float.valueOf(1.0f) ,"Failed"));
+        }
+
+        @Test
+        public void testIsGreaterThanFloatOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterThan(Float.valueOf(1.0f), (Float)null,"Failed"));
         }
 
         @Test
@@ -183,8 +218,13 @@ public class TestAssertionsGreaterThan {
         }
 
         @Test
-        public void testIsGreaterThanBigDecimalOkNull(){
+        public void testIsGreaterThanBigDecimalOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterThan((BigDecimal)null, BigDecimal.valueOf(1.0) ,"Failed"));
+        }
+
+        @Test
+        public void testIsGreaterThanBigDecimalOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isGreaterThan(BigDecimal.valueOf(1.0), (BigDecimal)null ,"Failed"));
         }
 
         @Test

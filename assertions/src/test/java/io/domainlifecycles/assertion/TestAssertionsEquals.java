@@ -239,7 +239,7 @@ public class TestAssertionsEquals {
         }
 
         @Test
-        public void testOptionalObjectEqualsNullFail(){
+        public void testOptionalObjectEqualsFirstArgNullFail(){
             Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalEquals(null, "B", "Failed"));
         }
 
@@ -251,6 +251,11 @@ public class TestAssertionsEquals {
         @Test
         public void testOptionalObjectEqualsOk(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalEquals(Optional.of("A"), "A", "Failed"));
+        }
+
+        @Test
+        public void testOptionalObjectEqualsSecondArgNullOk(){
+            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalEquals(Optional.of("A"), null, "Failed"));
         }
     }
 

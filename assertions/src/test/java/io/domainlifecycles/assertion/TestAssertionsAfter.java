@@ -11,6 +11,7 @@ import java.time.Year;
 import java.time.YearMonth;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Optional;
@@ -29,8 +30,13 @@ public class TestAssertionsAfter {
         }
 
         @Test
-        public void testIsAfterLocalDateOkNull(){
+        public void testIsAfterLocalDateOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter((LocalDate) null, LocalDate.now(), "Failed"));
+        }
+
+        @Test
+        public void testIsAfterLocalDateOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter(LocalDate.now(), (LocalDate) null, "Failed"));
         }
 
         @Test
@@ -44,8 +50,13 @@ public class TestAssertionsAfter {
         }
 
         @Test
-        public void testIsAfterLocalTimeOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter((LocalDate) null, LocalDate.now(), "Failed"));
+        public void testIsAfterLocalTimeOkFirstArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter((LocalTime) null, LocalTime.now(), "Failed"));
+        }
+
+        @Test
+        public void testIsAfterLocalTimeOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter(LocalTime.now(), (LocalTime) null, "Failed"));
         }
 
         @Test
@@ -59,8 +70,13 @@ public class TestAssertionsAfter {
         }
 
         @Test
-        public void testIsAfterLocalDateTimeOkNull(){
+        public void testIsAfterLocalDateTimeOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter((LocalDateTime) null, LocalDateTime.now(), "Failed"));
+        }
+
+        @Test
+        public void testIsAfterLocalDateTimeOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter(LocalDateTime.now(), (LocalDateTime) null, "Failed"));
         }
 
         @Test
@@ -74,8 +90,13 @@ public class TestAssertionsAfter {
         }
 
         @Test
-        public void testIsAfterInstantOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter((LocalDateTime) null, LocalDateTime.now(), "Failed"));
+        public void testIsAfterInstantOkFirstArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter((Instant) null, Instant.now(), "Failed"));
+        }
+
+        @Test
+        public void testIsAfterInstantOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter(Instant.now(), (Instant) null, "Failed"));
         }
 
         @Test
@@ -89,8 +110,13 @@ public class TestAssertionsAfter {
         }
 
         @Test
-        public void testIsAfterYearOkNull(){
+        public void testIsAfterYearOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter((Year) null, Year.now(), "Failed"));
+        }
+
+        @Test
+        public void testIsAfterYearOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter(Year.now(), (Year) null, "Failed"));
         }
 
         @Test
@@ -104,8 +130,13 @@ public class TestAssertionsAfter {
         }
 
         @Test
-        public void testIsAfterYearMonthOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter((Year) null, Year.now(), "Failed"));
+        public void testIsAfterYearMonthOkFirstArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter((YearMonth) null, YearMonth.now(), "Failed"));
+        }
+
+        @Test
+        public void testIsAfterYearMonthOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter(YearMonth.now(), (YearMonth) null, "Failed"));
         }
 
         @Test
@@ -119,8 +150,13 @@ public class TestAssertionsAfter {
         }
 
         @Test
-        public void testIsAfterZonedDateTimeOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter((ZonedDateTime) null, ZonedDateTime.now(), "Failed"));
+        public void testIsAfterZonedDateTimeOkFirstArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter((ZonedDateTime) null, ZonedDateTime.now(),"Failed"));
+        }
+
+        @Test
+        public void testIsAfterZonedDateTimeOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter(ZonedDateTime.now(), (ZonedDateTime) null, "Failed"));
         }
 
         @Test
@@ -134,8 +170,13 @@ public class TestAssertionsAfter {
         }
 
         @Test
-        public void testIsAfterMonthDayOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter((ZonedDateTime) null, ZonedDateTime.now(), "Failed"));
+        public void testIsAfterMonthDayOkFirstArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter((MonthDay) null, MonthDay.now(), "Failed"));
+        }
+
+        @Test
+        public void testIsAfterMonthDayOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter(MonthDay.now(), (MonthDay) null, "Failed"));
         }
 
         @Test
@@ -149,8 +190,13 @@ public class TestAssertionsAfter {
         }
 
         @Test
-        public void testIsAfterOffsetDateTimeOkNull(){
+        public void testIsAfterOffsetDateTimeOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter((OffsetDateTime) null, OffsetDateTime.now(), "Failed"));
+        }
+
+        @Test
+        public void testIsAfterOffsetDateTimeOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter(OffsetDateTime.now(), (OffsetDateTime) null, "Failed"));
         }
 
         @Test
@@ -164,8 +210,13 @@ public class TestAssertionsAfter {
         }
 
         @Test
-        public void testIsAfterOffsetTimeOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter((OffsetDateTime) null, OffsetDateTime.now(), "Failed"));
+        public void testIsAfterOffsetTimeOkFirstArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter((OffsetTime) null, OffsetTime.now(), "Failed"));
+        }
+
+        @Test
+        public void testIsAfterOffsetTimeOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter(OffsetTime.now(), (OffsetTime) null, "Failed"));
         }
 
         @Test
@@ -179,8 +230,13 @@ public class TestAssertionsAfter {
         }
 
         @Test
-        public void testIsAfterDateOkNull(){
+        public void testIsAfterDateOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter((Date) null, new Date(), "Failed"));
+        }
+
+        @Test
+        public void testIsAfterDateOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter(new Date(), (Date) null, "Failed"));
         }
 
         @Test
@@ -194,8 +250,13 @@ public class TestAssertionsAfter {
         }
 
         @Test
-        public void testIsAfterCalendarOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter((Date) null, new Date(), "Failed"));
+        public void testIsAfterCalendarOkFirstArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter((Calendar) null, Calendar.getInstance(), "Failed"));
+        }
+
+        @Test
+        public void testIsAfterCalendarOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isAfter(Calendar.getInstance(), (Calendar) null, "Failed"));
         }
 
         @Test

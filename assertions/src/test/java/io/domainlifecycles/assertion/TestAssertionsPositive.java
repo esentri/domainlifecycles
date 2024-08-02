@@ -197,8 +197,43 @@ public class TestAssertionsPositive {
     class TestOptionalIsPositive {
 
         @Test
-        public void testOptionalIsPositiveOk(){
+        public void testOptionalIsPositiveOkByte(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositive(Optional.of(Byte.valueOf((byte)2)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPositiveOkShort(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositive(Optional.of(Short.valueOf((short)2)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPositiveOkInteger(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositive(Optional.of(Integer.valueOf(2)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPositiveOkLong(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositive(Optional.of(Long.valueOf(2)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPositiveOkBigDecimal(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositive(Optional.of(BigDecimal.valueOf(2)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPositiveOkBigInteger(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositive(Optional.of(BigInteger.valueOf(2)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPositiveOkDouble(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositive(Optional.of(Double.valueOf(2.0)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPositiveOkFloat(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositive(Optional.of(Float.valueOf(2.0f)), "Failed"));
         }
 
         @Test

@@ -325,18 +325,43 @@ public class TestAssertionsMaxDigits {
     class TestOptionalHasMaxDigits {
 
         @Test
-        public void testOptionalHasMaxDigitsFailInteger(){
+        public void testOptionalHasMaxDigitsBigDecimalOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasMaxDigits(Optional.of(BigDecimal.valueOf(12.234)), 2, 3,  "Failed"));
+        }
+
+        @Test
+        public void testOptionalHasMaxDigitsBigDecimalFail(){
             Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalHasMaxDigits(Optional.of(BigDecimal.valueOf(12.23)), 1,2,  "Failed"));
         }
 
         @Test
-        public void testOptionalHasMaxDigitsFailFraction(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalHasMaxDigits(Optional.of(BigDecimal.valueOf(12.234)), 1,2,  "Failed"));
+        public void testOptionalHasMaxDigitsDoubleOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasMaxDigits(Optional.of(Double.valueOf(12.23)), 2,2,  "Failed"));
         }
 
         @Test
-        public void testOptionalHasMaxDigitsOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasMaxDigits(Optional.of(BigDecimal.valueOf(12.234)), 2, 3,  "Failed"));
+        public void testOptionalHasMaxDigitsDoubleFailInt(){
+            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalHasMaxDigits(Optional.of(Double.valueOf(12.23)), 1,2,  "Failed"));
+        }
+
+        @Test
+        public void testOptionalHasMaxDigitsDoubleFailFrac(){
+            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalHasMaxDigits(Optional.of(Double.valueOf(12.23)), 2,1,  "Failed"));
+        }
+
+        @Test
+        public void testOptionalHasMaxDigitsFloatOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasMaxDigits(Optional.of(Float.valueOf(12.23f)), 2,2,  "Failed"));
+        }
+
+        @Test
+        public void testOptionalHasMaxDigitsFloatFailInt(){
+            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalHasMaxDigits(Optional.of(Float.valueOf(12.23f)), 1,2,  "Failed"));
+        }
+
+        @Test
+        public void testOptionalHasMaxDigitsFloatFailFrac(){
+            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalHasMaxDigits(Optional.of(Float.valueOf(12.23f)), 2,1,  "Failed"));
         }
 
         @Test
@@ -364,8 +389,43 @@ public class TestAssertionsMaxDigits {
         }
 
         @Test
-        public void testOptionalHasMaxDigitsIntegerOk(){
+        public void testOptionalHasMaxDigitsIntegerBigDecimalOk(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasMaxDigitsInteger(Optional.of(BigDecimal.valueOf(12.234)), 2, "Failed"));
+        }
+
+        @Test
+        public void testOptionalHasMaxDigitsIntegerDoubleOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasMaxDigitsInteger(Optional.of(Double.valueOf(12.234)), 2, "Failed"));
+        }
+
+        @Test
+        public void testOptionalHasMaxDigitsIntegerFloatOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasMaxDigitsInteger(Optional.of(Float.valueOf(10.1f)), 2, "Failed"));
+        }
+
+        @Test
+        public void testOptionalHasMaxDigitsIntegerIntegerOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasMaxDigitsInteger(Optional.of(Integer.valueOf(12)), 2, "Failed"));
+        }
+
+        @Test
+        public void testOptionalHasMaxDigitsIntegerLongOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasMaxDigitsInteger(Optional.of(Long.valueOf(12)), 2, "Failed"));
+        }
+
+        @Test
+        public void testOptionalHasMaxDigitsIntegerBigIntegerOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasMaxDigitsInteger(Optional.of(BigInteger.valueOf(12)), 2, "Failed"));
+        }
+
+        @Test
+        public void testOptionalHasMaxDigitsIntegerByteOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasMaxDigitsInteger(Optional.of(Byte.valueOf((byte) 12)), 2, "Failed"));
+        }
+
+        @Test
+        public void testOptionalHasMaxDigitsIntegerShortOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasMaxDigitsInteger(Optional.of(Short.valueOf((short) 12)), 2, "Failed"));
         }
 
         @Test
@@ -388,13 +448,33 @@ public class TestAssertionsMaxDigits {
     class TestOptionalHasMaxDigitsFraction {
 
         @Test
-        public void testOptionalHasMaxDigitsFractionFail(){
+        public void testOptionalHasMaxDigitsFractionBigDecimalFail(){
             Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalHasMaxDigitsFraction(Optional.of(BigDecimal.valueOf(12.23)), 1,  "Failed"));
         }
 
         @Test
-        public void testOptionalHasMaxDigitsFractionOk(){
+        public void testOptionalHasMaxDigitsFractionBigDecimalOk(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasMaxDigitsFraction(Optional.of(BigDecimal.valueOf(12.234)), 3, "Failed"));
+        }
+
+        @Test
+        public void testOptionalHasMaxDigitsFractionDoubleFail(){
+            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalHasMaxDigitsFraction(Optional.of(Double.valueOf(12.23)), 1,  "Failed"));
+        }
+
+        @Test
+        public void testOptionalHasMaxDigitsFractionDoubleOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasMaxDigitsFraction(Optional.of(Double.valueOf(12.234)), 3, "Failed"));
+        }
+
+        @Test
+        public void testOptionalHasMaxDigitsFractionFloatFail(){
+            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalHasMaxDigitsFraction(Optional.of(Float.valueOf(12.23F)), 1,  "Failed"));
+        }
+
+        @Test
+        public void testOptionalHasMaxDigitsFractionFloatOk(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasMaxDigitsFraction(Optional.of(Float.valueOf(12.234F)), 3, "Failed"));
         }
 
         @Test

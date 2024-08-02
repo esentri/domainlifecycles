@@ -213,6 +213,46 @@ public class TestAssertionsPositiveOrZero {
     class TestOptionalIsPositiveOrZero {
 
         @Test
+        public void testOptionalIsPositiveOrZeroOkByte(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositiveOrZero(Optional.of(Byte.valueOf((byte)2)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPositiveOrZeroOkShort(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositiveOrZero(Optional.of(Short.valueOf((short)2)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPositiveOrZeroOkInteger(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositiveOrZero(Optional.of(Integer.valueOf(2)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPositiveOrZeroOkLong(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositiveOrZero(Optional.of(Long.valueOf(2)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPositiveOrZeroOkBigDecimal(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositiveOrZero(Optional.of(BigDecimal.valueOf(2.0)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPositiveOrZeroOkBigInteger(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositiveOrZero(Optional.of(BigInteger.valueOf(2)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPositiveOrZeroOkDouble(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositiveOrZero(Optional.of(Double.valueOf(2.0)), "Failed"));
+        }
+
+        @Test
+        public void testOptionalIsPositiveOrZeroOkFloat(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositiveOrZero(Optional.of(Float.valueOf(2.0f)), "Failed"));
+        }
+
+        @Test
         public void testOptionalIsPositiveOrZeroOk(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositiveOrZero(Optional.of(Byte.valueOf((byte)2)), "Failed"));
         }

@@ -77,8 +77,13 @@ public class TestAssertionsLessOrEqual {
         }
 
         @Test
-        public void testIsLessOrEqualByteOkNull(){
+        public void testIsLessOrEqualByteOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessOrEqual((Byte)null, Byte.valueOf((byte)2) ,"Failed"));
+        }
+
+        @Test
+        public void testIsLessOrEqualByteOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessOrEqual(Byte.valueOf((byte)2), (Byte)null ,"Failed"));
         }
 
         @Test
@@ -92,8 +97,13 @@ public class TestAssertionsLessOrEqual {
         }
 
         @Test
-        public void testIsLessOrEqualShortOkNull(){
+        public void testIsLessOrEqualShortOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessOrEqual((Short)null, Short.valueOf((short)2) ,"Failed"));
+        }
+
+        @Test
+        public void testIsLessOrEqualShortOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessOrEqual(Short.valueOf((short)2),  (Short)null,"Failed"));
         }
 
         @Test
@@ -107,8 +117,13 @@ public class TestAssertionsLessOrEqual {
         }
 
         @Test
-        public void testIsLessOrEqualIntegerOkNull(){
+        public void testIsLessOrEqualIntegerOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessOrEqual((Integer)null, Integer.valueOf(2) ,"Failed"));
+        }
+
+        @Test
+        public void testIsLessOrEqualIntegerOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessOrEqual(Integer.valueOf(2) , (Integer)null,"Failed"));
         }
 
         @Test
@@ -122,8 +137,13 @@ public class TestAssertionsLessOrEqual {
         }
 
         @Test
-        public void testIsLessOrEqualLongOkNull(){
+        public void testIsLessOrEqualLongOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessOrEqual((Long)null, Long.valueOf(2l) ,"Failed"));
+        }
+
+        @Test
+        public void testIsLessOrEqualLongOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessOrEqual(Long.valueOf(2l),  (Long)null,"Failed"));
         }
 
         @Test
@@ -137,8 +157,13 @@ public class TestAssertionsLessOrEqual {
         }
 
         @Test
-        public void testIsLessOrEqualDoubleOkNull(){
+        public void testIsLessOrEqualDoubleOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessOrEqual((Double)null, Double.valueOf(2.0) ,"Failed"));
+        }
+
+        @Test
+        public void testIsLessOrEqualDoubleOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessOrEqual(Double.valueOf(2.0),  (Double)null,"Failed"));
         }
 
         @Test
@@ -152,8 +177,13 @@ public class TestAssertionsLessOrEqual {
         }
 
         @Test
-        public void testIsLessOrEqualFloatOkNull(){
+        public void testIsLessOrEqualFloatOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessOrEqual((Float)null, Float.valueOf(2.0f) ,"Failed"));
+        }
+
+        @Test
+        public void testIsLessOrEqualFloatOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessOrEqual(Float.valueOf(2.0f) , (Float)null,"Failed"));
         }
 
         @Test
@@ -167,8 +197,13 @@ public class TestAssertionsLessOrEqual {
         }
 
         @Test
-        public void testIsLessOrEqualBigDecimalOkNull(){
+        public void testIsLessOrEqualBigDecimalOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessOrEqual((BigDecimal)null, BigDecimal.valueOf(2.0) ,"Failed"));
+        }
+
+        @Test
+        public void testIsLessOrEqualBigDecimalOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessOrEqual(BigDecimal.valueOf(2.0) , (BigDecimal)null,"Failed"));
         }
 
         @Test
@@ -182,8 +217,13 @@ public class TestAssertionsLessOrEqual {
         }
 
         @Test
-        public void testIsLessOrEqualBigIntegerOkNull(){
+        public void testIsLessOrEqualBigIntegerOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessOrEqual((BigInteger)null, BigInteger.valueOf(2l) ,"Failed"));
+        }
+
+        @Test
+        public void testIsLessOrEqualBigIntegerOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isLessOrEqual(BigInteger.valueOf(2l), (BigInteger)null ,"Failed"));
         }
 
         @Test

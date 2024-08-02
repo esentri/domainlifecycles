@@ -11,6 +11,7 @@ import java.time.Year;
 import java.time.YearMonth;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Optional;
@@ -29,8 +30,13 @@ public class TestAssertionsBeforeOrEqual {
         }
 
         @Test
-        public void testIsBeforeOrEqualToLocalDateOkNull(){
+        public void testIsBeforeOrEqualToLocalDateOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo((LocalDate) null, LocalDate.now(), "Failed"));
+        }
+
+        @Test
+        public void testIsBeforeOrEqualToLocalDateOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo(LocalDate.now(), (LocalDate) null, "Failed"));
         }
 
         @Test
@@ -44,8 +50,13 @@ public class TestAssertionsBeforeOrEqual {
         }
 
         @Test
-        public void testIsBeforeOrEqualToLocalTimeOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo((LocalDate) null, LocalDate.now(), "Failed"));
+        public void testIsBeforeOrEqualToLocalTimeOkFirstArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo((LocalTime) null, LocalTime.now(), "Failed"));
+        }
+
+        @Test
+        public void testIsBeforeOrEqualToLocalTimeOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo(LocalTime.now(), (LocalTime) null, "Failed"));
         }
 
         @Test
@@ -59,8 +70,13 @@ public class TestAssertionsBeforeOrEqual {
         }
 
         @Test
-        public void testIsBeforeOrEqualToLocalDateTimeOkNull(){
+        public void testIsBeforeOrEqualToLocalDateTimeOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo((LocalDateTime) null, LocalDateTime.now(), "Failed"));
+        }
+
+        @Test
+        public void testIsBeforeOrEqualToLocalDateTimeOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo(LocalDateTime.now(), (LocalDateTime) null, "Failed"));
         }
 
         @Test
@@ -74,8 +90,13 @@ public class TestAssertionsBeforeOrEqual {
         }
 
         @Test
-        public void testIsBeforeOrEqualToInstantOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo((LocalDateTime) null, LocalDateTime.now(), "Failed"));
+        public void testIsBeforeOrEqualToInstantOkFirstArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo((Instant) null, Instant.now(), "Failed"));
+        }
+
+        @Test
+        public void testIsBeforeOrEqualToInstantOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo(Instant.now(), (Instant) null, "Failed"));
         }
 
         @Test
@@ -89,8 +110,13 @@ public class TestAssertionsBeforeOrEqual {
         }
 
         @Test
-        public void testIsBeforeOrEqualToDateOkNull(){
+        public void testIsBeforeOrEqualToDateOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo((Date) null, new Date(), "Failed"));
+        }
+
+        @Test
+        public void testIsBeforeOrEqualToDateOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo(new Date(), (Date) null, "Failed"));
         }
 
         @Test
@@ -104,8 +130,13 @@ public class TestAssertionsBeforeOrEqual {
         }
 
         @Test
-        public void testIsBeforeOrEqualToCalendarOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo((Date) null, new Date(), "Failed"));
+        public void testIsBeforeOrEqualToCalendarOkFirstArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo((Calendar) null, Calendar.getInstance(), "Failed"));
+        }
+
+        @Test
+        public void testIsBeforeOrEqualToCalendarOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo(Calendar.getInstance(), (Calendar) null, "Failed"));
         }
 
         @Test
@@ -119,8 +150,13 @@ public class TestAssertionsBeforeOrEqual {
         }
 
         @Test
-        public void testIsBeforeOrEqualToYearOkNull(){
+        public void testIsBeforeOrEqualToYearOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo((Year) null, Year.now(), "Failed"));
+        }
+
+        @Test
+        public void testIsBeforeOrEqualToYearOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo(Year.now(), (Year) null, "Failed"));
         }
 
         @Test
@@ -134,8 +170,13 @@ public class TestAssertionsBeforeOrEqual {
         }
 
         @Test
-        public void testIsBeforeOrEqualToYearMonthOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo((Year) null, Year.now(), "Failed"));
+        public void testIsBeforeOrEqualToYearMonthOkFirstArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo((YearMonth) null, YearMonth.now(), "Failed"));
+        }
+
+        @Test
+        public void testIsBeforeOrEqualToYearMonthOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo(YearMonth.now(), (YearMonth) null, "Failed"));
         }
 
         @Test
@@ -149,8 +190,13 @@ public class TestAssertionsBeforeOrEqual {
         }
 
         @Test
-        public void testIsBeforeOrEqualToZonedDateTimeOkNull(){
+        public void testIsBeforeOrEqualToZonedDateTimeOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo((ZonedDateTime) null, ZonedDateTime.now(), "Failed"));
+        }
+
+        @Test
+        public void testIsBeforeOrEqualToZonedDateTimeOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo(ZonedDateTime.now(), (ZonedDateTime) null, "Failed"));
         }
 
         @Test
@@ -164,8 +210,13 @@ public class TestAssertionsBeforeOrEqual {
         }
 
         @Test
-        public void testIsBeforeOrEqualToMonthDayOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo((ZonedDateTime) null, ZonedDateTime.now(), "Failed"));
+        public void testIsBeforeOrEqualToMonthDayOkFirstArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo((MonthDay) null, MonthDay.now(), "Failed"));
+        }
+
+        @Test
+        public void testIsBeforeOrEqualToMonthDayOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo(MonthDay.now(), (MonthDay) null, "Failed"));
         }
 
         @Test
@@ -179,8 +230,13 @@ public class TestAssertionsBeforeOrEqual {
         }
 
         @Test
-        public void testIsBeforeOrEqualToOffsetDateTimeOkNull(){
+        public void testIsBeforeOrEqualToOffsetDateTimeOkFirstArgNull(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo((OffsetDateTime) null, OffsetDateTime.now(), "Failed"));
+        }
+
+        @Test
+        public void testIsBeforeOrEqualToOffsetDateTimeOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo(OffsetDateTime.now(), (OffsetDateTime) null, "Failed"));
         }
 
         @Test
@@ -194,8 +250,13 @@ public class TestAssertionsBeforeOrEqual {
         }
 
         @Test
-        public void testIsBeforeOrEqualToOffsetTimeOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo((OffsetDateTime) null, OffsetDateTime.now(), "Failed"));
+        public void testIsBeforeOrEqualToOffsetTimeOkFirstArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo((OffsetTime) null, OffsetTime.now(), "Failed"));
+        }
+
+        @Test
+        public void testIsBeforeOrEqualToOffsetTimeOkSecondArgNull(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBeforeOrEqualTo(OffsetTime.now(), (OffsetTime) null, "Failed"));
         }
 
         @Test

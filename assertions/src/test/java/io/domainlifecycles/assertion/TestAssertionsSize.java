@@ -45,7 +45,7 @@ public class TestAssertionsSize {
 
         @Test
         public void testHasSizeMapLongFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.hasSize(List.of("abdbddb",1,3,4,5,5), 1, 2, "Failed"));
+            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.hasSize(Map.of("abdbddb",1,3,4,5,5), 1, 2, "Failed"));
         }
 
         @Test
