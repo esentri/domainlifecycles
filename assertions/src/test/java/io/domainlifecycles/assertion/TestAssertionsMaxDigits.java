@@ -28,7 +28,7 @@ public class TestAssertionsMaxDigits {
         }
 
         @Test
-        public void testHasMaxDigitsNullOk(){
+        public void testHasMaxDigitsNullOkBigDecimal(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.hasMaxDigits((BigDecimal) null, 2, 3,  "Failed"));
         }
 
@@ -53,6 +53,11 @@ public class TestAssertionsMaxDigits {
         }
 
         @Test
+        public void testHasMaxDigitsNullOkDouble(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.hasMaxDigits((Double) null, 2, 3,  "Failed"));
+        }
+
+        @Test
         public void testHasMaxDigitsFailFloatPrimitive(){
             Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.hasMaxDigits(10.0f, 1,1,  "Failed"));
         }
@@ -72,7 +77,10 @@ public class TestAssertionsMaxDigits {
             Assertions.assertDoesNotThrow(()-> DomainAssertions.hasMaxDigits(Float.valueOf(10.1f), 2,1, "Failed"));
         }
 
-
+        @Test
+        public void testHasMaxDigitsNullOkFloat(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.hasMaxDigits((Float) null, 2, 3,  "Failed"));
+        }
     }
 
     @Nested
@@ -274,7 +282,7 @@ public class TestAssertionsMaxDigits {
         }
 
         @Test
-        public void testHasMaxDigitsFractionNullOk(){
+        public void testHasMaxDigitsFractionNullOkBigDecimal(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.hasMaxDigitsFraction((BigDecimal) null, 2,  "Failed"));
         }
 
@@ -298,6 +306,10 @@ public class TestAssertionsMaxDigits {
             Assertions.assertDoesNotThrow(()-> DomainAssertions.hasMaxDigitsFraction(Double.valueOf(10.2), 1, "Failed"));
         }
 
+        @Test
+        public void testHasMaxDigitsFractionNullOkDouble(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.hasMaxDigitsFraction((Double) null, 2,  "Failed"));
+        }
 
         @Test
         public void testHasMaxDigitsFractionFailFloatPrimitive(){
@@ -318,6 +330,11 @@ public class TestAssertionsMaxDigits {
         @Test
         public void testHasMaxDigitsFractionOkFloat(){
             Assertions.assertDoesNotThrow(()-> DomainAssertions.hasMaxDigitsFraction(Float.valueOf(10.1f), 1, "Failed"));
+        }
+
+        @Test
+        public void testHasMaxDigitsFractionNullOkBigFloat(){
+            Assertions.assertDoesNotThrow(()-> DomainAssertions.hasMaxDigitsFraction((Float) null, 2,  "Failed"));
         }
     }
 
