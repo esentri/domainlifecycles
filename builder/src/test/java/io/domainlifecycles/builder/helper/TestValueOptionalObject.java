@@ -25,10 +25,12 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.builder;
+package io.domainlifecycles.builder.helper;
 
-import lombok.Builder;
 import io.domainlifecycles.domain.types.ValueObject;
+import java.util.Optional;
+import javax.swing.text.html.Option;
+import lombok.Builder;
 
 @Builder
-public record TestValueObject(String first, Long second) implements ValueObject {}
+public record TestValueOptionalObject(Optional<String> first, Long second) implements ValueObject {}
