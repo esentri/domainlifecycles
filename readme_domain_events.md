@@ -130,7 +130,7 @@ public final class Customer extends AggregateRootBase<Customer.CustomerId> {
 DomainEvent handling provides a rich set of configuration options. There are several preconfigured options that are provided out-of-the-box (especially with transactional support for Spring/Spring Boot 3.0).
 But it's also possible to override some of the interfaces to add customized publishing or listening behaviour.
 
-The configuration typically is done via creating an instance of the ``io.domainlifecycles.events.api.DomainEventsConfiguration``class. 
+The configuration typically is done via creating an instance of the ``io.domainlifecycles.events.api.DomainEventsConfigurationImpl``class. 
 At least for the automatic routing functionality an instance of a ``io.domainlifecycles.services.ServiceProvider`` must be provided (typically ``io.domainlifecycles.services.Services`` is used).
 
 ##### Out-of-the-box configuration options
@@ -276,13 +276,13 @@ A third party event bus might be used with or without an Outbox involved. If the
 
 To route DomainEvents from an Outbox to a message bus, consider extending ``io.domainlifecycles.events.publish.outbox.poll.AbstractOutboxPoller``.
 To route DomainEvents without using an Outbox to a message bus, consider implementing a custom ``io.domainlifecycles.events.publish.DomainEventPublisher``. 
-Those custom implementations must be configured via ``io.domainlifecycles.events.api.DomainEventsConfiguration`` to activate them.
+Those custom implementations must be configured via ``io.domainlifecycles.events.api.DomainEventsConfigurationImpl`` to activate them.
 
 ###### Third party message bus Domain Event consumption
 
 To consume DomainEvents from a third party event bus and route them directly to handler services or Aggregates as described before, consider implementing a 
 message bus technology dependent consumer service and then provide those events directly to the configured ``io.domainlifecycles.events.receive.execution.ReceivingDomainEventHandler`` via it's
-``handleReceived()`` method. The ReceivingDomainEventHandler instance could be acquired via a ``io.domainlifecycles.events.api.DomainEventsConfiguration`` instance. 
+``handleReceived()`` method. The ReceivingDomainEventHandler instance could be acquired via a ``io.domainlifecycles.events.api.DomainEventsConfigurationImpl`` instance. 
 
 #### Typical Spring Boot setup
 
