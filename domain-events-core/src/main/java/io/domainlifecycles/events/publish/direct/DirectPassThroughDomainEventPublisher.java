@@ -33,15 +33,17 @@ import io.domainlifecycles.events.receive.execution.ReceivingDomainEventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 /**
  * The DirectPassThroughDomainEventPublisher class is an implementation of the DomainEventPublisher interface.
  * It simply delegates the publishing of a domain event to a ReceivingDomainEventHandler instance.
  * <br>
- * Be aware that message loss is possible.
+ * Be aware that message loss or ghost events are possible.
  *
  * @author Mario Herb
  */
-public class DirectPassThroughDomainEventPublisher implements DomainEventPublisher {
+public final class DirectPassThroughDomainEventPublisher implements DomainEventPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(DirectPassThroughDomainEventPublisher.class);
 
@@ -52,7 +54,7 @@ public class DirectPassThroughDomainEventPublisher implements DomainEventPublish
      * It simply delegates the publishing of a domain event to a ReceivingDomainEventHandler instance.
      */
     public DirectPassThroughDomainEventPublisher(ReceivingDomainEventHandler receivingDomainEventHandler) {
-        this.receivingDomainEventHandler = receivingDomainEventHandler;
+        this.receivingDomainEventHandler = Objects.requireNonNull(receivingDomainEventHandler, "A ReceivingDomainEventHandler is required!");
     }
 
     /**

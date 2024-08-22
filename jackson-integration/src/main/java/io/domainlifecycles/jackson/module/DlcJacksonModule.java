@@ -63,6 +63,11 @@ public class DlcJacksonModule extends SimpleModule {
         this.entityIdentityProvider = entityIdentityProvider;
     }
 
+    public DlcJacksonModule(DomainObjectBuilderProvider domainObjectBuilderProvider) {
+        this.domainObjectBuilderProvider = domainObjectBuilderProvider;
+        this.entityIdentityProvider = null;
+    }
+
     /**
      * Setup module.
      */

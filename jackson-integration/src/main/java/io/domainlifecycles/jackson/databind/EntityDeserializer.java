@@ -314,9 +314,11 @@ public class EntityDeserializer extends StdDeserializer<Entity<?>> {
         if(em.getIdentityField().isPresent()) {
             var idFieldName = em.getIdentityField().get().getName();
             JsonNode idNode = objectNode.get(idFieldName);
-            if (idNode == null || idNode.isNull()) {
-                Identity<?> identity = entityIdentityProvider.provideFor(targetEntityTypeName);
-                objectNode.set(idFieldName, JsonNodeFactory.instance.textNode(identity.value().toString()));
+            if(entityIdentityProvider != null) {
+                if (idNode == null || idNode.isNull()) {
+                    Identity<?> identity = entityIdentityProvider.provideFor(targetEntityTypeName);
+                    objectNode.set(idFieldName, JsonNodeFactory.instance.textNode(identity.value().toString()));
+                }
             }
         }
 

@@ -14,6 +14,9 @@ dependencies {
     testImplementation project(":domain-events-jakarta-jta")
     testImplementation project(":domain-events-spring")
     testImplementation project(":domain-events-spring-outbox")
+    testImplementation project(":domain-events-gruelbox")
+    testImplementation project(":jackson-integration")
+    testImplementation project(":builder")
     testImplementation "org.slf4j:slf4j-api:${slf4jVersion}"
     testImplementation "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
@@ -25,6 +28,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-json:3.2.3'
     testImplementation 'org.springframework.boot:spring-boot-starter-jooq:3.2.3'
     testImplementation 'org.springframework.boot:spring-boot-starter-test:3.2.3'
+    testImplementation "com.gruelbox:transactionoutbox-core:${gruelboxVersion}"
+    testImplementation "com.gruelbox:transactionoutbox-spring:${gruelboxVersion}"
+    testImplementation "com.gruelbox:transactionoutbox-jackson:${gruelboxVersion}"
     testImplementation "com.h2database:h2:2.2.222"
     testImplementation 'org.awaitility:awaitility:4.2.0'
 

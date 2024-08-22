@@ -54,7 +54,7 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
-public class MirrorBasedExecutionContextDetector implements ExecutionContextDetector {
+public final class MirrorBasedExecutionContextDetector implements ExecutionContextDetector {
 
     private static final Logger log = LoggerFactory.getLogger(MirrorBasedExecutionContextDetector.class);
 

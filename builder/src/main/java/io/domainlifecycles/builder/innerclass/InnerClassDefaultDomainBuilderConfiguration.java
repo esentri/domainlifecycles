@@ -38,7 +38,8 @@ import java.util.function.Function;
  */
 public final class InnerClassDefaultDomainBuilderConfiguration implements DomainBuilderConfiguration {
 
-    private final Function<String, String> f = k -> "set" + k.substring(0, 1).toUpperCase() + k.substring(1);
+    private final Function<String, String> setterFunc = k -> "set" + k.substring(0, 1).toUpperCase() + k.substring(1);
+    protected boolean tryFallbacks = true;
 
     /**
      * Creates new default inner builder configuration.
@@ -71,6 +72,23 @@ public final class InnerClassDefaultDomainBuilderConfiguration implements Domain
      */
     @Override
     public String setterFromPropertyName(String propertyName) {
-        return f.apply(propertyName);
+        return setterFunc.apply(propertyName);
+    }
+
+    protected String mutatorFallbackFromPropertyName(String propertyName){
+        return propertyName;
+    }
+
+    protected String defaultSetterFallbackFromPropertyName(String propertyName){
+        return propertyName;
+    }
+
+    /**
+     * Enables or disables the use of setter fallbacks.
+     *
+     * @param enabled true to enable setter fallbacks, false to disable
+     */
+    public void enableSetterFallbacks(boolean enabled){
+        this.tryFallbacks = enabled;
     }
 }

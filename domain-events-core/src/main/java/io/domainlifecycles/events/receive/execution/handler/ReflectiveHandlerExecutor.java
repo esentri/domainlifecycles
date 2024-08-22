@@ -38,6 +38,8 @@ import io.domainlifecycles.reflect.JavaReflect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 /**
  * ReflectiveHandlerExecutor is a concrete implementation of the HandlerExecutor interface.
  * It executes domain event listeners using reflection.
@@ -56,6 +58,7 @@ public class ReflectiveHandlerExecutor implements HandlerExecutor {
      */
     @Override
     public boolean execute(ExecutionContext executionContext) {
+        Objects.requireNonNull(executionContext, "An non-null ExecutionContext is required!");
        if(executionContext instanceof ServiceExecutionContext){
            return callDomainEventListenerMethods((ServiceExecutionContext) executionContext);
        }else{
@@ -87,7 +90,7 @@ public class ReflectiveHandlerExecutor implements HandlerExecutor {
                         log.error("DomainEvent Listener method {} execution on {} for DomainEvent {} failed!",
                             serviceExecutionContext.handlerMethodName(),
                             serviceExecutionContext.handler(),
-                            serviceExecutionContext.domainEvent()
+                            serviceExecutionContext.domainEvent(), e
                         );
                     }
                 } finally {
@@ -132,7 +135,8 @@ public class ReflectiveHandlerExecutor implements HandlerExecutor {
                 log.error("DomainEvent Listener method {} execution on {} for AggregateDomainEvent {} failed!",
                     aggregateExecutionContext.aggregateHandlerMethodName(),
                     root,
-                    aggregateExecutionContext.domainEvent()
+                    aggregateExecutionContext.domainEvent(),
+                    e
                 );
             }
             if (success) {

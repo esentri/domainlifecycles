@@ -78,7 +78,7 @@ public class DirectNonTransactionalEventHandlingTests {
         services.registerQueryClientInstance(queryClient);
         services.registerOutboundServiceInstance(outboundService);
 
-        NonTransactionDefaultDomainEventsConfiguration.configuration(services);
+        new NonTransactionDefaultDomainEventsConfiguration(services);
     }
 
     @Test

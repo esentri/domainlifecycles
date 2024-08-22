@@ -34,20 +34,22 @@ import jakarta.transaction.Synchronization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 /**
  * Synchronization callback to publish events after commit.
  *
  * @author Mario Herb
  */
-public class AfterCommitSynchronization implements Synchronization {
+final class AfterCommitSynchronization implements Synchronization {
 
     private static final Logger log = LoggerFactory.getLogger(AfterCommitSynchronization.class);
     private final ReceivingDomainEventHandler receivingDomainEventHandler;
     private final DomainEvent publishedDomainEvent;
 
     public AfterCommitSynchronization(ReceivingDomainEventHandler receivingDomainEventHandler, DomainEvent publishedDomainEvent) {
-        this.receivingDomainEventHandler = receivingDomainEventHandler;
-        this.publishedDomainEvent = publishedDomainEvent;
+        this.receivingDomainEventHandler = Objects.requireNonNull(receivingDomainEventHandler, "A ReceivingDomainEventHandler is required!");
+        this.publishedDomainEvent = Objects.requireNonNull(publishedDomainEvent, "A DomainEvent is required!");
     }
 
 

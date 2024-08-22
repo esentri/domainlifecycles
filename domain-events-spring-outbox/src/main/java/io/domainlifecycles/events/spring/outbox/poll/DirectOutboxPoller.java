@@ -33,6 +33,8 @@ import io.domainlifecycles.events.spring.outbox.api.TransactionalOutbox;
 import io.domainlifecycles.events.receive.execution.ReceivingDomainEventHandler;
 import io.domainlifecycles.events.receive.execution.processor.ExecutionResult;
 
+import java.util.Objects;
+
 /**
  * The DirectOutboxPoller class is a subclass of AbstractOutboxPoller which sends polled
  * domain events directly to a receiving domain event handler.
@@ -54,7 +56,7 @@ public class DirectOutboxPoller extends AbstractOutboxPoller {
 
     public DirectOutboxPoller(TransactionalOutbox transactionalOutbox, ReceivingDomainEventHandler receivingDomainEventHandler) {
         super(transactionalOutbox);
-        this.receivingDomainEventHandler = receivingDomainEventHandler;
+        this.receivingDomainEventHandler = Objects.requireNonNull(receivingDomainEventHandler, "A ReceivingDomainEventHandler is required!");
     }
 
     /**

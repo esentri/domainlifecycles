@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * DirectJtaTransactionalDomainEventPublisher is a class that implements the DomainEventPublisher interface.
@@ -57,7 +58,7 @@ import java.util.Collection;
  *
  * @author Mario Herb
  */
-public class DirectJtaTransactionalDomainEventPublisher implements DomainEventPublisher {
+public final class DirectJtaTransactionalDomainEventPublisher implements DomainEventPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(DirectJtaTransactionalDomainEventPublisher.class);
 
@@ -72,8 +73,8 @@ public class DirectJtaTransactionalDomainEventPublisher implements DomainEventPu
         TransactionManager transactionManager,
         boolean afterCommit
     ) {
-        this.receivingDomainEventHandler = receivingDomainEventHandler;
-        this.transactionManager = transactionManager;
+        this.receivingDomainEventHandler = Objects.requireNonNull(receivingDomainEventHandler, "A ReceivingDomainEventHandler is required!");
+        this.transactionManager = Objects.requireNonNull(transactionManager, "A TransactionManager is required!");
         this.afterCommit = afterCommit;
     }
 

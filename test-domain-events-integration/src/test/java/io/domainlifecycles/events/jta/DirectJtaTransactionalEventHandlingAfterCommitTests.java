@@ -42,17 +42,14 @@ import io.domainlifecycles.events.AnOutboundService;
 import io.domainlifecycles.events.PassThroughDomainEvent;
 import io.domainlifecycles.events.UnreceivedDomainEvent;
 import io.domainlifecycles.events.api.DomainEvents;
+import io.domainlifecycles.events.jta.api.JtaTransactionDomainEventsConfiguration;
 import io.domainlifecycles.events.jta.publish.DirectJtaTransactionalDomainEventPublisher;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.services.Services;
-import jakarta.transaction.Synchronization;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
 
@@ -92,8 +89,10 @@ public class DirectJtaTransactionalEventHandlingAfterCommitTests {
         services.registerOutboundServiceInstance(outboundService);
         services.registerQueryClientInstance(queryClient);
 
-        var config = JtaTransactionDomainEventsConfiguration.configuration(userTransactionManager, services, true);
-        ((DirectJtaTransactionalDomainEventPublisher)config.getDomainEventPublisher()).setPassThroughEventTypes(List.of(PassThroughDomainEvent.class));
+        var config = new JtaTransactionDomainEventsConfiguration(userTransactionManager, services, true)
+            .getDomainEventsConfiguration();
+        ((DirectJtaTransactionalDomainEventPublisher)config.getDomainEventPublisher())
+            .setPassThroughEventTypes(List.of(PassThroughDomainEvent.class));
 
     }
 

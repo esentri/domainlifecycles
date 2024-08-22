@@ -37,7 +37,7 @@ import io.domainlifecycles.domain.types.OutboundService;
 import io.domainlifecycles.domain.types.QueryClient;
 import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.events.api.DomainEventsConfiguration;
-import io.domainlifecycles.events.spring.SpringTransactionDomainEventsConfiguration;
+import io.domainlifecycles.events.spring.api.SpringTransactionDomainEventsConfiguration;
 import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.jooq.configuration.JooqDomainPersistenceConfiguration;

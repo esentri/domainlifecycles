@@ -42,6 +42,7 @@ import io.domainlifecycles.events.AnOutboundService;
 import io.domainlifecycles.events.PassThroughDomainEvent;
 import io.domainlifecycles.events.UnreceivedDomainEvent;
 import io.domainlifecycles.events.api.DomainEvents;
+import io.domainlifecycles.events.jta.api.JtaTransactionDomainEventsConfiguration;
 import io.domainlifecycles.events.jta.publish.DirectJtaTransactionalDomainEventPublisher;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
@@ -88,8 +89,9 @@ public class DirectJtaTransactionalEventHandlingBeforeCommitTests {
         services.registerOutboundServiceInstance(outboundService);
         services.registerQueryClientInstance(queryClient);
 
-        var config = JtaTransactionDomainEventsConfiguration.configuration(userTransactionManager, services, false);
-        ((DirectJtaTransactionalDomainEventPublisher)config.getDomainEventPublisher()).setPassThroughEventTypes(List.of(PassThroughDomainEvent.class));
+        var config = new JtaTransactionDomainEventsConfiguration(userTransactionManager, services, false);
+        ((DirectJtaTransactionalDomainEventPublisher)config.getDomainEventsConfiguration().getDomainEventPublisher())
+            .setPassThroughEventTypes(List.of(PassThroughDomainEvent.class));
 
     }
 

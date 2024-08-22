@@ -39,6 +39,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -47,14 +48,14 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Mario Herb
  */
-public class SpringTransactionalHandlerExecutor extends ReflectiveHandlerExecutor implements TransactionalHandlerExecutor {
+public final class SpringTransactionalHandlerExecutor extends ReflectiveHandlerExecutor implements TransactionalHandlerExecutor {
 
     private static final Logger log = LoggerFactory.getLogger(SpringTransactionalHandlerExecutor.class);
     private final PlatformTransactionManager transactionManager;
     private final Map<ExecutionContext, TransactionStatus> managedTransactions;
 
     public SpringTransactionalHandlerExecutor(PlatformTransactionManager transactionManager) {
-        this.transactionManager = transactionManager;
+        this.transactionManager = Objects.requireNonNull(transactionManager, "A PlatformTransactionManager is required!");
         managedTransactions = new ConcurrentHashMap<>();
     }
 

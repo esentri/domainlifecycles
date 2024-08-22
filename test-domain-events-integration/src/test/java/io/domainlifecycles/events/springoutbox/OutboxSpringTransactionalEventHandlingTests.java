@@ -39,7 +39,7 @@ import io.domainlifecycles.events.AnOutboundService;
 import io.domainlifecycles.events.UnreceivedDomainEvent;
 import io.domainlifecycles.events.api.DomainEvents;
 import io.domainlifecycles.events.spring.outbox.api.ProcessingResult;
-import io.domainlifecycles.events.spring.outbox.SpringOutboxConfiguration;
+import io.domainlifecycles.events.spring.outbox.api.SpringOutboxConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,7 +54,6 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import java.util.UUID;
 
-import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;

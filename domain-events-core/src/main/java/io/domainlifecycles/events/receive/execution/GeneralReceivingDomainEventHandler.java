@@ -45,7 +45,7 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
-public class GeneralReceivingDomainEventHandler implements ReceivingDomainEventHandler{
+public final class GeneralReceivingDomainEventHandler implements ReceivingDomainEventHandler{
 
     private static final Logger log = LoggerFactory.getLogger(GeneralReceivingDomainEventHandler.class);
     private final ExecutionContextDetector executionContextDetector;

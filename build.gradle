@@ -60,6 +60,7 @@ ext {
     lombokVersion = '1.18.30'
     logbackClassicVersion = '1.5.3'
     typeResolverVersion = '1.0.3'
+    gruelboxVersion = '5.5.447'
     quiltmcLicenserVersion = '2.0.1'
     nuStuderJooqVersion = '7.1.1'
     releasePluginVersion = '3.0.2'

@@ -25,7 +25,7 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.events.jta;
+package io.domainlifecycles.events.jta.api;
 
 import io.domainlifecycles.events.api.DomainEventsConfiguration;
 import io.domainlifecycles.events.api.NonTransactionDefaultDomainEventsConfiguration;
@@ -33,6 +33,8 @@ import io.domainlifecycles.events.jta.publish.DirectJtaTransactionalDomainEventP
 import io.domainlifecycles.events.jta.receive.execution.handler.JtaTransactionalHandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
 import jakarta.transaction.TransactionManager;
+
+import java.util.Objects;
 
 /**
  * JtaTransactionDomainEventsConfiguration class provides a static method
@@ -43,8 +45,11 @@ import jakarta.transaction.TransactionManager;
  *
  * @author Mario Herb
  */
-public class JtaTransactionDomainEventsConfiguration {
+public final class JtaTransactionDomainEventsConfiguration {
 
+    private final TransactionManager transactionManager;
+    private final boolean publishAfterCommit;
+    private final DomainEventsConfiguration domainEventsConfiguration;
     /**
      * Default DomainEventsConfiguration for JTA transaction handling.
      *
@@ -53,18 +58,32 @@ public class JtaTransactionDomainEventsConfiguration {
      * @param publishAfterCommit
      * @return
      */
-    static DomainEventsConfiguration configuration(
+    public JtaTransactionDomainEventsConfiguration(
         TransactionManager transactionManager,
         ServiceProvider serviceProvider,
         boolean publishAfterCommit
     ){
-        var baseConfig = NonTransactionDefaultDomainEventsConfiguration.configuration(serviceProvider);
+        this.transactionManager = Objects.requireNonNull(transactionManager, "A TransactionManager is required!");
+        this.publishAfterCommit = publishAfterCommit;
+
+        var baseConfig = new NonTransactionDefaultDomainEventsConfiguration(serviceProvider).getDomainEventsConfiguration();
         var builder = baseConfig.toBuilder();
         var publisher = new DirectJtaTransactionalDomainEventPublisher(baseConfig.getReceivingDomainEventHandler(), transactionManager, publishAfterCommit);
-        return builder
+        this.domainEventsConfiguration = builder
             .withDomainEventPublisher(publisher)
             .withHandlerExecutor(new JtaTransactionalHandlerExecutor(transactionManager))
             .build();
     }
 
+    public TransactionManager getTransactionManager() {
+        return transactionManager;
+    }
+
+    public boolean isPublishAfterCommit() {
+        return publishAfterCommit;
+    }
+
+    public DomainEventsConfiguration getDomainEventsConfiguration() {
+        return domainEventsConfiguration;
+    }
 }

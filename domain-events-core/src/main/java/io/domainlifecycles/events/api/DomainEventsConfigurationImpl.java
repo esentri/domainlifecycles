@@ -48,15 +48,15 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
-public class DomainEventsConfigurationImpl implements DomainEventsConfiguration{
+public final class DomainEventsConfigurationImpl implements DomainEventsConfiguration{
 
 
-    protected final DomainEventPublisher domainEventPublisher;
-    protected final ServiceProvider serviceProvider;
-    protected final ReceivingDomainEventHandler receivingDomainEventHandler;
-    protected final ExecutionContextDetector executionContextDetector;
-    protected final HandlerExecutor handlerExecutor;
-    protected final ExecutionContextProcessor executionContextProcessor;
+    private final DomainEventPublisher domainEventPublisher;
+    private final ServiceProvider serviceProvider;
+    private final ReceivingDomainEventHandler receivingDomainEventHandler;
+    private final ExecutionContextDetector executionContextDetector;
+    private final HandlerExecutor handlerExecutor;
+    private final ExecutionContextProcessor executionContextProcessor;
 
     protected DomainEventsConfigurationImpl(
         DomainEventPublisher domainEventPublisher,

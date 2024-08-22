@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * SimpleExecutionContextProcessor is an implementation of the ExecutionContextProcessor interface.
@@ -47,7 +48,7 @@ public class SimpleExecutionContextProcessor implements ExecutionContextProcesso
     protected final HandlerExecutor handlerExecutor;
 
     public SimpleExecutionContextProcessor(HandlerExecutor handlerExecutor) {
-        this.handlerExecutor = handlerExecutor;
+        this.handlerExecutor = Objects.requireNonNull(handlerExecutor, "A HandlerExecutor is required!");
     }
 
     /**

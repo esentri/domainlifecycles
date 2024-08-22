@@ -38,7 +38,7 @@ import io.domainlifecycles.events.AQueryClient;
 import io.domainlifecycles.events.ARepository;
 import io.domainlifecycles.events.AnApplicationService;
 import io.domainlifecycles.events.AnOutboundService;
-import io.domainlifecycles.events.spring.outbox.SpringOutboxConfiguration;
+import io.domainlifecycles.events.spring.outbox.api.SpringOutboxConfiguration;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.services.Services;
@@ -126,7 +126,5 @@ public class OutboxTestApplication {
         );
         return config;
     }
-
-
 
 }

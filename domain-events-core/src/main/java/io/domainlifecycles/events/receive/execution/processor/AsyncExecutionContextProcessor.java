@@ -53,6 +53,7 @@ public class AsyncExecutionContextProcessor extends SimpleExecutionContextProces
     private static final Logger log = LoggerFactory.getLogger(AsyncExecutionContextProcessor.class);
     private int threadPoolSize = 10;
     private final ExecutorService executorService;
+
     public AsyncExecutionContextProcessor(HandlerExecutor handlerExecutor) {
         super(handlerExecutor);
         executorService = Executors.newFixedThreadPool(threadPoolSize);

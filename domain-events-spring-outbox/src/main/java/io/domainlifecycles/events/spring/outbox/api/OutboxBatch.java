@@ -44,7 +44,7 @@ import java.util.UUID;
  *
  * @author Mario Herb
  */
-public class OutboxBatch {
+public final class OutboxBatch {
 
     final UUID batchId = UUID.randomUUID();
     List<DomainEvent> domainEvents;

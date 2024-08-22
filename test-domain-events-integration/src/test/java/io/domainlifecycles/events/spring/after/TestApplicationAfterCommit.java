@@ -39,7 +39,7 @@ import io.domainlifecycles.events.AnApplicationService;
 import io.domainlifecycles.events.AnOutboundService;
 import io.domainlifecycles.events.PassThroughDomainEvent;
 import io.domainlifecycles.events.api.DomainEventsConfiguration;
-import io.domainlifecycles.events.spring.SpringTransactionDomainEventsConfiguration;
+import io.domainlifecycles.events.spring.api.SpringTransactionDomainEventsConfiguration;
 import io.domainlifecycles.events.spring.publish.DirectSpringTransactionalDomainEventPublisher;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
@@ -121,11 +121,11 @@ public class TestApplicationAfterCommit {
      */
     @Bean
     public DomainEventsConfiguration domainEventsConfiguration(ServiceProvider serviceProvider, PlatformTransactionManager transactionManager) {
-        var config =  SpringTransactionDomainEventsConfiguration.configuration(
+        var config =  new SpringTransactionDomainEventsConfiguration(
             transactionManager,
             serviceProvider,
             true
-        );
+        ).getDomainEventsConfiguration();
 
         var pub = (DirectSpringTransactionalDomainEventPublisher)config.getDomainEventPublisher();
         pub.setPassThroughEventTypes(List.of(PassThroughDomainEvent.class));

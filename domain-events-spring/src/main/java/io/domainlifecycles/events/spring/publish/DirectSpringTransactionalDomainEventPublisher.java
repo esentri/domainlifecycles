@@ -36,6 +36,7 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * DirectSpringTransactionalDomainEventPublisher is a class that implements the DomainEventPublisher interface.
@@ -54,7 +55,7 @@ import java.util.Collection;
  *
  * @author Mario Herb
  */
-public class DirectSpringTransactionalDomainEventPublisher implements DomainEventPublisher {
+public final class DirectSpringTransactionalDomainEventPublisher implements DomainEventPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(DirectSpringTransactionalDomainEventPublisher.class);
 
@@ -66,7 +67,7 @@ public class DirectSpringTransactionalDomainEventPublisher implements DomainEven
         ReceivingDomainEventHandler receivingDomainEventHandler,
         boolean afterCommit
     ) {
-        this.receivingDomainEventHandler = receivingDomainEventHandler;
+        this.receivingDomainEventHandler = Objects.requireNonNull(receivingDomainEventHandler, "A ReceivingDomainEventHandler is required!");
         this.afterCommit = afterCommit;
     }
 

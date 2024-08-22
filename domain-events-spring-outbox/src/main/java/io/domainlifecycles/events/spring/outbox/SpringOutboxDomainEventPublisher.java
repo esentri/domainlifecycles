@@ -46,7 +46,7 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
-public class SpringOutboxDomainEventPublisher implements DomainEventPublisher {
+public final class SpringOutboxDomainEventPublisher implements DomainEventPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(SpringOutboxDomainEventPublisher.class);
 

@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -52,7 +53,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Mario Herb
  */
-public class JtaTransactionalHandlerExecutor extends ReflectiveHandlerExecutor implements TransactionalHandlerExecutor {
+public final class JtaTransactionalHandlerExecutor extends ReflectiveHandlerExecutor implements TransactionalHandlerExecutor {
     private static final Logger log = LoggerFactory.getLogger(JtaTransactionalHandlerExecutor.class);
 
     private final TransactionManager transactionManager;
@@ -60,7 +61,7 @@ public class JtaTransactionalHandlerExecutor extends ReflectiveHandlerExecutor i
     private final Map<ExecutionContext, Transaction> suspendedTransactions;
 
     public JtaTransactionalHandlerExecutor(TransactionManager transactionManager) {
-        this.transactionManager = transactionManager;
+        this.transactionManager = Objects.requireNonNull(transactionManager, "A TransactionManager is required!");
         managedTransactions = new ConcurrentHashMap<>();
         suspendedTransactions = new ConcurrentHashMap<>();
     }
