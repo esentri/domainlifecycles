@@ -29,12 +29,8 @@ package io.domainlifecycles.builder;
 
 
 import io.domainlifecycles.builder.innerclass.InnerClassDefaultDomainBuilderConfiguration;
-import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class InnerBuilderDefaultConfigurationTest {
 

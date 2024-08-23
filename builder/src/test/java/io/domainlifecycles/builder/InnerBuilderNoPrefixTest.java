@@ -52,7 +52,7 @@ public class InnerBuilderNoPrefixTest {
         Domain.initialize(new ReflectiveDomainMirrorFactory("tests", "io.domainlifecycles"));
     }
 
-    private static DomainBuilderConfiguration config = new DomainBuilderConfiguration() {
+    private static final DomainBuilderConfiguration config = new DomainBuilderConfiguration() {
         @Override
         public String builderMethodName() {
             return "builder";
@@ -76,8 +76,6 @@ public class InnerBuilderNoPrefixTest {
         var built = innerBuilder.build();
         assertThat(built).isNotNull();
     }
-
-
 
     @Test
     public void testSetFieldValueOk(){
@@ -110,8 +108,8 @@ public class InnerBuilderNoPrefixTest {
     public void testSetFieldValueFailMethodNotFound(){
         var testBuilder = preInitializedLombokBuilder();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
-
-        assertThrows(DLCBuilderException.class, () -> innerBuilder.setFieldValue("aaa", "third"));
+        DLCBuilderException exception = assertThrows(DLCBuilderException.class, () -> innerBuilder.setFieldValue("aaa", "third"));
+        assertThat(exception).hasMessageContaining("Was not able to set property");
     }
 
     @Test
@@ -119,15 +117,14 @@ public class InnerBuilderNoPrefixTest {
     public void testSetFieldValueFailMultipleMethods(){
         var testBuilder = preInitializedLombokBuilder();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
-
-        assertThrows(DLCBuilderException.class, () -> innerBuilder.setFieldValue("aaa", "fourth"));
+        DLCBuilderException exception = assertThrows(DLCBuilderException.class, () -> innerBuilder.setFieldValue("aaa", "fourth"));
+        assertThat(exception).hasMessageContaining("Multiple setters found in Lombok builder");
     }
 
     @Test
     public void testSetFieldValueOptionalOk(){
         var testBuilder = preInitializedOptionalLombokBuilder();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
-
         innerBuilder.setFieldValue("aaaOptionalParam", "first");
         TestValueOptionalObject built = (TestValueOptionalObject) innerBuilder.build();
         assertThat(built.first().get()).isEqualTo("aaaOptionalParam");
@@ -137,7 +134,6 @@ public class InnerBuilderNoPrefixTest {
     public void testSetFieldValueOkOptionalOkOptional(){
         var testBuilder = preInitializedOptionalLombokBuilder();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
-
         innerBuilder.setFieldValue(Optional.of("aaaOptionalValue"), "first");
         TestValueOptionalObject built = (TestValueOptionalObject) innerBuilder.build();
         assertThat(built.first().get()).isEqualTo("aaaOptionalValue");

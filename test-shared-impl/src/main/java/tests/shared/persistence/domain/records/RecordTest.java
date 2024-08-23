@@ -27,6 +27,7 @@
 
 package tests.shared.persistence.domain.records;
 
+import java.util.Set;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,16 +43,15 @@ public class RecordTest extends AggregateRootBase<RecordTestId> {
     private String myValue;
     private RecordVo myVo;
     private List<RecordVo> myVoList;
+    private Set<RecordVo> myVoSet;
 
     @Builder(setterPrefix = "set")
-    public RecordTest(RecordTestId id, String myValue, RecordVo myVo, List<RecordVo> myVoList, long concurrencyVersion) {
+    public RecordTest(RecordTestId id, String myValue, RecordVo myVo, List<RecordVo> myVoList, Set<RecordVo> myVoSet, long concurrencyVersion) {
         super(concurrencyVersion);
         this.myValue = myValue;
         this.myVo = myVo;
         this.myVoList = myVoList;
+        this.myVoSet = myVoSet;
         this.id = id;
     }
-
-
-
 }

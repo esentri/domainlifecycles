@@ -32,7 +32,6 @@ import io.domainlifecycles.builder.exception.DLCBuilderException;
 import io.domainlifecycles.builder.helper.TestValueObject;
 import io.domainlifecycles.builder.helper.TestValueObjectNoBuilder;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
-import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import org.junit.jupiter.api.BeforeAll;
@@ -48,7 +47,7 @@ public class InnerBuilderProviderTest {
         Domain.initialize(new ReflectiveDomainMirrorFactory("tests", "io.domainlifecycles.builder"));
     }
 
-    private static DomainBuilderConfiguration config = new DomainBuilderConfiguration() {
+    private static final DomainBuilderConfiguration config = new DomainBuilderConfiguration() {
         @Override
         public String builderMethodName() {
             return "builder";
@@ -67,14 +66,16 @@ public class InnerBuilderProviderTest {
 
     @Test
     void testProviderOk() {
-        InnerClassDomainObjectBuilderProvider provider = new InnerClassDomainObjectBuilderProvider(config);
-        DomainObjectBuilder<DomainObject> builder = provider.provide(TestValueObject.class.getName());
+        var provider = new InnerClassDomainObjectBuilderProvider(config);
+        var builder = provider.provide(TestValueObject.class.getName());
         assertThat(builder).isNotNull();
     }
 
     @Test
     void testProviderErrorNoBuilder() {
-        InnerClassDomainObjectBuilderProvider provider = new InnerClassDomainObjectBuilderProvider();
-        assertThrows(DLCBuilderException.class, () -> provider.provide(TestValueObjectNoBuilder.class.getName()));
+        var provider = new InnerClassDomainObjectBuilderProvider();
+        DLCBuilderException exception = assertThrows(DLCBuilderException.class, () -> provider.provide(TestValueObjectNoBuilder.class.getName()));
+
+        assertThat(exception).hasMessageContaining("Couldn't provide Builder instance for Entity class");
     }
 }
