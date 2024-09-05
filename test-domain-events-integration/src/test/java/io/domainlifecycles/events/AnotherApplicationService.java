@@ -32,15 +32,15 @@ import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.domain.types.ListensTo;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Slf4j
 public class AnotherApplicationService implements ApplicationService {
 
     private final AnotherService anotherService;
 
-    public List<DomainEvent> received = new ArrayList<>();
+    public Queue<DomainEvent> received = new ConcurrentLinkedQueue<>();
 
     public AnotherApplicationService(AnotherService anotherService) {
         this.anotherService = anotherService;

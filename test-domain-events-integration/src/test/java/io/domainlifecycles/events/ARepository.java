@@ -31,29 +31,30 @@ package io.domainlifecycles.events;
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.domain.types.ListensTo;
 import io.domainlifecycles.domain.types.Repository;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-
+@Slf4j
 public class ARepository implements Repository<AnAggregate.AggregateId, AnAggregate> {
 
-    public List<DomainEvent> received = new ArrayList<>();
+    public Queue<DomainEvent> received = new ConcurrentLinkedQueue<>();
 
     private Map<AnAggregate.AggregateId, AnAggregate> instanceMap = new HashMap<>();
 
     @ListensTo(domainEventType = ADomainEvent.class)
     public void onADomainEvent(ADomainEvent domainEvent){
-        System.out.println("ADomainEvent received in ARepository! Message = " + domainEvent.message());
+        log.debug("ADomainEvent received in ARepository! Message = " + domainEvent.message());
         received.add(domainEvent);
     }
 
     @ListensTo(domainEventType = PassThroughDomainEvent.class)
     public void onADomainEvent(PassThroughDomainEvent domainEvent){
-        System.out.println("PassThroughDomainEvent received in ARepository! Message = " + domainEvent.message());
+        log.debug("PassThroughDomainEvent received in ARepository! Message = " + domainEvent.message());
         received.add(domainEvent);
     }
 

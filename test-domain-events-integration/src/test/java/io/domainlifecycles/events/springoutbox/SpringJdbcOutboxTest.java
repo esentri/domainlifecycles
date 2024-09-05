@@ -27,8 +27,8 @@
 
 package io.domainlifecycles.events.springoutbox;
 
-import io.domainlifecycles.events.spring.outbox.api.SpringOutboxConfiguration;
 import io.domainlifecycles.events.spring.outbox.api.ProcessingResult;
+import io.domainlifecycles.events.spring.outbox.api.SpringOutboxConfiguration;
 import io.domainlifecycles.events.spring.outbox.impl.SpringJdbcOutbox;
 import lombok.extern.slf4j.Slf4j;
 import org.h2.jdbc.JdbcSQLTimeoutException;

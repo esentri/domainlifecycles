@@ -30,23 +30,25 @@ package io.domainlifecycles.events;
 import io.domainlifecycles.domain.types.ApplicationService;
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.domain.types.ListensTo;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
+@Slf4j
 public class AnApplicationService implements ApplicationService {
 
-    public List<DomainEvent> received = new ArrayList<>();
+    public Queue<DomainEvent> received = new ConcurrentLinkedQueue<>();
 
     @ListensTo(domainEventType = ADomainEvent.class)
     public void onADomainEvent(ADomainEvent domainEvent){
-        System.out.println("ADomainEvent received in AnApplicationService! Message = " + domainEvent.message());
+        log.debug("ADomainEvent received in AnApplicationService! Message = " + domainEvent.message());
         received.add(domainEvent);
     }
 
     @ListensTo(domainEventType = PassThroughDomainEvent.class)
     public void onDomainEvent(PassThroughDomainEvent domainEvent){
-        System.out.println("PassThroughDomainEvent received in AnApplicationService! Message = " + domainEvent.message());
+        log.debug("PassThroughDomainEvent received in AnApplicationService! Message = " + domainEvent.message());
         received.add(domainEvent);
     }
 }

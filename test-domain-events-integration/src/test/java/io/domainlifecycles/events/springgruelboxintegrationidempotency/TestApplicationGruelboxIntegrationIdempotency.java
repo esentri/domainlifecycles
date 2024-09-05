@@ -1,4 +1,4 @@
-package io.domainlifecycles.events.springgruelboxintegration;
+package io.domainlifecycles.events.springgruelboxintegrationidempotency;
 
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
@@ -14,6 +14,7 @@ import io.domainlifecycles.events.AnApplicationService;
 import io.domainlifecycles.events.AnOutboundService;
 import io.domainlifecycles.events.AnotherApplicationService;
 import io.domainlifecycles.events.AnotherService;
+import io.domainlifecycles.events.IdemProtectedListener;
 import io.domainlifecycles.events.TransactionalCounterService;
 import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
@@ -32,14 +33,14 @@ import java.util.List;
 import java.util.Locale;
 
 @SpringBootApplication()
-public class TestApplicationGruelboxIntegration {
+public class TestApplicationGruelboxIntegrationIdempotency {
 
     /**
      * Setting the Locale to explicitly force the language in default validation error messages.
      */
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH);
-        new SpringApplicationBuilder(TestApplicationGruelboxIntegration.class).run(args);
+        new SpringApplicationBuilder(TestApplicationGruelboxIntegrationIdempotency.class).run(args);
     }
 
     @Bean
@@ -84,6 +85,11 @@ public class TestApplicationGruelboxIntegration {
     @Bean
     public TransactionalCounterService transactionalCounterService(JdbcTemplate jdbcTemplate){
         return new TransactionalCounterService(jdbcTemplate);
+    }
+
+    @Bean
+    public IdemProtectedListener idemProtectedListener(){
+        return new IdemProtectedListener();
     }
     /**
      * This method creates and configures a ServiceProvider instance, which is responsible for providing instances of various types of services.

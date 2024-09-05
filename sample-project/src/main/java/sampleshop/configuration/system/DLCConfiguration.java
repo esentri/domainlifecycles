@@ -158,8 +158,8 @@ public class DLCConfiguration {
      * Using the Spring event bus to publish DLC domain events.
      */
     @Bean
-    public DomainEventsConfiguration domainEventsConfiguration(ServiceProvider serviceProvider, PlatformTransactionManager transactionManager) {
-        return SpringTransactionDomainEventsConfiguration.configuration(transactionManager, serviceProvider, true);
+    public SpringTransactionDomainEventsConfiguration domainEventsConfiguration(ServiceProvider serviceProvider, PlatformTransactionManager transactionManager) {
+        return new SpringTransactionDomainEventsConfiguration(transactionManager, serviceProvider, true);
     }
 
     /**

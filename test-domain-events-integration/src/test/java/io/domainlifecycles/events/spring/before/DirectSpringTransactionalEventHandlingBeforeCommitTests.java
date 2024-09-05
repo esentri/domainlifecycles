@@ -41,6 +41,7 @@ import io.domainlifecycles.events.api.DomainEvents;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -49,6 +50,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = TestApplicationBeforeCommit.class)
+@DirtiesContext
 public class DirectSpringTransactionalEventHandlingBeforeCommitTests {
 
     @Autowired

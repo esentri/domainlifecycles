@@ -11,6 +11,7 @@ dependencies {
     implementation project(":domain-events-core")
     implementation project(":types")
     implementation project(":service-registry")
+    implementation project(":mirror")
     implementation "com.gruelbox:transactionoutbox-core:${gruelboxVersion}"
 
     compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"

@@ -48,20 +48,14 @@ import java.util.Map;
  */
 public class Services implements ServiceRegistrator, ServiceProvider {
 
-    private final Map<String, ApplicationService> applicationServices = new HashMap<>();
-    private final Map<String, DomainService> domainServices = new HashMap<>();
-    private final Map<String, Repository<?, ?>> repositories = new HashMap<>();
-
-    private final Map<String, QueryClient<?>> queryClients = new HashMap<>();
-
-    private final Map<String, OutboundService> outboundServices  = new HashMap<>();
+    private final Map<String, Object> services = new HashMap<>();
 
     /**
      * {@inheritDoc}
      */
     @Override
     public ApplicationService getApplicationServiceInstance(String typeName) {
-        return applicationServices.get(typeName);
+        return (ApplicationService) services.get(typeName);
     }
 
     /**
@@ -69,7 +63,7 @@ public class Services implements ServiceRegistrator, ServiceProvider {
      */
     @Override
     public Repository<?, ?> getRepositoryInstance(String typeName) {
-        return repositories.get(typeName);
+        return (Repository<?, ?>)services.get(typeName);
     }
 
     /**
@@ -77,7 +71,7 @@ public class Services implements ServiceRegistrator, ServiceProvider {
      */
     @Override
     public DomainService getDomainServiceInstance(String typeName) {
-        return domainServices.get(typeName);
+        return (DomainService)services.get(typeName);
     }
 
     /**
@@ -85,7 +79,7 @@ public class Services implements ServiceRegistrator, ServiceProvider {
      */
     @Override
     public QueryClient<?> getQueryClientInstance(String typeName) {
-        return queryClients.get(typeName);
+        return (QueryClient<?>)services.get(typeName);
     }
 
     /**
@@ -93,7 +87,15 @@ public class Services implements ServiceRegistrator, ServiceProvider {
      */
     @Override
     public OutboundService getOutboundServiceInstance(String typeName) {
-        return outboundServices.get(typeName);
+        return (OutboundService) services.get(typeName);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object getServiceInstance(String typeName) {
+        return services.get(typeName);
     }
 
     /**
@@ -101,14 +103,7 @@ public class Services implements ServiceRegistrator, ServiceProvider {
      */
     @Override
     public void registerApplicationServiceInstance(ApplicationService applicationService) {
-        //check of mirrored types is needed, because in some frameworks like spring the concrete service instances
-        // are extended and so the class of the concrete instance at runtime is not known by the mirror
-        JavaReflect.allSupertypes(applicationService.getClass(), true)
-            .stream()
-            .filter(superType -> Domain.typeMirror(superType.getName()).isPresent())
-            .findFirst()
-            .ifPresent(mirroredType -> applicationServices.put(mirroredType.getName(), applicationService));
-
+        registerServiceInstance(applicationService);
     }
 
     /**
@@ -116,13 +111,7 @@ public class Services implements ServiceRegistrator, ServiceProvider {
      */
     @Override
     public void registerDomainServiceInstance(DomainService domainService) {
-        //check of mirrored types is needed, because in some frameworks like spring the concrete service instances
-        // are extended and so the class of the concrete instance at runtime is not known by the mirror
-        JavaReflect.allSupertypes(domainService.getClass(), true)
-            .stream()
-            .filter(superType -> Domain.typeMirror(superType.getName()).isPresent())
-            .findFirst()
-            .ifPresent(mirroredType -> domainServices.put(mirroredType.getName(), domainService));
+        registerServiceInstance(domainService);
     }
 
     /**
@@ -130,13 +119,7 @@ public class Services implements ServiceRegistrator, ServiceProvider {
      */
     @Override
     public void registerRepositoryInstance(Repository<?, ?> repository) {
-        //check of mirrored types is needed, because in some frameworks like spring the concrete service instances
-        // are extended and so the class of the concrete instance at runtime is not known by the mirror
-        JavaReflect.allSupertypes(repository.getClass(), true)
-            .stream()
-            .filter(superType -> Domain.typeMirror(superType.getName()).isPresent())
-            .findFirst()
-            .ifPresent(mirroredType -> repositories.put(mirroredType.getName(), repository));
+        registerServiceInstance(repository);
     }
 
     /**
@@ -144,13 +127,7 @@ public class Services implements ServiceRegistrator, ServiceProvider {
      */
     @Override
     public void registerQueryClientInstance(QueryClient<?> queryClient) {
-        //check of mirrored types is needed, because in some frameworks like spring the concrete service instances
-        // are extended and so the class of the concrete instance at runtime is not known by the mirror
-        JavaReflect.allSupertypes(queryClient.getClass(), true)
-            .stream()
-            .filter(superType -> Domain.typeMirror(superType.getName()).isPresent())
-            .findFirst()
-            .ifPresent(mirroredType -> queryClients.put(mirroredType.getName(), queryClient));
+        registerServiceInstance(queryClient);
     }
 
     /**
@@ -158,12 +135,16 @@ public class Services implements ServiceRegistrator, ServiceProvider {
      */
     @Override
     public void registerOutboundServiceInstance(OutboundService outboundService) {
+        registerServiceInstance(outboundService);
+    }
+
+    private void registerServiceInstance(Object serviceInstance){
         //check of mirrored types is needed, because in some frameworks like spring the concrete service instances
         // are extended and so the class of the concrete instance at runtime is not known by the mirror
-        JavaReflect.allSupertypes(outboundService.getClass(), true)
+        JavaReflect.allSupertypes(serviceInstance.getClass(), true)
             .stream()
             .filter(superType -> Domain.typeMirror(superType.getName()).isPresent())
             .findFirst()
-            .ifPresent(mirroredType -> outboundServices.put(mirroredType.getName(), outboundService));
+            .ifPresent(mirroredType -> services.put(mirroredType.getName(), serviceInstance));
     }
 }

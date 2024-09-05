@@ -83,5 +83,11 @@ public interface ServiceProvider {
      */
     OutboundService getOutboundServiceInstance(String typeName);
 
-
+    /**
+     * Retrieves an instance of a service based on the given type name.
+     *
+     * @param typeName The full qualified name of the type representing the service.
+     * @return An instance of the service.
+     */
+    Object getServiceInstance(String typeName);
 }

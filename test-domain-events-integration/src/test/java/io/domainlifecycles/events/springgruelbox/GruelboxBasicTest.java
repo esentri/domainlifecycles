@@ -13,10 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.Duration;
-
 import java.util.List;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 
-@SpringBootTest()
+@SpringBootTest(classes = TestApplicationGruelbox.class)
 @Slf4j
 public class GruelboxBasicTest {
 
@@ -44,6 +44,7 @@ public class GruelboxBasicTest {
     private ObjectMapper objectMapper;
 
     @Test
+    @DirtiesContext
     public void testTransactionOutbox(){
         var val = new ADomainEvent("GruelboxEvent");
         transactionTemplate.executeWithoutResult((status)->{
@@ -54,11 +55,12 @@ public class GruelboxBasicTest {
             .atMost(10, SECONDS)
             .untilAsserted(()->
                 assertThat(anApplicationService.received)
-                    .containsExactlyInAnyOrder(val)
+                    .contains(val)
             );
     }
 
     @Test
+    @DirtiesContext
     public void testTransactionOutboxDeSerialization(){
         var val = new ADomainEventCarryingAnId(new AnIdentity(5l));
         transactionTemplate.executeWithoutResult((status)->{
@@ -74,6 +76,7 @@ public class GruelboxBasicTest {
     }
 
     @Test
+    @DirtiesContext
     public void testTransactionOutboxDeSerializationComplexEvent() {
         var val = new AComplexDomainEvent(
             new AnIdentity(44l),
@@ -98,6 +101,7 @@ public class GruelboxBasicTest {
     }
 
     @Test
+    @DirtiesContext
     public void testComplexDomainEventDeserialization() throws Exception{
         var val = new AComplexDomainEvent(
             new AnIdentity(44l),

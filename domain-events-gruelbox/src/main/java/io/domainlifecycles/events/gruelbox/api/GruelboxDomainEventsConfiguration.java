@@ -32,10 +32,16 @@ import io.domainlifecycles.events.api.DomainEventsConfiguration;
 import io.domainlifecycles.events.api.NonTransactionDefaultDomainEventsConfiguration;
 import io.domainlifecycles.events.gruelbox.dispatch.DirectGruelboxDomainEventDispatcher;
 import io.domainlifecycles.events.gruelbox.dispatch.GruelboxDomainEventDispatcher;
+import io.domainlifecycles.events.gruelbox.idempotent.IdempotencyAwareHandlerExecutorProxy;
+import io.domainlifecycles.events.gruelbox.idempotent.IdempotencyConfiguration;
+import io.domainlifecycles.events.gruelbox.idempotent.IdempotentExecutor;
 import io.domainlifecycles.events.gruelbox.poll.GruelboxPoller;
 import io.domainlifecycles.events.gruelbox.publish.GruelboxDomainEventPublisher;
 import io.domainlifecycles.events.receive.execution.GeneralReceivingDomainEventHandler;
+import io.domainlifecycles.events.receive.execution.handler.HandlerExecutor;
+import io.domainlifecycles.events.receive.execution.handler.ReflectiveHandlerExecutor;
 import io.domainlifecycles.events.receive.execution.handler.TransactionalHandlerExecutor;
+import io.domainlifecycles.events.receive.execution.processor.ExecutionContextProcessor;
 import io.domainlifecycles.events.receive.execution.processor.SimpleExecutionContextProcessor;
 import io.domainlifecycles.services.api.ServiceProvider;
 
@@ -66,8 +72,12 @@ public final class GruelboxDomainEventsConfiguration {
     private final long internalPollerPeriodMs;
     private final GruelboxDomainEventDispatcher gruelboxDomainEventDispatcher;
     private final GruelboxPoller internalGruelboxPoller;
+    private final IdempotencyConfiguration idempotencyConfiguration;
 
     private static GruelboxDomainEventDispatcher configuredDispatcherInstance;
+    private static IdempotentExecutor configuredIdempotentExecutorInstance;
+
+
 
 
     /**
@@ -87,14 +97,17 @@ public final class GruelboxDomainEventsConfiguration {
             ServiceProvider serviceProvider,
             TransactionOutbox transactionOutbox,
             TransactionalHandlerExecutor transactionalHandlerExecutor,
+            IdempotencyConfiguration idempotencyConfiguration,
             Duration schedulingDelay,
             boolean orderedByDomainEventType,
             boolean useInternalPoller,
             long internalPollerDelayMs,
             long internalPollerPeriodMs
+
     ){
         this.internalPollerDelayMs = internalPollerDelayMs;
         this.internalPollerPeriodMs = internalPollerPeriodMs;
+        this.idempotencyConfiguration = idempotencyConfiguration;
         Objects.requireNonNull(serviceProvider, "A ServiceProvider is required!");
         this.transactionOutbox = Objects.requireNonNull(transactionOutbox, "A TransactionOutbox is required!");
         this.schedulingDelay = Objects.requireNonNull(schedulingDelay, "A schedulingDelay is required!");
@@ -102,7 +115,21 @@ public final class GruelboxDomainEventsConfiguration {
         this.orderedByDomainEventType = orderedByDomainEventType;
         this.useInternalPoller = useInternalPoller;
         var defaultConfig = new NonTransactionDefaultDomainEventsConfiguration(serviceProvider).getDomainEventsConfiguration();
-        var processor = new SimpleExecutionContextProcessor(transactionalHandlerExecutor);
+        HandlerExecutor handlerExecutor = transactionalHandlerExecutor;
+        if(idempotencyConfiguration != null){
+            handlerExecutor = new IdempotencyAwareHandlerExecutorProxy(
+                transactionalHandlerExecutor,
+                idempotencyConfiguration,
+                transactionOutbox,
+                orderedByDomainEventType,
+                schedulingDelay
+            );
+            configuredIdempotentExecutorInstance = new IdempotentExecutor(serviceProvider, new ReflectiveHandlerExecutor());
+        }else{
+            configuredIdempotentExecutorInstance = null;
+        }
+
+        var processor = new SimpleExecutionContextProcessor(handlerExecutor);
         var receivingDomainEventHandler = new GeneralReceivingDomainEventHandler(defaultConfig.getExecutionContextDetector(), processor);
         this.gruelboxDomainEventDispatcher = new DirectGruelboxDomainEventDispatcher(receivingDomainEventHandler);
         var domainEventPublisher = new GruelboxDomainEventPublisher(
@@ -124,6 +151,35 @@ public final class GruelboxDomainEventsConfiguration {
             this.internalGruelboxPoller = null;
         }
         configuredDispatcherInstance = this.gruelboxDomainEventDispatcher;
+
+
+
+    }
+
+    /**
+     * The GruelboxDomainEventsConfiguration class represents the configuration for the DLC Gruelbox domain events integration.
+     * It provides a constructor to initialize the configuration object with various parameters.
+     *
+     * @param serviceProvider The service provider used to retrieve instances of various types of services.
+     * @param transactionOutbox The transaction outbox used for flushing domain events.
+     * @param transactionalHandlerExecutor The executor for transactional handling of domain event handlers.
+     * @param idempotencyConfiguration The configuration for idempotent execution protection
+     */
+    public GruelboxDomainEventsConfiguration(
+        ServiceProvider serviceProvider,
+        TransactionOutbox transactionOutbox,
+        TransactionalHandlerExecutor transactionalHandlerExecutor,
+        IdempotencyConfiguration idempotencyConfiguration){
+        this(serviceProvider,
+            transactionOutbox,
+            transactionalHandlerExecutor,
+            idempotencyConfiguration,
+            schedulingDelayDefault,
+            orderedByDomainEventTypeDefault,
+            useInternalPollerDefault,
+            internalPollerDelayMsDefault,
+            internalPollerPeriodMsDefault
+        );
     }
 
     /**
@@ -141,6 +197,7 @@ public final class GruelboxDomainEventsConfiguration {
         this(serviceProvider,
             transactionOutbox,
             transactionalHandlerExecutor,
+            null,
             schedulingDelayDefault,
             orderedByDomainEventTypeDefault,
             useInternalPollerDefault,
@@ -231,6 +288,10 @@ public final class GruelboxDomainEventsConfiguration {
         return Optional.ofNullable(internalGruelboxPoller);
     }
 
+    public Optional<IdempotencyConfiguration> getIdempotencyConfiguration() {
+        return Optional.ofNullable(idempotencyConfiguration);
+    }
+
     /**
      * Returns the configured instance of the GruelboxDomainEventDispatcher.
      *
@@ -239,4 +300,11 @@ public final class GruelboxDomainEventsConfiguration {
     public static GruelboxDomainEventDispatcher configuredDispatcher(){
         return configuredDispatcherInstance;
     }
+
+    /**
+     * Retrieves the configured instance of the IdempotentExecutor.
+     *
+     * @return The configured IdempotentExecutor instance.
+     */
+    public static IdempotentExecutor configuredIdempotentExecutor(){return configuredIdempotentExecutorInstance; }
 }

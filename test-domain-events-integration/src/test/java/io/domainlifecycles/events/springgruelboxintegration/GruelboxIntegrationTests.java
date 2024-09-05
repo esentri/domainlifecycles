@@ -25,8 +25,10 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.events.spring.after;
+package io.domainlifecycles.events.springgruelboxintegration;
 
+import com.gruelbox.transactionoutbox.TransactionOutboxEntry;
+import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.events.ADomainEvent;
 import io.domainlifecycles.events.ADomainService;
 import io.domainlifecycles.events.AQueryClient;
@@ -35,23 +37,28 @@ import io.domainlifecycles.events.AnAggregate;
 import io.domainlifecycles.events.AnAggregateDomainEvent;
 import io.domainlifecycles.events.AnApplicationService;
 import io.domainlifecycles.events.AnOutboundService;
-import io.domainlifecycles.events.PassThroughDomainEvent;
+import io.domainlifecycles.events.CounterDomainEvent;
+import io.domainlifecycles.events.MyTransactionOutboxListener;
+import io.domainlifecycles.events.TransactionalCounterService;
 import io.domainlifecycles.events.UnreceivedDomainEvent;
 import io.domainlifecycles.events.api.DomainEvents;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.util.UUID;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
-@SpringBootTest(classes = TestApplicationAfterCommit.class)
-@DirtiesContext
-public class DirectSpringTransactionalEventHandlingAfterCommitTests {
+@SpringBootTest(classes = TestApplicationGruelboxIntegration.class)
+@Slf4j
+public class GruelboxIntegrationTests {
 
     @Autowired
     private PlatformTransactionManager platformTransactionManager;
@@ -71,15 +78,33 @@ public class DirectSpringTransactionalEventHandlingAfterCommitTests {
     @Autowired
     private AnOutboundService outboundService;
 
+    @Autowired
+    private MyTransactionOutboxListener outboxListener;
+
+    @Autowired
+    private TransactionalCounterService transactionalCounterService;
+
+    private boolean match(TransactionOutboxEntry entry, DomainEvent domainEvent){
+        return domainEvent.equals(entry.getInvocation().getArgs()[0]);
+    }
+
     @Test
+    @DirtiesContext
     public void testIntegrationCommit() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
-        var evt = new ADomainEvent("TestCommit");
+        var evt = new ADomainEvent("TestCommit"+ UUID.randomUUID());
         DomainEvents.publish(evt);
 
         platformTransactionManager.commit(status);
+
         //then
+        await()
+            .atMost(10, SECONDS)
+            .untilAsserted(()->
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
+            );
+
         assertThat(aDomainService.received).contains(evt);
         assertThat(aRepository.received).contains(evt);
         assertThat(anApplicationService.received).contains(evt);
@@ -88,14 +113,22 @@ public class DirectSpringTransactionalEventHandlingAfterCommitTests {
     }
 
     @Test
-    public void testIntegrationUnreceivedCommit() throws Exception{
+    @DirtiesContext
+    public void testIntegrationUnreceivedCommit() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
-        var evt = new UnreceivedDomainEvent("TestUnReceivedCommit");
+        var evt = new UnreceivedDomainEvent("TestUnReceivedCommit"+ UUID.randomUUID());
         DomainEvents.publish(evt);
 
         platformTransactionManager.commit(status);
         //then
+        await()
+            .atMost(10, SECONDS)
+            .untilAsserted(()->
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
+            );
+
+
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
@@ -104,13 +137,20 @@ public class DirectSpringTransactionalEventHandlingAfterCommitTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationRollback() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
-        var evt = new ADomainEvent("TestRollback");
+        var evt = new ADomainEvent("TestRollback"+ UUID.randomUUID());
         DomainEvents.publish(evt);
 
         platformTransactionManager.rollback(status);
+        await()
+            .atMost(10, SECONDS)
+            .pollDelay(9, SECONDS)
+            .untilAsserted(()->
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0)
+            );
         //then
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(aRepository.received).doesNotContain(evt);
@@ -121,63 +161,19 @@ public class DirectSpringTransactionalEventHandlingAfterCommitTests {
     }
 
     @Test
-    public void testIntegrationNoTransaction() {
-
-        //when
-        var evt = new ADomainEvent("TestNoTrans");
-        DomainEvents.publish(evt);
-
-        //then
-        assertThat(aDomainService.received).contains(evt);
-        assertThat(aRepository.received).contains(evt);
-        assertThat(anApplicationService.received).contains(evt);
-        assertThat(queryClient.received).contains(evt);
-        assertThat(outboundService.received).contains(evt);
-    }
-
-    @Test
-    public void testIntegrationRollbackButConfiguredPassThrough() {
-        var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        //when
-        var evt = new PassThroughDomainEvent("TestRollbackPassThrough");
-        DomainEvents.publish(evt);
-
-        platformTransactionManager.rollback(status);
-        //then
-        assertThat(aDomainService.received).contains(evt);
-        assertThat(aRepository.received).contains(evt);
-        assertThat(anApplicationService.received).contains(evt);
-        assertThat(queryClient.received).contains(evt);
-        assertThat(outboundService.received).contains(evt);
-
-
-    }
-
-    @Test
-    public void testIntegrationCommitConfiguredPassThrough() {
-        var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        //when
-        var evt = new PassThroughDomainEvent("TestRollbackPassThrough");
-        DomainEvents.publish(evt);
-
-        platformTransactionManager.commit(status);
-        //then
-        assertThat(aDomainService.received).contains(evt);
-        assertThat(aRepository.received).contains(evt);
-        assertThat(anApplicationService.received).contains(evt);
-        assertThat(queryClient.received).contains(evt);
-        assertThat(outboundService.received).contains(evt);
-
-    }
-
-    @Test
+    @DirtiesContext
     public void testIntegrationAggregateDomainEventCommit() {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        var evt = new AnAggregateDomainEvent("TestAggregateDomainEventCommit");
+        var evt = new AnAggregateDomainEvent("TestAggregateDomainEventCommit"+ UUID.randomUUID());
         DomainEvents.publish(evt);
         platformTransactionManager.commit(status);
         //then
+        await()
+            .atMost(10, SECONDS)
+            .untilAsserted(()->
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
+            );
 
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(aDomainService.received).doesNotContain(evt);
@@ -189,13 +185,20 @@ public class DirectSpringTransactionalEventHandlingAfterCommitTests {
     }
 
     @Test
-    public void testIntegrationAggregateDomainEventRollback() throws Exception{
+    @DirtiesContext
+    public void testIntegrationAggregateDomainEventRollback() {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        var evt = new AnAggregateDomainEvent("TestAggregateDomainEventRollback");
+        var evt = new AnAggregateDomainEvent("TestAggregateDomainEventRollback"+ UUID.randomUUID());
         DomainEvents.publish(evt);
         platformTransactionManager.rollback(status);
         //then
+        await()
+            .atMost(10, SECONDS)
+            .pollDelay(9, SECONDS)
+            .untilAsserted(()->
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0)
+            );
 
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(aDomainService.received).doesNotContain(evt);
@@ -207,13 +210,19 @@ public class DirectSpringTransactionalEventHandlingAfterCommitTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationAggregateDomainEventRollbackExceptionOnHandler() {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        var evt = new AnAggregateDomainEvent("TestAggregateDomainWithException");
+        var evt = new AnAggregateDomainEvent("TestAggregateDomainWithException"+ UUID.randomUUID());
         DomainEvents.publish(evt);
         platformTransactionManager.commit(status);
         //then
+        await()
+            .atMost(10, SECONDS)
+            .untilAsserted(()->
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
+            );
 
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(aDomainService.received).doesNotContain(evt);
@@ -225,13 +234,19 @@ public class DirectSpringTransactionalEventHandlingAfterCommitTests {
     }
 
     @Test
-    public void testIntegrationDomainServiceExceptionRollback() throws Exception{
+    @DirtiesContext
+    public void testIntegrationDomainServiceExceptionRollback() {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        var evt = new ADomainEvent("TestDomainServiceRollback");
+        var evt = new ADomainEvent("TestDomainServiceRollback"+ UUID.randomUUID());
         DomainEvents.publish(evt);
         platformTransactionManager.commit(status);
         //then
+        await()
+            .atMost(10, SECONDS)
+            .untilAsserted(()->
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
+            );
 
         assertThat(aRepository.received).contains(evt);
         assertThat(aDomainService.received).doesNotContain(evt);
@@ -243,30 +258,31 @@ public class DirectSpringTransactionalEventHandlingAfterCommitTests {
     }
 
     @Test
-    public void testLostEvent(){
+    @DirtiesContext
+    public void testTransactionalBehaviourWithCounterService() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-            @Override
-            public void afterCommit() {
-                throw new IllegalStateException("Error");
-            }
-        });
 
-        //when
-        var evt = new ADomainEvent("TestCommit2");
+        var cnt = transactionalCounterService.getCurrentCounterValue();
+        //2 listener methods receive this event, they both run increase sql statements
+        //one of those handlers throws an illegal state exception, rolling back one of the transactions
+        //so finally the counter should only be increased once
+        // but the event in the outbox is processed successfully,
+        // the handlers listening on the event are transactionally independent of each other
+        var evt = new CounterDomainEvent("Cnt");
         DomainEvents.publish(evt);
-
-
-        try {
-            platformTransactionManager.commit(status);
-        }catch (Throwable t){
-        }
-
+        platformTransactionManager.commit(status);
         //then
-        assertThat(aDomainService.received).doesNotContain(evt);
-        assertThat(aRepository.received).doesNotContain(evt);
-        assertThat(anApplicationService.received).doesNotContain(evt);
-        assertThat(queryClient.received).doesNotContain(evt);
-        assertThat(outboundService.received).doesNotContain(evt);
+        await()
+            .atMost(10, SECONDS)
+            .untilAsserted(()->
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
+            );
+
+        assertThat(transactionalCounterService.getCurrentCounterValue()).isEqualTo(cnt+1);
+
     }
+
+
+
+
 }

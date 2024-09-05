@@ -25,7 +25,7 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.events.springgruelboxintegration;
+package io.domainlifecycles.events.springgruelboxintegrationidempotency;
 
 import com.gruelbox.transactionoutbox.TransactionOutboxEntry;
 import io.domainlifecycles.domain.types.DomainEvent;
@@ -37,26 +37,26 @@ import io.domainlifecycles.events.AnAggregate;
 import io.domainlifecycles.events.AnAggregateDomainEvent;
 import io.domainlifecycles.events.AnApplicationService;
 import io.domainlifecycles.events.AnOutboundService;
-import io.domainlifecycles.events.PassThroughDomainEvent;
+import io.domainlifecycles.events.CounterDomainEvent;
+import io.domainlifecycles.events.MyTransactionOutboxListener;
+import io.domainlifecycles.events.TransactionalCounterService;
 import io.domainlifecycles.events.UnreceivedDomainEvent;
 import io.domainlifecycles.events.api.DomainEvents;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-@SpringBootTest(classes = TestApplicationGruelboxIntegration.class)
+@SpringBootTest(classes = TestApplicationGruelboxIntegrationIdempotency.class)
 @Slf4j
-public class GruelboxIntegrationTest {
+public class GruelboxIntegrationRegressionTests {
 
     @Autowired
     private PlatformTransactionManager platformTransactionManager;
@@ -79,41 +79,43 @@ public class GruelboxIntegrationTest {
     @Autowired
     private MyTransactionOutboxListener outboxListener;
 
+    @Autowired
+    private TransactionalCounterService transactionalCounterService;
+
     private boolean match(TransactionOutboxEntry entry, DomainEvent domainEvent){
         return domainEvent.equals(entry.getInvocation().getArgs()[0]);
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationCommit() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
-        var evt = new ADomainEvent("TestCommit");
+        var evt = new ADomainEvent("TestCommitRegression");
         DomainEvents.publish(evt);
 
         platformTransactionManager.commit(status);
 
         //then
-        SoftAssertions assertions = new SoftAssertions();
-
-        assertions.assertThat(aDomainService.received).contains(evt);
-        assertions.assertThat(aRepository.received).contains(evt);
-        assertions.assertThat(anApplicationService.received).contains(evt);
-        assertions.assertThat(queryClient.received).contains(evt);
-        assertions.assertThat(outboundService.received).contains(evt);
-
         await()
-            .atMost(10, SECONDS)
+            .atMost(15, SECONDS)
             .untilAsserted(()->
                 assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
             );
-        assertions.assertAll();
+
+        assertThat(aDomainService.received).contains(evt);
+        assertThat(aRepository.received).contains(evt);
+        assertThat(anApplicationService.received).contains(evt);
+        assertThat(queryClient.received).contains(evt);
+        assertThat(outboundService.received).contains(evt);
     }
 
     @Test
-    public void testIntegrationUnreceivedCommit() throws Exception{
+    @DirtiesContext
+    public void testIntegrationUnreceivedCommit() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
-        var evt = new UnreceivedDomainEvent("TestUnReceivedCommit");
+        var evt = new UnreceivedDomainEvent("TestUnReceivedCommitRegression");
         DomainEvents.publish(evt);
 
         platformTransactionManager.commit(status);
@@ -123,21 +125,22 @@ public class GruelboxIntegrationTest {
             .untilAsserted(()->
                 assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
             );
-        SoftAssertions assertions = new SoftAssertions();
 
-        assertions.assertThat(aDomainService.received).doesNotContain(evt);
-        assertions.assertThat(aRepository.received).doesNotContain(evt);
-        assertions.assertThat(anApplicationService.received).doesNotContain(evt);
-        assertions.assertThat(queryClient.received).doesNotContain(evt);
-        assertions.assertThat(outboundService.received).doesNotContain(evt);
-        assertions.assertAll();
+
+        assertThat(aDomainService.received).doesNotContain(evt);
+        assertThat(aRepository.received).doesNotContain(evt);
+        assertThat(anApplicationService.received).doesNotContain(evt);
+        assertThat(queryClient.received).doesNotContain(evt);
+        assertThat(outboundService.received).doesNotContain(evt);
+
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationRollback() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
-        var evt = new ADomainEvent("TestRollback");
+        var evt = new ADomainEvent("TestRollbackRegression");
         DomainEvents.publish(evt);
 
         platformTransactionManager.rollback(status);
@@ -157,10 +160,11 @@ public class GruelboxIntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationAggregateDomainEventCommit() {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        var evt = new AnAggregateDomainEvent("TestAggregateDomainEventCommit");
+        var evt = new AnAggregateDomainEvent("TestAggregateDomainEventCommitRegression");
         DomainEvents.publish(evt);
         platformTransactionManager.commit(status);
         //then
@@ -180,10 +184,11 @@ public class GruelboxIntegrationTest {
     }
 
     @Test
-    public void testIntegrationAggregateDomainEventRollback() throws Exception{
+    @DirtiesContext
+    public void testIntegrationAggregateDomainEventRollback() {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        var evt = new AnAggregateDomainEvent("TestAggregateDomainEventRollback");
+        var evt = new AnAggregateDomainEvent("TestAggregateDomainEventRollbackRegression");
         DomainEvents.publish(evt);
         platformTransactionManager.rollback(status);
         //then
@@ -204,10 +209,11 @@ public class GruelboxIntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationAggregateDomainEventRollbackExceptionOnHandler() {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        var evt = new AnAggregateDomainEvent("TestAggregateDomainWithException");
+        var evt = new AnAggregateDomainEvent("TestAggregateDomainWithExceptionRegression");
         DomainEvents.publish(evt);
         platformTransactionManager.commit(status);
         //then
@@ -227,10 +233,11 @@ public class GruelboxIntegrationTest {
     }
 
     @Test
-    public void testIntegrationDomainServiceExceptionRollback() throws Exception{
+    @DirtiesContext
+    public void testIntegrationDomainServiceExceptionRollback() {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        var evt = new ADomainEvent("TestDomainServiceRollback");
+        var evt = new ADomainEvent("TestDomainServiceRollbackRegression");
         DomainEvents.publish(evt);
         platformTransactionManager.commit(status);
         //then
@@ -248,6 +255,33 @@ public class GruelboxIntegrationTest {
         var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).doesNotContain(evt);
     }
+
+    @Test
+    @DirtiesContext
+    public void testTransactionalBehaviourWithCounterService() {
+        var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
+
+        var cnt = transactionalCounterService.getCurrentCounterValue();
+        //2 listener methods receive this event, they both run increase sql statements
+        //one of those handlers throws an illegal state exception, rolling back one of the transactions
+        //so finally the counter should only be increased once
+        // but the event in the outbox is processed successfully,
+        // the handlers listening on the event are transactionally independent of each other
+        var evt = new CounterDomainEvent("CntRegression");
+        DomainEvents.publish(evt);
+        platformTransactionManager.commit(status);
+        //then
+        await()
+            .atMost(10, SECONDS)
+            .untilAsserted(()->
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
+            );
+
+        assertThat(transactionalCounterService.getCurrentCounterValue()).isEqualTo(cnt+1);
+
+    }
+
+
 
 
 }

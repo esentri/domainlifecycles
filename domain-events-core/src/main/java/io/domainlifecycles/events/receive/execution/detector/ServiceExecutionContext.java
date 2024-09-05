@@ -51,4 +51,10 @@ public record ServiceExecutionContext(Object handler, String handlerMethodName, 
         Objects.requireNonNull(handlerMethodName, "A ServiceExecutionContext needs a non null handlerMethodName!");
         Objects.requireNonNull(domainEvent, "A ServiceExecutionContext needs a non null domain event!");
     }
+
+    @Override
+    public Object handler() {
+        return handler;
+    }
+
 }
