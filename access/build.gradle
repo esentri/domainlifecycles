@@ -13,4 +13,6 @@ dependencies {
     implementation project(":reflect")
     testImplementation "org.assertj:assertj-core:${assertJVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.0"
+    testImplementation project(path: ':test-shared-impl')
+    testImplementation project(":type-utils")
 }

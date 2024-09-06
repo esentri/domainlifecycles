@@ -9,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.assertj.core.api.Assertions;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DefaultClassProviderTest {
 
@@ -24,6 +25,8 @@ class DefaultClassProviderTest {
     @Test
     void testGetClassFail() {
         ClassProvider classProvider = new DefaultClassProvider();
+        DLCAccessException exception = assertThrows(DLCAccessException.class, () -> classProvider.getClassForName("someUnknownClass"));
+        Assertions.assertThat(exception).hasMessageContaining("could not be found");
     }
 
     private static Stream<Arguments> provideClassArguments() {
