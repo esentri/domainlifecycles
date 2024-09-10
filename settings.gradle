@@ -32,4 +32,5 @@ include 'domain-events-jakarta-jta'
 include 'domain-events-spring-outbox'
 include 'test-domain-events-integration'
 include 'domain-events-gruelbox'
+include 'domain-events-activemq'
 
