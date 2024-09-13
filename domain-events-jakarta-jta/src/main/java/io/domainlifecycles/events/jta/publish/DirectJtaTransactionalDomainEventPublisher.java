@@ -58,62 +58,45 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
-public final class DirectJtaTransactionalDomainEventPublisher implements DomainEventPublisher {
+public final class DirectJtaTransactionalDomainEventPublisher extends AbstractJtaTransactionalDomainEventPublisher {
 
-    private static final Logger log = LoggerFactory.getLogger(DirectJtaTransactionalDomainEventPublisher.class);
 
-    private final ReceivingDomainEventHandler receivingDomainEventHandler;
     private final TransactionManager transactionManager;
     private final boolean afterCommit;
     private Collection<Class<? extends DomainEvent>> passThroughEventTypes;
-
 
     public DirectJtaTransactionalDomainEventPublisher(
         ReceivingDomainEventHandler receivingDomainEventHandler,
         TransactionManager transactionManager,
         boolean afterCommit
     ) {
-        this.receivingDomainEventHandler = Objects.requireNonNull(receivingDomainEventHandler, "A ReceivingDomainEventHandler is required!");
+        super(new DirectSender(
+            Objects.requireNonNull(receivingDomainEventHandler, "A ReceivingDomainEventHandler is required!")),
+            transactionManager,
+            afterCommit);
+
         this.transactionManager = Objects.requireNonNull(transactionManager, "A TransactionManager is required!");
         this.afterCommit = afterCommit;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void publish(DomainEvent domainEvent) {
-        log.debug("Received DomainEvent {} for publishing", domainEvent);
-        try {
-            final var transaction = transactionManager.getTransaction();
+    protected void send(DomainEvent domainEvent) {
+        throw new IllegalStateException("Should not be called in this implementation!");
+    }
 
-            if(transaction == null || (passThroughEventTypes != null && passThroughEventTypes.contains(domainEvent.getClass()))) {
-                log.debug("Passing DomainEvent {} to DomainEventDispatcher passing through to ReceivingDomainEventHandler directly", domainEvent);
-                receivingDomainEventHandler.handleReceived(domainEvent);
-            }else{
-                if(this.afterCommit){
-                    transaction.registerSynchronization(new AfterCommitSynchronization(receivingDomainEventHandler, domainEvent));
-                }else{
-                    transaction.registerSynchronization(new BeforeCommitSynchronization(receivingDomainEventHandler, domainEvent));
-                }
-            }
-        } catch (SystemException | RollbackException e) {
-            throw DLCEventsException.fail("Couldn't get transaction! Event dispatching failed for %s", domainEvent, e);
+
+    private static class DirectSender implements JtaDomainEventSender{
+
+        private final ReceivingDomainEventHandler receivingDomainEventHandler;
+
+        private DirectSender(ReceivingDomainEventHandler receivingDomainEventHandler) {
+            this.receivingDomainEventHandler = receivingDomainEventHandler;
+        }
+
+        @Override
+        public void send(DomainEvent domainEvent) {
+            this.receivingDomainEventHandler.handleReceived(domainEvent);
         }
     }
-
-    /**
-     * Sets the pass-through event types.
-     * Pass-through event types are the types of events that should bypass the transaction handling and be immediately dispatched.
-     * If a transaction is active and the domain event is not a pass-through event, it will register a synchronization with the transaction
-     * to dispatch the event after the transaction is successfully committed.
-     *
-     * @param passThroughEventTypes the collection of pass-through event types
-     */
-    public void setPassThroughEventTypes(Collection<Class<? extends DomainEvent>> passThroughEventTypes){
-        this.passThroughEventTypes = passThroughEventTypes;
-    }
-
-
 
 }

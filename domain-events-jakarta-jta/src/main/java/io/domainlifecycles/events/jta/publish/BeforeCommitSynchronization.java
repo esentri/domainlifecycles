@@ -44,19 +44,18 @@ import java.util.Objects;
 final class BeforeCommitSynchronization implements Synchronization {
 
     private static final Logger log = LoggerFactory.getLogger(BeforeCommitSynchronization.class);
-    private final ReceivingDomainEventHandler receivingDomainEventHandler;
+    private final JtaDomainEventSender sender;
     private final DomainEvent publishedDomainEvent;
 
-    public BeforeCommitSynchronization(ReceivingDomainEventHandler receivingDomainEventHandler, DomainEvent publishedDomainEvent) {
-        this.receivingDomainEventHandler = Objects.requireNonNull(receivingDomainEventHandler, "A ReceivingDomainEventHandler is required!");
+    public BeforeCommitSynchronization(JtaDomainEventSender sender, DomainEvent publishedDomainEvent) {
+        this.sender = Objects.requireNonNull(sender, "A JtaDomainEventSender is required!");
         this.publishedDomainEvent = Objects.requireNonNull(publishedDomainEvent, "A DomainEvent is required!");
     }
-
 
     @Override
     public void beforeCompletion() {
         log.debug("Publisher transaction about to complete. Passing DomainEvent {} to ReceivingDomainEventHandler!", publishedDomainEvent);
-        receivingDomainEventHandler.handleReceived(publishedDomainEvent);
+        sender.send(publishedDomainEvent);
     }
 
     @Override

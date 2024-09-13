@@ -44,11 +44,11 @@ import java.util.Objects;
 final class AfterCommitSynchronization implements Synchronization {
 
     private static final Logger log = LoggerFactory.getLogger(AfterCommitSynchronization.class);
-    private final ReceivingDomainEventHandler receivingDomainEventHandler;
+    private final JtaDomainEventSender sender;
     private final DomainEvent publishedDomainEvent;
 
-    public AfterCommitSynchronization(ReceivingDomainEventHandler receivingDomainEventHandler, DomainEvent publishedDomainEvent) {
-        this.receivingDomainEventHandler = Objects.requireNonNull(receivingDomainEventHandler, "A ReceivingDomainEventHandler is required!");
+    public AfterCommitSynchronization(JtaDomainEventSender sender, DomainEvent publishedDomainEvent) {
+        this.sender = Objects.requireNonNull(sender, "A JtaDomainEventSender is required!");
         this.publishedDomainEvent = Objects.requireNonNull(publishedDomainEvent, "A DomainEvent is required!");
     }
 
@@ -62,7 +62,7 @@ final class AfterCommitSynchronization implements Synchronization {
     public void afterCompletion(int i) {
         if (Status.STATUS_COMMITTED == i) {
             log.debug("Publisher transaction committed. Passing DomainEvent {} to ReceivingDomainEventHandler!", publishedDomainEvent);
-            receivingDomainEventHandler.handleReceived(publishedDomainEvent);
+            sender.send(publishedDomainEvent);
         }else{
             log.debug("DomainEvent {} not dispatched. Transaction not committed!", publishedDomainEvent);
         }

@@ -76,6 +76,15 @@ public class Domain {
     }
 
     /**
+     * Returns the {@link AggregateRootMirror} for the given full qualified AggregateRoot type name.
+     */
+    @SuppressWarnings("unchecked")
+    public static <A extends AggregateRootMirror>  A aggregateRootMirrorFor(String aggregateRootTypeName){
+        return (A)typeMirror(aggregateRootTypeName)
+            .orElseThrow(()-> MirrorException.fail("No AggregateRootMirror found for %s", aggregateRootTypeName));
+    }
+
+    /**
      * Returns the {@link EntityMirror} for the given Entity instance.
      */
     @SuppressWarnings("unchecked")
