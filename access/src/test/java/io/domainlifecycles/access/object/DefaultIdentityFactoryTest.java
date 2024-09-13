@@ -5,7 +5,6 @@ import io.domainlifecycles.access.exception.DLCAccessException;
 import io.domainlifecycles.domain.types.Identity;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import tests.shared.persistence.domain.oneToManyIdentityEnum.MyId;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DefaultIdentityFactoryTest {
