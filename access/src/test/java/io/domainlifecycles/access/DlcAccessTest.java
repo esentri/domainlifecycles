@@ -8,20 +8,13 @@ import io.domainlifecycles.access.object.DynamicDomainObjectAccessor;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
-import javax.swing.plaf.basic.BasicListUI.FocusHandler;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import tests.shared.persistence.domain.inheritance.Car;
 import tests.shared.persistence.domain.inheritance.Car.Brand;
 import tests.shared.persistence.domain.inheritance.VehicleId;
 import tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 class DlcAccessTest {
 
