@@ -4,17 +4,31 @@ import io.domainlifecycles.access.classes.DefaultClassProvider;
 import io.domainlifecycles.access.object.DefaultDomainObjectAccessFactory;
 import io.domainlifecycles.access.object.DefaultEnumFactory;
 import io.domainlifecycles.access.object.DefaultIdentityFactory;
+import io.domainlifecycles.access.object.DynamicDomainObjectAccessor;
+import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.mirror.api.Domain;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import javax.swing.plaf.basic.BasicListUI.FocusHandler;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import tests.shared.persistence.domain.inheritance.Car;
+import tests.shared.persistence.domain.inheritance.Car.Brand;
+import tests.shared.persistence.domain.inheritance.VehicleId;
+import tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 class DlcAccessTest {
+
+    @BeforeAll
+    static void beforeAll() {
+        Domain.initialize(new ReflectiveDomainMirrorFactory("tests", "io.domainlifecycles"));
+    }
 
     @Test
     void testCustomizeOk() {
@@ -25,32 +39,43 @@ class DlcAccessTest {
     }
 
     @Test
-    void testGetClassProviderOk() {
+    void testGetClassOk() {
 
-        DefaultClassProvider defaultClassProviderMock = mock(DefaultClassProvider.class);
-        Object mock = mock();
-        //Mockito.when(defaultClassProviderMock.getClassForName(Mockito.eq("someClass"))).thenReturn(mock);
-
-        Class<?> aClass = DlcAccess.getClassForName("someClass");
+        Class<?> aClass = DlcAccess.getClassForName("tests.shared.persistence.domain.inheritance.Car");
 
         Assertions.assertThat(aClass).isNotNull();
-        Assertions.assertThat(aClass).isInstanceOf(Class.class);
-
-        verify(defaultClassProviderMock, times(1)).getClassForName(eq("someClass"));
+        Assertions.assertThat(aClass).isEqualTo(Car.class);
     }
 
     @Test
     void testNewEnumInstanceOk() {
 
-        DefaultEnumFactory defaultEnumFactoryMock = mock(DefaultEnumFactory.class);
-        Mockito.when(defaultEnumFactoryMock.newInstance(Mockito.eq("someValue"), Mockito.eq("enumType"))).thenReturn(mock(Enum.class));
+        MyEnum anEnum = DlcAccess.newEnumInstance("ONE", "tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum");
 
-        Enum<?> someEnum = DlcAccess.newEnumInstance("someValue", "enumType");
-
-        Assertions.assertThat(someEnum).isNotNull();
-        Assertions.assertThat(someEnum).isInstanceOf(Enum.class);
-
-        verify(defaultEnumFactoryMock, times(1)).newInstance(Mockito.eq("someValue"), Mockito.eq("enumType"));
+        Assertions.assertThat(anEnum).isNotNull();
+        Assertions.assertThat(anEnum.name()).isEqualTo("ONE");
     }
 
+    @Test
+    void testNewIdentityOk() {
+
+        Identity<Long> anIdentity = DlcAccess.newIdentityInstance(1L, "tests.shared.persistence.domain.inheritance.VehicleId");
+
+        Assertions.assertThat(anIdentity).isNotNull();
+        Assertions.assertThat(anIdentity.value()).isEqualTo(1L);
+    }
+
+    @Test
+    void testNewAccessorOk() {
+
+        Car car = Car.builder()
+            .setId(new VehicleId(1L))
+            .setBrand(Brand.AUDI)
+            .setLengthCm(390)
+            .build();
+
+        DynamicDomainObjectAccessor accessor = DlcAccess.accessorFor(car);
+
+        Assertions.assertThat(accessor.getAssigned()).isEqualTo(car);
+    }
 }
