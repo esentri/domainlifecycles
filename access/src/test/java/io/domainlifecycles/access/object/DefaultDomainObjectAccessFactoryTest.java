@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import tests.shared.persistence.domain.simple.TestRootSimple;
 import tests.shared.persistence.domain.simple.TestRootSimpleId;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class DefaultDomainObjectAccessFactoryTest {
 

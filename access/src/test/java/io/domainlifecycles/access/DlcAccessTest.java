@@ -8,13 +8,13 @@ import io.domainlifecycles.access.object.DynamicDomainObjectAccessor;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tests.shared.persistence.domain.inheritance.Car;
 import tests.shared.persistence.domain.inheritance.Car.Brand;
 import tests.shared.persistence.domain.inheritance.VehicleId;
 import tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class DlcAccessTest {
 
@@ -36,8 +36,8 @@ class DlcAccessTest {
 
         Class<?> aClass = DlcAccess.getClassForName("tests.shared.persistence.domain.inheritance.Car");
 
-        Assertions.assertThat(aClass).isNotNull();
-        Assertions.assertThat(aClass).isEqualTo(Car.class);
+        assertThat(aClass).isNotNull();
+        assertThat(aClass).isEqualTo(Car.class);
     }
 
     @Test
@@ -45,8 +45,8 @@ class DlcAccessTest {
 
         MyEnum anEnum = DlcAccess.newEnumInstance("ONE", "tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum");
 
-        Assertions.assertThat(anEnum).isNotNull();
-        Assertions.assertThat(anEnum.name()).isEqualTo("ONE");
+        assertThat(anEnum).isNotNull();
+        assertThat(anEnum.name()).isEqualTo("ONE");
     }
 
     @Test
@@ -54,8 +54,8 @@ class DlcAccessTest {
 
         Identity<Long> anIdentity = DlcAccess.newIdentityInstance(1L, "tests.shared.persistence.domain.inheritance.VehicleId");
 
-        Assertions.assertThat(anIdentity).isNotNull();
-        Assertions.assertThat(anIdentity.value()).isEqualTo(1L);
+        assertThat(anIdentity).isNotNull();
+        assertThat(anIdentity.value()).isEqualTo(1L);
     }
 
     @Test
@@ -69,6 +69,6 @@ class DlcAccessTest {
 
         DynamicDomainObjectAccessor accessor = DlcAccess.accessorFor(car);
 
-        Assertions.assertThat(accessor.getAssigned()).isEqualTo(car);
+        assertThat(accessor.getAssigned()).isEqualTo(car);
     }
 }

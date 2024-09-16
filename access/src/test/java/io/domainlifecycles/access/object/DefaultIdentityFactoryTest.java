@@ -3,9 +3,9 @@ package io.domainlifecycles.access.object;
 import io.domainlifecycles.access.classes.DefaultClassProvider;
 import io.domainlifecycles.access.exception.DLCAccessException;
 import io.domainlifecycles.domain.types.Identity;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class DefaultIdentityFactoryTest {
 
@@ -14,15 +14,16 @@ class DefaultIdentityFactoryTest {
         IdentityFactory identityFactory = new DefaultIdentityFactory(new DefaultClassProvider());
         Identity<Long> id = identityFactory.newInstance(1L, "tests.shared.persistence.domain.oneToManyIdentityEnum.MyId");
 
-        Assertions.assertThat(id).isNotNull();
-        Assertions.assertThat(id.value()).isEqualTo(1L);
+        assertThat(id).isNotNull();
+        assertThat(id.value()).isEqualTo(1L);
     }
 
     @Test
     void testIdentityFactoryFailNotInstantiableAbstract() {
         IdentityFactory identityFactory = new DefaultIdentityFactory(new DefaultClassProvider());
-        DLCAccessException exception = assertThrows(DLCAccessException.class, () -> identityFactory.newInstance("", "tests.shared.persistence.domain.inheritance.Vehicle"));
 
-        Assertions.assertThat(exception).hasMessageContaining("Failed to instantiate Identity");
+        assertThatThrownBy(identityFactory.newInstance("", "tests.shared.persistence.domain.inheritance.Vehicle"))
+            .isInstanceOf(DLCAccessException.class)
+            .hasMessageContaining("Failed to instantiate Identity");
     }
 }

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tests.shared.persistence.domain.optional.MySimpleValueObject;
 import tests.shared.persistence.domain.valueobjects.SimpleVo;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ReflectiveDomainObjectAccessorTest {
 
@@ -18,32 +19,29 @@ class ReflectiveDomainObjectAccessorTest {
 
     @Test
     void testPeekOk() {
-
         DynamicDomainObjectAccessor accessor = new ReflectiveDomainObjectAccessor(new SimpleVo("test"));
 
         Object value = accessor.peek("value");
-        Assertions.assertThat(value).isEqualTo("test");
+        assertThat(value).isEqualTo("test");
     }
 
     @Test
     void testPokeOk() {
-
         SimpleVo vo = new SimpleVo("test");
         DynamicDomainObjectAccessor accessor = new ReflectiveDomainObjectAccessor(vo);
 
         accessor.poke("value", "overwrite");
-        Assertions.assertThat(vo.getValue()).isEqualTo("overwrite");
+        assertThat(vo.getValue()).isEqualTo("overwrite");
     }
 
     @Test
     void testGetAssignedOk() {
-
         SimpleVo vo = new SimpleVo("test");
         DynamicDomainObjectAccessor accessor = new ReflectiveDomainObjectAccessor(vo);
 
         DomainObject assigned = accessor.getAssigned();
 
-        Assertions.assertThat(assigned).isEqualTo(vo);
+        assertThat(assigned).isEqualTo(vo);
     }
 
     @Test
@@ -55,6 +53,6 @@ class ReflectiveDomainObjectAccessorTest {
         MySimpleValueObject simpleVo = new MySimpleValueObject("testNew");
         accessor.assign(simpleVo);
 
-        Assertions.assertThat(accessor.getAssigned()).isEqualTo(simpleVo);
+        assertThat(accessor.getAssigned()).isEqualTo(simpleVo);
     }
 }
