@@ -37,6 +37,7 @@ import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
@@ -74,8 +75,8 @@ public class InnerBuilderProviderTest {
     @Test
     void testProviderErrorNoBuilder() {
         var provider = new InnerClassDomainObjectBuilderProvider();
-        DLCBuilderException exception = assertThrows(DLCBuilderException.class, () -> provider.provide(TestValueObjectNoBuilder.class.getName()));
-
-        assertThat(exception).hasMessageContaining("Couldn't provide Builder instance for Entity class");
+        assertThatThrownBy(() -> provider.provide(TestValueObjectNoBuilder.class.getName()))
+            .isInstanceOf(DLCBuilderException.class)
+            .hasMessageContaining("Couldn't provide Builder instance for Entity class");
     }
 }

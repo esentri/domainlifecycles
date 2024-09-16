@@ -39,6 +39,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
@@ -108,8 +109,9 @@ public class InnerBuilderNoPrefixTest {
     public void testSetFieldValueFailMethodNotFound(){
         var testBuilder = preInitializedLombokBuilder();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
-        DLCBuilderException exception = assertThrows(DLCBuilderException.class, () -> innerBuilder.setFieldValue("aaa", "third"));
-        assertThat(exception).hasMessageContaining("Was not able to set property");
+        assertThatThrownBy(() -> innerBuilder.setFieldValue("aaa", "third"))
+            .isInstanceOf(DLCBuilderException.class)
+            .hasMessageContaining("Was not able to set property");
     }
 
     @Test
@@ -117,8 +119,9 @@ public class InnerBuilderNoPrefixTest {
     public void testSetFieldValueFailMultipleMethods(){
         var testBuilder = preInitializedLombokBuilder();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
-        DLCBuilderException exception = assertThrows(DLCBuilderException.class, () -> innerBuilder.setFieldValue("aaa", "fourth"));
-        assertThat(exception).hasMessageContaining("Multiple setters found in Lombok builder");
+        assertThatThrownBy(() -> innerBuilder.setFieldValue("aaa", "fourth"))
+            .isInstanceOf(DLCBuilderException.class)
+            .hasMessageContaining("Multiple setters found in Lombok builder");
     }
 
     @Test

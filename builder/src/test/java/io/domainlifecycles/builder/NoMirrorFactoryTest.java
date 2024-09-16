@@ -8,6 +8,7 @@ import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NoMirrorFactoryTest {
@@ -20,8 +21,9 @@ public class NoMirrorFactoryTest {
     @Test
     public void testNoDomainMirrorFail(){
         var testBuilder = preInitializedLombokBuilder();
-        DLCBuilderException exception = assertThrows(DLCBuilderException.class, () -> new InnerClassDomainObjectBuilder<>(testBuilder));
-        assertThat(exception).hasMessageContaining("DomainTypeMirror for 'io.domainlifecycles.builder.helper.TestValueObject' not found!");
+        assertThatThrownBy(() -> new InnerClassDomainObjectBuilder<>(testBuilder))
+            .isInstanceOf(DLCBuilderException.class)
+            .hasMessageContaining("DomainTypeMirror for 'io.domainlifecycles.builder.helper.TestValueObject' not found!");
     }
 
     private TestValueObject.TestValueObjectBuilder preInitializedLombokBuilder(){
