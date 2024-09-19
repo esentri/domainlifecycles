@@ -1,9 +1,10 @@
 package io.domainlifecycles.assertion;
 
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class TestAssertionsEmail {
 
@@ -12,17 +13,17 @@ public class TestAssertionsEmail {
 
         @Test
         public void testIsValidEmailOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isValidEmail("a@b.de", "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isValidEmail("a@b.de", "Failed"));
         }
 
         @Test
         public void testIsValidEmailFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isValidEmail("aaaa-at-be.de", "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isValidEmail("aaaa-at-be.de", "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsValidEmailOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isValidEmail(null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isValidEmail(null, "Failed"));
         }
     }
 
@@ -31,22 +32,22 @@ public class TestAssertionsEmail {
 
         @Test
         public void testOptionalIsValidEmailOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsValidEmail(Optional.of("c@d.com"), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsValidEmail(Optional.of("c@d.com"), "Failed"));
         }
 
         @Test
         public void testOptionalIsValidEmailOkEmptyOptional(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsValidEmail(Optional.empty(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsValidEmail(Optional.empty(), "Failed"));
         }
 
         @Test
         public void testOptionalIsValidEmailFailEmptyString(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsValidEmail(Optional.of(""), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsValidEmail(Optional.of(""), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testOptionalIsValidEmailFailNull(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalIsValidEmail(null, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsValidEmail(null, "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
     }
 }

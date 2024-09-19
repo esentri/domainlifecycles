@@ -4,9 +4,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class TestAssertionsNotEmpty {
 
@@ -15,17 +16,17 @@ public class TestAssertionsNotEmpty {
 
         @Test
         public void testIsNotEmptyStringOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isNotEmpty("String", "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isNotEmpty("String", "Failed"));
         }
 
         @Test
         public void testIsNotEmptyStringFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isNotEmpty("", "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isNotEmpty("", "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsNotEmptyStringFailNull(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isNotEmpty(null, "Failed"));
+             assertThatThrownBy(()-> DomainAssertions.isNotEmpty(null, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
     }
 
@@ -34,47 +35,47 @@ public class TestAssertionsNotEmpty {
 
         @Test
         public void testIsNotEmptyIterableArrayOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isNotEmptyIterable(new String[1], "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isNotEmptyIterable(new String[1], "Failed"));
         }
 
         @Test
         public void testIsNotEmptyIterableArrayFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isNotEmptyIterable(new String[0], "Failed"));
+             assertThatThrownBy(()-> DomainAssertions.isNotEmptyIterable(new String[0], "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsNotEmptyIterableArrayFailNull(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isNotEmptyIterable((Object[])null, "Failed"));
+             assertThatThrownBy(()-> DomainAssertions.isNotEmptyIterable((Object[])null, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsNotEmptyIterableCollectionOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isNotEmptyIterable(List.of("a", "b"), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isNotEmptyIterable(List.of("a", "b"), "Failed"));
         }
 
         @Test
         public void testIsNotEmptyIterableCollectionFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isNotEmptyIterable(List.of(), "Failed"));
+             assertThatThrownBy(()-> DomainAssertions.isNotEmptyIterable(List.of(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsNotEmptyIterableCollectionFailNull(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isNotEmptyIterable((Collection)null, "Failed"));
+             assertThatThrownBy(()-> DomainAssertions.isNotEmptyIterable((Collection)null, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsNotEmptyIterableMapOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isNotEmptyIterable(Map.of("a", "b"), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isNotEmptyIterable(Map.of("a", "b"), "Failed"));
         }
 
         @Test
         public void testIsNotEmptyIterableMapFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isNotEmptyIterable(Map.of(), "Failed"));
+             assertThatThrownBy(()-> DomainAssertions.isNotEmptyIterable(Map.of(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsNotEmptyIterableMapFailNull(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isNotEmptyIterable((Map)null, "Failed"));
+             assertThatThrownBy(()-> DomainAssertions.isNotEmptyIterable((Map)null, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
     }
 
@@ -83,22 +84,22 @@ public class TestAssertionsNotEmpty {
 
         @Test
         public void testOptionalIsNotEmptyStringOkEmptyOptional(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNotEmpty(Optional.empty(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsNotEmpty(Optional.empty(), "Failed"));
         }
 
         @Test
         public void testOptionalIsNotEmptyStringFailEmptyString(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsNotEmpty(Optional.of(""), "Failed"));
+             assertThatThrownBy(()-> DomainAssertions.optionalIsNotEmpty(Optional.of(""), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testOptionalIsNotEmptyStringFailNull(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalIsNotEmpty(null, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsNotEmpty(null, "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         public void testOptionalIsNotEmptyStringOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsNotEmpty(Optional.of("String"), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsNotEmpty(Optional.of("String"), "Failed"));
         }
     }
 }

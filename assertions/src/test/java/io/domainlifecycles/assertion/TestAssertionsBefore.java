@@ -15,9 +15,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class TestAssertionsBefore {
 
@@ -26,243 +27,243 @@ public class TestAssertionsBefore {
 
         @Test
         public void testIsBeforeLocalDateOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(LocalDate.now().minusDays(1), LocalDate.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(LocalDate.now().minusDays(1), LocalDate.now(), "Failed"));
         }
 
         @Test
         public void testIsBeforeLocalDateOkFirstArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore((LocalDate) null, LocalDate.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore((LocalDate) null, LocalDate.now(), "Failed"));
         }
 
         @Test
         public void testIsBeforeLocalDateOkSecondArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(LocalDate.now(), (LocalDate) null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(LocalDate.now(), (LocalDate) null, "Failed"));
         }
 
         @Test
         public void testIsBeforeLocalDateFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isBefore(LocalDate.now().plusDays(1), LocalDate.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isBefore(LocalDate.now().plusDays(1), LocalDate.now(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsBeforeLocalTimeOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(LocalTime.now().minusHours(1), LocalTime.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(LocalTime.now().minusHours(1), LocalTime.now(), "Failed"));
         }
 
         @Test
         public void testIsBeforeLocalTimeOkFirstArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore((LocalTime) null, LocalTime.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore((LocalTime) null, LocalTime.now(), "Failed"));
         }
 
         @Test
         public void testIsBeforeLocalTimeOkSecondArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(LocalTime.now(), (LocalTime) null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(LocalTime.now(), (LocalTime) null, "Failed"));
         }
 
         @Test
         public void testIsBeforeLocalTimeFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isBefore(LocalTime.now().plusHours(1), LocalTime.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isBefore(LocalTime.now().plusHours(1), LocalTime.now(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsBeforeLocalDateTimeOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(LocalDateTime.now().minusDays(1), LocalDateTime.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(LocalDateTime.now().minusDays(1), LocalDateTime.now(), "Failed"));
         }
 
         @Test
         public void testIsBeforeLocalDateTimeOkFirstArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore((LocalDateTime) null, LocalDateTime.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore((LocalDateTime) null, LocalDateTime.now(), "Failed"));
         }
 
         @Test
         public void testIsBeforeLocalDateTimeOkSecondArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(LocalDateTime.now(), (LocalDateTime) null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(LocalDateTime.now(), (LocalDateTime) null, "Failed"));
         }
 
         @Test
         public void testIsBeforeLocalDateTimeFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isBefore(LocalDateTime.now().plusDays(1), LocalDateTime.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isBefore(LocalDateTime.now().plusDays(1), LocalDateTime.now(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsBeforeInstantOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(Instant.now().minusSeconds(1), Instant.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(Instant.now().minusSeconds(1), Instant.now(), "Failed"));
         }
 
         @Test
         public void testIsBeforeInstantOkFirstArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore((Instant) null, Instant.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore((Instant) null, Instant.now(), "Failed"));
         }
 
         @Test
         public void testIsBeforeInstantOkSecondArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(Instant.now(), (Instant) null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(Instant.now(), (Instant) null, "Failed"));
         }
 
 
         @Test
         public void testIsBeforeInstantFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isBefore(Instant.now().plusSeconds(1), Instant.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isBefore(Instant.now().plusSeconds(1), Instant.now(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsBeforeDateOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(Date.from(Instant.now().minusSeconds(1)), new Date(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(Date.from(Instant.now().minusSeconds(1)), new Date(), "Failed"));
         }
 
         @Test
         public void testIsBeforeDateOkFirstArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore((Date) null, new Date(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore((Date) null, new Date(), "Failed"));
         }
 
         @Test
         public void testIsBeforeDateOkSecondArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(new Date(), (Date) null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(new Date(), (Date) null, "Failed"));
         }
 
         @Test
         public void testIsBeforeDateFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isBefore(Date.from(Instant.now().plusSeconds(1)), new Date(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isBefore(Date.from(Instant.now().plusSeconds(1)), new Date(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsBeforeCalendarOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(GregorianCalendar.from(ZonedDateTime.now().minusSeconds(1)), new GregorianCalendar(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(GregorianCalendar.from(ZonedDateTime.now().minusSeconds(1)), new GregorianCalendar(), "Failed"));
         }
 
         @Test
         public void testIsBeforeCalendarOkFirstArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore((Calendar) null, Calendar.getInstance(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore((Calendar) null, Calendar.getInstance(), "Failed"));
         }
 
         @Test
         public void testIsBeforeCalendarOkSecondArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(Calendar.getInstance(), (Calendar) null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(Calendar.getInstance(), (Calendar) null, "Failed"));
         }
 
         @Test
         public void testIsBeforeCalendarFailOnAfter(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isBefore(GregorianCalendar.from(ZonedDateTime.now().plusSeconds(1)), new GregorianCalendar(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isBefore(GregorianCalendar.from(ZonedDateTime.now().plusSeconds(1)), new GregorianCalendar(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsBeforeYearOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(Year.now().minusYears(1), Year.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(Year.now().minusYears(1), Year.now(), "Failed"));
         }
 
         @Test
         public void testIsBeforeYearOkFirstArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore((Year) null, Year.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore((Year) null, Year.now(), "Failed"));
         }
 
         @Test
         public void testIsBeforeYearOkSecondArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(Year.now(), (Year) null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(Year.now(), (Year) null, "Failed"));
         }
 
         @Test
         public void testIsBeforeYearFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isBefore(Year.now().plusYears(1), Year.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isBefore(Year.now().plusYears(1), Year.now(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsBeforeYearMonthOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(YearMonth.now().minusMonths(1), YearMonth.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(YearMonth.now().minusMonths(1), YearMonth.now(), "Failed"));
         }
 
         @Test
         public void testIsBeforeYearMonthOkFirstArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore((YearMonth) null, YearMonth.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore((YearMonth) null, YearMonth.now(), "Failed"));
         }
 
         @Test
         public void testIsBeforeYearMonthOkSecondArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(YearMonth.now(), (YearMonth) null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(YearMonth.now(), (YearMonth) null, "Failed"));
         }
 
         @Test
         public void testIsBeforeYearMonthFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isBefore(YearMonth.now().plusMonths(1), YearMonth.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isBefore(YearMonth.now().plusMonths(1), YearMonth.now(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsBeforeZonedDateTimeOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(ZonedDateTime.now().minusDays(1), ZonedDateTime.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(ZonedDateTime.now().minusDays(1), ZonedDateTime.now(), "Failed"));
         }
 
         @Test
         public void testIsBeforeZonedDateTimeOkFirstArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore((ZonedDateTime) null, ZonedDateTime.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore((ZonedDateTime) null, ZonedDateTime.now(), "Failed"));
         }
 
         @Test
         public void testIsBeforeZonedDateTimeOkSecondArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(ZonedDateTime.now(), (ZonedDateTime) null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(ZonedDateTime.now(), (ZonedDateTime) null, "Failed"));
         }
 
         @Test
         public void testIsBeforeZonedDateTimeFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isBefore(ZonedDateTime.now().plusDays(1), ZonedDateTime.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isBefore(ZonedDateTime.now().plusDays(1), ZonedDateTime.now(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsBeforeMonthDayOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(MonthDay.of(4,5), MonthDay.of(5,5), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(MonthDay.of(4,5), MonthDay.of(5,5), "Failed"));
         }
 
         @Test
         public void testIsBeforeMonthDayOkFirstArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore((MonthDay) null, MonthDay.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore((MonthDay) null, MonthDay.now(), "Failed"));
         }
 
         @Test
         public void testIsBeforeMonthDayOkSecondArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(MonthDay.now(), (MonthDay) null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(MonthDay.now(), (MonthDay) null, "Failed"));
         }
 
         @Test
         public void testIsBeforeMonthDayFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isBefore(MonthDay.of(6,5), MonthDay.of(5,5), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isBefore(MonthDay.of(6,5), MonthDay.of(5,5), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsBeforeOffsetDateTimeOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(OffsetDateTime.now().minusDays(1), OffsetDateTime.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(OffsetDateTime.now().minusDays(1), OffsetDateTime.now(), "Failed"));
         }
 
         @Test
         public void testIsBeforeOffsetDateTimeOkFirstArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore((OffsetDateTime) null, OffsetDateTime.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore((OffsetDateTime) null, OffsetDateTime.now(), "Failed"));
         }
 
         @Test
         public void testIsBeforeOffsetDateTimeOkSecondArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(OffsetDateTime.now(), (OffsetDateTime) null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(OffsetDateTime.now(), (OffsetDateTime) null, "Failed"));
         }
 
         @Test
         public void testIsBeforeOffsetDateTimeFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isBefore(OffsetDateTime.now().plusDays(1), OffsetDateTime.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isBefore(OffsetDateTime.now().plusDays(1), OffsetDateTime.now(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsBeforeOffsetTimeOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore(OffsetTime.of(4,5,0,0,ZoneOffset.UTC), OffsetTime.of(5,5,0,0,ZoneOffset.UTC), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore(OffsetTime.of(4,5,0,0,ZoneOffset.UTC), OffsetTime.of(5,5,0,0,ZoneOffset.UTC), "Failed"));
         }
 
         @Test
         public void testIsBeforeOffsetTimeOkFirstArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore((OffsetTime) null, OffsetTime.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore((OffsetTime) null, OffsetTime.now(), "Failed"));
         }
 
         @Test
         public void testIsBeforeOffsetTimeOkSecondArgNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isBefore( OffsetTime.now(), (OffsetTime) null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isBefore( OffsetTime.now(), (OffsetTime) null, "Failed"));
         }
 
         @Test
         public void testIsBeforeOffsetTimeFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isBefore(OffsetTime.of(6,5,0,0,ZoneOffset.UTC), OffsetTime.of(5,5,0,0,ZoneOffset.UTC), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isBefore(OffsetTime.of(6,5,0,0,ZoneOffset.UTC), OffsetTime.of(5,5,0,0,ZoneOffset.UTC), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
     }
 
@@ -271,242 +272,242 @@ public class TestAssertionsBefore {
 
         @Test
         public void testOptionalIsBeforeLocalDateOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.of(LocalDate.now().minusDays(1)), LocalDate.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(LocalDate.now().minusDays(1)), LocalDate.now(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeLocalDateOkEmpty(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.empty(), LocalDate.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.empty(), LocalDate.now(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeLocalDateFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsBefore(Optional.of(LocalDate.now().plusDays(1)), LocalDate.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(LocalDate.now().plusDays(1)), LocalDate.now(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testOptionalIsBeforeLocalDateFailNull(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalIsBefore(null, LocalDate.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(null, LocalDate.now(), "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         public void testOptionalIsBeforeLocalTimeOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.of(LocalTime.now().minusHours(1)), LocalTime.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(LocalTime.now().minusHours(1)), LocalTime.now(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeLocalTimeOkEmpty(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.empty(), LocalTime.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.empty(), LocalTime.now(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeLocalTimeFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsBefore(Optional.of(LocalTime.now().plusHours(1)), LocalTime.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(LocalTime.now().plusHours(1)), LocalTime.now(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testOptionalIsBeforeLocalTimeFailNull(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalIsBefore(null, LocalTime.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(null, LocalTime.now(), "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         public void testOptionalIsBeforeLocalDateTimeOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.of(LocalDateTime.now().minusDays(1)), LocalDateTime.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(LocalDateTime.now().minusDays(1)), LocalDateTime.now(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeLocalDateTimeOkEmpty(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.empty(), LocalDateTime.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.empty(), LocalDateTime.now(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeLocalDateTimeFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsBefore(Optional.of(LocalDateTime.now().plusDays(1)), LocalDateTime.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(LocalDateTime.now().plusDays(1)), LocalDateTime.now(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testOptionalIsBeforeLocalDateTimeFailNull(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalIsBefore(null, LocalDateTime.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(null, LocalDateTime.now(), "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         public void testOptionalIsBeforeInstantOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.of(Instant.now().minusSeconds(1)), Instant.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(Instant.now().minusSeconds(1)), Instant.now(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeInstantOkEmpty(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.empty(), Instant.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.empty(), Instant.now(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeInstantFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsBefore(Optional.of(Instant.now().plusSeconds(1)), Instant.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(Instant.now().plusSeconds(1)), Instant.now(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testOptionalIsBeforeInstantFailNull(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalIsBefore(null, Instant.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(null, Instant.now(), "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         public void testOptionalIsBeforeDateOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.of(Date.from(Instant.now().minusSeconds(1))), new Date(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(Date.from(Instant.now().minusSeconds(1))), new Date(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeDateOkEmpty(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.empty(), new Date(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.empty(), new Date(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeDateFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsBefore(Optional.of(Date.from(Instant.now().plusSeconds(1))), new Date(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(Date.from(Instant.now().plusSeconds(1))), new Date(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testOptionalIsBeforeDateFailNull(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalIsBefore(null, new Date(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(null, new Date(), "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         public void testOptionalIsBeforeCalendarOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.of(GregorianCalendar.from(ZonedDateTime.now().minusSeconds(1))), new GregorianCalendar(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(GregorianCalendar.from(ZonedDateTime.now().minusSeconds(1))), new GregorianCalendar(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeCalendarOkEmpty(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.empty(), new GregorianCalendar(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.empty(), new GregorianCalendar(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeCalendarFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsBefore(Optional.of(GregorianCalendar.from(ZonedDateTime.now().plusSeconds(1))), new GregorianCalendar(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(GregorianCalendar.from(ZonedDateTime.now().plusSeconds(1))), new GregorianCalendar(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testOptionalIsBeforeCalendarFailNull(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalIsBefore(null, new GregorianCalendar(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(null, new GregorianCalendar(), "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         public void testOptionalIsBeforeYearOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.of(Year.now().minusYears(1)), Year.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(Year.now().minusYears(1)), Year.now(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeYearOkEmpty(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.empty(), Year.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.empty(), Year.now(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeYearFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsBefore(Optional.of(Year.now().plusYears(1)), Year.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(Year.now().plusYears(1)), Year.now(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testOptionalIsBeforeYearFailNull(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalIsBefore(null, Year.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(null, Year.now(), "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         public void testOptionalIsBeforeYearMonthOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.of(YearMonth.now().minusMonths(1)), YearMonth.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(YearMonth.now().minusMonths(1)), YearMonth.now(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeYearMonthOkEmpty(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.empty(), YearMonth.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.empty(), YearMonth.now(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeYearMonthFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsBefore(Optional.of(YearMonth.now().plusMonths(1)), YearMonth.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(YearMonth.now().plusMonths(1)), YearMonth.now(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testOptionalIsBeforeYearMonthFailNull(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalIsBefore(null, YearMonth.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(null, YearMonth.now(), "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         public void testOptionalIsBeforeZonedDateTimeOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.of(ZonedDateTime.now().minusDays(1)), ZonedDateTime.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(ZonedDateTime.now().minusDays(1)), ZonedDateTime.now(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeZonedDateTimeOkEmpty(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.empty(), ZonedDateTime.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.empty(), ZonedDateTime.now(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeZonedDateTimeFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsBefore(Optional.of(ZonedDateTime.now().plusDays(1)), ZonedDateTime.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(ZonedDateTime.now().plusDays(1)), ZonedDateTime.now(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testOptionalIsBeforeZonedDateTimeFailNull(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalIsBefore(null, ZonedDateTime.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(null, ZonedDateTime.now(), "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         public void testOptionalIsBeforeMonthDayOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.of(MonthDay.of(4,5)), MonthDay.of(5,5), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(MonthDay.of(4,5)), MonthDay.of(5,5), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeMonthDayOkEmpty(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.empty(), MonthDay.of(5,5), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.empty(), MonthDay.of(5,5), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeMonthDayFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsBefore(Optional.of(MonthDay.of(6,5)), MonthDay.of(5,5), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(MonthDay.of(6,5)), MonthDay.of(5,5), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testOptionalIsBeforeMonthDayFailNull(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalIsBefore(null, MonthDay.of(5,5), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(null, MonthDay.of(5,5), "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         public void testOptionalIsBeforeOffsetDateTimeOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.of(OffsetDateTime.now().minusDays(1)), OffsetDateTime.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(OffsetDateTime.now().minusDays(1)), OffsetDateTime.now(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeOffsetDateTimeOkEmpty(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.empty(), OffsetDateTime.now(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.empty(), OffsetDateTime.now(), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeOffsetDateTimeFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsBefore(Optional.of(OffsetDateTime.now().plusDays(1)), OffsetDateTime.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(OffsetDateTime.now().plusDays(1)), OffsetDateTime.now(), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testOptionalIsBeforeOffsetDateTimeFailNull(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalIsBefore(null, OffsetDateTime.now(), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(null, OffsetDateTime.now(), "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         public void testOptionalIsBeforeOffsetTimeOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.of(OffsetTime.of(4,5,0,0, ZoneOffset.UTC)), OffsetTime.of(5,5,0,0,ZoneOffset.UTC), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(OffsetTime.of(4,5,0,0, ZoneOffset.UTC)), OffsetTime.of(5,5,0,0,ZoneOffset.UTC), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeOffsetTimeOkEmpty(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsBefore(Optional.empty(), OffsetTime.of(5,5,0,0,ZoneOffset.UTC), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.empty(), OffsetTime.of(5,5,0,0,ZoneOffset.UTC), "Failed"));
         }
 
         @Test
         public void testOptionalIsBeforeOffsetTimeFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsBefore(Optional.of(OffsetTime.of(6,5,0,0,ZoneOffset.UTC)), OffsetTime.of(5,5,0,0,ZoneOffset.UTC), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(Optional.of(OffsetTime.of(6,5,0,0,ZoneOffset.UTC)), OffsetTime.of(5,5,0,0,ZoneOffset.UTC), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testOptionalIsBeforeOffsetTimeFailNull(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalIsBefore(null, OffsetTime.of(5,5,0,0,ZoneOffset.UTC), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsBefore(null, OffsetTime.of(5,5,0,0,ZoneOffset.UTC), "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
     }
 }

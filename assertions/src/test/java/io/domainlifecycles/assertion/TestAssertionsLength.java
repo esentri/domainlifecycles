@@ -1,9 +1,10 @@
 package io.domainlifecycles.assertion;
 
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class TestAssertionsLength {
 
@@ -12,17 +13,17 @@ public class TestAssertionsLength {
 
         @Test
         public void testHasLengthMaxOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.hasLengthMax("abc", 3, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.hasLengthMax("abc", 3, "Failed"));
         }
 
         @Test
         public void testHasLengthMaxFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.hasLengthMax("abc", 2, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.hasLengthMax("abc", 2, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testHasLengthMaxNullOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.hasLengthMax(null, 3, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.hasLengthMax(null, 3, "Failed"));
         }
     }
 
@@ -31,17 +32,17 @@ public class TestAssertionsLength {
 
         @Test
         public void testHasLengthMinOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.hasLengthMin("abc", 3, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.hasLengthMin("abc", 3, "Failed"));
         }
 
         @Test
         public void testHasLengthMinFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.hasLengthMin("a", 2, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.hasLengthMin("a", 2, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testHasLengthMinNullOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.hasLengthMin(null, 3, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.hasLengthMin(null, 3, "Failed"));
         }
     }
 
@@ -51,22 +52,22 @@ public class TestAssertionsLength {
 
         @Test
         public void testOptionalHasLengthMaxOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasLengthMax(Optional.of("abc"), 3, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalHasLengthMax(Optional.of("abc"), 3, "Failed"));
         }
 
         @Test
         public void testOptionalHasLengthMaxFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalHasLengthMax(Optional.of("abc"), 2, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalHasLengthMax(Optional.of("abc"), 2, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testOptionalHasLengthMaxEmptyOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasLengthMax(Optional.empty(), 3, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalHasLengthMax(Optional.empty(), 3, "Failed"));
         }
 
         @Test
         public void testOptionalHasLengthMaxNullFail(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalHasLengthMax(null, 2, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalHasLengthMax(null, 2, "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -75,22 +76,22 @@ public class TestAssertionsLength {
 
         @Test
         public void testOptionalHasLengthMinOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasLengthMin(Optional.of("abc"), 3, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalHasLengthMin(Optional.of("abc"), 3, "Failed"));
         }
 
         @Test
         public void testOptionalHasLengthMinFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalHasLengthMin(Optional.of("a"), 2, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalHasLengthMin(Optional.of("a"), 2, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testOptionalHasLengthMinEmptyOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasLengthMin(Optional.empty(), 3, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalHasLengthMin(Optional.empty(), 3, "Failed"));
         }
 
         @Test
         public void testOptionalHasLengthMinNullFail(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalHasLengthMin(null, 2, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalHasLengthMin(null, 2, "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -99,22 +100,22 @@ public class TestAssertionsLength {
 
         @Test
         public void testHasLengthOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.hasLength("abc", 2, 3, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.hasLength("abc", 2, 3, "Failed"));
         }
 
         @Test
         public void testHasLengthShortFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.hasLength("a", 2, 3, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.hasLength("a", 2, 3, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testHasLengthLongFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.hasLength("abdbddb", 2, 3, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.hasLength("abdbddb", 2, 3, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testHasLengthNullOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.hasLength(null, 2, 3, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.hasLength(null, 2, 3, "Failed"));
         }
     }
 
@@ -123,22 +124,22 @@ public class TestAssertionsLength {
 
         @Test
         public void testOptionalHasLengthOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasLength(Optional.of("abc"), 2,3, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalHasLength(Optional.of("abc"), 2,3, "Failed"));
         }
 
         @Test
         public void testOptionalHasLengthFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalHasLength(Optional.of("a"), 2,3, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalHasLength(Optional.of("a"), 2,3, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testOptionalHasLengthEmptyOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalHasLength(Optional.empty(), 2,3, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalHasLength(Optional.empty(), 2,3, "Failed"));
         }
 
         @Test
         public void testOptionalHasLengthNullFail(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalHasLength(null, 2, 3, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalHasLength(null, 2, 3, "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
     }
 }

@@ -1,9 +1,10 @@
 package io.domainlifecycles.assertion;
 
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class TestAssertionsRegex {
 
@@ -12,12 +13,12 @@ public class TestAssertionsRegex {
 
         @Test
         public void testRegExFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.regEx("a","[b]", "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.regEx("a","[b]", "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testRegExOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.regEx("a", "[a]" ,"Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.regEx("a", "[a]" ,"Failed"));
         }
     }
 
@@ -26,22 +27,22 @@ public class TestAssertionsRegex {
 
         @Test
         public void testOptionalRegExFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalRegEx(Optional.of("a"),"[b]", "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalRegEx(Optional.of("a"),"[b]", "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testOptionalRegExOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalRegEx(Optional.of("a"), "[a]" ,"Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalRegEx(Optional.of("a"), "[a]" ,"Failed"));
         }
 
         @Test
         public void testOptionalRegExOkEmpty(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalRegEx(Optional.empty(), "[a]" ,"Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalRegEx(Optional.empty(), "[a]" ,"Failed"));
         }
 
         @Test
         public void testOptionalRegExFailNull(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalRegEx(null,"[b]", "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalRegEx(null,"[b]", "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
     }
 }

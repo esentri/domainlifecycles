@@ -1,8 +1,9 @@
 package io.domainlifecycles.assertion;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class TestAssertionsNull {
 
@@ -11,12 +12,12 @@ public class TestAssertionsNull {
 
         @Test
         public void testIsNullOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isNull(null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isNull(null, "Failed"));
         }
 
         @Test
         public void testIsNullFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isNull("", "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isNull("", "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
     }
@@ -26,12 +27,12 @@ public class TestAssertionsNull {
 
         @Test
         public void testIsNotNullOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isNotNull(1l, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isNotNull(1l, "Failed"));
         }
 
         @Test
         public void testIsNotNullFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isNotNull(null, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isNotNull(null, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
     }
 }

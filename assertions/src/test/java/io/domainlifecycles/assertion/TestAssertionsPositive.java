@@ -3,9 +3,10 @@ package io.domainlifecycles.assertion;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class TestAssertionsPositive {
 
@@ -14,182 +15,182 @@ public class TestAssertionsPositive {
 
         @Test
         public void testIsPositiveShortOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive(Short.valueOf((short)2), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive(Short.valueOf((short)2), "Failed"));
         }
 
         @Test
         public void testIsPositiveShortOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive((Short)null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive((Short)null, "Failed"));
         }
 
         @Test
         public void testIsPositiveShortFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPositive(Short.valueOf((short)-1), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isPositive(Short.valueOf((short)-1), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsPositiveIntegerOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive(Integer.valueOf(2), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive(Integer.valueOf(2), "Failed"));
         }
 
         @Test
         public void testIsPositiveIntegerOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive((Integer)null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive((Integer)null, "Failed"));
         }
 
         @Test
         public void testIsPositiveIntegerFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPositive(Integer.valueOf(-1), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isPositive(Integer.valueOf(-1), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsPositiveLongOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive(Long.valueOf(2), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive(Long.valueOf(2), "Failed"));
         }
 
         @Test
         public void testIsPositiveLongOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive((Long)null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive((Long)null, "Failed"));
         }
 
         @Test
         public void testIsPositiveLongFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPositive(Long.valueOf(-1l), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isPositive(Long.valueOf(-1l), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsPositiveDoubleOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive(Double.valueOf(2.0), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive(Double.valueOf(2.0), "Failed"));
         }
 
         @Test
         public void testIsPositiveDoubleOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive((Double)null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive((Double)null, "Failed"));
         }
 
         @Test
         public void testIsPositiveDoubleFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPositive(Double.valueOf(-1.0), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isPositive(Double.valueOf(-1.0), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsPositiveFloatOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive(Float.valueOf(2.0f), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive(Float.valueOf(2.0f), "Failed"));
         }
 
         @Test
         public void testIsPositiveFloatOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive((Float)null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive((Float)null, "Failed"));
         }
 
         @Test
         public void testIsPositiveFloatFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPositive(Float.valueOf(-1.0f), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isPositive(Float.valueOf(-1.0f), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsPositiveBigDecimalOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive(BigDecimal.valueOf(2.0), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive(BigDecimal.valueOf(2.0), "Failed"));
         }
 
         @Test
         public void testIsPositiveBigDecimalOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive((BigDecimal)null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive((BigDecimal)null, "Failed"));
         }
 
         @Test
         public void testIsPositiveBigDecimalFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPositive(BigDecimal.valueOf(-1.0), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isPositive(BigDecimal.valueOf(-1.0), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsPositiveBigIntegerOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive(BigInteger.valueOf(2l), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive(BigInteger.valueOf(2l), "Failed"));
         }
 
         @Test
         public void testIsPositiveBigIntegerOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive((BigInteger)null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive((BigInteger)null, "Failed"));
         }
 
         @Test
         public void testIsPositiveBigIntegerFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPositive(BigInteger.valueOf(-1l), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isPositive(BigInteger.valueOf(-1l), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsPositiveBytePrimitiveOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive((byte)2, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive((byte)2, "Failed"));
         }
 
         @Test
         public void testIsPositiveBytePrimitiveFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPositive((byte)-1, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isPositive((byte)-1, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsPositiveShortPrimitiveOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive((short)2, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive((short)2, "Failed"));
         }
 
         @Test
         public void testIsPositiveShortPrimitiveFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPositive((short)-1, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isPositive((short)-1, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsPositiveIntPrimitiveOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive(2, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive(2, "Failed"));
         }
 
         @Test
         public void testIsPositiveIntPrimitiveFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPositive(-1, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isPositive(-1, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsPositiveLongPrimitiveOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive(2l, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive(2l, "Failed"));
         }
 
         @Test
         public void testIsPositiveLongPrimitiveFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPositive(-1l, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isPositive(-1l, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsPositiveDoublePrimitiveOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive(2.0, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive(2.0, "Failed"));
         }
 
         @Test
         public void testIsPositiveDoublePrimitiveFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPositive(-1.0, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isPositive(-1.0, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsPositiveFloatPrimitiveOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive(2.0f, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive(2.0f, "Failed"));
         }
 
         @Test
         public void testIsPositiveFloatPrimitiveFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPositive(-1.0f, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isPositive(-1.0f, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsPositiveByteOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive(Byte.valueOf((byte)2), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive(Byte.valueOf((byte)2), "Failed"));
         }
 
         @Test
         public void testIsPositiveByteOkNull(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isPositive((Byte)null, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isPositive((Byte)null, "Failed"));
         }
 
         @Test
         public void testIsPositiveByteFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isPositive(Byte.valueOf((byte)-1), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isPositive(Byte.valueOf((byte)-1), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
     }
 
@@ -198,62 +199,62 @@ public class TestAssertionsPositive {
 
         @Test
         public void testOptionalIsPositiveOkByte(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositive(Optional.of(Byte.valueOf((byte)2)), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsPositive(Optional.of(Byte.valueOf((byte)2)), "Failed"));
         }
 
         @Test
         public void testOptionalIsPositiveOkShort(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositive(Optional.of(Short.valueOf((short)2)), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsPositive(Optional.of(Short.valueOf((short)2)), "Failed"));
         }
 
         @Test
         public void testOptionalIsPositiveOkInteger(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositive(Optional.of(Integer.valueOf(2)), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsPositive(Optional.of(Integer.valueOf(2)), "Failed"));
         }
 
         @Test
         public void testOptionalIsPositiveOkLong(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositive(Optional.of(Long.valueOf(2)), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsPositive(Optional.of(Long.valueOf(2)), "Failed"));
         }
 
         @Test
         public void testOptionalIsPositiveOkBigDecimal(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositive(Optional.of(BigDecimal.valueOf(2)), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsPositive(Optional.of(BigDecimal.valueOf(2)), "Failed"));
         }
 
         @Test
         public void testOptionalIsPositiveOkBigInteger(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositive(Optional.of(BigInteger.valueOf(2)), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsPositive(Optional.of(BigInteger.valueOf(2)), "Failed"));
         }
 
         @Test
         public void testOptionalIsPositiveOkDouble(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositive(Optional.of(Double.valueOf(2.0)), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsPositive(Optional.of(Double.valueOf(2.0)), "Failed"));
         }
 
         @Test
         public void testOptionalIsPositiveOkFloat(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositive(Optional.of(Float.valueOf(2.0f)), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsPositive(Optional.of(Float.valueOf(2.0f)), "Failed"));
         }
 
         @Test
         public void testOptionalIsPositiveOkEmpty(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.optionalIsPositive(Optional.empty(), "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.optionalIsPositive(Optional.empty(), "Failed"));
         }
 
         @Test
         public void testOptionalIsPositiveFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.optionalIsPositive(Optional.of(Byte.valueOf((byte)-1)), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsPositive(Optional.of(Byte.valueOf((byte)-1)), "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testOptionalIsPositiveFailNull(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalIsPositive(null, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsPositive(null, "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         public void testOptionalIsPositiveFailWrongType(){
-            Assertions.assertThrows(IllegalArgumentException.class, ()-> DomainAssertions.optionalIsPositive(Optional.of(""), "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.optionalIsPositive(Optional.of(""), "Failed")).isInstanceOf(IllegalArgumentException.class);
         }
     }
 }

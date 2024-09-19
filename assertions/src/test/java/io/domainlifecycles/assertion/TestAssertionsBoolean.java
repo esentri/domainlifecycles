@@ -1,8 +1,9 @@
 package io.domainlifecycles.assertion;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class TestAssertionsBoolean {
 
@@ -11,12 +12,12 @@ public class TestAssertionsBoolean {
 
         @Test
         public void testIsTrueFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isTrue(false, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isTrue(false, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsTrueOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isTrue(true ,"Failed"));
+            assertThatNoException().isThrownBy(() -> DomainAssertions.isTrue(true ,"Failed"));
         }
     }
 
@@ -25,12 +26,12 @@ public class TestAssertionsBoolean {
 
         @Test
         public void testIsFalseFail(){
-            Assertions.assertThrows(DomainAssertionException.class, ()-> DomainAssertions.isFalse(true, "Failed"));
+            assertThatThrownBy(()-> DomainAssertions.isFalse(true, "Failed")).isInstanceOf(DomainAssertionException.class);
         }
 
         @Test
         public void testIsFalseOk(){
-            Assertions.assertDoesNotThrow(()-> DomainAssertions.isFalse(false, "Failed"));
+            assertThatNoException().isThrownBy(()-> DomainAssertions.isFalse(false, "Failed"));
         }
     }
 }
