@@ -5,6 +5,7 @@ plugins {
     id 'checkstyle'
     id 'org.quiltmc.gradle.licenser' version "${quiltmcLicenserVersion}"
     id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+    id 'jacoco'
 }
 
 dependencies {
@@ -19,3 +20,11 @@ dependencies {
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }
 
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport

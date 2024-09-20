@@ -25,33 +25,10 @@
  *  limitations under the License.
  */
 
-package tests.shared.persistence.domain.records;
+package io.domainlifecycles.builder.helper;
 
-import java.util.Set;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import io.domainlifecycles.domain.types.base.AggregateRootBase;
+import io.domainlifecycles.domain.types.ValueObject;
 
-import java.util.List;
-
-@Getter
-@Setter
-public class RecordTest extends AggregateRootBase<RecordTestId> {
-
-    private final RecordTestId id;
-    private String myValue;
-    private RecordVo myVo;
-    private List<RecordVo> myVoList;
-    private Set<RecordVo> myVoSet;
-
-    @Builder(setterPrefix = "set")
-    public RecordTest(RecordTestId id, String myValue, RecordVo myVo, List<RecordVo> myVoList, Set<RecordVo> myVoSet, long concurrencyVersion) {
-        super(concurrencyVersion);
-        this.myValue = myValue;
-        this.myVo = myVo;
-        this.myVoList = myVoList;
-        this.myVoSet = myVoSet;
-        this.id = id;
-    }
-}
+@Builder
+public record TestValueObject(String first, Long second) implements ValueObject {}

@@ -27,10 +27,12 @@
 
 package io.domainlifecycles.builder;
 
+import io.domainlifecycles.builder.exception.DLCBuilderException;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
-import org.assertj.core.api.Assertions;
+import java.util.HashSet;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tests.shared.TestDataGenerator;
@@ -39,9 +41,10 @@ import tests.shared.persistence.domain.records.RecordTestId;
 import tests.shared.persistence.domain.records.RecordVo;
 
 import java.util.ArrayList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class InnerBuilderTest {
-
 
     @BeforeAll
     static void beforeAll() {
@@ -50,15 +53,15 @@ public class InnerBuilderTest {
 
     @Test
     public void testBuild(){
-        var recordTestBuilder = preInitializedLombokBuilder();
+        var recordTestBuilder = preInitializedLombokBuilderAggregateRoot();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(recordTestBuilder);
         var built = innerBuilder.build();
-        Assertions.assertThat(built).isNotNull();
+        assertThat(built).isNotNull();
     }
 
     @Test
-    public void testAddToCollection(){
-        var recordTestBuilder = preInitializedLombokBuilder();
+    public void testAddToCollectionOk(){
+        var recordTestBuilder = preInitializedLombokBuilderAggregateRoot();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(recordTestBuilder);
         innerBuilder.addValueToCollection(RecordVo
             .builder()
@@ -66,78 +69,135 @@ public class InnerBuilderTest {
             .setValue2(25L)
             .build(), "myVoList");
         RecordTest built = (RecordTest) innerBuilder.build();
-        Assertions.assertThat(built.getMyVoList()).hasSize(3);
+        assertThat(built.getMyVoList()).hasSize(3);
+    }
+
+    @Test
+    public void testAddToCollectionOkNull(){
+        var recordTestBuilder = preInitializedLombokBuilderAggregateRoot();
+        recordTestBuilder.setMyVoList(null);
+        var innerBuilder = new InnerClassDomainObjectBuilder<>(recordTestBuilder);
+
+        innerBuilder.addValueToCollection(RecordVo
+            .builder()
+            .setValue1("v1_3")
+            .setValue2(25L)
+            .build(), "myVoList");
+        RecordTest built = (RecordTest) innerBuilder.build();
+        assertThat(built.getMyVoList()).hasSize(1);
+    }
+
+    @Test
+    public void testAddToCollectionFailNoCollection(){
+        var recordTestBuilder = preInitializedLombokBuilderAggregateRoot();
+        var innerBuilder = new InnerClassDomainObjectBuilder<>(recordTestBuilder);
+
+        assertThatThrownBy(() ->
+            innerBuilder.addValueToCollection(RecordVo
+                .builder()
+                .setValue1("v1_3")
+                .setValue2(25L)
+                .build(), "myValue"))
+            .isInstanceOf(DLCBuilderException.class);
     }
 
     @Test
     public void testSetFieldValue(){
-        var recordTestBuilder = preInitializedLombokBuilder();
+        var recordTestBuilder = preInitializedLombokBuilderAggregateRoot();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(recordTestBuilder);
         innerBuilder.setFieldValue("aaa", "myValue");
         RecordTest built = (RecordTest) innerBuilder.build();
-        Assertions.assertThat(built.getMyValue()).isEqualTo("aaa");
+        assertThat(built.getMyValue()).isEqualTo("aaa");
     }
 
     @Test
-    public void testNewCollectionForField(){
-        var recordTestBuilder = preInitializedLombokBuilder();
+    public void testNewCollectionForFieldOkList(){
+        var recordTestBuilder = preInitializedLombokBuilderAggregateRoot();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(recordTestBuilder);
         var newCollection = innerBuilder.newCollectionInstanceForField("myVoList");
-        Assertions.assertThat(newCollection).isEmpty();
-        Assertions.assertThat(newCollection.getClass()).isEqualTo(ArrayList.class);
+        assertThat(newCollection).isEmpty();
+        assertThat(newCollection.getClass()).isEqualTo(ArrayList.class);
+    }
+
+    @Test
+    public void testNewCollectionForFieldOkSet(){
+        var recordTestBuilder = preInitializedLombokBuilderAggregateRoot();
+        var innerBuilder = new InnerClassDomainObjectBuilder<>(recordTestBuilder);
+        var newCollection = innerBuilder.newCollectionInstanceForField("myVoSet");
+        assertThat(newCollection).isEmpty();
+        assertThat(newCollection.getClass()).isEqualTo(HashSet.class);
+    }
+
+    @Test
+    public void testNewCollectionForFieldFailNoContainer(){
+        var recordTestBuilder = preInitializedLombokBuilderAggregateRoot();
+        var innerBuilder = new InnerClassDomainObjectBuilder<>(recordTestBuilder);
+
+        assertThatThrownBy(() -> innerBuilder.newCollectionInstanceForField("myValue"))
+            .isInstanceOf(DLCBuilderException.class);
     }
 
     @Test
     public void testGetFieldValue(){
-        var recordTestBuilder = preInitializedLombokBuilder();
+        var recordTestBuilder = preInitializedLombokBuilderAggregateRoot();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(recordTestBuilder);
         var value = innerBuilder.getFieldValue("myValue");
-        Assertions.assertThat(value).isEqualTo("Vlue");
+        assertThat(value).isEqualTo("Vlue");
     }
 
     @Test
     public void testCanInstantiateTrue(){
-        var recordTestBuilder = preInitializedLombokBuilder();
+        var recordTestBuilder = preInitializedLombokBuilderAggregateRoot();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(recordTestBuilder);
-        Assertions.assertThat(innerBuilder.canInstantiateField("myValue")).isTrue();
+        assertThat(innerBuilder.canInstantiateField("myValue")).isTrue();
     }
 
     @Test
     public void testCanInstantiateFalse(){
-        var recordTestBuilder = preInitializedLombokBuilder();
+        var recordTestBuilder = preInitializedLombokBuilderAggregateRoot();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(recordTestBuilder);
-        Assertions.assertThat(innerBuilder.canInstantiateField("myValue1")).isFalse();
+        assertThat(innerBuilder.canInstantiateField("myValue1")).isFalse();
     }
 
     @Test
     public void testGetBuilderInstance(){
-        var recordTestBuilder = preInitializedLombokBuilder();
+        var recordTestBuilder = preInitializedLombokBuilderAggregateRoot();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(recordTestBuilder);
-        Assertions.assertThat(innerBuilder.getBuilderInstance()).isEqualTo(recordTestBuilder);
+        assertThat(innerBuilder.getBuilderInstance()).isEqualTo(recordTestBuilder);
     }
 
     @Test
     public void testGetInstanceType(){
-        var recordTestBuilder = preInitializedLombokBuilder();
+        var recordTestBuilder = preInitializedLombokBuilderAggregateRoot();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(recordTestBuilder);
-        Assertions.assertThat(innerBuilder.instanceType()).isEqualTo(RecordTest.class);
+        assertThat(innerBuilder.instanceType()).isEqualTo(RecordTest.class);
     }
 
     @Test
     public void testGetPrimaryIdentity(){
-        var recordTestBuilder = preInitializedLombokBuilder();
+        var recordTestBuilder = preInitializedLombokBuilderAggregateRoot();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(recordTestBuilder);
-        Assertions.assertThat((RecordTestId)innerBuilder.getPrimaryIdentity()).isEqualTo(new RecordTestId(5L));
+        assertThat((RecordTestId)innerBuilder.getPrimaryIdentity()).isEqualTo(new RecordTestId(5L));
     }
 
     @Test
-    public void testGetPrimaryIdentityField(){
-        var recordTestBuilder = preInitializedLombokBuilder();
+    public void testGetPrimaryIdentityFieldNameOk(){
+        var recordTestBuilder = preInitializedLombokBuilderAggregateRoot();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(recordTestBuilder);
-        Assertions.assertThat(innerBuilder.getPrimaryIdentityFieldName()).isEqualTo("id");
+        assertThat(innerBuilder.getPrimaryIdentityFieldName()).isEqualTo("id");
     }
 
-    private RecordTest.RecordTestBuilder preInitializedLombokBuilder(){
+    @Test
+    public void testGetPrimaryIdentityFieldNameFailValueObject(){
+        var recordTestBuilder = preInitializedLombokBuilderRecordValueObject();
+        var innerBuilder = new InnerClassDomainObjectBuilder<>(recordTestBuilder);
+
+        assertThatThrownBy(innerBuilder::getPrimaryIdentityFieldName)
+            .isInstanceOf(DLCBuilderException.class)
+            .hasMessageContaining("not an Entity and has no primary Identity");
+    }
+
+    private RecordTest.RecordTestBuilder preInitializedLombokBuilderAggregateRoot(){
         return RecordTest
             .builder()
             .setId(new RecordTestId(5L))
@@ -161,5 +221,12 @@ public class InnerBuilderTest {
                     .setValue2(24L)
                     .build()
             ));
+    }
+
+    private RecordVo.RecordVoBuilder preInitializedLombokBuilderRecordValueObject(){
+        return RecordVo
+            .builder()
+            .setValue1("1")
+            .setValue2(1L);
     }
 }

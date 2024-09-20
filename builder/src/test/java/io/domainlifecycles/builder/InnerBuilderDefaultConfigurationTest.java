@@ -25,33 +25,30 @@
  *  limitations under the License.
  */
 
-package tests.shared.persistence.domain.records;
+package io.domainlifecycles.builder;
 
-import java.util.Set;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import io.domainlifecycles.domain.types.base.AggregateRootBase;
 
-import java.util.List;
+import io.domainlifecycles.builder.innerclass.InnerClassDefaultDomainBuilderConfiguration;
+import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@Getter
-@Setter
-public class RecordTest extends AggregateRootBase<RecordTestId> {
+public class InnerBuilderDefaultConfigurationTest {
 
-    private final RecordTestId id;
-    private String myValue;
-    private RecordVo myVo;
-    private List<RecordVo> myVoList;
-    private Set<RecordVo> myVoSet;
+    @Test
+    public void testGetBuildMethodName(){
+        InnerClassDefaultDomainBuilderConfiguration conf = new InnerClassDefaultDomainBuilderConfiguration();;
+        assertThat(conf.buildMethodName()).isEqualTo("build");
+    }
 
-    @Builder(setterPrefix = "set")
-    public RecordTest(RecordTestId id, String myValue, RecordVo myVo, List<RecordVo> myVoList, Set<RecordVo> myVoSet, long concurrencyVersion) {
-        super(concurrencyVersion);
-        this.myValue = myValue;
-        this.myVo = myVo;
-        this.myVoList = myVoList;
-        this.myVoSet = myVoSet;
-        this.id = id;
+    @Test
+    public void testGetBuilderMethodName(){
+        InnerClassDefaultDomainBuilderConfiguration conf = new InnerClassDefaultDomainBuilderConfiguration();;
+        assertThat(conf.builderMethodName()).isEqualTo("builder");
+    }
+
+    @Test
+    public void testSetterFromPropertyName() {
+        InnerClassDefaultDomainBuilderConfiguration conf = new InnerClassDefaultDomainBuilderConfiguration();;
+        assertThat(conf.setterFromPropertyName("property")).isEqualTo("setProperty");
     }
 }
