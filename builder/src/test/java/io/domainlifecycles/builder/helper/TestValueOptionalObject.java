@@ -25,26 +25,12 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.assertion;
+package io.domainlifecycles.builder.helper;
 
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import io.domainlifecycles.domain.types.ValueObject;
+import java.util.Optional;
+import javax.swing.text.html.Option;
+import lombok.Builder;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-class DomainAssertionsTest {
-
-    @ParameterizedTest
-    @ValueSource(ints = { 0, 1, Integer.MAX_VALUE })
-    void assertValidIntValue(int value) {
-        assertDoesNotThrow(() -> DomainAssertions.isPositiveOrZero(value, "message"));
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = { -1, Integer.MIN_VALUE })
-    void assertInvalidIntValue(int value) {
-        assertThrows(DomainAssertionException.class, () -> DomainAssertions.isPositiveOrZero(value, "message"));
-    }
-
-}
+@Builder
+public record TestValueOptionalObject(Optional<String> first, Long second) implements ValueObject {}

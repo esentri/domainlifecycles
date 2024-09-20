@@ -285,6 +285,7 @@ o +- value2:Long
 ]
 [<AggregateRoot>RecordTest <<AggregateRoot>>]  o-[<label> myVo 0..1] - [<ValueObject>RecordVo <<ValueObject>>]
 [<AggregateRoot>RecordTest <<AggregateRoot>>]  o-[<label> myVoList 0..*] - [<ValueObject>RecordVo <<ValueObject>>]
+[<AggregateRoot>RecordTest <<AggregateRoot>>]  o-[<label> myVoSet 0..*] - [<ValueObject>RecordVo <<ValueObject>>]
 ]
 // !!! {Frame} tests.shared.persistence.domain.shared.one.Configuration !!!
 [<AggregateFrame> Configuration <<Aggregate>>|

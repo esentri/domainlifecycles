@@ -37,6 +37,7 @@ import io.domainlifecycles.mirror.resolver.TypeMetaResolver;
 
 import org.junit.jupiter.api.Test;
 import sampleshop.core.inport.OrderDriver;
+import tests.shared.persistence.domain.records.RecordTest;
 
 import java.io.IOException;
 import java.nio.file.Files;
