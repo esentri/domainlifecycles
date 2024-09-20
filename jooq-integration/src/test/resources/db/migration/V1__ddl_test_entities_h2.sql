@@ -748,6 +748,16 @@ CREATE TABLE test_domain.record_test_my_vo_list (
                                                     FOREIGN KEY (container_id) REFERENCES test_domain.record_test(id)
 );
 
+CREATE SEQUENCE test_domain.record_test_my_vo_set_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
+
+CREATE TABLE test_domain.record_test_my_vo_set (
+                                                    id NUMBER(18) PRIMARY KEY,
+                                                    container_id NUMBER(18) NOT NULL,
+                                                    value1 VARCHAR2(100),
+                                                    value2 NUMBER(18),
+                                                    FOREIGN KEY (container_id) REFERENCES test_domain.record_test(id)
+);
+
 
 CREATE TABLE test_domain.tree_root (
                                        id NUMBER(18) PRIMARY KEY,
