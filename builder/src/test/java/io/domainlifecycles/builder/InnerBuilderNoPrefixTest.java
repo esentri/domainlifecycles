@@ -115,16 +115,6 @@ public class InnerBuilderNoPrefixTest {
     }
 
     @Test
-    @Disabled
-    public void testSetFieldValueFailMultipleMethods(){
-        var testBuilder = preInitializedLombokBuilder();
-        var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
-        assertThatThrownBy(() -> innerBuilder.setFieldValue("aaa", "fourth"))
-            .isInstanceOf(DLCBuilderException.class)
-            .hasMessageContaining("Multiple setters found in Lombok builder");
-    }
-
-    @Test
     public void testSetFieldValueOptionalOk(){
         var testBuilder = preInitializedOptionalLombokBuilder();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
