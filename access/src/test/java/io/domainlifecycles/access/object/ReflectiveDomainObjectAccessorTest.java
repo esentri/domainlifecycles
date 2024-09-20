@@ -3,7 +3,6 @@ package io.domainlifecycles.access.object;
 import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tests.shared.persistence.domain.optional.MySimpleValueObject;

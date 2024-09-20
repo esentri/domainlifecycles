@@ -22,7 +22,7 @@ class DefaultIdentityFactoryTest {
     void testIdentityFactoryFailNotInstantiableAbstract() {
         IdentityFactory identityFactory = new DefaultIdentityFactory(new DefaultClassProvider());
 
-        assertThatThrownBy(identityFactory.newInstance("", "tests.shared.persistence.domain.inheritance.Vehicle"))
+        assertThatThrownBy(() -> identityFactory.newInstance("", "tests.shared.persistence.domain.inheritance.Vehicle"))
             .isInstanceOf(DLCAccessException.class)
             .hasMessageContaining("Failed to instantiate Identity");
     }
