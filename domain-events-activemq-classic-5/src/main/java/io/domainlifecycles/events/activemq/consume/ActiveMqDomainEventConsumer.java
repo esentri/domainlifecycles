@@ -31,17 +31,21 @@ public class ActiveMqDomainEventConsumer extends AbstractMqDomainEventConsumer<M
     private final String virtualTopicConsumerPrefix;
     private final String virtualTopicPrefix;
 
+    private final long receiveTimeoutMs;
+
     public ActiveMqDomainEventConsumer(ConnectionFactory connectionFactory,
                                        ObjectMapper objectMapper,
                                        ExecutionContextDetector executionContextDetector,
                                        ExecutionContextProcessor executionContextProcessor,
                                        ClassProvider classProvider,
                                        String virtualTopicConsumerPrefix,
-                                       String virtualTopicPrefix) {
+                                       String virtualTopicPrefix,
+                                       long receiveTimeoutMs) {
         super(objectMapper, executionContextDetector, executionContextProcessor, classProvider);
         this.connectionFactory = Objects.requireNonNull(connectionFactory, "ConnectionFactory is required!");
         this.virtualTopicConsumerPrefix = Objects.requireNonNull(virtualTopicConsumerPrefix, "virtualTopicConsumerPrefix is required!");
         this.virtualTopicPrefix = Objects.requireNonNull(virtualTopicPrefix, "virtualTopicPrefix is required!");
+        this.receiveTimeoutMs = receiveTimeoutMs;
         initialize();
     }
 
@@ -88,7 +92,7 @@ public class ActiveMqDomainEventConsumer extends AbstractMqDomainEventConsumer<M
     @Override
     protected TextMessage consumeMessage(MessageConsumer messageConsumer) {
         try {
-            Message message = messageConsumer.receive(100);
+            Message message = messageConsumer.receive(receiveTimeoutMs);
             return (TextMessage) message;
         } catch (JMSException e) {
             log.error("Consuming message failed", e);

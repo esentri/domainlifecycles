@@ -16,6 +16,18 @@ import java.util.Objects;
 public class JakartaJmsDomainEventsConfiguration extends AbstractMqDomainEventsConfiguration {
 
     private final ConnectionFactory connectionFactory;
+    private long receiveTimeoutMs = 100;
+
+    public JakartaJmsDomainEventsConfiguration(
+        ConnectionFactory connectionFactory,
+        ServiceProvider serviceProvider,
+        ClassProvider classProvider,
+        HandlerExecutor handlerExecutor,
+        ObjectMapper objectMapper,
+        long receiveTimeoutMs) {
+        this(connectionFactory, serviceProvider, classProvider, handlerExecutor, objectMapper);
+        this.receiveTimeoutMs = receiveTimeoutMs;
+    }
 
     public JakartaJmsDomainEventsConfiguration(
         ConnectionFactory connectionFactory,
@@ -45,7 +57,8 @@ public class JakartaJmsDomainEventsConfiguration extends AbstractMqDomainEventsC
             objectMapper,
             executionContextDetector,
             executionContextProcessor,
-            classProvider
+            classProvider,
+            this.receiveTimeoutMs
         );
     }
 }

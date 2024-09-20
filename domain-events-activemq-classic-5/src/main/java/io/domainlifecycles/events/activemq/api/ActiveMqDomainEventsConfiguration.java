@@ -19,6 +19,18 @@ public class ActiveMqDomainEventsConfiguration extends AbstractMqDomainEventsCon
     private String virtualTopicConsumerPrefix = "Consumer.";
 
     private final ConnectionFactory connectionFactory;
+    private long receiveTimeoutMs = 100;
+
+    public ActiveMqDomainEventsConfiguration(
+            ConnectionFactory connectionFactory,
+            ServiceProvider serviceProvider,
+            ClassProvider classProvider,
+            HandlerExecutor handlerExecutor,
+            ObjectMapper objectMapper,
+            long receiveTimeoutMs){
+        this(connectionFactory, serviceProvider, classProvider, handlerExecutor, objectMapper);
+        this.receiveTimeoutMs = receiveTimeoutMs;
+    }
 
     public ActiveMqDomainEventsConfiguration(
         ConnectionFactory connectionFactory,
@@ -69,7 +81,8 @@ public class ActiveMqDomainEventsConfiguration extends AbstractMqDomainEventsCon
             executionContextProcessor,
             classProvider,
             this.virtualTopicConsumerPrefix,
-            this.virtualTopicPrefix
+            this.virtualTopicPrefix,
+            this.receiveTimeoutMs
         );
     }
 

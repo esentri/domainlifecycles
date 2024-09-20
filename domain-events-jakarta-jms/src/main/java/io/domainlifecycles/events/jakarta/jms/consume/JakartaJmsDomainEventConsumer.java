@@ -26,16 +26,18 @@ public class JakartaJmsDomainEventConsumer extends AbstractMqDomainEventConsumer
 
     private final ConnectionFactory connectionFactory;
     private Connection connection;
-
     private Map<MessageConsumer, Session> sessions = new ConcurrentHashMap<>();
+    private final long receiveTimeoutMs;
 
     public JakartaJmsDomainEventConsumer(ConnectionFactory connectionFactory,
                                          ObjectMapper objectMapper,
                                          ExecutionContextDetector executionContextDetector,
                                          ExecutionContextProcessor executionContextProcessor,
-                                         ClassProvider classProvider) {
+                                         ClassProvider classProvider,
+                                         long receiveTimeoutMs) {
         super(objectMapper, executionContextDetector, executionContextProcessor, classProvider);
         this.connectionFactory = Objects.requireNonNull(connectionFactory, "ConnectionFactory is required!");
+        this.receiveTimeoutMs = receiveTimeoutMs;
         initialize();
     }
 
@@ -76,7 +78,7 @@ public class JakartaJmsDomainEventConsumer extends AbstractMqDomainEventConsumer
     @Override
     protected TextMessage consumeMessage(MessageConsumer messageConsumer) {
         try {
-            Message message = messageConsumer.receive(100);
+            Message message = messageConsumer.receive(receiveTimeoutMs);
             return (TextMessage) message;
         } catch (JMSException e) {
             log.error("Consuming message failed", e);

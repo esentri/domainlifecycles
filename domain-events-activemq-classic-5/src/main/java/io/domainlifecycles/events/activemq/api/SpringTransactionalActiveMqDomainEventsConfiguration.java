@@ -21,6 +21,19 @@ public class SpringTransactionalActiveMqDomainEventsConfiguration extends Abstra
     private String virtualTopicPrefix = "VirtualTopic.";
     private String virtualTopicConsumerPrefix = "Consumer.";
 
+    private long receiveTimeoutMs = 100;
+
+    public SpringTransactionalActiveMqDomainEventsConfiguration(
+        ConnectionFactory connectionFactory,
+        ServiceProvider serviceProvider,
+        ClassProvider classProvider,
+        HandlerExecutor handlerExecutor,
+        ObjectMapper objectMapper,
+        long receiveTimeoutMs){
+        this(connectionFactory, serviceProvider, classProvider, handlerExecutor, objectMapper);
+        this.receiveTimeoutMs = receiveTimeoutMs;
+    }
+
     public SpringTransactionalActiveMqDomainEventsConfiguration(
         ConnectionFactory connectionFactory,
         ServiceProvider serviceProvider,
@@ -71,7 +84,8 @@ public class SpringTransactionalActiveMqDomainEventsConfiguration extends Abstra
             executionContextProcessor,
             classProvider,
             this.virtualTopicConsumerPrefix,
-            this.virtualTopicPrefix
+            this.virtualTopicPrefix,
+            this.receiveTimeoutMs
         );
     }
 }
