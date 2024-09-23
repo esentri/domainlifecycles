@@ -214,6 +214,11 @@ allprojects {
             configFile = rootProject.file('./checkstyle/checkstyle.xml')
             ignoreFailures = true
             showViolations = true
+
+            checkstyleMain.source = "src/main/java"
+
+            checkstyleMain
+                    .exclude('./sample-project/**')
         }
     }
 
