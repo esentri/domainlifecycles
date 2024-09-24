@@ -100,7 +100,6 @@ public class AutoMapperNestedValueObjectAccessor<R, DO extends DomainObject> imp
         return new BuilderWrapper(this.domainObjectBuilderProvider.provide(targetType));
     }
 
-    @SuppressWarnings("unchecked")
     private Object getPathValue(ValuePath path, R record){
         RecordProperty p = valuePathToRecordProperty.get(path);
         if (p != null) {

@@ -56,6 +56,8 @@ import io.domainlifecycles.persistence.records.RecordClassProvider;
 import io.domainlifecycles.persistence.records.RecordProperty;
 import io.domainlifecycles.persistence.records.RecordPropertyAccessor;
 import io.domainlifecycles.persistence.records.RecordPropertyProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,13 +69,15 @@ import java.util.stream.Collectors;
 /**
  * This class provides the default mapping behaviour for mapping {@link DomainObject} instances to R (records)
  * and R records to a corresponding {@link DomainObjectBuilder} for the DomainObject type.
- *
- * This implementation defines the auto-mapping behaviour for DomainObjects.
+ * <br>
+ * This implementation defines the default auto-mapping behaviour for DomainObjects.
  *
  * @author Mario Herb
  */
 
 public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoot<?>> extends AbstractRecordMapper<R, DO, A>{
+
+    private static final Logger log = LoggerFactory.getLogger(AutoRecordMapper.class);
 
     private final String typeName;
 
@@ -94,6 +98,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
     private final IgnoredRecordPropertyProvider ignoredRecordPropertyProvider;
 
     private final ConverterRegistry converterRegistry;
+
     private final NewRecordInstanceProvider newRecordInstanceProvider;
 
     private final RecordPropertyAccessor<R> recordPropertyAccessor;
@@ -130,7 +135,6 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
         this.recordPropertyAccessor = Objects.requireNonNull(recordPropertyAccessor);
         Objects.requireNonNull(recordPropertyProvider);
         this.recordClassProvider = Objects.requireNonNull(recordClassProvider);
-
         relevantValueObjectRecordConfigs = new ArrayList<>();
         if(entityValueObjectRecordClassProvider != null) {
             relevantValueObjectRecordConfigs.addAll(entityValueObjectRecordClassProvider.provideContainedValueObjectRecordClassConfigurations()
@@ -155,7 +159,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
      */
 
     @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"rawtypes"})
     public DomainObjectBuilder<DO> recordToDomainObjectBuilder(R record) {
         if (record == null) {
             return null;
@@ -211,7 +215,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
      * @return
      */
     @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("rawtypes")
     public R from(DO domainObject, A root) {
         R record = this.newRecordInstanceProvider.provideNewRecord(this.recordTypeName);
         this.valuePathToRecordProperty.keySet().forEach(
@@ -343,7 +347,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
             @Override
             public boolean visitEnterEntity(EntityMirror entityMirror) {
                 var context = getVisitorContext();
-                return context.startingTypeName.equals(entityMirror.getTypeName()) && context.getCurrentPath().size() == 0;
+                return context.startingTypeName.equals(entityMirror.getTypeName()) && context.getCurrentPath().isEmpty();
             }
 
             @Override
@@ -383,6 +387,13 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
         return biMap;
     }
 
+    /**
+     * This method tries to match exactly one of the given recordProperties (e.g. a field of a database table)
+     * with the given {@link FieldMirror}, which represents a field in the given object structure.
+     *
+     * @param fieldMirror the FieldMirror to be matched
+     * @return the matching RecordProperty, otherwise null
+     */
     private RecordProperty findRecordPropertyForField(FieldMirror fieldMirror){
         if(this.ignoredFields != null && this.ignoredFields.isIgnored(fieldMirror)){
             return null;
@@ -394,26 +405,35 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
         if (matchedRecordProperties.size() > 1) {
             var matchedNames = new StringBuilder();
             matchedRecordProperties.forEach(rp -> matchedNames.append(" ").append(rp.getName()));
-            throw DLCPersistenceException.fail("The field '%s'"
-                + " of the DomainObject class '%s'"
-                + " could not be matched to a single record property! '%s'"
-                + " matching record properties were found! ['%s']",
+            var msg = String.format("The field '%s'"
+                    + " of the DomainObject class '%s'"
+                    + " could not be matched to a single record property! '%s'"
+                    + " matching record properties were found! ['%s']",
                 fieldMirror.getName(),
                 this.typeName,
                 matchedRecordProperties.size(),
-                matchedNames
-            );
-        } else if (matchedRecordProperties.size() == 0) {
-            throw DLCPersistenceException.fail("The field '%s'"
+                matchedNames);
+            log.error(msg);
+            return null;
+        } else if (matchedRecordProperties.isEmpty()) {
+            var msg = String.format("The field '%s'"
                     + " of the DomainObject class '%s'"
                     + " could not be matched to a single record property! No match found!",
                 fieldMirror.getName(),
-                this.typeName
-            );
+                this.typeName);
+            log.error(msg);
+            return null;
         }
         return matchedRecordProperties.get(0);
     }
 
+    /**
+     * This method tries to match exactly one of the given recordProperties (e.g. a field of a database table)
+     * with the given {@link ValuePath}, which represents a field in the given object structure.
+     *
+     * @param path the ValuePath to be matched
+     * @return the matching RecordProperty, otherwise null
+     */
     private RecordProperty findRecordPropertyForValuePath(ValuePath path){
         if(this.ignoredFields != null
             && path.pathElements().stream().anyMatch(this.ignoredFields::isIgnored)
@@ -427,19 +447,28 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
         if (matchedRecordProperties.size() > 1) {
             var matchedNames = new StringBuilder();
             matchedRecordProperties.forEach(rp -> matchedNames.append(" ").append(rp.getName()));
-            throw DLCPersistenceException.fail("The path '%s'"
+            var msg = String.format("The path '%s'"
                 + " of the DomainObject class '%s'"
                 + " could not be matched to a single record property! '%s'"
                 + " matching record properties were found! ['%s']", path.path(), this.typeName, matchedRecordProperties.size(), matchedNames);
-
-        } else if (matchedRecordProperties.size() == 0) {
-            throw DLCPersistenceException.fail("The path '%s'"
+            log.error(msg);
+            return null;
+        } else if (matchedRecordProperties.isEmpty()) {
+            var msg = String.format("The path '%s'"
                 + " of the DomainObject class '%s'"
                 + " could not be matched to a single record property! No match found!", path.path(), this.typeName);
+            log.error(msg);
+            return null;
         }
         return matchedRecordProperties.get(0);
     }
 
+    /**
+     * This method tries to match the given {@link EntityReferenceMirror} with exactly one {@link RecordProperty}.
+     *
+     * @param entityReferenceMirror the given entity reference
+     * @return the matching {@link RecordProperty}, otherwise null
+     */
     private RecordProperty findRecordPropertyForForwardReference(EntityReferenceMirror entityReferenceMirror){
         if(this.ignoredFields != null && this.ignoredFields.isIgnored(entityReferenceMirror)){
             return null;
@@ -451,12 +480,24 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
         if (matchedRecordProperties.size() > 1) {
             var matchedNames = new StringBuilder();
             matchedRecordProperties.forEach(rp -> matchedNames.append(" ").append(rp.getName()));
-            throw DLCPersistenceException.fail("The field '%s'"
+            var msg = String.format("The field '%s'"
                 + " of the DomainObject class '%s'"
                 + " could not be matched to a single record property! '%s'"
-                + "properties were found! ['%s']", entityReferenceMirror.getName(), this.typeName, matchedRecordProperties.size(), matchedNames);
-
-        } else if (matchedRecordProperties.size() == 0) {
+                + "properties were found! ['%s']",
+                entityReferenceMirror.getName(),
+                this.typeName,
+                matchedRecordProperties.size(),
+                matchedNames
+            );
+            log.error(msg);
+            return null;
+        } else if (matchedRecordProperties.isEmpty()) {
+            var msg = String.format("The field '%s'"
+                    + " of the DomainObject class '%s'"
+                    + " could not be matched to a single record property! No match found!",
+                entityReferenceMirror.getName(),
+                this.typeName);
+            log.error(msg);
             return null;
         }
         return matchedRecordProperties.get(0);
@@ -470,7 +511,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
             .filter(rp -> !(domainType.equals(DomainType.VALUE_OBJECT) && (rp.getName().equals("id") || rp.getName().equals("containerId"))))
             .filter(rp -> this.ignoredRecordPropertyProvider == null || !this.ignoredRecordPropertyProvider.isIgnored(rp))
             .toList();
-        if(nonMappedRecordProperties.size()>0){
+        if(!nonMappedRecordProperties.isEmpty()){
             throw DLCPersistenceException.fail(String.format("The record properties '%s' of '%s' were not matched within the DomainObject" +
                 "'%s' for auto mapping!",
                 nonMappedRecordProperties.stream().map(RecordProperty::getName).collect(Collectors.joining(", ")),
@@ -481,13 +522,11 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Class<DO> domainObjectType() {
         return (Class<DO>) DlcAccess.getClassForName(this.typeName);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Class<R> recordType() {
         return (Class<R>) recordClassProvider
                 .provideRecordClasses()

@@ -35,15 +35,14 @@ import java.util.Objects;
 
 /**
  * We need to work with several kinds of PersistenceActions, which depend on the
- * changes that were detected.
- *
+ * changes that were detected:
+ * <br>
  * INSERT - inserting a new record into a database. UPDATE - updating an
  * existing record in a database. DELETE - deleting an existing record from a
  * database. DELETE_UPDATE - sometimes before being able to delete a record. A
  * reference to record being deleted must be set to "null". This is necessary to
  * comply with foreign key constraints and to keep all the changes consistent.
- *
- *
+ * <br>
  * A PersistenceAction keeps a reference to {@link DomainObjectInstanceAccessModel} on which a change was detected and the type of action,
  * that has to be applied to the database.
  *
