@@ -35,7 +35,7 @@ package io.domainlifecycles.mirror.api;
 public interface ValueReferenceMirror extends FieldMirror {
 
     /**
-     * Returns the referenced {@link ValueMirror}.
+     * @return the referenced {@link ValueMirror}.
      */
     ValueMirror getValue();
 }

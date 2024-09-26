@@ -55,6 +55,8 @@ public class RepositoryMirrorBuilder extends DomainTypeMirrorBuilder{
 
     /**
      * Creates a new {@link RepositoryMirror}.
+     *
+     * @return new instance of RepositoryMirror
      */
     public RepositoryMirror build(){
         return new RepositoryModel(

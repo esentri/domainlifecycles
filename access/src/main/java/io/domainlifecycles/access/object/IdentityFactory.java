@@ -36,12 +36,12 @@ import io.domainlifecycles.domain.types.Identity;
  */
 public interface IdentityFactory {
     /**
-     * Create new {@link Identity} instance by it's value and full qualified Identity type name.
-     *
      * @param value Identity value
      * @param identityTypeName full qualified Identity type name
      * @param <V> value type
      * @param <I> Identity type
+     *
+     * @return new {@link Identity} instance by it's value and full qualified Identity type name
      */
     <V, I extends Identity<V>> I newInstance(V value, String identityTypeName);
 }

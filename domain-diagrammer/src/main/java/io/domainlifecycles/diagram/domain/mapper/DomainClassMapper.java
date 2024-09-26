@@ -78,6 +78,8 @@ public class DomainClassMapper {
 
     /**
      * Initializes the DomainClassMapper with a given {@link DomainDiagramConfig}
+     *
+     * @param domainDiagramConfig diagram configuration
      */
     public DomainClassMapper(DomainDiagramConfig domainDiagramConfig) {
         this.domainDiagramConfig = domainDiagramConfig;
@@ -85,6 +87,9 @@ public class DomainClassMapper {
 
     /**
      * Maps DomainEvent structure to a {@link NomnomlClass} representation.
+     *
+     * @param domainEventMirror mirrored domain event
+     * @return mapped domain event
      */
     public NomnomlClass mapDomainEventClass(DomainEventMirror domainEventMirror){
         return mapToNomnomlClass(domainEventMirror,
@@ -95,6 +100,9 @@ public class DomainClassMapper {
 
     /**
      * Maps DomainCommand structure to a {@link NomnomlClass} representation.
+     *
+     * @param domainCommandMirror mirrored domain command
+     * @return mapped domain command
      */
     public NomnomlClass mapDomainCommandClass(DomainCommandMirror domainCommandMirror){
         return mapToNomnomlClass(domainCommandMirror,
@@ -105,6 +113,9 @@ public class DomainClassMapper {
 
     /**
      * Maps DomainService structure to a {@link NomnomlClass} representation.
+     *
+     * @param domainServiceMirror mirrored domain service
+     * @return mapped domain service
      */
     public NomnomlClass mapDomainServiceClass(DomainServiceMirror domainServiceMirror){
         return mapToNomnomlClass(domainServiceMirror,
@@ -115,6 +126,9 @@ public class DomainClassMapper {
 
     /**
      * Maps ApplicationService structure to a {@link NomnomlClass} representation.
+     *
+     * @param applicationServiceMirror mirrored application service
+     * @return mapped application service
      */
     public NomnomlClass mapApplicationServiceClass(ApplicationServiceMirror applicationServiceMirror){
         return mapToNomnomlClass(applicationServiceMirror,
@@ -125,6 +139,9 @@ public class DomainClassMapper {
 
     /**
      * Maps Repository structure to a {@link NomnomlClass} representation.
+     *
+     * @param repositoryMirror mirrored repository
+     * @return mapped repository
      */
     public NomnomlClass mapRepositoryClass(RepositoryMirror repositoryMirror){
         return mapToNomnomlClass(repositoryMirror,
@@ -135,6 +152,9 @@ public class DomainClassMapper {
 
     /**
      * Maps ReadModel structure to a {@link NomnomlClass} representation.
+     *
+     * @param readModelMirror mirrored read model
+     * @return mapped read model
      */
     public NomnomlClass mapReadModelClass(ReadModelMirror readModelMirror){
         return mapToNomnomlClass(readModelMirror,
@@ -145,6 +165,9 @@ public class DomainClassMapper {
 
     /**
      * Maps QueryClient structure to a {@link NomnomlClass} representation.
+     *
+     * @param queryClientMirror mirrored query client
+     * @return mapped query client
      */
     public NomnomlClass mapQueryClientClass(QueryClientMirror queryClientMirror){
         return mapToNomnomlClass(queryClientMirror,
@@ -155,6 +178,9 @@ public class DomainClassMapper {
 
     /**
      * Maps OutboundService structure to a {@link NomnomlClass} representation.
+     *
+     * @param outboundServiceMirror mirrored outbound service
+     * @return mapped outbound service
      */
     public NomnomlClass mapOutboundServiceClass(OutboundServiceMirror outboundServiceMirror){
         return mapToNomnomlClass(outboundServiceMirror,
@@ -165,6 +191,9 @@ public class DomainClassMapper {
 
     /**
      * Maps Aggregate structure to a list of {@link NomnomlClass} representations.
+     *
+     * @param aggregateRootMirror mirrored AggregateRoot
+     * @return mapped aggregate classes
      */
     public List<NomnomlClass> mapAllAggregateClasses(AggregateRootMirror aggregateRootMirror){
         var aggregateClasses = new ArrayList<NomnomlClass>();

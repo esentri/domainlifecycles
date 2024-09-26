@@ -44,6 +44,8 @@ public class ReadModelMirrorBuilder extends DomainTypeMirrorBuilder{
 
     /**
      * Creates a new {@link ReadModelMirror}.
+     *
+     * @return new instance of ReadModelMirror
      */
     public ReadModelMirror build(){
         return new ReadModelModel(

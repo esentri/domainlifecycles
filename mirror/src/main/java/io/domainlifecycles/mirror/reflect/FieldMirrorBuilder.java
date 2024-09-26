@@ -132,6 +132,8 @@ public class FieldMirrorBuilder {
 
     /**
      * Creates a new {@link FieldMirror}.
+     *
+     * @return new instance of FieldMirror
      */
     public FieldMirror build(){
         var name = field.getName();

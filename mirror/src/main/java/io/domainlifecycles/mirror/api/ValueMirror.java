@@ -37,39 +37,39 @@ import java.util.Optional;
 public interface ValueMirror extends DomainTypeMirror {
 
     /**
-     * Returns true, if the ValueMirror is an EnumMirror.
+     * @return true, if the ValueMirror is an EnumMirror.
      */
     default boolean isEnum(){
         return this instanceof EnumMirror;
     }
 
     /**
-     * Returns true, if the ValueMirror is a ValueObjectMirror.
+     * @return true, if the ValueMirror is a ValueObjectMirror.
      */
     default boolean isValueObject(){
         return this instanceof ValueObjectMirror;
     }
 
     /**
-     * Returns true, if the ValueMirror is an IdentityMirror.
+     * @return true, if the ValueMirror is an IdentityMirror.
      */
     default boolean isIdentity(){
         return this instanceof IdentityMirror;
     }
 
     /**
-     * Returns the full qualified type name being mirrored.
+     * @return the full qualified type name being mirrored.
      */
     String getTypeName();
 
     /**
-     * Returns true, if the Value contains only exactly one field, that contains the associated value.
+     * @return true, if the Value contains only exactly one field, that contains the associated value.
      * Identities or Enums are singleValued by definition.
      */
     boolean isSingledValued();
 
     /**
-     * Returns the field mirror for the only field that might contain a value. If the ValueO is not singleValued
+     * @return the field mirror for the only field that might contain a value. If the ValueO is not singleValued
      * the returned Optional is empty.
      */
     Optional<FieldMirror> singledValuedField();

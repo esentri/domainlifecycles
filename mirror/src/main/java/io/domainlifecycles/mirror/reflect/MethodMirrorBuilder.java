@@ -67,6 +67,8 @@ public class MethodMirrorBuilder {
 
     /**
      * Creates a new {@link MethodMirror}.
+     *
+     * @return new instance of method mirror
      */
     public MethodMirror build(){
         return new MethodModel(

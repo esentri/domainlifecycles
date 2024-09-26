@@ -58,6 +58,8 @@ import java.util.stream.Collectors;
  * It enables to fetch complete valid ValueObject instances that were saved in a Record before.
  * It also enables to identify and return record values from a DomainObject instance.
  *
+ * @param <R> type of record
+ * @param <DO> type of domain object
  * @author Mario Herb
  */
 public class AutoMapperNestedValueObjectAccessor<R, DO extends DomainObject> implements MapperNestedValueObjectAccessor<R, DO> {

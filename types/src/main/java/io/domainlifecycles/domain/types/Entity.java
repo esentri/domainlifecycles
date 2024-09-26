@@ -69,7 +69,7 @@ import java.lang.annotation.Target;
 public interface Entity<ID extends Identity<?>> extends DomainObject, Validatable, ConcurrencySafe {
 
     /**
-     * Returns the value of the assigned entity identifier.
+     * @return the value of the assigned entity identifier.
      */
     ID id();
 

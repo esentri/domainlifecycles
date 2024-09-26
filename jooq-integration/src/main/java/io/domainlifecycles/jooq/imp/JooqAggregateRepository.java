@@ -39,6 +39,8 @@ import org.jooq.UpdatableRecord;
 /**
  * jOOQ specific implementation of a {@link PersistenceActionPublishingRepository}.
  *
+ * @param <A> type of AggregateRoot
+ * @param <I> type of Identity
  * @author Mario Herb
  */
 public class JooqAggregateRepository<A extends AggregateRoot<I>, I extends Identity<?>> extends PersistenceActionPublishingRepository<I, A, UpdatableRecord<?>> {

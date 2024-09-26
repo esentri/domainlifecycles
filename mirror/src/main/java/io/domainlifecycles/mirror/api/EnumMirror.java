@@ -37,7 +37,7 @@ import java.util.List;
 public interface EnumMirror extends ValueMirror, DomainTypeMirror {
 
     /**
-     * Returns the list {@link EnumOptionMirror} instances for the enum options defined within the mirrored enum.
+     * @return the list {@link EnumOptionMirror} instances for the enum options defined within the mirrored enum.
      */
     List<EnumOptionMirror> getEnumOptions();
 }

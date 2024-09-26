@@ -101,6 +101,8 @@ public class ValuePath {
     /**
      * Returns an {@link ValuePath} instance, that represents the container of a
      * ValueObject of this ValuePath.
+     *
+     * @return value path container
      */
     public ValuePath containerValuePath(){
         var list = pathElements.stream().toList();

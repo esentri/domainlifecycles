@@ -109,6 +109,8 @@ public class DomainTypesScanner {
 
     /**
      * Scans the given packages for Domain Model classes.
+     *
+     * @param boundedContextPackages the bounded context packages
      */
     @SuppressWarnings("unchecked")
     public void scan(String... boundedContextPackages){
@@ -227,98 +229,98 @@ public class DomainTypesScanner {
     }
 
     /**
-     * Determines whether the given name is a valid full qualified package name.
+     * @return whether the given name is a valid full qualified package name.
      */
     private static boolean isValidPackage(final String packageName) {
         return packagePattern.matcher(packageName).matches();
     }
 
     /**
-     * Returns list of scanned {@link Enum} classes.
+     * @return list of scanned {@link Enum} classes.
      */
     public List<Class<? extends Enum<?>>> getScannedEnums() {
         return enums;
     }
 
     /**
-     * Returns list of scanned {@link Identity} classes.
+     * @return list of scanned {@link Identity} classes.
      */
     public List<Class<? extends Identity<?>>> getScannedIdentities() {
         return identities;
     }
 
     /**
-     * Returns list of scanned {@link ValueObject} classes.
+     * @return list of scanned {@link ValueObject} classes.
      */
     public List<Class<? extends ValueObject>> getScannedValueObjects() {
         return valueObjects;
     }
 
     /**
-     * Returns the list of scanned {@link Entity} classes
+     * @return the list of scanned {@link Entity} classes
      */
     public List<Class<? extends Entity<?>>> getScannedEntities() {
         return entities;
     }
 
     /**
-     * Returns the list of scanned {@link AggregateRoot} classes
+     * @return the list of scanned {@link AggregateRoot} classes
      */
     public List<Class<? extends AggregateRoot<?>>> getScannedAggregateRoots() {
         return aggregateRoots;
     }
 
     /**
-     * Returns the list of scanned {@link DomainEvent} classes
+     * @return the list of scanned {@link DomainEvent} classes
      */
     public List<Class<? extends DomainEvent>> getScannedDomainEvents() {
         return domainEvents;
     }
 
     /**
-     * Returns the list of scanned {@link DomainService} classes
+     * @return the list of scanned {@link DomainService} classes
      */
     public List<Class<? extends DomainService>> getScannedDomainServices() {
         return domainServices;
     }
 
     /**
-     * Returns the list of scanned {@link ApplicationService} classes
+     * @return the list of scanned {@link ApplicationService} classes
      */
     public List<Class<? extends ApplicationService>> getScannedApplicationServices() {
         return applicationServices;
     }
 
     /**
-     * Returns the list of scanned {@link Repository} classes
+     * @return the list of scanned {@link Repository} classes
      */
     public List<Class<? extends Repository<?, ?>>> getScannedRepositories() {
         return repositories;
     }
 
     /**
-     * Returns the list of scanned {@link DomainCommand} classes
+     * @return the list of scanned {@link DomainCommand} classes
      */
     public List<Class<? extends DomainCommand>> getScannedDomainCommands() {
         return domainCommands;
     }
 
     /**
-     * Returns the list of scanned {@link ReadModel} classes
+     * @return the list of scanned {@link ReadModel} classes
      */
     public List<Class<? extends ReadModel>> getScannedReadModels() {
         return readModels;
     }
 
     /**
-     * Returns the list of scanned {@link QueryClient} classes
+     * @return the list of scanned {@link QueryClient} classes
      */
     public List<Class<? extends QueryClient<?>>> getScannedQueryClients() {
         return queryClients;
     }
 
     /**
-     * Returns the list of scanned {@link OutboundService} classes
+     * @return the list of scanned {@link OutboundService} classes
      */
     public List<Class<? extends OutboundService>> getScannedOutboundServices() {
         return outboundServices;

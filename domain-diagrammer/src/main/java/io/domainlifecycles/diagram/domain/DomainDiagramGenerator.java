@@ -72,12 +72,11 @@ public class DomainDiagramGenerator implements Diagram {
 
     /**
      * Initializes the DomainDiagramGenerator with a given {@link DomainDiagramConfig}
+     * @param diagramConfig diagram configuration
      */
     public DomainDiagramGenerator(final DomainDiagramConfig diagramConfig) {
         this.diagramConfig = diagramConfig;
         this.domainMapper = new DomainMapper(diagramConfig);
-
-
     }
 
     /**

@@ -44,6 +44,8 @@ public class ValueObjectMirrorBuilder extends DomainTypeMirrorBuilder{
 
     /**
      * Creates a new {@link ValueObjectMirror}.
+     *
+     * @return new instance of ValueObjectMirror
      */
     public ValueObjectMirror build() {
         return new ValueObjectModel(

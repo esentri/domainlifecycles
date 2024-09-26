@@ -38,6 +38,7 @@ import java.util.Stack;
 /**
  * Simple directed graph implementation, that enables for topological sorting of vertices and cycle detection.
  *
+ * @param <T> the type of vertices used in the graph
  * @author Mario Herb
  */
 public class DirectedGraph<T> {
@@ -48,6 +49,8 @@ public class DirectedGraph<T> {
 
     /**
      * Add an edge to the graph. If the edge contains any new vertices, they are added.
+     *
+     * @param edge the edge to be added
      */
     public void addEdge(Edge<T> edge){
         var list = adjacency.computeIfAbsent(edge.source(), k -> new LinkedList<>());
@@ -58,6 +61,8 @@ public class DirectedGraph<T> {
 
     /**
      * Add a vertex to the graph.
+     *
+     * @param v vertex to be added
      */
     public void addVertex(T v){
         vertices.add(v);
@@ -89,6 +94,8 @@ public class DirectedGraph<T> {
 
     /**
      * Return a topologically ordered list of the vertices in the graph.
+     *
+     * @return ordered list of vertices
      */
     public List<T> topologicalSort() {
         Stack<T> stack = new Stack<>();
@@ -142,6 +149,10 @@ public class DirectedGraph<T> {
 
     /**
      * Edge container
+     *
+     * @param <T> type of vertices which make up the edge
+     * @param source source vertex
+     * @param target target vertex
      */
     public record Edge<T>(T source, T target) {}
 }

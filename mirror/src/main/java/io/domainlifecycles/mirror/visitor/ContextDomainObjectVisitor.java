@@ -71,6 +71,7 @@ public abstract class ContextDomainObjectVisitor implements DomainObjectVisitor 
     /**
      * Creates a new visitor instance by passing a starting domain object mirror.
      *
+     * @param domainTypeMirror mirror for domain object
      * @param visitTypesOnlyOnce prevents endless loops, by assuring that every type is visited only once
      */
 
@@ -92,6 +93,7 @@ public abstract class ContextDomainObjectVisitor implements DomainObjectVisitor 
 
     /**
      * Creates a new visitor instance by passing a starting domain type mirror.
+     * @param domainObjectMirror mirror for DomainObject
      */
     public ContextDomainObjectVisitor(DomainObjectMirror domainObjectMirror) {
         this.visitorContext = new VisitorContext(domainObjectMirror.getTypeName());
@@ -292,7 +294,7 @@ public abstract class ContextDomainObjectVisitor implements DomainObjectVisitor 
     }
 
     /**
-     * Access the current visitor context.
+     * @return the current visitor context.
      */
     public VisitorContext getVisitorContext() {
         return visitorContext;

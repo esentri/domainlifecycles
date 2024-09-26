@@ -39,12 +39,12 @@ import java.util.Optional;
 public interface ValueObjectMirror extends DomainObjectMirror, ValueMirror{
 
     /**
-     * Returns true, if the ValueObject contains only exactly one basic, enum or identity field that contains the associated value or another singled valued value object.
+     * @return whether the ValueObject contains only exactly one basic, enum or identity field that contains the associated value or another singled valued value object.
      */
     boolean isSingledValued();
 
     /**
-     * Returns the field mirror for the only field that might contain a value. If the ValueObject is not singleValued
+     * @return the field mirror for the only field that might contain a value. If the ValueObject is not singleValued
      * the returned Optional is empty.
      */
     Optional<FieldMirror> singledValuedField();

@@ -55,7 +55,9 @@ public class Domain {
     private static GenericTypeResolver genericTypeResolver = new DefaultEmptyGenericTypeResolver();
 
     /**
-     * Get a mirror instance for a given full qualified type name.
+     * @param <V> type of DomainTypeMirror
+     * @param fullQualifiedTypeName the full qualified type name to return a mirror instance for
+     * @return a mirror instance for a given full qualified type name.
      */
     @SuppressWarnings("unchecked")
     public static <V extends DomainTypeMirror> Optional<V> typeMirror(String fullQualifiedTypeName){
@@ -67,7 +69,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link AggregateRootMirror} for the given AggregateRoot instance.
+     * @param <A> type of AggregateRootMirror
+     * @param aggregateRoot the AggregateRoot to return a mirror for
+     * @return the {@link AggregateRootMirror} for the given AggregateRoot instance.
      */
     @SuppressWarnings("unchecked")
     public static <A extends AggregateRootMirror>  A aggregateRootMirrorFor(AggregateRoot<?> aggregateRoot){
@@ -76,7 +80,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link EntityMirror} for the given Entity instance.
+     * @param <E> type of EntityMirror
+     * @param entity the entity to return a mirror for
+     * @return the {@link EntityMirror} for the given Entity instance.
      */
     @SuppressWarnings("unchecked")
     public static <E extends EntityMirror>  E entityMirrorFor(Entity<?> entity){
@@ -85,7 +91,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link EntityMirror} for the given full qualified Entity type name.
+     * @param <E> type of EntityMirror
+     * @param entityTypeName full qualified name of the entity type
+     * @return the {@link EntityMirror} for the given full qualified Entity type name.
      */
     @SuppressWarnings("unchecked")
     public static <E extends EntityMirror>  E entityMirrorFor(String entityTypeName){
@@ -94,7 +102,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link DomainEventMirror} for the given DomainEvent instance.
+     * @param <DE> type of DomainEventMirror
+     * @param domainEvent the domain event to return a mirror for
+     * @return the {@link DomainEventMirror} for the given DomainEvent instance.
      */
     @SuppressWarnings("unchecked")
     public static <DE extends DomainEventMirror>  DE domainEventMirrorFor(DomainEvent domainEvent){
@@ -103,7 +113,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link DomainEventMirror} for the given full qualified DomainEvent type name.
+     * @param <DE> type of DomainEventMirror
+     * @param domainEventTypeName full qualified name of DomainEvent type
+     * @return the {@link DomainEventMirror} for the given full qualified DomainEvent type name.
      */
     @SuppressWarnings("unchecked")
     public static <DE extends DomainEventMirror>  DE domainEventMirrorFor(String domainEventTypeName){
@@ -112,7 +124,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link DomainServiceMirror} for the given DomainService instance.
+     * @param <DS> type of DomainServiceMirror
+     * @param domainService the DomainService to return a mirror for
+     * @return the {@link DomainServiceMirror} for the given DomainService instance.
      */
     @SuppressWarnings("unchecked")
     public static <DS extends DomainServiceMirror>  DS domainServiceMirrorFor(DomainService domainService){
@@ -121,7 +135,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link DomainServiceMirror} for the given full qualified DomainService type name.
+     * @param <DS> type of DomainServiceMirror
+     * @param domainServiceTypeName full qualified name of domain service type
+     * @return the {@link DomainServiceMirror} for the given full qualified DomainService type name.
      */
     @SuppressWarnings("unchecked")
     public static <DS extends DomainServiceMirror>  DS domainServiceMirrorFor(String domainServiceTypeName){
@@ -130,7 +146,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link ApplicationServiceMirror} for the given ApplicationService instance.
+     * @param <AS> type of ApplicationServiceMirror
+     * @param applicationService the ApplicationService to return the mirror for
+     * @return the {@link ApplicationServiceMirror} for the given ApplicationService instance.
      */
     @SuppressWarnings("unchecked")
     public static <AS extends ApplicationServiceMirror>  AS domainServiceMirrorFor(ApplicationService applicationService){
@@ -139,7 +157,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link ApplicationServiceMirror} for the given full qualified ApplicationService type name.
+     * @param <AS> type of ApplicationServiceMirror
+     * @param applicationServiceTypeName full qualified name of the application service type
+     * @return the {@link ApplicationServiceMirror} for the given full qualified ApplicationService type name.
      */
     @SuppressWarnings("unchecked")
     public static <AS extends ApplicationServiceMirror>  AS applicationServiceMirrorFor(String applicationServiceTypeName){
@@ -148,7 +168,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link RepositoryMirror} for the given Repository instance for a given {@link AggregateRootMirror}.
+     * @param <R> type of RepositoryMirror
+     * @param arm AggregateRootMirror to return the mirror for
+     * @return the {@link RepositoryMirror} for the given Repository instance for a given {@link AggregateRootMirror}.
      */
     @SuppressWarnings("unchecked")
     public static <R extends RepositoryMirror>  R repositoryMirrorFor(AggregateRootMirror arm){
@@ -164,7 +186,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link RepositoryMirror} for the given Repository instance.
+     * @param <R> type of RepositoryMirror
+     * @param repository the repository to return the mirror for
+     * @return the {@link RepositoryMirror} for the given Repository instance.
      */
     @SuppressWarnings("unchecked")
     public static <R extends RepositoryMirror>  R repositoryMirrorFor(Repository<?, ?> repository){
@@ -173,7 +197,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link RepositoryMirror} for the given full qualified Repository type name.
+     * @param <R> type of RepositoryMirror
+     * @param repositoryTypeName full qualified Repository type name
+     * @return the {@link RepositoryMirror} for the given full qualified Repository type name.
      */
     @SuppressWarnings("unchecked")
     public static <R extends RepositoryMirror>  R repositoryMirrorFor(String repositoryTypeName){
@@ -182,7 +208,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link EntityMirror} for the given full qualified type name of the Identity type.
+     * @param <E> type of EntityMirror
+     * @param identityTypeName name of identity type
+     * @return the {@link EntityMirror} for the given full qualified type name of the Identity type.
      */
     @SuppressWarnings("unchecked")
     public static <E extends EntityMirror>  E entityMirrorForIdentityTypeName(String identityTypeName){
@@ -207,7 +235,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link IdentityMirror} for the given full qualified Identity type name.
+     * @param <I> type of IdentityMirror
+     * @param identityTypeName name of the identity type
+     * @return the {@link IdentityMirror} for the given full qualified Identity type name.
      */
     @SuppressWarnings("unchecked")
     public static <I extends IdentityMirror>  I identityMirrorFor(String identityTypeName){
@@ -216,7 +246,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link ValueObjectMirror} for the given ValueObject instance.
+     * @param <V> type of ValueObjectMirror
+     * @param valueObject the ValueObject to return the mirror for
+     * @return the {@link ValueObjectMirror} for the given ValueObject instance.
      */
     @SuppressWarnings("unchecked")
     public static <V extends ValueObjectMirror>  V valueObjectMirrorFor(ValueObject valueObject){
@@ -225,7 +257,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link ValueObjectMirror} for the given full qualified ValueObject type name.
+     * @param <V> type of ValueObjectMirror
+     * @param valueObjectTypeName name of the ValueObject type
+     * @return the {@link ValueObjectMirror} for the given full qualified ValueObject type name
      */
     @SuppressWarnings("unchecked")
     public static <V extends ValueObjectMirror>  V valueObjectMirrorFor(String valueObjectTypeName){
@@ -234,7 +268,7 @@ public class Domain {
     }
 
     /**
-     * Returns the list of {@link BoundedContextMirror} instances for the mirrored bounded contexts.
+     * @return the list of {@link BoundedContextMirror} instances for the mirrored bounded contexts
      */
     public static List<BoundedContextMirror> getBoundedContexts(){
         if(!initialized){
@@ -244,7 +278,7 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link InitializedDomain} containing all type mirrors created upon initialization.
+     * @return the {@link InitializedDomain} containing all type mirrors created upon initialization
      */
     public static InitializedDomain getInitializedDomain() {
         return initializedDomain;
@@ -253,6 +287,8 @@ public class Domain {
     /**
      * Initializes the domain by a given factory.
      * The factory decides the source of Domain meta information (reflection or something else).
+     *
+     * @param domainMirrorFactory the factory
      */
     public static void initialize(DomainMirrorFactory domainMirrorFactory){
         initializedDomain = domainMirrorFactory.initializeDomain(genericTypeResolver);
@@ -269,9 +305,7 @@ public class Domain {
     }
 
     /**
-     * Returns the GenericTypeResolver for the Domain.
-     *
-     * @return the GenericTypeResolver instance
+     * @return the GenericTypeResolver for the Domain
      */
     public static GenericTypeResolver getGenericTypeResolver() {
         return genericTypeResolver;

@@ -35,11 +35,11 @@ package io.domainlifecycles.access.object;
 public interface EnumFactory {
 
     /**
-     * Create new {@link Enum} instance by it's value and full qualified Enum type name.
-     *
      * @param value String value of Enum name
      * @param enumTypeName full qualified type name of Enum instance
      * @param <E> Enum type
+     *
+     * @return new {@link Enum} instance by its value and full qualified Enum type name.
      */
     <E extends Enum<E>> E newInstance(String value, String enumTypeName);
 }

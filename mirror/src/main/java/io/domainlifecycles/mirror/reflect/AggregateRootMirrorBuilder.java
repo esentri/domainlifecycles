@@ -40,6 +40,8 @@ public class AggregateRootMirrorBuilder extends EntityMirrorBuilder{
 
     /**
      * Initialize the builder with the corresponding {@link AggregateRoot} class.
+     *
+     * @param aggregateRootClass type of AggregateRoot
      */
     public AggregateRootMirrorBuilder(Class<? extends AggregateRoot<?>> aggregateRootClass) {
         super(aggregateRootClass);

@@ -31,6 +31,7 @@ package io.domainlifecycles.domain.types;
  * This is the common supertype (marker interface) to represent a service
  * providing queryable {@link ReadModel} instances.
  *
+ * @param <RM> the type of ReadModel used
  * @author Mario Herb
  *
  */

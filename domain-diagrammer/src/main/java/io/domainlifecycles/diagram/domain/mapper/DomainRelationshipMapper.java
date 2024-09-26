@@ -71,6 +71,9 @@ public class DomainRelationshipMapper {
 
     /**
      * Initializes the DomainRelationshipMapper with a given {@link DomainDiagramConfig} and the {@link FilteredDomainClasses}
+     *
+     * @param diagramConfig diagram configuration
+     * @param filteredDomainClasses filtered domain classes
      */
     public DomainRelationshipMapper(DomainDiagramConfig diagramConfig, FilteredDomainClasses filteredDomainClasses) {
         this.diagramConfig = diagramConfig;
@@ -79,6 +82,8 @@ public class DomainRelationshipMapper {
 
     /**
      * Derives a {@link NomnomlRelationship} for all ApplicationServices that use a Repository.
+     *
+     * @return mapped application service - service repository relationships
      */
     public List<NomnomlRelationship> mapAllApplicationServiceServiceRepositoryRelationships(){
         var relationShips = new ArrayList<NomnomlRelationship>();
@@ -94,6 +99,8 @@ public class DomainRelationshipMapper {
 
     /**
      * Derives a {@link NomnomlRelationship} for all ApplicationServices that use a Domain Service.
+     *
+     * @return mapped application service - domain service relationships
      */
     public List<NomnomlRelationship> mapAllApplicationServiceServiceDomainServiceRelationships(){
         var relationShips = new ArrayList<NomnomlRelationship>();
@@ -108,6 +115,8 @@ public class DomainRelationshipMapper {
 
     /**
      * Derives a {@link NomnomlRelationship} for all ApplicationServices that use a QueryClient.
+     *
+     * @return mapped application service - query client relationships
      */
     public List<NomnomlRelationship> mapAllApplicationServiceQueryClientRelationships(){
         var relationShips = new ArrayList<NomnomlRelationship>();
@@ -122,6 +131,8 @@ public class DomainRelationshipMapper {
 
     /**
      * Derives a {@link NomnomlRelationship} for all ApplicationServices that use an OutboundService.
+     *
+     * @return mapped application service - outbound service relationships
      */
     public List<NomnomlRelationship> mapAllApplicationServiceOutboundServiceRelationships(){
         var relationShips = new ArrayList<NomnomlRelationship>();
@@ -136,6 +147,8 @@ public class DomainRelationshipMapper {
 
     /**
      * Derives a {@link NomnomlRelationship} for all DomainServices that use a Repository.
+     *
+     * @return mapped domain service - repository relationships
      */
     public List<NomnomlRelationship> mapAllDomainServiceRepositoryRelationships(){
         var relationShips = new ArrayList<NomnomlRelationship>();
@@ -150,6 +163,8 @@ public class DomainRelationshipMapper {
 
     /**
      * Derives a {@link NomnomlRelationship} for all DomainServices that use a QueryClient.
+     *
+     * @return mapped domain service - query client relationships
      */
     public List<NomnomlRelationship> mapAllDomainServiceQueryClientRelationships(){
         var relationShips = new ArrayList<NomnomlRelationship>();
@@ -164,6 +179,8 @@ public class DomainRelationshipMapper {
 
     /**
      * Derives a {@link NomnomlRelationship} for all DomainServices that use an OutboundService.
+     *
+     * @return mapped domain service - outbound service relationships
      */
     public List<NomnomlRelationship> mapAllDomainServiceOutboundServiceRelationships(){
         var relationShips = new ArrayList<NomnomlRelationship>();
@@ -178,6 +195,8 @@ public class DomainRelationshipMapper {
 
     /**
      * Derives a {@link NomnomlRelationship} for all Aggregates to their Repository.
+     *
+     * @return mapped aggregate repository relationships
      */
     public List<NomnomlRelationship> mapAllAggregateRepositoryRelationships(){
         var relationShips = new ArrayList<NomnomlRelationship>();
@@ -190,6 +209,8 @@ public class DomainRelationshipMapper {
 
     /**
      * Derives a {@link NomnomlRelationship} for all QueryClients to their ReadModels.
+     *
+     * @return mapped query client - read model relationships
      */
     public List<NomnomlRelationship> mapAllQueryClientReadModelRelationships(){
         var relationShips = new ArrayList<NomnomlRelationship>();
@@ -202,6 +223,8 @@ public class DomainRelationshipMapper {
 
     /**
      * Derives a {@link NomnomlRelationship} for all Aggregates pointing to another Aggregate by an Id Reference.
+     *
+     * @return mapped aggregate frame relationships
      */
     public List<NomnomlRelationship> mapAllAggregateFrameRelationships(){
         var relationShips = new ArrayList<NomnomlRelationship>();
@@ -233,6 +256,8 @@ public class DomainRelationshipMapper {
     /**
      * Derives a {@link NomnomlRelationship} for all Aggregates
      * or services processing Domain Commands.
+     *
+     * @return mapped domain command relationships
      */
     public List<NomnomlRelationship> mapAllDomainCommandRelationships(){
         var relationShips = new ArrayList<NomnomlRelationship>();
@@ -362,6 +387,8 @@ public class DomainRelationshipMapper {
     /**
      * Derives a {@link NomnomlRelationship} for all Aggregates
      * or Domain Services or Application Services or Repositories publishing or listening to Domain Events.
+     *
+     * @return mapped domain event relationships
      */
     public List<NomnomlRelationship> mapAllDomainEventRelationships(){
         var relationShips = new ArrayList<NomnomlRelationship>();

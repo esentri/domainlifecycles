@@ -87,6 +87,8 @@ public class InternalFetcherContext<RECORD> extends SimpleFetcherContext<RECORD>
 
         /**
          * Returns the FieldMirror that represents the back reference.
+         *
+         * @return the back reference FieldMirror
          */
         public FieldMirror getBackReferenceMirror() {
             return fieldMirror;

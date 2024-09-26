@@ -55,6 +55,8 @@ public class EntityMirrorBuilder extends DomainTypeMirrorBuilder{
 
     /**
      * Creates a new {@link EntityMirror}.
+     *
+     * @return new instance of EntityMirror
      */
     public EntityMirror build() {
         return new EntityModel(

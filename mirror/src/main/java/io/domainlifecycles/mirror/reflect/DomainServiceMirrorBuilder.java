@@ -56,6 +56,8 @@ public class DomainServiceMirrorBuilder extends DomainTypeMirrorBuilder {
 
     /**
      * Creates a new {@link DomainServiceMirror}.
+     *
+     * @return new instance of DomainServiceMirror
      */
     public DomainServiceMirror build(){
         return new DomainServiceModel(

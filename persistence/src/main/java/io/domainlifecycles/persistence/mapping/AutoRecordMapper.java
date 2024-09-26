@@ -70,6 +70,9 @@ import java.util.stream.Collectors;
  *
  * This implementation defines the auto-mapping behaviour for DomainObjects.
  *
+ * @param <R> type of Record
+ * @param <DO> type of DomainObject
+ * @param <A> type of AggregateRoot
  * @author Mario Herb
  */
 

@@ -76,6 +76,9 @@ public class DlcOpenApiCustomizer implements OpenApiCustomizer {
      *
      * To work correctly, the spring doc configuration property 'springdoc.use-fqn' must be 'true',
      * as this extension relies on full qualified path names of the extended classes.
+     *
+     * @param springDocConfigProperties configuration for the customizer
+     * @param entitiesWithExternallyProvidedIds name of entities which IDs are provided from extern
      */
     public DlcOpenApiCustomizer(
         SpringDocConfigProperties springDocConfigProperties,

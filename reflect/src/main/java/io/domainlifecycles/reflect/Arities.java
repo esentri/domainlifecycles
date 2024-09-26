@@ -50,7 +50,7 @@ public enum Arities {
 
         /**
          * Returns the rank.
-         * @return
+         * @return the rank
          */
         int arity();
     }

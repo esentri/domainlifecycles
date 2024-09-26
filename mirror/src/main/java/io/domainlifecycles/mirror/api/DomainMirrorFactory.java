@@ -38,7 +38,8 @@ import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 public interface DomainMirrorFactory {
 
     /**
-     * Returns the InitializedDomain, containing all the mirrors provided by this factory for the corresponding Domain.
+     * @param typeResolver type resolver
+     * @return the InitializedDomain, containing all the mirrors provided by this factory for the corresponding Domain.
      */
     InitializedDomain initializeDomain(GenericTypeResolver typeResolver);
 }

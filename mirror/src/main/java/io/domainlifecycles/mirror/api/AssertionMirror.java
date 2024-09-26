@@ -37,22 +37,22 @@ import io.domainlifecycles.mirror.model.AssertionType;
 public interface AssertionMirror {
 
     /**
-     * Returns the {@link AssertionType} of the mirrored assertion.
+     * @return the {@link AssertionType} of the mirrored assertion.
      */
     AssertionType getAssertionType();
 
     /**
-     * Returns the first parameter of the mirrored assertion.
+     * @return the first parameter of the mirrored assertion.
      */
     String getParam1();
 
     /**
-     * Returns the second parameter of the mirrored assertion.
+     * @return the second parameter of the mirrored assertion.
      */
     String getParam2();
 
     /**
-     * Returns the message of the mirrored assertion.
+     * @return the message of the mirrored assertion.
      */
     String getMessage();
 }

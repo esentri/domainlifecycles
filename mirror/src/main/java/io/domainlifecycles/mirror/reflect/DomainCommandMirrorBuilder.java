@@ -53,6 +53,8 @@ public class DomainCommandMirrorBuilder extends DomainTypeMirrorBuilder{
 
     /**
      * Creates a new {@link DomainCommandMirror}.
+     *
+     * @return new instance of DomainCommandMirror
      */
     public DomainCommandMirror build(){
 

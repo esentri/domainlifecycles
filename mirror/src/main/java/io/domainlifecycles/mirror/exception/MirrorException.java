@@ -44,6 +44,7 @@ public class MirrorException extends RuntimeException {
      * Returns a new MirrorException with a detail message.
      *
      * @param detail exception message
+     * @return MirrorException with detailed message
      */
     public static MirrorException fail(final String detail) {
         return new MirrorException(requireNonNull(detail));

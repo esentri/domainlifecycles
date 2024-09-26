@@ -40,7 +40,9 @@ import io.domainlifecycles.jackson.exception.DLCJacksonException;
 public interface BuilderConverter {
 
     /**
-     * Returns the current DomainObjectBuilder instance from the current mapping context.
+     * @param <B> type of builder instance
+     * @param domainObjectMappingContext the mapping context for the DomainObject
+     * @return the current DomainObjectBuilder instance from the current mapping context.
      */
     @SuppressWarnings("unchecked")
     default <B> B getDomainObjectBuilder(DomainObjectMappingContext domainObjectMappingContext) {

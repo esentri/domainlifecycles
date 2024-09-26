@@ -37,11 +37,10 @@ import io.domainlifecycles.domain.types.internal.DomainObject;
 public interface DynamicDomainObjectAccessor {
 
     /**
-     * Returns the value of field with the given name of the DomainObject
-     * assigned to the accessor.
-     *
      * @param fieldName of field value to be returned
      * @param <T> type of returned value
+     *
+     * @return value of field with the given name of the DomainObject assigned to the accessor.
      */
     <T> T peek(String fieldName);
 
@@ -62,7 +61,7 @@ public interface DynamicDomainObjectAccessor {
     void assign(DomainObject domainObject);
 
     /**
-     * Returns the currently assigned DomainObject to be peeked or poked.
+     * @return the currently assigned DomainObject to be peeked or poked.
      */
     DomainObject getAssigned();
 }

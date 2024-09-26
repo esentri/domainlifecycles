@@ -54,6 +54,8 @@ public interface ServiceProvider {
     /**
      * Retrieves an instance of {@link Repository} based on the given type name.
      *
+     * @param <A> type of AggregateRoot
+     * @param <ID> type of AggregateRoot's Identity
      * @param typeName The full qualified name of the type representing the Repository.
      * @return An instance of Repository based on the given type name.
      */

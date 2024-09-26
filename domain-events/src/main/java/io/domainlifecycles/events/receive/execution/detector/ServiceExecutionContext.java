@@ -43,6 +43,9 @@ import java.util.Objects;
  *
  * It holds the handler object (the service instance), handler method name, and the domain event being dispatched.
  *
+ * @param handler handler instance
+ * @param handlerMethodName handler method name
+ * @param domainEvent domain event
  * @author Mario Herb
  */
 public record ServiceExecutionContext(Object handler, String handlerMethodName, DomainEvent domainEvent) implements ExecutionContext {

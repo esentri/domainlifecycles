@@ -118,6 +118,9 @@ public class Entities {
     /**
      * Detect changes for 2 given entity instances with the same id.
      *
+     * @param entityInstanceBefore instance before change
+     * @param entityInstanceAfter instance after change
+     * @param deep flag for deep change
      * @return a set of {@link DetectedChange}s
      */
     public static Set<DetectedChange> detectChanges(Entity<?> entityInstanceBefore, Entity<?> entityInstanceAfter, boolean deep) {
@@ -209,6 +212,14 @@ public class Entities {
 
     /**
      * Value carrier for the details of a detected change reported by "detectChanges".
+     *
+     * @param changedField the field which value has been changed
+     * @param entityBefore state of entity before change
+     * @param entityAfter state of entity after change
+     * @param valueBefore value before change
+     * @param valueAfter value after change
+     * @param changeType type of change
+     * @param innerChanges inner changes done
      */
     public record DetectedChange(FieldMirror changedField,
                                  Entity<?> entityBefore, Entity<?> entityAfter,

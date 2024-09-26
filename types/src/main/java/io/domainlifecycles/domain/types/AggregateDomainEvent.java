@@ -30,13 +30,16 @@ package io.domainlifecycles.domain.types;
 /**
  * This is the marker interface to represent DomainEvents that are automatically dispatched to a method in an Aggregate (by using the dlc-domain-events module).
  *
+ * @param <ID> the type of the AggregateRoot's Identity
+ * @param <A> the type of the targeted AggregateRoot
  * @author Mario Herb
  */
 public interface AggregateDomainEvent<ID extends Identity<?>, A extends AggregateRoot<ID>> extends DomainEvent {
 
     /**
      * An AggregateDomainEvent is targeted to a specific Aggregate instance.
-     * Returns the Identity of the targeted Aggregate instance.
+     *
+     * @return the Identity of the targeted Aggregate instance.
      */
     ID targetId();
 }

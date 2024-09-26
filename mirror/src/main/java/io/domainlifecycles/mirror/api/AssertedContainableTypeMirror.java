@@ -42,18 +42,18 @@ import java.util.Optional;
 public interface AssertedContainableTypeMirror {
 
     /**
-     * Returns the full qualified type name of the mirrored type.
+     * @return the full qualified type name of the mirrored type.
      * Might be the full qualified name of the contained type, if the type is a container type.
      */
     String getTypeName();
 
     /**
-     * Returns the list of associated {@link AssertionMirror} instances, mirroring the corresponding assertions.
+     * @return the list of associated {@link AssertionMirror} instances, mirroring the corresponding assertions.
      */
     List<AssertionMirror> getAssertions();
 
     /**
-     * Returns the {@link DomainType} of the mirrored type.
+     * @return the {@link DomainType} of the mirrored type.
      */
     DomainType getDomainType();
 
@@ -109,13 +109,13 @@ public interface AssertedContainableTypeMirror {
     boolean isArray();
 
     /**
-     * Returns the full qualified container type name, if the mirrored type is a container type.
+     * @return the full qualified container type name, if the mirrored type is a container type.
      * Otherwise returns empty.
      */
     Optional<String> getContainerTypeName();
 
     /**
-     * Returns the list of {@link AssertionMirror} instances associated with the container.
+     * @return the list of {@link AssertionMirror} instances associated with the container.
      */
     List<AssertionMirror> getContainerAssertions();
 

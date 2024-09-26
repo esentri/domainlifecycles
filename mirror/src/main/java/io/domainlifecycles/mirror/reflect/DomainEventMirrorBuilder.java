@@ -44,6 +44,8 @@ public class DomainEventMirrorBuilder extends DomainTypeMirrorBuilder{
 
     /**
      * Creates a new {@link DomainEventMirror}.
+     *
+     * @return new instance of DomainEventMirror
      */
     public DomainEventMirror build(){
         return new DomainEventModel(

@@ -134,6 +134,9 @@ public final class InnerClassDomainObjectBuilder<T extends DomainObject> extends
 
     /**
      * Helps to avoid using {@code @SuppressWarnings({"unchecked"})} when casting to a generic type.
+     * @param <K> type
+     * @param obj object to avoid checks on
+     * @return object
      */
     @SuppressWarnings({ "unchecked" })
     public <K> K uncheckedCast(Object obj) {

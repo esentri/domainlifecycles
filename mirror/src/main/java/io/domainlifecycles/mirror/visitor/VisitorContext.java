@@ -84,7 +84,7 @@ public class VisitorContext {
     }
 
     /**
-     * Return the current field mirror being visited
+     * @return the current field mirror being visited
      */
     public Optional<FieldMirror> getCurrentFieldMirror() {
         return currentFieldMirror;

@@ -61,12 +61,16 @@ public abstract class AbstractCleaningOutbox implements TransactionalOutbox {
 
     /**
      * The cleans up task is intended to remove older already processed DomainEvents from the transactional outbox.
+     *
+     * @param cleanUpAgeDays cleanup age specification in days
      */
     public abstract void cleanup(int cleanUpAgeDays);
 
     /**
      * The delivery check task is intended to check for batches of DomainEvents being proccessed, that are already running too long
      * and that should be considered failed.
+     *
+     * @param batchDeliveryTimeoutSeconds timeout specification in seconds
      */
     public abstract void deliveryCheck(int batchDeliveryTimeoutSeconds);
 

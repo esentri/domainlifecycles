@@ -64,6 +64,8 @@ public class AssertionMirrorBuilder {
 
     /**
      * Creates a new {@link AssertionMirror}.
+     *
+     * @return new instance of AssertionMirror
      */
     public Optional<AssertionMirror> build(){
         if(isNullAnnotation()){

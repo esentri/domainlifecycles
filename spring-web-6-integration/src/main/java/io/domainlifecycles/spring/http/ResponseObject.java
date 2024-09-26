@@ -60,7 +60,7 @@ public class ResponseObject<T> {
     }
 
     /**
-     * Get data
+     * @return the data
      */
     public T getData() {
         return this.data;
@@ -68,13 +68,15 @@ public class ResponseObject<T> {
 
     /**
      * Set data
+     *
+     * @param data the data to be set in the ResponseObject
      */
     public void setData(T data) {
         this.data = data;
     }
 
     /**
-     * Get errors.
+     * @return the errors
      */
     public List<Error> getErrors() {
         return this.errors;
@@ -82,6 +84,8 @@ public class ResponseObject<T> {
 
     /**
      * Set errors.
+     *
+     * @param errors the errors to be set in the ResponseObject
      */
     public void setErrors(List<Error> errors) {
         this.errors = errors;

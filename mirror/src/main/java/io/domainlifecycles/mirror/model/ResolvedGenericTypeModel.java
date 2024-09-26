@@ -38,6 +38,11 @@ import java.util.stream.Collectors;
 /**
  * Represents a resolved generic type model.
  *
+ * @param typeName type name
+ * @param isArray flag whether it represents an array
+ * @param genericTypes list of generic types
+ * @param wildcardBound the wildcard bound
+ *
  * @author Mario Herb
  */
 public record ResolvedGenericTypeModel(String typeName, boolean isArray, List<ResolvedGenericTypeMirror> genericTypes, Optional<WildcardBound> wildcardBound) implements ResolvedGenericTypeMirror {

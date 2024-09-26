@@ -40,6 +40,7 @@ public interface RecordPropertyProvider {
     /**
      * Provides the record properties.
      *
+     * @param recordClassName name of record class
      * @return the record properties
      */
     List<RecordProperty> provideProperties(String recordClassName);

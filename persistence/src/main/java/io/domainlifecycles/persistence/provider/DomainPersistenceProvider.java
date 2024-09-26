@@ -52,6 +52,7 @@ import java.util.Optional;
 /**
  * Provides base class to build access models for domain objects from a persistence mirror.
  *
+ * @param <BASE_RECORD> the base record type
  * @author Mario Herb
  */
 public abstract class DomainPersistenceProvider<BASE_RECORD> {

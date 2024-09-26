@@ -359,6 +359,8 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
 
     /**
      * Publish {@link PersistenceAction}. To be overridden by implementor, if needed
+     *
+     * @param action the action to be published
      */
     public void publish(PersistenceAction<?> action) {
         // to be overridden by implementor, if needed

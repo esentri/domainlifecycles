@@ -33,8 +33,9 @@ package io.domainlifecycles.mirror.api;
  * @author Mario Herb
  */
 public interface EnumOptionMirror {
+
     /**
-     * Returns the String value of the mirrored enum option.
+     * @return the String value of the mirrored enum option.
      */
     String getValue();
 }

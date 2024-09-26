@@ -64,10 +64,14 @@ public interface RecordMapper<R, DO extends DomainObject, A extends AggregateRoo
 
     /**
      * Needed to assign custom mappers in the mapping process;
+     *
+     * @return domain object type
      */
     Class<DO> domainObjectType();
     /**
      * Needed to assign custom mappers in the mapping process;
+     *
+     * @return record type
      */
     Class<R> recordType();
 }

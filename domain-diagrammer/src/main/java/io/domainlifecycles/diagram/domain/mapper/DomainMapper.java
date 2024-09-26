@@ -52,9 +52,9 @@ public class DomainMapper {
     private final FilteredDomainClasses filteredDomainClasses;
 
 
-
     /**
      * Initializes the Domain Mapper with a given {@link DomainDiagramConfig}.
+     * @param domainDiagramConfig diagram configuration
      */
     public DomainMapper(DomainDiagramConfig domainDiagramConfig) {
         this.domainDiagramConfig = domainDiagramConfig;
@@ -66,7 +66,7 @@ public class DomainMapper {
     }
 
     /**
-     * Returns all ApplicationsServices connected to the Bounded Context as {@link NomnomlClass}.
+     * @return all ApplicationsServices connected to the Bounded Context as {@link NomnomlClass}.
      */
     public List<NomnomlClass> getApplicationServices(){
         return filteredDomainClasses.getApplicationServices().stream()
@@ -75,7 +75,7 @@ public class DomainMapper {
     }
 
     /**
-     * Returns all DomainCommands of the Bounded Context as {@link NomnomlClass}.
+     * @return all DomainCommands of the Bounded Context as {@link NomnomlClass}.
      */
     public List<NomnomlClass> getDomainCommands(){
         return filteredDomainClasses.getDomainCommands().stream()
@@ -84,7 +84,7 @@ public class DomainMapper {
     }
 
     /**
-     * Returns all DomainEvents of the Bounded Context as {@link NomnomlClass}.
+     * @return all DomainEvents of the Bounded Context as {@link NomnomlClass}.
      */
     public List<NomnomlClass> getDomainEvents(){
         return filteredDomainClasses.getDomainEvents().stream()
@@ -93,7 +93,7 @@ public class DomainMapper {
     }
 
     /**
-     * Returns all DomainServices of the Bounded Context as {@link NomnomlClass}.
+     * @return all DomainServices of the Bounded Context as {@link NomnomlClass}.
      */
     public List<NomnomlClass> getDomainServices(){
        return filteredDomainClasses.getDomainServices().stream()
@@ -102,7 +102,7 @@ public class DomainMapper {
     }
 
     /**
-     * Returns all Repositories of the Bounded Context as {@link NomnomlClass}.
+     * @return all Repositories of the Bounded Context as {@link NomnomlClass}.
      */
     public List<NomnomlClass> getRepositories(){
         return filteredDomainClasses.getRepositories().stream()
@@ -111,7 +111,7 @@ public class DomainMapper {
     }
 
     /**
-     * Returns all ReadModels connected to the Bounded Context as {@link NomnomlClass}.
+     * @return all ReadModels connected to the Bounded Context as {@link NomnomlClass}.
      */
     public List<NomnomlClass> getReadModels(){
         return filteredDomainClasses.getReadModels().stream()
@@ -120,7 +120,7 @@ public class DomainMapper {
     }
 
     /**
-     * Returns all QueryClients connected to the Bounded Context as {@link NomnomlClass}.
+     * @return all QueryClients connected to the Bounded Context as {@link NomnomlClass}.
      */
     public List<NomnomlClass> getQueryClients(){
         return filteredDomainClasses.getQueryClients().stream()
@@ -129,7 +129,7 @@ public class DomainMapper {
     }
 
     /**
-     * Returns all OutboundServices connected to the Bounded Context as {@link NomnomlClass}.
+     * @return all OutboundServices connected to the Bounded Context as {@link NomnomlClass}.
      */
     public List<NomnomlClass> getOutboundServices(){
         return filteredDomainClasses.getOutboundServices().stream()
@@ -138,7 +138,7 @@ public class DomainMapper {
     }
 
     /**
-     * Returns all Aggregates of the Bounded Context as {@link NomnomlFrame}.
+     * @return all Aggregates of the Bounded Context as {@link NomnomlFrame}.
      */
     public List<NomnomlFrame> getAggregateFrames(){
         return filteredDomainClasses.getAggregateRoots().stream()
@@ -162,7 +162,7 @@ public class DomainMapper {
     }
 
     /**
-     * Provides access to the {@link DomainRelationshipMapper} providing all relationship
+     * @return the {@link DomainRelationshipMapper} providing all relationship
      * connections which have to be mapped.
      */
     public DomainRelationshipMapper getDomainRelationshipMapper() {

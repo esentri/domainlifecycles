@@ -51,6 +51,8 @@ public class Error {
 
     /**
      * Returns the error code
+     *
+     * @return the error code
      */
     public String getCode() {
         return this.code;
@@ -58,13 +60,15 @@ public class Error {
 
     /**
      * Sets the error code.
+     *
+     * @param code the error code to be set
      */
     public void setCode(String code) {
         this.code = code;
     }
 
     /**
-     * Returns the error message
+     * @return the error message
      */
     public String getMessage() {
         return this.message;
@@ -72,6 +76,8 @@ public class Error {
 
     /**
      * Sets the error message.
+     *
+     * @param message the error message to be set
      */
     public void setMessage(String message) {
         this.message = message;

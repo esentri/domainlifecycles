@@ -38,7 +38,7 @@ import java.util.Optional;
  */
 public interface IdentityMirror extends DomainTypeMirror, ValueMirror{
     /**
-     * Returns the full qualified type name of the value type for the mirrored Identity.
+     * @return the full qualified type name of the value type for the mirrored Identity.
      */
     public Optional<String> getValueTypeName();
 }

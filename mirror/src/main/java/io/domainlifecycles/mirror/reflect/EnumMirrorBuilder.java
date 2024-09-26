@@ -53,6 +53,8 @@ public class EnumMirrorBuilder extends DomainTypeMirrorBuilder{
 
     /**
      * Creates a new {@link EnumMirror}.
+     *
+     * @return new instance of EnumMirror
      */
     public EnumMirror build() {
         return new EnumModel(

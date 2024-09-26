@@ -68,6 +68,11 @@ public class DlcAccess {
 
     /**
      * To customize any access behaviour, this method must be called before any other module of dlc is initialized.
+     *
+     * @param customClassProvider class provider
+     * @param customEnumFactory enum factory
+     * @param customIdentityFactory identity factory
+     * @param customDomainObjectAccessFactory domain object access factory
      */
     public static void customize(
         ClassProvider customClassProvider,
@@ -81,28 +86,37 @@ public class DlcAccess {
     }
 
     /**
-     * Returns a {@link Class} instance for a given full qualified class name.
+     * @param className full qualified class name
+     * @return {@link Class} instance for a given full qualified class name.
      */
     public static Class<?> getClassForName(String className){
         return classProvider.getClassForName(className);
     }
 
     /**
-     * Returns a new {@link Enum} instance by its value (Enum option) and its full qualified type name.
+     * @param <E> type of enum
+     * @param value enum value
+     * @param enumTypeName full qualified name of enum
+     * @return a new {@link Enum} instance by its value (Enum option) and its full qualified type name.
      */
     public static <E extends Enum<E>> E newEnumInstance(String value, String enumTypeName){
         return enumFactory.newInstance(value, enumTypeName);
     }
 
     /**
-     * Returns a new {@link Identity} instance by its value and its full qualified type name.
+     * @param <I> type of Identity
+     * @param <V> type of value
+     * @param value the value for the Identity instance
+     * @param identityTypeName full qualified Identity type name
+     * @return a new {@link Identity} instance by its value and its full qualified type name.
      */
     public static <V, I extends Identity<V>> I newIdentityInstance(V value, String identityTypeName){
         return identityFactory.newInstance(value, identityTypeName);
     }
 
     /**
-     * Returns {@link DynamicDomainObjectAccessor} instance to access the fields of a {@link DomainObject}
+     * @param domainObject DomainObject to return an accessor for
+     * @return {@link DynamicDomainObjectAccessor} instance to access the fields of a {@link DomainObject}
      */
     public static DynamicDomainObjectAccessor accessorFor(DomainObject domainObject) {
         return domainObjectAccessFactory.accessorFor(domainObject);

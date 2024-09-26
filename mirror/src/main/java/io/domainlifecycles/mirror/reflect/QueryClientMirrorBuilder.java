@@ -52,6 +52,8 @@ public class QueryClientMirrorBuilder extends DomainTypeMirrorBuilder{
 
     /**
      * Creates a new {@link RepositoryMirror}.
+     *
+     * @return new instance of RepositoryMirror
      */
     public QueryClientMirror build(){
         return new QueryClientModel(

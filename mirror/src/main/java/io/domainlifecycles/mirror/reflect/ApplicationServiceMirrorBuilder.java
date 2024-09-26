@@ -52,6 +52,8 @@ public class ApplicationServiceMirrorBuilder extends DomainTypeMirrorBuilder {
 
     /**
      * Initialize the builder with the corresponding {@link AggregateRoot} class.
+     *
+     * @param applicationServiceClass the application service type
      */
     public ApplicationServiceMirrorBuilder(Class<? extends ApplicationService> applicationServiceClass) {
         super(applicationServiceClass);
@@ -60,6 +62,8 @@ public class ApplicationServiceMirrorBuilder extends DomainTypeMirrorBuilder {
 
     /**
      * Builds a new {@link ApplicationServiceMirror} instance by reflectively analyzing the applicationServiceClass.
+     *
+     * @return new instance of ApplicationServiceMirror
      */
     public ApplicationServiceMirror build(){
         return new ApplicationServiceModel(

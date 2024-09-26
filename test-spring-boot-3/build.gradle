@@ -176,3 +176,9 @@ tasks.named('generateJooq').configure {
     // make jOOQ task participate in incremental builds (and build caching)
     allInputsDeclared = true
 }
+
+// ----------------------------------------------------------
+
+tasks.withType(Checkstyle) {
+    enabled = false
+}

@@ -49,6 +49,8 @@ public class OutboundServiceMirrorBuilder extends DomainTypeMirrorBuilder{
 
     /**
      * Creates a new {@link OutboundServiceMirror}.
+     *
+     * @return new instance of OutboundServiceMirror
      */
     public OutboundServiceMirror build(){
         return new OutboundServiceModel(

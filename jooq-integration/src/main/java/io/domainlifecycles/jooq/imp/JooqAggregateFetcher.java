@@ -49,6 +49,8 @@ import java.util.Collection;
 /**
  * jOOQ specific implementation of a {@link InternalAggregateFetcher}.
  *
+ * @param <A> type of AggregateRoot
+ * @param <I> type of Identity
  * @author Mario Herb
  */
 public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity<?>> extends InternalAggregateFetcher<A, I, UpdatableRecord<?>> {

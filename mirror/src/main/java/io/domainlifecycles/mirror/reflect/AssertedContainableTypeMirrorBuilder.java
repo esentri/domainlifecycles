@@ -61,6 +61,11 @@ public class AssertedContainableTypeMirrorBuilder {
 
     /**
      * Initialize the builder with the corresponding class, annotated and generic type information.
+     *
+     * @param type class to mirror
+     * @param annotatedType the annotated type
+     * @param genericType the generic type
+     * @param resolvedGenericType the resolved generic type
      */
     public AssertedContainableTypeMirrorBuilder(Class<?> type, AnnotatedType annotatedType, Type genericType, ResolvedGenericTypeMirror resolvedGenericType) {
         this.type = Objects.requireNonNull(type);
@@ -71,6 +76,8 @@ public class AssertedContainableTypeMirrorBuilder {
 
     /**
      * Create a new {@link AssertedContainableTypeMirror} based on the given type information.
+     *
+     * @return new instance of AssertedContainableTypeMirror
      */
     public AssertedContainableTypeMirror build(){
         var containerType = getContainerTypeName();
@@ -128,7 +135,7 @@ public class AssertedContainableTypeMirrorBuilder {
     }
 
     /**
-     * Returns the basic type (the contained type).
+     * @return the basic type (the contained type).
      */
     public Type getBasicType(){
         if(Optional.class.isAssignableFrom(type) || Collection.class.isAssignableFrom(type) || Stream.class.isAssignableFrom(type)){

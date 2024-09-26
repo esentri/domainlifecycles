@@ -65,6 +65,8 @@ public enum DomainType {
 
     /**
      * Derives the DomainType form a given Java {@link Type}.
+     *
+     * @param type the type to return the corresponding DomainType for
      * @return the reflected DomainType for the given type
      */
     public static DomainType of(Type type){

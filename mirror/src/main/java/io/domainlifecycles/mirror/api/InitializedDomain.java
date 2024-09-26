@@ -33,6 +33,8 @@ import java.util.Map;
 /**
  * This record is a container for all mirrors in a mirrored Domain.
  *
+ * @param allTypeMirrors all the DomainTypeMirrors
+ * @param boundedContextMirrors all the BoundedContextMirrors
  * @author Mario Herb
  */
 public record InitializedDomain(Map<String, ? extends DomainTypeMirror> allTypeMirrors, List<BoundedContextMirror> boundedContextMirrors) {

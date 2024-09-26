@@ -55,7 +55,11 @@ public class DomainObjectMappingContextHolder {
     private final Map<DomainObjectMappingContextKey, DomainObjectMappingContext> contexts = new HashMap<>();
 
     /**
-     * Returns the current {@link DomainObjectMappingContext} instance
+     * @param jsonNode Jackson JSONNode
+     * @param domainObjectTypeName name of the DomainObject type
+     * @param deserializationContext Jackson's context for deserialization
+     * @param domainObjectBuilderProvider provider for DomainObject builder
+     * @return the current {@link DomainObjectMappingContext} instance
      */
     public static DomainObjectMappingContext getContext(JsonNode jsonNode,
                                                         String domainObjectTypeName,

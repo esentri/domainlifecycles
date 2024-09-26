@@ -216,9 +216,6 @@ allprojects {
             showViolations = true
 
             checkstyleMain.source = "src/main/java"
-
-            checkstyleMain
-                    .exclude('./sample-project/**')
         }
     }
 

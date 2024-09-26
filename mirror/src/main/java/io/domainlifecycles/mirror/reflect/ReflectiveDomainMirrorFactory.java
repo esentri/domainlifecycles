@@ -78,6 +78,8 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
 
     /**
      * Initialize the factory with the boundedContextPackages to be scanned.
+     *
+     * @param boundedContextPackages the bounded context packages
      */
     public ReflectiveDomainMirrorFactory(String ...boundedContextPackages) {
         this.boundedContextPackages = boundedContextPackages;

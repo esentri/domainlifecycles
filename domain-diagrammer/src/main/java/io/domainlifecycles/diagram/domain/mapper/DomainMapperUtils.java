@@ -51,7 +51,9 @@ import io.domainlifecycles.mirror.api.ValueReferenceMirror;
 public class DomainMapperUtils {
 
     /**
-     * Returns the type name representation of a Domain Type depending on the
+     * @param domainTypeMirror mirrored domain type
+     * @param domainDiagramConfig diagram configuration
+     * @return type name representation of a Domain Type depending on the
      * used {@link DomainDiagramConfig}.
      */
     public static String domainTypeName(DomainTypeMirror domainTypeMirror, DomainDiagramConfig domainDiagramConfig){
@@ -86,7 +88,9 @@ public class DomainMapperUtils {
     }
 
     /**
-     * Returns the type name representation dreived from the full qualified name of a Domain Type depending on the
+     * @param fullQualifiedName full qualified domain type name
+     * @param domainDiagramConfig diagram configuration
+     * @return the type name representation derived from the full qualified name of a Domain Type depending on the
      * used {@link DomainDiagramConfig}.
      */
     public static String mapTypeName(String fullQualifiedName, DomainDiagramConfig domainDiagramConfig){
@@ -95,7 +99,9 @@ public class DomainMapperUtils {
     }
 
     /**
-     * Decides, if a property should be included "inline" in a class or
+     * @param propertyMirror mirrored property
+     * @param domainTypeMirror mirrored domain type
+     * @return whether a property should be included "inline" in a class or
      * if it should be represented as a relationship.
      */
     public static boolean showPropertyInline(FieldMirror propertyMirror, DomainTypeMirror domainTypeMirror){
@@ -132,7 +138,8 @@ public class DomainMapperUtils {
     }
 
     /**
-     * Derives the style classifier for a given Domain type.
+     * @param domainTypeMirror mirrored domain type
+     * @return style classifier for given domain type
      */
     public static String styleClassifier(DomainTypeMirror domainTypeMirror){
         return switch (domainTypeMirror.getDomainType()){
@@ -154,7 +161,8 @@ public class DomainMapperUtils {
     }
 
     /**
-     * Derives the style classifier for a given Domain type, by its full qualified type name.
+     * @param typeName type name
+     * @return style classifier for given domain type
      */
     public static String styleClassifier(String typeName){
         var domainTypeMirrorOptional = Domain.typeMirror(typeName);
@@ -172,7 +180,10 @@ public class DomainMapperUtils {
     }
 
     /**
-     * Derives the stereotype for a given Domain type.
+     * @param domainTypeMirror mirrored domain type
+     * @param domainDiagramConfig diagram configuration
+     *
+     * @return stereotype for given Domain type
      */
     public static String stereotype(DomainTypeMirror domainTypeMirror, DomainDiagramConfig domainDiagramConfig){
         return switch (domainTypeMirror.getDomainType()){

@@ -78,6 +78,9 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
 
     /**
      * Creates a new InternalAggregateFetcher.
+     *
+     * @param aggregateRootEntityClass class of aggregate root
+     * @param domainPersistenceProvider the persistence provider
      */
     public InternalAggregateFetcher(Class<A> aggregateRootEntityClass,
                                     DomainPersistenceProvider domainPersistenceProvider

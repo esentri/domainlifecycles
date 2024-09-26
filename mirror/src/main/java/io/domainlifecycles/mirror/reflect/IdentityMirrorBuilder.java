@@ -48,6 +48,8 @@ public class IdentityMirrorBuilder extends DomainTypeMirrorBuilder{
 
     /**
      * Creates a new {@link IdentityMirror}.
+     *
+     * @return new instance of IdentityMirror
      */
     public IdentityMirror build(){
         return new IdentityModel(

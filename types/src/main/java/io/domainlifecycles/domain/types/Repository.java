@@ -41,6 +41,8 @@ import java.util.Optional;
  * Information: <a href="https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf">link</a>
  * </p>
  *
+ * @param <ID> the type of the AggregateRoot's Identity
+ * @param <A> the type of accessed AggregateRoot
  * @author Mario Herb
  */
 public interface Repository <ID extends Identity<?>, A extends AggregateRoot<ID>>{

@@ -41,29 +41,29 @@ public interface DomainServiceMirror extends DomainTypeMirror, DomainCommandProc
 
 
     /**
-     * Returns the list of mirrors for the {@link Repository} instances referenced by the DomainService.
+     * @return the list of mirrors for the {@link Repository} instances referenced by the DomainService.
      */
     List<RepositoryMirror> getReferencedRepositories();
 
     /**
-     * Returns the list of mirrors for the {@link DomainService} instances referenced by the DomainService.
+     * @return the list of mirrors for the {@link DomainService} instances referenced by the DomainService.
      */
     List<DomainServiceMirror> getReferencedDomainServices();
 
     /**
-     * Returns the interface type names (full qualified class names) that the mirrored DomainService implements.
+     * @return the interface type names (full qualified class names) that the mirrored DomainService implements.
      * The interfaces therefore must extend {@link DomainService}.
      * If separation of concerns is respected, we have at most only one interface, which fulfills that condition.
      */
     List<String> getDomainServiceInterfaceTypeNames();
 
     /**
-     * Returns the list of referenced {@link OutboundServiceMirror} instances.
+     * @return the list of referenced {@link OutboundServiceMirror} instances.
      */
     List<OutboundServiceMirror> getReferencedOutboundServices();
 
     /**
-     * Returns the list of referenced {@link QueryClientMirror} instances.
+     * @return the list of referenced {@link QueryClientMirror} instances.
      */
     List<QueryClientMirror> getReferencedQueryClients();
 

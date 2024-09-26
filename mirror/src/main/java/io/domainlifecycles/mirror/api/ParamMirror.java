@@ -35,12 +35,12 @@ package io.domainlifecycles.mirror.api;
 public interface ParamMirror {
 
     /**
-     * returns the parameter name
+     * @return the parameter name
      */
     String getName();
 
     /**
-     * Returns the mirrored type {@link AssertedContainableTypeMirror}.
+     * @return the mirrored type {@link AssertedContainableTypeMirror}.
      */
     AssertedContainableTypeMirror getType();
 }

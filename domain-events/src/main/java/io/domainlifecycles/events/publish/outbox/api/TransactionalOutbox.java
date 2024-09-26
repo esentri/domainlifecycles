@@ -62,6 +62,7 @@ public interface TransactionalOutbox {
      * Marks a domain event as failed.
      *
      * @param domainEvent the domain event to mark as failed
+     * @param result result of event processing
      */
     void markFailed(DomainEvent domainEvent, ProcessingResult result);
 

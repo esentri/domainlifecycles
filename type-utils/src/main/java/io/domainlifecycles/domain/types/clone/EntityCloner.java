@@ -62,6 +62,8 @@ public class EntityCloner {
 
     /**
      * Clone a given entity Object instance (deep clone).
+     *
+     * @param entity the Entity to be cloned
      * @return return a new Entity instance of the same type carrying the same values.
      */
     public Entity<?> clone(Entity<?> entity) {

@@ -42,6 +42,7 @@ import java.util.Map;
 /**
  * Represents a persistence model.
  *
+ * @param <BASE_RECORD_TYPE> the type of record
  * @author Mario Herb
  */
 public class PersistenceModel<BASE_RECORD_TYPE> implements PersistenceMirror<BASE_RECORD_TYPE> {
