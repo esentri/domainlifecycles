@@ -54,8 +54,6 @@ import java.util.Locale;
 @EnableTransactionManagement
 public class TestApplicationJmsSpring {
 
-
-
     /**
      * Setting the Locale to explicitly force the language in default validation error messages.
      */

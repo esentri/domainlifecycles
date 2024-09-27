@@ -39,8 +39,10 @@ import io.domainlifecycles.events.CounterDomainEvent;
 import io.domainlifecycles.events.TransactionalCounterService;
 import io.domainlifecycles.events.UnreceivedDomainEvent;
 import io.domainlifecycles.events.api.DomainEvents;
+import io.domainlifecycles.events.api.ProcessingChannel;
 import io.domainlifecycles.events.exception.DLCEventsException;
-import io.domainlifecycles.events.jakarta.jms.api.JakartaJmsDomainEventsConfiguration;
+import io.domainlifecycles.events.mq.api.AbstractMqConsumingConfiguration;
+import jakarta.jms.Connection;
 import jakarta.jms.DeliveryMode;
 import jakarta.jms.JMSException;
 import jakarta.jms.MessageConsumer;
@@ -53,8 +55,6 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import jakarta.jms.Connection;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.UUID;
@@ -91,8 +91,7 @@ public class SpringJmsIntegrationTests {
     private ActiveMQConnectionFactory activeMQConnectionFactory;
 
     @Autowired
-    private
-    JakartaJmsDomainEventsConfiguration jakartaJmsDomainEventsConfiguration;
+    private ProcessingChannel channel;
 
     @Test
     public void testEvents() throws JMSException {
@@ -111,15 +110,9 @@ public class SpringJmsIntegrationTests {
             session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
             log.info("Created ActiveMq session");
 
-
             var topic = session.createTopic("a.b.c");
-
-
-
             producer = session.createProducer(topic);
             producer.setDeliveryMode(DeliveryMode.PERSISTENT);
-
-
             consumer = session.createSharedConsumer(topic, "d.e.f");
             consumerB = session.createSharedConsumer(topic, "g.e.h");
             consumerC = session.createSharedConsumer(topic, "g.e.h");
@@ -309,7 +302,8 @@ public class SpringJmsIntegrationTests {
     @Test
     public void testIntegrationReceivedPauseResume() {
         //when
-        jakartaJmsDomainEventsConfiguration.getMqDomainEventConsumer().pauseHandler(
+        var config = ((AbstractMqConsumingConfiguration)channel.getConsumingConfiguration());
+        config.getMqDomainEventConsumer().pauseHandler(
             ADomainService.class.getName(),
             "onDomainEvent",
             ADomainEvent.class.getName()
@@ -317,7 +311,7 @@ public class SpringJmsIntegrationTests {
         await()
             .atMost(10, SECONDS)
             .untilAsserted(()-> {
-        assertThat(jakartaJmsDomainEventsConfiguration.getMqDomainEventConsumer().isHandlerPaused(
+        assertThat(config.getMqDomainEventConsumer().isHandlerPaused(
             ADomainService.class.getName(),
             "onDomainEvent",
             ADomainEvent.class.getName()
@@ -341,7 +335,7 @@ public class SpringJmsIntegrationTests {
                 }
             );
 
-        jakartaJmsDomainEventsConfiguration.getMqDomainEventConsumer().resumeHandler(
+        config.getMqDomainEventConsumer().resumeHandler(
             ADomainService.class.getName(),
             "onDomainEvent",
             ADomainEvent.class.getName()

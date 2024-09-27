@@ -28,10 +28,10 @@
 package io.domainlifecycles.events.spring.outbox.poll;
 
 import io.domainlifecycles.domain.types.DomainEvent;
+import io.domainlifecycles.events.consume.DomainEventConsumer;
 import io.domainlifecycles.events.spring.outbox.api.ProcessingResult;
 import io.domainlifecycles.events.spring.outbox.api.TransactionalOutbox;
-import io.domainlifecycles.events.receive.execution.ReceivingDomainEventHandler;
-import io.domainlifecycles.events.receive.execution.processor.ExecutionResult;
+import io.domainlifecycles.events.consume.execution.processor.ExecutionResult;
 
 import java.util.Objects;
 
@@ -42,8 +42,8 @@ import java.util.Objects;
  * Example usage:
  *
  * TransactionalOutbox transactionalOutbox = new TransactionalOutboxImpl();
- * ReceivingDomainEventHandler receivingDomainEventHandler = new ReceivingDomainEventHandlerImpl();
- * DirectOutboxPoller outboxPoller = new DirectOutboxPoller(transactionalOutbox, receivingDomainEventHandler);
+ * DomainEventConsumer domainEventConsumer = new ReceivingDomainEventHandlerImpl();
+ * DirectOutboxPoller outboxPoller = new DirectOutboxPoller(transactionalOutbox, domainEventConsumer);
  * outboxPoller.setDelay(5000);
  * outboxPoller.setPeriod(1000);
  * outboxPoller.setMaxBatchSize(10);
@@ -52,11 +52,11 @@ import java.util.Objects;
  */
 public class DirectOutboxPoller extends AbstractOutboxPoller {
 
-    private final ReceivingDomainEventHandler receivingDomainEventHandler;
+    private final DomainEventConsumer domainEventConsumer;
 
-    public DirectOutboxPoller(TransactionalOutbox transactionalOutbox, ReceivingDomainEventHandler receivingDomainEventHandler) {
+    public DirectOutboxPoller(TransactionalOutbox transactionalOutbox, DomainEventConsumer domainEventConsumer) {
         super(transactionalOutbox);
-        this.receivingDomainEventHandler = Objects.requireNonNull(receivingDomainEventHandler, "A ReceivingDomainEventHandler is required!");
+        this.domainEventConsumer = Objects.requireNonNull(domainEventConsumer, "A DomainEventConsumer is required!");
     }
 
     /**
@@ -67,7 +67,7 @@ public class DirectOutboxPoller extends AbstractOutboxPoller {
      */
     @Override
     protected ProcessingResult send(DomainEvent domainEvent) {
-        var results = receivingDomainEventHandler.handleReceived(domainEvent);
+        var results = domainEventConsumer.consume(domainEvent);
         if(results.stream().allMatch(ExecutionResult::success)){
             return ProcessingResult.OK;
         }else if(results.stream().noneMatch(ExecutionResult::success)){

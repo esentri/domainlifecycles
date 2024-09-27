@@ -1,20 +1,37 @@
 package io.domainlifecycles.events.gruelbox.idempotent;
 
-import io.domainlifecycles.events.receive.execution.detector.AggregateExecutionContext;
-import io.domainlifecycles.events.receive.execution.detector.ExecutionContext;
-import io.domainlifecycles.events.receive.execution.detector.ServiceExecutionContext;
+import io.domainlifecycles.events.consume.execution.detector.AggregateExecutionContext;
+import io.domainlifecycles.events.consume.execution.detector.ExecutionContext;
+import io.domainlifecycles.events.consume.execution.detector.ServiceExecutionContext;
 import io.domainlifecycles.mirror.api.Domain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public final class IdempotencyConfiguration {
+
     private static final Logger log = LoggerFactory.getLogger(IdempotencyConfiguration.class);
 
+    private static final Duration PUBLISHING_SCHEDULING_DELAY_DEFAULT = Duration.ZERO;
+    private static final boolean PUBLISHING_ORDERED_BY_DOMAIN_EVENT_TYPE_DEFAULT = false;
+
     private List<IdempotencyConfigurationEntry> configurationEntries = new ArrayList<>();
+    private final Duration idempotencySchedulingDelay;
+    private final boolean idempotencyOrderedByDomainEventType;
+
+    public IdempotencyConfiguration(Duration idempotencySchedulingDelay, boolean idempotencyOrderedByDomainEventType) {
+        this.idempotencySchedulingDelay = Objects.requireNonNull(idempotencySchedulingDelay, "idempotencySchedulingDelay is required!");
+        this.idempotencyOrderedByDomainEventType = idempotencyOrderedByDomainEventType;
+    }
+
+    public IdempotencyConfiguration() {
+        this(PUBLISHING_SCHEDULING_DELAY_DEFAULT, PUBLISHING_ORDERED_BY_DOMAIN_EVENT_TYPE_DEFAULT);
+    }
 
     public void addConfigurationEntry(IdempotencyConfigurationEntry entry){
         if(!isDomainEventHandlerMethodWithExpectedName(entry)){
@@ -56,5 +73,13 @@ public final class IdempotencyConfiguration {
                 && aggregateExecutionContext.domainEvent().getClass().getName().equals(entry.domainEventClass().getName());
         }
         return false;
+    }
+
+    public Duration getIdempotencySchedulingDelay() {
+        return idempotencySchedulingDelay;
+    }
+
+    public boolean isIdempotencyOrderedByDomainEventType() {
+        return idempotencyOrderedByDomainEventType;
     }
 }

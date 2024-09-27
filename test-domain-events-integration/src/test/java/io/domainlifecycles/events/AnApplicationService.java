@@ -46,9 +46,4 @@ public class AnApplicationService implements ApplicationService {
         received.add(domainEvent);
     }
 
-    @ListensTo(domainEventType = PassThroughDomainEvent.class)
-    public void onDomainEvent(PassThroughDomainEvent domainEvent){
-        log.debug("PassThroughDomainEvent received in AnApplicationService! Message = " + domainEvent.message());
-        received.add(domainEvent);
-    }
 }

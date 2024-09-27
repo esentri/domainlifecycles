@@ -35,7 +35,6 @@ import io.domainlifecycles.events.AnAggregate;
 import io.domainlifecycles.events.AnAggregateDomainEvent;
 import io.domainlifecycles.events.AnApplicationService;
 import io.domainlifecycles.events.AnOutboundService;
-import io.domainlifecycles.events.PassThroughDomainEvent;
 import io.domainlifecycles.events.UnreceivedDomainEvent;
 import io.domainlifecycles.events.api.DomainEvents;
 import org.junit.jupiter.api.Test;
@@ -48,6 +47,7 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest(classes = TestApplicationBeforeCommit.class)
 @DirtiesContext
@@ -122,52 +122,12 @@ public class DirectSpringTransactionalEventHandlingBeforeCommitTests {
 
     @Test
     public void testIntegrationNoTransaction() {
-
         //when
         var evt = new ADomainEvent("TestNoTrans");
-        DomainEvents.publish(evt);
-
         //then
-        assertThat(aDomainService.received).contains(evt);
-        assertThat(aRepository.received).contains(evt);
-        assertThat(anApplicationService.received).contains(evt);
-        assertThat(queryClient.received).contains(evt);
-        assertThat(outboundService.received).contains(evt);
-    }
-
-    @Test
-    public void testIntegrationRollbackButConfiguredPassThrough() {
-        var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        //when
-        var evt = new PassThroughDomainEvent("TestRollbackPassThrough");
-        DomainEvents.publish(evt);
-
-        platformTransactionManager.rollback(status);
-        //then
-        assertThat(aDomainService.received).contains(evt);
-        assertThat(aRepository.received).contains(evt);
-        assertThat(anApplicationService.received).contains(evt);
-        assertThat(queryClient.received).contains(evt);
-        assertThat(outboundService.received).contains(evt);
-
-
-    }
-
-    @Test
-    public void testIntegrationCommitConfiguredPassThrough() {
-        var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        //when
-        var evt = new PassThroughDomainEvent("TestRollbackPassThrough");
-        DomainEvents.publish(evt);
-
-        platformTransactionManager.commit(status);
-        //then
-        assertThat(aDomainService.received).contains(evt);
-        assertThat(aRepository.received).contains(evt);
-        assertThat(anApplicationService.received).contains(evt);
-        assertThat(queryClient.received).contains(evt);
-        assertThat(outboundService.received).contains(evt);
-
+        assertThatThrownBy(() ->
+            DomainEvents.publish(evt)
+        ).hasMessageContaining("No transaction active, but active transaction is required! Event dispatching failed for");
     }
 
     @Test
@@ -255,8 +215,6 @@ public class DirectSpringTransactionalEventHandlingBeforeCommitTests {
         //when
         var evt = new ADomainEvent("TestCommit2");
         DomainEvents.publish(evt);
-
-
         try {
             platformTransactionManager.commit(status);
         }catch (Throwable t){

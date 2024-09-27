@@ -2,8 +2,8 @@ package io.domainlifecycles.events.mq.consume;
 
 import io.domainlifecycles.domain.types.AggregateDomainEvent;
 import io.domainlifecycles.domain.types.DomainEvent;
-import io.domainlifecycles.events.receive.execution.detector.ExecutionContextDetector;
-import io.domainlifecycles.events.receive.execution.processor.ExecutionContextProcessor;
+import io.domainlifecycles.events.consume.execution.detector.ExecutionContextDetector;
+import io.domainlifecycles.events.consume.execution.processor.ExecutionContextProcessor;
 import io.domainlifecycles.mirror.api.Domain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

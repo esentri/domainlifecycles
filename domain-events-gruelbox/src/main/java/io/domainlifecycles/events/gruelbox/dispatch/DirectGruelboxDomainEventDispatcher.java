@@ -28,7 +28,7 @@
 package io.domainlifecycles.events.gruelbox.dispatch;
 
 import io.domainlifecycles.domain.types.DomainEvent;
-import io.domainlifecycles.events.receive.execution.ReceivingDomainEventHandler;
+import io.domainlifecycles.events.consume.DomainEventConsumer;
 
 import java.util.Objects;
 
@@ -43,17 +43,17 @@ import java.util.Objects;
  */
 public final class DirectGruelboxDomainEventDispatcher implements GruelboxDomainEventDispatcher{
 
-    private final ReceivingDomainEventHandler receivingDomainEventHandler;
+    private final DomainEventConsumer domainEventConsumer;
 
     /**
      * Creates a DirectGruelboxDomainEventDispatcher object.
      *
-     * @param receivingDomainEventHandler The receiving domain event handler that will handle the dispatched domain events.
-     *                                   It must implement the ReceivingDomainEventHandler interface.
-     * @throws NullPointerException if receivingDomainEventHandler is null.
+     * @param domainEventConsumer The receiving domain event handler that will handle the dispatched domain events.
+     *                                   It must implement the DomainEventConsumer interface.
+     * @throws NullPointerException if domainEventConsumer is null.
      */
-    public DirectGruelboxDomainEventDispatcher(ReceivingDomainEventHandler receivingDomainEventHandler) {
-        this.receivingDomainEventHandler = Objects.requireNonNull(receivingDomainEventHandler, "A ReceivingDomainEventHandler is required!");
+    public DirectGruelboxDomainEventDispatcher(DomainEventConsumer domainEventConsumer) {
+        this.domainEventConsumer = Objects.requireNonNull(domainEventConsumer, "A DomainEventConsumer is required!");
     }
 
     /**
@@ -63,6 +63,6 @@ public final class DirectGruelboxDomainEventDispatcher implements GruelboxDomain
      */
     @Override
     public void dispatch(DomainEvent domainEvent) {
-        receivingDomainEventHandler.handleReceived(domainEvent);
+        domainEventConsumer.consume(domainEvent);
     }
 }

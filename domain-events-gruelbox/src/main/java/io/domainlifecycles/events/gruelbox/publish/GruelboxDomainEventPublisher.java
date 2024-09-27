@@ -29,6 +29,7 @@ package io.domainlifecycles.events.gruelbox.publish;
 
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import io.domainlifecycles.domain.types.DomainEvent;
+import io.domainlifecycles.events.gruelbox.api.PublishingSchedulerConfiguration;
 import io.domainlifecycles.events.gruelbox.dispatch.GruelboxDomainEventDispatcher;
 import io.domainlifecycles.events.publish.DomainEventPublisher;
 import org.slf4j.Logger;
@@ -47,22 +48,18 @@ public final class GruelboxDomainEventPublisher implements DomainEventPublisher 
 
     private static final Logger log = LoggerFactory.getLogger(GruelboxDomainEventPublisher.class);
     private final TransactionOutbox outbox;
-    private final GruelboxDomainEventDispatcher gruelboxDomainEventDispatcher;
-    private final boolean orderedByDomainEventType;
-    private final Duration schedulingDelay;
+    private final PublishingSchedulerConfiguration publishingSchedulerConfiguration;
+
+
 
     /**
      * The {@code GruelboxDomainEventPublisher} class is responsible for publishing domain events to a transaction outbox.
      * The outbox schedules calls on a GruelboxDomainEventDispatcher, that dispatches the events later on when the outbox entries are processed.
      */
     public GruelboxDomainEventPublisher(TransactionOutbox outbox,
-                                        GruelboxDomainEventDispatcher gruelboxDomainEventDispatcher,
-                                        boolean orderedByDomainEventType,
-                                        Duration schedulingDelay) {
+                                        PublishingSchedulerConfiguration publishingSchedulerConfiguration) {
         this.outbox = Objects.requireNonNull(outbox, "A TransactionOutbox is required!");
-        this.gruelboxDomainEventDispatcher = Objects.requireNonNull(gruelboxDomainEventDispatcher, "A GruelboxDomainEventDispatcher is required!");
-        this.orderedByDomainEventType = orderedByDomainEventType;
-        this.schedulingDelay = Objects.requireNonNull(schedulingDelay, "A scheduling delay is required!");
+        this.publishingSchedulerConfiguration = Objects.requireNonNull(publishingSchedulerConfiguration, "A PublishingSchedulerConfiguration is required!");
     }
 
     /**
@@ -77,11 +74,15 @@ public final class GruelboxDomainEventPublisher implements DomainEventPublisher 
     public void publish(DomainEvent domainEvent) {
         log.debug("Received DomainEvent {} for publishing", domainEvent);
         var scheduleBuilder = outbox.with();
-        if(orderedByDomainEventType){
+        if(publishingSchedulerConfiguration.isOrderedByDomainEventType()){
             scheduleBuilder.ordered(domainEvent.getClass().getName());
         }
-        scheduleBuilder.delayForAtLeast(schedulingDelay)
+        scheduleBuilder.delayForAtLeast(publishingSchedulerConfiguration.getSchedulingDelay())
             .schedule(GruelboxDomainEventDispatcher.class)
             .dispatch(domainEvent);
+    }
+
+    public PublishingSchedulerConfiguration getPublishingSchedulerConfiguration() {
+        return publishingSchedulerConfiguration;
     }
 }

@@ -2,10 +2,10 @@ package io.domainlifecycles.events.gruelbox.idempotent;
 
 import io.domainlifecycles.domain.types.AggregateDomainEvent;
 import io.domainlifecycles.domain.types.Repository;
-import io.domainlifecycles.events.receive.execution.detector.AggregateExecutionContext;
-import io.domainlifecycles.events.receive.execution.detector.ExecutionContext;
-import io.domainlifecycles.events.receive.execution.detector.ServiceExecutionContext;
-import io.domainlifecycles.events.receive.execution.handler.HandlerExecutor;
+import io.domainlifecycles.events.consume.execution.detector.AggregateExecutionContext;
+import io.domainlifecycles.events.consume.execution.detector.ExecutionContext;
+import io.domainlifecycles.events.consume.execution.detector.ServiceExecutionContext;
+import io.domainlifecycles.events.consume.execution.handler.HandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
 
 public class IdempotentExecutor {

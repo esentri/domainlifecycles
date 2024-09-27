@@ -27,8 +27,10 @@
 
 package io.domainlifecycles.events.springoutbox;
 
+import io.domainlifecycles.events.api.ProcessingChannel;
 import io.domainlifecycles.events.spring.outbox.api.ProcessingResult;
-import io.domainlifecycles.events.spring.outbox.api.SpringOutboxConfiguration;
+import io.domainlifecycles.events.spring.outbox.api.SpringOutboxConsumingConfiguration;
+import io.domainlifecycles.events.spring.outbox.api.SpringTransactionalOutboxChannelFactory;
 import io.domainlifecycles.events.spring.outbox.impl.SpringJdbcOutbox;
 import lombok.extern.slf4j.Slf4j;
 import org.h2.jdbc.JdbcSQLTimeoutException;
@@ -59,7 +61,7 @@ public class SpringJdbcOutboxTest {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private SpringOutboxConfiguration springOutboxConfiguration;
+    private SpringTransactionalOutboxChannelFactory factory;
 
     private final String SELECT_OUTBOX = "SELECT * FROM outbox";
 
@@ -86,9 +88,13 @@ public class SpringJdbcOutboxTest {
     @Autowired
     private PlatformTransactionManager platformTransactionManager;
 
+    @Autowired
+    private ProcessingChannel channel;
+
     @BeforeEach
     public void init() {
-        springOutboxConfiguration.getOutboxPoller().setPollingDelayMilliseconds(100000L);
+        var config = (SpringOutboxConsumingConfiguration)channel.getConsumingConfiguration();
+        config.getOutboxPoller().setPollingDelayMilliseconds(100000L);
     }
 
     @AfterEach
@@ -104,7 +110,7 @@ public class SpringJdbcOutboxTest {
     @Transactional
     public void testInsert(){
         var domainEvent = new OutboxTestEvent("OutboxTest");
-        springOutboxConfiguration.getTransactionalOutbox().insert(domainEvent);
+        factory.getTransactionalOutbox().insert(domainEvent);
 
         var res = jdbcTemplate.query(SELECT_OUTBOX, (r, i)-> mapResultsetOutbox(r));
 
@@ -117,10 +123,10 @@ public class SpringJdbcOutboxTest {
     public void testInsertFailed(){
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         var domainEvent = new OutboxTestEvent("OutboxTestFailed");
-        springOutboxConfiguration.getTransactionalOutbox().insert(domainEvent);
+        factory.getTransactionalOutbox().insert(domainEvent);
         platformTransactionManager.commit(status);
 
-        springOutboxConfiguration.getTransactionalOutbox().markFailed(domainEvent, ProcessingResult.FAILED);
+        factory.getTransactionalOutbox().markFailed(domainEvent, ProcessingResult.FAILED);
         var def = new DefaultTransactionDefinition();
         def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         var statusSelect = platformTransactionManager.getTransaction(def);
@@ -137,10 +143,10 @@ public class SpringJdbcOutboxTest {
     public void testInsertSuccess(){
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         var domainEvent = new OutboxTestEvent("OutboxTest");
-        springOutboxConfiguration.getTransactionalOutbox().insert(domainEvent);
+        factory.getTransactionalOutbox().insert(domainEvent);
         platformTransactionManager.commit(status);
-        var batch = springOutboxConfiguration.getTransactionalOutbox().fetchBatchForSending(1);
-        springOutboxConfiguration.getTransactionalOutbox().sentSuccessfully(batch);
+        var batch = factory.getTransactionalOutbox().fetchBatchForSending(1);
+        factory.getTransactionalOutbox().sentSuccessfully(batch);
         var def = new DefaultTransactionDefinition();
         def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         var statusSelect = platformTransactionManager.getTransaction(def);
@@ -160,29 +166,29 @@ public class SpringJdbcOutboxTest {
         defReqNew.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         var statusInsert = platformTransactionManager.getTransaction(defReqNew);
         var domainEvent = new OutboxTestEvent("OutboxTest");
-        springOutboxConfiguration.getTransactionalOutbox().insert(domainEvent);
+        factory.getTransactionalOutbox().insert(domainEvent);
         platformTransactionManager.commit(statusInsert);
 
-        var batchA = springOutboxConfiguration.getTransactionalOutbox().fetchBatchForSending(1);
+        var batchA = factory.getTransactionalOutbox().fetchBatchForSending(1);
         assertThat(batchA.getDomainEvents()).hasSize(1);
-        var batchB = springOutboxConfiguration.getTransactionalOutbox().fetchBatchForSending(1);
+        var batchB = factory.getTransactionalOutbox().fetchBatchForSending(1);
         assertThat(batchB.getDomainEvents()).hasSize(0);
     }
 
     @Test
     public void testFetchConcurrentlyNonStrict(){
-        var springOutbox = (SpringJdbcOutbox)this.springOutboxConfiguration.getTransactionalOutbox();
+        var springOutbox = (SpringJdbcOutbox)this.factory.getTransactionalOutbox();
         springOutbox.setStrictBatchOrder(false);
         var defReqNew = new DefaultTransactionDefinition();
         defReqNew.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         var statusInsert = platformTransactionManager.getTransaction(defReqNew);
         var domainEvent = new OutboxTestEvent("OutboxTest");
-        springOutboxConfiguration.getTransactionalOutbox().insert(domainEvent);
+        factory.getTransactionalOutbox().insert(domainEvent);
         platformTransactionManager.commit(statusInsert);
 
-        var batchA = springOutboxConfiguration.getTransactionalOutbox().fetchBatchForSending(1);
+        var batchA = factory.getTransactionalOutbox().fetchBatchForSending(1);
         assertThat(batchA.getDomainEvents()).hasSize(1);
-        var batchB = springOutboxConfiguration.getTransactionalOutbox().fetchBatchForSending(1);
+        var batchB = factory.getTransactionalOutbox().fetchBatchForSending(1);
         assertThat(batchB.getDomainEvents()).hasSize(0);
         springOutbox.setStrictBatchOrder(true);
     }
@@ -193,7 +199,7 @@ public class SpringJdbcOutboxTest {
         defReqNew.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         var statusInsert = platformTransactionManager.getTransaction(defReqNew);
         var domainEvent = new OutboxTestEvent("OutboxTest");
-        springOutboxConfiguration.getTransactionalOutbox().insert(domainEvent);
+        factory.getTransactionalOutbox().insert(domainEvent);
         platformTransactionManager.commit(statusInsert);
 
         var select = "select from outbox for update nowait;";
@@ -212,15 +218,15 @@ public class SpringJdbcOutboxTest {
         defReqNew.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         var statusInsert = platformTransactionManager.getTransaction(defReqNew);
         var domainEvent1 = new OutboxTestEvent("OutboxTestOrder1");
-        springOutboxConfiguration.getTransactionalOutbox().insert(domainEvent1);
+        factory.getTransactionalOutbox().insert(domainEvent1);
         platformTransactionManager.commit(statusInsert);
 
         var statusInsert2 = platformTransactionManager.getTransaction(defReqNew);
         var domainEvent2 = new OutboxTestEvent("OutboxTestOrder2");
-        springOutboxConfiguration.getTransactionalOutbox().insert(domainEvent2);
+        factory.getTransactionalOutbox().insert(domainEvent2);
         platformTransactionManager.commit(statusInsert2);
 
-        var batchA = springOutboxConfiguration.getTransactionalOutbox().fetchBatchForSending(10);
+        var batchA = factory.getTransactionalOutbox().fetchBatchForSending(10);
 
         assertThat(batchA.getDomainEvents().get(0)).isEqualTo(domainEvent1);
         assertThat(batchA.getDomainEvents().get(1)).isEqualTo(domainEvent2);
@@ -233,7 +239,7 @@ public class SpringJdbcOutboxTest {
         var statusInsert = platformTransactionManager.getTransaction(defReqNew);
         jdbcTemplate.execute(INSERT_OUTBOX_OLD_SUCCESS);
         platformTransactionManager.commit(statusInsert);
-        SpringJdbcOutbox springJdbcOutbox = ((SpringJdbcOutbox)springOutboxConfiguration.getTransactionalOutbox());
+        SpringJdbcOutbox springJdbcOutbox = ((SpringJdbcOutbox)factory.getTransactionalOutbox());
         springJdbcOutbox.cleanup(springJdbcOutbox.getCleanUpAgeDays());
         var res = jdbcTemplate.query(SELECT_OUTBOX, (r, i)-> mapResultsetOutbox(r));
         assertThat(res.size()).isEqualTo(0);
@@ -246,7 +252,7 @@ public class SpringJdbcOutboxTest {
         var statusInsert = platformTransactionManager.getTransaction(defReqNew);
         jdbcTemplate.execute(INSERT_OUTBOX_DELIVERY_TIMEOUT);
         platformTransactionManager.commit(statusInsert);
-        SpringJdbcOutbox springJdbcOutbox = ((SpringJdbcOutbox)springOutboxConfiguration.getTransactionalOutbox());
+        SpringJdbcOutbox springJdbcOutbox = ((SpringJdbcOutbox)factory.getTransactionalOutbox());
         springJdbcOutbox.deliveryCheck(springJdbcOutbox.getBatchDeliveryTimeoutSeconds());
         var res = jdbcTemplate.query(SELECT_OUTBOX, (r, i)-> mapResultsetOutbox(r));
         assertThat(res.size()).isEqualTo(1);

@@ -38,7 +38,11 @@ import io.domainlifecycles.events.AQueryClient;
 import io.domainlifecycles.events.ARepository;
 import io.domainlifecycles.events.AnApplicationService;
 import io.domainlifecycles.events.AnOutboundService;
-import io.domainlifecycles.events.spring.outbox.api.SpringOutboxConfiguration;
+import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
+import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
+import io.domainlifecycles.events.api.ProcessingChannel;
+import io.domainlifecycles.events.api.PublishingChannel;
+import io.domainlifecycles.events.spring.outbox.api.SpringTransactionalOutboxChannelFactory;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.services.Services;
@@ -114,17 +118,28 @@ public class OutboxTestApplication {
      * Using DLC Events to publish DLC domain events.
      */
     @Bean
-    public SpringOutboxConfiguration springOutbox(DataSource dataSource,
-                                                  ObjectMapper objectMapper,
-                                                  PlatformTransactionManager platformTransactionManager,
-                                                  ServiceProvider serviceProvider) {
-        var config =  new SpringOutboxConfiguration(
-            dataSource,
+    public SpringTransactionalOutboxChannelFactory springOutbox(DataSource dataSource,
+                                                                ObjectMapper objectMapper,
+                                                                PlatformTransactionManager platformTransactionManager,
+                                                                ServiceProvider serviceProvider) {
+        return  new SpringTransactionalOutboxChannelFactory(
             platformTransactionManager,
             objectMapper,
+            dataSource,
             serviceProvider
         );
-        return config;
+    }
+
+    @Bean
+    public ProcessingChannel channel(SpringTransactionalOutboxChannelFactory factory){
+        return factory.processingChannel("channel");
+    }
+
+    @Bean
+    public ChannelRoutingConfiguration channelConfiguration(List<PublishingChannel> publishingChannels){
+        var router = new DomainEventTypeBasedRouter(publishingChannels);
+        router.defineDefaultChannel("channel");
+        return new ChannelRoutingConfiguration(router);
     }
 
 }

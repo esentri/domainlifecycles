@@ -35,7 +35,6 @@ import io.domainlifecycles.events.AnAggregate;
 import io.domainlifecycles.events.AnAggregateDomainEvent;
 import io.domainlifecycles.events.AnApplicationService;
 import io.domainlifecycles.events.AnOutboundService;
-import io.domainlifecycles.events.PassThroughDomainEvent;
 import io.domainlifecycles.events.UnreceivedDomainEvent;
 import io.domainlifecycles.events.api.DomainEvents;
 import org.assertj.core.api.SoftAssertions;
@@ -49,6 +48,7 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
 @SpringBootTest(classes = TestApplicationJmsSpring.class)
@@ -144,70 +144,12 @@ public class SpringTransactionalEventHandlingJmsTests {
 
     @Test
     public void testIntegrationNoTransaction() {
-
         //when
         var evt = new ADomainEvent("TestNoTrans");
-        DomainEvents.publish(evt);
-
         //then
-        await()
-            .atMost(10, SECONDS)
-            .untilAsserted(()-> {
-                SoftAssertions softly = new SoftAssertions();
-                softly.assertThat(aDomainService.received).contains(evt);
-                softly.assertThat(aRepository.received).contains(evt);
-                softly.assertThat(anApplicationService.received).contains(evt);
-                softly.assertThat(queryClient.received).contains(evt);
-                softly.assertThat(outboundService.received).contains(evt);
-                softly.assertAll();
-            });
-    }
-
-    @Test
-    public void testIntegrationRollbackButConfiguredPassThrough() {
-        var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        //when
-        var evt = new PassThroughDomainEvent("TestRollbackPassThrough");
-        DomainEvents.publish(evt);
-
-        platformTransactionManager.rollback(status);
-        //then
-        await()
-            .atMost(10, SECONDS)
-            .untilAsserted(()-> {
-                SoftAssertions softly = new SoftAssertions();
-                softly.assertThat(aDomainService.received).contains(evt);
-                softly.assertThat(aRepository.received).contains(evt);
-                softly.assertThat(anApplicationService.received).contains(evt);
-                softly.assertThat(queryClient.received).contains(evt);
-                softly.assertThat(outboundService.received).contains(evt);
-                softly.assertAll();
-            });
-
-
-    }
-
-    @Test
-    public void testIntegrationCommitConfiguredPassThrough() {
-        var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        //when
-        var evt = new PassThroughDomainEvent("TestRollbackPassThrough");
-        DomainEvents.publish(evt);
-
-        platformTransactionManager.commit(status);
-        //then
-        await()
-            .atMost(10, SECONDS)
-            .untilAsserted(()-> {
-                SoftAssertions softly = new SoftAssertions();
-                softly.assertThat(aDomainService.received).contains(evt);
-                softly.assertThat(aRepository.received).contains(evt);
-                softly.assertThat(anApplicationService.received).contains(evt);
-                softly.assertThat(queryClient.received).contains(evt);
-                softly.assertThat(outboundService.received).contains(evt);
-                softly.assertAll();
-            });
-
+        assertThatThrownBy(() ->
+            DomainEvents.publish(evt)
+        ).hasMessageContaining("No transaction active, but active transaction is required! Event dispatching failed for");
     }
 
     @Test

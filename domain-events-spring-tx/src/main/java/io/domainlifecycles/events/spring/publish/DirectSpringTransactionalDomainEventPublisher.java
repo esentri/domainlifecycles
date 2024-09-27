@@ -28,7 +28,7 @@
 package io.domainlifecycles.events.spring.publish;
 
 import io.domainlifecycles.domain.types.DomainEvent;
-import io.domainlifecycles.events.receive.execution.ReceivingDomainEventHandler;
+import io.domainlifecycles.events.consume.DomainEventConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,18 +55,18 @@ public final class DirectSpringTransactionalDomainEventPublisher extends Abstrac
 
     private static final Logger log = LoggerFactory.getLogger(DirectSpringTransactionalDomainEventPublisher.class);
 
-    private final ReceivingDomainEventHandler receivingDomainEventHandler;
+    private final DomainEventConsumer domainEventConsumer;
 
     public DirectSpringTransactionalDomainEventPublisher(
-        ReceivingDomainEventHandler receivingDomainEventHandler,
+        DomainEventConsumer domainEventConsumer,
         boolean afterCommit
     ) {
         super(afterCommit);
-        this.receivingDomainEventHandler = Objects.requireNonNull(receivingDomainEventHandler, "A ReceivingDomainEventHandler is required!");
+        this.domainEventConsumer = Objects.requireNonNull(domainEventConsumer, "A DomainEventConsumer is required!");
     }
 
     @Override
     protected void send(DomainEvent domainEvent) {
-        this.receivingDomainEventHandler.handleReceived(domainEvent);
+        this.domainEventConsumer.consume(domainEvent);
     }
 }

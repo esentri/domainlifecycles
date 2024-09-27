@@ -157,7 +157,6 @@ public class GruelboxIntegrationTests {
         assertThat(anApplicationService.received).doesNotContain(evt);
         assertThat(queryClient.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
-
     }
 
     @Test
@@ -281,8 +280,5 @@ public class GruelboxIntegrationTests {
         assertThat(transactionalCounterService.getCurrentCounterValue()).isEqualTo(cnt+1);
 
     }
-
-
-
 
 }

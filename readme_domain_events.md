@@ -281,7 +281,7 @@ Those custom implementations must be configured via ``io.domainlifecycles.events
 ###### Third party message bus Domain Event consumption
 
 To consume DomainEvents from a third party event bus and route them directly to handler services or Aggregates as described before, consider implementing a 
-message bus technology dependent consumer service and then provide those events directly to the configured ``io.domainlifecycles.events.receive.execution.ReceivingDomainEventHandler`` via it's
+message bus technology dependent consumer service and then provide those events directly to the configured ``io.domainlifecycles.events.consume.DomainEventConsumer`` via it's
 ``handleReceived()`` method. The ReceivingDomainEventHandler instance could be acquired via a ``io.domainlifecycles.events.api.DomainEventsConfigurationImpl`` instance. 
 
 #### Typical Spring Boot setup

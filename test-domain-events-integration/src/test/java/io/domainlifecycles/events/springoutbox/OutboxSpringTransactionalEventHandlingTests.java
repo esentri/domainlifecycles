@@ -38,8 +38,9 @@ import io.domainlifecycles.events.AnApplicationService;
 import io.domainlifecycles.events.AnOutboundService;
 import io.domainlifecycles.events.UnreceivedDomainEvent;
 import io.domainlifecycles.events.api.DomainEvents;
+import io.domainlifecycles.events.api.ProcessingChannel;
 import io.domainlifecycles.events.spring.outbox.api.ProcessingResult;
-import io.domainlifecycles.events.spring.outbox.api.SpringOutboxConfiguration;
+import io.domainlifecycles.events.spring.outbox.api.SpringOutboxConsumingConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -88,7 +89,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private SpringOutboxConfiguration config;
+    private ProcessingChannel channel;
 
     private static final String SELECT = "SELECT processing_result FROM outbox WHERE processing_result IS NOT NULL AND domain_event LIKE '%'||?||'%';";
 
@@ -96,12 +97,14 @@ public class OutboxSpringTransactionalEventHandlingTests {
 
     @BeforeEach
     public void init(){
+        var config = (SpringOutboxConsumingConfiguration)channel.getConsumingConfiguration();
         config.getOutboxPoller().setPollingDelayMilliseconds(1000);
         config.getOutboxPoller().setPollingPeriodMilliseconds(1000);
     }
 
     @AfterEach
     public void after(){
+        var config = (SpringOutboxConsumingConfiguration)channel.getConsumingConfiguration();
         config.getOutboxPoller().setPollingDelayMilliseconds(5000);
         config.getOutboxPoller().setPollingPeriodMilliseconds(5000);
     }

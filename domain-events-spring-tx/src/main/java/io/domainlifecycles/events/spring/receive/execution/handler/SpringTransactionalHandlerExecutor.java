@@ -28,13 +28,14 @@
 package io.domainlifecycles.events.spring.receive.execution.handler;
 
 import io.domainlifecycles.events.exception.DLCEventsException;
-import io.domainlifecycles.events.receive.execution.detector.ExecutionContext;
-import io.domainlifecycles.events.receive.execution.handler.ReflectiveHandlerExecutor;
-import io.domainlifecycles.events.receive.execution.handler.TransactionalHandlerExecutor;
+import io.domainlifecycles.events.consume.execution.detector.ExecutionContext;
+import io.domainlifecycles.events.consume.execution.handler.ReflectiveHandlerExecutor;
+import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 

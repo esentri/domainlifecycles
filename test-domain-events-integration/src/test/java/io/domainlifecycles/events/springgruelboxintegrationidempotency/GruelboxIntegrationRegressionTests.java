@@ -56,6 +56,7 @@ import static org.awaitility.Awaitility.await;
 
 @SpringBootTest(classes = TestApplicationGruelboxIntegrationIdempotency.class)
 @Slf4j
+@DirtiesContext
 public class GruelboxIntegrationRegressionTests {
 
     @Autowired
@@ -273,15 +274,11 @@ public class GruelboxIntegrationRegressionTests {
         //then
         await()
             .atMost(10, SECONDS)
-            .untilAsserted(()->
+            .untilAsserted(() ->
                 assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
             );
 
-        assertThat(transactionalCounterService.getCurrentCounterValue()).isEqualTo(cnt+1);
-
+        assertThat(transactionalCounterService.getCurrentCounterValue()).isEqualTo(cnt + 1);
     }
-
-
-
 
 }

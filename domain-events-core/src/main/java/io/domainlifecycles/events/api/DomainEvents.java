@@ -42,25 +42,26 @@ import org.slf4j.LoggerFactory;
 public class DomainEvents {
 
     private static final Logger log = LoggerFactory.getLogger(DomainEvents.class);
-    private static DomainEventsConfiguration configuration;
 
-    protected static void registerConfiguration(DomainEventsConfiguration config){
-        configuration = config;
+    private static ChannelRoutingConfiguration channelConfiguration;
+
+    protected static void registerChannelConfiguration(ChannelRoutingConfiguration channelConfig){
+        channelConfiguration = channelConfig;
     }
 
     /**
-     * Publishes a domain event using the configured domain event publisher.
-     * The method throws a DLCEventsException, if the configuration is not initialized.
+     * Publishes a domain event using the configured channels.
+     * The method throws a DLCEventsException, if the ChannelRoutingConfiguration is not initialized.
      *
      * @param domainEvent the domain event to be published
      * @throws DLCEventsException if the configuration is not initialized
      */
     public static void publish(DomainEvent domainEvent){
         log.info("DomainEvent provided to be published {}", domainEvent);
-        if(configuration == null){
-            throw DLCEventsException.fail("No configuration initialized!");
+        if(channelConfiguration == null){
+            throw DLCEventsException.fail("No ChannelRoutingConfiguration initialized!");
         }
-        configuration.getDomainEventPublisher().publish(domainEvent);
+        channelConfiguration.passToChannel(domainEvent);
     }
 
 }

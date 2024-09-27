@@ -28,14 +28,8 @@
 package io.domainlifecycles.events.jta.publish;
 
 import io.domainlifecycles.domain.types.DomainEvent;
-import io.domainlifecycles.events.exception.DLCEventsException;
-import io.domainlifecycles.events.publish.DomainEventPublisher;
-import io.domainlifecycles.events.receive.execution.ReceivingDomainEventHandler;
-import jakarta.transaction.RollbackException;
-import jakarta.transaction.SystemException;
+import io.domainlifecycles.events.consume.DomainEventConsumer;
 import jakarta.transaction.TransactionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -63,15 +57,15 @@ public final class DirectJtaTransactionalDomainEventPublisher extends AbstractJt
 
     private final TransactionManager transactionManager;
     private final boolean afterCommit;
-    private Collection<Class<? extends DomainEvent>> passThroughEventTypes;
+
 
     public DirectJtaTransactionalDomainEventPublisher(
-        ReceivingDomainEventHandler receivingDomainEventHandler,
+        DomainEventConsumer domainEventConsumer,
         TransactionManager transactionManager,
         boolean afterCommit
     ) {
         super(new DirectSender(
-            Objects.requireNonNull(receivingDomainEventHandler, "A ReceivingDomainEventHandler is required!")),
+            Objects.requireNonNull(domainEventConsumer, "A DomainEventConsumer is required!")),
             transactionManager,
             afterCommit);
 
@@ -87,15 +81,15 @@ public final class DirectJtaTransactionalDomainEventPublisher extends AbstractJt
 
     private static class DirectSender implements JtaDomainEventSender{
 
-        private final ReceivingDomainEventHandler receivingDomainEventHandler;
+        private final DomainEventConsumer domainEventConsumer;
 
-        private DirectSender(ReceivingDomainEventHandler receivingDomainEventHandler) {
-            this.receivingDomainEventHandler = receivingDomainEventHandler;
+        private DirectSender(DomainEventConsumer domainEventConsumer) {
+            this.domainEventConsumer = domainEventConsumer;
         }
 
         @Override
         public void send(DomainEvent domainEvent) {
-            this.receivingDomainEventHandler.handleReceived(domainEvent);
+            this.domainEventConsumer.consume(domainEvent);
         }
     }
 

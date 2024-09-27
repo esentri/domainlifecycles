@@ -1,16 +1,13 @@
 package io.domainlifecycles.events.gruelbox.idempotent;
 
 import com.gruelbox.transactionoutbox.TransactionOutbox;
-import io.domainlifecycles.events.gruelbox.dispatch.GruelboxDomainEventDispatcher;
-import io.domainlifecycles.events.receive.execution.detector.ExecutionContext;
-import io.domainlifecycles.events.receive.execution.handler.HandlerExecutor;
-import io.domainlifecycles.events.receive.execution.processor.ExecutionContextProcessor;
+import io.domainlifecycles.events.consume.execution.detector.ExecutionContext;
+import io.domainlifecycles.events.consume.execution.handler.HandlerExecutor;
+import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.time.Duration;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -18,18 +15,17 @@ public final class IdempotencyAwareHandlerExecutorProxy implements HandlerExecut
 
     private static final Logger log = LoggerFactory.getLogger(IdempotencyAwareHandlerExecutorProxy.class);
 
-    private final HandlerExecutor handlerExecutorDelegate;
+    private final TransactionalHandlerExecutor handlerExecutorDelegate;
     private final IdempotencyConfiguration idempotencyConfiguration;
     private final TransactionOutbox outbox;
-    private final boolean orderedByDomainEventType;
-    private final Duration schedulingDelay;
 
-    public IdempotencyAwareHandlerExecutorProxy(HandlerExecutor handlerExecutorDelegate, IdempotencyConfiguration idempotencyConfiguration, TransactionOutbox outbox, boolean orderedByDomainEventType, Duration schedulingDelay) {
+
+    public IdempotencyAwareHandlerExecutorProxy(TransactionalHandlerExecutor handlerExecutorDelegate,
+                                                IdempotencyConfiguration idempotencyConfiguration,
+                                                TransactionOutbox outbox) {
         this.handlerExecutorDelegate = Objects.requireNonNull(handlerExecutorDelegate, "A handlerExecutorDelegate is required!");
         this.idempotencyConfiguration = Objects.requireNonNull(idempotencyConfiguration, "An IdempotencyConfiguration is required!");
         this.outbox = Objects.requireNonNull(outbox, "A TransactionOutbox is required!");
-        this.orderedByDomainEventType = orderedByDomainEventType;
-        this.schedulingDelay = schedulingDelay;
         log.info("IdempotencyAwareHandlerExecutorProxy created!");
     }
 
@@ -42,11 +38,11 @@ public final class IdempotencyAwareHandlerExecutorProxy implements HandlerExecut
         }
         log.debug("Idempotency configuration detected for {}", executionContext);
         var scheduleBuilder = outbox.with();
-        if(orderedByDomainEventType){
+        if(idempotencyConfiguration.isIdempotencyOrderedByDomainEventType()){
             scheduleBuilder.ordered(executionContext.domainEvent().getClass().getName());
         }
         try {
-            scheduleBuilder.delayForAtLeast(schedulingDelay)
+            scheduleBuilder.delayForAtLeast(idempotencyConfiguration.getIdempotencySchedulingDelay())
                 .uniqueRequestId(config.get().idempotencyFunction().uniqueIdentifier(executionContext.domainEvent()))
                 .schedule(IdempotentExecutor.class)
                 .execute(

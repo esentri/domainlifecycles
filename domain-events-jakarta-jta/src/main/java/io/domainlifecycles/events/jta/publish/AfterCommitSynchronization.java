@@ -28,7 +28,6 @@
 package io.domainlifecycles.events.jta.publish;
 
 import io.domainlifecycles.domain.types.DomainEvent;
-import io.domainlifecycles.events.receive.execution.ReceivingDomainEventHandler;
 import jakarta.transaction.Status;
 import jakarta.transaction.Synchronization;
 import org.slf4j.Logger;
@@ -61,7 +60,7 @@ final class AfterCommitSynchronization implements Synchronization {
     @Override
     public void afterCompletion(int i) {
         if (Status.STATUS_COMMITTED == i) {
-            log.debug("Publisher transaction committed. Passing DomainEvent {} to ReceivingDomainEventHandler!", publishedDomainEvent);
+            log.debug("Publisher transaction committed. Passing DomainEvent {} to DomainEventConsumer!", publishedDomainEvent);
             sender.send(publishedDomainEvent);
         }else{
             log.debug("DomainEvent {} not dispatched. Transaction not committed!", publishedDomainEvent);

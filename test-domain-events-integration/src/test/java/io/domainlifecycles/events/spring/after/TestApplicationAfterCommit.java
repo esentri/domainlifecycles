@@ -37,10 +37,9 @@ import io.domainlifecycles.events.AQueryClient;
 import io.domainlifecycles.events.ARepository;
 import io.domainlifecycles.events.AnApplicationService;
 import io.domainlifecycles.events.AnOutboundService;
-import io.domainlifecycles.events.PassThroughDomainEvent;
-import io.domainlifecycles.events.api.DomainEventsConfiguration;
-import io.domainlifecycles.events.spring.api.SpringTransactionDomainEventsConfiguration;
-import io.domainlifecycles.events.spring.publish.DirectSpringTransactionalDomainEventPublisher;
+import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
+import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
+import io.domainlifecycles.events.spring.api.SpringTxInMemoryChannelFactory;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.services.Services;
@@ -116,20 +115,15 @@ public class TestApplicationAfterCommit {
         return services;
     }
 
-    /**
-     * Using DLC Events to publish DLC domain events.
-     */
     @Bean
-    public DomainEventsConfiguration domainEventsConfiguration(ServiceProvider serviceProvider, PlatformTransactionManager transactionManager) {
-        var config =  new SpringTransactionDomainEventsConfiguration(
-            transactionManager,
-            serviceProvider,
-            true
-        ).getDomainEventsConfiguration();
+    public ChannelRoutingConfiguration channelConfiguration(PlatformTransactionManager platformTransactionManager, ServiceProvider serviceProvider){
+        var channel = new SpringTxInMemoryChannelFactory(platformTransactionManager, serviceProvider,
+            5,
+            true).processingChannel("c1");
 
-        var pub = (DirectSpringTransactionalDomainEventPublisher)config.getDomainEventPublisher();
-        pub.setPassThroughEventTypes(List.of(PassThroughDomainEvent.class));
-        return config;
+        var router = new DomainEventTypeBasedRouter(List.of(channel));
+        router.defineDefaultChannel("c1");
+        return new ChannelRoutingConfiguration(router);
     }
 
 }

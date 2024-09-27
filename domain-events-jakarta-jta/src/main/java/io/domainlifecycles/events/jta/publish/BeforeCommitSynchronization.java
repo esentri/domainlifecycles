@@ -28,8 +28,6 @@
 package io.domainlifecycles.events.jta.publish;
 
 import io.domainlifecycles.domain.types.DomainEvent;
-import io.domainlifecycles.events.receive.execution.ReceivingDomainEventHandler;
-import jakarta.transaction.Status;
 import jakarta.transaction.Synchronization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +52,7 @@ final class BeforeCommitSynchronization implements Synchronization {
 
     @Override
     public void beforeCompletion() {
-        log.debug("Publisher transaction about to complete. Passing DomainEvent {} to ReceivingDomainEventHandler!", publishedDomainEvent);
+        log.debug("Publisher transaction about to complete. Passing DomainEvent {} to DomainEventConsumer!", publishedDomainEvent);
         sender.send(publishedDomainEvent);
     }
 

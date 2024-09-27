@@ -29,6 +29,7 @@ package io.domainlifecycles.events.gruelbox.poll;
 
 
 import com.gruelbox.transactionoutbox.TransactionOutbox;
+import io.domainlifecycles.events.gruelbox.api.PollerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,17 +49,14 @@ public final class GruelboxPoller {
 
     private final TransactionOutbox transactionOutbox;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
-    private final long initialDelayMs;
-    private final long periodMs;
+    private final PollerConfiguration pollerConfiguration;
 
     /**
      * The GruelboxPoller class represents a poller that flushes the transaction outbox at a fixed rate.
      */
-    public GruelboxPoller(TransactionOutbox transactionOutbox, long initialDelayMs, long periodMs) {
+    public GruelboxPoller(TransactionOutbox transactionOutbox, PollerConfiguration pollerConfiguration) {
         this.transactionOutbox = Objects.requireNonNull(transactionOutbox, "A TransactionOutbox is required!");
-        this.initialDelayMs = initialDelayMs;
-        this.periodMs = periodMs;
+        this.pollerConfiguration = Objects.requireNonNull(pollerConfiguration, "A PollerConfiguration is required!");
         scheduler.scheduleAtFixedRate(() ->{
                 try {
                     do {
@@ -68,7 +66,7 @@ public final class GruelboxPoller {
                     log.error("Error flushing transaction outbox. Pausing", t);
                 }
             },
-            this.initialDelayMs, this.periodMs, TimeUnit.MILLISECONDS);
+            this.pollerConfiguration.getPollerDelayMs(), this.pollerConfiguration.getPollerPeriodMs(), TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -89,21 +87,7 @@ public final class GruelboxPoller {
         return scheduler;
     }
 
-    /**
-     * Retrieves the initial delay in milliseconds before the GruelboxPoller starts flushing the transaction outbox.
-     *
-     * @return the initial delay in milliseconds
-     */
-    public long getInitialDelayMs() {
-        return initialDelayMs;
-    }
-
-    /**
-     * Retrieves the period in milliseconds between flushes of the transaction outbox.
-     *
-     * @return The period in milliseconds between flushes.
-     */
-    public long getPeriodMs() {
-        return periodMs;
+    public PollerConfiguration getPollerConfiguration() {
+        return pollerConfiguration;
     }
 }

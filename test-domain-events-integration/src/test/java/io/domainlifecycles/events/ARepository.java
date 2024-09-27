@@ -52,12 +52,6 @@ public class ARepository implements Repository<AnAggregate.AggregateId, AnAggreg
         received.add(domainEvent);
     }
 
-    @ListensTo(domainEventType = PassThroughDomainEvent.class)
-    public void onADomainEvent(PassThroughDomainEvent domainEvent){
-        log.debug("PassThroughDomainEvent received in ARepository! Message = " + domainEvent.message());
-        received.add(domainEvent);
-    }
-
     @Override
     public Optional<AnAggregate> findById(AnAggregate.AggregateId aggregateId) {
         if(!instanceMap.containsKey(aggregateId)) {

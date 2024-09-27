@@ -39,11 +39,11 @@ import io.domainlifecycles.events.AnAggregate;
 import io.domainlifecycles.events.AnAggregateDomainEvent;
 import io.domainlifecycles.events.AnApplicationService;
 import io.domainlifecycles.events.AnOutboundService;
-import io.domainlifecycles.events.PassThroughDomainEvent;
 import io.domainlifecycles.events.UnreceivedDomainEvent;
+import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
+import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.DomainEvents;
-import io.domainlifecycles.events.jta.api.JtaTransactionDomainEventsConfiguration;
-import io.domainlifecycles.events.jta.publish.DirectJtaTransactionalDomainEventPublisher;
+import io.domainlifecycles.events.jta.api.JtaInMemoryChannelFactory;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.services.Services;
@@ -54,6 +54,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 public class DirectJtaTransactionalEventHandlingAfterCommitTests {
@@ -89,11 +90,13 @@ public class DirectJtaTransactionalEventHandlingAfterCommitTests {
         services.registerOutboundServiceInstance(outboundService);
         services.registerQueryClientInstance(queryClient);
 
-        var config = new JtaTransactionDomainEventsConfiguration(userTransactionManager, services, true)
-            .getDomainEventsConfiguration();
-        ((DirectJtaTransactionalDomainEventPublisher)config.getDomainEventPublisher())
-            .setPassThroughEventTypes(List.of(PassThroughDomainEvent.class));
+        var channel = new JtaInMemoryChannelFactory(userTransactionManager, services,
+            5,
+            true).processingChannel("c1");
 
+        var router = new DomainEventTypeBasedRouter(List.of(channel));
+        router.defineDefaultChannel("c1");
+        new ChannelRoutingConfiguration(router);
     }
 
     @Test
@@ -134,7 +137,6 @@ public class DirectJtaTransactionalEventHandlingAfterCommitTests {
         //when
         var evt = new ADomainEvent("TestRollback");
         DomainEvents.publish(evt);
-
         userTransactionManager.rollback();
         //then
         assertThat(domainService.received).doesNotContain(evt);
@@ -147,52 +149,12 @@ public class DirectJtaTransactionalEventHandlingAfterCommitTests {
 
     @Test
     public void testIntegrationNoTransaction() {
-
         //when
         var evt = new ADomainEvent("TestNoTrans");
-        DomainEvents.publish(evt);
-
         //then
-        assertThat(domainService.received).contains(evt);
-        assertThat(repository.received).contains(evt);
-        assertThat(applicationService.received).contains(evt);
-        assertThat(outboundService.received).contains(evt);
-        assertThat(queryClient.received).contains(evt);
-
-    }
-
-    @Test
-    public void testIntegrationRollbackButConfiguredPassThrough() throws Exception{
-        userTransactionManager.begin();
-        //when
-        var evt = new PassThroughDomainEvent("TestRollbackPassThrough");
-        DomainEvents.publish(evt);
-
-        userTransactionManager.rollback();
-        //then
-        assertThat(domainService.received).contains(evt);
-        assertThat(repository.received).contains(evt);
-        assertThat(applicationService.received).contains(evt);
-        assertThat(outboundService.received).contains(evt);
-        assertThat(queryClient.received).contains(evt);
-
-    }
-
-    @Test
-    public void testIntegrationCommitConfiguredPassThrough() throws Exception{
-        userTransactionManager.begin();
-        //when
-        var evt = new PassThroughDomainEvent("TestRollbackPassThrough");
-        DomainEvents.publish(evt);
-
-        userTransactionManager.commit();
-        //then
-        assertThat(domainService.received).contains(evt);
-        assertThat(repository.received).contains(evt);
-        assertThat(applicationService.received).contains(evt);
-        assertThat(outboundService.received).contains(evt);
-        assertThat(queryClient.received).contains(evt);
-
+        assertThatThrownBy(() ->
+            DomainEvents.publish(evt)
+        ).hasMessageContaining("No transaction active, but active transaction is required! Event dispatching failed for");
     }
 
     @Test
@@ -203,7 +165,6 @@ public class DirectJtaTransactionalEventHandlingAfterCommitTests {
         DomainEvents.publish(evt);
         userTransactionManager.commit();
         //then
-
         assertThat(repository.received).doesNotContain(evt);
         assertThat(domainService.received).doesNotContain(evt);
         assertThat(applicationService.received).doesNotContain(evt);
