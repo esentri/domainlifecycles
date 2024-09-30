@@ -44,4 +44,5 @@ public record Address(
     @NotEmpty @Size(max = 50) String state,
     @NotEmpty @Size(max = 50) String country,
     @NotEmpty @Size(max = 10) String zipcode
-) implements ValueObject {}
+) implements ValueObject {
+}

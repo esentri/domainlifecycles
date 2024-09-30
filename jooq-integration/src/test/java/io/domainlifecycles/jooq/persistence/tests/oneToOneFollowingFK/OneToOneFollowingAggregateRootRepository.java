@@ -35,7 +35,8 @@ import org.slf4j.Logger;
 import tests.shared.persistence.domain.oneToOneFollowingFK.TestRootOneToOneFollowing;
 import tests.shared.persistence.domain.oneToOneFollowingFK.TestRootOneToOneFollowingId;
 
-public class OneToOneFollowingAggregateRootRepository extends JooqAggregateRepository<TestRootOneToOneFollowing, TestRootOneToOneFollowingId> {
+public class OneToOneFollowingAggregateRootRepository extends JooqAggregateRepository<TestRootOneToOneFollowing,
+    TestRootOneToOneFollowingId> {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(OneToOneFollowingAggregateRootRepository.class);
 

@@ -63,7 +63,8 @@ public class DlcDeserializerModifier extends BeanDeserializerModifier {
      * Plug in {@link Domain} based deserializer modifications
      */
     @Override
-    public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config, BeanDescription beanDesc, JsonDeserializer<?> deserializer) {
+    public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config, BeanDescription beanDesc,
+                                                  JsonDeserializer<?> deserializer) {
         if (Entity.class.isAssignableFrom(beanDesc.getBeanClass())) {
             return new EntityDeserializer(beanDesc.getType(),
                 customizersContainer,

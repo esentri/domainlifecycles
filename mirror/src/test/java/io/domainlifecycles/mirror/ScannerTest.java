@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 public class ScannerTest {
 
     @Test
-    public void testScan(){
+    public void testScan() {
         var scanner = new DomainTypesScanner();
         scanner.scan("tests");
 
@@ -50,7 +50,7 @@ public class ScannerTest {
     }
 
     @Test
-    public void testReflectiveFactory(){
+    public void testReflectiveFactory() {
         var factory = new ReflectiveDomainMirrorFactory("tests");
         Domain.initialize(factory);
     }

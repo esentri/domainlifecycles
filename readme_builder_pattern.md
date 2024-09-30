@@ -1,8 +1,9 @@
 # Builder Pattern Necessity and Support
 
 DLC internally heavily relies on the Builder Pattern for the creation of DomainObjects. This is due to the fact
-that we emphasize an always valid strategy on the one hand and on the other hand ValueObjects are by definition immutable. 
-Thus, DomainObjects created from JSON Input or by querying a database must be created by a builder. 
+that we emphasize an always valid strategy on the one hand and on the other hand ValueObjects are by definition
+immutable.
+Thus, DomainObjects created from JSON Input or by querying a database must be created by a builder.
 For developers, the usage of Builder Pattern is encouraged, since Domain Classes do often have many arguments
 which bloats constructor calls unnecessarily.
 
@@ -56,7 +57,7 @@ public class SampleClass {
 The Builder Pattern implementation provided above is compliant to the default Builder Pattern support of DLC.
 
 The classes `InnerClassDOmainObjectBuilderProvider`,
-`InnerClassDomainObjectBuilder` and `InnerClassDomainObjectBuilderConfiguration` are used by default. 
+`InnerClassDomainObjectBuilder` and `InnerClassDomainObjectBuilderConfiguration` are used by default.
 
 The required implementations are (alongside the implementation example above)
 
@@ -80,7 +81,7 @@ public class SampleClass
 ### Provide default builder configuration
 
 To provide the default builder configuration, the DLC configuration must be extended by the following
-`Bean` in the manner of a classical Spring Configuration Bean. 
+`Bean` in the manner of a classical Spring Configuration Bean.
 
 ```java
     @Bean
@@ -91,7 +92,8 @@ To provide the default builder configuration, the DLC configuration must be exte
 ```
 
 <a name="lombok-builder-support"></a>
-## Lombok Builder Support 
+
+## Lombok Builder Support
 
 The Pattern and configuration provided above is also supported by Lombok.
 

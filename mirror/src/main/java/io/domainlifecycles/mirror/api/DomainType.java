@@ -69,8 +69,8 @@ public enum DomainType {
      * @param type the type to return the corresponding DomainType for
      * @return the reflected DomainType for the given type
      */
-    public static DomainType of(Type type){
-        if(type instanceof Class<?>) {
+    public static DomainType of(Type type) {
+        if (type instanceof Class<?>) {
             Class<?> c = (Class<?>) type;
             if (AggregateRoot.class.isAssignableFrom(c)) {
                 return DomainType.AGGREGATE_ROOT;

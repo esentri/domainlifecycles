@@ -38,26 +38,27 @@ import java.util.stream.Collectors;
 /**
  * Represents a resolved generic type model.
  *
- * @param typeName type name
- * @param isArray flag whether it represents an array
- * @param genericTypes list of generic types
+ * @param typeName      type name
+ * @param isArray       flag whether it represents an array
+ * @param genericTypes  list of generic types
  * @param wildcardBound the wildcard bound
- *
  * @author Mario Herb
  */
-public record ResolvedGenericTypeModel(String typeName, boolean isArray, List<ResolvedGenericTypeMirror> genericTypes, Optional<WildcardBound> wildcardBound) implements ResolvedGenericTypeMirror {
+public record ResolvedGenericTypeModel(String typeName, boolean isArray, List<ResolvedGenericTypeMirror> genericTypes,
+                                       Optional<WildcardBound> wildcardBound) implements ResolvedGenericTypeMirror {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String resolvedTypeDescription(boolean shortTypeNames){
+    public String resolvedTypeDescription(boolean shortTypeNames) {
         var desc = new StringBuilder();
         wildcardBound.ifPresent(bound -> desc.append(bound.equals(WildcardBound.UPPER) ? "? extends " : "? super "));
         desc.append(typeName(typeName, shortTypeNames));
-        if(genericTypes != null && !genericTypes.isEmpty()){
+        if (genericTypes != null && !genericTypes.isEmpty()) {
             desc.append("<");
-            desc.append(genericTypes.stream().map(gt -> gt.resolvedTypeDescription(shortTypeNames)).collect(Collectors.joining(", ")));
+            desc.append(genericTypes.stream().map(gt -> gt.resolvedTypeDescription(shortTypeNames)).collect(
+                Collectors.joining(", ")));
             desc.append(">");
         }
         return desc.toString();
@@ -67,15 +68,15 @@ public record ResolvedGenericTypeModel(String typeName, boolean isArray, List<Re
      * {@inheritDoc}
      */
     @Override
-    public String resolvedTypeDescriptionFirstLevel(boolean shortTypeNames){
+    public String resolvedTypeDescriptionFirstLevel(boolean shortTypeNames) {
         var desc = new StringBuilder();
         wildcardBound.ifPresent(bound -> desc.append(bound.equals(WildcardBound.UPPER) ? "? extends " : "? super "));
         desc.append(typeName(typeName, shortTypeNames));
-        if(genericTypes != null && !genericTypes.isEmpty()){
+        if (genericTypes != null && !genericTypes.isEmpty()) {
             desc.append("<");
             desc.append(genericTypes.stream().map(gt -> {
                 var s = "";
-                if(gt.wildcardBound().isPresent()){
+                if (gt.wildcardBound().isPresent()) {
                     s = gt.wildcardBound().get().equals(WildcardBound.UPPER) ? "? extends " : "? super ";
                 }
                 s += typeName(gt.typeName(), shortTypeNames);
@@ -86,9 +87,9 @@ public record ResolvedGenericTypeModel(String typeName, boolean isArray, List<Re
         return desc.toString();
     }
 
-    private String typeName(String typeName, boolean shortTypeNames){
+    private String typeName(String typeName, boolean shortTypeNames) {
         Objects.requireNonNull(typeName, "A type name is obligatory!");
-        return shortTypeNames ? typeName.substring(typeName.lastIndexOf(".")+1) : typeName;
+        return shortTypeNames ? typeName.substring(typeName.lastIndexOf(".") + 1) : typeName;
     }
 
 }

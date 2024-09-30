@@ -42,16 +42,19 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public interface DomainCommandMirror extends DomainTypeMirror{
+public interface DomainCommandMirror extends DomainTypeMirror {
 
     /**
      * Returns the basic fields of the mirrored {@link DomainCommand}.
-     * @return list of {@link FieldMirror} instances, that are not Value references, Entity references or AggregateRoot references
+     *
+     * @return list of {@link FieldMirror} instances, that are not Value references, Entity references or
+     * AggregateRoot references
      */
     List<FieldMirror> getBasicFields();
 
     /**
-     * @return a list mirrors for value references (references of {@link ValueObject}, Enums or {@link Identity}) of the mirrored DomainCommand.
+     * @return a list mirrors for value references (references of {@link ValueObject}, Enums or {@link Identity}) of
+     * the mirrored DomainCommand.
      */
     List<ValueReferenceMirror> getValueReferences();
 

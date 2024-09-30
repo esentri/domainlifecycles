@@ -63,8 +63,10 @@ public class Test1JooqRecordMapper extends AbstractRecordMapper<TestEntity_1Reco
         testEntity_1Record.setTestRootId(testEntity1.getTestRootId().value());
         testEntity_1Record.setId(testEntity1.getId().value());
         testEntity_1Record.setName(testEntity1.getName());
-        testEntity_1Record.setTestEntity_2IdA(testEntity1.getTestEntity2A() != null ? testEntity1.getTestEntity2A().getId().value() : null);
-        testEntity_1Record.setTestEntity_2IdB(testEntity1.getTestEntity2B() != null ? testEntity1.getTestEntity2B().getId().value() : null);
+        testEntity_1Record.setTestEntity_2IdA(
+            testEntity1.getTestEntity2A() != null ? testEntity1.getTestEntity2A().getId().value() : null);
+        testEntity_1Record.setTestEntity_2IdB(
+            testEntity1.getTestEntity2B() != null ? testEntity1.getTestEntity2B().getId().value() : null);
         testEntity_1Record.setConcurrencyVersion(testEntity1.concurrencyVersion());
         return testEntity_1Record;
     }

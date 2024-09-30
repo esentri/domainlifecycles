@@ -28,8 +28,10 @@
 package io.domainlifecycles.events.receive.execution.detector;
 
 /**
- * The {@code ExecutionContext} interface represents the execution context for a domain event handler within a service or an aggregate.
- * Its implementations provide information about the handler object, handler method name, and the domain event being dispatched.
+ * The {@code ExecutionContext} interface represents the execution context for a domain event handler within a
+ * service or an aggregate.
+ * Its implementations provide information about the handler object, handler method name, and the domain event being
+ * dispatched.
  *
  * @author Mario Herb
  */

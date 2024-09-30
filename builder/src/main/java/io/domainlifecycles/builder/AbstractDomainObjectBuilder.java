@@ -49,7 +49,6 @@ import java.util.Optional;
  * Common class for domain object builders.
  *
  * @param <T> type for which the domain object builder delivers new domain object instances
- *
  * @author Dominik Galler
  */
 public abstract class AbstractDomainObjectBuilder<T extends DomainObject> implements DomainObjectBuilder<T> {
@@ -65,22 +64,26 @@ public abstract class AbstractDomainObjectBuilder<T extends DomainObject> implem
      */
     public AbstractDomainObjectBuilder(Class<T> instanceType) {
         log.debug("New domain object builder for '{}'", instanceType.getName());
-        this.instanceType = Objects.requireNonNull(instanceType, "A type definition is needed to create a builder instance!");
+        this.instanceType = Objects.requireNonNull(instanceType,
+            "A type definition is needed to create a builder instance!");
         this.domainTypeMirror = Domain.typeMirror(instanceType.getName())
-            .orElseThrow(() -> DLCBuilderException.fail("DomainTypeMirror for '%s' not found!", instanceType.getName()));
-        this.isEntityType = DomainType.ENTITY.equals(domainTypeMirror.getDomainType()) || DomainType.AGGREGATE_ROOT.equals(domainTypeMirror.getDomainType());
+            .orElseThrow(
+                () -> DLCBuilderException.fail("DomainTypeMirror for '%s' not found!", instanceType.getName()));
+        this.isEntityType = DomainType.ENTITY.equals(
+            domainTypeMirror.getDomainType()) || DomainType.AGGREGATE_ROOT.equals(domainTypeMirror.getDomainType());
     }
 
     /**
      * Adds Object to collection that is the value of the field.
      * If the collection is null, a new instance is initialized.
      *
-     * @param object added
+     * @param object    added
      * @param fieldName of field containing the collection
      */
     @Override
     public void addValueToCollection(Object object, String fieldName) {
-        log.debug("Adding {} ot collection in field '{}' at domain object builder for '{}'", object, fieldName, instanceType.getName());
+        log.debug("Adding {} ot collection in field '{}' at domain object builder for '{}'", object, fieldName,
+            instanceType.getName());
         final var fm = domainTypeMirror.fieldByName(fieldName);
         if (!fm.getType().hasCollectionContainer()) {
             throw DLCBuilderException.fail("Field '%s' does not contain a collection.", fieldName);
@@ -100,7 +103,8 @@ public abstract class AbstractDomainObjectBuilder<T extends DomainObject> implem
      */
     @Override
     public Collection<DomainObject> newCollectionInstanceForField(String fieldName) {
-        log.debug("Domain object builder for '{}' providing a new collection instance for the field '{}'", instanceType.getName(), fieldName);
+        log.debug("Domain object builder for '{}' providing a new collection instance for the field '{}'",
+            instanceType.getName(), fieldName);
         Collection<DomainObject> newCollection = null;
         FieldMirror fm = domainTypeMirror.fieldByName(fieldName);
         if (fm.getType().hasListContainer()) {
@@ -109,7 +113,9 @@ public abstract class AbstractDomainObjectBuilder<T extends DomainObject> implem
             newCollection = new HashSet<>();
         }
         if (newCollection == null) {
-            throw DLCBuilderException.fail("Was not able to create new collection instance for DomainObjectBuilder for field %s within %s", fieldName, this.instanceType.getName());
+            throw DLCBuilderException.fail(
+                "Was not able to create new collection instance for DomainObjectBuilder for field %s within %s",
+                fieldName, this.instanceType.getName());
         }
         return newCollection;
     }
@@ -117,13 +123,14 @@ public abstract class AbstractDomainObjectBuilder<T extends DomainObject> implem
     /**
      * Sets a field value for a given field name.
      *
-     * @param value        concrete object to be set in the builder for the given property name
+     * @param value     concrete object to be set in the builder for the given property name
      * @param fieldName name of the field to be set
      * @see DomainObjectBuilder
      */
     @Override
     public void setFieldValue(Object value, String fieldName) {
-        log.debug("Domain object builder for '{}' setting a new field value '{}' for the field '{}'", instanceType.getName(), value, fieldName);
+        log.debug("Domain object builder for '{}' setting a new field value '{}' for the field '{}'",
+            instanceType.getName(), value, fieldName);
         Object o = value;
         if (o instanceof Optional) {
             Optional<Object> optional = uncheckedCast(o);
@@ -141,7 +148,8 @@ public abstract class AbstractDomainObjectBuilder<T extends DomainObject> implem
      */
     @Override
     public Object getFieldValue(String fieldName) {
-        log.debug("Domain object builder for '{}' returning current field value for the field '{}'", instanceType.getName(), fieldName);
+        log.debug("Domain object builder for '{}' returning current field value for the field '{}'",
+            instanceType.getName(), fieldName);
         return getValue(fieldName);
     }
 
@@ -159,7 +167,8 @@ public abstract class AbstractDomainObjectBuilder<T extends DomainObject> implem
     }
 
     /**
-     * Convenience method to return the primary identity field name for the instanceType assigned to the builder instance.
+     * Convenience method to return the primary identity field name for the instanceType assigned to the builder
+     * instance.
      *
      * @return the property name of the primary identity property of the instanceType
      * @see DomainObjectBuilder
@@ -170,10 +179,12 @@ public abstract class AbstractDomainObjectBuilder<T extends DomainObject> implem
         if (this.isEntityType) {
             EntityMirror em = (EntityMirror) domainTypeMirror;
             var idField = em.getIdentityField()
-                .orElseThrow(() -> DLCBuilderException.fail("%s has no primary Identity!", this.instanceType.getName()));
+                .orElseThrow(
+                    () -> DLCBuilderException.fail("%s has no primary Identity!", this.instanceType.getName()));
             return idField.getName();
         } else {
-            throw DLCBuilderException.fail("%s is not an Entity and has no primary Identity!", this.instanceType.getName());
+            throw DLCBuilderException.fail("%s is not an Entity and has no primary Identity!",
+                this.instanceType.getName());
         }
     }
 
@@ -188,7 +199,7 @@ public abstract class AbstractDomainObjectBuilder<T extends DomainObject> implem
         return this.instanceType;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void addWithLazyInit(Object object, String fieldName) {
         Collection collection = (Collection) getValue(fieldName);
         if (collection == null) {
@@ -198,7 +209,7 @@ public abstract class AbstractDomainObjectBuilder<T extends DomainObject> implem
         collection.add(object);
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     protected <K> K uncheckedCast(Object obj) {
         return (K) obj;
     }

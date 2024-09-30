@@ -36,7 +36,7 @@ import io.domainlifecycles.domain.types.AggregateRoot;
  *
  * @author Mario Herb
  */
-public class AggregateRootMirrorBuilder extends EntityMirrorBuilder{
+public class AggregateRootMirrorBuilder extends EntityMirrorBuilder {
 
     /**
      * Initialize the builder with the corresponding {@link AggregateRoot} class.

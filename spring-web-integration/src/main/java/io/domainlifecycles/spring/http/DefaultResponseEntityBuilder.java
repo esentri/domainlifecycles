@@ -29,11 +29,12 @@ package io.domainlifecycles.spring.http;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 /**
  * Default implementation of {@link ResponseEntityBuilder}.
  *
- *  @author Mario Herb
- *  @author Dominik Galler
+ * @author Mario Herb
+ * @author Dominik Galler
  */
 public class DefaultResponseEntityBuilder implements ResponseEntityBuilder {
 

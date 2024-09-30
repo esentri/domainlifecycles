@@ -109,7 +109,7 @@ public class FetcherTest extends BasePersistence_ITest {
     private static ManyToManyAggregateRootRepository manyToManyAggregateRootRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         manyToManyAggregateRootRepository = new ManyToManyAggregateRootRepository(
             persistenceConfiguration.dslContext,
             persistenceEventTestHelper.testEventPublisher,
@@ -156,7 +156,8 @@ public class FetcherTest extends BasePersistence_ITest {
     @Test
     public void testFetcherOneToOneFollowingCompleteByRootRecord() {
         JooqAggregateFetcher<TestRootOneToOneFollowing, TestRootOneToOneFollowingId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootOneToOneFollowing.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRootOneToOneFollowing.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
         List<TestRootOneToOneFollowing> inserted = TestDataGenerator.buildManyOneToOneFollowingComplete().stream().map(
             r -> oneToOneFollowingAggregateRootRepository.insert(r)
         ).collect(Collectors.toList());
@@ -166,7 +167,8 @@ public class FetcherTest extends BasePersistence_ITest {
             .where(Tables.TEST_ROOT_ONE_TO_ONE_FOLLOWING.NAME.like("%Root%"))
             .orderBy(Tables.TEST_ROOT_ONE_TO_ONE_FOLLOWING.ID)
             .fetch().stream()
-            .map(r -> jooqEntityFetcher.fetchDeep((UpdatableRecord<?>) r).resultValue().get()).collect(Collectors.toList());
+            .map(r -> jooqEntityFetcher.fetchDeep((UpdatableRecord<?>) r).resultValue().get()).collect(
+                Collectors.toList());
 
         for (int i = 0; i < inserted.size(); i++) {
             assertInsertedWithResult(inserted.get(i), result.get(i));
@@ -176,9 +178,11 @@ public class FetcherTest extends BasePersistence_ITest {
     @Test
     public void testFetcherOneToOneFollowingEmpty() {
         JooqAggregateFetcher<TestRootOneToOneFollowing, TestRootOneToOneFollowingId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootOneToOneFollowing.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRootOneToOneFollowing.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
 
-        Optional<TestRootOneToOneFollowing> result = jooqEntityFetcher.fetchDeep(new TestRootOneToOneFollowingId(1L)).resultValue();
+        Optional<TestRootOneToOneFollowing> result = jooqEntityFetcher.fetchDeep(
+            new TestRootOneToOneFollowingId(1L)).resultValue();
         Assertions.assertThat(result).isEmpty();
     }
 
@@ -209,7 +213,9 @@ public class FetcherTest extends BasePersistence_ITest {
             .map(r -> {
                 TestRootOneToOneFollowingRecord recRoot = r.into(Tables.TEST_ROOT_ONE_TO_ONE_FOLLOWING);
                 TestEntityOneToOneFollowingRecord recEntity = r.into(Tables.TEST_ENTITY_ONE_TO_ONE_FOLLOWING);
-                DomainObjectBuilder<TestRootOneToOneFollowing> rootDomainObjectBuilder = rmRoot.recordToDomainObjectBuilder(recRoot);
+                DomainObjectBuilder<TestRootOneToOneFollowing> rootDomainObjectBuilder =
+                    rmRoot.recordToDomainObjectBuilder(
+                        recRoot);
                 TestEntityOneToOneFollowing entity = rmEntity.recordToDomainObjectBuilder(recEntity).build();
                 rootDomainObjectBuilder.setFieldValue(entity, "testEntityOneToOneFollowing");
                 return rootDomainObjectBuilder.build();
@@ -224,11 +230,14 @@ public class FetcherTest extends BasePersistence_ITest {
     @Test
     public void testFetcherOneToOneFollowingComplete() {
         JooqAggregateFetcher<TestRootOneToOneFollowing, TestRootOneToOneFollowingId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootOneToOneFollowing.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRootOneToOneFollowing.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
 
-        TestRootOneToOneFollowing inserted = oneToOneFollowingAggregateRootRepository.insert(TestDataGenerator.buildOneToOneFollowingComplete());
+        TestRootOneToOneFollowing inserted = oneToOneFollowingAggregateRootRepository.insert(
+            TestDataGenerator.buildOneToOneFollowingComplete());
 
-        Optional<TestRootOneToOneFollowing> result = jooqEntityFetcher.fetchDeep(new TestRootOneToOneFollowingId(1l)).resultValue();
+        Optional<TestRootOneToOneFollowing> result = jooqEntityFetcher.fetchDeep(
+            new TestRootOneToOneFollowingId(1l)).resultValue();
         Assertions.assertThat(result).isPresent();
         assertInsertedWithResult(inserted, result.get());
     }
@@ -236,9 +245,12 @@ public class FetcherTest extends BasePersistence_ITest {
     @Test
     public void testFetcherOneToOneFollowingOnlyRoot() {
         JooqAggregateFetcher<TestRootOneToOneFollowing, TestRootOneToOneFollowingId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootOneToOneFollowing.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
-        TestRootOneToOneFollowing inserted = oneToOneFollowingAggregateRootRepository.insert(TestDataGenerator.buildOneToOneFollowingOnlyRoot());
-        Optional<TestRootOneToOneFollowing> result = jooqEntityFetcher.fetchDeep(new TestRootOneToOneFollowingId(1l)).resultValue();
+            new JooqAggregateFetcher<>(TestRootOneToOneFollowing.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
+        TestRootOneToOneFollowing inserted = oneToOneFollowingAggregateRootRepository.insert(
+            TestDataGenerator.buildOneToOneFollowingOnlyRoot());
+        Optional<TestRootOneToOneFollowing> result = jooqEntityFetcher.fetchDeep(
+            new TestRootOneToOneFollowingId(1l)).resultValue();
         Assertions.assertThat(result).isPresent();
         assertInsertedWithResult(inserted, result.get());
     }
@@ -246,9 +258,12 @@ public class FetcherTest extends BasePersistence_ITest {
     @Test
     public void testFetcherOneToOneLeadingComplete() {
         JooqAggregateFetcher<TestRootOneToOneLeading, TestRootOneToOneLeadingId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootOneToOneLeading.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
-        TestRootOneToOneLeading inserted = oneToOneLeadingAggregateRootRepository.insert(TestDataGenerator.buildOneToOneLeadingComplete());
-        Optional<TestRootOneToOneLeading> result = jooqEntityFetcher.fetchDeep(new TestRootOneToOneLeadingId(1l)).resultValue();
+            new JooqAggregateFetcher<>(TestRootOneToOneLeading.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
+        TestRootOneToOneLeading inserted = oneToOneLeadingAggregateRootRepository.insert(
+            TestDataGenerator.buildOneToOneLeadingComplete());
+        Optional<TestRootOneToOneLeading> result = jooqEntityFetcher.fetchDeep(
+            new TestRootOneToOneLeadingId(1l)).resultValue();
         Assertions.assertThat(result).isPresent();
         assertInsertedWithResult(inserted, result.get());
     }
@@ -256,7 +271,8 @@ public class FetcherTest extends BasePersistence_ITest {
     @Test
     public void testFetcherOneToOneLeadingCompleteCustomPropertyProvider() {
         JooqAggregateFetcher<TestRootOneToOneLeading, TestRootOneToOneLeadingId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootOneToOneLeading.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRootOneToOneLeading.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
         RecordProvider prp = new RecordProvider() {
             @Override
             public Object provide(Object parentRecord) {
@@ -272,9 +288,12 @@ public class FetcherTest extends BasePersistence_ITest {
             }
         };
 
-        jooqEntityFetcher.withRecordProvider(prp, TestRootOneToOneLeading.class, TestEntityOneToOneLeading.class, List.of("testEntityOneToOneLeading"));
-        TestRootOneToOneLeading inserted = oneToOneLeadingAggregateRootRepository.insert(TestDataGenerator.buildOneToOneLeadingComplete());
-        Optional<TestRootOneToOneLeading> result = jooqEntityFetcher.fetchDeep(new TestRootOneToOneLeadingId(1l)).resultValue();
+        jooqEntityFetcher.withRecordProvider(prp, TestRootOneToOneLeading.class, TestEntityOneToOneLeading.class,
+            List.of("testEntityOneToOneLeading"));
+        TestRootOneToOneLeading inserted = oneToOneLeadingAggregateRootRepository.insert(
+            TestDataGenerator.buildOneToOneLeadingComplete());
+        Optional<TestRootOneToOneLeading> result = jooqEntityFetcher.fetchDeep(
+            new TestRootOneToOneLeadingId(1l)).resultValue();
         Assertions.assertThat(result).isPresent();
         assertInsertedWithResult(inserted, result.get());
     }
@@ -282,10 +301,13 @@ public class FetcherTest extends BasePersistence_ITest {
     @Test
     public void testFetcherOneToOneLeadingOnlyRoot() {
         JooqAggregateFetcher<TestRootOneToOneLeading, TestRootOneToOneLeadingId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootOneToOneLeading.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRootOneToOneLeading.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
 
-        TestRootOneToOneLeading inserted = oneToOneLeadingAggregateRootRepository.insert(TestDataGenerator.buildOneToOneLeadingOnlyRoot());
-        Optional<TestRootOneToOneLeading> result = jooqEntityFetcher.fetchDeep(new TestRootOneToOneLeadingId(1l)).resultValue();
+        TestRootOneToOneLeading inserted = oneToOneLeadingAggregateRootRepository.insert(
+            TestDataGenerator.buildOneToOneLeadingOnlyRoot());
+        Optional<TestRootOneToOneLeading> result = jooqEntityFetcher.fetchDeep(
+            new TestRootOneToOneLeadingId(1l)).resultValue();
         Assertions.assertThat(result).isPresent();
         assertInsertedWithResult(inserted, result.get());
     }
@@ -293,18 +315,22 @@ public class FetcherTest extends BasePersistence_ITest {
     @Test
     public void testFetcherOneToOneLeadingEmpty() {
         JooqAggregateFetcher<TestRootOneToOneLeading, TestRootOneToOneLeadingId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootOneToOneLeading.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRootOneToOneLeading.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
 
-        Optional<TestRootOneToOneLeading> result = jooqEntityFetcher.fetchDeep(new TestRootOneToOneLeadingId(1L)).resultValue();
+        Optional<TestRootOneToOneLeading> result = jooqEntityFetcher.fetchDeep(
+            new TestRootOneToOneLeadingId(1L)).resultValue();
         Assertions.assertThat(result).isEmpty();
     }
 
     @Test
     public void testFetcherOneToManyComplete() {
         JooqAggregateFetcher<TestRootOneToMany, TestRootOneToManyId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootOneToMany.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRootOneToMany.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
 
-        TestRootOneToMany inserted = oneToManyAggregateRootRepository.insert(TestDataGenerator.buildOneToManyComplete());
+        TestRootOneToMany inserted = oneToManyAggregateRootRepository.insert(
+            TestDataGenerator.buildOneToManyComplete());
         Optional<TestRootOneToMany> result = jooqEntityFetcher.fetchDeep(new TestRootOneToManyId(1l)).resultValue();
         Assertions.assertThat(result).isPresent();
         assertInsertedWithResult(inserted, result.get());
@@ -313,7 +339,8 @@ public class FetcherTest extends BasePersistence_ITest {
     @Test
     public void testFetcherOneToManyEmpty() {
         JooqAggregateFetcher<TestRootOneToMany, TestRootOneToManyId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootOneToMany.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRootOneToMany.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
 
         Optional<TestRootOneToMany> result = jooqEntityFetcher.fetchDeep(new TestRootOneToManyId(1L)).resultValue();
         Assertions.assertThat(result).isEmpty();
@@ -322,7 +349,8 @@ public class FetcherTest extends BasePersistence_ITest {
     @Test
     public void testFetcherOneToManyCompleteCustomProvider() {
         JooqAggregateFetcher<TestRootOneToMany, TestRootOneToManyId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootOneToMany.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRootOneToMany.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
 
         RecordProvider<TestEntityOneToManyRecord, TestRootOneToManyRecord> prp = new RecordProvider<>() {
             @Override
@@ -342,7 +370,8 @@ public class FetcherTest extends BasePersistence_ITest {
             TestRootOneToMany.class,
             TestEntityOneToMany.class,
             List.of("testEntityOneToManyList"));
-        TestRootOneToMany inserted = oneToManyAggregateRootRepository.insert(TestDataGenerator.buildOneToManyComplete());
+        TestRootOneToMany inserted = oneToManyAggregateRootRepository.insert(
+            TestDataGenerator.buildOneToManyComplete());
         Optional<TestRootOneToMany> result = jooqEntityFetcher.fetchDeep(new TestRootOneToManyId(1l)).resultValue();
         Assertions.assertThat(result).isPresent();
         assertInsertedWithResult(inserted, result.get());
@@ -351,9 +380,11 @@ public class FetcherTest extends BasePersistence_ITest {
     @Test
     public void testFetcherOneToManyOnlyRoot() {
         JooqAggregateFetcher<TestRootOneToMany, TestRootOneToManyId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootOneToMany.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRootOneToMany.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
 
-        TestRootOneToMany inserted = oneToManyAggregateRootRepository.insert(TestDataGenerator.buildOneToManyOnlyRoot());
+        TestRootOneToMany inserted = oneToManyAggregateRootRepository.insert(
+            TestDataGenerator.buildOneToManyOnlyRoot());
 
         Optional<TestRootOneToMany> result = jooqEntityFetcher.fetchDeep(new TestRootOneToManyId(1l)).resultValue();
         Assertions.assertThat(result).isPresent();
@@ -363,10 +394,13 @@ public class FetcherTest extends BasePersistence_ITest {
     @Test
     public void testFetcherOneToOneFollowingLeadingComplete() {
         JooqAggregateFetcher<TestRootOneToOneFollowingLeading, TestRootOneToOneFollowingLeadingId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootOneToOneFollowingLeading.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRootOneToOneFollowingLeading.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
 
-        TestRootOneToOneFollowingLeading inserted = oneToOneFollowingLeadingAggregateRootRepository.insert(TestDataGenerator.buildOneToOneFollowingLeadingComplete());
-        Optional<TestRootOneToOneFollowingLeading> result = jooqEntityFetcher.fetchDeep(new TestRootOneToOneFollowingLeadingId(1l)).resultValue();
+        TestRootOneToOneFollowingLeading inserted = oneToOneFollowingLeadingAggregateRootRepository.insert(
+            TestDataGenerator.buildOneToOneFollowingLeadingComplete());
+        Optional<TestRootOneToOneFollowingLeading> result = jooqEntityFetcher.fetchDeep(
+            new TestRootOneToOneFollowingLeadingId(1l)).resultValue();
         Assertions.assertThat(result).isPresent();
         assertInsertedWithResult(inserted, result.get());
     }
@@ -374,26 +408,32 @@ public class FetcherTest extends BasePersistence_ITest {
     @Test
     public void testFetcherOneToOneFollowingLeadingOnlyRoot() {
         JooqAggregateFetcher<TestRootOneToOneFollowingLeading, TestRootOneToOneFollowingLeadingId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootOneToOneFollowingLeading.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRootOneToOneFollowingLeading.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
 
-        TestRootOneToOneFollowingLeading inserted = oneToOneFollowingLeadingAggregateRootRepository.insert(TestDataGenerator.buildOneToOneFollowingLeadingOnlyRoot());
-        Optional<TestRootOneToOneFollowingLeading> result = jooqEntityFetcher.fetchDeep(new TestRootOneToOneFollowingLeadingId(1l)).resultValue();
+        TestRootOneToOneFollowingLeading inserted = oneToOneFollowingLeadingAggregateRootRepository.insert(
+            TestDataGenerator.buildOneToOneFollowingLeadingOnlyRoot());
+        Optional<TestRootOneToOneFollowingLeading> result = jooqEntityFetcher.fetchDeep(
+            new TestRootOneToOneFollowingLeadingId(1l)).resultValue();
         assertInsertedWithResult(inserted, result.get());
     }
 
     @Test
     public void testFetcherOneToOneFollowingLeadingEmpty() {
         JooqAggregateFetcher<TestRootOneToOneFollowingLeading, TestRootOneToOneFollowingLeadingId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootOneToOneFollowingLeading.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRootOneToOneFollowingLeading.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
 
-        Optional<TestRootOneToOneFollowingLeading> result = jooqEntityFetcher.fetchDeep(new TestRootOneToOneFollowingLeadingId(1L)).resultValue();
+        Optional<TestRootOneToOneFollowingLeading> result = jooqEntityFetcher.fetchDeep(
+            new TestRootOneToOneFollowingLeadingId(1L)).resultValue();
         Assertions.assertThat(result).isEmpty();
     }
 
     @Test
     public void testFetcherComplexExpectedException() {
         JooqAggregateFetcher<TestRoot, TestRootId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRoot.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRoot.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
 
         complexAggregateRootRepository.insert(TestDataGenerator.buildTestRootComplex());
 
@@ -407,7 +447,8 @@ public class FetcherTest extends BasePersistence_ITest {
     @Test
     public void testFetcherComplex() {
         JooqAggregateFetcher<TestRoot, TestRootId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRoot.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRoot.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
 
         RecordProvider<TestEntity_2Record, TestEntity_1Record> prpA = new RecordProvider<>() {
             @Override
@@ -449,30 +490,37 @@ public class FetcherTest extends BasePersistence_ITest {
     @Test
     public void testFetcherHierarchicalEmpty() {
         JooqAggregateFetcher<TestRootHierarchical, TestRootHierarchicalId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootHierarchical.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRootHierarchical.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
 
-        Optional<TestRootHierarchical> result = jooqEntityFetcher.fetchDeep(new TestRootHierarchicalId(1L)).resultValue();
+        Optional<TestRootHierarchical> result = jooqEntityFetcher.fetchDeep(
+            new TestRootHierarchicalId(1L)).resultValue();
         Assertions.assertThat(result).isEmpty();
     }
 
     @Test
     public void testFetcherHierarchicalComplete() {
         JooqAggregateFetcher<TestRootHierarchical, TestRootHierarchicalId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootHierarchical.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRootHierarchical.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
 
-        TestRootHierarchical inserted = hierarchicalAggregateRootRepository.insert(TestDataGenerator.buildTestRootHierarchicalCompleteLevel3());
+        TestRootHierarchical inserted = hierarchicalAggregateRootRepository.insert(
+            TestDataGenerator.buildTestRootHierarchicalCompleteLevel3());
         Optional<TestRootHierarchical> result = jooqEntityFetcher
             .withRecordProvider(new RecordProvider() {
-                    @Override
-                    public Object provide(Object parentRecord) {
-                        TestRootHierarchicalRecord pr = (TestRootHierarchicalRecord) parentRecord;
-                        Optional<TestRootHierarchicalRecord> childOptional = persistenceConfiguration.dslContext.fetchOptional(Tables.TEST_ROOT_HIERARCHICAL, Tables.TEST_ROOT_HIERARCHICAL.PARENT_ID.eq(pr.getId()));
-                        if (childOptional.isPresent()) {
-                            return childOptional.get();
-                        }
-                        return null;
-                    }
-                },
+                                    @Override
+                                    public Object provide(Object parentRecord) {
+                                        TestRootHierarchicalRecord pr = (TestRootHierarchicalRecord) parentRecord;
+                                        Optional<TestRootHierarchicalRecord> childOptional =
+                                            persistenceConfiguration.dslContext.fetchOptional(
+                                                Tables.TEST_ROOT_HIERARCHICAL,
+                                                Tables.TEST_ROOT_HIERARCHICAL.PARENT_ID.eq(pr.getId()));
+                                        if (childOptional.isPresent()) {
+                                            return childOptional.get();
+                                        }
+                                        return null;
+                                    }
+                                },
                 TestRootHierarchical.class,
                 TestRootHierarchical.class,
                 List.of("child"))
@@ -484,37 +532,47 @@ public class FetcherTest extends BasePersistence_ITest {
     @Test
     public void testFetcherHierarchicalBackRefComplete() {
         JooqAggregateFetcher<TestRootHierarchicalBackref, TestRootHierarchicalBackrefId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootHierarchicalBackref.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRootHierarchicalBackref.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
 
-        TestRootHierarchicalBackref inserted = hierarchicalAggregateRootBackrefRepository.insert(TestDataGenerator.buildTestRootHierarchicalBackrefCompleteLevel3());
+        TestRootHierarchicalBackref inserted = hierarchicalAggregateRootBackrefRepository.insert(
+            TestDataGenerator.buildTestRootHierarchicalBackrefCompleteLevel3());
         Optional<TestRootHierarchicalBackref> result = jooqEntityFetcher
             .withRecordProvider(new RecordProvider() {
-                @Override
-                public Object provide(Object parentRecord) {
-                    TestRootHierarchicalBackrefRecord pr = (TestRootHierarchicalBackrefRecord) parentRecord;
-                    Optional<TestRootHierarchicalBackrefRecord> childOptional = persistenceConfiguration.dslContext.fetchOptional(Tables.TEST_ROOT_HIERARCHICAL_BACKREF, Tables.TEST_ROOT_HIERARCHICAL_BACKREF.PARENT_ID.eq(pr.getId()));
-                    if (childOptional.isPresent()) {
-                        return childOptional.get();
-                    }
-                    return null;
-                }
-            },
+                                    @Override
+                                    public Object provide(Object parentRecord) {
+                                        TestRootHierarchicalBackrefRecord pr =
+                                            (TestRootHierarchicalBackrefRecord) parentRecord;
+                                        Optional<TestRootHierarchicalBackrefRecord> childOptional =
+                                            persistenceConfiguration.dslContext.fetchOptional(
+                                                Tables.TEST_ROOT_HIERARCHICAL_BACKREF,
+                                                Tables.TEST_ROOT_HIERARCHICAL_BACKREF.PARENT_ID.eq(pr.getId()));
+                                        if (childOptional.isPresent()) {
+                                            return childOptional.get();
+                                        }
+                                        return null;
+                                    }
+                                },
                 TestRootHierarchicalBackref.class,
                 TestRootHierarchicalBackref.class,
                 List.of("child"))
             .withRecordProvider(new RecordProvider() {
-                @Override
-                public Object provide(Object parentRecord) {
-                    TestRootHierarchicalBackrefRecord pr = (TestRootHierarchicalBackrefRecord) parentRecord;
-                    if (((TestRootHierarchicalBackrefRecord) parentRecord).getParentId() != null) {
-                        Optional<TestRootHierarchicalBackrefRecord> childOptional = persistenceConfiguration.dslContext.fetchOptional(Tables.TEST_ROOT_HIERARCHICAL_BACKREF, Tables.TEST_ROOT_HIERARCHICAL_BACKREF.ID.eq(pr.getParentId()));
-                        if (childOptional.isPresent()) {
-                            return childOptional.get();
-                        }
-                    }
-                    return null;
-                }
-            },
+                                    @Override
+                                    public Object provide(Object parentRecord) {
+                                        TestRootHierarchicalBackrefRecord pr =
+                                            (TestRootHierarchicalBackrefRecord) parentRecord;
+                                        if (((TestRootHierarchicalBackrefRecord) parentRecord).getParentId() != null) {
+                                            Optional<TestRootHierarchicalBackrefRecord> childOptional =
+                                                persistenceConfiguration.dslContext.fetchOptional(
+                                                    Tables.TEST_ROOT_HIERARCHICAL_BACKREF,
+                                                    Tables.TEST_ROOT_HIERARCHICAL_BACKREF.ID.eq(pr.getParentId()));
+                                            if (childOptional.isPresent()) {
+                                                return childOptional.get();
+                                            }
+                                        }
+                                        return null;
+                                    }
+                                },
                 TestRootHierarchicalBackref.class,
                 TestRootHierarchicalBackref.class,
                 List.of("parent"))
@@ -526,7 +584,8 @@ public class FetcherTest extends BasePersistence_ITest {
     @Test
     public void testFetcherComplexEmpty() {
         JooqAggregateFetcher<TestRoot, TestRootId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRoot.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRoot.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
 
         Optional<TestRoot> result = jooqEntityFetcher.fetchDeep(new TestRootId(1L)).resultValue();
         Assertions.assertThat(result).isEmpty();
@@ -535,7 +594,8 @@ public class FetcherTest extends BasePersistence_ITest {
     @Test
     public void testFetcherManyToManyEmpty() {
         JooqAggregateFetcher<TestRootManyToMany, TestRootManyToManyId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootManyToMany.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRootManyToMany.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
 
         Optional<TestRootManyToMany> result = jooqEntityFetcher.fetchDeep(new TestRootManyToManyId(1L)).resultValue();
         Assertions.assertThat(result).isEmpty();
@@ -544,9 +604,11 @@ public class FetcherTest extends BasePersistence_ITest {
     @Test
     public void testFetcherManyToManyComplete() {
         JooqAggregateFetcher<TestRootManyToMany, TestRootManyToManyId> jooqEntityFetcher =
-            new JooqAggregateFetcher<>(TestRootManyToMany.class, persistenceConfiguration.dslContext, persistenceConfiguration.domainPersistenceProvider);
+            new JooqAggregateFetcher<>(TestRootManyToMany.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
 
-        TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(TestDataGenerator.buildManyToManyComplete());
+        TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(
+            TestDataGenerator.buildManyToManyComplete());
         Optional<TestRootManyToMany> result = jooqEntityFetcher.fetchDeep(new TestRootManyToManyId(1l)).resultValue();
         Assertions.assertThat(result).isPresent();
         assertInsertedWithResult(inserted, result.get());

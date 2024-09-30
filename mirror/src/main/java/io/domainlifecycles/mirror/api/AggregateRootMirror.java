@@ -34,6 +34,6 @@ import io.domainlifecycles.domain.types.AggregateRoot;
  *
  * @author Mario Herb
  */
-public interface AggregateRootMirror extends EntityMirror{
+public interface AggregateRootMirror extends EntityMirror {
 
 }

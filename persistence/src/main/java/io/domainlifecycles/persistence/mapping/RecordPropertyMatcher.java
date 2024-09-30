@@ -44,7 +44,7 @@ public interface RecordPropertyMatcher {
      * Matches a record property to its according property mirror.
      *
      * @param recordProperty the record property
-     * @param fieldMirror the mirror for an entity field
+     * @param fieldMirror    the mirror for an entity field
      * @return true if the record property matches the value object property path, false otherwise
      */
     boolean matchProperty(RecordProperty recordProperty, FieldMirror fieldMirror);
@@ -61,8 +61,8 @@ public interface RecordPropertyMatcher {
     /**
      * Matches a record property to a forward entity reference.
      *
-     * @param recordProperty the record property
-     * @param entityReferenceMirror           the entity reference mirror
+     * @param recordProperty        the record property
+     * @param entityReferenceMirror the entity reference mirror
      * @return true if the record property matches the entity reference mirror, false otherwise
      */
     boolean matchForwardReference(RecordProperty recordProperty, EntityReferenceMirror entityReferenceMirror);

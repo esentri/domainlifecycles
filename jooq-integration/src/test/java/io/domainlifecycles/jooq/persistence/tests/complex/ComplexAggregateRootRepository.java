@@ -67,7 +67,8 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class ComplexAggregateRootRepository extends PersistenceActionPublishingRepository<TestRootId, TestRoot, UpdatableRecord<?>> {
+public class ComplexAggregateRootRepository extends PersistenceActionPublishingRepository<TestRootId, TestRoot,
+    UpdatableRecord<?>> {
 
     private static final Logger log = LoggerFactory.getLogger(ComplexAggregateRootRepository.class);
     private final DSLContext dslContext;
@@ -93,9 +94,12 @@ public class ComplexAggregateRootRepository extends PersistenceActionPublishingR
     private SimpleAggregateFetcher<Long, TestRoot, TestRootId, UpdatableRecord<?>> provideFetcher() {
         return new SimpleAggregateFetcher<>() {
             @Override
-            public AggregateFetcher<TestRoot, TestRootId, UpdatableRecord<?>> withRecordProvider(RecordProvider<? extends UpdatableRecord<?>, ? extends UpdatableRecord<?>> recordProvider,
-                                                                                                 Class<? extends Entity<?>> containingEntityClass,
-                                                                                                 Class<? extends DomainObject> propertyClass,
+            public AggregateFetcher<TestRoot, TestRootId, UpdatableRecord<?>> withRecordProvider(RecordProvider<?
+                extends UpdatableRecord<?>, ? extends UpdatableRecord<?>> recordProvider,
+                                                                                                 Class<?
+                                                                                                     extends Entity<?>> containingEntityClass,
+                                                                                                 Class<?
+                                                                                                     extends DomainObject> propertyClass,
                                                                                                  List<String> propertyPath) {
                 throw new IllegalStateException("Not implemented!");
             }
@@ -106,7 +110,8 @@ public class ComplexAggregateRootRepository extends PersistenceActionPublishingR
             }
 
             @Override
-            public TestRoot fetchBasicByRecord(UpdatableRecord<?> aggregateRecord, SimpleFetcherContext<UpdatableRecord<?>> fetcherContext) {
+            public TestRoot fetchBasicByRecord(UpdatableRecord<?> aggregateRecord,
+                                               SimpleFetcherContext<UpdatableRecord<?>> fetcherContext) {
                 throw new IllegalStateException("Not implemented!");
             }
 
@@ -115,7 +120,8 @@ public class ComplexAggregateRootRepository extends PersistenceActionPublishingR
 
 
     private TestRoot findByIdCustom(Long id) {
-        Optional<TestRootRecord> testRootOptional = dslContext.fetchOptional(Tables.TEST_ROOT, Tables.TEST_ROOT.ID.eq(id));
+        Optional<TestRootRecord> testRootOptional = dslContext.fetchOptional(Tables.TEST_ROOT,
+            Tables.TEST_ROOT.ID.eq(id));
         TestEntity1 te1 = null;
         if (testRootOptional.isPresent()) {
             Optional<TestEntity_1Record> testEntity1Optional = dslContext
@@ -124,18 +130,21 @@ public class ComplexAggregateRootRepository extends PersistenceActionPublishingR
             if (testEntity1Optional.isPresent()) {
                 TestEntity2 testEntity2A = fetchSubTreeEntity2(testEntity1Optional.get().getTestEntity_2IdA());
                 TestEntity2 testEntity2B = fetchSubTreeEntity2(testEntity1Optional.get().getTestEntity_2IdB());
-                RecordMapper<TestEntity_1Record, TestEntity1, ?> mapper1 = (RecordMapper<TestEntity_1Record, TestEntity1, ?>) domainPersistenceProvider
+                RecordMapper<TestEntity_1Record, TestEntity1, ?> mapper1 = (RecordMapper<TestEntity_1Record,
+                    TestEntity1, ?>) domainPersistenceProvider
                     .persistenceMirror
-                        .getEntityRecordMapper(TestEntity1.class.getName());
+                    .getEntityRecordMapper(TestEntity1.class.getName());
 
-                DomainObjectBuilder<TestEntity1> b = testEntity1Optional.map(r -> mapper1.recordToDomainObjectBuilder(r)).get();
+                DomainObjectBuilder<TestEntity1> b = testEntity1Optional.map(
+                    r -> mapper1.recordToDomainObjectBuilder(r)).get();
                 b.setFieldValue(testEntity2A, "testEntity2A");
                 b.setFieldValue(testEntity2B, "testEntity2B");
                 te1 = b.build();
             }
-            RecordMapper<TestRootRecord, TestRoot, ?> mapper = (RecordMapper<TestRootRecord, TestRoot, ?>) domainPersistenceProvider
-                .persistenceMirror
-                .getEntityRecordMapper(TestRoot.class.getName());
+            RecordMapper<TestRootRecord, TestRoot, ?> mapper =
+                (RecordMapper<TestRootRecord, TestRoot, ?>) domainPersistenceProvider
+                    .persistenceMirror
+                    .getEntityRecordMapper(TestRoot.class.getName());
             DomainObjectBuilder<TestRoot> b2 = testRootOptional
                 .map(r ->
                     mapper.recordToDomainObjectBuilder(r)).get();
@@ -149,9 +158,10 @@ public class ComplexAggregateRootRepository extends PersistenceActionPublishingR
         Optional<TestEntity_2Record> testEntity2 = dslContext.fetchOptional(Tables.TEST_ENTITY_2,
             Tables.TEST_ENTITY_2.ID.equal(testEntit2Id));
         if (testEntity2.isPresent()) {
-            RecordMapper<TestEntity_2Record, TestEntity2, ?> mapper = (RecordMapper<TestEntity_2Record, TestEntity2, ?>) domainPersistenceProvider
+            RecordMapper<TestEntity_2Record, TestEntity2, ?> mapper = (RecordMapper<TestEntity_2Record, TestEntity2,
+                ?>) domainPersistenceProvider
                 .persistenceMirror
-                    .getEntityRecordMapper(TestEntity2.class.getName());
+                .getEntityRecordMapper(TestEntity2.class.getName());
             DomainObjectBuilder<TestEntity2> b = testEntity2
                 .map(r -> mapper.recordToDomainObjectBuilder(r))
                 .get();
@@ -172,9 +182,10 @@ public class ComplexAggregateRootRepository extends PersistenceActionPublishingR
     private TestEntity3 fetchSubTreeEntity3(TestEntity_3Record te3) {
         List<TestEntity_4Record> testEntity4List = dslContext.fetch(Tables.TEST_ENTITY_4,
             Tables.TEST_ENTITY_4.TEST_ENTITY_3_ID.equal(te3.getId()));
-        RecordMapper<TestEntity_3Record, TestEntity3, ?> mapper = (RecordMapper<TestEntity_3Record, TestEntity3, ?>) domainPersistenceProvider
-            .persistenceMirror
-            .getEntityRecordMapper(TestEntity3.class.getName());
+        RecordMapper<TestEntity_3Record, TestEntity3, ?> mapper =
+            (RecordMapper<TestEntity_3Record, TestEntity3, ?>) domainPersistenceProvider
+                .persistenceMirror
+                .getEntityRecordMapper(TestEntity3.class.getName());
         DomainObjectBuilder<TestEntity3> b = mapper.recordToDomainObjectBuilder(te3);
         for (TestEntity_4Record te4 : testEntity4List) {
             TestEntity4 te4Entity = fetchSubTreeEntity4(te4);
@@ -189,9 +200,10 @@ public class ComplexAggregateRootRepository extends PersistenceActionPublishingR
     private TestEntity4 fetchSubTreeEntity4(TestEntity_4Record te4) {
         List<TestEntity_5Record> testEntity5List = dslContext.fetch(Tables.TEST_ENTITY_5,
             Tables.TEST_ENTITY_5.TEST_ENTITY_4_ID.equal(te4.getId()));
-        RecordMapper<TestEntity_4Record, TestEntity4, ?> mapper = (RecordMapper<TestEntity_4Record, TestEntity4, ?>) domainPersistenceProvider
-            .persistenceMirror
-            .getEntityRecordMapper(TestEntity4.class.getName());
+        RecordMapper<TestEntity_4Record, TestEntity4, ?> mapper =
+            (RecordMapper<TestEntity_4Record, TestEntity4, ?>) domainPersistenceProvider
+                .persistenceMirror
+                .getEntityRecordMapper(TestEntity4.class.getName());
         DomainObjectBuilder<TestEntity4> b = mapper.recordToDomainObjectBuilder(te4);
 
         for (TestEntity_5Record te5 : testEntity5List) {
@@ -206,12 +218,14 @@ public class ComplexAggregateRootRepository extends PersistenceActionPublishingR
     private TestEntity5 fetchSubTreeEntity5(TestEntity_5Record te5) {
         Optional<TestEntity_6Record> testEntity_6RecordOptional = dslContext.fetchOptional(Tables.TEST_ENTITY_6,
             Tables.TEST_ENTITY_6.ID.equal(te5.getTestEntity_6Id()));
-        RecordMapper<TestEntity_5Record, TestEntity5, ?> mapper5 = (RecordMapper<TestEntity_5Record, TestEntity5, ?>) domainPersistenceProvider
-            .persistenceMirror
-            .getEntityRecordMapper(TestEntity5.class.getName());
+        RecordMapper<TestEntity_5Record, TestEntity5, ?> mapper5 =
+            (RecordMapper<TestEntity_5Record, TestEntity5, ?>) domainPersistenceProvider
+                .persistenceMirror
+                .getEntityRecordMapper(TestEntity5.class.getName());
         DomainObjectBuilder<TestEntity5> b = mapper5.recordToDomainObjectBuilder(te5);
         if (testEntity_6RecordOptional.isPresent()) {
-            RecordMapper<TestEntity_6Record, TestEntity6, ?> mapper6 = (RecordMapper<TestEntity_6Record, TestEntity6, ?>) domainPersistenceProvider
+            RecordMapper<TestEntity_6Record, TestEntity6, ?> mapper6 = (RecordMapper<TestEntity_6Record, TestEntity6,
+                ?>) domainPersistenceProvider
                 .persistenceMirror
                 .getEntityRecordMapper(TestEntity6.class.getName());
 

@@ -63,8 +63,9 @@ public class BaseClassCompanionTest {
     @Test
     public void testToString() {
         TestEntity e1 = new TestEntity(new TestEntityId(1L), 0);
-        Assertions.assertThat(e1.toString()).isEqualTo(TestEntity.class.getName() + "@" + System.identityHashCode(e1) + "(id="
-            + TestEntityId.class.getName() + "@" + System.identityHashCode(e1.id) + "(value=1))");
+        Assertions.assertThat(e1.toString()).isEqualTo(
+            TestEntity.class.getName() + "@" + System.identityHashCode(e1) + "(id="
+                + TestEntityId.class.getName() + "@" + System.identityHashCode(e1.id) + "(value=1))");
     }
 
     @Test
@@ -91,8 +92,9 @@ public class BaseClassCompanionTest {
     @Test
     public void testToStringIdentities() {
         BestellStatusId id = new BestellStatusId(1L);
-        Assertions.assertThat(id.toString()).isEqualTo(BestellStatusId.class.getName() + "@" + System.identityHashCode(id)
-            + "(value=1)");
+        Assertions.assertThat(id.toString()).isEqualTo(
+            BestellStatusId.class.getName() + "@" + System.identityHashCode(id)
+                + "(value=1)");
 
     }
 
@@ -106,7 +108,8 @@ public class BaseClassCompanionTest {
     @Test
     public void testStringAktionsCode() {
         AktionsCode a = AktionsCode.builder().setValue("blubb").build();
-        Assertions.assertThat(a.toString()).isEqualTo(AktionsCode.class.getName() + "@" + System.identityHashCode(a) + "(value=blubb)");
+        Assertions.assertThat(a.toString()).isEqualTo(
+            AktionsCode.class.getName() + "@" + System.identityHashCode(a) + "(value=blubb)");
     }
 
     @Test
@@ -503,15 +506,19 @@ public class BaseClassCompanionTest {
             .build();
 
         //because set cannot guarantee order ;-)
-        Assertions.assertThat(vo.toString()).isIn(AutoMappedVoOneToManyEntity.class.getName()+"@"
-            +System.identityHashCode(vo)+"(value=Value, oneToManySet=["+AutoMappedVoOneToManyEntity2.class.getName()+"@"
-            +System.identityHashCode(lowerVo1)+"(value=VoLowerLevel), "+AutoMappedVoOneToManyEntity2.class.getName()+"@"
-            +System.identityHashCode(lowerVo2)+"(value=VoLowerLevel2)])",
-            AutoMappedVoOneToManyEntity.class.getName()+"@"
-                +System.identityHashCode(vo)+"(value=Value, oneToManySet=["+AutoMappedVoOneToManyEntity2.class.getName()+"@"
-                +System.identityHashCode(lowerVo2)+"(value=VoLowerLevel2), "+AutoMappedVoOneToManyEntity2.class.getName()+"@"
-                +System.identityHashCode(lowerVo1)+"(value=VoLowerLevel)])"
-            );
+        Assertions.assertThat(vo.toString()).isIn(AutoMappedVoOneToManyEntity.class.getName() + "@"
+                + System.identityHashCode(
+                vo) + "(value=Value, oneToManySet=[" + AutoMappedVoOneToManyEntity2.class.getName() + "@"
+                + System.identityHashCode(
+                lowerVo1) + "(value=VoLowerLevel), " + AutoMappedVoOneToManyEntity2.class.getName() + "@"
+                + System.identityHashCode(lowerVo2) + "(value=VoLowerLevel2)])",
+            AutoMappedVoOneToManyEntity.class.getName() + "@"
+                + System.identityHashCode(
+                vo) + "(value=Value, oneToManySet=[" + AutoMappedVoOneToManyEntity2.class.getName() + "@"
+                + System.identityHashCode(
+                lowerVo2) + "(value=VoLowerLevel2), " + AutoMappedVoOneToManyEntity2.class.getName() + "@"
+                + System.identityHashCode(lowerVo1) + "(value=VoLowerLevel)])"
+        );
     }
 
 }

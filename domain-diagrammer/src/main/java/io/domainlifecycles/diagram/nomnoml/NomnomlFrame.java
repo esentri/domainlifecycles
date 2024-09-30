@@ -59,11 +59,11 @@ public class NomnomlFrame implements DiagramElement {
     /**
      * Initializes the frame.
      *
-     * @param name of frame
-     * @param comment for frame
-     * @param type of frame
+     * @param name            of frame
+     * @param comment         for frame
+     * @param type            of frame
      * @param styleClassifier for frame
-     * @param innerElements contained
+     * @param innerElements   contained
      */
     @Builder
     public NomnomlFrame(String name,

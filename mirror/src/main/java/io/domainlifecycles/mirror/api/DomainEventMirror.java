@@ -42,49 +42,63 @@ import io.domainlifecycles.domain.types.ValueObject;
 import io.domainlifecycles.domain.types.QueryClient;
 
 import java.util.List;
+
 /**
  * A DomainCommandMirror mirrors a {@link DomainEvent}.
  *
  * @author Mario Herb
  */
-public interface DomainEventMirror extends DomainTypeMirror{
+public interface DomainEventMirror extends DomainTypeMirror {
     /**
-     * @return a list mirrored fields of the mirrored Command (all fields that are not in the category of other kinds of references).
+     * @return a list mirrored fields of the mirrored Command (all fields that are not in the category of other kinds
+     * of references).
      */
     List<FieldMirror> getBasicFields();
+
     /**
-     * @return a list mirrors for value references (references of {@link ValueObject}, Enums or {@link Identity}) of the mirrored Command.
+     * @return a list mirrors for value references (references of {@link ValueObject}, Enums or {@link Identity}) of
+     * the mirrored Command.
      */
     List<ValueReferenceMirror> getValueReferences();
+
     /**
      * @return a list mirrors for {@link Entity} references  of the mirrored Command.
      */
     List<EntityReferenceMirror> getEntityReferences();
+
     /**
      * @return a list mirrors for {@link AggregateRoot} references of the mirrored Command.
      */
     List<AggregateRootReferenceMirror> getAggregateRootReferences();
 
     /**
-     * @return a list mirrors for the {@link AggregateRoot} instances representing the Aggregates publishing the mirrored event.
-     * Therefor the AggregateRoot or any contained DomainObject must have a method being annotated with {@link Publishes}.
+     * @return a list mirrors for the {@link AggregateRoot} instances representing the Aggregates publishing the
+     * mirrored event.
+     * Therefor the AggregateRoot or any contained DomainObject must have a method being annotated with
+     * {@link Publishes}.
      */
     List<AggregateRootMirror> getPublishingAggregates();
+
     /**
      * @return a list mirrors for the {@link DomainService} instances publishing the mirrored event.
      * Therefor the DomainService must have a method being annotated with {@link Publishes}.
      */
     List<DomainServiceMirror> getPublishingDomainServices();
+
     /**
      * @return a list mirrors for the {@link Repository} instances publishing the mirrored event.
      * Therefor the Repository must have a method being annotated with {@link Publishes}.
      */
     List<RepositoryMirror> getPublishingRepositories();
+
     /**
-     * @return a list mirrors for the {@link AggregateRoot} instances representing the Aggregates listening to the mirrored event.
-     * Therefor the AggregateRoot or nay contained DomainObject must have a method being annotated with {@link ListensTo}.
+     * @return a list mirrors for the {@link AggregateRoot} instances representing the Aggregates listening to the
+     * mirrored event.
+     * Therefor the AggregateRoot or nay contained DomainObject must have a method being annotated with
+     * {@link ListensTo}.
      */
     List<AggregateRootMirror> getListeningAggregates();
+
     /**
      * @return a list mirrors for the {@link DomainService} instances listening to the mirrored event.
      * Therefor the DomainService must have a method being annotated with {@link ListensTo}.

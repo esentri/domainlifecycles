@@ -86,7 +86,7 @@ public class DirectSpringTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationUnreceivedCommit() throws Exception{
+    public void testIntegrationUnreceivedCommit() throws Exception {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
         var evt = new UnreceivedDomainEvent("TestUnReceivedCommit");
@@ -187,7 +187,7 @@ public class DirectSpringTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationAggregateDomainEventRollback() throws Exception{
+    public void testIntegrationAggregateDomainEventRollback() throws Exception {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         var evt = new AnAggregateDomainEvent("TestAggregateDomainEventRollback");
@@ -223,7 +223,7 @@ public class DirectSpringTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationDomainServiceExceptionRollback() throws Exception{
+    public void testIntegrationDomainServiceExceptionRollback() throws Exception {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         var evt = new ADomainEvent("TestDomainServiceRollback");

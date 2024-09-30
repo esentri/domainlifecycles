@@ -67,16 +67,17 @@ import java.util.stream.Collectors;
 /**
  * This class provides the default mapping behaviour for mapping {@link DomainObject} instances to R (records)
  * and R records to a corresponding {@link DomainObjectBuilder} for the DomainObject type.
- *
+ * <p>
  * This implementation defines the auto-mapping behaviour for DomainObjects.
  *
- * @param <R> type of Record
+ * @param <R>  type of Record
  * @param <DO> type of DomainObject
- * @param <A> type of AggregateRoot
+ * @param <A>  type of AggregateRoot
  * @author Mario Herb
  */
 
-public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoot<?>> extends AbstractRecordMapper<R, DO, A>{
+public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoot<?>> extends AbstractRecordMapper<R,
+    DO, A> {
 
     private final String typeName;
 
@@ -120,9 +121,10 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
         RecordPropertyProvider recordPropertyProvider,
         EntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider,
         RecordClassProvider<?> recordClassProvider
-        ) {
+    ) {
         this.typeName = Objects.requireNonNull(typeName);
-        this.domainType = Domain.typeMirror(typeName).map(DomainTypeMirror::getDomainType).orElse(DomainType.NON_DOMAIN);
+        this.domainType = Domain.typeMirror(typeName).map(DomainTypeMirror::getDomainType).orElse(
+            DomainType.NON_DOMAIN);
         this.recordTypeName = Objects.requireNonNull(recordTypeName);
         this.recordPropertyMatcher = Objects.requireNonNull(recordPropertyMatcher);
         this.domainObjectBuilderProvider = Objects.requireNonNull(domainObjectBuilderProvider);
@@ -135,11 +137,12 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
         this.recordClassProvider = Objects.requireNonNull(recordClassProvider);
 
         relevantValueObjectRecordConfigs = new ArrayList<>();
-        if(entityValueObjectRecordClassProvider != null) {
-            relevantValueObjectRecordConfigs.addAll(entityValueObjectRecordClassProvider.provideContainedValueObjectRecordClassConfigurations()
-                .stream()
-                .filter(c -> c.containingEntityType().getName().equals(typeName))
-                .toList());
+        if (entityValueObjectRecordClassProvider != null) {
+            relevantValueObjectRecordConfigs.addAll(
+                entityValueObjectRecordClassProvider.provideContainedValueObjectRecordClassConfigurations()
+                    .stream()
+                    .filter(c -> c.containingEntityType().getName().equals(typeName))
+                    .toList());
         }
         this.recordProperties = recordPropertyProvider.provideProperties(recordTypeName);
         this.valuePathToRecordProperty = initializeMappedValuePaths();
@@ -154,6 +157,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
 
     /**
      * {@inheritDoc}
+     *
      * @return
      */
 
@@ -170,7 +174,8 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
                     var path = valuePathToRecordProperty.getInverse(recordProperty);
                     if (path.pathElements().size() == 1) {
                         var fm = path.pathElements().getFirst();
-                        if(DomainType.ENTITY.equals(fm.getType().getDomainType()) || DomainType.AGGREGATE_ROOT.equals(fm.getType().getDomainType())){
+                        if (DomainType.ENTITY.equals(fm.getType().getDomainType()) || DomainType.AGGREGATE_ROOT.equals(
+                            fm.getType().getDomainType())) {
                             return;
                         }
                         Object value = this.recordPropertyAccessor.getPropertyValue(recordProperty, record);
@@ -184,13 +189,15 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
                             var recordPropertyType = recordProperty.getPropertyType();
 
                             if (!DomainType.IDENTITY.equals(domainType)) {
-                                var recordPropertyTypeName = BoxTypeNameConverter.convertToBoxedType(recordPropertyType.getName());
+                                var recordPropertyTypeName = BoxTypeNameConverter.convertToBoxedType(
+                                    recordPropertyType.getName());
                                 fieldTypeName = BoxTypeNameConverter.convertToBoxedType(fieldTypeName);
                                 if (!recordPropertyTypeName.equals(fieldTypeName)) {
                                     if (DomainType.ENUM.equals(domainType) && value instanceof String) {
                                         value = DlcAccess.newEnumInstance((String) value, fieldTypeName);
                                     } else {
-                                        TypeConverter tc = this.converterRegistry.getTypeConverter(recordPropertyTypeName, fieldTypeName);
+                                        TypeConverter tc = this.converterRegistry.getTypeConverter(
+                                            recordPropertyTypeName, fieldTypeName);
                                         value = tc.convert(value);
                                     }
                                 }
@@ -211,6 +218,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
 
     /**
      * {@inheritDoc}
+     *
      * @return
      */
     @Override
@@ -220,7 +228,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
         this.valuePathToRecordProperty.keySet().forEach(
             path -> {
                 var recordProperty = this.valuePathToRecordProperty.get(path);
-                if(path.pathElements().size()==1){
+                if (path.pathElements().size() == 1) {
                     var fm = path.getFinalFieldMirror();
                     var domainObjectFieldType = fm.getType().getTypeName();
                     Object value = DlcAccess.accessorFor(domainObject).peek(fm.getName());
@@ -245,27 +253,33 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
 
                         var fieldTypeMirror = Domain.typeMirror(domainObjectFieldType);
 
-                        if ((DomainType.ENTITY.equals(domainType) || DomainType.AGGREGATE_ROOT.equals(domainType)) && recordProperty.getName().toLowerCase().contains(fm.getName().toLowerCase())) {
+                        if ((DomainType.ENTITY.equals(domainType) || DomainType.AGGREGATE_ROOT.equals(
+                            domainType)) && recordProperty.getName().toLowerCase().contains(
+                            fm.getName().toLowerCase())) {
                             var em = (EntityMirror) fieldTypeMirror.orElseThrow();
-                            if(em.getIdentityField().isPresent()){
-                                Identity<?> identity = DlcAccess.accessorFor((Entity<?>)value).peek(em.getIdentityField().get().getName());
+                            if (em.getIdentityField().isPresent()) {
+                                Identity<?> identity = DlcAccess.accessorFor((Entity<?>) value).peek(
+                                    em.getIdentityField().get().getName());
                                 value = identity.value();
                             }
-                        } else if (DomainType.ENUM.equals(domainType) && String.class.getName().equals(recordPropertyType)) {
+                        } else if (DomainType.ENUM.equals(domainType) && String.class.getName().equals(
+                            recordPropertyType)) {
                             value = ((Enum<?>) value).name();
                         } else {
-                            TypeConverter tc = this.converterRegistry.getTypeConverter(domainObjectFieldType, recordPropertyType);
+                            TypeConverter tc = this.converterRegistry.getTypeConverter(domainObjectFieldType,
+                                recordPropertyType);
                             value = tc.convert(value);
                         }
                     }
                     this.recordPropertyAccessor.setPropertyValue(recordProperty, record, value);
-                }else{
-                    Object value = mapperNestedValueObjectAccessor.getMappedRecordPropertyValue(recordProperty, domainObject);
+                } else {
+                    Object value = mapperNestedValueObjectAccessor.getMappedRecordPropertyValue(recordProperty,
+                        domainObject);
                     if (value != null) {
                         String valueType = value.getClass().getName();
                         var valueTypeMirror = Domain.typeMirror(valueType);
                         var domainType = DomainType.NON_DOMAIN;
-                        if(valueTypeMirror.isPresent()){
+                        if (valueTypeMirror.isPresent()) {
                             domainType = valueTypeMirror.get().getDomainType();
                         }
                         if (DomainType.IDENTITY.equals(domainType)) {
@@ -276,10 +290,12 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
                         String recordPropertyType = recordProperty.getPropertyType().getName();
                         recordPropertyType = BoxTypeNameConverter.convertToBoxedType(recordPropertyType);
                         if (!recordPropertyType.equals(valueType)) {
-                            if (DomainType.ENUM.equals(domainType) && String.class.getName().equals(recordPropertyType)) {
+                            if (DomainType.ENUM.equals(domainType) && String.class.getName().equals(
+                                recordPropertyType)) {
                                 value = ((Enum<?>) value).name();
                             } else {
-                                TypeConverter tc = this.converterRegistry.getTypeConverter(valueType, recordPropertyType);
+                                TypeConverter tc = this.converterRegistry.getTypeConverter(valueType,
+                                    recordPropertyType);
                                 value = tc.convert(value);
                             }
                         }
@@ -291,20 +307,20 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
         return record;
     }
 
-    private BiMap<ValuePath, RecordProperty> initializeMappedValuePaths(){
+    private BiMap<ValuePath, RecordProperty> initializeMappedValuePaths() {
         var biMap = new BiMap<ValuePath, RecordProperty>();
-        var visitor = new ContextDomainObjectVisitor(typeName, false){
+        var visitor = new ContextDomainObjectVisitor(typeName, false) {
             @Override
             public void visitBasic(FieldMirror basicFieldMirror) {
-                if(isFieldMapped()) {
+                if (isFieldMapped()) {
                     var valuePath = new ValuePath(getVisitorContext().getCurrentPath());
                     RecordProperty rp;
-                    if(valuePath.pathElements().size()>1){
+                    if (valuePath.pathElements().size() > 1) {
                         rp = findRecordPropertyForValuePath(valuePath);
-                    }else{
+                    } else {
                         rp = findRecordPropertyForField(basicFieldMirror);
                     }
-                    if(isRecordPropertyMapped(rp)) {
+                    if (isRecordPropertyMapped(rp)) {
                         biMap.put(valuePath, rp);
                     }
                 }
@@ -313,7 +329,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
             @Override
             public void visitEntityId(FieldMirror idFieldMirror) {
                 var rp = findRecordPropertyForField(idFieldMirror);
-                if(isRecordPropertyMapped(rp)) {
+                if (isRecordPropertyMapped(rp)) {
                     var valuePath = new ValuePath(getVisitorContext().getCurrentPath());
                     biMap.put(valuePath, rp);
                 }
@@ -321,7 +337,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
 
             @Override
             public void visitValueReference(ValueReferenceMirror valueReferenceMirror) {
-                if(isFieldMapped()
+                if (isFieldMapped()
                     && (valueReferenceMirror.getValue().isIdentity() || valueReferenceMirror.getValue().isEnum())
                 ) {
                     var valuePath = new ValuePath(getVisitorContext().getCurrentPath());
@@ -334,7 +350,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
 
             @Override
             public void visitEntityReference(EntityReferenceMirror entityReferenceMirror) {
-                if(isFieldMapped()) {
+                if (isFieldMapped()) {
                     var rp = findRecordPropertyForForwardReference(entityReferenceMirror);
                     if (isRecordPropertyMapped(rp)) {
                         var valuePath = new ValuePath(getVisitorContext().getCurrentPath());
@@ -346,13 +362,14 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
             @Override
             public boolean visitEnterEntity(EntityMirror entityMirror) {
                 var context = getVisitorContext();
-                return context.startingTypeName.equals(entityMirror.getTypeName()) && context.getCurrentPath().size() == 0;
+                return context.startingTypeName.equals(
+                    entityMirror.getTypeName()) && context.getCurrentPath().size() == 0;
             }
 
             @Override
             public boolean visitEnterValue(ValueMirror valueMirror) {
-                if(valueMirror.isValueObject()){
-                    if(DomainType.ENTITY.equals(domainType) || DomainType.AGGREGATE_ROOT.equals(domainType)){
+                if (valueMirror.isValueObject()) {
+                    if (DomainType.ENTITY.equals(domainType) || DomainType.AGGREGATE_ROOT.equals(domainType)) {
                         List<String> contextPath = getVisitorContext()
                             .getCurrentPath()
                             .stream()
@@ -368,17 +385,18 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
                 return false;
             }
 
-            private boolean isFieldMapped(){
+            private boolean isFieldMapped() {
                 var contextPath = getVisitorContext().getCurrentPath();
                 return contextPath.stream().noneMatch(
                     fm -> fm.isStatic()
-                          || fm.getType().hasCollectionContainer()
-                          || (ignoredFields != null && ignoredFields.isIgnored(fm))
+                        || fm.getType().hasCollectionContainer()
+                        || (ignoredFields != null && ignoredFields.isIgnored(fm))
                 );
             }
 
-            private boolean isRecordPropertyMapped(RecordProperty rp){
-                return rp != null && (ignoredRecordPropertyProvider == null || !ignoredRecordPropertyProvider.isIgnored(rp));
+            private boolean isRecordPropertyMapped(RecordProperty rp) {
+                return rp != null && (ignoredRecordPropertyProvider == null || !ignoredRecordPropertyProvider.isIgnored(
+                    rp));
             }
 
         };
@@ -386,8 +404,8 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
         return biMap;
     }
 
-    private RecordProperty findRecordPropertyForField(FieldMirror fieldMirror){
-        if(this.ignoredFields != null && this.ignoredFields.isIgnored(fieldMirror)){
+    private RecordProperty findRecordPropertyForField(FieldMirror fieldMirror) {
+        if (this.ignoredFields != null && this.ignoredFields.isIgnored(fieldMirror)) {
             return null;
         }
         var matchedRecordProperties = recordProperties
@@ -398,9 +416,9 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
             var matchedNames = new StringBuilder();
             matchedRecordProperties.forEach(rp -> matchedNames.append(" ").append(rp.getName()));
             throw DLCPersistenceException.fail("The field '%s'"
-                + " of the DomainObject class '%s'"
-                + " could not be matched to a single record property! '%s'"
-                + " matching record properties were found! ['%s']",
+                    + " of the DomainObject class '%s'"
+                    + " could not be matched to a single record property! '%s'"
+                    + " matching record properties were found! ['%s']",
                 fieldMirror.getName(),
                 this.typeName,
                 matchedRecordProperties.size(),
@@ -417,23 +435,25 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
         return matchedRecordProperties.get(0);
     }
 
-    private RecordProperty findRecordPropertyForValuePath(ValuePath path){
-        if(this.ignoredFields != null
+    private RecordProperty findRecordPropertyForValuePath(ValuePath path) {
+        if (this.ignoredFields != null
             && path.pathElements().stream().anyMatch(this.ignoredFields::isIgnored)
-        ){
+        ) {
             return null;
         }
         var matchedRecordProperties = recordProperties
             .stream()
-            .filter(rp -> recordPropertyMatcher.matchValueObjectPath(rp, path.pathElements().stream().toList())).toList();
+            .filter(
+                rp -> recordPropertyMatcher.matchValueObjectPath(rp, path.pathElements().stream().toList())).toList();
 
         if (matchedRecordProperties.size() > 1) {
             var matchedNames = new StringBuilder();
             matchedRecordProperties.forEach(rp -> matchedNames.append(" ").append(rp.getName()));
             throw DLCPersistenceException.fail("The path '%s'"
-                + " of the DomainObject class '%s'"
-                + " could not be matched to a single record property! '%s'"
-                + " matching record properties were found! ['%s']", path.path(), this.typeName, matchedRecordProperties.size(), matchedNames);
+                    + " of the DomainObject class '%s'"
+                    + " could not be matched to a single record property! '%s'"
+                    + " matching record properties were found! ['%s']", path.path(), this.typeName,
+                matchedRecordProperties.size(), matchedNames);
 
         } else if (matchedRecordProperties.size() == 0) {
             throw DLCPersistenceException.fail("The path '%s'"
@@ -443,8 +463,8 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
         return matchedRecordProperties.get(0);
     }
 
-    private RecordProperty findRecordPropertyForForwardReference(EntityReferenceMirror entityReferenceMirror){
-        if(this.ignoredFields != null && this.ignoredFields.isIgnored(entityReferenceMirror)){
+    private RecordProperty findRecordPropertyForForwardReference(EntityReferenceMirror entityReferenceMirror) {
+        if (this.ignoredFields != null && this.ignoredFields.isIgnored(entityReferenceMirror)) {
             return null;
         }
         var matchedRecordProperties = recordProperties
@@ -455,9 +475,10 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
             var matchedNames = new StringBuilder();
             matchedRecordProperties.forEach(rp -> matchedNames.append(" ").append(rp.getName()));
             throw DLCPersistenceException.fail("The field '%s'"
-                + " of the DomainObject class '%s'"
-                + " could not be matched to a single record property! '%s'"
-                + "properties were found! ['%s']", entityReferenceMirror.getName(), this.typeName, matchedRecordProperties.size(), matchedNames);
+                    + " of the DomainObject class '%s'"
+                    + " could not be matched to a single record property! '%s'"
+                    + "properties were found! ['%s']", entityReferenceMirror.getName(), this.typeName,
+                matchedRecordProperties.size(), matchedNames);
 
         } else if (matchedRecordProperties.size() == 0) {
             return null;
@@ -465,20 +486,25 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
         return matchedRecordProperties.get(0);
     }
 
-    private void checkMappingComplete(){
+    private void checkMappingComplete() {
         var nonMappedRecordProperties = this.recordProperties
             .stream()
             .filter(rp -> this.valuePathToRecordProperty.getInverse(rp) == null)
-            .filter(rp -> (!domainType.equals(DomainType.ENTITY) && !domainType.equals(DomainType.AGGREGATE_ROOT)) || !rp.isNonNullForeignKey())
-            .filter(rp -> !(domainType.equals(DomainType.VALUE_OBJECT) && (rp.getName().equals("id") || rp.getName().equals("containerId"))))
-            .filter(rp -> this.ignoredRecordPropertyProvider == null || !this.ignoredRecordPropertyProvider.isIgnored(rp))
+            .filter(rp -> (!domainType.equals(DomainType.ENTITY) && !domainType.equals(
+                DomainType.AGGREGATE_ROOT)) || !rp.isNonNullForeignKey())
+            .filter(
+                rp -> !(domainType.equals(DomainType.VALUE_OBJECT) && (rp.getName().equals("id") || rp.getName().equals(
+                    "containerId"))))
+            .filter(
+                rp -> this.ignoredRecordPropertyProvider == null || !this.ignoredRecordPropertyProvider.isIgnored(rp))
             .toList();
-        if(nonMappedRecordProperties.size()>0){
-            throw DLCPersistenceException.fail(String.format("The record properties '%s' of '%s' were not matched within the DomainObject" +
-                "'%s' for auto mapping!",
-                nonMappedRecordProperties.stream().map(RecordProperty::getName).collect(Collectors.joining(", ")),
-                this.recordTypeName,
-                this.typeName
+        if (nonMappedRecordProperties.size() > 0) {
+            throw DLCPersistenceException.fail(
+                String.format("The record properties '%s' of '%s' were not matched within the DomainObject" +
+                        "'%s' for auto mapping!",
+                    nonMappedRecordProperties.stream().map(RecordProperty::getName).collect(Collectors.joining(", ")),
+                    this.recordTypeName,
+                    this.typeName
                 ));
         }
     }
@@ -493,10 +519,10 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
     @SuppressWarnings("unchecked")
     public Class<R> recordType() {
         return (Class<R>) recordClassProvider
-                .provideRecordClasses()
-                .stream()
-                .filter(rc -> rc.getName().equals(recordTypeName))
-                .findFirst()
-                .orElseThrow(() -> DLCPersistenceException.fail("Record class not found '%s'", this.recordTypeName));
+            .provideRecordClasses()
+            .stream()
+            .filter(rc -> rc.getName().equals(recordTypeName))
+            .findFirst()
+            .orElseThrow(() -> DLCPersistenceException.fail("Record class not found '%s'", this.recordTypeName));
     }
 }

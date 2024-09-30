@@ -48,7 +48,7 @@ public class JakartaBeanValidationDomainAssertionException extends DomainAsserti
     /**
      * Constructor assigning the violations, that caused te exception
      *
-     * @param message for the exception
+     * @param message    for the exception
      * @param violations causes
      */
     public JakartaBeanValidationDomainAssertionException(String message, Set<ConstraintViolation<Object>> violations) {

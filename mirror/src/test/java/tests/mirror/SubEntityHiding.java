@@ -27,7 +27,7 @@
 
 package tests.mirror;
 
-public class SubEntityHiding extends BaseEntityWithHidden<String>{
+public class SubEntityHiding extends BaseEntityWithHidden<String> {
     private String hiddenField = "hiding";
 
     private int[] intArray;

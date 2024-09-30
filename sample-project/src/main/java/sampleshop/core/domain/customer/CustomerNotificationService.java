@@ -37,7 +37,8 @@ import sampleshop.core.outport.CustomerRepository;
 import sampleshop.core.outport.EmailNotifierService;
 
 /**
- * The CustomerNotificationService class is responsible for notifying customers about various events related to their orders.
+ * The CustomerNotificationService class is responsible for notifying customers about various events related to their
+ * orders.
  * It listens to specific domain events and uses the EmailNotifierService to send email notifications to the customers.
  *
  * @author Mario Herb
@@ -49,7 +50,8 @@ public class CustomerNotificationService implements DomainService {
 
     private final CustomerRepository customerRepository;
 
-    public CustomerNotificationService(EmailNotifierService emailNotifierService, CustomerRepository customerRepository) {
+    public CustomerNotificationService(EmailNotifierService emailNotifierService,
+                                       CustomerRepository customerRepository) {
         this.emailNotifierService = emailNotifierService;
         this.customerRepository = customerRepository;
     }
@@ -60,10 +62,11 @@ public class CustomerNotificationService implements DomainService {
      * @param orderShipped the DomainEvent representing the fact that an order was shipped
      */
     @ListensTo(domainEventType = OrderShipped.class)
-    public void notifyOrderShipped(OrderShipped orderShipped){
+    public void notifyOrderShipped(OrderShipped orderShipped) {
         var customer = customerRepository.findById(orderShipped.order().getCustomerId())
             .orElseThrow();
-        emailNotifierService.notify(customer.getUserName(), String.format("Your Order with the ID %s was shipped!", orderShipped.order().getId().value()));
+        emailNotifierService.notify(customer.getUserName(),
+            String.format("Your Order with the ID %s was shipped!", orderShipped.order().getId().value()));
     }
 
     /**
@@ -72,10 +75,11 @@ public class CustomerNotificationService implements DomainService {
      * @param orderCanceled the DomainEvent representing the fact that an order was canceled
      */
     @ListensTo(domainEventType = OrderCanceled.class)
-    public void notifyOrderCanceled(OrderCanceled orderCanceled){
+    public void notifyOrderCanceled(OrderCanceled orderCanceled) {
         var customer = customerRepository.findById(orderCanceled.order().getCustomerId())
             .orElseThrow();
-        emailNotifierService.notify(customer.getUserName(), String.format("Your Order with the ID %s was canceled!", orderCanceled.order().getId().value()));
+        emailNotifierService.notify(customer.getUserName(),
+            String.format("Your Order with the ID %s was canceled!", orderCanceled.order().getId().value()));
     }
 
     /**
@@ -84,9 +88,10 @@ public class CustomerNotificationService implements DomainService {
      * @param newOrderPlaced the DomainEvent representing the fact that a new order was successfully placed
      */
     @ListensTo(domainEventType = NewOrderPlaced.class)
-    public void notifyNewOrderPlaced(NewOrderPlaced newOrderPlaced){
+    public void notifyNewOrderPlaced(NewOrderPlaced newOrderPlaced) {
         var customer = customerRepository.findById(newOrderPlaced.order().getCustomerId())
             .orElseThrow();
-        emailNotifierService.notify(customer.getUserName(), String.format("We received your new Order with the ID '%s'!", newOrderPlaced.order().getId().value()));
+        emailNotifierService.notify(customer.getUserName(),
+            String.format("We received your new Order with the ID '%s'!", newOrderPlaced.order().getId().value()));
     }
 }

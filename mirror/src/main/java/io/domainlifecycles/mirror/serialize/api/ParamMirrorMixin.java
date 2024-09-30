@@ -36,8 +36,9 @@ import io.domainlifecycles.mirror.model.ParamModel;
  *
  * @author Mario Herb
  */
-@JsonTypeInfo(use= JsonTypeInfo.Id.CLASS, property="@class")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = ParamModel.class),
 })
-public interface ParamMirrorMixin {}
+public interface ParamMirrorMixin {
+}

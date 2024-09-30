@@ -52,7 +52,8 @@ public class JooqAggregateRepository<A extends AggregateRoot<I>, I extends Ident
                                    DSLContext dslContext,
                                    JooqDomainPersistenceProvider domainPersistenceProvider,
                                    PersistenceEventPublisher persistenceEventPublisher) {
-        super(new JooqPersister(dslContext, domainPersistenceProvider), domainPersistenceProvider, persistenceEventPublisher);
+        super(new JooqPersister(dslContext, domainPersistenceProvider), domainPersistenceProvider,
+            persistenceEventPublisher);
         this.fetcher = new JooqAggregateFetcher<>(aggregateRootClass, dslContext, domainPersistenceProvider);
         this.dslContext = dslContext;
     }

@@ -36,7 +36,8 @@ import org.slf4j.LoggerFactory;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedVoAggregateRoot;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedVoAggregateRootId;
 
-public class AutoMappedVoAggregateRootRepository extends JooqAggregateRepository<AutoMappedVoAggregateRoot, AutoMappedVoAggregateRootId> {
+public class AutoMappedVoAggregateRootRepository extends JooqAggregateRepository<AutoMappedVoAggregateRoot,
+    AutoMappedVoAggregateRootId> {
 
     private static final Logger log = LoggerFactory.getLogger(AutoMappedVoAggregateRootRepository.class);
 

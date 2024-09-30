@@ -39,8 +39,8 @@ public class ADomainService implements DomainService {
     public List<DomainEvent> received = new ArrayList<>();
 
     @ListensTo(domainEventType = ADomainEvent.class)
-    public void onDomainEvent(ADomainEvent domainEvent){
-        if(domainEvent.message().startsWith("TestDomainServiceRollback")){
+    public void onDomainEvent(ADomainEvent domainEvent) {
+        if (domainEvent.message().startsWith("TestDomainServiceRollback")) {
             throw new RuntimeException("Provoked error!");
         }
         System.out.println("ADomainEvent received in ADomainService! Message = " + domainEvent.message());
@@ -48,7 +48,7 @@ public class ADomainService implements DomainService {
     }
 
     @ListensTo(domainEventType = PassThroughDomainEvent.class)
-    public void onDomainEvent(PassThroughDomainEvent domainEvent){
+    public void onDomainEvent(PassThroughDomainEvent domainEvent) {
         System.out.println("PassThroughDomainEvent received in ADomainService! Message = " + domainEvent.message());
         received.add(domainEvent);
     }

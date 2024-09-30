@@ -38,7 +38,6 @@ import java.util.Set;
  * InternalFetcherContext is the base class for all internal fetcher contexts.
  *
  * @param <RECORD> the record type
- *
  * @author Mario Herb
  */
 public class InternalFetcherContext<RECORD> extends SimpleFetcherContext<RECORD> implements FetcherContext<RECORD> {
@@ -72,8 +71,8 @@ public class InternalFetcherContext<RECORD> extends SimpleFetcherContext<RECORD>
         /**
          * Creates a new BackRef.
          *
-         * @param fieldMirror that field, that constitutes the back reference
-         * @param ownerRecord the owner record
+         * @param fieldMirror      that field, that constitutes the back reference
+         * @param ownerRecord      the owner record
          * @param referencedRecord the referenced record
          */
         public BackRef(FieldMirror fieldMirror, RECORD ownerRecord, RECORD referencedRecord) {

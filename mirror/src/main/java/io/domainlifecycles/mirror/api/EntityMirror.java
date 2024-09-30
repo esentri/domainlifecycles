@@ -40,7 +40,7 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public interface EntityMirror extends DomainObjectMirror, DomainCommandProcessingMirror, DomainEventProcessingMirror{
+public interface EntityMirror extends DomainObjectMirror, DomainCommandProcessingMirror, DomainEventProcessingMirror {
 
     /**
      * @return the mirror for the field containing the {@link Identity} value for the mirrored Entity.
@@ -50,7 +50,8 @@ public interface EntityMirror extends DomainObjectMirror, DomainCommandProcessin
 
     /**
      * @return the mirror for the field containing the concurrency version for the mirrored Entity.
-     * If no unambiguous field annotated with {@link ConcurrencySafe.ConcurrencyVersion} could be found, then the returned Optional is empty.
+     * If no unambiguous field annotated with {@link ConcurrencySafe.ConcurrencyVersion} could be found, then the
+     * returned Optional is empty.
      */
     Optional<FieldMirror> getConcurrencyVersionField();
 

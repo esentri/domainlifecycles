@@ -40,7 +40,7 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
-public class DefaultIdentityFactory implements IdentityFactory{
+public class DefaultIdentityFactory implements IdentityFactory {
 
     private final ClassProvider classProvider;
 
@@ -60,10 +60,11 @@ public class DefaultIdentityFactory implements IdentityFactory{
             .findConstructor(identityClass, value.getClass())
             .map(constructor -> {
                 try {
-                    return (I)constructor.newInstance(value);
+                    return (I) constructor.newInstance(value);
                 } catch (InstantiationException | InvocationTargetException |
                          IllegalAccessException ex) {
-                    throw DLCAccessException.fail("Couldn't instantiate Identity (Identity class: %s) for: '%s'.", ex, identityTypeName, value);
+                    throw DLCAccessException.fail("Couldn't instantiate Identity (Identity class: %s) for: '%s'.", ex,
+                        identityTypeName, value);
                 }
             })
             ///

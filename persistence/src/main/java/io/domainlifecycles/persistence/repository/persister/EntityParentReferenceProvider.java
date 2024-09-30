@@ -37,7 +37,6 @@ import io.domainlifecycles.persistence.provider.DomainObjectInstanceAccessModel;
  * map the corresponding entity objects to their record representation to get the key values to copy them.
  *
  * @param <BASE_RECORD_TYPE> the type of the record that is used to persist the {@link DomainObject}
- *
  * @author Mario Herb
  */
 public interface EntityParentReferenceProvider<BASE_RECORD_TYPE> {
@@ -45,8 +44,9 @@ public interface EntityParentReferenceProvider<BASE_RECORD_TYPE> {
     /**
      * Provides parent foreign key ids for a given entity record.
      *
-     * @param entityRecord                  the entity record
+     * @param entityRecord                    the entity record
      * @param domainObjectInstanceAccessModel the domain object instance access model
      */
-    void provideParentForeignKeyIdsForEntityRecord(BASE_RECORD_TYPE entityRecord, DomainObjectInstanceAccessModel<BASE_RECORD_TYPE> domainObjectInstanceAccessModel);
+    void provideParentForeignKeyIdsForEntityRecord(BASE_RECORD_TYPE entityRecord,
+                                                   DomainObjectInstanceAccessModel<BASE_RECORD_TYPE> domainObjectInstanceAccessModel);
 }

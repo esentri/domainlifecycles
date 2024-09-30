@@ -31,7 +31,7 @@ package io.domainlifecycles.domain.types;
  * This is the marker interface to represent DomainCommands that trigger a method in an Aggregate.
  *
  * @param <ID> the type of the AggregateRoot's Identity
- * @param <A> the type of targeted AggregateRoot
+ * @param <A>  the type of targeted AggregateRoot
  * @author Mario Herb
  */
 public interface AggregateCommand<ID extends Identity<?>, A extends AggregateRoot<ID>> extends DomainCommand {

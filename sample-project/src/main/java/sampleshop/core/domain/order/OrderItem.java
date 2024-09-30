@@ -47,9 +47,11 @@ public final class OrderItem extends EntityBase<OrderItem.OrderItemId> {
 
     /**
      * The "typed" OrderItemId as inner class (record) of the {@code OrderItem} class.
+     *
      * @param value
      */
-    public record OrderItemId(@NotNull Long value) implements Identity<Long> { }
+    public record OrderItemId(@NotNull Long value) implements Identity<Long> {
+    }
 
     /**
      * The identity of this item.
@@ -97,7 +99,7 @@ public final class OrderItem extends EntityBase<OrderItem.OrderItemId> {
     /**
      * Increase the quantity ordered.
      */
-    public OrderItem addQuantity(int quantity){
+    public OrderItem addQuantity(int quantity) {
         this.quantity += quantity;
         return this;
     }

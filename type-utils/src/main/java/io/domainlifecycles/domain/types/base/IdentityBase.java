@@ -35,7 +35,6 @@ import java.util.Objects;
  * Abstract skeleton implementation of an {@link Identity}.
  *
  * @param <V> type of identity value
- *
  * @author Mario Herb
  */
 public abstract class IdentityBase<V> implements Identity<V> {

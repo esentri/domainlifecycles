@@ -36,7 +36,8 @@ import org.slf4j.Logger;
 import tests.shared.persistence.domain.manyToManyWithJoinEntity.TestRootManyToMany;
 import tests.shared.persistence.domain.manyToManyWithJoinEntity.TestRootManyToManyId;
 
-public class ManyToManyAggregateRootRepository extends JooqAggregateRepository<TestRootManyToMany, TestRootManyToManyId> {
+public class ManyToManyAggregateRootRepository extends JooqAggregateRepository<TestRootManyToMany,
+    TestRootManyToManyId> {
 
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(ManyToManyAggregateRootRepository.class);

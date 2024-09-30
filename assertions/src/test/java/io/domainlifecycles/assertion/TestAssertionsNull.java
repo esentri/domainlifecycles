@@ -11,13 +11,14 @@ public class TestAssertionsNull {
     class TestIsNull {
 
         @Test
-        public void testIsNullOk(){
-            assertThatNoException().isThrownBy(()-> DomainAssertions.isNull(null, "Failed"));
+        public void testIsNullOk() {
+            assertThatNoException().isThrownBy(() -> DomainAssertions.isNull(null, "Failed"));
         }
 
         @Test
-        public void testIsNullFail(){
-            assertThatThrownBy(()-> DomainAssertions.isNull("", "Failed")).isInstanceOf(DomainAssertionException.class);
+        public void testIsNullFail() {
+            assertThatThrownBy(() -> DomainAssertions.isNull("", "Failed")).isInstanceOf(
+                DomainAssertionException.class);
         }
 
     }
@@ -26,13 +27,14 @@ public class TestAssertionsNull {
     class TestIsNotNull {
 
         @Test
-        public void testIsNotNullOk(){
-            assertThatNoException().isThrownBy(()-> DomainAssertions.isNotNull(1l, "Failed"));
+        public void testIsNotNullOk() {
+            assertThatNoException().isThrownBy(() -> DomainAssertions.isNotNull(1l, "Failed"));
         }
 
         @Test
-        public void testIsNotNullFail(){
-            assertThatThrownBy(()-> DomainAssertions.isNotNull(null, "Failed")).isInstanceOf(DomainAssertionException.class);
+        public void testIsNotNullFail() {
+            assertThatThrownBy(() -> DomainAssertions.isNotNull(null, "Failed")).isInstanceOf(
+                DomainAssertionException.class);
         }
     }
 }

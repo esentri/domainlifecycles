@@ -46,6 +46,7 @@ public interface DomainObjectVisitor {
 
     /**
      * Called when entering any domain type {@link DomainTypeMirror}
+     *
      * @param domainTypeMirror mirror for domain type
      */
     void visitEnterAnyDomainType(DomainTypeMirror domainTypeMirror);
@@ -76,18 +77,21 @@ public interface DomainObjectVisitor {
 
     /**
      * Called when leaving an {@link AggregateRootMirror}
+     *
      * @param aggregateRootMirror mirror for AggregateRoot
      */
     void visitLeaveAggregateRoot(AggregateRootMirror aggregateRootMirror);
 
     /**
      * Called when leaving an {@link EntityMirror}
+     *
      * @param entityMirror entity mirror
      */
     void visitLeaveEntity(EntityMirror entityMirror);
 
     /**
      * Called when leaving a {@link ValueMirror}
+     *
      * @param valueMirror value mirror
      */
     void visitLeaveValue(ValueMirror valueMirror);
@@ -95,18 +99,21 @@ public interface DomainObjectVisitor {
 
     /**
      * Called when passing a {@link AggregateRootReferenceMirror}
+     *
      * @param aggregateRootReferenceMirror mirror for AggregateRoot reference
      */
     void visitAggregateRootReference(AggregateRootReferenceMirror aggregateRootReferenceMirror);
 
     /**
      * Called when passing a {@link EntityReferenceMirror}
+     *
      * @param entityReferenceMirror mirror for entity reference
      */
     void visitEntityReference(EntityReferenceMirror entityReferenceMirror);
 
     /**
      * Called when passing a {@link ValueReferenceMirror}
+     *
      * @param valueReferenceMirror mirror for value reference
      */
     void visitValueReference(ValueReferenceMirror valueReferenceMirror);
@@ -114,12 +121,14 @@ public interface DomainObjectVisitor {
 
     /**
      * Called when passing a basic {@link FieldMirror}
+     *
      * @param basicFieldMirror mirror for basic field
      */
     void visitBasic(FieldMirror basicFieldMirror);
 
     /**
      * Called when passing an identity property {@link FieldMirror}
+     *
      * @param idPropertyMirror mirror for identity property
      */
     void visitEntityId(FieldMirror idPropertyMirror);

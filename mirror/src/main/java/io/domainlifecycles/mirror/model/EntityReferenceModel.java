@@ -55,7 +55,8 @@ public class EntityReferenceModel extends FieldModel implements EntityReferenceM
                                 @JsonProperty("static") boolean isStatic,
                                 @JsonProperty("hidden") boolean hidden
     ) {
-        super(name, type, accessLevel, declaredByTypeName, modifiable, publicReadable, publicWriteable, isStatic, hidden);
+        super(name, type, accessLevel, declaredByTypeName, modifiable, publicReadable, publicWriteable, isStatic,
+            hidden);
     }
 
     /**
@@ -63,9 +64,9 @@ public class EntityReferenceModel extends FieldModel implements EntityReferenceM
      */
     @JsonIgnore
     @Override
-    public EntityMirror getEntity(){
+    public EntityMirror getEntity() {
         return Domain.typeMirror(getType().getTypeName())
-            .map(e -> (EntityMirror)e)
+            .map(e -> (EntityMirror) e)
             .orElseThrow(() -> MirrorException.fail("EntityMirror not found for '%s'", getType().getTypeName()));
     }
 

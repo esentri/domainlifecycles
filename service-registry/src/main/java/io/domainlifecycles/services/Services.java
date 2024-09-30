@@ -54,7 +54,7 @@ public class Services implements ServiceRegistrator, ServiceProvider {
 
     private final Map<String, QueryClient<?>> queryClients = new HashMap<>();
 
-    private final Map<String, OutboundService> outboundServices  = new HashMap<>();
+    private final Map<String, OutboundService> outboundServices = new HashMap<>();
 
     /**
      * {@inheritDoc}

@@ -46,36 +46,35 @@ public interface RecordMirrorInstanceProvider<BASE_RECORD_TYPE> {
     /**
      * Provides the entity record mirror for a record type
      *
-     * @param recordTypeName name of record type
-     * @param entityTypeName name of entity type
-     * @param mapper the record mapper
-     * @param valueObjectRecordMirrors mirrors of value object record
+     * @param recordTypeName                           name of record type
+     * @param entityTypeName                           name of entity type
+     * @param mapper                                   the record mapper
+     * @param valueObjectRecordMirrors                 mirrors of value object record
      * @param recordCanonicalNameToDomainObjectTypeMap canonical name to domain object type
-     *
      * @return the entity record mirror
      */
     EntityRecordMirror<BASE_RECORD_TYPE> provideEntityRecordMirror(String recordTypeName,
-                                                 String entityTypeName,
-                                                 RecordMapper<BASE_RECORD_TYPE, ?, ?> mapper,
-                                                 List<ValueObjectRecordMirror<BASE_RECORD_TYPE>> valueObjectRecordMirrors,
-                                                 Map<String, List<String>> recordCanonicalNameToDomainObjectTypeMap);
+                                                                   String entityTypeName,
+                                                                   RecordMapper<BASE_RECORD_TYPE, ?, ?> mapper,
+                                                                   List<ValueObjectRecordMirror<BASE_RECORD_TYPE>> valueObjectRecordMirrors,
+                                                                   Map<String, List<String>> recordCanonicalNameToDomainObjectTypeMap);
 
     /**
      * Provides the value object record mirror for a record type
      *
-     * @param containingEntityTypeName name of contained entity type
-     * @param containedValueObjectTypeName name of contained value object type
-     * @param valueObjectRecordType type of value object record
-     * @param pathFromEntityToValueObject path from entity to value object
-     * @param mapper the record mapper
+     * @param containingEntityTypeName                 name of contained entity type
+     * @param containedValueObjectTypeName             name of contained value object type
+     * @param valueObjectRecordType                    type of value object record
+     * @param pathFromEntityToValueObject              path from entity to value object
+     * @param mapper                                   the record mapper
      * @param recordCanonicalNameToDomainObjectTypeMap canonical name to domain object type
      * @return the value object record mirror
      */
     ValueObjectRecordMirror<BASE_RECORD_TYPE> provideValueObjectRecordMirror(String containingEntityTypeName,
-                                                                    String containedValueObjectTypeName,
-                                                                    Class<? extends BASE_RECORD_TYPE> valueObjectRecordType,
-                                                                    List<String> pathFromEntityToValueObject,
-                                                                    RecordMapper<BASE_RECORD_TYPE, ?, ?> mapper,
-                                                                    Map<String, List<String>> recordCanonicalNameToDomainObjectTypeMap);
+                                                                             String containedValueObjectTypeName,
+                                                                             Class<? extends BASE_RECORD_TYPE> valueObjectRecordType,
+                                                                             List<String> pathFromEntityToValueObject,
+                                                                             RecordMapper<BASE_RECORD_TYPE, ?, ?> mapper,
+                                                                             Map<String, List<String>> recordCanonicalNameToDomainObjectTypeMap);
 
 }

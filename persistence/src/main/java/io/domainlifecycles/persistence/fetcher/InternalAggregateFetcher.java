@@ -64,7 +64,6 @@ import java.util.stream.Collectors;
  * @param <A>                the aggregate root entity type
  * @param <I>                the identity type
  * @param <BASE_RECORD_TYPE> the base record type
- *
  * @author Mario Herb
  */
 public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I extends Identity<?>, BASE_RECORD_TYPE> implements AggregateFetcher<A, I, BASE_RECORD_TYPE> {
@@ -79,7 +78,7 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
     /**
      * Creates a new InternalAggregateFetcher.
      *
-     * @param aggregateRootEntityClass class of aggregate root
+     * @param aggregateRootEntityClass  class of aggregate root
      * @param domainPersistenceProvider the persistence provider
      */
     public InternalAggregateFetcher(Class<A> aggregateRootEntityClass,
@@ -94,12 +93,15 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
      * {@inheritDoc}
      */
     @Override
-    public AggregateFetcher<A, I, BASE_RECORD_TYPE> withRecordProvider(RecordProvider<? extends BASE_RECORD_TYPE, ? extends BASE_RECORD_TYPE> recordProvider,
+    public AggregateFetcher<A, I, BASE_RECORD_TYPE> withRecordProvider(RecordProvider<? extends BASE_RECORD_TYPE, ?
+        extends BASE_RECORD_TYPE> recordProvider,
                                                                        Class<? extends Entity<?>> containingEntityClass,
                                                                        Class<? extends DomainObject> propertyClass,
                                                                        List<String> propertyPath) {
         checkValidRecordProviderAssignment(containingEntityClass, propertyClass, propertyPath);
-        recordProviderMap.put(new PropertyProviderKey(containingEntityClass.getName(), propertyClass.getName(), propertyPath), recordProvider);
+        recordProviderMap.put(
+            new PropertyProviderKey(containingEntityClass.getName(), propertyClass.getName(), propertyPath),
+            recordProvider);
         return this;
     }
 
@@ -111,7 +113,7 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
         }
 
         var correctPropertyCoordinates = new AtomicBoolean(false);
-        var visitor = new ContextDomainObjectVisitor(containingEntityClass.getName()){
+        var visitor = new ContextDomainObjectVisitor(containingEntityClass.getName()) {
 
             @Override
             public void visitAggregateRootReference(AggregateRootReferenceMirror aggregateRootReferenceMirror) {
@@ -147,9 +149,9 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
 
         if (!correctPropertyCoordinates.get()) {
             throw DLCPersistenceException.fail("%s does not contain a %s at the given path [%s]"
-                    , containingEntityClass.getName()
-                    , propertyClass.getName()
-                    , String.join(".", propertyPath));
+                , containingEntityClass.getName()
+                , propertyClass.getName()
+                , String.join(".", propertyPath));
         }
     }
 
@@ -167,29 +169,30 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
         }
         fetcherContext.recordFetched(aggregateRecord);
         A domainObjectDeepFetched = (A) fetchEntityReferencesAndValues(
-                aggregateRecord,
-                this.aggregateRootEntityClass.getName(),
-                fetcherContext
+            aggregateRecord,
+            this.aggregateRootEntityClass.getName(),
+            fetcherContext
         );
 
         //set potential back references
         //to prevent infinite loops, if there are any kind of back references
         fetcherContext.getBackReferences().forEach(
-                br -> {
-                    Optional<DomainObject> propertyDomainObject = fetcherContext.getDomainObjectFor(br.getReferencedRecord());
-                    Optional<DomainObject> ownerDomainObject = fetcherContext.getDomainObjectFor(br.getOwnerRecord());
-                    FieldMirror fm = br.getBackReferenceMirror();
+            br -> {
+                Optional<DomainObject> propertyDomainObject = fetcherContext.getDomainObjectFor(
+                    br.getReferencedRecord());
+                Optional<DomainObject> ownerDomainObject = fetcherContext.getDomainObjectFor(br.getOwnerRecord());
+                FieldMirror fm = br.getBackReferenceMirror();
 
-                    if (propertyDomainObject.isPresent() && ownerDomainObject.isPresent()) {
-                        var accessor = DlcAccess.accessorFor(ownerDomainObject.get());
-                        if (fm.getType().hasCollectionContainer()) {
-                            Collection<DomainObject> c = accessor.peek(fm.getName());
-                            c.add(propertyDomainObject.get());
-                        } else {
-                            accessor.poke(fm.getName(), propertyDomainObject.get());
-                        }
+                if (propertyDomainObject.isPresent() && ownerDomainObject.isPresent()) {
+                    var accessor = DlcAccess.accessorFor(ownerDomainObject.get());
+                    if (fm.getType().hasCollectionContainer()) {
+                        Collection<DomainObject> c = accessor.peek(fm.getName());
+                        c.add(propertyDomainObject.get());
+                    } else {
+                        accessor.poke(fm.getName(), propertyDomainObject.get());
                     }
                 }
+            }
         );
 
         return new FetcherResult<>(domainObjectDeepFetched, fetcherContext);
@@ -230,13 +233,16 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
     private DomainObject fetchEntityReferencesAndValues(BASE_RECORD_TYPE baseEntityRecord,
                                                         String baseEntityClassName,
                                                         InternalFetcherContext<BASE_RECORD_TYPE> fetcherContext) {
-        if(baseEntityRecord==null){
+        if (baseEntityRecord == null) {
             return null;
         }
-        var rm = (RecordMapper<BASE_RECORD_TYPE, ?, ?>) domainPersistenceProvider.persistenceMirror.getEntityRecordMapper(baseEntityClassName);
+        var rm =
+            (RecordMapper<BASE_RECORD_TYPE, ?, ?>) domainPersistenceProvider.persistenceMirror.getEntityRecordMapper(
+            baseEntityClassName);
         var b = rm.recordToDomainObjectBuilder(baseEntityRecord);
         if (b == null) {
-            throw DLCPersistenceException.fail(String.format("Was not able to get DomainObjectBuilder for record: %s", baseEntityRecord));
+            throw DLCPersistenceException.fail(
+                String.format("Was not able to get DomainObjectBuilder for record: %s", baseEntityRecord));
         }
 
         var em = Domain.entityMirrorFor(b.instanceType().getName());
@@ -246,9 +252,9 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
         for (AggregateRootReferenceMirror aggregateRootReferenceMirror : em.getAggregateRootReferences()) {
             fetchEntityReference(aggregateRootReferenceMirror, b, baseEntityRecord, fetcherContext);
         }
-        var erm = (EntityRecordMirror<BASE_RECORD_TYPE>)domainPersistenceProvider
-                .persistenceMirror
-                .getEntityRecordMirror(b.instanceType().getName());
+        var erm = (EntityRecordMirror<BASE_RECORD_TYPE>) domainPersistenceProvider
+            .persistenceMirror
+            .getEntityRecordMirror(b.instanceType().getName());
         fetchValueObjects(erm.valueObjectRecords(), b, baseEntityRecord, fetcherContext);
 
         DomainObject domainObjectBuilt = b.build();
@@ -262,8 +268,11 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
                                       BASE_RECORD_TYPE baseEntityRecord,
                                       InternalFetcherContext<BASE_RECORD_TYPE> fetcherContext
     ) {
-        var ppk = new PropertyProviderKey(entityReferenceMirror.getDeclaredByTypeName(), entityReferenceMirror.getType().getTypeName(), List.of(entityReferenceMirror.getName()));
-        RecordProvider<? extends BASE_RECORD_TYPE, BASE_RECORD_TYPE> prp = (RecordProvider<? extends BASE_RECORD_TYPE, BASE_RECORD_TYPE>) recordProviderMap.get(ppk);
+        var ppk = new PropertyProviderKey(entityReferenceMirror.getDeclaredByTypeName(),
+            entityReferenceMirror.getType().getTypeName(), List.of(entityReferenceMirror.getName()));
+        RecordProvider<? extends BASE_RECORD_TYPE, BASE_RECORD_TYPE> prp = (RecordProvider<? extends BASE_RECORD_TYPE
+            , BASE_RECORD_TYPE>) recordProviderMap.get(
+            ppk);
         var referencedEntityClassName = entityReferenceMirror.getType().getTypeName();
         DomainObject childDomainObject;
         if (prp != null) {
@@ -273,41 +282,43 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
                 var c = prp.provideCollection(baseEntityRecord);
                 for (BASE_RECORD_TYPE childRecord : c) {
                     childDomainObject = buildPropertyDomainObjectByPropertyRecord(
-                            baseEntityRecord,
-                            childRecord,
-                            entityReferenceMirror,
-                            fetcherContext
+                        baseEntityRecord,
+                        childRecord,
+                        entityReferenceMirror,
+                        fetcherContext
                     );
                     baseRecordBuilder.addValueToCollection(childDomainObject, entityReferenceMirror.getName());
                 }
             } else {
                 BASE_RECORD_TYPE propertyChildRecord = prp.provide(baseEntityRecord);
                 childDomainObject = buildPropertyDomainObjectByPropertyRecord(
-                        baseEntityRecord,
-                        propertyChildRecord,
-                        entityReferenceMirror,
-                        fetcherContext);
+                    baseEntityRecord,
+                    propertyChildRecord,
+                    entityReferenceMirror,
+                    fetcherContext);
                 baseRecordBuilder.setFieldValue(childDomainObject, entityReferenceMirror.getName());
             }
         } else {
-            //if there is no custom record provider we resolve association records in the way they are "naturally" provided
+            //if there is no custom record provider we resolve association records in the way they are "naturally"
+            // provided
             // e.g. by foreign key associations
             if (entityReferenceMirror.getType().hasCollectionContainer()) {
-                Collection<BASE_RECORD_TYPE> c = getEntityReferenceRecordCollectionByParentRecord(baseEntityRecord, referencedEntityClassName);
+                Collection<BASE_RECORD_TYPE> c = getEntityReferenceRecordCollectionByParentRecord(baseEntityRecord,
+                    referencedEntityClassName);
                 for (BASE_RECORD_TYPE childRecord : c) {
                     childDomainObject = buildPropertyDomainObjectByPropertyRecord(
-                            baseEntityRecord,
-                            childRecord,
-                            entityReferenceMirror,
-                            fetcherContext
+                        baseEntityRecord,
+                        childRecord,
+                        entityReferenceMirror,
+                        fetcherContext
                     );
                     baseRecordBuilder.addValueToCollection(childDomainObject, entityReferenceMirror.getName());
                 }
             } else {
                 childDomainObject = fetchEntityForReference(
-                        baseEntityRecord,
-                        entityReferenceMirror,
-                        fetcherContext);
+                    baseEntityRecord,
+                    entityReferenceMirror,
+                    fetcherContext);
                 baseRecordBuilder.setFieldValue(childDomainObject, entityReferenceMirror.getName());
             }
         }
@@ -321,7 +332,9 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
         //fetch record mapped value objects
         //phew, thats weird stuff
         if (vorms != null) {
-            var vormsSorted = (List<? extends ValueObjectRecordMirror<BASE_RECORD_TYPE>>) vorms.stream().sorted(Comparator.comparingInt((ValueObjectRecordMirror o) -> o.pathSegments().size())).collect(Collectors.toList());
+            var vormsSorted = (List<? extends ValueObjectRecordMirror<BASE_RECORD_TYPE>>) vorms.stream().sorted(
+                Comparator.comparingInt((ValueObjectRecordMirror o) -> o.pathSegments().size())).collect(
+                Collectors.toList());
 
             final Map<FetchedRecord<BASE_RECORD_TYPE>, BuilderAndBuilt> builderMap = new HashMap<>();
             final List<ValueObjectRecordComposition> compositions = new ArrayList<>();
@@ -335,8 +348,11 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
                 resetCurrentContainers(currentContainers, vorm, compositions, parent);
                 for (FetchedRecord<? extends BASE_RECORD_TYPE> container : currentContainers) {
                     ValueObjectRecordComposition composition = new ValueObjectRecordComposition(vorm, container.record);
-                    var ppk = new PropertyProviderKey(vorm.containingEntityTypeName(), vorm.domainObjectTypeName(), vorm.pathSegments());
-                    RecordProvider<? extends BASE_RECORD_TYPE, BASE_RECORD_TYPE> prp = (RecordProvider<? extends BASE_RECORD_TYPE, BASE_RECORD_TYPE>) recordProviderMap.get(ppk);
+                    var ppk = new PropertyProviderKey(vorm.containingEntityTypeName(), vorm.domainObjectTypeName(),
+                        vorm.pathSegments());
+                    RecordProvider<? extends BASE_RECORD_TYPE, BASE_RECORD_TYPE> prp = (RecordProvider<?
+                        extends BASE_RECORD_TYPE, BASE_RECORD_TYPE>) recordProviderMap.get(
+                        ppk);
                     if (prp != null) {
                         if (toManyReferenceOnPath(vorm)) {
                             children = (Collection<BASE_RECORD_TYPE>) prp.provideCollection(container.record);
@@ -350,9 +366,9 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
                     for (BASE_RECORD_TYPE childRecord : children) {
                         composition.addChildRecord(childRecord);
                         builderMap.put(FetchedRecord.of(childRecord),
-                                new BuilderAndBuilt(
-                                    vorm.recordMapper().recordToDomainObjectBuilder(childRecord)
-                                )
+                            new BuilderAndBuilt(
+                                vorm.recordMapper().recordToDomainObjectBuilder(childRecord)
+                            )
                         );
                     }
                     //the compositions are now ordered from leafs to root
@@ -371,14 +387,16 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
                     fetcherContext.assignRecordToDomainObject(childBuilderAndBuilt.getBuilt(), child);
                     DomainObject childInstance = childBuilderAndBuilt.getBuilt();
                     BuilderAndBuilt parentBuilderAndBuilt = builderMap.get(FetchedRecord.of(comp.parentRecord));
-                    String fieldName = comp.valueObjectRecordMirror.pathSegments().get(comp.valueObjectRecordMirror.pathSegments().size() - 1);
+                    String fieldName = comp.valueObjectRecordMirror.pathSegments().get(
+                        comp.valueObjectRecordMirror.pathSegments().size() - 1);
                     var parentTypeName = parentBuilderAndBuilt.getBuilder().instanceType().getName();
                     var dtm = Domain.typeMirror(parentTypeName)
-                            .orElseThrow(() -> DLCPersistenceException.fail("DomainTypeMirror not found for '%s'", parentTypeName));
+                        .orElseThrow(
+                            () -> DLCPersistenceException.fail("DomainTypeMirror not found for '%s'", parentTypeName));
                     var fm = dtm.fieldByName(fieldName);
-                    if(fm.getType().hasCollectionContainer()){
+                    if (fm.getType().hasCollectionContainer()) {
                         parentBuilderAndBuilt.getBuilder().addValueToCollection(childInstance, fieldName);
-                    }else{
+                    } else {
                         parentBuilderAndBuilt.getBuilder().setFieldValue(childInstance, fieldName);
                     }
 
@@ -437,7 +455,7 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
                 String compPath = comp.valueObjectRecordMirror.completePath();
                 String vormPath = vorm.completePath();
                 if (vorm.pathSegments().size() > (comp.valueObjectRecordMirror.pathSegments().size())
-                        && vormPath.startsWith(compPath)) {
+                    && vormPath.startsWith(compPath)) {
                     predecessorComp = comp;
                     break;
                 }
@@ -457,7 +475,8 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
 
     protected abstract BASE_RECORD_TYPE getEntityRecordById(I id);
 
-    protected abstract BASE_RECORD_TYPE getEntityReferenceRecordByParentRecord(BASE_RECORD_TYPE parentRecord, String referencedEntityClassName);
+    protected abstract BASE_RECORD_TYPE getEntityReferenceRecordByParentRecord(BASE_RECORD_TYPE parentRecord,
+                                                                               String referencedEntityClassName);
 
     protected abstract Collection<BASE_RECORD_TYPE> getChildValueObjectRecordCollectionByParentRecord(BASE_RECORD_TYPE parentRecord, ValueObjectRecordMirror<BASE_RECORD_TYPE> vorm);
 
@@ -467,24 +486,25 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
                                                    FieldMirror entityReferenceMirror,
                                                    InternalFetcherContext<BASE_RECORD_TYPE> fetcherContext
     ) {
-        BASE_RECORD_TYPE record = getEntityReferenceRecordByParentRecord(parentRecord, entityReferenceMirror.getType().getTypeName());
+        BASE_RECORD_TYPE record = getEntityReferenceRecordByParentRecord(parentRecord,
+            entityReferenceMirror.getType().getTypeName());
         return buildPropertyDomainObjectByPropertyRecord(
-                parentRecord,
-                record,
-                entityReferenceMirror,
-                fetcherContext
+            parentRecord,
+            record,
+            entityReferenceMirror,
+            fetcherContext
         );
     }
 
     private record PropertyProviderKey(String containingEntityClassName, String propertyClassName,
                                        List<String> propertyPath) {
-            private PropertyProviderKey(final String containingEntityClassName,
-                                        final String propertyClassName,
-                                        final List<String> propertyPath) {
-                this.containingEntityClassName = Objects.requireNonNull(containingEntityClassName);
-                this.propertyClassName = Objects.requireNonNull(propertyClassName);
-                this.propertyPath = Objects.requireNonNull(propertyPath);
-            }
+        private PropertyProviderKey(final String containingEntityClassName,
+                                    final String propertyClassName,
+                                    final List<String> propertyPath) {
+            this.containingEntityClassName = Objects.requireNonNull(containingEntityClassName);
+            this.propertyClassName = Objects.requireNonNull(propertyClassName);
+            this.propertyPath = Objects.requireNonNull(propertyPath);
+        }
     }
 
     private static class BuilderAndBuilt {
@@ -513,7 +533,8 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
         private final BASE_RECORD_TYPE parentRecord;
         private final List<BASE_RECORD_TYPE> childRecords = new ArrayList<>();
 
-        public ValueObjectRecordComposition(ValueObjectRecordMirror<BASE_RECORD_TYPE> valueObjectRecordMirror, BASE_RECORD_TYPE parentRecord) {
+        public ValueObjectRecordComposition(ValueObjectRecordMirror<BASE_RECORD_TYPE> valueObjectRecordMirror,
+                                            BASE_RECORD_TYPE parentRecord) {
             this.valueObjectRecordMirror = valueObjectRecordMirror;
             this.parentRecord = parentRecord;
         }

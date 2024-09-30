@@ -108,7 +108,8 @@ public class Bestellung extends AggregateRootBase<BestellungId> {
         var gesamtPreisBetrag = BigDecimal.ZERO;
         var waehrung = bestellPositionen.get(0).getStueckPreis().getWaehrung();
         for (BestellPosition p : bestellPositionen) {
-            gesamtPreisBetrag = gesamtPreisBetrag.add(p.getStueckPreis().getBetrag().multiply(BigDecimal.valueOf(p.getStueckzahl())));
+            gesamtPreisBetrag = gesamtPreisBetrag.add(
+                p.getStueckPreis().getBetrag().multiply(BigDecimal.valueOf(p.getStueckzahl())));
         }
         this.gesamtPreis = new Preis(gesamtPreisBetrag, waehrung);
     }
@@ -146,7 +147,8 @@ public class Bestellung extends AggregateRootBase<BestellungId> {
             .map(p -> p.getStueckPreis())
             .filter(p -> erstePosition.getStueckPreis().getWaehrung().equals(p.getWaehrung()))
             .count();
-        DomainAssertions.isTrue(positionenMitGleicherWaehrung == bestellPositionen.size(), "Alle Bestellpositionen müssen dieselbe Währung haben!");
+        DomainAssertions.isTrue(positionenMitGleicherWaehrung == bestellPositionen.size(),
+            "Alle Bestellpositionen müssen dieselbe Währung haben!");
     }
 
     public void setAktionsCodes(List<AktionsCode> aktionsCodes) {

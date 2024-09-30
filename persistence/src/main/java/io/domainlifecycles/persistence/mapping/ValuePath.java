@@ -34,8 +34,10 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
 /**
- * Represents the path to a final value field as a linear collection of {@link FieldMirror} instances ({@code pathElements}).
+ * Represents the path to a final value field as a linear collection of {@link FieldMirror} instances ({@code
+ * pathElements}).
  *
  * @author Mario Herb
  */
@@ -47,11 +49,11 @@ public class ValuePath {
         this.pathElements = new LinkedList<>(pathElements);
     }
 
-    protected Deque<FieldMirror> pathElements(){
+    protected Deque<FieldMirror> pathElements() {
         return pathElements;
     }
 
-    protected String path(){
+    protected String path() {
         return pathElements.stream().map(FieldMirror::getName).collect(Collectors.joining("."));
     }
 
@@ -104,10 +106,10 @@ public class ValuePath {
      *
      * @return value path container
      */
-    public ValuePath containerValuePath(){
+    public ValuePath containerValuePath() {
         var list = pathElements.stream().toList();
         return new ValuePath(
-            list.subList(0, list.size()-1)
+            list.subList(0, list.size() - 1)
         );
     }
 }

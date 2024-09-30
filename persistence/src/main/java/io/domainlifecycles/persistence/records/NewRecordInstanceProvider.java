@@ -32,12 +32,12 @@ package io.domainlifecycles.persistence.records;
  *
  * @author Mario Herb
  */
-public interface NewRecordInstanceProvider{
+public interface NewRecordInstanceProvider {
 
     /**
      * Provides a new record instance for the given record type.
      *
-     * @param <RECORD> the type of record
+     * @param <RECORD>        the type of record
      * @param recordClassName full qualified class name of record type
      * @return the new record instance
      */

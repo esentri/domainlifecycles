@@ -32,4 +32,5 @@ import io.domainlifecycles.domain.types.DomainEvent;
 import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
 
 public record AuslieferungGestartet(@NotNull BestellungBv3 bestellung, boolean premiumVersand)
-    implements DomainEvent {}
+    implements DomainEvent {
+}

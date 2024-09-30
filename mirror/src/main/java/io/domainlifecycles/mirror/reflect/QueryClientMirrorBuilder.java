@@ -42,7 +42,7 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public class QueryClientMirrorBuilder extends DomainTypeMirrorBuilder{
+public class QueryClientMirrorBuilder extends DomainTypeMirrorBuilder {
     private final Class<? extends QueryClient<?>> queryClientClass;
 
     public QueryClientMirrorBuilder(Class<? extends QueryClient<?>> queryClientClass) {
@@ -55,7 +55,7 @@ public class QueryClientMirrorBuilder extends DomainTypeMirrorBuilder{
      *
      * @return new instance of RepositoryMirror
      */
-    public QueryClientMirror build(){
+    public QueryClientMirror build() {
         return new QueryClientModel(
             getTypeName(),
             isAbstract(),
@@ -69,13 +69,13 @@ public class QueryClientMirrorBuilder extends DomainTypeMirrorBuilder{
     }
 
     @SuppressWarnings("unchecked")
-    private static Optional<Class<? extends ReadModel>> getProvidedReadModelType(Class<? extends QueryClient<?>> c)   {
+    private static Optional<Class<? extends ReadModel>> getProvidedReadModelType(Class<? extends QueryClient<?>> c) {
         var resolver = new GenericInterfaceTypeResolver(c);
         var resolved = resolver.resolveFor(QueryClient.class, 0);
         return Optional.ofNullable((Class<? extends ReadModel>) resolved);
     }
 
-    private List<String> queryClientInterfaceTypeNames(){
+    private List<String> queryClientInterfaceTypeNames() {
         return Arrays.stream(queryClientClass.getInterfaces())
             .filter(i -> QueryClient.class.isAssignableFrom(i) && !i.getName().equals(QueryClient.class.getName()))
             .map(Class::getName)

@@ -102,7 +102,8 @@ public class RepositoryModel extends DomainTypeModel implements RepositoryMirror
     public List<OutboundServiceMirror> getReferencedOutboundServices() {
         return referencedOutboundServiceTypeNames
             .stream()
-            .map(n -> (OutboundServiceMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("OutboundServiceMirror not found for '%s'", n)))
+            .map(n -> (OutboundServiceMirror) Domain.typeMirror(n).orElseThrow(
+                () -> MirrorException.fail("OutboundServiceMirror not found for '%s'", n)))
             .collect(Collectors.toList());
     }
 
@@ -114,7 +115,8 @@ public class RepositoryModel extends DomainTypeModel implements RepositoryMirror
     public List<QueryClientMirror> getReferencedQueryClients() {
         return referencedQueryClientTypeNames
             .stream()
-            .map(n -> (QueryClientMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("QueryClientMirror not found for '%s'", n)))
+            .map(n -> (QueryClientMirror) Domain.typeMirror(n).orElseThrow(
+                () -> MirrorException.fail("QueryClientMirror not found for '%s'", n)))
             .collect(Collectors.toList());
     }
 
@@ -196,6 +198,7 @@ public class RepositoryModel extends DomainTypeModel implements RepositoryMirror
      */
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), managedAggregateTypeName, referencedOutboundServiceTypeNames, referencedQueryClientTypeNames, repositoryInterfaceTypeNames);
+        return Objects.hash(super.hashCode(), managedAggregateTypeName, referencedOutboundServiceTypeNames,
+            referencedQueryClientTypeNames, repositoryInterfaceTypeNames);
     }
 }

@@ -34,11 +34,11 @@ import java.util.UUID;
 
 /**
  * Represents a batch of domain events in the outbox.
- *
+ * <p>
  * The OutboxBatch class is responsible for storing a batch of domain events to be sent out.
  * Each OutboxBatch instance is associated with a unique batch ID generated using UUID.randomUUID().
  * It contains a list of domain events that are to be sent out within the batch.
- *
+ * <p>
  * The OutboxBatch class provides a getter method for retrieving the batch ID.
  * The class does not provide any setter methods to modify the batch ID or the list of domain events.
  *
@@ -60,7 +60,7 @@ public class OutboxBatch {
 
     /**
      * Retrieves the batch ID associated with the OutboxBatch.
-     *
+     * <p>
      * The batch ID is a unique identifier generated using UUID.randomUUID().
      *
      * @return the batch ID

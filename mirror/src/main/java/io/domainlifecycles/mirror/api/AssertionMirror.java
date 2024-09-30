@@ -30,7 +30,8 @@ package io.domainlifecycles.mirror.api;
 import io.domainlifecycles.mirror.model.AssertionType;
 
 /**
- * An AssertionMirror mirrors assertions (on fields, return types or parameters), currently the meta data of bean validation annotations.
+ * An AssertionMirror mirrors assertions (on fields, return types or parameters), currently the meta data of bean
+ * validation annotations.
  *
  * @author Mario Herb
  */

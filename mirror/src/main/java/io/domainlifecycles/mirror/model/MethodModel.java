@@ -106,6 +106,7 @@ public class MethodModel implements MethodMirror {
 
     /**
      * {@inheritDoc}
+     *
      * @return
      */
     @Override
@@ -137,7 +138,8 @@ public class MethodModel implements MethodMirror {
     public List<DomainEventMirror> getPublishedEvents() {
         return this.publishedEventTypeNames
             .stream()
-            .map(n -> (DomainEventMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("DomainEventMirror not found for '%s'", n)))
+            .map(n -> (DomainEventMirror) Domain.typeMirror(n).orElseThrow(
+                () -> MirrorException.fail("DomainEventMirror not found for '%s'", n)))
             .collect(Collectors.toList());
     }
 
@@ -148,7 +150,8 @@ public class MethodModel implements MethodMirror {
     @Override
     public Optional<DomainEventMirror> getListenedEvent() {
         return listenedEventTypeName
-            .map(n -> (DomainEventMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("DomainEventMirror not found for '%s'", n)));
+            .map(n -> (DomainEventMirror) Domain.typeMirror(n).orElseThrow(
+                () -> MirrorException.fail("DomainEventMirror not found for '%s'", n)));
     }
 
     /**
@@ -180,17 +183,17 @@ public class MethodModel implements MethodMirror {
      */
     @Override
     public boolean isGetter() {
-        if(parameters.size()==0 && AccessLevel.PUBLIC.equals(accessLevel)) {
+        if (parameters.size() == 0 && AccessLevel.PUBLIC.equals(accessLevel)) {
             var declaringDomainTypeOptional = Domain.typeMirror(declaredByTypeName);
             if (declaringDomainTypeOptional.isPresent()) {
                 var declaringDomainType = declaringDomainTypeOptional.get();
                 var propName = name;
                 if (name.startsWith("get")) {
                     propName = propName.substring(3);
-                }else if(name.startsWith("is")){
+                } else if (name.startsWith("is")) {
                     propName = propName.substring(2);
                 }
-                if(propName.length()>0) {
+                if (propName.length() > 0) {
                     propName = propName.substring(0, 1).toLowerCase() + propName.substring(1);
                     final var propNameFinal = propName;
                     return declaringDomainType
@@ -209,7 +212,7 @@ public class MethodModel implements MethodMirror {
      */
     @Override
     public boolean isSetter() {
-        if(parameters.size()==1 && AccessLevel.PUBLIC.equals(accessLevel)) {
+        if (parameters.size() == 1 && AccessLevel.PUBLIC.equals(accessLevel)) {
             var declaringDomainTypeOptional = Domain.typeMirror(declaredByTypeName);
             if (declaringDomainTypeOptional.isPresent()) {
                 var declaringDomainType = declaringDomainTypeOptional.get();
@@ -217,7 +220,7 @@ public class MethodModel implements MethodMirror {
                 if (name.startsWith("set")) {
                     propName = propName.substring(3);
                 }
-                if(propName.length()>0) {
+                if (propName.length() > 0) {
                     propName = propName.substring(0, 1).toLowerCase() + propName.substring(1);
                     final var propNameFinal = propName;
                     final var firstParam = parameters.get(0);
@@ -265,7 +268,10 @@ public class MethodModel implements MethodMirror {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MethodModel that = (MethodModel) o;
-        return name.equals(that.name) && declaredByTypeName.equals(that.declaredByTypeName) && accessLevel == that.accessLevel && parameters.equals(that.parameters) && returnType.equals(that.returnType) && publishedEventTypeNames.equals(that.publishedEventTypeNames) && listenedEventTypeName.equals(that.listenedEventTypeName);
+        return name.equals(that.name) && declaredByTypeName.equals(
+            that.declaredByTypeName) && accessLevel == that.accessLevel && parameters.equals(
+            that.parameters) && returnType.equals(that.returnType) && publishedEventTypeNames.equals(
+            that.publishedEventTypeNames) && listenedEventTypeName.equals(that.listenedEventTypeName);
     }
 
     /**
@@ -273,6 +279,7 @@ public class MethodModel implements MethodMirror {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(name, declaredByTypeName, accessLevel, parameters, returnType, publishedEventTypeNames, listenedEventTypeName);
+        return Objects.hash(name, declaredByTypeName, accessLevel, parameters, returnType, publishedEventTypeNames,
+            listenedEventTypeName);
     }
 }

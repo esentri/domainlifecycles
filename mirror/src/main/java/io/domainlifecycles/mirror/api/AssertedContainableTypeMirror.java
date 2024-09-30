@@ -32,7 +32,7 @@ import java.util.Optional;
 
 /**
  * The AssertedContainableTypeMirror reflects a Java type specification.
- *
+ * <p>
  * This mirror provides information on specified Assertions (bean validation annotations).
  * as well as container types. java.langOptional, java.util.stream.Stream and java.util.Collection
  * are supported container types.
@@ -62,7 +62,7 @@ public interface AssertedContainableTypeMirror {
      *
      * @return true, if the mirrored type is a container type.
      */
-    default boolean hasContainer(){
+    default boolean hasContainer() {
         return hasOptionalContainer() || hasCollectionContainer() || hasStreamContainer();
     }
 
@@ -121,7 +121,7 @@ public interface AssertedContainableTypeMirror {
 
     /**
      * Retrieves the resolved generic type of the mirrored type.
-     *
+     * <p>
      * The resolved type provides information about the Java type and any generic types it may have.
      * It also indicates if the type is a wildcard type with an upper or lower bound.
      *

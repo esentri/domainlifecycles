@@ -66,7 +66,7 @@ public class BoundedContextModel implements BoundedContextMirror {
      */
     @JsonIgnore
     @Override
-    public List<AggregateRootMirror> getAggregateRoots(){
+    public List<AggregateRootMirror> getAggregateRoots() {
         return Domain
             .getInitializedDomain()
             .allTypeMirrors()
@@ -83,7 +83,7 @@ public class BoundedContextModel implements BoundedContextMirror {
      */
     @JsonIgnore
     @Override
-    public List<DomainServiceMirror> getDomainServices(){
+    public List<DomainServiceMirror> getDomainServices() {
         return Domain
             .getInitializedDomain()
             .allTypeMirrors()
@@ -100,7 +100,7 @@ public class BoundedContextModel implements BoundedContextMirror {
      */
     @JsonIgnore
     @Override
-    public List<RepositoryMirror> getRepositories(){
+    public List<RepositoryMirror> getRepositories() {
         return Domain
             .getInitializedDomain()
             .allTypeMirrors()
@@ -117,7 +117,7 @@ public class BoundedContextModel implements BoundedContextMirror {
      */
     @JsonIgnore
     @Override
-    public List<ReadModelMirror> getReadModels(){
+    public List<ReadModelMirror> getReadModels() {
         return Domain
             .getInitializedDomain()
             .allTypeMirrors()
@@ -134,7 +134,7 @@ public class BoundedContextModel implements BoundedContextMirror {
      */
     @JsonIgnore
     @Override
-    public List<DomainCommandMirror> getDomainCommands(){
+    public List<DomainCommandMirror> getDomainCommands() {
         return Domain
             .getInitializedDomain()
             .allTypeMirrors()
@@ -151,7 +151,7 @@ public class BoundedContextModel implements BoundedContextMirror {
      */
     @JsonIgnore
     @Override
-    public List<DomainEventMirror> getDomainEvents(){
+    public List<DomainEventMirror> getDomainEvents() {
         return Domain
             .getInitializedDomain()
             .allTypeMirrors()
@@ -168,7 +168,7 @@ public class BoundedContextModel implements BoundedContextMirror {
      */
     @JsonIgnore
     @Override
-    public List<ApplicationServiceMirror> getApplicationServices(){
+    public List<ApplicationServiceMirror> getApplicationServices() {
         return Domain
             .getInitializedDomain()
             .allTypeMirrors()
@@ -185,7 +185,7 @@ public class BoundedContextModel implements BoundedContextMirror {
      */
     @JsonIgnore
     @Override
-    public List<QueryClientMirror> getQueryClients(){
+    public List<QueryClientMirror> getQueryClients() {
         return Domain
             .getInitializedDomain()
             .allTypeMirrors()
@@ -202,7 +202,7 @@ public class BoundedContextModel implements BoundedContextMirror {
      */
     @JsonIgnore
     @Override
-    public List<OutboundServiceMirror> getOutboundServices(){
+    public List<OutboundServiceMirror> getOutboundServices() {
         return Domain
             .getInitializedDomain()
             .allTypeMirrors()

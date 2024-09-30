@@ -36,11 +36,10 @@ package io.domainlifecycles.domain.types;
  * as all necessary implementation requirements are immediately addressed.
  *
  * @param <V> type of identity value.
- * @see java.lang.Record
- *
  * @author Tobias Herb
+ * @see java.lang.Record
  */
-public interface Identity<V> extends Validatable{
+public interface Identity<V> extends Validatable {
 
     /**
      * @return the value that identifies a thread of continuity.

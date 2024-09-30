@@ -55,14 +55,14 @@ public class NomnomlRelationship implements DiagramElement {
     /**
      * Initializes the relationship.
      *
-     * @param fromName for relationship
+     * @param fromName            for relationship
      * @param fromStyleClassifier for relationship
-     * @param fromMultiplicity for relationship
-     * @param toName for relationship
-     * @param toStyleClassifier for relationship
-     * @param toMultiplicity for relationship
-     * @param label for relationship
-     * @param relationshiptype for relationship
+     * @param fromMultiplicity    for relationship
+     * @param toName              for relationship
+     * @param toStyleClassifier   for relationship
+     * @param toMultiplicity      for relationship
+     * @param label               for relationship
+     * @param relationshiptype    for relationship
      */
     @Builder
     public NomnomlRelationship(String fromName,
@@ -90,44 +90,44 @@ public class NomnomlRelationship implements DiagramElement {
     public String getDiagramText() {
         StringBuilder builder = new StringBuilder();
         builder.append("[");
-        if(!transposed){
+        if (!transposed) {
             builder.append(fromStyleClassifier);
             builder.append(fromName);
-        }else{
+        } else {
             builder.append(toStyleClassifier);
             builder.append(toName);
         }
         builder.append("] ");
-        if(!transposed) {
+        if (!transposed) {
             builder.append(fromMultiplicity);
-        }else{
+        } else {
             builder.append(toMultiplicity);
         }
         builder.append(" ");
-        if(!transposed) {
+        if (!transposed) {
             builder.append(relationshiptype.lineStart);
-        }else{
+        } else {
             builder.append(relationshiptype.transposedLineStart);
         }
-        if(!"".equals(label)){
+        if (!"".equals(label)) {
             builder.append("[<label> ");
             builder.append(label);
             builder.append("] ");
         }
-        if(!transposed) {
+        if (!transposed) {
             builder.append(relationshiptype.lineEnd);
             builder.append(toMultiplicity);
-        }else{
+        } else {
             builder.append(relationshiptype.transposedLineEnd);
             builder.append(fromMultiplicity);
         }
 
         builder.append(" ");
         builder.append("[");
-        if(!transposed) {
+        if (!transposed) {
             builder.append(toStyleClassifier);
             builder.append(toName);
-        }else{
+        } else {
             builder.append(fromStyleClassifier);
             builder.append(fromName);
         }
@@ -186,7 +186,7 @@ public class NomnomlRelationship implements DiagramElement {
         }
     }
 
-    public void transpose(){
+    public void transpose() {
         this.transposed = !transposed;
     }
 }

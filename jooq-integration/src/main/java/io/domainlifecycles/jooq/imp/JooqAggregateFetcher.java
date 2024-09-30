@@ -70,7 +70,8 @@ public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
         );
         this.domainPersistenceProvider = domainPersistenceProvider;
         this.dslContext = dslContext;
-        JooqDomainPersistenceConfiguration jooqPersistenceConfiguration = (JooqDomainPersistenceConfiguration) domainPersistenceProvider.domainPersistenceConfiguration;
+        JooqDomainPersistenceConfiguration jooqPersistenceConfiguration =
+            (JooqDomainPersistenceConfiguration) domainPersistenceProvider.domainPersistenceConfiguration;
         this.newRecordInstanceProvider = jooqPersistenceConfiguration.newRecordInstanceProvider;
     }
 
@@ -80,13 +81,17 @@ public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
     @Override
     @SuppressWarnings("unchecked")
     protected UpdatableRecord<?> getEntityRecordById(I id) {
-       var entityClassName = Domain.entityMirrorForIdentityTypeName(id.getClass().getName()).getTypeName();
-        String recordClassName = domainPersistenceProvider.persistenceMirror.getEntityRecordMirror(entityClassName).recordTypeName();
+        var entityClassName = Domain.entityMirrorForIdentityTypeName(id.getClass().getName()).getTypeName();
+        String recordClassName = domainPersistenceProvider.persistenceMirror.getEntityRecordMirror(
+            entityClassName).recordTypeName();
         var recordInstance = (UpdatableRecord<?>) newRecordInstanceProvider.provideNewRecord(recordClassName);
 
         var pk = recordInstance.getTable().getPrimaryKey();
         if (pk.getFields().size() > 1) {
-            throw DLCPersistenceException.fail("Find by ID. Currently only single valued primary key are supported. The primary key '%s' contains multiple fields!", pk.getName());
+            throw DLCPersistenceException.fail(
+                "Find by ID. Currently only single valued primary key are supported. The primary key '%s' contains " +
+                    "multiple fields!",
+                pk.getName());
         }
         recordInstance.set((Field) pk.getFields().get(0), id.value());
         recordInstance.attach(dslContext.configuration());
@@ -100,12 +105,12 @@ public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
     }
 
 
-
     /**
      * {@inheritDoc}
      */
     @Override
-    protected UpdatableRecord<?> getEntityReferenceRecordByParentRecord(UpdatableRecord<?> parentRecord, String referencedEntityClassName) {
+    protected UpdatableRecord<?> getEntityReferenceRecordByParentRecord(UpdatableRecord<?> parentRecord,
+                                                                        String referencedEntityClassName) {
         var parentRecordInstance = (UpdatableRecord<?>) parentRecord;
         String referencedRecordClassName = domainPersistenceProvider.entityRecordType(referencedEntityClassName);
         UpdatableRecord<?> dummyChildRecord = newRecordInstanceProvider.provideNewRecord(referencedRecordClassName);
@@ -117,17 +122,21 @@ public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
             if (fk.getKey().getTable().equals(dummyChildRecord.getTable())) {
                 if (fkCandidate != null) {
 
-                    throw DLCPersistenceException.fail("Only clear foreign key references between tables are supported! "
-                        + "There are multiple foreign key relations between '%s' and '%s'.", parentRecordInstance.getTable().getName(), dummyChildRecord.getTable().getName());
+                    throw DLCPersistenceException.fail(
+                        "Only clear foreign key references between tables are supported! "
+                            + "There are multiple foreign key relations between '%s' and '%s'.",
+                        parentRecordInstance.getTable().getName(), dummyChildRecord.getTable().getName());
                 }
                 if (fk.getKey().getFields().size() > 1) {
-                    throw DLCPersistenceException.fail("Only single valued foreign key references between tables are supported!" +
-                        " The foreign key '%s' contains multiple fields!", fk.getName());
+                    throw DLCPersistenceException.fail(
+                        "Only single valued foreign key references between tables are supported!" +
+                            " The foreign key '%s' contains multiple fields!", fk.getName());
                 }
                 if (!fk.getTable().equals(fk.getKey().getTable())) {
                     //no self reference support
                     fkCandidate = (ForeignKey<UpdatableRecord<?>, UpdatableRecord<?>>) fk;
-                    dummyChildRecord.set((Field) fk.getKey().getFields().get(0), parentRecordInstance.get((Field) fk.getFields().get(0)));
+                    dummyChildRecord.set((Field) fk.getKey().getFields().get(0),
+                        parentRecordInstance.get((Field) fk.getFields().get(0)));
                     dummyChildRecord.attach(dslContext.configuration());
                     childFk = true;
                 }
@@ -138,14 +147,19 @@ public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
         for (var fk : otherFks) {
             if (!fk.getTable().equals(fk.getKey().getTable())) {
                 if (fkCandidate != null && !fkCandidate.equals(fk)) {
-                    throw DLCPersistenceException.fail("Only clear foreign key references between tables are supported! "
-                        + "There are multiple foreign key relations between '%s' and '%s'.", parentRecordInstance.getTable().getName(), dummyChildRecord.getTable().getName());
+                    throw DLCPersistenceException.fail(
+                        "Only clear foreign key references between tables are supported! "
+                            + "There are multiple foreign key relations between '%s' and '%s'.",
+                        parentRecordInstance.getTable().getName(), dummyChildRecord.getTable().getName());
                 }
                 fkCandidate = (ForeignKey<UpdatableRecord<?>, UpdatableRecord<?>>) fk;
             }
         }
         if (fkCandidate == null) {
-            throw DLCPersistenceException.fail("No foreign key references between tables '%s' and '%s' were found! Self references (hierarchy) are not supported!", parentRecordInstance.getTable().getName(), dummyChildRecord.getTable().getName());
+            throw DLCPersistenceException.fail(
+                "No foreign key references between tables '%s' and '%s' were found! Self references (hierarchy) are " +
+                    "not supported!",
+                parentRecordInstance.getTable().getName(), dummyChildRecord.getTable().getName());
         }
         Result<?> r;
         if (childFk) {
@@ -159,7 +173,10 @@ public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
             r = fkCandidate.fetchChildren(parentRecordInstance);
         }
         if (r.size() > 1) {
-            throw DLCPersistenceException.fail("More than 1 row was fetched via fk reference '%s'! But on entity side this was modelled as 1-1 relation!", fkCandidate.getName());
+            throw DLCPersistenceException.fail(
+                "More than 1 row was fetched via fk reference '%s'! But on entity side this was modelled as 1-1 " +
+                    "relation!",
+                fkCandidate.getName());
         }
         if (r.size() > 0) {
             return (UpdatableRecord<?>) r.get(0);
@@ -179,17 +196,24 @@ public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
 
 
         if (fks.size() == 0) {
-            throw DLCPersistenceException.fail("No foreign key references between tables '%s' and '%s' were found!", parentRecord.getTable().getName(), dummyChildRecord.getTable().getName());
+            throw DLCPersistenceException.fail("No foreign key references between tables '%s' and '%s' were found!",
+                parentRecord.getTable().getName(), dummyChildRecord.getTable().getName());
         }
         if (fks.size() > 1) {
-            throw DLCPersistenceException.fail("ValueObject references: Exact foreign key reference between table '%s' and '%s' could not be identified! '%d' FK definitions could be found!", dummyChildRecord.getTable(), parentRecord.getTable(), fks.size());
+            throw DLCPersistenceException.fail(
+                "ValueObject references: Exact foreign key reference between table '%s' and '%s' could not be " +
+                    "identified! '%d' FK definitions could be found!",
+                dummyChildRecord.getTable(), parentRecord.getTable(), fks.size());
         }
-        ForeignKey<UpdatableRecord<?>,UpdatableRecord<?>> fk = (ForeignKey<UpdatableRecord<?>, UpdatableRecord<?>>) fks.get(0);
+        ForeignKey<UpdatableRecord<?>, UpdatableRecord<?>> fk =
+            (ForeignKey<UpdatableRecord<?>, UpdatableRecord<?>>) fks.get(
+            0);
         return fk.fetchChildren(parentRecord);
     }
 
     /**
      * {@inheritDoc}
+     *
      * @return
      */
     @Override
@@ -205,17 +229,19 @@ public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
         var o = newRecordInstanceProvider.provideNewRecord(referencedRecordClassName);
         var dummyChildRecord = (TableRecord<?>) o;
 
-        ForeignKey<UpdatableRecord<?>,UpdatableRecord<?>> fkCandidate = null;
+        ForeignKey<UpdatableRecord<?>, UpdatableRecord<?>> fkCandidate = null;
         var fks = dummyChildRecord.getTable().getReferencesTo(parentRecordInstance.getTable());
         for (var fk : fks) {
             if (fkCandidate != null) {
                 throw DLCPersistenceException.fail("Only clear foreign key references between tables are supported! "
-                    + "There are multiple foreign key relations between '%s' and '%s'.", dummyChildRecord.getTable().getName(), parentRecordInstance.getTable().getName());
+                        + "There are multiple foreign key relations between '%s' and '%s'.",
+                    dummyChildRecord.getTable().getName(), parentRecordInstance.getTable().getName());
             }
-            fkCandidate = (ForeignKey<UpdatableRecord<?>,UpdatableRecord<?>>)fk;
+            fkCandidate = (ForeignKey<UpdatableRecord<?>, UpdatableRecord<?>>) fk;
         }
         if (fkCandidate == null) {
-            throw DLCPersistenceException.fail("No foreign key references between tables '%s' and '%s' were found!", parentRecordInstance.getTable().getName(), dummyChildRecord.getTable().getName());
+            throw DLCPersistenceException.fail("No foreign key references between tables '%s' and '%s' were found!",
+                parentRecordInstance.getTable().getName(), dummyChildRecord.getTable().getName());
         }
         return fkCandidate.fetchChildren((UpdatableRecord<?>) parentRecordInstance);
     }

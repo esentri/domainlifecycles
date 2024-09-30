@@ -42,10 +42,9 @@ import java.util.List;
  * to derive a correct query to the underlying database. Or sometimes we want to
  * implement a more efficient query to be able to do some performance tuning.
  *
- * @param <A> EntityClass of the aggregate's root entity
- * @param <I> Identity Class of the root entity
+ * @param <A>      EntityClass of the aggregate's root entity
+ * @param <I>      Identity Class of the root entity
  * @param <RECORD> the record type of the aggregate's root entity
- *
  * @author Mario Herb
  */
 public interface AggregateFetcher<A extends AggregateRoot<I>, I extends Identity<?>, RECORD> {
@@ -58,10 +57,13 @@ public interface AggregateFetcher<A extends AggregateRoot<I>, I extends Identity
      * With this mechanism the results of user defined queries could be
      * defined when fetching the aggregate.
      *
-     * @param recordProvider        - the {@link RecordProvider} instance to be registered within this {@link AggregateFetcher}
-     * @param containingEntityClass - the {@link Entity} containing the properties whose records are provided by the registered {@link RecordProvider}
+     * @param recordProvider        - the {@link RecordProvider} instance to be registered within this
+     * {@link AggregateFetcher}
+     * @param containingEntityClass - the {@link Entity} containing the properties whose records are provided by the
+     *                              registered {@link RecordProvider}
      * @param propertyClass         - the {@link DomainObject} class of the contained properties
-     * @param propertyPath          - the path of property names containing the domain object instances, for which the {@link RecordProvider}
+     * @param propertyPath          - the path of property names containing the domain object instances, for which
+     *                              the {@link RecordProvider}
      *                              should supply the records
      * @return this - to offer a fluent API
      */

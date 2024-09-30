@@ -33,11 +33,13 @@ import io.domainlifecycles.domain.types.Driver;
 import java.util.List;
 
 /**
- * An ApplicationServiceMirror mirrors ApplicationServices (Clean Architecture conceptuality) or Drivers (Ports &amp; Adapters conceptuality).
+ * An ApplicationServiceMirror mirrors ApplicationServices (Clean Architecture conceptuality) or Drivers (Ports &amp;
+ * Adapters conceptuality).
  *
  * @author Mario Herb
  */
-public interface ApplicationServiceMirror extends DomainTypeMirror, DomainCommandProcessingMirror, DomainEventProcessingMirror{
+public interface ApplicationServiceMirror extends DomainTypeMirror, DomainCommandProcessingMirror,
+    DomainEventProcessingMirror {
 
     /**
      * @return the list of referenced {@link RepositoryMirror} instances.

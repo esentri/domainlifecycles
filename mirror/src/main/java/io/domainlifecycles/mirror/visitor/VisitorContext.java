@@ -58,21 +58,21 @@ public class VisitorContext {
         this.startingTypeName = startingTypeName;
     }
 
-    protected void enterType(DomainTypeMirror type){
+    protected void enterType(DomainTypeMirror type) {
         currentDomainTypeMirror = type;
         alreadyVisitedTypeMirrors.add(type);
     }
 
-    protected void leaveType(DomainTypeMirror type){
+    protected void leaveType(DomainTypeMirror type) {
         currentDomainTypeMirror = type;
     }
 
-    protected void visitFieldStart(FieldMirror fieldMirror){
+    protected void visitFieldStart(FieldMirror fieldMirror) {
         currentFieldMirror = Optional.of(fieldMirror);
         currentPath.add(fieldMirror);
     }
 
-    protected void visitFieldEnd(FieldMirror fieldMirror){
+    protected void visitFieldEnd(FieldMirror fieldMirror) {
         currentFieldMirror = Optional.empty();
         removeLastPathEntry();
     }
@@ -92,6 +92,7 @@ public class VisitorContext {
 
     /**
      * Return the current path to the currently visited structure
+     *
      * @return current path
      */
     public List<FieldMirror> getCurrentPath() {
@@ -114,7 +115,7 @@ public class VisitorContext {
      * @param typeName to be checked
      * @return true if type was already visited, else false
      */
-    public boolean isAlreadyVisited(String typeName){
+    public boolean isAlreadyVisited(String typeName) {
         return alreadyVisitedTypeMirrors.stream().map(DomainTypeMirror::getTypeName)
             .anyMatch(t -> t.equals(typeName));
     }

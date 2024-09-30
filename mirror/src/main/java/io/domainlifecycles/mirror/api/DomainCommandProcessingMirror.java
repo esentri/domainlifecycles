@@ -39,7 +39,8 @@ public interface DomainCommandProcessingMirror {
     /**
      * Query, if a given DomainCommand represented by the specified {@link DomainCommandMirror} is processed by this
      * mirror.
-     * The mirrored class therefore must declare a method annotated with the specified DomainCommand as the only parameter.
+     * The mirrored class therefore must declare a method annotated with the specified DomainCommand as the only
+     * parameter.
      *
      * @param command the command to process
      * @return true, if the given command is processed.

@@ -44,9 +44,11 @@ public class Constants {
     public static final String FORMAT_TYPE_DATE = "date";
     public static final String FORMAT_TYPE_DATE_TIME = "date-time";
 
-    public static final String PATTERN_LOCAL_TIME = "^([0-1][0-9]|[2][0-4])[:]([0-5][0-9])[:]([0-5][0-9])(\\.[0-9]{1,6})?$";
+    public static final String PATTERN_LOCAL_TIME = "^([0-1][0-9]|[2][0-4])[:]([0-5][0-9])[:]([0-5][0-9])(\\.[0-9]{1," +
+        "6})?$";
 
-    public static final String PATTERN_OFFSET_TIME = "^([0-1][0-9]|[2][0-4])[:]([0-5][0-9])[:]([0-5][0-9])(\\.[0-9]{1,6})?([+]|[-])[0-9]{2,2}[:][0-9]{2,2}$";
+    public static final String PATTERN_OFFSET_TIME = "^([0-1][0-9]|[2][0-4])[:]([0-5][0-9])[:]([0-5][0-9])(\\" +
+        ".[0-9]{1,6})?([+]|[-])[0-9]{2,2}[:][0-9]{2,2}$";
 
     public static final String PATTERN_YEAR_MONTH = "^[0-9]{4,4}[-][0-1][0-9]$";
 

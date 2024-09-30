@@ -38,5 +38,6 @@ public interface Validatable {
     /**
      * Activates validation mechanics.
      */
-    default void validate(){}
+    default void validate() {
+    }
 }

@@ -74,7 +74,6 @@ public class DomainEventsConfiguration {
     public final AbstractOutboxPoller outboxPoller;
 
 
-
     private DomainEventsConfiguration(
         DomainEventPublisher domainEventPublisher,
         ServiceProvider serviceProvider,
@@ -103,7 +102,7 @@ public class DomainEventsConfiguration {
      * The DomainEventsConfigurationBuilder class is used to build a configuration for publishing and handling
      * domain events in the application.
      */
-    public static class DomainEventsConfigurationBuilder{
+    public static class DomainEventsConfigurationBuilder {
 
         private DomainEventPublisher domainEventPublisher;
         private ServiceProvider serviceProvider;
@@ -118,120 +117,131 @@ public class DomainEventsConfiguration {
         private AbstractOutboxPoller outboxPoller;
 
 
-
-        public DomainEventsConfigurationBuilder withDomainEventPublisher(DomainEventPublisher domainEventPublisher){
+        public DomainEventsConfigurationBuilder withDomainEventPublisher(DomainEventPublisher domainEventPublisher) {
             this.domainEventPublisher = domainEventPublisher;
             return this;
         }
 
-        public DomainEventsConfigurationBuilder withServiceProvider(ServiceProvider serviceProvider){
+        public DomainEventsConfigurationBuilder withServiceProvider(ServiceProvider serviceProvider) {
             this.serviceProvider = serviceProvider;
             return this;
         }
 
-        public DomainEventsConfigurationBuilder withReceivingDomainEventHandler(ReceivingDomainEventHandler receivingDomainEventHandler){
+        public DomainEventsConfigurationBuilder withReceivingDomainEventHandler(ReceivingDomainEventHandler receivingDomainEventHandler) {
             this.receivingDomainEventHandler = receivingDomainEventHandler;
             return this;
         }
 
-        public DomainEventsConfigurationBuilder withExecutionContextDetector(ExecutionContextDetector executionContextDetector){
+        public DomainEventsConfigurationBuilder withExecutionContextDetector(ExecutionContextDetector executionContextDetector) {
             this.executionContextDetector = executionContextDetector;
             return this;
         }
 
-        public DomainEventsConfigurationBuilder withHandlerExecutor(HandlerExecutor handlerExecutor){
+        public DomainEventsConfigurationBuilder withHandlerExecutor(HandlerExecutor handlerExecutor) {
             this.handlerExecutor = handlerExecutor;
             return this;
         }
 
-        public DomainEventsConfigurationBuilder withExecutionContextProcessor(ExecutionContextProcessor executionContextProcessor){
+        public DomainEventsConfigurationBuilder withExecutionContextProcessor(ExecutionContextProcessor executionContextProcessor) {
             this.executionContextProcessor = executionContextProcessor;
             return this;
         }
 
-        public DomainEventsConfigurationBuilder withTransactionalOutbox(TransactionalOutbox transactionalOutbox){
+        public DomainEventsConfigurationBuilder withTransactionalOutbox(TransactionalOutbox transactionalOutbox) {
             this.transactionalOutbox = transactionalOutbox;
             return this;
         }
 
-        public DomainEventsConfigurationBuilder withSpringPlatformTransactionManager(PlatformTransactionManager springPlatformTransactionManager){
+        public DomainEventsConfigurationBuilder withSpringPlatformTransactionManager(PlatformTransactionManager springPlatformTransactionManager) {
             this.springPlatformTransactionManager = springPlatformTransactionManager;
             return this;
         }
 
-        public DomainEventsConfigurationBuilder withJtaTransactionManager(TransactionManager jtaTransactionManager){
+        public DomainEventsConfigurationBuilder withJtaTransactionManager(TransactionManager jtaTransactionManager) {
             this.jtaTransactionManager = jtaTransactionManager;
             return this;
         }
 
-        public DomainEventsConfigurationBuilder withOutboxPoller(AbstractOutboxPoller outboxPoller){
+        public DomainEventsConfigurationBuilder withOutboxPoller(AbstractOutboxPoller outboxPoller) {
             this.outboxPoller = outboxPoller;
             return this;
         }
 
 
-        public DomainEventsConfiguration make(){
+        public DomainEventsConfiguration make() {
             Objects.requireNonNull(
                 this.serviceProvider,
                 "A ServiceProvider is needed to be able to dispatch events properly!"
             );
 
-            if(this.springPlatformTransactionManager != null && this.jtaTransactionManager != null){
-                throw DLCEventsException.fail("Either Spring transaction management or JTA transaction management can be activated!");
+            if (this.springPlatformTransactionManager != null && this.jtaTransactionManager != null) {
+                throw DLCEventsException.fail(
+                    "Either Spring transaction management or JTA transaction management can be activated!");
             }
 
-            if(this.executionContextDetector == null){
+            if (this.executionContextDetector == null) {
                 this.executionContextDetector = new MirrorBasedExecutionContextDetector(serviceProvider);
             }
 
-            if(this.springPlatformTransactionManager != null){
-                if(this.handlerExecutor == null){
-                    this.handlerExecutor = new SpringTransactionalHandlerExecutor(this.springPlatformTransactionManager);
+            if (this.springPlatformTransactionManager != null) {
+                if (this.handlerExecutor == null) {
+                    this.handlerExecutor = new SpringTransactionalHandlerExecutor(
+                        this.springPlatformTransactionManager);
                 }
-                if(this.executionContextProcessor == null){
+                if (this.executionContextProcessor == null) {
                     this.executionContextProcessor = new AsyncExecutionContextProcessor(this.handlerExecutor);
                 }
-                if(this.receivingDomainEventHandler == null){
-                    this.receivingDomainEventHandler = new GeneralReceivingDomainEventHandler(this.executionContextDetector, this.executionContextProcessor);
+                if (this.receivingDomainEventHandler == null) {
+                    this.receivingDomainEventHandler = new GeneralReceivingDomainEventHandler(
+                        this.executionContextDetector, this.executionContextProcessor);
                 }
-                if(this.transactionalOutbox != null){
-                    this.domainEventPublisher = new SpringOutboxDomainEventPublisher(this.transactionalOutbox, this.springPlatformTransactionManager);
-                    if(this.outboxPoller == null){
-                        this.outboxPoller = new DirectOutboxPoller(this.transactionalOutbox, receivingDomainEventHandler);
+                if (this.transactionalOutbox != null) {
+                    this.domainEventPublisher = new SpringOutboxDomainEventPublisher(this.transactionalOutbox,
+                        this.springPlatformTransactionManager);
+                    if (this.outboxPoller == null) {
+                        this.outboxPoller = new DirectOutboxPoller(this.transactionalOutbox,
+                            receivingDomainEventHandler);
                     }
-                }else{
-                    this.domainEventPublisher = new DirectSpringTransactionalDomainEventPublisher(this.receivingDomainEventHandler);
+                } else {
+                    this.domainEventPublisher = new DirectSpringTransactionalDomainEventPublisher(
+                        this.receivingDomainEventHandler);
                 }
-            } else if(this.jtaTransactionManager != null){
-                if(this.handlerExecutor == null){
+            } else if (this.jtaTransactionManager != null) {
+                if (this.handlerExecutor == null) {
                     this.handlerExecutor = new JtaTransactionalHandlerExecutor(this.jtaTransactionManager);
                 }
-                if(this.executionContextProcessor == null){
+                if (this.executionContextProcessor == null) {
                     this.executionContextProcessor = new AsyncExecutionContextProcessor(this.handlerExecutor);
                 }
-                if(this.receivingDomainEventHandler == null){
-                    this.receivingDomainEventHandler = new GeneralReceivingDomainEventHandler(this.executionContextDetector, this.executionContextProcessor);
+                if (this.receivingDomainEventHandler == null) {
+                    this.receivingDomainEventHandler = new GeneralReceivingDomainEventHandler(
+                        this.executionContextDetector, this.executionContextProcessor);
                 }
-                if(this.transactionalOutbox != null){
-                    this.domainEventPublisher = new JtaOutboxDomainEventPublisher(this.transactionalOutbox, this.jtaTransactionManager);
-                    if(this.outboxPoller == null){
-                        this.outboxPoller = new DirectOutboxPoller(this.transactionalOutbox, receivingDomainEventHandler);
+                if (this.transactionalOutbox != null) {
+                    this.domainEventPublisher = new JtaOutboxDomainEventPublisher(this.transactionalOutbox,
+                        this.jtaTransactionManager);
+                    if (this.outboxPoller == null) {
+                        this.outboxPoller = new DirectOutboxPoller(this.transactionalOutbox,
+                            receivingDomainEventHandler);
                     }
-                }else{
-                    this.domainEventPublisher = new DirectJtaTransactionalDomainEventPublisher(this.receivingDomainEventHandler, this.jtaTransactionManager);
+                } else {
+                    this.domainEventPublisher = new DirectJtaTransactionalDomainEventPublisher(
+                        this.receivingDomainEventHandler, this.jtaTransactionManager);
                 }
-            }else{
-                if(this.handlerExecutor == null){
+            } else {
+                if (this.handlerExecutor == null) {
                     this.handlerExecutor = new ReflectiveHandlerExecutor();
                 }
-                if(this.executionContextProcessor == null){
+                if (this.executionContextProcessor == null) {
                     this.executionContextProcessor = new AsyncExecutionContextProcessor(this.handlerExecutor);
                 }
-                if(this.receivingDomainEventHandler == null){
-                    this.receivingDomainEventHandler = new GeneralReceivingDomainEventHandler(this.executionContextDetector, this.executionContextProcessor);
+                if (this.receivingDomainEventHandler == null) {
+                    this.receivingDomainEventHandler = new GeneralReceivingDomainEventHandler(
+                        this.executionContextDetector, this.executionContextProcessor);
                 }
-                if(this.domainEventPublisher == null) {
-                    this.domainEventPublisher = new DirectPassThroughDomainEventPublisher(this.receivingDomainEventHandler);
+                if (this.domainEventPublisher == null) {
+                    this.domainEventPublisher = new DirectPassThroughDomainEventPublisher(
+                        this.receivingDomainEventHandler);
                 }
             }
 

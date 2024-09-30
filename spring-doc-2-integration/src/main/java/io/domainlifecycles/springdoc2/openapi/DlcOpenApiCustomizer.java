@@ -39,22 +39,28 @@ import org.springdoc.core.properties.SpringDocConfigProperties;
 
 /**
  * Open API customizations and extensions for DLC.
- *
+ * <p>
  * Provides additional temporal type support, which reflects the Jackson default behaviour.
  * The extension adds Open API schemata for several additional temporal types {@link OpenAPITemporalTypeExtension}.
  * The temporal type extension works as well as for domain object types as for all other classes.
- *
- * By this extension primitive typed properties of Open API schemata are marekd as required {@link OpenAPIPrimitivePropertyExtension}.
- *
+ * <p>
+ * By this extension primitive typed properties of Open API schemata are marekd as required
+ * {@link OpenAPIPrimitivePropertyExtension}.
+ * <p>
  * If a bean validation implementation is provided in the classpath of the target application, then
- * this customization extends all classes which have bean validation annotations on their properties (also non dlc domain object classes, like DTOs)
- * with a corresponding additional open api description, if they are used in controller interfaces which additionally provide Open API documentation {@link OpenAPIPropertyBeanValidationExtension}.
- *
- * Additionally, for all special DLC domain object types (entities, valueObject, identities) some Open API extensions are performed, to make the
- * Open API description of controller interfaces match the default mapping behaviour of the DLC Jackson extension {@link MirrorBasedOpenApiExtension}.
- *
+ * this customization extends all classes which have bean validation annotations on their properties (also non dlc
+ * domain object classes, like DTOs)
+ * with a corresponding additional open api description, if they are used in controller interfaces which additionally
+ * provide Open API documentation {@link OpenAPIPropertyBeanValidationExtension}.
+ * <p>
+ * Additionally, for all special DLC domain object types (entities, valueObject, identities) some Open API extensions
+ * are performed, to make the
+ * Open API description of controller interfaces match the default mapping behaviour of the DLC Jackson extension
+ * {@link MirrorBasedOpenApiExtension}.
+ * <p>
  * A note for the error management of this extension: Any exception or error which happens when trying to
- * modify or extend the Open API behaviour of any class, results in an error log message without stopping the extension or
+ * modify or extend the Open API behaviour of any class, results in an error log message without stopping the
+ * extension or
  * modification of other classes. Also all errors are caught and only reported to the log.
  * So any problem, that arises in an unpredicted way, should never affect the regular application execution, as Open API
  * is primarily used only for additional API documentation purposes.
@@ -73,20 +79,21 @@ public class DlcOpenApiCustomizer implements OpenApiCustomizer {
 
     /**
      * Constructor of the DLC Spring Doc based Open API extension.
-     *
+     * <p>
      * To work correctly, the spring doc configuration property 'springdoc.use-fqn' must be 'true',
      * as this extension relies on full qualified path names of the extended classes.
      *
-     * @param springDocConfigProperties configuration for the customizer
+     * @param springDocConfigProperties         configuration for the customizer
      * @param entitiesWithExternallyProvidedIds name of entities which IDs are provided from extern
      */
     public DlcOpenApiCustomizer(
         SpringDocConfigProperties springDocConfigProperties,
-                                String... entitiesWithExternallyProvidedIds) {
+        String... entitiesWithExternallyProvidedIds) {
         this.springDocConfigProperties = springDocConfigProperties;
         this.entitiesWithExternallyProvidedIds = entitiesWithExternallyProvidedIds;
-        if(!this.springDocConfigProperties.isUseFqn()){
-            throw new RuntimeException("DLC Open API extension requires the spring doc config property 'springdoc.use-fqn' to be 'true'!");
+        if (!this.springDocConfigProperties.isUseFqn()) {
+            throw new RuntimeException(
+                "DLC Open API extension requires the spring doc config property 'springdoc.use-fqn' to be 'true'!");
         }
         this.mirrorBasedOpenApiExtension = new MirrorBasedOpenApiExtension();
     }

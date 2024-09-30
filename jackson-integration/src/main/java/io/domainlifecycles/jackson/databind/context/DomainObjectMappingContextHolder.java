@@ -43,7 +43,8 @@ import java.util.Map;
 
 /**
  * A DomainObjectMappingContextHolder instance is created within the Jackson {@link DeserializationContext}.
- * As such it is created for every new DeserializationContext instance. It provides access to several key objects in the deserialition process kept
+ * As such it is created for every new DeserializationContext instance. It provides access to several key objects in
+ * the deserialition process kept
  * in {@link DomainObjectMappingContext} instances.
  *
  * @author Mario Herb
@@ -55,9 +56,9 @@ public class DomainObjectMappingContextHolder {
     private final Map<DomainObjectMappingContextKey, DomainObjectMappingContext> contexts = new HashMap<>();
 
     /**
-     * @param jsonNode Jackson JSONNode
-     * @param domainObjectTypeName name of the DomainObject type
-     * @param deserializationContext Jackson's context for deserialization
+     * @param jsonNode                    Jackson JSONNode
+     * @param domainObjectTypeName        name of the DomainObject type
+     * @param deserializationContext      Jackson's context for deserialization
      * @param domainObjectBuilderProvider provider for DomainObject builder
      * @return the current {@link DomainObjectMappingContext} instance
      */
@@ -65,7 +66,9 @@ public class DomainObjectMappingContextHolder {
                                                         String domainObjectTypeName,
                                                         DeserializationContext deserializationContext,
                                                         DomainObjectBuilderProvider domainObjectBuilderProvider) {
-        DomainObjectMappingContextHolder instance = (DomainObjectMappingContextHolder) deserializationContext.getAttribute(KEY);
+        DomainObjectMappingContextHolder instance =
+            (DomainObjectMappingContextHolder) deserializationContext.getAttribute(
+            KEY);
         if (instance == null) {
             instance = new DomainObjectMappingContextHolder();
             deserializationContext.setAttribute(KEY, instance);
@@ -87,47 +90,52 @@ public class DomainObjectMappingContextHolder {
                               DomainObjectMappingContextHolder instance,
                               DomainObjectBuilderProvider domainObjectBuilderProvider) {
         DomainObjectBuilder<?> domainObjectBuilder = domainObjectBuilderProvider.provide(domainObjectTypeName);
-        DomainObjectMappingContext mappingContext = new DomainObjectMappingContext(node, domainObjectTypeName, domainObjectBuilder, parentContext);
+        DomainObjectMappingContext mappingContext = new DomainObjectMappingContext(node, domainObjectTypeName,
+            domainObjectBuilder, parentContext);
         DomainObjectMappingContextKey key = new DomainObjectMappingContextKey(node, domainObjectTypeName);
         instance.contexts.put(key, mappingContext);
 
         var dtm = Domain.typeMirror(domainObjectTypeName)
-            .orElseThrow(()-> DLCJacksonException.fail("DomainTypeMirror not found for '%s'", domainObjectTypeName));
+            .orElseThrow(() -> DLCJacksonException.fail("DomainTypeMirror not found for '%s'", domainObjectTypeName));
 
         if (DomainType.ENTITY.equals(dtm.getDomainType()) || DomainType.AGGREGATE_ROOT.equals(dtm.getDomainType())) {
-            EntityMirror em = (EntityMirror)dtm;
+            EntityMirror em = (EntityMirror) dtm;
             em.getEntityReferences().stream()
                 .filter(erm -> !erm.isStatic())
                 .forEach(
-                erm -> {
-                    var refNode = node.get(erm.getName());
-                    if ( refNode != null && !refNode.isNull()) {
-                        if (!erm.getType().hasCollectionContainer()) {
-                            initContexts(refNode, erm.getType().getTypeName(), mappingContext, instance, domainObjectBuilderProvider);
-                        } else {
-                            ArrayNode an = (ArrayNode) refNode;
-                            an.forEach(en -> initContexts(en, erm.getType().getTypeName(), mappingContext, instance, domainObjectBuilderProvider));
+                    erm -> {
+                        var refNode = node.get(erm.getName());
+                        if (refNode != null && !refNode.isNull()) {
+                            if (!erm.getType().hasCollectionContainer()) {
+                                initContexts(refNode, erm.getType().getTypeName(), mappingContext, instance,
+                                    domainObjectBuilderProvider);
+                            } else {
+                                ArrayNode an = (ArrayNode) refNode;
+                                an.forEach(en -> initContexts(en, erm.getType().getTypeName(), mappingContext, instance,
+                                    domainObjectBuilderProvider));
+                            }
                         }
                     }
-                }
-            );
+                );
 
             em.getValueReferences()
                 .stream()
                 .filter(vrm -> !vrm.isStatic())
                 .filter(vrm -> vrm.getValue().isValueObject())
                 .forEach(vrm -> {
-                    var refNode = node.get(vrm.getName());
-                    if (refNode != null && !refNode.isNull()) {
-                        if (!vrm.getType().hasCollectionContainer()) {
-                            initContexts(refNode, vrm.getType().getTypeName(), mappingContext, instance, domainObjectBuilderProvider);
-                        } else {
-                            ArrayNode an = (ArrayNode) refNode;
-                            an.forEach(en -> initContexts(en, vrm.getType().getTypeName(), mappingContext, instance, domainObjectBuilderProvider));
+                        var refNode = node.get(vrm.getName());
+                        if (refNode != null && !refNode.isNull()) {
+                            if (!vrm.getType().hasCollectionContainer()) {
+                                initContexts(refNode, vrm.getType().getTypeName(), mappingContext, instance,
+                                    domainObjectBuilderProvider);
+                            } else {
+                                ArrayNode an = (ArrayNode) refNode;
+                                an.forEach(en -> initContexts(en, vrm.getType().getTypeName(), mappingContext, instance,
+                                    domainObjectBuilderProvider));
+                            }
                         }
                     }
-                }
-            );
+                );
 
         } else if (DomainType.VALUE_OBJECT.equals(dtm.getDomainType())) {
             ValueObjectMirror vm = (ValueObjectMirror) dtm;
@@ -136,17 +144,19 @@ public class DomainObjectMappingContextHolder {
                 .filter(vrm -> !vrm.isStatic())
                 .filter(vrm -> vrm.getValue().isValueObject())
                 .forEach(vrm -> {
-                    var refNode = node.get(vrm.getName());
-                    if ( refNode != null && !refNode.isNull()) {
-                        if (!vrm.getType().hasListContainer()) {
-                            initContexts(refNode, vrm.getType().getTypeName(), mappingContext, instance, domainObjectBuilderProvider);
-                        } else {
-                            ArrayNode an = (ArrayNode) refNode;
-                            an.forEach(en -> initContexts(en, vrm.getType().getTypeName(), mappingContext, instance, domainObjectBuilderProvider));
+                        var refNode = node.get(vrm.getName());
+                        if (refNode != null && !refNode.isNull()) {
+                            if (!vrm.getType().hasListContainer()) {
+                                initContexts(refNode, vrm.getType().getTypeName(), mappingContext, instance,
+                                    domainObjectBuilderProvider);
+                            } else {
+                                ArrayNode an = (ArrayNode) refNode;
+                                an.forEach(en -> initContexts(en, vrm.getType().getTypeName(), mappingContext, instance,
+                                    domainObjectBuilderProvider));
+                            }
                         }
                     }
-                }
-            );
+                );
         }
     }
 

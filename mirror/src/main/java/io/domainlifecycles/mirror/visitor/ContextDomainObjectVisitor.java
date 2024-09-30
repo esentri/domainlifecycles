@@ -60,7 +60,8 @@ public abstract class ContextDomainObjectVisitor implements DomainObjectVisitor 
     /**
      * Creates a new visitor instance by passing a starting domain object type name (full qualified type name)
      * and the visitTypesOnlyOnce switch.
-     * @param startingTypeName full qualified type name of domain type to start depth-first visit
+     *
+     * @param startingTypeName   full qualified type name of domain type to start depth-first visit
      * @param visitTypesOnlyOnce prevents endless loops, by assuring that every type is visited only once
      */
     public ContextDomainObjectVisitor(String startingTypeName, boolean visitTypesOnlyOnce) {
@@ -71,7 +72,7 @@ public abstract class ContextDomainObjectVisitor implements DomainObjectVisitor 
     /**
      * Creates a new visitor instance by passing a starting domain object mirror.
      *
-     * @param domainTypeMirror mirror for domain object
+     * @param domainTypeMirror   mirror for domain object
      * @param visitTypesOnlyOnce prevents endless loops, by assuring that every type is visited only once
      */
 
@@ -82,6 +83,7 @@ public abstract class ContextDomainObjectVisitor implements DomainObjectVisitor 
 
     /**
      * Creates a new visitor instance by passing a starting domain object type name (full qualified type name).
+     *
      * @param startingTypeName full qualified type name of domain type to start depth-first visit
      */
     public ContextDomainObjectVisitor(String startingTypeName) {
@@ -93,6 +95,7 @@ public abstract class ContextDomainObjectVisitor implements DomainObjectVisitor 
 
     /**
      * Creates a new visitor instance by passing a starting domain type mirror.
+     *
      * @param domainObjectMirror mirror for DomainObject
      */
     public ContextDomainObjectVisitor(DomainObjectMirror domainObjectMirror) {
@@ -103,15 +106,15 @@ public abstract class ContextDomainObjectVisitor implements DomainObjectVisitor 
     /**
      * Start the visiting process.
      */
-    public void start(){
+    public void start() {
         walkType(startingMirror);
     }
 
-    private void walkType(DomainTypeMirror domainTypeMirror){
+    private void walkType(DomainTypeMirror domainTypeMirror) {
         var currentTypeMirror = visitorContext.getCurrentType();
         var descend = enterDomainType(domainTypeMirror);
         visitorContext.enterType(domainTypeMirror);
-        if(descend) {
+        if (descend) {
             domainTypeMirror
                 .getAllFields()
                 .stream()
@@ -123,9 +126,9 @@ public abstract class ContextDomainObjectVisitor implements DomainObjectVisitor 
         visitorContext.leaveType(currentTypeMirror);
     }
 
-    private boolean enterDomainType(DomainTypeMirror domainTypeMirror){
+    private boolean enterDomainType(DomainTypeMirror domainTypeMirror) {
         visitEnterAnyDomainType(domainTypeMirror);
-        return switch (domainTypeMirror.getDomainType()){
+        return switch (domainTypeMirror.getDomainType()) {
             case ENTITY -> visitEnterEntity((EntityMirror) domainTypeMirror);
             case ENUM, VALUE_OBJECT, IDENTITY -> visitEnterValue((ValueMirror) domainTypeMirror);
             case AGGREGATE_ROOT -> visitEnterAggregateRoot((AggregateRootMirror) domainTypeMirror);
@@ -133,17 +136,17 @@ public abstract class ContextDomainObjectVisitor implements DomainObjectVisitor 
         };
     }
 
-    private void leaveDomainType(DomainTypeMirror domainTypeMirror){
-        switch (domainTypeMirror.getDomainType()){
+    private void leaveDomainType(DomainTypeMirror domainTypeMirror) {
+        switch (domainTypeMirror.getDomainType()) {
             case ENTITY -> visitLeaveEntity((EntityMirror) domainTypeMirror);
             case ENUM, VALUE_OBJECT, IDENTITY -> visitLeaveValue((ValueMirror) domainTypeMirror);
             case AGGREGATE_ROOT -> visitLeaveAggregateRoot((AggregateRootMirror) domainTypeMirror);
         }
     }
 
-    private void walkField(FieldMirror fieldMirror){
+    private void walkField(FieldMirror fieldMirror) {
         visitorContext.visitFieldStart(fieldMirror);
-        switch (fieldMirror.getType().getDomainType()){
+        switch (fieldMirror.getType().getDomainType()) {
             case ENTITY -> walkEntityReference((EntityReferenceMirror) fieldMirror);
             case ENUM, VALUE_OBJECT, IDENTITY -> walkValueReference((ValueReferenceMirror) fieldMirror);
             case AGGREGATE_ROOT -> walkAggregateRootReference((AggregateRootReferenceMirror) fieldMirror);
@@ -152,56 +155,63 @@ public abstract class ContextDomainObjectVisitor implements DomainObjectVisitor 
         visitorContext.visitFieldEnd(fieldMirror);
     }
 
-    private void walkBasicField(FieldMirror fieldMirror){
+    private void walkBasicField(FieldMirror fieldMirror) {
         visitBasic(fieldMirror);
     }
 
-    private void walkValueReference(ValueReferenceMirror valueReferenceMirror){
+    private void walkValueReference(ValueReferenceMirror valueReferenceMirror) {
         boolean isIdentityField = false;
-        if(DomainType.ENTITY.equals(getVisitorContext().getCurrentType().getDomainType())
+        if (DomainType.ENTITY.equals(getVisitorContext().getCurrentType().getDomainType())
             || DomainType.AGGREGATE_ROOT.equals(getVisitorContext().getCurrentType().getDomainType())
-        ){
+        ) {
             var entityMirror = (EntityMirror) getVisitorContext().getCurrentType();
-            if(entityMirror.getIdentityField().isPresent() && entityMirror.getIdentityField().get().getName().equals(valueReferenceMirror.getName())){
+            if (entityMirror.getIdentityField().isPresent() && entityMirror.getIdentityField().get().getName().equals(
+                valueReferenceMirror.getName())) {
                 isIdentityField = true;
             }
         }
-        if(isIdentityField){
+        if (isIdentityField) {
             visitEntityId(valueReferenceMirror);
-        }else{
+        } else {
             visitValueReference(valueReferenceMirror);
         }
-        if(!visitTypesOnlyOnce || !visitorContext.isAlreadyVisited(valueReferenceMirror.getType().getTypeName())){
-            if(!Identity.class.getName().equals(valueReferenceMirror.getType().getTypeName())) {
+        if (!visitTypesOnlyOnce || !visitorContext.isAlreadyVisited(valueReferenceMirror.getType().getTypeName())) {
+            if (!Identity.class.getName().equals(valueReferenceMirror.getType().getTypeName())) {
                 try {
                     walkType(valueReferenceMirror.getValue());
                 } catch (Throwable t) {
-                    log.warn("Couldn't walk down " + valueReferenceMirror.getType().getTypeName() + "." + valueReferenceMirror.getName(), t);
+                    log.warn(
+                        "Couldn't walk down " + valueReferenceMirror.getType().getTypeName() + "." + valueReferenceMirror.getName(),
+                        t);
                 }
             }
         }
     }
 
 
-
-    private void walkEntityReference(EntityReferenceMirror entityReferenceMirror){
+    private void walkEntityReference(EntityReferenceMirror entityReferenceMirror) {
         visitEntityReference(entityReferenceMirror);
-        if(!visitTypesOnlyOnce || !visitorContext.isAlreadyVisited(entityReferenceMirror.getType().getTypeName())){
+        if (!visitTypesOnlyOnce || !visitorContext.isAlreadyVisited(entityReferenceMirror.getType().getTypeName())) {
             try {
                 walkType(entityReferenceMirror.getEntity());
-            }catch (Throwable t){
-                log.warn("Couldn't walk down " + entityReferenceMirror.getType().getTypeName() + "." + entityReferenceMirror.getName(), t);
+            } catch (Throwable t) {
+                log.warn(
+                    "Couldn't walk down " + entityReferenceMirror.getType().getTypeName() + "." + entityReferenceMirror.getName(),
+                    t);
             }
         }
     }
 
-    private void walkAggregateRootReference(AggregateRootReferenceMirror aggregateRootReferenceMirror){
+    private void walkAggregateRootReference(AggregateRootReferenceMirror aggregateRootReferenceMirror) {
         visitAggregateRootReference(aggregateRootReferenceMirror);
-        if(!visitTypesOnlyOnce || !visitorContext.isAlreadyVisited(aggregateRootReferenceMirror.getType().getTypeName())){
+        if (!visitTypesOnlyOnce || !visitorContext.isAlreadyVisited(
+            aggregateRootReferenceMirror.getType().getTypeName())) {
             try {
                 walkType(aggregateRootReferenceMirror.getAggregateRoot());
-            }catch (Throwable t){
-                log.warn("Couldn't walk down " + aggregateRootReferenceMirror.getType().getTypeName() + "." + aggregateRootReferenceMirror.getName(), t);
+            } catch (Throwable t) {
+                log.warn(
+                    "Couldn't walk down " + aggregateRootReferenceMirror.getType().getTypeName() + "." + aggregateRootReferenceMirror.getName(),
+                    t);
             }
         }
     }

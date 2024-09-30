@@ -36,10 +36,11 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public interface ValueObjectMirror extends DomainObjectMirror, ValueMirror{
+public interface ValueObjectMirror extends DomainObjectMirror, ValueMirror {
 
     /**
-     * @return whether the ValueObject contains only exactly one basic, enum or identity field that contains the associated value or another singled valued value object.
+     * @return whether the ValueObject contains only exactly one basic, enum or identity field that contains the
+     * associated value or another singled valued value object.
      */
     boolean isSingledValued();
 

@@ -26,15 +26,18 @@
  */
 
 package io.domainlifecycles.domain.types;
+
 /**
  * This is the common supertype (marker interface) to represent ReadModels.
  * <p>Sometimes it is convenient to load only parts of an Aggregate or a coherent model of data that spans
  * multiple Aggregates. This is normally the case, when data is presented in a user interface. ReadModels
- * can be useful, if the Aggregate boundaries are too wide or too narrow. They are not really part of the inner core domain,
+ * can be useful, if the Aggregate boundaries are too wide or too narrow. They are not really part of the inner core
+ * domain,
  * but it helps to know which ReadModels are used/available in the application.
  * </p>
  * <p>
- * Further information: <a href="http://gorodinski.com/blog/2012/04/25/read-models-as-a-tactical-pattern-in-domain-driven-design-ddd/">link</a>
+ * Further information:
+ * <a href="http://gorodinski.com/blog/2012/04/25/read-models-as-a-tactical-pattern-in-domain-driven-design-ddd/">link</a>
  * </p>
  *
  * @author Mario Herb

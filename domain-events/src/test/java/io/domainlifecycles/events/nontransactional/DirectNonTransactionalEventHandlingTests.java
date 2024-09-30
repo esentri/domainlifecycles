@@ -59,7 +59,7 @@ public class DirectNonTransactionalEventHandlingTests {
     private static AnOutboundService outboundService;
 
     @BeforeAll
-    public static void init(){
+    public static void init() {
         Logger rootLogger =
             (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         rootLogger.setLevel(Level.DEBUG);
@@ -85,7 +85,7 @@ public class DirectNonTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationDomainEvent(){
+    public void testIntegrationDomainEvent() {
         //when
         var evt = new ADomainEvent("Test");
         DomainEvents.publish(evt);
@@ -111,7 +111,7 @@ public class DirectNonTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationAggregateDomainEvent(){
+    public void testIntegrationAggregateDomainEvent() {
         //when
         var evt = new AnAggregateDomainEvent("Test");
         DomainEvents.publish(evt);

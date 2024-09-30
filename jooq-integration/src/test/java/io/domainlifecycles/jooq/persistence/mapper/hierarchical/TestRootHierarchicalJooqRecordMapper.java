@@ -38,7 +38,8 @@ import tests.shared.persistence.domain.hierarchical.TestRootHierarchicalId;
 /**
  * Mapping JOOQ TestRootHierarchical records.
  */
-public class TestRootHierarchicalJooqRecordMapper extends AbstractRecordMapper<TestRootHierarchicalRecord, TestRootHierarchical, TestRootHierarchical> {
+public class TestRootHierarchicalJooqRecordMapper extends AbstractRecordMapper<TestRootHierarchicalRecord,
+    TestRootHierarchical, TestRootHierarchical> {
 
     @Override
     public DomainObjectBuilder<TestRootHierarchical> recordToDomainObjectBuilder(TestRootHierarchicalRecord record) {

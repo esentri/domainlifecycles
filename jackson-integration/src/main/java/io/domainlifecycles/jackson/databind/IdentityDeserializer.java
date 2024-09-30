@@ -41,9 +41,9 @@ import java.io.IOException;
 
 /**
  * {@link Domain} based deserialization of {@link Identity} instances.
- * @see StdDeserializer
  *
  * @author Mario Herb
+ * @see StdDeserializer
  */
 public class IdentityDeserializer extends StdDeserializer<Identity<?>> {
 
@@ -56,10 +56,9 @@ public class IdentityDeserializer extends StdDeserializer<Identity<?>> {
     /**
      * Deserialize Identities.
      *
-     * @param jsonParser Parsed used for reading JSON content
+     * @param jsonParser             Parsed used for reading JSON content
      * @param deserializationContext Context that can be used to access information about
-     *   this deserialization activity.
-
+     *                               this deserialization activity.
      * @throws IOException if deserialization fails
      */
     @Override
@@ -72,7 +71,9 @@ public class IdentityDeserializer extends StdDeserializer<Identity<?>> {
 
                 Class<?> idValueType = DlcAccess.getClassForName(
                     idMirror.getValueTypeName()
-                        .orElseThrow(() -> DLCJacksonException.fail("Identity Deserialization failed for '%s'. ValueType not defined", this._valueType.getTypeName()))
+                        .orElseThrow(() -> DLCJacksonException.fail(
+                            "Identity Deserialization failed for '%s'. ValueType not defined",
+                            this._valueType.getTypeName()))
                 );
                 Object val = jsonParser.readValueAs(idValueType);
                 if (val != null) {

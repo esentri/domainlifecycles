@@ -56,13 +56,16 @@ public class DlcSerializerModifier extends BeanSerializerModifier {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public JsonSerializer<?> modifySerializer(SerializationConfig config, BeanDescription beanDesc, JsonSerializer<?> serializer) {
+    public JsonSerializer<?> modifySerializer(SerializationConfig config, BeanDescription beanDesc,
+                                              JsonSerializer<?> serializer) {
         if (Entity.class.isAssignableFrom(beanDesc.getBeanClass())) {
-            return new EntitySerializer((JacksonMappingCustomizer<Entity>) customizersContainer.findCustomizer(beanDesc.getBeanClass()));
+            return new EntitySerializer(
+                (JacksonMappingCustomizer<Entity>) customizersContainer.findCustomizer(beanDesc.getBeanClass()));
 
         }
         if (ValueObject.class.isAssignableFrom(beanDesc.getBeanClass())) {
-            return new ValueObjectSerializer((JacksonMappingCustomizer<ValueObject>) customizersContainer.findCustomizer(beanDesc.getBeanClass()));
+            return new ValueObjectSerializer(
+                (JacksonMappingCustomizer<ValueObject>) customizersContainer.findCustomizer(beanDesc.getBeanClass()));
         }
         if (Identity.class.isAssignableFrom(beanDesc.getBeanClass())) {
             return new IdentitySerializer();

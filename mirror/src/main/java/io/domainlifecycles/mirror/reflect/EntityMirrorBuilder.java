@@ -44,7 +44,7 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public class EntityMirrorBuilder extends DomainTypeMirrorBuilder{
+public class EntityMirrorBuilder extends DomainTypeMirrorBuilder {
     private final Class<? extends Entity<?>> entityClass;
 
     public EntityMirrorBuilder(Class<? extends Entity<?>> entityClass
@@ -70,34 +70,37 @@ public class EntityMirrorBuilder extends DomainTypeMirrorBuilder{
             buildInterfaceTypes()
         );
     }
-    protected Optional<FieldMirror> identityField(){
+
+    protected Optional<FieldMirror> identityField() {
         var identityType = getIdentityType(entityClass);
-        if(identityType.isPresent()) {
+        if (identityType.isPresent()) {
             var idPropertyFieldCandidates = JavaReflect.fields(entityClass, MemberSelect.HIERARCHY)
                 .stream()
                 .filter(
-                    f -> identityType.get().isAssignableFrom(f.getType()) || Identity.class.getName().equals(f.getType().getName())
+                    f -> identityType.get().isAssignableFrom(f.getType()) || Identity.class.getName().equals(
+                        f.getType().getName())
                 )
                 .toList();
             Optional<Field> idProperty;
-            if(idPropertyFieldCandidates.size()>1){
+            if (idPropertyFieldCandidates.size() > 1) {
                 idProperty = idPropertyFieldCandidates
                     .stream()
                     .filter(f -> f.isAnnotationPresent(Entity.Id.class))
                     .findFirst();
-            }else{
+            } else {
                 idProperty = idPropertyFieldCandidates
                     .stream()
                     .findFirst();
             }
-            if(idProperty.isPresent()){
-                return Optional.of(new FieldMirrorBuilder(idProperty.get(), entityClass, isHidden(idProperty.get())).build());
+            if (idProperty.isPresent()) {
+                return Optional.of(
+                    new FieldMirrorBuilder(idProperty.get(), entityClass, isHidden(idProperty.get())).build());
             }
         }
         return Optional.empty();
     }
 
-    protected Optional<FieldMirror> concurrencyVersionField(){
+    protected Optional<FieldMirror> concurrencyVersionField() {
         var concurrencyFieldCandidates = JavaReflect.fields(entityClass, MemberSelect.HIERARCHY)
             .stream()
             .filter(
@@ -105,15 +108,17 @@ public class EntityMirrorBuilder extends DomainTypeMirrorBuilder{
             )
             .toList();
         Field concurrencyField;
-        if(concurrencyFieldCandidates.size()==1){
+        if (concurrencyFieldCandidates.size() == 1) {
             concurrencyField = concurrencyFieldCandidates.get(0);
-            return Optional.of(new FieldMirrorBuilder(concurrencyField, entityClass, isHidden(concurrencyField) ).build());
+            return Optional.of(
+                new FieldMirrorBuilder(concurrencyField, entityClass, isHidden(concurrencyField)).build());
         }
         return Optional.empty();
     }
 
     @SuppressWarnings("unchecked")
-    private static Optional<Class<? extends Identity<?>>> getIdentityType(Class<? extends Entity<? extends Identity<?>>> c) {
+    private static Optional<Class<? extends Identity<?>>> getIdentityType(Class<? extends Entity<?
+        extends Identity<?>>> c) {
         var resolver = new GenericInterfaceTypeResolver(c);
         var resolved = resolver.resolveFor(Entity.class, 0);
         return Optional.ofNullable((Class<? extends Identity<?>>) resolved);

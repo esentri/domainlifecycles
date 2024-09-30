@@ -61,8 +61,8 @@ import java.lang.annotation.Target;
  * <a href="https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf">
  * Entities</a>.
  * </p>
- * @param <ID> type of entity identifier
  *
+ * @param <ID> type of entity identifier
  * @author Tobias Herb
  * @author Mario Herb
  */
@@ -102,5 +102,6 @@ public interface Entity<ID extends Identity<?>> extends DomainObject, Validatabl
     @Documented
     @Target(ElementType.FIELD)
     @Retention(RetentionPolicy.RUNTIME)
-    @interface Id { }
+    @interface Id {
+    }
 }

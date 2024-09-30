@@ -43,7 +43,8 @@ import io.domainlifecycles.persistence.repository.persister.Persister;
 public interface RecordMapper<R, DO extends DomainObject, A extends AggregateRoot<?>> {
 
     /**
-     * This method is called from the {@link Persister} or {@link AggregateFetcher}. We return a {@link DomainObjectBuilder} instance,
+     * This method is called from the {@link Persister} or {@link AggregateFetcher}. We return a
+     * {@link DomainObjectBuilder} instance,
      * to be able to build only complete instances, when all values are set,
      * to prevent NotNull assertions and other invariant checks from failing too early in the mapping process.
      *
@@ -56,8 +57,8 @@ public interface RecordMapper<R, DO extends DomainObject, A extends AggregateRoo
      * Part of the general mapping interface to map a domain object instance into a record.
      * Each record mapper must implement this, depending on the domain object's structure.
      *
-     * @param domainObject    {@link DomainObject} mapping source
-     * @param root instance of {@link AggregateRoot} of the domain object
+     * @param domainObject {@link DomainObject} mapping source
+     * @param root         instance of {@link AggregateRoot} of the domain object
      * @return record mapping result
      */
     R from(DO domainObject, A root);
@@ -68,6 +69,7 @@ public interface RecordMapper<R, DO extends DomainObject, A extends AggregateRoo
      * @return domain object type
      */
     Class<DO> domainObjectType();
+
     /**
      * Needed to assign custom mappers in the mapping process;
      *

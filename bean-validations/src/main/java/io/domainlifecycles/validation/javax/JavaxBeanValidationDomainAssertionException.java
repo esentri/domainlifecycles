@@ -32,6 +32,7 @@ import io.domainlifecycles.assertion.DomainAssertionException;
 
 import javax.validation.ConstraintViolation;
 import java.util.Set;
+
 /**
  * This class wraps Bean Validation (Javax) {@link jakarta.validation.ConstraintViolation} violations,
  * so that they can be thrown as {@link DomainAssertionException}.
@@ -48,7 +49,7 @@ public class JavaxBeanValidationDomainAssertionException extends DomainAssertion
     /**
      * Constructor
      *
-     * @param message for exception
+     * @param message    for exception
      * @param violations causes
      */
     public JavaxBeanValidationDomainAssertionException(String message, Set<ConstraintViolation<Object>> violations) {

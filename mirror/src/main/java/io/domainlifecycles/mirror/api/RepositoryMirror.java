@@ -37,7 +37,7 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public interface RepositoryMirror extends DomainTypeMirror, DomainCommandProcessingMirror, DomainEventProcessingMirror{
+public interface RepositoryMirror extends DomainTypeMirror, DomainCommandProcessingMirror, DomainEventProcessingMirror {
 
     /**
      * @return an Optional containing the mirror the managed Aggregate.

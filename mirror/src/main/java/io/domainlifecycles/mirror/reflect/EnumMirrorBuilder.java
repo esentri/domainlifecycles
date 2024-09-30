@@ -42,8 +42,8 @@ import java.util.stream.Collectors;
  *
  * @author Mario Herb
  */
-public class EnumMirrorBuilder extends DomainTypeMirrorBuilder{
-    private final Class<?extends Enum<?>> enumClass;
+public class EnumMirrorBuilder extends DomainTypeMirrorBuilder {
+    private final Class<? extends Enum<?>> enumClass;
 
     public EnumMirrorBuilder(Class<? extends Enum<?>> enumClass
     ) {
@@ -67,8 +67,9 @@ public class EnumMirrorBuilder extends DomainTypeMirrorBuilder{
             buildInterfaceTypes()
         );
     }
-    private List<EnumOptionMirror> buildEnumOptions(){
-        if(enumClass.getEnumConstants() != null) {
+
+    private List<EnumOptionMirror> buildEnumOptions() {
+        if (enumClass.getEnumConstants() != null) {
             return Arrays.stream(enumClass.getEnumConstants())
                 .map(c -> new EnumOptionModel(c.name()))
                 .collect(Collectors.toList());

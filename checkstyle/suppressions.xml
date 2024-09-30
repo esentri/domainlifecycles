@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <!DOCTYPE suppressions PUBLIC
-		"-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
-		"https://checkstyle.org/dtds/suppressions_1_2.dtd">
+        "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+        "https://checkstyle.org/dtds/suppressions_1_2.dtd">
 <suppressions>
-	<!-- Supresses most checks for test classes. -->
-	<suppress checks="PatternVariableName"
-			  files=".*Test.java"/>
-	<suppress checks="MethodName"
-			  files=".*Test.java"/>
-	<suppress checks="ConstantName"
-			  files=".*Test.java"/>
-	<supress checks="JavadocMethod"
-			 files=".*Test.java"/>
+    <!-- Supresses most checks for test classes. -->
+    <suppress checks="PatternVariableName"
+              files=".*Test.java"/>
+    <suppress checks="MethodName"
+              files=".*Test.java"/>
+    <suppress checks="ConstantName"
+              files=".*Test.java"/>
+    <supress checks="JavadocMethod"
+             files=".*Test.java"/>
 </suppressions>

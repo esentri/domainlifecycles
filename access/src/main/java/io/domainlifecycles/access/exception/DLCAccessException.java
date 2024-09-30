@@ -50,8 +50,7 @@ public class DLCAccessException extends RuntimeException {
 
     /**
      * @param detail detailed exception message
-     * @param cause Throwable
-     *
+     * @param cause  Throwable
      * @return a new DLCAccessException with a detail message and a cause.
      */
     public static DLCAccessException fail(final String detail, final Throwable cause) {
@@ -60,8 +59,7 @@ public class DLCAccessException extends RuntimeException {
 
     /**
      * @param detail detailed exception message
-     * @param args message parameters
-     *
+     * @param args   message parameters
      * @return a new DLCAccessException with a detail message formatted to include with given message parameters.
      */
     public static DLCAccessException fail(final String detail, final Object... args) {
@@ -70,10 +68,10 @@ public class DLCAccessException extends RuntimeException {
 
     /**
      * @param detail detailed exception message
-     * @param args message parameters
-     * @param cause Throwable
-     *
-     * @return a new DLCAccessException with a detail message formatted to include with given message parameters and containing a cause.
+     * @param args   message parameters
+     * @param cause  Throwable
+     * @return a new DLCAccessException with a detail message formatted to include with given message parameters and
+     * containing a cause.
      */
     public static DLCAccessException fail(final String detail, final Throwable cause, final Object... args) {
         return new DLCAccessException(requireNonNull(detail), requireNonNull(cause), requireNonNull(args));

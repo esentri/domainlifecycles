@@ -83,7 +83,8 @@ public class EntityCloner {
         cloningEntityIds.add(getId(entity));
         var em = Domain.entityMirrorFor(entity);
 
-        DomainObjectBuilder<Entity<?>> domainObjectBuilder = domainObjectBuilderProvider.provide(entity.getClass().getName());
+        DomainObjectBuilder<Entity<?>> domainObjectBuilder = domainObjectBuilderProvider.provide(
+            entity.getClass().getName());
 
         domainObjectBuilder.setFieldValue(getId(entity), domainObjectBuilder.getPrimaryIdentityFieldName());
         cloneEntityProperties(em, entity, domainObjectBuilder);
@@ -200,7 +201,7 @@ public class EntityCloner {
 
     private Identity<?> getId(Entity<?> entity) {
         var em = Domain.entityMirrorFor(entity);
-        var idField = em.getIdentityField().orElseThrow(()->
+        var idField = em.getIdentityField().orElseThrow(() ->
             DLCTypesException.fail("Identity not defined for '%s'", entity.getClass().getName()));
         return DlcAccess.accessorFor(entity).peek(idField.getName());
     }

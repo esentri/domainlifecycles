@@ -54,7 +54,6 @@ public interface OrderRepository extends Repository<Order.OrderId, Order> {
     OrderItem.OrderItemId newOrderItemId();
 
     /**
-     *
      * @param offset
      * @param limit
      * @param orderStatus
@@ -66,7 +65,7 @@ public interface OrderRepository extends Repository<Order.OrderId, Order> {
      * Stores an new {@code Order} into this repository.
      *
      * @param entity to to be stored
-     * @return updated {@code entity} instance 
+     * @return updated {@code entity} instance
      */
     @Override
     Order insert(Order entity);
@@ -75,7 +74,7 @@ public interface OrderRepository extends Repository<Order.OrderId, Order> {
      * Updates an existent {@code Order} in this repository.
      *
      * @param entity to to be updated
-     * @return updated {@code entity} instance 
+     * @return updated {@code entity} instance
      */
     @Override
     Order update(Order entity);

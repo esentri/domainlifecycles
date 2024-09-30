@@ -35,14 +35,17 @@ import io.domainlifecycles.domain.types.Repository;
 /**
  * Represents the execution context for a domain event handler within an {@link AggregateRoot}.
  * It holds the aggregate repository instance needed to access the AggregateRoot,
- * the handler method name of the method executed on the AggregateRoot instance, and the aggregate domain event being dispatched.
+ * the handler method name of the method executed on the AggregateRoot instance, and the aggregate domain event being
+ * dispatched.
  *
- * @param <I> type of AggregateRoot's Identity
- * @param <A> type of AggregateRoot
- * @param aggregateRepository repository for aggregate
+ * @param <I>                        type of AggregateRoot's Identity
+ * @param <A>                        type of AggregateRoot
+ * @param aggregateRepository        repository for aggregate
  * @param aggregateHandlerMethodName name of method for aggregate handler
- * @param domainEvent domain event
+ * @param domainEvent                domain event
  * @author Mario Herb
  */
-public record AggregateExecutionContext<I extends Identity<?>, A extends AggregateRoot<I>>(Repository<I,A> aggregateRepository, String aggregateHandlerMethodName, AggregateDomainEvent<I,A> domainEvent) implements ExecutionContext {
+public record AggregateExecutionContext<I extends Identity<?>, A extends AggregateRoot<I>>(
+    Repository<I, A> aggregateRepository, String aggregateHandlerMethodName,
+    AggregateDomainEvent<I, A> domainEvent) implements ExecutionContext {
 }

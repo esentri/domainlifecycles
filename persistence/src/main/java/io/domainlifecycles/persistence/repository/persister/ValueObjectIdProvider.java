@@ -35,7 +35,6 @@ import io.domainlifecycles.persistence.repository.actions.PersistenceContext;
  * A ValueObjectIdProvider provides technical ids for new {@link ValueObject}s.
  *
  * @param <BASE_RECORD_TYPE> the type of the record that is used to persist the {@link ValueObject}
- *
  * @author Mario Herb
  */
 public interface ValueObjectIdProvider<BASE_RECORD_TYPE> {
@@ -43,10 +42,11 @@ public interface ValueObjectIdProvider<BASE_RECORD_TYPE> {
     /**
      * Provides technical ids for new {@link ValueObject}s.
      *
-     * @param newVoRecord the new {@link ValueObject} record
+     * @param newVoRecord                     the new {@link ValueObject} record
      * @param domainObjectInstanceAccessModel the instance access model
-     * @param pc the persistence context
+     * @param pc                              the persistence context
      */
-    void provideTechnicalIdsForNewVoRecord(BASE_RECORD_TYPE newVoRecord, DomainObjectInstanceAccessModel<BASE_RECORD_TYPE> domainObjectInstanceAccessModel,
+    void provideTechnicalIdsForNewVoRecord(BASE_RECORD_TYPE newVoRecord,
+                                           DomainObjectInstanceAccessModel<BASE_RECORD_TYPE> domainObjectInstanceAccessModel,
                                            PersistenceContext<BASE_RECORD_TYPE> pc);
 }

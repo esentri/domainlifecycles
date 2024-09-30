@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GraphTests {
 
     @Test
-    public void testTopologicalOrder(){
+    public void testTopologicalOrder() {
         DirectedGraph<Integer> g = new DirectedGraph<Integer>();
         g.addEdge(new DirectedGraph.Edge<>(5, 2));
         g.addEdge(new DirectedGraph.Edge<>(5, 0));
@@ -50,7 +50,7 @@ public class GraphTests {
     }
 
     @Test
-    public void testTopologicalOrderCycleDetectionFalse(){
+    public void testTopologicalOrderCycleDetectionFalse() {
         DirectedGraph<Integer> g = new DirectedGraph<Integer>();
         g.addEdge(new DirectedGraph.Edge<>(5, 2));
         g.addEdge(new DirectedGraph.Edge<>(5, 0));
@@ -63,7 +63,7 @@ public class GraphTests {
     }
 
     @Test
-    public void testTopologicalOrderWithCycle(){
+    public void testTopologicalOrderWithCycle() {
         DirectedGraph<Integer> g = new DirectedGraph<Integer>();
         g.addEdge(new DirectedGraph.Edge<>(5, 2));
         g.addEdge(new DirectedGraph.Edge<>(5, 0));
@@ -77,7 +77,7 @@ public class GraphTests {
     }
 
     @Test
-    public void testTopologicalOrderCycleDetectionTrue(){
+    public void testTopologicalOrderCycleDetectionTrue() {
         DirectedGraph<Integer> g = new DirectedGraph<Integer>();
         g.addEdge(new DirectedGraph.Edge<>(5, 2));
         g.addEdge(new DirectedGraph.Edge<>(5, 0));
@@ -90,7 +90,7 @@ public class GraphTests {
     }
 
     @Test
-    public void testTopologicalOrderCycleDetectionTrue2(){
+    public void testTopologicalOrderCycleDetectionTrue2() {
         DirectedGraph<Integer> g = new DirectedGraph<Integer>();
         g.addEdge(new DirectedGraph.Edge<>(5, 2));
         g.addEdge(new DirectedGraph.Edge<>(5, 0));
@@ -103,7 +103,7 @@ public class GraphTests {
     }
 
     @Test
-    public void testTopologicalOrderCycleDetectionTrue3(){
+    public void testTopologicalOrderCycleDetectionTrue3() {
         DirectedGraph<Integer> g = new DirectedGraph<Integer>();
         g.addEdge(new DirectedGraph.Edge<>(5, 2));
         g.addEdge(new DirectedGraph.Edge<>(5, 0));

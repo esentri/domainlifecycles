@@ -89,7 +89,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles({ "test" })
+@ActiveProfiles({"test"})
 public class Jackson_ITest_SpringBoot2 {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(Jackson_ITest_SpringBoot2.class);
@@ -152,16 +152,20 @@ public class Jackson_ITest_SpringBoot2 {
         SoftAssertions softly = new SoftAssertions();
         for (Field f : TypeTestValueObject.class.getDeclaredFields()) {
             if (f.getType().isAssignableFrom(ZonedDateTime.class)) {
-                softly.assertThat(((ZonedDateTime) f.get(vo2)).toInstant()).isEqualTo(((ZonedDateTime) f.get(vo)).toInstant());
+                softly.assertThat(((ZonedDateTime) f.get(vo2)).toInstant()).isEqualTo(
+                    ((ZonedDateTime) f.get(vo)).toInstant());
             } else if (f.getType().isAssignableFrom(Calendar.class)) {
                 softly.assertThat(((Calendar) f.get(vo2)).toInstant()).isEqualTo(((Calendar) f.get(vo)).toInstant());
             } else if (f.getType().isAssignableFrom(OffsetDateTime.class)) {
-                softly.assertThat(((OffsetDateTime) f.get(vo2)).toInstant()).isEqualTo(((OffsetDateTime) f.get(vo)).toInstant());
-            } else if (f.getType().isAssignableFrom(Optional.class) && ((Optional) f.get(vo)).get().getClass().isAssignableFrom(ZonedDateTime.class)) {
+                softly.assertThat(((OffsetDateTime) f.get(vo2)).toInstant()).isEqualTo(
+                    ((OffsetDateTime) f.get(vo)).toInstant());
+            } else if (f.getType().isAssignableFrom(Optional.class) && ((Optional) f.get(
+                vo)).get().getClass().isAssignableFrom(ZonedDateTime.class)) {
                 var optVo = (Optional<ZonedDateTime>) f.get(vo);
                 var optVo2 = (Optional<ZonedDateTime>) f.get(vo2);
                 softly.assertThat(optVo2.get().toInstant()).isEqualTo(optVo.get().toInstant());
-            } else if (f.getType().isAssignableFrom(Optional.class) && ((Optional) f.get(vo)).get().getClass().isAssignableFrom(OffsetDateTime.class)) {
+            } else if (f.getType().isAssignableFrom(Optional.class) && ((Optional) f.get(
+                vo)).get().getClass().isAssignableFrom(OffsetDateTime.class)) {
                 var optVo = (Optional<OffsetDateTime>) f.get(vo);
                 var optVo2 = (Optional<OffsetDateTime>) f.get(vo2);
                 softly.assertThat(optVo2.get().toInstant()).isEqualTo(optVo.get().toInstant());
@@ -304,7 +308,8 @@ public class Jackson_ITest_SpringBoot2 {
         set.add(AutoMappedSimpleVoOneToMany3.builder().setValue("B").build());
         set.add(AutoMappedSimpleVoOneToMany3.builder().setValue("C").build());
 
-        AutoMappedSimpleVoOneToMany2 vo = AutoMappedSimpleVoOneToMany2.builder().setValue("TEST").setOneToMany3Set(set).build();
+        AutoMappedSimpleVoOneToMany2 vo = AutoMappedSimpleVoOneToMany2.builder().setValue("TEST").setOneToMany3Set(
+            set).build();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(vo);
         log.info("JSON = " + json);
 
@@ -317,7 +322,8 @@ public class Jackson_ITest_SpringBoot2 {
     public void testJacksonMappingSimpleVOOneTOMany2OnlyEmptySet() throws Throwable {
         Set<AutoMappedSimpleVoOneToMany3> set = new HashSet<>();
 
-        AutoMappedSimpleVoOneToMany2 vo = AutoMappedSimpleVoOneToMany2.builder().setValue("TEST").setOneToMany3Set(set).build();
+        AutoMappedSimpleVoOneToMany2 vo = AutoMappedSimpleVoOneToMany2.builder().setValue("TEST").setOneToMany3Set(
+            set).build();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(vo);
         log.info("JSON = " + json);
 
@@ -328,7 +334,8 @@ public class Jackson_ITest_SpringBoot2 {
 
     @Test
     public void testJacksonMappingSimpleVOOneTOMany2OnlyNullSet() throws Throwable {
-        AutoMappedSimpleVoOneToMany2 vo = AutoMappedSimpleVoOneToMany2.builder().setValue("TEST").setOneToMany3Set(null).build();
+        AutoMappedSimpleVoOneToMany2 vo = AutoMappedSimpleVoOneToMany2.builder().setValue("TEST").setOneToMany3Set(
+            null).build();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(vo);
         log.info("JSON = " + json);
 
@@ -591,10 +598,13 @@ public class Jackson_ITest_SpringBoot2 {
 
         IdProvisioningDto dtoRead = objectMapper.readValue(json, IdProvisioningDto.class);
         log.info("Read = " + dtoRead);
-        assertThat(dtoRead.getBestellPosition().getArtikelId()).isEqualTo(dtoToAssert.getBestellPosition().getArtikelId());
+        assertThat(dtoRead.getBestellPosition().getArtikelId()).isEqualTo(
+            dtoToAssert.getBestellPosition().getArtikelId());
         assertThat(dtoRead.getBestellPosition().getId()).isNotNull();
-        assertThat(dtoRead.getBestellPosition().getStueckzahl()).isEqualTo(dtoToAssert.getBestellPosition().getStueckzahl());
-        assertThat(dtoRead.getBestellPosition().getStueckPreis()).isEqualTo(dtoToAssert.getBestellPosition().getStueckPreis());
+        assertThat(dtoRead.getBestellPosition().getStueckzahl()).isEqualTo(
+            dtoToAssert.getBestellPosition().getStueckzahl());
+        assertThat(dtoRead.getBestellPosition().getStueckPreis()).isEqualTo(
+            dtoToAssert.getBestellPosition().getStueckPreis());
     }
 
     public static class IdProvisioningDto {

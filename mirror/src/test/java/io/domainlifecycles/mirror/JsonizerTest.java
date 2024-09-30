@@ -41,7 +41,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JsonizerTest {
 
     @BeforeAll
-    public static void init(){
+    public static void init() {
         ReflectiveDomainMirrorFactory factory = new ReflectiveDomainMirrorFactory("tests");
         Domain.initialize(factory);
     }
@@ -54,10 +54,11 @@ public class JsonizerTest {
         var init = serializer.deserialize(result);
         assertThat(init.boundedContextMirrors()).isEqualTo(Domain.getInitializedDomain().boundedContextMirrors());
         assertThat(init.allTypeMirrors().size()).isEqualTo(Domain.getInitializedDomain().allTypeMirrors().size());
-        for(String key : init.allTypeMirrors().keySet()){
+        for (String key : init.allTypeMirrors().keySet()) {
             //System.out.println(key);
             assertThat(Domain.getInitializedDomain().allTypeMirrors().containsKey(key)).isTrue();
-            assertThat(init.allTypeMirrors().get(key)).isEqualTo(Domain.getInitializedDomain().allTypeMirrors().get(key));
+            assertThat(init.allTypeMirrors().get(key)).isEqualTo(
+                Domain.getInitializedDomain().allTypeMirrors().get(key));
         }
         assertThat(init).isEqualTo(Domain.getInitializedDomain());
         var result2 = serializer.serialize(init);

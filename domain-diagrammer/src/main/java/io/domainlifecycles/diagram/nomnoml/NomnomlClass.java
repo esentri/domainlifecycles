@@ -61,14 +61,14 @@ public class NomnomlClass implements DiagramElement {
     /**
      * Constructor
      *
-     * @param name of the class
-     * @param comment to be added in diagram
+     * @param name            of the class
+     * @param comment         to be added in diagram
      * @param styleClassifier for class
-     * @param fields contained
-     * @param methods contained
-     * @param stereotypes to be used
-     * @param showFields show fields or exclude them
-     * @param showMethods show methods or exclude them
+     * @param fields          contained
+     * @param methods         contained
+     * @param stereotypes     to be used
+     * @param showFields      show fields or exclude them
+     * @param showMethods     show methods or exclude them
      */
     @Builder
     public NomnomlClass(String name,
@@ -102,12 +102,12 @@ public class NomnomlClass implements DiagramElement {
         builder.append(" ");
         builder.append(name);
         addStereotypes(builder);
-        if(showFields) {
+        if (showFields) {
             builder.append("|");
             builder.append(System.lineSeparator());
             addFields(builder);
         }
-        if(showMethods){
+        if (showMethods) {
             builder.append("|");
             builder.append(System.lineSeparator());
             addMethods(builder);

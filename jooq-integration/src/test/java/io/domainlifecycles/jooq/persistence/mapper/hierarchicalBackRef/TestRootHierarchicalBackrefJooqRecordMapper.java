@@ -46,7 +46,8 @@ public class TestRootHierarchicalBackrefJooqRecordMapper extends AbstractRecordM
         if (record == null) {
             return null;
         }
-        TestRootHierarchicalBackrefRecord testRootHierarchicalRecord = record.into(Tables.TEST_ROOT_HIERARCHICAL_BACKREF);
+        TestRootHierarchicalBackrefRecord testRootHierarchicalRecord = record.into(
+            Tables.TEST_ROOT_HIERARCHICAL_BACKREF);
         return new InnerClassDomainObjectBuilder<TestRootHierarchicalBackref>(TestRootHierarchicalBackref.builder()
             .setId(new TestRootHierarchicalBackrefId(testRootHierarchicalRecord.getId()))
             .setName(testRootHierarchicalRecord.getName())
@@ -54,7 +55,8 @@ public class TestRootHierarchicalBackrefJooqRecordMapper extends AbstractRecordM
     }
 
     @Override
-    public TestRootHierarchicalBackrefRecord from(TestRootHierarchicalBackref testRootHierarchicalBackref, TestRootHierarchicalBackref root) {
+    public TestRootHierarchicalBackrefRecord from(TestRootHierarchicalBackref testRootHierarchicalBackref,
+                                                  TestRootHierarchicalBackref root) {
         TestRootHierarchicalBackrefRecord testRootHierarchicalRecord = new TestRootHierarchicalBackrefRecord();
         testRootHierarchicalRecord.setId(testRootHierarchicalBackref.getId().value());
         testRootHierarchicalRecord.setName(testRootHierarchicalBackref.getName());

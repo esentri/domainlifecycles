@@ -113,9 +113,9 @@ public class DomainTypesScanner {
      * @param boundedContextPackages the bounded context packages
      */
     @SuppressWarnings("unchecked")
-    public void scan(String... boundedContextPackages){
-        for(String pack : boundedContextPackages){
-            if(isValidPackage(pack)) {
+    public void scan(String... boundedContextPackages) {
+        for (String pack : boundedContextPackages) {
+            if (isValidPackage(pack)) {
                 log.info("Scanning bounded context package for domain types '{}'", pack);
                 try (ScanResult scanResult =
                          new ClassGraph()
@@ -127,21 +127,21 @@ public class DomainTypesScanner {
                     enums.addAll(
                         scanResult.getAllEnums()
                             .stream()
-                            .map(r -> (Class<? extends Enum<?>>)r.loadClass())
+                            .map(r -> (Class<? extends Enum<?>>) r.loadClass())
                             .toList()
                     );
                     identities.addAll(
                         scanResult.getClassesImplementing(Identity.class)
                             .stream()
                             .filter(c -> !Identity.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends Identity<?>>)r.loadClass())
+                            .map(r -> (Class<? extends Identity<?>>) r.loadClass())
                             .toList()
                     );
                     valueObjects.addAll(
                         scanResult.getClassesImplementing(ValueObject.class)
                             .stream()
                             .filter(c -> !ValueObject.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends ValueObject>)r.loadClass())
+                            .map(r -> (Class<? extends ValueObject>) r.loadClass())
                             .toList()
                     );
                     entities.addAll(
@@ -150,42 +150,42 @@ public class DomainTypesScanner {
                             .filter(c -> !Entity.class.getName().equals(c.getName()))
                             .filter(c -> !AggregateRoot.class.getName().equals(c.getName()))
                             .stream()
-                            .map(r -> (Class<? extends Entity<?>>)r.loadClass())
+                            .map(r -> (Class<? extends Entity<?>>) r.loadClass())
                             .toList()
                     );
                     aggregateRoots.addAll(
                         scanResult.getClassesImplementing(AggregateRoot.class)
                             .stream()
                             .filter(c -> !AggregateRoot.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends AggregateRoot<?>>)r.loadClass())
+                            .map(r -> (Class<? extends AggregateRoot<?>>) r.loadClass())
                             .toList()
                     );
                     domainServices.addAll(
                         scanResult.getClassesImplementing(DomainService.class)
                             .stream()
                             .filter(c -> !DomainService.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends DomainService>)r.loadClass())
+                            .map(r -> (Class<? extends DomainService>) r.loadClass())
                             .toList()
                     );
                     applicationServices.addAll(
                         scanResult.getClassesImplementing(ApplicationService.class)
                             .stream()
                             .filter(c -> !ApplicationService.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends ApplicationService>)r.loadClass())
+                            .map(r -> (Class<? extends ApplicationService>) r.loadClass())
                             .toList()
                     );
                     domainEvents.addAll(
                         scanResult.getClassesImplementing(DomainEvent.class)
                             .stream()
                             .filter(c -> !DomainEvent.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends DomainEvent>)r.loadClass())
+                            .map(r -> (Class<? extends DomainEvent>) r.loadClass())
                             .toList()
                     );
                     repositories.addAll(
                         scanResult.getClassesImplementing(Repository.class)
                             .stream()
                             .filter(c -> !Repository.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends Repository<?, ?>>)r.loadClass())
+                            .map(r -> (Class<? extends Repository<?, ?>>) r.loadClass())
                             .toList()
                     );
                     domainCommands.addAll(
@@ -194,35 +194,35 @@ public class DomainTypesScanner {
                             .filter(c -> !DomainCommand.class.getName().equals(c.getName()))
                             .filter(c -> !AggregateCommand.class.getName().equals(c.getName()))
                             .filter(c -> !DomainServiceCommand.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends DomainCommand>)r.loadClass())
+                            .map(r -> (Class<? extends DomainCommand>) r.loadClass())
                             .toList()
-                        );
+                    );
                     readModels.addAll(
                         scanResult.getClassesImplementing(ReadModel.class)
                             .stream()
                             .filter(c -> !ReadModel.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends ReadModel>)r.loadClass())
+                            .map(r -> (Class<? extends ReadModel>) r.loadClass())
                             .toList()
                     );
                     queryClients.addAll(
                         scanResult.getClassesImplementing(QueryClient.class)
                             .stream()
                             .filter(c -> !QueryClient.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends QueryClient<?>>)r.loadClass())
+                            .map(r -> (Class<? extends QueryClient<?>>) r.loadClass())
                             .toList()
                     );
                     outboundServices.addAll(
                         scanResult.getClassesImplementing(OutboundService.class)
                             .stream()
                             .filter(c -> !OutboundService.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends OutboundService>)r.loadClass())
+                            .map(r -> (Class<? extends OutboundService>) r.loadClass())
                             .toList()
                     );
 
                 } catch (Throwable t) {
                     log.error("Scanning bounded context package '{}' failed!", pack);
                 }
-            }else{
+            } else {
                 log.error("Bounded context package is no valid package name'{}'!", pack);
             }
         }

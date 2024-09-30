@@ -62,12 +62,13 @@ public class AssertedContainableTypeMirrorBuilder {
     /**
      * Initialize the builder with the corresponding class, annotated and generic type information.
      *
-     * @param type class to mirror
-     * @param annotatedType the annotated type
-     * @param genericType the generic type
+     * @param type                class to mirror
+     * @param annotatedType       the annotated type
+     * @param genericType         the generic type
      * @param resolvedGenericType the resolved generic type
      */
-    public AssertedContainableTypeMirrorBuilder(Class<?> type, AnnotatedType annotatedType, Type genericType, ResolvedGenericTypeMirror resolvedGenericType) {
+    public AssertedContainableTypeMirrorBuilder(Class<?> type, AnnotatedType annotatedType, Type genericType,
+                                                ResolvedGenericTypeMirror resolvedGenericType) {
         this.type = Objects.requireNonNull(type);
         this.annotatedType = Objects.requireNonNull(annotatedType);
         this.genericType = genericType;
@@ -79,10 +80,11 @@ public class AssertedContainableTypeMirrorBuilder {
      *
      * @return new instance of AssertedContainableTypeMirror
      */
-    public AssertedContainableTypeMirror build(){
+    public AssertedContainableTypeMirror build() {
         var containerType = getContainerTypeName();
         var assertions = containerType.isEmpty() ? buildAssertionMirrors() : buildContainedAssertionMirrors();
-        List<AssertionMirror> containerAssertions = containerType.isPresent() ? buildAssertionMirrors() : Collections.emptyList();
+        List<AssertionMirror> containerAssertions = containerType.isPresent() ? buildAssertionMirrors() :
+            Collections.emptyList();
         return new AssertedContainableTypeModel(
             getTypeName(),
             DomainType.of(getBasicType()),
@@ -99,10 +101,11 @@ public class AssertedContainableTypeMirrorBuilder {
         );
     }
 
-    private List<AssertionMirror> buildAssertionMirrors(){
+    private List<AssertionMirror> buildAssertionMirrors() {
         return Arrays.stream(annotatedType.getAnnotations())
             .map(a -> {
-                var assertionMirrorBuilder = new AssertionMirrorBuilder(getBasicType(), a, false, Collection.class.isAssignableFrom(type));
+                var assertionMirrorBuilder = new AssertionMirrorBuilder(getBasicType(), a, false,
+                    Collection.class.isAssignableFrom(type));
                 return assertionMirrorBuilder.build();
             })
             .filter(Optional::isPresent)
@@ -110,13 +113,14 @@ public class AssertedContainableTypeMirrorBuilder {
             .collect(Collectors.toList());
     }
 
-    private List<AssertionMirror> buildContainedAssertionMirrors(){
-        if(AnnotatedParameterizedType.class.isAssignableFrom(annotatedType.getClass())){
-            var actualTypeArguments = ((AnnotatedParameterizedType)annotatedType).getAnnotatedActualTypeArguments();
-            if(actualTypeArguments.length>0){
+    private List<AssertionMirror> buildContainedAssertionMirrors() {
+        if (AnnotatedParameterizedType.class.isAssignableFrom(annotatedType.getClass())) {
+            var actualTypeArguments = ((AnnotatedParameterizedType) annotatedType).getAnnotatedActualTypeArguments();
+            if (actualTypeArguments.length > 0) {
                 return Arrays.stream(actualTypeArguments[0].getAnnotations())
                     .map(a -> {
-                        var assertionMirrorBuilder = new AssertionMirrorBuilder(getBasicType(), a, true, Collection.class.isAssignableFrom(type));
+                        var assertionMirrorBuilder = new AssertionMirrorBuilder(getBasicType(), a, true,
+                            Collection.class.isAssignableFrom(type));
                         return assertionMirrorBuilder.build();
                     })
                     .filter(Optional::isPresent)
@@ -127,8 +131,9 @@ public class AssertedContainableTypeMirrorBuilder {
         return List.of();
     }
 
-    private Optional<String> getContainerTypeName(){
-        if(Optional.class.isAssignableFrom(type) || Collection.class.isAssignableFrom(type) || Stream.class.isAssignableFrom(type)){
+    private Optional<String> getContainerTypeName() {
+        if (Optional.class.isAssignableFrom(type) || Collection.class.isAssignableFrom(
+            type) || Stream.class.isAssignableFrom(type)) {
             return Optional.of(type.getName());
         }
         return Optional.empty();
@@ -137,21 +142,23 @@ public class AssertedContainableTypeMirrorBuilder {
     /**
      * @return the basic type (the contained type).
      */
-    public Type getBasicType(){
-        if(Optional.class.isAssignableFrom(type) || Collection.class.isAssignableFrom(type) || Stream.class.isAssignableFrom(type)){
+    public Type getBasicType() {
+        if (Optional.class.isAssignableFrom(type) || Collection.class.isAssignableFrom(
+            type) || Stream.class.isAssignableFrom(type)) {
             return JavaReflect.getFirstParameterType(genericType)
                 .orElse(Object.class);
-        } else if(type.isArray()){
+        } else if (type.isArray()) {
             return type.componentType();
         }
         return type;
     }
 
-    private String getTypeName(){
-        if(resolvedGenericType == null){
+    private String getTypeName() {
+        if (resolvedGenericType == null) {
             return getBasicType().getTypeName();
-        }else{
-            if(Optional.class.isAssignableFrom(type) || Collection.class.isAssignableFrom(type) || Stream.class.isAssignableFrom(type)){
+        } else {
+            if (Optional.class.isAssignableFrom(type) || Collection.class.isAssignableFrom(
+                type) || Stream.class.isAssignableFrom(type)) {
                 return resolvedGenericType.genericTypes().get(0).typeName();
             }
             return resolvedGenericType.typeName();

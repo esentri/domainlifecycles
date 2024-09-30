@@ -55,7 +55,7 @@ public class NomnomlMethod implements DiagramElement {
      * Initializes the method.
      *
      * @param visibility of method
-     * @param name of method
+     * @param name       of method
      * @param returnType of method
      * @param parameters of method
      */

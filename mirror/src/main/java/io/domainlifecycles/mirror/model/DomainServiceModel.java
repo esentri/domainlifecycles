@@ -99,7 +99,8 @@ public class DomainServiceModel extends DomainTypeModel implements DomainService
     public List<RepositoryMirror> getReferencedRepositories() {
         return referencedRepositoryTypeNames
             .stream()
-            .map(n -> (RepositoryMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("RepositoryMirror not found for '%s'", n)))
+            .map(n -> (RepositoryMirror) Domain.typeMirror(n).orElseThrow(
+                () -> MirrorException.fail("RepositoryMirror not found for '%s'", n)))
             .collect(Collectors.toList());
     }
 
@@ -111,7 +112,8 @@ public class DomainServiceModel extends DomainTypeModel implements DomainService
     public List<DomainServiceMirror> getReferencedDomainServices() {
         return referencedDomainServiceTypeNames
             .stream()
-            .map(n -> (DomainServiceMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("DomainServiceMirror not found for '%s'", n)))
+            .map(n -> (DomainServiceMirror) Domain.typeMirror(n).orElseThrow(
+                () -> MirrorException.fail("DomainServiceMirror not found for '%s'", n)))
             .collect(Collectors.toList());
     }
 
@@ -123,7 +125,8 @@ public class DomainServiceModel extends DomainTypeModel implements DomainService
     public List<OutboundServiceMirror> getReferencedOutboundServices() {
         return referencedOutboundServiceTypeNames
             .stream()
-            .map(n -> (OutboundServiceMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("OutboundServiceMirror not found for '%s'", n)))
+            .map(n -> (OutboundServiceMirror) Domain.typeMirror(n).orElseThrow(
+                () -> MirrorException.fail("OutboundServiceMirror not found for '%s'", n)))
             .collect(Collectors.toList());
     }
 
@@ -135,7 +138,8 @@ public class DomainServiceModel extends DomainTypeModel implements DomainService
     public List<QueryClientMirror> getReferencedQueryClients() {
         return referencedQueryClientTypeNames
             .stream()
-            .map(n -> (QueryClientMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("QueryClientMirror not found for '%s'", n)))
+            .map(n -> (QueryClientMirror) Domain.typeMirror(n).orElseThrow(
+                () -> MirrorException.fail("QueryClientMirror not found for '%s'", n)))
             .collect(Collectors.toList());
     }
 

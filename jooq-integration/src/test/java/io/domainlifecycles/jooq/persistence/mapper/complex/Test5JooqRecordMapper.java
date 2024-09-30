@@ -65,7 +65,8 @@ public class Test5JooqRecordMapper extends AbstractRecordMapper<TestEntity_5Reco
         testEntity_5Record.setName(testEntity5.getName());
         testEntity_5Record.setTestEntity_4Id(testEntity5.getTestEntity4Id().value());
         testEntity_5Record.setTestRootId(testEntity5.getTestRootId().value());
-        testEntity_5Record.setTestEntity_6Id(testEntity5.getTestEntity6() != null ? testEntity5.getTestEntity6().getId().value() : null);
+        testEntity_5Record.setTestEntity_6Id(
+            testEntity5.getTestEntity6() != null ? testEntity5.getTestEntity6().getId().value() : null);
         testEntity_5Record.setConcurrencyVersion(testEntity5.concurrencyVersion());
         return testEntity_5Record;
     }

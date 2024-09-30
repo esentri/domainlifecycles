@@ -40,7 +40,7 @@ public interface TransactionalOutbox {
 
     /**
      * Retrieves a batch of domain events from the outbox for sending.
-     *
+     * <p>
      * The implementor must make sure the events are delivered in the order they were sent.
      * Also the implementor should take care, that no duplicates are sent by concurrent sender processes.
      * That means as long as a batch is processed, no other batches could be fetched. If a batch
@@ -62,7 +62,7 @@ public interface TransactionalOutbox {
      * Marks a domain event as failed.
      *
      * @param domainEvent the domain event to mark as failed
-     * @param result result of event processing
+     * @param result      result of event processing
      */
     void markFailed(DomainEvent domainEvent, ProcessingResult result);
 

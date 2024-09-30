@@ -40,15 +40,16 @@ import java.util.Objects;
  * Represents the execution context for a domain event handler within a service
  * ({@link DomainService}, {@link ApplicationService}, {@link OutboundService},
  * {@link QueryClient} or {@link Repository}).
- *
+ * <p>
  * It holds the handler object (the service instance), handler method name, and the domain event being dispatched.
  *
- * @param handler handler instance
+ * @param handler           handler instance
  * @param handlerMethodName handler method name
- * @param domainEvent domain event
+ * @param domainEvent       domain event
  * @author Mario Herb
  */
-public record ServiceExecutionContext(Object handler, String handlerMethodName, DomainEvent domainEvent) implements ExecutionContext {
+public record ServiceExecutionContext(Object handler, String handlerMethodName,
+                                      DomainEvent domainEvent) implements ExecutionContext {
     public ServiceExecutionContext {
         Objects.requireNonNull(handler, "A ServiceExecutionContext needs a non null handler object!");
         Objects.requireNonNull(handlerMethodName, "A ServiceExecutionContext needs a non null handlerMethodName!");

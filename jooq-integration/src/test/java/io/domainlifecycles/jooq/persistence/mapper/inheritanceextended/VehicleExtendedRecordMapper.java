@@ -37,7 +37,8 @@ import tests.shared.persistence.domain.inheritanceExtended.CarWithEngine;
 import tests.shared.persistence.domain.inheritanceExtended.VehicleExtended;
 import tests.shared.persistence.domain.inheritanceExtended.VehicleExtendedId;
 
-public class VehicleExtendedRecordMapper extends AbstractRecordMapper<VehicleExtendedRecord, VehicleExtended, VehicleExtended> {
+public class VehicleExtendedRecordMapper extends AbstractRecordMapper<VehicleExtendedRecord, VehicleExtended,
+    VehicleExtended> {
 
     @Override
     public DomainObjectBuilder<VehicleExtended> recordToDomainObjectBuilder(VehicleExtendedRecord record) {

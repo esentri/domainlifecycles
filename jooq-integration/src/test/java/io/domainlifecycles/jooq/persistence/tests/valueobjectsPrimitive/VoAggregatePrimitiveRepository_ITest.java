@@ -49,6 +49,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class VoAggregatePrimitiveRepository_ITest extends BasePersistence_ITest {
 
@@ -57,7 +58,7 @@ public class VoAggregatePrimitiveRepository_ITest extends BasePersistence_ITest 
     private VoAggregatePrimitiveRepository voAggregatePrimitiveRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         voAggregatePrimitiveRepository = spy(new VoAggregatePrimitiveRepository(
             persistenceConfiguration.dslContext,
             persistenceEventTestHelper.testEventPublisher,
@@ -78,7 +79,8 @@ public class VoAggregatePrimitiveRepository_ITest extends BasePersistence_ITest 
 
 
         //then
-        Optional<VoAggregatePrimitive> found = voAggregatePrimitiveRepository.findResultById(new VoAggregatePrimitiveId(1l))
+        Optional<VoAggregatePrimitive> found = voAggregatePrimitiveRepository.findResultById(
+                new VoAggregatePrimitiveId(1l))
             .resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
 
@@ -100,16 +102,20 @@ public class VoAggregatePrimitiveRepository_ITest extends BasePersistence_ITest 
 
 
         //then
-        Optional<VoAggregatePrimitive> found = voAggregatePrimitiveRepository.findResultById(new VoAggregatePrimitiveId(2l))
+        Optional<VoAggregatePrimitive> found = voAggregatePrimitiveRepository.findResultById(
+                new VoAggregatePrimitiveId(2l))
             .resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
 
         log.debug("Neue VO Aggregate Root: \n" + found);
 
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getRecordMappedSimple(), inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getRecordMappedComplex(), inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getRecordMappedNested(), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getRecordMappedSimple(), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getRecordMappedComplex(), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getRecordMappedNested(), inserted);
         persistenceEventTestHelper.assertEvents();
     }
 
@@ -125,7 +131,8 @@ public class VoAggregatePrimitiveRepository_ITest extends BasePersistence_ITest 
 
         persistenceEventTestHelper.resetEventsCaught();
         //then
-        Optional<VoAggregatePrimitive> found = voAggregatePrimitiveRepository.findResultById(new VoAggregatePrimitiveId(2l)).resultValue();
+        Optional<VoAggregatePrimitive> found = voAggregatePrimitiveRepository.findResultById(
+            new VoAggregatePrimitiveId(2l)).resultValue();
 
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
 
@@ -144,7 +151,8 @@ public class VoAggregatePrimitiveRepository_ITest extends BasePersistence_ITest 
         voAggregatePrimitiveRepository.deleteById(new VoAggregatePrimitiveId(1l));
 
         //then
-        Optional<VoAggregatePrimitive> found = voAggregatePrimitiveRepository.findResultById(new VoAggregatePrimitiveId(1l)).resultValue();
+        Optional<VoAggregatePrimitive> found = voAggregatePrimitiveRepository.findResultById(
+            new VoAggregatePrimitiveId(1l)).resultValue();
         Assertions.assertThat(found).isEmpty();
 
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted);
@@ -162,13 +170,17 @@ public class VoAggregatePrimitiveRepository_ITest extends BasePersistence_ITest 
         voAggregatePrimitiveRepository.deleteById(new VoAggregatePrimitiveId(2l));
 
         //then
-        Optional<VoAggregatePrimitive> found = voAggregatePrimitiveRepository.findResultById(new VoAggregatePrimitiveId(2l)).resultValue();
+        Optional<VoAggregatePrimitive> found = voAggregatePrimitiveRepository.findResultById(
+            new VoAggregatePrimitiveId(2l)).resultValue();
         Assertions.assertThat(found).isEmpty();
 
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getRecordMappedNested(), inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getRecordMappedSimple(), inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getRecordMappedComplex(), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getRecordMappedNested(), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getRecordMappedSimple(), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getRecordMappedComplex(), inserted);
 
         persistenceEventTestHelper.assertEvents();
     }
@@ -180,17 +192,17 @@ public class VoAggregatePrimitiveRepository_ITest extends BasePersistence_ITest 
         VoAggregatePrimitive inserted = voAggregatePrimitiveRepository.insert(r);
         VoAggregatePrimitive copy = persistenceEventTestHelper.kryo.copy(inserted);
         copy.setComplex(ComplexVoPrimitive.builder()
-                .setNum(5l)
-                .setVal(88l)
+            .setNum(5l)
+            .setVal(88l)
             .build());
         copy.setNested(NestedVoPrimitive.builder()
-                .setSimple(SimpleVoPrimitive.builder()
-                    .setVal(88l)
-                    .build())
-                .setComplex(ComplexVoPrimitive.builder()
-                    .setNum(6l)
-                    .setVal(88l)
-                    .build())
+            .setSimple(SimpleVoPrimitive.builder()
+                .setVal(88l)
+                .build())
+            .setComplex(ComplexVoPrimitive.builder()
+                .setNum(6l)
+                .setVal(88l)
+                .build())
             .build());
         copy.setSimple(SimpleVoPrimitive.builder()
             .setVal(88l)
@@ -237,7 +249,8 @@ public class VoAggregatePrimitiveRepository_ITest extends BasePersistence_ITest 
         VoAggregatePrimitive updated = voAggregatePrimitiveRepository.update(copy);
 
         //then
-        Optional<VoAggregatePrimitive> found = voAggregatePrimitiveRepository.findResultById(new VoAggregatePrimitiveId(1l)).resultValue();
+        Optional<VoAggregatePrimitive> found = voAggregatePrimitiveRepository.findResultById(
+            new VoAggregatePrimitiveId(1l)).resultValue();
         Assertions.assertThat(found).isPresent();
         assertThat(updated == copy);
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
@@ -246,9 +259,12 @@ public class VoAggregatePrimitiveRepository_ITest extends BasePersistence_ITest 
 
         //strange assertion errors sometimes --> seems to be a heisenbug in AssertJ
         /*persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getRecordMappedComplex(), updated );
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getRecordMappedNested(), updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getRecordMappedSimple(), updated);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated
+        .getRecordMappedComplex(), updated );
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated
+        .getRecordMappedNested(), updated);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated
+        .getRecordMappedSimple(), updated);
         persistenceEventTestHelper.assertEvents();*/
     }
 
@@ -273,14 +289,18 @@ public class VoAggregatePrimitiveRepository_ITest extends BasePersistence_ITest 
         //when
         VoAggregatePrimitive updated = voAggregatePrimitiveRepository.update(copy);
         //then
-        Optional<VoAggregatePrimitive> found = voAggregatePrimitiveRepository.findResultById(new VoAggregatePrimitiveId(2l)).resultValue();
+        Optional<VoAggregatePrimitive> found = voAggregatePrimitiveRepository.findResultById(
+            new VoAggregatePrimitiveId(2l)).resultValue();
 
         assertThat(updated == copy);
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getRecordMappedComplex(), inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getRecordMappedSimple(), inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getRecordMappedNested(), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getRecordMappedComplex(), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getRecordMappedSimple(), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getRecordMappedNested(), inserted);
         persistenceEventTestHelper.assertEvents();
         log.debug("Neue VO Aggregate Root: \n" + found);
     }

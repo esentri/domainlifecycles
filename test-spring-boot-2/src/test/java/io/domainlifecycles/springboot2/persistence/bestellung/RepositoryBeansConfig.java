@@ -42,11 +42,11 @@ public class RepositoryBeansConfig {
         SpringBoot2PersistenceEventPublisher springPersistenceEventPublisher,
         JooqDomainPersistenceProvider jooqDomainPersistenceProvider
 
-        ){
+    ) {
         return new BestellungRepository(
             dslContext,
             springPersistenceEventPublisher,
             jooqDomainPersistenceProvider
-            );
+        );
     }
 }

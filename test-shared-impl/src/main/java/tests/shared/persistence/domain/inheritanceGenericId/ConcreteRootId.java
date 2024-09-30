@@ -29,4 +29,5 @@ package tests.shared.persistence.domain.inheritanceGenericId;
 
 import io.domainlifecycles.domain.types.Identity;
 
-public record ConcreteRootId(Long value) implements Identity<Long> {}
+public record ConcreteRootId(Long value) implements Identity<Long> {
+}

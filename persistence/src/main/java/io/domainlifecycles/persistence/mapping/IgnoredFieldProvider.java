@@ -30,7 +30,8 @@ package io.domainlifecycles.persistence.mapping;
 import io.domainlifecycles.mirror.api.FieldMirror;
 
 /**
- * Implementing this interfaces enables to define ignored fields (Entity or ValueObject fields ignored for persistence auto mapping).
+ * Implementing this interfaces enables to define ignored fields (Entity or ValueObject fields ignored for
+ * persistence auto mapping).
  *
  * @author Mario Herb
  */

@@ -11,7 +11,7 @@ on:
   push:
     # Pattern matched against refs/tags
     tags:
-      - '[0-9]+.[0-9]+.[0-9]+'         
+      - '[0-9]+.[0-9]+.[0-9]+'
 #  workflow_dispatch:
 
 jobs:
@@ -23,70 +23,70 @@ jobs:
       packages: write
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
-        settings-path: ${{ github.workspace }} # location for the settings.xml file
-    - id: read_version
-      uses: andstor/file-reader-action@v1
-      with:
-        path: "version.properties"
-    - uses: bhowell2/github-substring-action@1.0.2
-      id: version
-      with:
-        value: ${{steps.read_version.outputs.contents}}
-        index_of_str: "version="
-    - id: read_changelog
-      uses: andstor/file-reader-action@v1
-      with:
-        path: "CHANGELOG.md"
-    - name: check_changelog
-      if: ${{ !contains(steps.read_changelog.outputs.contents, steps.version.outputs.substring) }}
-      run: |
-        echo ${{ format('Changelog does not contain new version {0} ', steps.version.outputs.substring) }}
-        exit 1
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
-    - name: Build with Gradle
-      run: ./gradlew build
-    - uses: rishabhgupta/split-by@v1
-      id: split
-      with:
-        string: ${{ steps.read_changelog.outputs.contents }}
-        split-by: '## '
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        body: ${{ steps.split.outputs._1 }}
-        draft: false
-        prerelease: false
-    # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
-    # the publishing section of your build.gradle
-    #- name: Publish to GitHub Packages
-    #  run: ./gradlew publish
-    #  env:
-    #    USERNAME: ${{ github.actor }}
-    #    TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v4.3.1
-      with:
-        path: ./*/build/
-        warn: Output a warning but do not fail the action
-    #- name: Publish to Sonatype OSSRH with Gradle
-    #  env:
-    #    ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
-    #    ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
-    #    ORG_GRADLE_PROJECT_signingKey: ${{ secrets.PGP_KEY }}
-    #    ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.PGP_PASSPHRASE }}
-    #  run: ./gradlew publishAllPublicationsToSonatypeRepository --no-daemon
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+          settings-path: ${{ github.workspace }} # location for the settings.xml file
+      - id: read_version
+        uses: andstor/file-reader-action@v1
+        with:
+          path: "version.properties"
+      - uses: bhowell2/github-substring-action@1.0.2
+        id: version
+        with:
+          value: ${{steps.read_version.outputs.contents}}
+          index_of_str: "version="
+      - id: read_changelog
+        uses: andstor/file-reader-action@v1
+        with:
+          path: "CHANGELOG.md"
+      - name: check_changelog
+        if: ${{ !contains(steps.read_changelog.outputs.contents, steps.version.outputs.substring) }}
+        run: |
+          echo ${{ format('Changelog does not contain new version {0} ', steps.version.outputs.substring) }}
+          exit 1
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+      - name: Build with Gradle
+        run: ./gradlew build
+      - uses: rishabhgupta/split-by@v1
+        id: split
+        with:
+          string: ${{ steps.read_changelog.outputs.contents }}
+          split-by: '## '
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: ${{ steps.split.outputs._1 }}
+          draft: false
+          prerelease: false
+      # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
+      # the publishing section of your build.gradle
+      #- name: Publish to GitHub Packages
+      #  run: ./gradlew publish
+      #  env:
+      #    USERNAME: ${{ github.actor }}
+      #    TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          path: ./*/build/
+          warn: Output a warning but do not fail the action
+            #- name: Publish to Sonatype OSSRH with Gradle
+            #  env:
+            #    ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
+            #    ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
+            #    ORG_GRADLE_PROJECT_signingKey: ${{ secrets.PGP_KEY }}
+            #    ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.PGP_PASSPHRASE }}
+            #  run: ./gradlew publishAllPublicationsToSonatypeRepository --no-daemon
     
           

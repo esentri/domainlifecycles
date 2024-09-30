@@ -47,6 +47,7 @@ import tests.shared.persistence.domain.optional.RefAgg;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class OptionalAggregateRepository_ITest extends BasePersistence_ITest {
 
@@ -55,7 +56,7 @@ public class OptionalAggregateRepository_ITest extends BasePersistence_ITest {
     private RefAggRepository refAggRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         optionalAggregateRepository = new OptionalAggregateRepository(
             persistenceConfiguration.dslContext,
             persistenceEventTestHelper.testEventPublisher,
@@ -78,7 +79,8 @@ public class OptionalAggregateRepository_ITest extends BasePersistence_ITest {
         //when
         OptionalAggregate inserted = optionalAggregateRepository.insert(r);
         //then
-        Optional<OptionalAggregate> found = optionalAggregateRepository.findResultById(new OptionalAggregateId(1l)).resultValue();
+        Optional<OptionalAggregate> found = optionalAggregateRepository.findResultById(
+            new OptionalAggregateId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
         persistenceEventTestHelper.assertEvents();
@@ -101,26 +103,35 @@ public class OptionalAggregateRepository_ITest extends BasePersistence_ITest {
         //when
         OptionalAggregate inserted = optionalAggregateRepository.insert(r);
         //then
-        Optional<OptionalAggregate> found = optionalAggregateRepository.findResultById(new OptionalAggregateId(1l)).resultValue();
+        Optional<OptionalAggregate> found = optionalAggregateRepository.findResultById(
+            new OptionalAggregateId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getOptionalEntity().get());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getOptionalEntity().get().getComplexValueObjectList().get(0), inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getOptionalEntity().get().getComplexValueObjectList().get(1), inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getRefValueObjectList().get(0), inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getRefValueObjectList().get(1), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getOptionalEntity().get());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getOptionalEntity().get().getComplexValueObjectList().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getOptionalEntity().get().getComplexValueObjectList().get(1), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getRefValueObjectList().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getRefValueObjectList().get(1), inserted);
         persistenceEventTestHelper.assertEvents();
         Assertions.assertThat(found.get().getOptionalEntity()).isPresent();
         Assertions.assertThat(found.get().getOptionalText()).isPresent();
         Assertions.assertThat(found.get().getOptionalComplexValueObject()).isPresent();
         Assertions.assertThat(found.get().getOptionalComplexValueObject().get().getOptionalText()).isPresent();
-        Assertions.assertThat(found.get().getOptionalComplexValueObject().get().getOptionalSimpleValueObject()).isPresent();
+        Assertions.assertThat(
+            found.get().getOptionalComplexValueObject().get().getOptionalSimpleValueObject()).isPresent();
         Assertions.assertThat(found.get().getOptionalSimpleValueObject()).isPresent();
         Assertions.assertThat(found.get().getOptionalEntity().get().getOptionalText()).isPresent();
         Assertions.assertThat(found.get().getOptionalEntity().get().getOptionalSimpleValueObject()).isPresent();
         Assertions.assertThat(found.get().getOptionalEntity().get().getOptionalComplexValueObject()).isPresent();
-        Assertions.assertThat(found.get().getOptionalEntity().get().getOptionalComplexValueObject().get().getOptionalSimpleValueObject()).isPresent();
-        Assertions.assertThat(found.get().getOptionalEntity().get().getOptionalComplexValueObject().get().getOptionalText()).isPresent();
+        Assertions.assertThat(
+            found.get().getOptionalEntity().get().getOptionalComplexValueObject().get().getOptionalSimpleValueObject()).isPresent();
+        Assertions.assertThat(
+            found.get().getOptionalEntity().get().getOptionalComplexValueObject().get().getOptionalText()).isPresent();
         Assertions.assertThat(found.get().getOptionalRefId()).isPresent();
         Assertions.assertThat(found.get().getRefValueObject().getOptionalRef()).isPresent();
         Assertions.assertThat(found.get().getOptionalEntity().get().getComplexValueObjectList()).hasSize(2);
@@ -143,7 +154,8 @@ public class OptionalAggregateRepository_ITest extends BasePersistence_ITest {
         //when
         OptionalAggregate updated = optionalAggregateRepository.update(insertedCopy);
         //then
-        Optional<OptionalAggregate> found = optionalAggregateRepository.findResultById(new OptionalAggregateId(1l)).resultValue();
+        Optional<OptionalAggregate> found = optionalAggregateRepository.findResultById(
+            new OptionalAggregateId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
@@ -185,10 +197,12 @@ public class OptionalAggregateRepository_ITest extends BasePersistence_ITest {
         //when
         OptionalAggregate updated = optionalAggregateRepository.update(insertedCopy);
         //then
-        Optional<OptionalAggregate> found = optionalAggregateRepository.findResultById(new OptionalAggregateId(1l)).resultValue();
+        Optional<OptionalAggregate> found = optionalAggregateRepository.findResultById(
+            new OptionalAggregateId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getOptionalEntity().get());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getOptionalEntity().get());
         persistenceEventTestHelper.assertEvents();
     }
 
@@ -213,7 +227,8 @@ public class OptionalAggregateRepository_ITest extends BasePersistence_ITest {
         //when
         OptionalAggregate updated = optionalAggregateRepository.update(insertedCopy);
         //then
-        Optional<OptionalAggregate> found = optionalAggregateRepository.findResultById(new OptionalAggregateId(1l)).resultValue();
+        Optional<OptionalAggregate> found = optionalAggregateRepository.findResultById(
+            new OptionalAggregateId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
@@ -251,7 +266,8 @@ public class OptionalAggregateRepository_ITest extends BasePersistence_ITest {
         //when
         OptionalAggregate updated = optionalAggregateRepository.update(insertedCopy);
         //then
-        Optional<OptionalAggregate> found = optionalAggregateRepository.findResultById(new OptionalAggregateId(1l)).resultValue();
+        Optional<OptionalAggregate> found = optionalAggregateRepository.findResultById(
+            new OptionalAggregateId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
@@ -265,7 +281,8 @@ public class OptionalAggregateRepository_ITest extends BasePersistence_ITest {
 
         OptionalAggregate r = TestDataGenerator.buildOptionalAggregateMin();
         OptionalAggregate inserted = optionalAggregateRepository.insert(r);
-        Optional<OptionalAggregate> found = optionalAggregateRepository.findResultById(new OptionalAggregateId(1l)).resultValue();
+        Optional<OptionalAggregate> found = optionalAggregateRepository.findResultById(
+            new OptionalAggregateId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
         persistenceEventTestHelper.resetEventsCaught();
         //when
@@ -287,7 +304,8 @@ public class OptionalAggregateRepository_ITest extends BasePersistence_ITest {
 
         OptionalAggregate r = TestDataGenerator.buildOptionalAggregateMax();
         OptionalAggregate inserted = optionalAggregateRepository.insert(r);
-        Optional<OptionalAggregate> found = optionalAggregateRepository.findResultById(new OptionalAggregateId(1l)).resultValue();
+        Optional<OptionalAggregate> found = optionalAggregateRepository.findResultById(
+            new OptionalAggregateId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
         persistenceEventTestHelper.resetEventsCaught();
         //when
@@ -298,11 +316,16 @@ public class OptionalAggregateRepository_ITest extends BasePersistence_ITest {
         Assertions.assertThat(found).isEmpty();
         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getOptionalEntity().get());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getOptionalEntity().get().getComplexValueObjectList().get(0), deleted.get());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getOptionalEntity().get().getComplexValueObjectList().get(1), deleted.get());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getRefValueObjectList().get(0), deleted.get());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getRefValueObjectList().get(1), deleted.get());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getOptionalEntity().get());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getOptionalEntity().get().getComplexValueObjectList().get(0), deleted.get());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getOptionalEntity().get().getComplexValueObjectList().get(1), deleted.get());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getRefValueObjectList().get(0), deleted.get());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getRefValueObjectList().get(1), deleted.get());
 
         persistenceEventTestHelper.assertEvents();
     }

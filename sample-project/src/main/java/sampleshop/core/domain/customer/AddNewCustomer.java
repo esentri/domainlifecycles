@@ -40,4 +40,5 @@ public record AddNewCustomer(
     String userName,
     Address address,
     Optional<CreditCard> creditCard)
-implements DomainCommand {}
+    implements DomainCommand {
+}

@@ -45,7 +45,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@ActiveProfiles({ "test" })
+@ActiveProfiles({"test"})
 public class ConverterTestSpringBoot3 {
 
     @Autowired

@@ -37,4 +37,5 @@ import io.domainlifecycles.domain.types.DomainCommand;
 public record ChangeCreditCard(
     Customer.CustomerId customerId,
     CreditCard creditCard)
-implements DomainCommand {}
+    implements DomainCommand {
+}

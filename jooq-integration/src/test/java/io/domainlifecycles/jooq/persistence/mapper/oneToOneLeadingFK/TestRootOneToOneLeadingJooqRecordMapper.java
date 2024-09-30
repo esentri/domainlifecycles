@@ -38,7 +38,8 @@ import tests.shared.persistence.domain.oneToOneLeadingFK.TestRootOneToOneLeading
 /**
  * Mapping JOOQ TestRootOneToOneLeading records.
  */
-public class TestRootOneToOneLeadingJooqRecordMapper extends AbstractRecordMapper<TestRootOneToOneLeadingRecord, TestRootOneToOneLeading, TestRootOneToOneLeading> {
+public class TestRootOneToOneLeadingJooqRecordMapper extends AbstractRecordMapper<TestRootOneToOneLeadingRecord,
+    TestRootOneToOneLeading, TestRootOneToOneLeading> {
 
     @Override
     public DomainObjectBuilder<TestRootOneToOneLeading> recordToDomainObjectBuilder(TestRootOneToOneLeadingRecord record) {
@@ -53,7 +54,8 @@ public class TestRootOneToOneLeadingJooqRecordMapper extends AbstractRecordMappe
     }
 
     @Override
-    public TestRootOneToOneLeadingRecord from(TestRootOneToOneLeading testRootOneToOneLeading, TestRootOneToOneLeading root) {
+    public TestRootOneToOneLeadingRecord from(TestRootOneToOneLeading testRootOneToOneLeading,
+                                              TestRootOneToOneLeading root) {
         TestRootOneToOneLeadingRecord testRootOneToOneLeadingRecord = new TestRootOneToOneLeadingRecord();
         testRootOneToOneLeadingRecord.setId(testRootOneToOneLeading.getId().value());
         testRootOneToOneLeadingRecord.setTestEntityId(testRootOneToOneLeading.getTestEntityOneToOneLeading() == null

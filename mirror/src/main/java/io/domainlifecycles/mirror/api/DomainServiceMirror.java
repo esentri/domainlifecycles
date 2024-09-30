@@ -37,7 +37,8 @@ import java.util.List;
  *
  * @author Mario Herb
  */
-public interface DomainServiceMirror extends DomainTypeMirror, DomainCommandProcessingMirror, DomainEventProcessingMirror{
+public interface DomainServiceMirror extends DomainTypeMirror, DomainCommandProcessingMirror,
+    DomainEventProcessingMirror {
 
 
     /**

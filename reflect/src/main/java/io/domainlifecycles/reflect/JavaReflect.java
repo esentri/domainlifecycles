@@ -484,7 +484,8 @@ public enum JavaReflect {
     }
 
     private static boolean canLambda(final int mod) {
-        return Modifier.isPublic(mod) && (mod & (Modifier.ABSTRACT | Modifier.PUBLIC | Modifier.STATIC)) != Modifier.PUBLIC;
+        return Modifier.isPublic(
+            mod) && (mod & (Modifier.ABSTRACT | Modifier.PUBLIC | Modifier.STATIC)) != Modifier.PUBLIC;
     }
 
 
@@ -519,7 +520,7 @@ public enum JavaReflect {
      */
     public static boolean isTopLevelType(final Class<?> type) {
         return type != null && type.getDeclaringClass() == null
-                && !isAnonymousType(type) && !isLocalType(type);
+            && !isAnonymousType(type) && !isLocalType(type);
     }
 
     /**
@@ -570,15 +571,15 @@ public enum JavaReflect {
      */
     public static boolean isBoxedType(final Class<?> type) {
         return (!type.isPrimitive() && !type.isArray())
-                && type == Boolean.class
-                || type == Byte.class
-                || type == Short.class
-                || type == Character.class
-                || type == Integer.class
-                || type == Long.class
-                || type == Float.class
-                || type == Double.class
-                || type == Void.class;
+            && type == Boolean.class
+            || type == Byte.class
+            || type == Short.class
+            || type == Character.class
+            || type == Integer.class
+            || type == Long.class
+            || type == Float.class
+            || type == Double.class
+            || type == Void.class;
     }
 
     // ----------------------------------------------------------
@@ -779,8 +780,8 @@ public enum JavaReflect {
     // ----------------------------------------------------------
 
     /// GENERIC TYPES.
-    public static Optional<Type> getFirstParameterType(Type genericType){
-        if(ParameterizedType.class.isAssignableFrom(genericType.getClass())){
+    public static Optional<Type> getFirstParameterType(Type genericType) {
+        if (ParameterizedType.class.isAssignableFrom(genericType.getClass())) {
             return Optional.of(((ParameterizedType) genericType).getActualTypeArguments()[0]);
         }
         return Optional.empty();
@@ -949,19 +950,19 @@ public enum JavaReflect {
      * Partially ordered type sequence with superclass before interfaces relative to
      * the given type and all types contained in the sequence.
      *
-     * @param type whose direct/indirect supertypes are to be returned.
+     * @param type    whose direct/indirect supertypes are to be returned.
      * @param include flag whether all supertypes should be included
      * @return sequence containing all supertypes.
      */
     public static List<Class<?>> allSupertypes(final Class<?> type, final boolean include) {
         final List<Class<?>> supertypes = new SupertypeIterator(type).toList();
-        if(include){
+        if (include) {
             List<Class<?>> allSupertypes = new ArrayList<>();
             allSupertypes.add(type);
             allSupertypes.addAll(supertypes);
             return List.of(allSupertypes.toArray(Class<?>[]::new));
 
-        }else{
+        } else {
             return supertypes;
         }
     }
@@ -1034,7 +1035,7 @@ public enum JavaReflect {
      * <p>
      * The returned sequence is empty, if the given type is at top level.
      *
-     * @param type whose enclosing types are to be returned.
+     * @param type    whose enclosing types are to be returned.
      * @param include flag whether type is contained.
      * @return type sequence of the enclosing lexical scope.
      */
@@ -1077,10 +1078,10 @@ public enum JavaReflect {
                 return List.of(declaring.getFields());
             case VISIBLE:
                 final List<Field> fields = allSupertypes(declaring)
-                        .stream()
-                        .flatMap(x -> Stream.of(x.getDeclaredFields()))
-                        .filter(x -> isPublic(x) || isProtected(x)
-                                || (isPackagePrivate(x) && isSamePackage(x.getDeclaringClass(), declaring)))
+                    .stream()
+                    .flatMap(x -> Stream.of(x.getDeclaredFields()))
+                    .filter(x -> isPublic(x) || isProtected(x)
+                        || (isPackagePrivate(x) && isSamePackage(x.getDeclaringClass(), declaring)))
                     .collect(Collectors.toList());
                 final List<Field> visibleFields = new ArrayList<>();
                 visibleFields.addAll(List.of(declaring.getDeclaredFields()));
@@ -1088,9 +1089,9 @@ public enum JavaReflect {
                 return List.of(visibleFields.toArray(Field[]::new));
             case HIERARCHY:
                 return allSupertypes(declaring, true)
-                        .stream()
-                        .flatMap(x -> Stream.of(x.getDeclaredFields()))
-                        .collect(Collectors.toList());
+                    .stream()
+                    .flatMap(x -> Stream.of(x.getDeclaredFields()))
+                    .collect(Collectors.toList());
             default:
                 throw new IllegalStateException();
         }
@@ -1135,11 +1136,11 @@ public enum JavaReflect {
                 return List.of(declaring.getMethods());
             case VISIBLE: {
                 final List<Method> methods = allSupertypes(declaring)
-                        .stream()
-                        .flatMap(x -> Stream.of(x.getDeclaredMethods()))
-                        .filter(x -> isPublic(x) || isProtected(x)
-                                || (isPackagePrivate(x) && isSamePackage(x.getDeclaringClass(), declaring)))
-                        .collect(Collectors.toList());
+                    .stream()
+                    .flatMap(x -> Stream.of(x.getDeclaredMethods()))
+                    .filter(x -> isPublic(x) || isProtected(x)
+                        || (isPackagePrivate(x) && isSamePackage(x.getDeclaringClass(), declaring)))
+                    .collect(Collectors.toList());
                 var visibleMethods = new ArrayList<>();
                 visibleMethods.addAll(List.of(declaring.getDeclaredMethods()));
                 visibleMethods.addAll(methods);
@@ -1147,27 +1148,27 @@ public enum JavaReflect {
             }
             case HIERARCHY:
                 return allSupertypes(declaring, true)
-                        .stream()
-                        .flatMap(x -> {
-                            try {
-                                return Stream.of(x.getDeclaredMethods());
-                            } catch (Throwable ex) {
-                                return Stream.empty();
-                            }
-                        }).collect(Collectors.toList());
+                    .stream()
+                    .flatMap(x -> {
+                        try {
+                            return Stream.of(x.getDeclaredMethods());
+                        } catch (Throwable ex) {
+                            return Stream.empty();
+                        }
+                    }).collect(Collectors.toList());
             default:
                 throw new IllegalStateException();
         }
     }
 
     public static Optional<Method> findMethod(final Class<?> declaring,
-                                            final String name, final Class<?>... parameters) {
+                                              final String name, final Class<?>... parameters) {
         return findMethod(declaring, MemberSelect.DECLARED, name, parameters);
     }
 
     public static Optional<Method> findMethod(final Class<?> declaring,
-                                            final MemberSelect select,
-                                            final String name, final Class<?>... parameters) {
+                                              final MemberSelect select,
+                                              final String name, final Class<?>... parameters) {
         return methods(declaring, select)
             .stream()
             .filter(x -> x.getName().equals(name)
@@ -1203,12 +1204,12 @@ public enum JavaReflect {
                 return List.of(declaring.getClasses());
             case VISIBLE: {
                 final List<Class<?>> classes =
-                        allSupertypes(declaring)
-                            .stream()
-                            .flatMap(x -> Stream.of(x.getDeclaredClasses()))
-                            .filter(x -> isPublic(x) || isProtected(x)
-                                        || (isPackagePrivate(x) && isSamePackage(x.getDeclaringClass(), declaring)))
-                            .collect(Collectors.toList());
+                    allSupertypes(declaring)
+                        .stream()
+                        .flatMap(x -> Stream.of(x.getDeclaredClasses()))
+                        .filter(x -> isPublic(x) || isProtected(x)
+                            || (isPackagePrivate(x) && isSamePackage(x.getDeclaringClass(), declaring)))
+                        .collect(Collectors.toList());
                 var declaredList = new ArrayList<>();
                 declaredList.addAll(List.of(declaring.getDeclaredClasses()));
                 declaredList.addAll(classes);
@@ -1230,7 +1231,7 @@ public enum JavaReflect {
      * Returns a sequence containing the declared constructors of the declaring class.
      *
      * @param declaring type whose constructors are to be returned.
-     * @param select selected members
+     * @param select    selected members
      * @return sequence containing the declaring constructors.
      */
     public static List<Constructor<?>> constructors(final Class<?> declaring, final MemberSelect select) {
@@ -1399,11 +1400,11 @@ public enum JavaReflect {
                 return false;
             if (lhs == int.class)
                 return rhs == long.class
-                        || rhs == float.class
-                        || rhs == double.class;
+                    || rhs == float.class
+                    || rhs == double.class;
             if (lhs == long.class)
                 return rhs == float.class
-                        || rhs == double.class;
+                    || rhs == double.class;
             if (lhs == boolean.class)
                 return false;
             if (lhs == double.class)
@@ -1412,15 +1413,15 @@ public enum JavaReflect {
                 return rhs == double.class;
             if (lhs == char.class || lhs == short.class)
                 return rhs == int.class
-                        || rhs == long.class
-                        || rhs == float.class
-                        || rhs == double.class;
+                    || rhs == long.class
+                    || rhs == float.class
+                    || rhs == double.class;
             if (lhs == byte.class)
                 return rhs == short.class
-                        || rhs == int.class
-                        || rhs == long.class
-                        || rhs == float.class
-                        || rhs == double.class;
+                    || rhs == int.class
+                    || rhs == long.class
+                    || rhs == float.class
+                    || rhs == double.class;
             throw new IllegalStateException();
         }
         return lhs.isAssignableFrom(rhs);
@@ -1519,9 +1520,9 @@ public enum JavaReflect {
             superclass = null;
         }
 
-        public List<Class<?>> toList(){
+        public List<Class<?>> toList() {
             List<Class<?>> superClasses = new ArrayList<>();
-            while(hasNext()){
+            while (hasNext()) {
                 superClasses.add(next());
             }
             return superClasses;
@@ -1543,8 +1544,8 @@ public enum JavaReflect {
         public InterfaceIterator(final HashSet<Class<?>> visited, final Class<?> type) {
             this.visited = Objects.requireNonNull(visited);
             Stream.of(type.getInterfaces())
-                    .filter(visited::add)
-                    .forEach(stack::push);
+                .filter(visited::add)
+                .forEach(stack::push);
         }
 
         @Override
@@ -1557,14 +1558,14 @@ public enum JavaReflect {
             if (!hasNext()) throw new NoSuchElementException();
             final Class<?> next = stack.pop();
             Stream.of(next.getInterfaces())
-                    .filter(visited::add)
-                    .forEach(stack::push);
+                .filter(visited::add)
+                .forEach(stack::push);
             return next;
         }
 
-        public List<Class<?>> toList(){
+        public List<Class<?>> toList() {
             List<Class<?>> superInterfaces = new ArrayList<>();
-            while(hasNext()){
+            while (hasNext()) {
                 superInterfaces.add(next());
             }
             return superInterfaces;
@@ -1614,9 +1615,9 @@ public enum JavaReflect {
             }
         }
 
-        public List<Class<?>> toList(){
+        public List<Class<?>> toList() {
             List<Class<?>> superTypes = new ArrayList<>();
-            while(hasNext()){
+            while (hasNext()) {
                 superTypes.add(next());
             }
             return superTypes;
@@ -1630,16 +1631,17 @@ public enum JavaReflect {
     }
 
     private static final Class<?>[][] PRIMITIVES = {
-            {void.class, boolean.class, byte.class, short.class, char.class, int.class, long.class, float.class, double.class},
-            {byte.class, short.class, int.class, long.class, float.class, double.class},
-            {byte.class, short.class, int.class, long.class},
-            {float.class, double.class},
-            {byte.class, short.class, int.class, long.class, float.class, double.class},
-            {boolean.class, char.class},
-            {long.class, double.class},
-            {int.class, float.class},
-            {boolean.class, byte.class, short.class, char.class},
-            {void.class}
+        {void.class, boolean.class, byte.class, short.class, char.class, int.class, long.class, float.class,
+            double.class},
+        {byte.class, short.class, int.class, long.class, float.class, double.class},
+        {byte.class, short.class, int.class, long.class},
+        {float.class, double.class},
+        {byte.class, short.class, int.class, long.class, float.class, double.class},
+        {boolean.class, char.class},
+        {long.class, double.class},
+        {int.class, float.class},
+        {boolean.class, byte.class, short.class, char.class},
+        {void.class}
     };
 
 

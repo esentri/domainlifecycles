@@ -40,7 +40,8 @@ import tests.shared.persistence.domain.oneToMany.TestRootOneToManyId;
 /**
  * Mapping JOOQ TestEntityOneToOneFollowing records.
  */
-public class TestOneToManyJooqRecordMapper extends AbstractRecordMapper<TestEntityOneToManyRecord, TestEntityOneToMany, TestRootOneToMany> {
+public class TestOneToManyJooqRecordMapper extends AbstractRecordMapper<TestEntityOneToManyRecord,
+    TestEntityOneToMany, TestRootOneToMany> {
 
     @Override
     public DomainObjectBuilder<TestEntityOneToMany> recordToDomainObjectBuilder(TestEntityOneToManyRecord record) {

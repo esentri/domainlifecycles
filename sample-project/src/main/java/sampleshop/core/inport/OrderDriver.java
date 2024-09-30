@@ -75,8 +75,9 @@ public interface OrderDriver extends Driver {
 
     /**
      * Finds existing orders filtered by status codes.
-     * @param offset for paging
-     * @param limit for paging
+     *
+     * @param offset      for paging
+     * @param limit       for paging
      * @param orderStatus to be filtered
      * @return found {@code Order}
      */

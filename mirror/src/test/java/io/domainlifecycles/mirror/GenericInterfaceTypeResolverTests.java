@@ -50,77 +50,77 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GenericInterfaceTypeResolverTests {
 
     @Test
-    public void testIdentityValueType(){
+    public void testIdentityValueType() {
         var resolver = new GenericInterfaceTypeResolver(BaseEntityWithHidden.HiddenId.class);
         var resolved = resolver.resolveFor(Identity.class, 0);
         assertThat(resolved).isEqualTo(Long.class);
     }
 
     @Test
-    public void testSubEntityHiding(){
+    public void testSubEntityHiding() {
         var resolver = new GenericInterfaceTypeResolver(SubEntityHiding.class);
         var resolved = resolver.resolveFor(Entity.class, 0);
         assertThat(resolved).isEqualTo(BaseEntityWithHidden.HiddenId.class);
     }
 
     @Test
-    public void testBaseEntityWithHidden(){
+    public void testBaseEntityWithHidden() {
         var resolver = new GenericInterfaceTypeResolver(BaseEntityWithHidden.class);
         var resolved = resolver.resolveFor(Entity.class, 0);
         assertThat(resolved).isEqualTo(BaseEntityWithHidden.HiddenId.class);
     }
 
     @Test
-    public void testQueryClientInterfaceInterface(){
+    public void testQueryClientInterfaceInterface() {
         var resolver = new GenericInterfaceTypeResolver(QueryClientInterface.class);
         var resolved = resolver.resolveFor(QueryClient.class, 0);
         assertThat(resolved).isEqualTo(MyReadModel.class);
     }
 
     @Test
-    public void testQueryClientInterfaceImpl(){
+    public void testQueryClientInterfaceImpl() {
         var resolver = new GenericInterfaceTypeResolver(QueryClientImpl.class);
         var resolved = resolver.resolveFor(QueryClient.class, 0);
         assertThat(resolved).isEqualTo(MyReadModel.class);
     }
 
     @Test
-    public void testQueryClientInterfaceImplSub(){
+    public void testQueryClientInterfaceImplSub() {
         var resolver = new GenericInterfaceTypeResolver(QueryClientImplSub.class);
         var resolved = resolver.resolveFor(QueryClient.class, 0);
         assertThat(resolved).isEqualTo(MyReadModel.class);
     }
 
     @Test
-    public void testQueryClientInterfaceInterfaceBounded(){
+    public void testQueryClientInterfaceInterfaceBounded() {
         var resolver = new GenericInterfaceTypeResolver(QueryClientInterfaceBounded.class);
         var resolved = resolver.resolveFor(QueryClient.class, 0);
         assertThat(resolved).isEqualTo(MyReadModel.class);
     }
 
     @Test
-    public void testDirectQueryClient(){
+    public void testDirectQueryClient() {
         var resolver = new GenericInterfaceTypeResolver(DirectQueryClient.class);
         var resolved = resolver.resolveFor(QueryClient.class, 0);
         assertThat(resolved).isEqualTo(MyReadModel.class);
     }
 
     @Test
-    public void testDirectQueryClientBounded(){
+    public void testDirectQueryClientBounded() {
         var resolver = new GenericInterfaceTypeResolver(DirectQueryClientBounded.class);
         var resolved = resolver.resolveFor(QueryClient.class, 0);
         assertThat(resolved).isEqualTo(MyReadModel.class);
     }
 
     @Test
-    public void testQueryClientSubSub(){
+    public void testQueryClientSubSub() {
         var resolver = new GenericInterfaceTypeResolver(QueryClientSubSub.class);
         var resolved = resolver.resolveFor(QueryClient.class, 0);
         assertThat(resolved).isEqualTo(MyReadModel.class);
     }
 
     @Test
-    public void testQueryClientSubGeneric(){
+    public void testQueryClientSubGeneric() {
         var resolver = new GenericInterfaceTypeResolver(QueryClientSubGeneric.class);
         var resolved = resolver.resolveFor(QueryClient.class, 0);
         assertThat(resolved).isEqualTo(ReadModel.class);

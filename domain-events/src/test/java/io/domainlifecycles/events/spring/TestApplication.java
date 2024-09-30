@@ -70,42 +70,44 @@ public class TestApplication {
     }
 
     @Bean
-    public AnApplicationService anApplicationService(){
+    public AnApplicationService anApplicationService() {
         return new AnApplicationService();
     }
 
     @Bean
-    public ADomainService aDomainService(){
+    public ADomainService aDomainService() {
         return new ADomainService();
     }
 
     @Bean
-    public ARepository aRepository(){
+    public ARepository aRepository() {
         return new ARepository();
     }
 
     @Bean
-    public AQueryClient aQueryClient(){
+    public AQueryClient aQueryClient() {
         return new AQueryClient();
     }
 
     @Bean
-    public AnOutboundService anOutboundService(){
+    public AnOutboundService anOutboundService() {
         return new AnOutboundService();
     }
 
     /**
-     * This method creates and configures a ServiceProvider instance, which is responsible for providing instances of various types of services.
-     * It takes three parameters: repositories, applicationServices, and domainServices, which are lists of Repository, ApplicationService, and DomainService instances respectively
+     * This method creates and configures a ServiceProvider instance, which is responsible for providing instances of
+     * various types of services.
+     * It takes three parameters: repositories, applicationServices, and domainServices, which are lists of
+     * Repository, ApplicationService, and DomainService instances respectively
      */
     @Bean
     public ServiceProvider serviceProvider(
-        List<Repository<?,?>> repositories,
+        List<Repository<?, ?>> repositories,
         List<ApplicationService> applicationServices,
         List<DomainService> domainServices,
         List<QueryClient<?>> queryClients,
         List<OutboundService> outboundServices
-    ){
+    ) {
         var services = new Services();
         repositories.forEach(services::registerRepositoryInstance);
         applicationServices.forEach(services::registerApplicationServiceInstance);
@@ -119,12 +121,13 @@ public class TestApplication {
      * Using DLC Events to publish DLC domain events.
      */
     @Bean
-    public DomainEventsConfiguration domainEventsConfiguration(ServiceProvider serviceProvider, PlatformTransactionManager transactionManager) {
-        var config =  new DomainEventsConfiguration.DomainEventsConfigurationBuilder()
+    public DomainEventsConfiguration domainEventsConfiguration(ServiceProvider serviceProvider,
+                                                               PlatformTransactionManager transactionManager) {
+        var config = new DomainEventsConfiguration.DomainEventsConfigurationBuilder()
             .withSpringPlatformTransactionManager(transactionManager)
             .withServiceProvider(serviceProvider)
             .make();
-        var pub = (DirectSpringTransactionalDomainEventPublisher)config.domainEventPublisher;
+        var pub = (DirectSpringTransactionalDomainEventPublisher) config.domainEventPublisher;
         pub.setPassThroughEventTypes(List.of(PassThroughDomainEvent.class));
         return config;
     }

@@ -38,8 +38,7 @@ public interface DynamicDomainObjectAccessor {
 
     /**
      * @param fieldName of field value to be returned
-     * @param <T> type of returned value
-     *
+     * @param <T>       type of returned value
      * @return value of field with the given name of the DomainObject assigned to the accessor.
      */
     <T> T peek(String fieldName);
@@ -49,7 +48,7 @@ public interface DynamicDomainObjectAccessor {
      * DomainObject.
      *
      * @param fieldName of field to be set
-     * @param argument value to be set
+     * @param argument  value to be set
      */
     void poke(String fieldName, Object argument);
 

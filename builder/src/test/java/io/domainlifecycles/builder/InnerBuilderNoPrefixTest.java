@@ -71,7 +71,7 @@ public class InnerBuilderNoPrefixTest {
     };
 
     @Test
-    public void testBuild(){
+    public void testBuild() {
         var testBuilder = preInitializedLombokBuilder();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
         var built = innerBuilder.build();
@@ -79,7 +79,7 @@ public class InnerBuilderNoPrefixTest {
     }
 
     @Test
-    public void testSetFieldValueOk(){
+    public void testSetFieldValueOk() {
         var testBuilder = preInitializedLombokBuilder();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
         innerBuilder.setFieldValue("aaa", "first");
@@ -88,7 +88,7 @@ public class InnerBuilderNoPrefixTest {
     }
 
     @Test
-    public void testSetFieldValueOkOptional(){
+    public void testSetFieldValueOkOptional() {
         var testBuilder = preInitializedLombokBuilder();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
         innerBuilder.setFieldValue(Optional.of("aaa"), "first");
@@ -97,7 +97,7 @@ public class InnerBuilderNoPrefixTest {
     }
 
     @Test
-    public void testSetFieldValueOkNull(){
+    public void testSetFieldValueOkNull() {
         var testBuilder = preInitializedLombokBuilder();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
         innerBuilder.setFieldValue(null, "first");
@@ -106,7 +106,7 @@ public class InnerBuilderNoPrefixTest {
     }
 
     @Test
-    public void testSetFieldValueFailMethodNotFound(){
+    public void testSetFieldValueFailMethodNotFound() {
         var testBuilder = preInitializedLombokBuilder();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
         assertThatThrownBy(() -> innerBuilder.setFieldValue("aaa", "third"))
@@ -115,7 +115,7 @@ public class InnerBuilderNoPrefixTest {
     }
 
     @Test
-    public void testSetFieldValueOptionalOk(){
+    public void testSetFieldValueOptionalOk() {
         var testBuilder = preInitializedOptionalLombokBuilder();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
         innerBuilder.setFieldValue("aaaOptionalParam", "first");
@@ -124,7 +124,7 @@ public class InnerBuilderNoPrefixTest {
     }
 
     @Test
-    public void testSetFieldValueOkOptionalOkOptional(){
+    public void testSetFieldValueOkOptionalOkOptional() {
         var testBuilder = preInitializedOptionalLombokBuilder();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
         innerBuilder.setFieldValue(Optional.of("aaaOptionalValue"), "first");
@@ -133,7 +133,7 @@ public class InnerBuilderNoPrefixTest {
     }
 
     @Test
-    public void testGetFieldValue(){
+    public void testGetFieldValue() {
         var testBuilder = preInitializedLombokBuilder();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
         var value = innerBuilder.getFieldValue("first");
@@ -141,40 +141,40 @@ public class InnerBuilderNoPrefixTest {
     }
 
     @Test
-    public void testCanInstantiateTrue(){
+    public void testCanInstantiateTrue() {
         var testBuilder = preInitializedLombokBuilder();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
         assertThat(innerBuilder.canInstantiateField("first")).isTrue();
     }
 
     @Test
-    public void testCanInstantiateFalse(){
+    public void testCanInstantiateFalse() {
         var testBuilder = preInitializedLombokBuilder();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
         assertThat(innerBuilder.canInstantiateField("myValue1")).isFalse();
     }
 
     @Test
-    public void testGetBuilderInstance(){
+    public void testGetBuilderInstance() {
         var testBuilder = preInitializedLombokBuilder();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
         assertThat(innerBuilder.getBuilderInstance()).isEqualTo(testBuilder);
     }
 
     @Test
-    public void testGetInstanceType(){
+    public void testGetInstanceType() {
         var testBuilder = preInitializedLombokBuilder();
         var innerBuilder = new InnerClassDomainObjectBuilder<>(testBuilder, config);
         assertThat(innerBuilder.instanceType()).isEqualTo(TestValueObject.class);
     }
 
-    private TestValueObject.TestValueObjectBuilder preInitializedLombokBuilder(){
+    private TestValueObject.TestValueObjectBuilder preInitializedLombokBuilder() {
         return TestValueObject.builder()
             .first(DEFAULT_FIRST_VALUE)
             .second(DEFAULT_SECOND_VALUE);
     }
 
-    private TestValueOptionalObject.TestValueOptionalObjectBuilder preInitializedOptionalLombokBuilder(){
+    private TestValueOptionalObject.TestValueOptionalObjectBuilder preInitializedOptionalLombokBuilder() {
         return TestValueOptionalObject.builder()
             .first(Optional.of(DEFAULT_FIRST_VALUE))
             .second(DEFAULT_SECOND_VALUE);

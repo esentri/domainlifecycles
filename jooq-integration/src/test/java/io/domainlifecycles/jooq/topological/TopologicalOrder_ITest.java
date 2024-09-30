@@ -85,25 +85,32 @@ public class TopologicalOrder_ITest extends BasePersistence_ITest {
 
     @Test
     public void testOrderingTestRootComplex() {
-        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(persistenceConfiguration.domainPersistenceProvider);
+        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(
+            persistenceConfiguration.domainPersistenceProvider);
         var order = orderProvider.insertionOrder(TestRoot.class.getName());
         log.info("INSERT/UPDATE Order for: " + TestRoot.class.getName());
         order.forEach(log::info);
 
-        assertThat(order.indexOf(TestEntity5.class.getName())).isGreaterThan(order.indexOf(TestEntity4.class.getName()));
-        assertThat(order.indexOf(TestEntity5.class.getName())).isGreaterThan(order.indexOf(TestEntity6.class.getName()));
+        assertThat(order.indexOf(TestEntity5.class.getName())).isGreaterThan(
+            order.indexOf(TestEntity4.class.getName()));
+        assertThat(order.indexOf(TestEntity5.class.getName())).isGreaterThan(
+            order.indexOf(TestEntity6.class.getName()));
         assertThat(order.indexOf(TestEntity5.class.getName())).isGreaterThan(order.indexOf(TestRoot.class.getName()));
         assertThat(order.indexOf(TestEntity1.class.getName())).isGreaterThan(order.indexOf(TestRoot.class.getName()));
         assertThat(order.indexOf(TestEntity2.class.getName())).isGreaterThan(order.indexOf(TestRoot.class.getName()));
         assertThat(order.indexOf(TestEntity3.class.getName())).isGreaterThan(order.indexOf(TestRoot.class.getName()));
-        assertThat(order.indexOf(TestEntity1.class.getName())).isGreaterThan(order.indexOf(TestEntity2.class.getName()));
-        assertThat(order.indexOf(TestEntity3.class.getName())).isGreaterThan(order.indexOf(TestEntity2.class.getName()));
-        assertThat(order.indexOf(TestEntity4.class.getName())).isGreaterThan(order.indexOf(TestEntity3.class.getName()));
+        assertThat(order.indexOf(TestEntity1.class.getName())).isGreaterThan(
+            order.indexOf(TestEntity2.class.getName()));
+        assertThat(order.indexOf(TestEntity3.class.getName())).isGreaterThan(
+            order.indexOf(TestEntity2.class.getName()));
+        assertThat(order.indexOf(TestEntity4.class.getName())).isGreaterThan(
+            order.indexOf(TestEntity3.class.getName()));
     }
 
     @Test
     public void testOrderingBestellung() {
-        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(persistenceConfiguration.domainPersistenceProvider);
+        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(
+            persistenceConfiguration.domainPersistenceProvider);
         var order = orderProvider.insertionOrder(Bestellung.class.getName());
         log.info("INSERT/UPDATE Order for: " + Bestellung.class.getName());
         order.forEach(log::info);
@@ -118,15 +125,19 @@ public class TopologicalOrder_ITest extends BasePersistence_ITest {
 
         assertThat(order.get(0)).isEqualTo(Lieferadresse.class.getName());
         assertThat(order.get(1)).isEqualTo(Bestellung.class.getName());
-        assertThat(order.indexOf(BestellStatus.class.getName())).isGreaterThan(order.indexOf(Bestellung.class.getName()));
-        assertThat(order.indexOf(BestellKommentar.class.getName())).isGreaterThan(order.indexOf(Bestellung.class.getName()));
+        assertThat(order.indexOf(BestellStatus.class.getName())).isGreaterThan(
+            order.indexOf(Bestellung.class.getName()));
+        assertThat(order.indexOf(BestellKommentar.class.getName())).isGreaterThan(
+            order.indexOf(Bestellung.class.getName()));
         assertThat(order.indexOf(AktionsCode.class.getName())).isGreaterThan(order.indexOf(Bestellung.class.getName()));
-        assertThat(order.indexOf(BestellPosition.class.getName())).isGreaterThan(order.indexOf(Bestellung.class.getName()));
+        assertThat(order.indexOf(BestellPosition.class.getName())).isGreaterThan(
+            order.indexOf(Bestellung.class.getName()));
     }
 
     @Test
     public void testOrderingHierarchical() {
-        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(persistenceConfiguration.domainPersistenceProvider);
+        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(
+            persistenceConfiguration.domainPersistenceProvider);
         var order = orderProvider.insertionOrder(TestRootHierarchical.class.getName());
         log.info("INSERT/UPDATE Order for: " + TestRootHierarchical.class.getName());
         order.forEach(log::info);
@@ -137,7 +148,8 @@ public class TopologicalOrder_ITest extends BasePersistence_ITest {
 
     @Test
     public void testOrderingHierarchicalBackref() {
-        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(persistenceConfiguration.domainPersistenceProvider);
+        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(
+            persistenceConfiguration.domainPersistenceProvider);
         var order = orderProvider.insertionOrder(TestRootHierarchicalBackref.class.getName());
         log.info("INSERT/UPDATE Order for: " + TestRootHierarchicalBackref.class.getName());
         order.forEach(p -> log.info(p));
@@ -148,7 +160,8 @@ public class TopologicalOrder_ITest extends BasePersistence_ITest {
 
     @Test
     public void testOrderingManyToMany() {
-        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(persistenceConfiguration.domainPersistenceProvider);
+        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(
+            persistenceConfiguration.domainPersistenceProvider);
         var order = orderProvider.insertionOrder(TestRootManyToMany.class.getName());
         log.info("INSERT/UPDATE Order for: " + TestRootManyToMany.class.getName());
         order.forEach(log::info);
@@ -162,7 +175,8 @@ public class TopologicalOrder_ITest extends BasePersistence_ITest {
 
     @Test
     public void testOrderingMultiLevelVo() {
-        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(persistenceConfiguration.domainPersistenceProvider);
+        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(
+            persistenceConfiguration.domainPersistenceProvider);
         var order = orderProvider.insertionOrder(VoAggregateThreeLevel.class.getName());
         log.info("INSERT/UPDATE Order for: " + VoAggregateThreeLevel.class.getName());
         order.forEach(log::info);
@@ -173,7 +187,8 @@ public class TopologicalOrder_ITest extends BasePersistence_ITest {
 
     @Test
     public void testOrderingOneToMany() {
-        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(persistenceConfiguration.domainPersistenceProvider);
+        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(
+            persistenceConfiguration.domainPersistenceProvider);
         var order = orderProvider.insertionOrder(TestRootOneToMany.class.getName());
         log.info("INSERT/UPDATE Order for: " + TestRootOneToMany.class.getName());
         order.forEach(log::info);
@@ -185,7 +200,8 @@ public class TopologicalOrder_ITest extends BasePersistence_ITest {
 
     @Test
     public void testOrderingOneToOneFollowing() {
-        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(persistenceConfiguration.domainPersistenceProvider);
+        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(
+            persistenceConfiguration.domainPersistenceProvider);
         var order = orderProvider.insertionOrder(TestRootOneToOneFollowing.class.getName());
         log.info("INSERT/UPDATE Order for: " + TestRootOneToOneFollowing.class.getName());
         order.forEach(log::info);
@@ -197,7 +213,8 @@ public class TopologicalOrder_ITest extends BasePersistence_ITest {
 
     @Test
     public void testOrderingOneToOneFollowingLeading() {
-        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(persistenceConfiguration.domainPersistenceProvider);
+        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(
+            persistenceConfiguration.domainPersistenceProvider);
         var order = orderProvider.insertionOrder(TestRootOneToOneFollowingLeading.class.getName());
         log.info("INSERT/UPDATE Order for: " + TestRootOneToOneFollowingLeading.class.getName());
         order.forEach(log::info);
@@ -210,7 +227,8 @@ public class TopologicalOrder_ITest extends BasePersistence_ITest {
 
     @Test
     public void testOrderingOneToOneLeading() {
-        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(persistenceConfiguration.domainPersistenceProvider);
+        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(
+            persistenceConfiguration.domainPersistenceProvider);
         var order = orderProvider.insertionOrder(TestRootOneToOneLeading.class.getName());
         log.info("INSERT/UPDATE Order for: " + TestRootOneToOneLeading.class.getName());
         order.forEach(log::info);
@@ -222,7 +240,8 @@ public class TopologicalOrder_ITest extends BasePersistence_ITest {
 
     @Test
     public void testOrderingSharedKernel() {
-        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(persistenceConfiguration.domainPersistenceProvider);
+        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(
+            persistenceConfiguration.domainPersistenceProvider);
         var order = orderProvider.insertionOrder(AnotherConfiguration.class.getName());
         log.info("INSERT/UPDATE Order for: " + AnotherConfiguration.class.getName());
         order.forEach(log::info);
@@ -242,7 +261,8 @@ public class TopologicalOrder_ITest extends BasePersistence_ITest {
 
     @Test
     public void testOrderingSimple() {
-        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(persistenceConfiguration.domainPersistenceProvider);
+        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(
+            persistenceConfiguration.domainPersistenceProvider);
         var order = orderProvider.insertionOrder(TestRootSimple.class.getName());
         log.info("INSERT/UPDATE Order for: " + TestRootSimple.class.getName());
         order.forEach(log::info);
@@ -253,7 +273,8 @@ public class TopologicalOrder_ITest extends BasePersistence_ITest {
 
     @Test
     public void testOrderingSimpleUUID() {
-        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(persistenceConfiguration.domainPersistenceProvider);
+        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(
+            persistenceConfiguration.domainPersistenceProvider);
         var order = orderProvider.insertionOrder(TestRootSimpleUuid.class.getName());
         log.info("INSERT/UPDATE Order for: " + TestRootSimpleUuid.class.getName());
         order.forEach(log::info);
@@ -264,7 +285,8 @@ public class TopologicalOrder_ITest extends BasePersistence_ITest {
 
     @Test
     public void testOrderingValueObjects() {
-        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(persistenceConfiguration.domainPersistenceProvider);
+        TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(
+            persistenceConfiguration.domainPersistenceProvider);
         var order = orderProvider.insertionOrder(VoAggregateRoot.class.getName());
         log.info("INSERT/UPDATE Order for: " + VoAggregateRoot.class.getName());
         order.forEach(log::info);
@@ -280,12 +302,18 @@ public class TopologicalOrder_ITest extends BasePersistence_ITest {
 
         assertThat(order.get(0)).isEqualTo(VoAggregateRoot.class.getName());
         assertThat(order.indexOf(VoAggregateRoot.class.getName())).isLessThan(order.indexOf(VoEntity.class.getName()));
-        assertThat(order.indexOf(VoEntity.class.getName())).isLessThan(order.indexOf(VoOneToManyEntity.class.getName()));
-        assertThat(order.indexOf(VoEntity.class.getName())).isLessThan(order.indexOf(VoOneToManyEntity2.class.getName()));
-        assertThat(order.indexOf(VoOneToManyEntity.class.getName())).isLessThan(order.indexOf(VoOneToManyEntity2.class.getName()));
-        assertThat(order.indexOf(VoAggregateRoot.class.getName())).isLessThan(order.indexOf(SimpleVoOneToMany2.class.getName()));
-        assertThat(order.indexOf(VoAggregateRoot.class.getName())).isLessThan(order.indexOf(SimpleVoOneToMany3.class.getName()));
-        assertThat(order.indexOf(SimpleVoOneToMany2.class.getName())).isLessThan(order.indexOf(SimpleVoOneToMany3.class.getName()));
+        assertThat(order.indexOf(VoEntity.class.getName())).isLessThan(
+            order.indexOf(VoOneToManyEntity.class.getName()));
+        assertThat(order.indexOf(VoEntity.class.getName())).isLessThan(
+            order.indexOf(VoOneToManyEntity2.class.getName()));
+        assertThat(order.indexOf(VoOneToManyEntity.class.getName())).isLessThan(
+            order.indexOf(VoOneToManyEntity2.class.getName()));
+        assertThat(order.indexOf(VoAggregateRoot.class.getName())).isLessThan(
+            order.indexOf(SimpleVoOneToMany2.class.getName()));
+        assertThat(order.indexOf(VoAggregateRoot.class.getName())).isLessThan(
+            order.indexOf(SimpleVoOneToMany3.class.getName()));
+        assertThat(order.indexOf(SimpleVoOneToMany2.class.getName())).isLessThan(
+            order.indexOf(SimpleVoOneToMany3.class.getName()));
     }
 
 }

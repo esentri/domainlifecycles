@@ -37,9 +37,10 @@ import tests.shared.persistence.domain.tree.TreeRoot;
 import tests.shared.persistence.domain.tree.TreeRootId;
 
 @Slf4j
-public class TreeRootRepository  extends JooqAggregateRepository<TreeRoot, TreeRootId> {
+public class TreeRootRepository extends JooqAggregateRepository<TreeRoot, TreeRootId> {
 
-    public TreeRootRepository(DSLContext dslContext, JooqDomainPersistenceProvider domainPersistenceProvider, PersistenceEventPublisher persistenceEventPublisher) {
+    public TreeRootRepository(DSLContext dslContext, JooqDomainPersistenceProvider domainPersistenceProvider,
+                              PersistenceEventPublisher persistenceEventPublisher) {
         super(TreeRoot.class, dslContext, domainPersistenceProvider, persistenceEventPublisher);
     }
 }

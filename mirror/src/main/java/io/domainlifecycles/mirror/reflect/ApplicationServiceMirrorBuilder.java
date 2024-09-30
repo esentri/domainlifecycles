@@ -65,23 +65,23 @@ public class ApplicationServiceMirrorBuilder extends DomainTypeMirrorBuilder {
      *
      * @return new instance of ApplicationServiceMirror
      */
-    public ApplicationServiceMirror build(){
+    public ApplicationServiceMirror build() {
         return new ApplicationServiceModel(
-                getTypeName(),
-                isAbstract(),
-                buildFields(),
-                buildMethods(),
-                getReferencedRepositoryNames(),
-                getReferencedDomainServiceNames(),
-                getReferencedOutboundServiceNames(),
-                getReferencedQueryClientNames(),
-                applicationServiceInterfaceTypeNames(),
-                buildInheritanceHierarchy(),
-                buildInterfaceTypes()
-            );
+            getTypeName(),
+            isAbstract(),
+            buildFields(),
+            buildMethods(),
+            getReferencedRepositoryNames(),
+            getReferencedDomainServiceNames(),
+            getReferencedOutboundServiceNames(),
+            getReferencedQueryClientNames(),
+            applicationServiceInterfaceTypeNames(),
+            buildInheritanceHierarchy(),
+            buildInterfaceTypes()
+        );
     }
 
-    private List<String> getReferencedRepositoryNames(){
+    private List<String> getReferencedRepositoryNames() {
         return JavaReflect
             .fields(this.applicationServiceClass, MemberSelect.HIERARCHY)
             .stream()
@@ -90,7 +90,7 @@ public class ApplicationServiceMirrorBuilder extends DomainTypeMirrorBuilder {
             .toList();
     }
 
-    private List<String> getReferencedDomainServiceNames(){
+    private List<String> getReferencedDomainServiceNames() {
         return JavaReflect
             .fields(this.applicationServiceClass, MemberSelect.HIERARCHY)
             .stream()
@@ -99,7 +99,7 @@ public class ApplicationServiceMirrorBuilder extends DomainTypeMirrorBuilder {
             .toList();
     }
 
-    private List<String> getReferencedOutboundServiceNames(){
+    private List<String> getReferencedOutboundServiceNames() {
         return JavaReflect
             .fields(this.applicationServiceClass, MemberSelect.HIERARCHY)
             .stream()
@@ -108,7 +108,7 @@ public class ApplicationServiceMirrorBuilder extends DomainTypeMirrorBuilder {
             .toList();
     }
 
-    private List<String> getReferencedQueryClientNames(){
+    private List<String> getReferencedQueryClientNames() {
         return JavaReflect
             .fields(this.applicationServiceClass, MemberSelect.HIERARCHY)
             .stream()
@@ -117,23 +117,23 @@ public class ApplicationServiceMirrorBuilder extends DomainTypeMirrorBuilder {
             .toList();
     }
 
-    private boolean isRepository(Class<?> fieldClass){
+    private boolean isRepository(Class<?> fieldClass) {
         return Repository.class.isAssignableFrom(fieldClass);
     }
 
-    private boolean isDomainService(Class<?> fieldClass){
+    private boolean isDomainService(Class<?> fieldClass) {
         return DomainService.class.isAssignableFrom(fieldClass);
     }
 
-    private boolean isOutboundService(Class<?> fieldClass){
+    private boolean isOutboundService(Class<?> fieldClass) {
         return OutboundService.class.isAssignableFrom(fieldClass);
     }
 
-    private boolean isQueryClientProvider(Class<?> fieldClass){
+    private boolean isQueryClientProvider(Class<?> fieldClass) {
         return QueryClient.class.isAssignableFrom(fieldClass);
     }
 
-    private List<String> applicationServiceInterfaceTypeNames(){
+    private List<String> applicationServiceInterfaceTypeNames() {
         return Arrays.stream(applicationServiceClass.getInterfaces())
             .filter(i -> (ApplicationService.class.isAssignableFrom(i) ||
                 Driver.class.isAssignableFrom(i))

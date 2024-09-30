@@ -33,14 +33,15 @@ import io.domainlifecycles.jackson.exception.DLCJacksonException;
 
 /**
  * Simplified access to the current {@link DomainObjectBuilder} instance
- * from a {@link JacksonMappingCustomizer} instance. Just implement this interface in a JacksonMappingCustomizer, to use it.
+ * from a {@link JacksonMappingCustomizer} instance. Just implement this interface in a JacksonMappingCustomizer, to
+ * use it.
  *
  * @author Mario Herb
  */
 public interface BuilderConverter {
 
     /**
-     * @param <B> type of builder instance
+     * @param <B>                        type of builder instance
      * @param domainObjectMappingContext the mapping context for the DomainObject
      * @return the current DomainObjectBuilder instance from the current mapping context.
      */

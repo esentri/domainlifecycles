@@ -61,13 +61,14 @@ public abstract class JacksonMappingCustomizer<T extends DomainObject> {
      * Reading means JSON -> Object transformation.
      *
      * @param mappingContext mapping information for DomainObject
-     * @param fieldNode Jackson TreeNode
-     * @param fieldName name of the field to be read
-     * @param expectedType expected type of read value
-     * @param codec Jackson codec
+     * @param fieldNode      Jackson TreeNode
+     * @param fieldName      name of the field to be read
+     * @param expectedType   expected type of read value
+     * @param codec          Jackson codec
      * @return specifies if, the default mapping action for the specified field should be skipped or continued
      */
-    public MappingAction beforeFieldRead(final DomainObjectMappingContext mappingContext, TreeNode fieldNode, String fieldName, Class<?> expectedType, ObjectCodec codec) {
+    public MappingAction beforeFieldRead(final DomainObjectMappingContext mappingContext, TreeNode fieldNode,
+                                         String fieldName, Class<?> expectedType, ObjectCodec codec) {
         return MappingAction.CONTINUE_WITH_DEFAULT_ACTION;
     }
 
@@ -76,12 +77,13 @@ public abstract class JacksonMappingCustomizer<T extends DomainObject> {
      * Reading means JSON -> Object transformation.
      *
      * @param mappingContext mapping information for DomainObject
-     * @param readValue read value
-     * @param fieldName name of the field which value has been read
-     * @param expectedType expected type of read value
+     * @param readValue      read value
+     * @param fieldName      name of the field which value has been read
+     * @param expectedType   expected type of read value
      * @return specifies if, the default mapping action for the specified field should be skipped or continued
      */
-    public MappingAction afterFieldRead(final DomainObjectMappingContext mappingContext, final Object readValue, String fieldName, Class<?> expectedType) {
+    public MappingAction afterFieldRead(final DomainObjectMappingContext mappingContext, final Object readValue,
+                                        String fieldName, Class<?> expectedType) {
         return MappingAction.CONTINUE_WITH_DEFAULT_ACTION;
     }
 
@@ -90,8 +92,8 @@ public abstract class JacksonMappingCustomizer<T extends DomainObject> {
      * Writing means Object -> JSON transformation.
      *
      * @param jsonGenerator Jackson JSON generator
-     * @param fieldName name of the field to be mapped
-     * @param fieldValue value to be written
+     * @param fieldName     name of the field to be mapped
+     * @param fieldValue    value to be written
      * @return specifies if, the default mapping action for the specified field should be skipped or continued
      */
     public MappingAction beforeFieldWrite(final JsonGenerator jsonGenerator, String fieldName, Object fieldValue) {
@@ -99,11 +101,12 @@ public abstract class JacksonMappingCustomizer<T extends DomainObject> {
     }
 
     /**
-     * Callback method, to specify the customization in the mapping process before reading an Object of the customizers {@link DomainObject} type .
+     * Callback method, to specify the customization in the mapping process before reading an Object of the
+     * customizers {@link DomainObject} type .
      * Reading means JSON -> Object transformation.
      *
      * @param mappingContext mapping information for DomainObject
-     * @param codec Jackson codec
+     * @param codec          Jackson codec
      * @return specifies if, the default mapping action for the specified object should be skipped or continued
      */
     public MappingAction beforeObjectRead(final DomainObjectMappingContext mappingContext, ObjectCodec codec) {
@@ -111,11 +114,12 @@ public abstract class JacksonMappingCustomizer<T extends DomainObject> {
     }
 
     /**
-     * Callback method, to specify the customization in the mapping process before writing an Object of the customizers {@link DomainObject} type .
+     * Callback method, to specify the customization in the mapping process before writing an Object of the
+     * customizers {@link DomainObject} type .
      * Writing means Object -> JSON transformation.
      *
      * @param jsonGenerator Jackson JSON generator
-     * @param object object to be mapped
+     * @param object        object to be mapped
      * @return specifies if, the default mapping action for the specified object should be skipped or continued
      */
     public MappingAction beforeObjectWrite(final JsonGenerator jsonGenerator, T object) {
@@ -123,11 +127,12 @@ public abstract class JacksonMappingCustomizer<T extends DomainObject> {
     }
 
     /**
-     * Callback method, to specify the customization in the mapping process after having read an Object of the customizers {@link DomainObject} type .
+     * Callback method, to specify the customization in the mapping process after having read an Object of the
+     * customizers {@link DomainObject} type .
      * Reading means JSON -> Object transformation.
      *
      * @param mappingContext mapping information for DomainObject
-     * @param codec Jackson codec
+     * @param codec          Jackson codec
      */
     public void afterObjectRead(final DomainObjectMappingContext mappingContext, ObjectCodec codec) {
     }

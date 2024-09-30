@@ -45,9 +45,11 @@ import java.util.Collection;
 /**
  * DirectJtaTransactionalDomainEventPublisher is a class that implements the DomainEventPublisher interface.
  * It is responsible for publishing domain events using an underlying event dispatcher and handling transactions.
- * If a transaction is active and the domain event is not a pass-through event, it registers a synchronization with the transaction.
+ * If a transaction is active and the domain event is not a pass-through event, it registers a synchronization with
+ * the transaction.
  * The synchronization will dispatch the domain event after the transaction is successfully committed.
- * If there is no active transaction or the domain event is a pass-through event, the domain event is immediately dispatched.
+ * If there is no active transaction or the domain event is a pass-through event, the domain event is immediately
+ * dispatched.
  * <br>
  * This implementation provides only at-most-once delivery guarantees. To avoid "event loss" in any case, consider
  * the outbox approach {@link JtaOutboxDomainEventPublisher}.
@@ -79,10 +81,14 @@ public class DirectJtaTransactionalDomainEventPublisher implements DomainEventPu
         try {
             final var transaction = transactionManager.getTransaction();
 
-            if(transaction == null || (passThroughEventTypes != null && passThroughEventTypes.contains(domainEvent.getClass()))) {
-                log.debug("Passing DomainEvent {} to DomainEventDispatcher passing through to ReceivingDomainEventHandler directly", domainEvent);
+            if (transaction == null || (passThroughEventTypes != null && passThroughEventTypes.contains(
+                domainEvent.getClass()))) {
+                log.debug(
+                    "Passing DomainEvent {} to DomainEventDispatcher passing through to ReceivingDomainEventHandler " +
+                        "directly",
+                    domainEvent);
                 receivingDomainEventHandler.handleReceived(domainEvent);
-            }else{
+            } else {
                 transaction.registerSynchronization(new Synchronization() {
                     @Override
                     public void beforeCompletion() {
@@ -91,9 +97,12 @@ public class DirectJtaTransactionalDomainEventPublisher implements DomainEventPu
                     @Override
                     public void afterCompletion(int i) {
                         if (Status.STATUS_COMMITTED == i) {
-                            log.debug("Publisher transaction committed. Passing DomainEvent {} to ReceivingDomainEventHandler!", domainEvent);
+                            log.debug(
+                                "Publisher transaction committed. Passing DomainEvent {} to " +
+                                    "ReceivingDomainEventHandler!",
+                                domainEvent);
                             receivingDomainEventHandler.handleReceived(domainEvent);
-                        }else{
+                        } else {
                             log.debug("DomainEvent {} not dispatched. Transaction not committed!", domainEvent);
                         }
                     }
@@ -106,16 +115,17 @@ public class DirectJtaTransactionalDomainEventPublisher implements DomainEventPu
 
     /**
      * Sets the pass-through event types.
-     * Pass-through event types are the types of events that should bypass the transaction handling and be immediately dispatched.
-     * If a transaction is active and the domain event is not a pass-through event, it will register a synchronization with the transaction
+     * Pass-through event types are the types of events that should bypass the transaction handling and be
+     * immediately dispatched.
+     * If a transaction is active and the domain event is not a pass-through event, it will register a
+     * synchronization with the transaction
      * to dispatch the event after the transaction is successfully committed.
      *
      * @param passThroughEventTypes the collection of pass-through event types
      */
-    public void setPassThroughEventTypes(Collection<Class<? extends DomainEvent>> passThroughEventTypes){
+    public void setPassThroughEventTypes(Collection<Class<? extends DomainEvent>> passThroughEventTypes) {
         this.passThroughEventTypes = passThroughEventTypes;
     }
-
 
 
 }

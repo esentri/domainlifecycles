@@ -61,7 +61,8 @@ public class MirrorBasedExecutionContextDetector implements ExecutionContextDete
     private final ServiceProvider serviceProvider;
 
     public MirrorBasedExecutionContextDetector(ServiceProvider serviceProvider) {
-        this.serviceProvider = Objects.requireNonNull(serviceProvider, "A ServiceProvider is needed to detect DomainEvent execution contexts!");
+        this.serviceProvider = Objects.requireNonNull(serviceProvider,
+            "A ServiceProvider is needed to detect DomainEvent execution contexts!");
     }
 
     /**
@@ -74,14 +75,14 @@ public class MirrorBasedExecutionContextDetector implements ExecutionContextDete
     public List<ExecutionContext> detectExecutionContexts(DomainEvent domainEvent) {
         var detectedContexts = new ArrayList<ExecutionContext>();
         var dem = Domain.domainEventMirrorFor(domainEvent);
-        if(domainEvent instanceof AggregateDomainEvent<?,?>) {
+        if (domainEvent instanceof AggregateDomainEvent<?, ?>) {
             detectedContexts.addAll(
                 dem.getListeningAggregates()
                     .stream()
                     .flatMap(arm -> detectAggregateRootExecutionContexts(arm, dem, domainEvent).stream())
                     .toList()
             );
-        }else{
+        } else {
             detectedContexts.addAll(
                 dem.getListeningDomainServices()
                     .stream()
@@ -121,48 +122,52 @@ public class MirrorBasedExecutionContextDetector implements ExecutionContextDete
         return detectedContexts;
     }
 
-    private List<ServiceExecutionContext> detectDomainServiceExecutionContexts(DomainServiceMirror dsm, DomainEventMirror dem, DomainEvent de){
+    private List<ServiceExecutionContext> detectDomainServiceExecutionContexts(DomainServiceMirror dsm,
+                                                                               DomainEventMirror dem, DomainEvent de) {
         log.debug("Detecting ExecutionContext for DomainEvent {} on DomainService {}", de, dsm.getTypeName());
         var ds = serviceProvider.getDomainServiceInstance(dsm.getTypeName());
-        if(ds != null) {
+        if (ds != null) {
             return dsm.getMethods()
                 .stream()
                 .filter(m -> m.listensTo(dem))
                 .map(m -> new ServiceExecutionContext(ds, m.getName(), de))
                 .toList();
-        }else{
+        } else {
             var msg = String.format("No DomainService instance found for %s", dsm.getTypeName());
             log.error(msg);
             throw DLCEventsException.fail(msg);
         }
     }
 
-    private List<ServiceExecutionContext> detectRepositoryExecutionContexts(RepositoryMirror rm, DomainEventMirror dem, DomainEvent de){
+    private List<ServiceExecutionContext> detectRepositoryExecutionContexts(RepositoryMirror rm,
+                                                                            DomainEventMirror dem, DomainEvent de) {
         log.debug("Detecting ExecutionContext for DomainEvent {} on Repository {}", de, rm.getTypeName());
         var r = serviceProvider.getRepositoryInstance(rm.getTypeName());
-        if(r != null) {
+        if (r != null) {
             return rm.getMethods()
                 .stream()
                 .filter(m -> m.listensTo(dem))
                 .map(m -> new ServiceExecutionContext(r, m.getName(), de))
                 .toList();
-        }else{
+        } else {
             var msg = String.format("No Repository instance found for %s", rm.getTypeName());
             log.error(msg);
             throw DLCEventsException.fail(msg);
         }
     }
 
-    private List<ServiceExecutionContext> detectApplicationServiceExecutionContexts(ApplicationServiceMirror am, DomainEventMirror dem, DomainEvent de){
+    private List<ServiceExecutionContext> detectApplicationServiceExecutionContexts(ApplicationServiceMirror am,
+                                                                                    DomainEventMirror dem,
+                                                                                    DomainEvent de) {
         log.debug("Detecting ExecutionContext for DomainEvent {} on ApplicationService {}", de, am.getTypeName());
         var as = serviceProvider.getApplicationServiceInstance(am.getTypeName());
-        if(as != null) {
+        if (as != null) {
             return am.getMethods()
                 .stream()
                 .filter(m -> m.listensTo(dem))
                 .map(m -> new ServiceExecutionContext(as, m.getName(), de))
                 .toList();
-        }else{
+        } else {
             var msg = String.format("No ApplicationService instance found for %s", am.getTypeName());
             log.error(msg);
             throw DLCEventsException.fail(msg);
@@ -170,32 +175,35 @@ public class MirrorBasedExecutionContextDetector implements ExecutionContextDete
 
     }
 
-    private List<ServiceExecutionContext> detectQueryClientExecutionContexts(QueryClientMirror qcm, DomainEventMirror dem, DomainEvent de){
+    private List<ServiceExecutionContext> detectQueryClientExecutionContexts(QueryClientMirror qcm,
+                                                                             DomainEventMirror dem, DomainEvent de) {
         log.debug("Detecting ExecutionContext for DomainEvent {} on QueryClient {}", de, qcm.getTypeName());
         var rmp = serviceProvider.getQueryClientInstance(qcm.getTypeName());
-        if(rmp != null) {
+        if (rmp != null) {
             return qcm.getMethods()
                 .stream()
                 .filter(m -> m.listensTo(dem))
                 .map(m -> new ServiceExecutionContext(rmp, m.getName(), de))
                 .toList();
-        }else{
+        } else {
             var msg = String.format("No QueryClient instance found for %s", qcm.getTypeName());
             log.error(msg);
             throw DLCEventsException.fail(msg);
         }
     }
 
-    private List<ServiceExecutionContext> detectOutboundServiceExecutionContexts(OutboundServiceMirror om, DomainEventMirror dem, DomainEvent de){
+    private List<ServiceExecutionContext> detectOutboundServiceExecutionContexts(OutboundServiceMirror om,
+                                                                                 DomainEventMirror dem,
+                                                                                 DomainEvent de) {
         log.debug("Detecting ExecutionContext for DomainEvent {} on OutboundService {}", de, om.getTypeName());
         var os = serviceProvider.getOutboundServiceInstance(om.getTypeName());
-        if(os != null) {
+        if (os != null) {
             return om.getMethods()
                 .stream()
                 .filter(m -> m.listensTo(dem))
                 .map(m -> new ServiceExecutionContext(os, m.getName(), de))
                 .toList();
-        }else{
+        } else {
             var msg = String.format("No OutboundService instance found for %s", om.getTypeName());
             log.error(msg);
             throw DLCEventsException.fail(msg);
@@ -203,18 +211,18 @@ public class MirrorBasedExecutionContextDetector implements ExecutionContextDete
     }
 
     @SuppressWarnings("unchecked")
-    private List<AggregateExecutionContext<Identity<?>, AggregateRoot<Identity<?>>>> detectAggregateRootExecutionContexts(AggregateRootMirror arm, DomainEventMirror dem, DomainEvent de){
+    private List<AggregateExecutionContext<Identity<?>, AggregateRoot<Identity<?>>>> detectAggregateRootExecutionContexts(AggregateRootMirror arm, DomainEventMirror dem, DomainEvent de) {
         log.debug("Detecting ExecutionContext for DomainEvent {} on AggregateRoot {}", de, arm.getTypeName());
         var rm = Domain.repositoryMirrorFor(arm);
         var ade = (AggregateDomainEvent<Identity<?>, AggregateRoot<Identity<?>>>) de;
         var r = serviceProvider.getRepositoryInstance(rm.getTypeName());
-        if(r != null){
+        if (r != null) {
             return arm.getMethods()
                 .stream()
                 .filter(m -> m.listensTo(dem))
                 .map(m -> new AggregateExecutionContext<>(r, m.getName(), ade))
                 .toList();
-        }else{
+        } else {
             var msg = String.format("No Repository instance found for %s", rm.getTypeName());
             log.error(msg);
             throw DLCEventsException.fail(msg);

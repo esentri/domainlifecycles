@@ -37,4 +37,5 @@ import io.domainlifecycles.domain.types.DomainEvent;
  */
 public record NewCustomerAdded(
     @NotNull Customer customer
-) implements DomainEvent {}
+) implements DomainEvent {
+}

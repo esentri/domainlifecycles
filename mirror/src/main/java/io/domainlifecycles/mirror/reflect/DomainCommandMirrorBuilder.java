@@ -42,7 +42,7 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public class DomainCommandMirrorBuilder extends DomainTypeMirrorBuilder{
+public class DomainCommandMirrorBuilder extends DomainTypeMirrorBuilder {
 
     private final Class<? extends DomainCommand> domainCommandClass;
 
@@ -56,15 +56,15 @@ public class DomainCommandMirrorBuilder extends DomainTypeMirrorBuilder{
      *
      * @return new instance of DomainCommandMirror
      */
-    public DomainCommandMirror build(){
+    public DomainCommandMirror build() {
 
         var targetType = getTargetType(domainCommandClass);
         String aggregateIdentityTargetTypeName = null;
         String domainServiceTargetTypeName = null;
-        if(targetType.isPresent()){
-            if(DomainService.class.isAssignableFrom(targetType.get())){
+        if (targetType.isPresent()) {
+            if (DomainService.class.isAssignableFrom(targetType.get())) {
                 domainServiceTargetTypeName = targetType.get().getName();
-            }else if(Identity.class.isAssignableFrom(targetType.get())){
+            } else if (Identity.class.isAssignableFrom(targetType.get())) {
                 aggregateIdentityTargetTypeName = targetType.get().getName();
             }
         }
@@ -80,20 +80,18 @@ public class DomainCommandMirrorBuilder extends DomainTypeMirrorBuilder{
         );
     }
 
-    private static Optional<Class<?>> getTargetType(Class<? extends DomainCommand> c)   {
-        if(DomainServiceCommand.class.isAssignableFrom(c)){
+    private static Optional<Class<?>> getTargetType(Class<? extends DomainCommand> c) {
+        if (DomainServiceCommand.class.isAssignableFrom(c)) {
             var resolver = new GenericInterfaceTypeResolver(c);
             var resolved = resolver.resolveFor(DomainServiceCommand.class, 0);
             return Optional.ofNullable(resolved);
-        }else if(AggregateCommand.class.isAssignableFrom(c)){
+        } else if (AggregateCommand.class.isAssignableFrom(c)) {
             var resolver = new GenericInterfaceTypeResolver(c);
             var resolved = resolver.resolveFor(AggregateCommand.class, 0);
             return Optional.ofNullable(resolved);
         }
         return Optional.empty();
     }
-
-
 
 
 }

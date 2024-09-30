@@ -1458,7 +1458,7 @@ public class TestDataGenerator {
             .build();
     }
 
-    public static RecordTest buildRecordTest(){
+    public static RecordTest buildRecordTest() {
         RecordTest recordTest = RecordTest
             .builder()
             .setId(new RecordTestId(1l))
@@ -1496,10 +1496,11 @@ public class TestDataGenerator {
             .build();
     }
 
-    public static TestRootTemporal buildTestRootTemporal(){
+    public static TestRootTemporal buildTestRootTemporal() {
         return buildTestRootTemporal(OffsetDateTime.now());
     }
-    public static TestRootTemporal buildTestRootTemporal(OffsetDateTime now){
+
+    public static TestRootTemporal buildTestRootTemporal(OffsetDateTime now) {
         TestRootTemporal t = TestRootTemporal.
             builder()
             .setId(new TestRootTemporalId(1l))
@@ -1552,11 +1553,11 @@ public class TestDataGenerator {
                     .setRootId(new TreeRootId(1L))
                     .setNodeName("TopLevelChild2")
                     .setChildNodes(newArrayListOf(
-                            TreeNode.builder()
-                                .setId(new TreeNodeId(4L))
-                                .setParentNodeId(new TreeNodeId(3L))
-                                .setNodeName("TestChildLevel2_2_2")
-                                .build())
+                        TreeNode.builder()
+                            .setId(new TreeNodeId(4L))
+                            .setParentNodeId(new TreeNodeId(3L))
+                            .setNodeName("TestChildLevel2_2_2")
+                            .build())
                     )
                     .build())
             )
@@ -1606,9 +1607,9 @@ public class TestDataGenerator {
                             )
                         )
                         .build()
-                    )
+                )
             )
-        .build();
+            .build();
     }
 
     public static TestRootOneToOneVoDedicated buildOneToOneVoDedicatedOnlyRoot() {
@@ -1640,13 +1641,13 @@ public class TestDataGenerator {
             .build();
     }
 
-    public static VoAggregatePrimitive buildVoPrimitiveEmpty(){
+    public static VoAggregatePrimitive buildVoPrimitiveEmpty() {
         return VoAggregatePrimitive.builder()
             .setId(new VoAggregatePrimitiveId(1l))
             .build();
     }
 
-    public static VoAggregatePrimitive buildVoPrimitiveComplete(){
+    public static VoAggregatePrimitive buildVoPrimitiveComplete() {
         return VoAggregatePrimitive.builder()
             .setId(new VoAggregatePrimitiveId(2l))
             .setSimple(SimpleVoPrimitive.builder().setVal(11l).build())
@@ -1704,20 +1705,22 @@ public class TestDataGenerator {
             .build();
     }
 
-    public static VoAggregateNested buildVoNestedEmpty(){
+    public static VoAggregateNested buildVoNestedEmpty() {
         return VoAggregateNested.builder()
             .setId(new VoAggregateNestedId(1l))
             .build();
     }
 
-    public static VoAggregateNested buildVoNestedComplete(){
+    public static VoAggregateNested buildVoNestedComplete() {
         return VoAggregateNested.builder()
             .setId(new VoAggregateNestedId(2l))
             .setNestedEnumSingleValued(NestedEnumSingleValued.builder().setEnumValue(MyEnum.A).build())
-            .setNestedSimpleVo(NestedSimpleVo.builder().setNested(tests.shared.persistence.domain.valueobjectsNested.SimpleVo.builder().setVal(9l).build()).build())
+            .setNestedSimpleVo(NestedSimpleVo.builder().setNested(
+                tests.shared.persistence.domain.valueobjectsNested.SimpleVo.builder().setVal(9l).build()).build())
             .setNestedId(NestedId.builder().setIdRef(new VoAggregateNestedId(55l)).build())
             .setNestedEnumSingleValuedList(List.of(NestedEnumSingleValued.builder().setEnumValue(MyEnum.B).build()))
-            .setNestedSimpleVoList(List.of(NestedSimpleVo.builder().setNested(tests.shared.persistence.domain.valueobjectsNested.SimpleVo.builder().setVal(90l).build()).build()))
+            .setNestedSimpleVoList(List.of(NestedSimpleVo.builder().setNested(
+                tests.shared.persistence.domain.valueobjectsNested.SimpleVo.builder().setVal(90l).build()).build()))
             .setNestedIdList(List.of(NestedId.builder().setIdRef(new VoAggregateNestedId(550l)).build()))
             .build();
     }
@@ -1763,7 +1766,8 @@ public class TestDataGenerator {
                     1l,
                     newArrayListOf(MyEnum.TWO),
                     newArrayListOf(new MyId(44L)),
-                    new ValueWithLists(newArrayListOf(MyEnum.ONE, MyEnum.TWO), newArrayListOf(new MyId(88l), new MyId(99l), new MyId(111l)))
+                    new ValueWithLists(newArrayListOf(MyEnum.ONE, MyEnum.TWO), newArrayListOf(new MyId(88l), new MyId
+                    (99l), new MyId(111l)))
                 )
             )
             .build();

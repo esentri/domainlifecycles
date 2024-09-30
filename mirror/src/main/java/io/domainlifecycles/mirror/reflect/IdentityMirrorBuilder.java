@@ -38,7 +38,7 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public class IdentityMirrorBuilder extends DomainTypeMirrorBuilder{
+public class IdentityMirrorBuilder extends DomainTypeMirrorBuilder {
     private final Class<? extends Identity<?>> identityClass;
 
     public IdentityMirrorBuilder(Class<? extends Identity<?>> identityClass) {
@@ -51,7 +51,7 @@ public class IdentityMirrorBuilder extends DomainTypeMirrorBuilder{
      *
      * @return new instance of IdentityMirror
      */
-    public IdentityMirror build(){
+    public IdentityMirror build() {
         return new IdentityModel(
             getTypeName(),
             isAbstract(),
@@ -63,7 +63,7 @@ public class IdentityMirrorBuilder extends DomainTypeMirrorBuilder{
         );
     }
 
-    private Optional<String> idValueType(){
+    private Optional<String> idValueType() {
         return getValueType(identityClass)
             .map(Class::getName);
     }

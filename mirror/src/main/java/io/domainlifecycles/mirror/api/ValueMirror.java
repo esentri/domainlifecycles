@@ -39,21 +39,21 @@ public interface ValueMirror extends DomainTypeMirror {
     /**
      * @return true, if the ValueMirror is an EnumMirror.
      */
-    default boolean isEnum(){
+    default boolean isEnum() {
         return this instanceof EnumMirror;
     }
 
     /**
      * @return true, if the ValueMirror is a ValueObjectMirror.
      */
-    default boolean isValueObject(){
+    default boolean isValueObject() {
         return this instanceof ValueObjectMirror;
     }
 
     /**
      * @return true, if the ValueMirror is an IdentityMirror.
      */
-    default boolean isIdentity(){
+    default boolean isIdentity() {
         return this instanceof IdentityMirror;
     }
 

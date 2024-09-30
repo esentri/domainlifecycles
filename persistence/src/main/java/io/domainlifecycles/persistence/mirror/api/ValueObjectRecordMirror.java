@@ -40,7 +40,7 @@ import java.util.List;
  * @param <BASE_RECORD_TYPE> the type of record
  * @author Mario Herb
  */
-public interface ValueObjectRecordMirror<BASE_RECORD_TYPE> extends RecordMirror<BASE_RECORD_TYPE>{
+public interface ValueObjectRecordMirror<BASE_RECORD_TYPE> extends RecordMirror<BASE_RECORD_TYPE> {
 
     /**
      * Returns the full qualified type name of the entity which
@@ -88,8 +88,6 @@ public interface ValueObjectRecordMirror<BASE_RECORD_TYPE> extends RecordMirror<
      * @param owner the owner to be set
      */
     void setOwner(EntityRecordMirror<BASE_RECORD_TYPE> owner);
-
-
 
 
 }

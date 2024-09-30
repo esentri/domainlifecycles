@@ -97,7 +97,7 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
      */
     @JsonIgnore
     @Override
-    public List<EntityReferenceMirror> getEntityReferences(){
+    public List<EntityReferenceMirror> getEntityReferences() {
         return allFields.stream().filter(p ->
                 DomainType.ENTITY.equals(p.getType().getDomainType())
             )
@@ -116,7 +116,8 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
             )
             .map(p -> (EntityReferenceMirror) p)
             .findFirst()
-            .orElseThrow(() -> MirrorException.fail(String.format("EntityReferenceMirror not found for name '%s' within '%s'!", name, typeName)));
+            .orElseThrow(() -> MirrorException.fail(
+                String.format("EntityReferenceMirror not found for name '%s' within '%s'!", name, typeName)));
     }
 
     /**
@@ -142,7 +143,8 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
             )
             .map(p -> (AggregateRootReferenceMirror) p)
             .findFirst()
-            .orElseThrow(() -> MirrorException.fail(String.format("AggregateRootReferenceMirror not found for name '%s' within '%s'!", name, typeName)));
+            .orElseThrow(() -> MirrorException.fail(
+                String.format("AggregateRootReferenceMirror not found for name '%s' within '%s'!", name, typeName)));
     }
 
     /**
@@ -150,11 +152,12 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
      */
     @JsonIgnore
     @Override
-    public List<ValueReferenceMirror> getValueReferences(){
+    public List<ValueReferenceMirror> getValueReferences() {
         return allFields.stream().filter(p ->
                 DomainType.VALUE_OBJECT.equals(p.getType().getDomainType()) ||
                     DomainType.ENUM.equals(p.getType().getDomainType()) ||
-                    (DomainType.IDENTITY.equals(p.getType().getDomainType()) && !p.getName().equals(getIdentityField().map(FieldMirror::getName).orElse(null)))
+                    (DomainType.IDENTITY.equals(p.getType().getDomainType()) && !p.getName().equals(
+                        getIdentityField().map(FieldMirror::getName).orElse(null)))
             )
             .map(p -> (ValueReferenceMirror) p)
             .collect(Collectors.toList());
@@ -165,7 +168,7 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
      */
     @JsonIgnore
     @Override
-    public List<FieldMirror> getBasicFields(){
+    public List<FieldMirror> getBasicFields() {
         return identityField.map(fieldMirror -> super.getBasicFields().stream().filter(p ->
                 !p.getName().equals(fieldMirror.getName())
             )
@@ -178,10 +181,10 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
     @Override
     public boolean publishes(DomainEventMirror domainEvent) {
         AtomicBoolean publishes = new AtomicBoolean(false);
-        var visitor = new ContextDomainObjectVisitor(this){
+        var visitor = new ContextDomainObjectVisitor(this) {
             @Override
             public void visitEnterAnyDomainType(DomainTypeMirror domainTypeMirror) {
-                if(!publishes.get()) {
+                if (!publishes.get()) {
                     publishes.set(domainTypeMirror
                         .getMethods()
                         .stream()
@@ -199,10 +202,10 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
     @Override
     public boolean listensTo(DomainEventMirror domainEvent) {
         AtomicBoolean listensTo = new AtomicBoolean(false);
-        var visitor = new ContextDomainObjectVisitor(this){
+        var visitor = new ContextDomainObjectVisitor(this) {
             @Override
             public void visitEnterAnyDomainType(DomainTypeMirror domainTypeMirror) {
-                if(!listensTo.get()) {
+                if (!listensTo.get()) {
                     listensTo.set(domainTypeMirror
                         .getMethods()
                         .stream()
@@ -220,10 +223,10 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
     @Override
     public boolean processes(DomainCommandMirror command) {
         AtomicBoolean processes = new AtomicBoolean(false);
-        var visitor = new ContextDomainObjectVisitor(this){
+        var visitor = new ContextDomainObjectVisitor(this) {
             @Override
             public void visitEnterAnyDomainType(DomainTypeMirror domainTypeMirror) {
-                if(!processes.get()) {
+                if (!processes.get()) {
                     processes.set(domainTypeMirror
                         .getMethods()
                         .stream()

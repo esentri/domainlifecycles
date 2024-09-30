@@ -34,7 +34,6 @@ import java.util.Objects;
  * General http response structure
  *
  * @param <T> type of returned object (mostly entity)
- *
  * @author Mario Herb
  * @author Tobias Herb
  * @author Dominik Galler
