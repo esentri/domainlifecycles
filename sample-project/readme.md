@@ -119,7 +119,7 @@ Ports & Adapters is particularly well suited to be combined with DDD tactical de
 That's why we applied it, in this demo application. You can also view the typical ports and adapters like
 separation of technical and domain concerns in the package structure above.
 
-![What a pity you cannot see it](./../dlc-documentation/resources/images/ports_adapters.png "Ports & Adapters")
+![What a pity you cannot see it](./../documentation/resources/images/ports_adapters.png "Ports & Adapters")
 
 More information on that: [Ports & Adapters by Alistair Cockburn](https://alistair.cockburn.us/hexagonal-architecture/)
 
@@ -142,7 +142,7 @@ and interactions within our model.
 This diagram represents a domain model for the `sampleshop` system (and the corresponding bounded context) that deals
 with customers, orders,
 
-![What a pity you cannot see it](./../dlc-documentation/resources/images/sample_diagram.png "Domain Diagram")
+![What a pity you cannot see it](./../documentation/resources/images/sample_diagram.png "Domain Diagram")
 
 Here's a breakdown of the different elements in the diagram:
 
