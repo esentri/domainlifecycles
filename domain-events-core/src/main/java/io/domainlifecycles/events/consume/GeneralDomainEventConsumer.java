@@ -51,6 +51,13 @@ public final class GeneralDomainEventConsumer implements DomainEventConsumer {
     private final ExecutionContextDetector executionContextDetector;
     private final ExecutionContextProcessor executionContextProcessor;
 
+    /**
+     * Constructs a GeneralDomainEventConsumer with the provided ExecutionContextDetector and ExecutionContextProcessor.
+     * An ExecutionContextDetector and ExecutionContextProcessor must be provided for DomainEvent handling.
+     *
+     * @param executionContextDetector The ExecutionContextDetector to detect execution contexts for domain events
+     * @param executionContextProcessor The ExecutionContextProcessor to process execution contexts and produce execution results
+     */
     public GeneralDomainEventConsumer(
         ExecutionContextDetector executionContextDetector,
         ExecutionContextProcessor executionContextProcessor

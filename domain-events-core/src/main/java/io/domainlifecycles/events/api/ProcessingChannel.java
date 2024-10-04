@@ -65,12 +65,21 @@ public class ProcessingChannel implements ConsumingChannel, PublishingChannel, N
         return name;
     }
 
-
+    /**
+     * Retrieves the ConsumingConfiguration associated with this channel.
+     *
+     * @return the ConsumingConfiguration for consuming domain events
+     */
     @Override
     public ConsumingConfiguration getConsumingConfiguration() {
         return this.consumingConfiguration;
     }
 
+    /**
+     * Retrieves the publishing configuration associated with this channel.
+     *
+     * @return the PublishingConfiguration for publishing domain events
+     */
     @Override
     public PublishingConfiguration getPublishingConfiguration() {
         return this.publishingConfiguration;

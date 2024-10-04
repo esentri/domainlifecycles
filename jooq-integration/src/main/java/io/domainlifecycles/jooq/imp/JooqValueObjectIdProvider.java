@@ -48,7 +48,7 @@ public class JooqValueObjectIdProvider extends BaseValueObjectIdProvider<Updatab
     private final DSLContext dslContext;
 
     public JooqValueObjectIdProvider(
-        DomainPersistenceProvider domainPersistenceProvider,
+        DomainPersistenceProvider<UpdatableRecord<?>> domainPersistenceProvider,
         DSLContext dslContext) {
         super(domainPersistenceProvider);
         this.dslContext = Objects.requireNonNull(dslContext);
@@ -58,7 +58,6 @@ public class JooqValueObjectIdProvider extends BaseValueObjectIdProvider<Updatab
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     protected void setContainerIdInNewVoRecord(UpdatableRecord<?> newVoRecord, Long containerTechId) {
         var f = (Field<Long>) newVoRecord.getTable().field("CONTAINER_ID");
         if (f == null) {
@@ -90,7 +89,6 @@ public class JooqValueObjectIdProvider extends BaseValueObjectIdProvider<Updatab
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     protected void provideNewTechIdForValueObjectRecord(UpdatableRecord<?> newVoRecord) {
         try {
             Sequence<?> s = newVoRecord.getTable().getSchema().getSequence(newVoRecord.getTable().getName() + "_SEQ");

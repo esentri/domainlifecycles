@@ -133,7 +133,6 @@ public abstract class DomainPersistenceProvider<BASE_RECORD> {
         return builder.build();
     }
 
-    @SuppressWarnings("unchecked")
     private void addChildrenToBuilder(StructuralPosition parentStructuralPosition,
                                       FieldMirror accessToChildMirror,
                                       DomainObjectInstanceAccessModel.DomainObjectInstanceAccessModelBuilder<BASE_RECORD> builder) {
@@ -165,7 +164,7 @@ public abstract class DomainPersistenceProvider<BASE_RECORD> {
             Class<?> entityType = structuralPosition.instance.getClass();
             return persistenceMirror.getEntityRecordMirror(entityType.getName());
         } else {
-            if (structuralPosition.accessPathFromRoot.size() == 0) {
+            if (structuralPosition.accessPathFromRoot.isEmpty()) {
                 throw DLCPersistenceException.fail("A value object can only be persisted when being child of an aggregate. Something went wrong! Value object: " + structuralPosition.instance);
             }
             final var descendingIterator = structuralPosition.accessPathFromRoot.descendingIterator();

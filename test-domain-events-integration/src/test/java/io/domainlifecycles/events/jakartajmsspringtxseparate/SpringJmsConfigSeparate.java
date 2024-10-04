@@ -1,3 +1,30 @@
+/*
+ *
+ *     ___
+ *     │   ╲                 _
+ *     │    ╲ ___ _ __  __ _(_)_ _
+ *     |     ╲ _ ╲ '  ╲╱ _` │ │ ' ╲
+ *     |_____╱___╱_│_│_╲__,_│_│_||_|
+ *     │ │  (_)╱ _│___ __ _  _ __│ |___ ___
+ *     │ │__│ │  _╱ -_) _│ ││ ╱ _│ ╱ -_|_-<
+ *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
+ *                      |__╱
+ *
+ *  Copyright 2019-2024 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package io.domainlifecycles.events.jakartajmsspringtxseparate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,7 +34,7 @@ import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
-import io.domainlifecycles.events.jakarta.jms.api.SpringtransactionJakartaJmsChannelFactory;
+import io.domainlifecycles.events.jakarta.jms.api.SpringTransactionJakartaJmsChannelFactory;
 import io.domainlifecycles.events.mq.api.AbstractMqConsumingChannel;
 import io.domainlifecycles.events.mq.api.AbstractMqPublishingChannel;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
@@ -29,14 +56,14 @@ public class SpringJmsConfigSeparate {
 
     @Bean
     @DependsOn("initializedDomain")
-    public SpringtransactionJakartaJmsChannelFactory springtransactionJakartaJmsChannelFactory(
+    public SpringTransactionJakartaJmsChannelFactory springtransactionJakartaJmsChannelFactory(
         ServiceProvider serviceProvider,
         ClassProvider classProvider,
         TransactionalHandlerExecutor transactionalHandlerExecutor,
         ActiveMQConnectionFactory jmsConnectionFactory,
         ObjectMapper objectMapper
     ){
-        return new SpringtransactionJakartaJmsChannelFactory(
+        return new SpringTransactionJakartaJmsChannelFactory(
             jmsConnectionFactory,
             serviceProvider,
             classProvider,
@@ -46,12 +73,12 @@ public class SpringJmsConfigSeparate {
     }
 
     @Bean(destroyMethod = "close")
-    public AbstractMqPublishingChannel channelPub(SpringtransactionJakartaJmsChannelFactory factory){
+    public AbstractMqPublishingChannel channelPub(SpringTransactionJakartaJmsChannelFactory factory){
         return factory.publishOnlyChannel("jms2Pub");
     }
 
     @Bean(destroyMethod = "close")
-    public AbstractMqConsumingChannel channelCons(SpringtransactionJakartaJmsChannelFactory factory){
+    public AbstractMqConsumingChannel channelCons(SpringTransactionJakartaJmsChannelFactory factory){
         return factory.consumeOnlyChannel("jms2Cons");
     }
 

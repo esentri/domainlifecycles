@@ -195,7 +195,7 @@ public abstract class AbstractDomainObjectBuilder<T extends DomainObject> implem
         return this.instanceType;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"rawtypes" })
     private void addWithLazyInit(Object object, String fieldName) {
         Collection collection = (Collection) getValue(fieldName);
         if (collection == null) {
@@ -205,7 +205,6 @@ public abstract class AbstractDomainObjectBuilder<T extends DomainObject> implem
         collection.add(object);
     }
 
-    @SuppressWarnings({ "unchecked" })
     protected <K> K uncheckedCast(Object obj) {
         return (K) obj;
     }

@@ -12,11 +12,11 @@ def commonsCollectionsVersion = '3.2.2'
 dependencies {
     compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
     implementation "io.github.classgraph:classgraph:${classGraphVersion}"
-    implementation project(":types")
+    api project(":types")
     implementation project(":type-utils")
     implementation project(":mirror")
     implementation project(":access")
-    implementation project(":builder")
+    api project(":builder")
 
     implementation "commons-collections:commons-collections:${commonsCollectionsVersion}"
 

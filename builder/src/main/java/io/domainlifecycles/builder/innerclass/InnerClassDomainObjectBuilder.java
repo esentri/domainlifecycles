@@ -66,7 +66,6 @@ public final class InnerClassDomainObjectBuilder<T extends DomainObject> extends
      * @param builderInstance instance of the builder
      */
     public InnerClassDomainObjectBuilder(Object builderInstance) {
-        //noinspection unchecked
         super((Class<T>) builderInstance.getClass().getEnclosingClass());
         this.builderInstance = builderInstance;
         this.builderClass = this.builderInstance.getClass();
@@ -150,7 +149,6 @@ public final class InnerClassDomainObjectBuilder<T extends DomainObject> extends
     /**
      * Helps to avoid using {@code @SuppressWarnings({"unchecked"})} when casting to a generic type.
      */
-    @SuppressWarnings({ "unchecked" })
     public <K> K uncheckedCast(Object obj) {
         return (K) obj;
     }

@@ -8,11 +8,11 @@ plugins {
 }
 
 dependencies {
-    implementation "javax.validation:validation-api:${javaxValidationApiVersion}"
-    implementation "jakarta.validation:jakarta.validation-api:${jakartaValidationApiVersion}"
+    api "javax.validation:validation-api:${javaxValidationApiVersion}"
+    api "jakarta.validation:jakarta.validation-api:${jakartaValidationApiVersion}"
     compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
-    compileOnly "io.swagger.core.v3:swagger-core-jakarta:2.2.21"
-    implementation project(":types")
+    api "io.swagger.core.v3:swagger-core-jakarta:2.2.21"
+    api project(":types")
     implementation project(":reflect")
     implementation project(":access")
     implementation project(":mirror")

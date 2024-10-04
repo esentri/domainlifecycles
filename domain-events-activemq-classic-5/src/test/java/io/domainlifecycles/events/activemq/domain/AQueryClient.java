@@ -44,9 +44,4 @@ public class AQueryClient implements QueryClient {
         received.add(domainEvent);
     }
 
-    @ListensTo(domainEventType = PassThroughDomainEvent.class)
-    public void onDomainEvent(PassThroughDomainEvent domainEvent){
-        System.out.println("PassThroughDomainEvent received in AQueryClient! Message = " + domainEvent.message());
-        received.add(domainEvent);
-    }
 }

@@ -87,6 +87,11 @@ public final class GruelboxPoller {
         return scheduler;
     }
 
+    /**
+     * Retrieves the PollerConfiguration object associated with this GruelboxPoller.
+     *
+     * @return The PollerConfiguration object associated with this GruelboxPoller.
+     */
     public PollerConfiguration getPollerConfiguration() {
         return pollerConfiguration;
     }

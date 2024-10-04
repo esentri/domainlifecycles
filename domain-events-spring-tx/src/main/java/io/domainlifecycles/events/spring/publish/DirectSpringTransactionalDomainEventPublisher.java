@@ -57,6 +57,13 @@ public final class DirectSpringTransactionalDomainEventPublisher extends Abstrac
 
     private final DomainEventConsumer domainEventConsumer;
 
+    /**
+     * Initializes a DirectSpringTransactionalDomainEventPublisher with the specified DomainEventConsumer and afterCommit flag.
+     * If afterCommit is true, the domain events will be dispatched after the transaction is successfully committed.
+     *
+     * @param domainEventConsumer The consumer responsible for handling received domain events
+     * @param afterCommit Flag indicating whether to dispatch events after transaction commit
+     */
     public DirectSpringTransactionalDomainEventPublisher(
         DomainEventConsumer domainEventConsumer,
         boolean afterCommit
@@ -65,6 +72,9 @@ public final class DirectSpringTransactionalDomainEventPublisher extends Abstrac
         this.domainEventConsumer = Objects.requireNonNull(domainEventConsumer, "A DomainEventConsumer is required!");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void send(DomainEvent domainEvent) {
         this.domainEventConsumer.consume(domainEvent);

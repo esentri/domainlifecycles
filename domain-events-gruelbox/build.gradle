@@ -8,11 +8,10 @@ plugins {
 }
 
 dependencies {
-    implementation project(":domain-events-core")
-    implementation project(":types")
-    implementation project(":service-registry")
-    implementation project(":mirror")
-    implementation "com.gruelbox:transactionoutbox-core:${gruelboxVersion}"
-
+    api project(":domain-events-core")
+    api project(":types")
+    api project(":service-registry")
+    api "com.gruelbox:transactionoutbox-core:${gruelboxVersion}"
+    api project(":mirror")
     compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
 }

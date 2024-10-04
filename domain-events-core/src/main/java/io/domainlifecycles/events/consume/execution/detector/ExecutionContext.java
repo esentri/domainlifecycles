@@ -37,9 +37,24 @@ import io.domainlifecycles.domain.types.DomainEvent;
  */
 public interface ExecutionContext {
 
+    /**
+     * Retrieves the Domain Event associated with the execution context.
+     *
+     * @return The domain event object.
+     */
     DomainEvent domainEvent();
 
+    /**
+     * This method returns the Domain Event handler object.
+     *
+     * @return The handler object.
+     */
     Object handler();
 
+    /**
+     * Retrieves the handler method name associated with the execution context.
+     *
+     * @return The handler method name.
+     */
     String handlerMethodName();
 }

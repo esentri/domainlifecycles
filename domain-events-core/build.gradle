@@ -9,11 +9,10 @@ plugins {
 
 dependencies {
 
-    implementation project(":types")
-    implementation project(":mirror")
-    implementation project(":service-registry")
+    api project(":types")
+    api project(":service-registry")
     implementation project(":reflect")
-
+    implementation project(":mirror")
     compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
 
     testImplementation "org.slf4j:slf4j-api:${slf4jVersion}"

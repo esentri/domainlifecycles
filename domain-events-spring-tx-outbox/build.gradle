@@ -9,14 +9,15 @@ plugins {
 
 dependencies {
 
-    implementation project(":domain-events-core")
-    implementation project(":domain-events-spring-tx")
-    implementation project(":types")
-    implementation project(":service-registry")
+    api project(":domain-events-core")
+    api project(":types")
+    api project(":service-registry")
+    api project(":domain-events-spring-tx")
+    api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
 
     compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
     compileOnly "org.springframework:spring-jdbc:${springJdbcVersion}"
     compileOnly "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
-    compileOnly "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+
 
 }

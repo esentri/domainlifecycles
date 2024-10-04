@@ -43,7 +43,6 @@ import java.util.Objects;
  * event processing calls. By using this instantiator only outbox entries which contain scheduling calls refering
  * to a GruelboxEventDispatcher can be processed.
  *
- *
  * @author Mario Herb
  */
 public final class DomainEventsInstantiator implements Instantiator {
@@ -92,10 +91,20 @@ public final class DomainEventsInstantiator implements Instantiator {
 
     }
 
+    /**
+     * Registers the IdempotentExecutor to be used for idempotency protected execution of domain event handlers.
+     *
+     * @param idempotentExecutor The IdempotentExecutor instance to register.
+     */
     public void registerIdempotentExecutor(IdempotentExecutor idempotentExecutor){
         this.idempotentExecutor = idempotentExecutor;
     }
 
+    /**
+     * Registers the provided {@link GruelboxDomainEventDispatcher} instance to be used for dispatching domain events.
+     *
+     * @param gruelboxDomainEventDispatcher The {@link GruelboxDomainEventDispatcher} instance to register
+     */
     public void registerGruelboxDomainEventDispatcher(GruelboxDomainEventDispatcher gruelboxDomainEventDispatcher){
         this.gruelboxDomainEventDispatcher = gruelboxDomainEventDispatcher;
     }

@@ -115,7 +115,6 @@ public class DomainObjectInstanceAccessModel<RECORD> {
      * @param p the domain object to be cloned and replaced
      * @return the cloned domain object with the replaced instance
      */
-    @SuppressWarnings("unchecked")
     public DomainObjectInstanceAccessModel<RECORD> cloneWithReplacement(DomainObject p) {
         if (p == null || !p.equals(this.structuralPosition.instance)) {
             throw DLCPersistenceException.fail("It's not allowed to call 'cloneWithReplacement' with another domainObject than "
@@ -125,7 +124,7 @@ public class DomainObjectInstanceAccessModel<RECORD> {
         StructuralPosition.StructuralPositionBuilder replacedStructuralPosition = StructuralPosition.builder()
             .withParentStructuralPosition(this.structuralPosition.parentStructuralPosition)
             .withInstance(p);
-        if (this.structuralPosition.accessPathFromRoot.size() > 0) {
+        if (!this.structuralPosition.accessPathFromRoot.isEmpty()) {
             var accessor = this.structuralPosition.accessPathFromRoot.getLast().accessorToNextElement;
             replacedStructuralPosition.withAccessorFromParent(accessor);
         }
@@ -217,7 +216,6 @@ public class DomainObjectInstanceAccessModel<RECORD> {
          *
          * @return the {@link DomainObjectInstanceAccessModel}
          */
-        @SuppressWarnings("unchecked")
         public DomainObjectInstanceAccessModel<RECORD> build() {
             Objects.requireNonNull(this.structuralPosition, "We need a structural position to have a valid access model!");
 

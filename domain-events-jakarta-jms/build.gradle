@@ -8,17 +8,14 @@ plugins {
 }
 
 dependencies {
-    implementation project(":mirror")
-    implementation project(":access")
-    implementation project(":domain-events-core")
-    implementation project(":types")
-    implementation project(":service-registry")
-    implementation project (":domain-events-gruelbox")
-    implementation project (":domain-events-mq")
-    implementation project (":domain-events-spring-tx")
-    compileOnly "jakarta.jms:jakarta.jms-api:${jakartaJmsApiVersion}"
+    api project(":access")
+    api project(":domain-events-core")
+    api project(":types")
+    api project(":service-registry")
+    api project (":domain-events-mq")
+    api "jakarta.jms:jakarta.jms-api:${jakartaJmsApiVersion}"
     compileOnly "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
-    compileOnly "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
 
 }

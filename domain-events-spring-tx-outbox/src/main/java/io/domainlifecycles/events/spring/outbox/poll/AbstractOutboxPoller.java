@@ -68,7 +68,12 @@ public abstract class AbstractOutboxPoller {
 
     private ScheduledFuture<?> sendFuture;
 
-
+    /**
+     * Constructs an AbstractOutboxPoller with the provided TransactionalOutbox.
+     * This class is responsible for polling the outbox for domain events and sending them using the provided TransactionalOutbox.
+     *
+     * @param transactionalOutbox the TransactionalOutbox to use for storing and sending domain events
+     */
     public AbstractOutboxPoller(TransactionalOutbox transactionalOutbox) {
         this.transactionalOutbox = Objects.requireNonNull(transactionalOutbox, "The OutboxSender need a non-null outbox!");
         this.senderExecutorService = Executors.newScheduledThreadPool(1);

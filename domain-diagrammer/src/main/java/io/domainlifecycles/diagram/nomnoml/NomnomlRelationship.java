@@ -28,8 +28,6 @@
 package io.domainlifecycles.diagram.nomnoml;
 
 import io.domainlifecycles.diagram.DiagramElement;
-import lombok.Builder;
-import lombok.Getter;
 
 import java.util.Objects;
 
@@ -39,7 +37,6 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
-@Getter
 public class NomnomlRelationship implements DiagramElement {
     private final String fromName;
     private final String fromStyleClassifier;
@@ -55,16 +52,15 @@ public class NomnomlRelationship implements DiagramElement {
     /**
      * Initializes the relationship.
      *
-     * @param fromName for relationship
+     * @param fromName            for relationship
      * @param fromStyleClassifier for relationship
-     * @param fromMultiplicity for relationship
-     * @param toName for relationship
-     * @param toStyleClassifier for relationship
-     * @param toMultiplicity for relationship
-     * @param label for relationship
-     * @param relationshiptype for relationship
+     * @param fromMultiplicity    for relationship
+     * @param toName              for relationship
+     * @param toStyleClassifier   for relationship
+     * @param toMultiplicity      for relationship
+     * @param label               for relationship
+     * @param relationshiptype    for relationship
      */
-    @Builder
     public NomnomlRelationship(String fromName,
                                String fromStyleClassifier,
                                String fromMultiplicity,
@@ -83,6 +79,10 @@ public class NomnomlRelationship implements DiagramElement {
         this.relationshiptype = Objects.requireNonNull(relationshiptype);
     }
 
+    public static NomnomlRelationshipBuilder builder() {
+        return new NomnomlRelationshipBuilder();
+    }
+
     /**
      * Returns the Nomnoml text representation of a relationship between classes.
      */
@@ -90,50 +90,86 @@ public class NomnomlRelationship implements DiagramElement {
     public String getDiagramText() {
         StringBuilder builder = new StringBuilder();
         builder.append("[");
-        if(!transposed){
+        if (!transposed) {
             builder.append(fromStyleClassifier);
             builder.append(fromName);
-        }else{
+        } else {
             builder.append(toStyleClassifier);
             builder.append(toName);
         }
         builder.append("] ");
-        if(!transposed) {
+        if (!transposed) {
             builder.append(fromMultiplicity);
-        }else{
+        } else {
             builder.append(toMultiplicity);
         }
         builder.append(" ");
-        if(!transposed) {
+        if (!transposed) {
             builder.append(relationshiptype.lineStart);
-        }else{
+        } else {
             builder.append(relationshiptype.transposedLineStart);
         }
-        if(!"".equals(label)){
+        if (!"".equals(label)) {
             builder.append("[<label> ");
             builder.append(label);
             builder.append("] ");
         }
-        if(!transposed) {
+        if (!transposed) {
             builder.append(relationshiptype.lineEnd);
             builder.append(toMultiplicity);
-        }else{
+        } else {
             builder.append(relationshiptype.transposedLineEnd);
             builder.append(fromMultiplicity);
         }
 
         builder.append(" ");
         builder.append("[");
-        if(!transposed) {
+        if (!transposed) {
             builder.append(toStyleClassifier);
             builder.append(toName);
-        }else{
+        } else {
             builder.append(fromStyleClassifier);
             builder.append(fromName);
         }
         builder.append("]");
         builder.append(System.lineSeparator());
         return builder.toString();
+    }
+
+    public String getFromName() {
+        return this.fromName;
+    }
+
+    public String getFromStyleClassifier() {
+        return this.fromStyleClassifier;
+    }
+
+    public String getFromMultiplicity() {
+        return this.fromMultiplicity;
+    }
+
+    public String getToName() {
+        return this.toName;
+    }
+
+    public String getToStyleClassifier() {
+        return this.toStyleClassifier;
+    }
+
+    public String getToMultiplicity() {
+        return this.toMultiplicity;
+    }
+
+    public String getLabel() {
+        return this.label;
+    }
+
+    public RelationshipType getRelationshiptype() {
+        return this.relationshiptype;
+    }
+
+    public boolean isTransposed() {
+        return this.transposed;
     }
 
 
@@ -186,7 +222,69 @@ public class NomnomlRelationship implements DiagramElement {
         }
     }
 
-    public void transpose(){
+    public void transpose() {
         this.transposed = !transposed;
+    }
+
+    public static class NomnomlRelationshipBuilder {
+        private String fromName;
+        private String fromStyleClassifier;
+        private String fromMultiplicity;
+        private String toName;
+        private String toStyleClassifier;
+        private String toMultiplicity;
+        private String label;
+        private RelationshipType relationshiptype;
+
+        NomnomlRelationshipBuilder() {
+        }
+
+        public NomnomlRelationshipBuilder fromName(String fromName) {
+            this.fromName = fromName;
+            return this;
+        }
+
+        public NomnomlRelationshipBuilder fromStyleClassifier(String fromStyleClassifier) {
+            this.fromStyleClassifier = fromStyleClassifier;
+            return this;
+        }
+
+        public NomnomlRelationshipBuilder fromMultiplicity(String fromMultiplicity) {
+            this.fromMultiplicity = fromMultiplicity;
+            return this;
+        }
+
+        public NomnomlRelationshipBuilder toName(String toName) {
+            this.toName = toName;
+            return this;
+        }
+
+        public NomnomlRelationshipBuilder toStyleClassifier(String toStyleClassifier) {
+            this.toStyleClassifier = toStyleClassifier;
+            return this;
+        }
+
+        public NomnomlRelationshipBuilder toMultiplicity(String toMultiplicity) {
+            this.toMultiplicity = toMultiplicity;
+            return this;
+        }
+
+        public NomnomlRelationshipBuilder label(String label) {
+            this.label = label;
+            return this;
+        }
+
+        public NomnomlRelationshipBuilder relationshiptype(RelationshipType relationshiptype) {
+            this.relationshiptype = relationshiptype;
+            return this;
+        }
+
+        public NomnomlRelationship build() {
+            return new NomnomlRelationship(this.fromName, this.fromStyleClassifier, this.fromMultiplicity, this.toName, this.toStyleClassifier, this.toMultiplicity, this.label, this.relationshiptype);
+        }
+
+        public String toString() {
+            return "NomnomlRelationship.NomnomlRelationshipBuilder(fromName=" + this.fromName + ", fromStyleClassifier=" + this.fromStyleClassifier + ", fromMultiplicity=" + this.fromMultiplicity + ", toName=" + this.toName + ", toStyleClassifier=" + this.toStyleClassifier + ", toMultiplicity=" + this.toMultiplicity + ", label=" + this.label + ", relationshiptype=" + this.relationshiptype + ")";
+        }
     }
 }

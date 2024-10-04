@@ -136,6 +136,11 @@ public class InMemoryChannelFactory implements ChannelFactory {
         return new InMemoryDomainEventPublisher(domainEventConsumer);
     }
 
+    /**
+     * Returns a new instance of ReflectiveHandlerExecutor to be used as the HandlerExecutor.
+     *
+     * @return a new instance of ReflectiveHandlerExecutor
+     */
     protected HandlerExecutor useHandlerExecutor(){
         return new ReflectiveHandlerExecutor();
     }

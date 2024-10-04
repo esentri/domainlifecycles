@@ -40,6 +40,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import sampleshop.core.domain.customer.Customer;
 import sampleshop.core.domain.customer.FraudDetected;
 import sampleshop.core.domain.order.Order;
@@ -75,6 +77,9 @@ public class DefaultTests {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private PlatformTransactionManager platformTransactionManager;
+
     @Test
     public void applicationStarted(){
     }
@@ -92,8 +97,10 @@ public class DefaultTests {
      */
     @Test
     public void fraudDetected(){
+        var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         var fraud = new FraudDetected(new Customer.CustomerId(1L));
         DomainEvents.publish(fraud);
+        platformTransactionManager.commit(status);
 
         var customer = customerRepository.findById(new Customer.CustomerId(1L));
         assertThat(customer).isPresent();

@@ -39,7 +39,7 @@ tasks.register('runApp', JavaExec) {
 // ----------------------------------------------------------
 
 dependencies {
-    implementation platform('org.springframework.boot:spring-boot-dependencies:3.1.5')
+    implementation platform('org.springframework.boot:spring-boot-dependencies:3.3.4')
     implementation project(":spring-boot-3-jooq-complete")
     implementation "com.h2database:h2:${dbVersion}"
     implementation "jakarta.validation:jakarta.validation-api:${jakartaValidationApiVersion}"

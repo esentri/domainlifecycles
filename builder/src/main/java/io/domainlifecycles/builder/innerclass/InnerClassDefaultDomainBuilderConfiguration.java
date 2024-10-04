@@ -39,7 +39,7 @@ import java.util.function.Function;
 public final class InnerClassDefaultDomainBuilderConfiguration implements DomainBuilderConfiguration {
 
     private final Function<String, String> setterFunc = k -> "set" + k.substring(0, 1).toUpperCase() + k.substring(1);
-    protected boolean tryFallbacks = true;
+    boolean tryFallbacks = true;
 
     /**
      * Creates new default inner builder configuration.
@@ -75,11 +75,11 @@ public final class InnerClassDefaultDomainBuilderConfiguration implements Domain
         return setterFunc.apply(propertyName);
     }
 
-    protected String mutatorFallbackFromPropertyName(String propertyName){
+    String mutatorFallbackFromPropertyName(String propertyName){
         return propertyName;
     }
 
-    protected String defaultSetterFallbackFromPropertyName(String propertyName){
+    String defaultSetterFallbackFromPropertyName(String propertyName){
         return propertyName;
     }
 

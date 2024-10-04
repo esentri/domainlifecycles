@@ -45,17 +45,29 @@ final class BeforeCommitSynchronization implements Synchronization {
     private final JtaDomainEventSender sender;
     private final DomainEvent publishedDomainEvent;
 
+    /**
+     * Constructor for creating a BeforeCommitSynchronization object.
+     *
+     * @param sender the JtaDomainEventSender responsible for sending domain events
+     * @param publishedDomainEvent the DomainEvent to be published before transaction commit
+     */
     public BeforeCommitSynchronization(JtaDomainEventSender sender, DomainEvent publishedDomainEvent) {
         this.sender = Objects.requireNonNull(sender, "A JtaDomainEventSender is required!");
         this.publishedDomainEvent = Objects.requireNonNull(publishedDomainEvent, "A DomainEvent is required!");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void beforeCompletion() {
         log.debug("Publisher transaction about to complete. Passing DomainEvent {} to DomainEventConsumer!", publishedDomainEvent);
         sender.send(publishedDomainEvent);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void afterCompletion(int i) {
 

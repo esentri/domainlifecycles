@@ -47,6 +47,11 @@ public class SimpleExecutionContextProcessor implements ExecutionContextProcesso
 
     protected final HandlerExecutor handlerExecutor;
 
+    /**
+     * Constructs a SimpleExecutionContextProcessor with the provided HandlerExecutor.
+     *
+     * @param handlerExecutor The HandlerExecutor to be used for processing execution contexts
+     */
     public SimpleExecutionContextProcessor(HandlerExecutor handlerExecutor) {
         this.handlerExecutor = Objects.requireNonNull(handlerExecutor, "A HandlerExecutor is required!");
     }

@@ -60,6 +60,11 @@ public final class MirrorBasedExecutionContextDetector implements ExecutionConte
 
     private final ServiceProvider serviceProvider;
 
+    /**
+     * Initializes a new instance of MirrorBasedExecutionContextDetector with the provided ServiceProvider.
+     *
+     * @param serviceProvider The ServiceProvider instance to be used for detecting DomainEvent execution contexts.
+     */
     public MirrorBasedExecutionContextDetector(ServiceProvider serviceProvider) {
         this.serviceProvider = Objects.requireNonNull(serviceProvider, "A ServiceProvider is needed to detect DomainEvent execution contexts!");
     }
@@ -202,7 +207,6 @@ public final class MirrorBasedExecutionContextDetector implements ExecutionConte
         }
     }
 
-    @SuppressWarnings("unchecked")
     private List<AggregateExecutionContext<Identity<?>, AggregateRoot<Identity<?>>>> detectAggregateRootExecutionContexts(AggregateRootMirror arm, DomainEventMirror dem, DomainEvent de){
         log.debug("Detecting ExecutionContext for DomainEvent {} on AggregateRoot {}", de, arm.getTypeName());
         var rm = Domain.repositoryMirrorFor(arm);

@@ -31,7 +31,8 @@ import io.domainlifecycles.domain.types.DomainEvent;
 
 /**
  * The {@code GruelboxDomainEventDispatcher} interface defines a contract for classes
- * that dispatch domain events to receiving domain event handlers for processing.
+ * that dispatch domain events to receiving domain event handlers for processing, after they were polled
+ * from the outbox table.
  *
  * <p>A domain event dispatcher is responsible for routing domain events to the appropriate
  * receiving domain event handler based on the type of the event.

@@ -54,11 +54,22 @@ public class AsyncExecutionContextProcessor extends SimpleExecutionContextProces
     private int threadPoolSize = 10;
     private final ExecutorService executorService;
 
+    /**
+     * Initializes a new instance of AsyncExecutionContextProcessor.
+     *
+     * @param handlerExecutor the HandlerExecutor to be used for processing execution contexts
+     */
     public AsyncExecutionContextProcessor(HandlerExecutor handlerExecutor) {
         super(handlerExecutor);
         executorService = Executors.newFixedThreadPool(threadPoolSize);
     }
 
+    /**
+     * Initializes a new instance of AsyncExecutionContextProcessor.
+     *
+     * @param handlerExecutor the HandlerExecutor to be used for processing execution contexts
+     * @param threadPoolSize the size of the fixed thread pool to be used for executing handlers asynchronously
+     */
     public AsyncExecutionContextProcessor(HandlerExecutor handlerExecutor, int threadPoolSize) {
         super(handlerExecutor);
         this.threadPoolSize = threadPoolSize;

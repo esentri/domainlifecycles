@@ -36,6 +36,12 @@ import io.domainlifecycles.events.consume.execution.detector.ExecutionContext;
  */
 public interface HandlerExecutor {
 
+    /**
+     * Executes a handler within the provided execution context.
+     *
+     * @param executionContext the execution context for the handler containing necessary information
+     * @return true if the execution was successful, false otherwise
+     */
     boolean execute(ExecutionContext executionContext);
 
     /**

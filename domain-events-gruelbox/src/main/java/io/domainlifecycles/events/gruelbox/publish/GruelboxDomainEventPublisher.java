@@ -40,7 +40,8 @@ import java.util.Objects;
 
 /**
  * The GruelboxDomainEventPublisher class is responsible for publishing domain events to a transaction outbox.
- * The outbox schedules calls on a GruelboxDomainEventDispatcher, that dispatches the events lateron when the outbox entries are processed.
+ * The outbox schedules calls on a GruelboxDomainEventDispatcher, that dispatches the events later on when the
+ * outbox entries are processed (the outbox is flushed).
  *
  * @author Mario Herb
  */
@@ -49,8 +50,6 @@ public final class GruelboxDomainEventPublisher implements DomainEventPublisher 
     private static final Logger log = LoggerFactory.getLogger(GruelboxDomainEventPublisher.class);
     private final TransactionOutbox outbox;
     private final PublishingSchedulerConfiguration publishingSchedulerConfiguration;
-
-
 
     /**
      * The {@code GruelboxDomainEventPublisher} class is responsible for publishing domain events to a transaction outbox.
@@ -82,6 +81,11 @@ public final class GruelboxDomainEventPublisher implements DomainEventPublisher 
             .dispatch(domainEvent);
     }
 
+    /**
+     * Retrieves the configuration settings for the publishing scheduler.
+     *
+     * @return the publishing scheduler configuration
+     */
     public PublishingSchedulerConfiguration getPublishingSchedulerConfiguration() {
         return publishingSchedulerConfiguration;
     }

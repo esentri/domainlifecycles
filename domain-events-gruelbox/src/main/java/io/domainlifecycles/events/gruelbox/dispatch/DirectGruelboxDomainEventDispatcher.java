@@ -34,7 +34,8 @@ import java.util.Objects;
 
 /**
  * The DirectGruelboxDomainEventDispatcher class is an implementation of the GruelboxDomainEventDispatcher interface.
- * It dispatches a domain event to a receiving domain event handler for processing.
+ * It dispatches a domain event to a receiving domain event handler for processing, after the event was polled
+ * from the outbox table.
  *
  * In other cases the outbox might be used as a proxy for a message queue. Then the dispatcher would
  * pass the domain events to the queue.

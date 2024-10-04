@@ -54,6 +54,12 @@ public class DirectOutboxPoller extends AbstractOutboxPoller {
 
     private final DomainEventConsumer domainEventConsumer;
 
+    /**
+     * Constructs a DirectOutboxPoller with the provided transactional outbox and domain event consumer.
+     *
+     * @param transactionalOutbox the transactional outbox to use for storing and sending domain events
+     * @param domainEventConsumer the domain event consumer to handle received domain events
+     */
     public DirectOutboxPoller(TransactionalOutbox transactionalOutbox, DomainEventConsumer domainEventConsumer) {
         super(transactionalOutbox);
         this.domainEventConsumer = Objects.requireNonNull(domainEventConsumer, "A DomainEventConsumer is required!");

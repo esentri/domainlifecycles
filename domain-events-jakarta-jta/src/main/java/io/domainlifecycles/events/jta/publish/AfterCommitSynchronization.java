@@ -46,17 +46,28 @@ final class AfterCommitSynchronization implements Synchronization {
     private final JtaDomainEventSender sender;
     private final DomainEvent publishedDomainEvent;
 
+    /**
+     * Initializes a new AfterCommitSynchronization instance with the provided JtaDomainEventSender and DomainEvent.
+     *
+     * @param sender The JtaDomainEventSender responsible for sending domain events
+     * @param publishedDomainEvent The DomainEvent to be published after commit
+     */
     public AfterCommitSynchronization(JtaDomainEventSender sender, DomainEvent publishedDomainEvent) {
         this.sender = Objects.requireNonNull(sender, "A JtaDomainEventSender is required!");
         this.publishedDomainEvent = Objects.requireNonNull(publishedDomainEvent, "A DomainEvent is required!");
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void beforeCompletion() {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void afterCompletion(int i) {
         if (Status.STATUS_COMMITTED == i) {

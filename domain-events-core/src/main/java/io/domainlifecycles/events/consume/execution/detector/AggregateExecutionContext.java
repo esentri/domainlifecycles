@@ -41,11 +41,22 @@ import io.domainlifecycles.domain.types.Repository;
  * @author Mario Herb
  */
 public record AggregateExecutionContext<I extends Identity<?>, A extends AggregateRoot<I>>(Repository<I,A> aggregateRepository, String aggregateHandlerMethodName, AggregateDomainEvent<I,A> domainEvent) implements ExecutionContext {
+
+    /**
+     * Returns the aggregate repository instance associated with the execution context of a domain event handler.
+     *
+     * @return the aggregate repository instance
+     */
     @Override
     public Object handler() {
         return aggregateRepository;
     }
 
+    /**
+     * Returns the handler method name associated with this execution context.
+     *
+     * @return the handler method name
+     */
     @Override
     public String handlerMethodName(){
         return aggregateHandlerMethodName;

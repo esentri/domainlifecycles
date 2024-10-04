@@ -45,7 +45,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The SpringTransactionalHandlerExecutor class is an implementation of the TransactionalHandlerExecutor interface.
- * It performs the execution of handlers in a transactional manner using the Spring Framework's PlatformTransactionManager.
+ * It performs the execution of handlers by wrapping them a new independent transaction
  *
  * @author Mario Herb
  */

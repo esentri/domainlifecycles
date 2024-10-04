@@ -46,9 +46,4 @@ public class AnOutboundService implements OutboundService {
         received.add(domainEvent);
     }
 
-    @ListensTo(domainEventType = PassThroughDomainEvent.class)
-    public void onDomainEvent(PassThroughDomainEvent domainEvent){
-        log.debug("PassThroughDomainEvent received in AnOutboundService! Message = " + domainEvent.message());
-        received.add(domainEvent);
-    }
 }

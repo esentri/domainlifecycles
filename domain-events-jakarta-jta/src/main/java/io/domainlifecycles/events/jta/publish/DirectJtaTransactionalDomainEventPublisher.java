@@ -37,12 +37,11 @@ import java.util.Objects;
 /**
  * DirectJtaTransactionalDomainEventPublisher is a class that implements the DomainEventPublisher interface.
  * It is responsible for publishing domain events using an underlying event dispatcher and handling transactions.
- * If a transaction is active and the domain event is not a pass-through event, it registers a synchronization with the transaction.
+ * It registers a synchronization with the transaction.
  * The synchronization will dispatch the domain event after or before the transaction is successfully committed (depending on <code>afterCommit</code>).
  *
- * If there is no active transaction or the domain event is a pass-through event, the domain event is immediately dispatched.
- * <br>
  * This implementation provides only at-most-once delivery guarantees in case of <code>afterCommit</code> being <code>true</code>.
+ * Events might still be lost.
  *
  * In case of <code>afterCommit</code> being <code>false</code>, "ghost events" might occur.
  * The transaction is rolled back, but the corresponding events are dispatched.
@@ -54,11 +53,16 @@ import java.util.Objects;
  */
 public final class DirectJtaTransactionalDomainEventPublisher extends AbstractJtaTransactionalDomainEventPublisher {
 
-
     private final TransactionManager transactionManager;
     private final boolean afterCommit;
 
-
+    /**
+     * Initializes a new DirectJtaTransactionalDomainEventPublisher with the provided parameters.
+     *
+     * @param domainEventConsumer The DomainEventConsumer responsible for handling domain events
+     * @param transactionManager The TransactionManager for managing transactions
+     * @param afterCommit A boolean flag indicating if event dispatch should occur after transaction commit
+     */
     public DirectJtaTransactionalDomainEventPublisher(
         DomainEventConsumer domainEventConsumer,
         TransactionManager transactionManager,
@@ -73,11 +77,15 @@ public final class DirectJtaTransactionalDomainEventPublisher extends AbstractJt
         this.afterCommit = afterCommit;
     }
 
+    /**
+     * This method is not intended to be called in this implementation.
+     *
+     * @param domainEvent the DomainEvent to be sent
+     */
     @Override
     protected void send(DomainEvent domainEvent) {
         throw new IllegalStateException("Should not be called in this implementation!");
     }
-
 
     private static class DirectSender implements JtaDomainEventSender{
 
@@ -87,6 +95,9 @@ public final class DirectJtaTransactionalDomainEventPublisher extends AbstractJt
             this.domainEventConsumer = domainEventConsumer;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void send(DomainEvent domainEvent) {
             this.domainEventConsumer.consume(domainEvent);

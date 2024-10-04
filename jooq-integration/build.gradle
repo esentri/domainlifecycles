@@ -27,14 +27,14 @@ configurations {
 
 dependencies {
     compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
-    compileOnly "org.jooq:jooq:${jooqVersion}"
+    api "org.jooq:jooq:${jooqVersion}"
     implementation "io.github.classgraph:classgraph:${classGraphVersion}"
-    implementation project(":types")
+    api project(":types")
     implementation project(":reflect")
     implementation project(":access")
-    implementation project(":builder")
+    api project(":builder")
     implementation project(":mirror")
-    implementation project(":persistence")
+    api project(":persistence")
 
     testImplementation project(":test-shared-impl")
     testImplementation project(":type-utils")

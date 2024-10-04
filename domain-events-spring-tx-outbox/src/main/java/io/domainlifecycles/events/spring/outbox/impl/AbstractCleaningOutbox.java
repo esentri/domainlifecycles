@@ -54,6 +54,11 @@ public abstract class AbstractCleaningOutbox implements TransactionalOutbox {
     private boolean doCleanUp = true;
 
     private boolean doDeliveryCheck = true;
+
+    /**
+     * Constructor for AbstractCleaningOutbox class.
+     * Initializes the clean up schedule and delivery check schedule by calling resetCleanUpSchedule() and resetDeliveryCheckSchedule() methods.
+     */
     public AbstractCleaningOutbox() {
         resetCleanUpSchedule();
         resetDeliveryCheckSchedule();
@@ -177,26 +182,59 @@ public abstract class AbstractCleaningOutbox implements TransactionalOutbox {
         resetCleanUpSchedule();
     }
 
+    /**
+     * Retrieves the clean up period in days.
+     *
+     * @return the clean up period in days
+     */
     public int getCleanUpPeriodDays() {
         return cleanUpPeriodDays;
     }
 
+    /**
+     * Retrieves the delivery check period in seconds.
+     *
+     * @return the delivery check period in seconds
+     */
     public int getDeliveryCheckPeriodSeconds() {
         return deliveryCheckPeriodSeconds;
     }
 
+    /**
+     * Retrieves the batch delivery timeout in seconds.
+     *
+     * This method returns the time period in seconds after which a batch of DomainEvents being processed should be considered failed.
+     * If a batch takes longer than the specified timeout to process, it will be marked as failed.
+     *
+     * @return the batch delivery timeout in seconds
+     */
     public int getBatchDeliveryTimeoutSeconds() {
         return batchDeliveryTimeoutSeconds;
     }
 
+    /**
+     * Retrieves the clean up age in days for removing older already processed DomainEvents from the transactional outbox.
+     *
+     * @return the clean up age in days
+     */
     public int getCleanUpAgeDays() {
         return cleanUpAgeDays;
     }
 
+    /**
+     * Retrieves the flag indicating whether clean up should be performed on older processed DomainEvents in the transactional outbox.
+     *
+     * @return true if clean up should be performed, false otherwise
+     */
     public boolean isDoCleanUp() {
         return doCleanUp;
     }
 
+    /**
+     * Retrieves the flag indicating whether delivery check should be performed on batches of DomainEvents.
+     *
+     * @return true if delivery check should be performed, false otherwise
+     */
     public boolean isDoDeliveryCheck() {
         return doDeliveryCheck;
     }

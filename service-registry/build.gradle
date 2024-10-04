@@ -9,7 +9,7 @@ plugins {
 
 dependencies {
 
-    implementation project(":types")
+    api project(":types")
     implementation project(":mirror")
     implementation project(":reflect")
     

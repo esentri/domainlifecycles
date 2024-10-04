@@ -27,7 +27,6 @@
 
 package io.domainlifecycles.diagram.domain.mapper;
 
-import lombok.Getter;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
@@ -56,31 +55,22 @@ public class FilteredDomainClasses {
 
     private final BoundedContextMirror boundedContextMirror;
 
-    @Getter
     private final List<ApplicationServiceMirror> applicationServices;
 
-    @Getter
     private final List<DomainServiceMirror> domainServices;
 
-    @Getter
     private final List<RepositoryMirror> repositories;
 
-    @Getter
     private final List<DomainCommandMirror> domainCommands;
 
-    @Getter
     private final List<DomainEventMirror> domainEvents;
 
-    @Getter
     private final List<AggregateRootMirror> aggregateRoots;
 
-    @Getter
     private final List<ReadModelMirror> readModels;
 
-    @Getter
     private final List<QueryClientMirror> queryClients;
 
-    @Getter
     private final List<OutboundServiceMirror> outboundServices;
 
     private final TransitiveDomainTypeFilter transitiveDomainTypeFilter;
@@ -197,6 +187,42 @@ public class FilteredDomainClasses {
             .filter(transitiveDomainTypeFilter::filter)
             .filter(r -> !domainDiagramConfig.getClassesBlacklist().contains(r.getTypeName()))
             .toList();
+    }
+
+    public List<ApplicationServiceMirror> getApplicationServices() {
+        return applicationServices;
+    }
+
+    public List<DomainServiceMirror> getDomainServices() {
+        return domainServices;
+    }
+
+    public List<RepositoryMirror> getRepositories() {
+        return repositories;
+    }
+
+    public List<DomainCommandMirror> getDomainCommands() {
+        return domainCommands;
+    }
+
+    public List<DomainEventMirror> getDomainEvents() {
+        return domainEvents;
+    }
+
+    public List<AggregateRootMirror> getAggregateRoots() {
+        return aggregateRoots;
+    }
+
+    public List<ReadModelMirror> getReadModels() {
+        return readModels;
+    }
+
+    public List<QueryClientMirror> getQueryClients() {
+        return queryClients;
+    }
+
+    public List<OutboundServiceMirror> getOutboundServices() {
+        return outboundServices;
     }
 }
 

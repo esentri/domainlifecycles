@@ -53,6 +53,12 @@ public final class SpringOutboxDomainEventPublisher implements DomainEventPublis
     private final TransactionalOutbox transactionalOutbox;
     private final PlatformTransactionManager transactionManager;
 
+    /**
+     * Constructs a SpringOutboxDomainEventPublisher with the provided TransactionalOutbox and PlatformTransactionManager.
+     *
+     * @param transactionalOutbox the TransactionalOutbox implementation to be used for domain event handling
+     * @param transactionManager the PlatformTransactionManager implementation to manage transactions
+     */
     public SpringOutboxDomainEventPublisher(TransactionalOutbox transactionalOutbox, PlatformTransactionManager transactionManager) {
         this.transactionalOutbox = Objects.requireNonNull(transactionalOutbox, "SpringOutboxDomainEventPublisher needs a non null TransactionalOutbox!");
         this.transactionManager = Objects.requireNonNull(transactionManager, "SpringOutboxDomainEventPublisher needs a non null PlatformTransactionManager!");

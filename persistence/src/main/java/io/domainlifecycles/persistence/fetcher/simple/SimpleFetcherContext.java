@@ -88,7 +88,6 @@ public class SimpleFetcherContext<BASE_RECORD_TYPE> implements FetcherContext<BA
      * @param p      the domain object
      * @param record the record
      */
-    @SuppressWarnings("unchecked")
     public void assignRecordToDomainObject(DomainObject p, BASE_RECORD_TYPE record) {
         if (p == null) return;
         fetchedRecordMap.put(p, record);

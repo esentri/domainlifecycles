@@ -25,22 +25,35 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.events.consume;
+package io.domainlifecycles.events.activemq.gruelboxpublish;
 
-import io.domainlifecycles.domain.types.DomainEvent;
-import io.domainlifecycles.events.consume.execution.processor.ExecutionResult;
+import com.gruelbox.transactionoutbox.TransactionOutboxEntry;
+import com.gruelbox.transactionoutbox.TransactionOutboxListener;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collections;
-import java.util.List;
-/**
- * The DummyDomainEventConsumer has no function and can be used as a placeholder in situations where
- * DomainEventConsumer is not needed.
- *
- * @author Mario Herb
- */
-public class DummyDomainEventConsumer implements DomainEventConsumer {
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+@Slf4j
+public class MyTransactionOutboxListener implements TransactionOutboxListener {
+
+    public Queue<TransactionOutboxEntry> successfulEntries = new ConcurrentLinkedQueue<>();
+    public Queue<TransactionOutboxEntry> blockedEntries = new ConcurrentLinkedQueue<>();
+
     @Override
-    public List<ExecutionResult> consume(DomainEvent domainEvent) {
-        return Collections.emptyList();
+    public void success(TransactionOutboxEntry entry) {
+        log.info("Entry '{}' processed successfully!", entry);
+        successfulEntries.add(entry);
+    }
+
+    @Override
+    public void failure(TransactionOutboxEntry entry, Throwable cause) {
+        log.error("Entry '{}' failed!", entry, cause);
+    }
+
+    @Override
+    public void blocked(TransactionOutboxEntry entry, Throwable cause) {
+        log.error("Entry '{}' blocked!", entry, cause);
+        blockedEntries.add(entry);
     }
 }

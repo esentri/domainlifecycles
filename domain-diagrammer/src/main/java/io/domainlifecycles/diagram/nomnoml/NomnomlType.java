@@ -28,9 +28,6 @@
 package io.domainlifecycles.diagram.nomnoml;
 
 import io.domainlifecycles.diagram.DiagramElement;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 
 import java.util.List;
 import java.util.Objects;
@@ -42,9 +39,6 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-@Builder
-@Getter
-@EqualsAndHashCode
 public class NomnomlType implements DiagramElement {
 
     private final String typeName;
@@ -68,13 +62,17 @@ public class NomnomlType implements DiagramElement {
         this.containerTypeAssertions = Objects.requireNonNull(containerTypeAssertions);
     }
 
+    public static NomnomlTypeBuilder builder() {
+        return new NomnomlTypeBuilder();
+    }
+
     /**
      * Returns the Nomnoml text representation of a type used in a class.
      */
     @Override
     public String getDiagramText() {
         StringBuilder builder = new StringBuilder();
-        if(containerTypeName.isPresent()){
+        if (containerTypeName.isPresent()) {
             builder.append(containerTypeName.get());
             builder.append("<");
             builder.append(typeName
@@ -84,7 +82,7 @@ public class NomnomlType implements DiagramElement {
             addTypeAssertions(builder);
             builder.append(">");
             addContainerTypeAssertions(builder);
-        }else{
+        } else {
             builder.append(typeName
                 .replaceAll("\\[", "\\\\[")
                 .replaceAll("\\]", "\\\\]")
@@ -107,4 +105,98 @@ public class NomnomlType implements DiagramElement {
     }
 
 
+    public String getTypeName() {
+        return this.typeName;
+    }
+
+    public List<String> getTypeAssertions() {
+        return this.typeAssertions;
+    }
+
+    public Optional<String> getContainerTypeName() {
+        return this.containerTypeName;
+    }
+
+    public List<String> getContainerTypeAssertions() {
+        return this.containerTypeAssertions;
+    }
+
+    public boolean equals(final Object o) {
+        if (o == this) return true;
+        if (!(o instanceof NomnomlType)) return false;
+        final NomnomlType other = (NomnomlType) o;
+        if (!other.canEqual((Object) this)) return false;
+        final Object this$typeName = this.getTypeName();
+        final Object other$typeName = other.getTypeName();
+        if (this$typeName == null ? other$typeName != null : !this$typeName.equals(other$typeName)) return false;
+        final Object this$typeAssertions = this.getTypeAssertions();
+        final Object other$typeAssertions = other.getTypeAssertions();
+        if (this$typeAssertions == null ? other$typeAssertions != null : !this$typeAssertions.equals(other$typeAssertions))
+            return false;
+        final Object this$containerTypeName = this.getContainerTypeName();
+        final Object other$containerTypeName = other.getContainerTypeName();
+        if (this$containerTypeName == null ? other$containerTypeName != null : !this$containerTypeName.equals(other$containerTypeName))
+            return false;
+        final Object this$containerTypeAssertions = this.getContainerTypeAssertions();
+        final Object other$containerTypeAssertions = other.getContainerTypeAssertions();
+        if (this$containerTypeAssertions == null ? other$containerTypeAssertions != null : !this$containerTypeAssertions.equals(other$containerTypeAssertions))
+            return false;
+        return true;
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof NomnomlType;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $typeName = this.getTypeName();
+        result = result * PRIME + ($typeName == null ? 43 : $typeName.hashCode());
+        final Object $typeAssertions = this.getTypeAssertions();
+        result = result * PRIME + ($typeAssertions == null ? 43 : $typeAssertions.hashCode());
+        final Object $containerTypeName = this.getContainerTypeName();
+        result = result * PRIME + ($containerTypeName == null ? 43 : $containerTypeName.hashCode());
+        final Object $containerTypeAssertions = this.getContainerTypeAssertions();
+        result = result * PRIME + ($containerTypeAssertions == null ? 43 : $containerTypeAssertions.hashCode());
+        return result;
+    }
+
+    public static class NomnomlTypeBuilder {
+        private String typeName;
+        private List<String> typeAssertions;
+        private Optional<String> containerTypeName;
+        private List<String> containerTypeAssertions;
+
+        NomnomlTypeBuilder() {
+        }
+
+        public NomnomlTypeBuilder typeName(String typeName) {
+            this.typeName = typeName;
+            return this;
+        }
+
+        public NomnomlTypeBuilder typeAssertions(List<String> typeAssertions) {
+            this.typeAssertions = typeAssertions;
+            return this;
+        }
+
+        public NomnomlTypeBuilder containerTypeName(Optional<String> containerTypeName) {
+            this.containerTypeName = containerTypeName;
+            return this;
+        }
+
+        public NomnomlTypeBuilder containerTypeAssertions(List<String> containerTypeAssertions) {
+            this.containerTypeAssertions = containerTypeAssertions;
+            return this;
+        }
+
+        public NomnomlType build() {
+            return new NomnomlType(this.typeName, this.typeAssertions, this.containerTypeName, this.containerTypeAssertions);
+        }
+
+        public String toString() {
+            return "NomnomlType.NomnomlTypeBuilder(typeName=" + this.typeName + ", typeAssertions=" + this.typeAssertions + ", containerTypeName=" + this.containerTypeName + ", containerTypeAssertions=" + this.containerTypeAssertions + ")";
+        }
+    }
 }

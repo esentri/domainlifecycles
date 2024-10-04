@@ -49,7 +49,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * JtaTransactionalHandlerExecutor is a concrete implementation of the TransactionalHandlerExecutor interface.
- * It executes domain event listeners in a transactional manner using JTA (Java Transaction API).
+ * It executes domain event listeners wrapped in an independent transaction using JTA (Java Transaction API).
  *
  * @author Mario Herb
  */
@@ -60,6 +60,11 @@ public final class JtaTransactionalHandlerExecutor extends ReflectiveHandlerExec
     private final Map<ExecutionContext, Transaction> managedTransactions;
     private final Map<ExecutionContext, Transaction> suspendedTransactions;
 
+    /**
+     * Initializes a new JtaTransactionalHandlerExecutor with the provided TransactionManager.
+     *
+     * @param transactionManager The TransactionManager to be used for handling transactions.
+     */
     public JtaTransactionalHandlerExecutor(TransactionManager transactionManager) {
         this.transactionManager = Objects.requireNonNull(transactionManager, "A TransactionManager is required!");
         managedTransactions = new ConcurrentHashMap<>();

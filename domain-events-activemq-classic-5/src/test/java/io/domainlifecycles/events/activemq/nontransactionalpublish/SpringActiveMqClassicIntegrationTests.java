@@ -27,7 +27,6 @@
 
 package io.domainlifecycles.events.activemq.nontransactionalpublish;
 
-import io.domainlifecycles.events.activemq.api.ActiveMqDomainEventsConfiguration;
 import io.domainlifecycles.events.activemq.domain.ADomainEvent;
 import io.domainlifecycles.events.activemq.domain.ADomainService;
 import io.domainlifecycles.events.activemq.domain.AQueryClient;
@@ -40,6 +39,7 @@ import io.domainlifecycles.events.activemq.domain.CounterDomainEvent;
 import io.domainlifecycles.events.activemq.domain.TransactionalCounterService;
 import io.domainlifecycles.events.activemq.domain.UnreceivedDomainEvent;
 import io.domainlifecycles.events.api.DomainEvents;
+import io.domainlifecycles.events.mq.api.AbstractMqProcessingChannel;
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.DeliveryMode;
@@ -55,7 +55,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-
 
 import java.util.UUID;
 
@@ -91,7 +90,7 @@ public class SpringActiveMqClassicIntegrationTests {
     private TransactionalCounterService transactionalCounterService;
 
     @Autowired
-    private ActiveMqDomainEventsConfiguration activeMqDomainEventsConfiguration;
+    private AbstractMqProcessingChannel activeMqChannel;
 
     @Test
     public void testEvents() throws JMSException {
@@ -344,7 +343,7 @@ public class SpringActiveMqClassicIntegrationTests {
     @Test
     public void testIntegrationReceivedPauseResume() {
         //when
-        activeMqDomainEventsConfiguration.getMqDomainEventConsumer().pauseHandler(
+        activeMqChannel.getConsumingConfiguration().getMqDomainEventConsumer().pauseHandler(
             ADomainService.class.getName(),
             "onDomainEvent",
             ADomainEvent.class.getName()
@@ -352,7 +351,7 @@ public class SpringActiveMqClassicIntegrationTests {
         await()
             .atMost(10, SECONDS)
             .untilAsserted(()-> {
-                assertThat(activeMqDomainEventsConfiguration.getMqDomainEventConsumer().isHandlerPaused(
+                assertThat(activeMqChannel.getConsumingConfiguration().getMqDomainEventConsumer().isHandlerPaused(
                     ADomainService.class.getName(),
                     "onDomainEvent",
                     ADomainEvent.class.getName()
@@ -376,7 +375,7 @@ public class SpringActiveMqClassicIntegrationTests {
                 }
             );
 
-        activeMqDomainEventsConfiguration.getMqDomainEventConsumer().resumeHandler(
+        activeMqChannel.getConsumingConfiguration().getMqDomainEventConsumer().resumeHandler(
             ADomainService.class.getName(),
             "onDomainEvent",
             ADomainEvent.class.getName()

@@ -8,10 +8,9 @@ plugins {
 }
 
 dependencies {
-
-    implementation project(":domain-events-core")
-    implementation project(":types")
-    implementation project(":service-registry")
+    api project(":domain-events-core")
+    api project(":types")
+    api project(":service-registry")
     compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
     compileOnly "org.springframework:spring-tx:${springTxVersion}"
 

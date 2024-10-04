@@ -1,3 +1,30 @@
+/*
+ *
+ *     ___
+ *     │   ╲                 _
+ *     │    ╲ ___ _ __  __ _(_)_ _
+ *     |     ╲ _ ╲ '  ╲╱ _` │ │ ' ╲
+ *     |_____╱___╱_│_│_╲__,_│_│_||_|
+ *     │ │  (_)╱ _│___ __ _  _ __│ |___ ___
+ *     │ │__│ │  _╱ -_) _│ ││ ╱ _│ ╱ -_|_-<
+ *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
+ *                      |__╱
+ *
+ *  Copyright 2019-2024 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package io.domainlifecycles.events.activemq.consume;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +46,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * ActiveMqDomainEventConsumer class extends AbstractMqDomainEventConsumer and
+ * implements methods for consuming domain events from ActiveMQ Classic 5 message broker.
+ * It provides functionality to connect to ActiveMQ, create consumers for specified topics,
+ * consume messages, acknowledge messages, extract message body, and close connections.
+ *
+ * @author Mario Herb
+ */
 public class ActiveMqDomainEventConsumer extends AbstractMqDomainEventConsumer<MessageConsumer, TextMessage> {
 
     private static final Logger log = LoggerFactory.getLogger(ActiveMqDomainEventConsumer.class);
@@ -33,6 +68,18 @@ public class ActiveMqDomainEventConsumer extends AbstractMqDomainEventConsumer<M
 
     private final long receiveTimeoutMs;
 
+    /**
+     * Constructor for creating an ActiveMqDomainEventConsumer.
+     *
+     * @param connectionFactory The ConnectionFactory to establish the connection.
+     * @param objectMapper The ObjectMapper for serialization and deserialization.
+     * @param executionContextDetector The ExecutionContextDetector for detecting execution contexts.
+     * @param executionContextProcessor The ExecutionContextProcessor for processing execution contexts.
+     * @param classProvider The ClassProvider for providing Class instances.
+     * @param virtualTopicConsumerPrefix The prefix for virtual topic consumer.
+     * @param virtualTopicPrefix The prefix for virtual topic.
+     * @param receiveTimeoutMs The timeout in milliseconds for receiving messages.
+     */
     public ActiveMqDomainEventConsumer(ConnectionFactory connectionFactory,
                                        ObjectMapper objectMapper,
                                        ExecutionContextDetector executionContextDetector,
@@ -49,6 +96,10 @@ public class ActiveMqDomainEventConsumer extends AbstractMqDomainEventConsumer<M
         initialize();
     }
 
+    /**
+     * Establishes a connection with the Active MQ broker using the provided ConnectionFactory.
+     * Throws a DLCEventsException with a descriptive error message if connection establishment fails.
+     */
     @Override
     protected void connect() {
         try {
@@ -64,6 +115,13 @@ public class ActiveMqDomainEventConsumer extends AbstractMqDomainEventConsumer<M
         }
     }
 
+    /**
+     * Creates a message consumer for a specific (virtual) topic and consumer name.
+     *
+     * @param topicName The name of the topic to consume messages from
+     * @param consumerName The name of the consumer for identification
+     * @return the created MessageConsumer for the specified topic and consumer name
+     */
     @Override
     protected MessageConsumer createConsumer(String topicName, String consumerName) {
         try {
@@ -89,6 +147,12 @@ public class ActiveMqDomainEventConsumer extends AbstractMqDomainEventConsumer<M
         }
     }
 
+    /**
+     * Consume a TextMessage from a given MessageConsumer with a timeout.
+     *
+     * @param messageConsumer The MessageConsumer to consume messages from.
+     * @return The consumed TextMessage, or null if consuming message fails.
+     */
     @Override
     protected TextMessage consumeMessage(MessageConsumer messageConsumer) {
         try {
@@ -100,6 +164,11 @@ public class ActiveMqDomainEventConsumer extends AbstractMqDomainEventConsumer<M
         return null;
     }
 
+    /**
+     * Acknowledges the TextMessage received from the message queue.
+     *
+     * @param textMessage The TextMessage to be acknowledged.
+     */
     @Override
     protected void acknowledge(TextMessage textMessage) {
         try {
@@ -109,6 +178,12 @@ public class ActiveMqDomainEventConsumer extends AbstractMqDomainEventConsumer<M
         }
     }
 
+    /**
+     * Retrieves the message body from a TextMessage.
+     *
+     * @param textMessage The TextMessage from which to retrieve the message body.
+     * @return The message body as a String.
+     */
     @Override
     protected String messageBody(TextMessage textMessage) {
         try {
@@ -120,6 +195,11 @@ public class ActiveMqDomainEventConsumer extends AbstractMqDomainEventConsumer<M
         }
     }
 
+    /**
+     * Closes the connection to the Active MQ broker by closing the underlying JMS connection.
+     * Logs informational messages before and after attempting to close the connection.
+     * If an exception occurs during the closing process, it is logged as an error.
+     */
     @Override
     protected void closeConnection() {
         try {
@@ -131,6 +211,11 @@ public class ActiveMqDomainEventConsumer extends AbstractMqDomainEventConsumer<M
         log.info("Closed connection");
     }
 
+    /**
+     * Closes the given MessageConsumer and its associated session.
+     *
+     * @param messageConsumer The MessageConsumer to be closed.
+     */
     @Override
     protected void closeConsumer(MessageConsumer messageConsumer) {
         try {

@@ -38,7 +38,7 @@ import java.util.List;
  * The {@code DomainEventConsumer} interface defines a contract for classes
  * that handle received domain events.
  *
- * <p>A receiving domain event handler is responsible for detecting execution contexts
+ * <p>A DomainEventConsumer is responsible for detecting execution contexts
  * for a domain event and processing them to produce execution results. The execution results
  * represent the outcome of processing the execution contexts.
  *
@@ -53,6 +53,8 @@ import java.util.List;
  * @see ExecutionContextDetector
  * @see ExecutionContextProcessor
  * @see DomainEvent
+ *
+ * @author Mario Herb
  */
 public interface DomainEventConsumer {
 

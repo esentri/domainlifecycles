@@ -64,7 +64,7 @@ import java.util.UUID;
  *
  * The fetch timeout, in seconds, can be set using the setFetchTimeoutSeconds method.
  *
- * @author MArio Herb
+ * @author Mario Herb
  */
 public class SpringJdbcOutbox extends AbstractCleaningOutbox{
 
@@ -92,6 +92,13 @@ public class SpringJdbcOutbox extends AbstractCleaningOutbox{
     private int fetchTimeoutSeconds = 60;
     private boolean strictBatchOrder = true;
 
+    /**
+     * Constructs a SpringJdbcOutbox instance with the provided dependencies.
+     *
+     * @param dataSource the DataSource to be used for database operations, must not be null
+     * @param objectMapper the ObjectMapper to serialize and deserialize messages, must not be null
+     * @param platformTransactionManager the PlatformTransactionManager for managing transactions, must not be null
+     */
     public SpringJdbcOutbox(DataSource dataSource, ObjectMapper objectMapper, PlatformTransactionManager platformTransactionManager) {
         this.jdbcTemplate = new JdbcTemplate(Objects.requireNonNull(dataSource, "A dataSource must be provided for a SpringJdbcOutbox!"));
         this.objectMapper = Objects.requireNonNull(objectMapper, "An objectMapper must be provided for a SpringJdbcOutbox!");

@@ -29,9 +29,6 @@ package io.domainlifecycles.diagram.nomnoml;
 
 import io.domainlifecycles.diagram.Diagram;
 import io.domainlifecycles.diagram.DiagramElement;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 
 import java.util.List;
 import java.util.Objects;
@@ -41,9 +38,6 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
-@Getter
-@Builder
-@EqualsAndHashCode
 public class NomnomlDiagram implements Diagram {
 
     private final List<String> styleDeclarations;
@@ -53,12 +47,16 @@ public class NomnomlDiagram implements Diagram {
      * Initializes the NomnomlDiagram.
      *
      * @param styleDeclarations for this diagram
-     * @param diagramElements contained
+     * @param diagramElements   contained
      */
     public NomnomlDiagram(List<String> styleDeclarations,
                           List<DiagramElement> diagramElements) {
         this.styleDeclarations = Objects.requireNonNull(styleDeclarations);
         this.diagramElements = Objects.requireNonNull(diagramElements);
+    }
+
+    public static NomnomlDiagramBuilder builder() {
+        return new NomnomlDiagramBuilder();
     }
 
     /**
@@ -76,4 +74,67 @@ public class NomnomlDiagram implements Diagram {
         return builder.toString();
     }
 
+    public List<String> getStyleDeclarations() {
+        return this.styleDeclarations;
+    }
+
+    public List<DiagramElement> getDiagramElements() {
+        return this.diagramElements;
+    }
+
+    public boolean equals(final Object o) {
+        if (o == this) return true;
+        if (!(o instanceof NomnomlDiagram)) return false;
+        final NomnomlDiagram other = (NomnomlDiagram) o;
+        if (!other.canEqual((Object) this)) return false;
+        final Object this$styleDeclarations = this.getStyleDeclarations();
+        final Object other$styleDeclarations = other.getStyleDeclarations();
+        if (this$styleDeclarations == null ? other$styleDeclarations != null : !this$styleDeclarations.equals(other$styleDeclarations))
+            return false;
+        final Object this$diagramElements = this.getDiagramElements();
+        final Object other$diagramElements = other.getDiagramElements();
+        if (this$diagramElements == null ? other$diagramElements != null : !this$diagramElements.equals(other$diagramElements))
+            return false;
+        return true;
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof NomnomlDiagram;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $styleDeclarations = this.getStyleDeclarations();
+        result = result * PRIME + ($styleDeclarations == null ? 43 : $styleDeclarations.hashCode());
+        final Object $diagramElements = this.getDiagramElements();
+        result = result * PRIME + ($diagramElements == null ? 43 : $diagramElements.hashCode());
+        return result;
+    }
+
+    public static class NomnomlDiagramBuilder {
+        private List<String> styleDeclarations;
+        private List<DiagramElement> diagramElements;
+
+        NomnomlDiagramBuilder() {
+        }
+
+        public NomnomlDiagramBuilder styleDeclarations(List<String> styleDeclarations) {
+            this.styleDeclarations = styleDeclarations;
+            return this;
+        }
+
+        public NomnomlDiagramBuilder diagramElements(List<DiagramElement> diagramElements) {
+            this.diagramElements = diagramElements;
+            return this;
+        }
+
+        public NomnomlDiagram build() {
+            return new NomnomlDiagram(this.styleDeclarations, this.diagramElements);
+        }
+
+        public String toString() {
+            return "NomnomlDiagram.NomnomlDiagramBuilder(styleDeclarations=" + this.styleDeclarations + ", diagramElements=" + this.diagramElements + ")";
+        }
+    }
 }

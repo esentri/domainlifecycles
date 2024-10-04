@@ -42,7 +42,6 @@ public interface BuilderConverter {
     /**
      * Returns the current DomainObjectBuilder instance from the current mapping context.
      */
-    @SuppressWarnings("unchecked")
     default <B> B getDomainObjectBuilder(DomainObjectMappingContext domainObjectMappingContext) {
         if (domainObjectMappingContext.domainObjectBuilder != null) {
             return (B) domainObjectMappingContext.domainObjectBuilder.getBuilderInstance();

@@ -49,9 +49,4 @@ public class ADomainService implements DomainService {
         received.add(domainEvent);
     }
 
-    @ListensTo(domainEventType = PassThroughDomainEvent.class)
-    public void onDomainEvent(PassThroughDomainEvent domainEvent){
-        log.debug("PassThroughDomainEvent received in ADomainService! Message = " + domainEvent.message());
-        received.add(domainEvent);
-    }
 }

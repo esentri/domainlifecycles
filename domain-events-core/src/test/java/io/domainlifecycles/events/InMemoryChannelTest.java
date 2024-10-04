@@ -27,6 +27,7 @@
 
 package io.domainlifecycles.events;
 
+import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.DomainEvents;
 import io.domainlifecycles.events.inmemory.InMemoryChannelFactory;
@@ -77,7 +78,7 @@ public class InMemoryChannelTest {
         var inMemoryChannel = new InMemoryChannelFactory(services).processingChannel("default");
         var router = new DomainEventTypeBasedRouter(List.of(inMemoryChannel));
         router.defineDefaultChannel("default");
-        new ChannelConfiguration(router);
+        new ChannelRoutingConfiguration(router);
     }
 
     @Test
