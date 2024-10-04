@@ -47,7 +47,7 @@ import io.domainlifecycles.mirror.model.ValueObjectModel;
  *
  * @author Mario Herb
  */
-@JsonTypeInfo(use= JsonTypeInfo.Id.CLASS, property="@class")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = EntityModel.class),
     @JsonSubTypes.Type(value = IdentityModel.class),
@@ -62,4 +62,5 @@ import io.domainlifecycles.mirror.model.ValueObjectModel;
     @JsonSubTypes.Type(value = QueryClientModel.class),
     @JsonSubTypes.Type(value = OutboundServiceModel.class),
 })
-public interface DomainTypeMirrorMixin {}
+public interface DomainTypeMirrorMixin {
+}

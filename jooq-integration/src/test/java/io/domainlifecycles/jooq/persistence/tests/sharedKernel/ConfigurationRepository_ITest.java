@@ -50,26 +50,46 @@ import static org.assertj.core.api.Assertions.assertThat;
 Test-Szenario for shared kernel in DDD
 
 ┌───────────────────────────────────────────────┐┌─────────────────────┐┌───────────────────────────────────────────────┐
-│                    Context                    ││    Shared Kernel    ││                Another Context                │
-│                                               ││                     ││                                               │
-│                                               ││                     ││                                               │
-│      ┌─────────────────────────────────┐      ││                     ││      ┌─────────────────────────────────┐      │
-│      │          Configuration          │      ││                     ││      │      AnotherConfiguration       │      │
-│      └─────────────────────────────────┘      ││                     ││      └─────────────────────────────────┘      │
-│                       ▲                       ││                     ││                       ▲                       │
-│                       │                       ││                     ││                       │                       │
-│                       │                       ││                     ││                       │                       │
-│                       │                       ││                     ││                       │                       │
-│                       │                       ││                     ││                       │                       │
-│                       │                       ││                     ││                       │                       │
-│                       │                       ││                     ││                       │                       │
-│      ┌─────────────────────────────────┐      ││   ┌───────────┐     ││      ┌─────────────────────────────────┐      │
-│      │  GlobalConfigurationTableEntry  │◀─────┼┼───│   Entry   │─────┼┼─────▶│ TangibleConfigurationTableEntry │      │
-│      └─────────────────────────────────┘      ││   └───────────┘     ││      └─────────────────────────────────┘      │
-│                                               ││                     ││                                               │
-│                                               ││                     ││                                               │
-│                                               ││                     ││                                               │
-│                                               ││                     ││                                               │
+│                    Context                    ││    Shared Kernel    ││                Another Context
+   │
+│                                               ││                     ││
+   │
+│                                               ││                     ││
+   │
+│      ┌─────────────────────────────────┐      ││                     ││      ┌─────────────────────────────────┐
+   │
+│      │          Configuration          │      ││                     ││      │      AnotherConfiguration       │
+   │
+│      └─────────────────────────────────┘      ││                     ││      └─────────────────────────────────┘
+   │
+│                       ▲                       ││                     ││                       ▲
+   │
+│                       │                       ││                     ││                       │
+   │
+│                       │                       ││                     ││                       │
+   │
+│                       │                       ││                     ││                       │
+   │
+│                       │                       ││                     ││                       │
+   │
+│                       │                       ││                     ││                       │
+   │
+│                       │                       ││                     ││                       │
+   │
+│      ┌─────────────────────────────────┐      ││   ┌───────────┐     ││      ┌─────────────────────────────────┐
+   │
+│      │  GlobalConfigurationTableEntry  │◀─────┼┼───│   Entry   │─────┼┼─────▶│ TangibleConfigurationTableEntry │
+   │
+│      └─────────────────────────────────┘      ││   └───────────┘     ││      └─────────────────────────────────┘
+   │
+│                                               ││                     ││
+   │
+│                                               ││                     ││
+   │
+│                                               ││                     ││
+   │
+│                                               ││                     ││
+   │
 └───────────────────────────────────────────────┘└─────────────────────┘└───────────────────────────────────────────────┘
 */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -80,7 +100,7 @@ public class ConfigurationRepository_ITest extends BasePersistence_ITest {
     private AnotherConfigurationRepository anotherConfigurationRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         configurationRepository = new ConfigurationRepository(
             persistenceConfiguration.dslContext,
             persistenceEventTestHelper.testEventPublisher,

@@ -46,7 +46,8 @@ public class TestRootOneToOneFollowingLeadingJooqRecordMapper extends AbstractRe
         if (record == null) {
             return null;
         }
-        TestRootOneToOneFollowingLeadingRecord testRootOneToOneFollowingLeadingRecord = record.into(Tables.TEST_ROOT_ONE_TO_ONE_FOLLOWING_LEADING);
+        TestRootOneToOneFollowingLeadingRecord testRootOneToOneFollowingLeadingRecord = record.into(
+            Tables.TEST_ROOT_ONE_TO_ONE_FOLLOWING_LEADING);
         return new InnerClassDomainObjectBuilder<>(TestRootOneToOneFollowingLeading.builder()
             .setId(new TestRootOneToOneFollowingLeadingId(testRootOneToOneFollowingLeadingRecord.getId()))
             .setName(testRootOneToOneFollowingLeadingRecord.getName())
@@ -55,12 +56,15 @@ public class TestRootOneToOneFollowingLeadingJooqRecordMapper extends AbstractRe
 
     @Override
     public TestRootOneToOneFollowingLeadingRecord from(TestRootOneToOneFollowingLeading testRootOneToOneFollowingLeading, TestRootOneToOneFollowingLeading root) {
-        TestRootOneToOneFollowingLeadingRecord testRootOneToOneFollowingLeadingRecord = new TestRootOneToOneFollowingLeadingRecord();
+        TestRootOneToOneFollowingLeadingRecord testRootOneToOneFollowingLeadingRecord =
+            new TestRootOneToOneFollowingLeadingRecord();
         testRootOneToOneFollowingLeadingRecord.setId(testRootOneToOneFollowingLeading.getId().value());
-        testRootOneToOneFollowingLeadingRecord.setTestEntityId(testRootOneToOneFollowingLeading.getTestEntityBOneToOneFollowingLeading() == null ?
-            null : testRootOneToOneFollowingLeading.getTestEntityBOneToOneFollowingLeading().getId().value());
+        testRootOneToOneFollowingLeadingRecord.setTestEntityId(
+            testRootOneToOneFollowingLeading.getTestEntityBOneToOneFollowingLeading() == null ?
+                null : testRootOneToOneFollowingLeading.getTestEntityBOneToOneFollowingLeading().getId().value());
         testRootOneToOneFollowingLeadingRecord.setName(testRootOneToOneFollowingLeading.getName());
-        testRootOneToOneFollowingLeadingRecord.setConcurrencyVersion(testRootOneToOneFollowingLeading.concurrencyVersion());
+        testRootOneToOneFollowingLeadingRecord.setConcurrencyVersion(
+            testRootOneToOneFollowingLeading.concurrencyVersion());
         return testRootOneToOneFollowingLeadingRecord;
     }
 

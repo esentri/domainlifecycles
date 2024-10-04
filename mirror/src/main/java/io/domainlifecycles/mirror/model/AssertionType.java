@@ -53,17 +53,17 @@ public enum AssertionType {
     isPastOrPresent(AssertionTypeGroup.TEMPORAL),
     isBefore(AssertionTypeGroup.TEMPORAL),
     isAfter(AssertionTypeGroup.TEMPORAL),
-    isBeforeOrEqualTo( AssertionTypeGroup.TEMPORAL),
+    isBeforeOrEqualTo(AssertionTypeGroup.TEMPORAL),
     isAfterOrEqualTo(AssertionTypeGroup.TEMPORAL),
     isNotEmpty(AssertionTypeGroup.STRING),
     isNotEmptyIterable(AssertionTypeGroup.ITERABLE),
     isNotBlank(AssertionTypeGroup.STRING),
     isValidEmail(AssertionTypeGroup.STRING),
     isNotNull(AssertionTypeGroup.OBJECT),
-    isNull( AssertionTypeGroup.OBJECT),
-    isInRange( AssertionTypeGroup.NUMERIC),
-    notEquals( AssertionTypeGroup.OBJECT),
-    regEx( AssertionTypeGroup.STRING),
+    isNull(AssertionTypeGroup.OBJECT),
+    isInRange(AssertionTypeGroup.NUMERIC),
+    notEquals(AssertionTypeGroup.OBJECT),
+    regEx(AssertionTypeGroup.STRING),
     isPositiveOrZero(AssertionTypeGroup.NUMERIC),
     isNegativeOrZero(AssertionTypeGroup.NUMERIC),
     isPositive(AssertionTypeGroup.NUMERIC),
@@ -76,12 +76,11 @@ public enum AssertionType {
     isLessOrEqualNonDecimal(AssertionTypeGroup.NUMERIC);
 
 
-  private final AssertionTypeGroup typeGroup;
+    private final AssertionTypeGroup typeGroup;
 
-  AssertionType(AssertionTypeGroup typeGroup) {
-    this.typeGroup = typeGroup;
-  }
-
+    AssertionType(AssertionTypeGroup typeGroup) {
+        this.typeGroup = typeGroup;
+    }
 
 
 }

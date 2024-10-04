@@ -53,15 +53,19 @@ public class SpringOutboxDomainEventPublisher implements DomainEventPublisher {
     private final TransactionalOutbox transactionalOutbox;
     private final PlatformTransactionManager transactionManager;
 
-    public SpringOutboxDomainEventPublisher(TransactionalOutbox transactionalOutbox, PlatformTransactionManager transactionManager) {
-        this.transactionalOutbox = Objects.requireNonNull(transactionalOutbox, "SpringOutboxDomainEventPublisher needs a non null TransactionalOutbox!");
-        this.transactionManager = Objects.requireNonNull(transactionManager, "SpringOutboxDomainEventPublisher needs a non null PlatformTransactionManager!");
+    public SpringOutboxDomainEventPublisher(TransactionalOutbox transactionalOutbox,
+                                            PlatformTransactionManager transactionManager) {
+        this.transactionalOutbox = Objects.requireNonNull(transactionalOutbox,
+            "SpringOutboxDomainEventPublisher needs a non null TransactionalOutbox!");
+        this.transactionManager = Objects.requireNonNull(transactionManager,
+            "SpringOutboxDomainEventPublisher needs a non null PlatformTransactionManager!");
     }
 
     /**
      * Publishes a domain event using a transactional outbox and a transaction manager.
      * If there is an active transaction, it inserts the domain event into the transactional outbox.
-     * If there is no active transaction, it begins a new transaction, inserts the domain event into the outbox, and commits the transaction.
+     * If there is no active transaction, it begins a new transaction, inserts the domain event into the outbox, and
+     * commits the transaction.
      * If any exceptions occur during the transaction handling, it throws a DLCEventsException.
      *
      * @param domainEvent the domain event to be published
@@ -69,10 +73,10 @@ public class SpringOutboxDomainEventPublisher implements DomainEventPublisher {
     @Override
     public void publish(DomainEvent domainEvent) {
         log.debug("Received DomainEvent {} for publishing", domainEvent);
-        if(TransactionSynchronizationManager.isActualTransactionActive()) {
+        if (TransactionSynchronizationManager.isActualTransactionActive()) {
             log.debug("Inserting DomainEvent {} into TransactionalOutbox", domainEvent);
             transactionalOutbox.insert(domainEvent);
-        }else{
+        } else {
             try {
                 DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
                 definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
@@ -80,7 +84,7 @@ public class SpringOutboxDomainEventPublisher implements DomainEventPublisher {
                 log.debug("Inserting DomainEvent {} into TransactionalOutbox", domainEvent);
                 transactionalOutbox.insert(domainEvent);
                 transactionManager.commit(status);
-            }catch (Throwable t){
+            } catch (Throwable t) {
                 throw DLCEventsException.fail("Inserting DomainEvent into Outbox failed for %s", domainEvent, t);
             }
         }

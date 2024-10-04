@@ -32,4 +32,5 @@ import io.domainlifecycles.domain.types.DomainServiceCommand;
 import tests.shared.complete.onlinehandel.bestellung.BestellungIdBv3;
 
 public record StarteAuslieferung(BestellungIdBv3 bestellungId)
-    implements DomainServiceCommand<ZustellungsService> {}
+    implements DomainServiceCommand<ZustellungsService> {
+}

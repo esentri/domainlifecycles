@@ -112,6 +112,7 @@ public class FieldModel implements FieldMirror {
 
     /**
      * {@inheritDoc}
+     *
      * @return
      */
     @Override
@@ -129,6 +130,7 @@ public class FieldModel implements FieldMirror {
 
     /**
      * {@inheritDoc}
+     *
      * @return
      */
     @Override
@@ -159,13 +161,12 @@ public class FieldModel implements FieldMirror {
     @Override
     public boolean isIdentityField() {
         var domainTypeMirrorOptional = Domain.typeMirror(declaredByTypeName);
-        if(domainTypeMirrorOptional.isPresent())
-        {
+        if (domainTypeMirrorOptional.isPresent()) {
             var domainTypeMirror = domainTypeMirrorOptional.get();
-            if(domainTypeMirror.getDomainType().equals(DomainType.AGGREGATE_ROOT)
-                || domainTypeMirror.getDomainType().equals(DomainType.ENTITY)){
+            if (domainTypeMirror.getDomainType().equals(DomainType.AGGREGATE_ROOT)
+                || domainTypeMirror.getDomainType().equals(DomainType.ENTITY)) {
                 var entityMirror = (EntityMirror) domainTypeMirror;
-                if(entityMirror.getIdentityField().isPresent()){
+                if (entityMirror.getIdentityField().isPresent()) {
                     return entityMirror.getIdentityField().get().equals(this);
                 }
             }
@@ -199,7 +200,9 @@ public class FieldModel implements FieldMirror {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FieldModel that = (FieldModel) o;
-        return publicReadable == that.publicReadable && publicWriteable == that.publicWriteable && modifiable == that.modifiable && name.equals(that.name) && type.equals(that.type) && accessLevel == that.accessLevel && declaredByTypeName.equals(that.declaredByTypeName) && isStatic==that.isStatic && hidden==that.hidden;
+        return publicReadable == that.publicReadable && publicWriteable == that.publicWriteable && modifiable == that.modifiable && name.equals(
+            that.name) && type.equals(that.type) && accessLevel == that.accessLevel && declaredByTypeName.equals(
+            that.declaredByTypeName) && isStatic == that.isStatic && hidden == that.hidden;
     }
 
     /**
@@ -207,6 +210,7 @@ public class FieldModel implements FieldMirror {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(name, type, accessLevel, declaredByTypeName, publicReadable, publicWriteable, modifiable, isStatic, hidden);
+        return Objects.hash(name, type, accessLevel, declaredByTypeName, publicReadable, publicWriteable, modifiable,
+            isStatic, hidden);
     }
 }

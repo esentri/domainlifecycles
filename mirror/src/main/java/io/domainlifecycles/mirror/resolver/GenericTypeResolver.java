@@ -34,7 +34,8 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * This interface provides methods for resolving generic types in fields and executable elements (methods, constructors).
+ * This interface provides methods for resolving generic types in fields and executable elements (methods,
+ * constructors).
  *
  * @author Mario Herb
  */
@@ -43,26 +44,27 @@ public interface GenericTypeResolver {
     /**
      * Resolves the generic type of a field in the given context class.
      *
-     * @param f The field to resolve the generic type for.
+     * @param f            The field to resolve the generic type for.
      * @param contextClass The context class to resolve the generic type in.
      * @return The ResolvedGenericTypeMirror representing the resolved generic type of the field.
      */
     ResolvedGenericTypeMirror resolveFieldType(Field f, Class<?> contextClass);
 
     /**
-     * Resolves the generic type of parameters in an executable element (method or constructor) based on the provided context class.
+     * Resolves the generic type of parameters in an executable element (method or constructor) based on the provided
+     * context class.
      *
-     * @param m The Method object representing the executable element to resolve the parameters for.
+     * @param m            The Method object representing the executable element to resolve the parameters for.
      * @param contextClass The context class to resolve the generic type in.
      * @return A List of ResolvedGenericTypeMirror objects, each representing the resolved generic type of a parameter.
-     *         The order of the objects is the same as the natural parameter order within the given method.
+     * The order of the objects is the same as the natural parameter order within the given method.
      */
     List<ResolvedGenericTypeMirror> resolveExecutableParameters(Method m, Class<?> contextClass);
 
     /**
      * Resolves the generic type of the return type of a method.
      *
-     * @param m The Method object representing the method.
+     * @param m            The Method object representing the method.
      * @param contextClass The context class to resolve the generic type in.
      * @return The ResolvedGenericTypeMirror representing the resolved generic type of the return type.
      */

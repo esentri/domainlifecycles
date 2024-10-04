@@ -32,4 +32,5 @@ import lombok.Builder;
 import io.domainlifecycles.domain.types.Identity;
 
 @Builder(setterPrefix = "set")
-public record ArtikelIdBv3(@NotNull Long value) implements Identity<Long> {}
+public record ArtikelIdBv3(@NotNull Long value) implements Identity<Long> {
+}

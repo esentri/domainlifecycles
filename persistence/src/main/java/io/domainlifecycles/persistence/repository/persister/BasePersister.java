@@ -47,7 +47,6 @@ import java.util.Objects;
  * A BasePersister provides basic functionality for persisting {@link DomainObject}s.
  *
  * @param <BASE_RECORD_TYPE> the type of the record that is used to persist the {@link DomainObject}
- *
  * @author Mario Herb
  */
 public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_RECORD_TYPE> {
@@ -68,7 +67,8 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
      * {@inheritDoc}
      */
     @Override
-    public BASE_RECORD_TYPE insertOne(PersistenceAction<BASE_RECORD_TYPE> insertAction, PersistenceContext<BASE_RECORD_TYPE> pc) {
+    public BASE_RECORD_TYPE insertOne(PersistenceAction<BASE_RECORD_TYPE> insertAction,
+                                      PersistenceContext<BASE_RECORD_TYPE> pc) {
         final BASE_RECORD_TYPE record = getRecordFromDomainObject(insertAction, pc.getProcessedRoot());
         if (insertAction.instanceAccessModel.isValueObject()) {
             valueObjectIdProvider.provideTechnicalIdsForNewVoRecord(record, insertAction.instanceAccessModel, pc);
@@ -76,7 +76,8 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
             pc.addNewValueObjectRecord((ValueObject) insertAction.instanceAccessModel.domainObject(), record);
         } else {
             doInsert(record);
-            //changes to properties by a trigger or something are only allowed for entities, value objects should be immutable
+            //changes to properties by a trigger or something are only allowed for entities, value objects should be
+            // immutable
             adaptChangesFromRecordToEntity(insertAction.instanceAccessModel, record);
         }
         insertAction.setActionRecord(record);
@@ -89,7 +90,8 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
      * {@inheritDoc}
      */
     @Override
-    public BASE_RECORD_TYPE updateOne(PersistenceAction<BASE_RECORD_TYPE> updateAction, PersistenceContext<BASE_RECORD_TYPE> pc) {
+    public BASE_RECORD_TYPE updateOne(PersistenceAction<BASE_RECORD_TYPE> updateAction,
+                                      PersistenceContext<BASE_RECORD_TYPE> pc) {
         final BASE_RECORD_TYPE record = getRecordFromDomainObject(updateAction, pc.getProcessedRoot());
         doUpdate(record);
         adaptChangesFromRecordToEntity(updateAction.instanceAccessModel, record);
@@ -103,14 +105,16 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
      * {@inheritDoc}
      */
     @Override
-    public BASE_RECORD_TYPE deleteOne(PersistenceAction<BASE_RECORD_TYPE> deleteAction, PersistenceContext<BASE_RECORD_TYPE> pc) {
+    public BASE_RECORD_TYPE deleteOne(PersistenceAction<BASE_RECORD_TYPE> deleteAction,
+                                      PersistenceContext<BASE_RECORD_TYPE> pc) {
         if (deleteAction.instanceAccessModel.isEntity()) {
             final BASE_RECORD_TYPE record = getRecordFromDomainObject(deleteAction, pc.getProcessedRoot());
             doDelete(record);
             deleteAction.setActionRecord(record);
             return record;
         } else {
-            final BASE_RECORD_TYPE record = deleteRecordMappedValueObject(deleteAction.instanceAccessModel.domainObject(), pc);
+            final BASE_RECORD_TYPE record = deleteRecordMappedValueObject(
+                deleteAction.instanceAccessModel.domainObject(), pc);
             deleteAction.setActionRecord(record);
             return record;
         }
@@ -126,7 +130,7 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
     public BASE_RECORD_TYPE increaseVersion(Entity<?> entity, PersistenceContext<BASE_RECORD_TYPE> pc) {
         var em = Domain.entityMirrorFor(entity);
         var concurrencyField = em.getConcurrencyVersionField();
-        if(concurrencyField.isPresent()) {
+        if (concurrencyField.isPresent()) {
             RecordMapper<BASE_RECORD_TYPE, Entity<?>, AggregateRoot<?>> recordMapper =
                 (RecordMapper<BASE_RECORD_TYPE, Entity<?>, AggregateRoot<?>>)
                     domainPersistenceProvider
@@ -145,7 +149,13 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
 
     protected abstract void doIncreaseVersion(BASE_RECORD_TYPE record);
 
+<<<<<<< HEAD
     protected BASE_RECORD_TYPE getRecordFromDomainObject(final PersistenceAction<BASE_RECORD_TYPE> persistenceAction, final AggregateRoot<?> root) {
+=======
+    @SuppressWarnings("unchecked")
+    protected BASE_RECORD_TYPE getRecordFromDomainObject(final PersistenceAction<BASE_RECORD_TYPE> persistenceAction,
+                                                         final AggregateRoot<?> root) {
+>>>>>>> feature/rename_domain
         Objects.requireNonNull(persistenceAction);
         Objects.requireNonNull(root);
         BASE_RECORD_TYPE record;
@@ -155,21 +165,25 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
             .recordMapper();
         record = recordMapper.from(persistenceAction.instanceAccessModel.domainObject(), root);
         if (persistenceAction.instanceAccessModel.domainObject() instanceof Entity && !(persistenceAction.instanceAccessModel.domainObject() instanceof AggregateRoot)) {
-            entityParentReferenceProvider.provideParentForeignKeyIdsForEntityRecord(record, persistenceAction.instanceAccessModel);
+            entityParentReferenceProvider.provideParentForeignKeyIdsForEntityRecord(record,
+                persistenceAction.instanceAccessModel);
         }
         return record;
     }
 
-    protected BASE_RECORD_TYPE deleteRecordMappedValueObject(final DomainObject domainObject, final PersistenceContext<BASE_RECORD_TYPE> pc) {
+    protected BASE_RECORD_TYPE deleteRecordMappedValueObject(final DomainObject domainObject,
+                                                             final PersistenceContext<BASE_RECORD_TYPE> pc) {
         Objects.requireNonNull(domainObject);
         Objects.requireNonNull(pc);
-        BASE_RECORD_TYPE record = pc.getDatabaseStateRootFetched().fetchedContext().getRecordFor(domainObject).orElseThrow();
+        BASE_RECORD_TYPE record = pc.getDatabaseStateRootFetched().fetchedContext().getRecordFor(
+            domainObject).orElseThrow();
         doDelete(record);
         return record;
     }
 
     /**
-     * E.g. Adapt increased version values or result values set or updated by database triggers into the entity, so that its reference
+     * E.g. Adapt increased version values or result values set or updated by database triggers into the entity, so
+     * that its reference
      * represents the current database state.
      *
      * @param domainObjectInstanceAccessModel instance in which changes are taken over
@@ -179,21 +193,24 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
         Objects.requireNonNull(record);
         var em = Domain.entityMirrorFor(domainObjectInstanceAccessModel.instanceType().getName());
 
-        RecordMapper<BASE_RECORD_TYPE, ?, ?> recordMapper = (RecordMapper<BASE_RECORD_TYPE, ?, ?>) domainPersistenceProvider
+        RecordMapper<BASE_RECORD_TYPE, ?, ?> recordMapper =
+            (RecordMapper<BASE_RECORD_TYPE, ?, ?>) domainPersistenceProvider
             .persistenceMirror
             .getEntityRecordMapper(domainObjectInstanceAccessModel.instanceType().getName());
         var builder = recordMapper.recordToDomainObjectBuilder(record);
 
         domainObjectInstanceAccessModel
             .children.stream().filter(DomainObjectInstanceAccessModel::isRecordMapped).forEach(child -> {
-                var accessorField = child.structuralPosition.accessPathFromRoot.descendingIterator().next().accessorToNextElement;
+                var accessorField =
+                    child.structuralPosition.accessPathFromRoot.descendingIterator().next().accessorToNextElement;
                 var builderTypeName = builder.instanceType().getName();
                 var dtm = Domain.typeMirror(builderTypeName)
-                    .orElseThrow(() -> DLCPersistenceException.fail("DomainTypeMirror not found for '%s'", builderTypeName));
+                    .orElseThrow(
+                        () -> DLCPersistenceException.fail("DomainTypeMirror not found for '%s'", builderTypeName));
                 var fm = dtm.fieldByName(accessorField);
-                if(fm.getType().hasCollectionContainer()){
+                if (fm.getType().hasCollectionContainer()) {
                     builder.addValueToCollection(child.domainObject(), accessorField);
-                }else{
+                } else {
                     builder.setFieldValue(child.domainObject(), accessorField);
                 }
             });
@@ -211,14 +228,14 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
             )
             .forEach(f -> {
 
-            var propertyValueOriginal = instanceAccessor.peek(f.getName());
-            var propertyValueResult = resultAccessor.peek(f.getName());
+                var propertyValueOriginal = instanceAccessor.peek(f.getName());
+                var propertyValueResult = resultAccessor.peek(f.getName());
 
-            if ((propertyValueOriginal == null && propertyValueResult != null) ||
-                (propertyValueOriginal != null && !propertyValueOriginal.equals(propertyValueResult))) {
-                instanceAccessor.poke(f.getName(), propertyValueResult);
-            }
-        });
+                if ((propertyValueOriginal == null && propertyValueResult != null) ||
+                    (propertyValueOriginal != null && !propertyValueOriginal.equals(propertyValueResult))) {
+                    instanceAccessor.poke(f.getName(), propertyValueResult);
+                }
+            });
     }
 
 }

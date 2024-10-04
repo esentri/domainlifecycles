@@ -56,10 +56,10 @@ public class NomnomlField implements DiagramElement {
      * Initializes the field.
      *
      * @param visibility of the field
-     * @param name of field
+     * @param name       of field
      * @param typePrefix prefix
-     * @param type of field
-     * @param required property
+     * @param type       of field
+     * @param required   property
      */
     public NomnomlField(String visibility,
                         String name,

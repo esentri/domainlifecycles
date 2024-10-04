@@ -88,7 +88,8 @@ public class BestellungRepository extends JooqAggregateRepository<Bestellung, Be
         List<Bestellung> result = dslContext.select()
             .from(Tables.BESTELLUNG)
             .fetch().stream()
-            .map(r -> getFetcher().fetchDeep(r.into(Tables.BESTELLUNG)).resultValue().get()).collect(Collectors.toList());
+            .map(r -> getFetcher().fetchDeep(r.into(Tables.BESTELLUNG)).resultValue().get()).collect(
+                Collectors.toList());
         return result;
     }
 
@@ -99,7 +100,8 @@ public class BestellungRepository extends JooqAggregateRepository<Bestellung, Be
             .offset(offset)
             .limit(pageSize)
             .fetch().stream()
-            .map(r -> getFetcher().fetchDeep(r.into(Tables.BESTELLUNG)).resultValue().get()).collect(Collectors.toList());
+            .map(r -> getFetcher().fetchDeep(r.into(Tables.BESTELLUNG)).resultValue().get()).collect(
+                Collectors.toList());
         return result;
     }
 
@@ -109,14 +111,16 @@ public class BestellungRepository extends JooqAggregateRepository<Bestellung, Be
             .join(Tables.BESTELL_STATUS)
             .on(Tables.BESTELL_STATUS.STATUS_CODE.equal(statusCode.name()))
             .fetch().stream()
-            .map(r -> getFetcher().fetchDeep(r.into(Tables.BESTELLUNG)).resultValue().get()).collect(Collectors.toList());
+            .map(r -> getFetcher().fetchDeep(r.into(Tables.BESTELLUNG)).resultValue().get()).collect(
+                Collectors.toList());
         return result;
     }
 
     //Achtung aus Sicht fachlich/inhaltlich korrekter Domänenlogik macht diese Methode keinen Sinn
     //Es geht lediglich um die Subquery Demonstration
     public Optional<Bestellung> findWithSubquery(BestellungId id) {
-        var fetcher = new JooqAggregateFetcher<Bestellung, BestellungId>(Bestellung.class, dslContext, jooqDomainPersistenceProvider);
+        var fetcher = new JooqAggregateFetcher<Bestellung, BestellungId>(Bestellung.class, dslContext,
+            jooqDomainPersistenceProvider);
 
         //Wir registrieren einen RecordProvider um nur noch Bestellpositionen mit ArtikelId 1 zu fetchen
         // Per FK Auto Fetch würden normalerweise alle Positionen zu einer Bestellung gefetcht
@@ -139,45 +143,52 @@ public class BestellungRepository extends JooqAggregateRepository<Bestellung, Be
     }
 
     /**
-     * This method ist optimized in the way, that only one select statement is issued to the database for fetching all records
+     * This method ist optimized in the way, that only one select statement is issued to the database for fetching
+     * all records
      * instead of the default and fetching several subselects.
      *
      * @param offset
      * @param pageSize
      */
     public Stream<Bestellung> findBestellungenOptimized(int offset, int pageSize) {
-        var fetcher = new JooqAggregateFetcher<Bestellung, BestellungId>(Bestellung.class, dslContext, jooqDomainPersistenceProvider);
+        var fetcher = new JooqAggregateFetcher<Bestellung, BestellungId>(Bestellung.class, dslContext,
+            jooqDomainPersistenceProvider);
 
         io.domainlifecycles.test.tables.Bestellung b = Tables.BESTELLUNG.as("b");
 
         var joinedRecords = dslContext.select()
-                .from(
-                    dslContext.select()
+            .from(
+                dslContext.select()
                     .from(Tables.BESTELLUNG)
                     .orderBy(Tables.BESTELLUNG.ID)
                     .offset(offset)
                     .limit(pageSize)
-                        .asTable("b")
-                )
-                .join(Tables.LIEFERADRESSE)
-                .on(b.LIEFERADRESSE_ID.eq(Tables.LIEFERADRESSE.ID))
-                .join(Tables.BESTELL_STATUS)
-                .on(b.ID.eq(Tables.BESTELL_STATUS.BESTELLUNG_ID))
-                .leftJoin(Tables.BESTELL_POSITION)
-                .on(b.ID.eq(Tables.BESTELL_POSITION.BESTELLUNG_ID))
-                .leftJoin(Tables.BESTELL_KOMMENTAR)
-                .on(b.ID.eq(Tables.BESTELL_KOMMENTAR.BESTELLUNG_ID))
-                .leftJoin(Tables.AKTIONS_CODE)
-                .on(Tables.AKTIONS_CODE.CONTAINER_ID.eq(b.ID));
+                    .asTable("b")
+            )
+            .join(Tables.LIEFERADRESSE)
+            .on(b.LIEFERADRESSE_ID.eq(Tables.LIEFERADRESSE.ID))
+            .join(Tables.BESTELL_STATUS)
+            .on(b.ID.eq(Tables.BESTELL_STATUS.BESTELLUNG_ID))
+            .leftJoin(Tables.BESTELL_POSITION)
+            .on(b.ID.eq(Tables.BESTELL_POSITION.BESTELLUNG_ID))
+            .leftJoin(Tables.BESTELL_KOMMENTAR)
+            .on(b.ID.eq(Tables.BESTELL_KOMMENTAR.BESTELLUNG_ID))
+            .leftJoin(Tables.AKTIONS_CODE)
+            .on(Tables.AKTIONS_CODE.CONTAINER_ID.eq(b.ID));
 
         var records = dslContext.fetch(joinedRecords);
 
-        var lieferadresseRecords = records.into(Tables.LIEFERADRESSE).stream().filter(r -> r.getId()!=null).collect(Collectors.toSet());
-        var bestellungenRecords = records.into(b).stream().filter(r -> r.getId()!=null).collect(Collectors.toSet());
-        var bestellPositionenRecords = records.into(Tables.BESTELL_POSITION).stream().filter(r -> r.getId()!=null).collect(Collectors.toSet());
-        var bestellKommentareRecords = records.into(Tables.BESTELL_KOMMENTAR).stream().filter(r -> r.getId()!=null).collect(Collectors.toSet());
-        var aktionsCodesRecords = records.into(Tables.AKTIONS_CODE).stream().filter(r -> r.getId()!=null).collect(Collectors.toSet());
-        var statusRecords = records.into(Tables.BESTELL_STATUS).stream().filter(r -> r.getId()!=null).collect(Collectors.toSet());
+        var lieferadresseRecords = records.into(Tables.LIEFERADRESSE).stream().filter(r -> r.getId() != null).collect(
+            Collectors.toSet());
+        var bestellungenRecords = records.into(b).stream().filter(r -> r.getId() != null).collect(Collectors.toSet());
+        var bestellPositionenRecords = records.into(Tables.BESTELL_POSITION).stream().filter(
+            r -> r.getId() != null).collect(Collectors.toSet());
+        var bestellKommentareRecords = records.into(Tables.BESTELL_KOMMENTAR).stream().filter(
+            r -> r.getId() != null).collect(Collectors.toSet());
+        var aktionsCodesRecords = records.into(Tables.AKTIONS_CODE).stream().filter(r -> r.getId() != null).collect(
+            Collectors.toSet());
+        var statusRecords = records.into(Tables.BESTELL_STATUS).stream().filter(r -> r.getId() != null).collect(
+            Collectors.toSet());
 
         fetcher.withRecordProvider(
                 new RecordProvider<BestellPositionRecord, BestellungRecord>() {

@@ -67,9 +67,12 @@ public class StringToDomainValueObjectConverterFactory implements ConverterFacto
             var singleValuedField = voMirror.singledValuedField();
             if (singleValuedField.isPresent()) {
                 try {
-                    return objectMapper.readValue("{\"" + singleValuedField.get().getName() + "\": \"" + source + "\"}", targetClass);
+                    return objectMapper.readValue("{\"" + singleValuedField.get().getName() + "\": \"" + source + "\"}",
+                        targetClass);
                 } catch (JsonProcessingException e) {
-                    throw new RuntimeException(String.format("Not able to parse single property value of ValueObject '%s'", targetClass.getName()), e);
+                    throw new RuntimeException(
+                        String.format("Not able to parse single property value of ValueObject '%s'",
+                            targetClass.getName()), e);
                 }
             } else {
                 throw new RuntimeException("Could not map value object of type " + targetClass.getName()

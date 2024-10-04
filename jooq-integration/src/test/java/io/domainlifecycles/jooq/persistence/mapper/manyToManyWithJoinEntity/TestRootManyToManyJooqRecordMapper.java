@@ -39,7 +39,8 @@ import io.domainlifecycles.test.Tables;
 /**
  * Mapping JOOQ TestRootManyToMany records.
  */
-public class TestRootManyToManyJooqRecordMapper extends AbstractRecordMapper<TestRootManyToManyRecord, TestRootManyToMany, TestRootManyToMany> {
+public class TestRootManyToManyJooqRecordMapper extends AbstractRecordMapper<TestRootManyToManyRecord,
+    TestRootManyToMany, TestRootManyToMany> {
 
     @Override
     public DomainObjectBuilder<TestRootManyToMany> recordToDomainObjectBuilder(TestRootManyToManyRecord record) {

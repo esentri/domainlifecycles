@@ -160,15 +160,21 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given name is a valid full qualified package name.
+     *
+     * @param packageName name of the package
+     * @return whether the provided package name is valid and full qualified
      */
     public static boolean isValidPackage(final String packageName) {
         return packagePattern.matcher(packageName).matches();
     }
 
     /**
-     * Returns the package name of {@code classFullName} according to JLS §6.7.
+     * Returns the package name of {@code type} according to JLS §6.7.
      * Unlike {@link Class#getPackage}, this method only parses the class name,
      * without attempting to define the {@link Package} and hence load files.
+     *
+     * @param type the type
+     * @return the package name of the provided type
      */
     public static String packageName(final Class<?> type) {
         return packageName(type.getName());
@@ -178,6 +184,9 @@ public enum JavaReflect {
      * Returns the package name of {@code classFullName} according to JLS §6.7.
      * Unlike {@link Class#getPackage}, this method only parses the class name,
      * without attempting to define the {@link Package} and hence load files.
+     *
+     * @param fullClassName the full name of class
+     * @return package name of provided class name
      */
     public static String packageName(final String fullClassName) {
         final int lastDot = fullClassName.lastIndexOf('.');
@@ -204,6 +213,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type is public.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is public
      */
     public static boolean isPublic(final Class<?> type) {
         return hasModifiers(type, Modifier.PUBLIC);
@@ -211,6 +223,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given member is public.
+     *
+     * @param member the member to be checked
+     * @return whether the provided member is public
      */
     public static boolean isPublic(final Member member) {
         return hasModifiers(member, Modifier.PUBLIC);
@@ -220,6 +235,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type is {@code protected}.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is protected
      */
     public static boolean isProtected(final Class<?> type) {
         return hasModifiers(type, PROTECTED);
@@ -227,6 +245,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given member is {@code protected}.
+     *
+     * @param member the member to be checked
+     * @return whether the provided member is protected
      */
     public static boolean isProtected(final Member member) {
         return hasModifiers(member, PROTECTED);
@@ -236,6 +257,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type is {@code private}.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is private
      */
     public static boolean isPrivate(final Class<?> type) {
         return hasModifiers(type, PRIVATE);
@@ -243,6 +267,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given member is {@code private}.
+     *
+     * @param member the member to be checked
+     * @return whether the provided member is private
      */
     public static boolean isPrivate(final Member member) {
         return hasModifiers(member, PRIVATE);
@@ -252,6 +279,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type is package private.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is package private
      */
     public static boolean isPackagePrivate(final Class<?> type) {
         return isPackagePrivate(type.getModifiers());
@@ -259,6 +289,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given member is package private.
+     *
+     * @param member the member to be checked
+     * @return whether the provided member is package private
      */
     public static boolean isPackagePrivate(final Member member) {
         return isPackagePrivate(member.getModifiers());
@@ -266,6 +299,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given modifier includes no public, private, protected.
+     *
+     * @param mod the modifier to be checked
+     * @return whether the provided modifier is package private
      */
     public static boolean isPackagePrivate(final int mod) {
         return (mod & (Modifier.PUBLIC | PROTECTED | PRIVATE)) == 0;
@@ -275,6 +311,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type is {@code abstract}.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is abstract
      */
     public static boolean isAbstract(final Class<?> type) {
         return hasModifiers(type, ABSTRACT);
@@ -282,6 +321,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given member is {@code abstract}.
+     *
+     * @param member the member to be checked
+     * @return whether the provided member is abstract
      */
     public static boolean isAbstract(final Member member) {
         return hasModifiers(member, ABSTRACT);
@@ -291,6 +333,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type is {@code static}.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is static
      */
     public static boolean isStatic(final Class<?> type) {
         return hasModifiers(type, STATIC);
@@ -298,6 +343,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given member is {@code static}.
+     *
+     * @param member the member to be checked
+     * @return whether the provided member is static
      */
     public static boolean isStatic(final Member member) {
         return hasModifiers(member, STATIC);
@@ -305,6 +353,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given member is {@code static}.
+     *
+     * @param member the member to be checked
+     * @return whether the provided member is static
      */
     public static boolean notStatic(final Member member) {
         return !hasModifiers(member, STATIC);
@@ -314,6 +365,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type is {@code final}.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is final
      */
     public static boolean isFinal(final Class<?> type) {
         return hasModifiers(type, FINAL);
@@ -321,6 +375,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given member is {@code final}.
+     *
+     * @param member the member to be checked
+     * @return whether the provided member is final
      */
     public static boolean isFinal(final Member member) {
         return hasModifiers(member, FINAL);
@@ -330,13 +387,19 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given method is {@code synchronized}.
+     *
+     * @param method the method to be checked
+     * @return whether the provided method is synchronized
      */
     public static boolean isSynchronized(final Method method) {
         return hasModifiers(method, SYNCHRONIZED);
     }
 
     /**
-     * Determines whether the given method is {@code synchronized}.
+     * Determines whether the given constructor is {@code synchronized}.
+     *
+     * @param ctor the constructor to be checked
+     * @return whether the provided method is synchronized
      */
     public static boolean isSynchronized(final Constructor<?> ctor) {
         return hasModifiers(ctor, SYNCHRONIZED);
@@ -346,6 +409,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given field is {@code volatile}.
+     *
+     * @param field the field to be checked
+     * @return whether the provided field is volatile
      */
     public static boolean isVolatile(final Field field) {
         return hasModifiers(field, VOLATILE);
@@ -353,6 +419,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given field is {@code transient}.
+     *
+     * @param field the field to be checked
+     * @return whether the provided field is transient
      */
     public static boolean isTransient(final Field field) {
         return hasModifiers(field, TRANSIENT);
@@ -366,6 +435,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type {@link Class#isInterface()}.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is an interface
      */
     public static boolean isInterfaceType(final Class<?> type) {
         return type != null && type.isInterface();
@@ -373,6 +445,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type {@link Class#isAnnotation()}.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is an annotation
      */
     public static boolean isAnnotationType(final Class<?> type) {
         return type != null && type.isAnnotation();
@@ -380,6 +455,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type is a {@link FunctionalInterface}.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is a functional interface
      */
     public static boolean isLambdaType(final Class<?> type) {
         if (!type.isInterface()) return false;
@@ -406,10 +484,16 @@ public enum JavaReflect {
     }
 
     private static boolean canLambda(final int mod) {
-        return Modifier.isPublic(mod) && (mod & (Modifier.ABSTRACT | Modifier.PUBLIC | Modifier.STATIC)) != Modifier.PUBLIC;
+        return Modifier.isPublic(
+            mod) && (mod & (Modifier.ABSTRACT | Modifier.PUBLIC | Modifier.STATIC)) != Modifier.PUBLIC;
     }
 
 
+    /**
+     * Determines whether it's a lambda expression
+     *
+     * @return whether it's a lambda expression
+     */
     public static Predicate<Method> canLambda() {
         return method -> canLambda(method.getModifiers());
     }
@@ -418,20 +502,32 @@ public enum JavaReflect {
 
     /// CLASS TYPES.
 
+    /**
+     * Determines whether the given type is a class.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is a class
+     */
     public static boolean isClassType(final Class<?> type) {
         return !type.isPrimitive() && !type.isArray();
     }
 
     /**
      * Determines whether the given type is a top-level class.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is a top-level class
      */
     public static boolean isTopLevelType(final Class<?> type) {
         return type != null && type.getDeclaringClass() == null
-                && !isAnonymousType(type) && !isLocalType(type);
+            && !isAnonymousType(type) && !isLocalType(type);
     }
 
     /**
      * Determines whether the given type {@link Class#isMemberClass()}.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is a member class
      */
     public static boolean isMemberType(final Class<?> type) {
         return type != null && type.isMemberClass();
@@ -439,6 +535,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type {@link Class#isEnum()}.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is an enum
      */
     public static boolean isEnumType(final Class<?> type) {
         return type != null && type.isEnum();
@@ -446,6 +545,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type {@link Class#isAnonymousClass()};
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is anonymous
      */
     public static boolean isAnonymousType(final Class<?> type) {
         return type != null && type.isAnonymousClass();
@@ -453,6 +555,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type {@link Class#isLocalClass()};
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is local
      */
     public static boolean isLocalType(final Class<?> type) {
         return type != null && type.isLocalClass();
@@ -460,18 +565,21 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given java class object represents a boxed type.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is boxed
      */
     public static boolean isBoxedType(final Class<?> type) {
         return (!type.isPrimitive() && !type.isArray())
-                && type == Boolean.class
-                || type == Byte.class
-                || type == Short.class
-                || type == Character.class
-                || type == Integer.class
-                || type == Long.class
-                || type == Float.class
-                || type == Double.class
-                || type == Void.class;
+            && type == Boolean.class
+            || type == Byte.class
+            || type == Short.class
+            || type == Character.class
+            || type == Integer.class
+            || type == Long.class
+            || type == Float.class
+            || type == Double.class
+            || type == Void.class;
     }
 
     // ----------------------------------------------------------
@@ -480,6 +588,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given class object represents an array type.
+     *
+     * @param o the object to be checked
+     * @return whether the class of the provided object is an array type
      */
     public static boolean isArray(final Object o) {
         return o != null && isArrayType(o.getClass());
@@ -487,6 +598,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given class object represents an array type.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is an array
      */
     public static boolean isArrayType(final Class<?> type) {
         return type != null && type.isArray();
@@ -494,6 +608,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type represents an primitive array type.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is a primitive array
      */
     public static boolean isPrimitiveArrayType(final Class<?> type) {
         return type != null && type.isArray() && isPrimitiveType(type.getComponentType());
@@ -501,6 +618,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type represents an reference array type.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is a reference array
      */
     public static boolean isReferenceArrayType(final Class<?> type) {
         return type != null && type.isArray() && !isPrimitiveType(type.getComponentType());
@@ -508,6 +628,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type represents a multidimensional array type.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is a multidimensional array
      */
     public static boolean isMultidimensionalArrayType(final Class<?> type) {
         return type != null && type.isArray() && isArrayType(type.getComponentType());
@@ -519,20 +642,29 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type {@link Class#isPrimitive()}.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is primitive
      */
     public static boolean isPrimitiveType(final Class<?> type) {
         return type != null && type.isPrimitive();
     }
 
     /**
-     * Determines whether the given type occupy a single JVM stack slot?
+     * Determines whether the given type occupies a single JVM stack slot?
+     *
+     * @param type the type to be checked
+     * @return whether the provided type occupies a single JVM stack slot
      */
     public static boolean isCategoryI(final Class<?> type) {
         return type != null && type != long.class && type != double.class;
     }
 
     /**
-     * Determines whether a value of the given type occupy two JVM stack slots.
+     * Determines whether a value of the given type occupies two JVM stack slots.
+     *
+     * @param type the tpe to be checked
+     * @return whether the provided type occupies two JVM stack slots
      */
     public static boolean isCategoryII(final Class<?> type) {
         return type == long.class || type == double.class;
@@ -540,6 +672,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type is a numeric type (not void or object)?
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is numeric
      */
     public static boolean isNumericType(final Class<?> type) {
         return type != void.class && !Object.class.isAssignableFrom(type);
@@ -547,6 +682,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type is non floating numeric type.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is non floating numeric
      */
     public static boolean isIntegralType(final Class<?> type) {
         return isNumericType(type) && !isFloatingType(type);
@@ -554,6 +692,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type is an signed integral type.
+     *
+     * @param type the type to be checked
+     * @return whether the provided type is signed
      */
     public static boolean isSignedType(final Class<?> type) {
         return type == byte.class || type == short.class || type == int.class || type == long.class;
@@ -561,6 +702,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type is an unsigned integral type.
+     *
+     * @param type type to be checked
+     * @return whether the provided type is unsigned
      */
     public static boolean isUnsignedType(final Class<?> type) {
         return type == boolean.class || type == char.class;
@@ -568,6 +712,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type is either float or double.
+     *
+     * @param type type to be checked
+     * @return whether the given type if floating
      */
     public static boolean isFloatingType(final Class<?> type) {
         return type == float.class || type == double.class;
@@ -587,6 +734,9 @@ public enum JavaReflect {
 
     /**
      * Returns the optional component type of the given array type.
+     *
+     * @param type array type
+     * @return optional component type of provided array type
      */
     public static Optional<Class<?>> componentType(final Class<?> type) {
         return Optional.ofNullable(type.getComponentType());
@@ -594,6 +744,9 @@ public enum JavaReflect {
 
     /**
      * Returns the optional element type of the given array type.
+     *
+     * @param type array type
+     * @return optional element type of provided array type
      */
     public static Optional<Class<?>> elementType(final Class<?> type) {
         if (!isArrayType(Objects.requireNonNull(type))) {
@@ -610,6 +763,9 @@ public enum JavaReflect {
 
     /**
      * Returns the rank of a given array type or 0;
+     *
+     * @param type array type
+     * @return the rank
      */
     public static int arrayRank(final Class<?> type) {
         int rank = 0;
@@ -624,8 +780,8 @@ public enum JavaReflect {
     // ----------------------------------------------------------
 
     /// GENERIC TYPES.
-    public static Optional<Type> getFirstParameterType(Type genericType){
-        if(ParameterizedType.class.isAssignableFrom(genericType.getClass())){
+    public static Optional<Type> getFirstParameterType(Type genericType) {
+        if (ParameterizedType.class.isAssignableFrom(genericType.getClass())) {
             return Optional.of(((ParameterizedType) genericType).getActualTypeArguments()[0]);
         }
         return Optional.empty();
@@ -634,6 +790,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given type is a generic type.
+     *
+     * @param type the type to be checked
+     * @return whether it is generic
      */
     public static boolean isGeneric(final Class<?> type) {
         return type.getTypeParameters().length > 0;
@@ -641,6 +800,9 @@ public enum JavaReflect {
 
     /**
      * Determines whether the given constructor has generic parameters.
+     *
+     * @param ctor the constructor to be checked
+     * @return whether it is generic
      */
     public static boolean isGeneric(final Constructor<?> ctor) {
         final Type[] ptypes = ctor.getGenericParameterTypes();
@@ -655,6 +817,9 @@ public enum JavaReflect {
     /**
      * Determines whether the given method has generic return type
      * and/or generic parameters.
+     *
+     * @param method method to be checked
+     * @return whether it is generic
      */
     public static boolean isGeneric(final Method method) {
         if (isGenericType(method.getGenericReturnType())) return true;
@@ -670,6 +835,9 @@ public enum JavaReflect {
     /**
      * Determines whether the given method has generic return type
      * and/or generic parameters.
+     *
+     * @param field field to be checked
+     * @return whether it is generic
      */
     public static boolean isGeneric(final Field field) {
         return isGenericType(field.getGenericType());
@@ -743,6 +911,7 @@ public enum JavaReflect {
      * i.e. the transitive closure over all (super-)interfaces.
      *
      * @param type whose interface hierarchy is to be returned.
+     * @return all interfaces of the given type
      */
     public static List<Class<?>> allInterfaces(final Class<?> type) {
         return new InterfaceIterator(type).toList();
@@ -781,18 +950,19 @@ public enum JavaReflect {
      * Partially ordered type sequence with superclass before interfaces relative to
      * the given type and all types contained in the sequence.
      *
-     * @param type whose direct/indirect supertypes are to be returned.
+     * @param type    whose direct/indirect supertypes are to be returned.
+     * @param include flag whether all supertypes should be included
      * @return sequence containing all supertypes.
      */
     public static List<Class<?>> allSupertypes(final Class<?> type, final boolean include) {
         final List<Class<?>> supertypes = new SupertypeIterator(type).toList();
-        if(include){
+        if (include) {
             List<Class<?>> allSupertypes = new ArrayList<>();
             allSupertypes.add(type);
             allSupertypes.addAll(supertypes);
             return List.of(allSupertypes.toArray(Class<?>[]::new));
 
-        }else{
+        } else {
             return supertypes;
         }
     }
@@ -865,7 +1035,8 @@ public enum JavaReflect {
      * <p>
      * The returned sequence is empty, if the given type is at top level.
      *
-     * @param type whose enclosing types are to be returned.
+     * @param type    whose enclosing types are to be returned.
+     * @param include flag whether type is contained.
      * @return type sequence of the enclosing lexical scope.
      */
     public static List<Class<?>> allEnclosingTypes(final Class<?> type, final boolean include) {
@@ -907,10 +1078,10 @@ public enum JavaReflect {
                 return List.of(declaring.getFields());
             case VISIBLE:
                 final List<Field> fields = allSupertypes(declaring)
-                        .stream()
-                        .flatMap(x -> Stream.of(x.getDeclaredFields()))
-                        .filter(x -> isPublic(x) || isProtected(x)
-                                || (isPackagePrivate(x) && isSamePackage(x.getDeclaringClass(), declaring)))
+                    .stream()
+                    .flatMap(x -> Stream.of(x.getDeclaredFields()))
+                    .filter(x -> isPublic(x) || isProtected(x)
+                        || (isPackagePrivate(x) && isSamePackage(x.getDeclaringClass(), declaring)))
                     .collect(Collectors.toList());
                 final List<Field> visibleFields = new ArrayList<>();
                 visibleFields.addAll(List.of(declaring.getDeclaredFields()));
@@ -918,9 +1089,9 @@ public enum JavaReflect {
                 return List.of(visibleFields.toArray(Field[]::new));
             case HIERARCHY:
                 return allSupertypes(declaring, true)
-                        .stream()
-                        .flatMap(x -> Stream.of(x.getDeclaredFields()))
-                        .collect(Collectors.toList());
+                    .stream()
+                    .flatMap(x -> Stream.of(x.getDeclaredFields()))
+                    .collect(Collectors.toList());
             default:
                 throw new IllegalStateException();
         }
@@ -965,11 +1136,11 @@ public enum JavaReflect {
                 return List.of(declaring.getMethods());
             case VISIBLE: {
                 final List<Method> methods = allSupertypes(declaring)
-                        .stream()
-                        .flatMap(x -> Stream.of(x.getDeclaredMethods()))
-                        .filter(x -> isPublic(x) || isProtected(x)
-                                || (isPackagePrivate(x) && isSamePackage(x.getDeclaringClass(), declaring)))
-                        .collect(Collectors.toList());
+                    .stream()
+                    .flatMap(x -> Stream.of(x.getDeclaredMethods()))
+                    .filter(x -> isPublic(x) || isProtected(x)
+                        || (isPackagePrivate(x) && isSamePackage(x.getDeclaringClass(), declaring)))
+                    .collect(Collectors.toList());
                 var visibleMethods = new ArrayList<>();
                 visibleMethods.addAll(List.of(declaring.getDeclaredMethods()));
                 visibleMethods.addAll(methods);
@@ -977,27 +1148,27 @@ public enum JavaReflect {
             }
             case HIERARCHY:
                 return allSupertypes(declaring, true)
-                        .stream()
-                        .flatMap(x -> {
-                            try {
-                                return Stream.of(x.getDeclaredMethods());
-                            } catch (Throwable ex) {
-                                return Stream.empty();
-                            }
-                        }).collect(Collectors.toList());
+                    .stream()
+                    .flatMap(x -> {
+                        try {
+                            return Stream.of(x.getDeclaredMethods());
+                        } catch (Throwable ex) {
+                            return Stream.empty();
+                        }
+                    }).collect(Collectors.toList());
             default:
                 throw new IllegalStateException();
         }
     }
 
     public static Optional<Method> findMethod(final Class<?> declaring,
-                                            final String name, final Class<?>... parameters) {
+                                              final String name, final Class<?>... parameters) {
         return findMethod(declaring, MemberSelect.DECLARED, name, parameters);
     }
 
     public static Optional<Method> findMethod(final Class<?> declaring,
-                                            final MemberSelect select,
-                                            final String name, final Class<?>... parameters) {
+                                              final MemberSelect select,
+                                              final String name, final Class<?>... parameters) {
         return methods(declaring, select)
             .stream()
             .filter(x -> x.getName().equals(name)
@@ -1033,12 +1204,12 @@ public enum JavaReflect {
                 return List.of(declaring.getClasses());
             case VISIBLE: {
                 final List<Class<?>> classes =
-                        allSupertypes(declaring)
-                            .stream()
-                            .flatMap(x -> Stream.of(x.getDeclaredClasses()))
-                            .filter(x -> isPublic(x) || isProtected(x)
-                                        || (isPackagePrivate(x) && isSamePackage(x.getDeclaringClass(), declaring)))
-                            .collect(Collectors.toList());
+                    allSupertypes(declaring)
+                        .stream()
+                        .flatMap(x -> Stream.of(x.getDeclaredClasses()))
+                        .filter(x -> isPublic(x) || isProtected(x)
+                            || (isPackagePrivate(x) && isSamePackage(x.getDeclaringClass(), declaring)))
+                        .collect(Collectors.toList());
                 var declaredList = new ArrayList<>();
                 declaredList.addAll(List.of(declaring.getDeclaredClasses()));
                 declaredList.addAll(classes);
@@ -1060,6 +1231,7 @@ public enum JavaReflect {
      * Returns a sequence containing the declared constructors of the declaring class.
      *
      * @param declaring type whose constructors are to be returned.
+     * @param select    selected members
      * @return sequence containing the declaring constructors.
      */
     public static List<Constructor<?>> constructors(final Class<?> declaring, final MemberSelect select) {
@@ -1228,11 +1400,11 @@ public enum JavaReflect {
                 return false;
             if (lhs == int.class)
                 return rhs == long.class
-                        || rhs == float.class
-                        || rhs == double.class;
+                    || rhs == float.class
+                    || rhs == double.class;
             if (lhs == long.class)
                 return rhs == float.class
-                        || rhs == double.class;
+                    || rhs == double.class;
             if (lhs == boolean.class)
                 return false;
             if (lhs == double.class)
@@ -1241,15 +1413,15 @@ public enum JavaReflect {
                 return rhs == double.class;
             if (lhs == char.class || lhs == short.class)
                 return rhs == int.class
-                        || rhs == long.class
-                        || rhs == float.class
-                        || rhs == double.class;
+                    || rhs == long.class
+                    || rhs == float.class
+                    || rhs == double.class;
             if (lhs == byte.class)
                 return rhs == short.class
-                        || rhs == int.class
-                        || rhs == long.class
-                        || rhs == float.class
-                        || rhs == double.class;
+                    || rhs == int.class
+                    || rhs == long.class
+                    || rhs == float.class
+                    || rhs == double.class;
             throw new IllegalStateException();
         }
         return lhs.isAssignableFrom(rhs);
@@ -1348,9 +1520,9 @@ public enum JavaReflect {
             superclass = null;
         }
 
-        public List<Class<?>> toList(){
+        public List<Class<?>> toList() {
             List<Class<?>> superClasses = new ArrayList<>();
-            while(hasNext()){
+            while (hasNext()) {
                 superClasses.add(next());
             }
             return superClasses;
@@ -1372,8 +1544,8 @@ public enum JavaReflect {
         public InterfaceIterator(final HashSet<Class<?>> visited, final Class<?> type) {
             this.visited = Objects.requireNonNull(visited);
             Stream.of(type.getInterfaces())
-                    .filter(visited::add)
-                    .forEach(stack::push);
+                .filter(visited::add)
+                .forEach(stack::push);
         }
 
         @Override
@@ -1386,14 +1558,14 @@ public enum JavaReflect {
             if (!hasNext()) throw new NoSuchElementException();
             final Class<?> next = stack.pop();
             Stream.of(next.getInterfaces())
-                    .filter(visited::add)
-                    .forEach(stack::push);
+                .filter(visited::add)
+                .forEach(stack::push);
             return next;
         }
 
-        public List<Class<?>> toList(){
+        public List<Class<?>> toList() {
             List<Class<?>> superInterfaces = new ArrayList<>();
-            while(hasNext()){
+            while (hasNext()) {
                 superInterfaces.add(next());
             }
             return superInterfaces;
@@ -1443,9 +1615,9 @@ public enum JavaReflect {
             }
         }
 
-        public List<Class<?>> toList(){
+        public List<Class<?>> toList() {
             List<Class<?>> superTypes = new ArrayList<>();
-            while(hasNext()){
+            while (hasNext()) {
                 superTypes.add(next());
             }
             return superTypes;
@@ -1459,16 +1631,17 @@ public enum JavaReflect {
     }
 
     private static final Class<?>[][] PRIMITIVES = {
-            {void.class, boolean.class, byte.class, short.class, char.class, int.class, long.class, float.class, double.class},
-            {byte.class, short.class, int.class, long.class, float.class, double.class},
-            {byte.class, short.class, int.class, long.class},
-            {float.class, double.class},
-            {byte.class, short.class, int.class, long.class, float.class, double.class},
-            {boolean.class, char.class},
-            {long.class, double.class},
-            {int.class, float.class},
-            {boolean.class, byte.class, short.class, char.class},
-            {void.class}
+        {void.class, boolean.class, byte.class, short.class, char.class, int.class, long.class, float.class,
+            double.class},
+        {byte.class, short.class, int.class, long.class, float.class, double.class},
+        {byte.class, short.class, int.class, long.class},
+        {float.class, double.class},
+        {byte.class, short.class, int.class, long.class, float.class, double.class},
+        {boolean.class, char.class},
+        {long.class, double.class},
+        {int.class, float.class},
+        {boolean.class, byte.class, short.class, char.class},
+        {void.class}
     };
 
 

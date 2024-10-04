@@ -62,7 +62,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-@ActiveProfiles({ "test" })
+@ActiveProfiles({"test"})
 public class BestellungRepository_ITest_SpringBoot2 {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(BestellungRepository_ITest_SpringBoot2.class);
@@ -243,7 +243,8 @@ public class BestellungRepository_ITest_SpringBoot2 {
 
         //when
         //we expect a unique constraint exception
-        //ATTENTION: Do not write the assertion with a lambda expression, that will create a class loading conflict with our
+        //ATTENTION: Do not write the assertion with a lambda expression, that will create a class loading conflict
+        // with our
         // byte buddy extension
         DataAccessException ex = assertThrows(DataAccessException.class, new Executable() {
             @Override
@@ -289,7 +290,8 @@ public class BestellungRepository_ITest_SpringBoot2 {
         Optional<Bestellung> foundAfter = bestellungRepository.findResultById(new BestellungId(1l)).resultValue();
         assertThat(foundAfter).isPresent();
         //when
-        List<Bestellung> bestaetigteBestellungen = bestellungRepository.findByStatusCode(BestellStatusCodeEnum.BESTAETIGT);
+        List<Bestellung> bestaetigteBestellungen = bestellungRepository.findByStatusCode(
+            BestellStatusCodeEnum.BESTAETIGT);
         //then
         assertThat(bestaetigteBestellungen).isEmpty();
         //when
@@ -439,7 +441,6 @@ public class BestellungRepository_ITest_SpringBoot2 {
             .ignoringFieldsOfTypes(UUID.class)
             .isEqualTo(found);
     }
-
 
 
 }

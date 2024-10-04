@@ -47,5 +47,4 @@ public class TestCommand {
     private List<AutoMappedVoEntityId> idList;
 
 
-
 }

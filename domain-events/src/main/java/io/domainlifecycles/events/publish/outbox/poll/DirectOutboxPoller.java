@@ -36,9 +36,9 @@ import io.domainlifecycles.events.receive.execution.processor.ExecutionResult;
 /**
  * The DirectOutboxPoller class is a subclass of AbstractOutboxPoller which sends polled
  * domain events directly to a receiving domain event handler.
- *
+ * <p>
  * Example usage:
- *
+ * <p>
  * TransactionalOutbox transactionalOutbox = new TransactionalOutboxImpl();
  * ReceivingDomainEventHandler receivingDomainEventHandler = new ReceivingDomainEventHandlerImpl();
  * DirectOutboxPoller outboxPoller = new DirectOutboxPoller(transactionalOutbox, receivingDomainEventHandler);
@@ -52,7 +52,8 @@ public class DirectOutboxPoller extends AbstractOutboxPoller {
 
     private final ReceivingDomainEventHandler receivingDomainEventHandler;
 
-    public DirectOutboxPoller(TransactionalOutbox transactionalOutbox, ReceivingDomainEventHandler receivingDomainEventHandler) {
+    public DirectOutboxPoller(TransactionalOutbox transactionalOutbox,
+                              ReceivingDomainEventHandler receivingDomainEventHandler) {
         super(transactionalOutbox);
         this.receivingDomainEventHandler = receivingDomainEventHandler;
     }
@@ -66,9 +67,9 @@ public class DirectOutboxPoller extends AbstractOutboxPoller {
     @Override
     protected ProcessingResult send(DomainEvent domainEvent) {
         var results = receivingDomainEventHandler.handleReceived(domainEvent);
-        if(results.stream().allMatch(ExecutionResult::success)){
+        if (results.stream().allMatch(ExecutionResult::success)) {
             return ProcessingResult.OK;
-        }else if(results.stream().noneMatch(ExecutionResult::success)){
+        } else if (results.stream().noneMatch(ExecutionResult::success)) {
             return ProcessingResult.FAILED;
         }
         return ProcessingResult.FAILED_PARTIALLY;

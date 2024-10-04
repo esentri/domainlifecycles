@@ -85,9 +85,8 @@ import io.domainlifecycles.domain.types.internal.DomainObject;
  * Consider implementing Value Objects with Java Record classes, as all necessary
  * implementation requirements are immediately addressed.
  *
- * @see java.lang.Record
- *
  * @author Mario Herb
+ * @see java.lang.Record
  */
 public interface ValueObject extends DomainObject, Validatable {
 }

@@ -40,19 +40,21 @@ import tests.shared.persistence.domain.simple.TestRootSimpleId;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SimpleAggregateRootRepository_ITest extends BasePersistence_ITest {
-    
+
     private SimpleAggregateRootRepository simpleAggregateRootRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         simpleAggregateRootRepository = new SimpleAggregateRootRepository(
             persistenceConfiguration.dslContext,
             persistenceEventTestHelper.testEventPublisher,
             persistenceConfiguration.domainPersistenceProvider
         );
     }
+
     @Test
     public void testInsertSimpleEntity() {
         //given

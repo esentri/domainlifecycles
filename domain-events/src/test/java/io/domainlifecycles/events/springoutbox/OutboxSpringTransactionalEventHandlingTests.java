@@ -87,27 +87,30 @@ public class OutboxSpringTransactionalEventHandlingTests {
     @Autowired
     private DomainEventsConfiguration config;
 
-    private static final String SELECT = "SELECT processing_result FROM outbox WHERE processing_result IS NOT NULL AND domain_event LIKE '%'||?||'%';";
+    private static final String SELECT = "SELECT processing_result FROM outbox WHERE processing_result IS NOT NULL " +
+        "AND domain_event LIKE '%'||?||'%';";
 
-    private static final String SELECT_EVENT = "SELECT domain_event, processing_result FROM outbox WHERE domain_event LIKE '%'||?||'%';";
+    private static final String SELECT_EVENT = "SELECT domain_event, processing_result FROM outbox WHERE domain_event" +
+        " LIKE '%'||?||'%';";
 
     @BeforeEach
-    public void init(){
+    public void init() {
         config.outboxPoller.setPollingDelayMilliseconds(1000);
         config.outboxPoller.setPollingPeriodMilliseconds(1000);
     }
 
     @AfterEach
-    public void after(){
+    public void after() {
         config.outboxPoller.setPollingDelayMilliseconds(5000);
         config.outboxPoller.setPollingPeriodMilliseconds(5000);
     }
 
-    private String processingResultForEvent(String eventMessage){
+    private String processingResultForEvent(String eventMessage) {
         var def = new DefaultTransactionDefinition();
         def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         var status = platformTransactionManager.getTransaction(def);
-        String processingResult = jdbcTemplate.query(SELECT, (r, rn)-> r.getString(1), eventMessage).stream().findFirst().orElse(null);
+        String processingResult = jdbcTemplate.query(SELECT, (r, rn) -> r.getString(1),
+            eventMessage).stream().findFirst().orElse(null);
         platformTransactionManager.commit(status);
         return processingResult;
     }
@@ -116,7 +119,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
     public void testIntegrationCommit() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
-        var evt = new ADomainEvent("TestCommit"+UUID.randomUUID());
+        var evt = new ADomainEvent("TestCommit" + UUID.randomUUID());
         DomainEvents.publish(evt);
 
         platformTransactionManager.commit(status);
@@ -138,7 +141,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
     public void testIntegrationRollback() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
-        var evt = new ADomainEvent("TestRollback"+UUID.randomUUID());
+        var evt = new ADomainEvent("TestRollback" + UUID.randomUUID());
         DomainEvents.publish(evt);
 
         platformTransactionManager.rollback(status);
@@ -146,7 +149,8 @@ public class OutboxSpringTransactionalEventHandlingTests {
         var def = new DefaultTransactionDefinition();
         def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         var statusTest = platformTransactionManager.getTransaction(def);
-        String event = jdbcTemplate.query(SELECT_EVENT, (r, rn)-> r.getString(1), evt.message()).stream().findFirst().orElse(null);
+        String event = jdbcTemplate.query(SELECT_EVENT, (r, rn) -> r.getString(1),
+            evt.message()).stream().findFirst().orElse(null);
         assertThat(event).isNull();
         platformTransactionManager.commit(statusTest);
 
@@ -160,7 +164,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationUnreceivedCommit() throws Exception{
+    public void testIntegrationUnreceivedCommit() throws Exception {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
         var evt = new UnreceivedDomainEvent("TestUnReceivedCommit");
@@ -185,7 +189,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
     public void testIntegrationNoTransaction() {
 
         //when
-        var evt = new ADomainEvent("TestNoTrans"+UUID.randomUUID());
+        var evt = new ADomainEvent("TestNoTrans" + UUID.randomUUID());
         DomainEvents.publish(evt);
         //then
         await().atMost(10, SECONDS).until(() -> processingResultForEvent(evt.message()) != null);
@@ -203,7 +207,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
     public void testIntegrationAggregateDomainEventCommit() {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        var evt = new AnAggregateDomainEvent("TestAggregateDomainEventCommit"+UUID.randomUUID());
+        var evt = new AnAggregateDomainEvent("TestAggregateDomainEventCommit" + UUID.randomUUID());
         DomainEvents.publish(evt);
         platformTransactionManager.commit(status);
         //then
@@ -225,7 +229,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
     public void testIntegrationAggregateDomainEventRollbackExceptionOnHandler() {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        var evt = new AnAggregateDomainEvent("TestAggregateDomainWithException"+UUID.randomUUID());
+        var evt = new AnAggregateDomainEvent("TestAggregateDomainWithException" + UUID.randomUUID());
         DomainEvents.publish(evt);
         platformTransactionManager.commit(status);
         //then
@@ -243,10 +247,10 @@ public class OutboxSpringTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationDomainServiceExceptionRollback() throws Exception{
+    public void testIntegrationDomainServiceExceptionRollback() throws Exception {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        var evt = new ADomainEvent("TestDomainServiceRollback"+UUID.randomUUID());
+        var evt = new ADomainEvent("TestDomainServiceRollback" + UUID.randomUUID());
         DomainEvents.publish(evt);
         platformTransactionManager.commit(status);
         //then

@@ -66,7 +66,9 @@ public final class SpringPersistenceEventPublisher implements PersistenceEventPu
      */
     private PersistenceEvent assembleEvent(final PersistenceAction persistenceAction) {
         PersistenceEvent.PersistenceEventType eventType = PersistenceEvent.PersistenceEventType.INSERTED;
-        if (persistenceAction.actionType.equals(PersistenceAction.ActionType.UPDATE) || persistenceAction.actionType.equals(PersistenceAction.ActionType.DELETE_UPDATE)) {
+        if (persistenceAction.actionType.equals(
+            PersistenceAction.ActionType.UPDATE) || persistenceAction.actionType.equals(
+            PersistenceAction.ActionType.DELETE_UPDATE)) {
             eventType = PersistenceEvent.PersistenceEventType.UPDATED;
         } else if (persistenceAction.actionType.equals(PersistenceAction.ActionType.DELETE)) {
             eventType = PersistenceEvent.PersistenceEventType.DELETED;

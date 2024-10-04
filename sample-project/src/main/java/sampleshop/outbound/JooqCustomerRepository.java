@@ -68,7 +68,7 @@ class JooqCustomerRepository extends JooqAggregateRepository<Customer, Customer.
      * {@inheritDoc}
      */
     @Override
-    public Stream<Customer> find(int offset, int limit){
+    public Stream<Customer> find(int offset, int limit) {
         return dslContext
             .selectFrom(CUSTOMER)
             .orderBy(CUSTOMER.ID.desc())

@@ -68,6 +68,7 @@ public class FieldMirrorBuilder {
 
     private static final String GETTER_PREFIX = "get";
     private static final String BOOL_GETTER_PREFIX = "is";
+
     private boolean isPublicReadable() {
         if (JavaReflect.isPublic(field)) {
             return true;
@@ -91,14 +92,21 @@ public class FieldMirrorBuilder {
         } catch (NoSuchMethodException e) {
             //ignore
         }
-        return (mGetter != null && Modifier.isPublic(mGetter.getModifiers()) && mGetter.getParameterCount() == 0 && mGetter.getReturnType().equals(field.getType()))
-            || (mBoolGetter != null && Modifier.isPublic(mBoolGetter.getModifiers()) && mBoolGetter.getParameterCount() == 0 && mBoolGetter.getReturnType().equals(field.getType()))
-            || (mReader != null && Modifier.isPublic(mReader.getModifiers()) && mReader.getParameterCount() == 0 && mReader.getReturnType().equals(field.getType()));
+        return (mGetter != null && Modifier.isPublic(
+            mGetter.getModifiers()) && mGetter.getParameterCount() == 0 && mGetter.getReturnType().equals(
+            field.getType()))
+            || (mBoolGetter != null && Modifier.isPublic(
+            mBoolGetter.getModifiers()) && mBoolGetter.getParameterCount() == 0 && mBoolGetter.getReturnType().equals(
+            field.getType()))
+            || (mReader != null && Modifier.isPublic(
+            mReader.getModifiers()) && mReader.getParameterCount() == 0 && mReader.getReturnType().equals(
+            field.getType()));
     }
 
     private static final String SETTER_PREFIX = "set";
+
     private boolean isPublicWriteable() {
-        if(JavaReflect.isFinal(field)){
+        if (JavaReflect.isFinal(field)) {
             return false;
         }
         if (JavaReflect.isPublic(field)) {
@@ -132,8 +140,10 @@ public class FieldMirrorBuilder {
 
     /**
      * Creates a new {@link FieldMirror}.
+     *
+     * @return new instance of FieldMirror
      */
-    public FieldMirror build(){
+    public FieldMirror build() {
         var name = field.getName();
         var declaredByTypeName = field.getDeclaringClass().getName();
         var isModifiable = !JavaReflect.isFinal(field);
@@ -143,7 +153,7 @@ public class FieldMirrorBuilder {
         var accessLevel = AccessLevel.of(field);
         var isStatic = JavaReflect.isStatic(field);
 
-        if(DomainType.ENTITY.equals(typeMirror.getDomainType())){
+        if (DomainType.ENTITY.equals(typeMirror.getDomainType())) {
             return new EntityReferenceModel(
                 name,
                 typeMirror,
@@ -155,7 +165,7 @@ public class FieldMirrorBuilder {
                 isStatic,
                 hidden
             );
-        }else if(DomainType.VALUE_OBJECT.equals(typeMirror.getDomainType())
+        } else if (DomainType.VALUE_OBJECT.equals(typeMirror.getDomainType())
             || DomainType.ENUM.equals(typeMirror.getDomainType())
             || DomainType.IDENTITY.equals(typeMirror.getDomainType())
         ) {
@@ -170,7 +180,7 @@ public class FieldMirrorBuilder {
                 isStatic,
                 hidden
             );
-        }else if(DomainType.AGGREGATE_ROOT.equals(typeMirror.getDomainType())) {
+        } else if (DomainType.AGGREGATE_ROOT.equals(typeMirror.getDomainType())) {
             return new AggregateRootReferenceModel(
                 name,
                 typeMirror,
@@ -185,15 +195,15 @@ public class FieldMirrorBuilder {
         }
 
         return new FieldModel(
-             name,
-             typeMirror,
-             accessLevel,
-             declaredByTypeName,
-             isModifiable,
-             isPublicReadable,
-             isPublicWriteable,
-             isStatic,
-             hidden
+            name,
+            typeMirror,
+            accessLevel,
+            declaredByTypeName,
+            isModifiable,
+            isPublicReadable,
+            isPublicWriteable,
+            isStatic,
+            hidden
         );
     }
 

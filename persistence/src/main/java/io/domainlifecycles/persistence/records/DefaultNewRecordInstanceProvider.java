@@ -35,7 +35,6 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Provides new record instances.
  *
- *
  * @author Mario Herb
  */
 public class DefaultNewRecordInstanceProvider implements NewRecordInstanceProvider {

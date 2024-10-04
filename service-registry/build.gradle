@@ -12,7 +12,7 @@ dependencies {
     implementation project(":types")
     implementation project(":mirror")
     implementation project(":reflect")
-    
+
     testImplementation project(":type-utils")
     testImplementation project(":test-shared-impl")
     testImplementation "org.slf4j:slf4j-api:${slf4jVersion}"

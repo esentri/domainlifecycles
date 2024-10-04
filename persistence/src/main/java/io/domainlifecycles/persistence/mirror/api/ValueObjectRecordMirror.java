@@ -36,27 +36,33 @@ import java.util.List;
  * - to provide information to be used in a fetcher implementation to fetch records form a database
  * - to provide information to be used in a repository implementation to apply insert, update and delete
  * operations for a given value object
-
  *
+ * @param <BASE_RECORD_TYPE> the type of record
  * @author Mario Herb
  */
-public interface ValueObjectRecordMirror<BASE_RECORD_TYPE> extends RecordMirror<BASE_RECORD_TYPE>{
+public interface ValueObjectRecordMirror<BASE_RECORD_TYPE> extends RecordMirror<BASE_RECORD_TYPE> {
 
     /**
      * Returns the full qualified type name of the entity which
      * contains this value object
+     *
+     * @return the containing entity type name
      */
     String containingEntityTypeName();
 
     /**
      * Returns the path of fields which must be accessed in the given order
      * to reach the value object represented by the given record.
+     *
+     * @return the path segments
      */
     List<String> pathSegments();
 
     /**
      * Returns the complete path of fields (separated by ".") which must be accessed in the
      * given order to reach the value object represented by the given record.
+     *
+     * @return the complete path of fields
      */
     String completePath();
 
@@ -78,10 +84,10 @@ public interface ValueObjectRecordMirror<BASE_RECORD_TYPE> extends RecordMirror<
 
     /**
      * Sets the owner {@link EntityRecordMirror}.
+     *
+     * @param owner the owner to be set
      */
     void setOwner(EntityRecordMirror<BASE_RECORD_TYPE> owner);
-
-
 
 
 }

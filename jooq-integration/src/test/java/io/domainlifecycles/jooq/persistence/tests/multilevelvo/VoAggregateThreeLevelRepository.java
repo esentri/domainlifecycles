@@ -36,7 +36,8 @@ import org.slf4j.LoggerFactory;
 import tests.shared.persistence.domain.multilevelvo.VoAggregateThreeLevel;
 import tests.shared.persistence.domain.multilevelvo.VoAggregateThreeLevelId;
 
-public class VoAggregateThreeLevelRepository extends JooqAggregateRepository<VoAggregateThreeLevel, VoAggregateThreeLevelId> {
+public class VoAggregateThreeLevelRepository extends JooqAggregateRepository<VoAggregateThreeLevel,
+    VoAggregateThreeLevelId> {
 
     private static final Logger log = LoggerFactory.getLogger(VoAggregateThreeLevelRepository.class);
 

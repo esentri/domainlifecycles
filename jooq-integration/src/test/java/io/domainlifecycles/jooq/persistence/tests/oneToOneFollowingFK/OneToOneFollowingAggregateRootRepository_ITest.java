@@ -42,14 +42,15 @@ import tests.shared.persistence.domain.oneToOneFollowingFK.TestRootOneToOneFollo
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class OneToOneFollowingAggregateRootRepository_ITest extends BasePersistence_ITest {
 
-    
+
     private OneToOneFollowingAggregateRootRepository oneToOneFollowingAggregateRootRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         oneToOneFollowingAggregateRootRepository = new OneToOneFollowingAggregateRootRepository(
             persistenceConfiguration.dslContext,
             persistenceEventTestHelper.testEventPublisher,
@@ -83,7 +84,8 @@ public class OneToOneFollowingAggregateRootRepository_ITest extends BasePersiste
         Optional<TestRootOneToOneFollowing> found = oneToOneFollowingAggregateRootRepository
             .findResultById(new TestRootOneToOneFollowingId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntityOneToOneFollowing());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntityOneToOneFollowing());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
         persistenceEventTestHelper.assertEvents();
     }
@@ -100,7 +102,8 @@ public class OneToOneFollowingAggregateRootRepository_ITest extends BasePersiste
         //when
         TestRootOneToOneFollowing updated = oneToOneFollowingAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneFollowing> found = oneToOneFollowingAggregateRootRepository.findResultById(new TestRootOneToOneFollowingId(1l)).resultValue();
+        Optional<TestRootOneToOneFollowing> found = oneToOneFollowingAggregateRootRepository.findResultById(
+            new TestRootOneToOneFollowingId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
@@ -118,7 +121,8 @@ public class OneToOneFollowingAggregateRootRepository_ITest extends BasePersiste
         //when
         TestRootOneToOneFollowing updated = oneToOneFollowingAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneFollowing> found = oneToOneFollowingAggregateRootRepository.findResultById(new TestRootOneToOneFollowingId(1l)).resultValue();
+        Optional<TestRootOneToOneFollowing> found = oneToOneFollowingAggregateRootRepository.findResultById(
+            new TestRootOneToOneFollowingId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
@@ -136,12 +140,15 @@ public class OneToOneFollowingAggregateRootRepository_ITest extends BasePersiste
         //when
         TestRootOneToOneFollowing updated = oneToOneFollowingAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneFollowing> found = oneToOneFollowingAggregateRootRepository.findResultById(new TestRootOneToOneFollowingId(1l)).resultValue();
+        Optional<TestRootOneToOneFollowing> found = oneToOneFollowingAggregateRootRepository.findResultById(
+            new TestRootOneToOneFollowingId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated.getTestEntityOneToOneFollowing());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED,
+            updated.getTestEntityOneToOneFollowing());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
-        Assertions.assertThat(updated.getTestEntityOneToOneFollowing().getName()).isEqualTo(insertedCopy.getTestEntityOneToOneFollowing().getName());
+        Assertions.assertThat(updated.getTestEntityOneToOneFollowing().getName()).isEqualTo(
+            insertedCopy.getTestEntityOneToOneFollowing().getName());
     }
 
     @Test
@@ -162,12 +169,15 @@ public class OneToOneFollowingAggregateRootRepository_ITest extends BasePersiste
         //when
         TestRootOneToOneFollowing updated = oneToOneFollowingAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneFollowing> found = oneToOneFollowingAggregateRootRepository.findResultById(new TestRootOneToOneFollowingId(1l)).resultValue();
+        Optional<TestRootOneToOneFollowing> found = oneToOneFollowingAggregateRootRepository.findResultById(
+            new TestRootOneToOneFollowingId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getTestEntityOneToOneFollowing());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getTestEntityOneToOneFollowing());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
-        Assertions.assertThat(updated.getTestEntityOneToOneFollowing().getName()).isEqualTo(insertedCopy.getTestEntityOneToOneFollowing().getName());
+        Assertions.assertThat(updated.getTestEntityOneToOneFollowing().getName()).isEqualTo(
+            insertedCopy.getTestEntityOneToOneFollowing().getName());
     }
 
     @Test
@@ -182,9 +192,11 @@ public class OneToOneFollowingAggregateRootRepository_ITest extends BasePersiste
         //when
         TestRootOneToOneFollowing updated = oneToOneFollowingAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneFollowing> found = oneToOneFollowingAggregateRootRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootOneToOneFollowing> found = oneToOneFollowingAggregateRootRepository.findResultById(
+            inserted.getId()).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityOneToOneFollowing());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityOneToOneFollowing());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
         Assertions.assertThat(updated.getTestEntityOneToOneFollowing()).isNull();
@@ -198,13 +210,16 @@ public class OneToOneFollowingAggregateRootRepository_ITest extends BasePersiste
         TestRootOneToOneFollowing inserted = oneToOneFollowingAggregateRootRepository.insert(trs);
         persistenceEventTestHelper.resetEventsCaught();
         //when
-        Optional<TestRootOneToOneFollowing> deleted = oneToOneFollowingAggregateRootRepository.deleteById(inserted.getId());
+        Optional<TestRootOneToOneFollowing> deleted = oneToOneFollowingAggregateRootRepository.deleteById(
+            inserted.getId());
         //then
-        Optional<TestRootOneToOneFollowing> found = oneToOneFollowingAggregateRootRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootOneToOneFollowing> found = oneToOneFollowingAggregateRootRepository.findResultById(
+            inserted.getId()).resultValue();
         Assertions.assertThat(deleted).isPresent();
         Assertions.assertThat(found).isEmpty();
         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getTestEntityOneToOneFollowing());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getTestEntityOneToOneFollowing());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get());
         persistenceEventTestHelper.assertEvents();
 
@@ -217,9 +232,11 @@ public class OneToOneFollowingAggregateRootRepository_ITest extends BasePersiste
         TestRootOneToOneFollowing inserted = oneToOneFollowingAggregateRootRepository.insert(trs);
         persistenceEventTestHelper.resetEventsCaught();
         //when
-        Optional<TestRootOneToOneFollowing> deleted = oneToOneFollowingAggregateRootRepository.deleteById(inserted.getId());
+        Optional<TestRootOneToOneFollowing> deleted = oneToOneFollowingAggregateRootRepository.deleteById(
+            inserted.getId());
         //then
-        Optional<TestRootOneToOneFollowing> found = oneToOneFollowingAggregateRootRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootOneToOneFollowing> found = oneToOneFollowingAggregateRootRepository.findResultById(
+            inserted.getId()).resultValue();
         Assertions.assertThat(deleted).isPresent();
         Assertions.assertThat(found).isEmpty();
         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);
@@ -240,9 +257,11 @@ public class OneToOneFollowingAggregateRootRepository_ITest extends BasePersiste
         //when
         TestRootOneToOneFollowing updated = oneToOneFollowingAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneFollowing> found = oneToOneFollowingAggregateRootRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootOneToOneFollowing> found = oneToOneFollowingAggregateRootRepository.findResultById(
+            inserted.getId()).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityOneToOneFollowing());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityOneToOneFollowing());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
         Assertions.assertThat(updated.getTestEntityOneToOneFollowing()).isNull();

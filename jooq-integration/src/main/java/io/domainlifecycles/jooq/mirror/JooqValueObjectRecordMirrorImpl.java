@@ -50,7 +50,7 @@ public class JooqValueObjectRecordMirrorImpl implements ValueObjectRecordMirror<
 
     private String recordMappedContainerTypeName;
 
-    private final RecordMapper<UpdatableRecord<?>,?,?> valueObjectRecordMapperInstance;
+    private final RecordMapper<UpdatableRecord<?>, ?, ?> valueObjectRecordMapperInstance;
     private final List<String> references;
 
     private EntityRecordMirror<UpdatableRecord<?>> owner;
@@ -59,7 +59,7 @@ public class JooqValueObjectRecordMirrorImpl implements ValueObjectRecordMirror<
                                            String containedValueObjectTypeName,
                                            Class<? extends UpdatableRecord<?>> valueObjectRecordType,
                                            List<String> pathFromEntityToValueObject,
-                                           RecordMapper<UpdatableRecord<?>,?,?> valueObjectRecordMapperInstance,
+                                           RecordMapper<UpdatableRecord<?>, ?, ?> valueObjectRecordMapperInstance,
                                            List<String> references) {
         this.containingEntityTypeName = Objects.requireNonNull(containingEntityTypeName);
         this.containedValueObjectTypeName = Objects.requireNonNull(containedValueObjectTypeName);
@@ -69,7 +69,8 @@ public class JooqValueObjectRecordMirrorImpl implements ValueObjectRecordMirror<
         this.valueObjectRecordMapperInstance = valueObjectRecordMapperInstance;
         this.references = references;
         if (this.references == null || this.references.size() == 0) {
-            throw DLCPersistenceException.fail("A value object when being persisted in its own record needs at least a reference (foreign key) " +
+            throw DLCPersistenceException.fail(
+                "A value object when being persisted in its own record needs at least a reference (foreign key) " +
                     "to its container entity in the database representation. \n" +
                     "There is no database reference detected for '%s'"
                     + " within its container '%s'!",
@@ -131,7 +132,7 @@ public class JooqValueObjectRecordMirrorImpl implements ValueObjectRecordMirror<
      * {@inheritDoc}
      */
     @Override
-    public RecordMapper<UpdatableRecord<?>,?,?> recordMapper() {
+    public RecordMapper<UpdatableRecord<?>, ?, ?> recordMapper() {
         return this.valueObjectRecordMapperInstance;
     }
 
@@ -140,14 +141,16 @@ public class JooqValueObjectRecordMirrorImpl implements ValueObjectRecordMirror<
      */
     @Override
     public String recordMappedContainerTypeName() {
-        //we need to initialize this variable lazy, because at instantiation time, we do not have the complete mirror structure
+        //we need to initialize this variable lazy, because at instantiation time, we do not have the complete mirror
+        // structure
         if (this.recordMappedContainerTypeName == null) {
             JooqEntityRecordMirrorImpl entityRecordMirror = (JooqEntityRecordMirrorImpl) this.owner;
             var predecessorVorm = entityRecordMirror
                 .valueObjectRecords()
                 .stream()
                 .filter(vorm -> this.completePath().startsWith(vorm.completePath())
-                    && (this.pathSegments().size() == (vorm.pathSegments().size() + 1))).min((o1, o2) -> Integer.compare(o1.pathSegments().size(), o2.pathSegments().size()) * -1);
+                    && (this.pathSegments().size() == (vorm.pathSegments().size() + 1))).min(
+                    (o1, o2) -> Integer.compare(o1.pathSegments().size(), o2.pathSegments().size()) * -1);
             if (predecessorVorm.isPresent()) {
                 var vorm = predecessorVorm.get();
                 this.recordMappedContainerTypeName = vorm.domainObjectTypeName();
@@ -165,7 +168,7 @@ public class JooqValueObjectRecordMirrorImpl implements ValueObjectRecordMirror<
     }
 
     @Override
-    public void setOwner(EntityRecordMirror<UpdatableRecord<?>> owner){
+    public void setOwner(EntityRecordMirror<UpdatableRecord<?>> owner) {
         this.owner = owner;
     }
 

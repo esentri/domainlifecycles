@@ -33,7 +33,6 @@ import java.util.Set;
  * Provides the record classes.
  *
  * @param <RECORD> the record type
- *
  * @author Mario Herb
  */
 public interface RecordClassProvider<RECORD> {

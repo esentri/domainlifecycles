@@ -36,8 +36,9 @@ import io.domainlifecycles.mirror.model.MethodModel;
  *
  * @author Mario Herb
  */
-@JsonTypeInfo(use= JsonTypeInfo.Id.CLASS, property="@class")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = MethodModel.class),
 })
-public interface MethodMirrorMixin {}
+public interface MethodMirrorMixin {
+}

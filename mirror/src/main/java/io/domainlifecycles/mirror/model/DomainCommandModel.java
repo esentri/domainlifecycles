@@ -69,7 +69,7 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
                               @JsonProperty("domainServiceTargetTypeName") Optional<String> domainServiceTargetTypeName,
                               @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
                               @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
-                              ) {
+    ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
         this.aggregateTargetIdentityTypeName = Objects.requireNonNull(aggregateTargetIdentityTypeName);
         this.domainServiceTargetTypeName = Objects.requireNonNull(domainServiceTargetTypeName);
@@ -80,7 +80,7 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
      */
     @JsonIgnore
     @Override
-    public List<FieldMirror> getBasicFields(){
+    public List<FieldMirror> getBasicFields() {
         return allFields.stream().filter(p ->
                 DomainType.NON_DOMAIN.equals(p.getType().getDomainType())
             )
@@ -92,7 +92,7 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
      */
     @JsonIgnore
     @Override
-    public List<ValueReferenceMirror> getValueReferences(){
+    public List<ValueReferenceMirror> getValueReferences() {
         return allFields.stream().filter(p ->
                 DomainType.VALUE_OBJECT.equals(p.getType().getDomainType()) ||
                     DomainType.ENUM.equals(p.getType().getDomainType()) ||
@@ -107,7 +107,7 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
      */
     @JsonIgnore
     @Override
-    public List<EntityReferenceMirror> getEntityReferences(){
+    public List<EntityReferenceMirror> getEntityReferences() {
         return allFields.stream().filter(p ->
                 DomainType.ENTITY.equals(p.getType().getDomainType())
             )
@@ -120,7 +120,7 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
      */
     @JsonIgnore
     @Override
-    public List<AggregateRootReferenceMirror> getAggregateRootReferences(){
+    public List<AggregateRootReferenceMirror> getAggregateRootReferences() {
         return allFields.stream().filter(p ->
                 DomainType.AGGREGATE_ROOT.equals(p.getType().getDomainType())
             )
@@ -134,8 +134,9 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     @JsonIgnore
     @Override
     public Optional<AggregateRootMirror> getAggregateTarget() {
-        var identity =  aggregateTargetIdentityTypeName
-            .map(n -> Domain.typeMirror(n).orElseThrow(() -> MirrorException.fail("AggregateRootMirror not found for '%s'", n)))
+        var identity = aggregateTargetIdentityTypeName
+            .map(n -> Domain.typeMirror(n).orElseThrow(
+                () -> MirrorException.fail("AggregateRootMirror not found for '%s'", n)))
             .map(m -> (IdentityMirror) m);
         return identity.flatMap(identityMirror -> Domain.getInitializedDomain()
             .allTypeMirrors()
@@ -155,7 +156,8 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     @Override
     public Optional<DomainServiceMirror> getDomainServiceTarget() {
         return domainServiceTargetTypeName
-            .map(n -> Domain.typeMirror(n).orElseThrow(() -> MirrorException.fail("DomainServiceMirror not found for '%s'", n)))
+            .map(n -> Domain.typeMirror(n).orElseThrow(
+                () -> MirrorException.fail("DomainServiceMirror not found for '%s'", n)))
             .map(m -> (DomainServiceMirror) m);
     }
 
@@ -188,7 +190,9 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         DomainCommandModel that = (DomainCommandModel) o;
-        return aggregateTargetIdentityTypeName.equals(that.aggregateTargetIdentityTypeName) && domainServiceTargetTypeName.equals(that.domainServiceTargetTypeName);
+        return aggregateTargetIdentityTypeName.equals(
+            that.aggregateTargetIdentityTypeName) && domainServiceTargetTypeName.equals(
+            that.domainServiceTargetTypeName);
     }
 
     /**

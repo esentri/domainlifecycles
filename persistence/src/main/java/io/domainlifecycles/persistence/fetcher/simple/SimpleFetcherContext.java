@@ -41,7 +41,6 @@ import java.util.Set;
  * SimpleFetcherContext is a simple implementation of a fetcher context.
  *
  * @param <BASE_RECORD_TYPE> the base record type
- *
  * @author Mario Herb
  */
 public class SimpleFetcherContext<BASE_RECORD_TYPE> implements FetcherContext<BASE_RECORD_TYPE> {

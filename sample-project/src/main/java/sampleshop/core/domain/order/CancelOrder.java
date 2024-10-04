@@ -37,4 +37,5 @@ import io.domainlifecycles.domain.types.DomainCommand;
  */
 public record CancelOrder(
     @NotNull Order.OrderId orderId
-) implements DomainCommand {}
+) implements DomainCommand {
+}

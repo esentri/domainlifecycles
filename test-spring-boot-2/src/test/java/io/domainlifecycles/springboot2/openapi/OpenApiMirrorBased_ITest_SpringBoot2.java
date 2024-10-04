@@ -80,7 +80,7 @@ public class OpenApiMirrorBased_ITest_SpringBoot2 {
     private MockMvc mockMvc;
 
     @BeforeEach
-    public void init() throws Exception{
+    public void init() throws Exception {
         Locale.setDefault(Locale.ENGLISH);
         final MvcResult response = mockMvc.perform(MockMvcRequestBuilders.get(API_DOCS_PATH))
             .andExpect(status().isOk())
@@ -88,29 +88,31 @@ public class OpenApiMirrorBased_ITest_SpringBoot2 {
     }
 
     @Test
-    public void testRegularAPICall() throws Exception{
+    public void testRegularAPICall() throws Exception {
         //test call with "singleValued" VO path param and identity reference path param in flat String representation
-        final MvcResult response = mockMvc.perform(MockMvcRequestBuilders.get(API_CALL_PREFIX+"/1/abc?bestellPositionId=5&kundennummern=2,3,4"))
+        final MvcResult response = mockMvc.perform(
+                MockMvcRequestBuilders.get(API_CALL_PREFIX + "/1/abc?bestellPositionId=5&kundennummern=2,3,4"))
             .andExpect(status().isOk())
             .andReturn();
-        var res = (AutoMappedComplexVo)objectMapper.readValue(response.getResponse().getContentAsString(), AutoMappedComplexVo.class);
+        var res = (AutoMappedComplexVo) objectMapper.readValue(response.getResponse().getContentAsString(),
+            AutoMappedComplexVo.class);
         assertThat(res).isNotNull();
         assertThat(res.getValueA()).isEqualTo("1 5 2 3 4");
         assertThat(res.getValueB()).isEqualTo(AutoMappedSimpleVo.builder().setValue("abc").build());
     }
 
     @Test
-    public void testFlatAPIDocRepresentationOfSingleValueVOReferenceAsString(){
+    public void testFlatAPIDocRepresentationOfSingleValueVOReferenceAsString() {
         assertPropertyTypeAndGetSchema(AutoMappedComplexVo.class, "valueB", SCHEMA_TYPE_STRING, null, null);
     }
 
     @Test
-    public void testFlatAPIDocRepresentationOfIdentityReferenceAsString(){
+    public void testFlatAPIDocRepresentationOfIdentityReferenceAsString() {
         assertPropertyTypeAndGetSchema(Bestellung.class, "kundennummer", SCHEMA_TYPE_STRING, null, null);
     }
 
     @Test
-    public void testFlatAPIDocRepresentationOfListOfSingleValuedVOReferenceAsStringArray(){
+    public void testFlatAPIDocRepresentationOfListOfSingleValuedVOReferenceAsStringArray() {
         Schema schema = assertPropertyTypeAndGetSchema(Bestellung.class, "aktionsCodes", SCHEMA_TYPE_ARRAY, null, null);
         Schema itemSchema = schema.getItems();
         assertThat(itemSchema).isNotNull();
@@ -119,8 +121,9 @@ public class OpenApiMirrorBased_ITest_SpringBoot2 {
     }
 
     @Test
-    public void testBestellungIdPrimaryNotRequired(){
-        Schema schema = assertPropertyTypeAndGetSchema(Bestellung.class, "id", SCHEMA_TYPE_INTEGER, FORMAT_TYPE_INT64, null);
+    public void testBestellungIdPrimaryNotRequired() {
+        Schema schema = assertPropertyTypeAndGetSchema(Bestellung.class, "id", SCHEMA_TYPE_INTEGER, FORMAT_TYPE_INT64,
+            null);
         var openAPI = openAPIService.getCachedOpenAPI(Locale.getDefault());
         var testSchema = openAPI.getComponents().getSchemas().get(Bestellung.class.getName());
         assertThat(testSchema).isNotNull();
@@ -128,7 +131,7 @@ public class OpenApiMirrorBased_ITest_SpringBoot2 {
     }
 
     @Test
-    public void testControllerParameters(){
+    public void testControllerParameters() {
         var openAPI = openAPIService.getCachedOpenAPI(Locale.getDefault());
         var pathItemOptional = openAPI.getPaths()
             .values()
@@ -139,28 +142,30 @@ public class OpenApiMirrorBased_ITest_SpringBoot2 {
             .findFirst();
         assertThat(pathItemOptional).isPresent();
         assertThat(pathItemOptional.get().getGet().getParameters()).isNotNull();
-        for(Parameter p : pathItemOptional.get().getGet().getParameters()){
-            if(p.getName().equals("kundennummern")){
+        for (Parameter p : pathItemOptional.get().getGet().getParameters()) {
+            if (p.getName().equals("kundennummern")) {
                 assertThat(p.getSchema().getType()).isEqualTo(SCHEMA_TYPE_ARRAY);
                 assertThat(p.getSchema().getItems().getType()).isEqualTo(SCHEMA_TYPE_STRING);
             }
-            if(p.getName().equals("bestellungId")){
+            if (p.getName().equals("bestellungId")) {
                 assertThat(p.getSchema().getType()).isEqualTo(SCHEMA_TYPE_INTEGER);
             }
-            if(p.getName().equals("bestellPositionId")){
+            if (p.getName().equals("bestellPositionId")) {
                 assertThat(p.getSchema().getType()).isEqualTo(SCHEMA_TYPE_INTEGER);
             }
-            if(p.getName().equals("simpleVo")){
+            if (p.getName().equals("simpleVo")) {
                 assertThat(p.getSchema().getType()).isEqualTo(SCHEMA_TYPE_STRING);
             }
         }
     }
 
 
-    private Schema assertPropertyTypeAndGetSchema(Class containingClass, String propertyName, String expectedPropertyType, String expectedFormat, String expectedPattern){
+    private Schema assertPropertyTypeAndGetSchema(Class containingClass, String propertyName,
+                                                  String expectedPropertyType, String expectedFormat,
+                                                  String expectedPattern) {
         var openAPI = openAPIService.getCachedOpenAPI(Locale.getDefault());
         var testSchema = openAPI.getComponents().getSchemas().get(containingClass.getName());
-        var propertySchema = (Schema)testSchema.getProperties().get(propertyName);
+        var propertySchema = (Schema) testSchema.getProperties().get(propertyName);
         assertThat(propertySchema.getType()).isEqualTo(expectedPropertyType);
         assertThat(propertySchema.getFormat()).isEqualTo(expectedFormat);
         assertThat(propertySchema.getPattern()).isEqualTo(expectedPattern);
@@ -168,27 +173,30 @@ public class OpenApiMirrorBased_ITest_SpringBoot2 {
     }
 
     @Test
-    public void testCommandSchema(){
+    public void testCommandSchema() {
         var openAPI = openAPIService.getCachedOpenAPI(Locale.getDefault());
         var testSchema = openAPI.getComponents().getSchemas().get(TestCommand.class.getName());
         assertThat(testSchema.getProperties()).isNotNull();
         assertThat(testSchema.getProperties().get("complexVo")).isNotNull();
-        assertThat(((Schema<?>)testSchema.getProperties().get("complexVo")).get$ref()).contains(AutoMappedComplexVo.class.getName());
+        assertThat(((Schema<?>) testSchema.getProperties().get("complexVo")).get$ref()).contains(
+            AutoMappedComplexVo.class.getName());
         assertThat(testSchema.getProperties().get("simpleVo")).isNotNull();
-        assertThat(((Schema<?>)testSchema.getProperties().get("simpleVo")).get$ref()).isNull();
+        assertThat(((Schema<?>) testSchema.getProperties().get("simpleVo")).get$ref()).isNull();
         assertThat(testSchema.getProperties().get("voEntity")).isNotNull();
-        assertThat(((Schema<?>)testSchema.getProperties().get("voEntity")).get$ref()).contains(AutoMappedVoEntity.class.getName());
+        assertThat(((Schema<?>) testSchema.getProperties().get("voEntity")).get$ref()).contains(
+            AutoMappedVoEntity.class.getName());
         assertThat(testSchema.getProperties().get("voEntityId")).isNotNull();
-        assertThat(((Schema<?>)testSchema.getProperties().get("voEntityId")).get$ref()).isNull();
+        assertThat(((Schema<?>) testSchema.getProperties().get("voEntityId")).get$ref()).isNull();
         assertThat(testSchema.getProperties().get("voList")).isNotNull();
-        assertThat(((Schema<?>)testSchema.getProperties().get("voList")).getItems()).isNotNull();
-        assertThat(((Schema<?>)testSchema.getProperties().get("voList")).getItems().get$ref()).isNull();
+        assertThat(((Schema<?>) testSchema.getProperties().get("voList")).getItems()).isNotNull();
+        assertThat(((Schema<?>) testSchema.getProperties().get("voList")).getItems().get$ref()).isNull();
         assertThat(testSchema.getProperties().get("entityList")).isNotNull();
-        assertThat(((Schema<?>)testSchema.getProperties().get("entityList")).getItems()).isNotNull();
-        assertThat(((Schema<?>)testSchema.getProperties().get("entityList")).getItems().get$ref()).contains(AutoMappedVoEntity.class.getName());
+        assertThat(((Schema<?>) testSchema.getProperties().get("entityList")).getItems()).isNotNull();
+        assertThat(((Schema<?>) testSchema.getProperties().get("entityList")).getItems().get$ref()).contains(
+            AutoMappedVoEntity.class.getName());
         assertThat(testSchema.getProperties().get("idList")).isNotNull();
-        assertThat(((Schema<?>)testSchema.getProperties().get("idList")).getItems()).isNotNull();
-        assertThat(((Schema<?>)testSchema.getProperties().get("idList")).getItems().get$ref()).isNull();
+        assertThat(((Schema<?>) testSchema.getProperties().get("idList")).getItems()).isNotNull();
+        assertThat(((Schema<?>) testSchema.getProperties().get("idList")).getItems().get$ref()).isNull();
 
     }
 

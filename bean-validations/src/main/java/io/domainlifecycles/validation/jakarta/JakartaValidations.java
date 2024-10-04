@@ -50,10 +50,10 @@ public class JakartaValidations {
      * Generic object validation using bean validation annotations.
      *
      * @param jakartaFactory to create a validator instance
-     * @param thisObject {@link Object} to be validated
+     * @param thisObject     {@link Object} to be validated
      */
-    public static void validate(ValidatorFactory jakartaFactory, Object thisObject){
-        if(jakartaFactory != null) {
+    public static void validate(ValidatorFactory jakartaFactory, Object thisObject) {
+        if (jakartaFactory != null) {
             Set<ConstraintViolation<Object>> violations = null;
             try {
                 Validator validator = jakartaFactory.getValidator();
@@ -69,12 +69,13 @@ public class JakartaValidations {
      * Generic return value validation using bean validation annotations.
      *
      * @param jakartaFactory to create a validator instance
-     * @param thisObject {@link Object}
-     * @param method validated
-     * @param returnValue {@link Object} to be validated
+     * @param thisObject     {@link Object}
+     * @param method         validated
+     * @param returnValue    {@link Object} to be validated
      */
-    public static void validateMethodReturnValue(ValidatorFactory jakartaFactory, Object thisObject, Method method, Object returnValue){
-        if(jakartaFactory != null) {
+    public static void validateMethodReturnValue(ValidatorFactory jakartaFactory, Object thisObject, Method method,
+                                                 Object returnValue) {
+        if (jakartaFactory != null) {
             Set<ConstraintViolation<Object>> violations = null;
             try {
                 ExecutableValidator executableValidator = jakartaFactory.getValidator().forExecutables();
@@ -90,25 +91,26 @@ public class JakartaValidations {
      * Generic method parameter validation using bean validation annotations.
      *
      * @param jakartaFactory to create a validator instance
-     * @param thisObject validated object
-     * @param method validated
-     * @param arguments parameter argument to be validated
+     * @param thisObject     validated object
+     * @param method         validated
+     * @param arguments      parameter argument to be validated
      */
-    public static void validateMethodParameters(ValidatorFactory jakartaFactory, Object thisObject, Method method, Object[] arguments){
-        if(jakartaFactory != null) {
+    public static void validateMethodParameters(ValidatorFactory jakartaFactory, Object thisObject, Method method,
+                                                Object[] arguments) {
+        if (jakartaFactory != null) {
             Set<ConstraintViolation<Object>> violations = null;
-            try{
+            try {
                 ExecutableValidator executableValidator = jakartaFactory.getValidator().forExecutables();
-                violations = executableValidator.validateParameters(thisObject, method, arguments );
-            }catch(Throwable t){
+                violations = executableValidator.validateParameters(thisObject, method, arguments);
+            } catch (Throwable t) {
                 log.error("Something failed on executing bean validations!", t);
             }
             throwForViolationsJakarta(violations);
         }
     }
 
-    private static void throwForViolationsJakarta(Set<ConstraintViolation<Object>> violations){
-        if(violations != null) {
+    private static void throwForViolationsJakarta(Set<ConstraintViolation<Object>> violations) {
+        if (violations != null) {
             StringBuilder messageBuilder = new StringBuilder();
             for (ConstraintViolation<Object> violation : violations) {
                 messageBuilder.append("'");

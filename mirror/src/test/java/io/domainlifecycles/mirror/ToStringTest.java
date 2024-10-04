@@ -37,13 +37,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ToStringTest {
 
     @BeforeAll
-    public static void init(){
+    public static void init() {
         ReflectiveDomainMirrorFactory factory = new ReflectiveDomainMirrorFactory("tests");
         Domain.initialize(factory);
     }
 
     @Test
-    public void domainToString(){
+    public void domainToString() {
         assertThat(Domain.getInitializedDomain().toString()).isNotEmpty();
     }
 }

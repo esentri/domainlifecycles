@@ -65,7 +65,8 @@ public class Test3JooqRecordMapper extends AbstractRecordMapper<TestEntity_3Reco
         testEntity_3Record.setTestRootId(testEntity3.getTestRootId().value());
         testEntity_3Record.setId(testEntity3.getId().value());
         testEntity_3Record.setName(testEntity3.getName());
-        testEntity_3Record.setTestEntity_2Id(testEntity3.getTestEntity2Id() == null ? null : testEntity3.getTestEntity2Id().value());
+        testEntity_3Record.setTestEntity_2Id(
+            testEntity3.getTestEntity2Id() == null ? null : testEntity3.getTestEntity2Id().value());
         testEntity_3Record.setConcurrencyVersion(testEntity3.concurrencyVersion());
         return testEntity_3Record;
     }

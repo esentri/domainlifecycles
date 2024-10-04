@@ -32,7 +32,6 @@ package io.domainlifecycles.persistence.mapping.converter;
  *
  * @param <FROM> the source type
  * @param <TO>   the target type
- *
  * @author Mario Herb
  */
 public abstract class TypeConverter<FROM, TO> {

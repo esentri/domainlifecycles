@@ -53,16 +53,17 @@ import java.util.Optional;
  *  ReflectiveDomainMirrorFactory factory = new ReflectiveDomainMirrorFactory("tests");
  *  Domain.initialize(factory);
  * }</pre>
- *
+ * <p>
  * A current use case is the DomainDiagrammer {@see io.domainlifecycles.diagram.domain.DomainDiagramGenerator}.
  *
  * @author Mario Herb
  */
-public class TypeMetaResolver implements GenericTypeResolver{
+public class TypeMetaResolver implements GenericTypeResolver {
 
     private final FieldTypeResolver<TypeMeta<?>> fieldTypeResolver = new FieldTypeMetaResolver();
 
     ExecutableTypeResolver<TypeMeta<?>> executableTypeResolver = new ExecutableTypeMetaResolver();
+
     /**
      * {@inheritDoc}
      */
@@ -92,18 +93,20 @@ public class TypeMetaResolver implements GenericTypeResolver{
         return map(methodReturnTypeMeta);
     }
 
-    private ResolvedGenericTypeMirror map(TypeMeta<?> typeMeta){
+    private ResolvedGenericTypeMirror map(TypeMeta<?> typeMeta) {
         var typeName = typeMeta.getType().getName();
-        if(typeMeta.getType().isArray()){
+        if (typeMeta.getType().isArray()) {
             typeName = typeMeta.getType().getComponentType().getName();
         }
-        return new ResolvedGenericTypeModel(typeName, typeMeta.getType().isArray(), Arrays.stream(typeMeta.getGenericTypes()).map(tm -> map(tm)).toList(), map(typeMeta.getWildcardBound()));
+        return new ResolvedGenericTypeModel(typeName, typeMeta.getType().isArray(),
+            Arrays.stream(typeMeta.getGenericTypes()).map(tm -> map(tm)).toList(), map(typeMeta.getWildcardBound()));
     }
 
-    private Optional<WildcardBound> map(com.github.vladislavsevruk.resolver.type.WildcardBound metaWildcardBound){
-        if(metaWildcardBound == null){
+    private Optional<WildcardBound> map(com.github.vladislavsevruk.resolver.type.WildcardBound metaWildcardBound) {
+        if (metaWildcardBound == null) {
             return Optional.empty();
         }
-        return metaWildcardBound.equals(com.github.vladislavsevruk.resolver.type.WildcardBound.UPPER) ? Optional.of(WildcardBound.UPPER) : Optional.of(WildcardBound.LOWER);
+        return metaWildcardBound.equals(com.github.vladislavsevruk.resolver.type.WildcardBound.UPPER) ? Optional.of(
+            WildcardBound.UPPER) : Optional.of(WildcardBound.LOWER);
     }
 }

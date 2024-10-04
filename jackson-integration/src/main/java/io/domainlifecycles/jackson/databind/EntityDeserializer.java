@@ -59,9 +59,9 @@ import java.util.Optional;
 
 /**
  * {@link Domain} based deserialization of {@link Entity} instances.
- * @see StdDeserializer
  *
  * @author Mario Herb
+ * @see StdDeserializer
  */
 public class EntityDeserializer extends StdDeserializer<Entity<?>> {
 
@@ -87,10 +87,9 @@ public class EntityDeserializer extends StdDeserializer<Entity<?>> {
     /**
      * Deserialize Entities
      *
-     * @param jsonParser Parsed used for reading JSON content
+     * @param jsonParser             Parsed used for reading JSON content
      * @param deserializationContext Context that can be used to access information about
-     *   this deserialization activity.
-     *
+     *                               this deserialization activity.
      * @throws IOException if parsing fails
      */
     @Override
@@ -120,7 +119,7 @@ public class EntityDeserializer extends StdDeserializer<Entity<?>> {
                                             ObjectCodec codec,
                                             DeserializationContext deserializationContext) {
 
-        if(entityMirror.getIdentityField().isPresent()){
+        if (entityMirror.getIdentityField().isPresent()) {
             var idField = entityMirror.getIdentityField().get();
             String fieldName = idField.getName();
             var fieldTypeName = idField.getType().getTypeName();
@@ -136,7 +135,7 @@ public class EntityDeserializer extends StdDeserializer<Entity<?>> {
             );
         }
 
-        entityMirror.getBasicFields().stream().filter(fm -> ! fm.isStatic()).forEach(fm -> {
+        entityMirror.getBasicFields().stream().filter(fm -> !fm.isStatic()).forEach(fm -> {
             if (mappingContext.contextNode == null) {
                 throw DLCJacksonException.fail("Node missing in mapping context!");
             }
@@ -159,64 +158,64 @@ public class EntityDeserializer extends StdDeserializer<Entity<?>> {
             .stream()
             .filter(vrm -> !vrm.isStatic())
             .forEach(vrm -> {
-                TreeNode valueObjectCompositionNode = mappingContext.contextNode.get(vrm.getName());
-                if (vrm.getType().hasCollectionContainer()) {
-                    if (valueObjectCompositionNode != null && valueObjectCompositionNode.isArray()) {
-                        mappingContext.domainObjectBuilder.setFieldValue(mappingContext.domainObjectBuilder
-                            .newCollectionInstanceForField(vrm.getName()), vrm.getName());
-                        for (int i = 0; i < valueObjectCompositionNode.size(); i++) {
-                            TreeNode valueObjectNode = valueObjectCompositionNode.get(i);
-                            readAndSetEntityField(
-                                mappingContext,
-                                valueObjectNode,
-                                vrm.getName(),
-                                vrm.getType().getTypeName(),
-                                codec,
-                                deserializationContext
-                            );
+                    TreeNode valueObjectCompositionNode = mappingContext.contextNode.get(vrm.getName());
+                    if (vrm.getType().hasCollectionContainer()) {
+                        if (valueObjectCompositionNode != null && valueObjectCompositionNode.isArray()) {
+                            mappingContext.domainObjectBuilder.setFieldValue(mappingContext.domainObjectBuilder
+                                .newCollectionInstanceForField(vrm.getName()), vrm.getName());
+                            for (int i = 0; i < valueObjectCompositionNode.size(); i++) {
+                                TreeNode valueObjectNode = valueObjectCompositionNode.get(i);
+                                readAndSetEntityField(
+                                    mappingContext,
+                                    valueObjectNode,
+                                    vrm.getName(),
+                                    vrm.getType().getTypeName(),
+                                    codec,
+                                    deserializationContext
+                                );
+                            }
                         }
+                    } else {
+                        readAndSetEntityField(
+                            mappingContext,
+                            valueObjectCompositionNode,
+                            vrm.getName(),
+                            vrm.getType().getTypeName(),
+                            codec, deserializationContext
+                        );
                     }
-                } else {
-                    readAndSetEntityField(
-                        mappingContext,
-                        valueObjectCompositionNode,
-                        vrm.getName(),
-                        vrm.getType().getTypeName(),
-                        codec, deserializationContext
-                    );
                 }
-            }
-        );
+            );
 
         entityMirror.getEntityReferences()
             .forEach(erm -> {
-                TreeNode entityReferenceNode = mappingContext.contextNode.get(erm.getName());
-                if (erm.getType().hasCollectionContainer()) {
-                    if (entityReferenceNode != null && entityReferenceNode.isArray()) {
-                        mappingContext.domainObjectBuilder.setFieldValue(mappingContext.domainObjectBuilder
-                            .newCollectionInstanceForField(erm.getName()), erm.getName());
-                        for (int i = 0; i < entityReferenceNode.size(); i++) {
-                            TreeNode innerEntityNode = entityReferenceNode.get(i);
-                            readAndSetEntityField(
-                                mappingContext,
-                                innerEntityNode,
-                                erm.getName(),
-                                erm.getType().getTypeName(),
-                                codec,
-                                deserializationContext);
+                    TreeNode entityReferenceNode = mappingContext.contextNode.get(erm.getName());
+                    if (erm.getType().hasCollectionContainer()) {
+                        if (entityReferenceNode != null && entityReferenceNode.isArray()) {
+                            mappingContext.domainObjectBuilder.setFieldValue(mappingContext.domainObjectBuilder
+                                .newCollectionInstanceForField(erm.getName()), erm.getName());
+                            for (int i = 0; i < entityReferenceNode.size(); i++) {
+                                TreeNode innerEntityNode = entityReferenceNode.get(i);
+                                readAndSetEntityField(
+                                    mappingContext,
+                                    innerEntityNode,
+                                    erm.getName(),
+                                    erm.getType().getTypeName(),
+                                    codec,
+                                    deserializationContext);
+                            }
                         }
+                    } else {
+                        readAndSetEntityField(
+                            mappingContext,
+                            entityReferenceNode,
+                            erm.getName(),
+                            erm.getType().getTypeName(),
+                            codec,
+                            deserializationContext);
                     }
-                } else {
-                    readAndSetEntityField(
-                        mappingContext,
-                        entityReferenceNode,
-                        erm.getName(),
-                        erm.getType().getTypeName(),
-                        codec,
-                        deserializationContext);
                 }
-            }
-        );
+            );
 
         if (customizer != null) {
             customizer.afterObjectRead(mappingContext, codec);
@@ -272,15 +271,16 @@ public class EntityDeserializer extends StdDeserializer<Entity<?>> {
                                 }
                             }
                             var fm = entityMirror.fieldByName(fieldName);
-                            if(fm.getType().hasCollectionContainer()) {
+                            if (fm.getType().hasCollectionContainer()) {
                                 mappingContext.domainObjectBuilder.addValueToCollection(value, fieldName);
-                            }else{
+                            } else {
                                 mappingContext.domainObjectBuilder.setFieldValue(value, fieldName);
                             }
                         }
                     }
                 } catch (IOException e) {
-                    throw DLCJacksonException.fail("Not able to read and set field '%s' for '%s' !", e, fieldName, fieldTypeName);
+                    throw DLCJacksonException.fail("Not able to read and set field '%s' for '%s' !", e, fieldName,
+                        fieldTypeName);
                 }
             }
         }
@@ -288,7 +288,7 @@ public class EntityDeserializer extends StdDeserializer<Entity<?>> {
 
     private Entity<?> buildWithExceptionHandling(DomainObjectMappingContext mappingContext) {
         try {
-            if (!mappingContext.contextNode.isNull()){
+            if (!mappingContext.contextNode.isNull()) {
                 return (Entity<?>) mappingContext.domainObjectBuilder.build();
             } else {
                 return null;
@@ -304,14 +304,14 @@ public class EntityDeserializer extends StdDeserializer<Entity<?>> {
     }
 
     public void injectIds(ObjectNode objectNode) {
-        injectIds(objectNode,  this._valueType.getRawClass().getName());
+        injectIds(objectNode, this._valueType.getRawClass().getName());
     }
 
     private void injectIds(ObjectNode objectNode, String targetEntityTypeName) {
 
         EntityMirror em = Domain.entityMirrorFor(targetEntityTypeName);
 
-        if(em.getIdentityField().isPresent()) {
+        if (em.getIdentityField().isPresent()) {
             var idFieldName = em.getIdentityField().get().getName();
             JsonNode idNode = objectNode.get(idFieldName);
             if (idNode == null || idNode.isNull()) {

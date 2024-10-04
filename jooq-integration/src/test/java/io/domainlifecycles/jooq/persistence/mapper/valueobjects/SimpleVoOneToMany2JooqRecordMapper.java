@@ -39,7 +39,8 @@ import io.domainlifecycles.test.Tables;
 /**
  * Mapping JOOQ TestRootSimpleIgnoring records.
  */
-public class SimpleVoOneToMany2JooqRecordMapper extends AbstractRecordMapper<SimpleVoOneToMany_2Record, SimpleVoOneToMany2, VoAggregateRoot> {
+public class SimpleVoOneToMany2JooqRecordMapper extends AbstractRecordMapper<SimpleVoOneToMany_2Record,
+    SimpleVoOneToMany2, VoAggregateRoot> {
 
     @Override
     public DomainObjectBuilder<SimpleVoOneToMany2> recordToDomainObjectBuilder(SimpleVoOneToMany_2Record record) {

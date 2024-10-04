@@ -51,7 +51,7 @@ public abstract class DomainObjectModel extends DomainTypeModel implements Domai
                              List<MethodMirror> methods,
                              List<String> inheritanceHierarchyTypeNames,
                              List<String> allInterfaceTypeNames
-                             ) {
+    ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
@@ -60,7 +60,7 @@ public abstract class DomainObjectModel extends DomainTypeModel implements Domai
      */
     @JsonIgnore
     @Override
-    public List<FieldMirror> getBasicFields(){
+    public List<FieldMirror> getBasicFields() {
         return allFields.stream().filter(p ->
                 DomainType.NON_DOMAIN.equals(p.getType().getDomainType())
             )
@@ -72,7 +72,7 @@ public abstract class DomainObjectModel extends DomainTypeModel implements Domai
      */
     @JsonIgnore
     @Override
-    public List<ValueReferenceMirror> getValueReferences(){
+    public List<ValueReferenceMirror> getValueReferences() {
         return allFields.stream().filter(p ->
                 DomainType.VALUE_OBJECT.equals(p.getType().getDomainType()) ||
                     DomainType.ENUM.equals(p.getType().getDomainType()) ||
@@ -88,15 +88,16 @@ public abstract class DomainObjectModel extends DomainTypeModel implements Domai
     @Override
     public ValueReferenceMirror valueReferenceByName(String name) {
         return allFields.stream().filter(p ->
-                 p.getName().equals(name) && (
-                DomainType.VALUE_OBJECT.equals(p.getType().getDomainType()) ||
-                    DomainType.ENUM.equals(p.getType().getDomainType()) ||
-                    DomainType.IDENTITY.equals(p.getType().getDomainType())
-                 )
+                p.getName().equals(name) && (
+                    DomainType.VALUE_OBJECT.equals(p.getType().getDomainType()) ||
+                        DomainType.ENUM.equals(p.getType().getDomainType()) ||
+                        DomainType.IDENTITY.equals(p.getType().getDomainType())
+                )
             )
             .map(p -> (ValueReferenceMirror) p)
             .findFirst()
-            .orElseThrow(() -> MirrorException.fail(String.format("ValueReferenceMirror not found for name '%s' within '%s'!", name, typeName)));
+            .orElseThrow(() -> MirrorException.fail(
+                String.format("ValueReferenceMirror not found for name '%s' within '%s'!", name, typeName)));
     }
 
 

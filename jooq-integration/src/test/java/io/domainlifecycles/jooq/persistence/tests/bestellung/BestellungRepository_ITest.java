@@ -58,6 +58,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BestellungRepository_ITest extends BasePersistence_ITest {
 
@@ -66,7 +67,7 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
     private static BestellungRepository bestellungRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
 
         bestellungRepository = new BestellungRepository(
             persistenceConfiguration.dslContext,
@@ -246,7 +247,8 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
 
         //when
         //we expect a unique constraint exception
-        //ATTENTION: Do not write the assertion with a lambda expression, that will create a class loading conflict with our
+        //ATTENTION: Do not write the assertion with a lambda expression, that will create a class loading conflict
+        // with our
         // byte buddy extension
         DataAccessException ex = assertThrows(DataAccessException.class, new Executable() {
             @Override
@@ -289,7 +291,8 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
         Optional<Bestellung> foundAfter = bestellungRepository.findResultById(new BestellungId(1l)).resultValue();
         Assertions.assertThat(foundAfter).isPresent();
         //when
-        List<Bestellung> bestaetigteBestellungen = bestellungRepository.findByStatusCode(BestellStatusCodeEnum.BESTAETIGT);
+        List<Bestellung> bestaetigteBestellungen = bestellungRepository.findByStatusCode(
+            BestellStatusCodeEnum.BESTAETIGT);
         //then
         Assertions.assertThat(bestaetigteBestellungen).isEmpty();
         //when
@@ -344,10 +347,10 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
             //then
             assertThat(found.size() <= pageSize);
             Assertions.assertThat(bestellungen
-                .stream()
-                .filter(b -> bestellungen.indexOf(b) >= offsetInLoop
-                    && bestellungen.indexOf(b) < (offsetInLoop + pageSize))
-                .collect(Collectors.toList()))
+                    .stream()
+                    .filter(b -> bestellungen.indexOf(b) >= offsetInLoop
+                        && bestellungen.indexOf(b) < (offsetInLoop + pageSize))
+                    .collect(Collectors.toList()))
                 .usingRecursiveComparison()
                 .ignoringAllOverriddenEquals()
                 .ignoringCollectionOrder()

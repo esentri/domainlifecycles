@@ -44,7 +44,8 @@ import java.util.stream.Stream;
 @Slf4j
 public class VehicleRepository extends JooqAggregateRepository<Vehicle, VehicleId> {
 
-    public VehicleRepository(DSLContext dslContext, JooqDomainPersistenceProvider domainPersistenceProvider, PersistenceEventPublisher persistenceEventPublisher) {
+    public VehicleRepository(DSLContext dslContext, JooqDomainPersistenceProvider domainPersistenceProvider,
+                             PersistenceEventPublisher persistenceEventPublisher) {
         super(Vehicle.class, dslContext, domainPersistenceProvider, persistenceEventPublisher);
     }
 

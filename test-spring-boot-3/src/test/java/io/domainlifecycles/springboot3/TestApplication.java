@@ -98,14 +98,14 @@ public class TestApplication {
     }
 
     @PostConstruct
-    public void postConstruct(){
+    public void postConstruct() {
         ValidationDomainClassExtender.extend("tests");
         log.info("ValidationExtension Done!");
     }
 
     @Bean
     public JooqDomainPersistenceProvider domainPersistenceProvider(DomainObjectBuilderProvider domainObjectBuilderProvider,
-                                                                   Set<RecordMapper<?,?,?>> customRecordMappers){
+                                                                   Set<RecordMapper<?, ?, ?>> customRecordMappers) {
 
         JooqDomainPersistenceConfiguration jooqDomainPersistenceConfiguration = JooqDomainPersistenceConfiguration
             .JooqPersistenceConfigurationBuilder
@@ -123,13 +123,14 @@ public class TestApplication {
             )
             .make();
 
-        JooqDomainPersistenceProvider domainPersistenceProvider = new JooqDomainPersistenceProvider(jooqDomainPersistenceConfiguration);
+        JooqDomainPersistenceProvider domainPersistenceProvider = new JooqDomainPersistenceProvider(
+            jooqDomainPersistenceConfiguration);
 
         return domainPersistenceProvider;
     }
 
     @Bean
-    DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider(){
+    DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
         return new InnerClassDomainObjectBuilderProvider();
     }
 
@@ -139,11 +140,12 @@ public class TestApplication {
         return new EntityIdentityProvider() {
 
             private final JooqEntityIdentityProvider provider = new JooqEntityIdentityProvider(dslContext);
+
             @Override
             public Identity<?> provideFor(String entityTypeName) {
-                if(entityTypeName.equals(TestRootSimpleUuid.class.getName())){
+                if (entityTypeName.equals(TestRootSimpleUuid.class.getName())) {
                     return new TestRootSimpleUuidId(UUID.randomUUID());
-                }else{
+                } else {
                     return provider.provideFor(entityTypeName);
                 }
             }

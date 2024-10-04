@@ -39,14 +39,16 @@ import tests.shared.persistence.domain.oneToOneLeadingFK.TestRootOneToOneLeading
 /**
  * Mapping JOOQ TestEntityOneToOneLeading records.
  */
-public class TestOneToOneLeadingJooqRecordMapper extends AbstractRecordMapper<TestEntityOneToOneLeadingRecord, TestEntityOneToOneLeading, TestRootOneToOneLeading> {
+public class TestOneToOneLeadingJooqRecordMapper extends AbstractRecordMapper<TestEntityOneToOneLeadingRecord,
+    TestEntityOneToOneLeading, TestRootOneToOneLeading> {
 
     @Override
     public DomainObjectBuilder<TestEntityOneToOneLeading> recordToDomainObjectBuilder(TestEntityOneToOneLeadingRecord record) {
         if (record == null) {
             return null;
         }
-        TestEntityOneToOneLeadingRecord testEntityOneToOneLeadingRecord = record.into(Tables.TEST_ENTITY_ONE_TO_ONE_LEADING);
+        TestEntityOneToOneLeadingRecord testEntityOneToOneLeadingRecord = record.into(
+            Tables.TEST_ENTITY_ONE_TO_ONE_LEADING);
         return new InnerClassDomainObjectBuilder<>(TestEntityOneToOneLeading.builder()
             .setId(new TestEntityOneToOneLeadingId(testEntityOneToOneLeadingRecord.getId()))
             .setName(testEntityOneToOneLeadingRecord.getName())
@@ -54,7 +56,8 @@ public class TestOneToOneLeadingJooqRecordMapper extends AbstractRecordMapper<Te
     }
 
     @Override
-    public TestEntityOneToOneLeadingRecord from(TestEntityOneToOneLeading testEntityOneToOneLeading, TestRootOneToOneLeading root) {
+    public TestEntityOneToOneLeadingRecord from(TestEntityOneToOneLeading testEntityOneToOneLeading,
+                                                TestRootOneToOneLeading root) {
         TestEntityOneToOneLeadingRecord testEntityOneToOneLeadingRecord = new TestEntityOneToOneLeadingRecord();
         testEntityOneToOneLeadingRecord.setId(testEntityOneToOneLeading.getId().value());
         testEntityOneToOneLeadingRecord.setName(testEntityOneToOneLeading.getName());

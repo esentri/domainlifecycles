@@ -46,20 +46,20 @@ public class ARepository implements Repository<AnAggregate.AggregateId, AnAggreg
     private Map<AnAggregate.AggregateId, AnAggregate> instanceMap = new HashMap<>();
 
     @ListensTo(domainEventType = ADomainEvent.class)
-    public void onADomainEvent(ADomainEvent domainEvent){
+    public void onADomainEvent(ADomainEvent domainEvent) {
         System.out.println("ADomainEvent received in ARepository! Message = " + domainEvent.message());
         received.add(domainEvent);
     }
 
     @ListensTo(domainEventType = PassThroughDomainEvent.class)
-    public void onADomainEvent(PassThroughDomainEvent domainEvent){
+    public void onADomainEvent(PassThroughDomainEvent domainEvent) {
         System.out.println("PassThroughDomainEvent received in ARepository! Message = " + domainEvent.message());
         received.add(domainEvent);
     }
 
     @Override
     public Optional<AnAggregate> findById(AnAggregate.AggregateId aggregateId) {
-        if(!instanceMap.containsKey(aggregateId)) {
+        if (!instanceMap.containsKey(aggregateId)) {
             instanceMap.put(aggregateId, new AnAggregate(aggregateId, 1l));
         }
         return Optional.of(instanceMap.get(aggregateId));

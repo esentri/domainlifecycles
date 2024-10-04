@@ -52,7 +52,7 @@ public class MockOutbox implements TransactionalOutbox {
         var eventsBatched = entries.stream()
             .filter(e -> e.batchId == null)
             .map(e -> {
-                e.batchId=batch.getBatchId();
+                e.batchId = batch.getBatchId();
                 return e.domainEvent;
             })
             .toList();

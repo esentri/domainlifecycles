@@ -83,7 +83,8 @@ public class TypeMetaResolverTests {
     public void testInheritedGenericMethodNotOverridden() throws NoSuchMethodException {
 
         Method methodToResolve = BaseEntityWithHidden.class.getDeclaredMethod("showTestNotOverridden", Object.class);
-        ResolvedGenericTypeMirror resolved = typeMetaResolver.resolveExecutableReturnType(methodToResolve, SubEntityHiding.class);
+        ResolvedGenericTypeMirror resolved = typeMetaResolver.resolveExecutableReturnType(methodToResolve,
+            SubEntityHiding.class);
 
         assertThat(resolved.typeName()).isEqualTo(String.class.getName());
         assertThat(resolved.isArray()).isFalse();
@@ -104,7 +105,8 @@ public class TypeMetaResolverTests {
     public void testInheritedGenericMethodOverridden() throws NoSuchMethodException {
 
         Method methodToResolve = BaseEntityWithHidden.class.getDeclaredMethod("showTestOverridden", Object.class);
-        ResolvedGenericTypeMirror resolved = typeMetaResolver.resolveExecutableReturnType(methodToResolve, SubEntityHiding.class);
+        ResolvedGenericTypeMirror resolved = typeMetaResolver.resolveExecutableReturnType(methodToResolve,
+            SubEntityHiding.class);
 
         assertThat(resolved.typeName()).isEqualTo(String.class.getName());
         assertThat(resolved.isArray()).isFalse();
@@ -124,7 +126,8 @@ public class TypeMetaResolverTests {
     @Test
     public void testInheritedValidate() throws NoSuchMethodException {
         Method methodToResolve = BaseEntityWithHidden.class.getDeclaredMethod("validate");
-        ResolvedGenericTypeMirror resolved = typeMetaResolver.resolveExecutableReturnType(methodToResolve, SubEntityHiding.class);
+        ResolvedGenericTypeMirror resolved = typeMetaResolver.resolveExecutableReturnType(methodToResolve,
+            SubEntityHiding.class);
 
         assertThat(resolved.typeName()).isEqualTo(void.class.getName());
         assertThat(resolved.isArray()).isFalse();
@@ -140,8 +143,10 @@ public class TypeMetaResolverTests {
     @Test
     public void testInheritedOptionalWildcardUpperBound() throws NoSuchMethodException {
 
-        Method methodToResolve = BaseEntityWithHidden.class.getDeclaredMethod("showTestNotOverriddenOptionalWildcardUpperBound", Optional.class);
-        ResolvedGenericTypeMirror resolved = typeMetaResolver.resolveExecutableReturnType(methodToResolve, SubEntityHiding.class);
+        Method methodToResolve = BaseEntityWithHidden.class.getDeclaredMethod(
+            "showTestNotOverriddenOptionalWildcardUpperBound", Optional.class);
+        ResolvedGenericTypeMirror resolved = typeMetaResolver.resolveExecutableReturnType(methodToResolve,
+            SubEntityHiding.class);
 
         assertThat(resolved.typeName()).isEqualTo(Optional.class.getName());
         assertThat(resolved.isArray()).isFalse();
@@ -159,8 +164,10 @@ public class TypeMetaResolverTests {
         assertThat(methodArgumentsTypeMetaList.get(0).isArray()).isFalse();
         assertThat(methodArgumentsTypeMetaList.get(0).wildcardBound()).isEmpty();
         assertThat(methodArgumentsTypeMetaList.get(0).genericTypes()).hasSize(1);
-        assertThat(methodArgumentsTypeMetaList.get(0).genericTypes().get(0).wildcardBound()).isEqualTo(Optional.of(WildcardBound.UPPER));
-        assertThat(methodArgumentsTypeMetaList.get(0).genericTypes().get(0).typeName()).isEqualTo(String.class.getName());
+        assertThat(methodArgumentsTypeMetaList.get(0).genericTypes().get(0).wildcardBound()).isEqualTo(
+            Optional.of(WildcardBound.UPPER));
+        assertThat(methodArgumentsTypeMetaList.get(0).genericTypes().get(0).typeName()).isEqualTo(
+            String.class.getName());
         assertThat(methodArgumentsTypeMetaList.get(0).genericTypes().get(0).isArray()).isFalse();
     }
 
@@ -182,7 +189,8 @@ public class TypeMetaResolverTests {
     public void testInheritedOptionalArrayReturn() throws NoSuchMethodException {
 
         Method methodToResolve = BaseEntityWithHidden.class.getDeclaredMethod("deliverArray");
-        ResolvedGenericTypeMirror resolved = typeMetaResolver.resolveExecutableReturnType(methodToResolve, SubEntityHiding.class);
+        ResolvedGenericTypeMirror resolved = typeMetaResolver.resolveExecutableReturnType(methodToResolve,
+            SubEntityHiding.class);
 
         assertThat(resolved.typeName()).isEqualTo(Optional.class.getName());
         assertThat(resolved.isArray()).isFalse();

@@ -67,7 +67,7 @@ public class DirectJtaTransactionalEventHandlingTests {
 
 
     @BeforeAll
-    public static void init(){
+    public static void init() {
         Logger rootLogger =
             (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         rootLogger.setLevel(Level.DEBUG);
@@ -95,12 +95,13 @@ public class DirectJtaTransactionalEventHandlingTests {
             .withServiceProvider(services)
             .withJtaTransactionManager(userTransactionManager);
         var config = configBuilder.make();
-        ((DirectJtaTransactionalDomainEventPublisher)config.domainEventPublisher).setPassThroughEventTypes(List.of(PassThroughDomainEvent.class));
+        ((DirectJtaTransactionalDomainEventPublisher) config.domainEventPublisher).setPassThroughEventTypes(
+            List.of(PassThroughDomainEvent.class));
 
     }
 
     @Test
-    public void testIntegrationCommit() throws Exception{
+    public void testIntegrationCommit() throws Exception {
         userTransactionManager.begin();
         //when
         var evt = new ADomainEvent("TestCommit");
@@ -116,7 +117,7 @@ public class DirectJtaTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationUnreceivedCommit() throws Exception{
+    public void testIntegrationUnreceivedCommit() throws Exception {
         userTransactionManager.begin();
         //when
         var evt = new UnreceivedDomainEvent("TestUnReceivedCommit");
@@ -132,7 +133,7 @@ public class DirectJtaTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationRollback() throws Exception{
+    public void testIntegrationRollback() throws Exception {
         userTransactionManager.begin();
         //when
         var evt = new ADomainEvent("TestRollback");
@@ -165,7 +166,7 @@ public class DirectJtaTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationRollbackButConfiguredPassThrough() throws Exception{
+    public void testIntegrationRollbackButConfiguredPassThrough() throws Exception {
         userTransactionManager.begin();
         //when
         var evt = new PassThroughDomainEvent("TestRollbackPassThrough");
@@ -182,7 +183,7 @@ public class DirectJtaTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationCommitConfiguredPassThrough() throws Exception{
+    public void testIntegrationCommitConfiguredPassThrough() throws Exception {
         userTransactionManager.begin();
         //when
         var evt = new PassThroughDomainEvent("TestRollbackPassThrough");
@@ -199,7 +200,7 @@ public class DirectJtaTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationAggregateDomainEventCommit() throws Exception{
+    public void testIntegrationAggregateDomainEventCommit() throws Exception {
         //when
         userTransactionManager.begin();
         var evt = new AnAggregateDomainEvent("TestAggregateDomainEventCommit");
@@ -217,7 +218,7 @@ public class DirectJtaTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationAggregateDomainEventRollback() throws Exception{
+    public void testIntegrationAggregateDomainEventRollback() throws Exception {
         //when
         userTransactionManager.begin();
         var evt = new AnAggregateDomainEvent("TestAggregateDomainEventRollback");
@@ -235,7 +236,7 @@ public class DirectJtaTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationAggregateDomainEventRollbackExceptionOnHandler() throws Exception{
+    public void testIntegrationAggregateDomainEventRollbackExceptionOnHandler() throws Exception {
         //when
         userTransactionManager.begin();
         var evt = new AnAggregateDomainEvent("TestAggregateDomainWithException");
@@ -253,7 +254,7 @@ public class DirectJtaTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationDomainServiceExceptionRollback() throws Exception{
+    public void testIntegrationDomainServiceExceptionRollback() throws Exception {
         //when
         userTransactionManager.begin();
         var evt = new ADomainEvent("TestDomainServiceRollback");

@@ -31,7 +31,6 @@ package io.domainlifecycles.persistence.records;
  * Provides access to record properties.
  *
  * @param <RECORD> the record type
- *
  * @author Mario Herb
  */
 public interface RecordPropertyAccessor<RECORD> {

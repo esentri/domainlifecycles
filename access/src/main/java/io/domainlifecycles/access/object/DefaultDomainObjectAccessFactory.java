@@ -35,15 +35,14 @@ import io.domainlifecycles.domain.types.internal.DomainObject;
  *
  * @author Mario Herb
  */
-public class DefaultDomainObjectAccessFactory implements DomainObjectAccessFactory{
+public class DefaultDomainObjectAccessFactory implements DomainObjectAccessFactory {
 
     /**
-     * Creates an accessor that allows to inspect or manipulate the values of the passed
-     * {@link DomainObject} instance.
-     *
      * @param domainObject to be accessed
+     * @return an accessor that allows to inspect or manipulate the values of the passed
+     * {@link DomainObject} instance.
      */
-    public DynamicDomainObjectAccessor accessorFor(DomainObject domainObject){
+    public DynamicDomainObjectAccessor accessorFor(DomainObject domainObject) {
         return new ReflectiveDomainObjectAccessor(domainObject);
     }
 }

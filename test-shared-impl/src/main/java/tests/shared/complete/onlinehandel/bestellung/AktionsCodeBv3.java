@@ -35,5 +35,7 @@ import io.domainlifecycles.domain.types.ValueObject;
 
 @Builder(setterPrefix = "set")
 public record AktionsCodeBv3(
-    @NotEmpty(message = "Ein Aktionscode darf nicht leer sein!") @Size(max=15, message = "Ein Aktionscode darf aus maximal 15 Zeichen bestehen!") String value
-) implements ValueObject {}
+    @NotEmpty(message = "Ein Aktionscode darf nicht leer sein!") @Size(max = 15, message = "Ein Aktionscode darf aus " +
+        "maximal 15 Zeichen bestehen!") String value
+) implements ValueObject {
+}

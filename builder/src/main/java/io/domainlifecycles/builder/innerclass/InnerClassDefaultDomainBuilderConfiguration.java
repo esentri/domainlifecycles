@@ -49,6 +49,7 @@ public final class InnerClassDefaultDomainBuilderConfiguration implements Domain
 
     /**
      * The default builder method name.
+     *
      * @return "builder"
      */
     @Override
@@ -58,6 +59,7 @@ public final class InnerClassDefaultDomainBuilderConfiguration implements Domain
 
     /**
      * The default build method name.
+     *
      * @return "build"
      */
     @Override
@@ -67,6 +69,7 @@ public final class InnerClassDefaultDomainBuilderConfiguration implements Domain
 
     /**
      * The default setter name.
+     *
      * @return String
      */
     @Override

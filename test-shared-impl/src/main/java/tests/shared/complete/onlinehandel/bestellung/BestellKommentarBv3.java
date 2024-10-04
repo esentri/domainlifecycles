@@ -44,7 +44,7 @@ public class BestellKommentarBv3 extends EntityBase<BestellKommentarIdBv3> {
     @NotNull
     private final BestellKommentarIdBv3 id;
 
-    @Size(max=1000)
+    @Size(max = 1000)
     @NotEmpty
     private String kommentarText;
 

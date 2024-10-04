@@ -58,7 +58,8 @@ public class JooqRecordPropertyAccessor implements RecordPropertyAccessor<Updata
             m.invoke(updatableRecord, value);
         } catch (IllegalArgumentException | NoSuchElementException |
                  IllegalAccessException | InvocationTargetException e) {
-            throw DLCPersistenceException.fail("Setting record value failed for '%s' with value '%s'.", e, property, value);
+            throw DLCPersistenceException.fail("Setting record value failed for '%s' with value '%s'.", e, property,
+                value);
         }
     }
 
@@ -67,7 +68,8 @@ public class JooqRecordPropertyAccessor implements RecordPropertyAccessor<Updata
      */
     @Override
     public Object getPropertyValue(RecordProperty property, UpdatableRecord<?> updatableRecord) {
-        Class<? extends UpdatableRecord<?>> recordClass = (Class<? extends UpdatableRecord<?>>) updatableRecord.getClass();
+        Class<? extends UpdatableRecord<?>> recordClass =
+            (Class<? extends UpdatableRecord<?>>) updatableRecord.getClass();
         try {
             Method m = recordClass.getDeclaredMethod(methodName("get", property));
             return m.invoke(updatableRecord);

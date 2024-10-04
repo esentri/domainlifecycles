@@ -40,14 +40,16 @@ import io.domainlifecycles.test.Tables;
 /**
  * Mapping JOOQ TestRootOneToOneFollowing records.
  */
-public class TestRootOneToOneFollowingJooqRecordMapper extends AbstractRecordMapper<TestRootOneToOneFollowingRecord, TestRootOneToOneFollowing, TestRootOneToOneFollowing> {
+public class TestRootOneToOneFollowingJooqRecordMapper extends AbstractRecordMapper<TestRootOneToOneFollowingRecord,
+    TestRootOneToOneFollowing, TestRootOneToOneFollowing> {
 
     @Override
     public DomainObjectBuilder<TestRootOneToOneFollowing> recordToDomainObjectBuilder(TestRootOneToOneFollowingRecord record) {
         if (record == null) {
             return null;
         }
-        TestRootOneToOneFollowingRecord testRootOneToOneFollowingRecord = record.into(Tables.TEST_ROOT_ONE_TO_ONE_FOLLOWING);
+        TestRootOneToOneFollowingRecord testRootOneToOneFollowingRecord = record.into(
+            Tables.TEST_ROOT_ONE_TO_ONE_FOLLOWING);
         return new InnerClassDomainObjectBuilder<>(TestRootOneToOneFollowing.builder()
             .setId(new TestRootOneToOneFollowingId(testRootOneToOneFollowingRecord.getId()))
             .setName(testRootOneToOneFollowingRecord.getName())
@@ -55,7 +57,8 @@ public class TestRootOneToOneFollowingJooqRecordMapper extends AbstractRecordMap
     }
 
     @Override
-    public TestRootOneToOneFollowingRecord from(TestRootOneToOneFollowing testRootOneToOneFollowing, TestRootOneToOneFollowing root) {
+    public TestRootOneToOneFollowingRecord from(TestRootOneToOneFollowing testRootOneToOneFollowing,
+                                                TestRootOneToOneFollowing root) {
         TestRootOneToOneFollowingRecord testRootOneToOneFollowingRecord = new TestRootOneToOneFollowingRecord();
         testRootOneToOneFollowingRecord.setId(testRootOneToOneFollowing.getId().value());
         testRootOneToOneFollowingRecord.setName(testRootOneToOneFollowing.getName());

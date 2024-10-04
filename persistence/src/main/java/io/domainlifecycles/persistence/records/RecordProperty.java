@@ -32,7 +32,6 @@ import java.util.Objects;
 /**
  * Represents a record property.
  *
- *
  * @author Mario Herb
  */
 public class RecordProperty {
@@ -46,10 +45,10 @@ public class RecordProperty {
     /**
      * Creates a new record property.
      *
-     * @param name the name
-     * @param recordClassName the record class
-     * @param propertyType the property type
-     * @param primaryKey the primary key
+     * @param name              the name
+     * @param recordClassName   the record class
+     * @param propertyType      the property type
+     * @param primaryKey        the primary key
      * @param nonNullForeignKey the non-null foreign key
      */
     public RecordProperty(String name, String recordClassName,
@@ -111,6 +110,7 @@ public class RecordProperty {
 
     /**
      * {@inheritDoc}
+     *
      * @return
      */
     @Override
@@ -125,6 +125,7 @@ public class RecordProperty {
 
     /**
      * {@inheritDoc}
+     *
      * @return
      */
     @Override
@@ -134,6 +135,7 @@ public class RecordProperty {
 
     /**
      * {@inheritDoc}
+     *
      * @return
      */
     @Override

@@ -62,7 +62,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-@ActiveProfiles({ "test" })
+@ActiveProfiles({"test"})
 public class BestellungRepository_SpringBoot3_ITest {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(BestellungRepository_SpringBoot3_ITest.class);
@@ -243,7 +243,8 @@ public class BestellungRepository_SpringBoot3_ITest {
 
         //when
         //we expect a unique constraint exception
-        //ATTENTION: Do not write the assertion with a lambda expression, that will create a class loading conflict with our
+        //ATTENTION: Do not write the assertion with a lambda expression, that will create a class loading conflict
+        // with our
         // byte buddy extension
         DataAccessException ex = assertThrows(DataAccessException.class, new Executable() {
             @Override
@@ -289,11 +290,13 @@ public class BestellungRepository_SpringBoot3_ITest {
         Optional<BestellungBv3> foundAfter = bestellungRepository.findResultById(new BestellungIdBv3(1l)).resultValue();
         assertThat(foundAfter).isPresent();
         //when
-        List<BestellungBv3> bestaetigteBestellungen = bestellungRepository.findByStatusCode(BestellStatusCodeEnumBv3.BESTAETIGT);
+        List<BestellungBv3> bestaetigteBestellungen = bestellungRepository.findByStatusCode(
+            BestellStatusCodeEnumBv3.BESTAETIGT);
         //then
         assertThat(bestaetigteBestellungen).isEmpty();
         //when
-        List<BestellungBv3> initialeBestellungen = bestellungRepository.findByStatusCode(BestellStatusCodeEnumBv3.INITIAL);
+        List<BestellungBv3> initialeBestellungen = bestellungRepository.findByStatusCode(
+            BestellStatusCodeEnumBv3.INITIAL);
         //then
         assertThat(initialeBestellungen).isNotEmpty();
 
@@ -439,7 +442,6 @@ public class BestellungRepository_SpringBoot3_ITest {
             .ignoringFieldsOfTypes(UUID.class)
             .isEqualTo(found);
     }
-
 
 
 }

@@ -143,7 +143,8 @@ public class QueryClientModel extends DomainTypeModel implements QueryClientMirr
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         QueryClientModel that = (QueryClientModel) o;
-        return providedReadModelTypeName.equals(that.providedReadModelTypeName) && queryClientInterfaceTypeNames.equals(that.queryClientInterfaceTypeNames);
+        return providedReadModelTypeName.equals(that.providedReadModelTypeName) && queryClientInterfaceTypeNames.equals(
+            that.queryClientInterfaceTypeNames);
     }
 
     /**

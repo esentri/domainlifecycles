@@ -2,17 +2,18 @@
 
 DLC Persistence is all about object relational mapping and Aggregate persistence via Repositories.
 The DDD recommendation is to implement the persistence related access on Aggregates within a Repository.
-Each Aggregate and each of the contained Entities or ValueObjects need to be mapped to corresponding 
+Each Aggregate and each of the contained Entities or ValueObjects need to be mapped to corresponding
 tables or columns in the course of the object relational mapping.
 
-The current DLC Persistence implementation is technically based on [jOOQ](https://www.jooq.org/)). 
-jOOQ provides Java Wrappers for relational Database Objects (e.g. tables, sequences,...). 
-That enables a simple 1-1 mapping between tables and jOOQ records (don't mix up jOOQ records with Java records). 
+The current DLC Persistence implementation is technically based on [jOOQ](https://www.jooq.org/)).
+jOOQ provides Java Wrappers for relational Database Objects (e.g. tables, sequences,...).
+That enables a simple 1-1 mapping between tables and jOOQ records (don't mix up jOOQ records with Java records).
 
-With DDD in mind, we want to abstract from these rather technical representations. 
-Repositories should provide interfaces to query complete Aggregates or to pass complete 
-Aggregates to be inserted, updated or deleted. Ideally a repository provides the illusion 
-of an in‐memory collection of all objects of that Aggregate’s root type. DLC persistence provides means to achieve exactly that behaviour with less effort. 
+With DDD in mind, we want to abstract from these rather technical representations.
+Repositories should provide interfaces to query complete Aggregates or to pass complete
+Aggregates to be inserted, updated or deleted. Ideally a repository provides the illusion
+of an in‐memory collection of all objects of that Aggregate’s root type. DLC persistence provides means to achieve
+exactly that behaviour with less effort.
 It helps to overcome the natural impedance mismatches that exist between the Aggregates technical representations.
 
 ![Impedance mismatch](documentation/resources/images/impedance.png "Impedance mismatch")
@@ -21,16 +22,18 @@ An Aggregate typically is composed of several different Entities and ValueObject
 These objects have to mapped into jOOQ records which then are mapped into their table representations via jOOQ.
 The mapping must be consistent in each direction either when reading from or writing to the underlying datastore.
 
-DLC Persistence provides: 
+DLC Persistence provides:
 
 - [Automatic mapping of Aggregates from/into jOOQ records](#automapping)
 - [RecordMappers](#recordmapper) to customize that mapping if needed
 - [Fetchers](#fetcher) to simplify read operations and read mapping on Aggregates
 - [Base Repository implementations](#dlc-repositories) to simplify write operations on Aggregates
 
-In most cases it is sufficient just to extend `io.domainlifecycles.jooq.imp.JooqAggregateRepository` for an adequate DDD style 
-repository implementation, without needing to implement additional mapper classes or the need to declare object relational mapping behaviour in detail.
-Have a look at the repositories within our [sample project](./dlc-sample), to see how DLC persistence works. 
+In most cases it is sufficient just to extend `io.domainlifecycles.jooq.imp.JooqAggregateRepository` for an adequate DDD
+style
+repository implementation, without needing to implement additional mapper classes or the need to declare object
+relational mapping behaviour in detail.
+Have a look at the repositories within our [sample project](./dlc-sample), to see how DLC persistence works.
 
 Here is an overview of more details about DLC Persistence and some additional features:
 
@@ -55,12 +58,14 @@ Here is an overview of more details about DLC Persistence and some additional fe
         - [TypeConverter](#typeconverter)
         - [Working with inheritance](#inheritance)
             - [Inheritance of Entities or AggregateRoots](#inheritance-entities)
-              - [Dedicated Tables Inheritance](#dedicated-tables-inheritance)
-              - [Single Table Inheritance](#single-table-inheritance)
+                - [Dedicated Tables Inheritance](#dedicated-tables-inheritance)
+                - [Single Table Inheritance](#single-table-inheritance)
             - [Inheritance of ValueObjects](#inheritance-of-valueobjects)
 
 <a name="jooq"></a>
+
 ### jOOQ
+
 jOOQ provides many functions for accessing relational databases in a type-safe-manner:
 
 - [Type safe SQL queries](https://www.jooq.org/#a=usp-typesafe-sql)
@@ -70,14 +75,17 @@ jOOQ provides many functions for accessing relational databases in a type-safe-m
 Jooq simplifies and harmonizes the way Java applications access relational databases.
 
 <a name="jooq-build-configuration"></a>
+
 #### jOOQ Build configuration for DLC
 
 DLC relies on jOOQ generated classes which represent the accessed database objects.
-DLC projects can work with either Maven or Gradle. We show how to configure jOOQ 
-class generation in the build process in the following sections. 
+DLC projects can work with either Maven or Gradle. We show how to configure jOOQ
+class generation in the build process in the following sections.
 
 <a name="maven-setup"></a>
+
 ##### Maven
+
 Maven setup regarding jOOQ:
 
 ```XML
@@ -161,31 +169,36 @@ Maven setup regarding jOOQ:
 </project>
 ```
 
-Watch out: DLC requires the use of optimistic locking. 
+Watch out: DLC requires the use of optimistic locking.
 To use the optimistic locking feature in an appropriate way, define:
- `<recordVersionFields>CONCURRENCY_VERSION</recordVersionFields>`!
+`<recordVersionFields>CONCURRENCY_VERSION</recordVersionFields>`!
 
 <a name="gradle-setup"></a>
+
 ##### Gradle
 
 A similar example for Gradle can be found in our [sample project](./dlc-sample).
 
 <a name="flyway-setup"></a>
+
 #### Flyway
 
 To use be able to use DLC Persistence currently only jOOQ is available as persistence provider.
 Therefore, it is necessary to generate jOOQ classes representing the database tables and other database objects.
 
-The build setup of jOOQ in connection with Flyway is our recommended setup. As it's a bit tricky, you can refer to the sample project linked below,
+The build setup of jOOQ in connection with Flyway is our recommended setup. As it's a bit tricky, you can refer to the
+sample project linked below,
 to see the setup working with Maven as well as with Gradle.
 
 The use of [Flyway](https://flywaydb.org/) is not necessary for DLC, but we nonetheless recommend the use of
 a tool for database structure version control.
 
 <a name="jooq-runtime-configuration"></a>
+
 #### jOOQ runtime configuration with DLC
 
 A typical runtime configuration for jOOQ using Spring Boot looks like that:
+
 ```Java
 @Configuration
 public class PersistenceConfiguration {
@@ -214,12 +227,15 @@ public class PersistenceConfiguration {
 
 }
 ```
+
 Watch out: Don't forget to set the appropriate SQL dialect!
 
 <a name="persistence-configuration"></a>
+
 ### DLC Persistence configuration
 
 <a name="minimal-persistence-configuration"></a>
+
 #### Minimal persistence configuration
 
 A minimal configuration example of a `io.domainlifecycles.persistence.provider.DomainPersistenceProvider`
@@ -246,25 +262,36 @@ For a minimal setup:
 
 - A DomainObjectBuilderProvider instance is required for DLCs internal automapping functionality.
 - We can add a list of custom RecordMappers (optionally).
-- Also, the full qualified package name where DLC persistence can expect to find all corresponding jOOQ record classes 
-  must be defined. 
+- Also, the full qualified package name where DLC persistence can expect to find all corresponding jOOQ record classes
+  must be defined.
 
 The DomainPersistenceProvider instance must finally be injected into all repository instances.
 
 <a name="extended-persistence-configuration"></a>
+
 #### Extended persistence configuration
 
-DLC persistence provides many more options to customize the persistence behaviour, by implementing and passing instances of the following interfaces:
+DLC persistence provides many more options to customize the persistence behaviour, by implementing and passing instances
+of the following interfaces:
 
-- `io.domainlifecycles.persistence.mapping.converter.TypeConverterProvider`: Enables customizing of generic type conversions between jOOQ record properties and DomainObject properties, see [TypeConverter](#typeconverter).
-- `io.domainlifecycles.persistence.records.EntityValueObjectRecordTypeConfiguration`: Enables customizing of the jOOQ record class that should be mapped to a ValueObject class (for example, if DLC naming conventions don't work), see [EntityValueObjectRecordTypeConfiguration](#entityvalueobjectrecordtypeconfiguration).
-- `io.domainlifecycles.persistence.records.RecordTypeToEntityTypeMatcher`: To adjust matching strategy between Entity types to Jooq record types (if DLC naming conventions are not sufficient).
-- `io.domainlifecycles.persistence.mapping.RecordPropertyMatcher`: To adjust matching strategy between field mirrors to Jooq record properties (if DLC naming conventions are not sufficient).
-- `io.domainlifecycles.persistence.records.RecordPropertyAccessor`: To adjust the way values of record properties are accessed (by default via reflection).
-- `io.domainlifecycles.persistence.mapping.IgnoredFieldProvider`: To define fields of DomainObjects, that should be ignored in persistence mapping process.
-- `io.domainlifecycles.persistence.mapping.IgnoredRecordPropertyProvider`: To define record properties of jooq records, that should be ignored in persistence mapping process.
+- `io.domainlifecycles.persistence.mapping.converter.TypeConverterProvider`: Enables customizing of generic type
+  conversions between jOOQ record properties and DomainObject properties, see [TypeConverter](#typeconverter).
+- `io.domainlifecycles.persistence.records.EntityValueObjectRecordTypeConfiguration`: Enables customizing of the jOOQ
+  record class that should be mapped to a ValueObject class (for example, if DLC naming conventions don't work),
+  see [EntityValueObjectRecordTypeConfiguration](#entityvalueobjectrecordtypeconfiguration).
+- `io.domainlifecycles.persistence.records.RecordTypeToEntityTypeMatcher`: To adjust matching strategy between Entity
+  types to Jooq record types (if DLC naming conventions are not sufficient).
+- `io.domainlifecycles.persistence.mapping.RecordPropertyMatcher`: To adjust matching strategy between field mirrors to
+  Jooq record properties (if DLC naming conventions are not sufficient).
+- `io.domainlifecycles.persistence.records.RecordPropertyAccessor`: To adjust the way values of record properties are
+  accessed (by default via reflection).
+- `io.domainlifecycles.persistence.mapping.IgnoredFieldProvider`: To define fields of DomainObjects, that should be
+  ignored in persistence mapping process.
+- `io.domainlifecycles.persistence.mapping.IgnoredRecordPropertyProvider`: To define record properties of jooq records,
+  that should be ignored in persistence mapping process.
 
 <a name="dlc-repositories"></a>
+
 ### DLC Repositories
 
 In DLC the type signature of a Repository shows for which Aggregate it is responsible.
@@ -281,15 +308,18 @@ DLC Repositories provide by default the following methods:
 - Inserting of new Aggregates
   > public A insert(A root)
 
-  By calling `insert(MyAggregateRoot a)` the complete Aggregate will be inserted in the database (throwing unique key exceptions, if already inserted) 
+  By calling `insert(MyAggregateRoot a)` the complete Aggregate will be inserted in the database (throwing unique key
+  exceptions, if already inserted)
   DLC takes care of the correct insert order (depending on the defined Foreign Key Constraints).
   The repository emits PersistenceActions for every inserted DomainObject (=each object in the Aggregates object tree).
 
 - Updating existing Aggregates:
   > public A update(A root)
 
-  By calling `update(MyAggregateRoot a)` changes within the Aggregate compared to the currently persisted (by default read committed isolation level) state are detected. 
-  All detected changes are updated in their corresponding table rows (the corresponding SQL DML statements are executed).
+  By calling `update(MyAggregateRoot a)` changes within the Aggregate compared to the currently persisted (by default
+  read committed isolation level) state are detected.
+  All detected changes are updated in their corresponding table rows (the corresponding SQL DML statements are
+  executed).
   The SQL DML operations (`INSERT`, `UPDATE`, `DELETE`) are executed in an order taking care of defined Foreign Key and
   Unique Key Constraints.
   The repository emits PersistenceActions for every change.
@@ -304,7 +334,7 @@ DLC Repositories provide by default the following methods:
 
 - Loading Aggregates by Id:
   > public FetcherResult<A, UpdatableRecord<?>> findResultById(I id)
-  
+
   > public Optional&lt;A&gt; findById(I id)
 
   Via `findByResultId(Identity id)` the complete Aggregate is loaded from the database.
@@ -345,6 +375,7 @@ public class OrderRepository extends JooqAggregateRepository<Order, OrderId> {
 Watch out: You need a jOOQ `DSLContext` instance and provide it to the Repository!
 
 <a name="optimistic-locking"></a>
+
 #### Optimistic Locking
 
 Write operations on Aggregates are protected from concurrent accesses by
@@ -352,9 +383,10 @@ Write operations on Aggregates are protected from concurrent accesses by
 increases the AggregateRoot's `concurrencyVersion`. That way the transactional guarantees of an Aggregate
 are always satisfied.
 
-The optimistic locking of DLC is based on the [optimistic locking feature of jOOQ](https://www.jooq.org/doc/latest/manual/sql-execution/crud-with-updatablerecords/optimistic-locking/).
+The optimistic locking of DLC is based on
+the [optimistic locking feature of jOOQ](https://www.jooq.org/doc/latest/manual/sql-execution/crud-with-updatablerecords/optimistic-locking/).
 
-DLC requires each Entity and each AggregateRoot to define a `concurrencyVersion` property. 
+DLC requires each Entity and each AggregateRoot to define a `concurrencyVersion` property.
 The corresponding tables need to provide appropriately mapped `concurrency_version` columns.
 
 The jOOQ configuration must enable optimistic locking. See the following Java/Spring Boot based example:
@@ -373,18 +405,19 @@ The jOOQ configuration must enable optimistic locking. See the following Java/Sp
 ```
 
 <a name="change-tracking"></a>
+
 #### Change Tracking with Persistence Actions
 
 Like already mentioned, emit DLC Repositories PersistenceActions for every
-SQL DML operation applied to the tables of a 
-Domain Object (AggregateRoot, Entity or ValueObject). 
+SQL DML operation applied to the tables of a
+Domain Object (AggregateRoot, Entity or ValueObject).
 These persistence events announce, which DML operation (`INSERT`, `UPDATE` oder `DELETE`) were performed.
 
 This mechanism works for any kind of change tracking logic.
-It could be used as a base mechanism for CQRS, extended logging, 
+It could be used as a base mechanism for CQRS, extended logging,
 auditing or for example to keep an external search index in sync.
 
-Every Repository allows to pass a `io.domainlifecycles.core.persistence.repository.PersistenceEventPublisher`, 
+Every Repository allows to pass a `io.domainlifecycles.core.persistence.repository.PersistenceEventPublisher`,
 that enables to pass the PersistenceActions to any kind of event bus.
 
 The following example shows the constructor of a Repository using a 'customized' EventPublisher:
@@ -432,10 +465,11 @@ For Spring based projects the Spring internal EventBus is a good match:
 ```
 
 <a name="fetcher"></a>
+
 #### Queries via Fetcher
 
 The 'Fetcher' simplifies the loading of Aggregates. It ensures that always
-complete object trees are loaded. It avoids that the developer has to formulate sub-queries 
+complete object trees are loaded. It avoids that the developer has to formulate sub-queries
 or complex joins to access all tables of the aggregate.
 
 ATTENTION: An important prerequisite for the correct functioning of the
@@ -497,15 +531,20 @@ Another complex example with pagination and additional filter:
 ```
 
 The Fetcher loads the complete Aggregate given an Aggregate-Id or given an AggregateRoot-Record.
-Corresponding `SELECT`-statements for subordinate Entities and possibly ValueObjects are performed via `getFetcher.fetchDeep()`.
+Corresponding `SELECT`-statements for subordinate Entities and possibly ValueObjects are performed
+via `getFetcher.fetchDeep()`.
 This is not necessarily always the optimal way regarding performance behavior.
 In most cases, however, the performance is sufficient, in other
-cases `io.domainlifecycles.core.persistence.fetcher.RecordProvider` can be used to retrieve database records using optimized `SELECT` statements defined by the programmer. 
-The Fetcher will then only execute `SELECTs` to load records for missing DomainObject types not passed to the RecordProvider. 
-In any case it maps the passed or additionally fetched `Records` into the appropriate object structure composes them into the resulting object tree.
+cases `io.domainlifecycles.core.persistence.fetcher.RecordProvider` can be used to retrieve database records using
+optimized `SELECT` statements defined by the programmer.
+The Fetcher will then only execute `SELECTs` to load records for missing DomainObject types not passed to the
+RecordProvider.
+In any case it maps the passed or additionally fetched `Records` into the appropriate object structure composes them
+into the resulting object tree.
 
-ATTENTION: When using a RecordProvider, it is recommended, that a new Fetcher is created for each query execution, 
-where the record provider is involved. The RecordProviders must provide the records for each single request based on the current query conditions. 
+ATTENTION: When using a RecordProvider, it is recommended, that a new Fetcher is created for each query execution,
+where the record provider is involved. The RecordProviders must provide the records for each single request based on the
+current query conditions.
 To make sure that, the fetcher instance used, uses the correctly provided records, it's more safe to create a new
 fetcher instance for each request.
 
@@ -566,22 +605,25 @@ optimized alternative, is demonstrated here:
 ```
 
 <a name="or-mapping"></a>
+
 #### Object relational mapping
 
 Part of the object-relational mapping in DLC Persistence is done by jOOQ
 (see [jOOQ](#jooq)), especially at the level of mapping between columns and properties.
 The jOOQ mapping functionality, which is based on JDBC and unifies SQL dialect
-specific features. It is further extended by DLC Persistence, 
+specific features. It is further extended by DLC Persistence,
 which automatically derives a mapping, that maps the object tree of an Aggregate from/into a set of table rows.
 
 This mapping takes place in a nearly transparent way for the developer (AutoMapping).
 
 <a name="automapping"></a>
+
 ##### AutoMapping
 
 DLC AutoMapping uses naming and structure conventions to map table structures
 to DLC object structures. Complex DDD objects can thus be mapped to
-complex table structures without writing any mapping boilerplate code (neither the mapping needs to be explicitly declared).
+complex table structures without writing any mapping boilerplate code (neither the mapping needs to be explicitly
+declared).
 
 The following conventions must be followed:
 
@@ -594,7 +636,7 @@ The following conventions must be followed:
   is relationally mapped in an own table. These ValueObjects are called
   called 'record mapped' ValueObjects.
 - Each non-static field of an Entity or ValueObject is mapped to a column of the target table.
-- Only fields are mapped by AutoMapping, properties represented by getters 
+- Only fields are mapped by AutoMapping, properties represented by getters
   and/or setters should be mapped to records(table structures), then a custom mapper implementation is needed.
 
 <b>data type conventions:</b>
@@ -607,7 +649,7 @@ The following conventions must be followed:
 The following overview represents possible mappings
 regarding data types:
 
-| Java type                  | SQL type (Oracle)              | SQL type (Postgres)               |
+| Java type                  | SQL type (Oracle)              | SQL type (Postgres)            |
 |----------------------------|--------------------------------|--------------------------------|
 | `char`                     | CHAR(1)                        | CHAR(1)                        |
 | `java.lang.Character`      | CHAR(1)                        | CHAR(1)                        |
@@ -649,12 +691,13 @@ regarding data types:
 - Java properties of DomainObjects should be named in the Java typical 'Lower Camel Case'.
 - Database tables and their columns are to be defined in the so-called Snake Case.
 - The names are mapped to each other according to the 'natural' mapping of the respective notations:
-  - Java class: orderPosition <==> table: ORDER_POSITION
-  - Java property: unitPriceNet <==> column: UNIT_PRICE_NET
+    - Java class: orderPosition <==> table: ORDER_POSITION
+    - Java property: unitPriceNet <==> column: UNIT_PRICE_NET
 - 'record mapped' ValueObjects have a special table naming convention,
   because ValueObjects in general are not fixed to be used in exactly one Entity.
   Example: The table `Order` contains a
-  property `List<ActionCode> actionsCodes` where `ActionCode` is a ValueObject: the corresponding table name for `ActionCodes` is then
+  property `List<ActionCode> actionsCodes` where `ActionCode` is a ValueObject: the corresponding table name
+  for `ActionCodes` is then
   `ORDER_ACTION_CODES` (the prefix of the containing entity and then the
   PropertyName (Attention: Not the type name, because only property names are always unique))
   If the naming convention for 'record mapped' ValueObjects is unfavorable,
@@ -663,25 +706,27 @@ regarding data types:
 
 In the [Sample App](./dlc-sample) you can view a fully AutoMapping capable complex example.
 
-If the conventions for property-level auto-mapping are not followed, DLC will issue an error message when the application is started and terminates. 
+If the conventions for property-level auto-mapping are not followed, DLC will issue an error message when the
+application is started and terminates.
 In this case it is possible define a RecordMapper to intervene.
 
 <a name="recordmapper"></a>
+
 ##### RecordMapper
 
-RecordMappers map tables to class structures as mentioned before. 
-They are part of the object-relational mapping of DLC Persistence. 
-DLC Persistence uses RecordMappers internally. 
-As a rule RecordMappers are never called directly by the application developer. 
+RecordMappers map tables to class structures as mentioned before.
+They are part of the object-relational mapping of DLC Persistence.
+DLC Persistence uses RecordMappers internally.
+As a rule RecordMappers are never called directly by the application developer.
 However, they must be registered as part of the DLC configuration (see below).
 
 Custom RecordMappers must implement `io.domainlifecycles.persistence.mapping.RecordMapper` or
 extend `io.domainlifecycles.persistence.mapping.AbstractRecordMapper`.
 
-It must be taken care that all table columns 
+It must be taken care that all table columns
 in the mapping methods are mapped to the properties of the respective class!
 
-The following example illustrates this. 
+The following example illustrates this.
 The table `test_entity_one_to_many` has the following structure:
 
 ```SQL
@@ -733,6 +778,7 @@ public class TestOneToManyJooqRecordMapper extends AbstractRecordMapper<TestEnti
 }
 
 ```
+
 Custom RecordMappers must be made known to DLC Persistence by configuration:
 
  ```Java
@@ -745,14 +791,13 @@ Custom RecordMappers must be made known to DLC Persistence by configuration:
         .make();
  ```
 
-
-
 <a name="record-mapped-valueobjects"></a>
+
 ##### record mapped ValueObjects
 
 Each ValueObject, which is in 1:n relation to its containing Entity
 is relationally mapped in an own table. These ValueObjects are called
-called 'record mapped' ValueObjects. But DLC persistence provides mechanisms to define 
+called 'record mapped' ValueObjects. But DLC persistence provides mechanisms to define
 explicit ValueObject-to-database-table mappings (see below "EntityValueObjectRecordTypeConfiguration").
 'Record mapped' ValueObjects must also fulfill certain requirements in their
 relational structures (database definition):
@@ -778,6 +823,7 @@ CREATE SEQUENCE test_domain.action_code_seq  MINVALUE 1000 MAXVALUE 999999999999
 ```
 
 <a name="entityvalueobjectrecordtypeconfiguration"></a>
+
 ##### EntityValueObjectRecordTypeConfiguration
 
 'EntityValueObjectRecordTypeConfigurations' have two functions:
@@ -810,15 +856,17 @@ A corresponding configuration must be specified in the persistence configuration
 ```
 
 <a name="typeconverter"></a>
+
 ##### TypeConverter
 
 TypeConverters' offer the possibility of data type conversions in a general
 form,
-so that for special frequently used data types (which may not be jOOQ compatible) simple conversion 
+so that for special frequently used data types (which may not be jOOQ compatible) simple conversion
 functions can be added to DLC Persistence:
 
 - TypeConverters must implement `io.domainlifecycles.core.persistence.mapping.converter.TypeConverter`.
-- They provide only one conversion direction. If the opposite direction is required, a corresponding additional  TypeConverter must be created and registered.
+- They provide only one conversion direction. If the opposite direction is required, a corresponding additional
+  TypeConverter must be created and registered.
 - The registration of a new TypeConverter is done via the persistence
   configuration:
   ```Java
@@ -889,26 +937,30 @@ functions can be added to DLC Persistence:
     - DefaultZonedDateTimeToOffsetDateTimeConverter
 
 <a name="inheritance"></a>
+
 ##### Working with inheritance
 
 The inheritance hierarchy of AggregateRoots, Entities or ValueObjects has
 in DLC only a deeper impact on their persistence mapping.
 Otherwise, DomainObjects will be recognized as such in DLC as soon as they have
 the corresponding marker interfaces somewhere in their inheritance hierarchy.
-That means, whether a concrete DomainObject has several levels of inheritance hierarchies has no effect except for persistence.
+That means, whether a concrete DomainObject has several levels of inheritance hierarchies has no effect except for
+persistence.
 
 <a name="inheritance-of-entities"></a>
+
 ###### Inheritance of Entities or AggregateRoots
 
 Entities with an inheritance hierarchy can be created in DLC in two different ways.
 
-Either each top-level Entity is mapped to its own table (default - dedicated tables inheritance) 
+Either each top-level Entity is mapped to its own table (default - dedicated tables inheritance)
 or all Entity occurrences are mapped to a common table (single table inheritance).
 
-Currently, there is no support for a joined table approach to entity inheritance structures 
+Currently, there is no support for a joined table approach to entity inheritance structures
 as with JPA(see JPA `InheritanceType.JOINED').
 
 <a name="dedicated-tables-inheritance"></a>
+
 ###### Dedicated tables inheritance
 
 In this case, each concrete manifestation of an Entity is mapped into a separate associated table.
@@ -916,7 +968,7 @@ For this it is necessary that on DomainObject level the superclass defines no co
 inheriting entity defines its own identity (corresponding to the one of the associated database table Primary Key).
 
 In this case it is not necessary to use a dedicated
-RecordMapper (`io.domainlifecycles.persistence.mapping.RecordMapper`). 
+RecordMapper (`io.domainlifecycles.persistence.mapping.RecordMapper`).
 AutoMapping can be applied without any problems.
 
 Class diagram for the "dedicated tables inheritance" case:
@@ -924,6 +976,7 @@ Class diagram for the "dedicated tables inheritance" case:
 ![What a pity you cannot see it](documentation/resources/images/dedicated_table_inheritance.png "Dedicated Tables Inheritance")
 
 <a name="single-table-inheritance"></a>
+
 ###### Single table inheritance
 
 Each concrete instance of an Entity is mapped into one single central table.
@@ -1010,6 +1063,7 @@ Class diagram for the "single table inheritance" case:
 ![What a pity you cannot see it](documentation/resources/images/single_table_inheritance.png "Single Table Inheritance")
 
 <a name="inheritance-of-valueobjects"></a>
+
 ###### Inheritance of ValueObjects
 
 In principle, DLC supports inheritance structures in ValueObjects.

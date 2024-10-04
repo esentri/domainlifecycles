@@ -29,7 +29,7 @@ package tests.shared.persistence.domain.inheritanceGenericId;
 
 import lombok.Builder;
 
-public class ConcreteRoot extends AbstractRoot<ConcreteRootId>{
+public class ConcreteRoot extends AbstractRoot<ConcreteRootId> {
 
     @Builder(setterPrefix = "set")
     protected ConcreteRoot(ConcreteRootId id, String name, long concurrencyVersion) {

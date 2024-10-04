@@ -65,7 +65,7 @@ public class ReadModelModel extends DomainTypeModel implements ReadModelMirror {
      */
     @JsonIgnore
     @Override
-    public List<FieldMirror> getBasicFields(){
+    public List<FieldMirror> getBasicFields() {
         return allFields.stream().filter(p ->
                 DomainType.NON_DOMAIN.equals(p.getType().getDomainType())
             )
@@ -77,7 +77,7 @@ public class ReadModelModel extends DomainTypeModel implements ReadModelMirror {
      */
     @JsonIgnore
     @Override
-    public List<ValueReferenceMirror> getValueReferences(){
+    public List<ValueReferenceMirror> getValueReferences() {
         return allFields.stream().filter(p ->
                 DomainType.VALUE_OBJECT.equals(p.getType().getDomainType()) ||
                     DomainType.ENUM.equals(p.getType().getDomainType()) ||
@@ -92,7 +92,7 @@ public class ReadModelModel extends DomainTypeModel implements ReadModelMirror {
      */
     @JsonIgnore
     @Override
-    public List<EntityReferenceMirror> getEntityReferences(){
+    public List<EntityReferenceMirror> getEntityReferences() {
         return allFields.stream().filter(p ->
                 DomainType.ENTITY.equals(p.getType().getDomainType())
             )
@@ -105,7 +105,7 @@ public class ReadModelModel extends DomainTypeModel implements ReadModelMirror {
      */
     @JsonIgnore
     @Override
-    public List<AggregateRootReferenceMirror> getAggregateRootReferences(){
+    public List<AggregateRootReferenceMirror> getAggregateRootReferences() {
         return allFields.stream().filter(p ->
                 DomainType.AGGREGATE_ROOT.equals(p.getType().getDomainType())
             )

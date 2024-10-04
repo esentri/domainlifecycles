@@ -54,7 +54,7 @@ import java.util.Optional;
 
 
 /**
- *  <p>
+ * <p>
  * Aggregate roots need to offer INSERT, UPDATE
  * and DELETE operations in a consistent way for all entities that are part of
  * the aggregate. In DDD the only way to manipulate entities persistently is
@@ -122,13 +122,14 @@ import java.util.Optional;
  * </li>
  * </ul>
  *
- * @param <I> the type of the identity of the aggregate root
- * @param <A> the type of the aggregate root
+ * @param <I>                the type of the identity of the aggregate root
+ * @param <A>                the type of the aggregate root
  * @param <BASE_RECORD_TYPE> the type of the database representation of the record
  *
  * @author Mario Herb
  */
-public abstract class DomainStructureAwareRepository<I extends Identity<?>, A extends AggregateRoot<I>, BASE_RECORD_TYPE> implements Repository<I, A> {
+public abstract class DomainStructureAwareRepository<I extends Identity<?>, A extends AggregateRoot<I>,
+    BASE_RECORD_TYPE> implements Repository<I, A> {
 
     private final Persister<BASE_RECORD_TYPE> persister;
 
@@ -229,9 +230,12 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
         this.notifyChanges(pc, rootUpdated);
 
         if (isRootVersionIncreasedWithoutPropertyUpdate) {
-            var rm = (RecordMapper<BASE_RECORD_TYPE, DomainObject, AggregateRoot<?>>) pc.updatedRootAccessModel.recordMirror.recordMapper();
-            BASE_RECORD_TYPE rootRecord = rm.from(pc.updatedRootAccessModel.domainObject(), (AggregateRoot<?>) pc.updatedRootAccessModel.domainObject());
-            PersistenceAction<BASE_RECORD_TYPE> updateAction = new PersistenceAction<>(pc.updatedRootAccessModel, PersistenceAction.ActionType.UPDATE, pc.databaseStateRootAccessModel);
+            var rm =
+                (RecordMapper<BASE_RECORD_TYPE, DomainObject, AggregateRoot<?>>) pc.updatedRootAccessModel.recordMirror.recordMapper();
+            BASE_RECORD_TYPE rootRecord = rm.from(pc.updatedRootAccessModel.domainObject(),
+                (AggregateRoot<?>) pc.updatedRootAccessModel.domainObject());
+            PersistenceAction<BASE_RECORD_TYPE> updateAction = new PersistenceAction<>(pc.updatedRootAccessModel,
+                PersistenceAction.ActionType.UPDATE, pc.databaseStateRootAccessModel);
             updateAction.setActionRecord(rootRecord);
             publish(updateAction);
         }
@@ -241,7 +245,7 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
      * To notify about changes already applied to the database
      *
      * @param pc   PersistenceContext which keeps all detected actions (in
-     *              notification order --> "bottom up")
+     *             notification order --> "bottom up")
      * @param root the root entity of the aggregate
      */
     protected void notifyChanges(PersistenceContext<BASE_RECORD_TYPE> pc, A root) {
@@ -261,10 +265,12 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
         });
     }
 
-    private boolean updateActionContainedForAccessModel(DomainObjectInstanceAccessModel<BASE_RECORD_TYPE> accessModel, PersistenceContext<BASE_RECORD_TYPE> pc) {
+    private boolean updateActionContainedForAccessModel(DomainObjectInstanceAccessModel<BASE_RECORD_TYPE> accessModel
+        , PersistenceContext<BASE_RECORD_TYPE> pc) {
         return pc.getActionsInNotificationOrder()
             .stream()
-            .anyMatch(a -> a.instanceAccessModel.equals(accessModel) && PersistenceAction.ActionType.UPDATE.equals(a.actionType));
+            .anyMatch(a -> a.instanceAccessModel.equals(accessModel) && PersistenceAction.ActionType.UPDATE.equals(
+                a.actionType));
     }
 
     /**
@@ -284,7 +290,8 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
 
         var insertionOrderClasses = persistenceActionOrderProvider.insertionOrder(context.rootClass.getName());
         if (insertionOrderClasses == null || insertionOrderClasses.isEmpty()) {
-            throw DLCPersistenceException.fail("The insertion order was not defined! Check the mirror! RootClass '%s'.", context.rootClass);
+            throw DLCPersistenceException.fail("The insertion order was not defined! Check the mirror! RootClass '%s'.",
+                context.rootClass);
         }
 
         insertionOrderClasses.forEach(c ->
@@ -296,8 +303,10 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
                 ));
 
         var deletionOrderClasses = persistenceActionOrderProvider.deletionOrder(context.rootClass.getName());
+
         if (deletionOrderClasses == null || deletionOrderClasses.isEmpty()) {
-            throw DLCPersistenceException.fail("The deletion order was not defined! Check the mirror! RootClass '%s'.", context.rootClass);
+            throw DLCPersistenceException.fail("The deletion order was not defined! Check the mirror! RootClass '%s'.",
+                context.rootClass);
         }
 
         //Below: Integer.compare actions --> are sorted in descending order by their structural position
@@ -329,7 +338,8 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
             //which means form root to leafs --> within hierarchical structures we need this order of applying inserts
             context.getActionsPartitioned(c, PersistenceAction.ActionType.INSERT)
                 .stream()
-                .sorted(Comparator.comparingInt(a -> a.instanceAccessModel.structuralPosition.accessPathFromRoot.size()))
+                .sorted(
+                    Comparator.comparingInt(a -> a.instanceAccessModel.structuralPosition.accessPathFromRoot.size()))
                 .forEach(a -> {
                         persister.insertOne(a, context);
                         if (a.instanceAccessModel.isEntity()) {
@@ -350,12 +360,14 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
      */
     public abstract FetcherResult<A, BASE_RECORD_TYPE> findResultById(I id);
 
-    public Optional<A> findById(I id){
+    public Optional<A> findById(I id) {
         return findResultById(id).resultValue();
     }
 
     /**
      * Publish {@link PersistenceAction}. To be overridden by implementor, if needed
+     *
+     * @param action the action to be published
      */
     public void publish(PersistenceAction<?> action) {
         // to be overridden by implementor, if needed
@@ -385,14 +397,14 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
                     f.getType().getDomainType().equals(DomainType.ENUM) ||
                     f.getType().getDomainType().equals(DomainType.NON_DOMAIN)
             ).forEach(f -> {
-            Object valueOriginal = accessorTo.peek(f.getName());
-            Object valueResult = accessorFrom.peek(f.getName());
+                Object valueOriginal = accessorTo.peek(f.getName());
+                Object valueResult = accessorFrom.peek(f.getName());
 
-            if ((valueOriginal == null && valueResult != null) ||
-                (valueOriginal != null && !valueOriginal.equals(valueResult))) {
-                accessorTo.poke(f.getName(), valueResult);
-            }
-        });
+                if ((valueOriginal == null && valueResult != null) ||
+                    (valueOriginal != null && !valueOriginal.equals(valueResult))) {
+                    accessorTo.poke(f.getName(), valueResult);
+                }
+            });
     }
 
     private void applyChangesToAllDuplicates(Entity<?> from, PersistenceContext<BASE_RECORD_TYPE> pc) {

@@ -40,7 +40,7 @@ public class BestellungRepository implements Repository<BestellungIdBv3, Bestell
 
 
     @Override
-    public Optional<BestellungBv3> findById(@NotNull BestellungIdBv3 id){
+    public Optional<BestellungBv3> findById(@NotNull BestellungIdBv3 id) {
         return Optional.empty();
     }
 
@@ -60,11 +60,11 @@ public class BestellungRepository implements Repository<BestellungIdBv3, Bestell
     }
 
     @Publishes(domainEventTypes = NeueBestellung.class)
-    public BestellungIdBv3 create(@NotNull BestellungBv3 bestellung){
+    public BestellungIdBv3 create(@NotNull BestellungBv3 bestellung) {
         return bestellung.getId();
     }
 
-    public Stream<BestellungBv3> findByStatus(@NotNull BestellStatusCodeEnum status){
+    public Stream<BestellungBv3> findByStatus(@NotNull BestellStatusCodeEnum status) {
         return Stream.empty();
     }
 

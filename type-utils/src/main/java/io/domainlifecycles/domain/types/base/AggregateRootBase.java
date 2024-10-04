@@ -34,7 +34,6 @@ import io.domainlifecycles.domain.types.Identity;
  * Abstract skeleton implementation of an {@link AggregateRoot}.
  *
  * @param <ID> type of aggregate identifier
- *
  * @author Mario Herb
  */
 public abstract class AggregateRootBase<ID extends Identity<?>> extends EntityBase<ID> implements AggregateRoot<ID> {

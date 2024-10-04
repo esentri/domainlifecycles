@@ -69,9 +69,12 @@ public class TestController {
 
     @GetMapping(path = "/testComplexVo/{bestellungId}/{simpleVo}", produces = MediaType.APPLICATION_JSON_VALUE)
     public AutoMappedComplexVo getComplexVO(@NotNull @PathVariable(name = "bestellungId") BestellungIdBv3 bestellungId, @NotNull @PathVariable(name = "simpleVo") AutoMappedSimpleVo simpleVo, @RequestParam(name = "bestellPositionId") BestellPositionIdBv3 bestellPositionId, @RequestParam(name = "kundennummern") List<KundennummerBv3> kundennummern) {
-        log.debug("BestellungId = {},  simpleVo = {}, bestellPositionId = {}, kundennummern = {}", bestellungId.value(), simpleVo.getValue(), bestellPositionId.value(), kundennummern );
+        log.debug("BestellungId = {},  simpleVo = {}, bestellPositionId = {}, kundennummern = {}", bestellungId.value(),
+            simpleVo.getValue(), bestellPositionId.value(), kundennummern);
         return AutoMappedComplexVo.builder()
-            .setValueA(bestellungId.value().toString() + " " + bestellPositionId.value().toString() + " " + kundennummern.stream().map(k -> k.value()).collect(Collectors.joining(" ")))
+            .setValueA(
+                bestellungId.value().toString() + " " + bestellPositionId.value().toString() + " " + kundennummern.stream().map(
+                    k -> k.value()).collect(Collectors.joining(" ")))
             .setValueB(simpleVo)
             .build();
     }

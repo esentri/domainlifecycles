@@ -55,7 +55,7 @@ public class DefaultTypeConverterProvider implements TypeConverterProvider {
      * {@inheritDoc}
      */
     @Override
-    public List<TypeConverter<?,?>> provideConverters() {
+    public List<TypeConverter<?, ?>> provideConverters() {
         try (ScanResult scanResult =
                  new ClassGraph()
                      .acceptPackages(DEFAULT_CONVERTERS_PACKAGE)

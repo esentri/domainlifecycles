@@ -51,55 +51,66 @@ import io.domainlifecycles.mirror.api.ValueReferenceMirror;
 public class DomainMapperUtils {
 
     /**
-     * Returns the type name representation of a Domain Type depending on the
+     * @param domainTypeMirror    mirrored domain type
+     * @param domainDiagramConfig diagram configuration
+     * @return type name representation of a Domain Type depending on the
      * used {@link DomainDiagramConfig}.
      */
-    public static String domainTypeName(DomainTypeMirror domainTypeMirror, DomainDiagramConfig domainDiagramConfig){
+    public static String domainTypeName(DomainTypeMirror domainTypeMirror, DomainDiagramConfig domainDiagramConfig) {
         var name = DomainMapperUtils.mapTypeName(domainTypeMirror.getTypeName(), domainDiagramConfig);
-        if(domainTypeMirror.getDomainType().equals(DomainType.REPOSITORY)){
+        if (domainTypeMirror.getDomainType().equals(DomainType.REPOSITORY)) {
             var repositoryMirror = (RepositoryMirror) domainTypeMirror;
-            if(repositoryMirror.getRepositoryInterfaceTypeNames().size()>0 && !repositoryMirror.isAbstract()){
-                name = DomainMapperUtils.mapTypeName(repositoryMirror.getRepositoryInterfaceTypeNames().get(0), domainDiagramConfig);
+            if (repositoryMirror.getRepositoryInterfaceTypeNames().size() > 0 && !repositoryMirror.isAbstract()) {
+                name = DomainMapperUtils.mapTypeName(repositoryMirror.getRepositoryInterfaceTypeNames().get(0),
+                    domainDiagramConfig);
             }
-        } else if(domainTypeMirror.getDomainType().equals(DomainType.DOMAIN_SERVICE)){
+        } else if (domainTypeMirror.getDomainType().equals(DomainType.DOMAIN_SERVICE)) {
             var domainServiceMirror = (DomainServiceMirror) domainTypeMirror;
-            if(domainServiceMirror.getDomainServiceInterfaceTypeNames().size()>0 && !domainServiceMirror.isAbstract()){
-                name = DomainMapperUtils.mapTypeName(domainServiceMirror.getDomainServiceInterfaceTypeNames().get(0), domainDiagramConfig);
+            if (domainServiceMirror.getDomainServiceInterfaceTypeNames().size() > 0 && !domainServiceMirror.isAbstract()) {
+                name = DomainMapperUtils.mapTypeName(domainServiceMirror.getDomainServiceInterfaceTypeNames().get(0),
+                    domainDiagramConfig);
             }
-        } else if(domainTypeMirror.getDomainType().equals(DomainType.APPLICATION_SERVICE)){
+        } else if (domainTypeMirror.getDomainType().equals(DomainType.APPLICATION_SERVICE)) {
             var applicationServiceMirror = (ApplicationServiceMirror) domainTypeMirror;
-            if(applicationServiceMirror.getApplicationServiceInterfaceTypeNames().size()>0 && !applicationServiceMirror.isAbstract()){
-                name = DomainMapperUtils.mapTypeName(applicationServiceMirror.getApplicationServiceInterfaceTypeNames().get(0), domainDiagramConfig);
+            if (applicationServiceMirror.getApplicationServiceInterfaceTypeNames().size() > 0 && !applicationServiceMirror.isAbstract()) {
+                name = DomainMapperUtils.mapTypeName(
+                    applicationServiceMirror.getApplicationServiceInterfaceTypeNames().get(0), domainDiagramConfig);
             }
-        } else if(domainTypeMirror.getDomainType().equals(DomainType.OUTBOUND_SERVICE)){
+        } else if (domainTypeMirror.getDomainType().equals(DomainType.OUTBOUND_SERVICE)) {
             var outboundServiceMirror = (OutboundServiceMirror) domainTypeMirror;
-            if(outboundServiceMirror.getOutboundServiceInterfaceTypeNames().size()>0 && !outboundServiceMirror.isAbstract()){
-                name = DomainMapperUtils.mapTypeName(outboundServiceMirror.getOutboundServiceInterfaceTypeNames().get(0), domainDiagramConfig);
+            if (outboundServiceMirror.getOutboundServiceInterfaceTypeNames().size() > 0 && !outboundServiceMirror.isAbstract()) {
+                name = DomainMapperUtils.mapTypeName(
+                    outboundServiceMirror.getOutboundServiceInterfaceTypeNames().get(0), domainDiagramConfig);
             }
-        } else if(domainTypeMirror.getDomainType().equals(DomainType.QUERY_CLIENT)){
+        } else if (domainTypeMirror.getDomainType().equals(DomainType.QUERY_CLIENT)) {
             var queryClientMirror = (QueryClientMirror) domainTypeMirror;
-            if(queryClientMirror.getQueryClientInterfaceTypeNames().size()>0 && !queryClientMirror.isAbstract()){
-                name = DomainMapperUtils.mapTypeName(queryClientMirror.getQueryClientInterfaceTypeNames().get(0), domainDiagramConfig);
+            if (queryClientMirror.getQueryClientInterfaceTypeNames().size() > 0 && !queryClientMirror.isAbstract()) {
+                name = DomainMapperUtils.mapTypeName(queryClientMirror.getQueryClientInterfaceTypeNames().get(0),
+                    domainDiagramConfig);
             }
         }
         return name;
     }
 
     /**
-     * Returns the type name representation dreived from the full qualified name of a Domain Type depending on the
+     * @param fullQualifiedName   full qualified domain type name
+     * @param domainDiagramConfig diagram configuration
+     * @return the type name representation derived from the full qualified name of a Domain Type depending on the
      * used {@link DomainDiagramConfig}.
      */
-    public static String mapTypeName(String fullQualifiedName, DomainDiagramConfig domainDiagramConfig){
+    public static String mapTypeName(String fullQualifiedName, DomainDiagramConfig domainDiagramConfig) {
         return (domainDiagramConfig.isShowFullQualifiedClassNames()) ?
             fullQualifiedName : simpleTypeName(fullQualifiedName);
     }
 
     /**
-     * Decides, if a property should be included "inline" in a class or
+     * @param propertyMirror   mirrored property
+     * @param domainTypeMirror mirrored domain type
+     * @return whether a property should be included "inline" in a class or
      * if it should be represented as a relationship.
      */
-    public static boolean showPropertyInline(FieldMirror propertyMirror, DomainTypeMirror domainTypeMirror){
-        if(
+    public static boolean showPropertyInline(FieldMirror propertyMirror, DomainTypeMirror domainTypeMirror) {
+        if (
             DomainType.NON_DOMAIN.equals(domainTypeMirror.getDomainType())
                 || DomainType.DOMAIN_EVENT.equals(domainTypeMirror.getDomainType())
                 || DomainType.DOMAIN_COMMAND.equals(domainTypeMirror.getDomainType())
@@ -107,20 +118,20 @@ public class DomainMapperUtils {
                 || DomainType.QUERY_CLIENT.equals(domainTypeMirror.getDomainType())
                 || DomainType.DOMAIN_SERVICE.equals(domainTypeMirror.getDomainType())
                 || DomainType.OUTBOUND_SERVICE.equals(domainTypeMirror.getDomainType())
-        ){
+        ) {
             //for commands and domain events or unknown types we show all properties "inline"
             return true;
-        }else if(DomainType.AGGREGATE_ROOT.equals(domainTypeMirror.getDomainType())
+        } else if (DomainType.AGGREGATE_ROOT.equals(domainTypeMirror.getDomainType())
             || DomainType.ENTITY.equals(domainTypeMirror.getDomainType())
-            || DomainType.VALUE_OBJECT.equals(domainTypeMirror.getDomainType())){
+            || DomainType.VALUE_OBJECT.equals(domainTypeMirror.getDomainType())) {
             //for aggregate roots, entities or value objects we filter
-            if(propertyMirror instanceof EntityReferenceMirror){
+            if (propertyMirror instanceof EntityReferenceMirror) {
                 return false;
-            }else if(propertyMirror instanceof ValueReferenceMirror valueRef){
-                if(valueRef.getValue().isEnum()  || valueRef.getValue().isIdentity()){
+            } else if (propertyMirror instanceof ValueReferenceMirror valueRef) {
+                if (valueRef.getValue().isEnum() || valueRef.getValue().isIdentity()) {
                     return true;
-                }else{
-                    var valueObjectMirror = (ValueObjectMirror)valueRef.getValue();
+                } else {
+                    var valueObjectMirror = (ValueObjectMirror) valueRef.getValue();
                     return valueObjectMirror.isSingledValued();
                 }
             }
@@ -132,63 +143,68 @@ public class DomainMapperUtils {
     }
 
     /**
-     * Derives the style classifier for a given Domain type.
+     * @param domainTypeMirror mirrored domain type
+     * @return style classifier for given domain type
      */
-    public static String styleClassifier(DomainTypeMirror domainTypeMirror){
-        return switch (domainTypeMirror.getDomainType()){
-            case AGGREGATE_ROOT -> "<"+ DomainDiagramGenerator.AGGREGATE_ROOT_STYLE_TAG+">";
-            case ENTITY -> "<"+DomainDiagramGenerator.ENTITY_STYLE_TAG+">";
-            case VALUE_OBJECT -> "<"+DomainDiagramGenerator.VALUE_OBJECT_STYLE_TAG+">";
-            case ENUM -> "<"+DomainDiagramGenerator.ENUM_STYLE_TAG+">";
-            case DOMAIN_SERVICE -> "<"+DomainDiagramGenerator.DOMAIN_SERVICE_STYLE_TAG+">";
-            case REPOSITORY -> "<"+DomainDiagramGenerator.REPOSITORY_STYLE_TAG+">";
-            case DOMAIN_COMMAND -> "<"+DomainDiagramGenerator.DOMAIN_COMMAND_STYLE_TAG+">";
-            case DOMAIN_EVENT -> "<"+DomainDiagramGenerator.DOMAIN_EVENT_STYLE_TAG+">";
-            case READ_MODEL -> "<"+DomainDiagramGenerator.READ_MODEL_STYLE_TAG+">";
-            case IDENTITY -> "<"+DomainDiagramGenerator.IDENTITY_STYLE_TAG+">";
-            case APPLICATION_SERVICE -> "<"+DomainDiagramGenerator.APPLICATION_SERVICE_STYLE_TAG+">";
-            case QUERY_CLIENT -> "<"+DomainDiagramGenerator.QUERY_CLIENT_STYLE_TAG +">";
-            case OUTBOUND_SERVICE -> "<"+DomainDiagramGenerator.OUTBOUND_SERVICE_STYLE_TAG+">";
+    public static String styleClassifier(DomainTypeMirror domainTypeMirror) {
+        return switch (domainTypeMirror.getDomainType()) {
+            case AGGREGATE_ROOT -> "<" + DomainDiagramGenerator.AGGREGATE_ROOT_STYLE_TAG + ">";
+            case ENTITY -> "<" + DomainDiagramGenerator.ENTITY_STYLE_TAG + ">";
+            case VALUE_OBJECT -> "<" + DomainDiagramGenerator.VALUE_OBJECT_STYLE_TAG + ">";
+            case ENUM -> "<" + DomainDiagramGenerator.ENUM_STYLE_TAG + ">";
+            case DOMAIN_SERVICE -> "<" + DomainDiagramGenerator.DOMAIN_SERVICE_STYLE_TAG + ">";
+            case REPOSITORY -> "<" + DomainDiagramGenerator.REPOSITORY_STYLE_TAG + ">";
+            case DOMAIN_COMMAND -> "<" + DomainDiagramGenerator.DOMAIN_COMMAND_STYLE_TAG + ">";
+            case DOMAIN_EVENT -> "<" + DomainDiagramGenerator.DOMAIN_EVENT_STYLE_TAG + ">";
+            case READ_MODEL -> "<" + DomainDiagramGenerator.READ_MODEL_STYLE_TAG + ">";
+            case IDENTITY -> "<" + DomainDiagramGenerator.IDENTITY_STYLE_TAG + ">";
+            case APPLICATION_SERVICE -> "<" + DomainDiagramGenerator.APPLICATION_SERVICE_STYLE_TAG + ">";
+            case QUERY_CLIENT -> "<" + DomainDiagramGenerator.QUERY_CLIENT_STYLE_TAG + ">";
+            case OUTBOUND_SERVICE -> "<" + DomainDiagramGenerator.OUTBOUND_SERVICE_STYLE_TAG + ">";
             default -> "";
         };
     }
 
     /**
-     * Derives the style classifier for a given Domain type, by its full qualified type name.
+     * @param typeName type name
+     * @return style classifier for given domain type
      */
-    public static String styleClassifier(String typeName){
+    public static String styleClassifier(String typeName) {
         var domainTypeMirrorOptional = Domain.typeMirror(typeName);
-        if(domainTypeMirrorOptional.isPresent()) {
+        if (domainTypeMirrorOptional.isPresent()) {
             return styleClassifier(domainTypeMirrorOptional.get());
         }
         return "";
     }
 
-    private static String simpleTypeName(String fullQualifiedTypeName){
-        if(fullQualifiedTypeName.contains(".")){
-            return fullQualifiedTypeName.substring(fullQualifiedTypeName.lastIndexOf(".")+1);
+    private static String simpleTypeName(String fullQualifiedTypeName) {
+        if (fullQualifiedTypeName.contains(".")) {
+            return fullQualifiedTypeName.substring(fullQualifiedTypeName.lastIndexOf(".") + 1);
         }
         return fullQualifiedTypeName;
     }
 
     /**
-     * Derives the stereotype for a given Domain type.
+     * @param domainTypeMirror    mirrored domain type
+     * @param domainDiagramConfig diagram configuration
+     * @return stereotype for given Domain type
      */
-    public static String stereotype(DomainTypeMirror domainTypeMirror, DomainDiagramConfig domainDiagramConfig){
-        return switch (domainTypeMirror.getDomainType()){
+    public static String stereotype(DomainTypeMirror domainTypeMirror, DomainDiagramConfig domainDiagramConfig) {
+        return switch (domainTypeMirror.getDomainType()) {
             case AGGREGATE_ROOT -> "AggregateRoot";
             case ENTITY -> "Entity";
             case VALUE_OBJECT -> "ValueObject";
             case ENUM -> "Enum";
             case DOMAIN_SERVICE -> "DomainService";
-            case APPLICATION_SERVICE -> (domainDiagramConfig.isCallApplicationServiceDriver() ? "Driver" : "ApplicationService");
+            case APPLICATION_SERVICE ->
+                (domainDiagramConfig.isCallApplicationServiceDriver() ? "Driver" : "ApplicationService");
             case REPOSITORY -> "Repository";
             case DOMAIN_COMMAND -> "DomainCommand";
             case DOMAIN_EVENT -> "DomainEvent";
             case IDENTITY -> "Identity";
-            case READ_MODEL-> "ReadModel";
+            case READ_MODEL -> "ReadModel";
             case QUERY_CLIENT -> "QueryClient";
-            case OUTBOUND_SERVICE-> "OutboundService";
+            case OUTBOUND_SERVICE -> "OutboundService";
             default -> "";
         };
     }

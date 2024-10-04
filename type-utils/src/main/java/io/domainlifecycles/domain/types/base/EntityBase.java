@@ -39,7 +39,6 @@ import io.domainlifecycles.domain.types.companions.Entities;
  * is not required to represent domain-specific entity hierarchies.
  *
  * @param <ID> type of entity identifier
- *
  * @author Mario Herb
  */
 public abstract class EntityBase<ID extends Identity<?>> implements Entity<ID> {

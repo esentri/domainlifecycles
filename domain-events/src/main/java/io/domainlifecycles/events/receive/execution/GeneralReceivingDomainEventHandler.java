@@ -45,7 +45,7 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
-public class GeneralReceivingDomainEventHandler implements ReceivingDomainEventHandler{
+public class GeneralReceivingDomainEventHandler implements ReceivingDomainEventHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GeneralReceivingDomainEventHandler.class);
     private final ExecutionContextDetector executionContextDetector;
@@ -55,8 +55,10 @@ public class GeneralReceivingDomainEventHandler implements ReceivingDomainEventH
         ExecutionContextDetector executionContextDetector,
         ExecutionContextProcessor executionContextProcessor
     ) {
-        this.executionContextDetector = Objects.requireNonNull(executionContextDetector, "An ExecutionContextDetector must be provided for DomainEvent handling!");
-        this.executionContextProcessor = Objects.requireNonNull(executionContextProcessor, "An ExecutionContextProcessor must be provided for DomainEvent handling!");
+        this.executionContextDetector = Objects.requireNonNull(executionContextDetector,
+            "An ExecutionContextDetector must be provided for DomainEvent handling!");
+        this.executionContextProcessor = Objects.requireNonNull(executionContextProcessor,
+            "An ExecutionContextProcessor must be provided for DomainEvent handling!");
     }
 
     /**
@@ -70,7 +72,7 @@ public class GeneralReceivingDomainEventHandler implements ReceivingDomainEventH
     public List<ExecutionResult> handleReceived(DomainEvent domainEvent) {
         log.debug("Received {}", domainEvent);
         var executionContexts = executionContextDetector.detectExecutionContexts(domainEvent);
-        if(executionContexts == null || executionContexts.isEmpty()){
+        if (executionContexts == null || executionContexts.isEmpty()) {
             log.debug("No execution contexts detected for {}", domainEvent);
             return Collections.emptyList();
         }

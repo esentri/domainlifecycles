@@ -219,7 +219,10 @@ public class AssertedContainableTypeModel implements AssertedContainableTypeMirr
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AssertedContainableTypeModel that = (AssertedContainableTypeModel) o;
-        return hasOptionalContainer == that.hasOptionalContainer && hasCollectionContainer == that.hasCollectionContainer && hasListContainer == that.hasListContainer && hasSetContainer == that.hasSetContainer && hasStreamContainer == that.hasStreamContainer && isArray == that.isArray && typeName.equals(that.typeName) && domainType == that.domainType && assertions.equals(that.assertions) && Objects.equals(containerTypeName, that.containerTypeName) && containerAssertions.equals(that.containerAssertions) && Objects.equals(resolvedGenericType, that.resolvedGenericType);
+        return hasOptionalContainer == that.hasOptionalContainer && hasCollectionContainer == that.hasCollectionContainer && hasListContainer == that.hasListContainer && hasSetContainer == that.hasSetContainer && hasStreamContainer == that.hasStreamContainer && isArray == that.isArray && typeName.equals(
+            that.typeName) && domainType == that.domainType && assertions.equals(that.assertions) && Objects.equals(
+            containerTypeName, that.containerTypeName) && containerAssertions.equals(
+            that.containerAssertions) && Objects.equals(resolvedGenericType, that.resolvedGenericType);
     }
 
     /**
@@ -227,6 +230,8 @@ public class AssertedContainableTypeModel implements AssertedContainableTypeMirr
      */
     @Override
     public int hashCode() {
-        return Objects.hash(typeName, domainType, assertions, hasOptionalContainer, hasCollectionContainer, hasListContainer, hasSetContainer, hasStreamContainer, isArray, containerTypeName, containerAssertions, resolvedGenericType);
+        return Objects.hash(typeName, domainType, assertions, hasOptionalContainer, hasCollectionContainer,
+            hasListContainer, hasSetContainer, hasStreamContainer, isArray, containerTypeName, containerAssertions,
+            resolvedGenericType);
     }
 }

@@ -38,19 +38,21 @@ import tests.shared.persistence.domain.ignoring.TestRootSimpleIgnoring;
 import tests.shared.persistence.domain.ignoring.TestRootSimpleIgnoringId;
 
 import java.util.Optional;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SimpleAggregateRootIgnoringRepository_ITest extends BasePersistence_ITest {
-    
+
     private SimpleAggregateRootIgnoringRepository simpleAggregateRootRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         simpleAggregateRootRepository = new SimpleAggregateRootIgnoringRepository(
             persistenceConfiguration.dslContext,
             persistenceEventTestHelper.testEventPublisher,
             persistenceConfiguration.domainPersistenceProvider
         );
     }
+
     @Test
     public void testInsertSimpleEntity() {
         //given

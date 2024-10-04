@@ -31,7 +31,7 @@ package io.domainlifecycles.reflect;
  * The arity determines the number of formal arguments or operands taken by a function or operation.
  * <p>
  * Be careful not to override fixed arity mixins defined from {@link Arity0} to {@link Arity8}.
- *
+ * <p>
  * For more information, read about
  * <a href="https://en.wikipedia.org/wiki/Arity">Arity</a>.
  *
@@ -50,7 +50,8 @@ public enum Arities {
 
         /**
          * Returns the rank.
-         * @return
+         *
+         * @return the rank
          */
         int arity();
     }
@@ -67,7 +68,8 @@ public enum Arities {
         /**
          * Returns the fixed arity of 0.
          */
-        @Override default int arity() {
+        @Override
+        default int arity() {
             return 0;
         }
     }
@@ -84,7 +86,8 @@ public enum Arities {
         /**
          * Returns the fixed arity of 1.
          */
-        @Override default int arity() {
+        @Override
+        default int arity() {
             return 1;
         }
     }
@@ -101,7 +104,8 @@ public enum Arities {
         /**
          * Returns the fixed arity of 2;
          */
-        @Override default int arity() {
+        @Override
+        default int arity() {
             return 2;
         }
     }
@@ -118,7 +122,8 @@ public enum Arities {
         /**
          * Returns the fixed arity of 3.
          */
-        @Override default int arity() {
+        @Override
+        default int arity() {
             return 3;
         }
     }
@@ -135,7 +140,8 @@ public enum Arities {
         /**
          * Returns the fixed arity of 4.
          */
-        @Override default int arity() {
+        @Override
+        default int arity() {
             return 4;
         }
     }
@@ -152,7 +158,8 @@ public enum Arities {
         /**
          * Returns the fixed arity of 5.
          */
-        @Override default int arity() {
+        @Override
+        default int arity() {
             return 5;
         }
     }
@@ -169,7 +176,8 @@ public enum Arities {
         /**
          * Returns the fixed arity of 6.
          */
-        @Override default int arity() {
+        @Override
+        default int arity() {
             return 6;
         }
     }
@@ -186,7 +194,8 @@ public enum Arities {
         /**
          * Returns the fixed arity of 7.
          */
-        @Override default int arity() {
+        @Override
+        default int arity() {
             return 7;
         }
     }
@@ -203,7 +212,8 @@ public enum Arities {
         /**
          * Returns the fixed arity of 8.
          */
-        @Override default int arity() {
+        @Override
+        default int arity() {
             return 8;
         }
     }

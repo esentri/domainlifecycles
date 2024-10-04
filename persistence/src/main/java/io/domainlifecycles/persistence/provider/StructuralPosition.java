@@ -90,10 +90,10 @@ public class StructuralPosition {
     @Override
     public String toString() {
         return "StructuralPosition{" +
-                "instance=" + instance +
-                ", accessPathFromRoot=" + accessPathFromRoot +
-                ", isBackReference=" + isBackReference +
-                '}';
+            "instance=" + instance +
+            ", accessPathFromRoot=" + accessPathFromRoot +
+            ", isBackReference=" + isBackReference +
+            '}';
     }
 
     /**
@@ -151,23 +151,25 @@ public class StructuralPosition {
                 extendedAccessPath = new LinkedList<>();
             } else {
                 backReference = this.parentStructuralPosition.accessPathFromRoot
-                        .stream()
-                        .anyMatch(pe -> pe.domainObject.equals(this.instance));
+                    .stream()
+                    .anyMatch(pe -> pe.domainObject.equals(this.instance));
 
                 extendedAccessPath = new LinkedList<>(this.parentStructuralPosition.accessPathFromRoot);
                 if (this.accessorFromParent == null) {
-                    throw DLCPersistenceException.fail("We need the accessorFromParent to be able to provide a valid access model");
+                    throw DLCPersistenceException.fail(
+                        "We need the accessorFromParent to be able to provide a valid access model");
                 } else {
-                    AccessPathElement pathElement = new AccessPathElement(this.parentStructuralPosition.instance, this.accessorFromParent);
+                    AccessPathElement pathElement = new AccessPathElement(this.parentStructuralPosition.instance,
+                        this.accessorFromParent);
                     extendedAccessPath.add(pathElement);
                 }
             }
 
             return new StructuralPosition(
-                    this.instance,
-                    extendedAccessPath,
-                    backReference,
-                    this.parentStructuralPosition
+                this.instance,
+                extendedAccessPath,
+                backReference,
+                this.parentStructuralPosition
             );
         }
 
@@ -193,7 +195,8 @@ public class StructuralPosition {
          * Creates a new {@link AccessPathElement}.
          *
          * @param domainObject          the {@link DomainObject} instance
-         * @param accessorToNextElement the field name for access to the next {@link DomainObject} instance in the access path
+         * @param accessorToNextElement the field name for access to the next {@link DomainObject} instance in the
+         *                              access path
          */
         public AccessPathElement(DomainObject domainObject, String accessorToNextElement) {
             this.domainObject = domainObject;
@@ -202,6 +205,7 @@ public class StructuralPosition {
 
         /**
          * {@inheritDoc}
+         *
          * @return
          */
         @Override
@@ -213,6 +217,7 @@ public class StructuralPosition {
 
         /**
          * {@inheritDoc}
+         *
          * @return
          */
         @Override
@@ -222,14 +227,15 @@ public class StructuralPosition {
 
         /**
          * {@inheritDoc}
+         *
          * @return
          */
         @Override
         public String toString() {
             return "AccessPathElement{" +
-                    "domainObject=" + domainObject +
-                    ", accessorToNextElement=" + accessorToNextElement +
-                    '}';
+                "domainObject=" + domainObject +
+                ", accessorToNextElement=" + accessorToNextElement +
+                '}';
         }
     }
 }

@@ -39,11 +39,12 @@ import io.domainlifecycles.mirror.model.ValueReferenceModel;
  *
  * @author Mario Herb
  */
-@JsonTypeInfo(use= JsonTypeInfo.Id.CLASS, property="@class")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = FieldModel.class),
     @JsonSubTypes.Type(value = AggregateRootReferenceModel.class),
     @JsonSubTypes.Type(value = ValueReferenceModel.class),
     @JsonSubTypes.Type(value = EntityReferenceModel.class),
 })
-public interface FieldMirrorMixin {}
+public interface FieldMirrorMixin {
+}

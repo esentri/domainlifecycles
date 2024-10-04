@@ -53,7 +53,7 @@ public class NomnomlDiagram implements Diagram {
      * Initializes the NomnomlDiagram.
      *
      * @param styleDeclarations for this diagram
-     * @param diagramElements contained
+     * @param diagramElements   contained
      */
     public NomnomlDiagram(List<String> styleDeclarations,
                           List<DiagramElement> diagramElements) {

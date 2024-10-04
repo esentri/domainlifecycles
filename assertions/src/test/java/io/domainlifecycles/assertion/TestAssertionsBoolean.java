@@ -11,13 +11,14 @@ public class TestAssertionsBoolean {
     class TestIsTrue {
 
         @Test
-        public void testIsTrueFail(){
-            assertThatThrownBy(()-> DomainAssertions.isTrue(false, "Failed")).isInstanceOf(DomainAssertionException.class);
+        public void testIsTrueFail() {
+            assertThatThrownBy(() -> DomainAssertions.isTrue(false, "Failed")).isInstanceOf(
+                DomainAssertionException.class);
         }
 
         @Test
-        public void testIsTrueOk(){
-            assertThatNoException().isThrownBy(() -> DomainAssertions.isTrue(true ,"Failed"));
+        public void testIsTrueOk() {
+            assertThatNoException().isThrownBy(() -> DomainAssertions.isTrue(true, "Failed"));
         }
     }
 
@@ -25,13 +26,14 @@ public class TestAssertionsBoolean {
     class TestIsFalse {
 
         @Test
-        public void testIsFalseFail(){
-            assertThatThrownBy(()-> DomainAssertions.isFalse(true, "Failed")).isInstanceOf(DomainAssertionException.class);
+        public void testIsFalseFail() {
+            assertThatThrownBy(() -> DomainAssertions.isFalse(true, "Failed")).isInstanceOf(
+                DomainAssertionException.class);
         }
 
         @Test
-        public void testIsFalseOk(){
-            assertThatNoException().isThrownBy(()-> DomainAssertions.isFalse(false, "Failed"));
+        public void testIsFalseOk() {
+            assertThatNoException().isThrownBy(() -> DomainAssertions.isFalse(false, "Failed"));
         }
     }
 }

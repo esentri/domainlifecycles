@@ -54,13 +54,14 @@ public abstract class DomainObjectBuilderProvider {
      * Provides a DomainObjectBuilder for a given class of {@link DomainObject} (domain object)
      *
      * @param domainObjectTypeName The full qualified type name of a type to provide a DomainObjectBuilder for
-     * @param <T>   The DomainType to be built
+     * @param <T>                  The DomainType to be built
      * @return DomainObjectBuilder
      */
     public abstract <T extends DomainObject> DomainObjectBuilder<T> provide(String domainObjectTypeName);
 
     /**
      * To get the {@link DomainBuilderConfiguration} for this provider.
+     *
      * @return the configuration instance
      */
     public DomainBuilderConfiguration getBuilderConfiguration() {

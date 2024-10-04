@@ -48,11 +48,11 @@ import java.util.Objects;
  * JtaOutboxDomainEventPublisher is a class that implements the DomainEventPublisher interface.
  * It is responsible for publishing domain events using a transactional outbox and a transaction manager.
  *
+ * @author Mario Herb
  * @see DomainEventPublisher
  * @see TransactionalOutbox
  * @see TransactionManager
  * @see DLCEventsException
- * @author Mario Herb
  */
 public class JtaOutboxDomainEventPublisher implements DomainEventPublisher {
 
@@ -61,19 +61,24 @@ public class JtaOutboxDomainEventPublisher implements DomainEventPublisher {
     private final TransactionManager transactionManager;
     private final TransactionalOutbox transactionalOutbox;
 
-    public JtaOutboxDomainEventPublisher(TransactionalOutbox transactionalOutbox, TransactionManager transactionManager) {
-        this.transactionalOutbox = Objects.requireNonNull(transactionalOutbox, "JtaOutboxDomainEventPublisher needs a non null TransactionalOutbox!");
-        this.transactionManager =  Objects.requireNonNull(transactionManager, "JtaOutboxDomainEventPublisher needs a non null TransactionManager!");
+    public JtaOutboxDomainEventPublisher(TransactionalOutbox transactionalOutbox,
+                                         TransactionManager transactionManager) {
+        this.transactionalOutbox = Objects.requireNonNull(transactionalOutbox,
+            "JtaOutboxDomainEventPublisher needs a non null TransactionalOutbox!");
+        this.transactionManager = Objects.requireNonNull(transactionManager,
+            "JtaOutboxDomainEventPublisher needs a non null TransactionManager!");
     }
 
     /**
      * Publishes a domain event using a transactional outbox and a transaction manager.
      * If there is an active transaction, it inserts the domain event into the transactional outbox.
-     * If there is no active transaction, it begins a new transaction, inserts the domain event into the outbox, and commits the transaction.
+     * If there is no active transaction, it begins a new transaction, inserts the domain event into the outbox, and
+     * commits the transaction.
      * If any exceptions occur during the transaction handling, it throws a DLCEventsException.
      *
      * @param domainEvent the domain event to be published
-     * @throws DLCEventsException if inserting the domain event into the outbox fails or there is an error accessing the transaction manager
+     * @throws DLCEventsException if inserting the domain event into the outbox fails or there is an error accessing
+     * the transaction manager
      */
     @Override
     public void publish(DomainEvent domainEvent) {
@@ -82,10 +87,11 @@ public class JtaOutboxDomainEventPublisher implements DomainEventPublisher {
         try {
             transaction = transactionManager.getTransaction();
         } catch (SystemException e) {
-            throw DLCEventsException.fail("Couldn't access transaction manager! Inserting DomainEvent into Outbox failed for %s", domainEvent, e);
+            throw DLCEventsException.fail(
+                "Couldn't access transaction manager! Inserting DomainEvent into Outbox failed for %s", domainEvent, e);
         }
-        if(transaction == null) {
-            try{
+        if (transaction == null) {
+            try {
                 transactionManager.begin();
                 transactionalOutbox.insert(domainEvent);
                 transactionManager.commit();
@@ -93,10 +99,10 @@ public class JtaOutboxDomainEventPublisher implements DomainEventPublisher {
                      | RollbackException
                      | NotSupportedException
                      | HeuristicRollbackException
-                     | HeuristicMixedException e){
+                     | HeuristicMixedException e) {
                 throw DLCEventsException.fail("Inserting DomainEvent into Outbox failed for %s", domainEvent, e);
             }
-        }else{
+        } else {
             transactionalOutbox.insert(domainEvent);
         }
         log.debug("Inserting DomainEvent {} into TransactionalOutbox", domainEvent);

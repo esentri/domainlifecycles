@@ -47,7 +47,7 @@ public class DomainAssertionException extends RuntimeException {
      * Creates a DomainAssertionException with a given message and a given cause
      *
      * @param message error message
-     * @param cause Throwable causing the error
+     * @param cause   Throwable causing the error
      */
     public DomainAssertionException(String message, Throwable cause) {
         super(message, cause);

@@ -34,7 +34,8 @@ import io.domainlifecycles.domain.types.QueryClient;
 import io.domainlifecycles.domain.types.Repository;
 
 /**
- * The ServiceRegistrator interface represents a registrator that is responsible for registering instances of various types of services.
+ * The ServiceRegistrator interface represents a registrator that is responsible for registering instances of various
+ * types of services.
  * It allows registering instances of {@link ApplicationService}, {@link Repository} and {@link DomainService}.
  *
  * @author Mario Herb

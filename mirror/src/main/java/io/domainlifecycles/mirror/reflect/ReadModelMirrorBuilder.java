@@ -36,7 +36,7 @@ import io.domainlifecycles.mirror.api.ReadModelMirror;
  *
  * @author Mario Herb
  */
-public class ReadModelMirrorBuilder extends DomainTypeMirrorBuilder{
+public class ReadModelMirrorBuilder extends DomainTypeMirrorBuilder {
 
     public ReadModelMirrorBuilder(Class<? extends ReadModel> readModelClass) {
         super(readModelClass);
@@ -44,8 +44,10 @@ public class ReadModelMirrorBuilder extends DomainTypeMirrorBuilder{
 
     /**
      * Creates a new {@link ReadModelMirror}.
+     *
+     * @return new instance of ReadModelMirror
      */
-    public ReadModelMirror build(){
+    public ReadModelMirror build() {
         return new ReadModelModel(
             getTypeName(),
             isAbstract(),

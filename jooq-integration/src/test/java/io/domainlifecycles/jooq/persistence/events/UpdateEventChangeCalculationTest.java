@@ -68,18 +68,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 public class UpdateEventChangeCalculationTest extends BasePersistence_ITest {
 
-    private Object getOldValue(PersistenceAction<?> action, String propertyName){
+    private Object getOldValue(PersistenceAction<?> action, String propertyName) {
         var accessor = DlcAccess.accessorFor(action.instanceAccessModelBeforeUpdate.domainObject());
         return accessor.peek(propertyName);
     }
 
-    private Object getNewValue(PersistenceAction<?> action, String propertyName){
+    private Object getNewValue(PersistenceAction<?> action, String propertyName) {
         var accessor = DlcAccess.accessorFor(action.instanceAccessModel.domainObject());
         return accessor.peek(propertyName);
     }
 
-    private Set<String> calculateChangedProperties(PersistenceAction<?> action){
-        return Entities.detectChanges((Entity<?>) action.instanceAccessModelBeforeUpdate.domainObject(), (Entity<?>)action.instanceAccessModel.domainObject(), false)
+    private Set<String> calculateChangedProperties(PersistenceAction<?> action) {
+        return Entities.detectChanges((Entity<?>) action.instanceAccessModelBeforeUpdate.domainObject(),
+                (Entity<?>) action.instanceAccessModel.domainObject(), false)
             .stream()
             .map(c -> c.changedField().getName())
             .collect(Collectors.toSet());
@@ -91,7 +92,9 @@ public class UpdateEventChangeCalculationTest extends BasePersistence_ITest {
         Bestellung b = buildBestellung();
         b.setPrioritaet(Byte.valueOf("2"));
 
-        PersistenceAction<?> action = new PersistenceAction<>(persistenceConfiguration.domainPersistenceProvider.buildAccessModel(b), PersistenceAction.ActionType.UPDATE, persistenceConfiguration.domainPersistenceProvider.buildAccessModel(a));
+        PersistenceAction<?> action = new PersistenceAction<>(
+            persistenceConfiguration.domainPersistenceProvider.buildAccessModel(b), PersistenceAction.ActionType.UPDATE,
+            persistenceConfiguration.domainPersistenceProvider.buildAccessModel(a));
         Set<String> changes = calculateChangedProperties(action);
         assertThat(changes).containsExactlyInAnyOrder("prioritaet");
 
@@ -105,7 +108,9 @@ public class UpdateEventChangeCalculationTest extends BasePersistence_ITest {
         Bestellung b = buildBestellung();
         b.setKundennummer(new Kundennummer("88888"));
 
-        PersistenceAction<?> action = new PersistenceAction<>(persistenceConfiguration.domainPersistenceProvider.buildAccessModel(b), PersistenceAction.ActionType.UPDATE, persistenceConfiguration.domainPersistenceProvider.buildAccessModel(a));
+        PersistenceAction<?> action = new PersistenceAction<>(
+            persistenceConfiguration.domainPersistenceProvider.buildAccessModel(b), PersistenceAction.ActionType.UPDATE,
+            persistenceConfiguration.domainPersistenceProvider.buildAccessModel(a));
         Set<String> changes = calculateChangedProperties(action);
         assertThat(changes).containsExactlyInAnyOrder("kundennummer");
         assertThat(getNewValue(action, "kundennummer")).isEqualTo(b.getKundennummer());
@@ -117,12 +122,14 @@ public class UpdateEventChangeCalculationTest extends BasePersistence_ITest {
         Bestellung a = buildBestellung();
         Bestellung b = buildBestellung();
         b.getBestellPositionen().get(0).setStueckzahl(66);
-        DomainObjectInstanceAccessModel<?> bModel = persistenceConfiguration.domainPersistenceProvider.buildAccessModel(b);
+        DomainObjectInstanceAccessModel<?> bModel = persistenceConfiguration.domainPersistenceProvider.buildAccessModel(
+            b);
         DomainObjectInstanceAccessModel<?> bPosModel = bModel.children.stream()
             .filter(c -> c.domainObject().equals(b.getBestellPositionen().get(0)))
             .findFirst()
             .get();
-        DomainObjectInstanceAccessModel<?> aModel = persistenceConfiguration.domainPersistenceProvider.buildAccessModel(a);
+        DomainObjectInstanceAccessModel<?> aModel = persistenceConfiguration.domainPersistenceProvider.buildAccessModel(
+            a);
         DomainObjectInstanceAccessModel<?> aPosModel = aModel.children.stream()
             .filter(c -> c.domainObject().equals(a.getBestellPositionen().get(0)))
             .findFirst()
@@ -138,7 +145,9 @@ public class UpdateEventChangeCalculationTest extends BasePersistence_ITest {
     public void testNoChanges() {
         Bestellung a = buildBestellung();
         Bestellung b = buildBestellung();
-        PersistenceAction<?> action = new PersistenceAction<>(persistenceConfiguration.domainPersistenceProvider.buildAccessModel(b), PersistenceAction.ActionType.UPDATE, persistenceConfiguration.domainPersistenceProvider.buildAccessModel(a));
+        PersistenceAction<?> action = new PersistenceAction<>(
+            persistenceConfiguration.domainPersistenceProvider.buildAccessModel(b), PersistenceAction.ActionType.UPDATE,
+            persistenceConfiguration.domainPersistenceProvider.buildAccessModel(a));
         Set<String> changes = calculateChangedProperties(action);
         assertThat(changes).isEmpty();
     }
@@ -152,17 +161,22 @@ public class UpdateEventChangeCalculationTest extends BasePersistence_ITest {
             .setBetrag(BigDecimal.valueOf(44))
             .setWaehrung(WaehrungEnum.EUR)
             .build());
-        DomainObjectInstanceAccessModel<UpdatableRecord<?>> bModel = persistenceConfiguration.domainPersistenceProvider.buildAccessModel(b);
+        DomainObjectInstanceAccessModel<UpdatableRecord<?>> bModel =
+            persistenceConfiguration.domainPersistenceProvider.buildAccessModel(
+                b);
         DomainObjectInstanceAccessModel<UpdatableRecord<?>> bPosModel = bModel.children.stream()
             .filter(c -> c.domainObject().equals(b.getBestellPositionen().get(0)))
             .findFirst()
             .get();
-        DomainObjectInstanceAccessModel<UpdatableRecord<?>> aModel = persistenceConfiguration.domainPersistenceProvider.buildAccessModel(a);
+        DomainObjectInstanceAccessModel<UpdatableRecord<?>> aModel =
+            persistenceConfiguration.domainPersistenceProvider.buildAccessModel(
+                a);
         DomainObjectInstanceAccessModel<UpdatableRecord<?>> aPosModel = aModel.children.stream()
             .filter(c -> c.domainObject().equals(a.getBestellPositionen().get(0)))
             .findFirst()
             .get();
-        PersistenceAction<UpdatableRecord<?>> action = new PersistenceAction<>(bPosModel, PersistenceAction.ActionType.UPDATE, aPosModel);
+        PersistenceAction<UpdatableRecord<?>> action = new PersistenceAction<>(bPosModel,
+            PersistenceAction.ActionType.UPDATE, aPosModel);
         Set<String> changes = calculateChangedProperties(action);
         assertThat(changes).containsExactlyInAnyOrder("stueckPreis");
         assertThat(getNewValue(action, "stueckPreis")).isEqualTo(b.getBestellPositionen().get(0).getStueckPreis());
@@ -175,7 +189,9 @@ public class UpdateEventChangeCalculationTest extends BasePersistence_ITest {
         TestRootSimple a = buildTestRootSimple();
         TestRootSimple b = buildTestRootSimple();
         b.setName(null);
-        PersistenceAction<?> action = new PersistenceAction<>(persistenceConfiguration.domainPersistenceProvider.buildAccessModel(b), PersistenceAction.ActionType.UPDATE, persistenceConfiguration.domainPersistenceProvider.buildAccessModel(a));
+        PersistenceAction<?> action = new PersistenceAction<>(
+            persistenceConfiguration.domainPersistenceProvider.buildAccessModel(b), PersistenceAction.ActionType.UPDATE,
+            persistenceConfiguration.domainPersistenceProvider.buildAccessModel(a));
         Set<String> changes = calculateChangedProperties(action);
         assertThat(changes).containsExactlyInAnyOrder("name");
         assertThat(getNewValue(action, "name")).isEqualTo(b.getName());
@@ -188,7 +204,9 @@ public class UpdateEventChangeCalculationTest extends BasePersistence_ITest {
         TestRootSimple a = buildTestRootSimple();
         TestRootSimple b = buildTestRootSimple();
         a.setName(null);
-        PersistenceAction<?> action = new PersistenceAction<>(persistenceConfiguration.domainPersistenceProvider.buildAccessModel(b), PersistenceAction.ActionType.UPDATE, persistenceConfiguration.domainPersistenceProvider.buildAccessModel(a));
+        PersistenceAction<?> action = new PersistenceAction<>(
+            persistenceConfiguration.domainPersistenceProvider.buildAccessModel(b), PersistenceAction.ActionType.UPDATE,
+            persistenceConfiguration.domainPersistenceProvider.buildAccessModel(a));
         Set<String> changes = calculateChangedProperties(action);
         assertThat(changes).containsExactlyInAnyOrder("name");
         assertThat(getNewValue(action, "name")).isEqualTo(b.getName());

@@ -39,6 +39,8 @@ import org.jooq.UpdatableRecord;
 /**
  * jOOQ specific implementation of a {@link PersistenceActionPublishingRepository}.
  *
+ * @param <A> type of AggregateRoot
+ * @param <I> type of Identity
  * @author Mario Herb
  */
 public class JooqAggregateRepository<A extends AggregateRoot<I>, I extends Identity<?>> extends PersistenceActionPublishingRepository<I, A, UpdatableRecord<?>> {
@@ -50,7 +52,8 @@ public class JooqAggregateRepository<A extends AggregateRoot<I>, I extends Ident
                                    DSLContext dslContext,
                                    JooqDomainPersistenceProvider domainPersistenceProvider,
                                    PersistenceEventPublisher persistenceEventPublisher) {
-        super(new JooqPersister(dslContext, domainPersistenceProvider), domainPersistenceProvider, persistenceEventPublisher);
+        super(new JooqPersister(dslContext, domainPersistenceProvider), domainPersistenceProvider,
+            persistenceEventPublisher);
         this.fetcher = new JooqAggregateFetcher<>(aggregateRootClass, dslContext, domainPersistenceProvider);
         this.dslContext = dslContext;
     }

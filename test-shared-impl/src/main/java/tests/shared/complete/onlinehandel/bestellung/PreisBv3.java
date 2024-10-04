@@ -38,4 +38,5 @@ import java.math.BigDecimal;
 public record PreisBv3(
     @NotNull WaehrungEnumBv3 waehrung,
     @NotNull @Positive BigDecimal betrag
-) implements ValueObject {}
+) implements ValueObject {
+}

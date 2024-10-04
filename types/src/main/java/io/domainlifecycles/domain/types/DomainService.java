@@ -26,19 +26,23 @@
  */
 
 package io.domainlifecycles.domain.types;
+
 /**
  * This is the common supertype (marker interface) to represent DomainServices.
- *
+ * <p>
  * Some concepts from the domain aren’t natural to model as objects. Especially, if domain functionality cannot be
  * properly expressed as the responsibility of exactly one Aggregate.
- * In contrast to ApplicationServices (which are not directly part of the domain) DomainServices do handle domain logic that
+ * In contrast to ApplicationServices (which are not directly part of the domain) DomainServices do handle domain
+ * logic that
  * is often dependent on the state of multiple Aggregates.
- *
+ * <p>
  * Further Information:
- * @see <a href="https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf">Design Reference - Services</a>
- * @see <a href="https://enterprisecraftsmanship.com/posts/domain-vs-application-services/">ApplicationServices vs. DomainServices</a>
  *
  * @author Mario Herb
+ * @see
+ * <a href="https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf">Design Reference - Services</a>
+ * @see
+ * <a href="https://enterprisecraftsmanship.com/posts/domain-vs-application-services/">ApplicationServices vs. DomainServices</a>
  */
 public interface DomainService {
 }

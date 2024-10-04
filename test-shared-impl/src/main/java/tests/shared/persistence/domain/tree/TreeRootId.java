@@ -29,4 +29,5 @@ package tests.shared.persistence.domain.tree;
 
 import io.domainlifecycles.domain.types.Identity;
 
-public record TreeRootId(Long value) implements Identity<Long> { }
+public record TreeRootId(Long value) implements Identity<Long> {
+}

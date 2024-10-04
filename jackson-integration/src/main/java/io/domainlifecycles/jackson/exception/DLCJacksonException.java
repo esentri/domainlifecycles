@@ -54,7 +54,7 @@ public class DLCJacksonException extends RuntimeException {
      * returns a new DLCJacksonException with a detail message and a cause.
      *
      * @param detail exception message
-     * @param cause Throwable
+     * @param cause  Throwable
      * @return new exception
      */
     public static DLCJacksonException fail(final String detail, final Throwable cause) {
@@ -65,7 +65,7 @@ public class DLCJacksonException extends RuntimeException {
      * returns a new DLCJacksonException with a detail message formatted to include with given message parameters.
      *
      * @param detail exception message
-     * @param args message parameters
+     * @param args   message parameters
      * @return new exception
      */
     public static DLCJacksonException fail(final String detail, final Object... args) {
@@ -73,11 +73,12 @@ public class DLCJacksonException extends RuntimeException {
     }
 
     /**
-     * returns a new DLCJacksonException with a detail message formatted to include with given message parameters and containing a cause.
+     * returns a new DLCJacksonException with a detail message formatted to include with given message parameters and
+     * containing a cause.
      *
      * @param detail exception message
-     * @param args message parameters
-     * @param cause Throwable
+     * @param args   message parameters
+     * @param cause  Throwable
      * @return new exception
      */
     public static DLCJacksonException fail(final String detail, final Throwable cause, final Object... args) {

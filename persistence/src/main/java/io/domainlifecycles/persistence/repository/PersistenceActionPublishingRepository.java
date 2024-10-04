@@ -56,10 +56,10 @@ import io.domainlifecycles.persistence.repository.persister.Persister;
  * @param <ID>     type of aggregate identity
  * @param <ROOT>   type of stored aggregates
  * @param <RECORD> type of record representation
- *
  * @author Mario Herb
  */
-public abstract class PersistenceActionPublishingRepository<ID extends Identity<?>, ROOT extends AggregateRoot<ID>, RECORD>
+public abstract class PersistenceActionPublishingRepository<ID extends Identity<?>, ROOT extends AggregateRoot<ID>,
+    RECORD>
     extends DomainStructureAwareRepository<ID, ROOT, RECORD> {
 
     private final PersistenceEventPublisher persistenceEventPublisher;
