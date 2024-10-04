@@ -38,7 +38,8 @@ import tests.shared.persistence.domain.simple.TestRootSimpleId;
 /**
  * Mapping JOOQ TestRootSimpleIgnoring records.
  */
-public class TestRootSimpleJooqRecordMapper extends AbstractRecordMapper<TestRootSimpleRecord, TestRootSimple, TestRootSimple> {
+public class TestRootSimpleJooqRecordMapper extends AbstractRecordMapper<TestRootSimpleRecord, TestRootSimple,
+    TestRootSimple> {
 
     @Override
     public DomainObjectBuilder<TestRootSimple> recordToDomainObjectBuilder(TestRootSimpleRecord record) {

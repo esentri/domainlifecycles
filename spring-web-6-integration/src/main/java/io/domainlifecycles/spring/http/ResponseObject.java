@@ -34,7 +34,6 @@ import java.util.Objects;
  * General http response structure
  *
  * @param <T> type of returned object (mostly entity)
- *
  * @author Mario Herb
  * @author Tobias Herb
  * @author Dominik Galler
@@ -60,7 +59,7 @@ public class ResponseObject<T> {
     }
 
     /**
-     * Get data
+     * @return the data
      */
     public T getData() {
         return this.data;
@@ -68,13 +67,15 @@ public class ResponseObject<T> {
 
     /**
      * Set data
+     *
+     * @param data the data to be set in the ResponseObject
      */
     public void setData(T data) {
         this.data = data;
     }
 
     /**
-     * Get errors.
+     * @return the errors
      */
     public List<Error> getErrors() {
         return this.errors;
@@ -82,6 +83,8 @@ public class ResponseObject<T> {
 
     /**
      * Set errors.
+     *
+     * @param errors the errors to be set in the ResponseObject
      */
     public void setErrors(List<Error> errors) {
         this.errors = errors;

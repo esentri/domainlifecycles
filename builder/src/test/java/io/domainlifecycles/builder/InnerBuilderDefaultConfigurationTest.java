@@ -35,20 +35,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class InnerBuilderDefaultConfigurationTest {
 
     @Test
-    public void testGetBuildMethodName(){
-        InnerClassDefaultDomainBuilderConfiguration conf = new InnerClassDefaultDomainBuilderConfiguration();;
+    public void testGetBuildMethodName() {
+        InnerClassDefaultDomainBuilderConfiguration conf = new InnerClassDefaultDomainBuilderConfiguration();
+        ;
         assertThat(conf.buildMethodName()).isEqualTo("build");
     }
 
     @Test
-    public void testGetBuilderMethodName(){
-        InnerClassDefaultDomainBuilderConfiguration conf = new InnerClassDefaultDomainBuilderConfiguration();;
+    public void testGetBuilderMethodName() {
+        InnerClassDefaultDomainBuilderConfiguration conf = new InnerClassDefaultDomainBuilderConfiguration();
+        ;
         assertThat(conf.builderMethodName()).isEqualTo("builder");
     }
 
     @Test
     public void testSetterFromPropertyName() {
-        InnerClassDefaultDomainBuilderConfiguration conf = new InnerClassDefaultDomainBuilderConfiguration();;
+        InnerClassDefaultDomainBuilderConfiguration conf = new InnerClassDefaultDomainBuilderConfiguration();
+        ;
         assertThat(conf.setterFromPropertyName("property")).isEqualTo("setProperty");
     }
 }

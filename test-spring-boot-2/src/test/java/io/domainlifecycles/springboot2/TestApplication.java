@@ -97,14 +97,14 @@ public class TestApplication {
     }
 
     @PostConstruct
-    public void postConstruct(){
+    public void postConstruct() {
         ValidationDomainClassExtender.extend("tests.shared.validation.javax");
         log.info("ValidationExtension Done!");
     }
 
     @Bean
     public JooqDomainPersistenceProvider domainPersistenceProvider(DomainObjectBuilderProvider domainObjectBuilderProvider,
-                                                                   Set<RecordMapper<?,?,?>> customRecordMappers){
+                                                                   Set<RecordMapper<?, ?, ?>> customRecordMappers) {
 
         JooqDomainPersistenceConfiguration jooqDomainPersistenceConfiguration = JooqDomainPersistenceConfiguration
             .JooqPersistenceConfigurationBuilder
@@ -122,7 +122,8 @@ public class TestApplication {
             )
             .make();
 
-        JooqDomainPersistenceProvider domainPersistenceProvider = new JooqDomainPersistenceProvider(jooqDomainPersistenceConfiguration);
+        JooqDomainPersistenceProvider domainPersistenceProvider = new JooqDomainPersistenceProvider(
+            jooqDomainPersistenceConfiguration);
 
         return domainPersistenceProvider;
     }

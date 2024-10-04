@@ -41,7 +41,6 @@ import io.domainlifecycles.persistence.repository.actions.PersistenceContext;
  * reflected back into the passed {@link DomainObject}.
  *
  * @param <BASE_RECORD_TYPE> the type of the record that is used to persist the {@link DomainObject}
- *
  * @author Mario Herb
  */
 public interface Persister<BASE_RECORD_TYPE> {
@@ -50,34 +49,37 @@ public interface Persister<BASE_RECORD_TYPE> {
      * Inserts a new record for the given {@link DomainObject} into the database.
      *
      * @param insertAction the insert action
-     * @param pc the persistence context
+     * @param pc           the persistence context
      * @return the inserted record
      */
-    BASE_RECORD_TYPE insertOne(PersistenceAction<BASE_RECORD_TYPE> insertAction, PersistenceContext<BASE_RECORD_TYPE> pc);
+    BASE_RECORD_TYPE insertOne(PersistenceAction<BASE_RECORD_TYPE> insertAction,
+                               PersistenceContext<BASE_RECORD_TYPE> pc);
 
     /**
      * Updates the record for the given {@link DomainObject} in the database.
      *
      * @param updateAction the update action
-     * @param pc the persistence context
+     * @param pc           the persistence context
      * @return the updated record
      */
-    BASE_RECORD_TYPE updateOne(PersistenceAction<BASE_RECORD_TYPE> updateAction, PersistenceContext<BASE_RECORD_TYPE> pc);
+    BASE_RECORD_TYPE updateOne(PersistenceAction<BASE_RECORD_TYPE> updateAction,
+                               PersistenceContext<BASE_RECORD_TYPE> pc);
 
     /**
      * Deletes the record for the given {@link DomainObject} from the database.
      *
      * @param deleteAction the delete action
-     * @param pc the persistence context
+     * @param pc           the persistence context
      * @return the deleted record
      */
-    BASE_RECORD_TYPE deleteOne(PersistenceAction<BASE_RECORD_TYPE> deleteAction, PersistenceContext<BASE_RECORD_TYPE> pc);
+    BASE_RECORD_TYPE deleteOne(PersistenceAction<BASE_RECORD_TYPE> deleteAction,
+                               PersistenceContext<BASE_RECORD_TYPE> pc);
 
     /**
      * Increases the version of the given {@link DomainObject} in the database.
      *
      * @param entity the entity
-     * @param pc the persistence context
+     * @param pc     the persistence context
      * @return the updated record
      */
     BASE_RECORD_TYPE increaseVersion(Entity<?> entity, PersistenceContext<BASE_RECORD_TYPE> pc);

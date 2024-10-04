@@ -35,7 +35,7 @@ import tests.shared.complete.onlinehandel.zustellung.AuslieferungGestartet;
 public class BenachrichtigungService implements DomainService {
 
     @ListensTo(domainEventType = AuslieferungGestartet.class)
-    public void benachrichtige(@NotNull AuslieferungGestartet auslieferungGestartet){
+    public void benachrichtige(@NotNull AuslieferungGestartet auslieferungGestartet) {
 
     }
 }

@@ -42,6 +42,7 @@ import java.util.Map;
 /**
  * Represents a persistence model.
  *
+ * @param <BASE_RECORD_TYPE> the type of record
  * @author Mario Herb
  */
 public class PersistenceModel<BASE_RECORD_TYPE> implements PersistenceMirror<BASE_RECORD_TYPE> {
@@ -84,7 +85,7 @@ public class PersistenceModel<BASE_RECORD_TYPE> implements PersistenceMirror<BAS
             .stream()
             .filter(rm -> Domain.entityMirrorFor(rm.domainObjectTypeName()).isSubClassOf(entityClassName))
             .findFirst()
-            .orElseThrow(()-> DLCPersistenceException.fail("Couldn't find record mapper for '%s'.", entityClassName));
-        return (RecordMapper<BASE_RECORD_TYPE, ? extends Entity<?>, ? extends AggregateRoot<?>>)erm.recordMapper();
+            .orElseThrow(() -> DLCPersistenceException.fail("Couldn't find record mapper for '%s'.", entityClassName));
+        return (RecordMapper<BASE_RECORD_TYPE, ? extends Entity<?>, ? extends AggregateRoot<?>>) erm.recordMapper();
     }
 }

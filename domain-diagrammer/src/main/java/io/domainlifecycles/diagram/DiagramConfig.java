@@ -33,6 +33,6 @@ package io.domainlifecycles.diagram;
  *
  * @author Mario Herb
  */
-public  interface DiagramConfig {
+public interface DiagramConfig {
 
 }

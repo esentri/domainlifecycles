@@ -72,12 +72,12 @@ public class DomainDiagramGenerator implements Diagram {
 
     /**
      * Initializes the DomainDiagramGenerator with a given {@link DomainDiagramConfig}
+     *
+     * @param diagramConfig diagram configuration
      */
     public DomainDiagramGenerator(final DomainDiagramConfig diagramConfig) {
         this.diagramConfig = diagramConfig;
         this.domainMapper = new DomainMapper(diagramConfig);
-
-
     }
 
     /**
@@ -108,32 +108,32 @@ public class DomainDiagramGenerator implements Diagram {
         builder.append(rankerStyleDeclaration());
 
         builder.append(System.lineSeparator());
-        if(diagramConfig.isShowDomainCommands()) {
+        if (diagramConfig.isShowDomainCommands()) {
             domainMapper.getDomainCommands().forEach(f -> builder.append(f.getDiagramText()));
         }
-        if(diagramConfig.isShowApplicationServices()) {
+        if (diagramConfig.isShowApplicationServices()) {
             domainMapper.getApplicationServices().forEach(f -> builder.append(f.getDiagramText()));
         }
-        if(diagramConfig.isShowDomainServices()) {
+        if (diagramConfig.isShowDomainServices()) {
             domainMapper.getDomainServices().forEach(f -> builder.append(f.getDiagramText()));
         }
-        if(diagramConfig.isShowDomainEvents()) {
+        if (diagramConfig.isShowDomainEvents()) {
             domainMapper.getDomainEvents().forEach(f -> builder.append(f.getDiagramText()));
         }
         domainMapper.getAggregateFrames().forEach(f -> builder.append(f.getDiagramText()));
         domainMapper.getDomainRelationshipMapper()
             .mapAllAggregateFrameRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
-        if(diagramConfig.isShowRepositories()) {
+        if (diagramConfig.isShowRepositories()) {
             domainMapper.getRepositories().forEach(f -> builder.append(f.getDiagramText()));
         }
-        if(diagramConfig.isShowReadModels()) {
+        if (diagramConfig.isShowReadModels()) {
             domainMapper.getReadModels().forEach(f -> builder.append(f.getDiagramText()));
         }
-        if(diagramConfig.isShowQueryClients()) {
+        if (diagramConfig.isShowQueryClients()) {
             domainMapper.getQueryClients().forEach(f -> builder.append(f.getDiagramText()));
         }
-        if(diagramConfig.isShowOutboundServices()) {
+        if (diagramConfig.isShowOutboundServices()) {
             domainMapper.getOutboundServices().forEach(f -> builder.append(f.getDiagramText()));
         }
 
@@ -162,134 +162,135 @@ public class DomainDiagramGenerator implements Diagram {
             .forEach(f -> builder.append(f.getDiagramText()));
 
 
-
         return builder.toString();
     }
 
-    private String aggregateFrameStyleDeclaration(){
-        if(diagramConfig.getAggregateFrameStyle()!= null){
+    private String aggregateFrameStyleDeclaration() {
+        if (diagramConfig.getAggregateFrameStyle() != null) {
             return styleDeclaration(diagramConfig.getAggregateFrameStyle(), AGGREGATE_FRAME_STYLE_TAG);
         }
         return "";
     }
-    private String aggregateRootStyleDeclaration(){
-        if(diagramConfig.getAggregateRootStyle()!= null){
+
+    private String aggregateRootStyleDeclaration() {
+        if (diagramConfig.getAggregateRootStyle() != null) {
             return styleDeclaration(diagramConfig.getAggregateRootStyle(), AGGREGATE_ROOT_STYLE_TAG);
         }
         return "";
     }
 
-    private String entityStyleDeclaration(){
-        if(diagramConfig.getEntityStyle()!= null){
+    private String entityStyleDeclaration() {
+        if (diagramConfig.getEntityStyle() != null) {
             return styleDeclaration(diagramConfig.getEntityStyle(), ENTITY_STYLE_TAG);
         }
         return "";
     }
 
-    private String valueObjectStyleDeclaration(){
-        if(diagramConfig.getValueObjectStyle()!= null){
+    private String valueObjectStyleDeclaration() {
+        if (diagramConfig.getValueObjectStyle() != null) {
             return styleDeclaration(diagramConfig.getValueObjectStyle(), VALUE_OBJECT_STYLE_TAG);
         }
         return "";
     }
 
-    private String enumStyleDeclaration(){
-        if(diagramConfig.getEnumStyle()!= null){
+    private String enumStyleDeclaration() {
+        if (diagramConfig.getEnumStyle() != null) {
             return styleDeclaration(diagramConfig.getEnumStyle(), ENUM_STYLE_TAG);
         }
         return "";
     }
-    private String identityStyleDeclaration(){
-        if(diagramConfig.getIdentityStyle()!= null){
+
+    private String identityStyleDeclaration() {
+        if (diagramConfig.getIdentityStyle() != null) {
             return styleDeclaration(diagramConfig.getIdentityStyle(), IDENTITY_STYLE_TAG);
         }
         return "";
     }
 
-    private String domainCommandStyleDeclaration(){
-        if(diagramConfig.getDomainCommandStyle()!= null){
+    private String domainCommandStyleDeclaration() {
+        if (diagramConfig.getDomainCommandStyle() != null) {
             return styleDeclaration(diagramConfig.getDomainCommandStyle(), DOMAIN_COMMAND_STYLE_TAG);
         }
         return "";
     }
 
-    private String domainEventStyleDeclaration(){
-        if(diagramConfig.getDomainEventStyle()!= null){
+    private String domainEventStyleDeclaration() {
+        if (diagramConfig.getDomainEventStyle() != null) {
             return styleDeclaration(diagramConfig.getDomainEventStyle(), DOMAIN_EVENT_STYLE_TAG);
         }
         return "";
     }
 
-    private String applicationServiceStyleDeclaration(){
-        if(diagramConfig.getApplicationServiceStyle()!= null){
+    private String applicationServiceStyleDeclaration() {
+        if (diagramConfig.getApplicationServiceStyle() != null) {
             return styleDeclaration(diagramConfig.getApplicationServiceStyle(), APPLICATION_SERVICE_STYLE_TAG);
         }
         return "";
     }
 
-    private String domainServiceStyleDeclaration(){
-        if(diagramConfig.getDomainServiceStyle()!= null){
+    private String domainServiceStyleDeclaration() {
+        if (diagramConfig.getDomainServiceStyle() != null) {
             return styleDeclaration(diagramConfig.getDomainServiceStyle(), DOMAIN_SERVICE_STYLE_TAG);
         }
         return "";
     }
 
-    private String repositoryStyleDeclaration(){
-        if(diagramConfig.getRepositoryStyle()!= null){
+    private String repositoryStyleDeclaration() {
+        if (diagramConfig.getRepositoryStyle() != null) {
             return styleDeclaration(diagramConfig.getRepositoryStyle(), REPOSITORY_STYLE_TAG);
         }
         return "";
     }
 
-    private String outboundServiceStyleDeclaration(){
-        if(diagramConfig.getOutboundServiceStyle()!= null){
+    private String outboundServiceStyleDeclaration() {
+        if (diagramConfig.getOutboundServiceStyle() != null) {
             return styleDeclaration(diagramConfig.getOutboundServiceStyle(), OUTBOUND_SERVICE_STYLE_TAG);
         }
         return "";
     }
 
-    private String queryClientStyleDeclaration(){
-        if(diagramConfig.getQueryClientStyle()!= null){
+    private String queryClientStyleDeclaration() {
+        if (diagramConfig.getQueryClientStyle() != null) {
             return styleDeclaration(diagramConfig.getQueryClientStyle(), QUERY_CLIENT_STYLE_TAG);
         }
         return "";
     }
 
-    private String readModelStyleDeclaration(){
-        if(diagramConfig.getReadModelStyle()!= null){
+    private String readModelStyleDeclaration() {
+        if (diagramConfig.getReadModelStyle() != null) {
             return styleDeclaration(diagramConfig.getReadModelStyle(), READ_MODEL_STYLE_TAG);
         }
         return "";
     }
 
-    private String styleDeclaration(String declaration, String tagName){
+    private String styleDeclaration(String declaration, String tagName) {
         return "#." + tagName + ":" + declaration + System.lineSeparator();
     }
 
-    private String fontStyleDeclaration(){
-        if(diagramConfig.getFont()!= null){
-            return "#font:"+diagramConfig.getFont() + System.lineSeparator();
+    private String fontStyleDeclaration() {
+        if (diagramConfig.getFont() != null) {
+            return "#font:" + diagramConfig.getFont() + System.lineSeparator();
         }
         return "";
     }
 
-    private String directionStyleDeclaration(){
-        if(diagramConfig.getDirection()!= null){
-            return "#direction:"+diagramConfig.getDirection() + System.lineSeparator();
+    private String directionStyleDeclaration() {
+        if (diagramConfig.getDirection() != null) {
+            return "#direction:" + diagramConfig.getDirection() + System.lineSeparator();
         }
         return "";
     }
 
-    private String acyclerStyleDeclaration(){
-        if(diagramConfig.getDirection()!= null){
-            return "#acycler: "+diagramConfig.getAcycler() + System.lineSeparator();
+    private String acyclerStyleDeclaration() {
+        if (diagramConfig.getDirection() != null) {
+            return "#acycler: " + diagramConfig.getAcycler() + System.lineSeparator();
         }
         return "";
     }
 
-    private String rankerStyleDeclaration(){
-        if(diagramConfig.getDirection()!= null){
-            return "#ranker: "+diagramConfig.getRanker() + System.lineSeparator();
+    private String rankerStyleDeclaration() {
+        if (diagramConfig.getDirection() != null) {
+            return "#ranker: " + diagramConfig.getRanker() + System.lineSeparator();
         }
         return "";
     }

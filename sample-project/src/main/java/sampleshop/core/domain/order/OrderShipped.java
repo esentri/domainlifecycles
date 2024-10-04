@@ -37,4 +37,5 @@ import io.domainlifecycles.domain.types.DomainEvent;
  */
 public record OrderShipped(
     @NotNull Order order
-) implements DomainEvent { }
+) implements DomainEvent {
+}

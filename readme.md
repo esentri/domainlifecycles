@@ -1,16 +1,19 @@
 # Domain Lifecycles (DLC)
 
-Domain Lifecycles is a Java based framework for developing business applications following the principles of 
-`Domain Driven Design` (DDD). The goal is to simplify and accelerate a Java based [tactical design](https://thedomaindrivendesign.io/what-is-tactical-design/),
-so that developers can focus on modelling the domain in an appropriate way without being restricted, constrained 
+Domain Lifecycles is a Java based framework for developing business applications following the principles of
+`Domain Driven Design` (DDD). The goal is to simplify and accelerate a Java
+based [tactical design](https://thedomaindrivendesign.io/what-is-tactical-design/),
+so that developers can focus on modelling the domain in an appropriate way without being restricted, constrained
 or accidentally being influenced by other pure technical frameworks.
 
-DLC provides features to reduce boilerplate code, especially in adapters implementations to the technical infrastructure.
-Another idea is to make tactical patterns transparent within the code using marker interfaces. 
+DLC provides features to reduce boilerplate code, especially in adapters implementations to the technical
+infrastructure.
+Another idea is to make tactical patterns transparent within the code using marker interfaces.
 Finally, DLC supports all kinds of domain isolating architecture styles, which
-enforce a clean separation of technical from domain concerns, in order to provide better long term quality characteristics regarding
+enforce a clean separation of technical from domain concerns, in order to provide better long term quality
+characteristics regarding
 adaptability, expandability and maintainability as well as a consistently high development.
-([Ports & Adapters](https://alistair.cockburn.us/hexagonal-architecture/), 
+([Ports & Adapters](https://alistair.cockburn.us/hexagonal-architecture/),
 [Onion Architecture](https://medium.com/the-software-architecture-chronicles/onion-architecture-79529d127f85),
 [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 ).
@@ -18,19 +21,23 @@ adaptability, expandability and maintainability as well as a consistently high d
 ![Added value](documentation/resources/images/added_value.png "DLC added value")
 
 DLC should enable developers to focus on the domain model and the true added value of the solution (the business value)
-instead of "getting lost" in pure technical concerns. Despite the quick implementation of typical default structures, the developer 
-should always be able to customize any part of the solution, if needed (e.g. custom mappers, custom naming conventions,...). 
+instead of "getting lost" in pure technical concerns. Despite the quick implementation of typical default structures,
+the developer
+should always be able to customize any part of the solution, if needed (e.g. custom mappers, custom naming
+conventions,...).
 
 ## Features
 
 DLC provides following core features:
 
-- [`Domain Types`](./readme_building_blocks.md)): Implementation of DDD building blocks using DLC interfaces or base classes
+- [`Domain Types`](./readme_building_blocks.md)): Implementation of DDD building blocks using DLC interfaces or base
+  classes
     * Mark DDD building blocks in the Java code: Make your tactical design more transparent
     * Base for Java typesystem backed meta-data (see below Domain Mirror)
 
-- [`Domain Mirror`](./readme_mirror.md): Mirrors the metamodel of the tactical design structures within bounded contexts 
-    * Provides structural queries and navigation through a bounded contexts structural metamodel as well as simplified reflective access
+- [`Domain Mirror`](./readme_mirror.md): Mirrors the metamodel of the tactical design structures within bounded contexts
+    * Provides structural queries and navigation through a bounded contexts structural metamodel as well as simplified
+      reflective access
       on values of instances of a domain's `Aggregates`, `Entities`
       and `ValueObjects`
 
@@ -60,20 +67,21 @@ DLC provides following core features:
     * Full ValueObject support regarding persistence
     * Supports `final` Keywords and Java-Optionals within persisted structures
 
-- [`Domain Events`](./readme_domain_events.md): Simplifies some technical concerns about publishing and listening to DomainEvents
-    * Reduce publisher boilerplate code using the static `DomainEvents.publish()` API 
+- [`Domain Events`](./readme_domain_events.md): Simplifies some technical concerns about publishing and listening to
+  DomainEvents
+    * Reduce publisher boilerplate code using the static `DomainEvents.publish()` API
     * Reduce listener and event routing boilerplate code by using the `@ListensTo` annotation
     * Optional: Specific support for Spring or JTA based transaction handling
-    * Optional: Support of the "transactional outbox" pattern for more reliable publishing of DomainEvents 
+    * Optional: Support of the "transactional outbox" pattern for more reliable publishing of DomainEvents
 
 - [`Validation`](./readme_validation.md): Simplifies the implementation of business rules and domain specific invariants
     * DomainAssertion API
-    * Optional: Extended Support for Java Bean Validation Annotations within DomainObjects to define 
+    * Optional: Extended Support for Java Bean Validation Annotations within DomainObjects to define
       invariants or method pre- and post-Conditions.
     * Optional: ByteCode extension to simplify the implementation of an
       “Always-Valid-Strategy”
 
-- `Spring Web Integration`: 
+- `Spring Web Integration`:
     * Spring Web Integration to enable
       Identities and “single-valued” ValueObjects being directly used as path or query
       parameters
@@ -81,46 +89,47 @@ DLC provides following core features:
 - [`Domain Diagrammer`](./readme_diagrammer.md): Generate text based class diagram for DDD building blocks
     * based on [Nomnoml](https://nomnoml.com/)
 
-
 ## DLC Project Setup
 
 ### DLC dependencies
 
-DLC provides several JARs which enable the DLC features independently 
+DLC provides several JARs which enable the DLC features independently
 (they correspond to according sub modules):
 
-| Feature                                                              | Relevant for           | Dependency (groupid:artifactid)                  |
-|----------------------------------------------------------------------|------------------------|--------------------------------------------------|
-| Basic domain type interfaces                                         | application developers | io.domainlifecycles:types                        |
-| Domain assertions, to express domain specific rules and invariants   | application developers | io.domainlifecycles:assertions                   |                         
-| Abstract base domain types and utilities                             | application developers | io.domainlifecycles:type-utils                   |                       
-| Domain type builders                                                 | only internally used   | io.domainlifecycles:builder                      |
-| General reflection utilities                                         | only internally used   | io.domainlifecycles:reflect                      |
-| Interfaces and implementation to access object and class structures  | only internally used   | io.domainlifecycles:access                       |
-| Domain mirror                                                        | only internally used   | io.domainlifecycles:mirror                       |
-| Domain event support                                                 | application developers | io.domainlifecycles:domain-events                |  
-| Jackson based JSON mapping                                           | application developers | io.domainlifecycles:jackson-integration          |                         
-| Service registry                                                     | only internally used   | io.domainlifecycles:service-registry             |
-| Persistence interfaces and general persistence management            | only internally used   | io.domainlifecycles:persistence                  | 
-| jOOQ based implementation for persistence management                 | application developers | io.domainlifecycles:jooq-integration             |
-| Bean Validation support (javax or jakarta)                           | application developers | io.domainlifecycles:bean-validations             |
-| Byte Buddy based auto validation extension                           | application developers | io.domainlifecycles:validation-extender          |
-| Spring Doc open API support (Spring Boot 2 compatible)               | application developers | io.domainlifecycles:spring-doc-integration       | 
-| Spring Doc 2 open API support (Spring Boot 3 compatible)             | application developers | io.domainlifecycles:spring-doc-2-integration     | 
-| General Swagger / Open API v3 support                                | only internally used   | io.domainlifecycles:swagger-v3-integration       | 
-| Spring Web support (Spring Boot 2 compatible)                        | application developers | io.domainlifecycles:spring-web-integration       | 
-| Spring Web support (Spring Boot 3 compatible)                        | application developers | io.domainlifecycles:spring-web-6-integration     |
-| Nomnoml based domain diagrams                                        | application developers | io.domainlifecycles:ddomain-diagrammer           | 
+| Feature                                                             | Relevant for           | Dependency (groupid:artifactid)              |
+|---------------------------------------------------------------------|------------------------|----------------------------------------------|
+| Basic domain type interfaces                                        | application developers | io.domainlifecycles:types                    |
+| Domain assertions, to express domain specific rules and invariants  | application developers | io.domainlifecycles:assertions               |                         
+| Abstract base domain types and utilities                            | application developers | io.domainlifecycles:type-utils               |                       
+| Domain type builders                                                | only internally used   | io.domainlifecycles:builder                  |
+| General reflection utilities                                        | only internally used   | io.domainlifecycles:reflect                  |
+| Interfaces and implementation to access object and class structures | only internally used   | io.domainlifecycles:access                   |
+| Domain mirror                                                       | only internally used   | io.domainlifecycles:mirror                   |
+| Domain event support                                                | application developers | io.domainlifecycles:domain-events            |  
+| Jackson based JSON mapping                                          | application developers | io.domainlifecycles:jackson-integration      |                         
+| Service registry                                                    | only internally used   | io.domainlifecycles:service-registry         |
+| Persistence interfaces and general persistence management           | only internally used   | io.domainlifecycles:persistence              | 
+| jOOQ based implementation for persistence management                | application developers | io.domainlifecycles:jooq-integration         |
+| Bean Validation support (javax or jakarta)                          | application developers | io.domainlifecycles:bean-validations         |
+| Byte Buddy based auto validation extension                          | application developers | io.domainlifecycles:validation-extender      |
+| Spring Doc open API support (Spring Boot 2 compatible)              | application developers | io.domainlifecycles:spring-doc-integration   | 
+| Spring Doc 2 open API support (Spring Boot 3 compatible)            | application developers | io.domainlifecycles:spring-doc-2-integration | 
+| General Swagger / Open API v3 support                               | only internally used   | io.domainlifecycles:swagger-v3-integration   | 
+| Spring Web support (Spring Boot 2 compatible)                       | application developers | io.domainlifecycles:spring-web-integration   | 
+| Spring Web support (Spring Boot 3 compatible)                       | application developers | io.domainlifecycles:spring-web-6-integration |
+| Nomnoml based domain diagrams                                       | application developers | io.domainlifecycles:ddomain-diagrammer       | 
 
 To simplify the dependency management using all features in a Spring Boot app using jOOQ for the relational
-database persistence management, we provide JARs for a Spring Boot 2 or Spring Boot 3 setup by adding just a single dependency:
+database persistence management, we provide JARs for a Spring Boot 2 or Spring Boot 3 setup by adding just a single
+dependency:
 
-| Application setup                                 | Dependency                                            | 
-|---------------------------------------------------|-------------------------------------------------------|
-| Spring Boot 2 app with all DLC features available | io.domainlifecycles:spring-boot-2-jooq-complete       |
-| Spring Boot 3 app with all DLC features available | io.domainlifecycles:spring-boot-3-jooq-complete       |
+| Application setup                                 | Dependency                                      | 
+|---------------------------------------------------|-------------------------------------------------|
+| Spring Boot 2 app with all DLC features available | io.domainlifecycles:spring-boot-2-jooq-complete |
+| Spring Boot 3 app with all DLC features available | io.domainlifecycles:spring-boot-3-jooq-complete |
 
 Gradle setup for a Spring Boot 3 app:
+
 ```Groovy
 dependencies{
     implementation 'io.domainlifecycles:spring-boot-3-jooq-complete:2.0.0'
@@ -128,6 +137,7 @@ dependencies{
 ```
 
 Maven setup for a Spring Boot 3 app:
+
 ```XML
 <dependency>
     <groupId>io.domainlifecycles</groupId>
@@ -136,14 +146,16 @@ Maven setup for a Spring Boot 3 app:
 </dependency>
 ```
 
-These single dependencies make the target application build mechanism (Maven or Gradle) providing (downloading) the required DLC modules and external dependencies 
-for the target applications classpath. 
+These single dependencies make the target application build mechanism (Maven or Gradle) providing (downloading) the
+required DLC modules and external dependencies
+for the target applications classpath.
 
 For detailed information on the setup, have a look at the sample project mentioned below.
 
 ### Additional runtime dependencies
 
-Depending on the features used, additionally to the DLC dependencies other runtime libraries must be provided in the target applications classpath.
+Depending on the features used, additionally to the DLC dependencies other runtime libraries must be provided in the
+target applications classpath.
 Here's an overview of the most important external dependencies:
 
 | Feature                                                               | External dependency                                                                            | Supported versions      |
@@ -165,7 +177,8 @@ Here's an overview of the most important external dependencies:
 | Domain Events, Jakarta JTA Support                                    | (JTA Provider implementation) e.g.: Atomikos com.atomikos:transactions-jta                     | tested with 6.0.0       |
 | Logging                                                               | (SLF4J Provider) e.g.: ch.qos.logback:logback-classic                                          | tested with 1.5.3       |           
 
-Run `./gradle dependencies` on the main project or any of the submodules to get a complete overview of the dependencies that must be provided on the target applications runtime classpath.
+Run `./gradle dependencies` on the main project or any of the submodules to get a complete overview of the dependencies
+that must be provided on the target applications runtime classpath.
 
 Newer or even older versions which are not tested might still work! Just try it.
 

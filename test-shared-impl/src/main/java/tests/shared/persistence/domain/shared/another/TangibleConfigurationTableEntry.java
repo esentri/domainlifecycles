@@ -30,6 +30,7 @@ package tests.shared.persistence.domain.shared.another;
 import lombok.Builder;
 import lombok.Getter;
 import tests.shared.persistence.domain.shared.Entry;
+
 @Getter
 public class TangibleConfigurationTableEntry extends Entry<TangibleConfigurationTableEntryId> {
 

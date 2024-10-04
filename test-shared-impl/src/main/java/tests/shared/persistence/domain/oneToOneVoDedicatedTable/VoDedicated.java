@@ -31,4 +31,5 @@ import lombok.Builder;
 import io.domainlifecycles.domain.types.ValueObject;
 
 @Builder(setterPrefix = "set")
-public record VoDedicated(String name) implements ValueObject {}
+public record VoDedicated(String name) implements ValueObject {
+}

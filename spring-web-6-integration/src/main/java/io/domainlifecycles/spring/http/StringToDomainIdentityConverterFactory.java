@@ -57,7 +57,7 @@ public class StringToDomainIdentityConverterFactory implements ConverterFactory<
 
     private record StringToDomainIdentityConverter<T extends Identity<?>>(Class<T> targetClass,
                                                                           ObjectMapper objectMapper)
-            implements Converter<String, T> {
+        implements Converter<String, T> {
 
         /**
          * {@inheritDoc}

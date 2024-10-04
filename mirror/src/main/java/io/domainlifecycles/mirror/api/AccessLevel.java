@@ -48,14 +48,14 @@ public enum AccessLevel {
      * @param member input
      * @return according access level
      */
-    public static AccessLevel of(Member member){
-        if(JavaReflect.isPublic(member)){
+    public static AccessLevel of(Member member) {
+        if (JavaReflect.isPublic(member)) {
             return PUBLIC;
-        }else if(JavaReflect.isProtected(member)){
+        } else if (JavaReflect.isProtected(member)) {
             return PROTECTED;
-        }else if(JavaReflect.isPrivate(member)){
+        } else if (JavaReflect.isPrivate(member)) {
             return PRIVATE;
-        }else{
+        } else {
             return PACKAGE;
         }
     }

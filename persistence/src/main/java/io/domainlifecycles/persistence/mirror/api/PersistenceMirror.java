@@ -34,6 +34,7 @@ import io.domainlifecycles.persistence.mapping.RecordMapper;
 /**
  * Top-level (root node) persistence mirror
  *
+ * @param <BASE_RECORD_TYPE> the type of base record
  * @author Mario Herb
  */
 public interface PersistenceMirror<BASE_RECORD_TYPE> {
@@ -43,6 +44,7 @@ public interface PersistenceMirror<BASE_RECORD_TYPE> {
      * the full qualified Entity type name.
      *
      * @param entityTypeName the full qualified entity type
+     * @return the EntityRecordMirror for the provided EntityTypeName
      */
     EntityRecordMirror<BASE_RECORD_TYPE> getEntityRecordMirror(String entityTypeName);
 
@@ -51,6 +53,7 @@ public interface PersistenceMirror<BASE_RECORD_TYPE> {
      * the full qualified Entity type name.
      *
      * @param entityTypeName the full qualified entity type
+     * @return the RecordMapper for the provided Entity
      */
     RecordMapper<? extends BASE_RECORD_TYPE, ? extends Entity<?>, ? extends AggregateRoot<?>> getEntityRecordMapper(String entityTypeName);
 }

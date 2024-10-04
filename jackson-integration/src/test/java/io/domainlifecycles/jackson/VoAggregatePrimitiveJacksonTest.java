@@ -46,7 +46,6 @@ import tests.shared.persistence.domain.valueobjectsPrimitive.VoAggregatePrimitiv
 import java.util.UUID;
 
 
-
 public class VoAggregatePrimitiveJacksonTest {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(VoAggregatePrimitiveJacksonTest.class);
@@ -103,8 +102,6 @@ public class VoAggregatePrimitiveJacksonTest {
             .withStrictTypeChecking()
             .isEqualTo(r);
     }
-
-
 
 
 }

@@ -40,25 +40,27 @@ import java.util.List;
  *
  * @author Mario Herb
  */
-public interface ReadModelMirror extends DomainTypeMirror{
+public interface ReadModelMirror extends DomainTypeMirror {
 
     /**
-     * Return a list mirrored fields of the mirrored ReadModel (all fields that are not in the category of other kinds of references).
+     * @return a list mirrored fields of the mirrored ReadModel (all fields that are not in the category of other
+     * kinds of references).
      */
     List<FieldMirror> getBasicFields();
 
     /**
-     * Return a list mirrors for value references (references of {@link ValueObject}, Enums or {@link Identity}) of the mirrored ReadModel.
+     * @return a list mirrors for value references (references of {@link ValueObject}, Enums or {@link Identity}) of
+     * the mirrored ReadModel.
      */
     List<ValueReferenceMirror> getValueReferences();
 
     /**
-     * Return a list mirrors for {@link Entity} references of the mirrored ReadModel.
+     * @return a list mirrors for {@link Entity} references of the mirrored ReadModel.
      */
     List<EntityReferenceMirror> getEntityReferences();
 
     /**
-     * Return a list mirrors for {@link AggregateRoot} references of the mirrored ReadModel.
+     * @return a list mirrors for {@link AggregateRoot} references of the mirrored ReadModel.
      */
     List<AggregateRootReferenceMirror> getAggregateRootReferences();
 

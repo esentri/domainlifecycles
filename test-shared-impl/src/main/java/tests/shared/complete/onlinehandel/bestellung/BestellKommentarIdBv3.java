@@ -30,4 +30,5 @@ package tests.shared.complete.onlinehandel.bestellung;
 import jakarta.validation.constraints.NotNull;
 import io.domainlifecycles.domain.types.Identity;
 
-public record BestellKommentarIdBv3(@NotNull Long value) implements Identity<Long> {}
+public record BestellKommentarIdBv3(@NotNull Long value) implements Identity<Long> {
+}

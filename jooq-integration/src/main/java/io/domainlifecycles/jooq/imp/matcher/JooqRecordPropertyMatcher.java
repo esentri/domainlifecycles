@@ -70,7 +70,8 @@ public class JooqRecordPropertyMatcher implements RecordPropertyMatcher {
      */
     @Override
     public boolean matchForwardReference(RecordProperty recordProperty, EntityReferenceMirror entityReferenceMirror) {
-        return recordProperty.getName().substring(0, recordProperty.getName().length() - 2).toLowerCase().replaceAll("_", "")
+        return recordProperty.getName().substring(0, recordProperty.getName().length() - 2).toLowerCase().replaceAll(
+                "_", "")
             .equals(entityReferenceMirror.getName().toLowerCase());
     }
 }

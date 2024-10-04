@@ -41,7 +41,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The SpringTransactionalHandlerExecutor class is an implementation of the TransactionalHandlerExecutor interface.
- * It performs the execution of handlers in a transactional manner using the Spring Framework's PlatformTransactionManager.
+ * It performs the execution of handlers in a transactional manner using the Spring Framework's
+ * PlatformTransactionManager.
  *
  * @author Mario Herb
  */
@@ -58,14 +59,15 @@ public class SpringTransactionalHandlerExecutor extends ReflectiveHandlerExecuto
 
     /**
      * Executes the before execution logic for the given execution context.
-     * If createNewTransactionForHandling returns true for the execution context, it starts a new transaction using the given transaction manager
+     * If createNewTransactionForHandling returns true for the execution context, it starts a new transaction using
+     * the given transaction manager
      * and adds the transaction status to the managedTransactions map.
      *
      * @param executionContext the execution context
      */
     @Override
     public void beforeExecution(ExecutionContext executionContext) {
-        if(createNewTransactionForHandling(executionContext)) {
+        if (createNewTransactionForHandling(executionContext)) {
             DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
             definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
             var status = transactionManager.getTransaction(definition);
@@ -81,7 +83,7 @@ public class SpringTransactionalHandlerExecutor extends ReflectiveHandlerExecuto
      * It then removes the execution context from the managedTransactions map.
      *
      * @param executionContext the execution context executed
-     * @param success A boolean flag indicating whether the listener method execution was successful or not.
+     * @param success          A boolean flag indicating whether the listener method execution was successful or not.
      * @throws DLCEventsException if there is an error handling the managed transaction
      */
     @Override
@@ -97,9 +99,9 @@ public class SpringTransactionalHandlerExecutor extends ReflectiveHandlerExecuto
                     transactionManager.rollback(status);
                     log.debug("DLC managed transaction rolled back!");
                 }
-            } catch(Throwable t){
+            } catch (Throwable t) {
                 throw DLCEventsException.fail("Failed to handle DLC managed transaction");
-            } finally{
+            } finally {
                 managedTransactions.remove(executionContext);
                 log.debug("DLC managed transaction removed!");
             }

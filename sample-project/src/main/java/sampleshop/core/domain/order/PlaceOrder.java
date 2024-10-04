@@ -43,5 +43,6 @@ public record PlaceOrder(@NotNull Customer.CustomerId customerId,
                          @NotNull List<PlaceOrderItem> items
 ) implements DomainCommand {
 
-    public record PlaceOrderItem(@NotNull Product.ProductId productId, int quantity){}
+    public record PlaceOrderItem(@NotNull Product.ProductId productId, int quantity) {
+    }
 }

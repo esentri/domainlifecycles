@@ -34,7 +34,8 @@ import org.jooq.DSLContext;
 import tests.shared.persistence.domain.shared.another.AnotherConfiguration;
 import tests.shared.persistence.domain.shared.another.AnotherConfigurationId;
 
-public class AnotherConfigurationRepository extends JooqAggregateRepository<AnotherConfiguration, AnotherConfigurationId> {
+public class AnotherConfigurationRepository extends JooqAggregateRepository<AnotherConfiguration,
+    AnotherConfigurationId> {
 
     public AnotherConfigurationRepository(DSLContext dslContext,
                                           PersistenceEventPublisher persistenceEventPublisher,

@@ -61,11 +61,11 @@ public class DomainAssertions {
      *
      * @param anObject1 checked
      * @param anObject2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage  message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void equals(Object anObject1, Object anObject2, String aMessage) {
-        if ((anObject1!= null && !anObject1.equals(anObject2))
+        if ((anObject1 != null && !anObject1.equals(anObject2))
             || (anObject1 == null && anObject2 != null)) {
             throw new DomainAssertionException(aMessage);
         }
@@ -76,25 +76,24 @@ public class DomainAssertions {
      * The Optional must not be {@code null}. An empty Optional and a null reference are considered to be equal.
      *
      * @param anObjectOptional checked
-     * @param anObject2 compare value
-     * @param aMessage message for thrown exception
+     * @param anObject2        compare value
+     * @param aMessage         message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalEquals(Optional anObjectOptional, Object anObject2, String aMessage) {
-        if(anObjectOptional == null){
+        if (anObjectOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (anObjectOptional.isPresent()) {
             Object anObject1 = anObjectOptional.get();
             equals(anObject1, anObject2, aMessage);
-        }else if(anObjectOptional.isEmpty() && anObject2 != null){
+        } else if (anObjectOptional.isEmpty() && anObject2 != null) {
             throw new DomainAssertionException(aMessage);
         }
     }
 
     /**
      * Compares two {@code int} instances for equality.
-     *
      *
      * @param aNumber1 checked
      * @param aNumber2 compare value
@@ -180,8 +179,8 @@ public class DomainAssertions {
     /**
      * Compares two {@code char} instances for equality.
      *
-     * @param aChar1 checked
-     * @param aChar2 compare value
+     * @param aChar1   checked
+     * @param aChar2   compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -194,8 +193,8 @@ public class DomainAssertions {
     /**
      * Compares two {@code boolean} instances for equality.
      *
-     * @param aBool1 checked
-     * @param aBool2 compare value
+     * @param aBool1   checked
+     * @param aBool2   compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -210,12 +209,12 @@ public class DomainAssertions {
      *
      * @param anObject1 checked
      * @param anObject2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage  message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void notEquals(Object anObject1, Object anObject2, String aMessage) {
         if ((anObject1 != null && anObject1.equals(anObject2))
-            || (anObject1 == null && anObject2==null)) {
+            || (anObject1 == null && anObject2 == null)) {
             throw new DomainAssertionException(aMessage);
         }
     }
@@ -225,18 +224,18 @@ public class DomainAssertions {
      * The Optional must not be {@code null}. An empty Optional and a null reference are considered to be equal.
      *
      * @param anOptionalObject1 checked
-     * @param anObject2 compare value
-     * @param aMessage message for thrown exception
+     * @param anObject2         compare value
+     * @param aMessage          message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalNotEquals(Optional anOptionalObject1, Object anObject2, String aMessage) {
-        if(anOptionalObject1 == null){
+        if (anOptionalObject1 == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (anOptionalObject1.isPresent()) {
             Object anObject1 = anOptionalObject1.get();
             notEquals(anObject1, anObject2, aMessage);
-        }else if(anOptionalObject1.isEmpty() && anObject2 == null){
+        } else if (anOptionalObject1.isEmpty() && anObject2 == null) {
             throw new DomainAssertionException(aMessage);
         }
     }
@@ -329,8 +328,8 @@ public class DomainAssertions {
     /**
      * Compares two {@code char} instances for non-equality.
      *
-     * @param aChar1 checked
-     * @param aChar2 compare value
+     * @param aChar1   checked
+     * @param aChar2   compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -343,8 +342,8 @@ public class DomainAssertions {
     /**
      * Compares two {@code boolean} instances for non-equality.
      *
-     * @param aBool1 checked
-     * @param aBool2 compare value
+     * @param aBool1   checked
+     * @param aBool2   compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -356,7 +355,6 @@ public class DomainAssertions {
 
     /**
      * Checks if a {@code boolean} is false.
-     *
      *
      * @param aBoolean checked
      * @param aMessage message for thrown exception
@@ -371,13 +369,13 @@ public class DomainAssertions {
     /**
      * Checks if a collection contains a given object. The Collection must not be {@code null}.
      *
-     * @param object1 checked
+     * @param object1          checked
      * @param objectCollection comparing collection
-     * @param aMessage message for thrown exception
+     * @param aMessage         message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isOneOf(Object object1, Collection<Object> objectCollection, String aMessage) {
-        if(objectCollection == null){
+        if (objectCollection == null) {
             throw new IllegalArgumentException("The second parameter (Collection) must not be null!");
         }
         if (object1 != null && !objectCollection.contains(object1)) {
@@ -390,16 +388,16 @@ public class DomainAssertions {
      * The Collection must not be {@code null}.
      * The Optional must not be {@code null}.
      *
-     * @param optionalObject1 to be contained
+     * @param optionalObject1  to be contained
      * @param objectCollection checked
-     * @param aMessage message for thrown exception
+     * @param aMessage         message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsOneOf(Optional optionalObject1, Collection<Object> objectCollection, String aMessage) {
-        if(optionalObject1 == null){
+        if (optionalObject1 == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
-        if(objectCollection == null){
+        if (objectCollection == null) {
             throw new IllegalArgumentException("The second parameter (Collection) must not be null!");
         }
         if (optionalObject1.isPresent()) {
@@ -411,7 +409,7 @@ public class DomainAssertions {
     /**
      * Checks a {@code String} for a given max length.
      *
-     * @param aString checked
+     * @param aString  checked
      * @param aMaximum max length
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
@@ -430,12 +428,12 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param optionalString checked
-     * @param aMaximum max length
-     * @param aMessage message for thrown exception
+     * @param aMaximum       max length
+     * @param aMessage       message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalHasLengthMax(Optional<String> optionalString, int aMaximum, String aMessage) {
-        if(optionalString == null){
+        if (optionalString == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (optionalString.isPresent()) {
@@ -447,7 +445,7 @@ public class DomainAssertions {
     /**
      * Checks a {@code String} for a given min length.
      *
-     * @param aString checked
+     * @param aString  checked
      * @param aMinimum min length
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
@@ -466,12 +464,12 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param aStringOptional checked
-     * @param aMinimum min length
-     * @param aMessage message for thrown exception
+     * @param aMinimum        min length
+     * @param aMessage        message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalHasLengthMin(Optional<String> aStringOptional, int aMinimum, String aMessage) {
-        if(aStringOptional == null){
+        if (aStringOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aStringOptional.isPresent()) {
@@ -483,7 +481,7 @@ public class DomainAssertions {
     /**
      * Checks a {@code String} for given length boundaries.
      *
-     * @param aString checked
+     * @param aString  checked
      * @param aMinimum min length
      * @param aMaximum max length
      * @param aMessage message for thrown exception
@@ -503,13 +501,14 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param aStringOptional checked
-     * @param aMinimum min length
-     * @param aMaximum max length
-     * @param aMessage message for thrown exception
+     * @param aMinimum        min length
+     * @param aMaximum        max length
+     * @param aMessage        message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalHasLength(Optional<String> aStringOptional, int aMinimum, int aMaximum, String aMessage) {
-        if(aStringOptional == null){
+    public static void optionalHasLength(Optional<String> aStringOptional, int aMinimum, int aMaximum,
+                                         String aMessage) {
+        if (aStringOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aStringOptional.isPresent()) {
@@ -522,9 +521,9 @@ public class DomainAssertions {
      * Checks a {@code Collection} for given size boundaries.
      *
      * @param collection checked
-     * @param aMinimum min size
-     * @param aMaximum max size
-     * @param aMessage message for thrown exception
+     * @param aMinimum   min size
+     * @param aMaximum   max size
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasSize(Collection collection, int aMinimum, int aMaximum, String aMessage) {
@@ -540,8 +539,8 @@ public class DomainAssertions {
      * Checks a {@code Collection} for a given min size.
      *
      * @param collection checked
-     * @param aMinimum min size
-     * @param aMessage message for thrown exception
+     * @param aMinimum   min size
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasSizeMin(Collection collection, int aMinimum, String aMessage) {
@@ -557,8 +556,8 @@ public class DomainAssertions {
      * Checks a {@code Collection} for a given max size.
      *
      * @param collection checked
-     * @param aMaximum max size
-     * @param aMessage message for thrown exception
+     * @param aMaximum   max size
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasSizeMax(Collection collection, int aMaximum, String aMessage) {
@@ -573,7 +572,7 @@ public class DomainAssertions {
     /**
      * Checks a {@code Map} for given size boundaries.
      *
-     * @param map checked
+     * @param map      checked
      * @param aMinimum min size
      * @param aMaximum max size
      * @param aMessage message for thrown exception
@@ -591,7 +590,7 @@ public class DomainAssertions {
     /**
      * Checks a {@code Map} for a given min size.
      *
-     * @param map checked
+     * @param map      checked
      * @param aMinimum min size
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
@@ -608,7 +607,7 @@ public class DomainAssertions {
     /**
      * Checks a {@code MAp} for a given max size.
      *
-     * @param map checked
+     * @param map      checked
      * @param aMaximum max size
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
@@ -625,7 +624,7 @@ public class DomainAssertions {
     /**
      * Checks an array for given size boundaries.
      *
-     * @param array checked
+     * @param array    checked
      * @param aMinimum min length
      * @param aMaximum max length
      * @param aMessage message for thrown exception
@@ -643,7 +642,7 @@ public class DomainAssertions {
     /**
      * Checks an array for a given min size.
      *
-     * @param array checked
+     * @param array    checked
      * @param aMinimum min length
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
@@ -660,7 +659,7 @@ public class DomainAssertions {
     /**
      * Checks an array for a given max size.
      *
-     * @param array checked
+     * @param array    checked
      * @param aMaximum max length
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
@@ -679,13 +678,14 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param arrayOptional checked
-     * @param aMinimum length
-     * @param aMaximum length
-     * @param aMessage message for thrown exception
+     * @param aMinimum      length
+     * @param aMaximum      length
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalArrayHasSize(Optional<Object[]> arrayOptional, int aMinimum, int aMaximum, String aMessage) {
-        if(arrayOptional == null){
+    public static void optionalArrayHasSize(Optional<Object[]> arrayOptional, int aMinimum, int aMaximum,
+     String aMessage) {
+        if (arrayOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (arrayOptional.isPresent()) {
@@ -698,12 +698,12 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param arrayOptional checked
-     * @param aMinimum min length
-     * @param aMessage message for thrown exception
+     * @param aMinimum      min length
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalArrayHasSizeMin(Optional<Object[]> arrayOptional, int aMinimum, String aMessage) {
-        if(arrayOptional == null){
+        if (arrayOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (arrayOptional.isPresent()) {
@@ -716,12 +716,12 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param arrayOptional checked
-     * @param aMaximum max length
-     * @param aMessage message for thrown exception
+     * @param aMaximum      max length
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalArrayHasSizeMax(Optional<Object[]> arrayOptional, int aMaximum, String aMessage) {
-        if(arrayOptional == null){
+        if (arrayOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (arrayOptional != null && arrayOptional.isPresent()) {
@@ -732,14 +732,14 @@ public class DomainAssertions {
     /**
      * Checks the max digits of a given {@code BigDecimal}.
      *
-     * @param bd value checked
-     * @param maxInteger max integer digits
+     * @param bd          value checked
+     * @param maxInteger  max integer digits
      * @param maxFraction max fraction digits
-     * @param aMessage message for thrown exception
+     * @param aMessage    message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigits(BigDecimal bd, int maxInteger, int maxFraction, String aMessage) {
-        if(bd != null) {
+        if (bd != null) {
             int fraction = fractionDigits(bd);
             int integer = integerDigits(bd);
             if (maxFraction < fraction || maxInteger < integer) {
@@ -754,13 +754,13 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param maxInteger max integer digits
-     * @param maxFraction max fraction digits
-     * @param aMessage message for thrown exception
+     * @param maxInteger    max integer digits
+     * @param maxFraction   max fraction digits
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalHasMaxDigits(Optional valueOptional, int maxInteger, int maxFraction, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -781,13 +781,13 @@ public class DomainAssertions {
     /**
      * Checks the max integer digits of a given {@code BigDecimal}.
      *
-     * @param bd value checked
+     * @param bd         value checked
      * @param maxInteger max integer digits
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigitsInteger(BigDecimal bd, int maxInteger, String aMessage) {
-        if(bd != null) {
+        if (bd != null) {
             int integer = integerDigits(bd);
             if (maxInteger < integer) {
                 throw new DomainAssertionException(aMessage);
@@ -802,12 +802,12 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param maxInteger max integer digits
-     * @param aMessage message for thrown exception
+     * @param maxInteger    max integer digits
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalHasMaxDigitsInteger(Optional valueOptional, int maxInteger, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -830,7 +830,8 @@ public class DomainAssertions {
                 hasMaxDigitsInteger((Short) o, maxInteger, aMessage);
             } else {
                 throw new IllegalArgumentException("valueOptional parameter must contain " +
-                    "BigDecimal, Double, Float, Integer, Long, BigInteger, Byte or Short. Other types are not supported!");
+                    "BigDecimal, Double, Float, Integer, Long, BigInteger, Byte or Short. Other types are not " +
+                     "supported!");
             }
         }
     }
@@ -838,13 +839,13 @@ public class DomainAssertions {
     /**
      * Checks the max fraction digits of a given {@code BigDecimal}.
      *
-     * @param bd value checked
+     * @param bd          value checked
      * @param maxFraction max fraction digits
-     * @param aMessage message for thrown exception
+     * @param aMessage    message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigitsFraction(BigDecimal bd, int maxFraction, String aMessage) {
-        if (bd != null){
+        if (bd != null) {
             int fraction = fractionDigits(bd);
             if (maxFraction < fraction) {
                 throw new DomainAssertionException(aMessage);
@@ -858,12 +859,12 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param maxFraction max fraction digits
-     * @param aMessage message for thrown exception
+     * @param maxFraction   max fraction digits
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalHasMaxDigitsFraction(Optional valueOptional, int maxFraction, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -884,13 +885,13 @@ public class DomainAssertions {
     /**
      * Checks the max integer digits of a given {@link BigInteger}.
      *
-     * @param bi checked value
+     * @param bi         checked value
      * @param maxInteger max integer digits
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigitsInteger(BigInteger bi, int maxInteger, String aMessage) {
-        if(bi != null) {
+        if (bi != null) {
             int integer = bi.toString().length();
             if (maxInteger < integer) {
                 throw new DomainAssertionException(aMessage);
@@ -901,10 +902,10 @@ public class DomainAssertions {
     /**
      * Checks the max digits of a given {@link double}.
      *
-     * @param d checked value
-     * @param maxInteger max integer digits
+     * @param d           checked value
+     * @param maxInteger  max integer digits
      * @param maxFraction max fraction digits
-     * @param aMessage message for thrown exception
+     * @param aMessage    message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigits(double d, int maxInteger, int maxFraction, String aMessage) {
@@ -915,9 +916,9 @@ public class DomainAssertions {
     /**
      * Checks the max integer digits of a given {@link double}.
      *
-     * @param d checked value
+     * @param d          checked value
      * @param maxInteger max integer digits
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigitsInteger(double d, int maxInteger, String aMessage) {
@@ -928,9 +929,9 @@ public class DomainAssertions {
     /**
      * Checks the max fraction digits of a given {@link double}.
      *
-     * @param d checked value
+     * @param d           checked value
      * @param maxFraction max fraction digits
-     * @param aMessage message for thrown exception
+     * @param aMessage    message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigitsFraction(double d, int maxFraction, String aMessage) {
@@ -941,14 +942,14 @@ public class DomainAssertions {
     /**
      * Checks the max digits of a given {@link Double}.
      *
-     * @param d checked value
-     * @param maxInteger max integer digits
+     * @param d           checked value
+     * @param maxInteger  max integer digits
      * @param maxFraction max fraction digits
-     * @param aMessage message for thrown exception
+     * @param aMessage    message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigits(Double d, int maxInteger, int maxFraction, String aMessage) {
-        if(d != null) {
+        if (d != null) {
             BigDecimal bd = BigDecimal.valueOf(d);
             hasMaxDigits(bd, maxInteger, maxFraction, aMessage);
         }
@@ -957,13 +958,13 @@ public class DomainAssertions {
     /**
      * Checks the max integer digits of a given {@link Double}.
      *
-     * @param d checked value
+     * @param d          checked value
      * @param maxInteger max integer digits
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigitsInteger(Double d, int maxInteger, String aMessage) {
-        if(d != null) {
+        if (d != null) {
             BigDecimal bd = BigDecimal.valueOf(d);
             hasMaxDigitsInteger(bd, maxInteger, aMessage);
         }
@@ -972,13 +973,13 @@ public class DomainAssertions {
     /**
      * Checks the max fraction digits of a given {@link Double}.
      *
-     * @param d checked value
+     * @param d           checked value
      * @param maxFraction max fraction digits
-     * @param aMessage message for thrown exception
+     * @param aMessage    message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigitsFraction(Double d, int maxFraction, String aMessage) {
-        if(d != null) {
+        if (d != null) {
             BigDecimal bd = BigDecimal.valueOf(d);
             hasMaxDigitsFraction(bd, maxFraction, aMessage);
         }
@@ -987,14 +988,14 @@ public class DomainAssertions {
     /**
      * Checks the max digits of a given {@link Float}.
      *
-     * @param f checked value
-     * @param maxInteger max integer digits
+     * @param f           checked value
+     * @param maxInteger  max integer digits
      * @param maxFraction max fraction digits
-     * @param aMessage message for thrown exception
+     * @param aMessage    message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigits(Float f, int maxInteger, int maxFraction, String aMessage) {
-        if(f != null) {
+        if (f != null) {
             hasMaxDigits(f.floatValue(), maxInteger, maxFraction, aMessage);
         }
     }
@@ -1002,13 +1003,13 @@ public class DomainAssertions {
     /**
      * Checks the max integer digits of a given {@link Float}.
      *
-     * @param f checked value
+     * @param f          checked value
      * @param maxInteger max integer digits
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigitsInteger(Float f, int maxInteger, String aMessage) {
-        if(f != null) {
+        if (f != null) {
             hasMaxDigitsInteger(f.floatValue(), maxInteger, aMessage);
         }
     }
@@ -1016,13 +1017,13 @@ public class DomainAssertions {
     /**
      * Checks the max fraction digits of a given {@link Float}.
      *
-     * @param f checked value
+     * @param f           checked value
      * @param maxFraction max fraction digits
-     * @param aMessage message for thrown exception
-     * @throws DomainAssertionException  if check failed
+     * @param aMessage    message for thrown exception
+     * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigitsFraction(Float f, int maxFraction, String aMessage) {
-        if(f != null) {
+        if (f != null) {
             hasMaxDigitsFraction(f.floatValue(), maxFraction, aMessage);
         }
     }
@@ -1030,16 +1031,16 @@ public class DomainAssertions {
     /**
      * Checks the max digits of a given {@link float}.
      *
-     * @param f checked value
-     * @param maxInteger max integer digits
+     * @param f           checked value
+     * @param maxInteger  max integer digits
      * @param maxFraction max fraction digits
-     * @param aMessage message for thrown exception
-     * @throws DomainAssertionException  if check failed
+     * @param aMessage    message for thrown exception
+     * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigits(float f, int maxInteger, int maxFraction, String aMessage) {
         int integer = integerDigits(BigDecimal.valueOf(f));
         int fraction = fractionDigits(f);
-        if (maxInteger < integer|| maxFraction < fraction) {
+        if (maxInteger < integer || maxFraction < fraction) {
             throw new DomainAssertionException(aMessage);
         }
 
@@ -1048,10 +1049,10 @@ public class DomainAssertions {
     /**
      * Checks the max integer digits of a given {@link float}.
      *
-     * @param f checked value
+     * @param f          checked value
      * @param maxInteger max integer digits
-     * @param aMessage message for thrown exception
-     * @throws DomainAssertionException  if check failed
+     * @param aMessage   message for thrown exception
+     * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigitsInteger(float f, int maxInteger, String aMessage) {
         BigDecimal bd = BigDecimal.valueOf(f);
@@ -1061,10 +1062,10 @@ public class DomainAssertions {
     /**
      * Checks the max fraction digits of a given {@link float}.
      *
-     * @param f checked value
+     * @param f           checked value
      * @param maxFraction max fraction digits
-     * @param aMessage message for thrown exception
-     * @throws DomainAssertionException  if check failed
+     * @param aMessage    message for thrown exception
+     * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigitsFraction(float f, int maxFraction, String aMessage) {
         int fraction = fractionDigits(f);
@@ -1076,10 +1077,10 @@ public class DomainAssertions {
     /**
      * Checks the max integer digits of a given {@link int}.
      *
-     * @param i checked value
+     * @param i          checked value
      * @param maxInteger max integer digits
-     * @param aMessage message for thrown exception
-     * @throws DomainAssertionException  if check failed
+     * @param aMessage   message for thrown exception
+     * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigitsInteger(int i, int maxInteger, String aMessage) {
         int integer = Integer.valueOf(i).toString().length();
@@ -1091,13 +1092,13 @@ public class DomainAssertions {
     /**
      * Checks the max integer digits of a given {@link Integer}.
      *
-     * @param i checked value
+     * @param i          checked value
      * @param maxInteger max integer digits
-     * @param aMessage message for thrown exception
-     * @throws DomainAssertionException  if check failed
+     * @param aMessage   message for thrown exception
+     * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigitsInteger(Integer i, int maxInteger, String aMessage) {
-        if(i != null) {
+        if (i != null) {
             int integer = i.toString().length();
             if (maxInteger < integer) {
                 throw new DomainAssertionException(aMessage);
@@ -1108,10 +1109,10 @@ public class DomainAssertions {
     /**
      * Checks the max integer digits of a given {@link long}.
      *
-     * @param l checked value
+     * @param l          checked value
      * @param maxInteger max integer digits
-     * @param aMessage message for thrown exception
-     * @throws DomainAssertionException  if check failed
+     * @param aMessage   message for thrown exception
+     * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigitsInteger(long l, int maxInteger, String aMessage) {
         int integer = Long.valueOf(l).toString().length();
@@ -1123,13 +1124,13 @@ public class DomainAssertions {
     /**
      * Checks the max integer digits of a given {@link Long}.
      *
-     * @param l checked value
+     * @param l          checked value
      * @param maxInteger compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigitsInteger(Long l, int maxInteger, String aMessage) {
-        if(l != null) {
+        if (l != null) {
             int integer = l.toString().length();
             if (maxInteger < integer) {
                 throw new DomainAssertionException(aMessage);
@@ -1140,9 +1141,9 @@ public class DomainAssertions {
     /**
      * Checks the max integer digits of a given {@link short}.
      *
-     * @param s checked value
+     * @param s          checked value
      * @param maxInteger max integer digits
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigitsInteger(short s, int maxInteger, String aMessage) {
@@ -1155,13 +1156,13 @@ public class DomainAssertions {
     /**
      * Checks the max integer digits of a given {@link Short}.
      *
-     * @param s checked value
+     * @param s          checked value
      * @param maxInteger max integer digits
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigitsInteger(Short s, int maxInteger, String aMessage) {
-        if(s != null) {
+        if (s != null) {
             int integer = s.toString().length();
             if (maxInteger < integer) {
                 throw new DomainAssertionException(aMessage);
@@ -1172,9 +1173,9 @@ public class DomainAssertions {
     /**
      * Checks the max integer digits of a given {@link byte}.
      *
-     * @param b checked value
+     * @param b          checked value
      * @param maxInteger max integer digits
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigitsInteger(byte b, int maxInteger, String aMessage) {
@@ -1187,13 +1188,13 @@ public class DomainAssertions {
     /**
      * Checks the max integer digits of a given {@link Byte}.
      *
-     * @param b checked value
+     * @param b          checked value
      * @param maxInteger max integer digits
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void hasMaxDigitsInteger(Byte b, int maxInteger, String aMessage) {
-        if(b != null) {
+        if (b != null) {
             int integer = b.toString().length();
             if (maxInteger < integer) {
                 throw new DomainAssertionException(aMessage);
@@ -1207,15 +1208,14 @@ public class DomainAssertions {
      * @param number input value
      */
     private static int integerDigits(Number number) {
-        if ( number == null ) {
+        if (number == null) {
             return 0;
         }
         BigDecimal bigNum;
-        if ( number instanceof BigDecimal ) {
+        if (number instanceof BigDecimal) {
             bigNum = (BigDecimal) number;
-        }
-        else {
-            bigNum = new BigDecimal( number.toString() ).stripTrailingZeros();
+        } else {
+            bigNum = new BigDecimal(number.toString()).stripTrailingZeros();
         }
         int integerPartLength = bigNum.precision() - bigNum.scale();
         return integerPartLength;
@@ -1227,15 +1227,14 @@ public class DomainAssertions {
      * @param number input value
      */
     private static int fractionDigits(Number number) {
-        if ( number == null ) {
+        if (number == null) {
             return 0;
         }
         BigDecimal bigNum;
-        if ( number instanceof BigDecimal ) {
+        if (number instanceof BigDecimal) {
             bigNum = (BigDecimal) number;
-        }
-        else {
-            bigNum = new BigDecimal( number.toString() ).stripTrailingZeros();
+        } else {
+            bigNum = new BigDecimal(number.toString()).stripTrailingZeros();
         }
         int fractionPartLength = bigNum.scale() < 0 ? 0 : bigNum.scale();
         return fractionPartLength;
@@ -1244,7 +1243,7 @@ public class DomainAssertions {
     /**
      * Checks, if a given {@link LocalDate} is in the future.
      *
-     * @param aDate checked
+     * @param aDate    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1258,7 +1257,7 @@ public class DomainAssertions {
     /**
      * Checks, if a given {@link LocalTime} is in the future.
      *
-     * @param aTime checked value
+     * @param aTime    checked value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1270,7 +1269,6 @@ public class DomainAssertions {
     }
 
 
-    
     /**
      * Checks an Optional containing a temporal value
      * ({@link LocalDateTime}, {@link LocalDate}, {@link LocalTime},
@@ -1282,11 +1280,11 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param aMessage message for thrown exception
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsFuture(Optional valueOptional, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -1317,7 +1315,8 @@ public class DomainAssertions {
                 isFuture((OffsetTime) o, aMessage);
             } else {
                 throw new IllegalArgumentException("valueOptional parameter must contain " +
-                    "LocalDateTime, LocalDate, LocalTime, Date, Calendar, Year, ZonedDateTime, YearMonth, MonthDay, OffsetDateTime or OffsetTime. Other types are not supported!");
+                    "LocalDateTime, LocalDate, LocalTime, Date, Calendar, Year, ZonedDateTime, YearMonth, MonthDay, " +
+                     "OffsetDateTime or OffsetTime. Other types are not supported!");
             }
         }
     }
@@ -1325,7 +1324,7 @@ public class DomainAssertions {
     /**
      * Checks, if a given {@link LocalDate} is in the future or is the present date.
      *
-     * @param aDate checked value
+     * @param aDate    checked value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1338,7 +1337,7 @@ public class DomainAssertions {
     /**
      * Checks, if a given {@link LocalTime} is in the future or is the present date.
      *
-     * @param aTime checked value
+     * @param aTime    checked value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1359,11 +1358,11 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param aMessage message for thrown exception
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsFutureOrPresent(Optional valueOptional, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -1394,7 +1393,8 @@ public class DomainAssertions {
                 isFutureOrPresent((OffsetTime) o, aMessage);
             } else {
                 throw new IllegalArgumentException("valueOptional parameter must contain " +
-                    "LocalDateTime, LocalDate, LocalTime, Date, Calendar, Year, ZonedDateTime, YearMonth, MonthDay, OffsetDateTime or OffsetTime. Other types are not supported!");
+                    "LocalDateTime, LocalDate, LocalTime, Date, Calendar, Year, ZonedDateTime, YearMonth, MonthDay, " +
+                     "OffsetDateTime or OffsetTime. Other types are not supported!");
             }
         }
     }
@@ -1402,7 +1402,7 @@ public class DomainAssertions {
     /**
      * Checks, if of a given {@link LocalDate} is in the past.
      *
-     * @param aDate checked value
+     * @param aDate    checked value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1416,7 +1416,7 @@ public class DomainAssertions {
     /**
      * Checks, if of a given {@link LocalTime} is in the past.
      *
-     * @param aTime checked value
+     * @param aTime    checked value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1438,11 +1438,11 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param aMessage message for thrown exception
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsPast(Optional valueOptional, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -1473,7 +1473,8 @@ public class DomainAssertions {
                 isPast((OffsetTime) o, aMessage);
             } else {
                 throw new IllegalArgumentException("valueOptional parameter must contain " +
-                    "LocalDateTime, LocalDate, LocalTime, Date, Calendar, Year, ZonedDateTime, YearMonth, MonthDay, OffsetDateTime or OffsetTime. Other types are not supported!");
+                    "LocalDateTime, LocalDate, LocalTime, Date, Calendar, Year, ZonedDateTime, YearMonth, MonthDay, " +
+                     "OffsetDateTime or OffsetTime. Other types are not supported!");
             }
         }
     }
@@ -1481,7 +1482,7 @@ public class DomainAssertions {
     /**
      * Checks, if of a given {@link LocalDate} is in the past or is the present.
      *
-     * @param aDate checked
+     * @param aDate    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1494,7 +1495,7 @@ public class DomainAssertions {
     /**
      * Checks, if of a given {@link LocalTime} is in the past or is the present.
      *
-     * @param aTime checked value
+     * @param aTime    checked value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1515,11 +1516,11 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param aMessage message for thrown exception
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsPastOrPresent(Optional valueOptional, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -1550,7 +1551,8 @@ public class DomainAssertions {
                 isPastOrPresent((OffsetTime) o, aMessage);
             } else {
                 throw new IllegalArgumentException("valueOptional parameter must contain " +
-                    "LocalDateTime, LocalDate, LocalTime, Date, Calendar, Year, ZonedDateTime, YearMonth, MonthDay, OffsetDateTime or OffsetTime. Other types are not supported!");
+                    "LocalDateTime, LocalDate, LocalTime, Date, Calendar, Year, ZonedDateTime, YearMonth, MonthDay, " +
+                     "OffsetDateTime or OffsetTime. Other types are not supported!");
             }
         }
     }
@@ -1559,8 +1561,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code date1} is before {@code date2}.
      *
-     * @param date1 checked value
-     * @param date2 compared value
+     * @param date1    checked value
+     * @param date2    compared value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1573,8 +1575,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code time1} is before {@code time2}.
      *
-     * @param time1 checked value
-     * @param time2 compared value
+     * @param time1    checked value
+     * @param time2    compared value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1588,12 +1590,12 @@ public class DomainAssertions {
      * Checks an Optional containing a {@link LocalDate}, if the contained value is before {@code date2}.
      *
      * @param date1Optional checked value
-     * @param date2 compared value
-     * @param aMessage message for thrown exception
+     * @param date2         compared value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsBefore(Optional<LocalDate> date1Optional, LocalDate date2, String aMessage) {
-        if(date1Optional == null){
+        if (date1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (date1Optional.isPresent()) {
@@ -1605,12 +1607,12 @@ public class DomainAssertions {
      * Checks an Optional containing a {@link LocalTime}, if the contained value is before {@code time2}.
      *
      * @param time1Optional checked value
-     * @param time2 compared value
-     * @param aMessage message for thrown exception
+     * @param time2         compared value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsBefore(Optional<LocalTime> time1Optional, LocalTime time2, String aMessage) {
-        if(time1Optional == null){
+        if (time1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (time1Optional.isPresent()) {
@@ -1621,8 +1623,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code date1} is after {@code date2}.
      *
-     * @param date1 checked value
-     * @param date2 compared value
+     * @param date1    checked value
+     * @param date2    compared value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1635,8 +1637,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code time1} is after {@code time2}.
      *
-     * @param time1 checked value
-     * @param time2 compared value
+     * @param time1    checked value
+     * @param time2    compared value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1650,12 +1652,12 @@ public class DomainAssertions {
      * Checks an Optional containing a {@link LocalDate}, if the contained value is after {@code date2}.
      *
      * @param date1Optional checked value
-     * @param date2 compared value
-     * @param aMessage message for thrown exception
+     * @param date2         compared value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsAfter(Optional<LocalDate> date1Optional, LocalDate date2, String aMessage) {
-        if(date1Optional == null){
+        if (date1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (date1Optional.isPresent()) {
@@ -1667,12 +1669,12 @@ public class DomainAssertions {
      * Checks an Optional containing a {@link LocalTime}, if the contained value is after {@code time2}.
      *
      * @param time1Optional checked value
-     * @param time2 compared value
-     * @param aMessage message for thrown exception
+     * @param time2         compared value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsAfter(Optional<LocalTime> time1Optional, LocalTime time2, String aMessage) {
-        if(time1Optional == null){
+        if (time1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (time1Optional.isPresent()) {
@@ -1683,8 +1685,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code date1} is before or equal to{@code date2}.
      *
-     * @param date1 checked value
-     * @param date2 compared value
+     * @param date1    checked value
+     * @param date2    compared value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1697,8 +1699,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code time1} is before or equal to{@code time2}.
      *
-     * @param time1 checked value
-     * @param time2 compared value
+     * @param time1    checked value
+     * @param time2    compared value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1712,12 +1714,12 @@ public class DomainAssertions {
      * Checks an Optional containing a {@link LocalDate}, if the contained value is before or equal to {@code date2}.
      *
      * @param date1Optional checked value
-     * @param date2 compared value
-     * @param aMessage message for thrown exception
+     * @param date2         compared value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsBeforeOrEqualTo(Optional<LocalDate> date1Optional, LocalDate date2, String aMessage) {
-        if(date1Optional == null){
+        if (date1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (date1Optional.isPresent()) {
@@ -1729,12 +1731,12 @@ public class DomainAssertions {
      * Checks an Optional containing a {@link LocalTime}, if the contained value is before or equal to {@code time2}.
      *
      * @param time1Optional checked value
-     * @param time2 compared value
-     * @param aMessage message for thrown exception
+     * @param time2         compared value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsBeforeOrEqualTo(Optional<LocalTime> time1Optional, LocalTime time2, String aMessage) {
-        if(time1Optional == null){
+        if (time1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (time1Optional.isPresent()) {
@@ -1745,8 +1747,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code date1} is after or equal to{@code date2}.
      *
-     * @param date1 checked value
-     * @param date2 compared value
+     * @param date1    checked value
+     * @param date2    compared value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1759,8 +1761,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code time1} is after or equal to{@code time2}.
      *
-     * @param time1 checked value
-     * @param time2 compared value
+     * @param time1    checked value
+     * @param time2    compared value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1774,12 +1776,12 @@ public class DomainAssertions {
      * Checks an Optional containing a {@link LocalDate}, if the contained value is before or equal to {@code date2}.
      *
      * @param date1Optional checked value
-     * @param date2 compared value
-     * @param aMessage message for thrown exception
+     * @param date2         compared value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsAfterOrEqualTo(Optional<LocalDate> date1Optional, LocalDate date2, String aMessage) {
-        if(date1Optional == null){
+        if (date1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (date1Optional.isPresent()) {
@@ -1791,12 +1793,12 @@ public class DomainAssertions {
      * Checks an Optional containing a {@link LocalTime}, if the contained value is before or equal to {@code time2}.
      *
      * @param time1Optional checked value
-     * @param time2 compared value
-     * @param aMessage message for thrown exception
+     * @param time2         compared value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsAfterOrEqualTo(Optional<LocalTime> time1Optional, LocalTime time2, String aMessage) {
-        if(time1Optional == null){
+        if (time1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (time1Optional.isPresent()) {
@@ -1808,7 +1810,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link LocalDateTime} is in the future.
      *
      * @param aDateTime checked value
-     * @param aMessage message for thrown exception
+     * @param aMessage  message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isFuture(LocalDateTime aDateTime, String aMessage) {
@@ -1822,7 +1824,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link LocalDateTime} is in the future or is the present.
      *
      * @param aDateTime checked value
-     * @param aMessage message for thrown exception
+     * @param aMessage  message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isFutureOrPresent(LocalDateTime aDateTime, String aMessage) {
@@ -1835,7 +1837,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link LocalDateTime} is in the past.
      *
      * @param aDateTime checked value
-     * @param aMessage message for thrown exception
+     * @param aMessage  message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isPast(LocalDateTime aDateTime, String aMessage) {
@@ -1849,7 +1851,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link LocalDateTime} is in the past or is the present.
      *
      * @param aDateTime checked value
-     * @param aMessage message for thrown exception
+     * @param aMessage  message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isPastOrPresent(LocalDateTime aDateTime, String aMessage) {
@@ -1861,8 +1863,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code date1} is before to{@code date2}.
      *
-     * @param date1 checked
-     * @param date2 compare value
+     * @param date1    checked
+     * @param date2    compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1876,12 +1878,12 @@ public class DomainAssertions {
      * Checks an Optional containing a {@link LocalDateTime}, if the contained value is before {@code date2}.
      *
      * @param date1Optional checked
-     * @param date2 compare value
-     * @param aMessage message for thrown exception
+     * @param date2         compare value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsBefore(Optional<LocalDateTime> date1Optional, LocalDateTime date2, String aMessage) {
-        if(date1Optional == null){
+        if (date1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (date1Optional.isPresent()) {
@@ -1892,8 +1894,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code date1} is after to{@code date2}.
      *
-     * @param date1 checked
-     * @param date2 compare value
+     * @param date1    checked
+     * @param date2    compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1907,12 +1909,12 @@ public class DomainAssertions {
      * Checks an Optional containing a {@link LocalDateTime}, if the contained value is after {@code date2}.
      *
      * @param date1Optional checked
-     * @param date2 compare value
-     * @param aMessage message for thrown exception
+     * @param date2         compare value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsAfter(Optional<LocalDateTime> date1Optional, LocalDateTime date2, String aMessage) {
-        if(date1Optional == null){
+        if (date1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (date1Optional.isPresent()) {
@@ -1923,8 +1925,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code date1} is before or equal to to{@code date2}.
      *
-     * @param date1 checked
-     * @param date2 compare value
+     * @param date1    checked
+     * @param date2    compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1935,15 +1937,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link LocalDateTime}, if the contained value is before or equal to {@code date2}.
+     * Checks an Optional containing a {@link LocalDateTime}, if the contained value is before or equal to {@code
+      * date2}.
      *
      * @param date1Optional checked
-     * @param date2 compare value
-     * @param aMessage message for thrown exception
+     * @param date2         compare value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsBeforeOrEqualTo(Optional<LocalDateTime> date1Optional, LocalDateTime date2, String aMessage) {
-        if(date1Optional == null){
+    public static void optionalIsBeforeOrEqualTo(Optional<LocalDateTime> date1Optional, LocalDateTime date2,
+ String aMessage) {
+        if (date1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (date1Optional.isPresent()) {
@@ -1954,8 +1958,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code date1} is after or equal to to{@code date2}.
      *
-     * @param date1 checked
-     * @param date2 compare value
+     * @param date1    checked
+     * @param date2    compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -1969,12 +1973,13 @@ public class DomainAssertions {
      * Checks if an Optional containing a {@link LocalDateTime} is after or equal to {@code date2}.
      *
      * @param date1Optional checked
-     * @param date2 compare value
-     * @param aMessage message for thrown exception
+     * @param date2         compare value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsAfterOrEqualTo(Optional<LocalDateTime> date1Optional, LocalDateTime date2, String aMessage) {
-        if(date1Optional == null){
+    public static void optionalIsAfterOrEqualTo(Optional<LocalDateTime> date1Optional, LocalDateTime date2,
+     String aMessage) {
+        if (date1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (date1Optional.isPresent()) {
@@ -1986,7 +1991,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link Instant} is in the future.
      *
      * @param anInstant checked
-     * @param aMessage message for thrown exception
+     * @param aMessage  message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isFuture(Instant anInstant, String aMessage) {
@@ -2000,7 +2005,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link Instant} is in the future or is the present.
      *
      * @param anInstant checked
-     * @param aMessage message for thrown exception
+     * @param aMessage  message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isFutureOrPresent(Instant anInstant, String aMessage) {
@@ -2013,7 +2018,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link Instant} is in the past.
      *
      * @param anInstant checked
-     * @param aMessage message for thrown exception
+     * @param aMessage  message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isPast(Instant anInstant, String aMessage) {
@@ -2027,7 +2032,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link Instant} is in the past or is the present.
      *
      * @param anInstant checked
-     * @param aMessage message for thrown exception
+     * @param aMessage  message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isPastOrPresent(Instant anInstant, String aMessage) {
@@ -2054,12 +2059,12 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link Instant}, if the contained value is before {@code instant2}.
      *
      * @param instant1Optional checked
-     * @param instant2 compare value
-     * @param aMessage message for thrown exception
+     * @param instant2         compare value
+     * @param aMessage         message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsBefore(Optional<Instant> instant1Optional, Instant instant2, String aMessage) {
-        if(instant1Optional == null){
+        if (instant1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (instant1Optional.isPresent()) {
@@ -2085,12 +2090,12 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link Instant}, if the contained value is after {@code instant2}.
      *
      * @param instant1Optional checked
-     * @param instant2 compare value
-     * @param aMessage message for thrown exception
+     * @param instant2         compare value
+     * @param aMessage         message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsAfter(Optional<Instant> instant1Optional, Instant instant2, String aMessage) {
-        if(instant1Optional == null){
+        if (instant1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (instant1Optional.isPresent()) {
@@ -2116,12 +2121,13 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link Instant}, if the contained value is before or equal to {@code instant2}.
      *
      * @param instant1Optional checked
-     * @param instant2 compare value
-     * @param aMessage message for thrown exception
+     * @param instant2         compare value
+     * @param aMessage         message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsBeforeOrEqualTo(Optional<Instant> instant1Optional, Instant instant2, String aMessage) {
-        if(instant1Optional == null){
+    public static void optionalIsBeforeOrEqualTo(Optional<Instant> instant1Optional, Instant instant2,
+ String aMessage) {
+        if (instant1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (instant1Optional.isPresent()) {
@@ -2147,12 +2153,12 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link Instant}, if the contained value is after or equal to {@code instant2}.
      *
      * @param instant1Optional checked
-     * @param instant2 compare value
-     * @param aMessage message for thrown exception
+     * @param instant2         compare value
+     * @param aMessage         message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsAfterOrEqualTo(Optional<Instant> instant1Optional, Instant instant2, String aMessage) {
-        if(instant1Optional == null){
+        if (instant1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (instant1Optional.isPresent()) {
@@ -2163,7 +2169,7 @@ public class DomainAssertions {
     /**
      * Checks, if of a given {@link Date} is in the future.
      *
-     * @param aDate checked
+     * @param aDate    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2177,7 +2183,7 @@ public class DomainAssertions {
     /**
      * Checks, if of a given {@link Date} is in the future or is the present.
      *
-     * @param aDate checked
+     * @param aDate    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2190,7 +2196,7 @@ public class DomainAssertions {
     /**
      * Checks, if of a given {@link Date} is in the past.
      *
-     * @param aDate checked
+     * @param aDate    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2204,7 +2210,7 @@ public class DomainAssertions {
     /**
      * Checks, if of a given {@link Date} is in the past or is the present.
      *
-     * @param aDate checked
+     * @param aDate    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2217,8 +2223,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code date1} is before {@code date2}.
      *
-     * @param date1 checked
-     * @param date2 compare value
+     * @param date1    checked
+     * @param date2    compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2232,12 +2238,12 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link Date}, if the contained value is before {@code date2}.
      *
      * @param date1Optional checked
-     * @param date2 compare value
-     * @param aMessage message for thrown exception
+     * @param date2         compare value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsBefore(Optional<Date> date1Optional, Date date2, String aMessage) {
-        if(date1Optional == null){
+        if (date1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (date1Optional.isPresent()) {
@@ -2248,8 +2254,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code date1} is after {@code date2}.
      *
-     * @param date1 checked
-     * @param date2 compare value
+     * @param date1    checked
+     * @param date2    compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2263,12 +2269,12 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link Date}, if the contained value is after {@code date2}.
      *
      * @param date1Optional checked
-     * @param date2 compare value
-     * @param aMessage message for thrown exception
+     * @param date2         compare value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsAfter(Optional<Date> date1Optional, Date date2, String aMessage) {
-        if(date1Optional == null){
+        if (date1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (date1Optional.isPresent()) {
@@ -2279,8 +2285,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code date1} is before or equal to {@code date2}.
      *
-     * @param date1 checked
-     * @param date2 compare value
+     * @param date1    checked
+     * @param date2    compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2294,12 +2300,12 @@ public class DomainAssertions {
      * Checks if Optional containing an {@link Date}, if the contained value is before or equal to {@code date2}.
      *
      * @param date1Optional checked
-     * @param date2 compare value
-     * @param aMessage message for thrown exception
+     * @param date2         compare value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsBeforeOrEqualTo(Optional<Date> date1Optional, Date date2, String aMessage) {
-        if(date1Optional == null){
+        if (date1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (date1Optional.isPresent()) {
@@ -2310,8 +2316,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code date1} is after or equal to {@code date2}.
      *
-     * @param date1 checked
-     * @param date2 compare value
+     * @param date1    checked
+     * @param date2    compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2325,12 +2331,12 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link Date}, if the contained value is after or equal to {@code date2}.
      *
      * @param date1Optional checked
-     * @param date2 compare value
-     * @param aMessage message for thrown exception
+     * @param date2         compare value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsAfterOrEqualTo(Optional<Date> date1Optional, Date date2, String aMessage) {
-        if(date1Optional == null){
+        if (date1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (date1Optional.isPresent()) {
@@ -2341,7 +2347,7 @@ public class DomainAssertions {
     /**
      * Checks, if of a given {@link Calendar} is in the future.
      *
-     * @param aCal checked
+     * @param aCal     checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2355,7 +2361,7 @@ public class DomainAssertions {
     /**
      * Checks, if of a given {@link Calendar} is in the future or is the present.
      *
-     * @param aCal checked
+     * @param aCal     checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2368,7 +2374,7 @@ public class DomainAssertions {
     /**
      * Checks, if of a given {@link Calendar} is in the past.
      *
-     * @param aCal checked
+     * @param aCal     checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2382,7 +2388,7 @@ public class DomainAssertions {
     /**
      * Checks, if of a given {@link Calendar} is in the past or is the present.
      *
-     * @param aCal checked
+     * @param aCal     checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2395,8 +2401,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code cal1} is before {@code cal2}.
      *
-     * @param cal1 checked
-     * @param cal2 compare value
+     * @param cal1     checked
+     * @param cal2     compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2410,12 +2416,12 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link Calendar}, if the contained value is before {@code cal2}.
      *
      * @param cal1Optional checked
-     * @param cal2 compare value
-     * @param aMessage message for thrown exception
+     * @param cal2         compare value
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsBefore(Optional<Calendar> cal1Optional, Calendar cal2, String aMessage) {
-        if(cal1Optional == null){
+        if (cal1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (cal1Optional.isPresent()) {
@@ -2426,8 +2432,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code cal1} is after {@code cal2}.
      *
-     * @param cal1 checked
-     * @param cal2 compare value
+     * @param cal1     checked
+     * @param cal2     compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2441,12 +2447,12 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link Calendar}, if the contained value is after {@code cal2}.
      *
      * @param cal1Optional checked
-     * @param cal2 compare value
-     * @param aMessage message for thrown exception
+     * @param cal2         compare value
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsAfter(Optional<Calendar> cal1Optional, Calendar cal2, String aMessage) {
-        if(cal1Optional == null){
+        if (cal1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (cal1Optional.isPresent()) {
@@ -2457,8 +2463,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code cal1} is before or equal to {@code cal2}.
      *
-     * @param cal1 checked
-     * @param cal2 compare value
+     * @param cal1     checked
+     * @param cal2     compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2472,12 +2478,12 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link Calendar}, if the contained value is before or equal to {@code cal2}.
      *
      * @param cal1Optional checked
-     * @param cal2 compare value
-     * @param aMessage message for thrown exception
+     * @param cal2         compare value
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsBeforeOrEqualTo(Optional<Calendar> cal1Optional, Calendar cal2, String aMessage) {
-        if(cal1Optional == null){
+        if (cal1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (cal1Optional.isPresent()) {
@@ -2488,8 +2494,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code cal1} is after or equal to {@code cal2}.
      *
-     * @param cal1 checked
-     * @param cal2 compare value
+     * @param cal1     checked
+     * @param cal2     compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2503,12 +2509,12 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link Calendar}, if the contained value is after or equal to {@code cal2}.
      *
      * @param cal1Optional checked
-     * @param cal2 compare value
-     * @param aMessage message for thrown exception
+     * @param cal2         compare value
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsAfterOrEqualTo(Optional<Calendar> cal1Optional, Calendar cal2, String aMessage) {
-        if(cal1Optional == null){
+        if (cal1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (cal1Optional.isPresent()) {
@@ -2519,7 +2525,7 @@ public class DomainAssertions {
     /**
      * Checks, if of a given {@link Year} is in the future.
      *
-     * @param aYear checked
+     * @param aYear    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2533,7 +2539,7 @@ public class DomainAssertions {
     /**
      * Checks, if of a given {@link Year} is in the future and is not the present year.
      *
-     * @param aYear checked
+     * @param aYear    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2546,7 +2552,7 @@ public class DomainAssertions {
     /**
      * Checks, if of a given {@link Year} is in the past.
      *
-     * @param aYear checked
+     * @param aYear    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2560,7 +2566,7 @@ public class DomainAssertions {
     /**
      * Checks, if of a given {@link Year} is in the past and is not the present year.
      *
-     * @param aYear checked
+     * @param aYear    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2573,8 +2579,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code year1} is before {@code year2}.
      *
-     * @param year1 checked
-     * @param year2 compare value
+     * @param year1    checked
+     * @param year2    compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2588,12 +2594,12 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link Year}, if the contained value is before {@code year2}.
      *
      * @param year1Optional checked
-     * @param year2 compare value
-     * @param aMessage message for thrown exception
+     * @param year2         compare value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsBefore(Optional<Year> year1Optional, Year year2, String aMessage) {
-        if(year1Optional == null){
+        if (year1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (year1Optional.isPresent()) {
@@ -2604,8 +2610,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code year1} is after {@code year2}.
      *
-     * @param year1 checked
-     * @param year2 compare value
+     * @param year1    checked
+     * @param year2    compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2619,12 +2625,12 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link Year}, if the contained value is after {@code year2}.
      *
      * @param year1Optional checked
-     * @param year2 compare value
-     * @param aMessage message for thrown exception
+     * @param year2         compare value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsAfter(Optional<Year> year1Optional, Year year2, String aMessage) {
-        if(year1Optional == null){
+        if (year1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (year1Optional.isPresent()) {
@@ -2635,8 +2641,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code year1} is before or equal to {@code year2}.
      *
-     * @param year1 checked
-     * @param year2 compare value
+     * @param year1    checked
+     * @param year2    compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2650,12 +2656,12 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link Year}, if the contained value is before or equal to {@code year2}.
      *
      * @param year1Optional checked
-     * @param year2 compare value
-     * @param aMessage message for thrown exception
+     * @param year2         compare value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsBeforeOrEqualTo(Optional<Year> year1Optional, Year year2, String aMessage) {
-        if(year1Optional == null){
+        if (year1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (year1Optional.isPresent()) {
@@ -2666,8 +2672,8 @@ public class DomainAssertions {
     /**
      * Checks if {@code year1} is after or equal to {@code year2}.
      *
-     * @param year1 checked
-     * @param year2 compare value
+     * @param year1    checked
+     * @param year2    compare value
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -2681,12 +2687,12 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link Year}, if the contained value is after or equal to {@code year2}.
      *
      * @param year1Optional checked
-     * @param year2 compare value
-     * @param aMessage message for thrown exception
+     * @param year2         compare value
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsAfterOrEqualTo(Optional<Year> year1Optional, Year year2, String aMessage) {
-        if(year1Optional == null){
+        if (year1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (year1Optional.isPresent()) {
@@ -2698,7 +2704,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link YearMonth} is in the future.
      *
      * @param aYearMonth checked
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isFuture(YearMonth aYearMonth, String aMessage) {
@@ -2712,7 +2718,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link YearMonth} is in the future or is the present.
      *
      * @param aYearMonth checked
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isFutureOrPresent(YearMonth aYearMonth, String aMessage) {
@@ -2725,7 +2731,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link YearMonth} is in the past.
      *
      * @param aYearMonth checked
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isPast(YearMonth aYearMonth, String aMessage) {
@@ -2739,7 +2745,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link YearMonth} is in the past or is the present.
      *
      * @param aYearMonth checked
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isPastOrPresent(YearMonth aYearMonth, String aMessage) {
@@ -2753,7 +2759,7 @@ public class DomainAssertions {
      *
      * @param yearMonth1 checked
      * @param yearMonth2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isBefore(YearMonth yearMonth1, YearMonth yearMonth2, String aMessage) {
@@ -2766,12 +2772,12 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link YearMonth}, if the contained value is before {@code yearMonth2}.
      *
      * @param yearMonth1Optional checked
-     * @param yearMonth2 compare value
-     * @param aMessage message for thrown exception
+     * @param yearMonth2         compare value
+     * @param aMessage           message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsBefore(Optional<YearMonth> yearMonth1Optional, YearMonth yearMonth2, String aMessage) {
-        if(yearMonth1Optional == null){
+        if (yearMonth1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (yearMonth1Optional.isPresent()) {
@@ -2784,7 +2790,7 @@ public class DomainAssertions {
      *
      * @param yearMonth1 checked
      * @param yearMonth2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isAfter(YearMonth yearMonth1, YearMonth yearMonth2, String aMessage) {
@@ -2797,12 +2803,12 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link YearMonth}, if the contained value is after {@code yearMonth2}.
      *
      * @param yearMonth1Optional checked
-     * @param yearMonth2 compare value
-     * @param aMessage message for thrown exception
+     * @param yearMonth2         compare value
+     * @param aMessage           message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsAfter(Optional<YearMonth> yearMonth1Optional, YearMonth yearMonth2, String aMessage) {
-        if(yearMonth1Optional == null){
+        if (yearMonth1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (yearMonth1Optional.isPresent()) {
@@ -2815,7 +2821,7 @@ public class DomainAssertions {
      *
      * @param yearMonth1 checked
      * @param yearMonth2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isBeforeOrEqualTo(YearMonth yearMonth1, YearMonth yearMonth2, String aMessage) {
@@ -2825,15 +2831,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing an {@link YearMonth}, if the contained value is before or equal to {@code yearMonth2}.
+     * Checks an Optional containing an {@link YearMonth}, if the contained value is before or equal to {@code
+      * yearMonth2}.
      *
      * @param yearMonth1Optional checked
-     * @param yearMonth2 compare value
-     * @param aMessage message for thrown exception
+     * @param yearMonth2         compare value
+     * @param aMessage           message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsBeforeOrEqualTo(Optional<YearMonth> yearMonth1Optional, YearMonth yearMonth2, String aMessage) {
-        if(yearMonth1Optional == null){
+    public static void optionalIsBeforeOrEqualTo(Optional<YearMonth> yearMonth1Optional, YearMonth yearMonth2,
+     String aMessage) {
+        if (yearMonth1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (yearMonth1Optional.isPresent()) {
@@ -2846,7 +2854,7 @@ public class DomainAssertions {
      *
      * @param yearMonth1 checked
      * @param yearMonth2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isAfterOrEqualTo(YearMonth yearMonth1, YearMonth yearMonth2, String aMessage) {
@@ -2856,15 +2864,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing an {@link YearMonth}, if the contained value is after or equal to {@code yearMonth2}.
+     * Checks an Optional containing an {@link YearMonth}, if the contained value is after or equal to {@code
+      * yearMonth2}.
      *
      * @param yearMonth1Optional checked
-     * @param yearMonth2 compare value
-     * @param aMessage message for thrown exception
+     * @param yearMonth2         compare value
+     * @param aMessage           message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsAfterOrEqualTo(Optional<YearMonth> yearMonth1Optional, YearMonth yearMonth2, String aMessage) {
-        if(yearMonth1Optional == null){
+    public static void optionalIsAfterOrEqualTo(Optional<YearMonth> yearMonth1Optional, YearMonth yearMonth2,
+     String aMessage) {
+        if (yearMonth1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (yearMonth1Optional.isPresent()) {
@@ -2876,7 +2886,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link ZonedDateTime} is in the future.
      *
      * @param aZonedDateTime checked
-     * @param aMessage message for thrown exception
+     * @param aMessage       message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isFuture(ZonedDateTime aZonedDateTime, String aMessage) {
@@ -2890,7 +2900,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link ZonedDateTime} is in the future or is the present.
      *
      * @param aZonedDateTime checked
-     * @param aMessage message for thrown exception
+     * @param aMessage       message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isFutureOrPresent(ZonedDateTime aZonedDateTime, String aMessage) {
@@ -2903,7 +2913,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link ZonedDateTime} is in the past.
      *
      * @param aZonedDateTime checked
-     * @param aMessage message for thrown exception
+     * @param aMessage       message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isPast(ZonedDateTime aZonedDateTime, String aMessage) {
@@ -2917,7 +2927,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link ZonedDateTime} is in the past or is the present.
      *
      * @param aZonedDateTime checked
-     * @param aMessage message for thrown exception
+     * @param aMessage       message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isPastOrPresent(ZonedDateTime aZonedDateTime, String aMessage) {
@@ -2931,7 +2941,7 @@ public class DomainAssertions {
      *
      * @param aZonedDateTime1 checked
      * @param aZonedDateTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage        message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isBefore(ZonedDateTime aZonedDateTime1, ZonedDateTime aZonedDateTime2, String aMessage) {
@@ -2944,12 +2954,13 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link ZonedDateTime}, if the contained value is before {@code aZonedDateTime2}.
      *
      * @param aZonedDateTime1Optional checked
-     * @param aZonedDateTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param aZonedDateTime2         compare value
+     * @param aMessage                message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsBefore(Optional<ZonedDateTime> aZonedDateTime1Optional, ZonedDateTime aZonedDateTime2, String aMessage) {
-        if(aZonedDateTime1Optional == null){
+    public static void optionalIsBefore(Optional<ZonedDateTime> aZonedDateTime1Optional,
+     ZonedDateTime aZonedDateTime2, String aMessage) {
+        if (aZonedDateTime1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aZonedDateTime1Optional.isPresent()) {
@@ -2962,7 +2973,7 @@ public class DomainAssertions {
      *
      * @param aZonedDateTime1 checked
      * @param aZonedDateTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage        message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isAfter(ZonedDateTime aZonedDateTime1, ZonedDateTime aZonedDateTime2, String aMessage) {
@@ -2975,12 +2986,13 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link ZonedDateTime}, if the contained value is after {@code aZonedDateTime2}.
      *
      * @param aZonedDateTime1Optional checked
-     * @param aZonedDateTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param aZonedDateTime2         compare value
+     * @param aMessage                message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsAfter(Optional<ZonedDateTime> aZonedDateTime1Optional, ZonedDateTime aZonedDateTime2, String aMessage) {
-        if(aZonedDateTime1Optional == null){
+    public static void optionalIsAfter(Optional<ZonedDateTime> aZonedDateTime1Optional, ZonedDateTime aZonedDateTime2
+, String aMessage) {
+        if (aZonedDateTime1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aZonedDateTime1Optional.isPresent()) {
@@ -2993,25 +3005,28 @@ public class DomainAssertions {
      *
      * @param aZonedDateTime1 checked
      * @param aZonedDateTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage        message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void isBeforeOrEqualTo(ZonedDateTime aZonedDateTime1, ZonedDateTime aZonedDateTime2, String aMessage) {
+    public static void isBeforeOrEqualTo(ZonedDateTime aZonedDateTime1, ZonedDateTime aZonedDateTime2,
+     String aMessage) {
         if (aZonedDateTime1 != null && aZonedDateTime2 != null && aZonedDateTime1.isAfter(aZonedDateTime2)) {
             throw new DomainAssertionException(aMessage);
         }
     }
 
     /**
-     * Checks Optional containing an {@link ZonedDateTime}, if the contained value is before or equal to {@code aZonedDateTime2}.
+     * Checks Optional containing an {@link ZonedDateTime}, if the contained value is before or equal to {@code
+      * aZonedDateTime2}.
      *
      * @param aZonedDateTime1Optional checked
-     * @param aZonedDateTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param aZonedDateTime2         compare value
+     * @param aMessage                message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsBeforeOrEqualTo(Optional<ZonedDateTime> aZonedDateTime1Optional, ZonedDateTime aZonedDateTime2, String aMessage) {
-        if(aZonedDateTime1Optional == null){
+    public static void optionalIsBeforeOrEqualTo(Optional<ZonedDateTime> aZonedDateTime1Optional,
+     ZonedDateTime aZonedDateTime2, String aMessage) {
+        if (aZonedDateTime1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aZonedDateTime1Optional.isPresent()) {
@@ -3024,7 +3039,7 @@ public class DomainAssertions {
      *
      * @param aZonedDateTime1 checked
      * @param aZonedDateTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage        message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isAfterOrEqualTo(ZonedDateTime aZonedDateTime1, ZonedDateTime aZonedDateTime2, String aMessage) {
@@ -3034,15 +3049,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing an {@link ZonedDateTime}, if the contained value is after or equal to {@code aZonedDateTime2}.
+     * Checks an Optional containing an {@link ZonedDateTime}, if the contained value is after or equal to {@code
+      * aZonedDateTime2}.
      *
      * @param aZonedDateTime1Optional checked
-     * @param aZonedDateTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param aZonedDateTime2         compare value
+     * @param aMessage                message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsAfterOrEqualTo(Optional<ZonedDateTime> aZonedDateTime1Optional, ZonedDateTime aZonedDateTime2, String aMessage) {
-        if(aZonedDateTime1Optional == null){
+    public static void optionalIsAfterOrEqualTo(Optional<ZonedDateTime> aZonedDateTime1Optional,
+     ZonedDateTime aZonedDateTime2, String aMessage) {
+        if (aZonedDateTime1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aZonedDateTime1Optional.isPresent()) {
@@ -3054,7 +3071,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link MonthDay} is in the future.
      *
      * @param aMonthDay checked
-     * @param aMessage message for thrown exception
+     * @param aMessage  message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isFuture(MonthDay aMonthDay, String aMessage) {
@@ -3068,7 +3085,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link MonthDay} is in the future or is the present.
      *
      * @param aMonthDay checked
-     * @param aMessage message for thrown exception
+     * @param aMessage  message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isFutureOrPresent(MonthDay aMonthDay, String aMessage) {
@@ -3081,7 +3098,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link MonthDay} is in the past.
      *
      * @param aMonthDay checked
-     * @param aMessage message for thrown exception
+     * @param aMessage  message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isPast(MonthDay aMonthDay, String aMessage) {
@@ -3095,7 +3112,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link MonthDay} is in the past or is the present.
      *
      * @param aMonthDay checked
-     * @param aMessage message for thrown exception
+     * @param aMessage  message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isPastOrPresent(MonthDay aMonthDay, String aMessage) {
@@ -3109,7 +3126,7 @@ public class DomainAssertions {
      *
      * @param aMonthDay1 checked
      * @param aMonthDay2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isBefore(MonthDay aMonthDay1, MonthDay aMonthDay2, String aMessage) {
@@ -3122,12 +3139,12 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link MonthDay}, if the contained value is before {@code aMonthDay2}.
      *
      * @param aMonthDay1Optional checked
-     * @param aMonthDay2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMonthDay2         compare value
+     * @param aMessage           message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsBefore(Optional<MonthDay> aMonthDay1Optional, MonthDay aMonthDay2, String aMessage) {
-        if(aMonthDay1Optional == null){
+        if (aMonthDay1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aMonthDay1Optional.isPresent()) {
@@ -3140,7 +3157,7 @@ public class DomainAssertions {
      *
      * @param aMonthDay1 checked
      * @param aMonthDay2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isAfter(MonthDay aMonthDay1, MonthDay aMonthDay2, String aMessage) {
@@ -3153,12 +3170,12 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link MonthDay}, if the contained value is after {@code aMonthDay2}.
      *
      * @param aMonthDay1Optional checked
-     * @param aMonthDay2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMonthDay2         compare value
+     * @param aMessage           message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsAfter(Optional<MonthDay> aMonthDay1Optional, MonthDay aMonthDay2, String aMessage) {
-        if(aMonthDay1Optional == null){
+        if (aMonthDay1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aMonthDay1Optional.isPresent()) {
@@ -3171,7 +3188,7 @@ public class DomainAssertions {
      *
      * @param aMonthDay1 checked
      * @param aMonthDay2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isBeforeOrEqualTo(MonthDay aMonthDay1, MonthDay aMonthDay2, String aMessage) {
@@ -3181,15 +3198,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing an {@link MonthDay}, if the contained value is before or equal to {@code aMonthDay2}.
+     * Checks an Optional containing an {@link MonthDay}, if the contained value is before or equal to {@code
+      * aMonthDay2}.
      *
      * @param aMonthDay1Optional checked
-     * @param aMonthDay2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMonthDay2         compare value
+     * @param aMessage           message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsBeforeOrEqualTo(Optional<MonthDay> aMonthDay1Optional, MonthDay aMonthDay2, String aMessage) {
-        if(aMonthDay1Optional == null){
+    public static void optionalIsBeforeOrEqualTo(Optional<MonthDay> aMonthDay1Optional, MonthDay aMonthDay2,
+     String aMessage) {
+        if (aMonthDay1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aMonthDay1Optional.isPresent()) {
@@ -3202,7 +3221,7 @@ public class DomainAssertions {
      *
      * @param aMonthDay1 checked
      * @param aMonthDay2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isAfterOrEqualTo(MonthDay aMonthDay1, MonthDay aMonthDay2, String aMessage) {
@@ -3212,15 +3231,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing an {@link MonthDay}, if the contained value is after or equal to {@code aMonthDay2}.
+     * Checks an Optional containing an {@link MonthDay}, if the contained value is after or equal to {@code
+      * aMonthDay2}.
      *
      * @param aMonthDay1Optional checked
-     * @param aMonthDay2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMonthDay2         compare value
+     * @param aMessage           message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsAfterOrEqualTo(Optional<MonthDay> aMonthDay1Optional, MonthDay aMonthDay2, String aMessage) {
-        if(aMonthDay1Optional == null){
+    public static void optionalIsAfterOrEqualTo(Optional<MonthDay> aMonthDay1Optional, MonthDay aMonthDay2,
+     String aMessage) {
+        if (aMonthDay1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aMonthDay1Optional.isPresent()) {
@@ -3232,7 +3253,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link OffsetTime} is in the future.
      *
      * @param anOffsetTime checked
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isFuture(OffsetTime anOffsetTime, String aMessage) {
@@ -3246,7 +3267,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link OffsetTime} is in the future or is the present.
      *
      * @param anOffsetTime checked
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isFutureOrPresent(OffsetTime anOffsetTime, String aMessage) {
@@ -3259,7 +3280,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link OffsetTime} is in the past.
      *
      * @param anOffsetTime checked
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isPast(OffsetTime anOffsetTime, String aMessage) {
@@ -3273,7 +3294,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link OffsetTime} is in the past or is the present.
      *
      * @param anOffsetTime checked
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isPastOrPresent(OffsetTime anOffsetTime, String aMessage) {
@@ -3287,7 +3308,7 @@ public class DomainAssertions {
      *
      * @param anOffsetTime1 checked
      * @param anOffsetTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isBefore(OffsetTime anOffsetTime1, OffsetTime anOffsetTime2, String aMessage) {
@@ -3300,12 +3321,13 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link OffsetTime}, if the contained value is before {@code anOffsetTime2}.
      *
      * @param anOffsetTime1Optional checked
-     * @param anOffsetTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param anOffsetTime2         compare value
+     * @param aMessage              message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsBefore(Optional<OffsetTime> anOffsetTime1Optional, OffsetTime anOffsetTime2, String aMessage) {
-        if(anOffsetTime1Optional == null){
+    public static void optionalIsBefore(Optional<OffsetTime> anOffsetTime1Optional, OffsetTime anOffsetTime2,
+     String aMessage) {
+        if (anOffsetTime1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (anOffsetTime1Optional.isPresent()) {
@@ -3318,7 +3340,7 @@ public class DomainAssertions {
      *
      * @param anOffsetTime1 checked
      * @param anOffsetTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isAfter(OffsetTime anOffsetTime1, OffsetTime anOffsetTime2, String aMessage) {
@@ -3331,12 +3353,13 @@ public class DomainAssertions {
      * Checks an Optional containing an {@link OffsetTime}, if the contained value is after {@code anOffsetTime2}.
      *
      * @param anOffsetTime1Optional checked
-     * @param anOffsetTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param anOffsetTime2         compare value
+     * @param aMessage              message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsAfter(Optional<OffsetTime> anOffsetTime1Optional, OffsetTime anOffsetTime2, String aMessage) {
-        if(anOffsetTime1Optional == null){
+    public static void optionalIsAfter(Optional<OffsetTime> anOffsetTime1Optional, OffsetTime anOffsetTime2,
+String aMessage) {
+        if (anOffsetTime1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (anOffsetTime1Optional.isPresent()) {
@@ -3349,7 +3372,7 @@ public class DomainAssertions {
      *
      * @param anOffsetTime1 checked
      * @param anOffsetTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isBeforeOrEqualTo(OffsetTime anOffsetTime1, OffsetTime anOffsetTime2, String aMessage) {
@@ -3359,15 +3382,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing an {@link OffsetTime}, if the contained value is before or equal to {@code anOffsetTime2}.
+     * Checks an Optional containing an {@link OffsetTime}, if the contained value is before or equal to {@code
+      * anOffsetTime2}.
      *
      * @param anOffsetTime1Optional checked
-     * @param anOffsetTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param anOffsetTime2         compare value
+     * @param aMessage              message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsBeforeOrEqualTo(Optional<OffsetTime> anOffsetTime1Optional, OffsetTime anOffsetTime2, String aMessage) {
-        if(anOffsetTime1Optional == null){
+    public static void optionalIsBeforeOrEqualTo(Optional<OffsetTime> anOffsetTime1Optional, OffsetTime anOffsetTime2
+    , String aMessage) {
+        if (anOffsetTime1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (anOffsetTime1Optional.isPresent()) {
@@ -3380,7 +3405,7 @@ public class DomainAssertions {
      *
      * @param anOffsetTime1 checked
      * @param anOffsetTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isAfterOrEqualTo(OffsetTime anOffsetTime1, OffsetTime anOffsetTime2, String aMessage) {
@@ -3393,12 +3418,13 @@ public class DomainAssertions {
      * Checks if an Optional containing an {@link OffsetTime} is after or equal to {@code anOffsetTime2}.
      *
      * @param anOffsetTime1Optional checked
-     * @param anOffsetTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param anOffsetTime2         compare value
+     * @param aMessage              message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsAfterOrEqualTo(Optional<OffsetTime> anOffsetTime1Optional, OffsetTime anOffsetTime2, String aMessage) {
-        if(anOffsetTime1Optional == null){
+    public static void optionalIsAfterOrEqualTo(Optional<OffsetTime> anOffsetTime1Optional, OffsetTime anOffsetTime2,
+     String aMessage) {
+        if (anOffsetTime1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (anOffsetTime1Optional.isPresent()) {
@@ -3410,7 +3436,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link OffsetDateTime} is in the future.
      *
      * @param anOffsetDateTime checked
-     * @param aMessage message for thrown exception
+     * @param aMessage         message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isFuture(OffsetDateTime anOffsetDateTime, String aMessage) {
@@ -3424,7 +3450,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link OffsetDateTime} is in the future or is the present.
      *
      * @param anOffsetDateTime checked
-     * @param aMessage message for thrown exception
+     * @param aMessage         message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isFutureOrPresent(OffsetDateTime anOffsetDateTime, String aMessage) {
@@ -3437,7 +3463,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link OffsetDateTime} is in the past.
      *
      * @param anOffsetDateTime checked
-     * @param aMessage message for thrown exception
+     * @param aMessage         message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isPast(OffsetDateTime anOffsetDateTime, String aMessage) {
@@ -3451,7 +3477,7 @@ public class DomainAssertions {
      * Checks, if of a given {@link OffsetDateTime} is in the past or is the present.
      *
      * @param anOffsetDateTime checked
-     * @param aMessage message for thrown exception
+     * @param aMessage         message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isPastOrPresent(OffsetDateTime anOffsetDateTime, String aMessage) {
@@ -3465,7 +3491,7 @@ public class DomainAssertions {
      *
      * @param anOffsetDateTime1 checked
      * @param anOffsetDateTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage          message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isBefore(OffsetDateTime anOffsetDateTime1, OffsetDateTime anOffsetDateTime2, String aMessage) {
@@ -3475,15 +3501,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing an {@link OffsetDateTime}, if the contained value is before {@code anOffsetDateTime2}.
+     * Checks an Optional containing an {@link OffsetDateTime}, if the contained value is before {@code
+      * anOffsetDateTime2}.
      *
      * @param anOffsetDateTime1Optional checked
-     * @param anOffsetDateTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param anOffsetDateTime2         compare value
+     * @param aMessage                  message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsBefore(Optional<OffsetDateTime> anOffsetDateTime1Optional, OffsetDateTime anOffsetDateTime2, String aMessage) {
-        if(anOffsetDateTime1Optional == null){
+    public static void optionalIsBefore(Optional<OffsetDateTime> anOffsetDateTime1Optional,
+     OffsetDateTime anOffsetDateTime2, String aMessage) {
+        if (anOffsetDateTime1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (anOffsetDateTime1Optional.isPresent()) {
@@ -3496,7 +3524,7 @@ public class DomainAssertions {
      *
      * @param anOffsetDateTime1 checked
      * @param anOffsetDateTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage          message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isAfter(OffsetDateTime anOffsetDateTime1, OffsetDateTime anOffsetDateTime2, String aMessage) {
@@ -3506,15 +3534,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing an {@link OffsetDateTime}, if the contained value is after {@code anOffsetDateTime2}.
+     * Checks an Optional containing an {@link OffsetDateTime}, if the contained value is after {@code
+      * anOffsetDateTime2}.
      *
      * @param anOffsetDateTime1Optional checked
-     * @param anOffsetDateTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param anOffsetDateTime2         compare value
+     * @param aMessage                  message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsAfter(Optional<OffsetDateTime> anOffsetDateTime1Optional, OffsetDateTime anOffsetDateTime2, String aMessage) {
-        if(anOffsetDateTime1Optional == null){
+    public static void optionalIsAfter(Optional<OffsetDateTime> anOffsetDateTime1Optional,
+     OffsetDateTime anOffsetDateTime2, String aMessage) {
+        if (anOffsetDateTime1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (anOffsetDateTime1Optional.isPresent()) {
@@ -3527,25 +3557,28 @@ public class DomainAssertions {
      *
      * @param anOffsetDateTime1 checked
      * @param anOffsetDateTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage          message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void isBeforeOrEqualTo(OffsetDateTime anOffsetDateTime1, OffsetDateTime anOffsetDateTime2, String aMessage) {
+    public static void isBeforeOrEqualTo(OffsetDateTime anOffsetDateTime1, OffsetDateTime anOffsetDateTime2,
+String aMessage) {
         if (anOffsetDateTime1 != null && anOffsetDateTime2 != null && anOffsetDateTime1.isAfter(anOffsetDateTime2)) {
             throw new DomainAssertionException(aMessage);
         }
     }
 
     /**
-     * Checks an Optional containing an {@link OffsetDateTime}, if the contained value is before or equal to {@code anOffsetDateTime2}.
+     * Checks an Optional containing an {@link OffsetDateTime}, if the contained value is before or equal to {@code
+      * anOffsetDateTime2}.
      *
      * @param anOffsetDateTime1Optional checked
-     * @param anOffsetDateTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param anOffsetDateTime2         compare value
+     * @param aMessage                  message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsBeforeOrEqualTo(Optional<OffsetDateTime> anOffsetDateTime1Optional, OffsetDateTime anOffsetDateTime2, String aMessage) {
-        if(anOffsetDateTime1Optional == null){
+    public static void optionalIsBeforeOrEqualTo(Optional<OffsetDateTime> anOffsetDateTime1Optional,
+     OffsetDateTime anOffsetDateTime2, String aMessage) {
+        if (anOffsetDateTime1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (anOffsetDateTime1Optional.isPresent()) {
@@ -3558,25 +3591,28 @@ public class DomainAssertions {
      *
      * @param anOffsetDateTime1 checked
      * @param anOffsetDateTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param aMessage          message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void isAfterOrEqualTo(OffsetDateTime anOffsetDateTime1, OffsetDateTime anOffsetDateTime2, String aMessage) {
+    public static void isAfterOrEqualTo(OffsetDateTime anOffsetDateTime1, OffsetDateTime anOffsetDateTime2,
+     String aMessage) {
         if (anOffsetDateTime1 != null && anOffsetDateTime2 != null && anOffsetDateTime1.isBefore(anOffsetDateTime2)) {
             throw new DomainAssertionException(aMessage);
         }
     }
 
     /**
-     * Checks an Optional containing an {@link OffsetDateTime}, if the contained value is after or equal to {@code anOffsetDateTime2}.
+     * Checks an Optional containing an {@link OffsetDateTime}, if the contained value is after or equal to {@code
+      * anOffsetDateTime2}.
      *
      * @param anOffsetDateTime1Optional checked
-     * @param anOffsetDateTime2 compare value
-     * @param aMessage message for thrown exception
+     * @param anOffsetDateTime2         compare value
+     * @param aMessage                  message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsAfterOrEqualTo(Optional<OffsetDateTime> anOffsetDateTime1Optional, OffsetDateTime anOffsetDateTime2, String aMessage) {
-        if(anOffsetDateTime1Optional == null){
+    public static void optionalIsAfterOrEqualTo(Optional<OffsetDateTime> anOffsetDateTime1Optional,
+ OffsetDateTime anOffsetDateTime2, String aMessage) {
+        if (anOffsetDateTime1Optional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (anOffsetDateTime1Optional.isPresent()) {
@@ -3587,7 +3623,7 @@ public class DomainAssertions {
     /**
      * Check, if a given {@link String} is not empty. {@code null} is considered as empty in this case.
      *
-     * @param aString checked
+     * @param aString  checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -3601,11 +3637,11 @@ public class DomainAssertions {
      * Checks an Optional containing a {@link String}, if the contained String is not empty.
      *
      * @param aStringOptional checked
-     * @param aMessage message for thrown exception
+     * @param aMessage        message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsNotEmpty(Optional<String> aStringOptional, String aMessage) {
-        if(aStringOptional == null){
+        if (aStringOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aStringOptional.isPresent()) {
@@ -3616,7 +3652,7 @@ public class DomainAssertions {
     /**
      * Checks, if a given {@link String} is a valid email address.
      *
-     * @param aString checked
+     * @param aString  checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -3628,12 +3664,13 @@ public class DomainAssertions {
 
     /**
      * Checks an Optional containing a {@link String}, if the contained String is a valid email address.
+     *
      * @param aStringOptional checked
-     * @param aMessage message for thrown exception
+     * @param aMessage        message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsValidEmail(Optional<String> aStringOptional, String aMessage) {
-        if(aStringOptional == null){
+        if (aStringOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aStringOptional.isPresent()) {
@@ -3644,7 +3681,7 @@ public class DomainAssertions {
     /**
      * Checks, if a given {@link String} is not blank. {@code null} is considered to be blank.
      *
-     * @param aString checked
+     * @param aString  checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -3658,11 +3695,11 @@ public class DomainAssertions {
      * Checks an Optional containing a {@link String}, if the contained String is not blank.
      *
      * @param aStringOptional checked
-     * @param aMessage message for thrown exception
+     * @param aMessage        message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsNotBlank(Optional<String> aStringOptional, String aMessage) {
-        if(aStringOptional == null){
+        if (aStringOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aStringOptional.isPresent()) {
@@ -3673,7 +3710,7 @@ public class DomainAssertions {
     /**
      * Checks an array, if it is not empty. {@code null} is considered to be empty.
      *
-     * @param array checked
+     * @param array    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -3687,7 +3724,7 @@ public class DomainAssertions {
      * Checks a {@link Collection}, if it is not empty. {@code null} is considered to be empty.
      *
      * @param collection checked
-     * @param aMessage message for thrown exception
+     * @param aMessage   message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isNotEmptyIterable(Collection collection, String aMessage) {
@@ -3699,7 +3736,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Map}, if it is not empty. {@code null} is considered to be empty.
      *
-     * @param map checked
+     * @param map      checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -3711,6 +3748,7 @@ public class DomainAssertions {
 
     /**
      * Checks an object reference, if is null
+     *
      * @param anObject checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
@@ -3723,6 +3761,7 @@ public class DomainAssertions {
 
     /**
      * Checks an object reference, if is not null
+     *
      * @param anObject checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
@@ -3736,7 +3775,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link double}, if the value is in the specified range (inclusive marginal values).
      *
-     * @param aValue checked
+     * @param aValue   checked
      * @param aMinimum lower bound
      * @param aMaximum upper bound
      * @param aMessage message for thrown exception
@@ -3751,7 +3790,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link float}, if the value is in the specified range (inclusive marginal values).
      *
-     * @param aValue checked
+     * @param aValue   checked
      * @param aMinimum lower bound
      * @param aMaximum upper bound
      * @param aMessage message for thrown exception
@@ -3766,7 +3805,7 @@ public class DomainAssertions {
     /**
      * Checks an {@link int}, if the value is in the specified range (inclusive marginal values).
      *
-     * @param aValue checked
+     * @param aValue   checked
      * @param aMinimum lower bound
      * @param aMaximum upper bound
      * @param aMessage message for thrown exception
@@ -3781,7 +3820,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link byte}, if the value is in the specified range (inclusive marginal values).
      *
-     * @param aValue checked
+     * @param aValue   checked
      * @param aMinimum lower bound
      * @param aMaximum upper bound
      * @param aMessage message for thrown exception
@@ -3796,7 +3835,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link short}, if the value is in the specified range (inclusive marginal values).
      *
-     * @param aValue checked
+     * @param aValue   checked
      * @param aMinimum lower bound
      * @param aMaximum upper bound
      * @param aMessage message for thrown exception
@@ -3811,7 +3850,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link long}, if the value is in the specified range (inclusive marginal values).
      *
-     * @param aValue checked
+     * @param aValue   checked
      * @param aMinimum lower bound
      * @param aMaximum upper bound
      * @param aMessage message for thrown exception
@@ -3826,7 +3865,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Long}, if the value is in the specified range (inclusive marginal values).
      *
-     * @param aValue checked
+     * @param aValue   checked
      * @param aMinimum lower bound
      * @param aMaximum upper bound
      * @param aMessage message for thrown exception
@@ -3839,16 +3878,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link Long}, if the contained value is in the specified range (inclusive marginal values).
+     * Checks an Optional containing a {@link Long}, if the contained value is in the specified range (inclusive
+     * marginal values).
      *
      * @param aValueOptional checked
-     * @param aMinimum lower bound
-     * @param aMaximum upper bound
-     * @param aMessage message for thrown exception
+     * @param aMinimum       lower bound
+     * @param aMaximum       upper bound
+     * @param aMessage       message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsInRange(Optional<Long> aValueOptional, long aMinimum, long aMaximum, String aMessage) {
-        if(aValueOptional == null){
+        if (aValueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aValueOptional.isPresent()) {
@@ -3859,7 +3899,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link BigDecimal}, if the value is in the specified range (inclusive marginal values).
      *
-     * @param aValue checked
+     * @param aValue   checked
      * @param aMinimum lower bound
      * @param aMaximum upper bound
      * @param aMessage message for thrown exception
@@ -3872,16 +3912,18 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link BigDecimal}, if the contained value is in the specified range (inclusive marginal values).
+     * Checks an Optional containing a {@link BigDecimal}, if the contained value is in the specified range
+     * (inclusive marginal values).
      *
      * @param aValueOptional checked
-     * @param aMinimum lower bound
-     * @param aMaximum upper bound
-     * @param aMessage message for thrown exception
+     * @param aMinimum       lower bound
+     * @param aMaximum       upper bound
+     * @param aMessage       message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsInRange(Optional<BigDecimal> aValueOptional, BigDecimal aMinimum, BigDecimal aMaximum, String aMessage) {
-        if(aValueOptional == null){
+    public static void optionalIsInRange(Optional<BigDecimal> aValueOptional, BigDecimal aMinimum,
+ BigDecimal aMaximum, String aMessage) {
+        if (aValueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aValueOptional.isPresent()) {
@@ -3892,7 +3934,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link BigInteger}, if the value is in the specified range (inclusive marginal values).
      *
-     * @param aValue checked
+     * @param aValue   checked
      * @param aMinimum lower bound
      * @param aMaximum upper bound
      * @param aMessage message for thrown exception
@@ -3905,16 +3947,18 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link BigInteger}, if the contained value is in the specified range (inclusive marginal values).
+     * Checks an Optional containing a {@link BigInteger}, if the contained value is in the specified range
+     * (inclusive marginal values).
      *
      * @param aValueOptional checked
-     * @param aMinimum lower bound
-     * @param aMaximum upper bound
-     * @param aMessage message for thrown exception
+     * @param aMinimum       lower bound
+     * @param aMaximum       upper bound
+     * @param aMessage       message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsInRange(Optional<BigInteger> aValueOptional, BigInteger aMinimum, BigInteger aMaximum, String aMessage) {
-        if(aValueOptional == null){
+    public static void optionalIsInRange(Optional<BigInteger> aValueOptional, BigInteger aMinimum,
+     BigInteger aMaximum, String aMessage) {
+        if (aValueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aValueOptional.isPresent()) {
@@ -3923,16 +3967,18 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link Double}, if the contained value is in the specified range (inclusive marginal values).
+     * Checks an Optional containing a {@link Double}, if the contained value is in the specified range (inclusive
+     * marginal values).
      *
      * @param aValueOptional checked
-     * @param aMinimum lower bound
-     * @param aMaximum upper bound
-     * @param aMessage message for thrown exception
+     * @param aMinimum       lower bound
+     * @param aMaximum       upper bound
+     * @param aMessage       message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsInRange(Optional<Double> aValueOptional, double aMinimum, double aMaximum, String aMessage) {
-        if(aValueOptional == null){
+    public static void optionalIsInRange(Optional<Double> aValueOptional, double aMinimum, double aMaximum,
+     String aMessage) {
+        if (aValueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aValueOptional.isPresent()) {
@@ -3941,16 +3987,18 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link Float}, if the contained value is in the specified range (inclusive marginal values).
+     * Checks an Optional containing a {@link Float}, if the contained value is in the specified range (inclusive
+     * marginal values).
      *
      * @param aValueOptional checked
-     * @param aMinimum lower bound
-     * @param aMaximum upper bound
-     * @param aMessage message for thrown exception
+     * @param aMinimum       lower bound
+     * @param aMaximum       upper bound
+     * @param aMessage       message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsInRange(Optional<Float> aValueOptional, float aMinimum, float aMaximum, String aMessage) {
-        if(aValueOptional == null){
+    public static void optionalIsInRange(Optional<Float> aValueOptional, float aMinimum, float aMaximum,
+     String aMessage) {
+        if (aValueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aValueOptional.isPresent()) {
@@ -3959,16 +4007,18 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing an {@link Integer}, if the contained value is in the specified range (inclusive marginal values).
+     * Checks an Optional containing an {@link Integer}, if the contained value is in the specified range (inclusive
+     * marginal values).
      *
      * @param aValueOptional checked
-     * @param aMinimum lower bound
-     * @param aMaximum upper bound
-     * @param aMessage message for thrown exception
+     * @param aMinimum       lower bound
+     * @param aMaximum       upper bound
+     * @param aMessage       message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsInRange(Optional<Integer> aValueOptional, int aMinimum, int aMaximum, String aMessage) {
-        if(aValueOptional == null){
+    public static void optionalIsInRange(Optional<Integer> aValueOptional, int aMinimum, int aMaximum,
+     String aMessage) {
+        if (aValueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aValueOptional.isPresent()) {
@@ -3977,16 +4027,18 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing an {@link Short}, if the contained value is in the specified range (inclusive marginal values).
+     * Checks an Optional containing an {@link Short}, if the contained value is in the specified range (inclusive
+     * marginal values).
      *
      * @param aValueOptional checked
-     * @param aMinimum lower bound
-     * @param aMaximum upper bound
-     * @param aMessage message for thrown exception
+     * @param aMinimum       lower bound
+     * @param aMaximum       upper bound
+     * @param aMessage       message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsInRange(Optional<Short> aValueOptional, short aMinimum, short aMaximum, String aMessage) {
-        if(aValueOptional == null){
+    public static void optionalIsInRange(Optional<Short> aValueOptional, short aMinimum, short aMaximum,
+     String aMessage) {
+        if (aValueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aValueOptional.isPresent()) {
@@ -3995,16 +4047,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing an {@link Byte}, if the contained value is in the specified range (inclusive marginal values).
+     * Checks an Optional containing an {@link Byte}, if the contained value is in the specified range (inclusive
+     * marginal values).
      *
      * @param aValueOptional checked
-     * @param aMinimum lower bound
-     * @param aMaximum upper bound
-     * @param aMessage message for thrown exception
+     * @param aMinimum       lower bound
+     * @param aMaximum       upper bound
+     * @param aMessage       message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsInRange(Optional<Byte> aValueOptional, byte aMinimum, byte aMaximum, String aMessage) {
-        if(aValueOptional == null){
+        if (aValueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (aValueOptional.isPresent()) {
@@ -4028,8 +4081,8 @@ public class DomainAssertions {
     /**
      * Checks a {@link String}, if it matches a given regular expression.
      *
-     * @param value checked
-     * @param regEx regular expression to be matched
+     * @param value    checked
+     * @param regEx    regular expression to be matched
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4043,12 +4096,12 @@ public class DomainAssertions {
      * Checks an Optional containing a {@link String}, if the contained String  it matches a given regular expression.
      *
      * @param valueOptional checked
-     * @param regEx regular expression to be matched
-     * @param aMessage message for thrown exception
+     * @param regEx         regular expression to be matched
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalRegEx(Optional<String> valueOptional, String regEx, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -4059,9 +4112,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link byte}, if it is greater than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterThan(byte value, byte compareValue, String aMessage) {
@@ -4073,9 +4126,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link byte}, if it is less than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessThan(byte value, byte compareValue, String aMessage) {
@@ -4087,9 +4140,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link byte}, if it is greater than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterOrEqual(byte value, byte compareValue, String aMessage) {
@@ -4101,9 +4154,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link byte}, if it is less than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessOrEqual(byte value, byte compareValue, String aMessage) {
@@ -4115,7 +4168,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link byte}, if it is positive or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4128,7 +4181,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link byte}, if it is positive
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4141,7 +4194,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link byte}, if it is negative or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4154,7 +4207,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link byte}, if it is negative
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4167,9 +4220,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link short}, if it is greater than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterThan(short value, short compareValue, String aMessage) {
@@ -4181,9 +4234,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link short}, if it is less than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessThan(short value, short compareValue, String aMessage) {
@@ -4195,9 +4248,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link short}, if it is greater than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterOrEqual(short value, short compareValue, String aMessage) {
@@ -4209,9 +4262,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link short}, if it is less than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessOrEqual(short value, short compareValue, String aMessage) {
@@ -4223,7 +4276,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link short}, if it is positive or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4236,7 +4289,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link short}, if it is positive
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4249,7 +4302,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link short}, if it is negative or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4262,7 +4315,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link short}, if it is negative
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4275,9 +4328,9 @@ public class DomainAssertions {
     /**
      * Checks an {@link int}, if it is greater than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterThan(int value, int compareValue, String aMessage) {
@@ -4289,9 +4342,9 @@ public class DomainAssertions {
     /**
      * Checks an {@link int}, if it is less than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessThan(int value, int compareValue, String aMessage) {
@@ -4303,9 +4356,9 @@ public class DomainAssertions {
     /**
      * Checks an {@link int}, if it is greater than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterOrEqual(int value, int compareValue, String aMessage) {
@@ -4317,9 +4370,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link int}, if it is less than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessOrEqual(int value, int compareValue, String aMessage) {
@@ -4331,7 +4384,7 @@ public class DomainAssertions {
     /**
      * Checks an {@link int}, if it is positive or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4344,7 +4397,7 @@ public class DomainAssertions {
     /**
      * Checks an {@link int}, if it is positive
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4357,7 +4410,7 @@ public class DomainAssertions {
     /**
      * Checks an {@link int}, if it is negative or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4370,7 +4423,7 @@ public class DomainAssertions {
     /**
      * Checks an {@link int}, if it is negative
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4383,9 +4436,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link long}, if it is greater than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterThan(long value, long compareValue, String aMessage) {
@@ -4397,9 +4450,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link long}, if it is less than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessThan(long value, long compareValue, String aMessage) {
@@ -4411,9 +4464,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link long}, if it is greater than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterOrEqual(long value, long compareValue, String aMessage) {
@@ -4425,9 +4478,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link long}, if it is less than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessOrEqual(long value, long compareValue, String aMessage) {
@@ -4439,7 +4492,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link long}, if it is positive or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4452,7 +4505,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link long}, if it is positive
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4465,7 +4518,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link long}, if it is negative or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4478,7 +4531,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link long}, if it is negative
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4491,9 +4544,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link double}, if it is greater than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterThan(double value, double compareValue, String aMessage) {
@@ -4505,9 +4558,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link double}, if it is less than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessThan(double value, double compareValue, String aMessage) {
@@ -4519,9 +4572,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link double}, if it is greater than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterOrEqual(double value, double compareValue, String aMessage) {
@@ -4533,9 +4586,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link double}, if it is less than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessOrEqual(double value, double compareValue, String aMessage) {
@@ -4547,7 +4600,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link double}, if it is positive or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4560,7 +4613,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link double}, if it is positive
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4573,7 +4626,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link double}, if it is negative or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4586,7 +4639,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link double}, if it is negative
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4599,9 +4652,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link float}, if it is greater than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterThan(float value, float compareValue, String aMessage) {
@@ -4613,9 +4666,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link float}, if it is less than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessThan(float value, float compareValue, String aMessage) {
@@ -4627,9 +4680,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link float}, if it is greater than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterOrEqual(float value, float compareValue, String aMessage) {
@@ -4641,9 +4694,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link float}, if it is less than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessOrEqual(float value, float compareValue, String aMessage) {
@@ -4655,7 +4708,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link float}, if it is positive or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4668,7 +4721,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link float}, if it is positive
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4681,7 +4734,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link float}, if it is negative or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4694,7 +4747,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link float}, if it is negative
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4707,9 +4760,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Byte}, if it is greater than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterThan(Byte value, Byte compareValue, String aMessage) {
@@ -4723,12 +4776,12 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsGreaterThan(Optional<Byte> valueOptional, Byte compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -4739,9 +4792,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Byte}, if it is less than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessThan(Byte value, Byte compareValue, String aMessage) {
@@ -4755,12 +4808,12 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsLessThan(Optional<Byte> valueOptional, Byte compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -4771,9 +4824,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Byte}, if it is greater than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterOrEqual(Byte value, Byte compareValue, String aMessage) {
@@ -4783,16 +4836,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link Byte}, if the contained value is greater than or equal to a given comparative value.
+     * Checks an Optional containing a {@link Byte}, if the contained value is greater than or equal to a given
+     * comparative value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsGreaterOrEqual(Optional<Byte> valueOptional, Byte compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -4803,9 +4857,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Byte}, if it is less than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessOrEqual(Byte value, Byte compareValue, String aMessage) {
@@ -4815,16 +4869,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link Byte}, if the contained value is less than or equal to a given comparative value.
+     * Checks an Optional containing a {@link Byte}, if the contained value is less than or equal to a given
+     * comparative value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsLessOrEqual(Optional<Byte> valueOptional, Byte compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -4835,7 +4890,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Byte}, if it is positive or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4853,11 +4908,11 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param aMessage message for thrown exception
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsPositiveOrZero(Optional valueOptional, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -4880,7 +4935,8 @@ public class DomainAssertions {
                 isPositiveOrZero((Float) value, aMessage);
             } else {
                 throw new IllegalArgumentException("valueOptional parameter must contain " +
-                    "Byte, Short, Integer, Long, BigDecimal, BigInteger, Double or Float. Other types are not supported!");
+                    "Byte, Short, Integer, Long, BigDecimal, BigInteger, Double or Float. Other types are not " +
+                     "supported!");
             }
         }
     }
@@ -4893,11 +4949,11 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param aMessage message for thrown exception
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsPositive(Optional valueOptional, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -4920,7 +4976,8 @@ public class DomainAssertions {
                 isPositive((Float) value, aMessage);
             } else {
                 throw new IllegalArgumentException("valueOptional parameter must contain " +
-                    "Byte, Short, Integer, Long, BigDecimal, BigInteger, Double or Float. Other types are not supported!");
+                    "Byte, Short, Integer, Long, BigDecimal, BigInteger, Double or Float. Other types are not " +
+                    "supported!");
             }
         }
     }
@@ -4928,7 +4985,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Byte}, if it is positive
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4941,7 +4998,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Byte}, if it is negative or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -4959,11 +5016,11 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param aMessage message for thrown exception
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsNegativeOrZero(Optional valueOptional, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -4986,7 +5043,8 @@ public class DomainAssertions {
                 isNegativeOrZero((Float) value, aMessage);
             } else {
                 throw new IllegalArgumentException("valueOptional parameter must contain " +
-                    "Byte, Short, Integer, Long, BigDecimal, BigInteger, Double or Float. Other types are not supported!");
+                    "Byte, Short, Integer, Long, BigDecimal, BigInteger, Double or Float. Other types are not " +
+                     "supported!");
             }
         }
     }
@@ -4994,7 +5052,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Byte}, if it is negative
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5012,11 +5070,11 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param aMessage message for thrown exception
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsNegative(Optional valueOptional, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5039,7 +5097,8 @@ public class DomainAssertions {
                 isNegative((Float) value, aMessage);
             } else {
                 throw new IllegalArgumentException("valueOptional parameter must contain " +
-                    "Byte, Short, Integer, Long, BigDecimal, BigInteger, Double or Float. Other types are not supported!");
+                    "Byte, Short, Integer, Long, BigDecimal, BigInteger, Double or Float. Other types are not " +
+                     "supported!");
             }
         }
     }
@@ -5047,9 +5106,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Short}, if it is greater than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterThan(Short value, Short compareValue, String aMessage) {
@@ -5063,12 +5122,12 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsGreaterThan(Optional<Short> valueOptional, Short compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5079,9 +5138,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Short}, if it is less than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessThan(Short value, Short compareValue, String aMessage) {
@@ -5095,12 +5154,12 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsLessThan(Optional<Short> valueOptional, Short compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5111,9 +5170,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Short}, if it is greater than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterOrEqual(Short value, Short compareValue, String aMessage) {
@@ -5123,16 +5182,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link Short}, if the contained value is greater than or equal to a given comparative value.
+     * Checks an Optional containing a {@link Short}, if the contained value is greater than or equal to a given
+     * comparative value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsGreaterOrEqual(Optional<Short> valueOptional, Short compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5143,9 +5203,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Short}, if it is less than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessOrEqual(Short value, Short compareValue, String aMessage) {
@@ -5155,16 +5215,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link Short}, if the contained value is less than or equal to a given comparative value.
+     * Checks an Optional containing a {@link Short}, if the contained value is less than or equal to a given
+     * comparative value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsLessOrEqual(Optional<Short> valueOptional, Short compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5175,7 +5236,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Short}, if it is positive or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5188,7 +5249,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Short}, if it is positive
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5201,7 +5262,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Short}, if it is negative or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5214,7 +5275,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Short}, if it is negative
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5227,9 +5288,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Integer}, if it is greater than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterThan(Integer value, Integer compareValue, String aMessage) {
@@ -5239,15 +5300,16 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing an {@link Integer}, if the contained value is greater than a given comparative value.
+     * Checks an Optional containing an {@link Integer}, if the contained value is greater than a given comparative
+     * value.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsGreaterThan(Optional<Integer> valueOptional, Integer compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5258,9 +5320,9 @@ public class DomainAssertions {
     /**
      * Checks an {@link Integer}, if it is less than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessThan(Integer value, Integer compareValue, String aMessage) {
@@ -5274,12 +5336,12 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsLessThan(Optional<Integer> valueOptional, Integer compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5290,9 +5352,9 @@ public class DomainAssertions {
     /**
      * Checks an {@link Integer}, if it is greater than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterOrEqual(Integer value, Integer compareValue, String aMessage) {
@@ -5302,16 +5364,18 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link Integer}, if the contained value is greater than or equal to a given comparative value.
+     * Checks an Optional containing a {@link Integer}, if the contained value is greater than or equal to a given
+     * comparative value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsGreaterOrEqual(Optional<Integer> valueOptional, Integer compareValue, String aMessage) {
-        if(valueOptional == null){
+    public static void optionalIsGreaterOrEqual(Optional<Integer> valueOptional, Integer compareValue,
+ String aMessage) {
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5322,9 +5386,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Integer}, if it is less than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessOrEqual(Integer value, Integer compareValue, String aMessage) {
@@ -5334,16 +5398,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing an {@link Integer}, if the contained value is less than or equal to a given comparative value.
+     * Checks an Optional containing an {@link Integer}, if the contained value is less than or equal to a given
+     * comparative value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsLessOrEqual(Optional<Integer> valueOptional, Integer compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5354,7 +5419,7 @@ public class DomainAssertions {
     /**
      * Checks an {@link Integer}, if it is positive or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5367,7 +5432,7 @@ public class DomainAssertions {
     /**
      * Checks an {@link Integer}, if it is positive
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5380,7 +5445,7 @@ public class DomainAssertions {
     /**
      * Checks an {@link Integer}, if it is negative or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5393,7 +5458,7 @@ public class DomainAssertions {
     /**
      * Checks an {@link Integer}, if it is negative
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5406,9 +5471,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Long}, if it is greater than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterThan(Long value, Long compareValue, String aMessage) {
@@ -5422,12 +5487,12 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsGreaterThan(Optional<Long> valueOptional, Long compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5438,9 +5503,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Long}, if it is less than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessThan(Long value, Long compareValue, String aMessage) {
@@ -5454,12 +5519,12 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsLessThan(Optional<Long> valueOptional, Long compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5470,9 +5535,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Long}, if it is greater than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterOrEqual(Long value, Long compareValue, String aMessage) {
@@ -5482,16 +5547,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link Long}, if the contained value is greater than or equal to a given comparative value.
+     * Checks an Optional containing a {@link Long}, if the contained value is greater than or equal to a given
+     * comparative value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsGreaterOrEqual(Optional<Long> valueOptional, Long compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5502,9 +5568,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Long}, if it is less than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessOrEqual(Long value, Long compareValue, String aMessage) {
@@ -5514,16 +5580,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link Long}, if the contained value is less than or equal to a given comparative value.
+     * Checks an Optional containing a {@link Long}, if the contained value is less than or equal to a given
+     * comparative value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsLessOrEqual(Optional<Long> valueOptional, Long compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5534,7 +5601,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Long}, if it is positive or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5547,7 +5614,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Long}, if it is positive
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5560,7 +5627,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Long}, if it is negative or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5573,7 +5640,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Long}, if it is negative
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5586,9 +5653,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Double}, if it is greater than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterThan(Double value, Double compareValue, String aMessage) {
@@ -5602,12 +5669,12 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsGreaterThan(Optional<Double> valueOptional, Double compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5618,9 +5685,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Double}, if it is less than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessThan(Double value, Double compareValue, String aMessage) {
@@ -5634,12 +5701,12 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsLessThan(Optional<Double> valueOptional, Double compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5650,9 +5717,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Double}, if it is greater than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterOrEqual(Double value, Double compareValue, String aMessage) {
@@ -5662,16 +5729,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link Double}, if the contained value is greater than or equal to a given comparative value.
+     * Checks an Optional containing a {@link Double}, if the contained value is greater than or equal to a given
+     * comparative value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsGreaterOrEqual(Optional<Double> valueOptional, Double compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5682,9 +5750,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Double}, if it is less than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessOrEqual(Double value, Double compareValue, String aMessage) {
@@ -5694,16 +5762,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link Double}, if the contained value is less than or equal to a given comparative value.
+     * Checks an Optional containing a {@link Double}, if the contained value is less than or equal to a given
+     * comparative value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsLessOrEqual(Optional<Double> valueOptional, Double compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5714,7 +5783,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Double}, if it is positive or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5727,7 +5796,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Double}, if it is positive
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5740,7 +5809,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Double}, if it is negative or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5753,7 +5822,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Double}, if it is negative
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5766,9 +5835,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Float}, if it is greater than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterThan(Float value, Float compareValue, String aMessage) {
@@ -5782,12 +5851,12 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsGreaterThan(Optional<Float> valueOptional, Float compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5798,9 +5867,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Float}, if it is less than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessThan(Float value, Float compareValue, String aMessage) {
@@ -5814,12 +5883,12 @@ public class DomainAssertions {
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsLessThan(Optional<Float> valueOptional, Float compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5830,9 +5899,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Float}, if it is greater than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterOrEqual(Float value, Float compareValue, String aMessage) {
@@ -5842,16 +5911,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link Float}, if the contained value is greater than or equal to a given comparative value.
+     * Checks an Optional containing a {@link Float}, if the contained value is greater than or equal to a given
+     * comparative value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsGreaterOrEqual(Optional<Float> valueOptional, Float compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5862,9 +5932,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link Float}, if it is less than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessOrEqual(Float value, Float compareValue, String aMessage) {
@@ -5874,16 +5944,17 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link Float}, if the contained value is less than or equal to a given comparative value.
+     * Checks an Optional containing a {@link Float}, if the contained value is less than or equal to a given
+     * comparative value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void optionalIsLessOrEqual(Optional<Float> valueOptional, Float compareValue, String aMessage) {
-        if(valueOptional == null){
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5894,7 +5965,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Float}, if it is positive or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5907,7 +5978,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Float}, if it is positive
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5920,7 +5991,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Float}, if it is negative or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5933,7 +6004,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link Float}, if it is negative
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -5946,9 +6017,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link BigDecimal}, if it is greater than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterThan(BigDecimal value, BigDecimal compareValue, String aMessage) {
@@ -5958,16 +6029,18 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link BigDecimal}, if the contained value is greater than a given comparative value.
+     * Checks an Optional containing a {@link BigDecimal}, if the contained value is greater than a given comparative
+     * value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsGreaterThan(Optional<BigDecimal> valueOptional, BigDecimal compareValue, String aMessage) {
-        if(valueOptional == null){
+    public static void optionalIsGreaterThan(Optional<BigDecimal> valueOptional, BigDecimal compareValue,
+                                             String aMessage) {
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -5978,9 +6051,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link BigDecimal}, if it is less than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessThan(BigDecimal value, BigDecimal compareValue, String aMessage) {
@@ -5990,16 +6063,18 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link BigDecimal}, if the contained value is less than a given comparative value.
+     * Checks an Optional containing a {@link BigDecimal}, if the contained value is less than a given comparative
+     * value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsLessThan(Optional<BigDecimal> valueOptional, BigDecimal compareValue, String aMessage) {
-        if(valueOptional == null){
+    public static void optionalIsLessThan(Optional<BigDecimal> valueOptional, BigDecimal compareValue,
+     String aMessage) {
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -6010,9 +6085,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link BigDecimal}, if it is greater than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterOrEqual(BigDecimal value, BigDecimal compareValue, String aMessage) {
@@ -6022,16 +6097,18 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link BigDecimal}, if the contained value is greater than or equal to a given comparative value.
+     * Checks an Optional containing a {@link BigDecimal}, if the contained value is greater than or equal to a given
+      * comparative value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsGreaterOrEqual(Optional<BigDecimal> valueOptional, BigDecimal compareValue, String aMessage) {
-        if(valueOptional == null){
+    public static void optionalIsGreaterOrEqual(Optional<BigDecimal> valueOptional, BigDecimal compareValue,
+ String aMessage) {
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -6042,9 +6119,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link BigDecimal}, if it is less than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessOrEqual(BigDecimal value, BigDecimal compareValue, String aMessage) {
@@ -6054,16 +6131,18 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link BigDecimal}, if the contained value is less than or equal to a given comparative value.
+     * Checks an Optional containing a {@link BigDecimal}, if the contained value is less than or equal to a given
+     * comparative value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsLessOrEqual(Optional<BigDecimal> valueOptional, BigDecimal compareValue, String aMessage) {
-        if(valueOptional == null){
+    public static void optionalIsLessOrEqual(Optional<BigDecimal> valueOptional, BigDecimal compareValue,
+                                             String aMessage) {
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -6074,7 +6153,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link BigDecimal}, if it is positive or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -6087,7 +6166,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link BigDecimal}, if it is positive
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -6100,7 +6179,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link BigDecimal}, if it is negative or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -6113,7 +6192,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link BigDecimal}, if it is negative
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -6126,9 +6205,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link BigInteger}, if it is greater than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterThan(BigInteger value, BigInteger compareValue, String aMessage) {
@@ -6138,16 +6217,18 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link BigInteger}, if the contained value is greater than a given comparative value.
+     * Checks an Optional containing a {@link BigInteger}, if the contained value is greater than a given comparative
+      * value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsGreaterThan(Optional<BigInteger> valueOptional, BigInteger compareValue, String aMessage) {
-        if(valueOptional == null){
+    public static void optionalIsGreaterThan(Optional<BigInteger> valueOptional, BigInteger compareValue,
+String aMessage) {
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -6158,9 +6239,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link BigInteger}, if it is less than a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessThan(BigInteger value, BigInteger compareValue, String aMessage) {
@@ -6170,16 +6251,18 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link BigInteger}, if the contained value is less than a given comparative value.
+     * Checks an Optional containing a {@link BigInteger}, if the contained value is less than a given comparative
+     * value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsLessThan(Optional<BigInteger> valueOptional, BigInteger compareValue, String aMessage) {
-        if(valueOptional == null){
+    public static void optionalIsLessThan(Optional<BigInteger> valueOptional, BigInteger compareValue,
+     String aMessage) {
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -6190,9 +6273,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link BigInteger}, if it is greater than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isGreaterOrEqual(BigInteger value, BigInteger compareValue, String aMessage) {
@@ -6202,16 +6285,18 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link BigInteger}, if the contained value is greater than or equal to a given comparative value.
+     * Checks an Optional containing a {@link BigInteger}, if the contained value is greater than or equal to a given
+      * comparative value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsGreaterOrEqual(Optional<BigInteger> valueOptional, BigInteger compareValue, String aMessage) {
-        if(valueOptional == null){
+    public static void optionalIsGreaterOrEqual(Optional<BigInteger> valueOptional, BigInteger compareValue,
+String aMessage) {
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -6222,9 +6307,9 @@ public class DomainAssertions {
     /**
      * Checks a {@link BigInteger}, if it is less than or equal to a given comparative value.
      *
-     * @param value checked
+     * @param value        checked
      * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param aMessage     message for thrown exception
      * @throws DomainAssertionException if check failed
      */
     public static void isLessOrEqual(BigInteger value, BigInteger compareValue, String aMessage) {
@@ -6234,16 +6319,18 @@ public class DomainAssertions {
     }
 
     /**
-     * Checks an Optional containing a {@link BigInteger}, if the contained value is less than or equal to a given comparative value.
+     * Checks an Optional containing a {@link BigInteger}, if the contained value is less than or equal to a given
+     * comparative value.
      * The Optional must not be {@code null}.
      *
      * @param valueOptional checked
-     * @param compareValue for check
-     * @param aMessage message for thrown exception
+     * @param compareValue  for check
+     * @param aMessage      message for thrown exception
      * @throws DomainAssertionException if check failed
      */
-    public static void optionalIsLessOrEqual(Optional<BigInteger> valueOptional, BigInteger compareValue, String aMessage) {
-        if(valueOptional == null){
+    public static void optionalIsLessOrEqual(Optional<BigInteger> valueOptional, BigInteger compareValue,
+     String aMessage) {
+        if (valueOptional == null) {
             throw new IllegalArgumentException("The first parameter must not be null!");
         }
         if (valueOptional.isPresent()) {
@@ -6254,7 +6341,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link BigInteger}, if it is positive or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -6267,7 +6354,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link BigInteger}, if it is positive
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -6280,7 +6367,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link BigInteger}, if it is negative or 0
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */
@@ -6293,7 +6380,7 @@ public class DomainAssertions {
     /**
      * Checks a {@link BigInteger}, if it is negative
      *
-     * @param value checked
+     * @param value    checked
      * @param aMessage message for thrown exception
      * @throws DomainAssertionException if check failed
      */

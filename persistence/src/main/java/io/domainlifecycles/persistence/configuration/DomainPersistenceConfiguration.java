@@ -34,7 +34,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- *  DomainPersistenceConfiguration is the base class for all domain persistence configurations.
+ * DomainPersistenceConfiguration is the base class for all domain persistence configurations.
  *
  * @author Mario Herb
  */
@@ -48,7 +48,7 @@ public abstract class DomainPersistenceConfiguration {
      * Creates a new DomainPersistenceConfiguration.
      *
      * @param domainObjectBuilderProvider the domain object builder provider to use
-     * @param customRecordMappers custom record mappers to use
+     * @param customRecordMappers         custom record mappers to use
      */
     public DomainPersistenceConfiguration(DomainObjectBuilderProvider domainObjectBuilderProvider,
                                           Set<RecordMapper<?, ?, ?>> customRecordMappers) {

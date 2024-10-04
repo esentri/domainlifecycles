@@ -67,8 +67,10 @@ public class MethodMirrorBuilder {
 
     /**
      * Creates a new {@link MethodMirror}.
+     *
+     * @return new instance of method mirror
      */
-    public MethodMirror build(){
+    public MethodMirror build() {
         return new MethodModel(
             m.getName(),
             m.getDeclaringClass().getName(),
@@ -81,7 +83,7 @@ public class MethodMirrorBuilder {
         );
     }
 
-    private AssertedContainableTypeMirror getReturnType(){
+    private AssertedContainableTypeMirror getReturnType() {
         var builder = new AssertedContainableTypeMirrorBuilder(
             m.getReturnType(),
             m.getAnnotatedReturnType(),
@@ -90,13 +92,13 @@ public class MethodMirrorBuilder {
         return builder.build();
     }
 
-    private List<ParamMirror> getParameters(){
+    private List<ParamMirror> getParameters() {
         var resolvedParameters = Domain.getGenericTypeResolver().resolveExecutableParameters(m, topLevelClass);
         List<ParamMirror> mirroredParams = new ArrayList<>();
         int i = 0;
-        for (Parameter p : m.getParameters()){
+        for (Parameter p : m.getParameters()) {
             ResolvedGenericTypeMirror resolved = null;
-            if(resolvedParameters != null){
+            if (resolvedParameters != null) {
                 resolved = resolvedParameters.get(i);
             }
             var typeMirrorBuilder = new AssertedContainableTypeMirrorBuilder(
@@ -104,29 +106,28 @@ public class MethodMirrorBuilder {
                 p.getAnnotatedType(),
                 p.getParameterizedType(),
                 resolved
-                );
+            );
             mirroredParams.add(new ParamModel(p.getName(), typeMirrorBuilder.build()));
             i++;
         }
         return mirroredParams;
     }
 
-    private List<String> publishedEventTypeNames(){
+    private List<String> publishedEventTypeNames() {
         var publishesAnnotation = m.getAnnotation(Publishes.class);
-        if(publishesAnnotation != null && publishesAnnotation.domainEventTypes() != null){
+        if (publishesAnnotation != null && publishesAnnotation.domainEventTypes() != null) {
             return Arrays.stream(publishesAnnotation.domainEventTypes()).map(Class::getName).toList();
         }
         return Collections.emptyList();
     }
 
-    private Optional<String> listenedEventTypeName(){
+    private Optional<String> listenedEventTypeName() {
         var listensAnnotation = m.getAnnotation(ListensTo.class);
-        if(listensAnnotation != null && listensAnnotation.domainEventType() != null){
+        if (listensAnnotation != null && listensAnnotation.domainEventType() != null) {
             return Optional.of(listensAnnotation.domainEventType().getName());
         }
         return Optional.empty();
     }
-
 
 
 }

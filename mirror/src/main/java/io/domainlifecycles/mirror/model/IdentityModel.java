@@ -56,7 +56,7 @@ public class IdentityModel extends DomainTypeModel implements IdentityMirror {
                          @JsonProperty("valueTypeName") Optional<String> valueTypeName,
                          @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
                          @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
-                         ) {
+    ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
         this.valueTypeName = Objects.requireNonNull(valueTypeName);
     }
@@ -92,9 +92,9 @@ public class IdentityModel extends DomainTypeModel implements IdentityMirror {
     @Override
     public Optional<FieldMirror> singledValuedField() {
         return this.allFields
-                .stream()
-                .filter(p -> p.isPublicReadable() && !p.isStatic())
-                .findFirst();
+            .stream()
+            .filter(p -> p.isPublicReadable() && !p.isStatic())
+            .findFirst();
     }
 
     /**

@@ -61,7 +61,7 @@ public class DemoFraudController {
     @ApiResponse(responseCode = "500", description = "Server Error")
     @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    void markFraudulent(@NotNull Customer.CustomerId customerId){
+    void markFraudulent(@NotNull Customer.CustomerId customerId) {
         var fraudEvent = new FraudDetected(customerId);
         applicationEventPublisher.publishEvent(fraudEvent);
     }

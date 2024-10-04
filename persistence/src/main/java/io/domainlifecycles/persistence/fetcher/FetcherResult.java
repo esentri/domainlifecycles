@@ -36,7 +36,6 @@ import java.util.Optional;
  *
  * @param <A>      the aggregate root type
  * @param <RECORD> the record type
- *
  * @author Mario Herb
  */
 public class FetcherResult<A extends AggregateRoot<?>, RECORD> {

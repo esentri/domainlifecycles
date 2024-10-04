@@ -57,7 +57,7 @@ public class ConverterRegistry {
      * Gets a converter.
      *
      * @param fromClassName full qualified name of source type to convert
-     * @param toClassName full qualified name of target type after conversion
+     * @param toClassName   full qualified name of target type after conversion
      * @return the converter converting from {@code fromClass} to {@code toClass}
      */
     public TypeConverter<?, ?> getTypeConverter(String fromClassName, String toClassName) {
@@ -65,7 +65,8 @@ public class ConverterRegistry {
         var k = new ConverterKey(fromClassName, toClassName);
         var tc = converterMap.get(k);
         if (tc == null) {
-            throw DLCPersistenceException.fail("No converter found to convert '%s' into '%s'.", fromClassName, toClassName);
+            throw DLCPersistenceException.fail("No converter found to convert '%s' into '%s'.", fromClassName,
+                toClassName);
         }
         return tc;
     }

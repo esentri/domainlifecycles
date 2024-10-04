@@ -40,19 +40,21 @@ import tests.shared.persistence.domain.hierarchicalBackRef.TestRootHierarchicalB
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HierarchicalAggregateRootBackrefRepository_ITest extends BasePersistence_ITest {
-    
+
     private HierarchicalAggregateRootBackrefRepository hierarchicalAggregateRootBackrefRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         hierarchicalAggregateRootBackrefRepository = new HierarchicalAggregateRootBackrefRepository(
             persistenceConfiguration.dslContext,
             persistenceEventTestHelper.testEventPublisher,
             persistenceConfiguration.domainPersistenceProvider
         );
     }
+
     @Test
     public void testInsertOnlyRoot() {
         //given
@@ -79,7 +81,8 @@ public class HierarchicalAggregateRootBackrefRepository_ITest extends BasePersis
         Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository
             .findResultById(new TestRootHierarchicalBackrefId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
         persistenceEventTestHelper.assertEvents();
     }
@@ -95,8 +98,10 @@ public class HierarchicalAggregateRootBackrefRepository_ITest extends BasePersis
         Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository
             .findResultById(new TestRootHierarchicalBackrefId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getChild().getChild());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getChild().getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
         persistenceEventTestHelper.assertEvents();
     }
@@ -112,9 +117,12 @@ public class HierarchicalAggregateRootBackrefRepository_ITest extends BasePersis
         Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository
             .findResultById(new TestRootHierarchicalBackrefId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getChild().getChild().getChild());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getChild().getChild());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getChild().getChild().getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getChild().getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
         persistenceEventTestHelper.assertEvents();
     }
@@ -131,7 +139,8 @@ public class HierarchicalAggregateRootBackrefRepository_ITest extends BasePersis
         //when
         TestRootHierarchicalBackref updated = hierarchicalAggregateRootBackrefRepository.update(insertedCopy);
         //then
-        Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository.findResultById(new TestRootHierarchicalBackrefId(1l)).resultValue();
+        Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository.findResultById(
+            new TestRootHierarchicalBackrefId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
@@ -149,7 +158,8 @@ public class HierarchicalAggregateRootBackrefRepository_ITest extends BasePersis
         //when
         TestRootHierarchicalBackref updated = hierarchicalAggregateRootBackrefRepository.update(insertedCopy);
         //then
-        Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository.findResultById(new TestRootHierarchicalBackrefId(1l)).resultValue();
+        Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository.findResultById(
+            new TestRootHierarchicalBackrefId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
@@ -167,7 +177,8 @@ public class HierarchicalAggregateRootBackrefRepository_ITest extends BasePersis
         //when
         TestRootHierarchicalBackref updated = hierarchicalAggregateRootBackrefRepository.update(insertedCopy);
         //then
-        Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository.findResultById(new TestRootHierarchicalBackrefId(1l)).resultValue();
+        Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository.findResultById(
+            new TestRootHierarchicalBackrefId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated.getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
@@ -193,7 +204,8 @@ public class HierarchicalAggregateRootBackrefRepository_ITest extends BasePersis
         //when
         TestRootHierarchicalBackref updated = hierarchicalAggregateRootBackrefRepository.update(insertedCopy);
         //then
-        Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository.findResultById(new TestRootHierarchicalBackrefId(1l)).resultValue();
+        Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository.findResultById(
+            new TestRootHierarchicalBackrefId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
@@ -213,7 +225,8 @@ public class HierarchicalAggregateRootBackrefRepository_ITest extends BasePersis
         //when
         TestRootHierarchicalBackref updated = hierarchicalAggregateRootBackrefRepository.update(insertedCopy);
         //then
-        Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository.findResultById(
+            inserted.getId()).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
@@ -229,15 +242,20 @@ public class HierarchicalAggregateRootBackrefRepository_ITest extends BasePersis
         TestRootHierarchicalBackref inserted = hierarchicalAggregateRootBackrefRepository.insert(trs);
         persistenceEventTestHelper.resetEventsCaught();
         //when
-        Optional<TestRootHierarchicalBackref> deleted = hierarchicalAggregateRootBackrefRepository.deleteById(inserted.getId());
+        Optional<TestRootHierarchicalBackref> deleted = hierarchicalAggregateRootBackrefRepository.deleteById(
+            inserted.getId());
         //then
-        Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository.findResultById(
+            inserted.getId()).resultValue();
         Assertions.assertThat(deleted).isPresent();
         Assertions.assertThat(found).isEmpty();
         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getChild().getChild().getChild());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getChild().getChild());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getChild().getChild().getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getChild().getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get());
         persistenceEventTestHelper.assertEvents();
 
@@ -256,9 +274,11 @@ public class HierarchicalAggregateRootBackrefRepository_ITest extends BasePersis
         //when
         TestRootHierarchicalBackref updated = hierarchicalAggregateRootBackrefRepository.update(insertedCopy);
         //then
-        Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository.findResultById(
+            inserted.getId()).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getChild().getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getChild().getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
         Assertions.assertThat(updated.getChild().getChild()).isNull();
@@ -279,10 +299,13 @@ public class HierarchicalAggregateRootBackrefRepository_ITest extends BasePersis
         //when
         TestRootHierarchicalBackref updated = hierarchicalAggregateRootBackrefRepository.update(insertedCopy);
         //then
-        Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository.findResultById(
+            inserted.getId()).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getChild().getChild().getChild());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getChild().getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getChild().getChild().getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getChild().getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
 
@@ -298,9 +321,11 @@ public class HierarchicalAggregateRootBackrefRepository_ITest extends BasePersis
         TestRootHierarchicalBackref inserted = hierarchicalAggregateRootBackrefRepository.insert(trs);
         persistenceEventTestHelper.resetEventsCaught();
         //when
-        Optional<TestRootHierarchicalBackref> deleted = hierarchicalAggregateRootBackrefRepository.deleteById(inserted.getId());
+        Optional<TestRootHierarchicalBackref> deleted = hierarchicalAggregateRootBackrefRepository.deleteById(
+            inserted.getId());
         //then
-        Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootHierarchicalBackref> found = hierarchicalAggregateRootBackrefRepository.findResultById(
+            inserted.getId()).resultValue();
         Assertions.assertThat(deleted).isPresent();
         Assertions.assertThat(found).isEmpty();
         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);

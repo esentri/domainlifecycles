@@ -36,29 +36,38 @@ import java.util.List;
 /**
  * Record Mirror interface
  *
+ * @param <BASE_RECORD_TYPE> the type of record
  * @author Mario Herb
  */
 public interface RecordMirror<BASE_RECORD_TYPE> {
 
     /**
      * Returns the full qualified type name of the record type.
+     *
+     * @return the type of record
      */
     String recordTypeName();
 
     /**
      * Returns the full qualified type name of the domain object type {@link DomainObject}.
+     *
+     * @return the name of DomainObject type
      */
     String domainObjectTypeName();
 
     /**
      * Returns the {@link DomainObject} type names for records that this record references directly
      * and where the reference is enforced (e.g. via Foreign Key Constraints of this record).
+     *
+     * @return the names of DomainObjects
      */
     List<String> enforcedReferences();
 
     /**
      * Returns the record mapper instance to be able to map a record to ist corresponding {@link DomainObject}
      * or the {@link DomainObject} to a record
+     *
+     * @return the record mapper
      */
     RecordMapper<BASE_RECORD_TYPE, ? extends DomainObject, ? extends AggregateRoot<?>> recordMapper();
 

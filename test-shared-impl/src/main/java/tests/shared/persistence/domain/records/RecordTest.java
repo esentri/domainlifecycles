@@ -46,7 +46,8 @@ public class RecordTest extends AggregateRootBase<RecordTestId> {
     private Set<RecordVo> myVoSet;
 
     @Builder(setterPrefix = "set")
-    public RecordTest(RecordTestId id, String myValue, RecordVo myVo, List<RecordVo> myVoList, Set<RecordVo> myVoSet, long concurrencyVersion) {
+    public RecordTest(RecordTestId id, String myValue, RecordVo myVo, List<RecordVo> myVoList, Set<RecordVo> myVoSet,
+                      long concurrencyVersion) {
         super(concurrencyVersion);
         this.myValue = myValue;
         this.myVo = myVo;

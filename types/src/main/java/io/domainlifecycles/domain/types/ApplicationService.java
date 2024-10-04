@@ -29,7 +29,7 @@ package io.domainlifecycles.domain.types;
 
 /**
  * This is the common supertype (marker interface) to represent ApplicationServices.
- *
+ * <p>
  * This has the same effect as {@link Driver} and can be used as a synonym.
  *
  * @author Mario Herb

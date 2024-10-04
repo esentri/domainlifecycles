@@ -52,6 +52,7 @@ import java.util.Optional;
 /**
  * Provides base class to build access models for domain objects from a persistence mirror.
  *
+ * @param <BASE_RECORD> the base record type
  * @author Mario Herb
  */
 public abstract class DomainPersistenceProvider<BASE_RECORD> {
@@ -78,8 +79,9 @@ public abstract class DomainPersistenceProvider<BASE_RECORD> {
      * @param domainPersistenceConfiguration the domain persistence configuration
      */
     public DomainPersistenceProvider(DomainPersistenceConfiguration domainPersistenceConfiguration) {
-        if(!Domain.isInitialized()){
-            throw DLCPersistenceException.fail("The Domain must be initialized before creating the DomainPersistenceProvider!");
+        if (!Domain.isInitialized()) {
+            throw DLCPersistenceException.fail(
+                "The Domain must be initialized before creating the DomainPersistenceProvider!");
         }
         this.domainPersistenceConfiguration = domainPersistenceConfiguration;
         this.converterRegistry = new ConverterRegistry();
@@ -100,8 +102,8 @@ public abstract class DomainPersistenceProvider<BASE_RECORD> {
     }
 
     private DomainObjectInstanceAccessModel<BASE_RECORD> buildAccessModelForInstance(DomainObject instance,
-                                                                        StructuralPosition parentPosition,
-                                                                        String accessorFromParent) {
+                                                                                     StructuralPosition parentPosition,
+                                                                                     String accessorFromParent) {
 
         StructuralPosition position = StructuralPosition.builder()
             .withInstance(instance)
@@ -109,15 +111,18 @@ public abstract class DomainPersistenceProvider<BASE_RECORD> {
             .withAccessorFromParent(accessorFromParent)
             .build();
 
-        DomainObjectInstanceAccessModel.DomainObjectInstanceAccessModelBuilder<BASE_RECORD> builder = DomainObjectInstanceAccessModel.builder();
+        DomainObjectInstanceAccessModel.DomainObjectInstanceAccessModelBuilder<BASE_RECORD> builder =
+            DomainObjectInstanceAccessModel.builder();
         builder.withStructuralPosition(position);
         builder.withRecordMirror(getRecordMirror(position));
         if (!position.isBackReference) {
             if (instance instanceof Entity) {
                 EntityMirror em = Domain.entityMirrorFor((Entity<?>) instance);
 
-                em.getEntityReferences().stream().filter(er -> !er.isStatic()).forEach(er -> addChildrenToBuilder(position, er, builder));
-                em.getAggregateRootReferences().stream().filter(ar -> !ar.isStatic()).forEach(ar -> addChildrenToBuilder(position, ar, builder));
+                em.getEntityReferences().stream().filter(er -> !er.isStatic()).forEach(
+                    er -> addChildrenToBuilder(position, er, builder));
+                em.getAggregateRootReferences().stream().filter(ar -> !ar.isStatic()).forEach(
+                    ar -> addChildrenToBuilder(position, ar, builder));
                 em.getValueReferences().stream().filter(vr -> !vr.isStatic())
                     .filter(vr -> DomainType.VALUE_OBJECT.equals(vr.getType().getDomainType()))
                     .forEach(voc -> addChildrenToBuilder(position, voc, builder));
@@ -137,12 +142,14 @@ public abstract class DomainPersistenceProvider<BASE_RECORD> {
     private void addChildrenToBuilder(StructuralPosition parentStructuralPosition,
                                       FieldMirror accessToChildMirror,
                                       DomainObjectInstanceAccessModel.DomainObjectInstanceAccessModelBuilder<BASE_RECORD> builder) {
-        Object childObjectInstance = DlcAccess.accessorFor(parentStructuralPosition.instance).peek(accessToChildMirror.getName());
+        Object childObjectInstance = DlcAccess.accessorFor(parentStructuralPosition.instance).peek(
+            accessToChildMirror.getName());
         if (childObjectInstance != null) {
             if (childObjectInstance instanceof Iterable iterable) {
                 iterable.forEach(
                     child -> {
-                        DomainObjectInstanceAccessModel<BASE_RECORD> childInstance = buildAccessModelForInstance((DomainObject) child, parentStructuralPosition, accessToChildMirror.getName());
+                        DomainObjectInstanceAccessModel<BASE_RECORD> childInstance = buildAccessModelForInstance(
+                            (DomainObject) child, parentStructuralPosition, accessToChildMirror.getName());
 
                         builder.withChildInstance(childInstance);
                     }
@@ -150,11 +157,13 @@ public abstract class DomainPersistenceProvider<BASE_RECORD> {
             } else if (accessToChildMirror.getType().hasOptionalContainer()) {
                 Optional<?> opt = (Optional<?>) childObjectInstance;
                 if (opt.isPresent()) {
-                    DomainObjectInstanceAccessModel<BASE_RECORD> childInstance = buildAccessModelForInstance((DomainObject) opt.get(), parentStructuralPosition, accessToChildMirror.getName());
+                    DomainObjectInstanceAccessModel<BASE_RECORD> childInstance = buildAccessModelForInstance(
+                        (DomainObject) opt.get(), parentStructuralPosition, accessToChildMirror.getName());
                     builder.withChildInstance(childInstance);
                 }
             } else {
-                DomainObjectInstanceAccessModel<BASE_RECORD> childInstance = buildAccessModelForInstance((DomainObject)childObjectInstance, parentStructuralPosition, accessToChildMirror.getName());
+                DomainObjectInstanceAccessModel<BASE_RECORD> childInstance = buildAccessModelForInstance(
+                    (DomainObject) childObjectInstance, parentStructuralPosition, accessToChildMirror.getName());
                 builder.withChildInstance(childInstance);
             }
         }
@@ -166,7 +175,9 @@ public abstract class DomainPersistenceProvider<BASE_RECORD> {
             return persistenceMirror.getEntityRecordMirror(entityType.getName());
         } else {
             if (structuralPosition.accessPathFromRoot.size() == 0) {
-                throw DLCPersistenceException.fail("A value object can only be persisted when being child of an aggregate. Something went wrong! Value object: " + structuralPosition.instance);
+                throw DLCPersistenceException.fail(
+                    "A value object can only be persisted when being child of an aggregate. Something went wrong! " +
+                        "Value object: " + structuralPosition.instance);
             }
             final var descendingIterator = structuralPosition.accessPathFromRoot.descendingIterator();
             Class<?> containingEntityType = null;
@@ -181,7 +192,9 @@ public abstract class DomainPersistenceProvider<BASE_RECORD> {
             }
             Collections.reverse(pathSegments);
             if (containingEntityType == null) {
-                throw DLCPersistenceException.fail("A value object can only be persisted when being contained within an entity. Something went wrong! Value object: " + structuralPosition.instance);
+                throw DLCPersistenceException.fail(
+                    "A value object can only be persisted when being contained within an entity. Something went " +
+                        "wrong! Value object: " + structuralPosition.instance);
             }
             final var containingEntityTypeName = containingEntityType.getName();
             final var erm = persistenceMirror.getEntityRecordMirror(containingEntityTypeName);
@@ -204,7 +217,8 @@ public abstract class DomainPersistenceProvider<BASE_RECORD> {
     public Identity<?> getId(Entity<?> entity) {
         var em = Domain.entityMirrorFor(entity);
         var idField = em.getIdentityField()
-            .orElseThrow(() -> DLCPersistenceException.fail("Identity field not defined for '%s'", entity.getClass().getName()));
+            .orElseThrow(
+                () -> DLCPersistenceException.fail("Identity field not defined for '%s'", entity.getClass().getName()));
         return DlcAccess.accessorFor(entity).peek(idField.getName());
     }
 

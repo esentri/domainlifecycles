@@ -40,38 +40,41 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public interface EntityMirror extends DomainObjectMirror, DomainCommandProcessingMirror, DomainEventProcessingMirror{
+public interface EntityMirror extends DomainObjectMirror, DomainCommandProcessingMirror, DomainEventProcessingMirror {
 
     /**
-     * Returns the mirror for the field containing the {@link Identity} value for the mirrored Entity.
+     * @return the mirror for the field containing the {@link Identity} value for the mirrored Entity.
      * If no unambiguous Identity could be found, then the returned Optional is empty.
      */
     Optional<FieldMirror> getIdentityField();
 
     /**
-     * Returns the mirror for the field containing the concurrency version for the mirrored Entity.
-     * If no unambiguous field annotated with {@link ConcurrencySafe.ConcurrencyVersion} could be found, then the returned Optional is empty.
+     * @return the mirror for the field containing the concurrency version for the mirrored Entity.
+     * If no unambiguous field annotated with {@link ConcurrencySafe.ConcurrencyVersion} could be found, then the
+     * returned Optional is empty.
      */
     Optional<FieldMirror> getConcurrencyVersionField();
 
     /**
-     * Return a list mirrors for {@link Entity} references of the mirrored Entity.
+     * @return a list mirrors for {@link Entity} references of the mirrored Entity.
      */
     List<EntityReferenceMirror> getEntityReferences();
 
     /**
-     * Returns an {@link EntityReferenceMirror} for the reference with the given name.
+     * @param name the name of the reference
+     * @return an {@link EntityReferenceMirror} for the reference with the given name.
      */
     EntityReferenceMirror entityReferenceByName(String name);
 
     /**
-     * Return a list mirrors for {@link AggregateRoot} references of the mirrored Entity.
+     * @return a list mirrors for {@link AggregateRoot} references of the mirrored Entity.
      * Should normally only exist for back references to the root.
      */
     List<AggregateRootReferenceMirror> getAggregateRootReferences();
 
     /**
-     * Returns an {@link AggregateRootReferenceMirror} for the reference with the given name.
+     * @param name the name of the AggregateRoot
+     * @return an {@link AggregateRootReferenceMirror} for the reference with the given name.
      */
     AggregateRootReferenceMirror aggregateRootReferenceByName(String name);
 

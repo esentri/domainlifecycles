@@ -50,7 +50,7 @@ public class NomnomlParameter implements DiagramElement {
     /**
      * Initializes the parameter.
      *
-     * @param type of parameter
+     * @param type     of parameter
      * @param required is param required
      */
     public NomnomlParameter(NomnomlType type,

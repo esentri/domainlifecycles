@@ -47,4 +47,5 @@ public record CreditCard(
     @NotEmpty @Size(max = 4) String ccvNumber,
     @NotEmpty @Size(max = 100) String ownerName,
     @NotNull LocalDate expiration
-) implements ValueObject {}
+) implements ValueObject {
+}

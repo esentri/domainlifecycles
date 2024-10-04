@@ -42,38 +42,41 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public interface DomainCommandMirror extends DomainTypeMirror{
+public interface DomainCommandMirror extends DomainTypeMirror {
 
     /**
      * Returns the basic fields of the mirrored {@link DomainCommand}.
-     * @return list of {@link FieldMirror} instances, that are not Value references, Entity references or AggregateRoot references
+     *
+     * @return list of {@link FieldMirror} instances, that are not Value references, Entity references or
+     * AggregateRoot references
      */
     List<FieldMirror> getBasicFields();
 
     /**
-     * Returns a list mirrors for value references (references of {@link ValueObject}, Enums or {@link Identity}) of the mirrored DomainCommand.
+     * @return a list mirrors for value references (references of {@link ValueObject}, Enums or {@link Identity}) of
+     * the mirrored DomainCommand.
      */
     List<ValueReferenceMirror> getValueReferences();
 
     /**
-     * Returns a list mirrors for {@link Entity} references  of the mirrored DomainCommand.
+     * @return a list mirrors for {@link Entity} references  of the mirrored DomainCommand.
      */
     List<EntityReferenceMirror> getEntityReferences();
 
     /**
-     * Returns a list mirrors for {@link AggregateRoot} references of the mirrored DomainCommand.
+     * @return a list mirrors for {@link AggregateRoot} references of the mirrored DomainCommand.
      */
     List<AggregateRootReferenceMirror> getAggregateRootReferences();
 
     /**
-     * If the mirrored DomainCommand is targets a specific Aggregate, the corresponding mirror for the {@link AggregateRoot}
-     * is returned wrapped in a Java Optional, else it is empty.
+     * @return the corresponding mirror when the mirrored DomainCommand targets a specific {@link AggregateRoot},
+     * otherwise an empty Optional.
      */
     Optional<AggregateRootMirror> getAggregateTarget();
 
     /**
-     * If the mirrored DomainCommand is targets a specific {@link DomainService}, the corresponding mirror
-     * is returned wrapped in a Java Optional, else it is empty.
+     * @return the corresponding mirror when the mirrored DomainCommand targets a specific {@link DomainService},
+     * otherwise an empty Optional.
      */
     Optional<DomainServiceMirror> getDomainServiceTarget();
 

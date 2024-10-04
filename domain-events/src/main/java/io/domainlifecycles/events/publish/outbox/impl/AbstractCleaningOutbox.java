@@ -48,12 +48,13 @@ public abstract class AbstractCleaningOutbox implements TransactionalOutbox {
 
     private int cleanUpPeriodDays = 1;
     private int deliveryCheckPeriodSeconds = 60;
-    private int batchDeliveryTimeoutSeconds = 5*60;
+    private int batchDeliveryTimeoutSeconds = 5 * 60;
     private int cleanUpAgeDays = 1;
 
     private boolean doCleanUp = true;
 
     private boolean doDeliveryCheck = true;
+
     public AbstractCleaningOutbox() {
         resetCleanUpSchedule();
         resetDeliveryCheckSchedule();
@@ -61,24 +62,29 @@ public abstract class AbstractCleaningOutbox implements TransactionalOutbox {
 
     /**
      * The cleans up task is intended to remove older already processed DomainEvents from the transactional outbox.
+     *
+     * @param cleanUpAgeDays cleanup age specification in days
      */
     public abstract void cleanup(int cleanUpAgeDays);
 
     /**
-     * The delivery check task is intended to check for batches of DomainEvents being proccessed, that are already running too long
+     * The delivery check task is intended to check for batches of DomainEvents being proccessed, that are already
+     * running too long
      * and that should be considered failed.
+     *
+     * @param batchDeliveryTimeoutSeconds timeout specification in seconds
      */
     public abstract void deliveryCheck(int batchDeliveryTimeoutSeconds);
 
-    private void resetCleanUpSchedule(){
-        if(cleanupFuture != null) {
+    private void resetCleanUpSchedule() {
+        if (cleanupFuture != null) {
             cleanupFuture.cancel(true);
         }
         scheduleCleanUp();
     }
 
-    private void scheduleCleanUp(){
-        if(doCleanUp) {
+    private void scheduleCleanUp() {
+        if (doCleanUp) {
             cleanupFuture = this.scheduledExecutorService.scheduleAtFixedRate(
                 () -> cleanup(cleanUpAgeDays),
                 cleanUpPeriodDays,
@@ -88,15 +94,15 @@ public abstract class AbstractCleaningOutbox implements TransactionalOutbox {
         }
     }
 
-    private void resetDeliveryCheckSchedule(){
-        if(deliveryCheckFuture != null) {
+    private void resetDeliveryCheckSchedule() {
+        if (deliveryCheckFuture != null) {
             deliveryCheckFuture.cancel(true);
         }
         scheduleDeliveryCheck();
     }
 
-    private void scheduleDeliveryCheck(){
-        if(doDeliveryCheck) {
+    private void scheduleDeliveryCheck() {
+        if (doDeliveryCheck) {
             deliveryCheckFuture = this.scheduledExecutorService.scheduleAtFixedRate(
                 () -> deliveryCheck(batchDeliveryTimeoutSeconds),
                 deliveryCheckPeriodSeconds,
@@ -108,8 +114,9 @@ public abstract class AbstractCleaningOutbox implements TransactionalOutbox {
 
     /**
      * Sets the clean up period in days.
-     *
-     * This method sets the clean up period in days for removing older already processed DomainEvents from the transactional outbox.
+     * <p>
+     * This method sets the clean up period in days for removing older already processed DomainEvents from the
+     * transactional outbox.
      * The clean up period defines how often the clean up task will run to remove older already processed DomainEvents.
      *
      * @param cleanUpPeriodDays the clean up period in days
@@ -121,7 +128,7 @@ public abstract class AbstractCleaningOutbox implements TransactionalOutbox {
 
     /**
      * Sets the delivery check period in seconds.
-     *
+     * <p>
      * This method sets the delivery check period in seconds for checking batches of DomainEvents being
      * processed, that are already running too long and that should be considered failed.
      * The delivery check period defines how often the delivery check task will run to check for failed batches.
@@ -134,7 +141,8 @@ public abstract class AbstractCleaningOutbox implements TransactionalOutbox {
     }
 
     /**
-     * Sets the flag to control whether clean up should be performed on older processed DomainEvents in the transactional outbox.
+     * Sets the flag to control whether clean up should be performed on older processed DomainEvents in the
+     * transactional outbox.
      *
      * @param doCleanUp the flag to indicate whether clean up should be performed
      */
@@ -155,8 +163,9 @@ public abstract class AbstractCleaningOutbox implements TransactionalOutbox {
 
     /**
      * Sets the batch delivery timeout in seconds.
-     *
-     * This method sets the time period in seconds after which a batch of DomainEvents being processed should be considered
+     * <p>
+     * This method sets the time period in seconds after which a batch of DomainEvents being processed should be
+     * considered
      * failed. If a batch takes longer than the specified timeout to process, it will be marked as failed.
      *
      * @param batchDeliveryTimeoutSeconds the batch delivery timeout in seconds

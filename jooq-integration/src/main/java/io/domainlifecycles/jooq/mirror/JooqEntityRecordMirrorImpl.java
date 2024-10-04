@@ -52,7 +52,7 @@ public class JooqEntityRecordMirrorImpl implements EntityRecordMirror<UpdatableR
 
     public JooqEntityRecordMirrorImpl(String recordTypeName,
                                       String entityTypeName,
-                                      RecordMapper<UpdatableRecord<?>,?,?> entityRecordMapper,
+                                      RecordMapper<UpdatableRecord<?>, ?, ?> entityRecordMapper,
                                       List<String> enforcedReferences,
                                       List<ValueObjectRecordMirror<UpdatableRecord<?>>> valueObjectRecordMirrors) {
         this.recordTypeName = recordTypeName;
@@ -60,7 +60,7 @@ public class JooqEntityRecordMirrorImpl implements EntityRecordMirror<UpdatableR
         entityRecordMapperInstance = entityRecordMapper;
         this.valueObjectRecordMirrors = valueObjectRecordMirrors;
         this.enforcedReferences = enforcedReferences;
-        for(var vrm : valueObjectRecordMirrors){
+        for (var vrm : valueObjectRecordMirrors) {
             vrm.setOwner(this);
         }
     }

@@ -44,9 +44,9 @@ import java.io.IOException;
 
 /**
  * {@link Domain} based serialization of {@link Entity} instances.
- * @see StdSerializer
  *
  * @author Mario Herb
+ * @see StdSerializer
  */
 @SuppressWarnings("rawtypes")
 public class EntitySerializer extends StdSerializer<Entity> {
@@ -61,10 +61,10 @@ public class EntitySerializer extends StdSerializer<Entity> {
     /**
      * Serialize Entities;
      *
-     * @param entity Value to serialize; can <b>not</b> be null.
-     * @param jsonGenerator Generator used to output resulting Json content
+     * @param entity             Value to serialize; can <b>not</b> be null.
+     * @param jsonGenerator      Generator used to output resulting Json content
      * @param serializerProvider Provider that can be used to get serializers for
-     *   serializing Objects value contains, if any.
+     *                           serializing Objects value contains, if any.
      * @throws IOException if serialization fails
      */
     @Override
@@ -86,8 +86,8 @@ public class EntitySerializer extends StdSerializer<Entity> {
 
     }
 
-    private void writeIdentity(JsonGenerator jsonGenerator, EntityMirror entityMirror, Entity<?> entity) throws IOException{
-        if(entityMirror.getIdentityField().isPresent()){
+    private void writeIdentity(JsonGenerator jsonGenerator, EntityMirror entityMirror, Entity<?> entity) throws IOException {
+        if (entityMirror.getIdentityField().isPresent()) {
             var idField = entityMirror.getIdentityField().get();
             String fieldName = idField.getName();
             Object toWrite = DlcAccess.accessorFor(entity).peek(fieldName);
@@ -95,7 +95,7 @@ public class EntitySerializer extends StdSerializer<Entity> {
         }
     }
 
-    private void writeBasicFields(JsonGenerator jsonGenerator, EntityMirror entityMirror, Entity<?> entity) throws IOException{
+    private void writeBasicFields(JsonGenerator jsonGenerator, EntityMirror entityMirror, Entity<?> entity) throws IOException {
         for (FieldMirror field : entityMirror.getBasicFields()) {
             if (!field.isStatic() && field.isPublicReadable()) {
                 String fieldName = field.getName();
@@ -106,7 +106,7 @@ public class EntitySerializer extends StdSerializer<Entity> {
     }
 
 
-    private void writeValues(JsonGenerator jsonGenerator, EntityMirror entityMirror, Entity<?> entity) throws IOException{
+    private void writeValues(JsonGenerator jsonGenerator, EntityMirror entityMirror, Entity<?> entity) throws IOException {
         for (ValueReferenceMirror ref : entityMirror.getValueReferences()) {
             if (ref.isPublicReadable() && !ref.isStatic()) {
                 Object toWrite = DlcAccess.accessorFor(entity).peek(ref.getName());
@@ -115,7 +115,7 @@ public class EntitySerializer extends StdSerializer<Entity> {
         }
     }
 
-    private void writeEntityReferences(JsonGenerator jsonGenerator, EntityMirror entityMirror, Entity<?> entity) throws IOException{
+    private void writeEntityReferences(JsonGenerator jsonGenerator, EntityMirror entityMirror, Entity<?> entity) throws IOException {
         for (EntityReferenceMirror ref : entityMirror.getEntityReferences()) {
             if (ref.isPublicReadable() && !ref.isStatic()) {
                 Object toWrite = DlcAccess.accessorFor(entity).peek(ref.getName());
@@ -124,7 +124,7 @@ public class EntitySerializer extends StdSerializer<Entity> {
         }
     }
 
-    private void writeCustomized(JsonGenerator jsonGenerator, String fieldName, Object fieldValue) throws IOException{
+    private void writeCustomized(JsonGenerator jsonGenerator, String fieldName, Object fieldValue) throws IOException {
         MappingAction mappingAction = MappingAction.CONTINUE_WITH_DEFAULT_ACTION;
         if (customizer != null) {
             mappingAction = customizer.beforeFieldWrite(jsonGenerator, fieldName, fieldValue);

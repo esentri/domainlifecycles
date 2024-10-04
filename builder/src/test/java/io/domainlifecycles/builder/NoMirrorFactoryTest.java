@@ -19,14 +19,15 @@ public class NoMirrorFactoryTest {
     }
 
     @Test
-    public void testNoDomainMirrorFail(){
+    public void testNoDomainMirrorFail() {
         var testBuilder = preInitializedLombokBuilder();
         assertThatThrownBy(() -> new InnerClassDomainObjectBuilder<>(testBuilder))
             .isInstanceOf(DLCBuilderException.class)
-            .hasMessageContaining("DomainTypeMirror for 'io.domainlifecycles.builder.helper.TestValueObject' not found!");
+            .hasMessageContaining(
+                "DomainTypeMirror for 'io.domainlifecycles.builder.helper.TestValueObject' not found!");
     }
 
-    private TestValueObject.TestValueObjectBuilder preInitializedLombokBuilder(){
+    private TestValueObject.TestValueObjectBuilder preInitializedLombokBuilder() {
         return TestValueObject.builder()
             .first("1")
             .second(1L);

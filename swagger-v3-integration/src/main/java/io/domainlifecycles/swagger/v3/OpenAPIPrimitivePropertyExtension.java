@@ -68,7 +68,8 @@ public class OpenAPIPrimitivePropertyExtension {
         }
     }
 
-    private static void extendOpenAPISchemaForPrimitivePropertyTypes(String fullQualifiedTypeName, Schema<?> typeSchema) {
+    private static void extendOpenAPISchemaForPrimitivePropertyTypes(String fullQualifiedTypeName,
+                                                                     Schema<?> typeSchema) {
         log.debug("Extending Open API schema for '" + fullQualifiedTypeName + "'!");
         Class<?> type = null;
         try {
@@ -95,6 +96,7 @@ public class OpenAPIPrimitivePropertyExtension {
             }
         }
     }
+
     private static Field getFieldForTypeByPropertyName(Class<?> type, String propertyName) {
         Field[] fieldCandidates = JavaReflect.fields(type, MemberSelect.HIERARCHY)
             .stream()

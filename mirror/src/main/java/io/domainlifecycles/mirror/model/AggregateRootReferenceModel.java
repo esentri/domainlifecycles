@@ -54,7 +54,8 @@ public class AggregateRootReferenceModel extends FieldModel implements Aggregate
                                        @JsonProperty("publicWriteable") boolean publicWriteable,
                                        @JsonProperty("static") boolean isStatic,
                                        @JsonProperty("hidden") boolean hidden) {
-        super(name, type, accessLevel, declaredByTypeName, modifiable, publicReadable, publicWriteable, isStatic, hidden);
+        super(name, type, accessLevel, declaredByTypeName, modifiable, publicReadable, publicWriteable, isStatic,
+            hidden);
     }
 
     /**
@@ -62,9 +63,9 @@ public class AggregateRootReferenceModel extends FieldModel implements Aggregate
      */
     @JsonIgnore
     @Override
-    public AggregateRootMirror getAggregateRoot(){
+    public AggregateRootMirror getAggregateRoot() {
         return Domain.typeMirror(type.getTypeName())
-            .map(e -> (AggregateRootMirror)e)
+            .map(e -> (AggregateRootMirror) e)
             .orElseThrow(() -> MirrorException.fail("AggregateRootMirror not found for '%s'", getType().getTypeName()));
     }
 

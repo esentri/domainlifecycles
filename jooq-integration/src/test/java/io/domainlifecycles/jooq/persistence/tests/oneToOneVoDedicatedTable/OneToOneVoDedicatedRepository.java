@@ -35,7 +35,8 @@ import org.slf4j.Logger;
 import tests.shared.persistence.domain.oneToOneVoDedicatedTable.TestRootOneToOneVoDedicated;
 import tests.shared.persistence.domain.oneToOneVoDedicatedTable.TestRootOneToOneVoDedicatedId;
 
-public class OneToOneVoDedicatedRepository extends JooqAggregateRepository<TestRootOneToOneVoDedicated, TestRootOneToOneVoDedicatedId> {
+public class OneToOneVoDedicatedRepository extends JooqAggregateRepository<TestRootOneToOneVoDedicated,
+    TestRootOneToOneVoDedicatedId> {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(OneToOneVoDedicatedRepository.class);
 

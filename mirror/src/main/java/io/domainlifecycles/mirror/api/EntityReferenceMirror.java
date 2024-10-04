@@ -37,7 +37,7 @@ import io.domainlifecycles.domain.types.Entity;
 public interface EntityReferenceMirror extends FieldMirror {
 
     /**
-     * Returns the {@link EntityMirror} for the referenced {@link Entity}.
+     * @return the {@link EntityMirror} for the referenced {@link Entity}.
      */
     EntityMirror getEntity();
 }

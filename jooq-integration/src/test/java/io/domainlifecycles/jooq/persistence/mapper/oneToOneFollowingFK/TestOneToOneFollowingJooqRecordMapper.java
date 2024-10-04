@@ -42,14 +42,16 @@ import tests.shared.persistence.domain.oneToOneFollowingFK.TestRootOneToOneFollo
 /**
  * Mapping JOOQ TestEntityOneToOneFollowing records.
  */
-public class TestOneToOneFollowingJooqRecordMapper extends AbstractRecordMapper<TestEntityOneToOneFollowingRecord, TestEntityOneToOneFollowing, TestRootOneToOneFollowing> {
+public class TestOneToOneFollowingJooqRecordMapper extends AbstractRecordMapper<TestEntityOneToOneFollowingRecord,
+    TestEntityOneToOneFollowing, TestRootOneToOneFollowing> {
 
     @Override
     public DomainObjectBuilder<TestEntityOneToOneFollowing> recordToDomainObjectBuilder(TestEntityOneToOneFollowingRecord record) {
         if (record == null) {
             return null;
         }
-        TestEntityOneToOneFollowingRecord testEntityOneToOneFollowingRecord = record.into(Tables.TEST_ENTITY_ONE_TO_ONE_FOLLOWING);
+        TestEntityOneToOneFollowingRecord testEntityOneToOneFollowingRecord = record.into(
+            Tables.TEST_ENTITY_ONE_TO_ONE_FOLLOWING);
         return new InnerClassDomainObjectBuilder<>(TestEntityOneToOneFollowing.builder()
             .setId(new TestEntityOneToOneFollowingId(testEntityOneToOneFollowingRecord.getId()))
             .setName(testEntityOneToOneFollowingRecord.getName())
@@ -59,7 +61,8 @@ public class TestOneToOneFollowingJooqRecordMapper extends AbstractRecordMapper<
     }
 
     @Override
-    public TestEntityOneToOneFollowingRecord from(TestEntityOneToOneFollowing testEntityOneToOneFollowing, TestRootOneToOneFollowing root) {
+    public TestEntityOneToOneFollowingRecord from(TestEntityOneToOneFollowing testEntityOneToOneFollowing,
+                                                  TestRootOneToOneFollowing root) {
         TestEntityOneToOneFollowingRecord testEntityOneToOneFollowingRecord = new TestEntityOneToOneFollowingRecord();
         testEntityOneToOneFollowingRecord.setId(testEntityOneToOneFollowing.getId().value());
         testEntityOneToOneFollowingRecord.setName(testEntityOneToOneFollowing.getName());

@@ -66,20 +66,20 @@ public class ValueObjectModel extends DomainObjectModel implements ValueObjectMi
     @Override
     public boolean isSingledValued() {
         var valueReferences = getValueReferences()
-                .stream().filter(vr -> !vr.isStatic() && !vr.isHidden()).toList();
+            .stream().filter(vr -> !vr.isStatic() && !vr.isHidden()).toList();
 
         var basicReferencesCount = getBasicFields()
-                .stream()
-                .filter(f -> !f.isStatic() && !f.isHidden())
+            .stream()
+            .filter(f -> !f.isStatic() && !f.isHidden())
             .count();
 
-        if(valueReferences.isEmpty()){
+        if (valueReferences.isEmpty()) {
             return basicReferencesCount == 1;
-        }else{
-            if (valueReferences.size() == 1 && basicReferencesCount == 0){
+        } else {
+            if (valueReferences.size() == 1 && basicReferencesCount == 0) {
                 var value = valueReferences.get(0).getValue();
                 return value.isSingledValued() || value.isEnum() || value.isIdentity();
-            }else{
+            } else {
                 return false;
             }
         }
@@ -98,16 +98,16 @@ public class ValueObjectModel extends DomainObjectModel implements ValueObjectMi
             .stream()
             .filter(f -> !f.isStatic() && !f.isHidden())
             .count();
-        if(valueReferences.isEmpty() && basicReferencesCount == 1){
+        if (valueReferences.isEmpty() && basicReferencesCount == 1) {
             return
                 getBasicFields()
                     .stream()
                     .filter(f -> !f.isStatic() && !f.isHidden())
                     .findFirst();
-        }else{
-            if (valueReferences.size() == 1 && basicReferencesCount == 0){
+        } else {
+            if (valueReferences.size() == 1 && basicReferencesCount == 0) {
                 return Optional.of(valueReferences.get(0));
-            }else{
+            } else {
                 return Optional.empty();
             }
         }

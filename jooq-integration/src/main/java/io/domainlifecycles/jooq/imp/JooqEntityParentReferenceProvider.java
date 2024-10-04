@@ -59,7 +59,8 @@ public class JooqEntityParentReferenceProvider implements EntityParentReferenceP
      */
     @Override
     @SuppressWarnings("unchecked")
-    public void provideParentForeignKeyIdsForEntityRecord(UpdatableRecord<?> entityRecord, DomainObjectInstanceAccessModel<UpdatableRecord<?>> domainObjectInstanceAccessModel) {
+    public void provideParentForeignKeyIdsForEntityRecord(UpdatableRecord<?> entityRecord,
+                                                          DomainObjectInstanceAccessModel<UpdatableRecord<?>> domainObjectInstanceAccessModel) {
         var foreignKeysToBeProvided = entityRecord
             .getTable()
             .getReferences()
@@ -87,7 +88,8 @@ public class JooqEntityParentReferenceProvider implements EntityParentReferenceP
                                 .accessPathFromRoot
                                 .getFirst()
                                 .domainObject;
-                            UpdatableRecord<?> ancestorRecord = ((RecordMapper<UpdatableRecord<?>, Entity<?>, AggregateRoot<?>>) erm.recordMapper())
+                            UpdatableRecord<?> ancestorRecord = ((RecordMapper<UpdatableRecord<?>, Entity<?>,
+                                AggregateRoot<?>>) erm.recordMapper())
                                 .from((Entity<?>) ancestor.domainObject, root);
                             entityRecord.set((Field) fk.getFields().get(0), ancestorRecord.key().getValue(0));
                         }

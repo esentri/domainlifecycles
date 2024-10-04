@@ -44,11 +44,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class OneToOneVoDedicatedRepository_ITest extends BasePersistence_ITest {
-    
+
     private OneToOneVoDedicatedRepository oneToOneVoDedicatedRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         oneToOneVoDedicatedRepository = new OneToOneVoDedicatedRepository(
             persistenceConfiguration.dslContext,
             persistenceEventTestHelper.testEventPublisher,
@@ -82,7 +82,8 @@ public class OneToOneVoDedicatedRepository_ITest extends BasePersistence_ITest {
         Optional<TestRootOneToOneVoDedicated> found = oneToOneVoDedicatedRepository
             .findResultById(new TestRootOneToOneVoDedicatedId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getVo(), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getVo(),
+            inserted);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
         persistenceEventTestHelper.assertEvents();
     }
@@ -99,7 +100,8 @@ public class OneToOneVoDedicatedRepository_ITest extends BasePersistence_ITest {
         //when
         TestRootOneToOneVoDedicated updated = oneToOneVoDedicatedRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneVoDedicated> found = oneToOneVoDedicatedRepository.findResultById(new TestRootOneToOneVoDedicatedId(1l)).resultValue();
+        Optional<TestRootOneToOneVoDedicated> found = oneToOneVoDedicatedRepository.findResultById(
+            new TestRootOneToOneVoDedicatedId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
@@ -117,7 +119,8 @@ public class OneToOneVoDedicatedRepository_ITest extends BasePersistence_ITest {
         //when
         TestRootOneToOneVoDedicated updated = oneToOneVoDedicatedRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneVoDedicated> found = oneToOneVoDedicatedRepository.findResultById(new TestRootOneToOneVoDedicatedId(1l)).resultValue();
+        Optional<TestRootOneToOneVoDedicated> found = oneToOneVoDedicatedRepository.findResultById(
+            new TestRootOneToOneVoDedicatedId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
@@ -135,10 +138,13 @@ public class OneToOneVoDedicatedRepository_ITest extends BasePersistence_ITest {
         //when
         TestRootOneToOneVoDedicated updated = oneToOneVoDedicatedRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneVoDedicated> found = oneToOneVoDedicatedRepository.findResultById(new TestRootOneToOneVoDedicatedId(1l)).resultValue();
+        Optional<TestRootOneToOneVoDedicated> found = oneToOneVoDedicatedRepository.findResultById(
+            new TestRootOneToOneVoDedicatedId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getVo(), inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getVo(), updated);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getVo(),
+            inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getVo(),
+            updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
         Assertions.assertThat(updated.getVo().name()).isEqualTo(insertedCopy.getVo().name());
@@ -160,9 +166,11 @@ public class OneToOneVoDedicatedRepository_ITest extends BasePersistence_ITest {
         //when
         TestRootOneToOneVoDedicated updated = oneToOneVoDedicatedRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneVoDedicated> found = oneToOneVoDedicatedRepository.findResultById(new TestRootOneToOneVoDedicatedId(1l)).resultValue();
+        Optional<TestRootOneToOneVoDedicated> found = oneToOneVoDedicatedRepository.findResultById(
+            new TestRootOneToOneVoDedicatedId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getVo(), updated);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getVo(),
+            updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
         Assertions.assertThat(updated.getVo().name()).isEqualTo(insertedCopy.getVo().name());
@@ -180,9 +188,11 @@ public class OneToOneVoDedicatedRepository_ITest extends BasePersistence_ITest {
         //when
         TestRootOneToOneVoDedicated updated = oneToOneVoDedicatedRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneVoDedicated> found = oneToOneVoDedicatedRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootOneToOneVoDedicated> found = oneToOneVoDedicatedRepository.findResultById(
+            inserted.getId()).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getVo(), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getVo(),
+            inserted);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
         Assertions.assertThat(updated.getVo()).isNull();
@@ -202,9 +212,11 @@ public class OneToOneVoDedicatedRepository_ITest extends BasePersistence_ITest {
         //when
         TestRootOneToOneVoDedicated updated = oneToOneVoDedicatedRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneVoDedicated> found = oneToOneVoDedicatedRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootOneToOneVoDedicated> found = oneToOneVoDedicatedRepository.findResultById(
+            inserted.getId()).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getVo(), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getVo(),
+            inserted);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
         Assertions.assertThat(updated.getVo()).isNull();
@@ -220,11 +232,13 @@ public class OneToOneVoDedicatedRepository_ITest extends BasePersistence_ITest {
         //when
         Optional<TestRootOneToOneVoDedicated> deleted = oneToOneVoDedicatedRepository.deleteById(inserted.getId());
         //then
-        Optional<TestRootOneToOneVoDedicated> found = oneToOneVoDedicatedRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootOneToOneVoDedicated> found = oneToOneVoDedicatedRepository.findResultById(
+            inserted.getId()).resultValue();
         Assertions.assertThat(deleted).isPresent();
         Assertions.assertThat(found).isEmpty();
         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getVo(), deleted.get());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getVo(), deleted.get());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get());
         persistenceEventTestHelper.assertEvents();
 
@@ -243,9 +257,11 @@ public class OneToOneVoDedicatedRepository_ITest extends BasePersistence_ITest {
         //when
         TestRootOneToOneVoDedicated updated = oneToOneVoDedicatedRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneVoDedicated> found = oneToOneVoDedicatedRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootOneToOneVoDedicated> found = oneToOneVoDedicatedRepository.findResultById(
+            inserted.getId()).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getVo(), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getVo(),
+            inserted);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
         Assertions.assertThat(updated.getVo()).isNull();
@@ -262,7 +278,8 @@ public class OneToOneVoDedicatedRepository_ITest extends BasePersistence_ITest {
         //when
         Optional<TestRootOneToOneVoDedicated> deleted = oneToOneVoDedicatedRepository.deleteById(inserted.getId());
         //then
-        Optional<TestRootOneToOneVoDedicated> found = oneToOneVoDedicatedRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootOneToOneVoDedicated> found = oneToOneVoDedicatedRepository.findResultById(
+            inserted.getId()).resultValue();
         Assertions.assertThat(deleted).isPresent();
         Assertions.assertThat(found).isEmpty();
         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);

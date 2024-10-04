@@ -55,10 +55,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * - {@link Year}
  * - {@link YearMonth}
  * - {@link MonthDay}
- *
+ * <p>
  * the default Springdoc behaviour currently (v.1.6.9) doesn't support those types.
  * <p>
- * The temporal type extension works as well as for domain object types as for all other classes which require Open API support by SpringDoc.
+ * The temporal type extension works as well as for domain object types as for all other classes which require Open
+ * API support by SpringDoc.
  *
  * @author Mario Herb
  */
@@ -107,15 +108,15 @@ public class OpenAPITemporalTypeExtension {
         openAPI.getComponents().getSchemas()
             .entrySet()
             .stream()
-            .filter( e -> !e.getKey().startsWith(Constants.IGNORED_RESPONSE_OBJECT_FQN))
-            .forEach(entry ->{
-            try {
-                Class<?> type = Thread.currentThread().getContextClassLoader().loadClass(entry.getKey());
-                JavaReflect.fields(type, MemberSelect.HIERARCHY)
-                    .stream()
-                    .filter(
-                        f -> !Modifier.isStatic(f.getModifiers())
-                            && (
+            .filter(e -> !e.getKey().startsWith(Constants.IGNORED_RESPONSE_OBJECT_FQN))
+            .forEach(entry -> {
+                try {
+                    Class<?> type = Thread.currentThread().getContextClassLoader().loadClass(entry.getKey());
+                    JavaReflect.fields(type, MemberSelect.HIERARCHY)
+                        .stream()
+                        .filter(
+                            f -> !Modifier.isStatic(f.getModifiers())
+                                && (
                                 containsType(f, OffsetTime.class)
                                     || containsType(f, YearMonth.class)
                                     || containsType(f, MonthDay.class)
@@ -125,7 +126,8 @@ public class OpenAPITemporalTypeExtension {
                         .forEach(f -> {
                             if (containsType(f, OffsetTime.class)) {
                                 needToAddOffsetTimeSchema.set(true);
-                                modifyPropertySchemaReference(entry.getValue(), f.getName(), OffsetTime.class.getName());
+                                modifyPropertySchemaReference(entry.getValue(), f.getName(),
+                                    OffsetTime.class.getName());
                             } else if (containsType(f, YearMonth.class)) {
                                 needToAddYearMonthSchema.set(true);
                                 modifyPropertySchemaReference(entry.getValue(), f.getName(), YearMonth.class.getName());
@@ -138,7 +140,9 @@ public class OpenAPITemporalTypeExtension {
                             }
                         });
                 } catch (ClassNotFoundException e) {
-                    log.warn("Wasn't able to add/modify potential temporal schema information for '" + entry.getKey() + "'!");
+                    log.warn(
+                        "Wasn't able to add/modify potential temporal schema information for '" + entry.getKey() +
+                            "'!");
                 }
             });
         if (needToAddOffsetTimeSchema.get()) {
@@ -199,7 +203,8 @@ public class OpenAPITemporalTypeExtension {
         }
     }
 
-    private static void modifyPropertySchemaReference(Schema<?> typeSchema, String propertyName, String propertyTypeFullQualifiedName) {
+    private static void modifyPropertySchemaReference(Schema<?> typeSchema, String propertyName,
+                                                      String propertyTypeFullQualifiedName) {
         if (typeSchema.getProperties() != null) {
             Schema<?> propertySchema = typeSchema.getProperties().get(propertyName);
             if (propertySchema != null) {

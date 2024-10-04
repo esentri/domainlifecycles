@@ -44,14 +44,16 @@ public interface HandlerExecutor {
      *
      * @param executionContext the execution context
      */
-    default void beforeExecution(ExecutionContext executionContext){}
+    default void beforeExecution(ExecutionContext executionContext) {
+    }
 
     /**
      * This method is called after the execution of a listener method for a domain event.
      * It can be used for any post-processing tasks.
      *
      * @param executionContext the execution context executed
-     * @param success A boolean flag indicating whether the listener method execution was successful or not.
+     * @param success          A boolean flag indicating whether the listener method execution was successful or not.
      */
-    default void afterExecution(ExecutionContext executionContext, boolean success){}
+    default void afterExecution(ExecutionContext executionContext, boolean success) {
+    }
 }

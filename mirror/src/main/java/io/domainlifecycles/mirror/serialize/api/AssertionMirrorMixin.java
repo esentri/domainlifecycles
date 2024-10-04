@@ -36,8 +36,9 @@ import io.domainlifecycles.mirror.model.AssertionModel;
  *
  * @author Mario Herb
  */
-@JsonTypeInfo(use= JsonTypeInfo.Id.CLASS, property="@class")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = AssertionModel.class),
 })
-public interface AssertionMirrorMixin {}
+public interface AssertionMirrorMixin {
+}

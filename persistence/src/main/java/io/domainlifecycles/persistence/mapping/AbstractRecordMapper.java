@@ -39,10 +39,9 @@ import io.domainlifecycles.persistence.repository.persister.Persister;
  * @param <R>  record type
  * @param <DO> domain object type
  * @param <A>  aggregate root type
- *
  * @author Mario Herb
  */
-public abstract class AbstractRecordMapper<R, DO extends DomainObject, A extends AggregateRoot<?>> implements RecordMapper<R,DO, A>{
+public abstract class AbstractRecordMapper<R, DO extends DomainObject, A extends AggregateRoot<?>> implements RecordMapper<R, DO, A> {
 
     /**
      * Mapping a record to a domain object. Here to build "complete" correct domain objects it is necessary to
@@ -60,7 +59,8 @@ public abstract class AbstractRecordMapper<R, DO extends DomainObject, A extends
     }
 
     /**
-     * We need this method in {@link Persister} or {@link AggregateFetcher}. We return a {@link DomainObjectBuilder} instance,
+     * We need this method in {@link Persister} or {@link AggregateFetcher}. We return a {@link DomainObjectBuilder}
+     * instance,
      * to be able to build only complete instances, when all values are set,
      * to prevent NotNull assertions and other invariant checks form failing too early in the mapping process
      *
@@ -73,8 +73,8 @@ public abstract class AbstractRecordMapper<R, DO extends DomainObject, A extends
      * Part of our general mapping interface to map a domain object instance into a record.
      * Each record mapper must implement this, depending on the domain object's structure.
      *
-     * @param domainObject    {@link DomainObject} mapping source
-     * @param root instance of {@link AggregateRoot} of the domain object
+     * @param domainObject {@link DomainObject} mapping source
+     * @param root         instance of {@link AggregateRoot} of the domain object
      * @return record mapping result
      */
     public abstract R from(DO domainObject, A root);

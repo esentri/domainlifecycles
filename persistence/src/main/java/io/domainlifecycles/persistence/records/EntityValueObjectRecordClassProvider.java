@@ -34,7 +34,6 @@ import java.util.List;
  * contained in an entity.
  *
  * @author Mario Herb
- *
  */
 public interface EntityValueObjectRecordClassProvider {
 

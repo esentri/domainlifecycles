@@ -91,7 +91,8 @@ public interface CustomerAPI {
     @ApiResponse(responseCode = "500", description = "Server Error")
     @PostMapping(path = "/{id}/command/change-adress", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<ResponseObject<Customer>> changeAddress(@PathVariable("id") Customer.CustomerId id, @RequestBody Address address);
+    ResponseEntity<ResponseObject<Customer>> changeAddress(@PathVariable("id") Customer.CustomerId id,
+                                                           @RequestBody Address address);
 
     /**
      * Change credit card of existing customer
@@ -102,7 +103,8 @@ public interface CustomerAPI {
     @ApiResponse(responseCode = "500", description = "Server Error")
     @PostMapping(path = "/{id}/command/change-credit-card", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<ResponseObject<Customer>> changeCreditCard(@PathVariable("id") Customer.CustomerId id, @RequestBody CreditCard creditCard);
+    ResponseEntity<ResponseObject<Customer>> changeCreditCard(@PathVariable("id") Customer.CustomerId id,
+                                                              @RequestBody CreditCard creditCard);
 
     /**
      * Returns a List of {@link OrdersByCustomer} read models. Enables paging.

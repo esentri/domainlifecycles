@@ -86,7 +86,8 @@ public class RootIdEnumListRepository_ITest extends BasePersistence_ITest {
             .findById(new RootIdEnumListId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getEntity());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted
+        .getEntity());
         persistenceEventTestHelper.assertEvents();
     }
 
@@ -424,7 +425,8 @@ public class RootIdEnumListRepository_ITest extends BasePersistence_ITest {
         assertThat(found).isEmpty();
         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getEntity());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get()
+        .getEntity());
         persistenceEventTestHelper.assertEvents();
     }
 

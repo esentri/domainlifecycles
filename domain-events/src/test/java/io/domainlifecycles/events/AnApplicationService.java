@@ -39,14 +39,15 @@ public class AnApplicationService implements ApplicationService {
     public List<DomainEvent> received = new ArrayList<>();
 
     @ListensTo(domainEventType = ADomainEvent.class)
-    public void onADomainEvent(ADomainEvent domainEvent){
+    public void onADomainEvent(ADomainEvent domainEvent) {
         System.out.println("ADomainEvent received in AnApplicationService! Message = " + domainEvent.message());
         received.add(domainEvent);
     }
 
     @ListensTo(domainEventType = PassThroughDomainEvent.class)
-    public void onDomainEvent(PassThroughDomainEvent domainEvent){
-        System.out.println("PassThroughDomainEvent received in AnApplicationService! Message = " + domainEvent.message());
+    public void onDomainEvent(PassThroughDomainEvent domainEvent) {
+        System.out.println(
+            "PassThroughDomainEvent received in AnApplicationService! Message = " + domainEvent.message());
         received.add(domainEvent);
     }
 }

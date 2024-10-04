@@ -67,23 +67,24 @@ public final class OrderPlacementService implements DomainService {
                 .setCreation(Instant.now())
                 .setItems(
                     placeOrder.items()
-                    .stream()
-                    .map(item ->
-                        OrderItem
-                            .builder()
-                            .setId(orderRepository.newOrderItemId())
-                            .setProductId(item.productId())
-                            .setQuantity(item.quantity())
-                            .setProductPrice(
-                                productRepository
-                                    .findById(item.productId())
-                                    .map(Product::getPrice)
-                                    .orElseThrow(() -> new IllegalArgumentException(
-                                        String.format("ProductId '%s' is not present in database!", item.productId()))
-                                    )
-                            )
-                            .build()
-                    ).collect(Collectors.toList()))
+                        .stream()
+                        .map(item ->
+                            OrderItem
+                                .builder()
+                                .setId(orderRepository.newOrderItemId())
+                                .setProductId(item.productId())
+                                .setQuantity(item.quantity())
+                                .setProductPrice(
+                                    productRepository
+                                        .findById(item.productId())
+                                        .map(Product::getPrice)
+                                        .orElseThrow(() -> new IllegalArgumentException(
+                                            String.format("ProductId '%s' is not present in database!",
+                                                item.productId()))
+                                        )
+                                )
+                                .build()
+                        ).collect(Collectors.toList()))
                 .build()
         );
         DomainEvents.publish(new NewOrderPlaced(placed));

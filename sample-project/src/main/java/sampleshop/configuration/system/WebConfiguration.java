@@ -71,7 +71,7 @@ public class WebConfiguration implements WebMvcConfigurer {
      * Optional DLC response format.
      */
     @Bean
-    public ResponseEntityBuilder defaultResponseEntityBuilder(){
+    public ResponseEntityBuilder defaultResponseEntityBuilder() {
         return new DefaultResponseEntityBuilder();
     }
 

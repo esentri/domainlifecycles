@@ -44,7 +44,7 @@ public class DomainEvents {
     private static final Logger log = LoggerFactory.getLogger(DomainEvents.class);
     private static DomainEventsConfiguration configuration;
 
-    protected static void registerConfiguration(DomainEventsConfiguration config){
+    protected static void registerConfiguration(DomainEventsConfiguration config) {
         configuration = config;
     }
 
@@ -55,9 +55,9 @@ public class DomainEvents {
      * @param domainEvent the domain event to be published
      * @throws DLCEventsException if the configuration is not initialized
      */
-    public static void publish(DomainEvent domainEvent){
+    public static void publish(DomainEvent domainEvent) {
         log.info("DomainEvent provided to be published {}", domainEvent);
-        if(configuration == null){
+        if (configuration == null) {
             throw DLCEventsException.fail("No configuration initialized!");
         }
         configuration.domainEventPublisher.publish(domainEvent);

@@ -83,7 +83,7 @@ public class ValidationDomainClassExtender {
     public static synchronized void extend(
         DomainBuilderConfiguration domainBuilderConfiguration,
         String... basePack
-                                           ) {
+    ) {
         if (!extensionProcessed) {
             basePackages = List.of(basePack);
             Instrumentation instrumentation = ByteBuddyAgent.install();
@@ -95,7 +95,8 @@ public class ValidationDomainClassExtender {
             }
             extendedValidate.forEach(t -> log.info(t.getName() + " extended validate call!"));
             extendedValidateParams.forEach(t -> log.info(t.getName() + " extended method parameter bean validations!"));
-            extendedValidateReturn.forEach(t -> log.info(t.getName() + " extended method return values bean validations!"));
+            extendedValidateReturn.forEach(
+                t -> log.info(t.getName() + " extended method return values bean validations!"));
             extensionProcessed = true;
         } else {
             log.info("DLCDomainExtensions already processed!");
@@ -110,7 +111,7 @@ public class ValidationDomainClassExtender {
     public static class ValidationAdvice {
         @Advice.OnMethodExit
         public static void after(@Advice.This Object thisObject) {
-            ((Validatable)thisObject).validate();
+            ((Validatable) thisObject).validate();
             BeanValidations.validate(thisObject);
         }
     }
@@ -147,13 +148,15 @@ public class ValidationDomainClassExtender {
         var agentBuilder = new AgentBuilder.Default()
             .disableClassFormatChanges()
             .with(AgentBuilder.RedefinitionStrategy.REDEFINITION)
-            .with(new AgentBuilder.RedefinitionStrategy.Listener.Adapter(){
+            .with(new AgentBuilder.RedefinitionStrategy.Listener.Adapter() {
                 @Override
-                public Iterable<? extends List<Class<?>>> onError(int index, List<Class<?>> batch, Throwable throwable, List<Class<?>> types) {
+                public Iterable<? extends List<Class<?>>> onError(int index, List<Class<?>> batch,
+                                                                  Throwable throwable, List<Class<?>> types) {
                     extendedValidate.clear();
                     extendedValidateParams.clear();
                     extendedValidateReturn.clear();
-                    types.forEach(t -> System.err.println(t.getName() + " failed to be extended: " + throwable.getMessage()));
+                    types.forEach(
+                        t -> System.err.println(t.getName() + " failed to be extended: " + throwable.getMessage()));
                     return super.onError(index, batch, throwable, types);
                 }
             })
@@ -166,31 +169,34 @@ public class ValidationDomainClassExtender {
                 return basePackages == null || basePackages.stream()
                     .filter(pack -> Objects.requireNonNull(t.getPackage()).getName().startsWith(pack))
                     .findAny().isEmpty();
-            } )
+            })
             .type(ElementMatchers.isSubTypeOf(Validatable.class).and(ElementMatchers.not(ElementMatchers.isAbstract())))
-                .transform((builder, typeDescription, classLoader, module, protectionDomain) -> {
-                    extendedValidate.add(typeDescription);
-                    return builder.visit(
-                        Advice
-                            .to(ValidationAdvice.class)
-                            .on(ElementMatchers.isConstructor()
-                                .or(
-                                    ElementMatchers.isMethod()
-                                        .and(ElementMatchers.not(ElementMatchers.hasMethodName("validate").and(ElementMatchers.takesNoArguments())))
-                                        .and(ElementMatchers.not(ElementMatchers.hasMethodName("concurrencyVersion").and(ElementMatchers.takesNoArguments())))
-                                        .and(ElementMatchers.not(ElementMatchers.hasMethodName(domainBuilderConfiguration.builderMethodName())))
-                                        .and(ElementMatchers.isPublic())
-                                        .and(ElementMatchers.not(ElementMatchers.isStatic()))
-                                        .and(ElementMatchers.not(ElementMatchers.isEquals()))
-                                        .and(ElementMatchers.not(ElementMatchers.isToString()))
-                                        .and(ElementMatchers.not(ElementMatchers.isHashCode()))
-                                        .and(ElementMatchers.not(ElementMatchers.isAnnotatedWith(Query.class)))
-                                        .and(ElementMatchers.not(ElementMatchers.isAnnotatedWith(ExcludeValidation.class)))
-                                        .and(ElementMatchers.not(ElementMatchers.isGetter()))
-                                )
+            .transform((builder, typeDescription, classLoader, module, protectionDomain) -> {
+                extendedValidate.add(typeDescription);
+                return builder.visit(
+                    Advice
+                        .to(ValidationAdvice.class)
+                        .on(ElementMatchers.isConstructor()
+                            .or(
+                                ElementMatchers.isMethod()
+                                    .and(ElementMatchers.not(ElementMatchers.hasMethodName("validate").and(
+                                        ElementMatchers.takesNoArguments())))
+                                    .and(ElementMatchers.not(ElementMatchers.hasMethodName("concurrencyVersion").and(
+                                        ElementMatchers.takesNoArguments())))
+                                    .and(ElementMatchers.not(
+                                        ElementMatchers.hasMethodName(domainBuilderConfiguration.builderMethodName())))
+                                    .and(ElementMatchers.isPublic())
+                                    .and(ElementMatchers.not(ElementMatchers.isStatic()))
+                                    .and(ElementMatchers.not(ElementMatchers.isEquals()))
+                                    .and(ElementMatchers.not(ElementMatchers.isToString()))
+                                    .and(ElementMatchers.not(ElementMatchers.isHashCode()))
+                                    .and(ElementMatchers.not(ElementMatchers.isAnnotatedWith(Query.class)))
+                                    .and(ElementMatchers.not(ElementMatchers.isAnnotatedWith(ExcludeValidation.class)))
+                                    .and(ElementMatchers.not(ElementMatchers.isGetter()))
                             )
-                    );
-                })
+                        )
+                );
+            })
             .type(ElementMatchers.isSubTypeOf(Validatable.class).and(ElementMatchers.not(ElementMatchers.isAbstract())))
             .transform((builder, typeDescription, classLoader, module, protectionDomain) -> {
 
@@ -203,9 +209,12 @@ public class ValidationDomainClassExtender {
                                     ElementMatchers.isMethod()
                                         .and(ElementMatchers.not(ElementMatchers.takesNoArguments()))
                                         .and(ElementMatchers.not(ElementMatchers.isStatic()))
-                                        .and(ElementMatchers.not(ElementMatchers.hasMethodName("validate").and(ElementMatchers.takesNoArguments())))
-                                        .and(ElementMatchers.not(ElementMatchers.hasMethodName("concurrencyVersion").and(ElementMatchers.takesNoArguments())))
-                                        .and(ElementMatchers.not(ElementMatchers.hasMethodName(domainBuilderConfiguration.builderMethodName())))
+                                        .and(ElementMatchers.not(ElementMatchers.hasMethodName("validate").and(
+                                            ElementMatchers.takesNoArguments())))
+                                        .and(ElementMatchers.not(ElementMatchers.hasMethodName("concurrencyVersion").and(
+                                            ElementMatchers.takesNoArguments())))
+                                        .and(ElementMatchers.not(
+                                            ElementMatchers.hasMethodName(domainBuilderConfiguration.builderMethodName())))
                                         .and(ElementMatchers.not(ElementMatchers.isEquals()))
                                         .and(ElementMatchers.not(ElementMatchers.isToString()))
                                         .and(ElementMatchers.not(ElementMatchers.isHashCode()))
@@ -226,10 +235,14 @@ public class ValidationDomainClassExtender {
                             .on(ElementMatchers.not(ElementMatchers.isConstructor())
                                 .and(
                                     ElementMatchers.isMethod()
-                                        .and(ElementMatchers.not(ElementMatchers.returns(TypeDescription.ForLoadedType.of(void.class))))
-                                        .and(ElementMatchers.not(ElementMatchers.hasMethodName("validate").and(ElementMatchers.takesNoArguments())))
-                                        .and(ElementMatchers.not(ElementMatchers.hasMethodName("concurrencyVersion").and(ElementMatchers.takesNoArguments())))
-                                        .and(ElementMatchers.not(ElementMatchers.hasMethodName(domainBuilderConfiguration.builderMethodName())))
+                                        .and(ElementMatchers.not(
+                                            ElementMatchers.returns(TypeDescription.ForLoadedType.of(void.class))))
+                                        .and(ElementMatchers.not(ElementMatchers.hasMethodName("validate").and(
+                                            ElementMatchers.takesNoArguments())))
+                                        .and(ElementMatchers.not(ElementMatchers.hasMethodName("concurrencyVersion").and(
+                                            ElementMatchers.takesNoArguments())))
+                                        .and(ElementMatchers.not(
+                                            ElementMatchers.hasMethodName(domainBuilderConfiguration.builderMethodName())))
                                         .and(ElementMatchers.not(ElementMatchers.isEquals()))
                                         .and(ElementMatchers.not(ElementMatchers.isToString()))
                                         .and(ElementMatchers.not(ElementMatchers.isHashCode()))

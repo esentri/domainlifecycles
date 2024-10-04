@@ -46,7 +46,7 @@ package io.domainlifecycles.domain.types;
  * These entities, which must be transactional consistent, then form an aggregate.
  * The best way to identify aggregates is probably to think about transactional
  * operations.
-
+ * <p>
  * Cluster the entities and value objects into aggregates and define
  * boundaries around each.
  * Choose one entity to be the root of each aggregate, allow external
@@ -57,15 +57,14 @@ package io.domainlifecycles.domain.types;
  * Use the same aggregate boundaries to govern transactions and distribution.
  * Within an aggregate boundary, apply consistency rules synchronously.
  * Across boundaries, handle updates asynchronously.
- *
+ * <p>
  * For more information, read about
- * @see <a href="https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf">
- * Aggregates</a>.
  *
  * @param <ID> type of aggregate identifier
- *
  * @author Tobias Herb
  * @author Mario Herb
+ * @see <a href="https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf">
+ * Aggregates</a>.
  */
 public interface AggregateRoot<ID extends Identity<?>> extends Entity<ID> {
 }

@@ -49,7 +49,8 @@ public class ValidatedAggregateRoot extends AggregateRootBase<ValidatedAggregate
 
 
     @Builder(setterPrefix = "set")
-    public ValidatedAggregateRoot(ValidatedAggregateRootId id, String text, String optionalText, long concurrencyVersion) {
+    public ValidatedAggregateRoot(ValidatedAggregateRootId id, String text, String optionalText,
+                                  long concurrencyVersion) {
         super(concurrencyVersion);
         this.id = id;
         this.text = text;

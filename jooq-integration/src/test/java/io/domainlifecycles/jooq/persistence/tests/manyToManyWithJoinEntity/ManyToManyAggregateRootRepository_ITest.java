@@ -63,81 +63,91 @@ public class ManyToManyAggregateRootRepository_ITest extends BasePersistence_ITe
     private ManyToManyAggregateRootRepository manyToManyAggregateRootRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         manyToManyAggregateRootRepository = new ManyToManyAggregateRootRepository(
             persistenceConfiguration.dslContext,
             persistenceEventTestHelper.testEventPublisher,
             persistenceConfiguration.domainPersistenceProvider
         );
     }
+
     @Test
-    public void testUpdateCompleteAddEntityDuplicatesDifferentRefs(){
+    public void testUpdateCompleteAddEntityDuplicatesDifferentRefs() {
         //given
         TestRootManyToMany tr = TestDataGenerator.buildManyToManyComplete();
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(tr);
         TestRootManyToMany insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
 
-        insertedCopy.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().add(TestEntityManyToManyJoin.builder()
-            .setId(new TestEntityManyToManyJoinId(125L))
-            .setTestEntityManyToManyB(
-                TestEntityManyToManyB.builder()
-                .setId(new TestEntityManyToManyBId(126L))
-                .setName("NEW")
-                .build())
-            .setTestEntityManyToManyAId(insertedCopy.getTestEntityManyToManyAList().get(0).getId())
-            .build()
-        ) ;
-        insertedCopy.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().add(TestEntityManyToManyJoin.builder()
-            .setId(new TestEntityManyToManyJoinId(127L))
-            .setTestEntityManyToManyB(
-                TestEntityManyToManyB.builder()
-                    .setId(new TestEntityManyToManyBId(126L))
-                    .setName("NEW")
-                    .build())
-            .setTestEntityManyToManyAId(insertedCopy.getTestEntityManyToManyAList().get(1).getId())
-            .build()
-        ) ;
-         persistenceEventTestHelper.resetEventsCaught();
+        insertedCopy.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().add(
+            TestEntityManyToManyJoin.builder()
+                .setId(new TestEntityManyToManyJoinId(125L))
+                .setTestEntityManyToManyB(
+                    TestEntityManyToManyB.builder()
+                        .setId(new TestEntityManyToManyBId(126L))
+                        .setName("NEW")
+                        .build())
+                .setTestEntityManyToManyAId(insertedCopy.getTestEntityManyToManyAList().get(0).getId())
+                .build()
+        );
+        insertedCopy.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().add(
+            TestEntityManyToManyJoin.builder()
+                .setId(new TestEntityManyToManyJoinId(127L))
+                .setTestEntityManyToManyB(
+                    TestEntityManyToManyB.builder()
+                        .setId(new TestEntityManyToManyBId(126L))
+                        .setName("NEW")
+                        .build())
+                .setTestEntityManyToManyAId(insertedCopy.getTestEntityManyToManyAList().get(1).getId())
+                .build()
+        );
+        persistenceEventTestHelper.resetEventsCaught();
         //when
         TestRootManyToMany updated = manyToManyAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(new TestRootManyToManyId(1l)).resultValue();
+        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(
+            new TestRootManyToManyId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(2).getTestEntityManyToManyB());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(2));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(2));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(
+                2).getTestEntityManyToManyB());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(2));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(2));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
     }
 
     @Test
-    public void testUpdateCompleteAddEntityDuplicatesDifferentRefsInconsitent(){
+    public void testUpdateCompleteAddEntityDuplicatesDifferentRefsInconsitent() {
         //given
         TestRootManyToMany tr = TestDataGenerator.buildManyToManyComplete();
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(tr);
         TestRootManyToMany insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
 
-        insertedCopy.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().add(TestEntityManyToManyJoin.builder()
-            .setId(new TestEntityManyToManyJoinId(125L))
-            .setTestEntityManyToManyB(
-                TestEntityManyToManyB.builder()
-                    .setId(new TestEntityManyToManyBId(126L))
-                    .setName("NEW1")
-                    .build())
-            .setTestEntityManyToManyAId(insertedCopy.getTestEntityManyToManyAList().get(0).getId())
-            .build()
-        ) ;
-        insertedCopy.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().add(TestEntityManyToManyJoin.builder()
-            .setId(new TestEntityManyToManyJoinId(127L))
-            .setTestEntityManyToManyB(
-                TestEntityManyToManyB.builder()
-                    .setId(new TestEntityManyToManyBId(126L))
-                    .setName("NEW")
-                    .build())
-            .setTestEntityManyToManyAId(insertedCopy.getTestEntityManyToManyAList().get(1).getId())
-            .build()
-        ) ;
-         persistenceEventTestHelper.resetEventsCaught();
+        insertedCopy.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().add(
+            TestEntityManyToManyJoin.builder()
+                .setId(new TestEntityManyToManyJoinId(125L))
+                .setTestEntityManyToManyB(
+                    TestEntityManyToManyB.builder()
+                        .setId(new TestEntityManyToManyBId(126L))
+                        .setName("NEW1")
+                        .build())
+                .setTestEntityManyToManyAId(insertedCopy.getTestEntityManyToManyAList().get(0).getId())
+                .build()
+        );
+        insertedCopy.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().add(
+            TestEntityManyToManyJoin.builder()
+                .setId(new TestEntityManyToManyJoinId(127L))
+                .setTestEntityManyToManyB(
+                    TestEntityManyToManyB.builder()
+                        .setId(new TestEntityManyToManyBId(126L))
+                        .setName("NEW")
+                        .build())
+                .setTestEntityManyToManyAId(insertedCopy.getTestEntityManyToManyAList().get(1).getId())
+                .build()
+        );
+        persistenceEventTestHelper.resetEventsCaught();
         //when
         assertThrows(DLCPersistenceException.class, () -> manyToManyAggregateRootRepository.update(insertedCopy)
         );
@@ -145,7 +155,7 @@ public class ManyToManyAggregateRootRepository_ITest extends BasePersistence_ITe
     }
 
     @Test
-    public void testUpdateCompleteAddEntityDuplicatesSameRef(){
+    public void testUpdateCompleteAddEntityDuplicatesSameRef() {
         //given
         TestRootManyToMany tr = TestDataGenerator.buildManyToManyComplete();
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(tr);
@@ -155,33 +165,40 @@ public class ManyToManyAggregateRootRepository_ITest extends BasePersistence_ITe
             .setId(new TestEntityManyToManyBId(126L))
             .setName("NEW")
             .build();
-        insertedCopy.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().add(TestEntityManyToManyJoin.builder()
-            .setId(new TestEntityManyToManyJoinId(125L))
-            .setTestEntityManyToManyB(b)
-            .setTestEntityManyToManyAId(insertedCopy.getTestEntityManyToManyAList().get(0).getId())
-            .build()
-        ) ;
-        insertedCopy.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().add(TestEntityManyToManyJoin.builder()
-            .setId(new TestEntityManyToManyJoinId(127L))
-            .setTestEntityManyToManyB(b)
-            .setTestEntityManyToManyAId(insertedCopy.getTestEntityManyToManyAList().get(1).getId())
-            .build()
-        ) ;
-         persistenceEventTestHelper.resetEventsCaught();
+        insertedCopy.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().add(
+            TestEntityManyToManyJoin.builder()
+                .setId(new TestEntityManyToManyJoinId(125L))
+                .setTestEntityManyToManyB(b)
+                .setTestEntityManyToManyAId(insertedCopy.getTestEntityManyToManyAList().get(0).getId())
+                .build()
+        );
+        insertedCopy.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().add(
+            TestEntityManyToManyJoin.builder()
+                .setId(new TestEntityManyToManyJoinId(127L))
+                .setTestEntityManyToManyB(b)
+                .setTestEntityManyToManyAId(insertedCopy.getTestEntityManyToManyAList().get(1).getId())
+                .build()
+        );
+        persistenceEventTestHelper.resetEventsCaught();
         //when
         TestRootManyToMany updated = manyToManyAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(new TestRootManyToManyId(1l)).resultValue();
+        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(
+            new TestRootManyToManyId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(2).getTestEntityManyToManyB());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(2));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(2));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(
+                2).getTestEntityManyToManyB());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(2));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(2));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
     }
 
     @Test
-    public void testUpdateCompleteDeleteEntityDuplicates(){
+    public void testUpdateCompleteDeleteEntityDuplicates() {
         //given
         TestRootManyToMany tr = TestDataGenerator.buildManyToManyComplete();
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(tr);
@@ -189,60 +206,71 @@ public class ManyToManyAggregateRootRepository_ITest extends BasePersistence_ITe
 
         insertedCopy.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().remove(1);
         insertedCopy.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().remove(1);
-         persistenceEventTestHelper.resetEventsCaught();
+        persistenceEventTestHelper.resetEventsCaught();
         //when
         TestRootManyToMany updated = manyToManyAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(new TestRootManyToManyId(1l)).resultValue();
+        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(
+            new TestRootManyToManyId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(1).getTestEntityManyToManyB());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(
+                1).getTestEntityManyToManyB());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(1));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
     }
 
     @Test
-    public void testUpdateCompleteEntityUpdateDuplicates(){
+    public void testUpdateCompleteEntityUpdateDuplicates() {
         //given
         TestRootManyToMany tr = TestDataGenerator.buildManyToManyComplete();
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(tr);
         TestRootManyToMany insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
 
-        insertedCopy.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(1).getTestEntityManyToManyB().setName("UPD");
-        insertedCopy.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(1).getTestEntityManyToManyB().setName("UPD");
-         persistenceEventTestHelper.resetEventsCaught();
+        insertedCopy.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(
+            1).getTestEntityManyToManyB().setName("UPD");
+        insertedCopy.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(
+            1).getTestEntityManyToManyB().setName("UPD");
+        persistenceEventTestHelper.resetEventsCaught();
         //when
         TestRootManyToMany updated = manyToManyAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(new TestRootManyToManyId(1l)).resultValue();
+        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(
+            new TestRootManyToManyId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(1).getTestEntityManyToManyB());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED,
+            updated.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(
+                1).getTestEntityManyToManyB());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
     }
 
     @Test
-    public void testUpdateCompleteEntityUpdateDuplicatesInconsistent(){
+    public void testUpdateCompleteEntityUpdateDuplicatesInconsistent() {
         //given
         TestRootManyToMany tr = TestDataGenerator.buildManyToManyComplete();
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(tr);
         TestRootManyToMany insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
 
-        insertedCopy.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(1).getTestEntityManyToManyB().setName("UPD");
-         persistenceEventTestHelper.resetEventsCaught();
+        insertedCopy.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(
+            1).getTestEntityManyToManyB().setName("UPD");
+        persistenceEventTestHelper.resetEventsCaught();
         //then
-        assertThrows( DLCPersistenceException.class,
+        assertThrows(DLCPersistenceException.class,
             () -> manyToManyAggregateRootRepository.update(insertedCopy)
         );
 
     }
 
     @Test
-    public void testInsertOnlyRoot(){
+    public void testInsertOnlyRoot() {
         //given
         TestRootManyToMany tr = TestDataGenerator.buildManyToManyOnlyRoot();
-         persistenceEventTestHelper.resetEventsCaught();
+        persistenceEventTestHelper.resetEventsCaught();
         //when
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(tr);
         //then
@@ -250,76 +278,106 @@ public class ManyToManyAggregateRootRepository_ITest extends BasePersistence_ITe
             .findResultById(new TestRootManyToManyId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
-        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(e-> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),e.getEventType())).collect(Collectors.toList()))
-            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(Collectors.toList()));
+        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(
+            e -> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),
+                e.getEventType())).collect(Collectors.toList()))
+            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(
+                e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(
+                Collectors.toList()));
     }
 
     @Test
-    public void testInsertComplete(){
+    public void testInsertComplete() {
         //given
         TestRootManyToMany tr = TestDataGenerator.buildManyToManyComplete();
-         persistenceEventTestHelper.resetEventsCaught();
+        persistenceEventTestHelper.resetEventsCaught();
         //when
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(tr);
         //then
         Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository
             .findResultById(new TestRootManyToManyId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(0).getTestEntityManyToManyB());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(1).getTestEntityManyToManyB());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntityManyToManyAList().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(0).getTestEntityManyToManyB());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntityManyToManyAList().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(
+                0).getTestEntityManyToManyB());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(
+                1).getTestEntityManyToManyB());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntityManyToManyAList().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(
+                0).getTestEntityManyToManyB());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntityManyToManyAList().get(1));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
-        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(e-> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),e.getEventType())).collect(Collectors.toList()))
-            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(Collectors.toList()));
+        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(
+            e -> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),
+                e.getEventType())).collect(Collectors.toList()))
+            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(
+                e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(
+                Collectors.toList()));
 
     }
 
 
     @Test
-    public void testUpdateSimpleOnlyRoot(){
+    public void testUpdateSimpleOnlyRoot() {
         //given
         TestRootManyToMany tr = TestDataGenerator.buildManyToManyOnlyRoot();
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(tr);
         TestRootManyToMany insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
         insertedCopy.setName("UPDATED");
-         persistenceEventTestHelper.resetEventsCaught();
+        persistenceEventTestHelper.resetEventsCaught();
         //when
         TestRootManyToMany updated = manyToManyAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(new TestRootManyToManyId(1l)).resultValue();
+        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(
+            new TestRootManyToManyId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
-        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(e-> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),e.getEventType())).collect(Collectors.toList()))
-            .isEqualTo(persistenceEventTestHelper.expectedEvents.stream().map(e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(Collectors.toList()));
+        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(
+            e -> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),
+                e.getEventType())).collect(Collectors.toList()))
+            .isEqualTo(persistenceEventTestHelper.expectedEvents.stream().map(
+                e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(
+                Collectors.toList()));
     }
 
     @Test
-    public void testUpdateSimpleComplete(){
+    public void testUpdateSimpleComplete() {
         //given
         TestRootManyToMany tr = TestDataGenerator.buildManyToManyComplete();
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(tr);
         TestRootManyToMany insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
         insertedCopy.setName("UPDATED");
-         persistenceEventTestHelper.resetEventsCaught();
+        persistenceEventTestHelper.resetEventsCaught();
         //when
         TestRootManyToMany updated = manyToManyAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(new TestRootManyToManyId(1l)).resultValue();
+        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(
+            new TestRootManyToManyId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
-        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(e-> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),e.getEventType())).collect(Collectors.toList()))
-            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(Collectors.toList()));
+        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(
+            e -> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),
+                e.getEventType())).collect(Collectors.toList()))
+            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(
+                e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(
+                Collectors.toList()));
 
     }
 
     @Test
-    public void testUpdateSimpleCompleteOnlyEntity(){
+    public void testUpdateSimpleCompleteOnlyEntity() {
         //given
         TestRootManyToMany tr = TestDataGenerator.buildManyToManyComplete();
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(tr);
@@ -329,17 +387,23 @@ public class ManyToManyAggregateRootRepository_ITest extends BasePersistence_ITe
         //when
         TestRootManyToMany updated = manyToManyAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(new TestRootManyToManyId(1l)).resultValue();
+        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(
+            new TestRootManyToManyId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated.getTestEntityManyToManyAList().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED,
+            updated.getTestEntityManyToManyAList().get(0));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
-        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(e-> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),e.getEventType())).collect(Collectors.toList()))
-            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(Collectors.toList()));
+        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(
+            e -> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),
+                e.getEventType())).collect(Collectors.toList()))
+            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(
+                e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(
+                Collectors.toList()));
 
     }
 
     @Test
-    public void testUpdateSimpleInsertEntity(){
+    public void testUpdateSimpleInsertEntity() {
         //given
         TestRootManyToMany tr = TestDataGenerator.buildManyToManyOnlyRoot();
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(tr);
@@ -352,21 +416,27 @@ public class ManyToManyAggregateRootRepository_ITest extends BasePersistence_ITe
             .build();
 
         insertedCopy.setTestEntityManyToManyAList(Arrays.asList(testEntityManyToManyA));
-         persistenceEventTestHelper.resetEventsCaught();
+        persistenceEventTestHelper.resetEventsCaught();
         //when
         TestRootManyToMany updated = manyToManyAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(new TestRootManyToManyId(1l)).resultValue();
+        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(
+            new TestRootManyToManyId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getTestEntityManyToManyAList().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getTestEntityManyToManyAList().get(0));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
-        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(e-> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),e.getEventType())).collect(Collectors.toList()))
-            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(Collectors.toList()));
+        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(
+            e -> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),
+                e.getEventType())).collect(Collectors.toList()))
+            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(
+                e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(
+                Collectors.toList()));
 
     }
 
     @Test
-    public void testUpdateCompleteInsertEntity(){
+    public void testUpdateCompleteInsertEntity() {
         //given
         TestRootManyToMany tr = TestDataGenerator.buildManyToManyComplete();
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(tr);
@@ -379,45 +449,61 @@ public class ManyToManyAggregateRootRepository_ITest extends BasePersistence_ITe
             .build();
 
         insertedCopy.getTestEntityManyToManyAList().add(testEntityManyToManyA);
-         persistenceEventTestHelper.resetEventsCaught();
+        persistenceEventTestHelper.resetEventsCaught();
         //when
         TestRootManyToMany updated = manyToManyAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(new TestRootManyToManyId(1l)).resultValue();
+        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(
+            new TestRootManyToManyId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getTestEntityManyToManyAList().get(2));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getTestEntityManyToManyAList().get(2));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
-        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(e-> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),e.getEventType())).collect(Collectors.toList()))
-            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(Collectors.toList()));
+        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(
+            e -> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),
+                e.getEventType())).collect(Collectors.toList()))
+            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(
+                e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(
+                Collectors.toList()));
 
     }
 
     @Test
-    public void testUpdateCompleteDeleteEntity(){
+    public void testUpdateCompleteDeleteEntity() {
         //given
         TestRootManyToMany tr = TestDataGenerator.buildManyToManyComplete();
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(tr);
         TestRootManyToMany insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
 
         insertedCopy.getTestEntityManyToManyAList().remove(1);
-         persistenceEventTestHelper.resetEventsCaught();
+        persistenceEventTestHelper.resetEventsCaught();
         //when
         TestRootManyToMany updated = manyToManyAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(new TestRootManyToManyId(1l)).resultValue();
+        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(
+            new TestRootManyToManyId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(0).getTestEntityManyToManyB());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(
+                0).getTestEntityManyToManyB());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(1));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
-        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(e-> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),e.getEventType())).collect(Collectors.toList()))
-            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(Collectors.toList()));
+        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(
+            e -> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),
+                e.getEventType())).collect(Collectors.toList()))
+            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(
+                e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(
+                Collectors.toList()));
 
     }
 
     @Test
-    public void testUpdateCompleteInsertEntityAndDeleteEntityAndUpdateEntity(){
+    public void testUpdateCompleteInsertEntityAndDeleteEntityAndUpdateEntity() {
         //given
         TestRootManyToMany tr = TestDataGenerator.buildManyToManyComplete();
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(tr);
@@ -433,25 +519,37 @@ public class ManyToManyAggregateRootRepository_ITest extends BasePersistence_ITe
         insertedCopy.getTestEntityManyToManyAList().get(1).setName("UPDATED");
         insertedCopy.getTestEntityManyToManyAList().remove(0);
 
-         persistenceEventTestHelper.resetEventsCaught();
+        persistenceEventTestHelper.resetEventsCaught();
         //when
         TestRootManyToMany updated = manyToManyAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(new TestRootManyToManyId(1l)).resultValue();
+        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(
+            new TestRootManyToManyId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(0).getTestEntityManyToManyB());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated.getTestEntityManyToManyAList().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getTestEntityManyToManyAList().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(
+                0).getTestEntityManyToManyB());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED,
+            updated.getTestEntityManyToManyAList().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getTestEntityManyToManyAList().get(1));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
-        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(e-> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),e.getEventType())).collect(Collectors.toList()))
-            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(Collectors.toList()));
+        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(
+            e -> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),
+                e.getEventType())).collect(Collectors.toList()))
+            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(
+                e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(
+                Collectors.toList()));
     }
 
     @Test
-    public void testUpdateCompleteDeleteEntityAndUpdateRoot(){
+    public void testUpdateCompleteDeleteEntityAndUpdateRoot() {
         //given
         TestRootManyToMany trs = TestDataGenerator.buildManyToManyComplete();
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(trs);
@@ -462,20 +560,30 @@ public class ManyToManyAggregateRootRepository_ITest extends BasePersistence_ITe
         //when
         TestRootManyToMany updated = manyToManyAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(
+            inserted.getId()).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(0).getTestEntityManyToManyB());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(
+                0).getTestEntityManyToManyB());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(0));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
-        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(e-> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),e.getEventType())).collect(Collectors.toList()))
-            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(Collectors.toList()));
+        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(
+            e -> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),
+                e.getEventType())).collect(Collectors.toList()))
+            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(
+                e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(
+                Collectors.toList()));
 
     }
 
     @Test
-    public void testDeleteComplete(){
+    public void testDeleteComplete() {
         //given
         TestRootManyToMany trs = TestDataGenerator.buildManyToManyComplete();
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(trs);
@@ -483,32 +591,55 @@ public class ManyToManyAggregateRootRepository_ITest extends BasePersistence_ITe
         //when
         Optional<TestRootManyToMany> deleted = manyToManyAggregateRootRepository.deleteById(inserted.getId());
         //then
-        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(
+            inserted.getId()).resultValue();
         Assertions.assertThat(deleted).isPresent();
         Assertions.assertThat(found).isEmpty();
         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(0).getTestEntityManyToManyB());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(1).getTestEntityManyToManyB());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getTestEntityManyToManyAList().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(0));
-        if(!persistenceEventTestHelper.expectedEvents.stream().anyMatch(e -> e.domainObject.equals(deleted.get().getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(0).getTestEntityManyToManyB()))){
-            persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(0).getTestEntityManyToManyB());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(
+                0).getTestEntityManyToManyB());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(
+                1).getTestEntityManyToManyB());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getTestEntityManyToManyAList().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(0));
+        if (!persistenceEventTestHelper.expectedEvents.stream().anyMatch(e -> e.domainObject.equals(
+            deleted.get().getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(
+                0).getTestEntityManyToManyB()))) {
+            persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+                deleted.get().getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(
+                    0).getTestEntityManyToManyB());
         }
-        if(!persistenceEventTestHelper.expectedEvents.stream().anyMatch(e -> e.domainObject.equals(deleted.get().getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(1).getTestEntityManyToManyB()))){
-            persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(1).getTestEntityManyToManyB());
+        if (!persistenceEventTestHelper.expectedEvents.stream().anyMatch(e -> e.domainObject.equals(
+            deleted.get().getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(
+                1).getTestEntityManyToManyB()))) {
+            persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+                deleted.get().getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(
+                    1).getTestEntityManyToManyB());
         }
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getTestEntityManyToManyAList().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getTestEntityManyToManyAList().get(1));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get());
-        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(e-> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),e.getEventType())).collect(Collectors.toList()))
-            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(Collectors.toList()));
+        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(
+            e -> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),
+                e.getEventType())).collect(Collectors.toList()))
+            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(
+                e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(
+                Collectors.toList()));
 
     }
 
     @Test
-    public void testDeleteOnlyRoot(){
+    public void testDeleteOnlyRoot() {
         //given
         TestRootManyToMany trs = TestDataGenerator.buildManyToManyOnlyRoot();
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(trs);
@@ -516,18 +647,23 @@ public class ManyToManyAggregateRootRepository_ITest extends BasePersistence_ITe
         //when
         Optional<TestRootManyToMany> deleted = manyToManyAggregateRootRepository.deleteById(inserted.getId());
         //then
-        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(
+            inserted.getId()).resultValue();
         Assertions.assertThat(deleted).isPresent();
         Assertions.assertThat(found).isEmpty();
         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get());
-        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(e-> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),e.getEventType())).collect(Collectors.toList()))
-            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(Collectors.toList()));
+        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(
+            e -> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),
+                e.getEventType())).collect(Collectors.toList()))
+            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(
+                e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(
+                Collectors.toList()));
 
     }
 
     @Test
-    public void testCloner(){
+    public void testCloner() {
         TestRootManyToMany trs = TestDataGenerator.buildManyToManyComplete();
         EntityCloner cl = new EntityCloner(persistenceConfiguration.domainObjectBuilderProvider);
         TestRootManyToMany cloned = (TestRootManyToMany) cl.clone(trs);
@@ -541,7 +677,7 @@ public class ManyToManyAggregateRootRepository_ITest extends BasePersistence_ITe
     }
 
     @Test
-    public void testUpdateDeleteComplete(){
+    public void testUpdateDeleteComplete() {
         //given
         TestRootManyToMany trs = TestDataGenerator.buildManyToManyComplete();
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(trs);
@@ -553,22 +689,39 @@ public class ManyToManyAggregateRootRepository_ITest extends BasePersistence_ITe
         //when
         TestRootManyToMany updated = manyToManyAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootManyToMany> found = manyToManyAggregateRootRepository.findResultById(
+            inserted.getId()).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(1).getTestEntityManyToManyB());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(0).getTestEntityManyToManyB());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(0).getTestEntityManyToManyB());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityManyToManyAList().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(
+                1).getTestEntityManyToManyB());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(
+                0).getTestEntityManyToManyB());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(1).getTestEntityManyToManyJoinList().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(
+                0).getTestEntityManyToManyB());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(0).getTestEntityManyToManyJoinList().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityManyToManyAList().get(0));
 
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
 
-        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(e-> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),e.getEventType())).collect(Collectors.toList()))
-            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(Collectors.toList()));
+        assertThat(persistenceEventTestHelper.eventsCaught.stream().map(
+            e -> new PersistenceEventTestHelper.DomainObjectEventType(e.getInstance().domainObject(),
+                e.getEventType())).collect(Collectors.toList()))
+            .containsExactlyInAnyOrderElementsOf(persistenceEventTestHelper.expectedEvents.stream().map(
+                e -> new PersistenceEventTestHelper.DomainObjectEventType(e.domainObject, e.eventType)).collect(
+                Collectors.toList()));
 
     }
 

@@ -57,7 +57,7 @@ public class ComplexAggregateRootRepository_ITest extends BasePersistence_ITest 
     private static ComplexAggregateRootRepository complexAggregateRootRepository;
 
     @BeforeAll
-    public  void init(){
+    public void init() {
         complexAggregateRootRepository = new ComplexAggregateRootRepository(
             persistenceConfiguration.dslContext,
             persistenceEventTestHelper.testEventPublisher,
@@ -81,33 +81,51 @@ public class ComplexAggregateRootRepository_ITest extends BasePersistence_ITest 
 
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
 
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(0).getTestEntity6());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(1).getTestEntity6());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(2).getTestEntity6());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(2));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntity1().getTestEntity2A());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntity1()
-            .getTestEntity2B().getTestEntity3List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntity1()
-            .getTestEntity2B().getTestEntity3List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntity1().getTestEntity2B());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntity1());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(
+                    0).getTestEntity6());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(
+                    1).getTestEntity6());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(
+                    2).getTestEntity6());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(2));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntity1().getTestEntity2A());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntity1()
+                .getTestEntity2B().getTestEntity3List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntity1()
+                .getTestEntity2B().getTestEntity3List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntity1().getTestEntity2B());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntity1());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
 
         persistenceEventTestHelper.assertEvents();
@@ -161,7 +179,8 @@ public class ComplexAggregateRootRepository_ITest extends BasePersistence_ITest 
         Optional<TestRoot> found = complexAggregateRootRepository.findResultById(new TestRootId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
 
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated.getTestEntity1());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED,
+            updated.getTestEntity1());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
 
         persistenceEventTestHelper.assertEvents();
@@ -180,7 +199,8 @@ public class ComplexAggregateRootRepository_ITest extends BasePersistence_ITest 
         //then
         Optional<TestRoot> found = complexAggregateRootRepository.findResultById(new TestRootId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1().getTestEntity2B().getTestEntity3List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1().getTestEntity2B().getTestEntity3List().get(0));
         //addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated.getTestEntity1().getTestEntity2B());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
@@ -201,26 +221,39 @@ public class ComplexAggregateRootRepository_ITest extends BasePersistence_ITest 
         //then
         Optional<TestRoot> found = complexAggregateRootRepository.findResultById(new TestRootId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        Assertions.assertThat(found.get().getTestEntity1().getTestEntity2A().getTestEntity3List().size()).isEqualTo(childrenBefore - 1);
+        Assertions.assertThat(found.get().getTestEntity1().getTestEntity2A().getTestEntity3List().size()).isEqualTo(
+            childrenBefore - 1);
 
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(2).getTestEntity6());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(2));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(1).getTestEntity6());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(0).getTestEntity6());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(
+                    2).getTestEntity6());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(2));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(
+                    1).getTestEntity6());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(
+                    0).getTestEntity6());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
     }
@@ -235,15 +268,19 @@ public class ComplexAggregateRootRepository_ITest extends BasePersistence_ITest 
 
         //when
         insertedCopy.getTestEntity1().getTestEntity2A().setName("Updated");
-        insertedCopy.getTestEntity1().getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).setName("Updated");
+        insertedCopy.getTestEntity1().getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).setName(
+            "Updated");
         insertedCopy.getTestEntity1().getTestEntity2B().getTestEntity3List().get(0).setName("Updated");
         TestRoot updated = complexAggregateRootRepository.update(insertedCopy);
         //then
         Optional<TestRoot> found = complexAggregateRootRepository.findResultById(new TestRootId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated.getTestEntity1().getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated.getTestEntity1().getTestEntity2A());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated.getTestEntity1().getTestEntity2B().getTestEntity3List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED,
+            updated.getTestEntity1().getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED,
+            updated.getTestEntity1().getTestEntity2A());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED,
+            updated.getTestEntity1().getTestEntity2B().getTestEntity3List().get(0));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
     }
@@ -298,28 +335,43 @@ public class ComplexAggregateRootRepository_ITest extends BasePersistence_ITest 
 
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
 
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(2).getTestEntity6());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(2));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(1).getTestEntity6());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(0).getTestEntity6());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1().getTestEntity2A());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated.getTestEntity1());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(
+                    2).getTestEntity6());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(2));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(
+                    1).getTestEntity6());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(
+                    0).getTestEntity6());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1().getTestEntity2A());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED,
+            updated.getTestEntity1());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
 
         persistenceEventTestHelper.assertEvents();
@@ -348,12 +400,18 @@ public class ComplexAggregateRootRepository_ITest extends BasePersistence_ITest 
         Optional<TestRoot> found = complexAggregateRootRepository.findResultById(new TestRootId(1l)).resultValue();
 
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1().getTestEntity2B().getTestEntity3List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1().getTestEntity2B().getTestEntity3List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1().getTestEntity2B());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated.getTestEntity1().getTestEntity2A().getTestEntity3List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getTestEntity1().getTestEntity2A().getTestEntity3List().get(2));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated.getTestEntity1());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1().getTestEntity2B().getTestEntity3List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1().getTestEntity2B().getTestEntity3List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1().getTestEntity2B());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED,
+            updated.getTestEntity1().getTestEntity2A().getTestEntity3List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getTestEntity1().getTestEntity2A().getTestEntity3List().get(2));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED,
+            updated.getTestEntity1());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
 
         persistenceEventTestHelper.assertEvents();
@@ -383,6 +441,7 @@ public class ComplexAggregateRootRepository_ITest extends BasePersistence_ITest 
         });
 
     }
+
     @Test
     public void testUpdateComplexScenarioDeleteSubtreeBySettingReferenceNullOnly() {
         //given
@@ -399,29 +458,44 @@ public class ComplexAggregateRootRepository_ITest extends BasePersistence_ITest 
         Optional<TestRoot> found = complexAggregateRootRepository.findResultById(new TestRootId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
 
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(2).getTestEntity6());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(2));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(1).getTestEntity6());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(0).getTestEntity6());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(
+                    2).getTestEntity6());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(2));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(
+                    1).getTestEntity6());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(
+                    0).getTestEntity6());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0));
 
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1().getTestEntity2A());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated.getTestEntity1());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1().getTestEntity2A());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED,
+            updated.getTestEntity1());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
 
         persistenceEventTestHelper.assertEvents();
@@ -465,35 +539,53 @@ public class ComplexAggregateRootRepository_ITest extends BasePersistence_ITest 
         Optional<TestRoot> found = complexAggregateRootRepository.findResultById(new TestRootId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
 
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, prepared.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, prepared.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(2).getTestEntity6());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, prepared.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(2));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, prepared.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(1).getTestEntity6());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, prepared.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, prepared.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(0).getTestEntity6());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, prepared.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, prepared.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            prepared.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            prepared.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(
+                    2).getTestEntity6());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            prepared.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(2));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            prepared.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(
+                    1).getTestEntity6());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            prepared.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            prepared.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(
+                    0).getTestEntity6());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            prepared.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            prepared.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0));
 
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, prepared.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, prepared.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, prepared.getTestEntity1().getTestEntity2A());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            prepared.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            prepared.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            prepared.getTestEntity1().getTestEntity2A());
 
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getTestEntity1()
-            .getTestEntity2B().getTestEntity3List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getTestEntity1()
-            .getTestEntity2B().getTestEntity3List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getTestEntity1().getTestEntity2B());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated.getTestEntity1());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getTestEntity1()
+                .getTestEntity2B().getTestEntity3List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getTestEntity1()
+                .getTestEntity2B().getTestEntity3List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getTestEntity1().getTestEntity2B());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED,
+            updated.getTestEntity1());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
 
         persistenceEventTestHelper.assertEvents();
@@ -515,33 +607,51 @@ public class ComplexAggregateRootRepository_ITest extends BasePersistence_ITest 
         //then
         Optional<TestRoot> found = complexAggregateRootRepository.findResultById(new TestRootId(1l)).resultValue();
         Assertions.assertThat(found).isEmpty();
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(2).getTestEntity6());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(2));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(1).getTestEntity6());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(0).getTestEntity6());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2A().getTestEntity3List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1().getTestEntity2A());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2B().getTestEntity3List().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1()
-            .getTestEntity2B().getTestEntity3List().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1().getTestEntity2B());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntity1());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(
+                    2).getTestEntity6());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(2));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(
+                    1).getTestEntity6());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(
+                    0).getTestEntity6());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0).getTestEntity5List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1).getTestEntity4List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2A().getTestEntity3List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1().getTestEntity2A());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2B().getTestEntity3List().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1()
+                .getTestEntity2B().getTestEntity3List().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1().getTestEntity2B());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntity1());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted);
         persistenceEventTestHelper.assertEvents();
     }

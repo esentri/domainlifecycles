@@ -53,7 +53,7 @@ public class SimpleCompanionTest {
     }
 
     @Test
-    public void testEntityEqualsFalse(){
+    public void testEntityEqualsFalse() {
         TestEntity e1 = new TestEntity(new TestEntityId(1L), 0);
         TestEntity e2 = new TestEntity(new TestEntityId(2L), 0);
         assertThat(e1 != e2).isTrue();
@@ -61,7 +61,7 @@ public class SimpleCompanionTest {
     }
 
     @Test
-    public void testEntityEqualsTrue(){
+    public void testEntityEqualsTrue() {
         TestEntity e1 = new TestEntity(new TestEntityId(1L), 0);
         TestEntity e2 = new TestEntity(new TestEntityId(1L), 0);
         assertThat(e1 != e2).isTrue();
@@ -69,14 +69,14 @@ public class SimpleCompanionTest {
     }
 
     @Test
-    public void testId(){
+    public void testId() {
         TestEntity e1 = new TestEntity(new TestEntityId(1L), 0);
 
         AssertionsForClassTypes.assertThat(Entities.id(e1)).isEqualTo(new TestEntityId(1L));
     }
 
     @Test
-    public void testEntityHashCode(){
+    public void testEntityHashCode() {
         TestEntity e1 = new TestEntity(new TestEntityId(1L), 0);
         TestEntity e2 = new TestEntity(new TestEntityId(1L), 2);
         assertThat(Entities.hashCode(e1)).isEqualTo(Entities.hashCode(e2));
@@ -84,10 +84,11 @@ public class SimpleCompanionTest {
     }
 
     @Test
-    public void testEntityToString(){
+    public void testEntityToString() {
         TestEntity e1 = new TestEntity(new TestEntityId(1L), 0);
-        assertThat(Entities.toString(e1)).isEqualTo(TestEntity.class.getName() + "@" + System.identityHashCode(e1) + "(id="
-            + TestEntityId.class.getName() + "@" + System.identityHashCode(e1.id) + "(value=1))");
+        assertThat(Entities.toString(e1)).isEqualTo(
+            TestEntity.class.getName() + "@" + System.identityHashCode(e1) + "(id="
+                + TestEntityId.class.getName() + "@" + System.identityHashCode(e1.id) + "(value=1))");
     }
 
     @Test
@@ -109,7 +110,8 @@ public class SimpleCompanionTest {
     @Test
     public void testToStringValueObject() {
         AktionsCode a = AktionsCode.builder().setValue("blubb").build();
-        Assertions.assertThat(ValueObjects.toString(a)).isEqualTo(AktionsCode.class.getName() + "@" + System.identityHashCode(a) + "(value=blubb)");
+        Assertions.assertThat(ValueObjects.toString(a)).isEqualTo(
+            AktionsCode.class.getName() + "@" + System.identityHashCode(a) + "(value=blubb)");
     }
 
     @Test
@@ -122,7 +124,7 @@ public class SimpleCompanionTest {
 
 
     @Test
-    public void testDetectChangesNoChange(){
+    public void testDetectChangesNoChange() {
         AutoMappedVoAggregateRoot a = TestDataGenerator.buildAutoMappedVoAggregateMax();
         AutoMappedVoAggregateRoot a2 = TestDataGenerator.buildAutoMappedVoAggregateMax();
         var changes = Entities.detectChanges(a, a2, true);
@@ -130,7 +132,7 @@ public class SimpleCompanionTest {
     }
 
     @Test
-    public void testDetectChangesSimple(){
+    public void testDetectChangesSimple() {
         AutoMappedVoAggregateRoot a = TestDataGenerator.buildAutoMappedVoAggregateMax();
         AutoMappedVoAggregateRoot a2 = TestDataGenerator.buildAutoMappedVoAggregateMax();
         a2.setText("NEU");
@@ -140,13 +142,13 @@ public class SimpleCompanionTest {
     }
 
     @Test
-    public void testDetectChangesAdded(){
+    public void testDetectChangesAdded() {
         AutoMappedVoAggregateRoot a = TestDataGenerator.buildAutoMappedVoAggregateMax();
         AutoMappedVoAggregateRoot a2 = TestDataGenerator.buildAutoMappedVoAggregateMax();
         a2.setEntities(List.of(AutoMappedVoEntity.builder()
-                .setId(new AutoMappedVoEntityId(22L))
-                .setText("Added")
-                .setRootId(a.getId())
+            .setId(new AutoMappedVoEntityId(22L))
+            .setText("Added")
+            .setRootId(a.getId())
             .build()));
         var changes = Entities.detectChanges(a, a2, true);
         assertThat(changes.size()).isEqualTo(1);
@@ -154,7 +156,6 @@ public class SimpleCompanionTest {
         assertThat(change.changedField().getName()).isEqualTo("entities");
         assertThat(change.changeType()).isEqualTo(Entities.DetectedChange.ChangeType.ADDED);
     }
-
 
 
 }

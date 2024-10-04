@@ -32,7 +32,9 @@ import io.domainlifecycles.domain.types.Identity;
 
 
 public class ReflectAggregate implements AggregateRoot<ReflectAggregate.ReflectAggregateId> {
-    public record ReflectAggregateId(Long value) implements Identity<Long>{}
+    public record ReflectAggregateId(Long value) implements Identity<Long> {
+    }
+
     public String value;
     public ReflectAggregateId id;
     public long concurrencyVersion;

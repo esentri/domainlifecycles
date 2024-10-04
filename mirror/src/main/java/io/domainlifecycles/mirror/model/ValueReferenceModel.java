@@ -56,7 +56,8 @@ public class ValueReferenceModel extends FieldModel implements ValueReferenceMir
                                @JsonProperty("static") boolean isStatic,
                                @JsonProperty("hidden") boolean hidden
     ) {
-        super(name, type, accessLevel, declaredByTypeName, modifiable, publicReadable, publicWriteable, isStatic, hidden);
+        super(name, type, accessLevel, declaredByTypeName, modifiable, publicReadable, publicWriteable, isStatic,
+            hidden);
     }
 
     /**
@@ -64,9 +65,9 @@ public class ValueReferenceModel extends FieldModel implements ValueReferenceMir
      */
     @JsonIgnore
     @Override
-    public ValueMirror getValue(){
+    public ValueMirror getValue() {
         return Domain.typeMirror(getType().getTypeName())
-            .map(e -> (ValueMirror)e)
+            .map(e -> (ValueMirror) e)
             .orElseThrow(() -> MirrorException.fail("ValueMirror not found for '%s'", getType().getTypeName()));
     }
 }
