@@ -3,8 +3,7 @@
 DLC Domain Events provides functionality to simplify some of the technical aspects regarding DomainEvents:
 
 - In order to keep the core implementation of a bounded context free of technical concerns DLC Domain Events provides
-  two simple
-  interfaces for publishing or listening on Domain Events.
+  two simple interfaces for publishing or listening on Domain Events.
 - DLC provides rich configuration options
     - to align DomainEvent handling according to transactional boundaries
     - to plug in technical message bus providers

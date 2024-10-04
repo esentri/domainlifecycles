@@ -5,9 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0] - 2024-06-18
+## [2.0.0.rc.8] - 2024-10-04
 
 ### Added
+
+#### domain-events
+
+- First draft of a new module supporting Domain Events, in a way where domain event operations
+  and the technical message processing are separated
+
+#### service-registry
+
+- First draft of a DLC specific service registry, that allows to accessing services in dynamic way at runtime 
 
 #### access
 
