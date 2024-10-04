@@ -45,7 +45,6 @@ public class DefaultNewRecordInstanceProvider implements NewRecordInstanceProvid
      * @param recordClassName the full qualified name of record type
      * @return the new record instance
      */
-    @SuppressWarnings("unchecked")
     @Override
     public <RECORD> RECORD provideNewRecord(String recordClassName) {
         try {

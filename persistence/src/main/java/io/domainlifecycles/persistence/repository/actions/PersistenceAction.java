@@ -42,13 +42,15 @@ import java.util.Objects;
  * database. DELETE_UPDATE - sometimes before being able to delete a record. A
  * reference to record being deleted must be set to "null". This is necessary to
  * comply with foreign key constraints and to keep all the changes consistent.
- * <p>
+ * </p>
  * <p>
  * A PersistenceAction keeps a reference to {@link DomainObjectInstanceAccessModel} on which a change was detected
  * and the type of action,
  * that has to be applied to the database.
+ * </p>
  *
  * @param <BASE_RECORD_TYPE> the type of the record that is being persisted
+ *
  * @author Mario Herb
  */
 public class PersistenceAction<BASE_RECORD_TYPE> {

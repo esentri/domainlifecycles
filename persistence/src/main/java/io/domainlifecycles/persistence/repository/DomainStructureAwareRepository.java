@@ -125,6 +125,7 @@ import java.util.Optional;
  * @param <I>                the type of the identity of the aggregate root
  * @param <A>                the type of the aggregate root
  * @param <BASE_RECORD_TYPE> the type of the database representation of the record
+ *
  * @author Mario Herb
  */
 public abstract class DomainStructureAwareRepository<I extends Identity<?>, A extends AggregateRoot<I>,
@@ -167,7 +168,6 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
      * @param root the aggregate root entity
      * @return the reference of the passed root object to be inserted
      */
-    @SuppressWarnings({"unchecked"})
     public A update(A root) {
         Objects.requireNonNull(root);
         var rootCurrentDatabaseState = findResultById((I) domainPersistenceProvider.getId(root));
@@ -184,7 +184,6 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
      * @param root the aggregate root entity
      * @return the reference of the passed root object to be inserted
      */
-    @SuppressWarnings({"unchecked"})
     public A increaseVersion(A root) {
         Objects.requireNonNull(root);
         var rootCurrentDatabaseState = findResultById((I) domainPersistenceProvider.getId(root));
@@ -213,7 +212,6 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
         return Optional.empty();
     }
 
-    @SuppressWarnings({"unchecked"})
     protected void processAggregates(A rootUpdated, FetcherResult<A, BASE_RECORD_TYPE> databaseStateRoot) {
         var pc = new PersistenceContext<>(domainPersistenceProvider, rootUpdated, databaseStateRoot);
 
@@ -291,7 +289,7 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
     protected void processPersistenceActions(final PersistenceContext<BASE_RECORD_TYPE> context) {
 
         var insertionOrderClasses = persistenceActionOrderProvider.insertionOrder(context.rootClass.getName());
-        if (insertionOrderClasses == null || insertionOrderClasses.size() == 0) {
+        if (insertionOrderClasses == null || insertionOrderClasses.isEmpty()) {
             throw DLCPersistenceException.fail("The insertion order was not defined! Check the mirror! RootClass '%s'.",
                 context.rootClass);
         }
@@ -305,7 +303,8 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
                 ));
 
         var deletionOrderClasses = persistenceActionOrderProvider.deletionOrder(context.rootClass.getName());
-        if (deletionOrderClasses == null || deletionOrderClasses.size() == 0) {
+
+        if (deletionOrderClasses == null || deletionOrderClasses.isEmpty()) {
             throw DLCPersistenceException.fail("The deletion order was not defined! Check the mirror! RootClass '%s'.",
                 context.rootClass);
         }

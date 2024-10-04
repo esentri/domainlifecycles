@@ -102,7 +102,6 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
     private final EntityCloner entityCloner;
     private final DomainPersistenceProvider<BASE_RECORD_TYPE> domainPersistenceProvider;
 
-    @SuppressWarnings("unchecked")
     public PersistenceContext(
         DomainPersistenceProvider<BASE_RECORD_TYPE> domainPersistenceProvider,
         AggregateRoot<?> updatedRoot,
@@ -500,7 +499,7 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
     private void addActionsToResetForwardReferencesOnDeletedEntities(final Set<Entity<?>> deletedEntities,
                                                                      Set<DomainObjectInstanceAccessModel<BASE_RECORD_TYPE>> recordMappedDatabaseDomainObjects,
                                                                      Set<DomainObjectInstanceAccessModel<BASE_RECORD_TYPE>> recordMappedUpdatedDomainObjects) {
-        if (deletedEntities.size() > 0) {
+        if (!deletedEntities.isEmpty()) {
             recordMappedDatabaseDomainObjects
                 .stream()
                 .filter(DomainObjectInstanceAccessModel::isEntity)

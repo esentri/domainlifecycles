@@ -127,7 +127,6 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
      */
 
     @Override
-    @SuppressWarnings("unchecked")
     public BASE_RECORD_TYPE increaseVersion(Entity<?> entity, PersistenceContext<BASE_RECORD_TYPE> pc) {
         var em = Domain.entityMirrorFor(entity);
         var concurrencyField = em.getConcurrencyVersionField();
@@ -150,9 +149,13 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
 
     protected abstract void doIncreaseVersion(BASE_RECORD_TYPE record);
 
+<<<<<<< HEAD
+    protected BASE_RECORD_TYPE getRecordFromDomainObject(final PersistenceAction<BASE_RECORD_TYPE> persistenceAction, final AggregateRoot<?> root) {
+=======
     @SuppressWarnings("unchecked")
     protected BASE_RECORD_TYPE getRecordFromDomainObject(final PersistenceAction<BASE_RECORD_TYPE> persistenceAction,
                                                          final AggregateRoot<?> root) {
+>>>>>>> feature/rename_domain
         Objects.requireNonNull(persistenceAction);
         Objects.requireNonNull(root);
         BASE_RECORD_TYPE record;

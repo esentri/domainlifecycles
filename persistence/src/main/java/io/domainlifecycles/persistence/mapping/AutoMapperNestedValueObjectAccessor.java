@@ -60,6 +60,7 @@ import java.util.stream.Collectors;
  *
  * @param <R>  type of record
  * @param <DO> type of domain object
+ *
  * @author Mario Herb
  */
 public class AutoMapperNestedValueObjectAccessor<R, DO extends DomainObject> implements MapperNestedValueObjectAccessor<R, DO> {
@@ -103,8 +104,7 @@ public class AutoMapperNestedValueObjectAccessor<R, DO extends DomainObject> imp
         return new BuilderWrapper(this.domainObjectBuilderProvider.provide(targetType));
     }
 
-    @SuppressWarnings("unchecked")
-    private Object getPathValue(ValuePath path, R record) {
+    private Object getPathValue(ValuePath path, R record){
         RecordProperty p = valuePathToRecordProperty.get(path);
         if (p != null) {
             var recordPropertyValue = recordPropertyAccessor.getPropertyValue(p, record);
