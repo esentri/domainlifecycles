@@ -55,7 +55,6 @@ import java.util.List;
 public class SpringJmsConfigSeparate {
 
     @Bean
-    @DependsOn("initializedDomain")
     public SpringTransactionJakartaJmsChannelFactory springtransactionJakartaJmsChannelFactory(
         ServiceProvider serviceProvider,
         ClassProvider classProvider,

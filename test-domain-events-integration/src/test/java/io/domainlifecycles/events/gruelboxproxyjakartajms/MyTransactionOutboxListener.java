@@ -25,19 +25,35 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.events.jakartajmsspringtxseparate;
+package io.domainlifecycles.events.gruelboxproxyjakartajms;
 
-import org.springframework.boot.autoconfigure.jms.artemis.ArtemisConfigurationCustomizer;
-import org.springframework.context.annotation.Configuration;
+import com.gruelbox.transactionoutbox.TransactionOutboxEntry;
+import com.gruelbox.transactionoutbox.TransactionOutboxListener;
+import lombok.extern.slf4j.Slf4j;
 
-@Configuration
-public class ArtemisConfigSeparate implements ArtemisConfigurationCustomizer {
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+@Slf4j
+public class MyTransactionOutboxListener implements TransactionOutboxListener {
+
+    public Queue<TransactionOutboxEntry> successfulEntries = new ConcurrentLinkedQueue<>();
+    public Queue<TransactionOutboxEntry> blockedEntries = new ConcurrentLinkedQueue<>();
+
     @Override
-    public void customize(org.apache.activemq.artemis.core.config.Configuration configuration) {
-        try {
-            configuration.addAcceptorConfiguration("remote", "tcp://0.0.0.0:66666");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void success(TransactionOutboxEntry entry) {
+        log.info("Entry '{}' processed successfully!", entry);
+        successfulEntries.add(entry);
+    }
+
+    @Override
+    public void failure(TransactionOutboxEntry entry, Throwable cause) {
+        log.error("Entry '{}' failed!", entry, cause);
+    }
+
+    @Override
+    public void blocked(TransactionOutboxEntry entry, Throwable cause) {
+        log.error("Entry '{}' blocked!", entry, cause);
+        blockedEntries.add(entry);
     }
 }

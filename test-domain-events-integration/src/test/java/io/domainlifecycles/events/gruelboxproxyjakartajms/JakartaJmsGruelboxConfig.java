@@ -25,24 +25,31 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.events.jakartajms;
+package io.domainlifecycles.events.gruelboxproxyjakartajms;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gruelbox.transactionoutbox.DefaultPersistor;
+import com.gruelbox.transactionoutbox.Dialect;
+import com.gruelbox.transactionoutbox.TransactionOutbox;
+import com.gruelbox.transactionoutbox.TransactionOutboxListener;
+import com.gruelbox.transactionoutbox.jackson.JacksonInvocationSerializer;
+import com.gruelbox.transactionoutbox.spring.SpringTransactionManager;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.access.classes.DefaultClassProvider;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
-import io.domainlifecycles.events.jakarta.jms.api.JakartaJmsChannelFactory;
+import io.domainlifecycles.events.gruelbox.api.DomainEventsInstantiator;
+import io.domainlifecycles.events.jakarta.jms.api.GruelboxProxyJakartaJmsChannelFactory;
 import io.domainlifecycles.events.mq.api.AbstractMqProcessingChannel;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
+import jakarta.jms.ConnectionFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Import;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -51,35 +58,63 @@ import java.util.List;
 @Configuration
 @Slf4j
 @EnableJms
-public class SpringJmsConfig {
-
+@Import({SpringTransactionManager.class})
+public class JakartaJmsGruelboxConfig {
 
     @Bean
-    public JakartaJmsChannelFactory jakartaJmsChannelFactory(
+    public DomainEventsInstantiator domainEventsInstantiator(){
+        return new DomainEventsInstantiator();
+    }
+
+    @Bean
+    public TransactionOutbox transactionOutbox(
+        SpringTransactionManager springTransactionManager,
+        ObjectMapper objectMapper,
+        DomainEventsInstantiator domainEventsInstantiator,
+        TransactionOutboxListener transactionOutboxListener
+    ) {
+        return TransactionOutbox.builder()
+            .instantiator(domainEventsInstantiator)
+            .transactionManager(springTransactionManager)
+            .blockAfterAttempts(3)
+            .persistor(DefaultPersistor.builder()
+                .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
+                .dialect(Dialect.H2)
+                .build())
+            .listener(transactionOutboxListener)
+            .build();
+    }
+
+    @Bean
+    public GruelboxProxyJakartaJmsChannelFactory gruelboxProxyActiveMqChannelFactory(
         ServiceProvider serviceProvider,
         ClassProvider classProvider,
         TransactionalHandlerExecutor transactionalHandlerExecutor,
-        ActiveMQConnectionFactory jmsConnectionFactory,
-        ObjectMapper objectMapper
+        ConnectionFactory jmsConnectionFactory,
+        ObjectMapper objectMapper,
+        TransactionOutbox transactionOutbox,
+        DomainEventsInstantiator domainEventsInstantiator
     ){
-        return new JakartaJmsChannelFactory(
-            jmsConnectionFactory,
+        return new GruelboxProxyJakartaJmsChannelFactory(
             serviceProvider,
             classProvider,
             transactionalHandlerExecutor,
-            objectMapper
-            );
+            objectMapper,
+            transactionOutbox,
+            domainEventsInstantiator,
+            jmsConnectionFactory
+        );
     }
 
     @Bean(destroyMethod = "close")
-    public AbstractMqProcessingChannel channel(JakartaJmsChannelFactory factory){
-        return factory.processingChannel("jms1");
+    public AbstractMqProcessingChannel channel(GruelboxProxyJakartaJmsChannelFactory factory){
+        return factory.processingChannel("gruelboxJmsChannel");
     }
 
     @Bean
     public ChannelRoutingConfiguration channelConfiguration(List<PublishingChannel> publishingChannels){
         var router = new DomainEventTypeBasedRouter(publishingChannels);
-        router.defineDefaultChannel("jms1");
+        router.defineDefaultChannel("gruelboxJmsChannel");
         return new ChannelRoutingConfiguration(router);
     }
 
@@ -91,6 +126,11 @@ public class SpringJmsConfig {
     @Bean
     public ClassProvider classProvider(){
         return new DefaultClassProvider();
+    }
+
+    @Bean
+    public MyTransactionOutboxListener transactionOutboxListener(){
+        return new MyTransactionOutboxListener();
     }
 
 }

@@ -42,6 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -53,6 +54,7 @@ import java.util.List;
 public class SpringJmsConfig {
 
     @Bean
+    @DependsOn("initializedDomain")
     public SpringTransactionJakartaJmsChannelFactory springtransactionJakartaJmsChannelFactory(
         ServiceProvider serviceProvider,
         ClassProvider classProvider,

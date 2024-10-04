@@ -25,17 +25,17 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.events.jakartajmsspringtxseparate;
+package io.domainlifecycles.events.gruelboxproxyjakartajms;
 
 import org.springframework.boot.autoconfigure.jms.artemis.ArtemisConfigurationCustomizer;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class ArtemisConfigSeparate implements ArtemisConfigurationCustomizer {
+public class GruelboxArtemisConfig implements ArtemisConfigurationCustomizer {
     @Override
     public void customize(org.apache.activemq.artemis.core.config.Configuration configuration) {
         try {
-            configuration.addAcceptorConfiguration("remote", "tcp://0.0.0.0:66666");
+            configuration.addAcceptorConfiguration("remote", "tcp://0.0.0.0:65555");
         } catch (Exception e) {
             e.printStackTrace();
         }

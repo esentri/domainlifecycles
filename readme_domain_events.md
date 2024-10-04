@@ -179,8 +179,6 @@ For the publishing of externally handled Domain Events, one might define a dedic
 using a JMS compliant message broker.
 
 An example for this type of configuration might look like that:
-
-TODO ab hier
 ```Java
 
     // We need a DomainEventsInstantiator for the outbox
@@ -237,7 +235,9 @@ TODO ab hier
     //This channel factory is used to create the external channel, routing event via JMS 
     // (using the Active MQ implementation of a Jakarta JMS compliant message broker )
     @Bean
-    @DependsOn("initializedDomain")
+    @DependsOn("initializedDomain") 
+    //@DependsOn: Depending on the rest of the application config it's sometimes necessary to make sure the 
+    //Domain mirror is initialized before
     public SpringtransactionJakartaJmsChannelFactory springtransactionJakartaJmsChannelFactory(
             ActiveMQConnectionFactory jmsConnectionFactory,
             ObjectMapper objectMapper
@@ -636,16 +636,91 @@ a dedicated outbox delivery service is reading those messages from the outbox ta
 This technique is not as performant as going directly to the broker, regarding processing speed and scalability, but it it
 a good tradeoff for the sake of application consistency.
 
-Here's an example configuration for a Gruelbox based outbox proxy :
+Here's an example configuration for a Gruelbox based outbox proxy with a JMS broker behind the outbox:
 ```Java
-TODO
+    // Our channel factory requires a Class Provider
+    @Bean
+    public ClassProvider classProvider(){
+        return new DefaultClassProvider();
+    }
+
+    // A TransactionalHandlerExecutor is used to wrap all listener executions in independent 
+    // transactions
+    @Bean
+    public TransactionalHandlerExecutor transactionalHandlerExecutor(PlatformTransactionManager platformTransactionManager){
+        return new SpringTransactionalHandlerExecutor(platformTransactionManager);
+    }
+
+    // Needed for wiring the outbox with the MQ domain event publisher
+    @Bean
+    public DomainEventsInstantiator domainEventsInstantiator(){
+        return new DomainEventsInstantiator();
+    }
+
+    // the outbox 
+    @Bean
+    public TransactionOutbox transactionOutbox(
+            SpringTransactionManager springTransactionManager,
+            ObjectMapper objectMapper,
+            DomainEventsInstantiator domainEventsInstantiator,
+            TransactionOutboxListener transactionOutboxListener
+    ) {
+        return TransactionOutbox.builder()
+                .instantiator(domainEventsInstantiator)
+                .transactionManager(springTransactionManager)
+                .blockAfterAttempts(3)
+                .persistor(DefaultPersistor.builder()
+                        .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
+                        .dialect(Dialect.H2)
+                        .build())
+                .listener(transactionOutboxListener)
+                .build();
+    }
+
+    // The channel factory providing Jakarta JMS based channels with a Gruelbox based outbox ensuring
+    // correct transactional sending behaviour
+    @Bean
+    public GruelboxProxyJakartaJmsChannelFactory gruelboxProxyActiveMqChannelFactory(
+            ServiceProvider serviceProvider,
+            ClassProvider classProvider,
+            TransactionalHandlerExecutor transactionalHandlerExecutor,
+            ConnectionFactory jmsConnectionFactory,
+            ObjectMapper objectMapper,
+            TransactionOutbox transactionOutbox,
+            DomainEventsInstantiator domainEventsInstantiator
+    ){
+        return new GruelboxProxyJakartaJmsChannelFactory(
+                serviceProvider,
+                classProvider,
+                transactionalHandlerExecutor,
+                objectMapper,
+                transactionOutbox,
+                domainEventsInstantiator,
+                jmsConnectionFactory
+        );
+    }
+
+    // Declaring the channel
+    @Bean(destroyMethod = "close")
+    public AbstractMqProcessingChannel channel(GruelboxProxyJakartaJmsChannelFactory factory){
+        return factory.processingChannel("gruelboxJmsChannel");
+    }
+
+    // Routing all Domain Events to the outbox and from there to the JMS broker
+    @Bean
+    public ChannelRoutingConfiguration channelConfiguration(List<PublishingChannel> publishingChannels){
+        var router = new DomainEventTypeBasedRouter(publishingChannels);
+        router.defineDefaultChannel("gruelboxJmsChannel");
+        return new ChannelRoutingConfiguration(router);
+    }
+
 ```
 
-The Gruelbox supports also some kind of idempotency protection. The idempotency protection prevents
+The Gruelbox supports also some kind of idempotency protection. Idempotency protection for Domain Events prevents
 Domain Event duplicates from being processed multiple times. JMS message brokers normally only 
 give at-least-once processing guarantees. That means, that in some cases it's possible that a message handler 
-receives the same Domain Event twice. If the handler behaves naturally idempotent, this is no problem.
-Naturally idempotent means, in the end we have the same final state in our system, regardless wether the Domain Event 
+receives the same Domain Event twice or multiple times. If the handler behaves naturally idempotent, this is no problem.
+Naturally idempotent means, in the end we have the same final state in our system, regardless weather the Domain Event 
 was processed once or multiple times.
 
 Whenever we have situations, where we have no naturally idempotent behaviour, we can use the Gruelbox to

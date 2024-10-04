@@ -25,7 +25,7 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.events.jakartajmsspringtx;
+package io.domainlifecycles.events.gruelboxproxyjakartajms;
 
 import io.domainlifecycles.domain.types.ApplicationService;
 import io.domainlifecycles.domain.types.DomainService;
@@ -37,6 +37,7 @@ import io.domainlifecycles.events.AQueryClient;
 import io.domainlifecycles.events.ARepository;
 import io.domainlifecycles.events.AnApplicationService;
 import io.domainlifecycles.events.AnOutboundService;
+import io.domainlifecycles.events.TransactionalCounterService;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.InitializedDomain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
@@ -46,6 +47,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.List;
@@ -53,14 +55,16 @@ import java.util.Locale;
 
 @SpringBootApplication
 @EnableTransactionManagement
-public class TestApplicationJmsSpring {
+public class TestApplicationJmsGruelbox {
+
+
 
     /**
      * Setting the Locale to explicitly force the language in default validation error messages.
      */
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH);
-        new SpringApplicationBuilder(TestApplicationJmsSpring.class).run(args);
+        new SpringApplicationBuilder(TestApplicationJmsGruelbox.class).run(args);
     }
 
     @Bean
@@ -94,11 +98,17 @@ public class TestApplicationJmsSpring {
         return new AnOutboundService();
     }
 
+    @Bean
+    public TransactionalCounterService transactionalCounterService(JdbcTemplate jdbcTemplate){
+        return new TransactionalCounterService(jdbcTemplate);
+    }
+
     /**
      * This method creates and configures a ServiceProvider instance, which is responsible for providing instances of various types of services.
      * It takes three parameters: repositories, applicationServices, and domainServices, which are lists of Repository, ApplicationService, and DomainService instances respectively
      */
     @Bean
+    @DependsOn("initializedDomain")
     public ServiceProvider serviceProvider(
         List<Repository<?,?>> repositories,
         List<ApplicationService> applicationServices,

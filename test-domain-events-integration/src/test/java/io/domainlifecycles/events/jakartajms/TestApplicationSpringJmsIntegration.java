@@ -117,6 +117,7 @@ public class TestApplicationSpringJmsIntegration {
      * It takes three parameters: repositories, applicationServices, and domainServices, which are lists of Repository, ApplicationService, and DomainService instances respectively
      */
     @Bean
+    @DependsOn("initializedDomain")
     public ServiceProvider serviceProvider(
         List<Repository<?,?>> repositories,
         List<ApplicationService> applicationServices,

@@ -45,6 +45,7 @@ import io.domainlifecycles.services.api.ServiceProvider;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.List;
@@ -98,6 +99,7 @@ public class TestApplicationJmsSpringSeparate {
      * It takes three parameters: repositories, applicationServices, and domainServices, which are lists of Repository, ApplicationService, and DomainService instances respectively
      */
     @Bean
+    @DependsOn("initializedDomain")
     public ServiceProvider serviceProvider(
         List<Repository<?,?>> repositories,
         List<ApplicationService> applicationServices,
