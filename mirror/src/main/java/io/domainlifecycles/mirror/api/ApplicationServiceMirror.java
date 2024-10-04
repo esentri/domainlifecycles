@@ -37,7 +37,7 @@ import java.util.List;
  *
  * @author Mario Herb
  */
-public interface ApplicationServiceMirror extends DomainTypeMirror, DomainCommandProcessingMirror, DomainEventProcessingMirror{
+public interface ApplicationServiceMirror extends ServiceKindMirror {
 
     /**
      * Returns the list of referenced {@link RepositoryMirror} instances.

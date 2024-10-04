@@ -53,15 +53,8 @@ import java.util.stream.Collectors;
  *
  * @author Mario Herb
  */
-public class ApplicationServiceModel extends DomainTypeModel implements ApplicationServiceMirror {
-    @JsonProperty
-    private final List<String> referencedRepositoryTypeNames;
-    @JsonProperty
-    private final List<String> referencedDomainServiceTypeNames;
-    @JsonProperty
-    private final List<String> referencedOutboundServiceTypeNames;
-    @JsonProperty
-    private final List<String> referencedQueryClientTypeNames;
+public class ApplicationServiceModel extends ServiceKindModel implements ApplicationServiceMirror {
+
     @JsonProperty
     private final List<String> applicationServiceInterfaceTypeNames;
 
@@ -70,20 +63,11 @@ public class ApplicationServiceModel extends DomainTypeModel implements Applicat
                                    @JsonProperty("abstract") boolean isAbstract,
                                    @JsonProperty("allFields") List<FieldMirror> allFields,
                                    @JsonProperty("methods") List<MethodMirror> methods,
-                                   @JsonProperty("referencedRepositoryTypeNames") List<String> referencedRepositoryTypeNames,
-                                   @JsonProperty("referencedDomainServiceTypeNames") List<String> referencedDomainServiceTypeNames,
-                                   @JsonProperty("referencedOutboundServiceTypeNames") List<String> referencedOutboundServiceTypeNames,
-                                   @JsonProperty("referencedQueryClientTypeNames") List<String> referencedQueryClientTypeNames,
                                    @JsonProperty("applicationServiceInterfaceTypeNames") List<String> applicationServiceInterfaceTypeNames,
                                    @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
                                    @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
                                    ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
-        Objects.requireNonNull(referencedRepositoryTypeNames);
-        this.referencedRepositoryTypeNames = Collections.unmodifiableList(referencedRepositoryTypeNames);
-        this.referencedDomainServiceTypeNames = Collections.unmodifiableList(referencedDomainServiceTypeNames);
-        this.referencedOutboundServiceTypeNames = Collections.unmodifiableList(referencedOutboundServiceTypeNames);
-        this.referencedQueryClientTypeNames = Collections.unmodifiableList(referencedQueryClientTypeNames);
         this.applicationServiceInterfaceTypeNames = Collections.unmodifiableList(applicationServiceInterfaceTypeNames);
     }
 
@@ -135,32 +119,6 @@ public class ApplicationServiceModel extends DomainTypeModel implements Applicat
             .collect(Collectors.toList());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean publishes(DomainEventMirror domainEvent) {
-        return methods.stream()
-            .anyMatch(m -> m.publishes(domainEvent));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean listensTo(DomainEventMirror domainEvent) {
-        return methods.stream()
-            .anyMatch(m -> m.listensTo(domainEvent));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean processes(DomainCommandMirror command) {
-        return methods.stream()
-            .anyMatch(m -> m.processes(command));
-    }
 
     /**
      * {@inheritDoc}

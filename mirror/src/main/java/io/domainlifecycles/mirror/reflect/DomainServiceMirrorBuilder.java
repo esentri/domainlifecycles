@@ -63,10 +63,6 @@ public class DomainServiceMirrorBuilder extends DomainTypeMirrorBuilder {
                 isAbstract(),
                 buildFields(),
                 buildMethods(),
-                getReferencedRepositoryNames(),
-                getReferencedDomainServiceNames(),
-                getReferencedOutboundServiceNames(),
-                getReferencedQueryClientNames(),
                 domainServiceInterfaceTypeNames(),
                 buildInheritanceHierarchy(),
                 buildInterfaceTypes()

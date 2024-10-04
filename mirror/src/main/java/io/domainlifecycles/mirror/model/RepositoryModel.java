@@ -53,17 +53,12 @@ import java.util.stream.Collectors;
  *
  * @author Mario Herb
  */
-public class RepositoryModel extends DomainTypeModel implements RepositoryMirror {
+public class RepositoryModel extends ServiceKindModel implements RepositoryMirror {
 
     @JsonProperty
     private final String managedAggregateTypeName;
     @JsonProperty
     private final List<String> repositoryInterfaceTypeNames;
-
-    @JsonProperty
-    private final List<String> referencedOutboundServiceTypeNames;
-    @JsonProperty
-    private final List<String> referencedQueryClientTypeNames;
 
     @JsonCreator
     public RepositoryModel(@JsonProperty("typeName") String typeName,
@@ -71,18 +66,13 @@ public class RepositoryModel extends DomainTypeModel implements RepositoryMirror
                            @JsonProperty("allFields") List<FieldMirror> allFields,
                            @JsonProperty("methods") List<MethodMirror> methods,
                            @JsonProperty("managedAggregateTypeName") String managedAggregateTypeName,
-                           @JsonProperty("referencedOutboundServiceTypeNames") List<String> referencedOutboundServiceTypeNames,
-                           @JsonProperty("referencedQueryClientTypeNames") List<String> referencedQueryClientTypeNames,
                            @JsonProperty("repositoryInterfaceTypeNames") List<String> repositoryInterfaceTypeNames,
                            @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
                            @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
         this.managedAggregateTypeName = Objects.requireNonNull(managedAggregateTypeName);
-        this.referencedOutboundServiceTypeNames = Collections.unmodifiableList(referencedOutboundServiceTypeNames);
-        this.referencedQueryClientTypeNames = Collections.unmodifiableList(referencedQueryClientTypeNames);
         this.repositoryInterfaceTypeNames = Collections.unmodifiableList(repositoryInterfaceTypeNames);
-
     }
 
     /**
@@ -116,33 +106,6 @@ public class RepositoryModel extends DomainTypeModel implements RepositoryMirror
             .stream()
             .map(n -> (QueryClientMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("QueryClientMirror not found for '%s'", n)))
             .collect(Collectors.toList());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean publishes(DomainEventMirror domainEvent) {
-        return methods.stream()
-            .anyMatch(m -> m.publishes(domainEvent));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean listensTo(DomainEventMirror domainEvent) {
-        return methods.stream()
-            .anyMatch(m -> m.listensTo(domainEvent));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean processes(DomainCommandMirror command) {
-        return methods.stream()
-            .anyMatch(m -> m.processes(command));
     }
 
     /**

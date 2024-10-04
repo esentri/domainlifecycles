@@ -37,7 +37,7 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public interface QueryClientMirror extends DomainTypeMirror, DomainCommandProcessingMirror, DomainEventProcessingMirror{
+public interface QueryClientMirror extends ServiceKindMirror {
 
     /**
      * Returns an Optional containing the mirror the provided ReadModel.

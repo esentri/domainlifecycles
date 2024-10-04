@@ -63,8 +63,6 @@ public class RepositoryMirrorBuilder extends DomainTypeMirrorBuilder{
             buildFields(),
             buildMethods(),
             getManagedAggregateType(repositoryClass).map(Class::getName).orElse(Object.class.getName()),
-            getReferencedOutboundServiceNames(),
-            getReferencedQueryClientNames(),
             repositoryInterfaceTypeNames(),
             buildInheritanceHierarchy(),
             buildInterfaceTypes()
