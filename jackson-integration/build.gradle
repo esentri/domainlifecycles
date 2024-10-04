@@ -1,0 +1,33 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+    id 'checkstyle'
+    id 'org.quiltmc.gradle.licenser' version "${quiltmcLicenserVersion}"
+    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+}
+
+dependencies {
+    compileOnly "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+    compileOnly "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    implementation project(":types")
+    implementation project(":mirror")
+    implementation project(":builder")
+    implementation project(":access")
+    implementation project(":persistence")
+    implementation project(":assertions")
+
+    testImplementation project(":reflect")
+    testImplementation project(":type-utils")
+    testImplementation project(":test-shared-impl")
+    testImplementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    testImplementation "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testImplementation "org.assertj:assertj-core:${assertJVersion}"
+    testImplementation "ch.qos.logback:logback-classic:${logbackClassicVersion}"
+    testImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${jacksonVersion}"
+    testImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+    testImplementation "com.fasterxml.jackson.module:jackson-module-parameter-names:${jacksonVersion}"
+
+}
+
