@@ -27,6 +27,9 @@
 
 package io.domainlifecycles.mirror.api;
 
+import io.domainlifecycles.domain.types.OutboundService;
+import io.domainlifecycles.domain.types.QueryClient;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.mirror.exception.MirrorException;
 import io.domainlifecycles.mirror.resolver.DefaultEmptyGenericTypeResolver;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
@@ -130,10 +133,28 @@ public class Domain {
     }
 
     /**
+     * Returns the {@link ServiceKindMirror} for the given ServiceKind instance.
+     */
+    @SuppressWarnings("unchecked")
+    public static <AS extends ServiceKindMirror>  AS serviceKindMirrorFor(ServiceKind serviceKind){
+        return (AS)typeMirror(serviceKind.getClass().getName())
+            .orElseThrow(()-> MirrorException.fail("No ServiceKindMirror found for %s", serviceKind.getClass().getName()));
+    }
+
+    /**
+     * Returns the {@link ServiceKindMirror} for the given full qualified ApplicationService type name.
+     */
+    @SuppressWarnings("unchecked")
+    public static <AS extends ServiceKindMirror>  AS serviceKindMirrorFor(String serviceKindTypeName){
+        return (AS)typeMirror(serviceKindTypeName)
+            .orElseThrow(()-> MirrorException.fail("No ServiceKindMirror found for %s", serviceKindTypeName));
+    }
+
+    /**
      * Returns the {@link ApplicationServiceMirror} for the given ApplicationService instance.
      */
     @SuppressWarnings("unchecked")
-    public static <AS extends ApplicationServiceMirror>  AS domainServiceMirrorFor(ApplicationService applicationService){
+    public static <AS extends ApplicationServiceMirror>  AS applicationServiceMirrorFor(ApplicationService applicationService){
         return (AS)typeMirror(applicationService.getClass().getName())
             .orElseThrow(()-> MirrorException.fail("No ApplicationServiceMirror found for %s", applicationService.getClass().getName()));
     }
@@ -145,6 +166,15 @@ public class Domain {
     public static <AS extends ApplicationServiceMirror>  AS applicationServiceMirrorFor(String applicationServiceTypeName){
         return (AS)typeMirror(applicationServiceTypeName)
             .orElseThrow(()-> MirrorException.fail("No ApplicationServiceMirror found for %s", applicationServiceTypeName));
+    }
+
+    /**
+     * Returns the {@link ApplicationServiceMirror} for the given ServiceKind instance.
+     */
+    @SuppressWarnings("unchecked")
+    public static <AS extends ApplicationServiceMirror>  AS applicationServiceMirrorFor(ServiceKind serviceKind){
+        return (AS)typeMirror(serviceKind.getClass().getName())
+            .orElseThrow(()-> MirrorException.fail("No ApplicationServiceMirror found for %s", serviceKind));
     }
 
     /**
@@ -231,6 +261,42 @@ public class Domain {
     public static <V extends ValueObjectMirror>  V valueObjectMirrorFor(String valueObjectTypeName){
         return (V)typeMirror(valueObjectTypeName)
             .orElseThrow(()-> MirrorException.fail("No ValueObjectMirror found for %s", valueObjectTypeName));
+    }
+
+    /**
+     * Returns the {@link OutboundServiceMirror} for the given OutboundService instance.
+     */
+    @SuppressWarnings("unchecked")
+    public static <V extends OutboundServiceMirror>  V outboundServiceMirrorFor(OutboundService outboundService){
+        return (V)typeMirror(outboundService.getClass().getName())
+            .orElseThrow(()-> MirrorException.fail("No OutboundServiceMirror found for %s", outboundService.getClass().getName()));
+    }
+
+    /**
+     * Returns the {@link OutboundServiceMirror} for the given full qualified OutboundService type name.
+     */
+    @SuppressWarnings("unchecked")
+    public static <V extends OutboundServiceMirror>  V outboundServiceMirrorFor(String outboundServiceTypeName){
+        return (V)typeMirror(outboundServiceTypeName)
+            .orElseThrow(()-> MirrorException.fail("No OutboundServiceMirror found for %s", outboundServiceTypeName));
+    }
+
+    /**
+     * Returns the {@link QueryClientMirror} for the given QueryClient instance.
+     */
+    @SuppressWarnings("unchecked")
+    public static <V extends QueryClientMirror>  V queryClientMirrorFor(QueryClient<?> queryClient){
+        return (V)typeMirror(queryClient.getClass().getName())
+            .orElseThrow(()-> MirrorException.fail("No QueryClientMirror found for %s", queryClient.getClass().getName()));
+    }
+
+    /**
+     * Returns the {@link QueryClientMirror} for the given full qualified QueryClient type name.
+     */
+    @SuppressWarnings("unchecked")
+    public static <V extends QueryClientMirror>  V queryClientMirrorFor(String queryClientTypeName){
+        return (V)typeMirror(queryClientTypeName)
+            .orElseThrow(()-> MirrorException.fail("No QueryClientMirror found for %s", queryClientTypeName));
     }
 
     /**
