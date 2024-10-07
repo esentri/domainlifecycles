@@ -94,12 +94,12 @@ public enum DomainType {
                 return DomainType.READ_MODEL;
             } else if (ApplicationService.class.isAssignableFrom(c)) {
                 return DomainType.APPLICATION_SERVICE;
-            } else if (ServiceKind.class.isAssignableFrom(c)) {
-                return DomainType.SERVICE_KIND;
             } else if (QueryClient.class.isAssignableFrom(c)) {
                 return DomainType.QUERY_CLIENT;
             } else if (OutboundService.class.isAssignableFrom(c)) {
                 return DomainType.OUTBOUND_SERVICE;
+            } else if (ServiceKind.class.isAssignableFrom(c)) {
+                return DomainType.SERVICE_KIND;
             }
         }
         return DomainType.NON_DOMAIN;

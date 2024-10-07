@@ -34,5 +34,5 @@ package io.domainlifecycles.domain.types;
  * @author Mario Herb
  *
  */
-public interface QueryClient<RM extends ReadModel> {
+public interface QueryClient<RM extends ReadModel> extends ServiceKind {
 }
