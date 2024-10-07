@@ -41,6 +41,7 @@ import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.mirror.api.QueryClientMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
+import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.mirror.exception.MirrorException;
 
 import java.util.Collections;
@@ -71,54 +72,6 @@ public class ApplicationServiceModel extends ServiceKindModel implements Applica
         this.applicationServiceInterfaceTypeNames = Collections.unmodifiableList(applicationServiceInterfaceTypeNames);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @JsonIgnore
-    @Override
-    public List<RepositoryMirror> getReferencedRepositories() {
-        return referencedRepositoryTypeNames
-            .stream()
-            .map(n -> (RepositoryMirror) Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("RepositoryMirror not found for '%s'", n)))
-            .collect(Collectors.toList());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @JsonIgnore
-    @Override
-    public List<DomainServiceMirror> getReferencedDomainServices() {
-        return referencedDomainServiceTypeNames
-            .stream()
-            .map(n -> (DomainServiceMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("DomainServiceMirror not found for '%s'", n)))
-            .collect(Collectors.toList());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @JsonIgnore
-    @Override
-    public List<OutboundServiceMirror> getReferencedOutboundServices() {
-        return referencedOutboundServiceTypeNames
-            .stream()
-            .map(n -> (OutboundServiceMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("OutboundServiceMirror not found for '%s'", n)))
-            .collect(Collectors.toList());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @JsonIgnore
-    @Override
-    public List<QueryClientMirror> getReferencedQueryClients() {
-        return referencedQueryClientTypeNames
-            .stream()
-            .map(n -> (QueryClientMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("QueryClientMirror not found for '%s'", n)))
-            .collect(Collectors.toList());
-    }
-
 
     /**
      * {@inheritDoc}
@@ -144,10 +97,6 @@ public class ApplicationServiceModel extends ServiceKindModel implements Applica
     @Override
     public String toString() {
         return "ApplicationServiceModel{" +
-            "referencedRepositoryTypeNames=" + referencedRepositoryTypeNames +
-            "referencedDomainServiceTypeNames=" + referencedDomainServiceTypeNames +
-            "referencedOutboundServiceTypeNames=" + referencedOutboundServiceTypeNames +
-            "referencedQueryClientTypeNames=" + referencedQueryClientTypeNames +
             ", applicationServiceInterfaceTypeNames=" + applicationServiceInterfaceTypeNames +
             "} " + super.toString();
     }
@@ -161,11 +110,7 @@ public class ApplicationServiceModel extends ServiceKindModel implements Applica
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         ApplicationServiceModel that = (ApplicationServiceModel) o;
-        return referencedRepositoryTypeNames.equals(that.referencedRepositoryTypeNames)
-            && referencedDomainServiceTypeNames.equals(that.referencedDomainServiceTypeNames)
-            && referencedOutboundServiceTypeNames.equals(that.referencedOutboundServiceTypeNames)
-            && referencedQueryClientTypeNames.equals(that.referencedQueryClientTypeNames)
-            && applicationServiceInterfaceTypeNames.equals(that.applicationServiceInterfaceTypeNames);
+        return applicationServiceInterfaceTypeNames.equals(that.applicationServiceInterfaceTypeNames);
     }
 
     /**
@@ -175,10 +120,6 @@ public class ApplicationServiceModel extends ServiceKindModel implements Applica
     public int hashCode() {
         return Objects.hash(
             super.hashCode(),
-            referencedRepositoryTypeNames,
-            referencedDomainServiceTypeNames,
-            referencedOutboundServiceTypeNames,
-            referencedQueryClientTypeNames,
             applicationServiceInterfaceTypeNames);
     }
 }

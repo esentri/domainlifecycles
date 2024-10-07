@@ -34,6 +34,7 @@ import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.domain.types.OutboundService;
 import io.domainlifecycles.domain.types.QueryClient;
 import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.ServiceKind;
 
 /**
  * The ServiceProvider interface represents a service provider that is responsible for providing instances of various types of services.
@@ -83,5 +84,11 @@ public interface ServiceProvider {
      */
     OutboundService getOutboundServiceInstance(String typeName);
 
-
+    /**
+     * Retrieves an instance of {@link ServiceKind} based on the given type name.
+     *
+     * @param typeName The full qualified name of the type representing the OutboundService.
+     * @return An instance of ServiceKind based on the given type name.
+     */
+    ServiceKind getServiceKindInstance(String typeName);
 }

@@ -53,14 +53,4 @@ public interface RepositoryMirror extends ServiceKindMirror {
      * If separation of concerns is respected, we have at most only one interface, which fulfills that condition.
      */
     List<String> getRepositoryInterfaceTypeNames();
-
-    /**
-     * Returns the list of referenced {@link OutboundServiceMirror} instances.
-     */
-    List<OutboundServiceMirror> getReferencedOutboundServices();
-
-    /**
-     * Returns the list of referenced {@link QueryClientMirror} instances.
-     */
-    List<QueryClientMirror> getReferencedQueryClients();
 }

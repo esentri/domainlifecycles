@@ -31,11 +31,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
+import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
+import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
+import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.mirror.exception.MirrorException;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
@@ -89,30 +92,6 @@ public class RepositoryModel extends ServiceKindModel implements RepositoryMirro
      */
     @JsonIgnore
     @Override
-    public List<OutboundServiceMirror> getReferencedOutboundServices() {
-        return referencedOutboundServiceTypeNames
-            .stream()
-            .map(n -> (OutboundServiceMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("OutboundServiceMirror not found for '%s'", n)))
-            .collect(Collectors.toList());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @JsonIgnore
-    @Override
-    public List<QueryClientMirror> getReferencedQueryClients() {
-        return referencedQueryClientTypeNames
-            .stream()
-            .map(n -> (QueryClientMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("QueryClientMirror not found for '%s'", n)))
-            .collect(Collectors.toList());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @JsonIgnore
-    @Override
     public DomainType getDomainType() {
         return DomainType.REPOSITORY;
     }
@@ -133,8 +112,6 @@ public class RepositoryModel extends ServiceKindModel implements RepositoryMirro
     public String toString() {
         return "RepositoryModel{" +
             "managedAggregateTypeName='" + managedAggregateTypeName + '\'' +
-            "referencedOutboundServiceTypeNames=" + referencedOutboundServiceTypeNames +
-            "referencedQueryClientTypeNames=" + referencedQueryClientTypeNames +
             ", repositoryInterfaceTypeNames=" + repositoryInterfaceTypeNames +
             "} " + super.toString();
     }
@@ -149,9 +126,7 @@ public class RepositoryModel extends ServiceKindModel implements RepositoryMirro
         if (!super.equals(o)) return false;
         RepositoryModel that = (RepositoryModel) o;
         return managedAggregateTypeName.equals(that.managedAggregateTypeName)
-            && repositoryInterfaceTypeNames.equals(that.repositoryInterfaceTypeNames)
-            && referencedOutboundServiceTypeNames.equals(that.referencedOutboundServiceTypeNames)
-            && referencedQueryClientTypeNames.equals(that.referencedQueryClientTypeNames);
+            && repositoryInterfaceTypeNames.equals(that.repositoryInterfaceTypeNames);
     }
 
     /**
@@ -159,6 +134,6 @@ public class RepositoryModel extends ServiceKindModel implements RepositoryMirro
      */
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), managedAggregateTypeName, referencedOutboundServiceTypeNames, referencedQueryClientTypeNames, repositoryInterfaceTypeNames);
+        return Objects.hash(super.hashCode(), managedAggregateTypeName, repositoryInterfaceTypeNames);
     }
 }

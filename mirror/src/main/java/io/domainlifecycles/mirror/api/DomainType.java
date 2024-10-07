@@ -38,6 +38,7 @@ import io.domainlifecycles.domain.types.OutboundService;
 import io.domainlifecycles.domain.types.QueryClient;
 import io.domainlifecycles.domain.types.ReadModel;
 import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.domain.types.ValueObject;
 
 import java.lang.reflect.Type;
@@ -59,6 +60,7 @@ public enum DomainType {
     REPOSITORY,
     READ_MODEL,
     APPLICATION_SERVICE,
+    SERVICE_KIND,
     QUERY_CLIENT,
     OUTBOUND_SERVICE,
     NON_DOMAIN;
@@ -92,6 +94,8 @@ public enum DomainType {
                 return DomainType.READ_MODEL;
             } else if (ApplicationService.class.isAssignableFrom(c)) {
                 return DomainType.APPLICATION_SERVICE;
+            } else if (ServiceKind.class.isAssignableFrom(c)) {
+                return DomainType.SERVICE_KIND;
             } else if (QueryClient.class.isAssignableFrom(c)) {
                 return DomainType.QUERY_CLIENT;
             } else if (OutboundService.class.isAssignableFrom(c)) {

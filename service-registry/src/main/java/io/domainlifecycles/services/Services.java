@@ -32,6 +32,7 @@ import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.OutboundService;
 import io.domainlifecycles.domain.types.QueryClient;
 import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.reflect.JavaReflect;
 import io.domainlifecycles.services.api.ServiceProvider;
@@ -55,6 +56,8 @@ public class Services implements ServiceRegistrator, ServiceProvider {
     private final Map<String, QueryClient<?>> queryClients = new HashMap<>();
 
     private final Map<String, OutboundService> outboundServices  = new HashMap<>();
+
+    private final Map<String, ServiceKind> serviceKinds = new HashMap<>();
 
     /**
      * {@inheritDoc}
@@ -94,6 +97,11 @@ public class Services implements ServiceRegistrator, ServiceProvider {
     @Override
     public OutboundService getOutboundServiceInstance(String typeName) {
         return outboundServices.get(typeName);
+    }
+
+    @Override
+    public ServiceKind getServiceKindInstance(String typeName) {
+        return serviceKinds.get(typeName);
     }
 
     /**
@@ -165,5 +173,16 @@ public class Services implements ServiceRegistrator, ServiceProvider {
             .filter(superType -> Domain.typeMirror(superType.getName()).isPresent())
             .findFirst()
             .ifPresent(mirroredType -> outboundServices.put(mirroredType.getName(), outboundService));
+    }
+
+    @Override
+    public void registerServiceKindInstance(ServiceKind serviceKind) {
+        //check of mirrored types is needed, because in some frameworks like spring the concrete service instances
+        // are extended and so the class of the concrete instance at runtime is not known by the mirror
+        JavaReflect.allSupertypes(serviceKind.getClass(), true)
+            .stream()
+            .filter(superType -> Domain.typeMirror(superType.getName()).isPresent())
+            .findFirst()
+            .ifPresent(mirroredType -> serviceKinds.put(mirroredType.getName(), serviceKind));
     }
 }

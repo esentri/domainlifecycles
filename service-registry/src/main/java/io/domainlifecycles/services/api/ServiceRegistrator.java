@@ -32,6 +32,7 @@ import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.OutboundService;
 import io.domainlifecycles.domain.types.QueryClient;
 import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.ServiceKind;
 
 /**
  * The ServiceRegistrator interface represents a registrator that is responsible for registering instances of various types of services.
@@ -76,4 +77,10 @@ public interface ServiceRegistrator {
      */
     void registerOutboundServiceInstance(OutboundService outboundService);
 
+    /**
+     * Registers an instance of {@link ServiceKind} with the {@link ServiceRegistrator}.
+     *
+     * @param serviceKind The {@link ServiceKind} instance to register.
+     */
+    void registerServiceKindInstance(ServiceKind serviceKind);
 }
