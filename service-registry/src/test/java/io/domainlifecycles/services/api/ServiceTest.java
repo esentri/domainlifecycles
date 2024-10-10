@@ -31,11 +31,11 @@ class ServiceTest {
 
         Services services = new Services();
 
-        services.registerDomainServiceInstance(new TestDomainService());
-        services.registerApplicationServiceInstance(new TestApplicationService());
-        services.registerRepositoryInstance(new TestRepository());
-        services.registerQueryClientInstance(new TestQueryClient());
-        services.registerOutboundServiceInstance(new TestOutboundService());
+        services.registerServiceKindInstance(new TestDomainService());
+        services.registerServiceKindInstance(new TestApplicationService());
+        services.registerServiceKindInstance(new TestRepository());
+        services.registerServiceKindInstance(new TestQueryClient());
+        services.registerServiceKindInstance(new TestOutboundService());
 
         return services;
     }

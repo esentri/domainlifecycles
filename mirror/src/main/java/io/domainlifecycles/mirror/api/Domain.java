@@ -84,7 +84,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link AggregateRootMirror} for the full qualified AggregateRoot type name.
+     * @param <A> type of AggregateRootMirror
+     * @param aggregateRootTypeName full qualified name of the AggregateRoot type
+     * @return  the {@link AggregateRootMirror} for the full qualified AggregateRoot type name.
      */
     @SuppressWarnings("unchecked")
     public static <A extends AggregateRootMirror>  A aggregateRootMirrorFor(String aggregateRootTypeName){
@@ -161,7 +163,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link ServiceKindMirror} for the given ServiceKind instance.
+     * @param <AS> type of ServiceKindMirror
+     * @param serviceKind  the ServiceKind to return a mirror for
+     * @return  the {@link ServiceKindMirror} for the given ServiceKind instance.
      */
     @SuppressWarnings("unchecked")
     public static <AS extends ServiceKindMirror>  AS serviceKindMirrorFor(ServiceKind serviceKind){
@@ -170,7 +174,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link ServiceKindMirror} for the given full qualified ServiceKind type name.
+     * @param <AS> type of ServiceKindMirror
+     * @param serviceKindTypeName full qualified name of ServiceKind type
+     * @return the {@link ServiceKindMirror} for the given full qualified ServiceKind type name.
      */
     @SuppressWarnings("unchecked")
     public static <AS extends ServiceKindMirror>  AS serviceKindMirrorFor(String serviceKindTypeName){
@@ -306,7 +312,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link OutboundServiceMirror} for the given OutboundService instance.
+     * @param <V> type of OutboundServiceMirror
+     * @param outboundService the OutboundService to return the mirror for
+     * @return the {@link OutboundServiceMirror} for the given OutboundService instance.
      */
     @SuppressWarnings("unchecked")
     public static <V extends OutboundServiceMirror>  V outboundServiceMirrorFor(OutboundService outboundService){
@@ -315,7 +323,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link OutboundServiceMirror} for the given full qualified OutboundService type name.
+     * @param <V>                 type of OutboundServiceMirror
+     * @param outboundServiceTypeName name of the OutboundService type
+     * @return the {@link OutboundServiceMirror} for the given full qualified OutboundService type name.
      */
     @SuppressWarnings("unchecked")
     public static <V extends OutboundServiceMirror>  V outboundServiceMirrorFor(String outboundServiceTypeName){
@@ -324,7 +334,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link QueryClientMirror} for the given QueryClient instance.
+     * @param <V> type of QueryClientMirror
+     * @param queryClient the QueryClient to return the mirror for
+     * @return the {@link QueryClientMirror} for the given QueryClient instance.
      */
     @SuppressWarnings("unchecked")
     public static <V extends QueryClientMirror>  V queryClientMirrorFor(QueryClient<?> queryClient){
@@ -333,7 +345,9 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link QueryClientMirror} for the given full qualified QueryClient type name.
+     * @param <V>                 type of QueryClientMirror
+     * @param queryClientTypeName name of the QueryClient type
+     * @return the {@link QueryClientMirror} for the given full qualified QueryClient type name.
      */
     @SuppressWarnings("unchecked")
     public static <V extends QueryClientMirror>  V queryClientMirrorFor(String queryClientTypeName){
