@@ -33,6 +33,7 @@ import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.OutboundService;
 import io.domainlifecycles.domain.types.QueryClient;
 import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.ADomainService;
 import io.domainlifecycles.events.AQueryClient;
 import io.domainlifecycles.events.ARepository;
@@ -98,17 +99,9 @@ public class OutboxTestApplication {
      * This method creates and configures a ServiceProvider instance, which is responsible for providing instances of various types of services.
      */
     @Bean
-    public ServiceProvider serviceProvider(List<Repository<?,?>> repositories,
-                                           List<ApplicationService> applicationServices,
-                                           List<DomainService> domainServices,
-                                           List<OutboundService> outboundServices,
-                                           List<QueryClient<?>> queryClients){
+    public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds){
         var services = new Services();
-        repositories.forEach(services::registerRepositoryInstance);
-        applicationServices.forEach(services::registerApplicationServiceInstance);
-        domainServices.forEach(services::registerDomainServiceInstance);
-        outboundServices.forEach(services::registerOutboundServiceInstance);
-        queryClients.forEach(services::registerQueryClientInstance);
+        serviceKinds.forEach(services::registerServiceKindInstance);
         return services;
     }
 
