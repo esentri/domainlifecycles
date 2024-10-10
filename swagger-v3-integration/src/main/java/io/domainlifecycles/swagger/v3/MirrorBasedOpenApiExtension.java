@@ -48,7 +48,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * For all special DLC domain object types (entities, valueObject, identities) some Open API extensions are performed, to make the
+ * For all special DLC domain object types (entities, valueObject, identities) some Open API extensions are
+ * performed, to make the
  * Open API description of controller interfaces match the default mapping behaviour of the DLC Jackson extension.
  * <p>
  * Identity types which are referenced from entities or value objects are "folded" in their mapping behaviour by the DLC
@@ -56,9 +57,9 @@ import java.util.Optional;
  * </p>
  * <p>
  * {
- *  "identityRef": {
- *      "value": "idValue"
- *  }
+ * "identityRef": {
+ * "value": "idValue"
+ * }
  * }
  * </p>
  * <p>
@@ -66,17 +67,20 @@ import java.util.Optional;
  * {
  * "identityRef": "idValue"
  * }
- *</p>
+ * </p>
  * <p>
  * In the same manner so called "singleValued" value object references are folded.
  * This Open API extension, makes the api doc fit to that behaviour accordingly.
  * </p>
  * <p>
- * Also, id value fields are added to the API documentation of identity types. Regular Spring docs behaviour ignores those
- * fields and gives Open API consumers wrong information. Primary identity properties are not required (for creating endpoints POST and PUT), that's
+ * Also, id value fields are added to the API documentation of identity types. Regular Spring docs behaviour ignores
+ * those
+ * fields and gives Open API consumers wrong information. Primary identity properties are not required (for creating
+ * endpoints POST and PUT), that's
  * why they are marked as not required.
  * </p>
- * The folding is also applied by {@see io.domainlifecycles.jackson.module.DlcJacksonModule} to path and query parameters on API
+ * The folding is also applied by {@see io.domainlifecycles.jackson.module.DlcJacksonModule} to path and query
+ * parameters on API
  * endpoints and hereby is corrected in the API documentation.
  *
  * @author Mario Herb
@@ -87,9 +91,9 @@ public class MirrorBasedOpenApiExtension {
 
 
     /**
-     * This extension modifies and extends the Open API description for all DLC specific domain object classes, which are
+     * This extension modifies and extends the Open API description for all DLC specific domain object classes, which
+     * are
      * managed by the given {@link Domain}.
-     *
      */
     public MirrorBasedOpenApiExtension() {
     }
@@ -98,13 +102,14 @@ public class MirrorBasedOpenApiExtension {
      * Starting point for all Open API specific extensions and corrections by this class.
      *
      * @param openAPI                           {@link OpenAPI} instance to be extended
-     * @param entitiesWithExternallyProvidedIds array of full qualified class names of entities which require primary identities
+     * @param entitiesWithExternallyProvidedIds array of full qualified class names of entities which require primary
+     *                                         identities
      */
     public void extendOpenAPISchemaForDLCTypes(OpenAPI openAPI, String... entitiesWithExternallyProvidedIds) {
         if (openAPI.getComponents() != null && openAPI.getComponents().getSchemas() != null) {
             openAPI.getComponents().getSchemas().forEach((typeName, typeSchema) -> {
                 var tm = Domain.typeMirror(typeName);
-                if(tm.isPresent() && DomainType.IDENTITY.equals(tm.get().getDomainType())){
+                if (tm.isPresent() && DomainType.IDENTITY.equals(tm.get().getDomainType())) {
                     var idm = (IdentityMirror) tm.get();
                     extendSchemaOfIdentityType(idm, typeSchema);
                 }
@@ -132,7 +137,8 @@ public class MirrorBasedOpenApiExtension {
                 domainObjectSchema.setProperties(propertiesMap);
                 domainObjectSchema.setRequired(List.of(fieldName));
             } else {
-                log.warn("Wasn't able to extend Identity Open API schema of '{}'! Identity value field not found!", identityMirror.getTypeName());
+                log.warn("Wasn't able to extend Identity Open API schema of '{}'! Identity value field not found!",
+                    identityMirror.getTypeName());
             }
         } catch (Throwable t) {
             log.warn("Extending Open API schema of identity type '{}' failed", identityMirror.getTypeName(), t);
@@ -144,7 +150,8 @@ public class MirrorBasedOpenApiExtension {
             .allTypeMirrors()
             .values()
             .stream()
-            .filter(dtm -> DomainType.ENTITY.equals(dtm.getDomainType()) || DomainType.AGGREGATE_ROOT.equals(dtm.getDomainType()))
+            .filter(dtm -> DomainType.ENTITY.equals(dtm.getDomainType()) || DomainType.AGGREGATE_ROOT.equals(
+                dtm.getDomainType()))
             .map(dtm -> (EntityMirror) dtm)
             .forEach(
                 em -> {
@@ -153,26 +160,30 @@ public class MirrorBasedOpenApiExtension {
                         var schemas = openAPI.getComponents().getSchemas();
                         var entitySchema = schemas.get(entityFqn);
                         if (entitySchema != null) {
-                            if(em.getIdentityField().isPresent()){
+                            if (em.getIdentityField().isPresent()) {
                                 var idField = em.getIdentityField().get();
-                                if (entitySchema.getRequired() != null && Arrays.stream(entitiesWithExternallyProvidedIds).noneMatch(fqn -> fqn.equals(em.getTypeName()))) {
+                                if (entitySchema.getRequired() != null && Arrays.stream(
+                                    entitiesWithExternallyProvidedIds).noneMatch(fqn -> fqn.equals(em.getTypeName()))) {
                                     entitySchema.getRequired().remove(idField.getName());
                                 }
-                                modifyIdentitySchemaReference(openAPI, idField.getName(), idField.getType().getTypeName(), entitySchema);
+                                modifyIdentitySchemaReference(openAPI, idField.getName(),
+                                    idField.getType().getTypeName(), entitySchema);
                             }
                             em.getValueReferences()
                                 .stream()
                                 .filter(vrm -> !vrm.isStatic())
                                 .filter(vrm -> vrm.getValue().isSingledValued() && !vrm.getValue().isEnum())
                                 .forEach(vrm -> {
-                                    var vm = vrm.getValue();
-                                    if (vm.isValueObject()) {
-                                        modifySingleValuedValueObjectSchemaReference(openAPI, vrm.getName(), vrm.getType().getTypeName(), entitySchema);
-                                    }else{
-                                        modifyIdentitySchemaReference(openAPI, vrm.getName(), vrm.getType().getTypeName(), entitySchema);
+                                        var vm = vrm.getValue();
+                                        if (vm.isValueObject()) {
+                                            modifySingleValuedValueObjectSchemaReference(openAPI, vrm.getName(),
+                                                vrm.getType().getTypeName(), entitySchema);
+                                        } else {
+                                            modifyIdentitySchemaReference(openAPI, vrm.getName(),
+                                                vrm.getType().getTypeName(), entitySchema);
+                                        }
                                     }
-                                }
-                            );
+                                );
                         }
                     } catch (Throwable t) {
                         log.warn("Extending Open API schema of entity type '{}' failed", em.getTypeName(), t);
@@ -189,45 +200,50 @@ public class MirrorBasedOpenApiExtension {
             .filter(dtm -> DomainType.VALUE_OBJECT.equals(dtm.getDomainType()))
             .map(dtm -> (ValueObjectMirror) dtm)
             .forEach(
-            vo -> {
-                try {
-                    String voFqn = vo.getTypeName();
-                    var schemas = openAPI.getComponents().getSchemas();
-                    var voSchema = schemas.get(voFqn);
-                    if (voSchema != null) {
-                        vo.getValueReferences()
-                            .stream()
-                            .filter(vrm -> !vrm.isStatic())
-                            .filter(vrm -> vrm.getValue().isValueObject() || vrm.getValue().isIdentity())
-                            .forEach(vrm -> {
-                                if(vrm.getValue().isValueObject()){
-                                    var vm = vrm.getValue();
-                                    if (vm.isSingledValued()) {
-                                        modifySingleValuedValueObjectSchemaReference(openAPI, vrm.getName(), vrm.getType().getTypeName(), voSchema);
+                vo -> {
+                    try {
+                        String voFqn = vo.getTypeName();
+                        var schemas = openAPI.getComponents().getSchemas();
+                        var voSchema = schemas.get(voFqn);
+                        if (voSchema != null) {
+                            vo.getValueReferences()
+                                .stream()
+                                .filter(vrm -> !vrm.isStatic())
+                                .filter(vrm -> vrm.getValue().isValueObject() || vrm.getValue().isIdentity())
+                                .forEach(vrm -> {
+                                    if (vrm.getValue().isValueObject()) {
+                                        var vm = vrm.getValue();
+                                        if (vm.isSingledValued()) {
+                                            modifySingleValuedValueObjectSchemaReference(openAPI, vrm.getName(),
+                                                vrm.getType().getTypeName(), voSchema);
+                                        }
+                                    } else {
+                                        modifyIdentitySchemaReference(openAPI, vrm.getName(),
+                                            vrm.getType().getTypeName(), voSchema);
                                     }
-                                }else{
-                                    modifyIdentitySchemaReference(openAPI, vrm.getName(), vrm.getType().getTypeName(), voSchema);
-                                }
 
-                        });
+                                });
+                        }
+                    } catch (Throwable t) {
+                        log.warn("Extending Open API schema of value object type '{}' failed", vo.getTypeName(), t);
                     }
-                } catch (Throwable t) {
-                    log.warn("Extending Open API schema of value object type '{}' failed", vo.getTypeName(), t);
                 }
-            }
-        );
+            );
     }
 
-    private void modifyIdentitySchemaReference(OpenAPI openAPI, String propertyName, String propertyIdentityTypeName, Schema<?> targetSchema) {
+    private void modifyIdentitySchemaReference(OpenAPI openAPI, String propertyName, String propertyIdentityTypeName,
+                                               Schema<?> targetSchema) {
 
         Schema<?> identitySchema = openAPI.getComponents().getSchemas().get(propertyIdentityTypeName);
         if (identitySchema != null && identitySchema.getProperties() != null) {
-            @SuppressWarnings("rawtypes") var idValueSchema = (Optional<Schema>) identitySchema.getProperties().values().stream().findFirst();
+            @SuppressWarnings("rawtypes") var idValueSchema =
+                (Optional<Schema>) identitySchema.getProperties().values().stream().findFirst();
             if (idValueSchema.isPresent()) {
-                Schema<?> newIdentityPropertySchema = copyValueSchema(idValueSchema.get(), targetSchema.getName() + "." + propertyName);
+                Schema<?> newIdentityPropertySchema = copyValueSchema(idValueSchema.get(),
+                    targetSchema.getName() + "." + propertyName);
                 if (targetSchema.getProperties() != null) {
                     Schema<?> currentValueSchema = targetSchema.getProperties().get(propertyName);
-                    if(Constants.TYPE_ARRAY.equals(currentValueSchema.getType())){
+                    if (Constants.TYPE_ARRAY.equals(currentValueSchema.getType())) {
                         currentValueSchema.setItems(newIdentityPropertySchema);
                     } else {
                         targetSchema.getProperties().put(propertyName, newIdentityPropertySchema);
@@ -236,18 +252,22 @@ public class MirrorBasedOpenApiExtension {
                 }
             }
         }
-        log.warn("Wasn't able to set correct value type for property '" + propertyName + "' on schema'" + targetSchema.getName() + "'!");
+        log.warn(
+            "Wasn't able to set correct value type for property '" + propertyName + "' on schema'" + targetSchema.getName() + "'!");
     }
 
-    private void modifySingleValuedValueObjectSchemaReference(OpenAPI openAPI, String voReferencePropertyName, String voTypeName, Schema<?> targetSchema) {
+    private void modifySingleValuedValueObjectSchemaReference(OpenAPI openAPI, String voReferencePropertyName,
+                                                              String voTypeName, Schema<?> targetSchema) {
         Schema<?> valueObjectSchema = openAPI.getComponents().getSchemas().get(voTypeName);
         if (valueObjectSchema != null && valueObjectSchema.getProperties() != null) {
-            @SuppressWarnings("rawtypes") var valueSchema = (Optional<Schema>) valueObjectSchema.getProperties().values().stream().findFirst();
+            @SuppressWarnings("rawtypes") var valueSchema =
+                (Optional<Schema>) valueObjectSchema.getProperties().values().stream().findFirst();
             if (valueSchema.isPresent()) {
-                Schema<?> newValueSchema = copyValueSchema(valueSchema.get(), targetSchema.getName() + "." + voReferencePropertyName);
+                Schema<?> newValueSchema = copyValueSchema(valueSchema.get(),
+                    targetSchema.getName() + "." + voReferencePropertyName);
                 if (targetSchema.getProperties() != null) {
                     Schema<?> currentValueSchema = targetSchema.getProperties().get(voReferencePropertyName);
-                    if(currentValueSchema != null) {
+                    if (currentValueSchema != null) {
                         if (Constants.TYPE_ARRAY.equals(currentValueSchema.getType())) {
                             currentValueSchema.setItems(newValueSchema);
                         } else {
@@ -258,7 +278,8 @@ public class MirrorBasedOpenApiExtension {
                 }
             }
         }
-        log.warn("Wasn't able to set correct value type for property '" + voReferencePropertyName + "' on '" + voTypeName + "'!");
+        log.warn(
+            "Wasn't able to set correct value type for property '" + voReferencePropertyName + "' on '" + voTypeName + "'!");
     }
 
     private Schema<?> copyValueSchema(Schema<?> source, String newName) {
@@ -300,24 +321,24 @@ public class MirrorBasedOpenApiExtension {
 
     private void modifyParam(Parameter param, OpenAPI openAPI) {
         String ref = param.getSchema().get$ref();
-        if(Constants.TYPE_ARRAY.equals(param.getSchema().getType())){
+        if (Constants.TYPE_ARRAY.equals(param.getSchema().getType())) {
             ref = param.getSchema().getItems().get$ref();
         }
         if (ref != null) {
             String referencedTypeFqn = ref.substring(ref.lastIndexOf("/") + 1);
             Schema<?> refTypeSchema = openAPI.getComponents().getSchemas().get(referencedTypeFqn);
             var dtmOptional = Domain.typeMirror(referencedTypeFqn);
-            if(dtmOptional.isPresent()){
+            if (dtmOptional.isPresent()) {
                 var dtm = dtmOptional.get();
                 if (DomainType.VALUE_OBJECT.equals(dtm.getDomainType())) {
                     var vo = (ValueObjectMirror) dtm;
-                    if(vo.isSingledValued()) {
+                    if (vo.isSingledValued()) {
                         modifySingleValuedTypeSchema(param, refTypeSchema, referencedTypeFqn);
                     }
-                }else if(DomainType.IDENTITY.equals(dtm.getDomainType())){
+                } else if (DomainType.IDENTITY.equals(dtm.getDomainType())) {
                     modifySingleValuedTypeSchema(param, refTypeSchema, referencedTypeFqn);
                 }
-            }else{
+            } else {
                 log.warn("Wasn't able to modify param schema for '{}'!", referencedTypeFqn);
             }
         }
@@ -325,7 +346,8 @@ public class MirrorBasedOpenApiExtension {
 
     private void modifySingleValuedTypeSchema(Parameter param, Schema<?> refTypeSchema, String referencedTypeFqn) {
         if (refTypeSchema.getProperties() != null) {
-            @SuppressWarnings("rawtypes") var propSchema = (Optional<Schema>) refTypeSchema.getProperties().values().stream().findFirst();
+            @SuppressWarnings("rawtypes") var propSchema =
+                (Optional<Schema>) refTypeSchema.getProperties().values().stream().findFirst();
             if (propSchema.isPresent()) {
                 var newSchema = copyValueSchema(propSchema.get(), param.getName() + "." + refTypeSchema.getName());
                 if (Constants.TYPE_ARRAY.equals(param.getSchema().getType())) {
@@ -345,7 +367,7 @@ public class MirrorBasedOpenApiExtension {
             .forEach(
                 (typeName, typeSchema) -> {
                     var dtmOptional = Domain.typeMirror(typeName);
-                    if(dtmOptional.isEmpty()) {
+                    if (dtmOptional.isEmpty()) {
                         if (typeSchema.getProperties() != null) {
                             //noinspection unchecked
                             typeSchema.getProperties().forEach(
@@ -359,22 +381,24 @@ public class MirrorBasedOpenApiExtension {
                 });
     }
 
-    private void modifyExternalDomainReferenceSchema(OpenAPI openAPI, String propertyName, Schema<?> propertySchema, Schema<?> containerSchema) {
+    private void modifyExternalDomainReferenceSchema(OpenAPI openAPI, String propertyName, Schema<?> propertySchema,
+                                                     Schema<?> containerSchema) {
         var pSchema = propertySchema;
-        if(Constants.TYPE_ARRAY.equals(pSchema.getType())){
+        if (Constants.TYPE_ARRAY.equals(pSchema.getType())) {
             pSchema = propertySchema.getItems();
         }
         if (pSchema.get$ref() != null) {
             var propTypeName = pSchema.get$ref().substring("#/components/schemas/".length());
             var dtmOptional = Domain.typeMirror(propTypeName);
-            if(dtmOptional.isPresent()) {
+            if (dtmOptional.isPresent()) {
                 var dtm = dtmOptional.get();
                 if (DomainType.IDENTITY.equals(dtm.getDomainType())) {
                     modifyIdentitySchemaReference(openAPI, propertyName, propTypeName, containerSchema);
                 } else if (DomainType.VALUE_OBJECT.equals(dtm.getDomainType())) {
                     var voMirror = Domain.valueObjectMirrorFor(propTypeName);
                     if (voMirror.isSingledValued()) {
-                        modifySingleValuedValueObjectSchemaReference(openAPI, propertyName, propTypeName, containerSchema);
+                        modifySingleValuedValueObjectSchemaReference(openAPI, propertyName, propTypeName,
+                            containerSchema);
                     }
                 }
             }

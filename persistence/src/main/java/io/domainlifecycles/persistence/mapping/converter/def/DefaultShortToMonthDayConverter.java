@@ -32,7 +32,7 @@ import io.domainlifecycles.persistence.mapping.converter.TypeConverter;
 import java.time.MonthDay;
 
 /**
- *  Converts a Short to a MonthDay.
+ * Converts a Short to a MonthDay.
  *
  * @author Mario Herb
  */

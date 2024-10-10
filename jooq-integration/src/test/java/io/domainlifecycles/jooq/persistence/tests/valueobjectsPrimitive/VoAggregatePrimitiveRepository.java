@@ -36,7 +36,8 @@ import org.slf4j.LoggerFactory;
 import tests.shared.persistence.domain.valueobjectsPrimitive.VoAggregatePrimitive;
 import tests.shared.persistence.domain.valueobjectsPrimitive.VoAggregatePrimitiveId;
 
-public class VoAggregatePrimitiveRepository extends JooqAggregateRepository<VoAggregatePrimitive, VoAggregatePrimitiveId> {
+public class VoAggregatePrimitiveRepository extends JooqAggregateRepository<VoAggregatePrimitive,
+    VoAggregatePrimitiveId> {
 
     private static final Logger log = LoggerFactory.getLogger(VoAggregatePrimitiveRepository.class);
 

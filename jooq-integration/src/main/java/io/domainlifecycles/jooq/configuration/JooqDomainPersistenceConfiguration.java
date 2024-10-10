@@ -81,7 +81,6 @@ public class JooqDomainPersistenceConfiguration extends DomainPersistenceConfigu
     public final EntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider;
 
 
-
     private JooqDomainPersistenceConfiguration(DomainObjectBuilderProvider domainObjectBuilderProvider,
                                                Set<RecordMapper<?, ?, ?>> customRecordMappers,
                                                RecordClassProvider<UpdatableRecord<?>> recordClassProvider,
@@ -132,69 +131,84 @@ public class JooqDomainPersistenceConfiguration extends DomainPersistenceConfigu
         public static JooqPersistenceConfigurationBuilder newConfig() {
             return new JooqPersistenceConfigurationBuilder();
         }
+
         public JooqPersistenceConfigurationBuilder withRecordTypeToEntityTypeMatcher(RecordTypeToEntityTypeMatcher<UpdatableRecord<?>> recordTypeToDomainObjectTypeMatcher) {
             this.recordTypeToEntityTypeMatcher = recordTypeToDomainObjectTypeMatcher;
             return this;
         }
+
         public JooqPersistenceConfigurationBuilder withRecordMirrorInstanceProvider(RecordMirrorInstanceProvider<UpdatableRecord<?>> recordMirrorInstanceProvider) {
             this.recordMirrorInstanceProvider = recordMirrorInstanceProvider;
             return this;
         }
+
         public JooqPersistenceConfigurationBuilder withRecordClassProvider(RecordClassProvider<UpdatableRecord<?>> recordClassProvider) {
             this.recordClassProvider = recordClassProvider;
             return this;
         }
+
         public JooqPersistenceConfigurationBuilder withTypeConverterProvider(TypeConverterProvider typeConverterProvider) {
             this.typeConverterProvider = typeConverterProvider;
             return this;
         }
+
         public JooqPersistenceConfigurationBuilder withRecordEntityPropertyMatcher(RecordPropertyMatcher recordPropertyMatcher) {
             this.recordPropertyMatcher = recordPropertyMatcher;
             return this;
         }
+
         public JooqPersistenceConfigurationBuilder withNewRecordInstanceProvider(NewRecordInstanceProvider newRecordInstanceProvider) {
             this.newRecordInstanceProvider = newRecordInstanceProvider;
             return this;
         }
+
         public JooqPersistenceConfigurationBuilder withRecordPropertyProvider(RecordPropertyProvider recordPropertyProvider) {
             this.recordPropertyProvider = recordPropertyProvider;
             return this;
         }
-        public JooqPersistenceConfigurationBuilder withRecordPropertyAccessor(RecordPropertyAccessor<UpdatableRecord<?>> recordPropertyAccessor) {
+
+        public JooqPersistenceConfigurationBuilder withRecordPropertyAccessor(RecordPropertyAccessor<UpdatableRecord<
+            ?>> recordPropertyAccessor) {
             this.recordPropertyAccessor = recordPropertyAccessor;
             return this;
         }
+
         public JooqPersistenceConfigurationBuilder withIgnoredDomainObjectFields(IgnoredFieldProvider ignoredFieldProvider) {
             this.ignoredDomainObjectFields = ignoredFieldProvider;
             return this;
         }
+
         public JooqPersistenceConfigurationBuilder withIgnoredRecordProperties(IgnoredRecordPropertyProvider ignoredRecordPropertyProvider) {
             this.ignoredRecordProperties = ignoredRecordPropertyProvider;
             return this;
         }
+
         public JooqPersistenceConfigurationBuilder withEntityValueObjectRecordClassProvider(EntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider) {
             this.entityValueObjectRecordClassProvider = entityValueObjectRecordClassProvider;
             return this;
         }
 
         public JooqPersistenceConfigurationBuilder withEntityValueObjectRecordTypeConfiguration(EntityValueObjectRecordTypeConfiguration<UpdatableRecord<?>>... entityValueObjectRecordTypeConfigurations) {
-            return withEntityValueObjectRecordClassProvider(() -> Arrays.asList(entityValueObjectRecordTypeConfigurations));
+            return withEntityValueObjectRecordClassProvider(
+                () -> Arrays.asList(entityValueObjectRecordTypeConfigurations));
         }
+
         public JooqPersistenceConfigurationBuilder withRecordPackage(String recordPackage) {
             this.recordPackage = recordPackage;
             return this;
         }
+
         public JooqPersistenceConfigurationBuilder withCustomRecordMappers(Set<RecordMapper<?, ?, ?>> customRecordMappers) {
             this.customRecordMappers = customRecordMappers;
             return this;
         }
+
         public JooqPersistenceConfigurationBuilder withDomainObjectBuilderProvider(DomainObjectBuilderProvider domainObjectBuilderProvider) {
             this.domainObjectBuilderProvider = domainObjectBuilderProvider;
             return this;
         }
 
         public JooqDomainPersistenceConfiguration make() {
-
 
 
             if (this.recordTypeToEntityTypeMatcher == null) {
@@ -221,13 +235,14 @@ public class JooqDomainPersistenceConfiguration extends DomainPersistenceConfigu
                 this.recordPropertyMatcher = new JooqRecordPropertyMatcher();
             }
 
-            if (this.recordPropertyAccessor == null){
+            if (this.recordPropertyAccessor == null) {
                 this.recordPropertyAccessor = new JooqRecordPropertyAccessor();
             }
 
             if (this.recordPackage != null && this.recordClassProvider != null) {
-                throw DLCPersistenceException.fail("Ambiguous persistence configuration. 'recordPackage' and 'recordClassProvider' configured. " +
-                    "We don't know which one should be used!");
+                throw DLCPersistenceException.fail(
+                    "Ambiguous persistence configuration. 'recordPackage' and 'recordClassProvider' configured. " +
+                        "We don't know which one should be used!");
             }
 
             if (this.recordPackage != null) {

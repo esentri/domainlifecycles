@@ -39,4 +39,5 @@ public record OrdersByCustomer(
     int pendingOrders,
     int shippedOrders,
     int canceledOrders
-) implements ReadModel {}
+) implements ReadModel {
+}

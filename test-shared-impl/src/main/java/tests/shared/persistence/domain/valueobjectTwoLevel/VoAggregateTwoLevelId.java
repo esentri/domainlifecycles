@@ -29,4 +29,5 @@ package tests.shared.persistence.domain.valueobjectTwoLevel;
 
 import io.domainlifecycles.domain.types.Identity;
 
-public record VoAggregateTwoLevelId(Long value) implements Identity<Long> {}
+public record VoAggregateTwoLevelId(Long value) implements Identity<Long> {
+}

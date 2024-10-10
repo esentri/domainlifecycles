@@ -39,7 +39,6 @@ import io.domainlifecycles.persistence.fetcher.FetcherResult;
  * @param <A>      the aggregate root type
  * @param <I>      the identity type
  * @param <RECORD> the record type
- *
  * @author Mario Herb
  */
 public abstract class SimpleAggregateFetcher<ID, A extends AggregateRoot<I>, I extends Identity<ID>, RECORD> implements AggregateFetcher<A, I, RECORD> {

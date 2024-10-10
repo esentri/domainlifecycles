@@ -35,6 +35,7 @@ import java.util.List;
  * - to provide information to be used in a repository implementation to apply insert, update and delete
  * operations for a given entity
  *
+ * @param <BASE_RECORD_TYPE> record type
  * @author Mario Herb
  */
 public interface EntityRecordMirror<BASE_RECORD_TYPE> extends RecordMirror<BASE_RECORD_TYPE> {

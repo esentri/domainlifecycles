@@ -52,7 +52,8 @@ public final class Product extends AggregateRootBase<Product.ProductId> {
     /**
      * The "typed" ProductId as inner class (record) of the {@code Product} class.
      */
-    public record ProductId(@NotNull Long value) implements Identity<Long> { }
+    public record ProductId(@NotNull Long value) implements Identity<Long> {
+    }
 
     /**
      * The identity of this Product.
@@ -67,7 +68,8 @@ public final class Product extends AggregateRootBase<Product.ProductId> {
     /**
      * The name of this product.
      */
-    @NotEmpty @Size(max = 200)
+    @NotEmpty
+    @Size(max = 200)
     private String name;
 
     /**

@@ -37,7 +37,8 @@ import java.util.List;
 
 public class AnAggregate extends AggregateRootBase<AnAggregate.AggregateId> {
 
-    public record AggregateId(Long value) implements Identity<Long>{}
+    public record AggregateId(Long value) implements Identity<Long> {
+    }
 
     private AnAggregate.AggregateId id;
     public List<DomainEvent> received = new ArrayList<>();
@@ -48,8 +49,8 @@ public class AnAggregate extends AggregateRootBase<AnAggregate.AggregateId> {
     }
 
     @ListensTo(domainEventType = AnAggregateDomainEvent.class)
-    public void onEvent(AnAggregateDomainEvent domainEvent){
-        if(domainEvent.message().startsWith("TestAggregateDomainWithException")){
+    public void onEvent(AnAggregateDomainEvent domainEvent) {
+        if (domainEvent.message().startsWith("TestAggregateDomainWithException")) {
             throw new RuntimeException("Provoked runtime error!");
         }
         received.add(domainEvent);

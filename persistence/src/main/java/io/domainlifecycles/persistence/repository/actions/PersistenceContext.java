@@ -60,14 +60,13 @@ import java.util.stream.Collectors;
  * order in which they must be applied we keep the in a map. Within this map the
  * actions are partitioned by it's entity class and by it's action type () eg.
  * INSERT, UPDATE,...)
- *
+ * <p>
  * We also keep all the actions in notification order. We want the notifications
  * to be emitted in post order (bottom up). but the changes have to be applied
  * to the database in a different order, which depends on the constraints of the
  * database relations and database structures.
  *
  * @param <BASE_RECORD_TYPE> the type of the record that is being persisted
- *
  * @author Mario Herb
  */
 public class PersistenceContext<BASE_RECORD_TYPE> {
@@ -103,7 +102,6 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
     private final EntityCloner entityCloner;
     private final DomainPersistenceProvider<BASE_RECORD_TYPE> domainPersistenceProvider;
 
-    @SuppressWarnings("unchecked")
     public PersistenceContext(
         DomainPersistenceProvider<BASE_RECORD_TYPE> domainPersistenceProvider,
         AggregateRoot<?> updatedRoot,
@@ -114,7 +112,8 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
 
         this.entityCloner = new EntityCloner(
             domainPersistenceProvider.domainPersistenceConfiguration.domainObjectBuilderProvider);
-        this.rootClass = (Class<? extends AggregateRoot<?>>) Objects.requireNonNullElseGet(updatedRoot, () -> databaseStateRootFetched.resultValue().get()).getClass();
+        this.rootClass = (Class<? extends AggregateRoot<?>>) Objects.requireNonNullElseGet(updatedRoot,
+            () -> databaseStateRootFetched.resultValue().get()).getClass();
         if (updatedRoot != null) {
             updatedRootAccessModel = domainPersistenceProvider.buildAccessModel(updatedRoot);
         } else {
@@ -122,7 +121,8 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
         }
 
         if (databaseStateRootFetched != null && databaseStateRootFetched.resultValue().isPresent()) {
-            databaseStateRootAccessModel = domainPersistenceProvider.buildAccessModel(databaseStateRootFetched.resultValue().get());
+            databaseStateRootAccessModel = domainPersistenceProvider.buildAccessModel(
+                databaseStateRootFetched.resultValue().get());
         } else {
             databaseStateRootAccessModel = null;
         }
@@ -134,7 +134,6 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
      * Gets the record type for a value object
      *
      * @param IValueObject the value object
-     *
      * @return the root class of the value object that is being persisted
      */
     public BASE_RECORD_TYPE getNewValueObjectRecord(ValueObject IValueObject) {
@@ -145,7 +144,7 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
      * Adds a new ValueObject to the persistence context.
      *
      * @param valueObject the value object
-     * @param record     the record
+     * @param record      the record
      */
     public void addNewValueObjectRecord(ValueObject valueObject, BASE_RECORD_TYPE record) {
         newValueObjectRecords.put(valueObject, record);
@@ -164,13 +163,15 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
             actionSet.iterator().forEachRemaining(
                 aq -> {
                     if (aq.instanceAccessModel.domainObject().equals(a.instanceAccessModel.domainObject())) {
-                        if (hasChangesCompareFieldByField((Entity<?>) aq.instanceAccessModel.domainObject(), (Entity<?>) a.instanceAccessModel.domainObject())) {
+                        if (hasChangesCompareFieldByField((Entity<?>) aq.instanceAccessModel.domainObject(),
+                            (Entity<?>) a.instanceAccessModel.domainObject())) {
                             throw DLCPersistenceException.fail("""
-                                Inconsistent aggregate. The same entity is contained with different values.
+                                    Inconsistent aggregate. The same entity is contained with different values.
 
-                                Entity 1: {0}\s
+                                    Entity 1: {0}\s
 
-                                Entity 2: {1}""", a.instanceAccessModel.domainObject(), aq.instanceAccessModel.domainObject());
+                                    Entity 2: {1}""", a.instanceAccessModel.domainObject(),
+                                aq.instanceAccessModel.domainObject());
                         } else {
                             //this domain object instance is contained multiple times in the aggregate
                             //but it's not the same reference (which should be allowed, see DDD equality rules)
@@ -204,7 +205,8 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
         if (Entity.class.isAssignableFrom(a.instanceAccessModel.instanceType())) {
             Set<PersistenceAction<BASE_RECORD_TYPE>> actionSet;
             if (!PersistenceAction.ActionType.INSERT.equals(a.actionType)) {
-                var insertKey = a.instanceAccessModel.instanceType().getName() + "-" + PersistenceAction.ActionType.INSERT;
+                var insertKey =
+                    a.instanceAccessModel.instanceType().getName() + "-" + PersistenceAction.ActionType.INSERT;
                 actionSet = partitionedActionsMap.get(insertKey);
                 if (actionSet != null) {
                     actionSet.forEach(aq -> {
@@ -219,8 +221,10 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
                     });
                 }
             }
-            if (!(PersistenceAction.ActionType.UPDATE.equals(a.actionType) || PersistenceAction.ActionType.DELETE_UPDATE.equals(a.actionType))) {
-                var updateKey = a.instanceAccessModel.instanceType().getName() + "-" + PersistenceAction.ActionType.UPDATE;
+            if (!(PersistenceAction.ActionType.UPDATE.equals(
+                a.actionType) || PersistenceAction.ActionType.DELETE_UPDATE.equals(a.actionType))) {
+                var updateKey =
+                    a.instanceAccessModel.instanceType().getName() + "-" + PersistenceAction.ActionType.UPDATE;
                 actionSet = partitionedActionsMap.get(updateKey);
                 if (actionSet != null) {
                     actionSet.forEach(aq -> {
@@ -236,7 +240,8 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
                 }
             }
             if (!PersistenceAction.ActionType.DELETE.equals(a.actionType)) {
-                var updateKey = a.instanceAccessModel.instanceType().getName() + "-" + PersistenceAction.ActionType.DELETE;
+                var updateKey =
+                    a.instanceAccessModel.instanceType().getName() + "-" + PersistenceAction.ActionType.DELETE;
                 actionSet = partitionedActionsMap.get(updateKey);
                 if (actionSet != null) {
                     actionSet.forEach(aq -> {
@@ -262,10 +267,11 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
      * Gets the required persistence acctions
      *
      * @param domainObjectTypeName the full qualified domain object type
-     * @param actionType the action type
+     * @param actionType           the action type
      * @return the actions
      */
-    public Set<PersistenceAction<BASE_RECORD_TYPE>> getActionsPartitioned(String domainObjectTypeName, PersistenceAction.ActionType actionType) {
+    public Set<PersistenceAction<BASE_RECORD_TYPE>> getActionsPartitioned(String domainObjectTypeName,
+                                                                          PersistenceAction.ActionType actionType) {
         var actions = this.partitionedActionsMap.get(domainObjectTypeName + "-" + actionType.name());
         if (actions == null) {
             return new HashSet<>();
@@ -311,33 +317,33 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
                     f.getType().getDomainType().equals(DomainType.ENUM) ||
                     f.getType().getDomainType().equals(DomainType.NON_DOMAIN)
             ).anyMatch(f -> {
-            var propertyValueE1 = DlcAccess.accessorFor(a).peek(f.getName());
-            var propertyValueE2 = DlcAccess.accessorFor(b).peek(f.getName());
+                var propertyValueE1 = DlcAccess.accessorFor(a).peek(f.getName());
+                var propertyValueE2 = DlcAccess.accessorFor(b).peek(f.getName());
 
-            if (f.getType().hasCollectionContainer()) {
-                if (propertyValueE1 == null && propertyValueE2 != null && ((Collection<?>) propertyValueE2).isEmpty()) {
-                    return false;
-                } else if (propertyValueE2 == null && propertyValueE1 != null && ((Collection<?>) propertyValueE1).isEmpty()) {
-                    return false;
-                } else if (propertyValueE2 == null && propertyValueE1 == null) {
-                    return false;
-                } else if (propertyValueE2 != null && propertyValueE1 != null) {
-                    Collection<?> c1 = (Collection<?>) propertyValueE1;
-                    Collection<?> c2 = (Collection<?>) propertyValueE2;
-                    return !c1.containsAll(c2) || !c2.containsAll(c1);
-                }
-                return true;
-            } else
-                return (propertyValueE1 != null && !propertyValueE1.equals(propertyValueE2)) ||
-                    (propertyValueE1 == null && propertyValueE2 != null);
-        });
+                if (f.getType().hasCollectionContainer()) {
+                    if (propertyValueE1 == null && propertyValueE2 != null && ((Collection<?>) propertyValueE2).isEmpty()) {
+                        return false;
+                    } else if (propertyValueE2 == null && propertyValueE1 != null && ((Collection<?>) propertyValueE1).isEmpty()) {
+                        return false;
+                    } else if (propertyValueE2 == null && propertyValueE1 == null) {
+                        return false;
+                    } else if (propertyValueE2 != null && propertyValueE1 != null) {
+                        Collection<?> c1 = (Collection<?>) propertyValueE1;
+                        Collection<?> c2 = (Collection<?>) propertyValueE2;
+                        return !c1.containsAll(c2) || !c2.containsAll(c1);
+                    }
+                    return true;
+                } else
+                    return (propertyValueE1 != null && !propertyValueE1.equals(propertyValueE2)) ||
+                        (propertyValueE1 == null && propertyValueE2 != null);
+            });
 
     }
 
     /**
      * Gets the entity duplicates
      *
-     * @return  the entity duplicates
+     * @return the entity duplicates
      */
     public Map<Entity<?>, List<Entity<?>>> getEntityDuplicates() {
         return entityDuplicates;
@@ -406,9 +412,10 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
                     for (Entity<?> a : x) {
                         for (Entity<?> b : x) {
                             if (hasChangesCompareFieldByField(a, b)) {
-                                throw DLCPersistenceException.fail("Inconsistent Aggregate: Entity is contained multiple times with different values\n"
-                                    + " Entity instance 1: " + a + "\n"
-                                    + " Entity instance 2: " + b);
+                                throw DLCPersistenceException.fail(
+                                    "Inconsistent Aggregate: Entity is contained multiple times with different values\n"
+                                        + " Entity instance 1: " + a + "\n"
+                                        + " Entity instance 2: " + b);
                             }
                         }
                     }
@@ -417,7 +424,8 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
             recordMappedUpdatedDomainObjects = new HashSet<>();
         }
 
-        //first we detect all DELETEs = domain objects that were in the database and are not contained in roots current representation anymore
+        //first we detect all DELETEs = domain objects that were in the database and are not contained in roots
+        // current representation anymore
         detectDeletes(recordMappedDatabaseDomainObjects, recordMappedUpdatedDomainObjects);
         //now we detect all UPDATEs and INSERTs
         detectUpdatesOrInserts(recordMappedDatabaseDomainObjects, recordMappedUpdatedDomainObjects);
@@ -433,7 +441,8 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
                 i -> {
                     if (!recordMappedUpdatedDomainObjects.contains(i)) {
                         if (i.isValueObject()) {
-                            addActionToPersistenceContext(new PersistenceAction<>(i, PersistenceAction.ActionType.DELETE, null));
+                            addActionToPersistenceContext(
+                                new PersistenceAction<>(i, PersistenceAction.ActionType.DELETE, null));
                             this.rootContainsChange = true;
                         } else {
                             //check if entity is still referenced elsewhere
@@ -444,7 +453,8 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
                                 .contains(i.domainObject());
                             if (!stillReferenced) {
                                 deletedEntities.add((Entity<?>) i.domainObject());
-                                addActionToPersistenceContext(new PersistenceAction<>(i, PersistenceAction.ActionType.DELETE, null));
+                                addActionToPersistenceContext(
+                                    new PersistenceAction<>(i, PersistenceAction.ActionType.DELETE, null));
                                 this.rootContainsChange = true;
                             }
                         }
@@ -453,7 +463,8 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
 
                 }
             );
-        addActionsToResetForwardReferencesOnDeletedEntities(deletedEntities, recordMappedDatabaseDomainObjects, recordMappedUpdatedDomainObjects);
+        addActionsToResetForwardReferencesOnDeletedEntities(deletedEntities, recordMappedDatabaseDomainObjects,
+            recordMappedUpdatedDomainObjects);
     }
 
     private void detectUpdatesOrInserts(
@@ -462,16 +473,20 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
     ) {
         recordMappedUpdatedDomainObjects.forEach(
             i -> {
-                DomainObjectInstanceAccessModel<BASE_RECORD_TYPE> dbStateInstance = fetchInstance(recordMappedDatabaseDomainObjects, i);
+                DomainObjectInstanceAccessModel<BASE_RECORD_TYPE> dbStateInstance = fetchInstance(
+                    recordMappedDatabaseDomainObjects, i);
                 if (dbStateInstance == null) {
-                    addActionToPersistenceContext(new PersistenceAction<>(i, PersistenceAction.ActionType.INSERT, null));
+                    addActionToPersistenceContext(
+                        new PersistenceAction<>(i, PersistenceAction.ActionType.INSERT, null));
                     this.rootContainsChange = true;
                     if (i.domainObject().equals(this.updatedRoot)) {
                         this.rootUpdatedDirectly = true;
                     }
-                } else if (i.isEntity() && hasChangesCompareFieldByField((Entity<?>) i.domainObject(), (Entity<?>) dbStateInstance.domainObject())) {
+                } else if (i.isEntity() && hasChangesCompareFieldByField((Entity<?>) i.domainObject(),
+                    (Entity<?>) dbStateInstance.domainObject())) {
                     //change detected when comparing database state to a given entity - value objects cannot be updated
-                    addActionToPersistenceContext(new PersistenceAction<>(i, PersistenceAction.ActionType.UPDATE, dbStateInstance));
+                    addActionToPersistenceContext(
+                        new PersistenceAction<>(i, PersistenceAction.ActionType.UPDATE, dbStateInstance));
                     this.rootContainsChange = true;
                     if (i.domainObject().equals(this.updatedRoot)) {
                         this.rootUpdatedDirectly = true;
@@ -484,14 +499,14 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
     private void addActionsToResetForwardReferencesOnDeletedEntities(final Set<Entity<?>> deletedEntities,
                                                                      Set<DomainObjectInstanceAccessModel<BASE_RECORD_TYPE>> recordMappedDatabaseDomainObjects,
                                                                      Set<DomainObjectInstanceAccessModel<BASE_RECORD_TYPE>> recordMappedUpdatedDomainObjects) {
-        if (deletedEntities.size() > 0) {
+        if (!deletedEntities.isEmpty()) {
             recordMappedDatabaseDomainObjects
                 .stream()
                 .filter(DomainObjectInstanceAccessModel::isEntity)
                 .filter(i -> !deletedEntities.contains(i.domainObject()))
                 .forEach(i -> {
                     var resetted = resetForwardReferenceOnDeletedEntity((Entity<?>) i.domainObject(), deletedEntities);
-                    if(resetted != null){
+                    if (resetted != null) {
                         var oldInstance = fetchInstance(recordMappedUpdatedDomainObjects, i);
                         var resettedMirror = Domain.entityMirrorFor(resetted);
 
@@ -499,7 +514,7 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
                             //needed because of update to reset reference
                             Entity<?> toIncreaseVersion = (Entity<?>) oldInstance.domainObject();
                             var em = Domain.entityMirrorFor(toIncreaseVersion);
-                            if(em.getConcurrencyVersionField().isPresent()) {
+                            if (em.getConcurrencyVersionField().isPresent()) {
                                 DlcAccess.accessorFor(toIncreaseVersion)
                                     .poke(
                                         em.getConcurrencyVersionField().get().getName(),
@@ -510,21 +525,24 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
                                 }
                             }
                         }
-                        var action =  new PersistenceAction<>(oldInstance.cloneWithReplacement(resetted), PersistenceAction.ActionType.DELETE_UPDATE, null);
+                        var action = new PersistenceAction<>(oldInstance.cloneWithReplacement(resetted),
+                            PersistenceAction.ActionType.DELETE_UPDATE, null);
                         addActionToPersistenceContext(action);
                     }
                 });
         }
     }
 
-    private Entity<?> resetForwardReferenceOnDeletedEntity(Entity<?> referencingEntity, Set<Entity<?>> deletedEntities) {
+    private Entity<?> resetForwardReferenceOnDeletedEntity(Entity<?> referencingEntity,
+                                                           Set<Entity<?>> deletedEntities) {
 
-        var referencingRecordMirror = domainPersistenceProvider.persistenceMirror.getEntityRecordMirror(referencingEntity.getClass().getName());
+        var referencingRecordMirror = domainPersistenceProvider.persistenceMirror.getEntityRecordMirror(
+            referencingEntity.getClass().getName());
 
-        if(referencingRecordMirror
+        if (referencingRecordMirror
             .enforcedReferences()
             .stream()
-            .anyMatch(ref -> deletedEntities.stream().anyMatch(del -> del.getClass().getName().equals(ref)))){
+            .anyMatch(ref -> deletedEntities.stream().anyMatch(del -> del.getClass().getName().equals(ref)))) {
             //an enforced reference is deleted
             var referencingMirror = Domain.entityMirrorFor(referencingEntity);
             Entity<?> clone = entityCloner.clone(referencingEntity);
@@ -537,7 +555,7 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
                     .filter(er -> er.getType().getTypeName().equals(deletedEntity.getClass().getName()))
                     .forEach(er -> {
                         var referenced = accessor.peek(er.getName());
-                        if(referenced != null) {
+                        if (referenced != null) {
                             if (er.getType().hasOptionalContainer()) {
                                 var referencedOptional = ((Optional<?>) referenced);
                                 if (referencedOptional.isPresent() && referencedOptional.get().equals(deletedEntity)) {

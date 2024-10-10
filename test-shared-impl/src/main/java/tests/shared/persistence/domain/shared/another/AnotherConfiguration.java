@@ -38,7 +38,8 @@ public class AnotherConfiguration extends AggregateRootBase<AnotherConfiguration
     private final TangibleConfigurationTableEntry classA;
 
     @Builder(setterPrefix = "set")
-    public AnotherConfiguration(AnotherConfigurationId id, long concurrencyVersion, TangibleConfigurationTableEntry classA) {
+    public AnotherConfiguration(AnotherConfigurationId id, long concurrencyVersion,
+                                TangibleConfigurationTableEntry classA) {
         super(concurrencyVersion);
         this.id = id;
         this.classA = classA;

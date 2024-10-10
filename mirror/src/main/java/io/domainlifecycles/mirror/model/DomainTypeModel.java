@@ -107,7 +107,8 @@ public abstract class DomainTypeModel implements DomainTypeMirror {
     public MethodMirror methodByName(String methodName) {
         return methods.stream().filter(m -> m.getName().equals(methodName))
             .findFirst()
-            .orElseThrow(() -> MirrorException.fail(String.format("MethodMirror not found for method name '%s' within '%s'", methodName, typeName)));
+            .orElseThrow(() -> MirrorException.fail(
+                String.format("MethodMirror not found for method name '%s' within '%s'", methodName, typeName)));
     }
 
     /**
@@ -117,7 +118,8 @@ public abstract class DomainTypeModel implements DomainTypeMirror {
     public FieldMirror fieldByName(String fieldName) {
         return allFields.stream()
             .filter(f -> f.getName().equals(fieldName) && !f.isHidden()).findFirst()
-            .orElseThrow(() -> MirrorException.fail(String.format("FieldMirror not found for field name '%s' within '%s'", fieldName, typeName)));
+            .orElseThrow(() -> MirrorException.fail(
+                String.format("FieldMirror not found for field name '%s' within '%s'", fieldName, typeName)));
 
     }
 
@@ -176,7 +178,9 @@ public abstract class DomainTypeModel implements DomainTypeMirror {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DomainTypeModel that = (DomainTypeModel) o;
-        return isAbstract == that.isAbstract && typeName.equals(that.typeName) && allFields.equals(that.allFields) && methods.equals(that.methods) && inheritanceHierarchyTypeNames.equals(that.inheritanceHierarchyTypeNames) && allInterfaceTypeNames.equals(that.allInterfaceTypeNames);
+        return isAbstract == that.isAbstract && typeName.equals(that.typeName) && allFields.equals(
+            that.allFields) && methods.equals(that.methods) && inheritanceHierarchyTypeNames.equals(
+            that.inheritanceHierarchyTypeNames) && allInterfaceTypeNames.equals(that.allInterfaceTypeNames);
     }
 
     /**
@@ -184,6 +188,7 @@ public abstract class DomainTypeModel implements DomainTypeMirror {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(typeName, allFields, methods, isAbstract, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
+        return Objects.hash(typeName, allFields, methods, isAbstract, inheritanceHierarchyTypeNames,
+            allInterfaceTypeNames);
     }
 }

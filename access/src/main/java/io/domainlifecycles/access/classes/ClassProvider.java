@@ -35,7 +35,8 @@ package io.domainlifecycles.access.classes;
 public interface ClassProvider {
 
     /**
-     * Returns a {@link Class} for the full qualified className
+     * @param className full qualified name of class
+     * @return a {@link Class} for the full qualified className
      */
     Class<?> getClassForName(String className);
 }

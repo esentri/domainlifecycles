@@ -55,7 +55,7 @@ public abstract class DomainTypeMirrorBuilder {
         this.fields = JavaReflect.fields(domainClass, MemberSelect.HIERARCHY);
     }
 
-    protected List<FieldMirror> buildFields(){
+    protected List<FieldMirror> buildFields() {
         return fields
             .stream()
             .filter(f -> !f.isSynthetic())
@@ -68,18 +68,18 @@ public abstract class DomainTypeMirrorBuilder {
             .toList();
     }
 
-    protected boolean isHidden(Field f){
+    protected boolean isHidden(Field f) {
         return fields.stream().anyMatch(c -> isHiddenBy(f, c));
     }
 
-    private boolean isHiddenBy(Field f, Field candidate){
-        if(f.equals(candidate) || !f.getDeclaringClass().isAssignableFrom(candidate.getDeclaringClass())){
+    private boolean isHiddenBy(Field f, Field candidate) {
+        if (f.equals(candidate) || !f.getDeclaringClass().isAssignableFrom(candidate.getDeclaringClass())) {
             return false;
         }
         return f.getName().equals(candidate.getName());
     }
 
-    protected List<MethodMirror> buildMethods(){
+    protected List<MethodMirror> buildMethods() {
         var meth = JavaReflect.methods(domainClass, MemberSelect.HIERARCHY);
         return meth.stream()
             .filter(m -> !m.isSynthetic() && !m.isBridge())
@@ -87,22 +87,22 @@ public abstract class DomainTypeMirrorBuilder {
             .collect(Collectors.toList());
     }
 
-    private boolean isOverridden(Method m, List<Method> candidates){
+    private boolean isOverridden(Method m, List<Method> candidates) {
         return candidates.stream().anyMatch(c -> isOverriddenBy(m, c));
     }
 
 
-    private boolean isOverriddenBy(Method m, Method candidate){
-        if(m.equals(candidate) || !m.getDeclaringClass().isAssignableFrom(candidate.getDeclaringClass())){
+    private boolean isOverriddenBy(Method m, Method candidate) {
+        if (m.equals(candidate) || !m.getDeclaringClass().isAssignableFrom(candidate.getDeclaringClass())) {
             return false;
         }
         if (!m.getName().equals(candidate.getName())) {
             return false;
         }
-        if(!candidate.getReturnType().equals(m.getReturnType())){
+        if (!candidate.getReturnType().equals(m.getReturnType())) {
             return false;
         }
-        if(!candidateIsAsOrLessRestrictive(m, candidate)){
+        if (!candidateIsAsOrLessRestrictive(m, candidate)) {
             return false;
         }
         Class<?>[] subclassParamTypes = m.getParameterTypes();
@@ -119,20 +119,20 @@ public abstract class DomainTypeMirrorBuilder {
         return true;
     }
 
-    private boolean candidateIsAsOrLessRestrictive(Method m, Method candidate){
+    private boolean candidateIsAsOrLessRestrictive(Method m, Method candidate) {
         int subclassModifiers = m.getModifiers();
         int superclassModifiers = candidate.getModifiers();
         return subclassModifiers <= superclassModifiers;
     }
 
-    protected List<String> buildInheritanceHierarchy(){
+    protected List<String> buildInheritanceHierarchy() {
         var superClass = domainClass.getSuperclass();
         var hierarchy = new ArrayList<String>();
-        if(superClass != null) {
+        if (superClass != null) {
             hierarchy.add(superClass.getName());
             while (superClass != null && !superClass.getName().equals(Object.class.getName())) {
                 superClass = superClass.getSuperclass();
-                if(superClass != null) {
+                if (superClass != null) {
                     hierarchy.add(superClass.getName());
                 }
             }
@@ -140,13 +140,13 @@ public abstract class DomainTypeMirrorBuilder {
         return hierarchy;
     }
 
-    protected List<String> buildInterfaceTypes(){
+    protected List<String> buildInterfaceTypes() {
         return Arrays.stream(domainClass.getInterfaces())
             .map(Class::getName)
             .toList();
     }
 
-    protected String getTypeName(){
+    protected String getTypeName() {
         return domainClass.getName();
     }
 

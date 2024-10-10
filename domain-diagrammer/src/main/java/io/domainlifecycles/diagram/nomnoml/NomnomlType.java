@@ -74,7 +74,7 @@ public class NomnomlType implements DiagramElement {
     @Override
     public String getDiagramText() {
         StringBuilder builder = new StringBuilder();
-        if(containerTypeName.isPresent()){
+        if (containerTypeName.isPresent()) {
             builder.append(containerTypeName.get());
             builder.append("<");
             builder.append(typeName
@@ -84,7 +84,7 @@ public class NomnomlType implements DiagramElement {
             addTypeAssertions(builder);
             builder.append(">");
             addContainerTypeAssertions(builder);
-        }else{
+        } else {
             builder.append(typeName
                 .replaceAll("\\[", "\\\\[")
                 .replaceAll("\\]", "\\\\]")

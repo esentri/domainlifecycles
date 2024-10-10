@@ -41,7 +41,6 @@ import java.util.Set;
  * SimpleFetcherContext is a simple implementation of a fetcher context.
  *
  * @param <BASE_RECORD_TYPE> the base record type
- *
  * @author Mario Herb
  */
 public class SimpleFetcherContext<BASE_RECORD_TYPE> implements FetcherContext<BASE_RECORD_TYPE> {
@@ -88,7 +87,6 @@ public class SimpleFetcherContext<BASE_RECORD_TYPE> implements FetcherContext<BA
      * @param p      the domain object
      * @param record the record
      */
-    @SuppressWarnings("unchecked")
     public void assignRecordToDomainObject(DomainObject p, BASE_RECORD_TYPE record) {
         if (p == null) return;
         fetchedRecordMap.put(p, record);
@@ -100,7 +98,6 @@ public class SimpleFetcherContext<BASE_RECORD_TYPE> implements FetcherContext<BA
      *
      * @param record the record to record as fetched
      */
-    @SuppressWarnings("unchecked")
     public void recordFetched(BASE_RECORD_TYPE record) {
         fetchedRecordSet.add(FetchedRecord.of(record));
     }

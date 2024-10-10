@@ -46,7 +46,8 @@ public class JooqRecordTypeToEntityTypeMatcher implements RecordTypeToEntityType
      * {@inheritDoc}
      */
     @Override
-    public Optional<Class<? extends UpdatableRecord<?>>> findMatchingRecordType(Set<Class<? extends UpdatableRecord<?>>> availableRecordTypes, String entityTypeName) {
+    public Optional<Class<? extends UpdatableRecord<?>>> findMatchingRecordType(Set<Class<?
+        extends UpdatableRecord<?>>> availableRecordTypes, String entityTypeName) {
         var matchedRecordType = availableRecordTypes
             .stream()
             .sorted(Comparator.comparing(Class::getSimpleName))
@@ -73,8 +74,8 @@ public class JooqRecordTypeToEntityTypeMatcher implements RecordTypeToEntityType
 
     private boolean exactMatch(Class<? extends UpdatableRecord<?>> recordType, String fullQualifiedEntityTypeName) {
         var simpleEntityTypeName = fullQualifiedEntityTypeName;
-        var dotPlusOne = fullQualifiedEntityTypeName.lastIndexOf(".")+1;
-        if(fullQualifiedEntityTypeName.contains(".") && fullQualifiedEntityTypeName.length()>dotPlusOne) {
+        var dotPlusOne = fullQualifiedEntityTypeName.lastIndexOf(".") + 1;
+        if (fullQualifiedEntityTypeName.contains(".") && fullQualifiedEntityTypeName.length() > dotPlusOne) {
             simpleEntityTypeName = fullQualifiedEntityTypeName.substring(dotPlusOne);
         }
         return recordType.getSimpleName().replaceAll("_", "").equals(simpleEntityTypeName + "Record");

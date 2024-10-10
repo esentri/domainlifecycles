@@ -37,4 +37,5 @@ import io.domainlifecycles.domain.types.DomainEvent;
 public record CustomerAdressChanged(
     Customer.CustomerId customerId,
     Address adress)
-implements DomainEvent {}
+    implements DomainEvent {
+}

@@ -45,19 +45,21 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class VehicleExtendedRepository_ITest extends BasePersistence_ITest {
-    
+
     private VehicleExtendedRepository vehicleRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         vehicleRepository = new VehicleExtendedRepository(
             persistenceConfiguration.dslContext,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
-            );
+        );
     }
+
     @Test
     public void testInsertCar() {
         //given
@@ -71,15 +73,17 @@ public class VehicleExtendedRepository_ITest extends BasePersistence_ITest {
                 .setType(Engine.EngineType.ELECTRIC)
                 .build())
             .build();
-         persistenceEventTestHelper.resetEventsCaught();
+        persistenceEventTestHelper.resetEventsCaught();
         //when
         CarWithEngine inserted = (CarWithEngine) vehicleRepository.insert(car);
         //then
-        Optional<CarWithEngine> found = vehicleRepository.findResultById(new VehicleExtendedId(1l)).resultValue().map(v -> (CarWithEngine)v);
-         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
+        Optional<CarWithEngine> found = vehicleRepository.findResultById(new VehicleExtendedId(1l)).resultValue().map(
+            v -> (CarWithEngine) v);
+        persistenceEventTestHelper.assertFoundWithResult(found, inserted);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getEngine());
-         persistenceEventTestHelper.assertEvents();
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getEngine());
+        persistenceEventTestHelper.assertEvents();
 
     }
 
@@ -98,16 +102,17 @@ public class VehicleExtendedRepository_ITest extends BasePersistence_ITest {
                 .build())
             .build();
         CarWithEngine inserted = (CarWithEngine) vehicleRepository.insert(car);
-        CarWithEngine insertedCopy =  persistenceEventTestHelper.kryo.copy(inserted);
+        CarWithEngine insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
         insertedCopy.setLengthCm(550);
-         persistenceEventTestHelper.resetEventsCaught();
+        persistenceEventTestHelper.resetEventsCaught();
         //when
         CarWithEngine updated = (CarWithEngine) vehicleRepository.update(insertedCopy);
         //then
-        Optional<CarWithEngine> found = vehicleRepository.findResultById(new VehicleExtendedId(1l)).resultValue().map(v->(CarWithEngine)v);
-         persistenceEventTestHelper.assertFoundWithResult(found, updated);
+        Optional<CarWithEngine> found = vehicleRepository.findResultById(new VehicleExtendedId(1l)).resultValue().map(
+            v -> (CarWithEngine) v);
+        persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
-         persistenceEventTestHelper.assertEvents();
+        persistenceEventTestHelper.assertEvents();
         Assertions.assertThat(updated.getLengthCm()).isEqualTo(insertedCopy.getLengthCm());
     }
 
@@ -125,17 +130,19 @@ public class VehicleExtendedRepository_ITest extends BasePersistence_ITest {
                 .build())
             .build();
         CarWithEngine inserted = (CarWithEngine) vehicleRepository.insert(car);
-         persistenceEventTestHelper.resetEventsCaught();
+        persistenceEventTestHelper.resetEventsCaught();
         //when
         Optional<CarWithEngine> deleted = vehicleRepository.deleteById(inserted.getId()).map(v -> (CarWithEngine) v);
         //then
-        Optional<CarWithEngine> found = vehicleRepository.findResultById(new VehicleExtendedId(1l)).resultValue().map(v -> (CarWithEngine) v);
+        Optional<CarWithEngine> found = vehicleRepository.findResultById(new VehicleExtendedId(1l)).resultValue().map(
+            v -> (CarWithEngine) v);
         Assertions.assertThat(deleted).isPresent();
         Assertions.assertThat(found).isEmpty();
-         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);
+        persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getEngine());
-         persistenceEventTestHelper.assertEvents();
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getEngine());
+        persistenceEventTestHelper.assertEvents();
     }
 
     @Test
@@ -156,16 +163,19 @@ public class VehicleExtendedRepository_ITest extends BasePersistence_ITest {
             .setLengthCm(150)
             .setBikeComponents(components)
             .build();
-         persistenceEventTestHelper.resetEventsCaught();
+        persistenceEventTestHelper.resetEventsCaught();
         //when
         BikeWithComponents inserted = (BikeWithComponents) vehicleRepository.insert(bike);
         //then
-        Optional<BikeWithComponents> found = vehicleRepository.findResultById(new VehicleExtendedId(1l)).resultValue().map(v -> (BikeWithComponents) v);
-         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
+        Optional<BikeWithComponents> found = vehicleRepository.findResultById(
+            new VehicleExtendedId(1l)).resultValue().map(v -> (BikeWithComponents) v);
+        persistenceEventTestHelper.assertFoundWithResult(found, inserted);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getBikeComponents().get(0), inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getBikeComponents().get(1), inserted);
-         persistenceEventTestHelper.assertEvents();
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getBikeComponents().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getBikeComponents().get(1), inserted);
+        persistenceEventTestHelper.assertEvents();
     }
 
     @Test
@@ -187,16 +197,17 @@ public class VehicleExtendedRepository_ITest extends BasePersistence_ITest {
             .setBikeComponents(components)
             .build();
         BikeWithComponents inserted = (BikeWithComponents) vehicleRepository.insert(bike);
-        BikeWithComponents insertedCopy =  persistenceEventTestHelper.kryo.copy(inserted);
+        BikeWithComponents insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
         insertedCopy.setLengthCm(550);
-         persistenceEventTestHelper.resetEventsCaught();
+        persistenceEventTestHelper.resetEventsCaught();
         //when
         BikeWithComponents updated = (BikeWithComponents) vehicleRepository.update(insertedCopy);
         //then
-        Optional<BikeWithComponents> found = vehicleRepository.findResultById(new VehicleExtendedId(1l)).resultValue().map(v->(BikeWithComponents) v);
-         persistenceEventTestHelper.assertFoundWithResult(found, updated);
+        Optional<BikeWithComponents> found = vehicleRepository.findResultById(
+            new VehicleExtendedId(1l)).resultValue().map(v -> (BikeWithComponents) v);
+        persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
-         persistenceEventTestHelper.assertEvents();
+        persistenceEventTestHelper.assertEvents();
         Assertions.assertThat(updated.getLengthCm()).isEqualTo(insertedCopy.getLengthCm());
     }
 
@@ -219,18 +230,22 @@ public class VehicleExtendedRepository_ITest extends BasePersistence_ITest {
             .setBikeComponents(components)
             .build();
         BikeWithComponents inserted = (BikeWithComponents) vehicleRepository.insert(bike);
-         persistenceEventTestHelper.resetEventsCaught();
+        persistenceEventTestHelper.resetEventsCaught();
         //when
-        Optional<BikeWithComponents> deleted = vehicleRepository.deleteById(inserted.getId()).map(v -> (BikeWithComponents) v);
+        Optional<BikeWithComponents> deleted = vehicleRepository.deleteById(inserted.getId()).map(
+            v -> (BikeWithComponents) v);
         //then
-        Optional<BikeWithComponents> found = vehicleRepository.findResultById(new VehicleExtendedId(1l)).resultValue().map(v -> (BikeWithComponents) v);
+        Optional<BikeWithComponents> found = vehicleRepository.findResultById(
+            new VehicleExtendedId(1l)).resultValue().map(v -> (BikeWithComponents) v);
         Assertions.assertThat(deleted).isPresent();
         Assertions.assertThat(found).isEmpty();
-         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getBikeComponents().get(1), deleted.get());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getBikeComponents().get(0), deleted.get());
+        persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getBikeComponents().get(1), deleted.get());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getBikeComponents().get(0), deleted.get());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get());
-         persistenceEventTestHelper.assertEvents();
+        persistenceEventTestHelper.assertEvents();
     }
 
     @Test
@@ -261,21 +276,26 @@ public class VehicleExtendedRepository_ITest extends BasePersistence_ITest {
                 .setType(Engine.EngineType.ELECTRIC)
                 .build())
             .build();
-         persistenceEventTestHelper.resetEventsCaught();
+        persistenceEventTestHelper.resetEventsCaught();
         //when
         BikeWithComponents insertedBike = (BikeWithComponents) vehicleRepository.insert(bike);
         CarWithEngine insertedCar = (CarWithEngine) vehicleRepository.insert(car);
         //then
-        Optional<BikeWithComponents> foundBike = vehicleRepository.findResultById(new VehicleExtendedId(1l)).resultValue().map(v -> (BikeWithComponents)v);
-         persistenceEventTestHelper.assertFoundWithResult(foundBike, insertedBike);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, insertedBike.getBikeComponents().get(1), insertedBike);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, insertedBike.getBikeComponents().get(0), insertedBike);
+        Optional<BikeWithComponents> foundBike = vehicleRepository.findResultById(
+            new VehicleExtendedId(1l)).resultValue().map(v -> (BikeWithComponents) v);
+        persistenceEventTestHelper.assertFoundWithResult(foundBike, insertedBike);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            insertedBike.getBikeComponents().get(1), insertedBike);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            insertedBike.getBikeComponents().get(0), insertedBike);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, insertedBike);
-        Optional<CarWithEngine> foundCar = vehicleRepository.findResultById(new VehicleExtendedId(2l)).resultValue().map(v -> (CarWithEngine)v);
-         persistenceEventTestHelper.assertFoundWithResult(foundCar, insertedCar);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, insertedCar.getEngine());
+        Optional<CarWithEngine> foundCar = vehicleRepository.findResultById(
+            new VehicleExtendedId(2l)).resultValue().map(v -> (CarWithEngine) v);
+        persistenceEventTestHelper.assertFoundWithResult(foundCar, insertedCar);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            insertedCar.getEngine());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, insertedCar);
-         persistenceEventTestHelper.assertEvents();
+        persistenceEventTestHelper.assertEvents();
         var vehicles = vehicleRepository.findAll().collect(Collectors.toList());
         assertThat(vehicles).hasSize(2);
         var bikes = vehicleRepository.findAllBikes();

@@ -39,4 +39,5 @@ import java.util.Optional;
 public record CustomerCreditCardChanged(
     Customer.CustomerId customerId,
     Optional<CreditCard> creditCard)
-implements DomainEvent {}
+    implements DomainEvent {
+}

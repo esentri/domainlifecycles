@@ -75,7 +75,7 @@ public class JooqEntityIdentityProvider implements EntityIdentityProvider {
 
     private Sequence<?> getSequence(String entityIdentityTypeName) {
         var seq = sequenceCache.get(entityIdentityTypeName);
-        var simpleName = entityIdentityTypeName.substring(entityIdentityTypeName.lastIndexOf(".")+1);
+        var simpleName = entityIdentityTypeName.substring(entityIdentityTypeName.lastIndexOf(".") + 1);
         if (seq == null) {
             var sequenceName = NamingUtil.camelCaseToSnakeCase(simpleName).toUpperCase() + seqSuffix;
             seq = dslContext
@@ -84,7 +84,7 @@ public class JooqEntityIdentityProvider implements EntityIdentityProvider {
                 .stream()
                 .findFirst()
                 .orElse(null);
-            if(seq == null){
+            if (seq == null) {
                 seq = dslContext
                     .meta()
                     .getSequences(sequenceName.toLowerCase())

@@ -54,7 +54,7 @@ public class RecordTestRepository_ITest extends BasePersistence_ITest {
     private RecordTestRepository recordTestRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         recordTestRepository = new RecordTestRepository(
             persistenceConfiguration.dslContext,
             persistenceEventTestHelper.testEventPublisher,
@@ -74,8 +74,10 @@ public class RecordTestRepository_ITest extends BasePersistence_ITest {
         Optional<RecordTest> found = recordTestRepository.findResultById(new RecordTestId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getMyVoList().get(0), inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getMyVoList().get(1), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getMyVoList().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getMyVoList().get(1), inserted);
         persistenceEventTestHelper.assertEvents();
     }
 
@@ -113,7 +115,8 @@ public class RecordTestRepository_ITest extends BasePersistence_ITest {
         Optional<RecordTest> found = recordTestRepository.findResultById(new RecordTestId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getMyVoList().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getMyVoList().get(0), inserted);
         persistenceEventTestHelper.assertEvents();
         Assertions.assertThat(updated.getMyVoList()).isEqualTo(insertedCopy.getMyVoList());
     }
@@ -131,15 +134,17 @@ public class RecordTestRepository_ITest extends BasePersistence_ITest {
         Assertions.assertThat(deleted).isPresent();
         Assertions.assertThat(found).isEmpty();
         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getMyVoList().get(1), deleted.get());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getMyVoList().get(0), deleted.get());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getMyVoList().get(1), deleted.get());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getMyVoList().get(0), deleted.get());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get());
 
         persistenceEventTestHelper.assertEvents();
     }
 
     @Test
-    public void buildVoWithAssertionError(){
+    public void buildVoWithAssertionError() {
         var ex = assertThrows(DomainAssertionException.class, () -> RecordVo.builder()
             .setValue2(1l)
             .build());

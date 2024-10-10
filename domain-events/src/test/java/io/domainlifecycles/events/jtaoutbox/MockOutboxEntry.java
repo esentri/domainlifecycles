@@ -33,7 +33,7 @@ import io.domainlifecycles.events.publish.outbox.api.ProcessingResult;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class MockOutboxEntry{
+public class MockOutboxEntry {
 
     public final DomainEvent domainEvent;
     public LocalDateTime inserted;

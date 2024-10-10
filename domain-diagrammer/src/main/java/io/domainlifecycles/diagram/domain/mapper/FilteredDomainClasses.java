@@ -45,7 +45,8 @@ import java.util.List;
 /**
  * The FilteredDomainClasses class represents a collection of filtered domain classes based on certain criteria
  * (based on the given diagram configuration).
- * It provides separate lists for various types of domain classes like application services, domain commands, domain events,
+ * It provides separate lists for various types of domain classes like application services, domain commands, domain
+ * events,
  * domain services, repositories, aggregate roots, query clients and read models.
  *
  * @author Mario Herb
@@ -90,7 +91,7 @@ public class FilteredDomainClasses {
         this.boundedContextMirror = Domain.getBoundedContexts()
             .stream()
             .filter(a -> a.getPackageName().equals(domainDiagramConfig.getContextPackageName()))
-            .findFirst().orElseThrow(()-> new IllegalStateException(
+            .findFirst().orElseThrow(() -> new IllegalStateException(
                 String.format("Bounded Context '%s' not found!", domainDiagramConfig.getContextPackageName())
             ));
         transitiveDomainTypeFilter = new TransitiveDomainTypeFilter(
@@ -109,7 +110,7 @@ public class FilteredDomainClasses {
 
     }
 
-    private List<ApplicationServiceMirror> initFilteredApplicationServices(){
+    private List<ApplicationServiceMirror> initFilteredApplicationServices() {
         return boundedContextMirror
             .getApplicationServices()
             .stream()
@@ -119,7 +120,7 @@ public class FilteredDomainClasses {
             .toList();
     }
 
-    private List<DomainCommandMirror> initFilteredDomainCommands(){
+    private List<DomainCommandMirror> initFilteredDomainCommands() {
         return boundedContextMirror
             .getDomainCommands()
             .stream()
@@ -129,7 +130,7 @@ public class FilteredDomainClasses {
             .toList();
     }
 
-    private List<DomainEventMirror> initFilteredDomainEvents(){
+    private List<DomainEventMirror> initFilteredDomainEvents() {
         return boundedContextMirror
             .getDomainEvents()
             .stream()
@@ -139,7 +140,7 @@ public class FilteredDomainClasses {
             .toList();
     }
 
-    private List<DomainServiceMirror> initFilteredDomainServices(){
+    private List<DomainServiceMirror> initFilteredDomainServices() {
         return boundedContextMirror
             .getDomainServices()
             .stream()
@@ -149,7 +150,7 @@ public class FilteredDomainClasses {
             .toList();
     }
 
-    private List<RepositoryMirror> initFilteredRepositories(){
+    private List<RepositoryMirror> initFilteredRepositories() {
         return boundedContextMirror
             .getRepositories()
             .stream()
@@ -159,7 +160,7 @@ public class FilteredDomainClasses {
             .toList();
     }
 
-    private List<ReadModelMirror> initFilteredReadModels(){
+    private List<ReadModelMirror> initFilteredReadModels() {
         return boundedContextMirror
             .getReadModels()
             .stream()
@@ -169,17 +170,17 @@ public class FilteredDomainClasses {
             .toList();
     }
 
-    private List<AggregateRootMirror> initFilteredAggregateRoots(){
+    private List<AggregateRootMirror> initFilteredAggregateRoots() {
         return boundedContextMirror
             .getAggregateRoots()
             .stream()
-            .filter(ar -> ! ar.isAbstract())
+            .filter(ar -> !ar.isAbstract())
             .filter(transitiveDomainTypeFilter::filter)
             .filter(ar -> !domainDiagramConfig.getClassesBlacklist().contains(ar.getTypeName()))
             .toList();
     }
 
-    private List<QueryClientMirror> initFilteredQueryClients(){
+    private List<QueryClientMirror> initFilteredQueryClients() {
         return boundedContextMirror
             .getQueryClients()
             .stream()
@@ -189,7 +190,7 @@ public class FilteredDomainClasses {
             .toList();
     }
 
-    private List<OutboundServiceMirror> initFilteredOutboundServices(){
+    private List<OutboundServiceMirror> initFilteredOutboundServices() {
         return boundedContextMirror
             .getOutboundServices()
             .stream()

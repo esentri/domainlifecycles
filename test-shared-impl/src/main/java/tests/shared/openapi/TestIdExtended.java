@@ -29,7 +29,7 @@ package tests.shared.openapi;
 
 import java.util.UUID;
 
-public class TestIdExtended extends TestId{
+public class TestIdExtended extends TestId {
     public TestIdExtended(UUID value) {
         super(value);
     }

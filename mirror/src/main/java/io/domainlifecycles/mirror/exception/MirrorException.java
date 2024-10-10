@@ -44,6 +44,7 @@ public class MirrorException extends RuntimeException {
      * Returns a new MirrorException with a detail message.
      *
      * @param detail exception message
+     * @return MirrorException with detailed message
      */
     public static MirrorException fail(final String detail) {
         return new MirrorException(requireNonNull(detail));
@@ -53,7 +54,7 @@ public class MirrorException extends RuntimeException {
      * Returns a new MirrorException with a detail message and a cause.
      *
      * @param detail exception message
-     * @param cause Throwable
+     * @param cause  Throwable
      * @return new exception
      */
     public static MirrorException fail(final String detail, final Throwable cause) {
@@ -64,7 +65,7 @@ public class MirrorException extends RuntimeException {
      * returns a new MirrorException with a detail message formatted to include with given message parameters.
      *
      * @param detail exception message
-     * @param args message parameters
+     * @param args   message parameters
      * @return new exception
      */
     public static MirrorException fail(final String detail, final Object... args) {
@@ -72,11 +73,12 @@ public class MirrorException extends RuntimeException {
     }
 
     /**
-     * returns a new MirrorException with a detail message formatted to include with given message parameters and containing a cause.
+     * returns a new MirrorException with a detail message formatted to include with given message parameters and
+     * containing a cause.
      *
      * @param detail exception message
-     * @param args message parameters
-     * @param cause Throwable
+     * @param args   message parameters
+     * @param cause  Throwable
      * @return new exception
      */
     public static MirrorException fail(final String detail, final Throwable cause, final Object... args) {

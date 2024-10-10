@@ -45,11 +45,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HierarchicalAggregateRootRepository_ITest extends BasePersistence_ITest {
-    
+
     private HierarchicalAggregateRootRepository hierarchicalAggregateRootRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         hierarchicalAggregateRootRepository = new HierarchicalAggregateRootRepository(
             persistenceConfiguration.dslContext,
             persistenceEventTestHelper.testEventPublisher,
@@ -83,7 +83,8 @@ public class HierarchicalAggregateRootRepository_ITest extends BasePersistence_I
         Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository
             .findResultById(new TestRootHierarchicalId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
         persistenceEventTestHelper.assertEvents();
     }
@@ -99,8 +100,10 @@ public class HierarchicalAggregateRootRepository_ITest extends BasePersistence_I
         Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository
             .findResultById(new TestRootHierarchicalId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getChild().getChild());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getChild().getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
         persistenceEventTestHelper.assertEvents();
     }
@@ -116,9 +119,12 @@ public class HierarchicalAggregateRootRepository_ITest extends BasePersistence_I
         Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository
             .findResultById(new TestRootHierarchicalId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getChild().getChild().getChild());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getChild().getChild());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getChild().getChild().getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getChild().getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
         persistenceEventTestHelper.assertEvents();
     }
@@ -135,7 +141,8 @@ public class HierarchicalAggregateRootRepository_ITest extends BasePersistence_I
         //when
         TestRootHierarchical updated = hierarchicalAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository.findResultById(new TestRootHierarchicalId(1l)).resultValue();
+        Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository.findResultById(
+            new TestRootHierarchicalId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
@@ -153,7 +160,8 @@ public class HierarchicalAggregateRootRepository_ITest extends BasePersistence_I
         //when
         TestRootHierarchical updated = hierarchicalAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository.findResultById(new TestRootHierarchicalId(1l)).resultValue();
+        Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository.findResultById(
+            new TestRootHierarchicalId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
@@ -171,7 +179,8 @@ public class HierarchicalAggregateRootRepository_ITest extends BasePersistence_I
         //when
         TestRootHierarchical updated = hierarchicalAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository.findResultById(new TestRootHierarchicalId(1l)).resultValue();
+        Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository.findResultById(
+            new TestRootHierarchicalId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated.getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
@@ -197,7 +206,8 @@ public class HierarchicalAggregateRootRepository_ITest extends BasePersistence_I
         //when
         TestRootHierarchical updated = hierarchicalAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository.findResultById(new TestRootHierarchicalId(1l)).resultValue();
+        Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository.findResultById(
+            new TestRootHierarchicalId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
@@ -217,7 +227,8 @@ public class HierarchicalAggregateRootRepository_ITest extends BasePersistence_I
         //when
         TestRootHierarchical updated = hierarchicalAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository.findResultById(
+            inserted.getId()).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
@@ -235,13 +246,17 @@ public class HierarchicalAggregateRootRepository_ITest extends BasePersistence_I
         //when
         Optional<TestRootHierarchical> deleted = hierarchicalAggregateRootRepository.deleteById(inserted.getId());
         //then
-        Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository.findResultById(
+            inserted.getId()).resultValue();
         Assertions.assertThat(deleted).isPresent();
         Assertions.assertThat(found).isEmpty();
         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getChild().getChild().getChild());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getChild().getChild());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getChild().getChild().getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getChild().getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get());
         persistenceEventTestHelper.assertEvents();
 
@@ -260,9 +275,11 @@ public class HierarchicalAggregateRootRepository_ITest extends BasePersistence_I
         //when
         TestRootHierarchical updated = hierarchicalAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository.findResultById(
+            inserted.getId()).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getChild().getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getChild().getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
         Assertions.assertThat(updated.getChild().getChild()).isNull();
@@ -283,10 +300,13 @@ public class HierarchicalAggregateRootRepository_ITest extends BasePersistence_I
         //when
         TestRootHierarchical updated = hierarchicalAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository.findResultById(
+            inserted.getId()).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getChild().getChild().getChild());
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getChild().getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getChild().getChild().getChild());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getChild().getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getChild());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
@@ -303,7 +323,8 @@ public class HierarchicalAggregateRootRepository_ITest extends BasePersistence_I
         //when
         Optional<TestRootHierarchical> deleted = hierarchicalAggregateRootRepository.deleteById(inserted.getId());
         //then
-        Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootHierarchical> found = hierarchicalAggregateRootRepository.findResultById(
+            inserted.getId()).resultValue();
         Assertions.assertThat(deleted).isPresent();
         Assertions.assertThat(found).isEmpty();
         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);

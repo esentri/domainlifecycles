@@ -37,9 +37,9 @@ import java.io.IOException;
 
 /**
  * {@link Domain} based serialization of {@link Identity} instances.
- * @see StdSerializer
  *
  * @author Mario Herb
+ * @see StdSerializer
  */
 @SuppressWarnings("rawtypes")
 public class IdentitySerializer extends StdSerializer<Identity> {
@@ -51,10 +51,10 @@ public class IdentitySerializer extends StdSerializer<Identity> {
     /**
      * Serialize Identities.
      *
-     * @param identity Value to serialize; can <b>not</b> be null.
-     * @param jsonGenerator Generator used to output resulting Json content
+     * @param identity           Value to serialize; can <b>not</b> be null.
+     * @param jsonGenerator      Generator used to output resulting Json content
      * @param serializerProvider Provider that can be used to get serializers for
-     *   serializing Objects value contains, if any.
+     *                           serializing Objects value contains, if any.
      * @throws IOException if serialization fails
      */
     @Override

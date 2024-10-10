@@ -41,6 +41,8 @@ public interface DomainEventProcessingMirror {
     /**
      * Query, if a certain DomainEvent for the corresponding {@link DomainEventMirror} is published.
      * To be more precise, if the mirrored type contains a method, which is annotated to do so {@link Publishes}.
+     *
+     * @param domainEvent the domain event to publish
      * @return true, if the underlying mirrored instance publishes the corresponding DomainEvent
      */
     boolean publishes(DomainEventMirror domainEvent);
@@ -48,6 +50,8 @@ public interface DomainEventProcessingMirror {
     /**
      * Query, if a certain DomainEvent for the corresponding {@link DomainEventMirror} is listened to.
      * To be more precise, if the mirrored type contains a method, which is annotated to do so {@link ListensTo}.
+     *
+     * @param domainEvent the domain event to listen to
      * @return true, if the underlying mirrored instance listens to the corresponding DomainEvent
      */
     boolean listensTo(DomainEventMirror domainEvent);

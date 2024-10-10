@@ -116,7 +116,8 @@ public class QueryClientModel extends ServiceKindModel implements QueryClientMir
         if (!super.equals(o)) return false;
         QueryClientModel that = (QueryClientModel) o;
         return providedReadModelTypeName.equals(that.providedReadModelTypeName)
-            && queryClientInterfaceTypeNames.equals(that.queryClientInterfaceTypeNames);
+            && queryClientInterfaceTypeNames.equals(
+            that.queryClientInterfaceTypeNames);
     }
 
     /**

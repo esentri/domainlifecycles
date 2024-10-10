@@ -50,6 +50,8 @@ public class DirectPassThroughDomainEventPublisher implements DomainEventPublish
     /**
      * The DirectPassThroughDomainEventPublisher class is an implementation of the DomainEventPublisher interface.
      * It simply delegates the publishing of a domain event to a ReceivingDomainEventHandler instance.
+     *
+     * @param receivingDomainEventHandler the event handler of the receiving DomainObject
      */
     public DirectPassThroughDomainEventPublisher(ReceivingDomainEventHandler receivingDomainEventHandler) {
         this.receivingDomainEventHandler = receivingDomainEventHandler;

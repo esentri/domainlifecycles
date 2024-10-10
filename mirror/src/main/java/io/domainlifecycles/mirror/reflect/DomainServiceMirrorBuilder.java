@@ -56,8 +56,10 @@ public class DomainServiceMirrorBuilder extends DomainTypeMirrorBuilder {
 
     /**
      * Creates a new {@link DomainServiceMirror}.
+     *
+     * @return new instance of DomainServiceMirror
      */
-    public DomainServiceMirror build(){
+    public DomainServiceMirror build() {
         return new DomainServiceModel(
                 getTypeName(),
                 isAbstract(),
@@ -69,7 +71,7 @@ public class DomainServiceMirrorBuilder extends DomainTypeMirrorBuilder {
             );
     }
 
-    private List<String> getReferencedRepositoryNames(){
+    private List<String> getReferencedRepositoryNames() {
         return JavaReflect
             .fields(this.domainServiceClass, MemberSelect.HIERARCHY)
             .stream()
@@ -78,7 +80,7 @@ public class DomainServiceMirrorBuilder extends DomainTypeMirrorBuilder {
             .collect(Collectors.toList());
     }
 
-    private List<String> getReferencedDomainServiceNames(){
+    private List<String> getReferencedDomainServiceNames() {
         return JavaReflect
             .fields(this.domainServiceClass, MemberSelect.HIERARCHY)
             .stream()
@@ -87,7 +89,7 @@ public class DomainServiceMirrorBuilder extends DomainTypeMirrorBuilder {
             .collect(Collectors.toList());
     }
 
-    private List<String> getReferencedOutboundServiceNames(){
+    private List<String> getReferencedOutboundServiceNames() {
         return JavaReflect
             .fields(this.domainServiceClass, MemberSelect.HIERARCHY)
             .stream()
@@ -96,7 +98,7 @@ public class DomainServiceMirrorBuilder extends DomainTypeMirrorBuilder {
             .toList();
     }
 
-    private List<String> getReferencedQueryClientNames(){
+    private List<String> getReferencedQueryClientNames() {
         return JavaReflect
             .fields(this.domainServiceClass, MemberSelect.HIERARCHY)
             .stream()
@@ -105,23 +107,23 @@ public class DomainServiceMirrorBuilder extends DomainTypeMirrorBuilder {
             .toList();
     }
 
-    private boolean isRepository(Class<?> fieldClass){
+    private boolean isRepository(Class<?> fieldClass) {
         return Repository.class.isAssignableFrom(fieldClass);
     }
 
-    private boolean isDomainService(Class<?> fieldClass){
+    private boolean isDomainService(Class<?> fieldClass) {
         return DomainService.class.isAssignableFrom(fieldClass);
     }
 
-    private boolean isOutboundService(Class<?> fieldClass){
+    private boolean isOutboundService(Class<?> fieldClass) {
         return OutboundService.class.isAssignableFrom(fieldClass);
     }
 
-    private boolean isQueryClient(Class<?> fieldClass){
+    private boolean isQueryClient(Class<?> fieldClass) {
         return QueryClient.class.isAssignableFrom(fieldClass);
     }
 
-    private List<String> domainServiceInterfaceTypeNames(){
+    private List<String> domainServiceInterfaceTypeNames() {
         return Arrays.stream(domainServiceClass.getInterfaces())
             .filter(i -> DomainService.class.isAssignableFrom(i) && !i.getName().equals(DomainService.class.getName()))
             .map(Class::getName)

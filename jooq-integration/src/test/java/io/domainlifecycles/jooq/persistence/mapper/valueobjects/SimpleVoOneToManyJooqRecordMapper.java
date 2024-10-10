@@ -38,7 +38,8 @@ import tests.shared.persistence.domain.valueobjects.VoAggregateRoot;
 /**
  * Mapping JOOQ TestRootSimpleIgnoring records.
  */
-public class SimpleVoOneToManyJooqRecordMapper extends AbstractRecordMapper<SimpleVoOneToManyRecord, SimpleVoOneToMany, VoAggregateRoot> {
+public class SimpleVoOneToManyJooqRecordMapper extends AbstractRecordMapper<SimpleVoOneToManyRecord,
+    SimpleVoOneToMany, VoAggregateRoot> {
 
     @Override
     public DomainObjectBuilder<SimpleVoOneToMany> recordToDomainObjectBuilder(SimpleVoOneToManyRecord record) {

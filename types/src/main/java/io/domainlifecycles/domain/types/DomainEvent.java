@@ -37,16 +37,18 @@ package io.domainlifecycles.domain.types;
  * of what happened in the domain (audit trail) or to improve performance and scalability of the system.
  * Apart from pure technical advantages, the use of DomainEvents makes important side effects explicit within the domain
  * and thus improves the readability and understandability of the code.
- *
- *
+ * <p>
+ * <p>
  * Further
  * Information:
- * @see <a href="https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf">Design Reference - Domain Events</a>
- * @see <a href="https://learn.microsoft.com/de-de/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-events-design-implementation">Microsoft DotNet Patterns (not Java but the concepts are described in a very nice way)</a>
  *
  * @author Mario Herb
+ * @see
+ * <a href="https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf">Design Reference - Domain Events</a>
+ * @see
+ * <a href="https://learn.microsoft.com/de-de/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-events-design-implementation">Microsoft DotNet Patterns (not Java but the concepts are described in a very nice way)</a>
  */
-public interface DomainEvent extends Validatable{
+public interface DomainEvent extends Validatable {
 
 
 }

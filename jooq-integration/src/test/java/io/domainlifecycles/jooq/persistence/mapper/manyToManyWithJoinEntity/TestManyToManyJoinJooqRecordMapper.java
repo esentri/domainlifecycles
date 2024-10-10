@@ -43,7 +43,8 @@ import io.domainlifecycles.test.Tables;
 /**
  * Mapping JOOQ TestEntityManyToManyA records.
  */
-public class TestManyToManyJoinJooqRecordMapper extends AbstractRecordMapper<TestEntityManyToManyJoinRecord, TestEntityManyToManyJoin, TestRootManyToMany> {
+public class TestManyToManyJoinJooqRecordMapper extends AbstractRecordMapper<TestEntityManyToManyJoinRecord,
+    TestEntityManyToManyJoin, TestRootManyToMany> {
 
     @Override
     public DomainObjectBuilder<TestEntityManyToManyJoin> recordToDomainObjectBuilder(TestEntityManyToManyJoinRecord record) {
@@ -58,11 +59,13 @@ public class TestManyToManyJoinJooqRecordMapper extends AbstractRecordMapper<Tes
     }
 
     @Override
-    public TestEntityManyToManyJoinRecord from(TestEntityManyToManyJoin testEntityManyToManyJoin, TestRootManyToMany root) {
+    public TestEntityManyToManyJoinRecord from(TestEntityManyToManyJoin testEntityManyToManyJoin,
+                                               TestRootManyToMany root) {
         TestEntityManyToManyJoinRecord testEntityManyToManyJoinRecord = new TestEntityManyToManyJoinRecord();
         testEntityManyToManyJoinRecord.setId(testEntityManyToManyJoin.getId().value());
         testEntityManyToManyJoinRecord.setTestEntityAId(testEntityManyToManyJoin.getTestEntityManyToManyAId().value());
-        testEntityManyToManyJoinRecord.setTestEntityBId(testEntityManyToManyJoin.getTestEntityManyToManyB().getId().value());
+        testEntityManyToManyJoinRecord.setTestEntityBId(
+            testEntityManyToManyJoin.getTestEntityManyToManyB().getId().value());
         testEntityManyToManyJoinRecord.setConcurrencyVersion(testEntityManyToManyJoin.concurrencyVersion());
         return testEntityManyToManyJoinRecord;
     }

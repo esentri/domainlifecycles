@@ -82,7 +82,7 @@ class JooqOrderRepository extends JooqAggregateRepository<Order, Order.OrderId> 
     @Override
     public Stream<Order> find(int offset, int limit, OrderStatus... orderStatuses) {
         Condition condition = trueCondition();
-        if(orderStatuses != null && orderStatuses.length>0){
+        if (orderStatuses != null && orderStatuses.length > 0) {
             condition = ORDER.STATUS.in(Arrays.stream(orderStatuses).map(s -> s.name()).toList());
         }
         return dslContext

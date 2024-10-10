@@ -67,7 +67,7 @@ public class ApplicationServiceModel extends ServiceKindModel implements Applica
                                    @JsonProperty("applicationServiceInterfaceTypeNames") List<String> applicationServiceInterfaceTypeNames,
                                    @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
                                    @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
-                                   ) {
+    ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
         this.applicationServiceInterfaceTypeNames = Collections.unmodifiableList(applicationServiceInterfaceTypeNames);
     }

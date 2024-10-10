@@ -54,9 +54,12 @@ import java.util.stream.Collectors;
 
 /**
  * This class enables the mapping of nested ValueObjects from and into fields of DomainObject instances.
- *
+ * <p>
  * It enables to fetch complete valid ValueObject instances that were saved in a Record before.
  * It also enables to identify and return record values from a DomainObject instance.
+ *
+ * @param <R>  type of record
+ * @param <DO> type of domain object
  *
  * @author Mario Herb
  */
@@ -86,21 +89,21 @@ public class AutoMapperNestedValueObjectAccessor<R, DO extends DomainObject> imp
      */
     @Override
     public ValueObject getMappedValueObject(R record, String valueObjectFieldName) {
-        LeveledPathContainer container = new LeveledPathContainer(valuePathToRecordProperty.keySet(), record, valueObjectFieldName);
+        LeveledPathContainer container = new LeveledPathContainer(valuePathToRecordProperty.keySet(), record,
+            valueObjectFieldName);
         return container.getValue();
     }
 
-    private BuilderWrapper newBuilderWrapperForPath(ValuePath path){
+    private BuilderWrapper newBuilderWrapperForPath(ValuePath path) {
         String targetType;
-        if(path.pathElements().size()>1){
+        if (path.pathElements().size() > 1) {
             targetType = path.containerValuePath().getFinalFieldMirror().getType().getTypeName();
-        }else{
+        } else {
             targetType = path.getFinalFieldMirror().getType().getTypeName();
         }
         return new BuilderWrapper(this.domainObjectBuilderProvider.provide(targetType));
     }
 
-    @SuppressWarnings("unchecked")
     private Object getPathValue(ValuePath path, R record){
         RecordProperty p = valuePathToRecordProperty.get(path);
         if (p != null) {
@@ -113,9 +116,10 @@ public class AutoMapperNestedValueObjectAccessor<R, DO extends DomainObject> imp
                     recordPropertyType = BoxTypeNameConverter.convertToBoxedType(recordPropertyType);
                     valueType = BoxTypeNameConverter.convertToBoxedType(valueType);
                     if (!recordPropertyType.equals(valueType)
-                        && !(DomainType.ENTITY.equals(valueDomainType) || DomainType.AGGREGATE_ROOT.equals(valueDomainType))) {
+                        && !(DomainType.ENTITY.equals(valueDomainType) || DomainType.AGGREGATE_ROOT.equals(
+                        valueDomainType))) {
                         if (DomainType.ENUM.equals(valueDomainType) && recordPropertyValue instanceof String) {
-                            recordPropertyValue = DlcAccess.newEnumInstance((String)recordPropertyValue, valueType);
+                            recordPropertyValue = DlcAccess.newEnumInstance((String) recordPropertyValue, valueType);
                         } else {
                             @SuppressWarnings("rawtypes")
                             TypeConverter tc = this.converterRegistry.getTypeConverter(recordPropertyType, valueType);
@@ -148,9 +152,9 @@ public class AutoMapperNestedValueObjectAccessor<R, DO extends DomainObject> imp
             if (currentObject == null) {
                 return null;
             }
-            if(isDomainObject(currentObject)){
+            if (isDomainObject(currentObject)) {
                 currentObject = DlcAccess.accessorFor((DomainObject) currentObject).peek(fm.getName());
-            }else{
+            } else {
                 return currentObject;
             }
             if (fm.getType().hasOptionalContainer()) {
@@ -162,9 +166,9 @@ public class AutoMapperNestedValueObjectAccessor<R, DO extends DomainObject> imp
 
     }
 
-    private boolean isDomainObject(Object currentObject){
+    private boolean isDomainObject(Object currentObject) {
         var domainTypeMirror = Domain.typeMirror(currentObject.getClass().getName());
-        if(domainTypeMirror.isPresent()){
+        if (domainTypeMirror.isPresent()) {
             var dtm = domainTypeMirror.get();
             return dtm.getDomainType().equals(DomainType.ENTITY)
                 || dtm.getDomainType().equals(DomainType.AGGREGATE_ROOT)
@@ -173,19 +177,19 @@ public class AutoMapperNestedValueObjectAccessor<R, DO extends DomainObject> imp
         return false;
     }
 
-    private class LeveledPathContainer{
+    private class LeveledPathContainer {
         private final Map<Integer, LeveledPaths> leveledPathsMap;
         private final R record;
 
-        private LeveledPathContainer(Collection<ValuePath> allPaths, R r, String valueObjectPropertyName){
+        private LeveledPathContainer(Collection<ValuePath> allPaths, R r, String valueObjectPropertyName) {
             record = r;
             leveledPathsMap = new HashMap<>();
             allPaths.stream()
                 .filter(path -> path.pathElements().getFirst().getName().equals(valueObjectPropertyName))
                 .forEach(p -> {
-                    var leveledPaths = leveledPathsMap.get(p.pathElements().size()-1);
-                    if(leveledPaths == null){
-                        var level = p.pathElements().size()-1;
+                    var leveledPaths = leveledPathsMap.get(p.pathElements().size() - 1);
+                    if (leveledPaths == null) {
+                        var level = p.pathElements().size() - 1;
                         leveledPaths = new LeveledPaths(record);
                         leveledPathsMap.put(level, leveledPaths);
                     }
@@ -194,42 +198,43 @@ public class AutoMapperNestedValueObjectAccessor<R, DO extends DomainObject> imp
             addMissingLevelsAndPaths();
         }
 
-        private int topLevel(){
+        private int topLevel() {
             return leveledPathsMap.keySet()
                 .stream()
                 .max(Comparator.comparingInt(k -> k))
                 .orElseThrow();
         }
 
-        private void addMissingLevelsAndPaths(){
-            for(int l = topLevel()-1; l>=0; l--){
+        private void addMissingLevelsAndPaths() {
+            for (int l = topLevel() - 1; l >= 0; l--) {
                 var leveledPaths = leveledPathsMap.get(l);
-                if(leveledPaths==null){
+                if (leveledPaths == null) {
                     leveledPaths = new LeveledPaths(record);
                     leveledPathsMap.put(l, leveledPaths);
                 }
-                var upperLevel = leveledPathsMap.get(l+1);
-                var containerPaths = upperLevel.paths.stream().map(ValuePath::containerValuePath).collect(Collectors.toSet());
-                for (var c : containerPaths){
+                var upperLevel = leveledPathsMap.get(l + 1);
+                var containerPaths = upperLevel.paths.stream().map(ValuePath::containerValuePath).collect(
+                    Collectors.toSet());
+                for (var c : containerPaths) {
                     leveledPaths.addPath(c);
                 }
             }
         }
 
-        private ValueObject getValue(){
+        private ValueObject getValue() {
             var tl = topLevel();
             Map<String, ValueObject> built = new HashMap<>();
             ValueObject returnValueObject = null;
-            for(int l = tl; l>=1; l--){
+            for (int l = tl; l >= 1; l--) {
                 var level = leveledPathsMap.get(l);
                 level.initializeBuilders(built);
-                if(l==1){
+                if (l == 1) {
                     returnValueObject = level.buildValueObjects()
                         .values()
                         .stream()
                         .findFirst()
                         .orElse(null);
-                }else{
+                } else {
                     built.putAll(level.buildValueObjects());
                 }
             }
@@ -238,7 +243,7 @@ public class AutoMapperNestedValueObjectAccessor<R, DO extends DomainObject> imp
 
     }
 
-    private class LeveledPaths{
+    private class LeveledPaths {
         private final Set<ValuePath> paths;
         private final Map<String, BuilderWrapper> buildersByPath;
         private final R record;
@@ -249,41 +254,41 @@ public class AutoMapperNestedValueObjectAccessor<R, DO extends DomainObject> imp
             this.record = record;
         }
 
-        private void addPath(ValuePath path){
+        private void addPath(ValuePath path) {
             this.paths.add(path);
         }
 
-        private void initializeBuilders(Map<String, ValueObject> builtMap){
-            paths.forEach(p ->{
+        private void initializeBuilders(Map<String, ValueObject> builtMap) {
+            paths.forEach(p -> {
                 var builderWrapper = buildersByPath.get(p.containerPath());
-                if(builderWrapper == null){
+                if (builderWrapper == null) {
                     builderWrapper = newBuilderWrapperForPath(p);
                     buildersByPath.put(p.containerPath(), builderWrapper);
                 }
-                if(DomainType.VALUE_OBJECT.equals(p.getFinalFieldMirror().getType().getDomainType())){
-                    if(p.pathElements().size()>1){
-                        var val = builtMap.get(p.path()+".");
+                if (DomainType.VALUE_OBJECT.equals(p.getFinalFieldMirror().getType().getDomainType())) {
+                    if (p.pathElements().size() > 1) {
+                        var val = builtMap.get(p.path() + ".");
                         builderWrapper.setPropertyValue(val, p.getFinalFieldMirror().getName());
 
                     }
-                }else{
+                } else {
                     builderWrapper.setPropertyValue(getPathValue(p, record), p.getFinalFieldMirror().getName());
                 }
 
             });
         }
 
-        private Map<String, ? extends ValueObject> buildValueObjects(){
+        private Map<String, ? extends ValueObject> buildValueObjects() {
             return buildersByPath.entrySet()
                 .stream()
                 .filter(e -> e.getValue().nonNullValueSet)
-                .map(e -> Map.entry(e.getKey(),e.getValue().build()))
+                .map(e -> Map.entry(e.getKey(), e.getValue().build()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         }
 
     }
 
-    private static class BuilderWrapper{
+    private static class BuilderWrapper {
         private final DomainObjectBuilder<? extends ValueObject> builder;
         private boolean nonNullValueSet;
 
@@ -292,14 +297,14 @@ public class AutoMapperNestedValueObjectAccessor<R, DO extends DomainObject> imp
             this.nonNullValueSet = false;
         }
 
-        private void setPropertyValue(Object value, String propertyName){
-            if(value != null){
+        private void setPropertyValue(Object value, String propertyName) {
+            if (value != null) {
                 this.nonNullValueSet = true;
             }
             builder.setFieldValue(value, propertyName);
         }
 
-        private ValueObject build(){
+        private ValueObject build() {
             return builder.build();
         }
     }

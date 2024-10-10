@@ -90,7 +90,8 @@ public class CustomerController implements CustomerAPI {
         @PathVariable("id") Customer.CustomerId id,
         @RequestBody Address address
     ) {
-        return responseEntityBuilder.build(customerDriver.changeAddress(new ChangeCustomerAddress(id, address)).orElse(null), HttpStatus.OK);
+        return responseEntityBuilder.build(
+            customerDriver.changeAddress(new ChangeCustomerAddress(id, address)).orElse(null), HttpStatus.OK);
     }
 
     /**
@@ -101,7 +102,8 @@ public class CustomerController implements CustomerAPI {
         @PathVariable("id") Customer.CustomerId id,
         @RequestBody CreditCard creditCard
     ) {
-        return responseEntityBuilder.build(customerDriver.changeCreditCard(new ChangeCreditCard(id, creditCard)).orElse(null), HttpStatus.OK);
+        return responseEntityBuilder.build(
+            customerDriver.changeCreditCard(new ChangeCreditCard(id, creditCard)).orElse(null), HttpStatus.OK);
     }
 
 
@@ -113,6 +115,7 @@ public class CustomerController implements CustomerAPI {
         @RequestParam(value = "customerNameFilter") String customerNameFilter,
         @RequestParam(value = "offset", defaultValue = "0") int offset,
         @RequestParam(value = "limit", defaultValue = "10") int limit) {
-        return responseEntityBuilder.build(customerDriver.reportOrders(customerNameFilter, offset, limit), HttpStatus.OK);
+        return responseEntityBuilder.build(customerDriver.reportOrders(customerNameFilter, offset, limit),
+            HttpStatus.OK);
     }
 }

@@ -46,12 +46,15 @@ public interface DomainObjectVisitor {
 
     /**
      * Called when entering any domain type {@link DomainTypeMirror}
+     *
+     * @param domainTypeMirror mirror for domain type
      */
     void visitEnterAnyDomainType(DomainTypeMirror domainTypeMirror);
 
     /**
      * Called when entering an {@link AggregateRootMirror}
      *
+     * @param aggregateRootMirror AggregateRoot mirror
      * @return true, to continue visiting the children, false to stop descending
      */
     boolean visitEnterAggregateRoot(AggregateRootMirror aggregateRootMirror);
@@ -59,6 +62,7 @@ public interface DomainObjectVisitor {
     /**
      * Called when entering an {@link EntityMirror}
      *
+     * @param entityMirror entity mirror
      * @return true, to continue visiting the children, false to stop descending
      */
     boolean visitEnterEntity(EntityMirror entityMirror);
@@ -66,49 +70,66 @@ public interface DomainObjectVisitor {
     /**
      * Called when entering a {@link ValueMirror}
      *
+     * @param valueMirror value mirror
      * @return true, to continue visiting the children, false to stop descending
      */
     boolean visitEnterValue(ValueMirror valueMirror);
 
     /**
      * Called when leaving an {@link AggregateRootMirror}
+     *
+     * @param aggregateRootMirror mirror for AggregateRoot
      */
     void visitLeaveAggregateRoot(AggregateRootMirror aggregateRootMirror);
 
     /**
      * Called when leaving an {@link EntityMirror}
+     *
+     * @param entityMirror entity mirror
      */
     void visitLeaveEntity(EntityMirror entityMirror);
 
     /**
      * Called when leaving a {@link ValueMirror}
+     *
+     * @param valueMirror value mirror
      */
     void visitLeaveValue(ValueMirror valueMirror);
 
 
     /**
      * Called when passing a {@link AggregateRootReferenceMirror}
+     *
+     * @param aggregateRootReferenceMirror mirror for AggregateRoot reference
      */
     void visitAggregateRootReference(AggregateRootReferenceMirror aggregateRootReferenceMirror);
 
     /**
      * Called when passing a {@link EntityReferenceMirror}
+     *
+     * @param entityReferenceMirror mirror for entity reference
      */
     void visitEntityReference(EntityReferenceMirror entityReferenceMirror);
 
     /**
      * Called when passing a {@link ValueReferenceMirror}
+     *
+     * @param valueReferenceMirror mirror for value reference
      */
     void visitValueReference(ValueReferenceMirror valueReferenceMirror);
 
 
     /**
      * Called when passing a basic {@link FieldMirror}
+     *
+     * @param basicFieldMirror mirror for basic field
      */
     void visitBasic(FieldMirror basicFieldMirror);
 
     /**
-     * Called when passing a identity property {@link FieldMirror}
+     * Called when passing an identity property {@link FieldMirror}
+     *
+     * @param idPropertyMirror mirror for identity property
      */
     void visitEntityId(FieldMirror idPropertyMirror);
 }

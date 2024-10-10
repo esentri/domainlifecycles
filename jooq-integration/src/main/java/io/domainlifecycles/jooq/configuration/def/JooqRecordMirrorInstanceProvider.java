@@ -62,17 +62,18 @@ public class JooqRecordMirrorInstanceProvider
      */
     @Override
     public EntityRecordMirror<UpdatableRecord<?>> provideEntityRecordMirror(String recordTypeName,
-                                                        String entityTypeName,
-                                                        RecordMapper<UpdatableRecord<?>,?,?> mapper,
-                                                        List<ValueObjectRecordMirror<UpdatableRecord<?>>> valueObjectRecordMirrors,
-                                                        Map<String, List<String>> recordCanonicalNameToDomainObjectTypeMap) {
-        var recordInstance = (TableRecord<?>)newRecordInstanceProvider.provideNewRecord(recordTypeName);
+                                                                            String entityTypeName,
+                                                                            RecordMapper<UpdatableRecord<?>, ?, ?> mapper,
+                                                                            List<ValueObjectRecordMirror<UpdatableRecord<?>>> valueObjectRecordMirrors,
+                                                                            Map<String, List<String>> recordCanonicalNameToDomainObjectTypeMap) {
+        var recordInstance = (TableRecord<?>) newRecordInstanceProvider.provideNewRecord(recordTypeName);
         var databaseReferences = recordInstance
             .getTable()
             .getReferences()
             .stream()
             .flatMap(fk ->
-                recordCanonicalNameToDomainObjectTypeMap.get((((ForeignKey) fk).getKey()).getTable().getRecordType().getName()).stream()
+                recordCanonicalNameToDomainObjectTypeMap.get(
+                    (((ForeignKey) fk).getKey()).getTable().getRecordType().getName()).stream()
             )
             .distinct()
             .collect(Collectors.toList());
@@ -96,11 +97,13 @@ public class JooqRecordMirrorInstanceProvider
                                                                           List<String> pathFromEntityToValueObject,
                                                                           RecordMapper<UpdatableRecord<?>, ?, ?> mapper,
                                                                           Map<String, List<String>> recordToDomainObjectTypeMap) {
-        var recordInstance = (TableRecord<?>)newRecordInstanceProvider.provideNewRecord(valueObjectRecordType.getName());
+        var recordInstance = (TableRecord<?>) newRecordInstanceProvider.provideNewRecord(
+            valueObjectRecordType.getName());
         var databaseReferences = recordInstance.getTable()
             .getReferences()
             .stream()
-            .flatMap(fk -> recordToDomainObjectTypeMap.get(((ForeignKey) fk).getKey().getTable().getRecordType().getName()).stream())
+            .flatMap(fk -> recordToDomainObjectTypeMap.get(
+                ((ForeignKey) fk).getKey().getTable().getRecordType().getName()).stream())
             .distinct()
             .collect(Collectors.toList());
 

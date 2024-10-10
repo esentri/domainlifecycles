@@ -114,19 +114,19 @@ public class JacksonTest {
 
             @Override
             public Identity<?> provideFor(String entityTypeName) {
-                if(entityTypeName.equals(TestRootSimpleUuid.class.getName())){
+                if (entityTypeName.equals(TestRootSimpleUuid.class.getName())) {
                     return new TestRootSimpleUuidId(UUID.randomUUID());
-                }else if(entityTypeName.equals(TestRootSimple.class.getName())){
+                } else if (entityTypeName.equals(TestRootSimple.class.getName())) {
                     return new TestRootSimpleId(1L);
-                }else if(entityTypeName.equals(Bestellung.class.getName())){
+                } else if (entityTypeName.equals(Bestellung.class.getName())) {
                     return new BestellungId(1L);
-                }else if(entityTypeName.equals(BestellPosition.class.getName())){
+                } else if (entityTypeName.equals(BestellPosition.class.getName())) {
                     return new BestellPositionId(1L);
-                }else if(entityTypeName.equals(Lieferadresse.class.getName())){
+                } else if (entityTypeName.equals(Lieferadresse.class.getName())) {
                     return new LieferadresseId(1L);
-                }else if(entityTypeName.equals(BestellKommentar.class.getName())){
+                } else if (entityTypeName.equals(BestellKommentar.class.getName())) {
                     return new BestellKommentarId(1L);
-                }else if(entityTypeName.equals(BestellStatus.class.getName())){
+                } else if (entityTypeName.equals(BestellStatus.class.getName())) {
                     return new BestellStatusId(1L);
                 }
                 return null;
@@ -144,16 +144,16 @@ public class JacksonTest {
     }
 
     @Test
-    public void testJacksonMappingTypeTest() throws Throwable{
+    public void testJacksonMappingTypeTest() throws Throwable {
         TypeTestValueObject vo = new TypeTestValueObject();
         vo.setABoolean(true);
-        vo.setAByte((byte)5);
+        vo.setAByte((byte) 5);
         vo.setAChar('a');
         vo.setADouble(5);
         vo.setAFloat(5);
         vo.setALong(5L);
         vo.setAnInt(5);
-        vo.setAShort((short)5);
+        vo.setAShort((short) 5);
         vo.setBigDecimal(BigDecimal.TEN);
         vo.setBigInteger(BigInteger.TEN);
         vo.setLocalDateTime(LocalDateTime.now());
@@ -177,7 +177,7 @@ public class JacksonTest {
         vo.setOptionalFloat(Optional.of(5F));
         vo.setOptionalInstant(Optional.of(Instant.now()));
         vo.setOptionalInteger(Optional.of(4));
-        vo.setOptionalShort(Optional.of((short)4));
+        vo.setOptionalShort(Optional.of((short) 4));
         vo.setOptionalLocalDate(Optional.of(LocalDate.now()));
         vo.setZonedDateTime(ZonedDateTime.now());
         vo.setOptionalLocalDateTime(Optional.of(LocalDateTime.now()));
@@ -197,47 +197,75 @@ public class JacksonTest {
         TypeTestValueObject vo2 = objectMapper.readValue(json, TypeTestValueObject.class);
         log.info("Read = " + vo2);
         SoftAssertions softly = new SoftAssertions();
-        for(Field f : TypeTestValueObject.class.getDeclaredFields()){
-            if(f.getType().isAssignableFrom(ZonedDateTime.class)){
-                softly.assertThat(((ZonedDateTime) f.get(vo2)).toInstant().truncatedTo(ChronoUnit.MILLIS)).isEqualTo(((ZonedDateTime)f.get(vo)).toInstant().truncatedTo(ChronoUnit.MILLIS));
-            }else if(f.getType().isAssignableFrom(Calendar.class)){
-                softly.assertThat(((Calendar) f.get(vo2)).toInstant().truncatedTo(ChronoUnit.MILLIS)).isEqualTo(((Calendar)f.get(vo)).toInstant().truncatedTo(ChronoUnit.MILLIS));
-            }else if(f.getType().isAssignableFrom(OffsetDateTime.class)){
-                softly.assertThat(((OffsetDateTime) f.get(vo2)).toInstant().truncatedTo(ChronoUnit.MILLIS)).isEqualTo(((OffsetDateTime)f.get(vo)).toInstant().truncatedTo(ChronoUnit.MILLIS));
-            }else if(f.getType().isAssignableFrom(OffsetTime.class)){
-                softly.assertThat(((OffsetTime) f.get(vo2)).atDate(LocalDate.now()).toInstant().truncatedTo(ChronoUnit.MILLIS)).isEqualTo(((OffsetTime)f.get(vo)).atDate(LocalDate.now()).toInstant().truncatedTo(ChronoUnit.MILLIS));
-            }else if(f.getType().isAssignableFrom(LocalTime.class)){
-                softly.assertThat(((LocalTime) f.get(vo2)).atDate(LocalDate.now()).toInstant(ZoneOffset.UTC).truncatedTo(ChronoUnit.MILLIS)).isEqualTo(((LocalTime)f.get(vo)).atDate(LocalDate.now()).toInstant(ZoneOffset.UTC).truncatedTo(ChronoUnit.MILLIS));
-            }else if(f.getType().isAssignableFrom(LocalDateTime.class)){
-                softly.assertThat(((LocalDateTime) f.get(vo2)).atOffset(ZoneOffset.UTC).toInstant().truncatedTo(ChronoUnit.MILLIS)).isEqualTo(((LocalDateTime)f.get(vo)).atOffset(ZoneOffset.UTC).toInstant().truncatedTo(ChronoUnit.MILLIS));
-            }else if(f.getType().isAssignableFrom(Instant.class)){
-                softly.assertThat(((Instant) f.get(vo2)).truncatedTo(ChronoUnit.MILLIS)).isEqualTo(((Instant)f.get(vo)).truncatedTo(ChronoUnit.MILLIS));
-            }else if(f.getType().isAssignableFrom(Optional.class) && ((Optional)f.get(vo)).get().getClass().isAssignableFrom(ZonedDateTime.class)){
-                var optVo = (Optional<ZonedDateTime>)f.get(vo);
-                var optVo2 = (Optional<ZonedDateTime>)f.get(vo2);
-                softly.assertThat(optVo2.get().toInstant().truncatedTo(ChronoUnit.MILLIS)).isEqualTo(optVo.get().toInstant().truncatedTo(ChronoUnit.MILLIS));
-            }else if(f.getType().isAssignableFrom(Optional.class) && ((Optional)f.get(vo)).get().getClass().isAssignableFrom(OffsetDateTime.class)){
-                var optVo = (Optional<OffsetDateTime>)f.get(vo);
-                var optVo2 = (Optional<OffsetDateTime>)f.get(vo2);
-                softly.assertThat(optVo2.get().toInstant().truncatedTo(ChronoUnit.MILLIS)).isEqualTo(optVo.get().toInstant().truncatedTo(ChronoUnit.MILLIS));
-            }else if(f.getType().isAssignableFrom(Optional.class) && ((Optional)f.get(vo)).get().getClass().isAssignableFrom(LocalDateTime.class)){
-                var optVo = (Optional<LocalDateTime>)f.get(vo);
-                var optVo2 = (Optional<LocalDateTime>)f.get(vo2);
-                softly.assertThat(optVo2.get().atOffset(ZoneOffset.UTC).toInstant().truncatedTo(ChronoUnit.MILLIS)).isEqualTo(optVo.get().atOffset(ZoneOffset.UTC).toInstant().truncatedTo(ChronoUnit.MILLIS));
-            }else if(f.getType().isAssignableFrom(Optional.class) && ((Optional)f.get(vo)).get().getClass().isAssignableFrom(LocalTime.class)){
-                var optVo = (Optional<LocalTime>)f.get(vo);
-                var optVo2 = (Optional<LocalTime>)f.get(vo2);
-                softly.assertThat(optVo2.get().atOffset(ZoneOffset.UTC).atDate(LocalDate.now()).toInstant().truncatedTo(ChronoUnit.MILLIS)).isEqualTo(optVo.get().atOffset(ZoneOffset.UTC).atDate(LocalDate.now()).toInstant().truncatedTo(ChronoUnit.MILLIS));
-            }else if(f.getType().isAssignableFrom(Optional.class) && ((Optional)f.get(vo)).get().getClass().isAssignableFrom(OffsetTime.class)){
-                var optVo = (Optional<OffsetTime>)f.get(vo);
-                var optVo2 = (Optional<OffsetTime>)f.get(vo2);
-                softly.assertThat(optVo2.get().atDate(LocalDate.now()).toInstant().truncatedTo(ChronoUnit.MILLIS)).isEqualTo(optVo.get().atDate(LocalDate.now()).toInstant().truncatedTo(ChronoUnit.MILLIS));
-            }else if(f.getType().isAssignableFrom(Optional.class) && ((Optional)f.get(vo)).get().getClass().isAssignableFrom(Instant.class)){
-                var optVo = (Optional<Instant>)f.get(vo);
-                var optVo2 = (Optional<Instant>)f.get(vo2);
-                softly.assertThat(optVo2.get().truncatedTo(ChronoUnit.MILLIS)).isEqualTo(optVo.get().truncatedTo(ChronoUnit.MILLIS));
-            }else {
-                log.debug("Debug analysis: " + f.getName() + " " +f.getType().getName() );
+        for (Field f : TypeTestValueObject.class.getDeclaredFields()) {
+            if (f.getType().isAssignableFrom(ZonedDateTime.class)) {
+                softly.assertThat(((ZonedDateTime) f.get(vo2)).toInstant().truncatedTo(ChronoUnit.MILLIS)).isEqualTo(
+                    ((ZonedDateTime) f.get(vo)).toInstant().truncatedTo(ChronoUnit.MILLIS));
+            } else if (f.getType().isAssignableFrom(Calendar.class)) {
+                softly.assertThat(((Calendar) f.get(vo2)).toInstant().truncatedTo(ChronoUnit.MILLIS)).isEqualTo(
+                    ((Calendar) f.get(vo)).toInstant().truncatedTo(ChronoUnit.MILLIS));
+            } else if (f.getType().isAssignableFrom(OffsetDateTime.class)) {
+                softly.assertThat(((OffsetDateTime) f.get(vo2)).toInstant().truncatedTo(ChronoUnit.MILLIS)).isEqualTo(
+                    ((OffsetDateTime) f.get(vo)).toInstant().truncatedTo(ChronoUnit.MILLIS));
+            } else if (f.getType().isAssignableFrom(OffsetTime.class)) {
+                softly.assertThat(((OffsetTime) f.get(vo2)).atDate(LocalDate.now()).toInstant().truncatedTo(
+                    ChronoUnit.MILLIS)).isEqualTo(
+                    ((OffsetTime) f.get(vo)).atDate(LocalDate.now()).toInstant().truncatedTo(ChronoUnit.MILLIS));
+            } else if (f.getType().isAssignableFrom(LocalTime.class)) {
+                softly.assertThat(
+                    ((LocalTime) f.get(vo2)).atDate(LocalDate.now()).toInstant(ZoneOffset.UTC).truncatedTo(
+                        ChronoUnit.MILLIS)).isEqualTo(
+                    ((LocalTime) f.get(vo)).atDate(LocalDate.now()).toInstant(ZoneOffset.UTC).truncatedTo(
+                        ChronoUnit.MILLIS));
+            } else if (f.getType().isAssignableFrom(LocalDateTime.class)) {
+                softly.assertThat(((LocalDateTime) f.get(vo2)).atOffset(ZoneOffset.UTC).toInstant().truncatedTo(
+                    ChronoUnit.MILLIS)).isEqualTo(
+                    ((LocalDateTime) f.get(vo)).atOffset(ZoneOffset.UTC).toInstant().truncatedTo(ChronoUnit.MILLIS));
+            } else if (f.getType().isAssignableFrom(Instant.class)) {
+                softly.assertThat(((Instant) f.get(vo2)).truncatedTo(ChronoUnit.MILLIS)).isEqualTo(
+                    ((Instant) f.get(vo)).truncatedTo(ChronoUnit.MILLIS));
+            } else if (f.getType().isAssignableFrom(Optional.class) && ((Optional) f.get(
+                vo)).get().getClass().isAssignableFrom(ZonedDateTime.class)) {
+                var optVo = (Optional<ZonedDateTime>) f.get(vo);
+                var optVo2 = (Optional<ZonedDateTime>) f.get(vo2);
+                softly.assertThat(optVo2.get().toInstant().truncatedTo(ChronoUnit.MILLIS)).isEqualTo(
+                    optVo.get().toInstant().truncatedTo(ChronoUnit.MILLIS));
+            } else if (f.getType().isAssignableFrom(Optional.class) && ((Optional) f.get(
+                vo)).get().getClass().isAssignableFrom(OffsetDateTime.class)) {
+                var optVo = (Optional<OffsetDateTime>) f.get(vo);
+                var optVo2 = (Optional<OffsetDateTime>) f.get(vo2);
+                softly.assertThat(optVo2.get().toInstant().truncatedTo(ChronoUnit.MILLIS)).isEqualTo(
+                    optVo.get().toInstant().truncatedTo(ChronoUnit.MILLIS));
+            } else if (f.getType().isAssignableFrom(Optional.class) && ((Optional) f.get(
+                vo)).get().getClass().isAssignableFrom(LocalDateTime.class)) {
+                var optVo = (Optional<LocalDateTime>) f.get(vo);
+                var optVo2 = (Optional<LocalDateTime>) f.get(vo2);
+                softly.assertThat(
+                    optVo2.get().atOffset(ZoneOffset.UTC).toInstant().truncatedTo(ChronoUnit.MILLIS)).isEqualTo(
+                    optVo.get().atOffset(ZoneOffset.UTC).toInstant().truncatedTo(ChronoUnit.MILLIS));
+            } else if (f.getType().isAssignableFrom(Optional.class) && ((Optional) f.get(
+                vo)).get().getClass().isAssignableFrom(LocalTime.class)) {
+                var optVo = (Optional<LocalTime>) f.get(vo);
+                var optVo2 = (Optional<LocalTime>) f.get(vo2);
+                softly.assertThat(optVo2.get().atOffset(ZoneOffset.UTC).atDate(LocalDate.now()).toInstant().truncatedTo(
+                    ChronoUnit.MILLIS)).isEqualTo(
+                    optVo.get().atOffset(ZoneOffset.UTC).atDate(LocalDate.now()).toInstant().truncatedTo(
+                        ChronoUnit.MILLIS));
+            } else if (f.getType().isAssignableFrom(Optional.class) && ((Optional) f.get(
+                vo)).get().getClass().isAssignableFrom(OffsetTime.class)) {
+                var optVo = (Optional<OffsetTime>) f.get(vo);
+                var optVo2 = (Optional<OffsetTime>) f.get(vo2);
+                softly.assertThat(
+                    optVo2.get().atDate(LocalDate.now()).toInstant().truncatedTo(ChronoUnit.MILLIS)).isEqualTo(
+                    optVo.get().atDate(LocalDate.now()).toInstant().truncatedTo(ChronoUnit.MILLIS));
+            } else if (f.getType().isAssignableFrom(Optional.class) && ((Optional) f.get(
+                vo)).get().getClass().isAssignableFrom(Instant.class)) {
+                var optVo = (Optional<Instant>) f.get(vo);
+                var optVo2 = (Optional<Instant>) f.get(vo2);
+                softly.assertThat(optVo2.get().truncatedTo(ChronoUnit.MILLIS)).isEqualTo(
+                    optVo.get().truncatedTo(ChronoUnit.MILLIS));
+            } else {
+                log.debug("Debug analysis: " + f.getName() + " " + f.getType().getName());
                 softly.assertThat(f.get(vo2)).isEqualTo(f.get(vo));
             }
         }
@@ -638,7 +666,8 @@ public class JacksonTest {
 
         IdProvisioningDto dtoRead = objectMapper.readValue(json, IdProvisioningDto.class);
         log.info("Read = " + dtoRead);
-        Assertions.assertThat(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(dtoRead)).isEqualTo(json);
+        Assertions.assertThat(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(dtoRead)).isEqualTo(
+            json);
     }
 
     @Test
@@ -686,10 +715,13 @@ public class JacksonTest {
 
         IdProvisioningDto dtoRead = objectMapper.readValue(json, IdProvisioningDto.class);
         log.info("Read = " + dtoRead);
-        Assertions.assertThat(dtoRead.getBestellPosition().getArtikelId()).isEqualTo(dtoToAssert.getBestellPosition().getArtikelId());
+        Assertions.assertThat(dtoRead.getBestellPosition().getArtikelId()).isEqualTo(
+            dtoToAssert.getBestellPosition().getArtikelId());
         Assertions.assertThat(dtoRead.getBestellPosition().getId()).isNotNull();
-        Assertions.assertThat(dtoRead.getBestellPosition().getStueckzahl()).isEqualTo(dtoToAssert.getBestellPosition().getStueckzahl());
-        Assertions.assertThat(dtoRead.getBestellPosition().getStueckPreis()).isEqualTo(dtoToAssert.getBestellPosition().getStueckPreis());
+        Assertions.assertThat(dtoRead.getBestellPosition().getStueckzahl()).isEqualTo(
+            dtoToAssert.getBestellPosition().getStueckzahl());
+        Assertions.assertThat(dtoRead.getBestellPosition().getStueckPreis()).isEqualTo(
+            dtoToAssert.getBestellPosition().getStueckPreis());
     }
 
     public static class IdProvisioningDto {

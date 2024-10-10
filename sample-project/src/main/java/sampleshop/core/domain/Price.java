@@ -43,13 +43,12 @@ import java.math.BigDecimal;
 @Builder(setterPrefix = "set")
 public record Price(
     @NotNull @PositiveOrZero @Digits(integer = 10, fraction = 2) BigDecimal amount
-    ) implements ValueObject
-{
-    public Price add(Price another){
+) implements ValueObject {
+    public Price add(Price another) {
         return new Price(amount.add(another.amount));
     }
 
-    public Price multiply(int factor){
+    public Price multiply(int factor) {
         return new Price(amount.multiply(BigDecimal.valueOf(factor)));
     }
 

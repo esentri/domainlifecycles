@@ -28,7 +28,6 @@
 package sampleshop.configuration.system;
 
 
-
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.ApplicationService;
@@ -58,6 +57,7 @@ import sampleshop.outbound.event.SpringPersistenceEventPublisher;
 
 import java.util.List;
 import java.util.Set;
+
 /**
  * Spring configuration for DLC.
  *
@@ -75,13 +75,14 @@ public class DLCConfiguration {
      * IMPORTANT: A record package where all JOOQ record classes are generated must be defined.
      *
      * @param domainObjectBuilderProvider
-     * @param customRecordMappers {@link RecordMapper} all record mappers (should be defined as spring beans to work like that)
+     * @param customRecordMappers         {@link RecordMapper} all record mappers (should be defined as spring beans
+     *                                                        to work like that)
      * @return {@link JooqDomainPersistenceProvider} instance configured
      */
     @Bean
     public JooqDomainPersistenceProvider domainPersistenceProvider(DomainObjectBuilderProvider domainObjectBuilderProvider,
                                                                    Set<RecordMapper<?, ?, ?>> customRecordMappers
-                                                                   ) {
+    ) {
         return new JooqDomainPersistenceProvider(
             JooqDomainPersistenceConfiguration.JooqPersistenceConfigurationBuilder
                 .newConfig()
@@ -101,9 +102,11 @@ public class DLCConfiguration {
 
     /**
      * The entity identity provider, makes it possible that new Entities or AggregateRoots are to the application
-     * from outside (via a REST controller) and that for new instances new IDs are fetched from the corresponding database sequences or other ID providers.
-     * The identity provider assignes the new id values within the deserialization process. We need that because we only want to valid instances with nonnull IDs within our domain.
-     *
+     * from outside (via a REST controller) and that for new instances new IDs are fetched from the corresponding
+     * database sequences or other ID providers.
+     * The identity provider assignes the new id values within the deserialization process. We need that because we
+     * only want to valid instances with nonnull IDs within our domain.
+     * <p>
      * Only used together with DLC Jackson integration, see below...
      */
     @Bean
@@ -118,7 +121,7 @@ public class DLCConfiguration {
     DlcJacksonModule dlcModuleConfiguration(List<? extends JacksonMappingCustomizer<?>> customizers,
                                             DomainObjectBuilderProvider domainObjectBuilderProvider,
                                             EntityIdentityProvider entityIdentityProvider
-                                            ) {
+    ) {
         DlcJacksonModule module = new DlcJacksonModule(domainObjectBuilderProvider, entityIdentityProvider);
         customizers.forEach(c -> module.registerCustomizer(c, c.instanceType));
         return module;
@@ -134,8 +137,10 @@ public class DLCConfiguration {
     }
 
     /**
-     * This method creates and configures a ServiceProvider instance, which is responsible for providing instances of various types of services.
-     * It takes three parameters: repositories, applicationServices, and domainServices, which are lists of Repository, ApplicationService, and DomainService instances respectively
+     * This method creates and configures a ServiceProvider instance, which is responsible for providing instances of
+     * various types of services.
+     * It takes three parameters: repositories, applicationServices, and domainServices, which are lists of
+     * Repository, ApplicationService, and DomainService instances respectively
      */
     @Bean
     public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds){
@@ -148,7 +153,8 @@ public class DLCConfiguration {
      * Using the Spring event bus to publish DLC domain events.
      */
     @Bean
-    public DomainEventsConfiguration domainEventsConfiguration(ServiceProvider serviceProvider, PlatformTransactionManager transactionManager) {
+    public DomainEventsConfiguration domainEventsConfiguration(ServiceProvider serviceProvider,
+                                                               PlatformTransactionManager transactionManager) {
         return new DomainEventsConfiguration.DomainEventsConfigurationBuilder()
             .withServiceProvider(serviceProvider)
             .withSpringPlatformTransactionManager(transactionManager)

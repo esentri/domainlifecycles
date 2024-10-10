@@ -80,7 +80,8 @@ public class TreeNode extends EntityBase<TreeNodeId> {
     @Override
     public void validate() {
         DomainAssertions.isTrue(
-            parentNodeId.isPresent() ^ rootId.isPresent(), "Ein Knoten muss entweder dem TreeRoot oder einem anderen TreeNode untergeordnet sein!"
+            parentNodeId.isPresent() ^ rootId.isPresent(),
+            "Ein Knoten muss entweder dem TreeRoot oder einem anderen TreeNode untergeordnet sein!"
         );
     }
 }

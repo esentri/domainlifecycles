@@ -39,18 +39,19 @@ public class BasePersistence_ITest {
     protected PersistenceEventTestHelper persistenceEventTestHelper = new PersistenceEventTestHelper();
 
     @BeforeEach
-    public void startTransaction(){
+    public void startTransaction() {
         persistenceConfiguration.startTransaction();
         persistenceEventTestHelper.resetEventsCaught();
         log.debug("New transaction started!");
     }
 
     @AfterEach
-    public void rollbackTransaction(){
+    public void rollbackTransaction() {
         persistenceConfiguration.rollbackTransaction();
         log.debug("Transaction rolled back!");
     }
 
-    public record Result(Object persisted, Object found){}
+    public record Result(Object persisted, Object found) {
+    }
 }
 

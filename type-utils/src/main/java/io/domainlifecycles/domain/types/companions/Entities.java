@@ -95,7 +95,8 @@ public class Entities {
         var em = Domain.entityMirrorFor(thisEntity);
         var accessor = DlcAccess.accessorFor(thisEntity);
         var idField = em.getIdentityField()
-            .orElseThrow(()-> DLCTypesException.fail("Identity field not defined for '%s'", thisEntity.getClass().getName()));
+            .orElseThrow(
+                () -> DLCTypesException.fail("Identity field not defined for '%s'", thisEntity.getClass().getName()));
         return accessor.peek(idField.getName());
     }
 
@@ -118,11 +119,17 @@ public class Entities {
     /**
      * Detect changes for 2 given entity instances with the same id.
      *
+     * @param entityInstanceBefore instance before change
+     * @param entityInstanceAfter  instance after change
+     * @param deep                 flag for deep change
      * @return a set of {@link DetectedChange}s
      */
-    public static Set<DetectedChange> detectChanges(Entity<?> entityInstanceBefore, Entity<?> entityInstanceAfter, boolean deep) {
-        Objects.requireNonNull(entityInstanceBefore, "entityInstanceBefore is required to be not null, when calling 'detectChanges'!");
-        Objects.requireNonNull(entityInstanceAfter, "entityInstanceAfter is required to be not null, when calling 'detectChanges'!");
+    public static Set<DetectedChange> detectChanges(Entity<?> entityInstanceBefore, Entity<?> entityInstanceAfter,
+                                                    boolean deep) {
+        Objects.requireNonNull(entityInstanceBefore,
+            "entityInstanceBefore is required to be not null, when calling 'detectChanges'!");
+        Objects.requireNonNull(entityInstanceAfter,
+            "entityInstanceAfter is required to be not null, when calling 'detectChanges'!");
 
         var em = Domain.entityMirrorFor(entityInstanceBefore);
         var accessorBefore = DlcAccess.accessorFor(entityInstanceBefore);
@@ -146,42 +153,53 @@ public class Entities {
     private static Set<DetectedChange> changesForField(FieldMirror fm,
                                                        DynamicDomainObjectAccessor accessorBefore,
                                                        DynamicDomainObjectAccessor accessorAfter,
-                                                       boolean deep){
+                                                       boolean deep) {
         Object newValue = accessorAfter.peek(fm.getName());
         Object oldValue = accessorBefore.peek(fm.getName());
         Set<DetectedChange> changes = new HashSet<>();
         if (!fm.getType().hasCollectionContainer()) {
             if (newValue == null && oldValue != null) {
-                changes.add(new DetectedChange(fm, (Entity<?>) accessorBefore.getAssigned(), (Entity<?>) accessorAfter.getAssigned(), oldValue, newValue, DetectedChange.ChangeType.REMOVED, null));
+                changes.add(new DetectedChange(fm, (Entity<?>) accessorBefore.getAssigned(),
+                    (Entity<?>) accessorAfter.getAssigned(), oldValue, newValue, DetectedChange.ChangeType.REMOVED,
+                    null));
             } else if (newValue != null && oldValue == null) {
-                changes.add(new DetectedChange(fm, (Entity<?>) accessorBefore.getAssigned(), (Entity<?>) accessorAfter.getAssigned(), oldValue, newValue, DetectedChange.ChangeType.ADDED, null));
+                changes.add(new DetectedChange(fm, (Entity<?>) accessorBefore.getAssigned(),
+                    (Entity<?>) accessorAfter.getAssigned(), oldValue, newValue, DetectedChange.ChangeType.ADDED,
+                    null));
             } else if ((newValue != null && !newValue.equals(oldValue))) {
-                changes.add(new DetectedChange(fm, (Entity<?>) accessorBefore.getAssigned(), (Entity<?>) accessorAfter.getAssigned(), oldValue, newValue, DetectedChange.ChangeType.CHANGED, null));
+                changes.add(new DetectedChange(fm, (Entity<?>) accessorBefore.getAssigned(),
+                    (Entity<?>) accessorAfter.getAssigned(), oldValue, newValue, DetectedChange.ChangeType.CHANGED,
+                    null));
             } else if (newValue != null && newValue.equals(oldValue)) {
                 var type =
                     Domain.typeMirror(newValue.getClass().getName())
                         .map(DomainTypeMirror::getDomainType)
                         .orElse(DomainType.NON_DOMAIN);
-                if(DomainType.ENTITY.equals(type)){
+                if (DomainType.ENTITY.equals(type)) {
                     Set<DetectedChange> innerChanges = detectChanges((Entity<?>) oldValue, (Entity<?>) newValue, deep);
                     if (innerChanges.size() > 0) {
-                        changes.add(new DetectedChange(fm, (Entity<?>) accessorBefore.getAssigned(), (Entity<?>) accessorAfter.getAssigned(), oldValue, newValue, DetectedChange.ChangeType.CHANGED, innerChanges));
+                        changes.add(new DetectedChange(fm, (Entity<?>) accessorBefore.getAssigned(),
+                            (Entity<?>) accessorAfter.getAssigned(), oldValue, newValue,
+                            DetectedChange.ChangeType.CHANGED, innerChanges));
                     }
                 }
             }
         } else {
             Collection<?> newValues = (Collection<?>) newValue;
             Collection<?> oldValues = (Collection<?>) oldValue;
-            if(newValues == null || newValues.isEmpty()){
-                if(oldValues!= null && !((Collection<?>) oldValue).isEmpty()){
-                    oldValues.forEach(ov -> changes.add(new DetectedChange(fm, (Entity<?>) accessorBefore.getAssigned(), (Entity<?>) accessorAfter.getAssigned(), ov, null, DetectedChange.ChangeType.REMOVED, null)));
+            if (newValues == null || newValues.isEmpty()) {
+                if (oldValues != null && !((Collection<?>) oldValue).isEmpty()) {
+                    oldValues.forEach(ov -> changes.add(new DetectedChange(fm, (Entity<?>) accessorBefore.getAssigned(),
+                        (Entity<?>) accessorAfter.getAssigned(), ov, null, DetectedChange.ChangeType.REMOVED, null)));
                 }
-            }else {
+            } else {
                 newValues.forEach(nv -> {
                     if (oldValues == null || !oldValues.contains(nv)) {
-                        changes.add(new DetectedChange(fm, (Entity<?>) accessorBefore.getAssigned(), (Entity<?>) accessorAfter.getAssigned(), null, nv, DetectedChange.ChangeType.ADDED, null));
+                        changes.add(new DetectedChange(fm, (Entity<?>) accessorBefore.getAssigned(),
+                            (Entity<?>) accessorAfter.getAssigned(), null, nv, DetectedChange.ChangeType.ADDED, null));
                     } else {
-                        @SuppressWarnings("OptionalGetWithoutIsPresent") Object ov = oldValues.stream().filter(e -> e.equals(nv)).findFirst().get();
+                        @SuppressWarnings("OptionalGetWithoutIsPresent") Object ov = oldValues.stream().filter(
+                            e -> e.equals(nv)).findFirst().get();
                         var type =
                             Domain.typeMirror(newValue.getClass().getName())
                                 .map(dtm -> dtm.getDomainType())
@@ -189,15 +207,19 @@ public class Entities {
                         if (DomainType.ENTITY.equals(type)) {
                             Set<DetectedChange> innerChanges = detectChanges((Entity<?>) ov, (Entity<?>) nv, deep);
                             if (innerChanges.size() > 0) {
-                                changes.add(new DetectedChange(fm, (Entity<?>) accessorBefore.getAssigned(), (Entity<?>) accessorAfter.getAssigned(), ov, nv, DetectedChange.ChangeType.CHANGED, innerChanges));
+                                changes.add(new DetectedChange(fm, (Entity<?>) accessorBefore.getAssigned(),
+                                    (Entity<?>) accessorAfter.getAssigned(), ov, nv, DetectedChange.ChangeType.CHANGED,
+                                    innerChanges));
                             }
                         }
                     }
                 });
-                if(oldValues != null){
+                if (oldValues != null) {
                     oldValues.forEach(ov -> {
                         if (!newValues.contains(ov)) {
-                            changes.add(new DetectedChange(fm, (Entity<?>) accessorBefore.getAssigned(), (Entity<?>) accessorAfter.getAssigned(), ov, null, DetectedChange.ChangeType.REMOVED, null));
+                            changes.add(new DetectedChange(fm, (Entity<?>) accessorBefore.getAssigned(),
+                                (Entity<?>) accessorAfter.getAssigned(), ov, null, DetectedChange.ChangeType.REMOVED,
+                                null));
                         }
                     });
                 }
@@ -209,6 +231,14 @@ public class Entities {
 
     /**
      * Value carrier for the details of a detected change reported by "detectChanges".
+     *
+     * @param changedField the field which value has been changed
+     * @param entityBefore state of entity before change
+     * @param entityAfter  state of entity after change
+     * @param valueBefore  value before change
+     * @param valueAfter   value after change
+     * @param changeType   type of change
+     * @param innerChanges inner changes done
      */
     public record DetectedChange(FieldMirror changedField,
                                  Entity<?> entityBefore, Entity<?> entityAfter,

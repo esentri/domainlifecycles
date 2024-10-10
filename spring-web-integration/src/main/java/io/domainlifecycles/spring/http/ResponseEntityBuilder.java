@@ -29,6 +29,7 @@ package io.domainlifecycles.spring.http;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 /**
  * Interface for building a {@link ResponseEntity} with a {@link ResponseObject} as body.
  *

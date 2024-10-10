@@ -44,7 +44,7 @@ public class SampleShopConfiguration {
 
     @Bean
     public OrderPlacementService orderPlacementService(final OrderRepository orderRepository,
-                                                 final ProductRepository productRepository) {
+                                                       final ProductRepository productRepository) {
         return new OrderPlacementService(orderRepository, productRepository);
     }
 

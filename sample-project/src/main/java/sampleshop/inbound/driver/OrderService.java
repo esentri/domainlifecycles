@@ -69,7 +69,7 @@ public class OrderService implements OrderDriver {
      * {@inheritDoc}
      */
     @Override
-    public Optional<Order> cancel(CancelOrder cancelOrder){
+    public Optional<Order> cancel(CancelOrder cancelOrder) {
         var canceled = orderRepository
             .findById(cancelOrder.orderId())
             .map(order ->
@@ -95,7 +95,7 @@ public class OrderService implements OrderDriver {
      * {@inheritDoc}
      */
     @Override
-    public Order place(PlaceOrder placeOrder){
+    public Order place(PlaceOrder placeOrder) {
         return orderPlacementService.placeOrder(placeOrder);
     }
 
@@ -103,7 +103,7 @@ public class OrderService implements OrderDriver {
      * {@inheritDoc}
      */
     @Override
-    public List<Order> find(int offset, int limit, OrderStatus... orderStatus){
+    public List<Order> find(int offset, int limit, OrderStatus... orderStatus) {
         return orderRepository.find(offset, limit, orderStatus)
             .collect(Collectors.toList());
     }

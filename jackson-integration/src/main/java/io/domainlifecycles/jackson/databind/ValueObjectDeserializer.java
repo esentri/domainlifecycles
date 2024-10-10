@@ -53,9 +53,9 @@ import java.util.Optional;
 
 /**
  * {@link Domain} based deserialization of {@link ValueObject} instances.
- * @see StdDeserializer
  *
  * @author Mario Herb
+ * @see StdDeserializer
  */
 public class ValueObjectDeserializer extends StdDeserializer<ValueObject> {
 
@@ -74,16 +74,16 @@ public class ValueObjectDeserializer extends StdDeserializer<ValueObject> {
     /**
      * Deserialize ValueObjects.
      *
-     * @param jsonParser Parsed used for reading JSON content
+     * @param jsonParser             Parsed used for reading JSON content
      * @param deserializationContext Context that can be used to access information about
-     *   this deserialization activity.
-     *
+     *                               this deserialization activity.
      * @throws IOException if deserialization failed
      */
     @Override
     public ValueObject deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         JsonNode node = jsonParser.readValueAsTree();
-        DomainObjectMappingContext mappingContext = DomainObjectMappingContextHolder.getContext(node, this._valueType.getRawClass().getName(), deserializationContext, domainObjectBuilderProvider);
+        DomainObjectMappingContext mappingContext = DomainObjectMappingContextHolder.getContext(node,
+            this._valueType.getRawClass().getName(), deserializationContext, domainObjectBuilderProvider);
         if (customizer != null) {
             MappingAction mappingAction = customizer.beforeObjectRead(mappingContext, jsonParser.getCodec());
             if (MappingAction.SKIP_DEFAULT_ACTION.equals(mappingAction)) {
@@ -137,16 +137,17 @@ public class ValueObjectDeserializer extends StdDeserializer<ValueObject> {
                                     value = null;
                                 }
                             }
-                            if(fm.getType().hasCollectionContainer()) {
+                            if (fm.getType().hasCollectionContainer()) {
                                 mappingContext.domainObjectBuilder.addValueToCollection(value, fieldName);
-                            }else{
+                            } else {
                                 mappingContext.domainObjectBuilder.setFieldValue(value, fieldName);
                             }
                         }
                     }
                 }
             } catch (IOException e) {
-                throw DLCJacksonException.fail("Not able to read and set field '%s' for '%s'!", e, fieldName, this._valueType.getRawClass().getName());
+                throw DLCJacksonException.fail("Not able to read and set field '%s' for '%s'!", e, fieldName,
+                    this._valueType.getRawClass().getName());
             }
         }
     }
@@ -182,53 +183,53 @@ public class ValueObjectDeserializer extends StdDeserializer<ValueObject> {
 
             valueObjectMirror.getBasicFields()
                 .stream()
-                .filter(fm -> ! fm.isStatic())
+                .filter(fm -> !fm.isStatic())
                 .forEach(fm -> {
-                    TreeNode fieldNode = mappingContext.contextNode.get(fm.getName());
-                    readAndSetValueObjectField(
-                        mappingContext,
-                        fieldNode,
-                        fm.getName(),
-                        fm.getType().getTypeName(),
-                        codec,
-                        deserializationContext
-                    );
-                }
-            );
+                        TreeNode fieldNode = mappingContext.contextNode.get(fm.getName());
+                        readAndSetValueObjectField(
+                            mappingContext,
+                            fieldNode,
+                            fm.getName(),
+                            fm.getType().getTypeName(),
+                            codec,
+                            deserializationContext
+                        );
+                    }
+                );
 
             valueObjectMirror.getValueReferences()
                 .stream()
                 .filter(vrm -> !vrm.isStatic())
                 .forEach(vrm -> {
-                    TreeNode valueObjectCompositionNode = mappingContext.contextNode.get(vrm.getName());
-                    if (vrm.getType().hasCollectionContainer()) {
-                        if (valueObjectCompositionNode != null && valueObjectCompositionNode.isArray()) {
-                            mappingContext.domainObjectBuilder.setFieldValue(mappingContext.domainObjectBuilder
-                                .newCollectionInstanceForField(vrm.getName()), vrm.getName());
-                            for (int i = 0; i < valueObjectCompositionNode.size(); i++) {
-                                TreeNode valueObjectNode = valueObjectCompositionNode.get(i);
-                                readAndSetValueObjectField(
-                                    mappingContext,
-                                    valueObjectNode,
-                                    vrm.getName(),
-                                    vrm.getType().getTypeName(),
-                                    codec,
-                                    deserializationContext
-                                );
+                        TreeNode valueObjectCompositionNode = mappingContext.contextNode.get(vrm.getName());
+                        if (vrm.getType().hasCollectionContainer()) {
+                            if (valueObjectCompositionNode != null && valueObjectCompositionNode.isArray()) {
+                                mappingContext.domainObjectBuilder.setFieldValue(mappingContext.domainObjectBuilder
+                                    .newCollectionInstanceForField(vrm.getName()), vrm.getName());
+                                for (int i = 0; i < valueObjectCompositionNode.size(); i++) {
+                                    TreeNode valueObjectNode = valueObjectCompositionNode.get(i);
+                                    readAndSetValueObjectField(
+                                        mappingContext,
+                                        valueObjectNode,
+                                        vrm.getName(),
+                                        vrm.getType().getTypeName(),
+                                        codec,
+                                        deserializationContext
+                                    );
+                                }
                             }
+                        } else {
+                            readAndSetValueObjectField(
+                                mappingContext,
+                                valueObjectCompositionNode,
+                                vrm.getName(),
+                                vrm.getType().getTypeName(),
+                                codec,
+                                deserializationContext
+                            );
                         }
-                    } else {
-                        readAndSetValueObjectField(
-                            mappingContext,
-                            valueObjectCompositionNode,
-                            vrm.getName(),
-                            vrm.getType().getTypeName(),
-                            codec,
-                            deserializationContext
-                        );
                     }
-                }
-            );
+                );
 
             return buildWithExceptionHandling(mappingContext);
         }

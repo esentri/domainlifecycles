@@ -40,15 +40,13 @@ import java.lang.reflect.InvocationTargetException;
  * Provider for inner class domain object builders. Provides instances of DomainObjectBuilder for a given class, given
  * a inner class builder. Can be configured by using {@code DomainBuilderConfiguration}
  *
- * @see DomainObjectBuilderProvider
- *
  * @author Dominik Galler
+ * @see DomainObjectBuilderProvider
  */
 public final class InnerClassDomainObjectBuilderProvider extends DomainObjectBuilderProvider {
 
     /**
      * Constructor for default configuration.
-     *
      */
     public InnerClassDomainObjectBuilderProvider() {
         this(new InnerClassDefaultDomainBuilderConfiguration());
@@ -69,8 +67,8 @@ public final class InnerClassDomainObjectBuilderProvider extends DomainObjectBui
      * Provides a new {@link DomainObjectBuilder} instance for the given class.
      *
      * @param domainObjectTypeName The full qualified class name to provide a DomainObjectBuilder for
+     * @param <T>                  the DomainObject type for which a new DomianObjectBuilder is provided.
      * @return a new builder instance
-     * @param <T> the DomainObject type for which a new DomianObjectBuilder is provided.
      */
     @Override
     public <T extends DomainObject> DomainObjectBuilder<T> provide(String domainObjectTypeName) {

@@ -35,7 +35,6 @@ import java.util.Optional;
  * FetcherContext is the base interface for all fetcher contexts.
  *
  * @param <BASE_RECORD_TYPE> the base record type
- *
  * @author Mario Herb
  */
 public interface FetcherContext<BASE_RECORD_TYPE> {

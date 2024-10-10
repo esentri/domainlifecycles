@@ -37,7 +37,8 @@ import tests.shared.persistence.domain.ignoring.TestRootSimpleIgnoring;
 import tests.shared.persistence.domain.ignoring.TestRootSimpleIgnoringId;
 
 
-public class SimpleAggregateRootIgnoringRepository extends JooqAggregateRepository<TestRootSimpleIgnoring, TestRootSimpleIgnoringId> {
+public class SimpleAggregateRootIgnoringRepository extends JooqAggregateRepository<TestRootSimpleIgnoring,
+    TestRootSimpleIgnoringId> {
 
     private static final Logger log = LoggerFactory.getLogger(SimpleAggregateRootIgnoringRepository.class);
 

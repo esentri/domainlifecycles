@@ -45,7 +45,8 @@ import java.util.List;
 public class DomainDiagramConfig implements DiagramConfig {
 
     /**
-     * A DomainDiagram is meant focus on domain elements which are contained in one specific package (e.g. bounded context).
+     * A DomainDiagram is meant focus on domain elements which are contained in one specific package (e.g. bounded
+     * context).
      * The package name must be specified.
      */
     @Builder.Default
@@ -133,7 +134,8 @@ public class DomainDiagramConfig implements DiagramConfig {
     private String direction = "down";
 
     /**
-     * General layout direction style declaration (see Nomnoml style options, 'network-simplex' or 'tight-tree' or 'longest-path' is supported)
+     * General layout direction style declaration (see Nomnoml style options, 'network-simplex' or 'tight-tree' or
+     * 'longest-path' is supported)
      */
     @Builder.Default
     private String ranker = "longest-path";
@@ -353,7 +355,8 @@ public class DomainDiagramConfig implements DiagramConfig {
      *   <li>{@code <ID>}: Represents a unique identifier for an Entity in the domain.</li>
      *   <li>{@code <ENUM>}: Indicates that the field is an enumeration, a distinct type that consists of a
      *       set of named constants.</li>
-     *   <li>{@code <IDREF>}: Denotes an identifier reference field that holds a reference to another AggregateRoot.</li>
+     *   <li>{@code <IDREF>}: Denotes an identifier reference field that holds a reference to another AggregateRoot
+     *   .</li>
      *   <li>{@code <VO>}: Signifies a value object.</li>
      * </ul>
      */

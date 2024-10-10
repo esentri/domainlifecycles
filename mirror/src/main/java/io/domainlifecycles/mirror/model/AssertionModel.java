@@ -109,7 +109,8 @@ public class AssertionModel implements AssertionMirror {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AssertionModel that = (AssertionModel) o;
-        return assertionType == that.assertionType && Objects.equals(param1, that.param1) && Objects.equals(param2, that.param2) && Objects.equals(message, that.message);
+        return assertionType == that.assertionType && Objects.equals(param1, that.param1) && Objects.equals(param2,
+            that.param2) && Objects.equals(message, that.message);
     }
 
     /**

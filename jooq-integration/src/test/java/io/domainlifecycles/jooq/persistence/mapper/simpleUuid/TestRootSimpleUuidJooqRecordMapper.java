@@ -40,7 +40,8 @@ import java.util.UUID;
 /**
  * Mapping JOOQ TestRootSimpleIgnoring records.
  */
-public class TestRootSimpleUuidJooqRecordMapper extends AbstractRecordMapper<TestRootSimpleUuidRecord, TestRootSimpleUuid, TestRootSimpleUuid> {
+public class TestRootSimpleUuidJooqRecordMapper extends AbstractRecordMapper<TestRootSimpleUuidRecord,
+    TestRootSimpleUuid, TestRootSimpleUuid> {
 
     @Override
     public DomainObjectBuilder<TestRootSimpleUuid> recordToDomainObjectBuilder(TestRootSimpleUuidRecord record) {

@@ -36,6 +36,7 @@ import io.domainlifecycles.assertion.DomainAssertions;
 import io.domainlifecycles.domain.types.base.AggregateRootBase;
 
 import java.util.Optional;
+
 @Getter
 public class ValidatedAggregateRoot2 extends AggregateRootBase<ValidatedAggregateRoot2Id> {
 
@@ -47,33 +48,34 @@ public class ValidatedAggregateRoot2 extends AggregateRootBase<ValidatedAggregat
     private Optional<@Size(max = 10) String> optionalText;
 
 
-
     @Builder(setterPrefix = "set")
-    public ValidatedAggregateRoot2(ValidatedAggregateRoot2Id id, String text, String optionalText, long concurrencyVersion) {
+    public ValidatedAggregateRoot2(ValidatedAggregateRoot2Id id, String text, String optionalText,
+                                   long concurrencyVersion) {
         super(concurrencyVersion);
         this.id = id;
         this.text = text;
         this.optionalText = Optional.ofNullable(optionalText);
     }
 
-    public void komischeBerechnungMitValidationError(){
+    public void komischeBerechnungMitValidationError() {
         text = "WRONG";
     }
 
-    public ValidatedAggregateRoot2 textSetzenMitReturn(String neuerText){
+    public ValidatedAggregateRoot2 textSetzenMitReturn(String neuerText) {
         this.text = neuerText;
         return this;
     }
-    public ValidatedAggregateRoot2 optionalTextSetzenMitReturn(Optional<@NotBlank String> neuerTextOptional){
+
+    public ValidatedAggregateRoot2 optionalTextSetzenMitReturn(Optional<@NotBlank String> neuerTextOptional) {
         this.optionalText = neuerTextOptional;
         return this;
     }
 
-    public void textSetzenPrecondition(@NotBlank String neuerText){
+    public void textSetzenPrecondition(@NotBlank String neuerText) {
         this.text = neuerText;
     }
 
-    public @NotBlank String textSetzenReturnVal(String neuerText){
+    public @NotBlank String textSetzenReturnVal(String neuerText) {
         this.text = neuerText;
         return this.text;
     }

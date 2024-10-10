@@ -78,7 +78,7 @@ public class JooqOrdersByCustomerQueryClient implements OrdersByCustomerQueryCli
                 ).as("cancelled_orders")
             )
             .from(CUSTOMER)
-            .where(CUSTOMER.USER_NAME.like("%"+customerNameFilter+"%"))
+            .where(CUSTOMER.USER_NAME.like("%" + customerNameFilter + "%"))
             .orderBy(CUSTOMER.USER_NAME.desc())
             .offset(offset)
             .limit(limit)

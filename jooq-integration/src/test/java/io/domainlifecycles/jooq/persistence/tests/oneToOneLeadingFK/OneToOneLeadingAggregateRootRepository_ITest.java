@@ -42,13 +42,14 @@ import tests.shared.persistence.domain.oneToOneLeadingFK.TestRootOneToOneLeading
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class OneToOneLeadingAggregateRootRepository_ITest extends BasePersistence_ITest {
-    
+
     private OneToOneLeadingAggregateRootRepository oneToOneLeadingAggregateRootRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         oneToOneLeadingAggregateRootRepository = new OneToOneLeadingAggregateRootRepository(
             persistenceConfiguration.dslContext,
             persistenceEventTestHelper.testEventPublisher,
@@ -82,7 +83,8 @@ public class OneToOneLeadingAggregateRootRepository_ITest extends BasePersistenc
         Optional<TestRootOneToOneLeading> found = oneToOneLeadingAggregateRootRepository
             .findResultById(new TestRootOneToOneLeadingId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getTestEntityOneToOneLeading());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getTestEntityOneToOneLeading());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
         persistenceEventTestHelper.assertEvents();
     }
@@ -99,7 +101,8 @@ public class OneToOneLeadingAggregateRootRepository_ITest extends BasePersistenc
         //when
         TestRootOneToOneLeading updated = oneToOneLeadingAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneLeading> found = oneToOneLeadingAggregateRootRepository.findResultById(new TestRootOneToOneLeadingId(1l)).resultValue();
+        Optional<TestRootOneToOneLeading> found = oneToOneLeadingAggregateRootRepository.findResultById(
+            new TestRootOneToOneLeadingId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
@@ -117,7 +120,8 @@ public class OneToOneLeadingAggregateRootRepository_ITest extends BasePersistenc
         //when
         TestRootOneToOneLeading updated = oneToOneLeadingAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneLeading> found = oneToOneLeadingAggregateRootRepository.findResultById(new TestRootOneToOneLeadingId(1l)).resultValue();
+        Optional<TestRootOneToOneLeading> found = oneToOneLeadingAggregateRootRepository.findResultById(
+            new TestRootOneToOneLeadingId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
@@ -135,12 +139,15 @@ public class OneToOneLeadingAggregateRootRepository_ITest extends BasePersistenc
         //when
         TestRootOneToOneLeading updated = oneToOneLeadingAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneLeading> found = oneToOneLeadingAggregateRootRepository.findResultById(new TestRootOneToOneLeadingId(1l)).resultValue();
+        Optional<TestRootOneToOneLeading> found = oneToOneLeadingAggregateRootRepository.findResultById(
+            new TestRootOneToOneLeadingId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated.getTestEntityOneToOneLeading());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED,
+            updated.getTestEntityOneToOneLeading());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
-        Assertions.assertThat(updated.getTestEntityOneToOneLeading().getName()).isEqualTo(insertedCopy.getTestEntityOneToOneLeading().getName());
+        Assertions.assertThat(updated.getTestEntityOneToOneLeading().getName()).isEqualTo(
+            insertedCopy.getTestEntityOneToOneLeading().getName());
     }
 
     @Test
@@ -160,12 +167,15 @@ public class OneToOneLeadingAggregateRootRepository_ITest extends BasePersistenc
         //when
         TestRootOneToOneLeading updated = oneToOneLeadingAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneLeading> found = oneToOneLeadingAggregateRootRepository.findResultById(new TestRootOneToOneLeadingId(1l)).resultValue();
+        Optional<TestRootOneToOneLeading> found = oneToOneLeadingAggregateRootRepository.findResultById(
+            new TestRootOneToOneLeadingId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getTestEntityOneToOneLeading());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getTestEntityOneToOneLeading());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
-        Assertions.assertThat(updated.getTestEntityOneToOneLeading().getName()).isEqualTo(insertedCopy.getTestEntityOneToOneLeading().getName());
+        Assertions.assertThat(updated.getTestEntityOneToOneLeading().getName()).isEqualTo(
+            insertedCopy.getTestEntityOneToOneLeading().getName());
     }
 
     @Test
@@ -180,9 +190,11 @@ public class OneToOneLeadingAggregateRootRepository_ITest extends BasePersistenc
         //when
         TestRootOneToOneLeading updated = oneToOneLeadingAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneLeading> found = oneToOneLeadingAggregateRootRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootOneToOneLeading> found = oneToOneLeadingAggregateRootRepository.findResultById(
+            inserted.getId()).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityOneToOneLeading());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityOneToOneLeading());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
         Assertions.assertThat(updated.getTestEntityOneToOneLeading()).isNull();
@@ -203,9 +215,11 @@ public class OneToOneLeadingAggregateRootRepository_ITest extends BasePersistenc
         //when
         TestRootOneToOneLeading updated = oneToOneLeadingAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneLeading> found = oneToOneLeadingAggregateRootRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootOneToOneLeading> found = oneToOneLeadingAggregateRootRepository.findResultById(
+            inserted.getId()).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityOneToOneLeading());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityOneToOneLeading());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
         Assertions.assertThat(updated.getTestEntityOneToOneLeading()).isNull();
@@ -221,11 +235,13 @@ public class OneToOneLeadingAggregateRootRepository_ITest extends BasePersistenc
         //when
         Optional<TestRootOneToOneLeading> deleted = oneToOneLeadingAggregateRootRepository.deleteById(inserted.getId());
         //then
-        Optional<TestRootOneToOneLeading> found = oneToOneLeadingAggregateRootRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootOneToOneLeading> found = oneToOneLeadingAggregateRootRepository.findResultById(
+            inserted.getId()).resultValue();
         Assertions.assertThat(deleted).isPresent();
         Assertions.assertThat(found).isEmpty();
         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get().getTestEntityOneToOneLeading());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            deleted.get().getTestEntityOneToOneLeading());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, deleted.get());
         persistenceEventTestHelper.assertEvents();
 
@@ -244,9 +260,11 @@ public class OneToOneLeadingAggregateRootRepository_ITest extends BasePersistenc
         //when
         TestRootOneToOneLeading updated = oneToOneLeadingAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootOneToOneLeading> found = oneToOneLeadingAggregateRootRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootOneToOneLeading> found = oneToOneLeadingAggregateRootRepository.findResultById(
+            inserted.getId()).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getTestEntityOneToOneLeading());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getTestEntityOneToOneLeading());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
         Assertions.assertThat(updated.getTestEntityOneToOneLeading()).isNull();
@@ -263,7 +281,8 @@ public class OneToOneLeadingAggregateRootRepository_ITest extends BasePersistenc
         //when
         Optional<TestRootOneToOneLeading> deleted = oneToOneLeadingAggregateRootRepository.deleteById(inserted.getId());
         //then
-        Optional<TestRootOneToOneLeading> found = oneToOneLeadingAggregateRootRepository.findResultById(inserted.getId()).resultValue();
+        Optional<TestRootOneToOneLeading> found = oneToOneLeadingAggregateRootRepository.findResultById(
+            inserted.getId()).resultValue();
         Assertions.assertThat(deleted).isPresent();
         Assertions.assertThat(found).isEmpty();
         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);

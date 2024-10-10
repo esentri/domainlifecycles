@@ -51,7 +51,7 @@ public class JooqRecordClassProvider implements RecordClassProvider<UpdatableRec
     private static final Logger log = LoggerFactory.getLogger(DefaultTypeConverterProvider.class);
 
     public JooqRecordClassProvider(String recordPackage) {
-        if(!JavaReflect.isValidPackage(recordPackage)){
+        if (!JavaReflect.isValidPackage(recordPackage)) {
             throw new IllegalStateException(String.format("The package '%s' is not a valid package!", recordPackage));
         }
         this.recordPackage = recordPackage;
@@ -59,6 +59,7 @@ public class JooqRecordClassProvider implements RecordClassProvider<UpdatableRec
 
     /**
      * {@inheritDoc}
+     *
      * @return
      */
     @Override

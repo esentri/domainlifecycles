@@ -43,75 +43,78 @@ import java.util.Optional;
 public interface MethodMirror {
 
     /**
-     * Returns the method name of the mirrored method
+     * @return the method name of the mirrored method
      */
     String getName();
 
     /**
-     * Returns the full qualified type name, of the type that declared the method.
+     * @return the full qualified type name, of the type that declared the method.
      */
     String getDeclaredByTypeName();
 
     /**
-     * Returns the {@link AccessLevel} of the mirrored method.
+     * @return the {@link AccessLevel} of the mirrored method.
      */
     AccessLevel getAccessLevel();
 
     /**
-     * Returns the list of {@link ParamMirror} instances for the parameters declared in the mirrored methods signature.
+     * @return the list of {@link ParamMirror} instances for the parameters declared in the mirrored method's signature.
      */
     List<ParamMirror> getParameters();
 
     /**
-     * Returns an {@link AssertedContainableTypeMirror} mirroring the return type of the method.
+     * @return an {@link AssertedContainableTypeMirror} mirroring the return type of the method.
      * The {@literal void} return type is explicitly defined.
      */
     AssertedContainableTypeMirror getReturnType();
 
     /**
-     * Returns a list of {@link DomainEventMirror} published by the mirrored method.
+     * @return a list of {@link DomainEventMirror} published by the mirrored method.
      * The method must be annotated with {@link Publishes}.
      */
     List<DomainEventMirror> getPublishedEvents();
 
     /**
-     * Returns a {@link DomainEventMirror} if the method listens to an according {@link DomainEvent}
+     * @return a {@link DomainEventMirror} if the method listens to an according {@link DomainEvent}
      * The method must be annotated with {@link ListensTo}
      */
     Optional<DomainEventMirror> getListenedEvent();
 
     /**
-     * Query, if the mirrored method publishes {@link DomainEvent} instances for the given corresponding mirror.
+     * @param domainEvent the DomainEvent to publish
+     * @return whether the mirrored method publishes {@link DomainEvent} instances for the given corresponding mirror.
      * To be more precise, if the method is annotated to do so {@link Publishes}.
      */
     boolean publishes(DomainEventMirror domainEvent);
 
     /**
-     * Query, if the mirrored method listens to {@link DomainEvent} instances for the given corresponding mirror.
+     * @param domainEvent the DomainEvent to listen to
+     * @return whether the mirrored method listens to {@link DomainEvent} instances for the given corresponding mirror.
      * To be more precise, if the method is annotated to do so {@link ListensTo}.
      */
     boolean listensTo(DomainEventMirror domainEvent);
 
     /**
-     * Query, if the mirrored method processes {@link DomainCommand} instances for the given corresponding mirror.
+     * @param command the command to process
+     * @return the mirrored method processes {@link DomainCommand} instances for the given corresponding mirror.
      * To be more precise, if the method has exactly one parameter containing a DomainCommand.
      */
     boolean processes(DomainCommandMirror command);
 
     /**
-     * Returns true, if the method is a setter (follows the conventions of a setter in Java)
+     * @return whether the method is a setter (follows the conventions of a setter in Java)
      */
     boolean isSetter();
 
     /**
-     * Returns true, if the method is a getter (follows the conventions of a getter in Java)
+     * @return whether the method is a getter (follows the conventions of a getter in Java)
      */
     boolean isGetter();
 
     /**
-     * Checks if the method is overridden by a subclass.
+     * Checks if the method is overridden.
      *
-     * @return true if the method is overridden, false otherwise
+     * @return whether the method is overridden
      */
     boolean isOverridden();
 }

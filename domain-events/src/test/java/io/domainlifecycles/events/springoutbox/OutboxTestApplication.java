@@ -71,35 +71,36 @@ public class OutboxTestApplication {
     }
 
     @Bean
-    public AnApplicationService anApplicationService(){
+    public AnApplicationService anApplicationService() {
         return new AnApplicationService();
     }
 
     @Bean
-    public ADomainService aDomainService(){
+    public ADomainService aDomainService() {
         return new ADomainService();
     }
 
     @Bean
-    public ARepository aRepository(){
+    public ARepository aRepository() {
         return new ARepository();
     }
 
     @Bean
-    public AnOutboundService anOutboundService(){
+    public AnOutboundService anOutboundService() {
         return new AnOutboundService();
     }
 
     @Bean
-    public AQueryClient aQueryClient(){
+    public AQueryClient aQueryClient() {
         return new AQueryClient();
     }
 
     /**
-     * This method creates and configures a ServiceProvider instance, which is responsible for providing instances of various types of services.
+     * This method creates and configures a ServiceProvider instance, which is responsible for providing instances of
+     * various types of services.
      */
     @Bean
-    public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds){
+    public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds) {
         var services = new Services();
         serviceKinds.forEach(services::registerServiceKindInstance);
         return services;
@@ -109,8 +110,10 @@ public class OutboxTestApplication {
      * Using DLC Events to publish DLC domain events.
      */
     @Bean
-    public DomainEventsConfiguration domainEventsConfiguration(TransactionalOutbox transactionalOutbox, ServiceProvider serviceProvider, PlatformTransactionManager transactionManager) {
-        var config =  new DomainEventsConfiguration.DomainEventsConfigurationBuilder()
+    public DomainEventsConfiguration domainEventsConfiguration(TransactionalOutbox transactionalOutbox,
+                                                               ServiceProvider serviceProvider,
+                                                               PlatformTransactionManager transactionManager) {
+        var config = new DomainEventsConfiguration.DomainEventsConfigurationBuilder()
             .withSpringPlatformTransactionManager(transactionManager)
             .withServiceProvider(serviceProvider)
             .withTransactionalOutbox(transactionalOutbox)
@@ -123,7 +126,8 @@ public class OutboxTestApplication {
      * {@link ObjectMapper}, and {@link PlatformTransactionManager}.
      */
     @Bean
-    public TransactionalOutbox transactionalOutbox(DataSource dataSource, ObjectMapper objectMapper, PlatformTransactionManager platformTransactionManager){
+    public TransactionalOutbox transactionalOutbox(DataSource dataSource, ObjectMapper objectMapper,
+                                                   PlatformTransactionManager platformTransactionManager) {
         return new SpringJdbcOutbox(dataSource, objectMapper, platformTransactionManager);
     }
 

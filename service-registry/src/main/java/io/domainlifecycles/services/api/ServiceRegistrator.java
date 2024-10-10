@@ -35,7 +35,8 @@ import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.domain.types.ServiceKind;
 
 /**
- * The ServiceRegistrator interface represents a registrator that is responsible for registering instances of various types of services.
+ * The ServiceRegistrator interface represents a registrator that is responsible for registering instances of various
+ * types of services.
  * It allows registering instances of {@link ServiceKind} (and subtypes).
  *
  * @author Mario Herb

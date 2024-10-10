@@ -35,7 +35,6 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Provides new record instances.
  *
- *
  * @author Mario Herb
  */
 public class DefaultNewRecordInstanceProvider implements NewRecordInstanceProvider {
@@ -46,7 +45,6 @@ public class DefaultNewRecordInstanceProvider implements NewRecordInstanceProvid
      * @param recordClassName the full qualified name of record type
      * @return the new record instance
      */
-    @SuppressWarnings("unchecked")
     @Override
     public <RECORD> RECORD provideNewRecord(String recordClassName) {
         try {

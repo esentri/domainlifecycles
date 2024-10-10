@@ -31,15 +31,20 @@ package io.domainlifecycles.domain.types;
  * This is the common supertype (marker interface) to represent DomainCommand.
  *
  * <p>
- * DomainCommands should be used to express that someone (e.g. a user or an external system) wishes that something should happen in the domain.
- * DomainCommands can be rejected (in contrast to DomainEvents). DomainCommands play an important role in the modification of Aggregates.
- * They protect Aggregate boundaries, because command handlers only allow distinct mutations on Aggregates in contrast to, for example,
- * services with general `update(MyAggregate a)` methods. Moreover, they improve the readability and understandability of the code,
- * because they explicitly describe the intentions of actions that can be requested and generally performed on Aggregates.
+ * DomainCommands should be used to express that someone (e.g. a user or an external system) wishes that something
+ * should happen in the domain.
+ * DomainCommands can be rejected (in contrast to DomainEvents). DomainCommands play an important role in the
+ * modification of Aggregates.
+ * They protect Aggregate boundaries, because command handlers only allow distinct mutations on Aggregates in
+ * contrast to, for example,
+ * services with general `update(MyAggregate a)` methods. Moreover, they improve the readability and
+ * understandability of the code,
+ * because they explicitly describe the intentions of actions that can be requested and generally performed on
+ * Aggregates.
  * Furthermore, they can reduce the amount of parameters needed at methods that implement the corresponding action.
- *</p>
+ * </p>
  *
  * @author Mario Herb
  */
-public interface DomainCommand extends Validatable{
+public interface DomainCommand extends Validatable {
 }

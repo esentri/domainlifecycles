@@ -49,14 +49,19 @@ import java.util.Set;
 
 /**
  * If a bean validation implementation is provided in the classpath of the target application, then
- * this customization extends all classes which have bean validation annotations on their properties (also non dlc domain object classes, like DTOs)
- * with a corresponding additional open api description, if they are used in controller interfaces which provide Open API documentation {@link OpenAPIPropertyBeanValidationExtension}.
+ * this customization extends all classes which have bean validation annotations on their properties (also non dlc
+ * domain object classes, like DTOs)
+ * with a corresponding additional open api description, if they are used in controller interfaces which provide Open
+ * API documentation {@link OpenAPIPropertyBeanValidationExtension}.
  * <p>
- * In contrast to SpringDoc default behaviour this extension adds additional detailed Open API doc information for every single default
- * annotation of the Java Bean Validation standard 2.0 or 3.0. Additionally, this extension corrects the (in our point of view wrong) default behaviour of spring doc
+ * In contrast to SpringDoc default behaviour this extension adds additional detailed Open API doc information for
+ * every single default
+ * annotation of the Java Bean Validation standard 2.0 or 3.0. Additionally, this extension corrects the (in our
+ * point of view wrong) default behaviour of spring doc
  * if properties (fields) of API classes wrap their types in {@link Optional}.
  * </p>
- * If no bean validation implementation is provided, only an info level log entry occurs. The behaviour of the application is not affected in any negative way.
+ * If no bean validation implementation is provided, only an info level log entry occurs. The behaviour of the
+ * application is not affected in any negative way.
  *
  * @author Mario Herb
  */
@@ -142,7 +147,7 @@ public class OpenAPIPropertyBeanValidationExtension {
         try {
             validatorJavax = Validation.buildDefaultValidatorFactory().getValidator();
             log.info("Bean validation 2.0 supported!");
-        } catch(Throwable t){
+        } catch (Throwable t) {
             validatorJavax = null;
             log.info("No bean validation 2.0 provider found or validation factory could not be built. " +
                 "Bean validation 2.0 extensions are disabled!");
@@ -150,7 +155,7 @@ public class OpenAPIPropertyBeanValidationExtension {
         try {
             validatorJakarta = jakarta.validation.Validation.buildDefaultValidatorFactory().getValidator();
             log.info("Bean validation 3.0 supported!");
-        } catch(Throwable t){
+        } catch (Throwable t) {
             validatorJakarta = null;
             log.info("No bean validation provider 3.0 found or validation factory could not be built. " +
                 "Bean validation 3.0 extensions are disabled!");
@@ -162,8 +167,8 @@ public class OpenAPIPropertyBeanValidationExtension {
      *
      * @param openAPI {@link OpenAPI} instance to be extended
      */
-    public static void extendWithBeanValidationInformation(OpenAPI openAPI){
-        if((validatorJavax != null || validatorJakarta != null) && openAPI.getComponents()!= null && openAPI.getComponents().getSchemas() != null) {
+    public static void extendWithBeanValidationInformation(OpenAPI openAPI) {
+        if ((validatorJavax != null || validatorJakarta != null) && openAPI.getComponents() != null && openAPI.getComponents().getSchemas() != null) {
             openAPI.getComponents().getSchemas()
                 .entrySet()
                 .stream()
@@ -197,12 +202,13 @@ public class OpenAPIPropertyBeanValidationExtension {
         return Optional.class.isAssignableFrom(field.getType());
     }
 
-    private static Set<ConstraintDescriptor<?>> getConstraintDescriptorsJavax(Field field){
+    private static Set<ConstraintDescriptor<?>> getConstraintDescriptorsJavax(Field field) {
         var desc = validatorJavax.getConstraintsForClass(field.getDeclaringClass());
         var prop = desc.getConstraintsForProperty(field.getName());
         if (prop != null) {
             if (isOptional(field)) {
-                var container = (ContainerElementTypeDescriptor) prop.getConstrainedContainerElementTypes().toArray()[0];
+                var container =
+                    (ContainerElementTypeDescriptor) prop.getConstrainedContainerElementTypes().toArray()[0];
                 return container.getConstraintDescriptors();
             } else {
                 return prop.getConstraintDescriptors();
@@ -211,12 +217,13 @@ public class OpenAPIPropertyBeanValidationExtension {
         return null;
     }
 
-    private static Set<jakarta.validation.metadata.ConstraintDescriptor<?>> getConstraintDescriptorsJakarta(Field field){
+    private static Set<jakarta.validation.metadata.ConstraintDescriptor<?>> getConstraintDescriptorsJakarta(Field field) {
         var desc = validatorJakarta.getConstraintsForClass(field.getDeclaringClass());
         var prop = desc.getConstraintsForProperty(field.getName());
-        if(prop != null) {
+        if (prop != null) {
             if (isOptional(field)) {
-                var container = (jakarta.validation.metadata.ContainerElementTypeDescriptor) prop.getConstrainedContainerElementTypes().toArray()[0];
+                var container =
+                    (jakarta.validation.metadata.ContainerElementTypeDescriptor) prop.getConstrainedContainerElementTypes().toArray()[0];
                 return container.getConstraintDescriptors();
             } else {
                 return prop.getConstraintDescriptors();
@@ -225,54 +232,56 @@ public class OpenAPIPropertyBeanValidationExtension {
         return null;
     }
 
-    private static void extendSchemaForField(Field field, Schema<?> propertySchema){
+    private static void extendSchemaForField(Field field, Schema<?> propertySchema) {
         Objects.requireNonNull(field, "A field must be given to extend its Open API schema!");
         Objects.requireNonNull(propertySchema, "A property schema must be given to be extended!");
-        if(validatorJavax != null) {
+        if (validatorJavax != null) {
             Set<ConstraintDescriptor<?>> constraintDescriptors = getConstraintDescriptorsJavax(field);
             if (constraintDescriptors != null) {
                 constraintDescriptors.forEach(cd -> extendSchemaForConstraintJavax(cd, propertySchema));
             }
-        }else if(validatorJakarta != null){
-            Set<jakarta.validation.metadata.ConstraintDescriptor<?>> constraintDescriptors = getConstraintDescriptorsJakarta(field);
+        } else if (validatorJakarta != null) {
+            Set<jakarta.validation.metadata.ConstraintDescriptor<?>> constraintDescriptors =
+                getConstraintDescriptorsJakarta(
+                field);
             if (constraintDescriptors != null) {
                 constraintDescriptors.forEach(cd -> extendSchemaForConstraintJakarta(cd, propertySchema));
             }
         }
     }
 
-    private static void extendSchemaForConstraintJavax(ConstraintDescriptor<?> cd, Schema<?> schema){
+    private static void extendSchemaForConstraintJavax(ConstraintDescriptor<?> cd, Schema<?> schema) {
         switch (cd.getAnnotation().annotationType().getName()) {
             case BV_2_0_NOT_EMPTY -> extendNotEmpty(schema);
             case BV_2_0_NOT_BLANK -> extendNotBlank(schema);
             case BV_2_0_EMAIL -> extendEmail(schema);
             case BV_2_0_PATTERN -> {
-                String regEx = (String)cd.getAttributes().get(BV_PATTERN_ATTRIBUTE_REGEXP);
+                String regEx = (String) cd.getAttributes().get(BV_PATTERN_ATTRIBUTE_REGEXP);
                 extendPattern(schema, regEx);
             }
             case BV_2_0_SIZE -> {
-                Integer minLengthAnnotated = (Integer)cd.getAttributes().get(BV_SIZE_ATTRIBUTE_MIN);
-                Integer maxLengthAnnotated = (Integer)cd.getAttributes().get(BV_SIZE_ATTRIBUTE_MAX);
+                Integer minLengthAnnotated = (Integer) cd.getAttributes().get(BV_SIZE_ATTRIBUTE_MIN);
+                Integer maxLengthAnnotated = (Integer) cd.getAttributes().get(BV_SIZE_ATTRIBUTE_MAX);
                 extendSize(schema, minLengthAnnotated, maxLengthAnnotated);
             }
             case BV_2_0_MIN -> {
-                Long minAnnotated = (Long)cd.getAttributes().get(BV_MIN_ATTRIBUTE_VALUE);
+                Long minAnnotated = (Long) cd.getAttributes().get(BV_MIN_ATTRIBUTE_VALUE);
                 extendMin(schema, minAnnotated);
             }
             case BV_2_0_MAX -> {
-                Long maxAnnotated = (Long)cd.getAttributes().get(BV_MAX_ATTRIBUTE_VALUE);
+                Long maxAnnotated = (Long) cd.getAttributes().get(BV_MAX_ATTRIBUTE_VALUE);
                 extendMax(schema, maxAnnotated);
             }
             case BV_2_0_DECIMAL_MIN -> {
-                String minAnnotated = (String)cd.getAttributes().get(BV_DECIMAL_MIN_ATTRIBUTE_VALUE);
+                String minAnnotated = (String) cd.getAttributes().get(BV_DECIMAL_MIN_ATTRIBUTE_VALUE);
                 BigDecimal bigDecimalMinAnnotated = new BigDecimal(minAnnotated);
-                Boolean inclusiveAnnotated = (Boolean)cd.getAttributes().get(BV_DECIMAL_MIN_ATTRIBUTE_INCLUSIVE);
+                Boolean inclusiveAnnotated = (Boolean) cd.getAttributes().get(BV_DECIMAL_MIN_ATTRIBUTE_INCLUSIVE);
                 extendDecimalMin(schema, bigDecimalMinAnnotated, inclusiveAnnotated);
             }
             case BV_2_0_DECIMAL_MAX -> {
-                String maxAnnotated = (String)cd.getAttributes().get(BV_DECIMAL_MAX_ATTRIBUTE_VALUE);
+                String maxAnnotated = (String) cd.getAttributes().get(BV_DECIMAL_MAX_ATTRIBUTE_VALUE);
                 BigDecimal bigDecimalMaxAnnotated = new BigDecimal(maxAnnotated);
-                Boolean inclusiveAnnotated = (Boolean)cd.getAttributes().get(BV_DECIMAL_MAX_ATTRIBUTE_INCLUSIVE);
+                Boolean inclusiveAnnotated = (Boolean) cd.getAttributes().get(BV_DECIMAL_MAX_ATTRIBUTE_INCLUSIVE);
                 extendDecimalMax(schema, bigDecimalMaxAnnotated, inclusiveAnnotated);
             }
             case BV_2_0_NEGATIVE -> extendNegative(schema);
@@ -280,8 +289,8 @@ public class OpenAPIPropertyBeanValidationExtension {
             case BV_2_0_NEGATIVE_OR_ZERO -> extendNegativeOrZero(schema);
             case BV_2_0_POSITIVE_OR_ZERO -> extendPositiveOrZero(schema);
             case BV_2_0_DIGITS -> {
-                Integer integerAnnotated = (Integer)cd.getAttributes().get(BV_DIGITS_ATTRIBUTE_INTEGER);
-                Integer fractionAnnotated = (Integer)cd.getAttributes().get(BV_DIGITS_ATTRIBUTE_FRACTION);
+                Integer integerAnnotated = (Integer) cd.getAttributes().get(BV_DIGITS_ATTRIBUTE_INTEGER);
+                Integer fractionAnnotated = (Integer) cd.getAttributes().get(BV_DIGITS_ATTRIBUTE_FRACTION);
                 extendDigits(schema, integerAnnotated, fractionAnnotated);
             }
             case BV_2_0_PAST -> extendPast(schema);
@@ -291,38 +300,39 @@ public class OpenAPIPropertyBeanValidationExtension {
         }
     }
 
-    private static void extendSchemaForConstraintJakarta(jakarta.validation.metadata.ConstraintDescriptor<?> cd, Schema<?> schema){
+    private static void extendSchemaForConstraintJakarta(jakarta.validation.metadata.ConstraintDescriptor<?> cd,
+                                                         Schema<?> schema) {
         switch (cd.getAnnotation().annotationType().getName()) {
             case BV_3_0_NOT_EMPTY -> extendNotEmpty(schema);
             case BV_3_0_NOT_BLANK -> extendNotBlank(schema);
             case BV_3_0_EMAIL -> extendEmail(schema);
             case BV_3_0_PATTERN -> {
-                String regEx = (String)cd.getAttributes().get(BV_PATTERN_ATTRIBUTE_REGEXP);
+                String regEx = (String) cd.getAttributes().get(BV_PATTERN_ATTRIBUTE_REGEXP);
                 extendPattern(schema, regEx);
             }
             case BV_3_0_SIZE -> {
-                Integer minLengthAnnotated = (Integer)cd.getAttributes().get(BV_SIZE_ATTRIBUTE_MIN);
-                Integer maxLengthAnnotated = (Integer)cd.getAttributes().get(BV_SIZE_ATTRIBUTE_MAX);
+                Integer minLengthAnnotated = (Integer) cd.getAttributes().get(BV_SIZE_ATTRIBUTE_MIN);
+                Integer maxLengthAnnotated = (Integer) cd.getAttributes().get(BV_SIZE_ATTRIBUTE_MAX);
                 extendSize(schema, minLengthAnnotated, maxLengthAnnotated);
             }
             case BV_3_0_MIN -> {
-                Long minAnnotated = (Long)cd.getAttributes().get(BV_MIN_ATTRIBUTE_VALUE);
+                Long minAnnotated = (Long) cd.getAttributes().get(BV_MIN_ATTRIBUTE_VALUE);
                 extendMin(schema, minAnnotated);
             }
             case BV_3_0_MAX -> {
-                Long maxAnnotated = (Long)cd.getAttributes().get(BV_MAX_ATTRIBUTE_VALUE);
+                Long maxAnnotated = (Long) cd.getAttributes().get(BV_MAX_ATTRIBUTE_VALUE);
                 extendMax(schema, maxAnnotated);
             }
             case BV_3_0_DECIMAL_MIN -> {
-                String minAnnotated = (String)cd.getAttributes().get(BV_DECIMAL_MIN_ATTRIBUTE_VALUE);
+                String minAnnotated = (String) cd.getAttributes().get(BV_DECIMAL_MIN_ATTRIBUTE_VALUE);
                 BigDecimal bigDecimalMinAnnotated = new BigDecimal(minAnnotated);
-                Boolean inclusiveAnnotated = (Boolean)cd.getAttributes().get(BV_DECIMAL_MIN_ATTRIBUTE_INCLUSIVE);
+                Boolean inclusiveAnnotated = (Boolean) cd.getAttributes().get(BV_DECIMAL_MIN_ATTRIBUTE_INCLUSIVE);
                 extendDecimalMin(schema, bigDecimalMinAnnotated, inclusiveAnnotated);
             }
             case BV_3_0_DECIMAL_MAX -> {
-                String maxAnnotated = (String)cd.getAttributes().get(BV_DECIMAL_MAX_ATTRIBUTE_VALUE);
+                String maxAnnotated = (String) cd.getAttributes().get(BV_DECIMAL_MAX_ATTRIBUTE_VALUE);
                 BigDecimal bigDecimalMaxAnnotated = new BigDecimal(maxAnnotated);
-                Boolean inclusiveAnnotated = (Boolean)cd.getAttributes().get(BV_DECIMAL_MAX_ATTRIBUTE_INCLUSIVE);
+                Boolean inclusiveAnnotated = (Boolean) cd.getAttributes().get(BV_DECIMAL_MAX_ATTRIBUTE_INCLUSIVE);
                 extendDecimalMax(schema, bigDecimalMaxAnnotated, inclusiveAnnotated);
             }
             case BV_3_0_NEGATIVE -> extendNegative(schema);
@@ -330,8 +340,8 @@ public class OpenAPIPropertyBeanValidationExtension {
             case BV_3_0_NEGATIVE_OR_ZERO -> extendNegativeOrZero(schema);
             case BV_3_0_POSITIVE_OR_ZERO -> extendPositiveOrZero(schema);
             case BV_3_0_DIGITS -> {
-                Integer integerAnnotated = (Integer)cd.getAttributes().get(BV_DIGITS_ATTRIBUTE_INTEGER);
-                Integer fractionAnnotated = (Integer)cd.getAttributes().get(BV_DIGITS_ATTRIBUTE_FRACTION);
+                Integer integerAnnotated = (Integer) cd.getAttributes().get(BV_DIGITS_ATTRIBUTE_INTEGER);
+                Integer fractionAnnotated = (Integer) cd.getAttributes().get(BV_DIGITS_ATTRIBUTE_FRACTION);
                 extendDigits(schema, integerAnnotated, fractionAnnotated);
             }
             case BV_3_0_PAST -> extendPast(schema);
@@ -342,13 +352,13 @@ public class OpenAPIPropertyBeanValidationExtension {
     }
 
     private static void extendNotEmpty(Schema<?> schema) {
-        if(Constants.TYPE_STRING.equals(schema.getType())){
+        if (Constants.TYPE_STRING.equals(schema.getType())) {
             //spring doc open api 1.6.7 and lower doesn't do that
             if (schema.getMinLength() == null || schema.getMinLength() < 1) {
                 schema.setMinLength(1);
             }
             addSchemaDescription("beanValidationNotEmpty", schema);
-        }else if(Constants.TYPE_ARRAY.equals(schema.getType())) {
+        } else if (Constants.TYPE_ARRAY.equals(schema.getType())) {
             //spring doc open api 1.6.7 and lower doesn't do that
             if (schema.getMinItems() == null || schema.getMinItems() < 1) {
                 schema.setMinItems(1);
@@ -358,7 +368,7 @@ public class OpenAPIPropertyBeanValidationExtension {
     }
 
     private static void extendNotBlank(Schema<?> schema) {
-        if(Constants.TYPE_STRING.equals(schema.getType())){
+        if (Constants.TYPE_STRING.equals(schema.getType())) {
             //spring doc open api 1.6.7 and lower doesn't do that
             if (schema.getMinLength() == null || schema.getMinLength() < 1) {
                 schema.setMinLength(1);
@@ -368,7 +378,7 @@ public class OpenAPIPropertyBeanValidationExtension {
     }
 
     private static void extendEmail(Schema<?> schema) {
-        if(Constants.TYPE_STRING.equals(schema.getType())){
+        if (Constants.TYPE_STRING.equals(schema.getType())) {
             //spring doc open api 1.6.7 and lower doesn't do that
             if (schema.getFormat() == null) {
                 schema.setFormat(Constants.FORMAT_TYPE_EMAIL);
@@ -378,7 +388,7 @@ public class OpenAPIPropertyBeanValidationExtension {
     }
 
     private static void extendPattern(Schema<?> schema, String regEx) {
-        if(Constants.TYPE_STRING.equals(schema.getType())){
+        if (Constants.TYPE_STRING.equals(schema.getType())) {
             //spring doc open api 1.6.7 and lower doesn't do that for optional Strings
             if (schema.getPattern() == null) {
                 schema.setPattern(regEx);
@@ -388,7 +398,7 @@ public class OpenAPIPropertyBeanValidationExtension {
     }
 
     private static void extendSize(Schema<?> schema, Integer minLengthAnnotated, Integer maxLengthAnnotated) {
-        if(Constants.TYPE_STRING.equals(schema.getType())){
+        if (Constants.TYPE_STRING.equals(schema.getType())) {
             //spring doc open api 1.6.7 and lower doesn't do that for optional Strings
             if (schema.getMinLength() == null || schema.getMinLength() < minLengthAnnotated) {
                 schema.setMinLength(minLengthAnnotated);
@@ -403,8 +413,9 @@ public class OpenAPIPropertyBeanValidationExtension {
     }
 
     private static void extendMin(Schema<?> schema, Long minAnnotated) {
-        if(Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
-            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(schema.getFormat()))){
+        if (Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
+            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+            schema.getFormat()))) {
             //spring doc open api 1.6.7 and lower doesn't do that for optional numeric types
             if (schema.getMinimum() == null || schema.getMinimum().intValue() < minAnnotated) {
                 schema.setMinimum(BigDecimal.valueOf(minAnnotated));
@@ -414,8 +425,9 @@ public class OpenAPIPropertyBeanValidationExtension {
     }
 
     private static void extendMax(Schema<?> schema, Long maxAnnotated) {
-        if(Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
-            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(schema.getFormat()))){
+        if (Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
+            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+            schema.getFormat()))) {
             //spring doc open api 1.6.7 and lower doesn't do that for optional numeric types
             if (schema.getMaximum() == null || schema.getMaximum().intValue() > maxAnnotated) {
                 schema.setMaximum(BigDecimal.valueOf(maxAnnotated));
@@ -424,43 +436,50 @@ public class OpenAPIPropertyBeanValidationExtension {
         }
     }
 
-    private static void extendDecimalMin(Schema<?> schema, BigDecimal bigDecimalMinAnnotated, Boolean inclusiveAnnotated) {
-        if(Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
-            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(schema.getFormat()))){
+    private static void extendDecimalMin(Schema<?> schema, BigDecimal bigDecimalMinAnnotated,
+                                         Boolean inclusiveAnnotated) {
+        if (Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
+            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+            schema.getFormat()))) {
             //spring doc open api 1.6.7 and lower doesn't do that for optional numeric types
-            if (schema.getMinimum() == null || schema.getMinimum().compareTo(bigDecimalMinAnnotated)<0) {
+            if (schema.getMinimum() == null || schema.getMinimum().compareTo(bigDecimalMinAnnotated) < 0) {
                 schema.setMinimum(bigDecimalMinAnnotated);
 
             }
             if (!inclusiveAnnotated) {
                 schema.setExclusiveMinimum(true);
                 addSchemaDescription("beanValidationDecimalMin", schema, bigDecimalMinAnnotated.toPlainString());
-            }else{
-                addSchemaDescription("beanValidationDecimalMinInclusive", schema, bigDecimalMinAnnotated.toPlainString());
+            } else {
+                addSchemaDescription("beanValidationDecimalMinInclusive", schema,
+                    bigDecimalMinAnnotated.toPlainString());
             }
         }
     }
 
-    private static void extendDecimalMax(Schema<?> schema, BigDecimal bigDecimalMaxAnnotated,  Boolean inclusiveAnnotated) {
-        if(Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
-            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(schema.getFormat()))){
+    private static void extendDecimalMax(Schema<?> schema, BigDecimal bigDecimalMaxAnnotated,
+                                         Boolean inclusiveAnnotated) {
+        if (Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
+            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+            schema.getFormat()))) {
             //spring doc open api 1.6.7 and lower doesn't do that for optional numeric types
-            if (schema.getMaximum() == null || schema.getMaximum().compareTo(bigDecimalMaxAnnotated)>0) {
+            if (schema.getMaximum() == null || schema.getMaximum().compareTo(bigDecimalMaxAnnotated) > 0) {
                 schema.setMaximum(bigDecimalMaxAnnotated);
             }
             if (!inclusiveAnnotated) {
                 schema.setExclusiveMaximum(true);
                 addSchemaDescription("beanValidationDecimalMax", schema, bigDecimalMaxAnnotated.toPlainString());
-            }else{
-                addSchemaDescription("beanValidationDecimalMaxInclusive", schema, bigDecimalMaxAnnotated.toPlainString());
+            } else {
+                addSchemaDescription("beanValidationDecimalMaxInclusive", schema,
+                    bigDecimalMaxAnnotated.toPlainString());
             }
 
         }
     }
 
     private static void extendNegative(Schema<?> schema) {
-        if(Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
-            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(schema.getFormat()))){
+        if (Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
+            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+            schema.getFormat()))) {
             //spring doc open api 1.6.7 and lower doesn't do that
             if (schema.getMaximum() == null || schema.getMaximum().intValue() > 0) {
                 schema.setMaximum(BigDecimal.valueOf(0));
@@ -471,8 +490,9 @@ public class OpenAPIPropertyBeanValidationExtension {
     }
 
     private static void extendPositive(Schema<?> schema) {
-        if(Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
-            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(schema.getFormat()))){
+        if (Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
+            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+            schema.getFormat()))) {
             //spring doc open api 1.6.7 and lower doesn't do that
             if (schema.getMinimum() == null || schema.getMinimum().intValue() < 0) {
                 schema.setMinimum(BigDecimal.valueOf(0));
@@ -483,8 +503,9 @@ public class OpenAPIPropertyBeanValidationExtension {
     }
 
     private static void extendNegativeOrZero(Schema<?> schema) {
-        if(Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
-            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(schema.getFormat()))){
+        if (Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
+            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+            schema.getFormat()))) {
             //spring doc open api 1.6.7 and lower doesn't do that
             if (schema.getMaximum() == null || schema.getMaximum().intValue() > 0) {
                 schema.setMaximum(BigDecimal.valueOf(0));
@@ -495,8 +516,9 @@ public class OpenAPIPropertyBeanValidationExtension {
     }
 
     private static void extendPositiveOrZero(Schema<?> schema) {
-        if(Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
-            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(schema.getFormat()))){
+        if (Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
+            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+            schema.getFormat()))) {
             //spring doc open api 1.6.7 and lower doesn't do that
             if (schema.getMinimum() == null || schema.getMinimum().intValue() < 0) {
                 schema.setMinimum(BigDecimal.valueOf(0));
@@ -507,11 +529,12 @@ public class OpenAPIPropertyBeanValidationExtension {
     }
 
     private static void extendDigits(Schema<?> schema, Integer integerAnnotated, Integer fractionAnnotated) {
-        if(Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
-            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(schema.getFormat()))){
+        if (Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
+            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+            schema.getFormat()))) {
             //spring doc open api 1.6.7 and lower doesn't do that
-            if(integerAnnotated<1){
-                log.warn("Annotating the integer part of '" + schema.getName() +"' with a value < 1 makes no sense!");
+            if (integerAnnotated < 1) {
+                log.warn("Annotating the integer part of '" + schema.getName() + "' with a value < 1 makes no sense!");
             }
             if (schema.getPattern() == null) {
                 String patternInteger = "[-]?[1-9]{1,1}[0-9]{0," + (integerAnnotated - 1) + "}|[0]";
@@ -519,13 +542,16 @@ public class OpenAPIPropertyBeanValidationExtension {
                 String patternFraction = "[0-9]{1," + (fractionAnnotated) + "}";
                 String patternSeparator = "\\.";
                 String pattern;
-                if(Constants.TYPE_INTEGER.equals(schema.getType())
-                    || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(schema.getFormat()))){
+                if (Constants.TYPE_INTEGER.equals(schema.getType())
+                    || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+                    schema.getFormat()))) {
                     pattern = "^" + patternInteger + "$";
                 } else {
                     if (fractionAnnotated > 0) {
-                        pattern = "^(" + patternInteger + patternIntegerZeroNegativeOption + "){1,1}" + "(" + patternSeparator + patternFraction + ")?$";
-                        addSchemaDescription("beanValidationDigitsIntegerFraction", schema, integerAnnotated.toString(), fractionAnnotated.toString());
+                        pattern =
+                            "^(" + patternInteger + patternIntegerZeroNegativeOption + "){1,1}" + "(" + patternSeparator + patternFraction + ")?$";
+                        addSchemaDescription("beanValidationDigitsIntegerFraction", schema, integerAnnotated.toString(),
+                            fractionAnnotated.toString());
                     } else {
                         pattern = "^" + patternInteger + "$";
                         addSchemaDescription("beanValidationDigitsInteger", schema, integerAnnotated.toString());
@@ -566,15 +592,15 @@ public class OpenAPIPropertyBeanValidationExtension {
 
     private static boolean isTemporalType(Schema<?> schema) {
         return (
-                Constants.TYPE_STRING.equals(schema.getType()) &&
-                    (Constants.FORMAT_TYPE_DATE.equals(schema.getFormat())
+            Constants.TYPE_STRING.equals(schema.getType()) &&
+                (Constants.FORMAT_TYPE_DATE.equals(schema.getFormat())
                     || Constants.FORMAT_TYPE_DATE_TIME.equals(schema.getFormat()))
-                )
-                || Constants.$REF_LOCAL_TIME.equals(schema.get$ref())
-                || Constants.$REF_OFFSET_TIME.equals(schema.get$ref())
-                || Constants.$REF_YEAR_MONTH.equals(schema.get$ref())
-                || Constants.$REF_MONTH_DAY.equals(schema.get$ref())
-                || Constants.$REF_YEAR.equals(schema.get$ref());
+        )
+            || Constants.$REF_LOCAL_TIME.equals(schema.get$ref())
+            || Constants.$REF_OFFSET_TIME.equals(schema.get$ref())
+            || Constants.$REF_YEAR_MONTH.equals(schema.get$ref())
+            || Constants.$REF_MONTH_DAY.equals(schema.get$ref())
+            || Constants.$REF_YEAR.equals(schema.get$ref());
     }
 
     private static Field getFieldForTypeByPropertyName(Class<?> type, String propertyName) {
@@ -606,8 +632,9 @@ public class OpenAPIPropertyBeanValidationExtension {
         return fieldCandidates[0];
     }
 
-    private static void addSchemaDescription(String bundleKey, Schema<?> schema, String... replacement){
-        var bundle = ResourceBundle.getBundle(io.domainlifecycles.swagger.v3.resource.ResourceBundle.class.getName(), Locale.getDefault());
+    private static void addSchemaDescription(String bundleKey, Schema<?> schema, String... replacement) {
+        var bundle = ResourceBundle.getBundle(io.domainlifecycles.swagger.v3.resource.ResourceBundle.class.getName(),
+            Locale.getDefault());
         if (schema.getDescription() == null) {
             schema.setDescription(String.format(bundle.getString(bundleKey), (Object[]) replacement));
         } else {

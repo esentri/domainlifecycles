@@ -46,7 +46,7 @@ dependencies {
 
     testImplementation "com.h2database:h2:${dbVersion}"
     flywayMigration "com.h2database:h2:${dbVersion}"
-    jooqGenerator   "com.h2database:h2:${dbVersion}"
+    jooqGenerator "com.h2database:h2:${dbVersion}"
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }
@@ -58,14 +58,14 @@ bootJar {
 // ----------------------------------------------------------
 
 flyway {
-    configurations  = ['flywayMigration']
-    url             = dbUrl
-    user            = dbUsername
-    password        = dbPassword
-    defaultSchema   = 'TEST_DOMAIN_FLYWAY'
-    createSchemas   = true
-    encoding        = 'UTF-8'
-    locations       = ["filesystem:./${dbMigration}"]
+    configurations = ['flywayMigration']
+    url = dbUrl
+    user = dbUsername
+    password = dbPassword
+    defaultSchema = 'TEST_DOMAIN_FLYWAY'
+    createSchemas = true
+    encoding = 'UTF-8'
+    locations = ["filesystem:./${dbMigration}"]
 }
 
 // ----------------------------------------------------------
@@ -79,9 +79,9 @@ jooq {
                 // Link: https://www.jooq.org/doc/latest/manual/code-generation/codegen-advanced/codegen-config-jdbc/
                 //
                 jdbc {
-                    driver   = dbDriver
-                    url      = flyway.url
-                    user     = dbUsername
+                    driver = dbDriver
+                    url = flyway.url
+                    user = dbUsername
                     password = dbPassword
                 }
 
@@ -174,4 +174,10 @@ tasks.named('generateJooq').configure {
 
     // make jOOQ task participate in incremental builds (and build caching)
     allInputsDeclared = true
+}
+
+// ----------------------------------------------------------
+
+tasks.withType(Checkstyle) {
+    enabled = false
 }

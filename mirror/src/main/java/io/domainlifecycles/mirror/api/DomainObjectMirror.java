@@ -43,18 +43,22 @@ import java.util.List;
  * @author Mario Herb
  */
 public interface DomainObjectMirror extends DomainTypeMirror {
+
     /**
-     * Return a list mirrored fields of the mirrored DomainObject (all fields that are not in the category of other kinds of references).
+     * @return a list mirrored fields of the mirrored DomainObject (all fields that are not in the category of other
+     * kinds of references).
      */
     List<FieldMirror> getBasicFields();
+
     /**
-     * Return a list mirrors for value references (references of {@link ValueObject}, Enums or {@link Identity}) of the mirrored DomainObject.
+     * @return a list mirrors for value references (references of {@link ValueObject}, Enums or {@link Identity}) of
+     * the mirrored DomainObject.
      */
     List<ValueReferenceMirror> getValueReferences();
 
     /**
-     * Returns a {@link ValueReferenceMirror} for the reference with the given name.
+     * @param name the name to return a ValueReferenceMirror for
+     * @return a {@link ValueReferenceMirror} for the reference with the given name.
      */
     ValueReferenceMirror valueReferenceByName(String name);
-
 }

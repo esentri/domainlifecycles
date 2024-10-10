@@ -44,26 +44,30 @@ public class ResourceBundle_de_DE extends ListResourceBundle {
     @Override
     protected Object[][] getContents() {
         return new Object[][]{
-            { "beanValidationNotEmpty", "Der Wert darf nicht leer sein!" },
-            { "beanValidationNotBlank", "Der Wert darf nicht leer sein und darf nicht ausschließlich aus Leerzeichen bestehen!" },
-            { "beanValidationEmail", "Der Wert muss einer validen Email-Adresse entsprechen!" },
-            { "beanValidationPattern", "Der Wert muss dem angegebenen regulären Ausdruck entsprechen!" },
-            { "beanValidationSizeMin", "Die Länge muss größer oder gleich %s sein!" },
-            { "beanValidationSizeMax", "Die Länge muss kleiner oder gleich %s sein!" },
-            { "beanValidationDecimalMin", "Der Wert muss größer sein als %s!" },
-            { "beanValidationDecimalMinInclusive", "Der Wert muss größer oder gleich sein als %s!" },
-            { "beanValidationDecimalMax", "Der Wert muss kleiner sein als %s!" },
-            { "beanValidationDecimalMaxInclusive", "Der Wert muss kleiner oder gleich sein als %s!" },
-            { "beanValidationNegative", "Der Wert muss negativ sein!" },
-            { "beanValidationPositive", "Der Wert muss positiv sein!" },
-            { "beanValidationNegativeOrZero", "Der Wert muss negativ oder gleich Null sein!" },
-            { "beanValidationPositiveOrZero", "Der Wert muss positiv oder gleich Null sein!" },
-            { "beanValidationDigitsInteger", "Der Wert darf höchstens aus %s Ziffern bestehen!" },
-            { "beanValidationDigitsIntegerFraction", "Der Wert darf höchstens aus %s Ziffern vor und höchstens aus %s Ziffern nach dem Dezimalpunkt bestehen!" },
-            { "beanValidationPast", "Der Wert muss in der Vergangenheit liegen!" },
-            { "beanValidationFuture", "Der Wert muss in der Zukunft liegen!" },
-            { "beanValidationPastOrPresent", "Der Wert muss in der Vergangenheit liegen oder dem aktuellen Zeitpunkt entsprechen!" },
-            { "beanValidationFutureOrPresent", "Der Wert muss in der Zukunft liegen oder dem aktuellen Zeitpunkt entsprechen!" },
+            {"beanValidationNotEmpty", "Der Wert darf nicht leer sein!"},
+            {"beanValidationNotBlank", "Der Wert darf nicht leer sein und darf nicht ausschließlich aus Leerzeichen " +
+                "bestehen!"},
+            {"beanValidationEmail", "Der Wert muss einer validen Email-Adresse entsprechen!"},
+            {"beanValidationPattern", "Der Wert muss dem angegebenen regulären Ausdruck entsprechen!"},
+            {"beanValidationSizeMin", "Die Länge muss größer oder gleich %s sein!"},
+            {"beanValidationSizeMax", "Die Länge muss kleiner oder gleich %s sein!"},
+            {"beanValidationDecimalMin", "Der Wert muss größer sein als %s!"},
+            {"beanValidationDecimalMinInclusive", "Der Wert muss größer oder gleich sein als %s!"},
+            {"beanValidationDecimalMax", "Der Wert muss kleiner sein als %s!"},
+            {"beanValidationDecimalMaxInclusive", "Der Wert muss kleiner oder gleich sein als %s!"},
+            {"beanValidationNegative", "Der Wert muss negativ sein!"},
+            {"beanValidationPositive", "Der Wert muss positiv sein!"},
+            {"beanValidationNegativeOrZero", "Der Wert muss negativ oder gleich Null sein!"},
+            {"beanValidationPositiveOrZero", "Der Wert muss positiv oder gleich Null sein!"},
+            {"beanValidationDigitsInteger", "Der Wert darf höchstens aus %s Ziffern bestehen!"},
+            {"beanValidationDigitsIntegerFraction", "Der Wert darf höchstens aus %s Ziffern vor und höchstens aus %s " +
+                "Ziffern nach dem Dezimalpunkt bestehen!"},
+            {"beanValidationPast", "Der Wert muss in der Vergangenheit liegen!"},
+            {"beanValidationFuture", "Der Wert muss in der Zukunft liegen!"},
+            {"beanValidationPastOrPresent", "Der Wert muss in der Vergangenheit liegen oder dem aktuellen Zeitpunkt " +
+                "entsprechen!"},
+            {"beanValidationFutureOrPresent", "Der Wert muss in der Zukunft liegen oder dem aktuellen Zeitpunkt " +
+                "entsprechen!"},
         };
     }
 }

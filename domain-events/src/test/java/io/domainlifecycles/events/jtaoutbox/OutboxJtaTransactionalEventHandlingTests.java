@@ -67,7 +67,7 @@ public class OutboxJtaTransactionalEventHandlingTests {
 
 
     @BeforeAll
-    public static void init(){
+    public static void init() {
         Logger rootLogger =
             (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         rootLogger.setLevel(Level.DEBUG);
@@ -102,7 +102,7 @@ public class OutboxJtaTransactionalEventHandlingTests {
         config.outboxPoller.setPollingPeriodMilliseconds(1000);
     }
 
-    private MockOutboxEntry outboxContainsEventWithStatus(DomainEvent domainEvent){
+    private MockOutboxEntry outboxContainsEventWithStatus(DomainEvent domainEvent) {
         return transactionalOutbox.entries
             .stream()
             .filter(entry -> entry.domainEvent.equals(domainEvent) && entry.processingResult != null)
@@ -110,7 +110,7 @@ public class OutboxJtaTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationCommit() throws Exception{
+    public void testIntegrationCommit() throws Exception {
         userTransactionManager.begin();
         //when
         var evt = new ADomainEvent("TestCommit");
@@ -138,7 +138,7 @@ public class OutboxJtaTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationUnreceivedCommit() throws Exception{
+    public void testIntegrationUnreceivedCommit() throws Exception {
         userTransactionManager.begin();
         //when
         var evt = new UnreceivedDomainEvent("TestUnReceivedCommit");
@@ -190,7 +190,7 @@ public class OutboxJtaTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationAggregateDomainEventCommit() throws Exception{
+    public void testIntegrationAggregateDomainEventCommit() throws Exception {
         //when
         userTransactionManager.begin();
         var evt = new AnAggregateDomainEvent("TestAggregateDomainEventCommit");
@@ -216,7 +216,7 @@ public class OutboxJtaTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationAggregateDomainEventRollbackExceptionOnHandler() throws Exception{
+    public void testIntegrationAggregateDomainEventRollbackExceptionOnHandler() throws Exception {
         //when
         userTransactionManager.begin();
         var evt = new AnAggregateDomainEvent("TestAggregateDomainWithException");
@@ -242,7 +242,7 @@ public class OutboxJtaTransactionalEventHandlingTests {
     }
 
     @Test
-    public void testIntegrationDomainServiceExceptionRollback() throws Exception{
+    public void testIntegrationDomainServiceExceptionRollback() throws Exception {
         //when
         userTransactionManager.begin();
         var evt = new ADomainEvent("TestDomainServiceRollback");

@@ -31,4 +31,5 @@ import lombok.Builder;
 import io.domainlifecycles.domain.types.ValueObject;
 
 @Builder(setterPrefix = "set")
-public record VoLevelOne(VoLevelTwoA first, VoLevelTwoA second, VoLevelTwoB third) implements ValueObject {}
+public record VoLevelOne(VoLevelTwoA first, VoLevelTwoA second, VoLevelTwoB third) implements ValueObject {
+}

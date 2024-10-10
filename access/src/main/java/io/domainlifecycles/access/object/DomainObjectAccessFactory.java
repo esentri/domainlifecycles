@@ -37,7 +37,8 @@ import io.domainlifecycles.domain.types.internal.DomainObject;
 public interface DomainObjectAccessFactory {
 
     /**
-     * Return a new {@link DynamicDomainObjectAccessor} instance
+     * @param domainObject DomainObject to return an accessor instance for
+     * @return a new {@link DynamicDomainObjectAccessor} instance
      */
     DynamicDomainObjectAccessor accessorFor(DomainObject domainObject);
 }

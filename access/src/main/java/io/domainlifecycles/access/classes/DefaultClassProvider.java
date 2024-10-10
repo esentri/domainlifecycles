@@ -30,11 +30,12 @@ package io.domainlifecycles.access.classes;
 import io.domainlifecycles.access.exception.DLCAccessException;
 
 /**
- * Simple implementation to get {@link Class} instances by their full qualified className also providing primitive support.
+ * Simple implementation to get {@link Class} instances by their full qualified className also providing primitive
+ * support.
  *
  * @author Mario Herb
  */
-public class DefaultClassProvider implements ClassProvider{
+public class DefaultClassProvider implements ClassProvider {
 
     /**
      * {@inheritDoc}
@@ -62,7 +63,7 @@ public class DefaultClassProvider implements ClassProvider{
                 try {
                     return Class.forName(className);
                 } catch (ClassNotFoundException ex) {
-                    throw DLCAccessException.fail("Class '%s' could not be found",ex, className);
+                    throw DLCAccessException.fail("Class '%s' could not be found", ex, className);
                 }
         }
     }

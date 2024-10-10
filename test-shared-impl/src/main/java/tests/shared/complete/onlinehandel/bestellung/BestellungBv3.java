@@ -107,11 +107,12 @@ public class BestellungBv3 extends AggregateRootBase<BestellungIdBv3> {
         this.kundennummer = kundennummer;
     }
 
-    private void calculateGesamtPreis(){
+    private void calculateGesamtPreis() {
         var gesamtPreisBetrag = BigDecimal.ZERO;
         var waehrung = bestellPositionen.get(0).getStueckPreis().waehrung();
-        for(BestellPositionBv3 p : bestellPositionen){
-            gesamtPreisBetrag = gesamtPreisBetrag.add(p.getStueckPreis().betrag().multiply(BigDecimal.valueOf(p.getStueckzahl())));
+        for (BestellPositionBv3 p : bestellPositionen) {
+            gesamtPreisBetrag = gesamtPreisBetrag.add(
+                p.getStueckPreis().betrag().multiply(BigDecimal.valueOf(p.getStueckzahl())));
         }
         this.gesamtPreis = new PreisBv3(waehrung, gesamtPreisBetrag);
     }
@@ -120,20 +121,20 @@ public class BestellungBv3 extends AggregateRootBase<BestellungIdBv3> {
         this.bestellStatus = bestellStatus;
     }
 
-    public void addBestellKommentar(BestellKommentarBv3 kommentar){
+    public void addBestellKommentar(BestellKommentarBv3 kommentar) {
         this.bestellKommentare.add(kommentar);
     }
 
-    public void removeBestellKommentar(BestellKommentarBv3 kommentar){
+    public void removeBestellKommentar(BestellKommentarBv3 kommentar) {
         this.bestellKommentare.remove(kommentar);
     }
 
-    public void addBestellPosition(BestellPositionBv3 position){
+    public void addBestellPosition(BestellPositionBv3 position) {
         this.bestellPositionen.add(position);
         calculateGesamtPreis();
     }
 
-    public void removeBestellPosition(BestellPositionBv3 position){
+    public void removeBestellPosition(BestellPositionBv3 position) {
         this.bestellPositionen.remove(position);
         calculateGesamtPreis();
     }
@@ -149,7 +150,8 @@ public class BestellungBv3 extends AggregateRootBase<BestellungIdBv3> {
             .map(p -> p.getStueckPreis())
             .filter(p -> erstePosition.getStueckPreis().waehrung().equals(p.waehrung()))
             .count();
-        DomainAssertions.isTrue(positionenMitGleicherWaehrung==bestellPositionen.size(), "Alle Bestellpositionen müssen dieselbe Währung haben!");
+        DomainAssertions.isTrue(positionenMitGleicherWaehrung == bestellPositionen.size(),
+            "Alle Bestellpositionen müssen dieselbe Währung haben!");
     }
 
     public void setAktionsCodes(List<AktionsCodeBv3> aktionsCodes) {
@@ -157,7 +159,7 @@ public class BestellungBv3 extends AggregateRootBase<BestellungIdBv3> {
     }
 
     @Publishes(domainEventTypes = AuslieferungGestartet.class)
-    public void starteLieferung(){
+    public void starteLieferung() {
         getBestellStatus().setStatusAenderungAm(LocalDateTime.now());
         getBestellStatus().setStatusCode(BestellStatusCodeEnumBv3.ZUSTELLUNG_LAEUFT);
         AuslieferungGestartet event = new AuslieferungGestartet(this, false);

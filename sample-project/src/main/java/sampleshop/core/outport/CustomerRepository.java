@@ -49,7 +49,7 @@ public interface CustomerRepository extends Repository<Customer.CustomerId, Cust
     /**
      * Stores an new {@code Customer} into this repository.
      *
-     * @param entity    customer to to be stored
+     * @param entity customer to to be stored
      * @return updated {@code entity} instance
      */
     @Override
@@ -58,7 +58,7 @@ public interface CustomerRepository extends Repository<Customer.CustomerId, Cust
     /**
      * Updates an existent {@code Customer} in this repository.
      *
-     * @param entity    customer to to be updated
+     * @param entity customer to to be updated
      * @return updated {@link Customer} instance
      */
     @Override
@@ -67,8 +67,8 @@ public interface CustomerRepository extends Repository<Customer.CustomerId, Cust
     /**
      * Finds {@code Customer}s paginated in this repository.
      *
-     * @param offset            pagination offset
-     * @param limit             pagination limit
+     * @param offset pagination offset
+     * @param limit  pagination limit
      * @return Stream of {@link Customer} instances
      */
     Stream<Customer> find(int offset, int limit);

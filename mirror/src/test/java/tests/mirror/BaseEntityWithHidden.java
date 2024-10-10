@@ -36,26 +36,36 @@ import java.util.Optional;
 
 public class BaseEntityWithHidden<TEST> extends EntityBase<BaseEntityWithHidden.HiddenId> {
 
-    public record HiddenId(Long value) implements Identity<Long>{}
+    public record HiddenId(Long value) implements Identity<Long> {
+    }
+
     private String hiddenField = "hidden";
 
     private TEST inheritedGeneric;
 
     private List<TEST> inheritedGenericList;
 
-    public String hidden(){
+    public String hidden() {
         return hiddenField;
     }
 
-    public TEST showTestNotOverridden(TEST test){return null;}
-
-    public TEST showTestOverridden(TEST test){return null;}
-
-    public Optional<? extends TEST> showTestNotOverriddenOptionalWildcardUpperBound(Optional<? extends TEST> test){return null;}
-
-    public Optional<TEST[]> deliverArray(){
+    public TEST showTestNotOverridden(TEST test) {
         return null;
-    };
+    }
+
+    public TEST showTestOverridden(TEST test) {
+        return null;
+    }
+
+    public Optional<? extends TEST> showTestNotOverriddenOptionalWildcardUpperBound(Optional<? extends TEST> test) {
+        return null;
+    }
+
+    public Optional<TEST[]> deliverArray() {
+        return null;
+    }
+
+    ;
 
     @Override
     public void validate() {

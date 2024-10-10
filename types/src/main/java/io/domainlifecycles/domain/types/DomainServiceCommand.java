@@ -30,6 +30,7 @@ package io.domainlifecycles.domain.types;
 /**
  * This is the marker interface to represent DomainCommands that trigger a DomainService.
  *
+ * @param <S> the type of DomainService
  * @author Mario Herb
  */
 public interface DomainServiceCommand<S extends DomainService> extends DomainCommand {

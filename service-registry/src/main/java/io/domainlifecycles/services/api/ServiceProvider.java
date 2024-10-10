@@ -37,7 +37,8 @@ import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.domain.types.ServiceKind;
 
 /**
- * The ServiceProvider interface represents a service provider that is responsible for providing instances of various types of services.
+ * The ServiceProvider interface represents a service provider that is responsible for providing instances of various
+ * types of services.
  * It allows retrieving instances of ApplicationService, Repository, and DomainService based on their type name.
  *
  * @author Mario Herb
@@ -55,10 +56,12 @@ public interface ServiceProvider {
     /**
      * Retrieves an instance of {@link Repository} based on the given type name.
      *
+     * @param <A>      type of AggregateRoot
+     * @param <ID>     type of AggregateRoot's Identity
      * @param typeName The full qualified name of the type representing the Repository.
      * @return An instance of Repository based on the given type name.
      */
-    <ID extends Identity<?>, A extends AggregateRoot<ID>>Repository<ID, A> getRepositoryInstance(String typeName);
+    <ID extends Identity<?>, A extends AggregateRoot<ID>> Repository<ID, A> getRepositoryInstance(String typeName);
 
     /**
      * Retrieves an instance of {@link DomainService} based on the given type name.
