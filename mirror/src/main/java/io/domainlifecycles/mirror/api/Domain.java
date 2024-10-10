@@ -179,6 +179,7 @@ public class Domain {
 
     /**
      * Returns the {@link ApplicationServiceMirror} for the given ServiceKind instance.
+     * TODO: implement or remove, not functional right now
      */
     @SuppressWarnings("unchecked")
     public static <AS extends ApplicationServiceMirror>  AS applicationServiceMirrorFor(ServiceKind serviceKind){
