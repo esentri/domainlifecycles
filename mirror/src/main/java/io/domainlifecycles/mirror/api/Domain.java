@@ -79,6 +79,15 @@ public class Domain {
     }
 
     /**
+     * Returns the {@link AggregateRootMirror} for the full qualified AggregateRoot type name.
+     */
+    @SuppressWarnings("unchecked")
+    public static <A extends AggregateRootMirror>  A aggregateRootMirrorFor(String aggregateRootTypeName){
+        return (A)typeMirror(aggregateRootTypeName)
+            .orElseThrow(()-> MirrorException.fail("No AggregateRootMirror found for %s", aggregateRootTypeName));
+    }
+
+    /**
      * Returns the {@link EntityMirror} for the given Entity instance.
      */
     @SuppressWarnings("unchecked")
@@ -142,7 +151,7 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link ServiceKindMirror} for the given full qualified ApplicationService type name.
+     * Returns the {@link ServiceKindMirror} for the given full qualified ServiceKind type name.
      */
     @SuppressWarnings("unchecked")
     public static <AS extends ServiceKindMirror>  AS serviceKindMirrorFor(String serviceKindTypeName){
