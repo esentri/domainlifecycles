@@ -178,16 +178,6 @@ public class Domain {
     }
 
     /**
-     * Returns the {@link ApplicationServiceMirror} for the given ServiceKind instance.
-     * TODO: implement or remove, not functional right now
-     */
-    @SuppressWarnings("unchecked")
-    public static <AS extends ApplicationServiceMirror>  AS applicationServiceMirrorFor(ServiceKind serviceKind){
-        return (AS)typeMirror(serviceKind.getClass().getName())
-            .orElseThrow(()-> MirrorException.fail("No ApplicationServiceMirror found for %s", serviceKind));
-    }
-
-    /**
      * Returns the {@link RepositoryMirror} for the given Repository instance for a given {@link AggregateRootMirror}.
      */
     @SuppressWarnings("unchecked")
