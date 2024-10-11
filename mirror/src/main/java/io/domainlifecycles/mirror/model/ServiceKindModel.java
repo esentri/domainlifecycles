@@ -64,6 +64,7 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
     }
 
     @Override
+    @JsonIgnore
     public List<ServiceKindMirror> getReferencedServiceKinds() {
         return allFields.stream()
             .filter(fieldMirror -> DomainType.SERVICE_KIND.equals(fieldMirror.getType().getDomainType())
@@ -76,6 +77,7 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
     }
 
     @Override
+    @JsonIgnore
     public List<RepositoryMirror> getReferencedRepositories() {
         return allFields.stream()
             .filter(fieldMirror -> DomainType.REPOSITORY.equals(fieldMirror.getType().getDomainType()))
@@ -83,6 +85,7 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
     }
 
     @Override
+    @JsonIgnore
     public List<DomainServiceMirror> getReferencedDomainServices() {
         return allFields.stream()
             .filter(fieldMirror -> DomainType.DOMAIN_SERVICE.equals(fieldMirror.getType().getDomainType()))
@@ -90,6 +93,7 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
     }
 
     @Override
+    @JsonIgnore
     public List<OutboundServiceMirror> getReferencedOutboundServices() {
         return allFields.stream()
             .filter(fieldMirror -> DomainType.OUTBOUND_SERVICE.equals(fieldMirror.getType().getDomainType()))
@@ -97,6 +101,7 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
     }
 
     @Override
+    @JsonIgnore
     public List<QueryClientMirror> getReferencedQueryClients() {
         return allFields.stream()
             .filter(fieldMirror -> DomainType.QUERY_CLIENT.equals(fieldMirror.getType().getDomainType()))
@@ -104,6 +109,7 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
     }
 
     @Override
+    @JsonIgnore
     public List<ApplicationServiceMirror> getReferencedApplicationServices() {
         return allFields.stream()
             .filter(fieldMirror -> DomainType.APPLICATION_SERVICE.equals(fieldMirror.getType().getDomainType()))
