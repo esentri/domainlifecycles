@@ -5,6 +5,7 @@ import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.OutboundService;
 import io.domainlifecycles.domain.types.QueryClient;
 import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.services.Services;
@@ -15,6 +16,7 @@ import sample.TestDomainService;
 import sample.TestOutboundService;
 import sample.TestQueryClient;
 import sample.TestRepository;
+import sample.TestServiceKind;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ServiceTest {
@@ -36,6 +38,7 @@ class ServiceTest {
         services.registerServiceKindInstance(new TestRepository());
         services.registerServiceKindInstance(new TestQueryClient());
         services.registerServiceKindInstance(new TestOutboundService());
+        services.registerServiceKindInstance(new TestServiceKind());
 
         return services;
     }
@@ -83,5 +86,14 @@ class ServiceTest {
 
         assertThat(service).isNotNull();
         assertThat(service).isInstanceOf(TestOutboundService.class);
+    }
+
+    @Test
+    void testGetServiceKindOk() {
+
+        ServiceKind service = provider.getServiceKindInstance("sample.TestServiceKind");
+
+        assertThat(service).isNotNull();
+        assertThat(service).isInstanceOf(ServiceKind.class);
     }
 }

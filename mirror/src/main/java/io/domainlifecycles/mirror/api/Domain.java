@@ -27,6 +27,7 @@
 
 package io.domainlifecycles.mirror.api;
 
+import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.domain.types.OutboundService;
 import io.domainlifecycles.domain.types.QueryClient;
 import io.domainlifecycles.domain.types.ServiceKind;
@@ -114,6 +115,33 @@ public class Domain {
     public static <E extends EntityMirror> E entityMirrorFor(String entityTypeName) {
         return (E) typeMirror(entityTypeName)
             .orElseThrow(() -> MirrorException.fail("No EntityMirror found for %s", entityTypeName));
+    }
+
+    /**
+     * @param <E>              type of EntityMirror
+     * @param identityTypeName name of identity type
+     * @return the {@link EntityMirror} for the given full qualified type name of the Identity type.
+     */
+    @SuppressWarnings("unchecked")
+    public static <E extends EntityMirror> E entityMirrorForIdentityTypeName(String identityTypeName) {
+        if (!initialized) {
+            throw MirrorException.fail("Domain was not initialized!");
+        }
+
+        return (E) initializedDomain.allTypeMirrors()
+            .values()
+            .stream()
+            .filter(dm -> {
+                if (dm instanceof EntityMirror) {
+                    var em = (EntityMirror) dm;
+                    if (em.getIdentityField().isPresent()) {
+                        return em.getIdentityField().get().getType().getTypeName().equals(identityTypeName);
+                    }
+                }
+                return false;
+            })
+            .findFirst()
+            .orElseThrow(() -> MirrorException.fail("No EntityMirror found for identity type %s", identityTypeName));
     }
 
     /**
@@ -251,30 +279,14 @@ public class Domain {
     }
 
     /**
-     * @param <E>              type of EntityMirror
-     * @param identityTypeName name of identity type
-     * @return the {@link EntityMirror} for the given full qualified type name of the Identity type.
+     * @param <I>              type of IdentityMirror
+     * @param identity the identity to return the mirror for
+     * @return the {@link IdentityMirror} for the given full qualified Identity type name.
      */
     @SuppressWarnings("unchecked")
-    public static <E extends EntityMirror> E entityMirrorForIdentityTypeName(String identityTypeName) {
-        if (!initialized) {
-            throw MirrorException.fail("Domain was not initialized!");
-        }
-
-        return (E) initializedDomain.allTypeMirrors()
-            .values()
-            .stream()
-            .filter(dm -> {
-                if (dm instanceof EntityMirror) {
-                    var em = (EntityMirror) dm;
-                    if (em.getIdentityField().isPresent()) {
-                        return em.getIdentityField().get().getType().getTypeName().equals(identityTypeName);
-                    }
-                }
-                return false;
-            })
-            .findFirst()
-            .orElseThrow(() -> MirrorException.fail("No EntityMirror found for identity type %s", identityTypeName));
+    public static <I extends IdentityMirror> I identityMirrorFor(Identity<?> identity) {
+        return (I) typeMirror(identity.getClass().getName())
+            .orElseThrow(() -> MirrorException.fail("No IdentityMirror found for %s", identity.getClass().getName()));
     }
 
     /**

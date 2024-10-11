@@ -1,5 +1,6 @@
 package io.domainlifecycles.mirror.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
 import io.domainlifecycles.mirror.api.Domain;
@@ -17,7 +18,7 @@ import io.domainlifecycles.mirror.exception.MirrorException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class ServiceKindModel extends DomainTypeModel implements ServiceKindMirror {
+public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirror {
 
     public ServiceKindModel(@JsonProperty("typeName") String typeName,
                             @JsonProperty("isAbstract") boolean isAbstract,
@@ -57,7 +58,10 @@ public abstract class ServiceKindModel extends DomainTypeModel implements Servic
     }
 
     @Override
-    public abstract DomainType getDomainType();
+    @JsonIgnore
+    public DomainType getDomainType() {
+        return DomainType.SERVICE_KIND;
+    }
 
     @Override
     public List<ServiceKindMirror> getReferencedServiceKinds() {
