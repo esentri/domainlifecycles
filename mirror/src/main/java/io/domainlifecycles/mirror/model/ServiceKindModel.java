@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirror {
 
     public ServiceKindModel(@JsonProperty("typeName") String typeName,
-                            @JsonProperty("isAbstract") boolean isAbstract,
+                            @JsonProperty("abstract") boolean isAbstract,
                             @JsonProperty("allFields") List<FieldMirror> allFields,
                             @JsonProperty("methods") List<MethodMirror> methods,
                             @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
