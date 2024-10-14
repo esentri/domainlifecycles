@@ -27,6 +27,10 @@
 
 package io.domainlifecycles.mirror.api;
 
+import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.domain.types.OutboundService;
+import io.domainlifecycles.domain.types.QueryClient;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.mirror.exception.MirrorException;
 import io.domainlifecycles.mirror.resolver.DefaultEmptyGenericTypeResolver;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
@@ -81,6 +85,17 @@ public class Domain {
     }
 
     /**
+     * @param <A> type of AggregateRootMirror
+     * @param aggregateRootTypeName full qualified name of the AggregateRoot type
+     * @return  the {@link AggregateRootMirror} for the full qualified AggregateRoot type name.
+     */
+    @SuppressWarnings("unchecked")
+    public static <A extends AggregateRootMirror>  A aggregateRootMirrorFor(String aggregateRootTypeName){
+        return (A)typeMirror(aggregateRootTypeName)
+            .orElseThrow(()-> MirrorException.fail("No AggregateRootMirror found for %s", aggregateRootTypeName));
+    }
+
+    /**
      * @param <E>    type of EntityMirror
      * @param entity the entity to return a mirror for
      * @return the {@link EntityMirror} for the given Entity instance.
@@ -100,6 +115,33 @@ public class Domain {
     public static <E extends EntityMirror> E entityMirrorFor(String entityTypeName) {
         return (E) typeMirror(entityTypeName)
             .orElseThrow(() -> MirrorException.fail("No EntityMirror found for %s", entityTypeName));
+    }
+
+    /**
+     * @param <E>              type of EntityMirror
+     * @param identityTypeName name of identity type
+     * @return the {@link EntityMirror} for the given full qualified type name of the Identity type.
+     */
+    @SuppressWarnings("unchecked")
+    public static <E extends EntityMirror> E entityMirrorForIdentityTypeName(String identityTypeName) {
+        if (!initialized) {
+            throw MirrorException.fail("Domain was not initialized!");
+        }
+
+        return (E) initializedDomain.allTypeMirrors()
+            .values()
+            .stream()
+            .filter(dm -> {
+                if (dm instanceof EntityMirror) {
+                    var em = (EntityMirror) dm;
+                    if (em.getIdentityField().isPresent()) {
+                        return em.getIdentityField().get().getType().getTypeName().equals(identityTypeName);
+                    }
+                }
+                return false;
+            })
+            .findFirst()
+            .orElseThrow(() -> MirrorException.fail("No EntityMirror found for identity type %s", identityTypeName));
     }
 
     /**
@@ -149,12 +191,34 @@ public class Domain {
     }
 
     /**
+     * @param <AS> type of ServiceKindMirror
+     * @param serviceKind  the ServiceKind to return a mirror for
+     * @return  the {@link ServiceKindMirror} for the given ServiceKind instance.
+     */
+    @SuppressWarnings("unchecked")
+    public static <AS extends ServiceKindMirror>  AS serviceKindMirrorFor(ServiceKind serviceKind){
+        return (AS)typeMirror(serviceKind.getClass().getName())
+            .orElseThrow(()-> MirrorException.fail("No ServiceKindMirror found for %s", serviceKind.getClass().getName()));
+    }
+
+    /**
+     * @param <AS> type of ServiceKindMirror
+     * @param serviceKindTypeName full qualified name of ServiceKind type
+     * @return the {@link ServiceKindMirror} for the given full qualified ServiceKind type name.
+     */
+    @SuppressWarnings("unchecked")
+    public static <AS extends ServiceKindMirror>  AS serviceKindMirrorFor(String serviceKindTypeName){
+        return (AS)typeMirror(serviceKindTypeName)
+            .orElseThrow(()-> MirrorException.fail("No ServiceKindMirror found for %s", serviceKindTypeName));
+    }
+
+    /**
      * @param <AS>               type of ApplicationServiceMirror
      * @param applicationService the ApplicationService to return the mirror for
      * @return the {@link ApplicationServiceMirror} for the given ApplicationService instance.
      */
     @SuppressWarnings("unchecked")
-    public static <AS extends ApplicationServiceMirror> AS domainServiceMirrorFor(ApplicationService applicationService) {
+    public static <AS extends ApplicationServiceMirror> AS applicationServiceMirrorFor(ApplicationService applicationService) {
         return (AS) typeMirror(applicationService.getClass().getName())
             .orElseThrow(() -> MirrorException.fail("No ApplicationServiceMirror found for %s",
                 applicationService.getClass().getName()));
@@ -215,30 +279,14 @@ public class Domain {
     }
 
     /**
-     * @param <E>              type of EntityMirror
-     * @param identityTypeName name of identity type
-     * @return the {@link EntityMirror} for the given full qualified type name of the Identity type.
+     * @param <I>              type of IdentityMirror
+     * @param identity the identity to return the mirror for
+     * @return the {@link IdentityMirror} for the given full qualified Identity type name.
      */
     @SuppressWarnings("unchecked")
-    public static <E extends EntityMirror> E entityMirrorForIdentityTypeName(String identityTypeName) {
-        if (!initialized) {
-            throw MirrorException.fail("Domain was not initialized!");
-        }
-
-        return (E) initializedDomain.allTypeMirrors()
-            .values()
-            .stream()
-            .filter(dm -> {
-                if (dm instanceof EntityMirror) {
-                    var em = (EntityMirror) dm;
-                    if (em.getIdentityField().isPresent()) {
-                        return em.getIdentityField().get().getType().getTypeName().equals(identityTypeName);
-                    }
-                }
-                return false;
-            })
-            .findFirst()
-            .orElseThrow(() -> MirrorException.fail("No EntityMirror found for identity type %s", identityTypeName));
+    public static <I extends IdentityMirror> I identityMirrorFor(Identity<?> identity) {
+        return (I) typeMirror(identity.getClass().getName())
+            .orElseThrow(() -> MirrorException.fail("No IdentityMirror found for %s", identity.getClass().getName()));
     }
 
     /**
@@ -273,6 +321,50 @@ public class Domain {
     public static <V extends ValueObjectMirror> V valueObjectMirrorFor(String valueObjectTypeName) {
         return (V) typeMirror(valueObjectTypeName)
             .orElseThrow(() -> MirrorException.fail("No ValueObjectMirror found for %s", valueObjectTypeName));
+    }
+
+    /**
+     * @param <V> type of OutboundServiceMirror
+     * @param outboundService the OutboundService to return the mirror for
+     * @return the {@link OutboundServiceMirror} for the given OutboundService instance.
+     */
+    @SuppressWarnings("unchecked")
+    public static <V extends OutboundServiceMirror>  V outboundServiceMirrorFor(OutboundService outboundService){
+        return (V)typeMirror(outboundService.getClass().getName())
+            .orElseThrow(()-> MirrorException.fail("No OutboundServiceMirror found for %s", outboundService.getClass().getName()));
+    }
+
+    /**
+     * @param <V>                 type of OutboundServiceMirror
+     * @param outboundServiceTypeName name of the OutboundService type
+     * @return the {@link OutboundServiceMirror} for the given full qualified OutboundService type name.
+     */
+    @SuppressWarnings("unchecked")
+    public static <V extends OutboundServiceMirror>  V outboundServiceMirrorFor(String outboundServiceTypeName){
+        return (V)typeMirror(outboundServiceTypeName)
+            .orElseThrow(()-> MirrorException.fail("No OutboundServiceMirror found for %s", outboundServiceTypeName));
+    }
+
+    /**
+     * @param <V> type of QueryClientMirror
+     * @param queryClient the QueryClient to return the mirror for
+     * @return the {@link QueryClientMirror} for the given QueryClient instance.
+     */
+    @SuppressWarnings("unchecked")
+    public static <V extends QueryClientMirror>  V queryClientMirrorFor(QueryClient<?> queryClient){
+        return (V)typeMirror(queryClient.getClass().getName())
+            .orElseThrow(()-> MirrorException.fail("No QueryClientMirror found for %s", queryClient.getClass().getName()));
+    }
+
+    /**
+     * @param <V>                 type of QueryClientMirror
+     * @param queryClientTypeName name of the QueryClient type
+     * @return the {@link QueryClientMirror} for the given full qualified QueryClient type name.
+     */
+    @SuppressWarnings("unchecked")
+    public static <V extends QueryClientMirror>  V queryClientMirrorFor(String queryClientTypeName){
+        return (V)typeMirror(queryClientTypeName)
+            .orElseThrow(()-> MirrorException.fail("No QueryClientMirror found for %s", queryClientTypeName));
     }
 
     /**

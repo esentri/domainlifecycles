@@ -44,5 +44,5 @@ package io.domainlifecycles.domain.types;
  * @see
  * <a href="https://enterprisecraftsmanship.com/posts/domain-vs-application-services/">ApplicationServices vs. DomainServices</a>
  */
-public interface DomainService {
+public interface DomainService extends ServiceKind {
 }

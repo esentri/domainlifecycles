@@ -52,18 +52,7 @@ import java.util.stream.Collectors;
  *
  * @author Mario Herb
  */
-public class DomainServiceModel extends DomainTypeModel implements DomainServiceMirror {
-    @JsonProperty
-    private final List<String> referencedRepositoryTypeNames;
-
-    @JsonProperty
-    private final List<String> referencedDomainServiceTypeNames;
-
-    @JsonProperty
-    private final List<String> referencedOutboundServiceTypeNames;
-
-    @JsonProperty
-    private final List<String> referencedQueryClientTypeNames;
+public class DomainServiceModel extends ServiceKindModel implements DomainServiceMirror {
 
     @JsonProperty
     private final List<String> domainServiceInterfaceTypeNames;
@@ -73,101 +62,13 @@ public class DomainServiceModel extends DomainTypeModel implements DomainService
                               @JsonProperty("abstract") boolean isAbstract,
                               @JsonProperty("allFields") List<FieldMirror> allFields,
                               @JsonProperty("methods") List<MethodMirror> methods,
-                              @JsonProperty("referencedRepositoryTypeNames") List<String> referencedRepositoryTypeNames,
-                              @JsonProperty("referencedDomainServiceTypeNames") List<String> referencedDomainServiceTypeNames,
-                              @JsonProperty("referencedOutboundServiceTypeNames") List<String> referencedOutboundServiceTypeNames,
-                              @JsonProperty("referencedQueryClientTypeNames") List<String> referencedQueryClientTypeNames,
                               @JsonProperty("domainServiceInterfaceTypeNames") List<String> domainServiceInterfaceTypeNames,
                               @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
                               @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
-        Objects.requireNonNull(referencedRepositoryTypeNames);
-        this.referencedRepositoryTypeNames = Collections.unmodifiableList(referencedRepositoryTypeNames);
         this.domainServiceInterfaceTypeNames = Collections.unmodifiableList(domainServiceInterfaceTypeNames);
-        this.referencedDomainServiceTypeNames = Collections.unmodifiableList(referencedDomainServiceTypeNames);
-        this.referencedOutboundServiceTypeNames = Collections.unmodifiableList(referencedOutboundServiceTypeNames);
-        this.referencedQueryClientTypeNames = Collections.unmodifiableList(referencedQueryClientTypeNames);
 
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @JsonIgnore
-    @Override
-    public List<RepositoryMirror> getReferencedRepositories() {
-        return referencedRepositoryTypeNames
-            .stream()
-            .map(n -> (RepositoryMirror) Domain.typeMirror(n).orElseThrow(
-                () -> MirrorException.fail("RepositoryMirror not found for '%s'", n)))
-            .collect(Collectors.toList());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @JsonIgnore
-    @Override
-    public List<DomainServiceMirror> getReferencedDomainServices() {
-        return referencedDomainServiceTypeNames
-            .stream()
-            .map(n -> (DomainServiceMirror) Domain.typeMirror(n).orElseThrow(
-                () -> MirrorException.fail("DomainServiceMirror not found for '%s'", n)))
-            .collect(Collectors.toList());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @JsonIgnore
-    @Override
-    public List<OutboundServiceMirror> getReferencedOutboundServices() {
-        return referencedOutboundServiceTypeNames
-            .stream()
-            .map(n -> (OutboundServiceMirror) Domain.typeMirror(n).orElseThrow(
-                () -> MirrorException.fail("OutboundServiceMirror not found for '%s'", n)))
-            .collect(Collectors.toList());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @JsonIgnore
-    @Override
-    public List<QueryClientMirror> getReferencedQueryClients() {
-        return referencedQueryClientTypeNames
-            .stream()
-            .map(n -> (QueryClientMirror) Domain.typeMirror(n).orElseThrow(
-                () -> MirrorException.fail("QueryClientMirror not found for '%s'", n)))
-            .collect(Collectors.toList());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean publishes(DomainEventMirror domainEvent) {
-        return methods.stream()
-            .anyMatch(m -> m.publishes(domainEvent));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean listensTo(DomainEventMirror domainEvent) {
-        return methods.stream()
-            .anyMatch(m -> m.listensTo(domainEvent));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean processes(DomainCommandMirror command) {
-        return methods.stream()
-            .anyMatch(m -> m.processes(command));
     }
 
     /**
@@ -194,11 +95,6 @@ public class DomainServiceModel extends DomainTypeModel implements DomainService
     @Override
     public String toString() {
         return "DomainServiceModel{" +
-            "referencedRepositoryTypeNames=" + referencedRepositoryTypeNames +
-            "referencedDomainServiceTypeNames=" + referencedDomainServiceTypeNames +
-            "referencedOutboundServiceTypeNames=" + referencedOutboundServiceTypeNames +
-            "referencedQueryClientTypeNames=" + referencedQueryClientTypeNames +
-            "referencedDomainServiceTypeNames=" + referencedDomainServiceTypeNames +
             ", domainServiceInterfaceTypeNames=" + domainServiceInterfaceTypeNames +
             "} " + super.toString();
     }
@@ -212,12 +108,7 @@ public class DomainServiceModel extends DomainTypeModel implements DomainService
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         DomainServiceModel that = (DomainServiceModel) o;
-        return referencedRepositoryTypeNames.equals(that.referencedRepositoryTypeNames)
-            && referencedDomainServiceTypeNames.equals(that.referencedDomainServiceTypeNames)
-            && referencedOutboundServiceTypeNames.equals(that.referencedOutboundServiceTypeNames)
-            && referencedQueryClientTypeNames.equals(that.referencedQueryClientTypeNames)
-            && domainServiceInterfaceTypeNames.equals(that.domainServiceInterfaceTypeNames)
-            ;
+        return domainServiceInterfaceTypeNames.equals(that.domainServiceInterfaceTypeNames);
     }
 
     /**
@@ -227,10 +118,6 @@ public class DomainServiceModel extends DomainTypeModel implements DomainService
     public int hashCode() {
         return Objects.hash(
             super.hashCode(),
-            referencedRepositoryTypeNames,
-            referencedDomainServiceTypeNames,
-            referencedOutboundServiceTypeNames,
-            referencedQueryClientTypeNames,
             domainServiceInterfaceTypeNames
         );
     }

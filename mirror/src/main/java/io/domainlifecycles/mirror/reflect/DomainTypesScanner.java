@@ -27,7 +27,9 @@
 
 package io.domainlifecycles.mirror.reflect;
 
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
 import io.domainlifecycles.domain.types.AggregateCommand;
 import io.domainlifecycles.domain.types.AggregateRoot;
@@ -87,6 +89,8 @@ public class DomainTypesScanner {
 
     private final List<Class<? extends OutboundService>> outboundServices;
 
+    private final List<Class<? extends ServiceKind>> serviceKinds;
+
 
     /**
      * Constructor
@@ -105,6 +109,7 @@ public class DomainTypesScanner {
         readModels = new ArrayList<>();
         queryClients = new ArrayList<>();
         outboundServices = new ArrayList<>();
+        serviceKinds = new ArrayList<>();
     }
 
     /**
@@ -219,6 +224,24 @@ public class DomainTypesScanner {
                             .toList()
                     );
 
+                    serviceKinds.addAll(
+                        scanResult.getClassesImplementing(ServiceKind.class)
+                            .stream()
+                            .filter(c -> !ServiceKind.class.getName().equals(c.getName())
+                                        && !ApplicationService.class.getName().equals(c.getName())
+                                        && !DomainService.class.getName().equals(c.getName())
+                                        && !OutboundService.class.getName().equals(c.getName())
+                                        && !QueryClient.class.getName().equals(c.getName())
+                                        && !Repository.class.getName().equals(c.getName()))
+                            .filter(c -> !(c.implementsInterface(ApplicationService.class))
+                                        && !(c.implementsInterface(DomainService.class))
+                                        && !(c.implementsInterface(OutboundService.class))
+                                        && !(c.implementsInterface(QueryClient.class))
+                                        && !(c.implementsInterface(Repository.class)))
+                            .map(r -> (Class<? extends ServiceKind>) r.loadClass())
+                            .toList()
+                    );
+
                 } catch (Throwable t) {
                     log.error("Scanning bounded context package '{}' failed!", pack);
                 }
@@ -324,5 +347,12 @@ public class DomainTypesScanner {
      */
     public List<Class<? extends OutboundService>> getScannedOutboundServices() {
         return outboundServices;
+    }
+
+    /**
+     * @return the list of scanned {@link ServiceKind} classes
+     */
+    public List<Class<? extends ServiceKind>> getScannedServiceKinds() {
+        return serviceKinds;
     }
 }

@@ -48,7 +48,7 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public class QueryClientModel extends DomainTypeModel implements QueryClientMirror {
+public class QueryClientModel extends ServiceKindModel implements QueryClientMirror {
 
     @JsonProperty
     private final String providedReadModelTypeName;
@@ -75,36 +75,8 @@ public class QueryClientModel extends DomainTypeModel implements QueryClientMirr
      * {@inheritDoc}
      */
     @Override
-    public boolean processes(DomainCommandMirror command) {
-        return methods.stream()
-            .anyMatch(m -> m.processes(command));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean publishes(DomainEventMirror domainEvent) {
-        return methods.stream()
-            .anyMatch(m -> m.publishes(domainEvent));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean listensTo(DomainEventMirror domainEvent) {
-        return methods.stream()
-            .anyMatch(m -> m.listensTo(domainEvent));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Optional<ReadModelMirror> getProvidedReadModel() {
         return Optional.ofNullable((ReadModelMirror) Domain.typeMirror(providedReadModelTypeName).orElse(null));
-
     }
 
     /**
@@ -143,7 +115,8 @@ public class QueryClientModel extends DomainTypeModel implements QueryClientMirr
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         QueryClientModel that = (QueryClientModel) o;
-        return providedReadModelTypeName.equals(that.providedReadModelTypeName) && queryClientInterfaceTypeNames.equals(
+        return providedReadModelTypeName.equals(that.providedReadModelTypeName)
+            && queryClientInterfaceTypeNames.equals(
             that.queryClientInterfaceTypeNames);
     }
 

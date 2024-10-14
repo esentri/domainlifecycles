@@ -39,7 +39,7 @@ import java.util.List;
  *
  * @author Mario Herb
  */
-public class OutboundServiceMirrorBuilder extends DomainTypeMirrorBuilder {
+public class OutboundServiceMirrorBuilder extends ServiceKindMirrorBuilder {
     private final Class<? extends OutboundService> outboundServiceClass;
 
     public OutboundServiceMirrorBuilder(Class<? extends OutboundService> outboundServiceClass) {

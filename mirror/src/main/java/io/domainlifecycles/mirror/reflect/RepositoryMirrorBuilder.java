@@ -45,7 +45,7 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public class RepositoryMirrorBuilder extends DomainTypeMirrorBuilder {
+public class RepositoryMirrorBuilder extends ServiceKindMirrorBuilder {
     private final Class<? extends Repository<?, ?>> repositoryClass;
 
     public RepositoryMirrorBuilder(Class<? extends Repository<?, ?>> repositoryClass) {
@@ -65,38 +65,10 @@ public class RepositoryMirrorBuilder extends DomainTypeMirrorBuilder {
             buildFields(),
             buildMethods(),
             getManagedAggregateType(repositoryClass).map(Class::getName).orElse(Object.class.getName()),
-            getReferencedOutboundServiceNames(),
-            getReferencedQueryClientNames(),
             repositoryInterfaceTypeNames(),
             buildInheritanceHierarchy(),
             buildInterfaceTypes()
         );
-    }
-
-    private List<String> getReferencedOutboundServiceNames() {
-        return JavaReflect
-            .fields(this.repositoryClass, MemberSelect.HIERARCHY)
-            .stream()
-            .filter(f -> isOutboundService(f.getType()))
-            .map(f -> f.getType().getName())
-            .toList();
-    }
-
-    private List<String> getReferencedQueryClientNames() {
-        return JavaReflect
-            .fields(this.repositoryClass, MemberSelect.HIERARCHY)
-            .stream()
-            .filter(f -> isQueryClient(f.getType()))
-            .map(f -> f.getType().getName())
-            .toList();
-    }
-
-    private boolean isOutboundService(Class<?> fieldClass) {
-        return OutboundService.class.isAssignableFrom(fieldClass);
-    }
-
-    private boolean isQueryClient(Class<?> fieldClass) {
-        return QueryClient.class.isAssignableFrom(fieldClass);
     }
 
     @SuppressWarnings("unchecked")

@@ -47,7 +47,7 @@ import java.util.List;
  *
  * @author Mario Herb
  */
-public class ApplicationServiceMirrorBuilder extends DomainTypeMirrorBuilder {
+public class ApplicationServiceMirrorBuilder extends ServiceKindMirrorBuilder {
     private final Class<? extends ApplicationService> applicationServiceClass;
 
     /**
@@ -71,66 +71,10 @@ public class ApplicationServiceMirrorBuilder extends DomainTypeMirrorBuilder {
             isAbstract(),
             buildFields(),
             buildMethods(),
-            getReferencedRepositoryNames(),
-            getReferencedDomainServiceNames(),
-            getReferencedOutboundServiceNames(),
-            getReferencedQueryClientNames(),
             applicationServiceInterfaceTypeNames(),
             buildInheritanceHierarchy(),
             buildInterfaceTypes()
         );
-    }
-
-    private List<String> getReferencedRepositoryNames() {
-        return JavaReflect
-            .fields(this.applicationServiceClass, MemberSelect.HIERARCHY)
-            .stream()
-            .filter(f -> isRepository(f.getType()))
-            .map(f -> f.getType().getName())
-            .toList();
-    }
-
-    private List<String> getReferencedDomainServiceNames() {
-        return JavaReflect
-            .fields(this.applicationServiceClass, MemberSelect.HIERARCHY)
-            .stream()
-            .filter(f -> isDomainService(f.getType()))
-            .map(f -> f.getType().getName())
-            .toList();
-    }
-
-    private List<String> getReferencedOutboundServiceNames() {
-        return JavaReflect
-            .fields(this.applicationServiceClass, MemberSelect.HIERARCHY)
-            .stream()
-            .filter(f -> isOutboundService(f.getType()))
-            .map(f -> f.getType().getName())
-            .toList();
-    }
-
-    private List<String> getReferencedQueryClientNames() {
-        return JavaReflect
-            .fields(this.applicationServiceClass, MemberSelect.HIERARCHY)
-            .stream()
-            .filter(f -> isQueryClientProvider(f.getType()))
-            .map(f -> f.getType().getName())
-            .toList();
-    }
-
-    private boolean isRepository(Class<?> fieldClass) {
-        return Repository.class.isAssignableFrom(fieldClass);
-    }
-
-    private boolean isDomainService(Class<?> fieldClass) {
-        return DomainService.class.isAssignableFrom(fieldClass);
-    }
-
-    private boolean isOutboundService(Class<?> fieldClass) {
-        return OutboundService.class.isAssignableFrom(fieldClass);
-    }
-
-    private boolean isQueryClientProvider(Class<?> fieldClass) {
-        return QueryClient.class.isAssignableFrom(fieldClass);
     }
 
     private List<String> applicationServiceInterfaceTypeNames() {

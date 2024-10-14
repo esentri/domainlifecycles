@@ -35,5 +35,5 @@ package io.domainlifecycles.domain.types;
  *
  * @author Mario Herb
  */
-public interface OutboundService {
+public interface OutboundService extends ServiceKind {
 }

@@ -36,8 +36,7 @@ import java.util.List;
  *
  * @author Mario Herb
  */
-public interface OutboundServiceMirror extends DomainTypeMirror, DomainCommandProcessingMirror,
-    DomainEventProcessingMirror {
+public interface OutboundServiceMirror extends ServiceKindMirror {
 
     /**
      * @return the interface type name (full qualified class name) that the mirrored OutboundService implements.

@@ -45,7 +45,7 @@ import java.util.Optional;
  * @param <A>  the type of accessed AggregateRoot
  * @author Mario Herb
  */
-public interface Repository<ID extends Identity<?>, A extends AggregateRoot<ID>> {
+public interface Repository <ID extends Identity<?>, A extends AggregateRoot<ID>> extends ServiceKind {
 
     Optional<A> findById(ID id);
 

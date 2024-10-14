@@ -83,11 +83,11 @@ public class DirectJtaTransactionalEventHandlingTests {
         outboundService = new AnOutboundService();
 
         var services = new Services();
-        services.registerDomainServiceInstance(domainService);
-        services.registerRepositoryInstance(repository);
-        services.registerApplicationServiceInstance(applicationService);
-        services.registerOutboundServiceInstance(outboundService);
-        services.registerQueryClientInstance(queryClient);
+        services.registerServiceKindInstance(domainService);
+        services.registerServiceKindInstance(repository);
+        services.registerServiceKindInstance(applicationService);
+        services.registerServiceKindInstance(outboundService);
+        services.registerServiceKindInstance(queryClient);
 
         var configBuilder = new DomainEventsConfiguration.DomainEventsConfigurationBuilder();
 
