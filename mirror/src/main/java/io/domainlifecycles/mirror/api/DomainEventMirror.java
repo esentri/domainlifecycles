@@ -38,6 +38,7 @@ import io.domainlifecycles.domain.types.ListensTo;
 import io.domainlifecycles.domain.types.OutboundService;
 import io.domainlifecycles.domain.types.Publishes;
 import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.domain.types.ValueObject;
 import io.domainlifecycles.domain.types.QueryClient;
 
@@ -128,5 +129,11 @@ public interface DomainEventMirror extends DomainTypeMirror {
      * Therefor the QueryClient must have a method being annotated with {@link ListensTo}.
      */
     List<QueryClientMirror> getListeningQueryClients();
+
+    /**
+     * @return a list mirrors for the {@link ServiceKind} instances listening to the mirrored event.
+     * Therefor the ServiceKind must have a method being annotated with {@link ListensTo}.
+     */
+    List<ServiceKindMirror> getListeningServiceKinds();
 
 }

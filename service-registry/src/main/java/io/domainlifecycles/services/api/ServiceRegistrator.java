@@ -27,12 +27,9 @@
 
 package io.domainlifecycles.services.api;
 
-import io.domainlifecycles.domain.types.ApplicationService;
-import io.domainlifecycles.domain.types.DomainService;
-import io.domainlifecycles.domain.types.OutboundService;
-import io.domainlifecycles.domain.types.QueryClient;
-import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.domain.types.ServiceKind;
+
+import java.util.Collection;
 
 /**
  * The ServiceRegistrator interface represents a registrator that is responsible for registering instances of various
@@ -50,4 +47,11 @@ public interface ServiceRegistrator {
      * @param serviceKind The {@link ServiceKind} instance to register.
      */
     void registerServiceKindInstance(ServiceKind serviceKind);
+
+    /**
+     * Registers a collection of instance of {@link ServiceKind} with the {@link ServiceRegistrator}.
+     *
+     * @param serviceKinds The Collection of {@link ServiceKind} instances to register.
+     */
+    void registerServiceKindInstances(Collection<ServiceKind> serviceKinds);
 }

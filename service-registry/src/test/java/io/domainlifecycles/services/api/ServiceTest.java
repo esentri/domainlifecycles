@@ -46,7 +46,7 @@ class ServiceTest {
     @Test
     void testGetApplicationServiceInstanceOk() {
 
-        ApplicationService service = provider.getApplicationServiceInstance("sample.TestApplicationService");
+        ApplicationService service = provider.getServiceKindInstance("sample.TestApplicationService");
 
         assertThat(service).isNotNull();
         assertThat(service).isInstanceOf(TestApplicationService.class);
@@ -55,7 +55,7 @@ class ServiceTest {
     @Test
     void testGetDomainServiceInstanceOk() {
 
-        DomainService service = provider.getDomainServiceInstance("sample.TestDomainService");
+        DomainService service = provider.getServiceKindInstance("sample.TestDomainService");
 
         assertThat(service).isNotNull();
         assertThat(service).isInstanceOf(TestDomainService.class);
@@ -64,7 +64,7 @@ class ServiceTest {
     @Test
     void testGetRepositoryInstanceOk() {
 
-        Repository<?, ?> repository = provider.getRepositoryInstance("sample.TestRepository");
+        Repository<?, ?> repository = provider.getServiceKindInstance("sample.TestRepository");
 
         assertThat(repository).isNotNull();
         assertThat(repository).isInstanceOf(TestRepository.class);
@@ -73,7 +73,7 @@ class ServiceTest {
     @Test
     void testGetQueryClientOk() {
 
-        QueryClient<?> client = provider.getQueryClientInstance("sample.TestQueryClient");
+        QueryClient<?> client = provider.getServiceKindInstance("sample.TestQueryClient");
 
         assertThat(client).isNotNull();
         assertThat(client).isInstanceOf(TestQueryClient.class);
@@ -82,7 +82,7 @@ class ServiceTest {
     @Test
     void testGetOutboundServiceOk() {
 
-        OutboundService service = provider.getOutboundServiceInstance("sample.TestOutboundService");
+        OutboundService service = provider.getServiceKindInstance("sample.TestOutboundService");
 
         assertThat(service).isNotNull();
         assertThat(service).isInstanceOf(TestOutboundService.class);

@@ -144,9 +144,7 @@ public class DLCConfiguration {
      */
     @Bean
     public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds){
-        var services = new Services();
-        serviceKinds.forEach(services::registerServiceKindInstance);
-        return services;
+        return  new Services(serviceKinds);
     }
 
     /**

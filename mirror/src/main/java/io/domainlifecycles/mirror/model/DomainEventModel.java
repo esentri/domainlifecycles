@@ -43,6 +43,7 @@ import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.EntityReferenceMirror;
 import io.domainlifecycles.mirror.api.QueryClientMirror;
+import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.mirror.api.ValueReferenceMirror;
 
 import java.util.List;
@@ -268,6 +269,23 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
             .stream()
             .filter(m -> m instanceof QueryClientMirror)
             .map(a -> (QueryClientMirror) a)
+            .filter(a -> a.listensTo(this))
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @JsonIgnore
+    @Override
+    public List<ServiceKindMirror> getListeningServiceKinds() {
+        return Domain
+            .getInitializedDomain()
+            .allTypeMirrors()
+            .values()
+            .stream()
+            .filter(m -> m instanceof ServiceKindMirror)
+            .map(a -> (ServiceKindMirror) a)
             .filter(a -> a.listensTo(this))
             .collect(Collectors.toList());
     }
