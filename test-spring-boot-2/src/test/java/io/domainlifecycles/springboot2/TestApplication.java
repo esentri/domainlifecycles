@@ -113,7 +113,7 @@ public class TestApplication {
             .withRecordPackage("io.domainlifecycles.test.springboot2.tables.records")
             .withCustomRecordMappers(customRecordMappers)
             .withEntityValueObjectRecordTypeConfiguration(
-                new EntityValueObjectRecordTypeConfiguration(
+                new EntityValueObjectRecordTypeConfiguration<>(
                     Bestellung.class,
                     AktionsCode.class,
                     AktionsCodeRecord.class,
@@ -122,10 +122,8 @@ public class TestApplication {
             )
             .make();
 
-        JooqDomainPersistenceProvider domainPersistenceProvider = new JooqDomainPersistenceProvider(
+        return new JooqDomainPersistenceProvider(
             jooqDomainPersistenceConfiguration);
-
-        return domainPersistenceProvider;
     }
 
     @Bean
@@ -160,20 +158,17 @@ public class TestApplication {
         return module;
     }
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean
     public DefaultDSLContext dslContext(DataSource dataSource) {
         return new DefaultDSLContext(configuration(dataSource));
     }
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean
     public DataSourceConnectionProvider connectionProvider(DataSource dataSource) {
         return new DataSourceConnectionProvider
             (new TransactionAwareDataSourceProxy(dataSource));
     }
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean
     public DefaultConfiguration configuration(DataSource dataSource) {
         DefaultConfiguration jooqConfiguration = new DefaultConfiguration();

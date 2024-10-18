@@ -27,6 +27,7 @@
 
 package io.domainlifecycles.mirror.reflect;
 
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainMirrorFactory;
@@ -36,6 +37,7 @@ import io.domainlifecycles.mirror.api.EnumMirror;
 import io.domainlifecycles.mirror.api.InitializedDomain;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
+import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.mirror.api.ValueObjectMirror;
 import io.domainlifecycles.mirror.model.BoundedContextModel;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
@@ -134,6 +136,9 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
 
         buildOutboundServiceMirrors(domainTypesScanner.getScannedOutboundServices())
             .forEach(om -> builtTypeMirrors.put(om.getTypeName(), om));
+
+        buildServiceKindMirrors(domainTypesScanner.getScannedServiceKinds())
+            .forEach(sk -> builtTypeMirrors.put(sk.getTypeName(), sk));
 
         builtTypeMirrors
             .values()
@@ -247,6 +252,13 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
             .stream()
             .map(o -> new OutboundServiceMirrorBuilder(o).build()
             )
+            .toList();
+    }
+
+    private List<ServiceKindMirror> buildServiceKindMirrors(List<Class<? extends ServiceKind>> serviceKindClassList) {
+        return serviceKindClassList
+            .stream()
+            .map(s -> new ServiceKindMirrorBuilder(s).build())
             .toList();
     }
 

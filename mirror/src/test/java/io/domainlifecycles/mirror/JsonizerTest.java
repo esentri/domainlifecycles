@@ -50,7 +50,7 @@ public class JsonizerTest {
     public void testJsonize() {
         var serializer = new JacksonDomainSerializer(true);
         var result = serializer.serialize(Domain.getInitializedDomain());
-        //System.out.println("Serialized: "+result);
+        System.out.println("Serialized: "+result);
         var init = serializer.deserialize(result);
         assertThat(init.boundedContextMirrors()).isEqualTo(Domain.getInitializedDomain().boundedContextMirrors());
         assertThat(init.allTypeMirrors().size()).isEqualTo(Domain.getInitializedDomain().allTypeMirrors().size());

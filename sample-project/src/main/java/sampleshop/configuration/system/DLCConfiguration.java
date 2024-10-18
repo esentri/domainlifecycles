@@ -35,6 +35,7 @@ import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.OutboundService;
 import io.domainlifecycles.domain.types.QueryClient;
 import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.api.DomainEventsConfiguration;
 import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
@@ -142,20 +143,8 @@ public class DLCConfiguration {
      * Repository, ApplicationService, and DomainService instances respectively
      */
     @Bean
-    public ServiceProvider serviceProvider(
-        List<Repository<?, ?>> repositories,
-        List<ApplicationService> applicationServices,
-        List<DomainService> domainServices,
-        List<QueryClient<?>> queryClients,
-        List<OutboundService> outboundServices
-    ) {
-        var services = new Services();
-        repositories.forEach(services::registerRepositoryInstance);
-        applicationServices.forEach(services::registerApplicationServiceInstance);
-        domainServices.forEach(services::registerDomainServiceInstance);
-        queryClients.forEach(services::registerQueryClientInstance);
-        outboundServices.forEach(services::registerOutboundServiceInstance);
-        return services;
+    public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds){
+        return  new Services(serviceKinds);
     }
 
     /**

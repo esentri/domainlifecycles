@@ -72,11 +72,11 @@ public class DirectNonTransactionalEventHandlingTests {
         outboundService = new AnOutboundService();
 
         var services = new Services();
-        services.registerDomainServiceInstance(domainService);
-        services.registerRepositoryInstance(repository);
-        services.registerApplicationServiceInstance(applicationService);
-        services.registerQueryClientInstance(queryClient);
-        services.registerOutboundServiceInstance(outboundService);
+        services.registerServiceKindInstance(domainService);
+        services.registerServiceKindInstance(repository);
+        services.registerServiceKindInstance(applicationService);
+        services.registerServiceKindInstance(queryClient);
+        services.registerServiceKindInstance(outboundService);
 
         var configBuilder = new DomainEventsConfiguration.DomainEventsConfigurationBuilder();
         configBuilder.withServiceProvider(services);

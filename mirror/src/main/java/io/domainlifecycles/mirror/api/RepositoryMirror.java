@@ -37,7 +37,7 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public interface RepositoryMirror extends DomainTypeMirror, DomainCommandProcessingMirror, DomainEventProcessingMirror {
+public interface RepositoryMirror extends ServiceKindMirror {
 
     /**
      * @return an Optional containing the mirror the managed Aggregate.
@@ -53,14 +53,4 @@ public interface RepositoryMirror extends DomainTypeMirror, DomainCommandProcess
      * If separation of concerns is respected, we have at most only one interface, which fulfills that condition
      */
     List<String> getRepositoryInterfaceTypeNames();
-
-    /**
-     * @return the list of referenced {@link OutboundServiceMirror} instances
-     */
-    List<OutboundServiceMirror> getReferencedOutboundServices();
-
-    /**
-     * @return the list of referenced {@link QueryClientMirror} instances
-     */
-    List<QueryClientMirror> getReferencedQueryClients();
 }

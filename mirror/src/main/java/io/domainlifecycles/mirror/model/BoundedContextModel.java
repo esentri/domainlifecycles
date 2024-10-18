@@ -42,6 +42,7 @@ import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.QueryClientMirror;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
+import io.domainlifecycles.mirror.api.ServiceKindMirror;
 
 import java.util.List;
 import java.util.Objects;
@@ -211,6 +212,22 @@ public class BoundedContextModel implements BoundedContextMirror {
             .filter(dt -> dt.getTypeName().startsWith(packageName)
                 && DomainType.OUTBOUND_SERVICE.equals(dt.getDomainType()))
             .map(dt -> (OutboundServiceMirror) dt)
+            .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @JsonIgnore
+    @Override
+    public List<ServiceKindMirror> getServiceKinds() {
+        return Domain
+            .getInitializedDomain()
+            .allTypeMirrors()
+            .values()
+            .stream()
+            .filter(m -> m instanceof ServiceKindMirror)
+            .map(m -> (ServiceKindMirror) m)
             .toList();
     }
 

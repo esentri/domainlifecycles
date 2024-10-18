@@ -27,13 +27,7 @@
 
 package io.domainlifecycles.services.api;
 
-import io.domainlifecycles.domain.types.AggregateRoot;
-import io.domainlifecycles.domain.types.ApplicationService;
-import io.domainlifecycles.domain.types.DomainService;
-import io.domainlifecycles.domain.types.Identity;
-import io.domainlifecycles.domain.types.OutboundService;
-import io.domainlifecycles.domain.types.QueryClient;
-import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.ServiceKind;
 
 /**
  * The ServiceProvider interface represents a service provider that is responsible for providing instances of various
@@ -45,46 +39,10 @@ import io.domainlifecycles.domain.types.Repository;
 public interface ServiceProvider {
 
     /**
-     * Retrieves an instance of {@link ApplicationService} based on the given type name.
-     *
-     * @param typeName The full qualified name of the type representing the ApplicationService.
-     * @return An instance of ApplicationService based on the given type name.
-     */
-    ApplicationService getApplicationServiceInstance(String typeName);
-
-    /**
-     * Retrieves an instance of {@link Repository} based on the given type name.
-     *
-     * @param <A>      type of AggregateRoot
-     * @param <ID>     type of AggregateRoot's Identity
-     * @param typeName The full qualified name of the type representing the Repository.
-     * @return An instance of Repository based on the given type name.
-     */
-    <ID extends Identity<?>, A extends AggregateRoot<ID>> Repository<ID, A> getRepositoryInstance(String typeName);
-
-    /**
-     * Retrieves an instance of {@link DomainService} based on the given type name.
-     *
-     * @param typeName The full qualified name of the type representing the DomainService.
-     * @return An instance of DomainService based on the given type name.
-     */
-    DomainService getDomainServiceInstance(String typeName);
-
-    /**
-     * Retrieves an instance of {@link QueryClient} based on the given type name.
-     *
-     * @param typeName The full qualified name of the type representing the QueryClient.
-     * @return An instance of QueryClient based on the given type name.
-     */
-    QueryClient getQueryClientInstance(String typeName);
-
-    /**
-     * Retrieves an instance of {@link OutboundService} based on the given type name.
+     * Retrieves an instance of {@link ServiceKind} based on the given type name.
      *
      * @param typeName The full qualified name of the type representing the OutboundService.
-     * @return An instance of QueryClient based on the given type name.
+     * @return An instance of ServiceKind based on the given type name.
      */
-    OutboundService getOutboundServiceInstance(String typeName);
-
-
+    <S extends ServiceKind> S getServiceKindInstance(String typeName);
 }

@@ -40,6 +40,7 @@ import io.domainlifecycles.mirror.model.IdentityModel;
 import io.domainlifecycles.mirror.model.OutboundServiceModel;
 import io.domainlifecycles.mirror.model.QueryClientModel;
 import io.domainlifecycles.mirror.model.RepositoryModel;
+import io.domainlifecycles.mirror.model.ServiceKindModel;
 import io.domainlifecycles.mirror.model.ValueObjectModel;
 
 /**
@@ -61,6 +62,7 @@ import io.domainlifecycles.mirror.model.ValueObjectModel;
     @JsonSubTypes.Type(value = ApplicationServiceModel.class),
     @JsonSubTypes.Type(value = QueryClientModel.class),
     @JsonSubTypes.Type(value = OutboundServiceModel.class),
+    @JsonSubTypes.Type(value = ServiceKindModel.class)
 })
 public interface DomainTypeMirrorMixin {
 }

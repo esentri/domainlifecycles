@@ -42,7 +42,7 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public class QueryClientMirrorBuilder extends DomainTypeMirrorBuilder {
+public class QueryClientMirrorBuilder extends ServiceKindMirrorBuilder {
     private final Class<? extends QueryClient<?>> queryClientClass;
 
     public QueryClientMirrorBuilder(Class<? extends QueryClient<?>> queryClientClass) {

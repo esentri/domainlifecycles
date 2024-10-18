@@ -34,5 +34,5 @@ package io.domainlifecycles.domain.types;
  *
  * @author Mario Herb
  */
-public interface ApplicationService {
+public interface ApplicationService extends ServiceKind {
 }

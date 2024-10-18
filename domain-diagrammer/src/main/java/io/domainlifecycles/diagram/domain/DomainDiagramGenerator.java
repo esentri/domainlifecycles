@@ -108,59 +108,39 @@ public class DomainDiagramGenerator implements Diagram {
         builder.append(rankerStyleDeclaration());
 
         builder.append(System.lineSeparator());
-        if (diagramConfig.isShowDomainCommands()) {
-            domainMapper.getDomainCommands().forEach(f -> builder.append(f.getDiagramText()));
-        }
-        if (diagramConfig.isShowApplicationServices()) {
-            domainMapper.getApplicationServices().forEach(f -> builder.append(f.getDiagramText()));
-        }
-        if (diagramConfig.isShowDomainServices()) {
-            domainMapper.getDomainServices().forEach(f -> builder.append(f.getDiagramText()));
-        }
-        if (diagramConfig.isShowDomainEvents()) {
-            domainMapper.getDomainEvents().forEach(f -> builder.append(f.getDiagramText()));
-        }
+
+        domainMapper.getDomainCommands().forEach(f -> builder.append(f.getDiagramText()));
+
+        domainMapper.getApplicationServices().forEach(f -> builder.append(f.getDiagramText()));
+
+        domainMapper.getDomainServices().forEach(f -> builder.append(f.getDiagramText()));
+
+        domainMapper.getDomainEvents().forEach(f -> builder.append(f.getDiagramText()));
+
         domainMapper.getAggregateFrames().forEach(f -> builder.append(f.getDiagramText()));
         domainMapper.getDomainRelationshipMapper()
             .mapAllAggregateFrameRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
-        if (diagramConfig.isShowRepositories()) {
-            domainMapper.getRepositories().forEach(f -> builder.append(f.getDiagramText()));
-        }
-        if (diagramConfig.isShowReadModels()) {
-            domainMapper.getReadModels().forEach(f -> builder.append(f.getDiagramText()));
-        }
-        if (diagramConfig.isShowQueryClients()) {
-            domainMapper.getQueryClients().forEach(f -> builder.append(f.getDiagramText()));
-        }
-        if (diagramConfig.isShowOutboundServices()) {
-            domainMapper.getOutboundServices().forEach(f -> builder.append(f.getDiagramText()));
-        }
+
+        domainMapper.getRepositories().forEach(f -> builder.append(f.getDiagramText()));
+
+        domainMapper.getReadModels().forEach(f -> builder.append(f.getDiagramText()));
+
+        domainMapper.getQueryClients().forEach(f -> builder.append(f.getDiagramText()));
+
+        domainMapper.getOutboundServices().forEach(f -> builder.append(f.getDiagramText()));
 
         domainMapper.getDomainRelationshipMapper().mapAllDomainCommandRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
         domainMapper.getDomainRelationshipMapper().mapAllDomainEventRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllApplicationServiceServiceDomainServiceRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllApplicationServiceServiceRepositoryRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllApplicationServiceOutboundServiceRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllApplicationServiceQueryClientRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllDomainServiceRepositoryRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllDomainServiceQueryClientRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllDomainServiceOutboundServiceRelationships()
+        domainMapper.getDomainRelationshipMapper().mapAllServiceKindRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
 
         domainMapper.getDomainRelationshipMapper().mapAllAggregateRepositoryRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
         domainMapper.getDomainRelationshipMapper().mapAllQueryClientReadModelRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
-
 
         return builder.toString();
     }
