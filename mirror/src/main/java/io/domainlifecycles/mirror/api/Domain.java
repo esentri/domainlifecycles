@@ -63,7 +63,6 @@ public class Domain {
      * @param fullQualifiedTypeName the full qualified type name to return a mirror instance for
      * @return a mirror instance for a given full qualified type name.
      */
-    @SuppressWarnings("unchecked")
     public static <V extends DomainTypeMirror> Optional<V> typeMirror(String fullQualifiedTypeName) {
         if (!initialized) {
             throw MirrorException.fail("Domain was not initialized!");
@@ -77,7 +76,6 @@ public class Domain {
      * @param aggregateRoot the AggregateRoot to return a mirror for
      * @return the {@link AggregateRootMirror} for the given AggregateRoot instance.
      */
-    @SuppressWarnings("unchecked")
     public static <A extends AggregateRootMirror> A aggregateRootMirrorFor(AggregateRoot<?> aggregateRoot) {
         return (A) typeMirror(aggregateRoot.getClass().getName())
             .orElseThrow(
@@ -89,7 +87,6 @@ public class Domain {
      * @param aggregateRootTypeName full qualified name of the AggregateRoot type
      * @return  the {@link AggregateRootMirror} for the full qualified AggregateRoot type name.
      */
-    @SuppressWarnings("unchecked")
     public static <A extends AggregateRootMirror>  A aggregateRootMirrorFor(String aggregateRootTypeName){
         return (A)typeMirror(aggregateRootTypeName)
             .orElseThrow(()-> MirrorException.fail("No AggregateRootMirror found for %s", aggregateRootTypeName));
@@ -100,7 +97,6 @@ public class Domain {
      * @param entity the entity to return a mirror for
      * @return the {@link EntityMirror} for the given Entity instance.
      */
-    @SuppressWarnings("unchecked")
     public static <E extends EntityMirror> E entityMirrorFor(Entity<?> entity) {
         return (E) typeMirror(entity.getClass().getName())
             .orElseThrow(() -> MirrorException.fail("No EntityMirror found for %s", entity.getClass().getName()));
@@ -111,7 +107,6 @@ public class Domain {
      * @param entityTypeName full qualified name of the entity type
      * @return the {@link EntityMirror} for the given full qualified Entity type name.
      */
-    @SuppressWarnings("unchecked")
     public static <E extends EntityMirror> E entityMirrorFor(String entityTypeName) {
         return (E) typeMirror(entityTypeName)
             .orElseThrow(() -> MirrorException.fail("No EntityMirror found for %s", entityTypeName));
@@ -122,7 +117,6 @@ public class Domain {
      * @param identityTypeName name of identity type
      * @return the {@link EntityMirror} for the given full qualified type name of the Identity type.
      */
-    @SuppressWarnings("unchecked")
     public static <E extends EntityMirror> E entityMirrorForIdentityTypeName(String identityTypeName) {
         if (!initialized) {
             throw MirrorException.fail("Domain was not initialized!");
@@ -132,8 +126,7 @@ public class Domain {
             .values()
             .stream()
             .filter(dm -> {
-                if (dm instanceof EntityMirror) {
-                    var em = (EntityMirror) dm;
+                if (dm instanceof EntityMirror em) {
                     if (em.getIdentityField().isPresent()) {
                         return em.getIdentityField().get().getType().getTypeName().equals(identityTypeName);
                     }
@@ -149,7 +142,6 @@ public class Domain {
      * @param domainEvent the domain event to return a mirror for
      * @return the {@link DomainEventMirror} for the given DomainEvent instance.
      */
-    @SuppressWarnings("unchecked")
     public static <DE extends DomainEventMirror> DE domainEventMirrorFor(DomainEvent domainEvent) {
         return (DE) typeMirror(domainEvent.getClass().getName())
             .orElseThrow(
@@ -161,7 +153,6 @@ public class Domain {
      * @param domainEventTypeName full qualified name of DomainEvent type
      * @return the {@link DomainEventMirror} for the given full qualified DomainEvent type name.
      */
-    @SuppressWarnings("unchecked")
     public static <DE extends DomainEventMirror> DE domainEventMirrorFor(String domainEventTypeName) {
         return (DE) typeMirror(domainEventTypeName)
             .orElseThrow(() -> MirrorException.fail("No DomainEventMirror found for %s", domainEventTypeName));
@@ -172,7 +163,6 @@ public class Domain {
      * @param domainService the DomainService to return a mirror for
      * @return the {@link DomainServiceMirror} for the given DomainService instance.
      */
-    @SuppressWarnings("unchecked")
     public static <DS extends DomainServiceMirror> DS domainServiceMirrorFor(DomainService domainService) {
         return (DS) typeMirror(domainService.getClass().getName())
             .orElseThrow(
@@ -184,7 +174,6 @@ public class Domain {
      * @param domainServiceTypeName full qualified name of domain service type
      * @return the {@link DomainServiceMirror} for the given full qualified DomainService type name.
      */
-    @SuppressWarnings("unchecked")
     public static <DS extends DomainServiceMirror> DS domainServiceMirrorFor(String domainServiceTypeName) {
         return (DS) typeMirror(domainServiceTypeName)
             .orElseThrow(() -> MirrorException.fail("No DomainServiceMirror found for %s", domainServiceTypeName));
@@ -195,7 +184,6 @@ public class Domain {
      * @param serviceKind  the ServiceKind to return a mirror for
      * @return  the {@link ServiceKindMirror} for the given ServiceKind instance.
      */
-    @SuppressWarnings("unchecked")
     public static <AS extends ServiceKindMirror>  AS serviceKindMirrorFor(ServiceKind serviceKind){
         return (AS)typeMirror(serviceKind.getClass().getName())
             .orElseThrow(()-> MirrorException.fail("No ServiceKindMirror found for %s", serviceKind.getClass().getName()));
@@ -206,7 +194,6 @@ public class Domain {
      * @param serviceKindTypeName full qualified name of ServiceKind type
      * @return the {@link ServiceKindMirror} for the given full qualified ServiceKind type name.
      */
-    @SuppressWarnings("unchecked")
     public static <AS extends ServiceKindMirror>  AS serviceKindMirrorFor(String serviceKindTypeName){
         return (AS)typeMirror(serviceKindTypeName)
             .orElseThrow(()-> MirrorException.fail("No ServiceKindMirror found for %s", serviceKindTypeName));
@@ -217,7 +204,6 @@ public class Domain {
      * @param applicationService the ApplicationService to return the mirror for
      * @return the {@link ApplicationServiceMirror} for the given ApplicationService instance.
      */
-    @SuppressWarnings("unchecked")
     public static <AS extends ApplicationServiceMirror> AS applicationServiceMirrorFor(ApplicationService applicationService) {
         return (AS) typeMirror(applicationService.getClass().getName())
             .orElseThrow(() -> MirrorException.fail("No ApplicationServiceMirror found for %s",
@@ -229,7 +215,6 @@ public class Domain {
      * @param applicationServiceTypeName full qualified name of the application service type
      * @return the {@link ApplicationServiceMirror} for the given full qualified ApplicationService type name.
      */
-    @SuppressWarnings("unchecked")
     public static <AS extends ApplicationServiceMirror> AS applicationServiceMirrorFor(String applicationServiceTypeName) {
         return (AS) typeMirror(applicationServiceTypeName)
             .orElseThrow(
@@ -241,7 +226,6 @@ public class Domain {
      * @param arm AggregateRootMirror to return the mirror for
      * @return the {@link RepositoryMirror} for the given Repository instance for a given {@link AggregateRootMirror}.
      */
-    @SuppressWarnings("unchecked")
     public static <R extends RepositoryMirror> R repositoryMirrorFor(AggregateRootMirror arm) {
         return (R) initializedDomain
             .allTypeMirrors()
@@ -260,7 +244,6 @@ public class Domain {
      * @param repository the repository to return the mirror for
      * @return the {@link RepositoryMirror} for the given Repository instance.
      */
-    @SuppressWarnings("unchecked")
     public static <R extends RepositoryMirror> R repositoryMirrorFor(Repository<?, ?> repository) {
         return (R) typeMirror(repository.getClass().getName())
             .orElseThrow(
@@ -272,7 +255,6 @@ public class Domain {
      * @param repositoryTypeName full qualified Repository type name
      * @return the {@link RepositoryMirror} for the given full qualified Repository type name.
      */
-    @SuppressWarnings("unchecked")
     public static <R extends RepositoryMirror> R repositoryMirrorFor(String repositoryTypeName) {
         return (R) typeMirror(repositoryTypeName)
             .orElseThrow(() -> MirrorException.fail("No RepositoryMirror found for %s", repositoryTypeName));
@@ -283,7 +265,6 @@ public class Domain {
      * @param identity the identity to return the mirror for
      * @return the {@link IdentityMirror} for the given full qualified Identity type name.
      */
-    @SuppressWarnings("unchecked")
     public static <I extends IdentityMirror> I identityMirrorFor(Identity<?> identity) {
         return (I) typeMirror(identity.getClass().getName())
             .orElseThrow(() -> MirrorException.fail("No IdentityMirror found for %s", identity.getClass().getName()));
@@ -294,7 +275,6 @@ public class Domain {
      * @param identityTypeName name of the identity type
      * @return the {@link IdentityMirror} for the given full qualified Identity type name.
      */
-    @SuppressWarnings("unchecked")
     public static <I extends IdentityMirror> I identityMirrorFor(String identityTypeName) {
         return (I) typeMirror(identityTypeName)
             .orElseThrow(() -> MirrorException.fail("No IdentityMirror found for %s", identityTypeName));
@@ -305,7 +285,6 @@ public class Domain {
      * @param valueObject the ValueObject to return the mirror for
      * @return the {@link ValueObjectMirror} for the given ValueObject instance.
      */
-    @SuppressWarnings("unchecked")
     public static <V extends ValueObjectMirror> V valueObjectMirrorFor(ValueObject valueObject) {
         return (V) typeMirror(valueObject.getClass().getName())
             .orElseThrow(
@@ -317,7 +296,6 @@ public class Domain {
      * @param valueObjectTypeName name of the ValueObject type
      * @return the {@link ValueObjectMirror} for the given full qualified ValueObject type name
      */
-    @SuppressWarnings("unchecked")
     public static <V extends ValueObjectMirror> V valueObjectMirrorFor(String valueObjectTypeName) {
         return (V) typeMirror(valueObjectTypeName)
             .orElseThrow(() -> MirrorException.fail("No ValueObjectMirror found for %s", valueObjectTypeName));
@@ -328,7 +306,6 @@ public class Domain {
      * @param outboundService the OutboundService to return the mirror for
      * @return the {@link OutboundServiceMirror} for the given OutboundService instance.
      */
-    @SuppressWarnings("unchecked")
     public static <V extends OutboundServiceMirror>  V outboundServiceMirrorFor(OutboundService outboundService){
         return (V)typeMirror(outboundService.getClass().getName())
             .orElseThrow(()-> MirrorException.fail("No OutboundServiceMirror found for %s", outboundService.getClass().getName()));
@@ -339,7 +316,6 @@ public class Domain {
      * @param outboundServiceTypeName name of the OutboundService type
      * @return the {@link OutboundServiceMirror} for the given full qualified OutboundService type name.
      */
-    @SuppressWarnings("unchecked")
     public static <V extends OutboundServiceMirror>  V outboundServiceMirrorFor(String outboundServiceTypeName){
         return (V)typeMirror(outboundServiceTypeName)
             .orElseThrow(()-> MirrorException.fail("No OutboundServiceMirror found for %s", outboundServiceTypeName));
@@ -350,7 +326,6 @@ public class Domain {
      * @param queryClient the QueryClient to return the mirror for
      * @return the {@link QueryClientMirror} for the given QueryClient instance.
      */
-    @SuppressWarnings("unchecked")
     public static <V extends QueryClientMirror>  V queryClientMirrorFor(QueryClient<?> queryClient){
         return (V)typeMirror(queryClient.getClass().getName())
             .orElseThrow(()-> MirrorException.fail("No QueryClientMirror found for %s", queryClient.getClass().getName()));
@@ -361,7 +336,6 @@ public class Domain {
      * @param queryClientTypeName name of the QueryClient type
      * @return the {@link QueryClientMirror} for the given full qualified QueryClient type name.
      */
-    @SuppressWarnings("unchecked")
     public static <V extends QueryClientMirror>  V queryClientMirrorFor(String queryClientTypeName){
         return (V)typeMirror(queryClientTypeName)
             .orElseThrow(()-> MirrorException.fail("No QueryClientMirror found for %s", queryClientTypeName));

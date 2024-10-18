@@ -304,6 +304,22 @@ public class DomainDiagramConfig implements DiagramConfig {
     private boolean showOutboundServiceMethods = false;
 
     /**
+     * If true, unspecified ServiceKind classes are included
+     */
+    @Builder.Default
+    private boolean showUnspecifiedServiceKinds = true;
+    /**
+     * If true, fields of unspecified ServiceKinds are included
+     */
+    @Builder.Default
+    private boolean showUnspecifiedServiceKindFields = false;
+    /**
+     * If true, methods of unspecified ServiceKinds are included
+     */
+    @Builder.Default
+    private boolean showUnspecifiedServiceKindMethods = false;
+
+    /**
      * If true, the stereotype {@code <Driver>} is used instead of {@code <ApplicationService>}
      */
     @Builder.Default

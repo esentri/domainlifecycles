@@ -78,6 +78,11 @@ public interface BoundedContextMirror {
     List<OutboundServiceMirror> getOutboundServices();
 
     /**
+     * @return the list of {@link ServiceKindMirror} instances, associated with the BoundedContext.
+     */
+    List<ServiceKindMirror> getServiceKinds();
+
+    /**
      * @return the list of {@link DomainCommandMirror} instances of DomainCommands processed within the BoundedContext.
      */
     List<DomainCommandMirror> getDomainCommands();
