@@ -293,21 +293,21 @@ Processing failures in the handlers are reported via log (SLF4J). No automatic r
 
 Example setup:
 ```Java
-//The Services instance must register all services that contain event handler methods
-var services = new Services();
-services.registerDomainServiceInstance(domainService);
-services.registerRepositoryInstance(repository);
-services.registerApplicationServiceInstance(applicationService);
-services.registerQueryClientInstance(queryClient);
-services.registerOutboundServiceInstance(outboundService);
-
-//In memory only a processing channel can be defined
-var inMemoryChannel = new InMemoryChannelFactory(services).processingChannel("default");
-var router = new DomainEventTypeBasedRouter(List.of(inMemoryChannel));
-//all events, that have no special routing declaration are routed to the default channel
-router.defineDefaultChannel("default");
-// by instantiating this routing configuration, the channel is active
-new ChannelRoutingConfiguration(router);
+    //The Services instance must register all services that contain event handler methods
+    var services = new Services();
+    services.registerDomainServiceInstance(domainService);
+    services.registerRepositoryInstance(repository);
+    services.registerApplicationServiceInstance(applicationService);
+    services.registerQueryClientInstance(queryClient);
+    services.registerOutboundServiceInstance(outboundService);
+    
+    //In memory only a processing channel can be defined
+    var inMemoryChannel = new InMemoryChannelFactory(services).processingChannel("default");
+    var router = new DomainEventTypeBasedRouter(List.of(inMemoryChannel));
+    //all events, that have no special routing declaration are routed to the default channel
+    router.defineDefaultChannel("default");
+    // by instantiating this routing configuration, the channel is active
+    new ChannelRoutingConfiguration(router);
 ```
 
 <a name="transactional-without-outbox"></a>
@@ -319,37 +319,37 @@ DomainEvents directly to consuming handlers. The consuming handlers are executed
 Processing failures in the handlers are reported via log (SLF4J). No automatic retry is in place.
 
 Example setup with Spring transactions:
-``` Java
-var services = new Services();
-...
-var channel = new SpringTxInMemoryChannelFactory(
-    platformTransactionManager, 
-    services,
-    5,
-    true
-    )
-    .processingChannel("c1");
-
-var router = new DomainEventTypeBasedRouter(List.of(channel));
-router.defineDefaultChannel("c1");
-new ChannelRoutingConfiguration(router);
+```Java
+    var services = new Services();
+    ...
+    var channel = new SpringTxInMemoryChannelFactory(
+        platformTransactionManager, 
+        services,
+        5,
+        true
+        )
+        .processingChannel("c1");
+    
+    var router = new DomainEventTypeBasedRouter(List.of(channel));
+    router.defineDefaultChannel("c1");
+    new ChannelRoutingConfiguration(router);
 ```
 
 Example setup with JTA provided transactions:
-``` Java
-var services = new Services();
-...
-var channel = new JtaInMemoryChannelFactory(
-    userTransactionManager, 
-    services,
-    5,
-    true
-    )
-    .processingChannel("c1");
-
-var router = new DomainEventTypeBasedRouter(List.of(channel));
-router.defineDefaultChannel("c1");
-new ChannelRoutingConfiguration(router);
+```Java
+    var services = new Services();
+    ...
+    var channel = new JtaInMemoryChannelFactory(
+        userTransactionManager, 
+        services,
+        5,
+        true
+        )
+        .processingChannel("c1");
+    
+    var router = new DomainEventTypeBasedRouter(List.of(channel));
+    router.defineDefaultChannel("c1");
+    new ChannelRoutingConfiguration(router);
 ```
 <a name="transactional-with-outbox"></a>
 ###### Transactional setup with a transactional outbox
@@ -371,43 +371,43 @@ within the pollers process, the consuming handlers are executed asynchronously i
 this is acknowledged to the outbox directly. So monitoring the state of event delivery is possible on the outbox. No automatic retry is in place.
 Processing failures in the handlers are also reported via log (SLF4J).
 ```Java
-@SpringBootApplication
-public class OutboxTestApplication {
-   ...
-    @Bean
-    public ServiceProvider serviceProvider(
+    @SpringBootApplication
+    public class OutboxTestApplication {
        ...
-    ){
-        ...
-        return services;
+        @Bean
+        public ServiceProvider serviceProvider(
+           ...
+        ){
+            ...
+            return services;
+        }
+    
+        @Bean
+        public SpringTransactionalOutboxChannelFactory springOutbox(DataSource dataSource,
+                                                                    ObjectMapper objectMapper,
+                                                                    PlatformTransactionManager platformTransactionManager,
+                                                                    ServiceProvider serviceProvider) {
+            return  new SpringTransactionalOutboxChannelFactory(
+                platformTransactionManager,
+                objectMapper,
+                dataSource,
+                serviceProvider
+            );
+        }
+    
+        @Bean
+        public ProcessingChannel channel(SpringTransactionalOutboxChannelFactory factory){
+            return factory.processingChannel("channel");
+        }
+    
+        @Bean
+        public ChannelRoutingConfiguration channelConfiguration(List<PublishingChannel> publishingChannels){
+            var router = new DomainEventTypeBasedRouter(publishingChannels);
+            router.defineDefaultChannel("channel");
+            return new ChannelRoutingConfiguration(router);
+        }
+    
     }
-
-    @Bean
-    public SpringTransactionalOutboxChannelFactory springOutbox(DataSource dataSource,
-                                                                ObjectMapper objectMapper,
-                                                                PlatformTransactionManager platformTransactionManager,
-                                                                ServiceProvider serviceProvider) {
-        return  new SpringTransactionalOutboxChannelFactory(
-            platformTransactionManager,
-            objectMapper,
-            dataSource,
-            serviceProvider
-        );
-    }
-
-    @Bean
-    public ProcessingChannel channel(SpringTransactionalOutboxChannelFactory factory){
-        return factory.processingChannel("channel");
-    }
-
-    @Bean
-    public ChannelRoutingConfiguration channelConfiguration(List<PublishingChannel> publishingChannels){
-        var router = new DomainEventTypeBasedRouter(publishingChannels);
-        router.defineDefaultChannel("channel");
-        return new ChannelRoutingConfiguration(router);
-    }
-
-}
 ```
 Using this implementation a outbox table must be provided in the database like that (example is for H2 database, a corresponding schema must be provided by the developers for other database technologies):
 ```SQL
@@ -713,7 +713,6 @@ Here's an example configuration for a Gruelbox based outbox proxy with a JMS bro
         router.defineDefaultChannel("gruelboxJmsChannel");
         return new ChannelRoutingConfiguration(router);
     }
-
 ```
 
 The Gruelbox supports also some kind of idempotency protection. Idempotency protection for Domain Events prevents
