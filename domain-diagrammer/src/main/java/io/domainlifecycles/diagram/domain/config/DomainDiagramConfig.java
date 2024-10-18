@@ -41,7 +41,8 @@ import java.util.List;
 public class DomainDiagramConfig implements DiagramConfig {
 
     /**
-     * A DomainDiagram is meant focus on domain elements which are contained in one specific package (e.g. bounded context).
+     * A DomainDiagram is meant focus on domain elements which are contained in one specific package (e.g. bounded
+     * context).
      * The package name must be specified.
      */
     private String contextPackageName = null;
@@ -103,6 +104,10 @@ public class DomainDiagramConfig implements DiagramConfig {
      */
     private String outboundServiceStyle = "fill=#C0C0C0 bold";
     /**
+     * Style declaration for unspecified ServiceKinds  (see Nomnoml style options)
+     */
+    private String unspecifiedServiceKindStyle = "fill=#C0C0C0 bold";
+    /**
      * General font style declaration  (see Nomnoml style options)
      */
     private String font = "Courier";
@@ -112,7 +117,8 @@ public class DomainDiagramConfig implements DiagramConfig {
     private String direction = "down";
 
     /**
-     * General layout direction style declaration (see Nomnoml style options, 'network-simplex' or 'tight-tree' or 'longest-path' is supported)
+     * General layout direction style declaration (see Nomnoml style options, 'network-simplex' or 'tight-tree' or
+     * 'longest-path' is supported)
      */
     private String ranker = "longest-path";
 
@@ -248,6 +254,19 @@ public class DomainDiagramConfig implements DiagramConfig {
     private boolean showOutboundServiceMethods = false;
 
     /**
+     * If true, unspecified ServiceKind classes are included
+     */
+    private boolean showUnspecifiedServiceKinds = true;
+    /**
+     * If true, fields of unspecified ServiceKinds are included
+     */
+    private boolean showUnspecifiedServiceKindFields = false;
+    /**
+     * If true, methods of unspecified ServiceKinds are included
+     */
+    private boolean showUnspecifiedServiceKindMethods = false;
+
+    /**
      * If true, the stereotype {@code <Driver>} is used instead of {@code <ApplicationService>}
      */
     private boolean callApplicationServiceDriver = true;
@@ -293,7 +312,8 @@ public class DomainDiagramConfig implements DiagramConfig {
      *   <li>{@code <ID>}: Represents a unique identifier for an Entity in the domain.</li>
      *   <li>{@code <ENUM>}: Indicates that the field is an enumeration, a distinct type that consists of a
      *       set of named constants.</li>
-     *   <li>{@code <IDREF>}: Denotes an identifier reference field that holds a reference to another AggregateRoot.</li>
+     *   <li>{@code <IDREF>}: Denotes an identifier reference field that holds a reference to another AggregateRoot
+     *   .</li>
      *   <li>{@code <VO>}: Signifies a value object.</li>
      * </ul>
      */
@@ -304,7 +324,69 @@ public class DomainDiagramConfig implements DiagramConfig {
      */
     private List<String> transitiveFilterSeedDomainServiceTypeNames = Collections.emptyList();
 
-    DomainDiagramConfig(String contextPackageName, String aggregateRootStyle, String aggregateFrameStyle, String entityStyle, String valueObjectStyle, String enumStyle, String identityStyle, String domainEventStyle, String domainCommandStyle, String applicationServiceStyle, String domainServiceStyle, String repositoryStyle, String readModelStyle, String queryClientStyle, String outboundServiceStyle, String font, String direction, String ranker, String acycler, List<String> classesBlacklist, boolean showFields, boolean showFullQualifiedClassNames, boolean showAssertions, boolean showMethods, boolean showOnlyPublicMethods, boolean showDomainEvents, boolean showDomainEventFields, boolean showDomainEventMethods, boolean showDomainCommands, boolean showOnlyTopLevelDomainCommandRelations, boolean showDomainCommandFields, boolean showDomainCommandMethods, boolean showDomainServices, boolean showDomainServiceFields, boolean showDomainServiceMethods, boolean showApplicationServices, boolean showApplicationServiceFields, boolean showApplicationServiceMethods, boolean showRepositories, boolean showRepositoryFields, boolean showRepositoryMethods, boolean showReadModels, boolean showReadModelFields, boolean showReadModelMethods, boolean showQueryClients, boolean showQueryClientFields, boolean showQueryClientMethods, boolean showOutboundServices, boolean showOutboundServiceFields, boolean showOutboundServiceMethods, boolean callApplicationServiceDriver, List<String> fieldBlacklist, List<String> methodBlacklist, boolean showInheritedMembersInClasses, boolean showObjectMembersInClasses, boolean multiplicityInLabel, boolean fieldStereotypes, List<String> transitiveFilterSeedDomainServiceTypeNames) {
+    DomainDiagramConfig(String contextPackageName,
+                        String aggregateRootStyle,
+                        String aggregateFrameStyle,
+                        String entityStyle,
+                        String valueObjectStyle,
+                        String enumStyle,
+                        String identityStyle,
+                        String domainEventStyle,
+                        String domainCommandStyle,
+                        String applicationServiceStyle,
+                        String domainServiceStyle,
+                        String repositoryStyle,
+                        String readModelStyle,
+                        String queryClientStyle,
+                        String outboundServiceStyle,
+                        String unspecifiedServiceKindStyle,
+                        String font,
+                        String direction,
+                        String ranker,
+                        String acycler,
+                        List<String> classesBlacklist,
+                        boolean showFields,
+                        boolean showFullQualifiedClassNames,
+                        boolean showAssertions,
+                        boolean showMethods,
+                        boolean showOnlyPublicMethods,
+                        boolean showDomainEvents,
+                        boolean showDomainEventFields,
+                        boolean showDomainEventMethods,
+                        boolean showDomainCommands,
+                        boolean showOnlyTopLevelDomainCommandRelations,
+                        boolean showDomainCommandFields,
+                        boolean showDomainCommandMethods,
+                        boolean showDomainServices,
+                        boolean showDomainServiceFields,
+                        boolean showDomainServiceMethods,
+                        boolean showApplicationServices,
+                        boolean showApplicationServiceFields,
+                        boolean showApplicationServiceMethods,
+                        boolean showRepositories,
+                        boolean showRepositoryFields,
+                        boolean showRepositoryMethods,
+                        boolean showReadModels,
+                        boolean showReadModelFields,
+                        boolean showReadModelMethods,
+                        boolean showQueryClients,
+                        boolean showQueryClientFields,
+                        boolean showQueryClientMethods,
+                        boolean showOutboundServices,
+                        boolean showOutboundServiceFields,
+                        boolean showOutboundServiceMethods,
+                        boolean showUnspecifiedServiceKinds,
+                        boolean showUnspecifiedServiceKindFields,
+                        boolean showUnspecifiedServiceKindMethods,
+                        boolean callApplicationServiceDriver,
+                        List<String> fieldBlacklist,
+                        List<String> methodBlacklist,
+                        boolean showInheritedMembersInClasses,
+                        boolean showObjectMembersInClasses,
+                        boolean multiplicityInLabel,
+                        boolean fieldStereotypes,
+                        List<String> transitiveFilterSeedDomainServiceTypeNames
+    ) {
         this.contextPackageName = contextPackageName;
         this.aggregateRootStyle = aggregateRootStyle;
         this.aggregateFrameStyle = aggregateFrameStyle;
@@ -320,6 +402,7 @@ public class DomainDiagramConfig implements DiagramConfig {
         this.readModelStyle = readModelStyle;
         this.queryClientStyle = queryClientStyle;
         this.outboundServiceStyle = outboundServiceStyle;
+        this.unspecifiedServiceKindStyle = unspecifiedServiceKindStyle;
         this.font = font;
         this.direction = direction;
         this.ranker = ranker;
@@ -355,6 +438,9 @@ public class DomainDiagramConfig implements DiagramConfig {
         this.showOutboundServices = showOutboundServices;
         this.showOutboundServiceFields = showOutboundServiceFields;
         this.showOutboundServiceMethods = showOutboundServiceMethods;
+        this.showUnspecifiedServiceKinds = showUnspecifiedServiceKinds;
+        this.showUnspecifiedServiceKindFields = showUnspecifiedServiceKindFields;
+        this.showUnspecifiedServiceKindMethods = showUnspecifiedServiceKindMethods;
         this.callApplicationServiceDriver = callApplicationServiceDriver;
         this.fieldBlacklist = fieldBlacklist;
         this.methodBlacklist = methodBlacklist;
@@ -422,6 +508,10 @@ public class DomainDiagramConfig implements DiagramConfig {
     }
 
     private static String $default$outboundServiceStyle() {
+        return "fill=#C0C0C0 bold";
+    }
+
+    private static String $default$unspecifiedServiceKindStyle() {
         return "fill=#C0C0C0 bold";
     }
 
@@ -565,6 +655,18 @@ public class DomainDiagramConfig implements DiagramConfig {
         return false;
     }
 
+    private static boolean $default$showUnspecifiedServiceKinds() {
+        return true;
+    }
+
+    private static boolean $default$showUnspecifiedServiceKindFields() {
+        return false;
+    }
+
+    private static boolean $default$showUnspecifiedServiceKindMethods() {
+        return false;
+    }
+
     private static boolean $default$callApplicationServiceDriver() {
         return true;
     }
@@ -670,6 +772,10 @@ public class DomainDiagramConfig implements DiagramConfig {
 
     public String getOutboundServiceStyle() {
         return this.outboundServiceStyle;
+    }
+
+    public String getUnspecifiedServiceKindStyle() {
+        return unspecifiedServiceKindStyle;
     }
 
     public String getFont() {
@@ -812,6 +918,18 @@ public class DomainDiagramConfig implements DiagramConfig {
         return this.showOutboundServiceMethods;
     }
 
+    public boolean isShowUnspecifiedServiceKinds() {
+        return this.showUnspecifiedServiceKinds;
+    }
+
+    public boolean isShowUnspecifiedServiceKindFields() {
+        return this.showUnspecifiedServiceKindFields;
+    }
+
+    public boolean isShowUnspecifiedServiceKindMethods() {
+        return this.showUnspecifiedServiceKindMethods;
+    }
+
     public boolean isCallApplicationServiceDriver() {
         return this.callApplicationServiceDriver;
     }
@@ -845,7 +963,67 @@ public class DomainDiagramConfig implements DiagramConfig {
     }
 
     public DomainDiagramConfigBuilder toBuilder() {
-        return new DomainDiagramConfigBuilder().withContextPackageName(this.contextPackageName).withAggregateRootStyle(this.aggregateRootStyle).withAggregateFrameStyle(this.aggregateFrameStyle).withEntityStyle(this.entityStyle).withValueObjectStyle(this.valueObjectStyle).withEnumStyle(this.enumStyle).withIdentityStyle(this.identityStyle).withDomainEventStyle(this.domainEventStyle).withDomainCommandStyle(this.domainCommandStyle).withApplicationServiceStyle(this.applicationServiceStyle).withDomainServiceStyle(this.domainServiceStyle).withRepositoryStyle(this.repositoryStyle).withReadModelStyle(this.readModelStyle).withQueryClientStyle(this.queryClientStyle).withOutboundServiceStyle(this.outboundServiceStyle).withFont(this.font).withDirection(this.direction).withRanker(this.ranker).withAcycler(this.acycler).withClassesBlacklist(this.classesBlacklist).withShowFields(this.showFields).withShowFullQualifiedClassNames(this.showFullQualifiedClassNames).withShowAssertions(this.showAssertions).withShowMethods(this.showMethods).withShowOnlyPublicMethods(this.showOnlyPublicMethods).withShowDomainEvents(this.showDomainEvents).withShowDomainEventFields(this.showDomainEventFields).withShowDomainEventMethods(this.showDomainEventMethods).withShowDomainCommands(this.showDomainCommands).withShowOnlyTopLevelDomainCommandRelations(this.showOnlyTopLevelDomainCommandRelations).withShowDomainCommandFields(this.showDomainCommandFields).withShowDomainCommandMethods(this.showDomainCommandMethods).withShowDomainServices(this.showDomainServices).withShowDomainServiceFields(this.showDomainServiceFields).withShowDomainServiceMethods(this.showDomainServiceMethods).withShowApplicationServices(this.showApplicationServices).withShowApplicationServiceFields(this.showApplicationServiceFields).withShowApplicationServiceMethods(this.showApplicationServiceMethods).withShowRepositories(this.showRepositories).withShowRepositoryFields(this.showRepositoryFields).withShowRepositoryMethods(this.showRepositoryMethods).withShowReadModels(this.showReadModels).withShowReadModelFields(this.showReadModelFields).withShowReadModelMethods(this.showReadModelMethods).withShowQueryClients(this.showQueryClients).withShowQueryClientFields(this.showQueryClientFields).withShowQueryClientMethods(this.showQueryClientMethods).withShowOutboundServices(this.showOutboundServices).withShowOutboundServiceFields(this.showOutboundServiceFields).withShowOutboundServiceMethods(this.showOutboundServiceMethods).withCallApplicationServiceDriver(this.callApplicationServiceDriver).withFieldBlacklist(this.fieldBlacklist).withMethodBlacklist(this.methodBlacklist).withShowInheritedMembersInClasses(this.showInheritedMembersInClasses).withShowObjectMembersInClasses(this.showObjectMembersInClasses).withMultiplicityInLabel(this.multiplicityInLabel).withFieldStereotypes(this.fieldStereotypes).withTransitiveFilterSeedDomainServiceTypeNames(this.transitiveFilterSeedDomainServiceTypeNames);
+        return new DomainDiagramConfigBuilder()
+            .withContextPackageName(this.contextPackageName)
+            .withAggregateRootStyle(this.aggregateRootStyle)
+            .withAggregateFrameStyle(this.aggregateFrameStyle)
+            .withEntityStyle(this.entityStyle)
+            .withValueObjectStyle(this.valueObjectStyle)
+            .withEnumStyle(this.enumStyle)
+            .withIdentityStyle(this.identityStyle)
+            .withDomainEventStyle(this.domainEventStyle)
+            .withDomainCommandStyle(this.domainCommandStyle)
+            .withApplicationServiceStyle(this.applicationServiceStyle)
+            .withDomainServiceStyle(this.domainServiceStyle)
+            .withRepositoryStyle(this.repositoryStyle)
+            .withReadModelStyle(this.readModelStyle)
+            .withQueryClientStyle(this.queryClientStyle)
+            .withOutboundServiceStyle(this.outboundServiceStyle)
+            .withUnspecifiedServiceKindStyle(this.unspecifiedServiceKindStyle)
+            .withFont(this.font).withDirection(this.direction)
+            .withRanker(this.ranker).withAcycler(this.acycler)
+            .withClassesBlacklist(this.classesBlacklist)
+            .withShowFields(this.showFields)
+            .withShowFullQualifiedClassNames(this.showFullQualifiedClassNames)
+            .withShowAssertions(this.showAssertions)
+            .withShowMethods(this.showMethods)
+            .withShowOnlyPublicMethods(this.showOnlyPublicMethods)
+            .withShowDomainEvents(this.showDomainEvents)
+            .withShowDomainEventFields(this.showDomainEventFields)
+            .withShowDomainEventMethods(this.showDomainEventMethods)
+            .withShowDomainCommands(this.showDomainCommands)
+            .withShowOnlyTopLevelDomainCommandRelations(this.showOnlyTopLevelDomainCommandRelations)
+            .withShowDomainCommandFields(this.showDomainCommandFields)
+            .withShowDomainCommandMethods(this.showDomainCommandMethods)
+            .withShowDomainServices(this.showDomainServices)
+            .withShowDomainServiceFields(this.showDomainServiceFields)
+            .withShowDomainServiceMethods(this.showDomainServiceMethods)
+            .withShowApplicationServices(this.showApplicationServices)
+            .withShowApplicationServiceFields(this.showApplicationServiceFields)
+            .withShowApplicationServiceMethods(this.showApplicationServiceMethods)
+            .withShowRepositories(this.showRepositories)
+            .withShowRepositoryFields(this.showRepositoryFields)
+            .withShowRepositoryMethods(this.showRepositoryMethods)
+            .withShowReadModels(this.showReadModels)
+            .withShowReadModelFields(this.showReadModelFields)
+            .withShowReadModelMethods(this.showReadModelMethods)
+            .withShowQueryClients(this.showQueryClients)
+            .withShowQueryClientFields(this.showQueryClientFields)
+            .withShowQueryClientMethods(this.showQueryClientMethods)
+            .withShowOutboundServices(this.showOutboundServices)
+            .withShowOutboundServiceFields(this.showOutboundServiceFields)
+            .withShowOutboundServiceMethods(this.showOutboundServiceMethods)
+            .withShowUnspecifiedServiceKinds(this.showUnspecifiedServiceKinds)
+            .withShowUnspecifiedServiceKindFields(this.showUnspecifiedServiceKindFields)
+            .withShowUnspecifiedServiceKindMethods(this.showUnspecifiedServiceKindMethods)
+            .withCallApplicationServiceDriver(this.callApplicationServiceDriver)
+            .withFieldBlacklist(this.fieldBlacklist)
+            .withMethodBlacklist(this.methodBlacklist)
+            .withShowInheritedMembersInClasses(this.showInheritedMembersInClasses)
+            .withShowObjectMembersInClasses(this.showObjectMembersInClasses)
+            .withMultiplicityInLabel(this.multiplicityInLabel)
+            .withFieldStereotypes(this.fieldStereotypes)
+            .withTransitiveFilterSeedDomainServiceTypeNames(this.transitiveFilterSeedDomainServiceTypeNames);
     }
 
     public static class DomainDiagramConfigBuilder {
@@ -879,6 +1057,8 @@ public class DomainDiagramConfig implements DiagramConfig {
         private boolean queryClientStyle$set;
         private String outboundServiceStyle$value;
         private boolean outboundServiceStyle$set;
+        private String unspecifiedServiceKindStyle$value;
+        private boolean unspecifiedServiceKindStyle$set;
         private String font$value;
         private boolean font$set;
         private String direction$value;
@@ -949,6 +1129,12 @@ public class DomainDiagramConfig implements DiagramConfig {
         private boolean showOutboundServiceFields$set;
         private boolean showOutboundServiceMethods$value;
         private boolean showOutboundServiceMethods$set;
+        private boolean showUnspecifiedServiceKinds$value;
+        private boolean showUnspecifiedServiceKinds$set;
+        private boolean showUnspecifiedServiceKindFields$value;
+        private boolean showUnspecifiedServiceKindFields$set;
+        private boolean showUnspecifiedServiceKindMethods$value;
+        private boolean showUnspecifiedServiceKindMethods$set;
         private boolean callApplicationServiceDriver$value;
         private boolean callApplicationServiceDriver$set;
         private List<String> fieldBlacklist$value;
@@ -1056,6 +1242,12 @@ public class DomainDiagramConfig implements DiagramConfig {
         public DomainDiagramConfigBuilder withOutboundServiceStyle(String outboundServiceStyle) {
             this.outboundServiceStyle$value = outboundServiceStyle;
             this.outboundServiceStyle$set = true;
+            return this;
+        }
+
+        public DomainDiagramConfigBuilder withUnspecifiedServiceKindStyle(String unspecifiedServiceKindStyle) {
+            this.unspecifiedServiceKindStyle$value = unspecifiedServiceKindStyle;
+            this.unspecifiedServiceKindStyle$set = true;
             return this;
         }
 
@@ -1269,6 +1461,24 @@ public class DomainDiagramConfig implements DiagramConfig {
             return this;
         }
 
+        public DomainDiagramConfigBuilder withShowUnspecifiedServiceKinds(boolean showUnspecifiedServiceKinds) {
+            this.showUnspecifiedServiceKinds$value = showUnspecifiedServiceKinds;
+            this.showUnspecifiedServiceKinds$set = true;
+            return this;
+        }
+
+        public DomainDiagramConfigBuilder withShowUnspecifiedServiceKindFields(boolean showUnspecifiedServiceKindFields) {
+            this.showUnspecifiedServiceKindFields$value = showUnspecifiedServiceKindFields;
+            this.showUnspecifiedServiceKindFields$set = true;
+            return this;
+        }
+
+        public DomainDiagramConfigBuilder withShowUnspecifiedServiceKindMethods(boolean showUnspecifiedServiceKindMethods) {
+            this.showUnspecifiedServiceKindMethods$value = showUnspecifiedServiceKindMethods;
+            this.showUnspecifiedServiceKindMethods$set = true;
+            return this;
+        }
+
         public DomainDiagramConfigBuilder withCallApplicationServiceDriver(boolean callApplicationServiceDriver) {
             this.callApplicationServiceDriver$value = callApplicationServiceDriver;
             this.callApplicationServiceDriver$set = true;
@@ -1377,6 +1587,10 @@ public class DomainDiagramConfig implements DiagramConfig {
             String outboundServiceStyle$value = this.outboundServiceStyle$value;
             if (!this.outboundServiceStyle$set) {
                 outboundServiceStyle$value = DomainDiagramConfig.$default$outboundServiceStyle();
+            }
+            String unspecifiedServiceKindStyle$value = this.unspecifiedServiceKindStyle$value;
+            if (!this.unspecifiedServiceKindStyle$set) {
+                unspecifiedServiceKindStyle$value = DomainDiagramConfig.$default$unspecifiedServiceKindStyle();
             }
             String font$value = this.font$value;
             if (!this.font$set) {
@@ -1518,6 +1732,18 @@ public class DomainDiagramConfig implements DiagramConfig {
             if (!this.showOutboundServiceMethods$set) {
                 showOutboundServiceMethods$value = DomainDiagramConfig.$default$showOutboundServiceMethods();
             }
+            boolean showUnspecifiedServiceKinds$value = this.showUnspecifiedServiceKinds$value;
+            if (!this.showUnspecifiedServiceKinds$set) {
+                showUnspecifiedServiceKinds$value = DomainDiagramConfig.$default$showUnspecifiedServiceKinds();
+            }
+            boolean showUnspecifiedServiceKindFields$value = this.showUnspecifiedServiceKindFields$value;
+            if (!this.showUnspecifiedServiceKindFields$set) {
+                showUnspecifiedServiceKindFields$value = DomainDiagramConfig.$default$showUnspecifiedServiceKindFields();
+            }
+            boolean showUnspecifiedServiceKindMethods$value = this.showUnspecifiedServiceKindMethods$value;
+            if (!this.showUnspecifiedServiceKindMethods$set) {
+                showUnspecifiedServiceKindMethods$value = DomainDiagramConfig.$default$showUnspecifiedServiceKindMethods();
+            }
             boolean callApplicationServiceDriver$value = this.callApplicationServiceDriver$value;
             if (!this.callApplicationServiceDriver$set) {
                 callApplicationServiceDriver$value = DomainDiagramConfig.$default$callApplicationServiceDriver();
@@ -1550,11 +1776,198 @@ public class DomainDiagramConfig implements DiagramConfig {
             if (!this.transitiveFilterSeedDomainServiceTypeNames$set) {
                 transitiveFilterSeedDomainServiceTypeNames$value = DomainDiagramConfig.$default$transitiveFilterSeedDomainServiceTypeNames();
             }
-            return new DomainDiagramConfig(contextPackageName$value, aggregateRootStyle$value, aggregateFrameStyle$value, entityStyle$value, valueObjectStyle$value, enumStyle$value, identityStyle$value, domainEventStyle$value, domainCommandStyle$value, applicationServiceStyle$value, domainServiceStyle$value, repositoryStyle$value, readModelStyle$value, queryClientStyle$value, outboundServiceStyle$value, font$value, direction$value, ranker$value, acycler$value, classesBlacklist$value, showFields$value, showFullQualifiedClassNames$value, showAssertions$value, showMethods$value, showOnlyPublicMethods$value, showDomainEvents$value, showDomainEventFields$value, showDomainEventMethods$value, showDomainCommands$value, showOnlyTopLevelDomainCommandRelations$value, showDomainCommandFields$value, showDomainCommandMethods$value, showDomainServices$value, showDomainServiceFields$value, showDomainServiceMethods$value, showApplicationServices$value, showApplicationServiceFields$value, showApplicationServiceMethods$value, showRepositories$value, showRepositoryFields$value, showRepositoryMethods$value, showReadModels$value, showReadModelFields$value, showReadModelMethods$value, showQueryClients$value, showQueryClientFields$value, showQueryClientMethods$value, showOutboundServices$value, showOutboundServiceFields$value, showOutboundServiceMethods$value, callApplicationServiceDriver$value, fieldBlacklist$value, methodBlacklist$value, showInheritedMembersInClasses$value, showObjectMembersInClasses$value, multiplicityInLabel$value, fieldStereotypes$value, transitiveFilterSeedDomainServiceTypeNames$value);
+            return new DomainDiagramConfig(
+                contextPackageName$value,
+                aggregateRootStyle$value,
+                aggregateFrameStyle$value,
+                entityStyle$value,
+                valueObjectStyle$value,
+                enumStyle$value,
+                identityStyle$value,
+                domainEventStyle$value,
+                domainCommandStyle$value,
+                applicationServiceStyle$value,
+                domainServiceStyle$value,
+                repositoryStyle$value,
+                readModelStyle$value,
+                queryClientStyle$value,
+                outboundServiceStyle$value,
+                unspecifiedServiceKindStyle$value,
+                font$value,
+                direction$value,
+                ranker$value,
+                acycler$value,
+                classesBlacklist$value,
+                showFields$value,
+                showFullQualifiedClassNames$value,
+                showAssertions$value,
+                showMethods$value,
+                showOnlyPublicMethods$value,
+                showDomainEvents$value,
+                showDomainEventFields$value,
+                showDomainEventMethods$value,
+                showDomainCommands$value,
+                showOnlyTopLevelDomainCommandRelations$value,
+                showDomainCommandFields$value,
+                showDomainCommandMethods$value,
+                showDomainServices$value,
+                showDomainServiceFields$value,
+                showDomainServiceMethods$value,
+                showApplicationServices$value,
+                showApplicationServiceFields$value,
+                showApplicationServiceMethods$value,
+                showRepositories$value,
+                showRepositoryFields$value,
+                showRepositoryMethods$value,
+                showReadModels$value,
+                showReadModelFields$value,
+                showReadModelMethods$value,
+                showQueryClients$value,
+                showQueryClientFields$value,
+                showQueryClientMethods$value,
+                showOutboundServices$value,
+                showOutboundServiceFields$value,
+                showOutboundServiceMethods$value,
+                showUnspecifiedServiceKinds$value,
+                showUnspecifiedServiceKindFields$value,
+                showUnspecifiedServiceKindMethods$value,
+                callApplicationServiceDriver$value,
+                fieldBlacklist$value,
+                methodBlacklist$value,
+                showInheritedMembersInClasses$value,
+                showObjectMembersInClasses$value,
+                multiplicityInLabel$value,
+                fieldStereotypes$value,
+                transitiveFilterSeedDomainServiceTypeNames$value
+            );
         }
 
         public String toString() {
-            return "DomainDiagramConfig.DomainDiagramConfigBuilder(contextPackageName$value=" + this.contextPackageName$value + ", aggregateRootStyle$value=" + this.aggregateRootStyle$value + ", aggregateFrameStyle$value=" + this.aggregateFrameStyle$value + ", entityStyle$value=" + this.entityStyle$value + ", valueObjectStyle$value=" + this.valueObjectStyle$value + ", enumStyle$value=" + this.enumStyle$value + ", identityStyle$value=" + this.identityStyle$value + ", domainEventStyle$value=" + this.domainEventStyle$value + ", domainCommandStyle$value=" + this.domainCommandStyle$value + ", applicationServiceStyle$value=" + this.applicationServiceStyle$value + ", domainServiceStyle$value=" + this.domainServiceStyle$value + ", repositoryStyle$value=" + this.repositoryStyle$value + ", readModelStyle$value=" + this.readModelStyle$value + ", queryClientStyle$value=" + this.queryClientStyle$value + ", outboundServiceStyle$value=" + this.outboundServiceStyle$value + ", font$value=" + this.font$value + ", direction$value=" + this.direction$value + ", ranker$value=" + this.ranker$value + ", acycler$value=" + this.acycler$value + ", classesBlacklist$value=" + this.classesBlacklist$value + ", showFields$value=" + this.showFields$value + ", showFullQualifiedClassNames$value=" + this.showFullQualifiedClassNames$value + ", showAssertions$value=" + this.showAssertions$value + ", showMethods$value=" + this.showMethods$value + ", showOnlyPublicMethods$value=" + this.showOnlyPublicMethods$value + ", showDomainEvents$value=" + this.showDomainEvents$value + ", showDomainEventFields$value=" + this.showDomainEventFields$value + ", showDomainEventMethods$value=" + this.showDomainEventMethods$value + ", showDomainCommands$value=" + this.showDomainCommands$value + ", showOnlyTopLevelDomainCommandRelations$value=" + this.showOnlyTopLevelDomainCommandRelations$value + ", showDomainCommandFields$value=" + this.showDomainCommandFields$value + ", showDomainCommandMethods$value=" + this.showDomainCommandMethods$value + ", showDomainServices$value=" + this.showDomainServices$value + ", showDomainServiceFields$value=" + this.showDomainServiceFields$value + ", showDomainServiceMethods$value=" + this.showDomainServiceMethods$value + ", showApplicationServices$value=" + this.showApplicationServices$value + ", showApplicationServiceFields$value=" + this.showApplicationServiceFields$value + ", showApplicationServiceMethods$value=" + this.showApplicationServiceMethods$value + ", showRepositories$value=" + this.showRepositories$value + ", showRepositoryFields$value=" + this.showRepositoryFields$value + ", showRepositoryMethods$value=" + this.showRepositoryMethods$value + ", showReadModels$value=" + this.showReadModels$value + ", showReadModelFields$value=" + this.showReadModelFields$value + ", showReadModelMethods$value=" + this.showReadModelMethods$value + ", showQueryClients$value=" + this.showQueryClients$value + ", showQueryClientFields$value=" + this.showQueryClientFields$value + ", showQueryClientMethods$value=" + this.showQueryClientMethods$value + ", showOutboundServices$value=" + this.showOutboundServices$value + ", showOutboundServiceFields$value=" + this.showOutboundServiceFields$value + ", showOutboundServiceMethods$value=" + this.showOutboundServiceMethods$value + ", callApplicationServiceDriver$value=" + this.callApplicationServiceDriver$value + ", fieldBlacklist$value=" + this.fieldBlacklist$value + ", methodBlacklist$value=" + this.methodBlacklist$value + ", showInheritedMembersInClasses$value=" + this.showInheritedMembersInClasses$value + ", showObjectMembersInClasses$value=" + this.showObjectMembersInClasses$value + ", multiplicityInLabel$value=" + this.multiplicityInLabel$value + ", fieldStereotypes$value=" + this.fieldStereotypes$value + ", transitiveFilterSeedDomainServiceTypeNames$value=" + this.transitiveFilterSeedDomainServiceTypeNames$value + ")";
+            return "DomainDiagramConfig.DomainDiagramConfigBuilder(contextPackageName$value=" +
+                this.contextPackageName$value +
+                ", aggregateRootStyle$value=" +
+                this.aggregateRootStyle$value +
+                ", aggregateFrameStyle$value=" +
+                this.aggregateFrameStyle$value +
+                ", entityStyle$value=" +
+                this.entityStyle$value +
+                ", valueObjectStyle$value=" +
+                this.valueObjectStyle$value +
+                ", enumStyle$value=" +
+                this.enumStyle$value +
+                ", identityStyle$value=" +
+                this.identityStyle$value +
+                ", domainEventStyle$value=" +
+                this.domainEventStyle$value +
+                ", domainCommandStyle$value=" +
+                this.domainCommandStyle$value +
+                ", applicationServiceStyle$value=" +
+                this.applicationServiceStyle$value +
+                ", domainServiceStyle$value=" +
+                this.domainServiceStyle$value +
+                ", repositoryStyle$value=" +
+                this.repositoryStyle$value +
+                ", readModelStyle$value=" +
+                this.readModelStyle$value +
+                ", queryClientStyle$value=" +
+                this.queryClientStyle$value +
+                ", outboundServiceStyle$value=" +
+                this.outboundServiceStyle$value +
+                ", unspecifiedServiceKindStyle$value=" +
+                this.unspecifiedServiceKindStyle$value +
+                ", font$value=" +
+                this.font$value +
+                ", direction$value=" +
+                this.direction$value +
+                ", ranker$value=" +
+                this.ranker$value +
+                ", acycler$value=" +
+                this.acycler$value +
+                ", classesBlacklist$value=" +
+                this.classesBlacklist$value +
+                ", showFields$value=" +
+                this.showFields$value +
+                ", showFullQualifiedClassNames$value=" +
+                this.showFullQualifiedClassNames$value +
+                ", showAssertions$value=" +
+                this.showAssertions$value +
+                ", showMethods$value=" +
+                this.showMethods$value +
+                ", showOnlyPublicMethods$value=" +
+                this.showOnlyPublicMethods$value +
+                ", showDomainEvents$value=" +
+                this.showDomainEvents$value +
+                ", showDomainEventFields$value=" +
+                this.showDomainEventFields$value +
+                ", showDomainEventMethods$value=" +
+                this.showDomainEventMethods$value +
+                ", showDomainCommands$value=" +
+                this.showDomainCommands$value +
+                ", showOnlyTopLevelDomainCommandRelations$value=" +
+                this.showOnlyTopLevelDomainCommandRelations$value +
+                ", showDomainCommandFields$value=" +
+                this.showDomainCommandFields$value +
+                ", showDomainCommandMethods$value=" +
+                this.showDomainCommandMethods$value +
+                ", showDomainServices$value=" +
+                this.showDomainServices$value +
+                ", showDomainServiceFields$value=" +
+                this.showDomainServiceFields$value +
+                ", showDomainServiceMethods$value=" +
+                this.showDomainServiceMethods$value +
+                ", showApplicationServices$value=" +
+                this.showApplicationServices$value +
+                ", showApplicationServiceFields$value=" +
+                this.showApplicationServiceFields$value +
+                ", showApplicationServiceMethods$value=" +
+                this.showApplicationServiceMethods$value +
+                ", showRepositories$value=" +
+                this.showRepositories$value +
+                ", showRepositoryFields$value=" +
+                this.showRepositoryFields$value +
+                ", showRepositoryMethods$value=" +
+                this.showRepositoryMethods$value +
+                ", showReadModels$value=" +
+                this.showReadModels$value +
+                ", showReadModelFields$value=" +
+                this.showReadModelFields$value +
+                ", showReadModelMethods$value=" +
+                this.showReadModelMethods$value +
+                ", showQueryClients$value=" +
+                this.showQueryClients$value +
+                ", showQueryClientFields$value=" +
+                this.showQueryClientFields$value +
+                ", showQueryClientMethods$value=" +
+                this.showQueryClientMethods$value +
+                ", showOutboundServices$value=" +
+                this.showOutboundServices$value +
+                ", showOutboundServiceFields$value=" +
+                this.showOutboundServiceFields$value +
+                ", showOutboundServiceMethods$value=" +
+                this.showOutboundServiceMethods$value +
+                ", showUnspecifiedServiceKinds$value=" +
+                this.showUnspecifiedServiceKinds$value +
+                ", showUnspecifiedServiceKindFields$value=" +
+                this.showUnspecifiedServiceKindFields$value +
+                ", showUnspecifiedServiceKindMethods$value=" +
+                this.showUnspecifiedServiceKindMethods$value +
+                ", callApplicationServiceDriver$value=" +
+                this.callApplicationServiceDriver$value +
+                ", fieldBlacklist$value=" +
+                this.fieldBlacklist$value +
+                ", methodBlacklist$value=" +
+                this.methodBlacklist$value +
+                ", showInheritedMembersInClasses$value=" +
+                this.showInheritedMembersInClasses$value +
+                ", showObjectMembersInClasses$value=" +
+                this.showObjectMembersInClasses$value +
+                ", multiplicityInLabel$value=" +
+                this.multiplicityInLabel$value +
+                ", fieldStereotypes$value=" +
+                this.fieldStereotypes$value +
+                ", transitiveFilterSeedDomainServiceTypeNames$value=" +
+                this.transitiveFilterSeedDomainServiceTypeNames$value +
+                ")";
         }
     }
 }

@@ -38,56 +38,54 @@ import io.domainlifecycles.domain.types.Identity;
 public interface FieldMirror {
 
     /**
-     * Returns the name of the mirrored field.
+     * @return the name of the mirrored field.
      */
     String getName();
 
     /**
-     * Returns the type of the mirrored field as {@link AssertedContainableTypeMirror}
+     * @return the type of the mirrored field as {@link AssertedContainableTypeMirror}
      */
     AssertedContainableTypeMirror getType();
 
     /**
-     * Returns the full qualified name of the class, that declared this field.
+     * @return the full qualified name of the class, that declared this field.
      */
     String getDeclaredByTypeName();
 
     /**
-     * Returns true, if this field is modifiable (in Java non final).
+     * @return true, if this field is modifiable (in Java non final).
      */
     boolean isModifiable();
 
     /**
-     * Returns the {@link AccessLevel} of the mirrored field.
+     * @return the {@link AccessLevel} of the mirrored field.
      */
     AccessLevel getAccessLevel();
 
     /**
-     * Returns true, if this field is readable with public access constraints.
+     * @return whether this field is readable with public access constraints.
      * E.g. the field is public or there is a public getter.
      */
     boolean isPublicReadable();
 
     /**
-     * Returns true, if this field is writeable with public access constraints.
+     * @return whether this field is writeable with public access constraints.
      * E.g. the field is public or there is a public setter.
      */
     boolean isPublicWriteable();
 
     /**
-     * Returns true, if this field contains the {@link Identity}, in case it is defined by an {@link Entity}.
+     * @return whether this field contains the {@link Identity}, in case it is defined by an {@link Entity}.
      */
     boolean isIdentityField();
 
     /**
-     * Returns true, if this field is {@code static}.
+     * @return whether this field is {@code static}.
      */
     boolean isStatic();
 
     /**
-     * Returns true, if this field is hidden.
-     *
-     * @return true if the field is hidden, otherwise false
+     * @return whether the field is hidden
      */
     boolean isHidden();
 }

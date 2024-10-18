@@ -29,11 +29,7 @@ package io.domainlifecycles.events.springgruelboxintegration;
 
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
-import io.domainlifecycles.domain.types.ApplicationService;
-import io.domainlifecycles.domain.types.DomainService;
-import io.domainlifecycles.domain.types.OutboundService;
-import io.domainlifecycles.domain.types.QueryClient;
-import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.ADomainService;
 import io.domainlifecycles.events.AQueryClient;
 import io.domainlifecycles.events.ARepository;
@@ -118,18 +114,9 @@ public class TestApplicationGruelboxIntegration {
      */
     @Bean
     public ServiceProvider serviceProvider(
-        List<Repository<?,?>> repositories,
-        List<ApplicationService> applicationServices,
-        List<DomainService> domainServices,
-        List<QueryClient<?>> queryClients,
-        List<OutboundService> outboundServices
+        List<ServiceKind> serviceInstances
     ){
-        var services = new Services();
-        repositories.forEach(services::registerRepositoryInstance);
-        applicationServices.forEach(services::registerApplicationServiceInstance);
-        domainServices.forEach(services::registerDomainServiceInstance);
-        queryClients.forEach(services::registerQueryClientInstance);
-        outboundServices.forEach(services::registerOutboundServiceInstance);
+        var services = new Services(serviceInstances);
         return services;
     }
 

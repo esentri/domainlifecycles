@@ -47,13 +47,14 @@ import io.domainlifecycles.mirror.exception.MirrorException;
 
 /**
  * Jackson specific implementation a {@link DomainSerializer}.
- *
+ * <p>
  * It can serialize all mirrors of given domain {@link InitializedDomain} into a String.
- * And it also can deserialize it back to the original state of an {@link InitializedDomain} (without having to use Java reflection).
+ * And it also can deserialize it back to the original state of an {@link InitializedDomain} (without having to use
+ * Java reflection).
  *
  * @author Mario Herb
  */
-public class JacksonDomainSerializer implements DomainSerializer{
+public class JacksonDomainSerializer implements DomainSerializer {
 
     private final ObjectMapper objectMapper;
 
@@ -77,7 +78,7 @@ public class JacksonDomainSerializer implements DomainSerializer{
         objectMapper.addMixIn(BoundedContextMirror.class, BoundedContextMirrorMixin.class);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        if(prettyPrint){
+        if (prettyPrint) {
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
         }
     }

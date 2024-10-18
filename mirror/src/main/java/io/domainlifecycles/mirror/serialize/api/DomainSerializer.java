@@ -36,5 +36,6 @@ import io.domainlifecycles.mirror.api.InitializedDomain;
  */
 public interface DomainSerializer {
     String serialize(InitializedDomain initializedDomain);
+
     InitializedDomain deserialize(String serializedDomain);
 }

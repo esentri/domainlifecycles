@@ -45,7 +45,8 @@ public class ReflectiveDomainObjectAccessor implements DynamicDomainObjectAccess
     private static Map<String, Field> fieldMap = new HashMap<>();
     private DomainObject domainObject;
     private Class<? extends DomainObject> domainObjectClass;
-    protected ReflectiveDomainObjectAccessor(DomainObject domainObject){
+
+    protected ReflectiveDomainObjectAccessor(DomainObject domainObject) {
         this.domainObject = domainObject;
         this.domainObjectClass = domainObject.getClass();
     }
@@ -55,11 +56,13 @@ public class ReflectiveDomainObjectAccessor implements DynamicDomainObjectAccess
      */
     @Override
     public Object peek(String fieldName) {
-        try{
+        try {
             var field = getField(fieldName);
             return field.get(domainObject);
         } catch (IllegalAccessException illegalAccessException) {
-            throw DLCAccessException.fail(String.format("Failed to read '%' from '%'!", fieldName, domainObjectClass.getName()), illegalAccessException);
+            throw DLCAccessException.fail(
+                String.format("Failed to read '%' from '%'!", fieldName, domainObjectClass.getName()),
+                illegalAccessException);
         }
     }
 
@@ -67,12 +70,14 @@ public class ReflectiveDomainObjectAccessor implements DynamicDomainObjectAccess
      * {@inheritDoc}
      */
     @Override
-    public void poke(String fieldName, Object argument){
+    public void poke(String fieldName, Object argument) {
         try {
             var field = getField(fieldName);
             field.set(domainObject, argument);
         } catch (IllegalAccessException illegalAccessException) {
-            throw DLCAccessException.fail(String.format("Failed to write '%s' in '%s'!", fieldName, domainObjectClass.getName()), illegalAccessException);
+            throw DLCAccessException.fail(
+                String.format("Failed to write '%s' in '%s'!", fieldName, domainObjectClass.getName()),
+                illegalAccessException);
         }
     }
 
@@ -90,25 +95,26 @@ public class ReflectiveDomainObjectAccessor implements DynamicDomainObjectAccess
         return domainObject;
     }
 
-    private Field getField(String fieldName){
+    private Field getField(String fieldName) {
         var field = fieldMap.get(fieldKey(fieldName));
-        if(field == null){
+        if (field == null) {
             field = retrieveField(fieldName);
         }
         return field;
     }
 
-    private synchronized Field retrieveField(String fieldName){
-            var field = JavaReflect
-                .findField(domainObjectClass, MemberSelect.HIERARCHY, fieldName)
-                .orElseThrow(() -> DLCAccessException.fail(String.format("Field '%s' not found in '%s'!", fieldName, domainObjectClass.getName())));
-            field.trySetAccessible();
-            var key = fieldKey(fieldName);
-            fieldMap.put(key, field);
-            return field;
+    private synchronized Field retrieveField(String fieldName) {
+        var field = JavaReflect
+            .findField(domainObjectClass, MemberSelect.HIERARCHY, fieldName)
+            .orElseThrow(() -> DLCAccessException.fail(
+                String.format("Field '%s' not found in '%s'!", fieldName, domainObjectClass.getName())));
+        field.trySetAccessible();
+        var key = fieldKey(fieldName);
+        fieldMap.put(key, field);
+        return field;
     }
 
-    private String fieldKey(String fieldName){
-        return domainObjectClass.getName()+"."+fieldName;
+    private String fieldKey(String fieldName) {
+        return domainObjectClass.getName() + "." + fieldName;
     }
 }

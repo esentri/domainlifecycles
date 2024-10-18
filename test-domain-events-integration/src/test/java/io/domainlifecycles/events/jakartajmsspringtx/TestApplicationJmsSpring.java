@@ -27,11 +27,7 @@
 
 package io.domainlifecycles.events.jakartajmsspringtx;
 
-import io.domainlifecycles.domain.types.ApplicationService;
-import io.domainlifecycles.domain.types.DomainService;
-import io.domainlifecycles.domain.types.OutboundService;
-import io.domainlifecycles.domain.types.QueryClient;
-import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.ADomainService;
 import io.domainlifecycles.events.AQueryClient;
 import io.domainlifecycles.events.ARepository;
@@ -45,7 +41,6 @@ import io.domainlifecycles.services.api.ServiceProvider;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.List;
@@ -94,24 +89,11 @@ public class TestApplicationJmsSpring {
         return new AnOutboundService();
     }
 
-    /**
-     * This method creates and configures a ServiceProvider instance, which is responsible for providing instances of various types of services.
-     * It takes three parameters: repositories, applicationServices, and domainServices, which are lists of Repository, ApplicationService, and DomainService instances respectively
-     */
     @Bean
     public ServiceProvider serviceProvider(
-        List<Repository<?,?>> repositories,
-        List<ApplicationService> applicationServices,
-        List<DomainService> domainServices,
-        List<QueryClient<?>> queryClients,
-        List<OutboundService> outboundServices
+        List<ServiceKind> serviceInstances
     ){
-        var services = new Services();
-        repositories.forEach(services::registerRepositoryInstance);
-        applicationServices.forEach(services::registerApplicationServiceInstance);
-        domainServices.forEach(services::registerDomainServiceInstance);
-        queryClients.forEach(services::registerQueryClientInstance);
-        outboundServices.forEach(services::registerOutboundServiceInstance);
+        var services = new Services(serviceInstances);
         return services;
     }
 

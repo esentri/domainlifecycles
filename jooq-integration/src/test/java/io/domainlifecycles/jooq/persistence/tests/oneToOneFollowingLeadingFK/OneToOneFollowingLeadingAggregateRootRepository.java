@@ -37,7 +37,8 @@ import tests.shared.persistence.domain.oneToOneFollowingLeadingFK.TestRootOneToO
 
 public class OneToOneFollowingLeadingAggregateRootRepository extends JooqAggregateRepository<TestRootOneToOneFollowingLeading, TestRootOneToOneFollowingLeadingId> {
 
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(OneToOneFollowingLeadingAggregateRootRepository.class);
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(
+        OneToOneFollowingLeadingAggregateRootRepository.class);
 
     public OneToOneFollowingLeadingAggregateRootRepository(DSLContext dslContext,
                                                            PersistenceEventPublisher persistenceEventPublisher,

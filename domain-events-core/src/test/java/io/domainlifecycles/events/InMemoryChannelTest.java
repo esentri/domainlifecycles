@@ -61,7 +61,6 @@ public class InMemoryChannelTest {
     @BeforeAll
     public static void init(){
         Domain.initialize(new ReflectiveDomainMirrorFactory("io.domainlifecycles.events.domain"));
-
         domainService = new ADomainService();
         repository = new ARepository();
         applicationService = new AnApplicationService();
@@ -69,11 +68,11 @@ public class InMemoryChannelTest {
         outboundService = new AnOutboundService();
 
         var services = new Services();
-        services.registerDomainServiceInstance(domainService);
-        services.registerRepositoryInstance(repository);
-        services.registerApplicationServiceInstance(applicationService);
-        services.registerQueryClientInstance(queryClient);
-        services.registerOutboundServiceInstance(outboundService);
+        services.registerServiceKindInstance(domainService);
+        services.registerServiceKindInstance(repository);
+        services.registerServiceKindInstance(applicationService);
+        services.registerServiceKindInstance(queryClient);
+        services.registerServiceKindInstance(outboundService);
 
         var inMemoryChannel = new InMemoryChannelFactory(services).processingChannel("default");
         var router = new DomainEventTypeBasedRouter(List.of(inMemoryChannel));
@@ -82,7 +81,7 @@ public class InMemoryChannelTest {
     }
 
     @Test
-    public void testIntegrationDomainEvent(){
+    public void testIntegrationDomainEvent() {
         //when
         var evt = new ADomainEvent("Test");
         DomainEvents.publish(evt);
@@ -121,7 +120,7 @@ public class InMemoryChannelTest {
     }
 
     @Test
-    public void testIntegrationAggregateDomainEvent(){
+    public void testIntegrationAggregateDomainEvent() {
         //when
         var evt = new AnAggregateDomainEvent("Test");
         DomainEvents.publish(evt);

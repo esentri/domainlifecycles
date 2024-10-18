@@ -61,5 +61,6 @@ public interface ConcurrencySafe {
     @Documented
     @Target(ElementType.FIELD)
     @Retention(RetentionPolicy.RUNTIME)
-    @interface ConcurrencyVersion { }
+    @interface ConcurrencyVersion {
+    }
 }

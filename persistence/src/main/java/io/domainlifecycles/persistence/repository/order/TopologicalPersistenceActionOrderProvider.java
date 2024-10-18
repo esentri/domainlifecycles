@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 /**
  * The order of persistence actions performed of the database is depending on the foreign key constraints
  * of the underlying database relations. Those are represented by {@link DatabaseDependencyEdge}.
- *
+ * <p>
  * In this class we calculate the total
  * order on how the changes can be applied - a topological order algorithm.
  */
@@ -71,6 +71,7 @@ public class TopologicalPersistenceActionOrderProvider implements PersistenceAct
 
     /**
      * {@inheritDoc}
+     *
      * @param aggregateRootClassName the aggregate root full qualified class name
      * @return
      */
@@ -81,6 +82,7 @@ public class TopologicalPersistenceActionOrderProvider implements PersistenceAct
 
     /**
      * {@inheritDoc}
+     *
      * @param aggregateRootClassName the aggregate root full qualified class name
      * @return
      */
@@ -92,7 +94,7 @@ public class TopologicalPersistenceActionOrderProvider implements PersistenceAct
     }
 
 
-    private void calculateContainedEntities( String aggregateRootOrEntityType, Set<String> currentlyContained) {
+    private void calculateContainedEntities(String aggregateRootOrEntityType, Set<String> currentlyContained) {
         var entityMirror = Domain.entityMirrorFor(aggregateRootOrEntityType);
 
         Set<String> contained = entityMirror.getEntityReferences()
@@ -150,7 +152,8 @@ public class TopologicalPersistenceActionOrderProvider implements PersistenceAct
 
     private Set<DatabaseDependencyEdge> getDatabaseDependencyEdges(Set<RecordMirror<?>> recordMirrors) {
         return recordMirrors.stream()
-            .flatMap(rm -> rm.enforcedReferences().stream().map(r -> new DatabaseDependencyEdge(r, rm.domainObjectTypeName())))
+            .flatMap(rm -> rm.enforcedReferences().stream().map(
+                r -> new DatabaseDependencyEdge(r, rm.domainObjectTypeName())))
             .collect(Collectors.toSet());
     }
 }

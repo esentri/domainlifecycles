@@ -78,12 +78,15 @@ public class PersistenceEventTestHelper {
                 + eventsCaught.get(i).getInstance().domainObject().toString());
         }
 
-        Assertions.assertThat(eventsCaught.stream().map(e-> new DomainObjectEventType(e.getInstance().domainObject(),e.getEventType())).collect(Collectors.toList()))
-        .usingRecursiveComparison()
-        .ignoringOverriddenEqualsForTypes(Entity.class)
-        .ignoringFieldsOfTypes(UUID.class)
-        .ignoringCollectionOrder()
-        .isEqualTo(expectedEvents.stream().map(e -> new DomainObjectEventType(e.domainObject, e.eventType)).collect(Collectors.toList()));
+        Assertions.assertThat(eventsCaught.stream().map(
+                e -> new DomainObjectEventType(e.getInstance().domainObject(), e.getEventType())).collect(
+                Collectors.toList()))
+            .usingRecursiveComparison()
+            .ignoringOverriddenEqualsForTypes(Entity.class)
+            .ignoringFieldsOfTypes(UUID.class)
+            .ignoringCollectionOrder()
+            .isEqualTo(expectedEvents.stream().map(e -> new DomainObjectEventType(e.domainObject, e.eventType)).collect(
+                Collectors.toList()));
 
     }
 
@@ -92,7 +95,8 @@ public class PersistenceEventTestHelper {
         expectedEvents.add(new ExpectedEvent(entity, eventType, null));
     }
 
-    public void addExpectedEvent(PersistenceEvent.PersistenceEventType eventType, ValueObject valueObject, Entity containingEntity) {
+    public void addExpectedEvent(PersistenceEvent.PersistenceEventType eventType, ValueObject valueObject,
+                                 Entity containingEntity) {
         expectedEvents.add(new ExpectedEvent(valueObject, eventType, containingEntity));
     }
 
@@ -115,9 +119,11 @@ public class PersistenceEventTestHelper {
 
         private PersistenceEvent assembleEvent(final PersistenceAction persistenceAction) {
             PersistenceEvent.PersistenceEventType eventType = PersistenceEvent.PersistenceEventType.INSERTED;
-            if(persistenceAction.actionType.equals(PersistenceAction.ActionType.UPDATE) || persistenceAction.actionType.equals(PersistenceAction.ActionType.DELETE_UPDATE)){
+            if (persistenceAction.actionType.equals(
+                PersistenceAction.ActionType.UPDATE) || persistenceAction.actionType.equals(
+                PersistenceAction.ActionType.DELETE_UPDATE)) {
                 eventType = PersistenceEvent.PersistenceEventType.UPDATED;
-            }else if(persistenceAction.actionType.equals(PersistenceAction.ActionType.DELETE)){
+            } else if (persistenceAction.actionType.equals(PersistenceAction.ActionType.DELETE)) {
                 eventType = PersistenceEvent.PersistenceEventType.DELETED;
             }
 
@@ -125,7 +131,7 @@ public class PersistenceEventTestHelper {
         }
     }
 
-    public class ExpectedEvent{
+    public class ExpectedEvent {
         public final DomainObject domainObject;
         public final PersistenceEvent.PersistenceEventType eventType;
         public final Entity containingEntity;
@@ -134,13 +140,16 @@ public class PersistenceEventTestHelper {
             DomainObject domainObject,
             PersistenceEvent.PersistenceEventType eventType,
             Entity containingEntity
-        ){
+        ) {
             this.domainObject = domainObject;
             this.eventType = eventType;
             this.containingEntity = containingEntity;
         }
     }
 
-    public record DomainObjectEventType(DomainObject domainObject, PersistenceEvent.PersistenceEventType eventType){};
+    public record DomainObjectEventType(DomainObject domainObject, PersistenceEvent.PersistenceEventType eventType) {
+    }
+
+    ;
 
 }

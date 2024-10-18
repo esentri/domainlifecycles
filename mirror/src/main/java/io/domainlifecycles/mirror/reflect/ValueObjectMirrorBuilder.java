@@ -36,7 +36,7 @@ import io.domainlifecycles.domain.types.ValueObject;
  *
  * @author Mario Herb
  */
-public class ValueObjectMirrorBuilder extends DomainTypeMirrorBuilder{
+public class ValueObjectMirrorBuilder extends DomainTypeMirrorBuilder {
 
     public ValueObjectMirrorBuilder(Class<? extends ValueObject> valueObjectClass) {
         super(valueObjectClass);
@@ -44,6 +44,8 @@ public class ValueObjectMirrorBuilder extends DomainTypeMirrorBuilder{
 
     /**
      * Creates a new {@link ValueObjectMirror}.
+     *
+     * @return new instance of ValueObjectMirror
      */
     public ValueObjectMirror build() {
         return new ValueObjectModel(

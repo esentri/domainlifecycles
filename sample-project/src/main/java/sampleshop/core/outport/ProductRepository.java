@@ -49,7 +49,7 @@ public interface ProductRepository extends Repository<Product.ProductId, Product
      * Stores an new {@code Product} into this repository.
      *
      * @param entity to to be stored
-     * @return updated {@code entity} instance 
+     * @return updated {@code entity} instance
      */
     @Override
     Product insert(Product entity);
@@ -58,7 +58,7 @@ public interface ProductRepository extends Repository<Product.ProductId, Product
      * Updates an existent {@code Product} in this repository.
      *
      * @param entity to to be updated
-     * @return updated {@code entity} instance 
+     * @return updated {@code entity} instance
      */
     @Override
     Product update(Product entity);
@@ -71,7 +71,8 @@ public interface ProductRepository extends Repository<Product.ProductId, Product
     /**
      * Finds a product by its ID.
      *
-     * @param productId the*/
+     * @param productId the
+     */
     @Override
     Optional<Product> findById(Product.ProductId productId);
 

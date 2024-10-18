@@ -70,7 +70,7 @@ public class VoAggregateThreeLevelJacksonTest {
 
             @Override
             public Identity<?> provideFor(String entityTypeName) {
-                if(entityTypeName.equals(VoAggregateThreeLevel.class.getName())){
+                if (entityTypeName.equals(VoAggregateThreeLevel.class.getName())) {
                     return new VoAggregateThreeLevelId(1L);
                 }
                 return null;
@@ -78,7 +78,7 @@ public class VoAggregateThreeLevelJacksonTest {
         };
         objectMapper.registerModule(new DlcJacksonModule(
                 new InnerClassDomainObjectBuilderProvider(),
-                 entityIdentityProvider
+                entityIdentityProvider
             )
         );
         objectMapper.registerModule(new Jdk8Module());
@@ -176,7 +176,7 @@ public class VoAggregateThreeLevelJacksonTest {
             .ignoringFields("identifikationsNummer")
             .withStrictTypeChecking()
             .isEqualTo(r);
-        Assertions.assertThat(read.getIdentifikationsNummer()).isEqualTo(new VoAggregateThreeLevelId(  1L));
+        Assertions.assertThat(read.getIdentifikationsNummer()).isEqualTo(new VoAggregateThreeLevelId(1L));
     }
 
     @Test
@@ -224,6 +224,6 @@ public class VoAggregateThreeLevelJacksonTest {
             .ignoringFields("identifikationsNummer")
             .withStrictTypeChecking()
             .isEqualTo(r);
-        Assertions.assertThat(read.getIdentifikationsNummer()).isEqualTo(new VoAggregateThreeLevelId(  1L));
+        Assertions.assertThat(read.getIdentifikationsNummer()).isEqualTo(new VoAggregateThreeLevelId(1L));
     }
 }

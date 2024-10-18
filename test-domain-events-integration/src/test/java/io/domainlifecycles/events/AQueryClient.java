@@ -39,7 +39,7 @@ public class AQueryClient implements QueryClient {
     public Queue<DomainEvent> received = new ConcurrentLinkedQueue<>();
 
     @ListensTo(domainEventType = ADomainEvent.class)
-    public void onADomainEvent(ADomainEvent domainEvent){
+    public void onADomainEvent(ADomainEvent domainEvent) {
         System.out.println("ADomainEvent received in AQueryClient! Message = " + domainEvent.message());
         received.add(domainEvent);
     }

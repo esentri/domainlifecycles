@@ -97,14 +97,14 @@ public class TestApplication {
     }
 
     @PostConstruct
-    public void postConstruct(){
+    public void postConstruct() {
         ValidationDomainClassExtender.extend("tests.shared.validation.javax");
         log.info("ValidationExtension Done!");
     }
 
     @Bean
     public JooqDomainPersistenceProvider domainPersistenceProvider(DomainObjectBuilderProvider domainObjectBuilderProvider,
-                                                                   Set<RecordMapper<?,?,?>> customRecordMappers){
+                                                                   Set<RecordMapper<?, ?, ?>> customRecordMappers) {
 
         JooqDomainPersistenceConfiguration jooqDomainPersistenceConfiguration = JooqDomainPersistenceConfiguration
             .JooqPersistenceConfigurationBuilder
@@ -113,7 +113,7 @@ public class TestApplication {
             .withRecordPackage("io.domainlifecycles.test.springboot2.tables.records")
             .withCustomRecordMappers(customRecordMappers)
             .withEntityValueObjectRecordTypeConfiguration(
-                new EntityValueObjectRecordTypeConfiguration(
+                new EntityValueObjectRecordTypeConfiguration<>(
                     Bestellung.class,
                     AktionsCode.class,
                     AktionsCodeRecord.class,
@@ -122,9 +122,8 @@ public class TestApplication {
             )
             .make();
 
-        JooqDomainPersistenceProvider domainPersistenceProvider = new JooqDomainPersistenceProvider(jooqDomainPersistenceConfiguration);
-
-        return domainPersistenceProvider;
+        return new JooqDomainPersistenceProvider(
+            jooqDomainPersistenceConfiguration);
     }
 
     @Bean
@@ -159,20 +158,17 @@ public class TestApplication {
         return module;
     }
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean
     public DefaultDSLContext dslContext(DataSource dataSource) {
         return new DefaultDSLContext(configuration(dataSource));
     }
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean
     public DataSourceConnectionProvider connectionProvider(DataSource dataSource) {
         return new DataSourceConnectionProvider
             (new TransactionAwareDataSourceProxy(dataSource));
     }
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean
     public DefaultConfiguration configuration(DataSource dataSource) {
         DefaultConfiguration jooqConfiguration = new DefaultConfiguration();

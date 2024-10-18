@@ -129,7 +129,7 @@ public class BaseDLCTestPersistenceConfiguration {
         domainPersistenceProvider = initDomainPersistenceProvider();
     }
 
-    private DataSource initDatasource(){
+    private DataSource initDatasource() {
         var ds = new JdbcDataSource();
         ds.setURL("jdbc:h2:./build/h2-db/test;AUTO_SERVER=TRUE");
         ds.setUser("sa");
@@ -137,7 +137,7 @@ public class BaseDLCTestPersistenceConfiguration {
         return ds;
     }
 
-    private DSLContext initDslContext(){
+    private DSLContext initDslContext() {
         //connection provider
         var connectionProvider = new ConnectionProvider() {
             @Override
@@ -159,15 +159,15 @@ public class BaseDLCTestPersistenceConfiguration {
         return new DefaultDSLContext(jooqConfiguration);
     }
 
-    private void initDomainMirror(){
+    private void initDomainMirror() {
         Domain.initialize(new ReflectiveDomainMirrorFactory("tests"));
     }
 
-    private DomainObjectBuilderProvider initDomainObjectBuilderProvider(){
+    private DomainObjectBuilderProvider initDomainObjectBuilderProvider() {
         return new InnerClassDomainObjectBuilderProvider();
     }
 
-    private JooqDomainPersistenceProvider initDomainPersistenceProvider(){
+    private JooqDomainPersistenceProvider initDomainPersistenceProvider() {
         Set<RecordMapper<?, ?, ?>> customRecordMappers = new HashSet<>();
         customRecordMappers.add(new Test1JooqRecordMapper());
         customRecordMappers.add(new Test2JooqRecordMapper());
@@ -213,7 +213,7 @@ public class BaseDLCTestPersistenceConfiguration {
                 return false;
             })
             .withIgnoredRecordProperties(p -> {
-                if(p.getName().equals("ignoredColumn")) return true;
+                if (p.getName().equals("ignoredColumn")) return true;
                 return false;
             })
             .withEntityValueObjectRecordClassProvider(
@@ -294,20 +294,20 @@ public class BaseDLCTestPersistenceConfiguration {
         return new JooqDomainPersistenceProvider(jooqDomainPersistenceConfiguration);
     }
 
-    public void startTransaction(){
+    public void startTransaction() {
         try {
             currentConnection = dataSource.getConnection();
             currentConnection.setAutoCommit(false);
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
     }
 
-    public void rollbackTransaction(){
+    public void rollbackTransaction() {
         try {
             currentConnection.rollback();
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }

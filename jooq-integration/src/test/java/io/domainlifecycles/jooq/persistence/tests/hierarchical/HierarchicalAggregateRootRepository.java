@@ -53,7 +53,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-public class HierarchicalAggregateRootRepository extends PersistenceActionPublishingRepository<TestRootHierarchicalId, TestRootHierarchical, UpdatableRecord<?>> {
+public class HierarchicalAggregateRootRepository extends PersistenceActionPublishingRepository<TestRootHierarchicalId
+    , TestRootHierarchical, UpdatableRecord<?>> {
 
     private final DSLContext dslContext;
 
@@ -88,19 +89,21 @@ public class HierarchicalAggregateRootRepository extends PersistenceActionPublis
 
 
             @Override
-            public TestRootHierarchical fetchBasicByIdValue(Long aLong, SimpleFetcherContext<UpdatableRecord<?>> fetcherContext) {
+            public TestRootHierarchical fetchBasicByIdValue(Long aLong,
+                                                            SimpleFetcherContext<UpdatableRecord<?>> fetcherContext) {
                 return findByIdCustom(aLong);
             }
 
             @Override
-            public TestRootHierarchical fetchBasicByRecord(UpdatableRecord<?> aggregateRecord, SimpleFetcherContext<UpdatableRecord<?>> fetcherContext) {
+            public TestRootHierarchical fetchBasicByRecord(UpdatableRecord<?> aggregateRecord,
+                                                           SimpleFetcherContext<UpdatableRecord<?>> fetcherContext) {
                 throw new IllegalStateException("Not implemented!");
             }
 
         };
     }
 
-    public TestRootHierarchical findByIdCustom(Long testRootHierarchicalId){
+    public TestRootHierarchical findByIdCustom(Long testRootHierarchicalId) {
         Optional<TestRootHierarchicalRecord> testRootHierarchicalRecordOptional = dslContext
             .fetchOptional(Tables.TEST_ROOT_HIERARCHICAL, Tables.TEST_ROOT_HIERARCHICAL.ID.eq(testRootHierarchicalId));
 
@@ -115,7 +118,8 @@ public class HierarchicalAggregateRootRepository extends PersistenceActionPublis
                 .get();
 
             Optional<TestRootHierarchicalRecord> testRootHierarchicalChildRecordOptional = dslContext
-                .fetchOptional(Tables.TEST_ROOT_HIERARCHICAL, Tables.TEST_ROOT_HIERARCHICAL.PARENT_ID.eq(testRootHierarchicalId));
+                .fetchOptional(Tables.TEST_ROOT_HIERARCHICAL,
+                    Tables.TEST_ROOT_HIERARCHICAL.PARENT_ID.eq(testRootHierarchicalId));
 
             if (testRootHierarchicalChildRecordOptional.isPresent()) {
                 TestRootHierarchical child = findByIdCustom(testRootHierarchicalChildRecordOptional.get().getId());

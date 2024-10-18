@@ -27,18 +27,12 @@
 
 package sampleshop.configuration.system;
 
-
-
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
-import io.domainlifecycles.domain.types.ApplicationService;
-import io.domainlifecycles.domain.types.DomainService;
-import io.domainlifecycles.domain.types.OutboundService;
-import io.domainlifecycles.domain.types.QueryClient;
-import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.spring.api.SpringTxInMemoryChannelFactory;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.jooq.configuration.JooqDomainPersistenceConfiguration;
@@ -59,6 +53,7 @@ import sampleshop.outbound.event.SpringPersistenceEventPublisher;
 
 import java.util.List;
 import java.util.Set;
+
 /**
  * Spring configuration for DLC.
  *
@@ -76,13 +71,14 @@ public class DLCConfiguration {
      * IMPORTANT: A record package where all JOOQ record classes are generated must be defined.
      *
      * @param domainObjectBuilderProvider
-     * @param customRecordMappers {@link RecordMapper} all record mappers (should be defined as spring beans to work like that)
+     * @param customRecordMappers         {@link RecordMapper} all record mappers (should be defined as spring beans
+     *                                                        to work like that)
      * @return {@link JooqDomainPersistenceProvider} instance configured
      */
     @Bean
     public JooqDomainPersistenceProvider domainPersistenceProvider(DomainObjectBuilderProvider domainObjectBuilderProvider,
                                                                    Set<RecordMapper<?, ?, ?>> customRecordMappers
-                                                                   ) {
+    ) {
         return new JooqDomainPersistenceProvider(
             JooqDomainPersistenceConfiguration.JooqPersistenceConfigurationBuilder
                 .newConfig()
@@ -102,9 +98,11 @@ public class DLCConfiguration {
 
     /**
      * The entity identity provider, makes it possible that new Entities or AggregateRoots are to the application
-     * from outside (via a REST controller) and that for new instances new IDs are fetched from the corresponding database sequences or other ID providers.
-     * The identity provider assignes the new id values within the deserialization process. We need that because we only want to valid instances with nonnull IDs within our domain.
-     *
+     * from outside (via a REST controller) and that for new instances new IDs are fetched from the corresponding
+     * database sequences or other ID providers.
+     * The identity provider assignes the new id values within the deserialization process. We need that because we
+     * only want to valid instances with nonnull IDs within our domain.
+     * <p>
      * Only used together with DLC Jackson integration, see below...
      */
     @Bean
@@ -119,7 +117,7 @@ public class DLCConfiguration {
     DlcJacksonModule dlcModuleConfiguration(List<? extends JacksonMappingCustomizer<?>> customizers,
                                             DomainObjectBuilderProvider domainObjectBuilderProvider,
                                             EntityIdentityProvider entityIdentityProvider
-                                            ) {
+    ) {
         DlcJacksonModule module = new DlcJacksonModule(domainObjectBuilderProvider, entityIdentityProvider);
         customizers.forEach(c -> module.registerCustomizer(c, c.instanceType));
         return module;
@@ -135,24 +133,14 @@ public class DLCConfiguration {
     }
 
     /**
-     * This method creates and configures a ServiceProvider instance, which is responsible for providing instances of various types of services.
-     * It takes three parameters: repositories, applicationServices, and domainServices, which are lists of Repository, ApplicationService, and DomainService instances respectively
+     * This method creates and configures a ServiceProvider instance, which is responsible for providing instances of
+     * various types of services.
+     * It takes three parameters: repositories, applicationServices, and domainServices, which are lists of
+     * Repository, ApplicationService, and DomainService instances respectively
      */
     @Bean
-    public ServiceProvider serviceProvider(
-        List<Repository<?,?>> repositories,
-        List<ApplicationService> applicationServices,
-        List<DomainService> domainServices,
-        List<QueryClient<?>> queryClients,
-        List<OutboundService> outboundServices
-    ){
-        var services = new Services();
-        repositories.forEach(services::registerRepositoryInstance);
-        applicationServices.forEach(services::registerApplicationServiceInstance);
-        domainServices.forEach(services::registerDomainServiceInstance);
-        queryClients.forEach(services::registerQueryClientInstance);
-        outboundServices.forEach(services::registerOutboundServiceInstance);
-        return services;
+    public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds){
+        return  new Services(serviceKinds);
     }
 
     @Bean

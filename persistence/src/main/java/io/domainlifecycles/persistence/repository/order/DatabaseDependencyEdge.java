@@ -32,13 +32,13 @@ import io.domainlifecycles.domain.types.internal.DomainObject;
 import java.util.Objects;
 
 /**
- * A DatabaseDependencyEdge expresses any kind of order relation that is implied to these {@link DomainObject}s (=entities, value objects) by its corresponding
+ * A DatabaseDependencyEdge expresses any kind of order relation that is implied to these {@link DomainObject}s
+ * (=entities, value objects) by its corresponding
  * database relation (Dependencies implied by Foreign Keys).
  * Those dependencies have an impact on the order of operations applied to an entity.
  *
  * @param sourceClassName the source of the edge (the entity that has to be persisted before the target entity)
  * @param targetClassName the target of the edge (the entity that has to be persisted after the source entity)
- *
  * @author Mario Herb
  */
 public record DatabaseDependencyEdge(String sourceClassName,

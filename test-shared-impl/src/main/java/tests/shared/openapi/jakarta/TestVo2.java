@@ -50,8 +50,8 @@ import java.util.Optional;
 @Getter
 public class TestVo2 implements ValueObject {
 
-    private final @Size(max=5) String stringSized;
-    private final Optional<@Size(max=5) String> optionalStringSized;
+    private final @Size(max = 5) String stringSized;
+    private final Optional<@Size(max = 5) String> optionalStringSized;
     private final @NotNull String stringNotNull;
     private final @NotEmpty String stringNotEmpty;
     private final @NotBlank String stringNotBlank;
@@ -69,7 +69,7 @@ public class TestVo2 implements ValueObject {
     private final @DecimalMax(value = "5.0", inclusive = false) int anIntDecimalMaxExclusive;
     private final Optional<@DecimalMax(value = "5.0", inclusive = false) BigDecimal> optionalBigDecimalDecimalMaxExclusive;
 
-    private final @Size(max = 2)  List<TestId> listTestIdSized;
+    private final @Size(max = 2) List<TestId> listTestIdSized;
     private final @Digits(integer = 3, fraction = 2) double aDoubleDigits;
     private final TestId testId;
     private final Optional<TestId> optionalTestId;

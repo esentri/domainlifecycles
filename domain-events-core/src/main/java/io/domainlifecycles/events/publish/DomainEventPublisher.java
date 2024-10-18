@@ -40,6 +40,7 @@ public interface DomainEventPublisher {
 
     /**
      * Publish a domainEvent with the underlying technical event bus.
+     *
      * @param domainEvent being published
      */
     public void publish(DomainEvent domainEvent);

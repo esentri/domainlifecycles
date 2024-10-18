@@ -55,7 +55,7 @@ public class VoAggregateTwoLevelRepository_ITest extends BasePersistence_ITest {
     private VoAggregateTwoLevelRepository voAggregateTwoLevelRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         voAggregateTwoLevelRepository = Mockito.spy(new VoAggregateTwoLevelRepository(
             persistenceConfiguration.dslContext,
             persistenceEventTestHelper.testEventPublisher,
@@ -76,7 +76,8 @@ public class VoAggregateTwoLevelRepository_ITest extends BasePersistence_ITest {
 
 
         //then
-        Optional<VoAggregateTwoLevel> found = voAggregateTwoLevelRepository.findResultById(new VoAggregateTwoLevelId(1l))
+        Optional<VoAggregateTwoLevel> found = voAggregateTwoLevelRepository.findResultById(
+                new VoAggregateTwoLevelId(1l))
             .resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
 
@@ -98,7 +99,8 @@ public class VoAggregateTwoLevelRepository_ITest extends BasePersistence_ITest {
 
         persistenceEventTestHelper.resetEventsCaught();
         //then
-        Optional<VoAggregateTwoLevel> found = voAggregateTwoLevelRepository.findResultById(new VoAggregateTwoLevelId(1l)).resultValue();
+        Optional<VoAggregateTwoLevel> found = voAggregateTwoLevelRepository.findResultById(
+            new VoAggregateTwoLevelId(1l)).resultValue();
 
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
 
@@ -117,7 +119,8 @@ public class VoAggregateTwoLevelRepository_ITest extends BasePersistence_ITest {
         voAggregateTwoLevelRepository.deleteById(new VoAggregateTwoLevelId(1l));
 
         //then
-        Optional<VoAggregateTwoLevel> found = voAggregateTwoLevelRepository.findResultById(new VoAggregateTwoLevelId(1l)).resultValue();
+        Optional<VoAggregateTwoLevel> found = voAggregateTwoLevelRepository.findResultById(
+            new VoAggregateTwoLevelId(1l)).resultValue();
         Assertions.assertThat(found).isEmpty();
 
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted);
@@ -138,7 +141,8 @@ public class VoAggregateTwoLevelRepository_ITest extends BasePersistence_ITest {
         VoAggregateTwoLevel updated = voAggregateTwoLevelRepository.update(copy);
 
         //then
-        Optional<VoAggregateTwoLevel> found = voAggregateTwoLevelRepository.findResultById(new VoAggregateTwoLevelId(1l)).resultValue();
+        Optional<VoAggregateTwoLevel> found = voAggregateTwoLevelRepository.findResultById(
+            new VoAggregateTwoLevelId(1l)).resultValue();
         Assertions.assertThat(found).isPresent();
         assertThat(updated == copy);
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
@@ -167,7 +171,8 @@ public class VoAggregateTwoLevelRepository_ITest extends BasePersistence_ITest {
         VoAggregateTwoLevel updated = voAggregateTwoLevelRepository.update(copy);
 
         //then
-        Optional<VoAggregateTwoLevel> found = voAggregateTwoLevelRepository.findResultById(new VoAggregateTwoLevelId(1l)).resultValue();
+        Optional<VoAggregateTwoLevel> found = voAggregateTwoLevelRepository.findResultById(
+            new VoAggregateTwoLevelId(1l)).resultValue();
 
         assertThat(updated == copy);
         persistenceEventTestHelper.assertFoundWithResult(found, updated);

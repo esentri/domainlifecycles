@@ -43,10 +43,9 @@ import java.util.List;
  * {@link #process(List)} method, which takes a list of execution contexts and returns
  * a list of execution results.
  *
+ * @author Mario Herb
  * @see ExecutionContext
  * @see ExecutionResult
- *
- * @author Mario Herb
  */
 public interface ExecutionContextProcessor {
 

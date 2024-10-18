@@ -38,11 +38,11 @@ import java.util.Objects;
 /**
  * The DirectOutboxPoller class is a subclass of AbstractOutboxPoller which sends polled
  * domain events directly to a receiving domain event handler.
- *
+ * <p>
  * Example usage:
- *
+ * <p>
  * TransactionalOutbox transactionalOutbox = new TransactionalOutboxImpl();
- * DomainEventConsumer domainEventConsumer = new ReceivingDomainEventHandlerImpl();
+ * DomainEventConsumer domainEventConsumer = new GeneralDomainEventConsumer();
  * DirectOutboxPoller outboxPoller = new DirectOutboxPoller(transactionalOutbox, domainEventConsumer);
  * outboxPoller.setDelay(5000);
  * outboxPoller.setPeriod(1000);
@@ -74,9 +74,9 @@ public class DirectOutboxPoller extends AbstractOutboxPoller {
     @Override
     protected ProcessingResult send(DomainEvent domainEvent) {
         var results = domainEventConsumer.consume(domainEvent);
-        if(results.stream().allMatch(ExecutionResult::success)){
+        if (results.stream().allMatch(ExecutionResult::success)) {
             return ProcessingResult.OK;
-        }else if(results.stream().noneMatch(ExecutionResult::success)){
+        } else if (results.stream().noneMatch(ExecutionResult::success)) {
             return ProcessingResult.FAILED;
         }
         return ProcessingResult.FAILED_PARTIALLY;

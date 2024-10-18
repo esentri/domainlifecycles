@@ -77,7 +77,8 @@ public class AsyncExecutionContextProcessor extends SimpleExecutionContextProces
     }
 
     /**
-     * Processes a list of execution contexts by executing a HandlerExecutor on each context asynchronously using a fixed thread pool.
+     * Processes a list of execution contexts by executing a HandlerExecutor on each context asynchronously using a
+     * fixed thread pool.
      *
      * @param contextList The list of execution contexts to be processed.
      * @return A list of ExecutionResult objects, representing the results of the processing.
@@ -85,21 +86,21 @@ public class AsyncExecutionContextProcessor extends SimpleExecutionContextProces
      */
     @Override
     public List<ExecutionResult> process(List<ExecutionContext> contextList) {
-        log.debug("Going to process {}", contextList.stream().map(c-> c.toString()).collect(Collectors.joining(",")));
+        log.debug("Going to process {}", contextList.stream().map(c -> c.toString()).collect(Collectors.joining(",")));
         List<Future<ExecutionResult>> futures;
         try {
-            futures = executorService.invokeAll(contextList.stream().map(c -> new Callable<ExecutionResult>(){
-                    @Override
-                    public ExecutionResult call() throws Exception {
-                        return new ExecutionResult(c, handlerExecutor.execute(c));
-                    }
-                }).toList());
+            futures = executorService.invokeAll(contextList.stream().map(c -> new Callable<ExecutionResult>() {
+                @Override
+                public ExecutionResult call() throws Exception {
+                    return new ExecutionResult(c, handlerExecutor.execute(c));
+                }
+            }).toList());
 
-        } catch (InterruptedException e ) {
+        } catch (InterruptedException e) {
             throw DLCEventsException.fail("Invoking the handler executor asynchronously failed!", e);
         }
         var results = new ArrayList<ExecutionResult>();
-        for(var f : futures){
+        for (var f : futures) {
             ExecutionResult result = null;
             try {
                 result = f.get();
@@ -108,7 +109,8 @@ public class AsyncExecutionContextProcessor extends SimpleExecutionContextProces
             }
             results.add(result);
         }
-        log.debug("Returning to process results {}", results.stream().map(c-> c.toString()).collect(Collectors.joining(",")));
+        log.debug("Returning to process results {}",
+            results.stream().map(c -> c.toString()).collect(Collectors.joining(",")));
         return results;
 
     }

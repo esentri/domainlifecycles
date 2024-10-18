@@ -67,6 +67,7 @@ public class NamingUtil {
 
     /**
      * Transforma a camel case String into snake case.
+     *
      * @param camelCase input String
      * @return snake case String
      */

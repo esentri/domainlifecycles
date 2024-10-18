@@ -246,6 +246,12 @@ public class TypeTestValueObject extends ValueObjectBase {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), aBoolean, aChar, string, uuid, optionalString, bigDecimal, bigInteger, anInt, aLong, aByte, aShort, optionalBigDecimal, optionalBigInteger, optionalInteger, optionalLong, optionalByte, optionalShort, aFloat, aDouble, optionalFloat, optionalDouble, instant, optionalInstant, localDate, optionalLocalDate, localDateTime, optionalLocalDateTime, localTime, optionalLocalTime, zonedDateTime, optionalZonedDateTime, offsetDateTime, optionalOffsetDateTime, offsetTime, optionalOffsetTime, date, calendar, yearMonth, optionalYearMonth, monthDay, optionalMonthDay, year, optionalYear);
+        return Objects.hash(super.hashCode(), aBoolean, aChar, string, uuid, optionalString, bigDecimal, bigInteger,
+            anInt, aLong, aByte, aShort, optionalBigDecimal, optionalBigInteger, optionalInteger, optionalLong,
+            optionalByte, optionalShort, aFloat, aDouble, optionalFloat, optionalDouble, instant, optionalInstant,
+            localDate, optionalLocalDate, localDateTime, optionalLocalDateTime, localTime, optionalLocalTime,
+            zonedDateTime, optionalZonedDateTime, offsetDateTime, optionalOffsetDateTime, offsetTime,
+            optionalOffsetTime, date, calendar, yearMonth, optionalYearMonth, monthDay, optionalMonthDay, year,
+            optionalYear);
     }
 }

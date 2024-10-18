@@ -36,7 +36,8 @@ import org.slf4j.LoggerFactory;
 import tests.shared.persistence.domain.simpleUuid.TestRootSimpleUuid;
 import tests.shared.persistence.domain.simpleUuid.TestRootSimpleUuidId;
 
-public class SimpleUuidAggregateRootRepository extends JooqAggregateRepository<TestRootSimpleUuid, TestRootSimpleUuidId> {
+public class SimpleUuidAggregateRootRepository extends JooqAggregateRepository<TestRootSimpleUuid,
+    TestRootSimpleUuidId> {
 
 
     private static final Logger log = LoggerFactory.getLogger(SimpleUuidAggregateRootRepository.class);

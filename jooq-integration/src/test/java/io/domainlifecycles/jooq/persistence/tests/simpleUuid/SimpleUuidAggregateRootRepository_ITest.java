@@ -40,13 +40,14 @@ import tests.shared.persistence.domain.simpleUuid.TestRootSimpleUuidId;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SimpleUuidAggregateRootRepository_ITest extends BasePersistence_ITest {
 
     private SimpleUuidAggregateRootRepository simpleUuidAggregateRootRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         simpleUuidAggregateRootRepository = new SimpleUuidAggregateRootRepository(
             persistenceConfiguration.dslContext,
             persistenceEventTestHelper.testEventPublisher,
@@ -62,7 +63,8 @@ public class SimpleUuidAggregateRootRepository_ITest extends BasePersistence_ITe
         //when
         TestRootSimpleUuid inserted = simpleUuidAggregateRootRepository.insert(trs);
         //then
-        Optional<TestRootSimpleUuid> found = simpleUuidAggregateRootRepository.findResultById(new TestRootSimpleUuidId(trs.getId().value())).resultValue();
+        Optional<TestRootSimpleUuid> found = simpleUuidAggregateRootRepository.findResultById(
+            new TestRootSimpleUuidId(trs.getId().value())).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
         Assertions.assertThat(found.get().getId().value()).isEqualTo(inserted.getId().value());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
@@ -86,7 +88,8 @@ public class SimpleUuidAggregateRootRepository_ITest extends BasePersistence_ITe
         //when
         TestRootSimpleUuid updated = simpleUuidAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootSimpleUuid> found = simpleUuidAggregateRootRepository.findResultById(new TestRootSimpleUuidId(trs.getId().value())).resultValue();
+        Optional<TestRootSimpleUuid> found = simpleUuidAggregateRootRepository.findResultById(
+            new TestRootSimpleUuidId(trs.getId().value())).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         Assertions.assertThat(found.get().getId().value()).isEqualTo(inserted.getId().value());
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
@@ -104,7 +107,8 @@ public class SimpleUuidAggregateRootRepository_ITest extends BasePersistence_ITe
         //when
         Optional<TestRootSimpleUuid> deleted = simpleUuidAggregateRootRepository.deleteById(inserted.getId());
         //then
-        Optional<TestRootSimpleUuid> found = simpleUuidAggregateRootRepository.findResultById(new TestRootSimpleUuidId(trs.getId().value())).resultValue();
+        Optional<TestRootSimpleUuid> found = simpleUuidAggregateRootRepository.findResultById(
+            new TestRootSimpleUuidId(trs.getId().value())).resultValue();
         Assertions.assertThat(deleted).isPresent();
         Assertions.assertThat(found).isEmpty();
         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);

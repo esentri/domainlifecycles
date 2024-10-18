@@ -37,55 +37,58 @@ import java.util.List;
 public interface DomainTypeMirror extends Mirror {
 
     /**
-     * Returns the full qualified type name of the mirrored type.
+     * @return the full qualified type name of the mirrored type.
      */
     String getTypeName();
 
     /**
-     * Returns the {@link DomainType} of the mirrored type.
+     * @return the {@link DomainType} of the mirrored type.
      */
     DomainType getDomainType();
 
     /**
-     * Returns a list mirrored fields of the mirrored type (including all special references to other DomainTypes).
+     * @return a list mirrored fields of the mirrored type (including all special references to other DomainTypes).
      */
     List<FieldMirror> getAllFields();
 
     /**
-     * Returns a list of mirrored methods.
+     * @return a list of mirrored methods.
      */
     List<MethodMirror> getMethods();
 
     /**
-     * Returns a mirrored method by the method name.
+     * @param methodName the method's name
+     * @return a mirrored method by the method name.
      */
     MethodMirror methodByName(String methodName);
 
     /**
-     * Returns a fields by the field name (excluding possible hidden fields).
+     * @param fieldName the field name to return the field for
+     * @return a mirrored field by the field name (excluding possible hidden fields).
      */
     FieldMirror fieldByName(String fieldName);
 
     /**
-     * Returns true, if the mirrored type is abstract.
+     * @return true, if the mirrored type is abstract.
      */
     boolean isAbstract();
 
     /**
-     * Returns a list of full qualified type names, that represent the
+     * @return a list of full qualified type names, that represent the
      * inheritance hierarchy of this type (extends). It is ordered according to the natural order
      * of {@code extends} from the direct superclass of this type until {@link java.lang.Object}.
      */
     List<String> getInheritanceHierarchyTypeNames();
 
     /**
-     * Checks if the passed typeName is contained in the direct inheritance hierarchy.
+     * @param typeName the type name to check
+     * @return whether the passed typeName is contained in the direct inheritance hierarchy.
      * This does not work with interface type names, only the "extends" hierarchy is checked.
      */
     boolean isSubClassOf(String typeName);
 
     /**
-     * Returns a list of full qualified type names, that represent the
+     * @return a list of full qualified type names, that represent the
      * interface list of this type (implements). It is ordered according to the definition order
      * of {@code implements}.
      */

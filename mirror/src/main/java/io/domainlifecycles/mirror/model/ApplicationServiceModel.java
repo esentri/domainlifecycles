@@ -41,6 +41,7 @@ import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.mirror.api.QueryClientMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
+import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.mirror.exception.MirrorException;
 
 import java.util.Collections;
@@ -53,15 +54,8 @@ import java.util.stream.Collectors;
  *
  * @author Mario Herb
  */
-public class ApplicationServiceModel extends DomainTypeModel implements ApplicationServiceMirror {
-    @JsonProperty
-    private final List<String> referencedRepositoryTypeNames;
-    @JsonProperty
-    private final List<String> referencedDomainServiceTypeNames;
-    @JsonProperty
-    private final List<String> referencedOutboundServiceTypeNames;
-    @JsonProperty
-    private final List<String> referencedQueryClientTypeNames;
+public class ApplicationServiceModel extends ServiceKindModel implements ApplicationServiceMirror {
+
     @JsonProperty
     private final List<String> applicationServiceInterfaceTypeNames;
 
@@ -70,97 +64,14 @@ public class ApplicationServiceModel extends DomainTypeModel implements Applicat
                                    @JsonProperty("abstract") boolean isAbstract,
                                    @JsonProperty("allFields") List<FieldMirror> allFields,
                                    @JsonProperty("methods") List<MethodMirror> methods,
-                                   @JsonProperty("referencedRepositoryTypeNames") List<String> referencedRepositoryTypeNames,
-                                   @JsonProperty("referencedDomainServiceTypeNames") List<String> referencedDomainServiceTypeNames,
-                                   @JsonProperty("referencedOutboundServiceTypeNames") List<String> referencedOutboundServiceTypeNames,
-                                   @JsonProperty("referencedQueryClientTypeNames") List<String> referencedQueryClientTypeNames,
                                    @JsonProperty("applicationServiceInterfaceTypeNames") List<String> applicationServiceInterfaceTypeNames,
                                    @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
                                    @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
-                                   ) {
+    ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
-        Objects.requireNonNull(referencedRepositoryTypeNames);
-        this.referencedRepositoryTypeNames = Collections.unmodifiableList(referencedRepositoryTypeNames);
-        this.referencedDomainServiceTypeNames = Collections.unmodifiableList(referencedDomainServiceTypeNames);
-        this.referencedOutboundServiceTypeNames = Collections.unmodifiableList(referencedOutboundServiceTypeNames);
-        this.referencedQueryClientTypeNames = Collections.unmodifiableList(referencedQueryClientTypeNames);
         this.applicationServiceInterfaceTypeNames = Collections.unmodifiableList(applicationServiceInterfaceTypeNames);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @JsonIgnore
-    @Override
-    public List<RepositoryMirror> getReferencedRepositories() {
-        return referencedRepositoryTypeNames
-            .stream()
-            .map(n -> (RepositoryMirror) Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("RepositoryMirror not found for '%s'", n)))
-            .collect(Collectors.toList());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @JsonIgnore
-    @Override
-    public List<DomainServiceMirror> getReferencedDomainServices() {
-        return referencedDomainServiceTypeNames
-            .stream()
-            .map(n -> (DomainServiceMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("DomainServiceMirror not found for '%s'", n)))
-            .collect(Collectors.toList());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @JsonIgnore
-    @Override
-    public List<OutboundServiceMirror> getReferencedOutboundServices() {
-        return referencedOutboundServiceTypeNames
-            .stream()
-            .map(n -> (OutboundServiceMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("OutboundServiceMirror not found for '%s'", n)))
-            .collect(Collectors.toList());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @JsonIgnore
-    @Override
-    public List<QueryClientMirror> getReferencedQueryClients() {
-        return referencedQueryClientTypeNames
-            .stream()
-            .map(n -> (QueryClientMirror)Domain.typeMirror(n).orElseThrow(()-> MirrorException.fail("QueryClientMirror not found for '%s'", n)))
-            .collect(Collectors.toList());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean publishes(DomainEventMirror domainEvent) {
-        return methods.stream()
-            .anyMatch(m -> m.publishes(domainEvent));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean listensTo(DomainEventMirror domainEvent) {
-        return methods.stream()
-            .anyMatch(m -> m.listensTo(domainEvent));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean processes(DomainCommandMirror command) {
-        return methods.stream()
-            .anyMatch(m -> m.processes(command));
-    }
 
     /**
      * {@inheritDoc}
@@ -186,10 +97,6 @@ public class ApplicationServiceModel extends DomainTypeModel implements Applicat
     @Override
     public String toString() {
         return "ApplicationServiceModel{" +
-            "referencedRepositoryTypeNames=" + referencedRepositoryTypeNames +
-            "referencedDomainServiceTypeNames=" + referencedDomainServiceTypeNames +
-            "referencedOutboundServiceTypeNames=" + referencedOutboundServiceTypeNames +
-            "referencedQueryClientTypeNames=" + referencedQueryClientTypeNames +
             ", applicationServiceInterfaceTypeNames=" + applicationServiceInterfaceTypeNames +
             "} " + super.toString();
     }
@@ -203,11 +110,7 @@ public class ApplicationServiceModel extends DomainTypeModel implements Applicat
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         ApplicationServiceModel that = (ApplicationServiceModel) o;
-        return referencedRepositoryTypeNames.equals(that.referencedRepositoryTypeNames)
-            && referencedDomainServiceTypeNames.equals(that.referencedDomainServiceTypeNames)
-            && referencedOutboundServiceTypeNames.equals(that.referencedOutboundServiceTypeNames)
-            && referencedQueryClientTypeNames.equals(that.referencedQueryClientTypeNames)
-            && applicationServiceInterfaceTypeNames.equals(that.applicationServiceInterfaceTypeNames);
+        return applicationServiceInterfaceTypeNames.equals(that.applicationServiceInterfaceTypeNames);
     }
 
     /**
@@ -217,10 +120,6 @@ public class ApplicationServiceModel extends DomainTypeModel implements Applicat
     public int hashCode() {
         return Objects.hash(
             super.hashCode(),
-            referencedRepositoryTypeNames,
-            referencedDomainServiceTypeNames,
-            referencedOutboundServiceTypeNames,
-            referencedQueryClientTypeNames,
             applicationServiceInterfaceTypeNames);
     }
 }

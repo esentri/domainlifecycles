@@ -35,7 +35,7 @@ import java.util.Objects;
 /**
  * The DomainObjectMappingContext is associated to a {@code contextNode}, which is a JSON node,
  * that represents a DomainObject instance of a given {@code domainObjectType} in the deserialization process.
- *
+ * <p>
  * It provides access to associated {@link DomainObjectBuilder} instances, that are filled with vaules throughout the
  * deserialization process.
  *
@@ -59,7 +59,8 @@ public class DomainObjectMappingContext {
     public final DomainObjectBuilder<?> domainObjectBuilder;
 
     /**
-     * The parent context. The contexts form a hierarchy corresponding to the deserialized hierarchical object structure.
+     * The parent context. The contexts form a hierarchy corresponding to the deserialized hierarchical object
+     * structure.
      */
     public final DomainObjectMappingContext parentContext;
 

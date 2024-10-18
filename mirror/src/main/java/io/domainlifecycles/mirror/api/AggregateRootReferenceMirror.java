@@ -37,7 +37,7 @@ import io.domainlifecycles.domain.types.AggregateRoot;
 public interface AggregateRootReferenceMirror extends FieldMirror {
 
     /**
-     * Returns the {@link AggregateRootMirror} for this reference.
+     * @return the {@link AggregateRootMirror} for this reference.
      */
     AggregateRootMirror getAggregateRoot();
 

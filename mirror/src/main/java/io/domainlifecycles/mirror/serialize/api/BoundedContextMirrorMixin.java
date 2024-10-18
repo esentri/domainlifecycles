@@ -36,8 +36,9 @@ import io.domainlifecycles.mirror.model.BoundedContextModel;
  *
  * @author Mario Herb
  */
-@JsonTypeInfo(use= JsonTypeInfo.Id.CLASS, property="@class")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = BoundedContextModel.class),
 })
-public interface BoundedContextMirrorMixin {}
+public interface BoundedContextMirrorMixin {
+}

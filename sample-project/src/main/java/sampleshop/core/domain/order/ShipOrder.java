@@ -37,4 +37,5 @@ import io.domainlifecycles.domain.types.DomainCommand;
  */
 public record ShipOrder(
     @NotNull Order.OrderId orderId
-) implements DomainCommand {}
+) implements DomainCommand {
+}

@@ -30,6 +30,7 @@ package sampleshop.core.outport;
 import io.domainlifecycles.domain.types.QueryClient;
 
 import java.util.List;
+
 /**
  * Defines {@link OrdersByCustomer} readmodel database access.
  *

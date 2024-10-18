@@ -39,16 +39,16 @@ public class ZustellungsService implements DomainService {
         this.bestellungRepository = bestellungRepository;
     }
 
-    public void liefereAus(StarteAuslieferung starteAuslieferung){
+    public void liefereAus(StarteAuslieferung starteAuslieferung) {
         var bestellung = bestellungRepository.findById(starteAuslieferung.bestellungId());
-        if(bestellung.isPresent()){
+        if (bestellung.isPresent()) {
             var b = bestellung.get();
             b.starteLieferung();
             bestellungRepository.update(b);
         }
     }
 
-    private void tueWasPrivates(BestellungIdBv3 bestellungIdBv3){
+    private void tueWasPrivates(BestellungIdBv3 bestellungIdBv3) {
 
     }
 }

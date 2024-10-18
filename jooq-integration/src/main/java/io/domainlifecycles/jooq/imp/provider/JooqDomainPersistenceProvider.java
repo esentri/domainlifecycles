@@ -76,14 +76,16 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
      */
     @Override
     protected PersistenceMirror<UpdatableRecord<?>> buildPersistenceMirror() {
-        JooqDomainPersistenceConfiguration jooqPersistenceConfiguration = (JooqDomainPersistenceConfiguration) domainPersistenceConfiguration;
+        JooqDomainPersistenceConfiguration jooqPersistenceConfiguration =
+            (JooqDomainPersistenceConfiguration) domainPersistenceConfiguration;
 
         Map<String, List<String>> recordCanonicalNameToDomainObjectTypeMap = new HashMap<>();
         Map<String, String> entityToRecordTypeMap = new HashMap<>();
 
         List<EntityValueObjectRecordTypeConfiguration<?>> recordMappedValueObjectConfigurations = new ArrayList<>();
         if (jooqPersistenceConfiguration.entityValueObjectRecordClassProvider != null) {
-            List<EntityValueObjectRecordTypeConfiguration<?>> providedConfigurations = jooqPersistenceConfiguration.entityValueObjectRecordClassProvider
+            List<EntityValueObjectRecordTypeConfiguration<?>> providedConfigurations =
+                jooqPersistenceConfiguration.entityValueObjectRecordClassProvider
                 .provideContainedValueObjectRecordClassConfigurations();
             if (providedConfigurations != null) {
                 recordMappedValueObjectConfigurations.addAll(providedConfigurations);
@@ -94,7 +96,8 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
             .allTypeMirrors()
             .values()
             .stream()
-            .filter(dtm -> DomainType.ENTITY.equals(dtm.getDomainType()) || DomainType.AGGREGATE_ROOT.equals(dtm.getDomainType()))
+            .filter(dtm -> DomainType.ENTITY.equals(dtm.getDomainType()) || DomainType.AGGREGATE_ROOT.equals(
+                dtm.getDomainType()))
             .filter(dtm -> !dtm.isAbstract())
             .map(dtm -> (EntityMirror) dtm)
             .toList();
@@ -105,23 +108,29 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
                     .recordClassProvider.provideRecordClasses();
                 Optional<Class<? extends UpdatableRecord<?>>> recordType;
                 if (recordTypeSet != null && !recordTypeSet.isEmpty()) {
-                    recordType = jooqPersistenceConfiguration.recordTypeToEntityTypeMatcher.findMatchingRecordType(recordTypeSet, em.getTypeName());
+                    recordType = jooqPersistenceConfiguration.recordTypeToEntityTypeMatcher.findMatchingRecordType(
+                        recordTypeSet, em.getTypeName());
                     if (recordType.isEmpty()) {
                         throw DLCPersistenceException.fail("Couldn't find record type for '%s'. " +
-                            "You must obey the naming conventions or override RecordTypeToDomainObjectTypeMatcher! +\n" +
+                            "You must obey the naming conventions or override RecordTypeToDomainObjectTypeMatcher! " +
+                            "+\n" +
                             "Make sure that the records have a primary key defined in the database!", em.getTypeName());
                     }
                 } else {
-                    throw DLCPersistenceException.fail("No record types are defined. Rethink your 'recordClassProvider'!");
+                    throw DLCPersistenceException.fail("No record types are defined. Rethink your " +
+                        "'recordClassProvider'!");
                 }
                 //add entity record and entity type to the record -> domain object type map
-                addRecordToDomainObjectTypeEntry(recordType.get().getName(), em.getTypeName(), recordCanonicalNameToDomainObjectTypeMap);
+                addRecordToDomainObjectTypeEntry(recordType.get().getName(), em.getTypeName(),
+                    recordCanonicalNameToDomainObjectTypeMap);
                 entityToRecordTypeMap.put(em.getTypeName(), recordType.get().getName());
-                //for all custom "record mapped" value object configurations: add record and valueobject type to the record --> domain object type map
+                //for all custom "record mapped" value object configurations: add record and valueobject type to the
+            // record --> domain object type map
                 recordMappedValueObjectConfigurations
                     .stream()
                     .filter(c -> c.containingEntityType().getName().equals(em.getTypeName()))
-                    .forEach(conf -> addRecordToDomainObjectTypeEntry(conf.valueObjectRecordType().getName(), conf.containedValueObjectType().getName(), recordCanonicalNameToDomainObjectTypeMap));
+                    .forEach(conf -> addRecordToDomainObjectTypeEntry(conf.valueObjectRecordType().getName(),
+                        conf.containedValueObjectType().getName(), recordCanonicalNameToDomainObjectTypeMap));
             }
         );
 
@@ -130,13 +139,13 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
             .stream()
             .map(em -> {
                 List<ValueObjectRecordMirror<UpdatableRecord<?>>> valueObjectRecordMirrors = new ArrayList<>();
-                var v = new ContextDomainObjectVisitor(em.getTypeName(), true){
-                        @Override
-                        public boolean visitEnterEntity(EntityMirror entityMirror) {
-                            var context = getVisitorContext();
-                            return entityMirror.getTypeName().equals(context.startingTypeName)
-                                && !context.isAlreadyVisited(context.startingTypeName);
-                        }
+                var v = new ContextDomainObjectVisitor(em.getTypeName(), true) {
+                    @Override
+                    public boolean visitEnterEntity(EntityMirror entityMirror) {
+                        var context = getVisitorContext();
+                        return entityMirror.getTypeName().equals(context.startingTypeName)
+                            && !context.isAlreadyVisited(context.startingTypeName);
+                    }
 
                     @Override
                     public boolean visitEnterValue(ValueMirror valueMirror) {
@@ -145,7 +154,7 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
 
                     @Override
                     public void visitValueReference(ValueReferenceMirror valueReferenceMirror) {
-                        if(valueReferenceMirror.getType().getDomainType().equals(DomainType.VALUE_OBJECT)) {
+                        if (valueReferenceMirror.getType().getDomainType().equals(DomainType.VALUE_OBJECT)) {
                             var context = getVisitorContext();
                             var valueObjectRecordDefinition =
                                 findCustomValueObjectRecordDefinition(
@@ -156,8 +165,10 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
                                 );
 
                             if (valueObjectRecordDefinition == null && valueReferenceMirror.getType().hasCollectionContainer()) {
-                                //if we have no custom record and record mapper definition and we have a to-many relationship,
-                                // we need to build a valueObjectRecordDefinition for the auto mapping of the value object
+                                //if we have no custom record and record mapper definition and we have a to-many
+                                // relationship,
+                                // we need to build a valueObjectRecordDefinition for the auto mapping of the value
+                                // object
                                 valueObjectRecordDefinition = createAutoMappingValueObjectRecordDefinition(
                                     em.getTypeName(),
                                     valueReferenceMirror.getType().getTypeName(),
@@ -189,8 +200,8 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
                             }
                         }
                     }
-               };
-               v.start();
+                };
+                v.start();
 
                 List<ValueObjectRecordMirror<UpdatableRecord<?>>> entityVorms = valueObjectRecordMirrors
                     .stream()
@@ -201,7 +212,8 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
                     .provideEntityRecordMirror(
                         entityToRecordTypeMap.get(em.getTypeName()),
                         em.getTypeName(),
-                        getEntityRecordMapperFor(entityToRecordTypeMap.get(em.getTypeName()), em.getTypeName(), domainPersistenceConfiguration.customRecordMappers, jooqPersistenceConfiguration),
+                        getEntityRecordMapperFor(entityToRecordTypeMap.get(em.getTypeName()), em.getTypeName(),
+                            domainPersistenceConfiguration.customRecordMappers, jooqPersistenceConfiguration),
                         entityVorms,
                         recordCanonicalNameToDomainObjectTypeMap
                     );
@@ -211,9 +223,10 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
         return new PersistenceModel(entityRecordMirrors);
     }
 
-    private void addRecordToDomainObjectTypeEntry(String recordName, String domainObjectTypeName, Map<String, List<String>> recordToDomainObjectTypeMap){
+    private void addRecordToDomainObjectTypeEntry(String recordName, String domainObjectTypeName, Map<String,
+        List<String>> recordToDomainObjectTypeMap) {
         var list = recordToDomainObjectTypeMap.get(recordName);
-        if(list == null){
+        if (list == null) {
             list = new ArrayList<>();
             recordToDomainObjectTypeMap.put(recordName, list);
         }
@@ -243,9 +256,12 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
             }).toList();
 
         if (foundConfigurations.size() > 1) {
-            throw DLCPersistenceException.fail("Multiple value object record class configurations (" + foundConfigurations + ") found for composition of " +
-                valueObjectTypeName + " within " + entityTypeName);
+            throw DLCPersistenceException.fail(
+                "Multiple value object record class configurations (" + foundConfigurations + ") found for " +
+                    "composition of " +
+                    valueObjectTypeName + " within " + entityTypeName);
         } else if (foundConfigurations.isEmpty()) {
+
             return null;
         }
         return InternalValueObjectRecordDefinition.of(foundConfigurations.get(0));
@@ -260,7 +276,7 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
         Set<Class<? extends UpdatableRecord<?>>> recordTypeSet = jooqPersistenceConfiguration
             .recordClassProvider.provideRecordClasses();
         if (recordTypeSet != null && !recordTypeSet.isEmpty()) {
-            var simpleEntityTypeName = entityTypeName.substring(entityTypeName.lastIndexOf(".")+1);
+            var simpleEntityTypeName = entityTypeName.substring(entityTypeName.lastIndexOf(".") + 1);
             var recordTypeName = simpleEntityTypeName + accessPath
                 .stream()
                 .map(n -> n.substring(0, 1).toUpperCase() + n.substring(1))
@@ -270,13 +286,16 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
                 .filter(c -> c.getSimpleName().equals(recordTypeName)).toList();
             if (recordTypes.isEmpty()) {
                 throw DLCPersistenceException.fail("No value object record type found for composition of " +
-                        " '%1$s' within '%2$s', when trying to initiate value object auto mapping. Expected a record with the name '%3$s'",
+                        " '%1$s' within '%2$s', when trying to initiate value object auto mapping. Expected a record " +
+                        "with the name '%3$s'",
                     valueObjectTypeName,
                     entityTypeName,
                     recordTypeName
                 );
             } else if (recordTypes.size() > 1) {
-                throw DLCPersistenceException.fail("Multiple record types found for '%1$s' when trying to initiate value object auto mapping for '%2$s' within '%3$s'!",
+                throw DLCPersistenceException.fail(
+                    "Multiple record types found for '%1$s' when trying to initiate value object auto mapping for " +
+                        "'%2$s' within '%3$s'!",
                     recordTypeName,
                     valueObjectTypeName,
                     entityTypeName
@@ -292,21 +311,22 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
         }
         throw DLCPersistenceException.fail("No record types are defined. Rethink your 'recordClassProvider'!");
     }
-    private RecordMapper<UpdatableRecord<?>,?,?> getEntityRecordMapperFor(
+
+    private RecordMapper<UpdatableRecord<?>, ?, ?> getEntityRecordMapperFor(
         String recordTypeName,
         String entityTypeName,
         Set<RecordMapper<?, ?, ?>> customMapperSet,
         JooqDomainPersistenceConfiguration jooqPersistenceConfiguration
     ) {
-        RecordMapper<?,?,?> mapper = null;
-        if(customMapperSet != null && !customMapperSet.isEmpty()){
+        RecordMapper<?, ?, ?> mapper = null;
+        if (customMapperSet != null && !customMapperSet.isEmpty()) {
             var mapperOptional = customMapperSet.stream()
                 .filter(m -> m.recordType().getName().equals(recordTypeName)
                     && m.domainObjectType().getName().equals(entityTypeName))
                 .findFirst();
-            if(mapperOptional.isPresent()) {
+            if (mapperOptional.isPresent()) {
                 mapper = mapperOptional.get();
-            }else{
+            } else {
                 //check hierarchy
                 var em = Domain.entityMirrorFor(entityTypeName);
                 var entitySuperClasses = em.getInheritanceHierarchyTypeNames();
@@ -346,18 +366,20 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
     }
 
 
-    private RecordMapper<UpdatableRecord<?>,?,?> getValueObjectRecordMapperFor(
+    private RecordMapper<UpdatableRecord<?>, ?, ?> getValueObjectRecordMapperFor(
         InternalValueObjectRecordDefinition entityValueObjectRecordTypeConfiguration,
         JooqDomainPersistenceConfiguration jooqPersistenceConfiguration
 
     ) {
-        RecordMapper<?,?,?> mapper = null;
+        RecordMapper<?, ?, ?> mapper = null;
         var customMapperSet = jooqPersistenceConfiguration.customRecordMappers;
         if (customMapperSet != null && !customMapperSet.isEmpty()) {
 
             var mapperTuple = customMapperSet.stream()
-                .filter(m -> m.recordType().getName().equals(entityValueObjectRecordTypeConfiguration.valueObjectRecordType().getName())
-                    && m.domainObjectType().getName().equals(entityValueObjectRecordTypeConfiguration.containedValueObjectTypeName()))
+                .filter(m -> m.recordType().getName().equals(
+                    entityValueObjectRecordTypeConfiguration.valueObjectRecordType().getName())
+                    && m.domainObjectType().getName().equals(
+                    entityValueObjectRecordTypeConfiguration.containedValueObjectTypeName()))
                 .findFirst();
             if (mapperTuple.isPresent()) {
                 mapper = mapperTuple.get();
@@ -388,9 +410,9 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
         String containedValueObjectTypeName,
         Class<?> valueObjectRecordType,
         String... pathFromEntityToValueObject
-    ){
+    ) {
 
-        static InternalValueObjectRecordDefinition of(EntityValueObjectRecordTypeConfiguration<?> entityValueObjectRecordTypeConfiguration){
+        static InternalValueObjectRecordDefinition of(EntityValueObjectRecordTypeConfiguration<?> entityValueObjectRecordTypeConfiguration) {
             return new InternalValueObjectRecordDefinition(
                 entityValueObjectRecordTypeConfiguration.containingEntityType().getName(),
                 entityValueObjectRecordTypeConfiguration.containedValueObjectType().getName(),

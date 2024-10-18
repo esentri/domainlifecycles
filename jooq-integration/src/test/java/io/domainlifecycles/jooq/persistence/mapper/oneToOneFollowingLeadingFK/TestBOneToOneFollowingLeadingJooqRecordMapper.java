@@ -48,7 +48,8 @@ public class TestBOneToOneFollowingLeadingJooqRecordMapper extends AbstractRecor
         if (record == null) {
             return null;
         }
-        TestEntityBOneToOneFollowingLeadingRecord testEntityBOneToOneFollowingLeadingRecord = record.into(Tables.TEST_ENTITY_B_ONE_TO_ONE_FOLLOWING_LEADING);
+        TestEntityBOneToOneFollowingLeadingRecord testEntityBOneToOneFollowingLeadingRecord = record.into(
+            Tables.TEST_ENTITY_B_ONE_TO_ONE_FOLLOWING_LEADING);
         return new InnerClassDomainObjectBuilder<>(TestEntityBOneToOneFollowingLeading.builder()
             .setId(new TestEntityBOneToOneFollowingLeadingId(testEntityBOneToOneFollowingLeadingRecord.getId()))
             .setName(testEntityBOneToOneFollowingLeadingRecord.getName())
@@ -57,10 +58,12 @@ public class TestBOneToOneFollowingLeadingJooqRecordMapper extends AbstractRecor
 
     @Override
     public TestEntityBOneToOneFollowingLeadingRecord from(TestEntityBOneToOneFollowingLeading testEntityBOneToOneFollowingLeading, TestRootOneToOneFollowingLeading root) {
-        TestEntityBOneToOneFollowingLeadingRecord testEntityBOneToOneFollowingLeadingRecord = new TestEntityBOneToOneFollowingLeadingRecord();
+        TestEntityBOneToOneFollowingLeadingRecord testEntityBOneToOneFollowingLeadingRecord =
+            new TestEntityBOneToOneFollowingLeadingRecord();
         testEntityBOneToOneFollowingLeadingRecord.setId(testEntityBOneToOneFollowingLeading.getId().value());
         testEntityBOneToOneFollowingLeadingRecord.setName(testEntityBOneToOneFollowingLeading.getName());
-        testEntityBOneToOneFollowingLeadingRecord.setConcurrencyVersion(testEntityBOneToOneFollowingLeading.concurrencyVersion());
+        testEntityBOneToOneFollowingLeadingRecord.setConcurrencyVersion(
+            testEntityBOneToOneFollowingLeading.concurrencyVersion());
         return testEntityBOneToOneFollowingLeadingRecord;
     }
 

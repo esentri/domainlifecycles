@@ -33,8 +33,8 @@ import io.domainlifecycles.events.consume.execution.detector.ExecutionContext;
  * Represents the result of executing a DomainEvent processing operation.
  *
  * @param executionContext The execution context associated with the operation.
- * @param success           A flag indicating whether the operation executed successfully or not.
- *
+ * @param success          A flag indicating whether the operation executed successfully or not.
  * @author Mario Herb
  */
-public record ExecutionResult(ExecutionContext executionContext, boolean success) {}
+public record ExecutionResult(ExecutionContext executionContext, boolean success) {
+}

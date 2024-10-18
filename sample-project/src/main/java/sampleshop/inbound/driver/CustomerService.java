@@ -69,7 +69,7 @@ public class CustomerService implements CustomerDriver {
      */
     @Override
     @Publishes(domainEventTypes = {NewCustomerAdded.class})
-    public Customer add(AddNewCustomer addNewCustomer){
+    public Customer add(AddNewCustomer addNewCustomer) {
         var addedCustomer = repository.insert(Customer
             .builder()
             .setId(repository.newCustomerId())
@@ -87,7 +87,7 @@ public class CustomerService implements CustomerDriver {
      * {@inheritDoc}
      */
     @Override
-    public Optional<Customer> changeAddress(ChangeCustomerAddress changeCustomerAddress){
+    public Optional<Customer> changeAddress(ChangeCustomerAddress changeCustomerAddress) {
         return repository
             .findById(changeCustomerAddress.customerId())
             .map(customer -> repository.update(customer.setAddress(changeCustomerAddress.address()))
@@ -98,7 +98,7 @@ public class CustomerService implements CustomerDriver {
      * {@inheritDoc}
      */
     @Override
-    public Optional<Customer> changeCreditCard(ChangeCreditCard changeCreditCard){
+    public Optional<Customer> changeCreditCard(ChangeCreditCard changeCreditCard) {
         var changedCustomer = repository
             .findById(changeCreditCard.customerId())
             .map(customer -> repository.update(customer.setCreditCard(changeCreditCard.creditCard()))
@@ -110,7 +110,7 @@ public class CustomerService implements CustomerDriver {
      * {@inheritDoc}
      */
     @Override
-    public List<Customer> find(int offset, int limit){
+    public List<Customer> find(int offset, int limit) {
         return repository.find(offset, limit).toList();
     }
 
@@ -118,7 +118,7 @@ public class CustomerService implements CustomerDriver {
      * {@inheritDoc}
      */
     @Override
-    public List<OrdersByCustomer> reportOrders(String customerFilter, int offset, int limit){
+    public List<OrdersByCustomer> reportOrders(String customerFilter, int offset, int limit) {
         return ordersByCustomerQueries.listAll(customerFilter, offset, limit);
     }
 

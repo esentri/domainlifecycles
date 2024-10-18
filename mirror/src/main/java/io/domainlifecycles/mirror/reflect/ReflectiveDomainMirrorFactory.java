@@ -27,6 +27,7 @@
 
 package io.domainlifecycles.mirror.reflect;
 
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainMirrorFactory;
@@ -36,6 +37,7 @@ import io.domainlifecycles.mirror.api.EnumMirror;
 import io.domainlifecycles.mirror.api.InitializedDomain;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
+import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.mirror.api.ValueObjectMirror;
 import io.domainlifecycles.mirror.model.BoundedContextModel;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
@@ -78,14 +80,17 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
 
     /**
      * Initialize the factory with the boundedContextPackages to be scanned.
+     *
+     * @param boundedContextPackages the bounded context packages
      */
-    public ReflectiveDomainMirrorFactory(String ...boundedContextPackages) {
+    public ReflectiveDomainMirrorFactory(String... boundedContextPackages) {
         this.boundedContextPackages = boundedContextPackages;
         this.domainTypesScanner = new DomainTypesScanner();
     }
 
     /**
      * Initializes the domain with the scanned classes.
+     *
      * @return InitializedDomain - a container for all mirrors that are available in the analyzed bounded contexts.
      */
     @Override
@@ -132,35 +137,38 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
         buildOutboundServiceMirrors(domainTypesScanner.getScannedOutboundServices())
             .forEach(om -> builtTypeMirrors.put(om.getTypeName(), om));
 
+        buildServiceKindMirrors(domainTypesScanner.getScannedServiceKinds())
+            .forEach(sk -> builtTypeMirrors.put(sk.getTypeName(), sk));
+
         builtTypeMirrors
             .values()
-            .forEach(m -> log.debug("Created Mirror:"+ m));
+            .forEach(m -> log.debug("Created Mirror:" + m));
 
         return new InitializedDomain(builtTypeMirrors, buildBoundedContextMirrors());
     }
 
-    private List<BoundedContextMirror> buildBoundedContextMirrors(){
+    private List<BoundedContextMirror> buildBoundedContextMirrors() {
         return Arrays.stream(boundedContextPackages)
-                .map(BoundedContextModel::new
-                )
-                .collect(Collectors.toList());
+            .map(BoundedContextModel::new
+            )
+            .collect(Collectors.toList());
     }
 
-    private List<ValueObjectMirror> buildValueObjectMirrors(List<Class<? extends ValueObject>> valueObjectClassList){
+    private List<ValueObjectMirror> buildValueObjectMirrors(List<Class<? extends ValueObject>> valueObjectClassList) {
         return valueObjectClassList.stream()
             .map(c -> new ValueObjectMirrorBuilder(c).build()
             )
             .toList();
     }
 
-    private List<EnumMirror> buildEnumMirrors(List<Class<? extends Enum<?>>> enumClassList){
+    private List<EnumMirror> buildEnumMirrors(List<Class<? extends Enum<?>>> enumClassList) {
         return enumClassList
             .stream()
             .map(ei -> new EnumMirrorBuilder(ei).build())
             .toList();
     }
 
-    private List<IdentityMirror> buildIdentityMirrors(List<Class<? extends Identity<?>>> identityClassList){
+    private List<IdentityMirror> buildIdentityMirrors(List<Class<? extends Identity<?>>> identityClassList) {
         return identityClassList
             .stream()
             .map(ci -> new IdentityMirrorBuilder(ci).build())
@@ -168,14 +176,14 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
 
     }
 
-    private List<EntityMirror> buildEntityMirrors(List<Class<? extends Entity<?>>> entityClassList){
+    private List<EntityMirror> buildEntityMirrors(List<Class<? extends Entity<?>>> entityClassList) {
         return entityClassList
             .stream()
             .map(em -> new EntityMirrorBuilder(em).build())
             .toList();
     }
 
-    private List<AggregateRootMirror> buildAggregateRootMirrors(List<Class<? extends AggregateRoot<?>>> aggregateRootClassList){
+    private List<AggregateRootMirror> buildAggregateRootMirrors(List<Class<? extends AggregateRoot<?>>> aggregateRootClassList) {
         return aggregateRootClassList
             .stream()
             .map(am -> new AggregateRootMirrorBuilder(am).build()
@@ -183,7 +191,7 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
             .toList();
     }
 
-    private List<DomainServiceMirror> buildDomainServiceMirrors(List<Class<? extends DomainService>> domainServiceClassList){
+    private List<DomainServiceMirror> buildDomainServiceMirrors(List<Class<? extends DomainService>> domainServiceClassList) {
         return domainServiceClassList
             .stream()
             .map(ds -> new DomainServiceMirrorBuilder(ds).build()
@@ -191,7 +199,7 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
             .toList();
     }
 
-    private List<ApplicationServiceMirror> buildApplicationServiceMirrors(List<Class<? extends ApplicationService>> applicationServiceClassList){
+    private List<ApplicationServiceMirror> buildApplicationServiceMirrors(List<Class<? extends ApplicationService>> applicationServiceClassList) {
         return applicationServiceClassList
             .stream()
             .map(ds -> new ApplicationServiceMirrorBuilder(ds).build()
@@ -199,7 +207,7 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
             .toList();
     }
 
-    private List<DomainEventMirror> buildDomainEventMirrors(List<Class<? extends DomainEvent>> domainEventClassList){
+    private List<DomainEventMirror> buildDomainEventMirrors(List<Class<? extends DomainEvent>> domainEventClassList) {
         return domainEventClassList
             .stream()
             .map(de -> new DomainEventMirrorBuilder(de).build()
@@ -207,7 +215,7 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
             .toList();
     }
 
-    private List<DomainCommandMirror> buildDomainCommandMirrors(List<Class<? extends DomainCommand>> domainCommandClassList){
+    private List<DomainCommandMirror> buildDomainCommandMirrors(List<Class<? extends DomainCommand>> domainCommandClassList) {
         return domainCommandClassList
             .stream()
             .map(c -> new DomainCommandMirrorBuilder(c).build()
@@ -215,7 +223,7 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
             .toList();
     }
 
-    private List<ReadModelMirror> buildReadModelMirrors(List<Class<? extends ReadModel>> readModelClassList){
+    private List<ReadModelMirror> buildReadModelMirrors(List<Class<? extends ReadModel>> readModelClassList) {
         return readModelClassList
             .stream()
             .map(rm -> new ReadModelMirrorBuilder(rm).build()
@@ -223,7 +231,7 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
             .toList();
     }
 
-    private List<RepositoryMirror> buildRepositoryMirrors(List<Class<? extends Repository<?, ?>>> repositoryClassList){
+    private List<RepositoryMirror> buildRepositoryMirrors(List<Class<? extends Repository<?, ?>>> repositoryClassList) {
         return repositoryClassList
             .stream()
             .map(r -> new RepositoryMirrorBuilder(r).build()
@@ -231,7 +239,7 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
             .toList();
     }
 
-    private List<QueryClientMirror> buildQueryClientMirrors(List<Class<? extends QueryClient<?>>> queryClientClassList){
+    private List<QueryClientMirror> buildQueryClientMirrors(List<Class<? extends QueryClient<?>>> queryClientClassList) {
         return queryClientClassList
             .stream()
             .map(r -> new QueryClientMirrorBuilder(r).build()
@@ -239,11 +247,18 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
             .toList();
     }
 
-    private List<OutboundServiceMirror> buildOutboundServiceMirrors(List<Class<? extends OutboundService>> outboundServiceClassList){
+    private List<OutboundServiceMirror> buildOutboundServiceMirrors(List<Class<? extends OutboundService>> outboundServiceClassList) {
         return outboundServiceClassList
             .stream()
             .map(o -> new OutboundServiceMirrorBuilder(o).build()
             )
+            .toList();
+    }
+
+    private List<ServiceKindMirror> buildServiceKindMirrors(List<Class<? extends ServiceKind>> serviceKindClassList) {
+        return serviceKindClassList
+            .stream()
+            .map(s -> new ServiceKindMirrorBuilder(s).build())
             .toList();
     }
 

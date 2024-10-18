@@ -81,13 +81,15 @@ public class DefaultTests {
     private PlatformTransactionManager platformTransactionManager;
 
     @Test
-    public void applicationStarted(){
+    public void applicationStarted() {
     }
 
     /**
      * This test demonstrates the usage of an {@link AggregateDomainEvent} in a transactional setup.
-     * The FraudDetected event is published within this application. DLC recognizes the event, start a new transaction (if needed),
-     * loads the target aggregate and calls the event handler directly on the aggregate and finally persists the updates on the aggregate
+     * The FraudDetected event is published within this application. DLC recognizes the event, start a new
+     * transaction (if needed),
+     * loads the target aggregate and calls the event handler directly on the aggregate and finally persists the
+     * updates on the aggregate
      * and commits the transaction.
      * <br/>
      * This way the domain event is automatically part of the aggregate interface. A lot of boilerplate code for the
@@ -111,26 +113,33 @@ public class DefaultTests {
      * This test demonstrates several features of DLC:
      * <br/>
      * The JSON mapping extension for Jackson automatically translates the numerical id values of the request
-     * into typed ids expected on the Java side {@link Customer.CustomerId} or {@link sampleshop.core.domain.product.Product.ProductId}.
+     * into typed ids expected on the Java side {@link Customer.CustomerId} or
+     * {@link sampleshop.core.domain.product.Product.ProductId}.
      * <br/>
      * The DLC persistence extension maps the new {@link Order} into records and applies several
-     * INSERT statements to insert them into the database, without having a programmer needing to declare or specify anything for the
+     * INSERT statements to insert them into the database, without having a programmer needing to declare or specify
+     * anything for the
      * persistence behaviour.
      * <br/>
      * It also demonstrates the transactional behaviour of the DLC domain event handling. The event handler defined in
      * {@link CustomerNotificationService} is running after the transaction of the incoming new order request committed.
      * If the event publishing transaction failed, the event handler would not be notified.
-     * Have a look at the log output to inspect that behaviour. You should find the event handler logging something like 'Notification sent to "john_doe@whitehouse.com" with...'.
+     * Have a look at the log output to inspect that behaviour. You should find the event handler logging something
+     * like 'Notification sent to "john_doe@whitehouse.com" with...'.
      * <br/>
-     * Afterwards for the selection of the all orders that belong to the customer with the id 1, the DLC persistence extension
-     * (via fetcher) issues additional select statements to select the records for {@link OrderItem} instances, that belong to the selected orders.
-     * All selected records were mapped into complete and fully loaded {@link Order} aggregates without any heavy boilerplate mapping code.
+     * Afterwards for the selection of the all orders that belong to the customer with the id 1, the DLC persistence
+     * extension
+     * (via fetcher) issues additional select statements to select the records for {@link OrderItem} instances, that
+     * belong to the selected orders.
+     * All selected records were mapped into complete and fully loaded {@link Order} aggregates without any heavy
+     * boilerplate mapping code.
      * <br/>
-     * We delete the newly created order afterwards, in order to get a 'replayable' test database. The default DLC repository implementation provides
+     * We delete the newly created order afterwards, in order to get a 'replayable' test database. The default DLC
+     * repository implementation provides
      * a 'deleteById' method that issues SQL DELETE statements for each domain object contained in the aggregate.
      */
     @Test
-    public void newOrder() throws Exception{
+    public void newOrder() throws Exception {
         final var body = "{" +
             "\"customerId\":1," +
             "\"items\":[ " +
@@ -139,10 +148,10 @@ public class DefaultTests {
             "]}";
 
         mockMvc.perform(
-            MockMvcRequestBuilders
-                .post("/api/orders/command/place")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
+                MockMvcRequestBuilders
+                    .post("/api/orders/command/place")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(body)
             )
             .andExpect(status().isCreated())
             .andReturn();
@@ -155,8 +164,10 @@ public class DefaultTests {
     }
 
     /**
-     * This test demonstrates the DLC validation extension. The extension validates fields of domain objects or return values or parameters of their methods
-     * with bean validation annotations directly upon object creation or when the values are set. That helps keeping domain objects "always-valid" as well simplifying
+     * This test demonstrates the DLC validation extension. The extension validates fields of domain objects or
+     * return values or parameters of their methods
+     * with bean validation annotations directly upon object creation or when the values are set. That helps keeping
+     * domain objects "always-valid" as well simplifying
      * the declaration invariants/business rules on domain objects.
      */
     @Test
@@ -164,26 +175,26 @@ public class DefaultTests {
     public void validation() {
         var order = orderRepository.findById(new Order.OrderId(1L)).orElseThrow();
         //the quantity of an order item must be > 0
-        var t = catchThrowable(()->
+        var t = catchThrowable(() ->
             order.addItem(
                 new Product.ProductId(1L),
                 0));
         assertThat(t).hasMessageContaining("addItem.quantity");
-        log.info("Exception message: "+ t.getMessage());
+        log.info("Exception message: " + t.getMessage());
 
 
         //order without a status is invalid
-        var t2 = catchThrowable(()->
+        var t2 = catchThrowable(() ->
             Order.builder()
-            .setCustomerId(new Customer.CustomerId(1L))
-            .setId(new Order.OrderId(2L))
-            .setItems(new ArrayList<>())
-            .setCreation(Instant.now())
-            .build()
+                .setCustomerId(new Customer.CustomerId(1L))
+                .setId(new Order.OrderId(2L))
+                .setItems(new ArrayList<>())
+                .setCreation(Instant.now())
+                .build()
         );
 
         assertThat(t2).hasMessageContaining("status");
-        log.info("Exception message: "+ t2.getMessage());
+        log.info("Exception message: " + t2.getMessage());
     }
 
     @Test

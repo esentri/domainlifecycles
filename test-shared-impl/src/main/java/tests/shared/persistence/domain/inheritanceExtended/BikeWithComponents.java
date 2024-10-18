@@ -43,7 +43,8 @@ public class BikeWithComponents extends VehicleExtended {
     private List<BikeComponent> bikeComponents = new ArrayList<>();
 
     @Builder(setterPrefix = "set")
-    public BikeWithComponents(VehicleExtendedId id, long concurrencyVersion, Integer lengthCm, int gears, List<BikeComponent> bikeComponents) {
+    public BikeWithComponents(VehicleExtendedId id, long concurrencyVersion, Integer lengthCm, int gears,
+                              List<BikeComponent> bikeComponents) {
         super(id, concurrencyVersion, lengthCm);
         this.gears = gears;
         this.bikeComponents = bikeComponents;

@@ -50,6 +50,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.spy;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class VoAggregateNestedRepository_ITest extends BasePersistence_ITest {
 
@@ -58,7 +59,7 @@ public class VoAggregateNestedRepository_ITest extends BasePersistence_ITest {
     private VoAggregateNestedRepository voAggregateNestedRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         voAggregateNestedRepository = spy(new VoAggregateNestedRepository(
             persistenceConfiguration.dslContext,
             persistenceEventTestHelper.testEventPublisher,
@@ -108,9 +109,12 @@ public class VoAggregateNestedRepository_ITest extends BasePersistence_ITest {
         log.debug("Neues VO Nested Aggregate Root: \n" + found);
 
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getNestedEnumSingleValuedList().get(0), inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getNestedIdList().get(0), inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getNestedSimpleVoList().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getNestedEnumSingleValuedList().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getNestedIdList().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getNestedSimpleVoList().get(0), inserted);
         persistenceEventTestHelper.assertEvents();
     }
 
@@ -126,7 +130,8 @@ public class VoAggregateNestedRepository_ITest extends BasePersistence_ITest {
 
         persistenceEventTestHelper.resetEventsCaught();
         //then
-        Optional<VoAggregateNested> found = voAggregateNestedRepository.findResultById(new VoAggregateNestedId(2l)).resultValue();
+        Optional<VoAggregateNested> found = voAggregateNestedRepository.findResultById(
+            new VoAggregateNestedId(2l)).resultValue();
 
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
 
@@ -145,7 +150,8 @@ public class VoAggregateNestedRepository_ITest extends BasePersistence_ITest {
         voAggregateNestedRepository.deleteById(new VoAggregateNestedId(1l));
 
         //then
-        Optional<VoAggregateNested> found = voAggregateNestedRepository.findResultById(new VoAggregateNestedId(1l)).resultValue();
+        Optional<VoAggregateNested> found = voAggregateNestedRepository.findResultById(
+            new VoAggregateNestedId(1l)).resultValue();
         Assertions.assertThat(found).isEmpty();
 
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted);
@@ -163,13 +169,17 @@ public class VoAggregateNestedRepository_ITest extends BasePersistence_ITest {
         voAggregateNestedRepository.deleteById(new VoAggregateNestedId(2l));
 
         //then
-        Optional<VoAggregateNested> found = voAggregateNestedRepository.findResultById(new VoAggregateNestedId(2l)).resultValue();
+        Optional<VoAggregateNested> found = voAggregateNestedRepository.findResultById(
+            new VoAggregateNestedId(2l)).resultValue();
         Assertions.assertThat(found).isEmpty();
 
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getNestedEnumSingleValuedList().get(0), inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getNestedIdList().get(0), inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getNestedSimpleVoList().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getNestedEnumSingleValuedList().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getNestedIdList().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getNestedSimpleVoList().get(0), inserted);
 
         persistenceEventTestHelper.assertEvents();
     }
@@ -181,10 +191,12 @@ public class VoAggregateNestedRepository_ITest extends BasePersistence_ITest {
         VoAggregateNested inserted = voAggregateNestedRepository.insert(r);
         VoAggregateNested copy = persistenceEventTestHelper.kryo.copy(inserted);
         copy.setNestedEnumSingleValued(NestedEnumSingleValued.builder().setEnumValue(MyEnum.A).build());
-        copy.setNestedSimpleVo(NestedSimpleVo.builder().setNested(tests.shared.persistence.domain.valueobjectsNested.SimpleVo.builder().setVal(9l).build()).build());
+        copy.setNestedSimpleVo(NestedSimpleVo.builder().setNested(
+            tests.shared.persistence.domain.valueobjectsNested.SimpleVo.builder().setVal(9l).build()).build());
         copy.setNestedId(NestedId.builder().setIdRef(new VoAggregateNestedId(55l)).build());
         copy.setNestedEnumSingleValuedList(List.of(NestedEnumSingleValued.builder().setEnumValue(MyEnum.B).build()));
-        copy.setNestedSimpleVoList(List.of(NestedSimpleVo.builder().setNested(tests.shared.persistence.domain.valueobjectsNested.SimpleVo.builder().setVal(90l).build()).build()));
+        copy.setNestedSimpleVoList(List.of(NestedSimpleVo.builder().setNested(
+            tests.shared.persistence.domain.valueobjectsNested.SimpleVo.builder().setVal(90l).build()).build()));
         copy.setNestedIdList(List.of(NestedId.builder().setIdRef(new VoAggregateNestedId(550l)).build()));
 
 
@@ -194,7 +206,8 @@ public class VoAggregateNestedRepository_ITest extends BasePersistence_ITest {
         VoAggregateNested updated = voAggregateNestedRepository.update(copy);
 
         //then
-        Optional<VoAggregateNested> found = voAggregateNestedRepository.findResultById(new VoAggregateNestedId(1l)).resultValue();
+        Optional<VoAggregateNested> found = voAggregateNestedRepository.findResultById(
+            new VoAggregateNestedId(1l)).resultValue();
         Assertions.assertThat(found).isPresent();
         assertThat(updated == copy);
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
@@ -202,9 +215,12 @@ public class VoAggregateNestedRepository_ITest extends BasePersistence_ITest {
         log.debug("Neues VO Nested Aggregate Root: \n" + found);
 
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getNestedEnumSingleValuedList().get(0), updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getNestedIdList().get(0), updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getNestedSimpleVoList().get(0), updated);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getNestedEnumSingleValuedList().get(0), updated);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getNestedIdList().get(0), updated);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getNestedSimpleVoList().get(0), updated);
         persistenceEventTestHelper.assertEvents();
     }
 
@@ -226,14 +242,18 @@ public class VoAggregateNestedRepository_ITest extends BasePersistence_ITest {
         //when
         VoAggregateNested updated = voAggregateNestedRepository.update(copy);
         //then
-        Optional<VoAggregateNested> found = voAggregateNestedRepository.findResultById(new VoAggregateNestedId(2l)).resultValue();
+        Optional<VoAggregateNested> found = voAggregateNestedRepository.findResultById(
+            new VoAggregateNestedId(2l)).resultValue();
 
         assertThat(updated == copy);
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getNestedEnumSingleValuedList().get(0), inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getNestedIdList().get(0), inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getNestedSimpleVoList().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getNestedEnumSingleValuedList().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getNestedIdList().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getNestedSimpleVoList().get(0), inserted);
 
         persistenceEventTestHelper.assertEvents();
         log.debug("Neues VO Nested Aggregate Root: \n" + found);

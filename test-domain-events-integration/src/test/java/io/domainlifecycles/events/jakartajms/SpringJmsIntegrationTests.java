@@ -66,7 +66,6 @@ import static org.awaitility.Awaitility.await;
 
 @SpringBootTest(classes = TestApplicationSpringJmsIntegration.class)
 @Slf4j
-@DirtiesContext
 public class SpringJmsIntegrationTests {
 
     @Autowired
@@ -94,6 +93,7 @@ public class SpringJmsIntegrationTests {
     private ProcessingChannel channel;
 
     @Test
+    @DirtiesContext
     public void testEvents() throws JMSException {
         MessageProducer producer = null;
         Connection connection = null;
@@ -161,6 +161,7 @@ public class SpringJmsIntegrationTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationReceived() {
         //when
         var evt = new ADomainEvent("Test"+ UUID.randomUUID());
@@ -182,6 +183,7 @@ public class SpringJmsIntegrationTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationUnreceived() {
 
         //when
@@ -205,6 +207,7 @@ public class SpringJmsIntegrationTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationAggregateDomainEvent() {
         //when
 
@@ -230,6 +233,7 @@ public class SpringJmsIntegrationTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationAggregateDomainEventExceptionOnHandler() {
         //when
 
@@ -255,6 +259,7 @@ public class SpringJmsIntegrationTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationDomainServiceExceptionRollback() {
         //when
 
@@ -279,6 +284,7 @@ public class SpringJmsIntegrationTests {
     }
 
     @Test
+    @DirtiesContext
     public void testTransactionalBehaviourWithCounterService() {
 
         var cnt = transactionalCounterService.getCurrentCounterValue();
@@ -300,6 +306,7 @@ public class SpringJmsIntegrationTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationReceivedPauseResume() {
         //when
         var config = ((AbstractMqConsumingConfiguration)channel.getConsumingConfiguration());

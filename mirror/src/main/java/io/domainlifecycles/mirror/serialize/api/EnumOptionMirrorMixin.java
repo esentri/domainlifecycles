@@ -30,13 +30,15 @@ package io.domainlifecycles.mirror.serialize.api;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.domainlifecycles.mirror.model.EnumOptionModel;
+
 /**
  * Jackson mixin interface for proper serialization of {@link EnumOptionModel}.
  *
  * @author Mario Herb
  */
-@JsonTypeInfo(use= JsonTypeInfo.Id.CLASS, property="@class")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = EnumOptionModel.class),
 })
-public interface EnumOptionMirrorMixin {}
+public interface EnumOptionMirrorMixin {
+}

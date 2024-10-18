@@ -63,7 +63,7 @@ public class TemporalAggregateRootRepository_ITest extends BasePersistence_ITest
     private TemporalAggregateRootRepository temporalAggregateRootRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         temporalAggregateRootRepository = new TemporalAggregateRootRepository(
             persistenceConfiguration.dslContext,
             persistenceEventTestHelper.testEventPublisher,
@@ -79,7 +79,8 @@ public class TemporalAggregateRootRepository_ITest extends BasePersistence_ITest
         //when
         TestRootTemporal inserted = temporalAggregateRootRepository.insert(trs);
         //then
-        Optional<TestRootTemporal> found = temporalAggregateRootRepository.findResultById(new TestRootTemporalId(1l)).resultValue();
+        Optional<TestRootTemporal> found = temporalAggregateRootRepository.findResultById(
+            new TestRootTemporalId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
         persistenceEventTestHelper.assertEvents();
@@ -87,7 +88,7 @@ public class TemporalAggregateRootRepository_ITest extends BasePersistence_ITest
 
 
     @Test
-    public void testUpdateTemporalEntity(){
+    public void testUpdateTemporalEntity() {
         //given
         var now = OffsetDateTime.now(Clock.tickMillis(OffsetDateTime.now().toZonedDateTime().getZone()));
 
@@ -127,7 +128,8 @@ public class TemporalAggregateRootRepository_ITest extends BasePersistence_ITest
         //when
         TestRootTemporal updated = temporalAggregateRootRepository.update(insertedCopy);
         //then
-        Optional<TestRootTemporal> found = temporalAggregateRootRepository.findResultById(new TestRootTemporalId(1l)).resultValue();
+        Optional<TestRootTemporal> found = temporalAggregateRootRepository.findResultById(
+            new TestRootTemporalId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
@@ -147,7 +149,7 @@ public class TemporalAggregateRootRepository_ITest extends BasePersistence_ITest
     }
 
     @Test
-    public void testDeleteTemporalEntity(){
+    public void testDeleteTemporalEntity() {
         //given
         var now = OffsetDateTime.now(Clock.tickMillis(OffsetDateTime.now().toZonedDateTime().getZone()));
 
@@ -157,7 +159,8 @@ public class TemporalAggregateRootRepository_ITest extends BasePersistence_ITest
         //when
         Optional<TestRootTemporal> deleted = temporalAggregateRootRepository.deleteById(inserted.getId());
         //then
-        Optional<TestRootTemporal> found = temporalAggregateRootRepository.findResultById(new TestRootTemporalId(1l)).resultValue();
+        Optional<TestRootTemporal> found = temporalAggregateRootRepository.findResultById(
+            new TestRootTemporalId(1l)).resultValue();
         Assertions.assertThat(deleted).isPresent();
         Assertions.assertThat(found).isEmpty();
         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);

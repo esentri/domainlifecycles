@@ -41,7 +41,7 @@ import org.springframework.core.convert.converter.ConverterFactory;
  * @author Dominik Galler
  */
 public class StringToDomainValueObjectConverterFactory
-  implements ConverterFactory<String, ValueObject> {
+    implements ConverterFactory<String, ValueObject> {
 
     private final ObjectMapper objectMapper;
 
@@ -62,20 +62,23 @@ public class StringToDomainValueObjectConverterFactory
         implements Converter<String, T> {
 
         @Override
-            public T convert(String source) {
-                var voMirror = Domain.valueObjectMirrorFor(targetClass.getName());
-                var singleValuedField = voMirror.singledValuedField();
-                if (singleValuedField.isPresent()) {
-                    try {
-                        return objectMapper.readValue("{\"" + singleValuedField.get().getName() + "\": \"" + source + "\"}", targetClass);
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException(String.format("Not able to parse single property value of ValueObject '%s'", targetClass.getName()), e);
-                    }
-                } else {
-                    throw new RuntimeException("Could not map value object of type " + targetClass.getName()
-                        + " from String value '" + source + "'. Please provide a custom converter of type" +
-                        " 'org.springframework.core.convert.converter.Converter'!");
+        public T convert(String source) {
+            var voMirror = Domain.valueObjectMirrorFor(targetClass.getName());
+            var singleValuedField = voMirror.singledValuedField();
+            if (singleValuedField.isPresent()) {
+                try {
+                    return objectMapper.readValue("{\"" + singleValuedField.get().getName() + "\": \"" + source + "\"}",
+                        targetClass);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(
+                        String.format("Not able to parse single property value of ValueObject '%s'",
+                            targetClass.getName()), e);
                 }
+            } else {
+                throw new RuntimeException("Could not map value object of type " + targetClass.getName()
+                    + " from String value '" + source + "'. Please provide a custom converter of type" +
+                    " 'org.springframework.core.convert.converter.Converter'!");
             }
         }
+    }
 }

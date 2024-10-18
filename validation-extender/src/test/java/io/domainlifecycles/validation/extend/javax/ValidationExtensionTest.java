@@ -81,7 +81,8 @@ public class ValidationExtensionTest {
     @Test
     public void testInstrumentationValidateCallAggregate() {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
-            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "WRONG", null, 1L);
+            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "WRONG", null,
+                1L);
         });
         assertThat(ex).hasMessageContaining("text darf niemals 'WRONG' sein!");
     }
@@ -106,7 +107,8 @@ public class ValidationExtensionTest {
     @Test
     public void testInstrumentationValidateCallSetter() {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
-            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null, 1L);
+            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null,
+                1L);
             root.setText("WRONG");
         });
         assertThat(ex).hasMessageContaining("text darf niemals 'WRONG' sein!");
@@ -115,7 +117,8 @@ public class ValidationExtensionTest {
     @Test
     public void testInstrumentationBeanValidationSetter() {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
-            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null, 1L);
+            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null,
+                1L);
             root.setText(null);
         });
         assertThat(ex).hasMessageContaining("'text'");
@@ -124,7 +127,8 @@ public class ValidationExtensionTest {
     @Test
     public void testInstrumentationBeanValidationOptional() {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
-            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null, 1L);
+            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null,
+                1L);
             root.setText("test");
             root.setOptionalText("12345678901");
         });
@@ -142,7 +146,8 @@ public class ValidationExtensionTest {
     @Test
     public void testInstrumentationTextSetzenmitReturnWrong() {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
-            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null, 1L);
+            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null,
+                1L);
             root.textSetzenMitReturn("WRONG");
         });
         assertThat(ex).hasMessageContaining("text darf niemals 'WRONG' sein!");
@@ -159,7 +164,8 @@ public class ValidationExtensionTest {
     @Test
     public void testInstrumentationTextSetzenPreconditionFail() {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
-            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null, 1L);
+            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null,
+                1L);
             root.textSetzenPrecondition(" ");
         });
         assertThat(ex).hasMessageContaining("textSetzenPrecondition");
@@ -176,7 +182,8 @@ public class ValidationExtensionTest {
     @Test
     public void testInstrumentationTextSetzenReturnValFail() {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
-            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null, 1L);
+            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null,
+                1L);
             root.textSetzenReturnVal(" ");
         });
         assertThat(ex).hasMessageContaining("textSetzenReturnVal");
@@ -185,7 +192,8 @@ public class ValidationExtensionTest {
     @Test
     public void testInstrumentationTextSetzenPreconditionOkFailAfter() {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
-            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null, 1L);
+            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null,
+                1L);
             root.textSetzenPrecondition("WRONG");
         });
         assertThat(ex).hasMessageContaining("text darf niemals 'WRONG' sein!");
@@ -203,7 +211,8 @@ public class ValidationExtensionTest {
     @Test
     public void testInstrumentationOptionalTextSetzenFailLengthIntialization() {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
-            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", "1223344556677876555", 1L);
+            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test",
+                "1223344556677876555", 1L);
         });
         assertThat(ex).hasMessageContaining("optionalText");
     }
@@ -211,7 +220,8 @@ public class ValidationExtensionTest {
     @Test
     public void testInstrumentationTextSetzenReturnValOkFailOnValidate() {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
-            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null, 1L);
+            ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null,
+                1L);
             root.textSetzenReturnVal("WRONG");
         });
         assertThat(ex).hasMessageContaining("text darf niemals 'WRONG' sein!");

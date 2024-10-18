@@ -32,7 +32,7 @@ import io.domainlifecycles.persistence.mapping.converter.TypeConverter;
 import java.math.BigDecimal;
 
 /**
- *  Converts a Double to a BigDecimal.
+ * Converts a Double to a BigDecimal.
  *
  * @author Mario Herb
  */

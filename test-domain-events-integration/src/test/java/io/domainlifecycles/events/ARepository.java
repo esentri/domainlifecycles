@@ -54,7 +54,7 @@ public class ARepository implements Repository<AnAggregate.AggregateId, AnAggreg
 
     @Override
     public Optional<AnAggregate> findById(AnAggregate.AggregateId aggregateId) {
-        if(!instanceMap.containsKey(aggregateId)) {
+        if (!instanceMap.containsKey(aggregateId)) {
             instanceMap.put(aggregateId, new AnAggregate(aggregateId, 1l));
         }
         return Optional.of(instanceMap.get(aggregateId));

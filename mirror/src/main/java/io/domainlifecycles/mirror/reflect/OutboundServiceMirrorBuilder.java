@@ -39,7 +39,7 @@ import java.util.List;
  *
  * @author Mario Herb
  */
-public class OutboundServiceMirrorBuilder extends DomainTypeMirrorBuilder{
+public class OutboundServiceMirrorBuilder extends ServiceKindMirrorBuilder {
     private final Class<? extends OutboundService> outboundServiceClass;
 
     public OutboundServiceMirrorBuilder(Class<? extends OutboundService> outboundServiceClass) {
@@ -49,8 +49,10 @@ public class OutboundServiceMirrorBuilder extends DomainTypeMirrorBuilder{
 
     /**
      * Creates a new {@link OutboundServiceMirror}.
+     *
+     * @return new instance of OutboundServiceMirror
      */
-    public OutboundServiceMirror build(){
+    public OutboundServiceMirror build() {
         return new OutboundServiceModel(
             getTypeName(),
             isAbstract(),
@@ -62,9 +64,10 @@ public class OutboundServiceMirrorBuilder extends DomainTypeMirrorBuilder{
         );
     }
 
-    private List<String> outboundServiceInterfaceTypeNames(){
+    private List<String> outboundServiceInterfaceTypeNames() {
         return Arrays.stream(outboundServiceClass.getInterfaces())
-            .filter(i -> OutboundService.class.isAssignableFrom(i) && !i.getName().equals(OutboundService.class.getName()))
+            .filter(
+                i -> OutboundService.class.isAssignableFrom(i) && !i.getName().equals(OutboundService.class.getName()))
             .map(Class::getName)
             .toList();
     }

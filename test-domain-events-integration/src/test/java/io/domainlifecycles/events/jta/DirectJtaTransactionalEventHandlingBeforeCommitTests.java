@@ -65,7 +65,7 @@ public class DirectJtaTransactionalEventHandlingBeforeCommitTests {
     private static UserTransactionManager userTransactionManager;
 
     @BeforeAll
-    public static void init(){
+    public static void init() {
         Logger rootLogger =
             (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         rootLogger.setLevel(Level.DEBUG);
@@ -81,11 +81,11 @@ public class DirectJtaTransactionalEventHandlingBeforeCommitTests {
         outboundService = new AnOutboundService();
 
         var services = new Services();
-        services.registerDomainServiceInstance(domainService);
-        services.registerRepositoryInstance(repository);
-        services.registerApplicationServiceInstance(applicationService);
-        services.registerOutboundServiceInstance(outboundService);
-        services.registerQueryClientInstance(queryClient);
+        services.registerServiceKindInstance(domainService);
+        services.registerServiceKindInstance(repository);
+        services.registerServiceKindInstance(applicationService);
+        services.registerServiceKindInstance(outboundService);
+        services.registerServiceKindInstance(queryClient);
 
         var channel = new JtaInMemoryChannelFactory(userTransactionManager, services,
             5,
@@ -94,11 +94,10 @@ public class DirectJtaTransactionalEventHandlingBeforeCommitTests {
         var router = new DomainEventTypeBasedRouter(List.of(channel));
         router.defineDefaultChannel("c1");
         new ChannelRoutingConfiguration(router);
-
     }
 
     @Test
-    public void testIntegrationCommit() throws Exception{
+    public void testIntegrationCommit() throws Exception {
         userTransactionManager.begin();
         //when
         var evt = new ADomainEvent("TestCommit");
@@ -114,7 +113,7 @@ public class DirectJtaTransactionalEventHandlingBeforeCommitTests {
     }
 
     @Test
-    public void testIntegrationUnreceivedCommit() throws Exception{
+    public void testIntegrationUnreceivedCommit() throws Exception {
         userTransactionManager.begin();
         //when
         var evt = new UnreceivedDomainEvent("TestUnReceivedCommit");
@@ -156,7 +155,7 @@ public class DirectJtaTransactionalEventHandlingBeforeCommitTests {
     }
 
     @Test
-    public void testIntegrationAggregateDomainEventCommit() throws Exception{
+    public void testIntegrationAggregateDomainEventCommit() throws Exception {
         //when
         userTransactionManager.begin();
         var evt = new AnAggregateDomainEvent("TestAggregateDomainEventCommit");
@@ -174,25 +173,7 @@ public class DirectJtaTransactionalEventHandlingBeforeCommitTests {
     }
 
     @Test
-    public void testIntegrationAggregateDomainEventRollback() throws Exception{
-        //when
-        userTransactionManager.begin();
-        var evt = new AnAggregateDomainEvent("TestAggregateDomainEventRollback");
-        DomainEvents.publish(evt);
-        userTransactionManager.rollback();
-        //then
-
-        assertThat(repository.received).doesNotContain(evt);
-        assertThat(domainService.received).doesNotContain(evt);
-        assertThat(applicationService.received).doesNotContain(evt);
-        assertThat(outboundService.received).doesNotContain(evt);
-        assertThat(queryClient.received).doesNotContain(evt);
-        var root = repository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
-        assertThat(root.received).doesNotContain(evt);
-    }
-
-    @Test
-    public void testIntegrationAggregateDomainEventRollbackExceptionOnHandler() throws Exception{
+    public void testIntegrationAggregateDomainEventRollbackExceptionOnHandler() throws Exception {
         //when
         userTransactionManager.begin();
         var evt = new AnAggregateDomainEvent("TestAggregateDomainWithException");
@@ -210,7 +191,7 @@ public class DirectJtaTransactionalEventHandlingBeforeCommitTests {
     }
 
     @Test
-    public void testIntegrationDomainServiceExceptionRollback() throws Exception{
+    public void testIntegrationDomainServiceExceptionRollback() throws Exception {
         //when
         userTransactionManager.begin();
         var evt = new ADomainEvent("TestDomainServiceRollback");

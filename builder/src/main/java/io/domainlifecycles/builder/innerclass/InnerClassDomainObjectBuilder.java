@@ -47,7 +47,6 @@ import java.util.Optional;
  * Implementation wrapping inner class domain object builders, so that DLC can use them internally.
  *
  * @param <T> type for which the domain object builder delivers new domain object instances
- *
  * @author Dominik Galler
  * @author Mario Herb
  */
@@ -70,8 +69,8 @@ public final class InnerClassDomainObjectBuilder<T extends DomainObject> extends
         this.builderInstance = builderInstance;
         this.builderClass = this.builderInstance.getClass();
         Field[] fields = builderClass.getDeclaredFields();
-        for(var f: fields){
-            if(!f.canAccess(this.builderInstance)){
+        for (var f : fields) {
+            if (!f.canAccess(this.builderInstance)) {
                 f.trySetAccessible();
             }
             fieldMap.put(f.getName(), f);
@@ -82,7 +81,7 @@ public final class InnerClassDomainObjectBuilder<T extends DomainObject> extends
      * This implementation relies on the domain structure information within the domain mirror and the passed
      * {@link DomainBuilderConfiguration}instance.
      *
-     * @param builderInstance of the "inner" builder
+     * @param builderInstance            of the "inner" builder
      * @param domainBuilderConfiguration for builder
      */
     public InnerClassDomainObjectBuilder(Object builderInstance,
@@ -103,6 +102,7 @@ public final class InnerClassDomainObjectBuilder<T extends DomainObject> extends
 
     /**
      * Check, if the builder provides a setter for the given property name.
+     *
      * @param fieldName of field addressed
      * @return true if the inner builder instance provides a corresponding setter method.
      */
@@ -148,6 +148,10 @@ public final class InnerClassDomainObjectBuilder<T extends DomainObject> extends
 
     /**
      * Helps to avoid using {@code @SuppressWarnings({"unchecked"})} when casting to a generic type.
+     *
+     * @param <K> type
+     * @param obj object to avoid checks on
+     * @return object
      */
     public <K> K uncheckedCast(Object obj) {
         return (K) obj;

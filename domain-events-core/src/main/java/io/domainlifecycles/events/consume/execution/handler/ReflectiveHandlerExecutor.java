@@ -59,19 +59,20 @@ public class ReflectiveHandlerExecutor implements HandlerExecutor {
     @Override
     public boolean execute(ExecutionContext executionContext) {
         Objects.requireNonNull(executionContext, "An non-null ExecutionContext is required!");
-       if(executionContext instanceof ServiceExecutionContext){
+        if(executionContext instanceof ServiceExecutionContext){
            return callDomainEventListenerMethods((ServiceExecutionContext) executionContext);
-       }else{
+        }else{
            return callDomainEventListenerMethodsOnAggregate((AggregateExecutionContext<?,?>) executionContext);
-       }
+        }
     }
 
-    private boolean callDomainEventListenerMethods(ServiceExecutionContext serviceExecutionContext){
+    private boolean callDomainEventListenerMethods(ServiceExecutionContext serviceExecutionContext) {
         return JavaReflect
             .methods(serviceExecutionContext.handler().getClass())
             .stream()
             .filter(m -> m.getName().equals(serviceExecutionContext.handlerMethodName())
-                && m.getParameters()[0].getType().getName().equals(serviceExecutionContext.domainEvent().getClass().getName()))
+                && m.getParameters()[0].getType().getName().equals(
+                serviceExecutionContext.domainEvent().getClass().getName()))
             .findFirst()
             .map(m -> {
                 var success = false;
@@ -101,23 +102,26 @@ public class ReflectiveHandlerExecutor implements HandlerExecutor {
             .orElse(false);
     }
 
-    private <I extends Identity<?>, A extends AggregateRoot<I>> boolean callDomainEventListenerMethodsOnAggregate(AggregateExecutionContext<I, A> aggregateExecutionContext){
-        if(aggregateExecutionContext.domainEvent().targetId() == null){
-            throw DLCEventsException.fail("TargetId is null for AggregateDomainEvent '%s'! " +
-                "DomainEvent could not be delivered to AggregateRoot!", aggregateExecutionContext.domainEvent().getClass().getName());
+    private <I extends Identity<?>, A extends AggregateRoot<I>> boolean callDomainEventListenerMethodsOnAggregate(AggregateExecutionContext<I, A> aggregateExecutionContext) {
+        if (aggregateExecutionContext.domainEvent().targetId() == null) {
+            throw DLCEventsException.fail("TargetId is null for AggregateDomainEvent %s! " +
+                    "DomainEvent could not be delivered to AggregateRoot!",
+                aggregateExecutionContext.domainEvent().getClass().getName());
         }
         var success = false;
         try {
             beforeExecution(aggregateExecutionContext);
             var root = aggregateExecutionContext.aggregateRepository()
                 .findById(aggregateExecutionContext.domainEvent().targetId())
-                .orElseThrow(() -> DLCEventsException.fail("No Aggregate instance found for AggregateDomainEvent '%s'! " +
-                    "DomainEvent could not be delivered to AggregateRoot!", aggregateExecutionContext.domainEvent().getClass().getName()));
+                .orElseThrow(() -> DLCEventsException.fail("No Aggregate instance found for AggregateDomainEvent %s! " +
+                        "DomainEvent could not be delivered to AggregateRoot!",
+                    aggregateExecutionContext.domainEvent().getClass().getName()));
             var method = JavaReflect
                 .methods(root.getClass())
                 .stream()
                 .filter(m -> m.getName().equals(aggregateExecutionContext.aggregateHandlerMethodName())
-                    && m.getParameters()[0].getType().getName().equals(aggregateExecutionContext.domainEvent().getClass().getName()))
+                    && m.getParameters()[0].getType().getName().equals(
+                    aggregateExecutionContext.domainEvent().getClass().getName()))
                 .findFirst()
                 .orElseThrow(() -> DLCEventsException.fail("Method '{}' not found on '{}'",
                     aggregateExecutionContext.aggregateHandlerMethodName(),
@@ -146,7 +150,7 @@ public class ReflectiveHandlerExecutor implements HandlerExecutor {
                     aggregateExecutionContext.domainEvent().targetId()
                 );
             }
-        }finally {
+        } finally {
             afterExecution(aggregateExecutionContext, success);
         }
         return success;

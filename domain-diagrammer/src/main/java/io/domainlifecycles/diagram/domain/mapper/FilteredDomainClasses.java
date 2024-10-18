@@ -27,6 +27,8 @@
 
 package io.domainlifecycles.diagram.domain.mapper;
 
+import io.domainlifecycles.mirror.api.DomainType;
+import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
@@ -44,7 +46,8 @@ import java.util.List;
 /**
  * The FilteredDomainClasses class represents a collection of filtered domain classes based on certain criteria
  * (based on the given diagram configuration).
- * It provides separate lists for various types of domain classes like application services, domain commands, domain events,
+ * It provides separate lists for various types of domain classes like application services, domain commands, domain
+ * events,
  * domain services, repositories, aggregate roots, query clients and read models.
  *
  * @author Mario Herb
@@ -55,12 +58,6 @@ public class FilteredDomainClasses {
 
     private final BoundedContextMirror boundedContextMirror;
 
-    private final List<ApplicationServiceMirror> applicationServices;
-
-    private final List<DomainServiceMirror> domainServices;
-
-    private final List<RepositoryMirror> repositories;
-
     private final List<DomainCommandMirror> domainCommands;
 
     private final List<DomainEventMirror> domainEvents;
@@ -69,9 +66,7 @@ public class FilteredDomainClasses {
 
     private final List<ReadModelMirror> readModels;
 
-    private final List<QueryClientMirror> queryClients;
-
-    private final List<OutboundServiceMirror> outboundServices;
+    private final List<ServiceKindMirror> serviceKinds;
 
     private final TransitiveDomainTypeFilter transitiveDomainTypeFilter;
 
@@ -80,125 +75,127 @@ public class FilteredDomainClasses {
         this.boundedContextMirror = Domain.getBoundedContexts()
             .stream()
             .filter(a -> a.getPackageName().equals(domainDiagramConfig.getContextPackageName()))
-            .findFirst().orElseThrow(()-> new IllegalStateException(
+            .findFirst().orElseThrow(() -> new IllegalStateException(
                 String.format("Bounded Context '%s' not found!", domainDiagramConfig.getContextPackageName())
             ));
         transitiveDomainTypeFilter = new TransitiveDomainTypeFilter(
             domainDiagramConfig.getTransitiveFilterSeedDomainServiceTypeNames(),
             boundedContextMirror
         );
-        this.applicationServices = initFilteredApplicationServices();
         this.domainCommands = initFilteredDomainCommands();
         this.domainEvents = initFilteredDomainEvents();
         this.aggregateRoots = initFilteredAggregateRoots();
-        this.domainServices = initFilteredDomainServices();
-        this.repositories = initFilteredRepositories();
         this.readModels = initFilteredReadModels();
-        this.queryClients = initFilteredQueryClients();
-        this.outboundServices = initFilteredOutboundServices();
+        this.serviceKinds = initFilteredServiceKinds();
 
     }
 
-    private List<ApplicationServiceMirror> initFilteredApplicationServices(){
+    private List<ServiceKindMirror> initFilteredServiceKinds() {
         return boundedContextMirror
-            .getApplicationServices()
+            .getServiceKinds()
             .stream()
-            .filter(as -> !as.isAbstract())
+            .filter(s -> !s.isAbstract())
+            .filter(s ->
+                (s.getDomainType().equals(DomainType.REPOSITORY) && domainDiagramConfig.isShowRepositories() && !s.getTypeName().equals("io.domainlifecycles.jooq.imp.JooqAggregateRepository"))
+                || (s.getDomainType().equals(DomainType.APPLICATION_SERVICE) && domainDiagramConfig.isShowApplicationServices())
+                || (s.getDomainType().equals(DomainType.DOMAIN_SERVICE) && domainDiagramConfig.isShowDomainServices())
+                || (s.getDomainType().equals(DomainType.OUTBOUND_SERVICE) && domainDiagramConfig.isShowOutboundServices())
+                || (s.getDomainType().equals(DomainType.QUERY_CLIENT) && domainDiagramConfig.isShowQueryClients())
+                || (s.getDomainType().equals(DomainType.SERVICE_KIND) && domainDiagramConfig.isShowUnspecifiedServiceKinds())
+            )
             .filter(transitiveDomainTypeFilter::filter)
-            .filter(as -> !domainDiagramConfig.getClassesBlacklist().contains(as.getTypeName()))
+            .filter(s -> !domainDiagramConfig.getClassesBlacklist().contains(s.getTypeName()))
             .toList();
     }
 
-    private List<DomainCommandMirror> initFilteredDomainCommands(){
+    public boolean contains(ServiceKindMirror serviceKindMirror){
+        return this.serviceKinds.stream().anyMatch(
+            s -> s.getTypeName().equals(serviceKindMirror.getTypeName())
+            || s.getAllInterfaceTypeNames().contains(serviceKindMirror.getTypeName())
+        );
+    }
+
+    public List<ApplicationServiceMirror>getApplicationServices() {
+        return serviceKinds
+            .stream()
+            .filter(s -> s.getDomainType().equals(DomainType.APPLICATION_SERVICE))
+            .map(s -> (ApplicationServiceMirror) s)
+            .toList();
+    }
+
+    private List<DomainCommandMirror> initFilteredDomainCommands() {
         return boundedContextMirror
             .getDomainCommands()
             .stream()
             .filter(dc -> !dc.isAbstract())
+            .filter(dc -> domainDiagramConfig.isShowDomainCommands())
             .filter(transitiveDomainTypeFilter::filter)
             .filter(dc -> !domainDiagramConfig.getClassesBlacklist().contains(dc.getTypeName()))
             .toList();
     }
 
-    private List<DomainEventMirror> initFilteredDomainEvents(){
+    private List<DomainEventMirror> initFilteredDomainEvents() {
         return boundedContextMirror
             .getDomainEvents()
             .stream()
             .filter(de -> !de.isAbstract())
+            .filter(dc -> domainDiagramConfig.isShowDomainEvents())
             .filter(transitiveDomainTypeFilter::filter)
             .filter(de -> !domainDiagramConfig.getClassesBlacklist().contains(de.getTypeName()))
             .toList();
     }
 
-    private List<DomainServiceMirror> initFilteredDomainServices(){
-        return boundedContextMirror
-            .getDomainServices()
+    public List<DomainServiceMirror> getDomainServices() {
+        return serviceKinds
             .stream()
-            .filter(ds -> !ds.isAbstract())
-            .filter(transitiveDomainTypeFilter::filter)
-            .filter(ds -> !domainDiagramConfig.getClassesBlacklist().contains(ds.getTypeName()))
+            .filter(s -> s.getDomainType().equals(DomainType.DOMAIN_SERVICE))
+            .map(s -> (DomainServiceMirror) s)
             .toList();
     }
 
-    private List<RepositoryMirror> initFilteredRepositories(){
-        return boundedContextMirror
-            .getRepositories()
+    public List<RepositoryMirror> getRepositories() {
+        return serviceKinds
             .stream()
-            .filter(r -> !r.isAbstract())
-            .filter(transitiveDomainTypeFilter::filter)
-            .filter(r -> !domainDiagramConfig.getClassesBlacklist().contains(r.getTypeName()))
+            .filter(s -> s.getDomainType().equals(DomainType.REPOSITORY))
+            .map(s -> (RepositoryMirror) s)
             .toList();
     }
 
-    private List<ReadModelMirror> initFilteredReadModels(){
+    private List<ReadModelMirror> initFilteredReadModels() {
         return boundedContextMirror
             .getReadModels()
             .stream()
             .filter(r -> !r.isAbstract())
+            .filter(r -> domainDiagramConfig.isShowReadModels())
             .filter(transitiveDomainTypeFilter::filter)
             .filter(r -> !domainDiagramConfig.getClassesBlacklist().contains(r.getTypeName()))
             .toList();
     }
 
-    private List<AggregateRootMirror> initFilteredAggregateRoots(){
+    private List<AggregateRootMirror> initFilteredAggregateRoots() {
         return boundedContextMirror
             .getAggregateRoots()
             .stream()
-            .filter(ar -> ! ar.isAbstract())
+            .filter(ar -> !ar.isAbstract())
             .filter(transitiveDomainTypeFilter::filter)
             .filter(ar -> !domainDiagramConfig.getClassesBlacklist().contains(ar.getTypeName()))
             .toList();
     }
 
-    private List<QueryClientMirror> initFilteredQueryClients(){
-        return boundedContextMirror
-            .getQueryClients()
+    public List<QueryClientMirror> getQueryClients() {
+        return serviceKinds
             .stream()
-            .filter(r -> !r.isAbstract())
-            .filter(transitiveDomainTypeFilter::filter)
-            .filter(r -> !domainDiagramConfig.getClassesBlacklist().contains(r.getTypeName()))
+            .filter(s -> s.getDomainType().equals(DomainType.QUERY_CLIENT))
+            .map(s -> (QueryClientMirror) s)
             .toList();
     }
 
-    private List<OutboundServiceMirror> initFilteredOutboundServices(){
-        return boundedContextMirror
-            .getOutboundServices()
+    public List<OutboundServiceMirror> getOutboundServices() {
+        return serviceKinds
             .stream()
-            .filter(r -> !r.isAbstract())
-            .filter(transitiveDomainTypeFilter::filter)
-            .filter(r -> !domainDiagramConfig.getClassesBlacklist().contains(r.getTypeName()))
+            .filter(s -> s.getDomainType().equals(DomainType.OUTBOUND_SERVICE))
+            .map(s -> (OutboundServiceMirror) s)
             .toList();
-    }
-
-    public List<ApplicationServiceMirror> getApplicationServices() {
-        return applicationServices;
-    }
-
-    public List<DomainServiceMirror> getDomainServices() {
-        return domainServices;
-    }
-
-    public List<RepositoryMirror> getRepositories() {
-        return repositories;
     }
 
     public List<DomainCommandMirror> getDomainCommands() {
@@ -217,12 +214,16 @@ public class FilteredDomainClasses {
         return readModels;
     }
 
-    public List<QueryClientMirror> getQueryClients() {
-        return queryClients;
+    public List<ServiceKindMirror> getServiceKinds() {
+        return serviceKinds;
     }
 
-    public List<OutboundServiceMirror> getOutboundServices() {
-        return outboundServices;
+    public List<ServiceKindMirror> getUnspecifiedServiceKinds() {
+        return serviceKinds
+            .stream()
+            .filter(s -> s.getDomainType().equals(DomainType.SERVICE_KIND))
+            .toList();
     }
+
 }
 

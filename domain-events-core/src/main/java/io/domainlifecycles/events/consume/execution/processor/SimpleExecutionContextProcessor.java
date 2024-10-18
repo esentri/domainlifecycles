@@ -65,6 +65,7 @@ public class SimpleExecutionContextProcessor implements ExecutionContextProcesso
     @Override
     public List<ExecutionResult> process(List<ExecutionContext> contextList) {
         log.debug("Processing detected execution contexts ({} instances)!", contextList.size());
-        return contextList.stream().map(context -> new ExecutionResult(context, handlerExecutor.execute(context))).toList();
+        return contextList.stream().map(
+            context -> new ExecutionResult(context, handlerExecutor.execute(context))).toList();
     }
 }

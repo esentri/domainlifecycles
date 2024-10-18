@@ -7,7 +7,7 @@ file("version.properties").withInputStream { versionProps.load(it) }
 
 task printVersion {
     doFirst {
-        println ('Domain Lifecycles Version: ' + versionProps.getProperty("version"))
+        println('Domain Lifecycles Version: ' + versionProps.getProperty("version"))
     }
 }
 
@@ -44,7 +44,7 @@ release {
 
 ext {
     dlcGroup = 'io.domainlifecycles'
-    dlcVersion =  versionProps.getProperty("version")
+    dlcVersion = versionProps.getProperty("version")
     slf4jVersion = '2.0.12'
     bytebuddyVersion = '1.14.9'
     classGraphVersion = '4.8.163'
@@ -218,6 +218,8 @@ allprojects {
             configFile = rootProject.file('./checkstyle/checkstyle.xml')
             ignoreFailures = true
             showViolations = true
+
+            checkstyleMain.source = "src/main/java"
         }
     }
 

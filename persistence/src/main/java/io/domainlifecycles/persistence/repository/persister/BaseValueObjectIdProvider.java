@@ -36,9 +36,8 @@ import io.domainlifecycles.persistence.repository.actions.PersistenceContext;
 /**
  * A BaseValueObjectIdProvider provides basic functionality for providing technical ids for new {@link ValueObject}s.
  *
- * @param <BASE_RECORD_TYPE> the type of the record that is used to persist the {@link ValueObject}
+ * @param <BASE_RECORD_TYPE>       the type of the record that is used to persist the {@link ValueObject}
  * @param <CONTAINER_TECH_ID_TYPE> the type of the technical id of the container of the {@link ValueObject}
- *
  * @author Mario Herb
  */
 public abstract class BaseValueObjectIdProvider<BASE_RECORD_TYPE, CONTAINER_TECH_ID_TYPE> implements ValueObjectIdProvider<BASE_RECORD_TYPE> {
@@ -57,9 +56,9 @@ public abstract class BaseValueObjectIdProvider<BASE_RECORD_TYPE, CONTAINER_TECH
     /**
      * Provides the technical id for the given {@link ValueObject} record.
      *
-     * @param newVoRecord the new {@link ValueObject} record
+     * @param newVoRecord         the new {@link ValueObject} record
      * @param instanceAccessModel the instance access model
-     * @param pc the persistence context
+     * @param pc                  the persistence context
      */
     public void provideTechnicalIdsForNewVoRecord(BASE_RECORD_TYPE newVoRecord,
                                                   DomainObjectInstanceAccessModel<BASE_RECORD_TYPE> instanceAccessModel,
@@ -82,7 +81,8 @@ public abstract class BaseValueObjectIdProvider<BASE_RECORD_TYPE, CONTAINER_TECH
     }
 
 
-    protected abstract void setContainerIdInNewVoRecord(BASE_RECORD_TYPE newVoRecord, CONTAINER_TECH_ID_TYPE containerTechId);
+    protected abstract void setContainerIdInNewVoRecord(BASE_RECORD_TYPE newVoRecord,
+                                                        CONTAINER_TECH_ID_TYPE containerTechId);
 
     //The implementor must know that the given record instance does not contain the id
     //It must be selected by using equals on all values --> it a value object

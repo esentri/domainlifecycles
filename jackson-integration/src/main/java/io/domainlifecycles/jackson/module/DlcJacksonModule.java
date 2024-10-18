@@ -42,9 +42,9 @@ import java.util.Map;
 
 /**
  * DLC Jackson extension
- * @see SimpleModule
  *
  * @author Mario Herb
+ * @see SimpleModule
  */
 public class DlcJacksonModule extends SimpleModule {
 
@@ -74,12 +74,12 @@ public class DlcJacksonModule extends SimpleModule {
     @Override
     public void setupModule(SetupContext context) {
         super.setupModule(context);
-        context.addBeanDeserializerModifier(new DlcDeserializerModifier(customizerContainer, domainObjectBuilderProvider, entityIdentityProvider));
+        context.addBeanDeserializerModifier(
+            new DlcDeserializerModifier(customizerContainer, domainObjectBuilderProvider, entityIdentityProvider));
         context.addBeanSerializerModifier(new DlcSerializerModifier(customizerContainer));
     }
 
     /**
-     *
      * @return module name
      */
     @Override
@@ -88,7 +88,6 @@ public class DlcJacksonModule extends SimpleModule {
     }
 
     /**
-     *
      * @return module version
      */
     @Override
@@ -99,10 +98,11 @@ public class DlcJacksonModule extends SimpleModule {
     /**
      * Register {@link JacksonMappingCustomizer} instances
      *
-     * @param customizer registered
+     * @param customizer       registered
      * @param domainObjectType for which customizer is registered
      */
-    public void registerCustomizer(JacksonMappingCustomizer<?> customizer, Class<? extends DomainObject> domainObjectType) {
+    public void registerCustomizer(JacksonMappingCustomizer<?> customizer,
+                                   Class<? extends DomainObject> domainObjectType) {
         customizerContainer.addCustomizer(customizer, domainObjectType);
     }
 
@@ -116,7 +116,8 @@ public class DlcJacksonModule extends SimpleModule {
             return customizers.get(beanClass);
         }
 
-        private void addCustomizer(JacksonMappingCustomizer<?> customizer, Class<? extends DomainObject> domainObjectType) {
+        private void addCustomizer(JacksonMappingCustomizer<?> customizer,
+                                   Class<? extends DomainObject> domainObjectType) {
             customizers.put(domainObjectType, customizer);
         }
 

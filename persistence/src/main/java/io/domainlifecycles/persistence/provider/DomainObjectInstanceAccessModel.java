@@ -44,7 +44,6 @@ import java.util.Set;
  * Represents a domain object instance access model.
  *
  * @param <RECORD> the record type
- *
  * @author Mario Herb
  */
 public class DomainObjectInstanceAccessModel<RECORD> {
@@ -103,7 +102,7 @@ public class DomainObjectInstanceAccessModel<RECORD> {
     /**
      * Gets the {@link DomainObject} instance
      *
-     * @return  the {@link DomainObject} instance
+     * @return the {@link DomainObject} instance
      */
     public DomainObject domainObject() {
         return this.structuralPosition.instance;
@@ -117,8 +116,9 @@ public class DomainObjectInstanceAccessModel<RECORD> {
      */
     public DomainObjectInstanceAccessModel<RECORD> cloneWithReplacement(DomainObject p) {
         if (p == null || !p.equals(this.structuralPosition.instance)) {
-            throw DLCPersistenceException.fail("It's not allowed to call 'cloneWithReplacement' with another domainObject than "
-                + this.structuralPosition.instance + ". Was called with " + p);
+            throw DLCPersistenceException.fail(
+                "It's not allowed to call 'cloneWithReplacement' with another domainObject than "
+                    + this.structuralPosition.instance + ". Was called with " + p);
         }
 
         StructuralPosition.StructuralPositionBuilder replacedStructuralPosition = StructuralPosition.builder()
@@ -217,7 +217,8 @@ public class DomainObjectInstanceAccessModel<RECORD> {
          * @return the {@link DomainObjectInstanceAccessModel}
          */
         public DomainObjectInstanceAccessModel<RECORD> build() {
-            Objects.requireNonNull(this.structuralPosition, "We need a structural position to have a valid access model!");
+            Objects.requireNonNull(this.structuralPosition,
+                "We need a structural position to have a valid access model!");
 
             return new DomainObjectInstanceAccessModel<RECORD>(
                 this.structuralPosition,
@@ -230,6 +231,7 @@ public class DomainObjectInstanceAccessModel<RECORD> {
 
     /**
      * {@inheritDoc}
+     *
      * @return
      */
     @Override
@@ -241,6 +243,7 @@ public class DomainObjectInstanceAccessModel<RECORD> {
 
     /**
      * {@inheritDoc}
+     *
      * @return
      */
     @Override
@@ -250,6 +253,7 @@ public class DomainObjectInstanceAccessModel<RECORD> {
 
     /**
      * {@inheritDoc}
+     *
      * @return
      */
     @Override

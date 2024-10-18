@@ -52,9 +52,12 @@ public final class Customer extends AggregateRootBase<Customer.CustomerId> {
     /**
      * The "typed" CustomerId as inner class (record) of the {@code Customer} class.
      */
-    public record CustomerId(@NotNull Long value) implements Identity<Long> { }
+    public record CustomerId(@NotNull Long value) implements Identity<Long> {
+    }
+
     private final CustomerId id;
-    @NotEmpty @Size(max = 100)
+    @NotEmpty
+    @Size(max = 100)
     private String userName;
     @NotNull
     private Address address;
@@ -77,17 +80,17 @@ public final class Customer extends AggregateRootBase<Customer.CustomerId> {
     }
 
     @ListensTo(domainEventType = FraudDetected.class)
-    public void onFraudDetected(FraudDetected fraudDetected){
+    public void onFraudDetected(FraudDetected fraudDetected) {
         block();
     }
 
-    public Customer block(){
+    public Customer block() {
         this.blocked = true;
         return this;
     }
 
     @Publishes(domainEventTypes = CustomerCreditCardChanged.class)
-    public Customer setCreditCard(CreditCard creditCard){
+    public Customer setCreditCard(CreditCard creditCard) {
         this.creditCard = Optional.ofNullable(creditCard);
         DomainEvents.publish(new CustomerCreditCardChanged(
             id,
@@ -97,7 +100,7 @@ public final class Customer extends AggregateRootBase<Customer.CustomerId> {
     }
 
     @Publishes(domainEventTypes = CustomerAdressChanged.class)
-    public Customer setAddress(Address address){
+    public Customer setAddress(Address address) {
         this.address = address;
         DomainEvents.publish(new CustomerAdressChanged(
             id,
@@ -106,7 +109,7 @@ public final class Customer extends AggregateRootBase<Customer.CustomerId> {
         return this;
     }
 
-    public Customer setUsername(String username){
+    public Customer setUsername(String username) {
         this.userName = username;
         return this;
     }

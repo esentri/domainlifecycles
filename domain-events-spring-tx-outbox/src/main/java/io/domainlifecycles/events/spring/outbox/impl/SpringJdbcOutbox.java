@@ -54,19 +54,19 @@ import java.util.UUID;
 
 /**
  * A subclass of AbstractCleaningOutbox that uses Spring JDBC to interact with a database holding the outbox table.
- *
+ * <p>
  * This class provides methods to insert domain events into the outbox, fetch a batch of events
  * for sending, mark a batch as sent successfully, mark a domain event as failed, perform cleanup
  * of processed events, and check for delivery timeouts on the outbox table.
- *
+ * <p>
  * The class requires a DataSource, ObjectMapper, and PlatformTransactionManager to be provided
  * in order to function properly. The outbox table name can also be configured.
- *
+ * <p>
  * The fetch timeout, in seconds, can be set using the setFetchTimeoutSeconds method.
  *
  * @author Mario Herb
  */
-public class SpringJdbcOutbox extends AbstractCleaningOutbox{
+public class SpringJdbcOutbox extends AbstractCleaningOutbox {
 
     private static final Logger log = LoggerFactory.getLogger(SpringJdbcOutbox.class);
     private final JdbcTemplate jdbcTemplate;
@@ -75,13 +75,22 @@ public class SpringJdbcOutbox extends AbstractCleaningOutbox{
 
     private String outboxTableName = "outbox";
     private String insertStatementTemplate = "INSERT INTO $OUTBOX_TABLE$(id, domain_event, inserted) VALUES (?, ?, ?);";
-    private String updateStatementSetBatchIdTemplate = "UPDATE $OUTBOX_TABLE$ SET batch_id = ?, delivery_started = ? WHERE id = ?;";
-    private String updateStatementBatchSuccessfulTemplate = "UPDATE $OUTBOX_TABLE$ SET processing_result = 'OK' WHERE batch_id = ?;";
-    private String updateStatementDomainEventFailedTemplate = "UPDATE $OUTBOX_TABLE$ SET processing_result = ? WHERE domain_event = ?;";
-    private String fetchForBatchStatementTemplate = "SELECT id, domain_event, inserted, batch_id, processing_result FROM $OUTBOX_TABLE$ WHERE processing_result IS NULL ORDER BY inserted ASC LIMIT ? OFFSET 0  FOR UPDATE NOWAIT;";
-    private String fetchForBatchStatementTemplateNonStrict = "SELECT id, domain_event, inserted, batch_id, processing_result FROM $OUTBOX_TABLE$ WHERE processing_result IS NULL and batch_id IS NULL ORDER BY inserted ASC LIMIT ? OFFSET 0  FOR UPDATE NOWAIT;";
-    private String cleanupStatementTemplate = "DELETE FROM $OUTBOX_TABLE$ WHERE processing_result = 'OK' AND inserted < ?;";
-    private String updateStatementDeliverTimeoutTemplate = "UPDATE $OUTBOX_TABLE$ SET processing_result = 'DELIVERY_TIMED_OUT' WHERE batch_id IS NOT NULL AND delivery_started < ?;";
+    private String updateStatementSetBatchIdTemplate = "UPDATE $OUTBOX_TABLE$ SET batch_id = ?, delivery_started = ? " +
+        "WHERE id = ?;";
+    private String updateStatementBatchSuccessfulTemplate = "UPDATE $OUTBOX_TABLE$ SET processing_result = 'OK' WHERE" +
+        " batch_id = ?;";
+    private String updateStatementDomainEventFailedTemplate = "UPDATE $OUTBOX_TABLE$ SET processing_result = ? WHERE " +
+        "domain_event = ?;";
+    private String fetchForBatchStatementTemplate = "SELECT id, domain_event, inserted, batch_id, processing_result " +
+        "FROM $OUTBOX_TABLE$ WHERE processing_result IS NULL ORDER BY inserted ASC LIMIT ? OFFSET 0  FOR UPDATE " +
+        "NOWAIT;";
+    private String fetchForBatchStatementTemplateNonStrict = "SELECT id, domain_event, inserted, batch_id, " +
+        "processing_result FROM $OUTBOX_TABLE$ WHERE processing_result IS NULL and batch_id IS NULL ORDER BY inserted" +
+        " ASC LIMIT ? OFFSET 0  FOR UPDATE NOWAIT;";
+    private String cleanupStatementTemplate = "DELETE FROM $OUTBOX_TABLE$ WHERE processing_result = 'OK' AND inserted" +
+        " < ?;";
+    private String updateStatementDeliverTimeoutTemplate = "UPDATE $OUTBOX_TABLE$ SET processing_result = " +
+        "'DELIVERY_TIMED_OUT' WHERE batch_id IS NOT NULL AND delivery_started < ?;";
     private String insertStatement;
     private String updateStatementSetBatchId;
     private String updateStatementBatchSuccessful;
@@ -99,10 +108,14 @@ public class SpringJdbcOutbox extends AbstractCleaningOutbox{
      * @param objectMapper the ObjectMapper to serialize and deserialize messages, must not be null
      * @param platformTransactionManager the PlatformTransactionManager for managing transactions, must not be null
      */
-    public SpringJdbcOutbox(DataSource dataSource, ObjectMapper objectMapper, PlatformTransactionManager platformTransactionManager) {
-        this.jdbcTemplate = new JdbcTemplate(Objects.requireNonNull(dataSource, "A dataSource must be provided for a SpringJdbcOutbox!"));
-        this.objectMapper = Objects.requireNonNull(objectMapper, "An objectMapper must be provided for a SpringJdbcOutbox!");
-        this.platformTransactionManager = Objects.requireNonNull(platformTransactionManager, "A platformTransactionManager must be provided for a SpringJdbcOutbox!");
+    public SpringJdbcOutbox(DataSource dataSource, ObjectMapper objectMapper,
+                            PlatformTransactionManager platformTransactionManager) {
+        this.jdbcTemplate = new JdbcTemplate(
+            Objects.requireNonNull(dataSource, "A dataSource must be provided for a SpringJdbcOutbox!"));
+        this.objectMapper = Objects.requireNonNull(objectMapper,
+            "An objectMapper must be provided for a SpringJdbcOutbox!");
+        this.platformTransactionManager = Objects.requireNonNull(platformTransactionManager,
+            "A platformTransactionManager must be provided for a SpringJdbcOutbox!");
         setOutboxTableName(this.outboxTableName);
     }
 
@@ -147,12 +160,12 @@ public class SpringJdbcOutbox extends AbstractCleaningOutbox{
                     row.getString(5)
                 )
             ).toList();
-        } catch (QueryTimeoutException t){
+        } catch (QueryTimeoutException t) {
             log.debug("Concurrent outbox fetch!", t);
             platformTransactionManager.rollback(trans);
             return new OutboxBatch(Collections.emptyList());
         }
-        if(strictBatchOrder) {
+        if (strictBatchOrder) {
             var batchInProcess = result.stream().anyMatch(outboxEntry -> outboxEntry.batchId != null);
             if (batchInProcess) {
                 log.debug("Another batch is processed at the moment!");
@@ -162,8 +175,9 @@ public class SpringJdbcOutbox extends AbstractCleaningOutbox{
         }
         var batch = new OutboxBatch(result.stream().map(entry -> entry.domainEvent).toList());
         var deliveryStarted = Timestamp.from(Instant.now());
-        for(var entry : result){
-            jdbcTemplate.update(this.updateStatementSetBatchId, batch.getBatchId().toString(), deliveryStarted, entry.id().toString());
+        for (var entry : result) {
+            jdbcTemplate.update(this.updateStatementSetBatchId, batch.getBatchId().toString(), deliveryStarted,
+                entry.id().toString());
         }
         platformTransactionManager.commit(trans);
         return batch;
@@ -178,7 +192,7 @@ public class SpringJdbcOutbox extends AbstractCleaningOutbox{
         def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         var trans = platformTransactionManager.getTransaction(def);
         jdbcTemplate.update(ps -> {
-            var  stmt = ps.prepareStatement(this.updateStatementBatchSuccessful);
+            var stmt = ps.prepareStatement(this.updateStatementBatchSuccessful);
             stmt.setString(1, batch.getBatchId().toString());
             return stmt;
         });
@@ -190,13 +204,13 @@ public class SpringJdbcOutbox extends AbstractCleaningOutbox{
      */
     @Override
     public void markFailed(DomainEvent domainEvent, ProcessingResult result) {
-        Objects.requireNonNull(result,"The result cannot be NULL when marking a DomainEvent as failed!");
+        Objects.requireNonNull(result, "The result cannot be NULL when marking a DomainEvent as failed!");
         var def = new DefaultTransactionDefinition();
         def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         var trans = platformTransactionManager.getTransaction(def);
         String domainEventString = mapDomainEvent(domainEvent);
         jdbcTemplate.update(ps -> {
-            var  stmt = ps.prepareStatement(this.updateStatementDomainEventFailed);
+            var stmt = ps.prepareStatement(this.updateStatementDomainEventFailed);
             stmt.setString(1, result.name());
             stmt.setString(2, domainEventString);
             return stmt;
@@ -222,20 +236,22 @@ public class SpringJdbcOutbox extends AbstractCleaningOutbox{
         var def = new DefaultTransactionDefinition();
         def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         var trans = platformTransactionManager.getTransaction(def);
-        var deliveryBoundaryTimeStamp = Timestamp.from(Instant.now().minus(batchDeliveryTimeoutSeconds, ChronoUnit.SECONDS));
+        var deliveryBoundaryTimeStamp = Timestamp.from(
+            Instant.now().minus(batchDeliveryTimeoutSeconds, ChronoUnit.SECONDS));
         jdbcTemplate.update(this.updateStatementDeliverTimeout, deliveryBoundaryTimeStamp);
         platformTransactionManager.commit(trans);
     }
 
-    private String mapDomainEvent(DomainEvent domainEvent){
+    private String mapDomainEvent(DomainEvent domainEvent) {
         try {
             return objectMapper.writeValueAsString(new DeserializableDomainEvent(domainEvent));
         } catch (JsonProcessingException e) {
-            throw DLCEventsException.fail("Mapping  the given DomainEvent '{}' to its JSON representation failed!", e, domainEvent);
+            throw DLCEventsException.fail("Mapping  the given DomainEvent '{}' to its JSON representation failed!", e,
+                domainEvent);
         }
     }
 
-    private DomainEvent readDeserializableDomainEvent(String val){
+    private DomainEvent readDeserializableDomainEvent(String val) {
         DeserializableDomainEvent deserializable = null;
         try {
             deserializable = objectMapper.readValue(val, DeserializableDomainEvent.class);
@@ -256,7 +272,7 @@ public class SpringJdbcOutbox extends AbstractCleaningOutbox{
 
     /**
      * Sets the fetch timeout in seconds.
-     *
+     * <p>
      * This method sets the fetch timeout in seconds. It determines the maximum time
      * that the fetch operation will wait for data to be fetched before timing out.
      *
@@ -277,7 +293,7 @@ public class SpringJdbcOutbox extends AbstractCleaningOutbox{
 
     /**
      * Sets the table name of the outbox.
-     *
+     * <p>
      * This method sets the table name of the outbox to be used for storing domain events.
      *
      * @param outboxTableName the table name of the outbox
@@ -288,9 +304,9 @@ public class SpringJdbcOutbox extends AbstractCleaningOutbox{
         this.updateStatementSetBatchId = initializeStatement(updateStatementSetBatchIdTemplate);
         this.updateStatementBatchSuccessful = initializeStatement(updateStatementBatchSuccessfulTemplate);
         this.updateStatementDomainEventFailed = initializeStatement(updateStatementDomainEventFailedTemplate);
-        if(this.strictBatchOrder){
+        if (this.strictBatchOrder) {
             this.fetchForBatchStatement = initializeStatement(this.fetchForBatchStatementTemplate);
-        }else{
+        } else {
             this.fetchForBatchStatement = initializeStatement(this.fetchForBatchStatementTemplateNonStrict);
         }
         this.cleanupStatement = initializeStatement(cleanupStatementTemplate);
@@ -313,14 +329,16 @@ public class SpringJdbcOutbox extends AbstractCleaningOutbox{
      * @param insertStatementTemplate the insert statement template
      */
     public void setInsertStatementTemplate(String insertStatementTemplate) {
-        this.insertStatementTemplate = Objects.requireNonNull(insertStatementTemplate, "A statement template cannot be null!");
+        this.insertStatementTemplate = Objects.requireNonNull(insertStatementTemplate,
+            "A statement template cannot be null!");
         this.insertStatement = initializeStatement(insertStatementTemplate);
     }
 
     /**
      * Retrieves the update statement template for setting the batch ID.
-     *
-     * This method returns the update statement template used by the SpringJdbcOutbox class for setting the batch ID of a batch of domain events.
+     * <p>
+     * This method returns the update statement template used by the SpringJdbcOutbox class for setting the batch ID
+     * of a batch of domain events.
      * It is used in the process of marking a batch as successful or failed.
      *
      * @return the update statement template for setting the batch ID
@@ -331,19 +349,23 @@ public class SpringJdbcOutbox extends AbstractCleaningOutbox{
 
     /**
      * Sets the update statement template for setting the batch ID.
-     *
-     * This method sets the update statement template used by the SpringJdbcOutbox class for setting the batch ID of a batch of domain events.
-     * It is used in the process of marking a batch as successful or failed. Refer to the configurable outbox table name via a '$OUTBOX_TABLE$' placeholder.
+     * <p>
+     * This method sets the update statement template used by the SpringJdbcOutbox class for setting the batch ID of
+     * a batch of domain events.
+     * It is used in the process of marking a batch as successful or failed. Refer to the configurable outbox table
+     * name via a '$OUTBOX_TABLE$' placeholder.
      *
      * @param updateStatementSetBatchIdTemplate the update statement template for setting the batch ID
      */
     public void setUpdateStatementSetBatchIdTemplate(String updateStatementSetBatchIdTemplate) {
-        this.updateStatementSetBatchIdTemplate = Objects.requireNonNull(updateStatementSetBatchIdTemplate, "A statement template cannot be null!");
+        this.updateStatementSetBatchIdTemplate = Objects.requireNonNull(updateStatementSetBatchIdTemplate,
+            "A statement template cannot be null!");
         this.updateStatementSetBatchId = initializeStatement(updateStatementSetBatchIdTemplate);
     }
 
     /**
-     * This method retrieves the update statement template for marking a batch as successful in the SpringJdbcOutbox class.
+     * This method retrieves the update statement template for marking a batch as successful in the SpringJdbcOutbox
+     * class.
      *
      * @return the update statement template for marking a batch as successful
      */
@@ -353,14 +375,15 @@ public class SpringJdbcOutbox extends AbstractCleaningOutbox{
 
     /**
      * Sets the update statement template for marking a batch as successful in the SpringJdbcOutbox class.
-     *
+     * <p>
      * This method sets the update statement template used by the SpringJdbcOutbox class for marking a batch
      * as successful. Refer to the configurable outbox table name via a '$OUTBOX_TABLE$' placeholder.
      *
      * @param updateStatementBatchSuccessfulTemplate the update statement template for marking a batch as successful
      */
     public void setUpdateStatementBatchSuccessfulTemplate(String updateStatementBatchSuccessfulTemplate) {
-        this.updateStatementBatchSuccessfulTemplate = Objects.requireNonNull(updateStatementBatchSuccessfulTemplate, "A statement template cannot be null!");
+        this.updateStatementBatchSuccessfulTemplate = Objects.requireNonNull(updateStatementBatchSuccessfulTemplate,
+            "A statement template cannot be null!");
         this.updateStatementBatchSuccessful = initializeStatement(updateStatementBatchSuccessfulTemplate);
     }
 
@@ -377,15 +400,18 @@ public class SpringJdbcOutbox extends AbstractCleaningOutbox{
      * Sets the update statement template for marking a domain event as failed in the SpringJdbcOutbox class.
      * Refer to the configurable outbox table name via a '$OUTBOX_TABLE$' placeholder.
      *
-     * @param updateStatementDomainEventFailedTemplate the update statement template for marking a domain event as failed
+     * @param updateStatementDomainEventFailedTemplate the update statement template for marking a domain event as
+     *                                                 failed
      */
     public void setUpdateStatementDomainEventFailedTemplate(String updateStatementDomainEventFailedTemplate) {
-        this.updateStatementDomainEventFailedTemplate = Objects.requireNonNull(updateStatementDomainEventFailedTemplate, "A statement template cannot be null!");
+        this.updateStatementDomainEventFailedTemplate = Objects.requireNonNull(updateStatementDomainEventFailedTemplate,
+            "A statement template cannot be null!");
         this.updateStatementDomainEventFailed = initializeStatement(updateStatementDomainEventFailedTemplate);
     }
 
     /**
-     * Retrieves the fetch statement template for fetching a batch of domain events from the outbox in the SpringJdbcOutbox class.
+     * Retrieves the fetch statement template for fetching a batch of domain events from the outbox in the
+     * SpringJdbcOutbox class.
      *
      * @return the fetch statement template for fetching a batch of domain events
      */
@@ -395,7 +421,7 @@ public class SpringJdbcOutbox extends AbstractCleaningOutbox{
 
     /**
      * Sets the fetch statement template for fetching a batch of domain events from the outbox.
-     *
+     * <p>
      * This method sets the fetch statement template used by the SpringJdbcOutbox class for fetching
      * a batch of domain events from the outbox table. The template can include a '$OUTBOX_TABLE$'
      * placeholder that will be replaced with the actual outbox table name.
@@ -404,10 +430,11 @@ public class SpringJdbcOutbox extends AbstractCleaningOutbox{
      * @throws NullPointerException if fetchForBatchStatementTemplate is null
      */
     public void setFetchForBatchStatementTemplate(String fetchForBatchStatementTemplate) {
-        this.fetchForBatchStatementTemplate = Objects.requireNonNull(fetchForBatchStatementTemplate, "A statement template cannot be null!");
-        if(this.strictBatchOrder){
+        this.fetchForBatchStatementTemplate = Objects.requireNonNull(fetchForBatchStatementTemplate,
+            "A statement template cannot be null!");
+        if (this.strictBatchOrder) {
             this.fetchForBatchStatement = initializeStatement(this.fetchForBatchStatementTemplate);
-        }else{
+        } else {
             this.fetchForBatchStatement = initializeStatement(this.fetchForBatchStatementTemplateNonStrict);
         }
     }
@@ -423,21 +450,24 @@ public class SpringJdbcOutbox extends AbstractCleaningOutbox{
 
     /**
      * Sets the cleanup statement template used by the SpringJdbcOutbox class.
-     *
+     * <p>
      * The cleanup statement template is used to create the cleanup statement that will be executed to remove expired
-     * domain events from the outbox table. The template can include a '$OUTBOX_TABLE$' placeholder that will be replaced
+     * domain events from the outbox table. The template can include a '$OUTBOX_TABLE$' placeholder that will be
+     * replaced
      * with the actual outbox table name.
      *
      * @param cleanupStatementTemplate the cleanup statement template to set
      * @throws NullPointerException if cleanupStatementTemplate is null
      */
     public void setCleanupStatementTemplate(String cleanupStatementTemplate) {
-        this.cleanupStatementTemplate = Objects.requireNonNull(cleanupStatementTemplate, "A statement template cannot be null!");
+        this.cleanupStatementTemplate = Objects.requireNonNull(cleanupStatementTemplate,
+            "A statement template cannot be null!");
         this.cleanupStatement = initializeStatement(cleanupStatementTemplate);
     }
 
     /**
-     * Retrieves the update statement template for updating the delivery timeout of a domain event in the SpringJdbcOutbox class.
+     * Retrieves the update statement template for updating the delivery timeout of a domain event in the
+     * SpringJdbcOutbox class.
      *
      * @return the update statement template for updating the delivery timeout
      */
@@ -446,61 +476,75 @@ public class SpringJdbcOutbox extends AbstractCleaningOutbox{
     }
 
     /**
-     * Sets the update statement template for updating the delivery timeout of a domain event in the SpringJdbcOutbox class.
+     * Sets the update statement template for updating the delivery timeout of a domain event in the SpringJdbcOutbox
+     * class.
      * The template can include a '$OUTBOX_TABLE$' placeholder that will be replaced with the actual outbox table name.
      *
      * @param updateStatementDeliverTimeoutTemplate the update statement template for updating the delivery timeout
      */
     public void setUpdateStatementDeliverTimeoutTemplate(String updateStatementDeliverTimeoutTemplate) {
-        this.updateStatementDeliverTimeoutTemplate = Objects.requireNonNull(updateStatementDeliverTimeoutTemplate, "A statement template cannot be null!");
+        this.updateStatementDeliverTimeoutTemplate = Objects.requireNonNull(updateStatementDeliverTimeoutTemplate,
+            "A statement template cannot be null!");
         this.updateStatementDeliverTimeout = initializeStatement(updateStatementDeliverTimeoutTemplate);
     }
 
     /**
-     * Sets the fetch statement template for fetching a batch of domain events from the outbox in the SpringJdbcOutbox class in case of {@code strictBatchOrder = false}.
-     *
-     * This method sets the fetch statement template used by the SpringJdbcOutbox class for fetching a batch of domain events from the outbox table.
+     * Sets the fetch statement template for fetching a batch of domain events from the outbox in the
+     * SpringJdbcOutbox class in case of {@code strictBatchOrder = false}.
+     * <p>
+     * This method sets the fetch statement template used by the SpringJdbcOutbox class for fetching a batch of
+     * domain events from the outbox table.
      * The template can include a '$OUTBOX_TABLE$' placeholder that will be replaced with the actual outbox table name.
-     * This non-strict fetch allows batches to overtake each other, even if they were inserted into the outbox in a different order.
+     * This non-strict fetch allows batches to overtake each other, even if they were inserted into the outbox in a
+     * different order.
      *
-     * @param fetchForBatchStatementTemplateNonStrict the fetch statement template for fetching a batch of domain events with non-strict ordering
+     * @param fetchForBatchStatementTemplateNonStrict the fetch statement template for fetching a batch of domain
+     *                                                events with non-strict ordering
      * @throws NullPointerException if fetchForBatchStatementTemplateNonStrict is null
      */
     public void setFetchForBatchStatementTemplateNonStrict(String fetchForBatchStatementTemplateNonStrict) {
-        this.fetchForBatchStatementTemplateNonStrict = Objects.requireNonNull(fetchForBatchStatementTemplateNonStrict, "A statement template cannot be null!");
-        if(this.strictBatchOrder){
+        this.fetchForBatchStatementTemplateNonStrict = Objects.requireNonNull(fetchForBatchStatementTemplateNonStrict,
+            "A statement template cannot be null!");
+        if (this.strictBatchOrder) {
             this.fetchForBatchStatement = initializeStatement(this.fetchForBatchStatementTemplate);
-        }else{
+        } else {
             this.fetchForBatchStatement = initializeStatement(this.fetchForBatchStatementTemplateNonStrict);
         }
     }
 
     /**
      * Sets the strict batch order flag.
-     *
+     * <p>
      * This method sets the flag that determines if the batch order should be strictly enforced.
-     * If strictBatchOrder is set to true, the order in which domain events are inserted into the outbox will be preserved, when they are polled.
-     * If strictBatchOrder is set to false, the order of domain events in a batch may be different from the order they were inserted into the outbox,
+     * If strictBatchOrder is set to true, the order in which domain events are inserted into the outbox will be
+     * preserved, when they are polled.
+     * If strictBatchOrder is set to false, the order of domain events in a batch may be different from the order
+     * they were inserted into the outbox,
      * as batches might overtake each other, if there are multiple polling processes.
      *
      * @param strictBatchOrder the value indicating whether the strict batch order should be enforced
      */
     public void setStrictBatchOrder(boolean strictBatchOrder) {
         this.strictBatchOrder = strictBatchOrder;
-        if(this.strictBatchOrder){
+        if (this.strictBatchOrder) {
             this.fetchForBatchStatement = initializeStatement(this.fetchForBatchStatementTemplate);
-        }else{
+        } else {
             this.fetchForBatchStatement = initializeStatement(this.fetchForBatchStatementTemplateNonStrict);
         }
     }
 
-    private String initializeStatement(String statementTemplate){
+    private String initializeStatement(String statementTemplate) {
         String initialized = statementTemplate.replaceAll("\\$OUTBOX_TABLE\\$", this.outboxTableName);
         log.debug("Initialized statement: " + initialized);
         return initialized;
     }
 
-    private record DeserializableDomainEvent(@JsonTypeInfo(use= JsonTypeInfo.Id.CLASS, property="@class")DomainEvent event){}
-    private record OutboxEntry(UUID id, DomainEvent domainEvent, LocalDateTime inserted, UUID batchId, String processingResult){}
+    private record DeserializableDomainEvent(
+        @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class") DomainEvent event) {
+    }
+
+    private record OutboxEntry(UUID id, DomainEvent domainEvent, LocalDateTime inserted, UUID batchId,
+                               String processingResult) {
+    }
 
 }

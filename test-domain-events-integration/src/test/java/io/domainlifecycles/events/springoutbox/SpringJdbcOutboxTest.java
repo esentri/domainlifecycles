@@ -67,7 +67,8 @@ public class SpringJdbcOutboxTest {
 
     private final String DELETE_OUTBOX = "DELETE FROM outbox";
 
-    private final String INSERT_OUTBOX_OLD_SUCCESS = "INSERT INTO outbox (id, domain_event, inserted, batch_id, processing_result, delivery_started) VALUES (" +
+    private final String INSERT_OUTBOX_OLD_SUCCESS = "INSERT INTO outbox (id, domain_event, inserted, batch_id, " +
+        "processing_result, delivery_started) VALUES (" +
         "'" + UUID.randomUUID().toString() + "'," +
         "'TEST'," +
         "DATEADD(DAY, -2, CURRENT_TIMESTAMP)," +
@@ -76,7 +77,8 @@ public class SpringJdbcOutboxTest {
         "CURRENT_TIMESTAMP" +
         ");";
 
-    private final String INSERT_OUTBOX_DELIVERY_TIMEOUT = "INSERT INTO outbox (id, domain_event, inserted, batch_id, processing_result, delivery_started) VALUES (" +
+    private final String INSERT_OUTBOX_DELIVERY_TIMEOUT = "INSERT INTO outbox (id, domain_event, inserted, batch_id, " +
+        "processing_result, delivery_started) VALUES (" +
         "'" + UUID.randomUUID().toString() + "'," +
         "'TEST'," +
         "CURRENT_TIMESTAMP," +
@@ -108,11 +110,11 @@ public class SpringJdbcOutboxTest {
 
     @Test
     @Transactional
-    public void testInsert(){
+    public void testInsert() {
         var domainEvent = new OutboxTestEvent("OutboxTest");
         factory.getTransactionalOutbox().insert(domainEvent);
 
-        var res = jdbcTemplate.query(SELECT_OUTBOX, (r, i)-> mapResultsetOutbox(r));
+        var res = jdbcTemplate.query(SELECT_OUTBOX, (r, i) -> mapResultsetOutbox(r));
 
         assertThat(res.size()).isGreaterThan(0);
         log.debug("OutboxEntry: " + res.get(0));
@@ -120,7 +122,7 @@ public class SpringJdbcOutboxTest {
     }
 
     @Test
-    public void testInsertFailed(){
+    public void testInsertFailed() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         var domainEvent = new OutboxTestEvent("OutboxTestFailed");
         factory.getTransactionalOutbox().insert(domainEvent);
@@ -130,7 +132,7 @@ public class SpringJdbcOutboxTest {
         var def = new DefaultTransactionDefinition();
         def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         var statusSelect = platformTransactionManager.getTransaction(def);
-        var res = jdbcTemplate.query(SELECT_OUTBOX, (r, i)-> mapResultsetOutbox(r));
+        var res = jdbcTemplate.query(SELECT_OUTBOX, (r, i) -> mapResultsetOutbox(r));
         platformTransactionManager.commit(statusSelect);
 
         assertThat(res.size()).isGreaterThan(0);
@@ -140,7 +142,7 @@ public class SpringJdbcOutboxTest {
     }
 
     @Test
-    public void testInsertSuccess(){
+    public void testInsertSuccess() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         var domainEvent = new OutboxTestEvent("OutboxTest");
         factory.getTransactionalOutbox().insert(domainEvent);
@@ -150,7 +152,7 @@ public class SpringJdbcOutboxTest {
         var def = new DefaultTransactionDefinition();
         def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         var statusSelect = platformTransactionManager.getTransaction(def);
-        var res = jdbcTemplate.query(SELECT_OUTBOX, (r, i)-> mapResultsetOutbox(r));
+        var res = jdbcTemplate.query(SELECT_OUTBOX, (r, i) -> mapResultsetOutbox(r));
         platformTransactionManager.commit(statusSelect);
 
         assertThat(res.size()).isGreaterThan(0);
@@ -161,7 +163,7 @@ public class SpringJdbcOutboxTest {
     }
 
     @Test
-    public void testFetchConcurrently(){
+    public void testFetchConcurrently() {
         var defReqNew = new DefaultTransactionDefinition();
         defReqNew.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         var statusInsert = platformTransactionManager.getTransaction(defReqNew);
@@ -194,7 +196,7 @@ public class SpringJdbcOutboxTest {
     }
 
     @Test
-    public void testFetchConcurrentlyNoWait(){
+    public void testFetchConcurrentlyNoWait() {
         var defReqNew = new DefaultTransactionDefinition();
         defReqNew.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         var statusInsert = platformTransactionManager.getTransaction(defReqNew);
@@ -207,13 +209,13 @@ public class SpringJdbcOutboxTest {
         jdbcTemplate.execute(select);
         var statusFetchB = platformTransactionManager.getTransaction(defReqNew);
         assertThatThrownBy(() -> {
-                jdbcTemplate.execute(select);
-            }).hasCauseInstanceOf(JdbcSQLTimeoutException.class);
+            jdbcTemplate.execute(select);
+        }).hasCauseInstanceOf(JdbcSQLTimeoutException.class);
         platformTransactionManager.commit(statusFetchA);
     }
 
     @Test
-    public void testFetchOrder(){
+    public void testFetchOrder() {
         var defReqNew = new DefaultTransactionDefinition();
         defReqNew.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         var statusInsert = platformTransactionManager.getTransaction(defReqNew);
@@ -233,7 +235,7 @@ public class SpringJdbcOutboxTest {
     }
 
     @Test
-    public void testCleanup(){
+    public void testCleanup() {
         var defReqNew = new DefaultTransactionDefinition();
         defReqNew.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         var statusInsert = platformTransactionManager.getTransaction(defReqNew);
@@ -241,12 +243,12 @@ public class SpringJdbcOutboxTest {
         platformTransactionManager.commit(statusInsert);
         SpringJdbcOutbox springJdbcOutbox = ((SpringJdbcOutbox)factory.getTransactionalOutbox());
         springJdbcOutbox.cleanup(springJdbcOutbox.getCleanUpAgeDays());
-        var res = jdbcTemplate.query(SELECT_OUTBOX, (r, i)-> mapResultsetOutbox(r));
+        var res = jdbcTemplate.query(SELECT_OUTBOX, (r, i) -> mapResultsetOutbox(r));
         assertThat(res.size()).isEqualTo(0);
     }
 
     @Test
-    public void testDeliveryCheck(){
+    public void testDeliveryCheck() {
         var defReqNew = new DefaultTransactionDefinition();
         defReqNew.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         var statusInsert = platformTransactionManager.getTransaction(defReqNew);
@@ -254,7 +256,7 @@ public class SpringJdbcOutboxTest {
         platformTransactionManager.commit(statusInsert);
         SpringJdbcOutbox springJdbcOutbox = ((SpringJdbcOutbox)factory.getTransactionalOutbox());
         springJdbcOutbox.deliveryCheck(springJdbcOutbox.getBatchDeliveryTimeoutSeconds());
-        var res = jdbcTemplate.query(SELECT_OUTBOX, (r, i)-> mapResultsetOutbox(r));
+        var res = jdbcTemplate.query(SELECT_OUTBOX, (r, i) -> mapResultsetOutbox(r));
         assertThat(res.size()).isEqualTo(1);
         assertThat(res.get(0).processingResult).isEqualTo("DELIVERY_TIMED_OUT");
     }
@@ -270,6 +272,9 @@ public class SpringJdbcOutboxTest {
             rs.getTimestamp(6) == null ? null : rs.getTimestamp(6).toLocalDateTime()
         );
     }
-    private record OutboxEntry(String id, String domainEvent, LocalDateTime inserted, String batchId, String processingResult, LocalDateTime deliveryStarted){}
+
+    private record OutboxEntry(String id, String domainEvent, LocalDateTime inserted, String batchId,
+                               String processingResult, LocalDateTime deliveryStarted) {
+    }
 
 }

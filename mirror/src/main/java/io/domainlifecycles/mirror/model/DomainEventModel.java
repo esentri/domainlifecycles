@@ -43,6 +43,7 @@ import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.EntityReferenceMirror;
 import io.domainlifecycles.mirror.api.QueryClientMirror;
+import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.mirror.api.ValueReferenceMirror;
 
 import java.util.List;
@@ -62,7 +63,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
                             @JsonProperty("methods") List<MethodMirror> methods,
                             @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
                             @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
-                            ) {
+    ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
@@ -71,7 +72,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
      */
     @JsonIgnore
     @Override
-    public List<FieldMirror> getBasicFields(){
+    public List<FieldMirror> getBasicFields() {
         return allFields.stream().filter(p ->
                 DomainType.NON_DOMAIN.equals(p.getType().getDomainType())
             )
@@ -83,7 +84,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
      */
     @JsonIgnore
     @Override
-    public List<ValueReferenceMirror> getValueReferences(){
+    public List<ValueReferenceMirror> getValueReferences() {
         return allFields.stream().filter(p ->
                 DomainType.VALUE_OBJECT.equals(p.getType().getDomainType()) ||
                     DomainType.ENUM.equals(p.getType().getDomainType()) ||
@@ -98,7 +99,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
      */
     @JsonIgnore
     @Override
-    public List<EntityReferenceMirror> getEntityReferences(){
+    public List<EntityReferenceMirror> getEntityReferences() {
         return allFields.stream().filter(p ->
                 DomainType.ENTITY.equals(p.getType().getDomainType())
             )
@@ -111,7 +112,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
      */
     @JsonIgnore
     @Override
-    public List<AggregateRootReferenceMirror> getAggregateRootReferences(){
+    public List<AggregateRootReferenceMirror> getAggregateRootReferences() {
         return allFields.stream().filter(p ->
                 DomainType.AGGREGATE_ROOT.equals(p.getType().getDomainType())
             )
@@ -124,14 +125,14 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
      */
     @JsonIgnore
     @Override
-    public List<AggregateRootMirror> getPublishingAggregates(){
+    public List<AggregateRootMirror> getPublishingAggregates() {
         return Domain
             .getInitializedDomain()
             .allTypeMirrors()
             .values()
             .stream()
             .filter(m -> m instanceof AggregateRootMirror)
-            .map(a -> (AggregateRootMirror)a)
+            .map(a -> (AggregateRootMirror) a)
             .filter(a -> a.publishes(this))
             .collect(Collectors.toList());
     }
@@ -148,7 +149,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
             .values()
             .stream()
             .filter(m -> m instanceof DomainServiceMirror)
-            .map(ds -> (DomainServiceMirror)ds)
+            .map(ds -> (DomainServiceMirror) ds)
             .filter(ds -> ds.publishes(this))
             .collect(Collectors.toList());
     }
@@ -165,7 +166,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
             .values()
             .stream()
             .filter(m -> m instanceof RepositoryMirror)
-            .map(ds -> (RepositoryMirror)ds)
+            .map(ds -> (RepositoryMirror) ds)
             .filter(r -> r.publishes(this))
             .collect(Collectors.toList());
     }
@@ -182,7 +183,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
             .values()
             .stream()
             .filter(m -> m instanceof AggregateRootMirror)
-            .map(a -> (AggregateRootMirror)a)
+            .map(a -> (AggregateRootMirror) a)
             .filter(a -> a.listensTo(this))
             .collect(Collectors.toList());
     }
@@ -199,7 +200,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
             .values()
             .stream()
             .filter(m -> m instanceof DomainServiceMirror)
-            .map(ds -> (DomainServiceMirror)ds)
+            .map(ds -> (DomainServiceMirror) ds)
             .filter(ds -> ds.listensTo(this))
             .collect(Collectors.toList());
     }
@@ -216,7 +217,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
             .values()
             .stream()
             .filter(m -> m instanceof RepositoryMirror)
-            .map(ds -> (RepositoryMirror)ds)
+            .map(ds -> (RepositoryMirror) ds)
             .filter(r -> r.listensTo(this))
             .collect(Collectors.toList());
     }
@@ -233,7 +234,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
             .values()
             .stream()
             .filter(m -> m instanceof ApplicationServiceMirror)
-            .map(as -> (ApplicationServiceMirror)as)
+            .map(as -> (ApplicationServiceMirror) as)
             .filter(r -> r.listensTo(this))
             .collect(Collectors.toList());
     }
@@ -250,7 +251,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
             .values()
             .stream()
             .filter(m -> m instanceof OutboundServiceMirror)
-            .map(a -> (OutboundServiceMirror)a)
+            .map(a -> (OutboundServiceMirror) a)
             .filter(a -> a.listensTo(this))
             .collect(Collectors.toList());
     }
@@ -267,7 +268,24 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
             .values()
             .stream()
             .filter(m -> m instanceof QueryClientMirror)
-            .map(a -> (QueryClientMirror)a)
+            .map(a -> (QueryClientMirror) a)
+            .filter(a -> a.listensTo(this))
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @JsonIgnore
+    @Override
+    public List<ServiceKindMirror> getListeningServiceKinds() {
+        return Domain
+            .getInitializedDomain()
+            .allTypeMirrors()
+            .values()
+            .stream()
+            .filter(m -> m instanceof ServiceKindMirror)
+            .map(a -> (ServiceKindMirror) a)
             .filter(a -> a.listensTo(this))
             .collect(Collectors.toList());
     }

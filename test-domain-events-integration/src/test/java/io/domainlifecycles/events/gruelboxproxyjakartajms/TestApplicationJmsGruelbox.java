@@ -27,11 +27,7 @@
 
 package io.domainlifecycles.events.gruelboxproxyjakartajms;
 
-import io.domainlifecycles.domain.types.ApplicationService;
-import io.domainlifecycles.domain.types.DomainService;
-import io.domainlifecycles.domain.types.OutboundService;
-import io.domainlifecycles.domain.types.QueryClient;
-import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.ADomainService;
 import io.domainlifecycles.events.AQueryClient;
 import io.domainlifecycles.events.ARepository;
@@ -103,25 +99,12 @@ public class TestApplicationJmsGruelbox {
         return new TransactionalCounterService(jdbcTemplate);
     }
 
-    /**
-     * This method creates and configures a ServiceProvider instance, which is responsible for providing instances of various types of services.
-     * It takes three parameters: repositories, applicationServices, and domainServices, which are lists of Repository, ApplicationService, and DomainService instances respectively
-     */
     @Bean
     @DependsOn("initializedDomain")
     public ServiceProvider serviceProvider(
-        List<Repository<?,?>> repositories,
-        List<ApplicationService> applicationServices,
-        List<DomainService> domainServices,
-        List<QueryClient<?>> queryClients,
-        List<OutboundService> outboundServices
+        List<ServiceKind> serviceInstances
     ){
-        var services = new Services();
-        repositories.forEach(services::registerRepositoryInstance);
-        applicationServices.forEach(services::registerApplicationServiceInstance);
-        domainServices.forEach(services::registerDomainServiceInstance);
-        queryClients.forEach(services::registerQueryClientInstance);
-        outboundServices.forEach(services::registerOutboundServiceInstance);
+        var services = new Services(serviceInstances);
         return services;
     }
 

@@ -1,19 +1,21 @@
 ## Domain Lifecycles JSON Mapping
 
-DLC supports serialization and deserialization of JSON to/from Java based DomainObjects 
+DLC supports serialization and deserialization of JSON to/from Java based DomainObjects
 via a [Jackson](https://github.com/FasterXML/jackson) extension.
 
-The support of concepts of Domain Driven Design (DDD) and Java class structures that correspond to DDD concepts 
+The support of concepts of Domain Driven Design (DDD) and Java class structures that correspond to DDD concepts
 is not necessarily provided by Jackson. Especially with objects that are immutable, Jackson requires either
 default constructors or one have to specify the mapping for deserialization by annotation or in another way.
-In addition, certain properties in DomainObjects are mapped 
+In addition, certain properties in DomainObjects are mapped
 unfavorably in the default behavior of Jackson, as shown below.
 
 ### Mapping of Identities and single-valued ValueObjects
 
-Identities are always 'single-valued' with DLC (i.e. they have exactly one property that holds the ID value). 
-In addition, ValueObjects often have only one property that holds the value. Because of the Java representation of Identities
-and ValueObjects as Java objects (except for enum-based ValueObjects), Jackson would map them as in the following example:
+Identities are always 'single-valued' with DLC (i.e. they have exactly one property that holds the ID value).
+In addition, ValueObjects often have only one property that holds the value. Because of the Java representation of
+Identities
+and ValueObjects as Java objects (except for enum-based ValueObjects), Jackson would map them as in the following
+example:
 
 The following Java class structure
 
@@ -47,8 +49,8 @@ is mapped by Jackson to the following JSON structure, if Jackson default mapping
 }
  ```
 
-which is unfavourable for processing the JSON structure in a client application, 
-due to necessary nested access to the properties, 
+which is unfavourable for processing the JSON structure in a client application,
+due to necessary nested access to the properties,
 which may have different names in different 'single-valued' ValueObjects.
 
 Instead of the mapping shown above, DLC provides mechanisms to serialize the Java class from above to
@@ -69,9 +71,9 @@ DLC JSON Mapping offers various customization options.
 
 #### MappingCustomizer
 
-Default mapping behaviour of DLC can be customized in various ways via 
+Default mapping behaviour of DLC can be customized in various ways via
 `api.io.domainlifecycles.jackson.JacksonMappingCustomizer`.
-A MappingCustomizer offers various callback methods, which provide multiple entry points for customizations. 
+A MappingCustomizer offers various callback methods, which provide multiple entry points for customizations.
 
 The entry-points for callbacks are explained in the following.
 
@@ -112,6 +114,7 @@ public abstract class JacksonMappingCustomizer<T extends DomainObject> {
     }
 }
 ```
+
 By overriding the respective methods, individual logic can be integrated into the mapping process:
 
 - `beforeFieldRead`: is executed before the mapping of fields, when reading JSON structures.
@@ -122,12 +125,12 @@ By overriding the respective methods, individual logic can be integrated into th
 - `beforeObjectWrite`: is executed before the mapping of DomainObjects, when writing JSON structures.
 
 By returning `MappingAction.CONTINUE_WITH_DEFAULT_ACTION` after the execution of custom logic
-the default mapping behaviour for the field or DomainObject is continued. 
+the default mapping behaviour for the field or DomainObject is continued.
 
-By returning `MappingAction.SKIP_DEFAULT_ACTION` the default mapping logic for the corresponding 
+By returning `MappingAction.SKIP_DEFAULT_ACTION` the default mapping logic for the corresponding
 field or DomainObject is skipped.
 
-The most common use case of a MappingCustomizer is `afterObjectRead`. 
+The most common use case of a MappingCustomizer is `afterObjectRead`.
 For the following example we suppose having an AggregateRoot called `Deactivation`:
 
 ```Java
@@ -151,15 +154,14 @@ public class DeactivationMappingCustomizer extends JacksonMappingCustomizer<Deac
 }
 ```
 
-> **_NOTE:_**  All implementations of `JacksonMappingCustomizer` must be passed to the `DlcJacksonModule` 
+> **_NOTE:_**  All implementations of `JacksonMappingCustomizer` must be passed to the `DlcJacksonModule`
 > when [configuring](#activation-jackson-extension) the module.
-
 
 ###### DomainObjectMappingContext
 
 The `DomainObjectMappingContext` provides access to the `DomainObjectBuilder` instance,
 which is filled with values during the mapping process before the final `DomainObject` is created from it.
-Furthermore, in hierarchical object structures, access can be gained to the parent `DomainObjectMappingContext`, 
+Furthermore, in hierarchical object structures, access can be gained to the parent `DomainObjectMappingContext`,
 in order to react to properties of the parent object during the mapping process of child objects.
 
 #### EntityIdentityProvider
@@ -169,8 +171,9 @@ to the application from the outside (e.g. via REST endpoint), then a value for t
 in the mapping process, if the client does not do this (e.g. via client-side generated UUID). Especially with relational
 database systems, the assignment of ID values from e.g. a 'SEQUENCE' is common practice.
 
-By providing a `io.domainlifecycles.jackson.api.EntityIdentityProvider` Jackson can tell how new IDs are generated for Entities
-in the context of the mapping process, so that they can be assigned when the Entity is created from 'outside' and 
+By providing a `io.domainlifecycles.jackson.api.EntityIdentityProvider` Jackson can tell how new IDs are generated for
+Entities
+in the context of the mapping process, so that they can be assigned when the Entity is created from 'outside' and
 thus, the always-valid principle is not violated.
 
 ```Java
@@ -179,16 +182,16 @@ public interface EntityIdentityProvider {
 }
 ```
 
-The method `provideFor()` takes the Entity type as parameter and should return 
+The method `provideFor()` takes the Entity type as parameter and should return
 a new unused Identity suitable for this Entity.
 
-> **_NOTE:_** A suitable `EntityIdentityProvider` implementation must be passed to the `DlcJacksonModule` 
-when [configuring](#activation-jackson-extension) the module.
+> **_NOTE:_** A suitable `EntityIdentityProvider` implementation must be passed to the `DlcJacksonModule`
+> when [configuring](#activation-jackson-extension) the module.
 
 ###### JooqEntityIdentityProvider
 
 DLC Persistence provides an `EntityIdentityProvider` implementation based on database `Sequences`.
-Prerequisite for the `JooqEntityIdentityProvider` is that `Sequences` are defined for each `Entity`, which 
+Prerequisite for the `JooqEntityIdentityProvider` is that `Sequences` are defined for each `Entity`, which
 must apply to a predefined naming convention.
 
 Example:
@@ -214,6 +217,7 @@ The `Sequence` must be named according to the following schema:
 this is Camel-Case in Java to lower-case pascal-case in SQL with the suffix `_seq`.
 
 <a name="activation-jackson-extension"></a>
+
 ### Activation of the Jackson extension
 
 Common extensions are typically included in Jackson as Jackson modules. DLC offers

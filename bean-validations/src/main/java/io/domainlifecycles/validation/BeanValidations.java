@@ -26,6 +26,7 @@
  */
 
 package io.domainlifecycles.validation;
+
 import io.domainlifecycles.validation.jakarta.JakartaValidations;
 import io.domainlifecycles.validation.javax.JavaxValidations;
 import org.slf4j.Logger;
@@ -38,7 +39,7 @@ import java.lang.reflect.Method;
 /**
  * Generic static Bean Validation support, supporting Bean Validation 2.0 (Javax)
  * as well as Bean Validations 3.0 (Jakarta).
- *
+ * <p>
  * The static constructor initializes the validator factory, that is available in the class path.
  *
  * @author Mario Herb
@@ -48,15 +49,16 @@ public class BeanValidations {
     private static ValidatorFactory javaxFactory = null;
     private static jakarta.validation.ValidatorFactory jakartaFactory = null;
     private static final Logger log = LoggerFactory.getLogger(BeanValidations.class);
-    static{
+
+    static {
         try {
             jakartaFactory = jakarta.validation.Validation.buildDefaultValidatorFactory();
-        }catch (Throwable t){
+        } catch (Throwable t) {
             log.warn("Jakarta Bean Validation disabled. ValidatorFactory could not be created!");
         }
         try {
             javaxFactory = Validation.buildDefaultValidatorFactory();
-        }catch (Throwable t){
+        } catch (Throwable t) {
             log.warn("Javax Bean Validation disabled. ValidatorFactory could not be created!");
         }
     }
@@ -66,11 +68,11 @@ public class BeanValidations {
      *
      * @param thisObject {@link Object} to be validated
      */
-    public static void validate(Object thisObject){
-        if(jakartaFactory != null) {
+    public static void validate(Object thisObject) {
+        if (jakartaFactory != null) {
             JakartaValidations.validate(jakartaFactory, thisObject);
         }
-        if(javaxFactory != null) {
+        if (javaxFactory != null) {
             JavaxValidations.validate(javaxFactory, thisObject);
         }
     }
@@ -79,14 +81,14 @@ public class BeanValidations {
      * Generic method parameter validation implementation using bean validations.
      *
      * @param thisObject validated
-     * @param method validated
-     * @param arguments parameter argument to be validated
+     * @param method     validated
+     * @param arguments  parameter argument to be validated
      */
-    public static void validateMethodParameters(Object thisObject, Method method, Object[] arguments){
-        if(jakartaFactory != null) {
+    public static void validateMethodParameters(Object thisObject, Method method, Object[] arguments) {
+        if (jakartaFactory != null) {
             JakartaValidations.validateMethodParameters(jakartaFactory, thisObject, method, arguments);
         }
-        if(javaxFactory != null) {
+        if (javaxFactory != null) {
             JavaxValidations.validateMethodParameters(javaxFactory, thisObject, method, arguments);
         }
     }
@@ -94,15 +96,15 @@ public class BeanValidations {
     /**
      * Generic return value validation implementation using bean validations.
      *
-     * @param thisObject {@link Object}
-     * @param method validated
+     * @param thisObject  {@link Object}
+     * @param method      validated
      * @param returnValue {@link Object} to be validated
      */
-    public static void validateMethodReturnValue(Object thisObject, Method method, Object returnValue){
-        if(jakartaFactory != null) {
+    public static void validateMethodReturnValue(Object thisObject, Method method, Object returnValue) {
+        if (jakartaFactory != null) {
             JakartaValidations.validateMethodReturnValue(jakartaFactory, thisObject, method, returnValue);
         }
-        if(javaxFactory != null) {
+        if (javaxFactory != null) {
             JavaxValidations.validateMethodReturnValue(javaxFactory, thisObject, method, returnValue);
         }
     }

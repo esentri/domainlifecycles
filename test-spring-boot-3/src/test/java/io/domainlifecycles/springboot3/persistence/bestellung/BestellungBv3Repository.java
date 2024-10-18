@@ -120,7 +120,8 @@ public class BestellungBv3Repository extends JooqAggregateRepository<BestellungB
     //Achtung aus Sicht fachlich/inhaltlich korrekter Domänenlogik macht diese Methode keinen Sinn
     //Es geht lediglich um die Subquery Demonstration
     public Optional<BestellungBv3> findWithSubquery(BestellungIdBv3 id) {
-        var fetcher = new JooqAggregateFetcher<BestellungBv3, BestellungIdBv3>(BestellungBv3.class, dslContext, jooqDomainPersistenceProvider);
+        var fetcher = new JooqAggregateFetcher<BestellungBv3, BestellungIdBv3>(BestellungBv3.class, dslContext,
+            jooqDomainPersistenceProvider);
 
         //Wir registrieren einen RecordProvider um nur noch Bestellpositionen mit ArtikelId 1 zu fetchen
         // Per FK Auto Fetch würden normalerweise alle Positionen zu einer Bestellung gefetcht
@@ -143,108 +144,116 @@ public class BestellungBv3Repository extends JooqAggregateRepository<BestellungB
     }
 
     /**
-     * This method ist optimized in the way, that only one select statement is issued to the database for fetching all records
+     * This method ist optimized in the way, that only one select statement is issued to the database for fetching
+     * all records
      * instead of the default and fetching several subselects.
+     *
      * @param offset
      * @param pageSize
      * @return
      */
     public Stream<BestellungBv3> findBestellungenOptimized(int offset, int pageSize) {
-        var fetcher = new JooqAggregateFetcher<BestellungBv3, BestellungIdBv3>(BestellungBv3.class, dslContext, jooqDomainPersistenceProvider);
+        var fetcher = new JooqAggregateFetcher<BestellungBv3, BestellungIdBv3>(BestellungBv3.class, dslContext,
+            jooqDomainPersistenceProvider);
 
         io.domainlifecycles.test.springboot3.tables.BestellungBv3 b = BESTELLUNG_BV3.as("b");
 
         var joinedRecords = dslContext.select()
-                .from(
-                    dslContext.select()
+            .from(
+                dslContext.select()
                     .from(BESTELLUNG_BV3)
                     .orderBy(BESTELLUNG_BV3.ID)
                     .offset(offset)
                     .limit(pageSize)
-                        .asTable("b")
-                )
-                .join(LIEFERADRESSE_BV3)
-                .on(b.LIEFERADRESSE_ID.eq(LIEFERADRESSE_BV3.ID))
-                .join(BESTELL_STATUS_BV3)
-                .on(b.ID.eq(BESTELL_STATUS_BV3.BESTELLUNG_ID))
-                .leftJoin(BESTELL_POSITION_BV3)
-                .on(b.ID.eq(BESTELL_POSITION_BV3.BESTELLUNG_ID))
-                .leftJoin(BESTELL_KOMMENTAR_BV3)
-                .on(b.ID.eq(BESTELL_KOMMENTAR_BV3.BESTELLUNG_ID))
-                .leftJoin(AKTIONS_CODE_BV3)
-                .on(AKTIONS_CODE_BV3.CONTAINER_ID.eq(b.ID));
+                    .asTable("b")
+            )
+            .join(LIEFERADRESSE_BV3)
+            .on(b.LIEFERADRESSE_ID.eq(LIEFERADRESSE_BV3.ID))
+            .join(BESTELL_STATUS_BV3)
+            .on(b.ID.eq(BESTELL_STATUS_BV3.BESTELLUNG_ID))
+            .leftJoin(BESTELL_POSITION_BV3)
+            .on(b.ID.eq(BESTELL_POSITION_BV3.BESTELLUNG_ID))
+            .leftJoin(BESTELL_KOMMENTAR_BV3)
+            .on(b.ID.eq(BESTELL_KOMMENTAR_BV3.BESTELLUNG_ID))
+            .leftJoin(AKTIONS_CODE_BV3)
+            .on(AKTIONS_CODE_BV3.CONTAINER_ID.eq(b.ID));
 
         var records = dslContext.fetch(joinedRecords);
 
-        var lieferadresseRecords = records.into(LIEFERADRESSE_BV3).stream().filter(r -> r.getId()!=null).collect(Collectors.toSet());
-        var bestellungenRecords = records.into(b).stream().filter(r -> r.getId()!=null).collect(Collectors.toSet());
-        var bestellPositionenRecords = records.into(BESTELL_POSITION_BV3).stream().filter(r -> r.getId()!=null).collect(Collectors.toSet());
-        var bestellKommentareRecords = records.into(BESTELL_KOMMENTAR_BV3).stream().filter(r -> r.getId()!=null).collect(Collectors.toSet());
-        var aktionsCodesRecords = records.into(AKTIONS_CODE_BV3).stream().filter(r -> r.getId()!=null).collect(Collectors.toSet());
-        var statusRecords = records.into(BESTELL_STATUS_BV3).stream().filter(r -> r.getId()!=null).collect(Collectors.toSet());
+        var lieferadresseRecords = records.into(LIEFERADRESSE_BV3).stream().filter(r -> r.getId() != null).collect(
+            Collectors.toSet());
+        var bestellungenRecords = records.into(b).stream().filter(r -> r.getId() != null).collect(Collectors.toSet());
+        var bestellPositionenRecords = records.into(BESTELL_POSITION_BV3).stream().filter(
+            r -> r.getId() != null).collect(Collectors.toSet());
+        var bestellKommentareRecords = records.into(BESTELL_KOMMENTAR_BV3).stream().filter(
+            r -> r.getId() != null).collect(Collectors.toSet());
+        var aktionsCodesRecords = records.into(AKTIONS_CODE_BV3).stream().filter(r -> r.getId() != null).collect(
+            Collectors.toSet());
+        var statusRecords = records.into(BESTELL_STATUS_BV3).stream().filter(r -> r.getId() != null).collect(
+            Collectors.toSet());
 
         fetcher.withRecordProvider(
-            new RecordProvider<BestellPositionBv3Record, BestellungBv3Record>() {
-                @Override
-                public Collection<BestellPositionBv3Record> provideCollection(BestellungBv3Record parentRecord) {
-                    return bestellPositionenRecords
-                        .stream()
-                        .filter(p -> p.getBestellungId().equals(parentRecord.getId()))
-                        .collect(Collectors.toList());
-                }
-            },
-            BestellungBv3.class,
-            BestellPositionBv3.class,
-            List.of("bestellPositionen"))
-        .withRecordProvider(new RecordProvider<LieferadresseBv3Record, BestellungBv3Record>() {
-                                      @Override
-                                      public LieferadresseBv3Record provide(BestellungBv3Record parentRecord) {
-                                          return lieferadresseRecords
-                                              .stream()
-                                              .filter(l -> l.getId().equals(parentRecord.getLieferadresseId()))
-                                              .findFirst().orElse(null);
-                                      }
-                                  },
-            BestellungBv3.class,
-            LieferadresseBv3.class,
-            List.of("lieferadresse"))
-        .withRecordProvider(new RecordProvider<BestellKommentarBv3Record, BestellungBv3Record>() {
-                                      @Override
-                                      public Collection<BestellKommentarBv3Record> provideCollection(BestellungBv3Record parentRecord) {
-                                          return bestellKommentareRecords.stream()
-                                              .filter(k -> k.getBestellungId().equals(parentRecord.getId()))
-                                              .collect(Collectors.toList());
-                                      }
-                                  },
-            BestellungBv3.class,
-            BestellKommentarBv3.class,
-            List.of("bestellKommentare"))
-        .withRecordProvider(new RecordProvider<BestellStatusBv3Record, BestellungBv3Record>() {
-                                          @Override
-                                          public BestellStatusBv3Record provide(BestellungBv3Record parentRecord) {
-                                              return statusRecords
-                                                  .stream()
-                                                  .filter(s -> s.getBestellungId().equals(parentRecord.getId()))
-                                                  .findFirst().orElse(null);
-                                          }
-                                      },
-            BestellungBv3.class,
-            BestellStatusBv3.class,
+                new RecordProvider<BestellPositionBv3Record, BestellungBv3Record>() {
+                    @Override
+                    public Collection<BestellPositionBv3Record> provideCollection(BestellungBv3Record parentRecord) {
+                        return bestellPositionenRecords
+                            .stream()
+                            .filter(p -> p.getBestellungId().equals(parentRecord.getId()))
+                            .collect(Collectors.toList());
+                    }
+                },
+                BestellungBv3.class,
+                BestellPositionBv3.class,
+                List.of("bestellPositionen"))
+            .withRecordProvider(new RecordProvider<LieferadresseBv3Record, BestellungBv3Record>() {
+                                    @Override
+                                    public LieferadresseBv3Record provide(BestellungBv3Record parentRecord) {
+                                        return lieferadresseRecords
+                                            .stream()
+                                            .filter(l -> l.getId().equals(parentRecord.getLieferadresseId()))
+                                            .findFirst().orElse(null);
+                                    }
+                                },
+                BestellungBv3.class,
+                LieferadresseBv3.class,
+                List.of("lieferadresse"))
+            .withRecordProvider(new RecordProvider<BestellKommentarBv3Record, BestellungBv3Record>() {
+                                    @Override
+                                    public Collection<BestellKommentarBv3Record> provideCollection(BestellungBv3Record parentRecord) {
+                                        return bestellKommentareRecords.stream()
+                                            .filter(k -> k.getBestellungId().equals(parentRecord.getId()))
+                                            .collect(Collectors.toList());
+                                    }
+                                },
+                BestellungBv3.class,
+                BestellKommentarBv3.class,
+                List.of("bestellKommentare"))
+            .withRecordProvider(new RecordProvider<BestellStatusBv3Record, BestellungBv3Record>() {
+                                    @Override
+                                    public BestellStatusBv3Record provide(BestellungBv3Record parentRecord) {
+                                        return statusRecords
+                                            .stream()
+                                            .filter(s -> s.getBestellungId().equals(parentRecord.getId()))
+                                            .findFirst().orElse(null);
+                                    }
+                                },
+                BestellungBv3.class,
+                BestellStatusBv3.class,
                 List.of("bestellStatus"))
-        .withRecordProvider(new RecordProvider<AktionsCodeBv3Record, BestellungBv3Record>() {
-                                @Override
-                                public List<AktionsCodeBv3Record> provideCollection(BestellungBv3Record parentRecord) {
-                                    return aktionsCodesRecords
-                                        .stream()
-                                        .filter(ac -> ac.getContainerId().equals(parentRecord.getId()))
-                                        .collect(Collectors.toList());
-                                }
-                            },
-            BestellungBv3.class,
-            AktionsCodeBv3.class,
-            List.of("aktionsCodes"))
+            .withRecordProvider(new RecordProvider<AktionsCodeBv3Record, BestellungBv3Record>() {
+                                    @Override
+                                    public List<AktionsCodeBv3Record> provideCollection(BestellungBv3Record parentRecord) {
+                                        return aktionsCodesRecords
+                                            .stream()
+                                            .filter(ac -> ac.getContainerId().equals(parentRecord.getId()))
+                                            .collect(Collectors.toList());
+                                    }
+                                },
+                BestellungBv3.class,
+                AktionsCodeBv3.class,
+                List.of("aktionsCodes"))
         ;
-        var bestellungen = bestellungenRecords.stream().map(br->fetcher.fetchDeep(br).resultValue().get());
+        var bestellungen = bestellungenRecords.stream().map(br -> fetcher.fetchDeep(br).resultValue().get());
 
         return bestellungen;
     }

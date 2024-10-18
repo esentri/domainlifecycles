@@ -29,4 +29,5 @@ package tests.shared.persistence.domain.valueobjectsPrimitive;
 
 import io.domainlifecycles.domain.types.Identity;
 
-public record VoAggregatePrimitiveId(Long value) implements Identity<Long> {}
+public record VoAggregatePrimitiveId(Long value) implements Identity<Long> {
+}

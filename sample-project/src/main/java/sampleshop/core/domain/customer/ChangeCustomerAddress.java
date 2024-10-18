@@ -37,4 +37,5 @@ import io.domainlifecycles.domain.types.DomainCommand;
 public record ChangeCustomerAddress(
     Customer.CustomerId customerId,
     Address address)
-implements DomainCommand {}
+    implements DomainCommand {
+}

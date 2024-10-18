@@ -38,52 +38,57 @@ import java.util.List;
 public interface BoundedContextMirror {
 
     /**
-     * Returns the full qualified package name of this mirrored BoundedContext
+     * @return the full qualified package name of this mirrored BoundedContext
      */
     String getPackageName();
 
     /**
-     * Returns the list of {@link AggregateRootMirror} instances, contained in the BoundedContext.
+     * @return the list of {@link AggregateRootMirror} instances, contained in the BoundedContext.
      */
     List<AggregateRootMirror> getAggregateRoots();
 
     /**
-     * Returns the list of {@link DomainServiceMirror} instances, contained in the BoundedContext.
+     * @return the list of {@link DomainServiceMirror} instances, contained in the BoundedContext.
      */
     List<DomainServiceMirror> getDomainServices();
 
     /**
-     * Returns the list of {@link ApplicationServiceMirror} instances, associated with the BoundedContext.
+     * @return the list of {@link ApplicationServiceMirror} instances, associated with the BoundedContext.
      */
     List<ApplicationServiceMirror> getApplicationServices();
 
     /**
-     * Returns the list of {@link RepositoryMirror} instances, contained in the BoundedContext.
+     * @return the list of {@link RepositoryMirror} instances, contained in the BoundedContext.
      */
     List<RepositoryMirror> getRepositories();
 
     /**
-     * Returns the list of {@link ReadModelMirror} instances, associated with the BoundedContext.
+     * @return the list of {@link ReadModelMirror} instances, associated with the BoundedContext.
      */
     List<ReadModelMirror> getReadModels();
 
     /**
-     * Returns the list of {@link QueryClientMirror} instances, associated with the BoundedContext.
+     * @return the list of {@link QueryClientMirror} instances, associated with the BoundedContext.
      */
     List<QueryClientMirror> getQueryClients();
 
     /**
-     * Returns the list of {@link OutboundServiceMirror} instances, associated with the BoundedContext.
+     * @return the list of {@link OutboundServiceMirror} instances, associated with the BoundedContext.
      */
     List<OutboundServiceMirror> getOutboundServices();
 
     /**
-     * Returns the list of {@link DomainCommandMirror} instances of DomainCommands processed within the BoundedContext.
+     * @return the list of {@link ServiceKindMirror} instances, associated with the BoundedContext.
+     */
+    List<ServiceKindMirror> getServiceKinds();
+
+    /**
+     * @return the list of {@link DomainCommandMirror} instances of DomainCommands processed within the BoundedContext.
      */
     List<DomainCommandMirror> getDomainCommands();
 
     /**
-     * Returns the list of {@link DomainEventMirror} instances of DomainEvents processed within the BoundedContext.
+     * @return the list of {@link DomainEventMirror} instances of DomainEvents processed within the BoundedContext.
      */
     List<DomainEventMirror> getDomainEvents();
 

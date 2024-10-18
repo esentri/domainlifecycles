@@ -39,7 +39,6 @@ import java.util.Collection;
  * from the database.
  *
  * @param <T> the domain type to be built
- *
  * @author Mario Herb
  * @author Dominik Galler
  */
@@ -56,10 +55,9 @@ public interface DomainObjectBuilder<T extends DomainObject> {
     /**
      * This method adds an object into a collection of the given field name.
      *
-     * @throws DLCBuilderException if the field does not hold a Collection
-     *
-     * @param object added
+     * @param object    added
      * @param fieldName of field containing collection
+     * @throws DLCBuilderException if the field does not hold a Collection
      */
     void addValueToCollection(Object object, String fieldName);
 
@@ -68,10 +66,9 @@ public interface DomainObjectBuilder<T extends DomainObject> {
      * collection instance) for the field with the given field name. If no
      * container could be provided an exception is thrown.
      *
-     * @throws DLCBuilderException if the field does not hold a Collection or if providing the value fails
-     *
      * @param fieldName of field containing collection
      * @return the new Collection instance for the given field
+     * @throws DLCBuilderException if the field does not hold a Collection or if providing the value fails
      */
     Collection<DomainObject> newCollectionInstanceForField(String fieldName);
 
@@ -79,8 +76,8 @@ public interface DomainObjectBuilder<T extends DomainObject> {
      * Sets a fields value for a given field name. If the field type
      * doesn't fit the type of given field value an exception is thrown.
      *
-     * @param value        concrete object to be set in the builder for the
-     *                     given field name
+     * @param value     concrete object to be set in the builder for the
+     *                  given field name
      * @param fieldName name of the field to be set
      */
     void setFieldValue(Object value, String fieldName);
@@ -98,7 +95,7 @@ public interface DomainObjectBuilder<T extends DomainObject> {
      * Queries the current field value set in the builder for the given
      * field name.
      *
-     * @param fieldName  the field name of the field being queried
+     * @param fieldName the field name of the field being queried
      * @return the object instance that is currently set in the builder instance
      */
     Object getFieldValue(String fieldName);

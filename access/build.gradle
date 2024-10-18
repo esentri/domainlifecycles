@@ -5,9 +5,25 @@ plugins {
     id 'checkstyle'
     id 'org.quiltmc.gradle.licenser' version "${quiltmcLicenserVersion}"
     id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+    id 'jacoco'
 }
 
 dependencies {
     api project(":types")
     implementation project(":reflect")
+    testImplementation project(":mirror")
+    testImplementation "org.assertj:assertj-core:${assertJVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.0"
+    testImplementation project(path: ':test-shared-impl')
+    testImplementation project(":type-utils")
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.0"
 }
+
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport

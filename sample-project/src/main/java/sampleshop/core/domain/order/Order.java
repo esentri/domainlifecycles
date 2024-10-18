@@ -57,7 +57,8 @@ public final class Order extends AggregateRootBase<Order.OrderId> {
     /**
      * The "typed" OrderId as inner class (record) of the {@code Order} class.
      */
-    public record OrderId(@NotNull Long value) implements Identity<Long> {}
+    public record OrderId(@NotNull Long value) implements Identity<Long> {
+    }
 
     private final OrderId id;
 
@@ -122,7 +123,7 @@ public final class Order extends AggregateRootBase<Order.OrderId> {
      * Either creates a new order item for the given product or increases
      * the quantity if already present as order item.
      *
-     * @param id of the product to be added
+     * @param id       of the product to be added
      * @param quantity of the product to be ordered
      * @return this Order.
      */

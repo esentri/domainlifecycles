@@ -79,10 +79,10 @@ public final class JtaTransactionalHandlerExecutor extends ReflectiveHandlerExec
      */
     @Override
     public void beforeExecution(ExecutionContext executionContext) {
-        if(createNewTransactionForHandling(executionContext)) {
+        if (createNewTransactionForHandling(executionContext)) {
             try {
                 var transaction = transactionManager.getTransaction();
-                if(transaction != null){
+                if (transaction != null) {
                     suspendedTransactions.put(executionContext, transactionManager.suspend());
                     log.debug("Suspended externally managed transaction!");
                 }
@@ -103,7 +103,7 @@ public final class JtaTransactionalHandlerExecutor extends ReflectiveHandlerExec
      * Handles DLC managed transactions as well as suspended transactions, which are resumed after handler execution.
      *
      * @param executionContext context of domain event handler execution
-     * @param success    A boolean flag indicating whether the listener method execution was successful or not.
+     * @param success          A boolean flag indicating whether the listener method execution was successful or not.
      * @throws DLCEventsException if there is an error committing or rolling back the transaction.
      * @throws DLCEventsException if the managed transaction cannot be removed.
      * @throws DLCEventsException if there is an error suspending an already running transaction.
@@ -113,12 +113,13 @@ public final class JtaTransactionalHandlerExecutor extends ReflectiveHandlerExec
         try {
             var transaction = transactionManager.getTransaction();
             try {
-                if (managedTransactions.get(executionContext).equals(transaction) && Status.STATUS_ACTIVE == transaction.getStatus()) {
+                if (managedTransactions.get(executionContext).equals(
+                    transaction) && Status.STATUS_ACTIVE == transaction.getStatus()) {
                     log.debug("DLC managed transaction recognized!");
-                    if(success){
+                    if (success) {
                         transaction.commit();
                         log.debug("DLC managed transaction committed!");
-                    } else{
+                    } else {
                         transaction.rollback();
                         log.debug("DLC managed transaction rolled back!");
                     }
@@ -131,7 +132,7 @@ public final class JtaTransactionalHandlerExecutor extends ReflectiveHandlerExec
                     log.debug("DLC managed transaction removed!");
                 }
             }
-            if(suspendedTransactions.containsKey(executionContext)){
+            if (suspendedTransactions.containsKey(executionContext)) {
                 var suspended = suspendedTransactions.get(executionContext);
                 try {
                     transactionManager.resume(suspended);

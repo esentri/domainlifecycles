@@ -36,7 +36,6 @@ import io.domainlifecycles.persistence.records.RecordProperty;
  *
  * @param <R>  the record type
  * @param <DO> the domain object type
- *
  * @author Mario Herb
  */
 public interface MapperNestedValueObjectAccessor<R, DO extends DomainObject> {
@@ -44,7 +43,7 @@ public interface MapperNestedValueObjectAccessor<R, DO extends DomainObject> {
     /**
      * Gets the mapped value object.
      *
-     * @param record                        the record
+     * @param record               the record
      * @param valueObjectFieldName the name of the field that should hold the value object
      * @return the mapped value object
      */

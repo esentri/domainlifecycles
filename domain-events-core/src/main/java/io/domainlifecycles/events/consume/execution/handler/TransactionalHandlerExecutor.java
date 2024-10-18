@@ -39,13 +39,13 @@ public interface TransactionalHandlerExecutor extends HandlerExecutor{
 
     /**
      * Returns true if a new transaction for executing the execution context should be created.
-     *
+     * <p>
      * Override this method for a special customized transactional handling.
      *
      * @param executionContext describes which domain object handler method is to be called
      * @return true if the transaction should be created, false otherwise.
      */
-    default boolean createNewTransactionForHandling(ExecutionContext executionContext){
+    default boolean createNewTransactionForHandling(ExecutionContext executionContext) {
         return true;
     }
 }

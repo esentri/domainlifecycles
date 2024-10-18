@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  *
  * @author Mario Herb
  */
-public class DomainServiceMirrorBuilder extends DomainTypeMirrorBuilder {
+public class DomainServiceMirrorBuilder extends ServiceKindMirrorBuilder {
 
     private final Class<? extends DomainService> domainServiceClass;
 
@@ -56,76 +56,22 @@ public class DomainServiceMirrorBuilder extends DomainTypeMirrorBuilder {
 
     /**
      * Creates a new {@link DomainServiceMirror}.
+     *
+     * @return new instance of DomainServiceMirror
      */
-    public DomainServiceMirror build(){
+    public DomainServiceMirror build() {
         return new DomainServiceModel(
                 getTypeName(),
                 isAbstract(),
                 buildFields(),
                 buildMethods(),
-                getReferencedRepositoryNames(),
-                getReferencedDomainServiceNames(),
-                getReferencedOutboundServiceNames(),
-                getReferencedQueryClientNames(),
                 domainServiceInterfaceTypeNames(),
                 buildInheritanceHierarchy(),
                 buildInterfaceTypes()
             );
     }
 
-    private List<String> getReferencedRepositoryNames(){
-        return JavaReflect
-            .fields(this.domainServiceClass, MemberSelect.HIERARCHY)
-            .stream()
-            .filter(f -> isRepository(f.getType()))
-            .map(f -> f.getType().getName())
-            .collect(Collectors.toList());
-    }
-
-    private List<String> getReferencedDomainServiceNames(){
-        return JavaReflect
-            .fields(this.domainServiceClass, MemberSelect.HIERARCHY)
-            .stream()
-            .filter(f -> isDomainService(f.getType()))
-            .map(f -> f.getType().getName())
-            .collect(Collectors.toList());
-    }
-
-    private List<String> getReferencedOutboundServiceNames(){
-        return JavaReflect
-            .fields(this.domainServiceClass, MemberSelect.HIERARCHY)
-            .stream()
-            .filter(f -> isOutboundService(f.getType()))
-            .map(f -> f.getType().getName())
-            .toList();
-    }
-
-    private List<String> getReferencedQueryClientNames(){
-        return JavaReflect
-            .fields(this.domainServiceClass, MemberSelect.HIERARCHY)
-            .stream()
-            .filter(f -> isQueryClient(f.getType()))
-            .map(f -> f.getType().getName())
-            .toList();
-    }
-
-    private boolean isRepository(Class<?> fieldClass){
-        return Repository.class.isAssignableFrom(fieldClass);
-    }
-
-    private boolean isDomainService(Class<?> fieldClass){
-        return DomainService.class.isAssignableFrom(fieldClass);
-    }
-
-    private boolean isOutboundService(Class<?> fieldClass){
-        return OutboundService.class.isAssignableFrom(fieldClass);
-    }
-
-    private boolean isQueryClient(Class<?> fieldClass){
-        return QueryClient.class.isAssignableFrom(fieldClass);
-    }
-
-    private List<String> domainServiceInterfaceTypeNames(){
+    private List<String> domainServiceInterfaceTypeNames() {
         return Arrays.stream(domainServiceClass.getInterfaces())
             .filter(i -> DomainService.class.isAssignableFrom(i) && !i.getName().equals(DomainService.class.getName()))
             .map(Class::getName)

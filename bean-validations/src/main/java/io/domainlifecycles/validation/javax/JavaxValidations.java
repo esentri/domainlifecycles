@@ -37,6 +37,7 @@ import javax.validation.executable.ExecutableValidator;
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Set;
+
 /**
  * Static access to execute validation checks on annotated objects (Javax Bean Validation annotations).
  *
@@ -50,15 +51,15 @@ public class JavaxValidations {
      * Generic object validation implementation using bean validations.
      *
      * @param javaxFactory to create a validator instance
-     * @param thisObject {@link Object} to be validated
+     * @param thisObject   {@link Object} to be validated
      */
-    public static void validate(ValidatorFactory javaxFactory, Object thisObject){
+    public static void validate(ValidatorFactory javaxFactory, Object thisObject) {
         Objects.requireNonNull(javaxFactory);
         Set<ConstraintViolation<Object>> violations = null;
         try {
             Validator validator = javaxFactory.getValidator();
             violations = validator.validate(thisObject);
-        }catch(Throwable t){
+        } catch (Throwable t) {
             log.error("Something failed on executing bean validations!", t);
         }
         throwForViolationsJavax(violations);
@@ -68,11 +69,12 @@ public class JavaxValidations {
      * Generic return value validation using bean validation annotations.
      *
      * @param javaxFactory to create a validator instance
-     * @param thisObject {@link Object} validated
-     * @param method validated
-     * @param returnValue {@link Object} to be validated
+     * @param thisObject   {@link Object} validated
+     * @param method       validated
+     * @param returnValue  {@link Object} to be validated
      */
-    public static void validateMethodReturnValue(ValidatorFactory javaxFactory, Object thisObject, Method method, Object returnValue){
+    public static void validateMethodReturnValue(ValidatorFactory javaxFactory, Object thisObject, Method method,
+                                                 Object returnValue) {
         Objects.requireNonNull(javaxFactory);
         Set<ConstraintViolation<Object>> violations = null;
         try {
@@ -89,24 +91,25 @@ public class JavaxValidations {
      * Generic method parameter validation using bean validation annotations.
      *
      * @param javaxFactory to create a validator instance
-     * @param thisObject validated
-     * @param method validated
-     * @param arguments parameter argument to be validated
+     * @param thisObject   validated
+     * @param method       validated
+     * @param arguments    parameter argument to be validated
      */
-    public static void validateMethodParameters(ValidatorFactory javaxFactory, Object thisObject, Method method, Object[] arguments){
+    public static void validateMethodParameters(ValidatorFactory javaxFactory, Object thisObject, Method method,
+                                                Object[] arguments) {
         Objects.requireNonNull(javaxFactory);
         Set<ConstraintViolation<Object>> violations = null;
-        try{
+        try {
             ExecutableValidator executableValidator = javaxFactory.getValidator().forExecutables();
-            violations = executableValidator.validateParameters(thisObject, method, arguments );
-        }catch(Throwable t){
+            violations = executableValidator.validateParameters(thisObject, method, arguments);
+        } catch (Throwable t) {
             log.error("Something failed on executing bean validations!", t);
         }
         throwForViolationsJavax(violations);
     }
 
-    private static void throwForViolationsJavax(Set<ConstraintViolation<Object>> violations){
-        if(violations != null) {
+    private static void throwForViolationsJavax(Set<ConstraintViolation<Object>> violations) {
+        if (violations != null) {
             StringBuilder messageBuilder = new StringBuilder();
             for (ConstraintViolation<Object> violation : violations) {
                 messageBuilder.append("'");

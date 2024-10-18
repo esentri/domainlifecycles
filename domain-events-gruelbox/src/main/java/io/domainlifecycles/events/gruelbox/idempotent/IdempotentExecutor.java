@@ -66,7 +66,7 @@ public class IdempotentExecutor {
      */
     public void execute(IdempotentExecutionContext idempotentExecutionContext){
         ExecutionContext executionContext = null;
-        var service = serviceProvider.getServiceInstance(idempotentExecutionContext.handlerClass().getName());
+        var service = serviceProvider.getServiceKindInstance(idempotentExecutionContext.handlerClass().getName());
         if(Repository.class.isAssignableFrom(idempotentExecutionContext.handlerClass())){
             executionContext = new AggregateExecutionContext<>((Repository) service, idempotentExecutionContext.handlerMethod(), (AggregateDomainEvent)idempotentExecutionContext.domainEvent());
         }else{

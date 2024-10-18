@@ -49,23 +49,28 @@ public class TestAOneToOneFollowingLeadingJooqRecordMapper extends AbstractRecor
         if (record == null) {
             return null;
         }
-        TestEntityAOneToOneFollowingLeadingRecord testEntityAOneToOneFollowingLeadingRecord = record.into(Tables.TEST_ENTITY_A_ONE_TO_ONE_FOLLOWING_LEADING);
+        TestEntityAOneToOneFollowingLeadingRecord testEntityAOneToOneFollowingLeadingRecord = record.into(
+            Tables.TEST_ENTITY_A_ONE_TO_ONE_FOLLOWING_LEADING);
         return new InnerClassDomainObjectBuilder<>(TestEntityAOneToOneFollowingLeading.builder()
             .setId(new TestEntityAOneToOneFollowingLeadingId(testEntityAOneToOneFollowingLeadingRecord.getId()))
             .setName(testEntityAOneToOneFollowingLeadingRecord.getName())
             .setTestRootId(testEntityAOneToOneFollowingLeadingRecord.getTestRootId() == null ?
-                null : new TestRootOneToOneFollowingLeadingId(testEntityAOneToOneFollowingLeadingRecord.getTestRootId()))
+                null : new TestRootOneToOneFollowingLeadingId(
+                testEntityAOneToOneFollowingLeadingRecord.getTestRootId()))
             .setConcurrencyVersion(testEntityAOneToOneFollowingLeadingRecord.getConcurrencyVersion()));
     }
 
     @Override
     public TestEntityAOneToOneFollowingLeadingRecord from(TestEntityAOneToOneFollowingLeading testEntityAOneToOneFollowingLeading, TestRootOneToOneFollowingLeading root) {
-        TestEntityAOneToOneFollowingLeadingRecord testEntityAOneToOneFollowingLeadingRecord = new TestEntityAOneToOneFollowingLeadingRecord();
+        TestEntityAOneToOneFollowingLeadingRecord testEntityAOneToOneFollowingLeadingRecord =
+            new TestEntityAOneToOneFollowingLeadingRecord();
         testEntityAOneToOneFollowingLeadingRecord.setId(testEntityAOneToOneFollowingLeading.getId().value());
         testEntityAOneToOneFollowingLeadingRecord.setName(testEntityAOneToOneFollowingLeading.getName());
-        testEntityAOneToOneFollowingLeadingRecord.setTestRootId(testEntityAOneToOneFollowingLeading.getTestRootId() == null ?
-            null : testEntityAOneToOneFollowingLeading.getTestRootId().value());
-        testEntityAOneToOneFollowingLeadingRecord.setConcurrencyVersion(testEntityAOneToOneFollowingLeading.concurrencyVersion());
+        testEntityAOneToOneFollowingLeadingRecord.setTestRootId(
+            testEntityAOneToOneFollowingLeading.getTestRootId() == null ?
+                null : testEntityAOneToOneFollowingLeading.getTestRootId().value());
+        testEntityAOneToOneFollowingLeadingRecord.setConcurrencyVersion(
+            testEntityAOneToOneFollowingLeading.concurrencyVersion());
         return testEntityAOneToOneFollowingLeadingRecord;
     }
 

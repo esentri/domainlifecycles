@@ -27,53 +27,31 @@
 
 package io.domainlifecycles.services.api;
 
-import io.domainlifecycles.domain.types.ApplicationService;
-import io.domainlifecycles.domain.types.DomainService;
-import io.domainlifecycles.domain.types.OutboundService;
-import io.domainlifecycles.domain.types.QueryClient;
-import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.ServiceKind;
+
+import java.util.Collection;
 
 /**
- * The ServiceRegistrator interface represents a registrator that is responsible for registering instances of various types of services.
- * It allows registering instances of {@link ApplicationService}, {@link Repository} and {@link DomainService}.
+ * The ServiceRegistrator interface represents a registrator that is responsible for registering instances of various
+ * types of services.
+ * It allows registering instances of {@link ServiceKind} (and subtypes).
  *
  * @author Mario Herb
  */
 public interface ServiceRegistrator {
 
-    /**
-     * Registers an instance of {@link ApplicationService}.
-     *
-     * @param applicationService The instance of {@link ApplicationService} to register.
-     */
-    void registerApplicationServiceInstance(ApplicationService applicationService);
 
     /**
-     * Registers an instance of {@link DomainService} with the {@link ServiceRegistrator}.
+     * Registers an instance of {@link ServiceKind} with the {@link ServiceRegistrator}.
      *
-     * @param domainService The {@link DomainService} instance to register.
+     * @param serviceKind The {@link ServiceKind} instance to register.
      */
-    void registerDomainServiceInstance(DomainService domainService);
+    void registerServiceKindInstance(ServiceKind serviceKind);
 
     /**
-     * Registers an instance of {@link Repository} with the {@link ServiceRegistrator}.
+     * Registers a collection of instance of {@link ServiceKind} with the {@link ServiceRegistrator}.
      *
-     * @param repository The {@link Repository} instance to register.
+     * @param serviceKinds The Collection of {@link ServiceKind} instances to register.
      */
-    void registerRepositoryInstance(Repository<?, ?> repository);
-
-    /**
-     * Registers an instance of {@link QueryClient} with the {@link ServiceRegistrator}.
-     *
-     * @param queryClient The {@link QueryClient} instance to register.
-     */
-    void registerQueryClientInstance(QueryClient<?> queryClient);
-
-    /**
-     * Registers an instance of {@link OutboundService} with the {@link ServiceRegistrator}.
-     *
-     * @param outboundService The {@link OutboundService} instance to register.
-     */
-    void registerOutboundServiceInstance(OutboundService outboundService);
-
+    void registerServiceKindInstances(Collection<ServiceKind> serviceKinds);
 }

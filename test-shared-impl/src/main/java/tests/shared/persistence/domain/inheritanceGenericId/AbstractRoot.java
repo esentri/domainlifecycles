@@ -32,7 +32,8 @@ import io.domainlifecycles.domain.types.base.AggregateRootBase;
 
 public abstract class AbstractRoot<T extends Identity<?>> extends AggregateRootBase<T> {
 
-    @Id T myId;
+    @Id
+    T myId;
 
     String name;
 

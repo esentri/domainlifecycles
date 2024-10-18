@@ -42,11 +42,11 @@ public class RepositoryBeansConfig {
         SpringPersistenceEventPublisher springPersistenceEventPublisher,
         JooqDomainPersistenceProvider jooqDomainPersistenceProvider
 
-        ){
+    ) {
         return new BestellungBv3Repository(
             dslContext,
             springPersistenceEventPublisher,
             jooqDomainPersistenceProvider
-            );
+        );
     }
 }

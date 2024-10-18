@@ -68,8 +68,8 @@ import java.util.Optional;
 @Setter
 public class TestDTO2 {
 
-    private @Size(max=5) String stringSized;
-    private Optional<@Size(max=5) String> optionalStringSized;
+    private @Size(max = 5) String stringSized;
+    private Optional<@Size(max = 5) String> optionalStringSized;
     private @NotNull String stringNotNull;
     private @NotEmpty String stringNotEmpty;
     private @NotBlank String stringNotBlank;

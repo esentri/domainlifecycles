@@ -45,7 +45,7 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public class RepositoryMirrorBuilder extends DomainTypeMirrorBuilder{
+public class RepositoryMirrorBuilder extends ServiceKindMirrorBuilder {
     private final Class<? extends Repository<?, ?>> repositoryClass;
 
     public RepositoryMirrorBuilder(Class<? extends Repository<?, ?>> repositoryClass) {
@@ -55,56 +55,31 @@ public class RepositoryMirrorBuilder extends DomainTypeMirrorBuilder{
 
     /**
      * Creates a new {@link RepositoryMirror}.
+     *
+     * @return new instance of RepositoryMirror
      */
-    public RepositoryMirror build(){
+    public RepositoryMirror build() {
         return new RepositoryModel(
             getTypeName(),
             isAbstract(),
             buildFields(),
             buildMethods(),
             getManagedAggregateType(repositoryClass).map(Class::getName).orElse(Object.class.getName()),
-            getReferencedOutboundServiceNames(),
-            getReferencedQueryClientNames(),
             repositoryInterfaceTypeNames(),
             buildInheritanceHierarchy(),
             buildInterfaceTypes()
         );
     }
 
-    private List<String> getReferencedOutboundServiceNames(){
-        return JavaReflect
-            .fields(this.repositoryClass, MemberSelect.HIERARCHY)
-            .stream()
-            .filter(f -> isOutboundService(f.getType()))
-            .map(f -> f.getType().getName())
-            .toList();
-    }
-
-    private List<String> getReferencedQueryClientNames(){
-        return JavaReflect
-            .fields(this.repositoryClass, MemberSelect.HIERARCHY)
-            .stream()
-            .filter(f -> isQueryClient(f.getType()))
-            .map(f -> f.getType().getName())
-            .toList();
-    }
-
-    private boolean isOutboundService(Class<?> fieldClass){
-        return OutboundService.class.isAssignableFrom(fieldClass);
-    }
-
-    private boolean isQueryClient(Class<?> fieldClass){
-        return QueryClient.class.isAssignableFrom(fieldClass);
-    }
-
     @SuppressWarnings("unchecked")
-    private static Optional<Class<? extends AggregateRoot<?>>> getManagedAggregateType(Class<? extends Repository<?, ?>> c)   {
+    private static Optional<Class<? extends AggregateRoot<?>>> getManagedAggregateType(Class<? extends Repository<?,
+        ?>> c) {
         var resolver = new GenericInterfaceTypeResolver(c);
         var resolved = resolver.resolveFor(Repository.class, 1);
         return Optional.ofNullable((Class<? extends AggregateRoot<?>>) resolved);
     }
 
-    private List<String> repositoryInterfaceTypeNames(){
+    private List<String> repositoryInterfaceTypeNames() {
         return Arrays.stream(repositoryClass.getInterfaces())
             .filter(i -> Repository.class.isAssignableFrom(i) && !i.getName().equals(Repository.class.getName()))
             .map(Class::getName)

@@ -36,8 +36,9 @@ import io.domainlifecycles.mirror.model.AssertedContainableTypeModel;
  *
  * @author Mario Herb
  */
-@JsonTypeInfo(use= JsonTypeInfo.Id.CLASS, property="@class")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = AssertedContainableTypeModel.class),
 })
-public interface AssertedContainableTypeMirrorMixin {}
+public interface AssertedContainableTypeMirrorMixin {
+}

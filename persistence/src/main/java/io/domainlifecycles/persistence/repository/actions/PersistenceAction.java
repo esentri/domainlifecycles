@@ -36,16 +36,18 @@ import java.util.Objects;
 /**
  * We need to work with several kinds of PersistenceActions, which depend on the
  * changes that were detected.
- *
+ * <p>
  * INSERT - inserting a new record into a database. UPDATE - updating an
  * existing record in a database. DELETE - deleting an existing record from a
  * database. DELETE_UPDATE - sometimes before being able to delete a record. A
  * reference to record being deleted must be set to "null". This is necessary to
  * comply with foreign key constraints and to keep all the changes consistent.
- *
- *
- * A PersistenceAction keeps a reference to {@link DomainObjectInstanceAccessModel} on which a change was detected and the type of action,
+ * </p>
+ * <p>
+ * A PersistenceAction keeps a reference to {@link DomainObjectInstanceAccessModel} on which a change was detected
+ * and the type of action,
  * that has to be applied to the database.
+ * </p>
  *
  * @param <BASE_RECORD_TYPE> the type of the record that is being persisted
  *
@@ -77,8 +79,8 @@ public class PersistenceAction<BASE_RECORD_TYPE> {
     /**
      * Creates a new PersistenceAction.
      *
-     * @param instanceAccessModel the {@link DomainObjectInstanceAccessModel} on which a change was detected
-     * @param actionType         the type of the action that has to be applied to the database
+     * @param instanceAccessModel             the {@link DomainObjectInstanceAccessModel} on which a change was detected
+     * @param actionType                      the type of the action that has to be applied to the database
      * @param instanceAccessModelBeforeUpdate the {@link DomainObjectInstanceAccessModel} before the update
      */
     public PersistenceAction(DomainObjectInstanceAccessModel<BASE_RECORD_TYPE> instanceAccessModel,
@@ -91,7 +93,8 @@ public class PersistenceAction<BASE_RECORD_TYPE> {
             throw DLCPersistenceException.fail("Update actions need a 'before' instance access model!");
         }
         if (instanceAccessModel == null) {
-            throw DLCPersistenceException.fail("Every PersistenceAction must contain a non-null DomainObjectInstanceAccessModel!");
+            throw DLCPersistenceException.fail(
+                "Every PersistenceAction must contain a non-null DomainObjectInstanceAccessModel!");
         }
         this.instanceAccessModel = instanceAccessModel;
         this.instanceAccessModelBeforeUpdate = instanceAccessModelBeforeUpdate;
@@ -100,17 +103,20 @@ public class PersistenceAction<BASE_RECORD_TYPE> {
 
     /**
      * {@inheritDoc}
+     *
      * @return
      */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PersistenceAction<?> that)) return false;
-        return instanceAccessModel.equals(that.instanceAccessModel) && Objects.equals(instanceAccessModelBeforeUpdate, that.instanceAccessModelBeforeUpdate) && actionType == that.actionType;
+        return instanceAccessModel.equals(that.instanceAccessModel) && Objects.equals(instanceAccessModelBeforeUpdate,
+            that.instanceAccessModelBeforeUpdate) && actionType == that.actionType;
     }
 
     /**
      * {@inheritDoc}
+     *
      * @return
      */
     @Override

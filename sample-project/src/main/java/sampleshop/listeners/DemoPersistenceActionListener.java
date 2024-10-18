@@ -45,7 +45,7 @@ public class DemoPersistenceActionListener {
      * Every PersistenceAction is reported in the log.
      */
     @TransactionalEventListener
-    public void reportAction(PersistenceAction<?> action){
+    public void reportAction(PersistenceAction<?> action) {
         log.info("Persistence Action happened: " + action.actionType + " " + action.getActionRecord());
     }
 

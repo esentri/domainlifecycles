@@ -52,7 +52,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
 @SpringBootTest(classes = TestApplicationJmsSpring.class)
-@DirtiesContext
 public class SpringTransactionalEventHandlingJmsTests {
 
     @Autowired
@@ -74,6 +73,7 @@ public class SpringTransactionalEventHandlingJmsTests {
     private AnOutboundService outboundService;
 
     @Test
+    @DirtiesContext
     public void testIntegrationCommit() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
@@ -96,6 +96,7 @@ public class SpringTransactionalEventHandlingJmsTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationUnreceivedCommit() throws Exception{
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
@@ -119,6 +120,7 @@ public class SpringTransactionalEventHandlingJmsTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationRollback() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
@@ -143,6 +145,7 @@ public class SpringTransactionalEventHandlingJmsTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationNoTransaction() {
         //when
         var evt = new ADomainEvent("TestNoTrans");
@@ -153,6 +156,7 @@ public class SpringTransactionalEventHandlingJmsTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationAggregateDomainEventCommit() {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
@@ -177,6 +181,7 @@ public class SpringTransactionalEventHandlingJmsTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationAggregateDomainEventRollback() throws Exception{
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
@@ -202,6 +207,7 @@ public class SpringTransactionalEventHandlingJmsTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationAggregateDomainEventRollbackExceptionOnHandler() {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
@@ -226,6 +232,7 @@ public class SpringTransactionalEventHandlingJmsTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationDomainServiceExceptionRollback() throws Exception{
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
@@ -250,6 +257,7 @@ public class SpringTransactionalEventHandlingJmsTests {
     }
 
     @Test
+    @DirtiesContext
     public void testLostEvent(){
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {

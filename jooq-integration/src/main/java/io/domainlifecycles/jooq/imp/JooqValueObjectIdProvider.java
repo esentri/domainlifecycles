@@ -96,12 +96,15 @@ public class JooqValueObjectIdProvider extends BaseValueObjectIdProvider<Updatab
                 s = newVoRecord.getTable().getSchema().getSequence(newVoRecord.getTable().getName() + "_seq");
             }
             if (s == null) {
-                throw DLCPersistenceException.fail("Sequence '%s_SEQ' not found. Please create the sequence in your database!", newVoRecord.getTable().getName());
+                throw DLCPersistenceException.fail(
+                    "Sequence '%s_SEQ' not found. Please create the sequence in your database!",
+                    newVoRecord.getTable().getName());
             }
             var newTechId = dslContext.nextval(s).longValue();
             newVoRecord.setValue((Field<Long>) newVoRecord.getTable().getPrimaryKey().getFields().get(0), newTechId);
         } catch (DataAccessException ex) {
-            throw DLCPersistenceException.fail("Couldn't access sequence '%s_SEQ'", ex, newVoRecord.getTable().getName());
+            throw DLCPersistenceException.fail("Couldn't access sequence '%s_SEQ'", ex,
+                newVoRecord.getTable().getName());
         }
     }
 }

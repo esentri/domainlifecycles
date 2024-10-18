@@ -39,24 +39,25 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * The AbstractOutboxPoller class is an abstract base class that is reponsible for polling the outbox and sending the fetched domain event
+ * The AbstractOutboxPoller class is an abstract base class that is reponsible for polling the outbox and sending the
+ * fetched domain event
  * to its corresponding consumers.
  * Subclasses of AbstractOutboxPoller must implement the send method for sending individual domain events.
- * The AbstractOutboxPoller uses a TransactionalOutbox to fetch a batch of domain events and send them periodically using a Timer.
+ * The AbstractOutboxPoller uses a TransactionalOutbox to fetch a batch of domain events and send them periodically
+ * using a Timer.
  * The timer can be configured with a delay and a period.
  * It also provides methods to set the delay, period, and maximum batch size for sending the domain events.
- *
+ * <p>
  * Example usage:
- *
+ * <p>
  * AbstractOutboxPoller outboxPoller = new DirectOutboxPoller(transactionalOutbox, receivingDomainEventHandler);
  * outboxSender.setDelay(5000);
  * outboxSender.setPeriod(1000);
  * outboxSender.setMaxBatchSize(10);
  *
+ * @author Mario Herb
  * @see TransactionalOutbox
  * @see DirectOutboxPoller
- *
- * @author Mario Herb
  */
 public abstract class AbstractOutboxPoller {
 
@@ -75,17 +76,18 @@ public abstract class AbstractOutboxPoller {
      * @param transactionalOutbox the TransactionalOutbox to use for storing and sending domain events
      */
     public AbstractOutboxPoller(TransactionalOutbox transactionalOutbox) {
-        this.transactionalOutbox = Objects.requireNonNull(transactionalOutbox, "The OutboxSender need a non-null outbox!");
+        this.transactionalOutbox = Objects.requireNonNull(transactionalOutbox,
+            "The OutboxSender need a non-null outbox!");
         this.senderExecutorService = Executors.newScheduledThreadPool(1);
         resetSendSchedule();
     }
 
-    private void resetSendSchedule(){
-        if(sendFuture != null){
+    private void resetSendSchedule() {
+        if (sendFuture != null) {
             sendFuture.cancel(false);
         }
         sendFuture = senderExecutorService.scheduleAtFixedRate(
-            ()->sendEvents(),
+            () -> sendEvents(),
             pollingDelayMilliseconds,
             pollingPeriodMilliseconds,
             TimeUnit.MILLISECONDS
@@ -94,25 +96,26 @@ public abstract class AbstractOutboxPoller {
 
     /**
      * Sends a batch of domain events.
-     *
-     * The method retrieves a batch of domain events from the transactional outbox and sends each event using the send method.
+     * <p>
+     * The method retrieves a batch of domain events from the transactional outbox and sends each event using the
+     * send method.
      * If the send method returns true for all events in the batch, the method marks the batch as sent successfully.
      * Otherwise, it marks any failed events and does not mark the batch as sent.
-     *
+     * <p>
      * If the batch is empty, no events are sent.
      */
-    protected void sendEvents(){
+    protected void sendEvents() {
         var batch = transactionalOutbox.fetchBatchForSending(maxBatchSize);
-        if(!batch.getDomainEvents().isEmpty()) {
+        if (!batch.getDomainEvents().isEmpty()) {
             var batchSuccessfull = true;
-            for (DomainEvent event : batch.getDomainEvents()){
+            for (DomainEvent event : batch.getDomainEvents()) {
                 var res = send(event);
-                if(!ProcessingResult.OK.equals(res)){
+                if (!ProcessingResult.OK.equals(res)) {
                     batchSuccessfull = false;
                     transactionalOutbox.markFailed(event, res);
                 }
             }
-            if(batchSuccessfull){
+            if (batchSuccessfull) {
                 transactionalOutbox.sentSuccessfully(batch);
             }
         }
@@ -148,7 +151,7 @@ public abstract class AbstractOutboxPoller {
 
     /**
      * Sets the maximum batch size for sending domain events.
-     *
+     * <p>
      * The maximum batch size determines the number of domain events that can be sent in a single batch.
      * When sending domain events, they are fetched from the outbox in batches.
      * The method sets the maximum number of events that can be included in each batch.

@@ -36,24 +36,23 @@ import java.util.Set;
  *
  * @param <K>
  * @param <V>
- *
  * @author MArio Herb
  */
 public class BiMap<K, V> {
 
-    private final Map<K,V> keyToValue = new HashMap<>();
-    private final Map<V,K> valueToKey = new HashMap<>();
+    private final Map<K, V> keyToValue = new HashMap<>();
+    private final Map<V, K> valueToKey = new HashMap<>();
 
-    public void put(K key, V value){
+    public void put(K key, V value) {
         keyToValue.put(key, value);
         valueToKey.put(value, key);
     }
 
-    public K getInverse(V value){
+    public K getInverse(V value) {
         return valueToKey.get(value);
     }
 
-    public V get(K key){
+    public V get(K key) {
         return keyToValue.get(key);
     }
 

@@ -54,21 +54,21 @@ dependencies {
     testImplementation 'jakarta.el:jakarta.el-api:5.0.1'
 
     flywayMigration "com.h2database:h2:${dbVersion}"
-    jooqGenerator   "com.h2database:h2:${dbVersion}"
+    jooqGenerator "com.h2database:h2:${dbVersion}"
 
     testImplementation "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }
 
 flyway {
-    configurations  = ['flywayMigration']
-    url             = dbUrl
-    user            = dbUsername
-    password        = dbPassword
-    defaultSchema   = 'TEST_DOMAIN_FLYWAY'
-    createSchemas   = true
-    encoding        = 'UTF-8'
-    locations       = ["filesystem:./${dbMigration}"]
+    configurations = ['flywayMigration']
+    url = dbUrl
+    user = dbUsername
+    password = dbPassword
+    defaultSchema = 'TEST_DOMAIN_FLYWAY'
+    createSchemas = true
+    encoding = 'UTF-8'
+    locations = ["filesystem:./${dbMigration}"]
 }
 
 // ----------------------------------------------------------
@@ -82,9 +82,9 @@ jooq {
                 // Link: https://www.jooq.org/doc/latest/manual/code-generation/codegen-advanced/codegen-config-jdbc/
                 //
                 jdbc {
-                    driver   = dbDriver
-                    url      = flyway.url
-                    user     = dbUsername
+                    driver = dbDriver
+                    url = flyway.url
+                    user = dbUsername
                     password = dbPassword
                 }
 
@@ -182,3 +182,8 @@ tasks.named('generateJooq').configure {
 jar {
     exclude('io/domainlifecycles/test/**')
 }
+
+// Although test classes are not scanned by checkstyle, as configured in the root-level build.gradle file,
+// checkstyle will throw errors and hints as soon as you add a JavaDoc in test file methods, which is the case in some
+// of the more complex test files in this module. That's why the checkstyleTest task is explicitly disabled.
+checkstyleTest.enabled = false

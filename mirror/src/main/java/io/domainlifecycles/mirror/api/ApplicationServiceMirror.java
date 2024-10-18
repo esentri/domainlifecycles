@@ -33,35 +33,36 @@ import io.domainlifecycles.domain.types.Driver;
 import java.util.List;
 
 /**
- * An ApplicationServiceMirror mirrors ApplicationServices (Clean Architecture conceptuality) or Drivers (Ports &amp; Adapters conceptuality).
+ * An ApplicationServiceMirror mirrors ApplicationServices (Clean Architecture conceptuality) or Drivers (Ports &amp;
+ * Adapters conceptuality).
  *
  * @author Mario Herb
  */
-public interface ApplicationServiceMirror extends DomainTypeMirror, DomainCommandProcessingMirror, DomainEventProcessingMirror{
+public interface ApplicationServiceMirror extends ServiceKindMirror {
 
     /**
-     * Returns the list of referenced {@link RepositoryMirror} instances.
+     * @return the list of referenced {@link RepositoryMirror} instances.
      */
     List<RepositoryMirror> getReferencedRepositories();
 
     /**
-     * Returns the list of referenced {@link DomainServiceMirror} instances.
+     * @return the list of referenced {@link DomainServiceMirror} instances.
      */
     List<DomainServiceMirror> getReferencedDomainServices();
 
     /**
-     * Returns the list of referenced {@link OutboundServiceMirror} instances.
+     * @return the list of referenced {@link OutboundServiceMirror} instances.
      */
     List<OutboundServiceMirror> getReferencedOutboundServices();
 
     /**
-     * Returns the list of referenced {@link QueryClientMirror} instances.
+     * @return the list of referenced {@link QueryClientMirror} instances.
      */
     List<QueryClientMirror> getReferencedQueryClients();
 
 
     /**
-     * Returns the interface type names (full qualified class names) that the mirrored ApplicationService implements.
+     * @return the interface type names (full qualified class names) that the mirrored ApplicationService implements.
      * The interfaces therefore must extend {@link ApplicationService} or {@link Driver}.
      * If separation of concerns is respected, we have at most only one interface, which fulfills that condition.
      */

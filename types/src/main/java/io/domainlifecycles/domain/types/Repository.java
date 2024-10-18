@@ -35,15 +35,17 @@ import java.util.Optional;
  * A Repository is responsible for accessing Aggregates from the datastore. It provides methods to query,
  * insert, modify or delete Aggregates. Repositories help to hide datastore specific complexity and thus keep
  * the domain implementation clean and unaffected by requirements of the underlying datastore technology.
- *</p>
+ * </p>
  * <p>
  * Further
  * Information: <a href="https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf">link</a>
  * </p>
  *
+ * @param <ID> the type of the AggregateRoot's Identity
+ * @param <A>  the type of accessed AggregateRoot
  * @author Mario Herb
  */
-public interface Repository <ID extends Identity<?>, A extends AggregateRoot<ID>>{
+public interface Repository <ID extends Identity<?>, A extends AggregateRoot<ID>> extends ServiceKind {
 
     Optional<A> findById(ID id);
 

@@ -60,9 +60,11 @@ public class JooqRecordPropertyProvider implements RecordPropertyProvider {
 
         UpdatableRecord<?> r = newRecordInstanceProvider.provideNewRecord(recordClassName);
         if (Objects.requireNonNull(r.getTable().getPrimaryKey()).getFields().size() > 1) {
-            throw DLCPersistenceException.fail("Only single fielded primary keys are supported! Contradicting table=" + r.getTable().getName());
+            throw DLCPersistenceException.fail(
+                "Only single fielded primary keys are supported! Contradicting table=" + r.getTable().getName());
         }
-        String pkFieldName = NamingUtil.snakeCaseToCamelCase((r.getTable().getPrimaryKey().getFields().get(0)).getName().toLowerCase());
+        String pkFieldName = NamingUtil.snakeCaseToCamelCase(
+            (r.getTable().getPrimaryKey().getFields().get(0)).getName().toLowerCase());
         Class<?> recordClass;
         try {
             recordClass = Class.forName(recordClassName);
@@ -79,13 +81,14 @@ public class JooqRecordPropertyProvider implements RecordPropertyProvider {
                 boolean nonNullForeignKey = r.getTable()
                     .getReferences()
                     .stream()
-                    .flatMap(fk -> ((ForeignKey<?,?>) fk).getFields().stream())
+                    .flatMap(fk -> ((ForeignKey<?, ?>) fk).getFields().stream())
                     .filter(tf -> {
                         String name = NamingUtil.snakeCaseToCamelCase(tf.getUnqualifiedName().last());
                         return name.equals(propNameCopy);
                     })
                     .anyMatch(tf -> !tf.getDataType().nullable());
-                return new RecordProperty(propName, recordClassName, valueType, propName.equals(pkFieldName), nonNullForeignKey);
+                return new RecordProperty(propName, recordClassName, valueType, propName.equals(pkFieldName),
+                    nonNullForeignKey);
             })
             .toList();
     }

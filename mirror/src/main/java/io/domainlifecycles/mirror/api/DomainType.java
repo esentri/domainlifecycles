@@ -38,6 +38,7 @@ import io.domainlifecycles.domain.types.OutboundService;
 import io.domainlifecycles.domain.types.QueryClient;
 import io.domainlifecycles.domain.types.ReadModel;
 import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.domain.types.ValueObject;
 
 import java.lang.reflect.Type;
@@ -59,16 +60,19 @@ public enum DomainType {
     REPOSITORY,
     READ_MODEL,
     APPLICATION_SERVICE,
+    SERVICE_KIND,
     QUERY_CLIENT,
     OUTBOUND_SERVICE,
     NON_DOMAIN;
 
     /**
      * Derives the DomainType form a given Java {@link Type}.
+     *
+     * @param type the type to return the corresponding DomainType for
      * @return the reflected DomainType for the given type
      */
-    public static DomainType of(Type type){
-        if(type instanceof Class<?>) {
+    public static DomainType of(Type type) {
+        if (type instanceof Class<?>) {
             Class<?> c = (Class<?>) type;
             if (AggregateRoot.class.isAssignableFrom(c)) {
                 return DomainType.AGGREGATE_ROOT;
@@ -96,6 +100,8 @@ public enum DomainType {
                 return DomainType.QUERY_CLIENT;
             } else if (OutboundService.class.isAssignableFrom(c)) {
                 return DomainType.OUTBOUND_SERVICE;
+            } else if (ServiceKind.class.isAssignableFrom(c)) {
+                return DomainType.SERVICE_KIND;
             }
         }
         return DomainType.NON_DOMAIN;

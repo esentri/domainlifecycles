@@ -32,7 +32,8 @@ import io.domainlifecycles.domain.types.internal.DomainObject;
 import java.util.List;
 
 /**
- * A PersistenceActionOrderProvider provides the order in which {@link DomainObject}s (=entities, value objects) have to be persisted.
+ * A PersistenceActionOrderProvider provides the order in which {@link DomainObject}s (=entities, value objects) have
+ * to be persisted.
  *
  * @author Mario Herb
  */

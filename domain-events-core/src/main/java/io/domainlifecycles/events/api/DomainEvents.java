@@ -56,7 +56,7 @@ public class DomainEvents {
      * @param domainEvent the domain event to be published
      * @throws DLCEventsException if the configuration is not initialized
      */
-    public static void publish(DomainEvent domainEvent){
+    public static void publish(DomainEvent domainEvent) {
         log.info("DomainEvent provided to be published {}", domainEvent);
         if(channelConfiguration == null){
             throw DLCEventsException.fail("No ChannelRoutingConfiguration initialized!");

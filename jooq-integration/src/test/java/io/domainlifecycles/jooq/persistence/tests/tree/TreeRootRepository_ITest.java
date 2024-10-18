@@ -45,11 +45,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TreeRootRepository_ITest extends BasePersistence_ITest {
-    
+
     private TreeRootRepository treeRootRepository;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         treeRootRepository = new TreeRootRepository(
             persistenceConfiguration.dslContext,
             persistenceConfiguration.domainPersistenceProvider,
@@ -84,7 +84,8 @@ public class TreeRootRepository_ITest extends BasePersistence_ITest {
         Optional<TreeRoot> found = treeRootRepository
             .findResultById(new TreeRootId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getDirectChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getDirectChildNodes().get(0));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
         persistenceEventTestHelper.assertEvents();
     }
@@ -100,10 +101,13 @@ public class TreeRootRepository_ITest extends BasePersistence_ITest {
         Optional<TreeRoot> found = treeRootRepository
             .findResultById(new TreeRootId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getDirectChildNodes().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getDirectChildNodes().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getDirectChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getDirectChildNodes().get(1));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getDirectChildNodes().get(1).getChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getDirectChildNodes().get(1).getChildNodes().get(0));
         persistenceEventTestHelper.assertEvents();
     }
 
@@ -118,11 +122,16 @@ public class TreeRootRepository_ITest extends BasePersistence_ITest {
         Optional<TreeRoot> found = treeRootRepository
             .findResultById(new TreeRootId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getDirectChildNodes().get(1).getChildNodes().get(0).getChildNodes().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getDirectChildNodes().get(0).getChildNodes().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getDirectChildNodes().get(1).getChildNodes().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getDirectChildNodes().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getDirectChildNodes().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getDirectChildNodes().get(1).getChildNodes().get(0).getChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getDirectChildNodes().get(0).getChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getDirectChildNodes().get(1).getChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getDirectChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getDirectChildNodes().get(1));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
         persistenceEventTestHelper.assertEvents();
     }
@@ -177,10 +186,12 @@ public class TreeRootRepository_ITest extends BasePersistence_ITest {
         //then
         Optional<TreeRoot> found = treeRootRepository.findResultById(new TreeRootId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated.getDirectChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED,
+            updated.getDirectChildNodes().get(0));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
-        Assertions.assertThat(updated.getDirectChildNodes().get(0).getNodeName()).isEqualTo(insertedCopy.getDirectChildNodes().get(0).getNodeName());
+        Assertions.assertThat(updated.getDirectChildNodes().get(0).getNodeName()).isEqualTo(
+            insertedCopy.getDirectChildNodes().get(0).getNodeName());
     }
 
     @Test
@@ -203,7 +214,8 @@ public class TreeRootRepository_ITest extends BasePersistence_ITest {
         //then
         Optional<TreeRoot> found = treeRootRepository.findResultById(new TreeRootId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getDirectChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getDirectChildNodes().get(0));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
     }
@@ -228,7 +240,8 @@ public class TreeRootRepository_ITest extends BasePersistence_ITest {
         //then
         Optional<TreeRoot> found = treeRootRepository.findResultById(new TreeRootId(1l)).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, insertedCopy.getDirectChildNodes().get(0).getChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            insertedCopy.getDirectChildNodes().get(0).getChildNodes().get(0));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
     }
@@ -247,7 +260,8 @@ public class TreeRootRepository_ITest extends BasePersistence_ITest {
         //then
         Optional<TreeRoot> found = treeRootRepository.findResultById(inserted.getId()).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getDirectChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getDirectChildNodes().get(0));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
         Assertions.assertThat(updated.getDirectChildNodes().size()).isEqualTo(0);
@@ -267,11 +281,16 @@ public class TreeRootRepository_ITest extends BasePersistence_ITest {
         Assertions.assertThat(deleted).isPresent();
         Assertions.assertThat(found).isEmpty();
         persistenceEventTestHelper.assertFoundWithResult(deleted, inserted);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getDirectChildNodes().get(1).getChildNodes().get(0).getChildNodes().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getDirectChildNodes().get(0).getChildNodes().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getDirectChildNodes().get(1).getChildNodes().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getDirectChildNodes().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getDirectChildNodes().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getDirectChildNodes().get(1).getChildNodes().get(0).getChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getDirectChildNodes().get(0).getChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getDirectChildNodes().get(1).getChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getDirectChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getDirectChildNodes().get(1));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted);
         persistenceEventTestHelper.assertEvents();
 
@@ -292,7 +311,8 @@ public class TreeRootRepository_ITest extends BasePersistence_ITest {
         //then
         Optional<TreeRoot> found = treeRootRepository.findResultById(inserted.getId()).resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getDirectChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getDirectChildNodes().get(0));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
         Assertions.assertThat(updated.getName()).isEqualTo(insertedCopy.getName());
@@ -327,7 +347,7 @@ public class TreeRootRepository_ITest extends BasePersistence_ITest {
         insertedCopy.getDirectChildNodes().get(0).getChildNodes().get(0).setNodeName("UPDATED");
         insertedCopy.getDirectChildNodes().get(0).getChildNodes().get(0).getChildNodes().add(
             TreeNode
-            .builder()
+                .builder()
                 .setId(new TreeNodeId(11l))
                 .setNodeName("NEW")
                 .setParentNodeId(inserted.getDirectChildNodes().get(0).getChildNodes().get(0).getId())
@@ -347,11 +367,16 @@ public class TreeRootRepository_ITest extends BasePersistence_ITest {
         Assertions.assertThat(found).isPresent();
 
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getDirectChildNodes().get(0).getChildNodes().get(0).getChildNodes().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getDirectChildNodes().get(0).getChildNodes().get(0).getChildNodes().get(1));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getDirectChildNodes().get(1).getChildNodes().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getDirectChildNodes().get(1).getChildNodes().get(0).getChildNodes().get(0));
-        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated.getDirectChildNodes().get(0).getChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getDirectChildNodes().get(0).getChildNodes().get(0).getChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            updated.getDirectChildNodes().get(0).getChildNodes().get(0).getChildNodes().get(1));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getDirectChildNodes().get(1).getChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getDirectChildNodes().get(1).getChildNodes().get(0).getChildNodes().get(0));
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED,
+            updated.getDirectChildNodes().get(0).getChildNodes().get(0));
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
         persistenceEventTestHelper.assertEvents();
     }

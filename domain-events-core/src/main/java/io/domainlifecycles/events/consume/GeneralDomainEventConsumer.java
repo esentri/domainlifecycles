@@ -62,8 +62,10 @@ public final class GeneralDomainEventConsumer implements DomainEventConsumer {
         ExecutionContextDetector executionContextDetector,
         ExecutionContextProcessor executionContextProcessor
     ) {
-        this.executionContextDetector = Objects.requireNonNull(executionContextDetector, "An ExecutionContextDetector must be provided for DomainEvent handling!");
-        this.executionContextProcessor = Objects.requireNonNull(executionContextProcessor, "An ExecutionContextProcessor must be provided for DomainEvent handling!");
+        this.executionContextDetector = Objects.requireNonNull(executionContextDetector,
+            "An ExecutionContextDetector must be provided for DomainEvent handling!");
+        this.executionContextProcessor = Objects.requireNonNull(executionContextProcessor,
+            "An ExecutionContextProcessor must be provided for DomainEvent handling!");
     }
 
     /**
@@ -77,7 +79,7 @@ public final class GeneralDomainEventConsumer implements DomainEventConsumer {
     public List<ExecutionResult> consume(DomainEvent domainEvent) {
         log.debug("Received {}", domainEvent);
         var executionContexts = executionContextDetector.detectExecutionContexts(domainEvent);
-        if(executionContexts == null || executionContexts.isEmpty()){
+        if (executionContexts == null || executionContexts.isEmpty()) {
             log.debug("No execution contexts detected for {}", domainEvent);
             return Collections.emptyList();
         }

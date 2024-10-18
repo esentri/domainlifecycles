@@ -50,7 +50,7 @@ public final class SpringBoot2PersistenceEventPublisher implements PersistenceEv
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public void publish(@NonNull PersistenceAction pa ) {
+    public void publish(@NonNull PersistenceAction pa) {
         final PersistenceEvent event = assembleEvent(pa);
         log.debug("Publish persistence event: {}", event);
         applicationEventPublisher.publishEvent(event);
@@ -66,9 +66,11 @@ public final class SpringBoot2PersistenceEventPublisher implements PersistenceEv
      */
     private PersistenceEvent assembleEvent(final PersistenceAction persistenceAction) {
         PersistenceEvent.PersistenceEventType eventType = PersistenceEvent.PersistenceEventType.INSERTED;
-        if(persistenceAction.actionType.equals(PersistenceAction.ActionType.UPDATE) || persistenceAction.actionType.equals(PersistenceAction.ActionType.DELETE_UPDATE)){
+        if (persistenceAction.actionType.equals(
+            PersistenceAction.ActionType.UPDATE) || persistenceAction.actionType.equals(
+            PersistenceAction.ActionType.DELETE_UPDATE)) {
             eventType = PersistenceEvent.PersistenceEventType.UPDATED;
-        }else if(persistenceAction.actionType.equals(PersistenceAction.ActionType.DELETE)){
+        } else if (persistenceAction.actionType.equals(PersistenceAction.ActionType.DELETE)) {
             eventType = PersistenceEvent.PersistenceEventType.DELETED;
         }
 

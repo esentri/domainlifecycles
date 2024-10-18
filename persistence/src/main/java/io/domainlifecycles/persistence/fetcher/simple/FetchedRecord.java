@@ -36,7 +36,6 @@ import java.util.Objects;
  * hashmaps which are hold in the fetcher context
  *
  * @param <RECORD> the record type
- *
  * @author Mario Herb
  */
 public class FetchedRecord<RECORD> {
@@ -52,9 +51,9 @@ public class FetchedRecord<RECORD> {
     /**
      * Creates a new FetchedRecord.
      *
-     * @param record the record
-     * @return the fetched record
+     * @param record   the record
      * @param <RECORD> the record type
+     * @return the fetched record
      */
     public static <RECORD> FetchedRecord<RECORD> of(RECORD record) {
         return new FetchedRecord<>(record, record.getClass().getName());

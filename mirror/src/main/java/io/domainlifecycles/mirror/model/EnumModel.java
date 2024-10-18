@@ -58,7 +58,7 @@ public class EnumModel extends DomainTypeModel implements EnumMirror {
                      @JsonProperty("enumOptions") List<EnumOptionMirror> enumOptions,
                      @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
                      @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
-                     ) {
+    ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
         Objects.requireNonNull(enumOptions);
         this.enumOptions = Collections.unmodifiableList(enumOptions);

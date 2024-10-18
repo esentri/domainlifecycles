@@ -51,7 +51,7 @@ import static org.awaitility.Awaitility.await;
 @SpringBootTest(classes = TestApplicationGruelboxIntegrationIdempotency.class)
 @DirtiesContext
 @Slf4j
-public class GreulboxIntegrationIdempotencyTests {
+public class GruelboxIntegrationIdempotencyTests {
 
     @Autowired
     private PlatformTransactionManager platformTransactionManager;

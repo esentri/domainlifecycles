@@ -98,14 +98,14 @@ public class TestApplication {
     }
 
     @PostConstruct
-    public void postConstruct(){
+    public void postConstruct() {
         ValidationDomainClassExtender.extend("tests");
         log.info("ValidationExtension Done!");
     }
 
     @Bean
     public JooqDomainPersistenceProvider domainPersistenceProvider(DomainObjectBuilderProvider domainObjectBuilderProvider,
-                                                                   Set<RecordMapper<?,?,?>> customRecordMappers){
+                                                                   Set<RecordMapper<?, ?, ?>> customRecordMappers) {
 
         JooqDomainPersistenceConfiguration jooqDomainPersistenceConfiguration = JooqDomainPersistenceConfiguration
             .JooqPersistenceConfigurationBuilder
@@ -114,7 +114,7 @@ public class TestApplication {
             .withRecordPackage("io.domainlifecycles.test.springboot3.tables.records")
             .withCustomRecordMappers(customRecordMappers)
             .withEntityValueObjectRecordTypeConfiguration(
-                new EntityValueObjectRecordTypeConfiguration(
+                new EntityValueObjectRecordTypeConfiguration<>(
                     BestellungBv3.class,
                     AktionsCodeBv3.class,
                     AktionsCodeBv3Record.class,
@@ -123,13 +123,12 @@ public class TestApplication {
             )
             .make();
 
-        JooqDomainPersistenceProvider domainPersistenceProvider = new JooqDomainPersistenceProvider(jooqDomainPersistenceConfiguration);
-
-        return domainPersistenceProvider;
+        return new JooqDomainPersistenceProvider(
+            jooqDomainPersistenceConfiguration);
     }
 
     @Bean
-    DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider(){
+    DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
         return new InnerClassDomainObjectBuilderProvider();
     }
 
@@ -139,11 +138,12 @@ public class TestApplication {
         return new EntityIdentityProvider() {
 
             private final JooqEntityIdentityProvider provider = new JooqEntityIdentityProvider(dslContext);
+
             @Override
             public Identity<?> provideFor(String entityTypeName) {
-                if(entityTypeName.equals(TestRootSimpleUuid.class.getName())){
+                if (entityTypeName.equals(TestRootSimpleUuid.class.getName())) {
                     return new TestRootSimpleUuidId(UUID.randomUUID());
-                }else{
+                } else {
                     return provider.provideFor(entityTypeName);
                 }
             }
@@ -159,20 +159,17 @@ public class TestApplication {
         return module;
     }
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean
     public DefaultDSLContext dslContext(DataSource dataSource) {
         return new DefaultDSLContext(configuration(dataSource));
     }
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean
     public DataSourceConnectionProvider connectionProvider(DataSource dataSource) {
         return new DataSourceConnectionProvider
             (new TransactionAwareDataSourceProxy(dataSource));
     }
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean
     public DefaultConfiguration configuration(DataSource dataSource) {
         DefaultConfiguration jooqConfiguration = new DefaultConfiguration();

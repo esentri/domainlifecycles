@@ -33,6 +33,7 @@ import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.OutboundService;
 import io.domainlifecycles.domain.types.QueryClient;
 import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.ADomainService;
 import io.domainlifecycles.events.AQueryClient;
 import io.domainlifecycles.events.ARepository;
@@ -72,45 +73,38 @@ public class OutboxTestApplication {
     }
 
     @Bean
-    public AnApplicationService anApplicationService(){
+    public AnApplicationService anApplicationService() {
         return new AnApplicationService();
     }
 
     @Bean
-    public ADomainService aDomainService(){
+    public ADomainService aDomainService() {
         return new ADomainService();
     }
 
     @Bean
-    public ARepository aRepository(){
+    public ARepository aRepository() {
         return new ARepository();
     }
 
     @Bean
-    public AnOutboundService anOutboundService(){
+    public AnOutboundService anOutboundService() {
         return new AnOutboundService();
     }
 
     @Bean
-    public AQueryClient aQueryClient(){
+    public AQueryClient aQueryClient() {
         return new AQueryClient();
     }
 
     /**
-     * This method creates and configures a ServiceProvider instance, which is responsible for providing instances of various types of services.
+     * This method creates and configures a ServiceProvider instance, which is responsible for providing instances of
+     * various types of services.
      */
     @Bean
-    public ServiceProvider serviceProvider(List<Repository<?,?>> repositories,
-                                           List<ApplicationService> applicationServices,
-                                           List<DomainService> domainServices,
-                                           List<OutboundService> outboundServices,
-                                           List<QueryClient<?>> queryClients){
+    public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds) {
         var services = new Services();
-        repositories.forEach(services::registerRepositoryInstance);
-        applicationServices.forEach(services::registerApplicationServiceInstance);
-        domainServices.forEach(services::registerDomainServiceInstance);
-        outboundServices.forEach(services::registerOutboundServiceInstance);
-        queryClients.forEach(services::registerQueryClientInstance);
+        serviceKinds.forEach(services::registerServiceKindInstance);
         return services;
     }
 

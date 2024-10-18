@@ -27,16 +27,14 @@
 
 package io.domainlifecycles.services;
 
-import io.domainlifecycles.domain.types.ApplicationService;
-import io.domainlifecycles.domain.types.DomainService;
-import io.domainlifecycles.domain.types.OutboundService;
-import io.domainlifecycles.domain.types.QueryClient;
-import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.reflect.JavaReflect;
 import io.domainlifecycles.services.api.ServiceProvider;
 import io.domainlifecycles.services.api.ServiceRegistrator;
+import io.domainlifecycles.services.exception.ServiceRegistryException;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,103 +46,47 @@ import java.util.Map;
  */
 public class Services implements ServiceRegistrator, ServiceProvider {
 
-    private final Map<String, Object> services = new HashMap<>();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ApplicationService getApplicationServiceInstance(String typeName) {
-        return (ApplicationService) services.get(typeName);
+    private final Map<String, ServiceKind> serviceKinds = new HashMap<>();
+
+    public Services() {
+    }
+
+    public Services(Collection<ServiceKind> serviceKinds) {
+        registerServiceKindInstances(serviceKinds);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Repository<?, ?> getRepositoryInstance(String typeName) {
-        return (Repository<?, ?>)services.get(typeName);
+    public <S extends ServiceKind> S getServiceKindInstance(String typeName) {
+        var s = (S)serviceKinds.get(typeName);
+        if (s == null){
+            throw ServiceRegistryException.fail("ServiceKindInstance with type '%s' not found", typeName);
+        }
+        return s;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public DomainService getDomainServiceInstance(String typeName) {
-        return (DomainService)services.get(typeName);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public QueryClient<?> getQueryClientInstance(String typeName) {
-        return (QueryClient<?>)services.get(typeName);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public OutboundService getOutboundServiceInstance(String typeName) {
-        return (OutboundService) services.get(typeName);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object getServiceInstance(String typeName) {
-        return services.get(typeName);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void registerApplicationServiceInstance(ApplicationService applicationService) {
-        registerServiceInstance(applicationService);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void registerDomainServiceInstance(DomainService domainService) {
-        registerServiceInstance(domainService);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void registerRepositoryInstance(Repository<?, ?> repository) {
-        registerServiceInstance(repository);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void registerQueryClientInstance(QueryClient<?> queryClient) {
-        registerServiceInstance(queryClient);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void registerOutboundServiceInstance(OutboundService outboundService) {
-        registerServiceInstance(outboundService);
-    }
-
-    private void registerServiceInstance(Object serviceInstance){
+    public void registerServiceKindInstance(ServiceKind serviceKind) {
         //check of mirrored types is needed, because in some frameworks like spring the concrete service instances
         // are extended and so the class of the concrete instance at runtime is not known by the mirror
-        JavaReflect.allSupertypes(serviceInstance.getClass(), true)
+        JavaReflect.allSupertypes(serviceKind.getClass(), true)
             .stream()
             .filter(superType -> Domain.typeMirror(superType.getName()).isPresent())
             .findFirst()
-            .ifPresent(mirroredType -> services.put(mirroredType.getName(), serviceInstance));
+            .ifPresent(mirroredType -> serviceKinds.put(mirroredType.getName(), serviceKind));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void registerServiceKindInstances(Collection<ServiceKind> serviceKinds) {
+        serviceKinds.forEach(this::registerServiceKindInstance);
     }
 }

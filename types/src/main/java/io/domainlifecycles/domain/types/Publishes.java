@@ -45,6 +45,7 @@ public @interface Publishes {
 
     /**
      * The {@link DomainEvent} type published by the marked method.
+     *
      * @return the specified DomainEvent class
      */
     Class<? extends DomainEvent>[] domainEventTypes();

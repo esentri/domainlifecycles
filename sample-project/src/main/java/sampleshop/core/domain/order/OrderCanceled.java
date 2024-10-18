@@ -37,4 +37,5 @@ import io.domainlifecycles.domain.types.DomainEvent;
  */
 public record OrderCanceled(
     @NotNull Order order
-) implements DomainEvent { }
+) implements DomainEvent {
+}

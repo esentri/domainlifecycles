@@ -36,6 +36,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 import javax.sql.DataSource;
+
 /**
  * Spring configuration for JOOQ.
  *
@@ -72,7 +73,6 @@ public class PersistenceConfiguration {
     public DefaultDSLContext dslContext(DataSource dataSource) {
         return new DefaultDSLContext(configuration(dataSource));
     }
-
 
 
 }

@@ -36,7 +36,7 @@ import io.domainlifecycles.mirror.api.DomainEventMirror;
  *
  * @author Mario Herb
  */
-public class DomainEventMirrorBuilder extends DomainTypeMirrorBuilder{
+public class DomainEventMirrorBuilder extends DomainTypeMirrorBuilder {
 
     public DomainEventMirrorBuilder(Class<? extends DomainEvent> domainEventClass) {
         super(domainEventClass);
@@ -44,8 +44,10 @@ public class DomainEventMirrorBuilder extends DomainTypeMirrorBuilder{
 
     /**
      * Creates a new {@link DomainEventMirror}.
+     *
+     * @return new instance of DomainEventMirror
      */
-    public DomainEventMirror build(){
+    public DomainEventMirror build() {
         return new DomainEventModel(
             getTypeName(),
             isAbstract(),

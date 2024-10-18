@@ -29,10 +29,10 @@ package io.domainlifecycles.domain.types;
 
 /**
  * This is the common supertype (marker interface) to represent Drivers.
- *
+ * <p>
  * This has the same effect as {@link ApplicationService} and can be used as a synonym.
  *
  * @author Mario Herb
  */
-public interface Driver extends ApplicationService{
+public interface Driver extends ApplicationService {
 }

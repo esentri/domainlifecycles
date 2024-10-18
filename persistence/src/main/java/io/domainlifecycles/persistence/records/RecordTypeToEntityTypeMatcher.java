@@ -34,7 +34,6 @@ import java.util.Set;
  * Matches a record type to an entity type.
  *
  * @param <RECORD_TYPE> the record type
- *
  * @author Mario Herb
  */
 public interface RecordTypeToEntityTypeMatcher<RECORD_TYPE> {

@@ -68,7 +68,7 @@ public class DirectJtaTransactionalEventHandlingAfterCommitTests {
 
 
     @BeforeAll
-    public static void init(){
+    public static void init() {
         Logger rootLogger =
             (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         rootLogger.setLevel(Level.DEBUG);
@@ -84,23 +84,22 @@ public class DirectJtaTransactionalEventHandlingAfterCommitTests {
         outboundService = new AnOutboundService();
 
         var services = new Services();
-        services.registerDomainServiceInstance(domainService);
-        services.registerRepositoryInstance(repository);
-        services.registerApplicationServiceInstance(applicationService);
-        services.registerOutboundServiceInstance(outboundService);
-        services.registerQueryClientInstance(queryClient);
+        services.registerServiceKindInstance(domainService);
+        services.registerServiceKindInstance(repository);
+        services.registerServiceKindInstance(applicationService);
+        services.registerServiceKindInstance(outboundService);
+        services.registerServiceKindInstance(queryClient);
 
         var channel = new JtaInMemoryChannelFactory(userTransactionManager, services,
             5,
             true).processingChannel("c1");
-
         var router = new DomainEventTypeBasedRouter(List.of(channel));
         router.defineDefaultChannel("c1");
         new ChannelRoutingConfiguration(router);
     }
 
     @Test
-    public void testIntegrationCommit() throws Exception{
+    public void testIntegrationCommit() throws Exception {
         userTransactionManager.begin();
         //when
         var evt = new ADomainEvent("TestCommit");
@@ -116,7 +115,7 @@ public class DirectJtaTransactionalEventHandlingAfterCommitTests {
     }
 
     @Test
-    public void testIntegrationUnreceivedCommit() throws Exception{
+    public void testIntegrationUnreceivedCommit() throws Exception {
         userTransactionManager.begin();
         //when
         var evt = new UnreceivedDomainEvent("TestUnReceivedCommit");
@@ -132,7 +131,7 @@ public class DirectJtaTransactionalEventHandlingAfterCommitTests {
     }
 
     @Test
-    public void testIntegrationRollback() throws Exception{
+    public void testIntegrationRollback() throws Exception {
         userTransactionManager.begin();
         //when
         var evt = new ADomainEvent("TestRollback");
@@ -158,7 +157,7 @@ public class DirectJtaTransactionalEventHandlingAfterCommitTests {
     }
 
     @Test
-    public void testIntegrationAggregateDomainEventCommit() throws Exception{
+    public void testIntegrationAggregateDomainEventCommit() throws Exception {
         //when
         userTransactionManager.begin();
         var evt = new AnAggregateDomainEvent("TestAggregateDomainEventCommit");
@@ -175,7 +174,7 @@ public class DirectJtaTransactionalEventHandlingAfterCommitTests {
     }
 
     @Test
-    public void testIntegrationAggregateDomainEventRollback() throws Exception{
+    public void testIntegrationAggregateDomainEventRollback() throws Exception {
         //when
         userTransactionManager.begin();
         var evt = new AnAggregateDomainEvent("TestAggregateDomainEventRollback");
@@ -193,7 +192,7 @@ public class DirectJtaTransactionalEventHandlingAfterCommitTests {
     }
 
     @Test
-    public void testIntegrationAggregateDomainEventRollbackExceptionOnHandler() throws Exception{
+    public void testIntegrationAggregateDomainEventRollbackExceptionOnHandler() throws Exception {
         //when
         userTransactionManager.begin();
         var evt = new AnAggregateDomainEvent("TestAggregateDomainWithException");
@@ -211,7 +210,7 @@ public class DirectJtaTransactionalEventHandlingAfterCommitTests {
     }
 
     @Test
-    public void testIntegrationDomainServiceExceptionRollback() throws Exception{
+    public void testIntegrationDomainServiceExceptionRollback() throws Exception {
         //when
         userTransactionManager.begin();
         var evt = new ADomainEvent("TestDomainServiceRollback");

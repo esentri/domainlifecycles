@@ -55,7 +55,7 @@ public class ProductService implements ProductDriver {
      * {@inheritDoc}
      */
     @Override
-    public Product create(Product product){
+    public Product create(Product product) {
         return repository.insert(product);
     }
 
@@ -63,7 +63,7 @@ public class ProductService implements ProductDriver {
      * {@inheritDoc}
      */
     @Override
-    public void removeAll(){
+    public void removeAll() {
         repository.removeAll();
     }
 
@@ -71,7 +71,7 @@ public class ProductService implements ProductDriver {
      * {@inheritDoc}
      */
     @Override
-    public Optional<Product> find(Product.ProductId productId){
+    public Optional<Product> find(Product.ProductId productId) {
         return repository.findById(productId);
     }
 }

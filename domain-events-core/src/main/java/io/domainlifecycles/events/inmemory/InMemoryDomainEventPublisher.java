@@ -50,8 +50,10 @@ public final class InMemoryDomainEventPublisher implements DomainEventPublisher 
     private final DomainEventConsumer domainEventConsumer;
 
     /**
-     * The InMemoryDomainEventPublisher class is an implementation of the DomainEventPublisher interface.
-     * It simply delegates the publishing of a domain event to a DomainEventConsumer instance.
+     * The DirectPassThroughDomainEventPublisher class is an implementation of the DomainEventPublisher interface.
+     * It simply delegates the publishing of a domain event to a ReceivingDomainEventHandler instance.
+     *
+     * @param receivingDomainEventHandler the event handler of the receiving DomainObject
      */
     public InMemoryDomainEventPublisher(DomainEventConsumer domainEventConsumer) {
         this.domainEventConsumer = Objects.requireNonNull(domainEventConsumer, "A DomainEventConsumer is required!");

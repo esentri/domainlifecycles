@@ -42,9 +42,9 @@ import java.io.IOException;
 
 /**
  * {@link Domain} based serialization of {@link ValueObject} instances.
- * @see StdSerializer
  *
  * @author Mario Herb
+ * @see StdSerializer
  */
 public class ValueObjectSerializer extends StdSerializer<ValueObject> {
 
@@ -58,22 +58,24 @@ public class ValueObjectSerializer extends StdSerializer<ValueObject> {
     /**
      * Serialize ValueObjects
      *
-     * @param valueObject Value to serialize; can <b>not</b> be null.
-     * @param jsonGenerator Generator used to output resulting Json content
+     * @param valueObject        Value to serialize; can <b>not</b> be null.
+     * @param jsonGenerator      Generator used to output resulting Json content
      * @param serializerProvider Provider that can be used to get serializers for
-     *   serializing Objects value contains, if any.
+     *                           serializing Objects value contains, if any.
      * @throws IOException if serialization failed
      */
     @Override
-    public void serialize(ValueObject valueObject, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+    public void serialize(ValueObject valueObject, JsonGenerator jsonGenerator,
+                          SerializerProvider serializerProvider) throws IOException {
         MappingAction mappingAction = MappingAction.CONTINUE_WITH_DEFAULT_ACTION;
         if (customizer != null) {
             mappingAction = customizer.beforeObjectWrite(jsonGenerator, valueObject);
         }
-        if(MappingAction.CONTINUE_WITH_DEFAULT_ACTION.equals(mappingAction)) {
+        if (MappingAction.CONTINUE_WITH_DEFAULT_ACTION.equals(mappingAction)) {
             var valueObjectMirror = Domain.valueObjectMirrorFor(valueObject);
-            if  (valueObjectMirror.isSingledValued()&& !jsonGenerator.getOutputContext().inRoot()) {
-                Object value = DlcAccess.accessorFor(valueObject).peek(valueObjectMirror.singledValuedField().get().getName());
+            if (valueObjectMirror.isSingledValued() && !jsonGenerator.getOutputContext().inRoot()) {
+                Object value = DlcAccess.accessorFor(valueObject).peek(
+                    valueObjectMirror.singledValuedField().get().getName());
                 jsonGenerator.writeObject(value);
             } else {
                 jsonGenerator.writeStartObject();
@@ -84,7 +86,8 @@ public class ValueObjectSerializer extends StdSerializer<ValueObject> {
         }
     }
 
-    private void writeBasicFields(JsonGenerator jsonGenerator, ValueObjectMirror valueObjectMirror, ValueObject valueObject) throws IOException {
+    private void writeBasicFields(JsonGenerator jsonGenerator, ValueObjectMirror valueObjectMirror,
+                                  ValueObject valueObject) throws IOException {
         for (FieldMirror field : valueObjectMirror.getBasicFields()) {
             if (!field.isStatic() && field.isPublicReadable()) {
                 Object toWrite = DlcAccess.accessorFor(valueObject).peek(field.getName());
@@ -94,7 +97,8 @@ public class ValueObjectSerializer extends StdSerializer<ValueObject> {
 
     }
 
-    private void writeValues(JsonGenerator jsonGenerator, ValueObjectMirror valueObjectMirror, ValueObject valueObject) throws IOException {
+    private void writeValues(JsonGenerator jsonGenerator, ValueObjectMirror valueObjectMirror,
+                             ValueObject valueObject) throws IOException {
         for (FieldMirror field : valueObjectMirror.getValueReferences()) {
             if (field.isPublicReadable() && !field.isStatic()) {
                 Object toWrite = DlcAccess.accessorFor(valueObject).peek(field.getName());

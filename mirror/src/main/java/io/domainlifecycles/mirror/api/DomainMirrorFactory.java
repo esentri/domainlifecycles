@@ -31,14 +31,16 @@ import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 /**
  * The implementations of this interface decide how the InitializedDomain is provided.
- * E.g. created by reflection or read from a config file. The default implementation initializes the domain by reflection {@see ReflectiveDomainMirrorFactory}.
+ * E.g. created by reflection or read from a config file. The default implementation initializes the domain by
+ * reflection {@see ReflectiveDomainMirrorFactory}.
  *
  * @author Mario Herb
  */
 public interface DomainMirrorFactory {
 
     /**
-     * Returns the InitializedDomain, containing all the mirrors provided by this factory for the corresponding Domain.
+     * @param typeResolver type resolver
+     * @return the InitializedDomain, containing all the mirrors provided by this factory for the corresponding Domain.
      */
     InitializedDomain initializeDomain(GenericTypeResolver typeResolver);
 }

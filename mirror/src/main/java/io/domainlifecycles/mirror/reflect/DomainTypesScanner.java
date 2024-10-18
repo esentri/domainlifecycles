@@ -27,7 +27,9 @@
 
 package io.domainlifecycles.mirror.reflect;
 
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
 import io.domainlifecycles.domain.types.AggregateCommand;
 import io.domainlifecycles.domain.types.AggregateRoot;
@@ -87,6 +89,8 @@ public class DomainTypesScanner {
 
     private final List<Class<? extends OutboundService>> outboundServices;
 
+    private final List<Class<? extends ServiceKind>> serviceKinds;
+
 
     /**
      * Constructor
@@ -105,15 +109,18 @@ public class DomainTypesScanner {
         readModels = new ArrayList<>();
         queryClients = new ArrayList<>();
         outboundServices = new ArrayList<>();
+        serviceKinds = new ArrayList<>();
     }
 
     /**
      * Scans the given packages for Domain Model classes.
+     *
+     * @param boundedContextPackages the bounded context packages
      */
     @SuppressWarnings("unchecked")
-    public void scan(String... boundedContextPackages){
-        for(String pack : boundedContextPackages){
-            if(isValidPackage(pack)) {
+    public void scan(String... boundedContextPackages) {
+        for (String pack : boundedContextPackages) {
+            if (isValidPackage(pack)) {
                 log.info("Scanning bounded context package for domain types '{}'", pack);
                 try (ScanResult scanResult =
                          new ClassGraph()
@@ -125,21 +132,21 @@ public class DomainTypesScanner {
                     enums.addAll(
                         scanResult.getAllEnums()
                             .stream()
-                            .map(r -> (Class<? extends Enum<?>>)r.loadClass())
+                            .map(r -> (Class<? extends Enum<?>>) r.loadClass())
                             .toList()
                     );
                     identities.addAll(
                         scanResult.getClassesImplementing(Identity.class)
                             .stream()
                             .filter(c -> !Identity.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends Identity<?>>)r.loadClass())
+                            .map(r -> (Class<? extends Identity<?>>) r.loadClass())
                             .toList()
                     );
                     valueObjects.addAll(
                         scanResult.getClassesImplementing(ValueObject.class)
                             .stream()
                             .filter(c -> !ValueObject.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends ValueObject>)r.loadClass())
+                            .map(r -> (Class<? extends ValueObject>) r.loadClass())
                             .toList()
                     );
                     entities.addAll(
@@ -148,42 +155,42 @@ public class DomainTypesScanner {
                             .filter(c -> !Entity.class.getName().equals(c.getName()))
                             .filter(c -> !AggregateRoot.class.getName().equals(c.getName()))
                             .stream()
-                            .map(r -> (Class<? extends Entity<?>>)r.loadClass())
+                            .map(r -> (Class<? extends Entity<?>>) r.loadClass())
                             .toList()
                     );
                     aggregateRoots.addAll(
                         scanResult.getClassesImplementing(AggregateRoot.class)
                             .stream()
                             .filter(c -> !AggregateRoot.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends AggregateRoot<?>>)r.loadClass())
+                            .map(r -> (Class<? extends AggregateRoot<?>>) r.loadClass())
                             .toList()
                     );
                     domainServices.addAll(
                         scanResult.getClassesImplementing(DomainService.class)
                             .stream()
                             .filter(c -> !DomainService.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends DomainService>)r.loadClass())
+                            .map(r -> (Class<? extends DomainService>) r.loadClass())
                             .toList()
                     );
                     applicationServices.addAll(
                         scanResult.getClassesImplementing(ApplicationService.class)
                             .stream()
                             .filter(c -> !ApplicationService.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends ApplicationService>)r.loadClass())
+                            .map(r -> (Class<? extends ApplicationService>) r.loadClass())
                             .toList()
                     );
                     domainEvents.addAll(
                         scanResult.getClassesImplementing(DomainEvent.class)
                             .stream()
                             .filter(c -> !DomainEvent.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends DomainEvent>)r.loadClass())
+                            .map(r -> (Class<? extends DomainEvent>) r.loadClass())
                             .toList()
                     );
                     repositories.addAll(
                         scanResult.getClassesImplementing(Repository.class)
                             .stream()
                             .filter(c -> !Repository.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends Repository<?, ?>>)r.loadClass())
+                            .map(r -> (Class<? extends Repository<?, ?>>) r.loadClass())
                             .toList()
                     );
                     domainCommands.addAll(
@@ -192,135 +199,160 @@ public class DomainTypesScanner {
                             .filter(c -> !DomainCommand.class.getName().equals(c.getName()))
                             .filter(c -> !AggregateCommand.class.getName().equals(c.getName()))
                             .filter(c -> !DomainServiceCommand.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends DomainCommand>)r.loadClass())
+                            .map(r -> (Class<? extends DomainCommand>) r.loadClass())
                             .toList()
-                        );
+                    );
                     readModels.addAll(
                         scanResult.getClassesImplementing(ReadModel.class)
                             .stream()
                             .filter(c -> !ReadModel.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends ReadModel>)r.loadClass())
+                            .map(r -> (Class<? extends ReadModel>) r.loadClass())
                             .toList()
                     );
                     queryClients.addAll(
                         scanResult.getClassesImplementing(QueryClient.class)
                             .stream()
                             .filter(c -> !QueryClient.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends QueryClient<?>>)r.loadClass())
+                            .map(r -> (Class<? extends QueryClient<?>>) r.loadClass())
                             .toList()
                     );
                     outboundServices.addAll(
                         scanResult.getClassesImplementing(OutboundService.class)
                             .stream()
                             .filter(c -> !OutboundService.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends OutboundService>)r.loadClass())
+                            .map(r -> (Class<? extends OutboundService>) r.loadClass())
+                            .toList()
+                    );
+
+                    serviceKinds.addAll(
+                        scanResult.getClassesImplementing(ServiceKind.class)
+                            .stream()
+                            .filter(c -> !ServiceKind.class.getName().equals(c.getName())
+                                        && !ApplicationService.class.getName().equals(c.getName())
+                                        && !DomainService.class.getName().equals(c.getName())
+                                        && !OutboundService.class.getName().equals(c.getName())
+                                        && !QueryClient.class.getName().equals(c.getName())
+                                        && !Repository.class.getName().equals(c.getName()))
+                            .filter(c -> !(c.implementsInterface(ApplicationService.class))
+                                        && !(c.implementsInterface(DomainService.class))
+                                        && !(c.implementsInterface(OutboundService.class))
+                                        && !(c.implementsInterface(QueryClient.class))
+                                        && !(c.implementsInterface(Repository.class)))
+                            .map(r -> (Class<? extends ServiceKind>) r.loadClass())
                             .toList()
                     );
 
                 } catch (Throwable t) {
                     log.error("Scanning bounded context package '{}' failed!", pack);
                 }
-            }else{
+            } else {
                 log.error("Bounded context package is no valid package name'{}'!", pack);
             }
         }
     }
 
     /**
-     * Determines whether the given name is a valid full qualified package name.
+     * @return whether the given name is a valid full qualified package name.
      */
     private static boolean isValidPackage(final String packageName) {
         return packagePattern.matcher(packageName).matches();
     }
 
     /**
-     * Returns list of scanned {@link Enum} classes.
+     * @return list of scanned {@link Enum} classes.
      */
     public List<Class<? extends Enum<?>>> getScannedEnums() {
         return enums;
     }
 
     /**
-     * Returns list of scanned {@link Identity} classes.
+     * @return list of scanned {@link Identity} classes.
      */
     public List<Class<? extends Identity<?>>> getScannedIdentities() {
         return identities;
     }
 
     /**
-     * Returns list of scanned {@link ValueObject} classes.
+     * @return list of scanned {@link ValueObject} classes.
      */
     public List<Class<? extends ValueObject>> getScannedValueObjects() {
         return valueObjects;
     }
 
     /**
-     * Returns the list of scanned {@link Entity} classes
+     * @return the list of scanned {@link Entity} classes
      */
     public List<Class<? extends Entity<?>>> getScannedEntities() {
         return entities;
     }
 
     /**
-     * Returns the list of scanned {@link AggregateRoot} classes
+     * @return the list of scanned {@link AggregateRoot} classes
      */
     public List<Class<? extends AggregateRoot<?>>> getScannedAggregateRoots() {
         return aggregateRoots;
     }
 
     /**
-     * Returns the list of scanned {@link DomainEvent} classes
+     * @return the list of scanned {@link DomainEvent} classes
      */
     public List<Class<? extends DomainEvent>> getScannedDomainEvents() {
         return domainEvents;
     }
 
     /**
-     * Returns the list of scanned {@link DomainService} classes
+     * @return the list of scanned {@link DomainService} classes
      */
     public List<Class<? extends DomainService>> getScannedDomainServices() {
         return domainServices;
     }
 
     /**
-     * Returns the list of scanned {@link ApplicationService} classes
+     * @return the list of scanned {@link ApplicationService} classes
      */
     public List<Class<? extends ApplicationService>> getScannedApplicationServices() {
         return applicationServices;
     }
 
     /**
-     * Returns the list of scanned {@link Repository} classes
+     * @return the list of scanned {@link Repository} classes
      */
     public List<Class<? extends Repository<?, ?>>> getScannedRepositories() {
         return repositories;
     }
 
     /**
-     * Returns the list of scanned {@link DomainCommand} classes
+     * @return the list of scanned {@link DomainCommand} classes
      */
     public List<Class<? extends DomainCommand>> getScannedDomainCommands() {
         return domainCommands;
     }
 
     /**
-     * Returns the list of scanned {@link ReadModel} classes
+     * @return the list of scanned {@link ReadModel} classes
      */
     public List<Class<? extends ReadModel>> getScannedReadModels() {
         return readModels;
     }
 
     /**
-     * Returns the list of scanned {@link QueryClient} classes
+     * @return the list of scanned {@link QueryClient} classes
      */
     public List<Class<? extends QueryClient<?>>> getScannedQueryClients() {
         return queryClients;
     }
 
     /**
-     * Returns the list of scanned {@link OutboundService} classes
+     * @return the list of scanned {@link OutboundService} classes
      */
     public List<Class<? extends OutboundService>> getScannedOutboundServices() {
         return outboundServices;
+    }
+
+    /**
+     * @return the list of scanned {@link ServiceKind} classes
+     */
+    public List<Class<? extends ServiceKind>> getScannedServiceKinds() {
+        return serviceKinds;
     }
 }

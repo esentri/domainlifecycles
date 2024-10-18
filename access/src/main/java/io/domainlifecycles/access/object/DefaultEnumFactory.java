@@ -34,7 +34,7 @@ import io.domainlifecycles.access.classes.ClassProvider;
  *
  * @author Mario Herb
  */
-public class DefaultEnumFactory implements EnumFactory{
+public class DefaultEnumFactory implements EnumFactory {
 
     private final ClassProvider classProvider;
 

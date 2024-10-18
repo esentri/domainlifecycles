@@ -53,9 +53,11 @@ import java.util.Optional;
 
 public class HierarchicalAggregateRootBackrefRepository extends PersistenceActionPublishingRepository<TestRootHierarchicalBackrefId, TestRootHierarchicalBackref, UpdatableRecord<?>> {
 
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(HierarchicalAggregateRootBackrefRepository.class);
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(
+        HierarchicalAggregateRootBackrefRepository.class);
     private final DSLContext dslContext;
-    private final SimpleAggregateFetcher<Long, TestRootHierarchicalBackref, TestRootHierarchicalBackrefId, UpdatableRecord<?>> simpleAggregateFetcher;
+    private final SimpleAggregateFetcher<Long, TestRootHierarchicalBackref, TestRootHierarchicalBackrefId,
+        UpdatableRecord<?>> simpleAggregateFetcher;
     private final JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
 
     public HierarchicalAggregateRootBackrefRepository(DSLContext dslContext,
@@ -70,7 +72,8 @@ public class HierarchicalAggregateRootBackrefRepository extends PersistenceActio
         this.simpleAggregateFetcher = provideFetcher();
     }
 
-    private SimpleAggregateFetcher<Long, TestRootHierarchicalBackref, TestRootHierarchicalBackrefId, UpdatableRecord<?>> provideFetcher() {
+    private SimpleAggregateFetcher<Long, TestRootHierarchicalBackref, TestRootHierarchicalBackrefId, UpdatableRecord<
+        ?>> provideFetcher() {
         return new SimpleAggregateFetcher<>() {
             @Override
             public AggregateFetcher<TestRootHierarchicalBackref, TestRootHierarchicalBackrefId, UpdatableRecord<?>> withRecordProvider(
@@ -83,12 +86,14 @@ public class HierarchicalAggregateRootBackrefRepository extends PersistenceActio
             }
 
             @Override
-            public TestRootHierarchicalBackref fetchBasicByIdValue(Long aLong, SimpleFetcherContext<UpdatableRecord<?>> fetcherContext) {
+            public TestRootHierarchicalBackref fetchBasicByIdValue(Long aLong,
+                                                                   SimpleFetcherContext<UpdatableRecord<?>> fetcherContext) {
                 return findByIdCustom(aLong);
             }
 
             @Override
-            public TestRootHierarchicalBackref fetchBasicByRecord(UpdatableRecord<?> aggregateRecord, SimpleFetcherContext<UpdatableRecord<?>> fetcherContext) {
+            public TestRootHierarchicalBackref fetchBasicByRecord(UpdatableRecord<?> aggregateRecord,
+                                                                  SimpleFetcherContext<UpdatableRecord<?>> fetcherContext) {
                 throw new IllegalStateException("Not implemented!");
             }
 
@@ -97,22 +102,27 @@ public class HierarchicalAggregateRootBackrefRepository extends PersistenceActio
 
     public TestRootHierarchicalBackref findByIdCustom(Long testRootHierarchicalBackrefId) {
         Optional<TestRootHierarchicalBackrefRecord> testRootHierarchicalRecordOptional = dslContext
-            .fetchOptional(Tables.TEST_ROOT_HIERARCHICAL_BACKREF, Tables.TEST_ROOT_HIERARCHICAL_BACKREF.ID.eq(testRootHierarchicalBackrefId));
+            .fetchOptional(Tables.TEST_ROOT_HIERARCHICAL_BACKREF,
+                Tables.TEST_ROOT_HIERARCHICAL_BACKREF.ID.eq(testRootHierarchicalBackrefId));
 
         if (testRootHierarchicalRecordOptional.isPresent()) {
 
             DomainObjectBuilder<TestRootHierarchicalBackref> b = testRootHierarchicalRecordOptional
-                .map(r -> ((RecordMapper<TestRootHierarchicalBackrefRecord, TestRootHierarchicalBackref, TestRootHierarchicalBackref>)
-                    jooqDomainPersistenceProvider
-                        .persistenceMirror
-                        .getEntityRecordMapper(TestRootHierarchicalBackref.class.getName()))
-                    .recordToDomainObjectBuilder(r)).get();
+                .map(
+                    r -> ((RecordMapper<TestRootHierarchicalBackrefRecord, TestRootHierarchicalBackref,
+                        TestRootHierarchicalBackref>)
+                        jooqDomainPersistenceProvider
+                            .persistenceMirror
+                            .getEntityRecordMapper(TestRootHierarchicalBackref.class.getName()))
+                        .recordToDomainObjectBuilder(r)).get();
 
             Optional<TestRootHierarchicalBackrefRecord> testRootHierarchicalChildRecordOptional = dslContext
-                .fetchOptional(Tables.TEST_ROOT_HIERARCHICAL_BACKREF, Tables.TEST_ROOT_HIERARCHICAL_BACKREF.PARENT_ID.eq(testRootHierarchicalBackrefId));
+                .fetchOptional(Tables.TEST_ROOT_HIERARCHICAL_BACKREF,
+                    Tables.TEST_ROOT_HIERARCHICAL_BACKREF.PARENT_ID.eq(testRootHierarchicalBackrefId));
 
             if (testRootHierarchicalChildRecordOptional.isPresent()) {
-                TestRootHierarchicalBackref child = findByIdCustom(testRootHierarchicalChildRecordOptional.get().getId());
+                TestRootHierarchicalBackref child = findByIdCustom(
+                    testRootHierarchicalChildRecordOptional.get().getId());
                 b.setFieldValue(child, "child");
             }
 

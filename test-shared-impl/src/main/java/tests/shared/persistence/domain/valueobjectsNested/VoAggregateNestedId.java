@@ -29,4 +29,5 @@ package tests.shared.persistence.domain.valueobjectsNested;
 
 import io.domainlifecycles.domain.types.Identity;
 
-public record VoAggregateNestedId(Long value) implements Identity<Long> {}
+public record VoAggregateNestedId(Long value) implements Identity<Long> {
+}

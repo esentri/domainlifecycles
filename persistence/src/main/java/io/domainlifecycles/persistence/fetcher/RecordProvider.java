@@ -34,21 +34,20 @@ import java.util.Collection;
  * AggregateFetcher by using custom user defined queries.
  * The query can be issued outside the fetcher,
  * then the resulting records are provided to the fetcher by a record provider.
- *
+ * <p>
  * A "child" record or a collection of "child" records is to be returned. To be
  * able to define a query the parent record is given. The parent record's values
  * could be used as query parameters.
  *
  * @param <CHILD_RECORD_TYPE>
  * @param <PARENT_RECORD_TYPE>
- *
  * @author Mario Herb
  */
 public interface RecordProvider<CHILD_RECORD_TYPE, PARENT_RECORD_TYPE> {
 
     /**
      * Implement this method to provide a single child record for.
-     *
+     * <p>
      * Instead of issuing a query to fetch record, a fetcher using this record provider
      * will use this record.
      *
@@ -56,12 +55,14 @@ public interface RecordProvider<CHILD_RECORD_TYPE, PARENT_RECORD_TYPE> {
      * @return The "child" record for the parent record
      */
     default CHILD_RECORD_TYPE provide(PARENT_RECORD_TYPE parentRecord) {
-        throw new UnsupportedOperationException("This EntityRecordProvider should deliver a single record for its assigned property. It's currently not implemented.");
+        throw new UnsupportedOperationException(
+            "This EntityRecordProvider should deliver a single record for its assigned property. It's currently not " +
+                "implemented.");
     }
 
     /**
      * Implement this method to provide a collection of child records
-     *
+     * <p>
      * Instead of issuing a query to fetch a collection of records, a fetcher using this record provider
      * will use this collection of records.
      *
@@ -69,7 +70,9 @@ public interface RecordProvider<CHILD_RECORD_TYPE, PARENT_RECORD_TYPE> {
      * @return The collection of "child" records for the parent record
      */
     default Collection<CHILD_RECORD_TYPE> provideCollection(PARENT_RECORD_TYPE parentRecord) {
-        throw new UnsupportedOperationException("This EntityRecordProvider should deliver a collection of records for its assigned property. It's currently not implemented.");
+        throw new UnsupportedOperationException(
+            "This EntityRecordProvider should deliver a collection of records for its assigned property. It's " +
+                "currently not implemented.");
     }
 
 }

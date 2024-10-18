@@ -45,7 +45,7 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
-public class OutboundServiceModel extends DomainTypeModel implements OutboundServiceMirror {
+public class OutboundServiceModel extends ServiceKindModel implements OutboundServiceMirror {
 
     @JsonProperty
     private final List<String> outboundServiceInterfaceTypeNames;
@@ -62,33 +62,6 @@ public class OutboundServiceModel extends DomainTypeModel implements OutboundSer
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
         this.outboundServiceInterfaceTypeNames = Collections.unmodifiableList(outboundServiceInterfaceTypeNames);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean processes(DomainCommandMirror command) {
-        return methods.stream()
-            .anyMatch(m -> m.processes(command));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean publishes(DomainEventMirror domainEvent) {
-        return methods.stream()
-            .anyMatch(m -> m.publishes(domainEvent));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean listensTo(DomainEventMirror domainEvent) {
-        return methods.stream()
-            .anyMatch(m -> m.listensTo(domainEvent));
     }
 
     /**
