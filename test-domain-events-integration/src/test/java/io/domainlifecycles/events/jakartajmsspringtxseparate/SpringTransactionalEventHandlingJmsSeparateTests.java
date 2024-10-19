@@ -121,7 +121,6 @@ public class SpringTransactionalEventHandlingJmsSeparateTests {
 
     @Test
     @DirtiesContext
-
     public void testIntegrationRollback() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
