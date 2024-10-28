@@ -1,4 +1,5 @@
 plugins {
+    id 'org.jreleaser' version '1.14.0'
     id 'net.researchgate.release' version '3.0.2'
 }
 
@@ -50,7 +51,7 @@ ext {
     classGraphVersion = '4.8.163'
     openAPIVersion = '1.8.0'
     openAPIVersion2 = '2.4.0'
-    jacksonVersion = '2.17.0'
+    jacksonVersion = '2.17.2'
     javaxValidationApiVersion = '2.0.1.Final'
     jakartaValidationApiVersion = '3.0.2'
     jakartaTransactionApiVersion = '2.0.1'
@@ -127,87 +128,6 @@ allprojects {
         }
     }
 
-    plugins.withId('signing') {
-        if (!repositories.mavenLocal()) {
-            signing {
-                def signingKey = findProperty("signingKey")
-                def signingPassword = findProperty("signingPassword")
-                useInMemoryPgpKeys(signingKey, signingPassword)
-                sign publishing.publications
-            }
-        }
-    }
-
-    plugins.withId('maven-publish') {
-        publishing {
-
-            publications {
-                mavenJava(MavenPublication) {
-                    groupId = dlcGroup
-                    version = dlcVersion
-                    from components.java
-                    pom {
-                        name = 'Domain Lifecycles'
-                        description = 'A Java library for building DDD applications'
-
-                        licenses {
-                            license {
-                                name = 'The Apache License, Version 2.0'
-                                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                            }
-                        }
-                        developers {
-                            developer {
-                                id = 'mherb'
-                                name = 'Mario Herb'
-                                email = 'mario.herb@esentri.com'
-                                organization = 'esentri AG'
-                                organizationUrl = 'https://www.esentri.com'
-                            }
-                            developer {
-                                id = 'dgaller'
-                                name = 'Dominik Galler'
-                                email = 'dominik.galler@esentri.com'
-                                organization = 'esentri AG'
-                                organizationUrl = 'https://www.esentri.com'
-                            }
-                        }
-                        scm {
-                            connection = 'scm:git@github.com:esentri/domainlifecycles.git'
-                            url = 'https://github.com/esentri/domainlifecycles/'
-                        }
-                    }
-                    if (!repositories.mavenLocal()) {
-                        artifact(sourcesJar) {
-                            classifier = 'sources'
-                        }
-                        artifact(javadocJar) {
-                            classifier = 'javadoc'
-                        }
-                    }
-                    versionMapping {
-                        usage('java-api') {
-                            fromResolutionOf('runtimeClasspath')
-                        }
-                        usage('java-runtime') {
-                            fromResolutionResult()
-                        }
-                    }
-                }
-            }
-
-            repositories {
-                maven {
-                    name = 'sonatype'
-                    def releasesRepoUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
-                    def snapshotsRepoUrl = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
-                    url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-                    credentials(PasswordCredentials)
-                }
-            }
-        }
-    }
-
     plugins.withId('checkstyle') {
         checkstyle {
             toolVersion = '10.12.4'
@@ -234,11 +154,40 @@ allprojects {
 tasks.release.dependsOn('applyLicenses')
 
 // ----------------------------------------------------------
+//  RELEASE TO MAVEN CENTRAL
+// ----------------------------------------------------------
+
+jreleaser {
+    project {
+        java.groupId = 'io'
+        version = versionProps.getProperty("version")
+    }
+    environment {
+        properties.put('jreleaser.mavencentral.stage', 'upload')
+    }
+    signing {
+        active = 'ALWAYS'
+        armored = true
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                sonatype {
+                    active = 'ALWAYS'
+                    url = 'https://central.sonatype.com/api/v1/publisher'
+                    stagingRepository('target/staging-deploy')
+                }
+            }
+        }
+    }
+}
+
+// ----------------------------------------------------------
 //  GRADLE.WRAPPER
 // ----------------------------------------------------------
 
 wrapper {
-    gradleVersion = '8.1.1'
+    gradleVersion = '8.10.1'
     distributionType = 'ALL'
 }
 
