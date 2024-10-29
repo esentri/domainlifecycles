@@ -1,13 +1,6 @@
 plugins {
     id 'org.jreleaser' version '1.13.1'
-    id 'maven-publish'
-    id 'java-library'
     id 'net.researchgate.release' version '3.0.2'
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
 }
 
 def versionProps = new Properties()
@@ -146,6 +139,61 @@ allprojects {
             include '**/*.java'
         }
     }
+
+    plugins.withId('maven-publish') {
+
+        afterEvaluate {
+            publishing {
+                publications {
+                    mavenJava(MavenPublication) {
+                        groupId = dlcGroup
+                        version = dlcVersion
+
+                        from components.java
+
+                        pom {
+                            name = 'Domain Lifecycles'
+                            description = 'A Java library for building DDD applications'
+                            url = 'https://www.esentri.com'
+
+                            licenses {
+                                license {
+                                    name = 'The Apache License, Version 2.0'
+                                    url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                                }
+                            }
+                            developers {
+                                developer {
+                                    id = 'mherb'
+                                    name = 'Mario Herb'
+                                    email = 'mario.herb@esentri.com'
+                                    organization = 'esentri AG'
+                                    organizationUrl = 'https://www.esentri.com'
+                                }
+                                developer {
+                                    id = 'dgaller'
+                                    name = 'Dominik Galler'
+                                    email = 'dominik.galler@esentri.com'
+                                    organization = 'esentri AG'
+                                    organizationUrl = 'https://www.esentri.com'
+                                }
+                            }
+                            scm {
+                                connection = 'scm:git@github.com:esentri/domainlifecycles.git'
+                                url = 'https://github.com/esentri/domainlifecycles/'
+                            }
+                        }
+                    }
+                }
+
+                repositories {
+                    maven {
+                        url = '../build/staging-deploy'
+                    }
+                }
+            }
+        }
+    }
 }
 
 tasks.release.dependsOn('applyLicenses')
@@ -153,56 +201,6 @@ tasks.release.dependsOn('applyLicenses')
 // ----------------------------------------------------------
 //  RELEASE TO MAVEN CENTRAL
 // ----------------------------------------------------------
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId = dlcGroup
-            version = dlcVersion
-
-            from components.java
-
-            pom {
-                name = 'Domain Lifecycles'
-                description = 'A Java library for building DDD applications'
-                url = 'https://www.esentri.com'
-
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'mherb'
-                        name = 'Mario Herb'
-                        email = 'mario.herb@esentri.com'
-                        organization = 'esentri AG'
-                        organizationUrl = 'https://www.esentri.com'
-                    }
-                    developer {
-                        id = 'dgaller'
-                        name = 'Dominik Galler'
-                        email = 'dominik.galler@esentri.com'
-                        organization = 'esentri AG'
-                        organizationUrl = 'https://www.esentri.com'
-                    }
-                }
-                scm {
-                    connection = 'scm:git@github.com:esentri/domainlifecycles.git'
-                    url = 'https://github.com/esentri/domainlifecycles/'
-                }
-            }
-        }
-    }
-
-    repositories {
-        maven {
-            url = layout.buildDirectory.dir('staging-deploy')
-        }
-    }
-}
 
 jreleaser {
     project {
