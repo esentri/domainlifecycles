@@ -12,5 +12,5 @@
               files=".*Test.java"/>
     <supress checks="JavadocMethod"
              files=".*Test.java"/>
-	<suppress checks="[a-zA-Z0-9]*" files=".*[\\/]src[\\/]test[\\/].*" />
+	<suppress files="[/\\]src[/\\].*[Tt]est[/\\](java|groovy)[/\\]" checks="." />
 </suppressions>

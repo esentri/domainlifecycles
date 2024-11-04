@@ -40,7 +40,9 @@ import io.domainlifecycles.events.activemq.domain.CounterDomainEvent;
 import io.domainlifecycles.events.activemq.domain.TransactionalCounterService;
 import io.domainlifecycles.events.activemq.domain.UnreceivedDomainEvent;
 import io.domainlifecycles.events.api.DomainEvents;
+import org.apache.activemq.broker.BrokerService;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,6 +51,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import java.util.Arrays;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -78,6 +82,15 @@ public class GruelboxEventHandlingActiveMqTests {
 
     @Autowired
     private TransactionalCounterService transactionalCounterService;
+
+    @Autowired
+    private BrokerService brokerService;
+
+    @BeforeEach
+    public void checkInit(){
+        Arrays.stream(brokerService.getDestinations()).filter(d -> d.isTopic())
+            .flatMap(d -> Arrays.stream(d.getCompositeDestinations())).forEach(cd -> System.out.println("CD:"+cd.getQualifiedName()));
+    }
 
     @Test
     @DirtiesContext
