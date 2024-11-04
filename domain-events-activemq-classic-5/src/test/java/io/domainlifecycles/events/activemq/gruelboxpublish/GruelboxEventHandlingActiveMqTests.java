@@ -88,6 +88,7 @@ public class GruelboxEventHandlingActiveMqTests {
 
     @BeforeEach
     public void checkInit() throws Exception {
+        await().pollDelay(5, SECONDS).until(()-> true);
         Arrays.stream(brokerService.getBroker().getDestinations()).forEach(cd -> System.out.println("CD:"+cd.getQualifiedName()));
     }
 
