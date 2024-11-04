@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import java.util.Collection;
 
 
 public abstract class AbstractSpringTransactionalDomainEventPublisher extends AbstractTransactionalDomainEventPublisher {

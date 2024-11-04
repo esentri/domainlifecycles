@@ -40,6 +40,7 @@ import io.domainlifecycles.events.jakarta.jms.consume.JakartaJmsDomainEventConsu
 import io.domainlifecycles.events.jakarta.jms.publish.JakartaJmsDomainEventPublisher;
 import io.domainlifecycles.events.mq.api.AbstractGruelboxProxyMqChannelFactory;
 import io.domainlifecycles.events.mq.consume.MqDomainEventConsumer;
+import io.domainlifecycles.events.mq.consume.TransactionalIdempotencyAwareHandlerExecutorProxy;
 import io.domainlifecycles.events.mq.publish.MqDomainEventPublisher;
 import io.domainlifecycles.services.api.ServiceProvider;
 import jakarta.jms.ConnectionFactory;
@@ -86,6 +87,32 @@ public class GruelboxProxyJakartaJmsChannelFactory extends AbstractGruelboxProxy
     /**
      * Initializes a GruelboxProxyJakartaJmsChannelFactory with the provided dependencies.
      *
+     * @param serviceProvider The ServiceProvider instance for providing various types of services.
+     * @param classProvider The ClassProvider instance for providing Class instances for full qualified class names.
+     * @param handlerExecutor The HandlerExecutor instance for handling domain event listeners.
+     * @param objectMapper The ObjectMapper instance used for serialization/deserialization.
+     * @param transactionOutbox The TransactionOutbox instance for managing transactional outbox messages.
+     * @param domainEventsInstantiator The DomainEventsInstantiator instance for instantiating a domain event sender.
+     * @param connectionFactory The ConnectionFactory instance for creating JMS connections.
+     * @param idempotencyAwareHandlerExecutorProxy The IdempotencyAwareHandlerExecutorProxy used to protect against Domain Event duplicates
+     */
+    public GruelboxProxyJakartaJmsChannelFactory(
+        ServiceProvider serviceProvider,
+        ClassProvider classProvider,
+        HandlerExecutor handlerExecutor,
+        ObjectMapper objectMapper,
+        TransactionOutbox transactionOutbox,
+        DomainEventsInstantiator domainEventsInstantiator,
+        ConnectionFactory connectionFactory,
+        TransactionalIdempotencyAwareHandlerExecutorProxy idempotencyAwareHandlerExecutorProxy
+    ) {
+        super(serviceProvider, classProvider, handlerExecutor, objectMapper, transactionOutbox, domainEventsInstantiator, idempotencyAwareHandlerExecutorProxy);
+        this.connectionFactory = Objects.requireNonNull(connectionFactory, "A ConnectionFactory is required!");
+    }
+
+    /**
+     * Initializes a GruelboxProxyJakartaJmsChannelFactory with the provided dependencies.
+     *
      * @param serviceProvider The ServiceProvider instance for providing various types of services
      * @param classProvider The ClassProvider instance for providing Class instances for full qualified class names
      * @param handlerExecutor The HandlerExecutor instance for handling domain event listeners
@@ -108,6 +135,37 @@ public class GruelboxProxyJakartaJmsChannelFactory extends AbstractGruelboxProxy
             ConnectionFactory connectionFactory
     ) {
         super(serviceProvider, classProvider, handlerExecutor, objectMapper, transactionOutbox, domainEventsInstantiator, pollerConfiguration, publishingSchedulerConfiguration);
+        this.connectionFactory = Objects.requireNonNull(connectionFactory, "A ConnectionFactory is required!");
+    }
+
+    /**
+     * Initializes a GruelboxProxyJakartaJmsChannelFactory with the provided dependencies.
+     *
+     * @param serviceProvider The ServiceProvider instance for providing various types of services
+     * @param classProvider The ClassProvider instance for providing Class instances for full qualified class names
+     * @param handlerExecutor The HandlerExecutor instance for handling domain event listeners
+     * @param objectMapper The ObjectMapper instance used for serialization/deserialization
+     * @param transactionOutbox The TransactionOutbox instance for managing transactional outbox messages
+     * @param domainEventsInstantiator The DomainEventsInstantiator instance for instantiating a domain event sender
+     * @param pollerConfiguration The PollerConfiguration for polling configuration on the outbox
+     * @param publishingSchedulerConfiguration The PublishingSchedulerConfiguration for scheduling publishing tasks
+     * @param connectionFactory The ConnectionFactory instance for creating JMS connections
+     * @param idempotencyAwareHandlerExecutorProxy The IdempotencyAwareHandlerExecutorProxy used to protect against Domain Event duplicates
+     *
+     */
+    public GruelboxProxyJakartaJmsChannelFactory(
+        ServiceProvider serviceProvider,
+        ClassProvider classProvider,
+        HandlerExecutor handlerExecutor,
+        ObjectMapper objectMapper,
+        TransactionOutbox transactionOutbox,
+        DomainEventsInstantiator domainEventsInstantiator,
+        PollerConfiguration pollerConfiguration,
+        PublishingSchedulerConfiguration publishingSchedulerConfiguration,
+        ConnectionFactory connectionFactory,
+        TransactionalIdempotencyAwareHandlerExecutorProxy idempotencyAwareHandlerExecutorProxy
+    ) {
+        super(serviceProvider, classProvider, handlerExecutor, objectMapper, transactionOutbox, domainEventsInstantiator, pollerConfiguration, publishingSchedulerConfiguration, idempotencyAwareHandlerExecutorProxy);
         this.connectionFactory = Objects.requireNonNull(connectionFactory, "A ConnectionFactory is required!");
     }
 

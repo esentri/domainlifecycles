@@ -45,7 +45,7 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public final class IdempotencyAwareHandlerExecutorProxy implements HandlerExecutor {
+public class IdempotencyAwareHandlerExecutorProxy implements HandlerExecutor {
 
     private static final Logger log = LoggerFactory.getLogger(IdempotencyAwareHandlerExecutorProxy.class);
 
@@ -70,14 +70,23 @@ public final class IdempotencyAwareHandlerExecutorProxy implements HandlerExecut
             log.debug("No idempotency configuration detected for {}", executionContext);
             return handlerExecutorDelegate.execute(executionContext);
         }
+        return schedule(executionContext, config.get());
+    }
+
+    protected boolean schedule(ExecutionContext executionContext,
+                               IdempotencyConfigurationEntry config){
         log.debug("Idempotency configuration detected for {}", executionContext);
         var scheduleBuilder = outbox.with();
         if(idempotencyConfiguration.isIdempotencyOrderedByDomainEventType()){
             scheduleBuilder.ordered(executionContext.domainEvent().getClass().getName());
         }
         try {
+
             scheduleBuilder.delayForAtLeast(idempotencyConfiguration.getIdempotencySchedulingDelay())
-                .uniqueRequestId(config.get().idempotencyFunction().uniqueIdentifier(executionContext.domainEvent()))
+                .uniqueRequestId(
+                    config.idempotencyFunction().uniqueIdentifier(executionContext.domainEvent()) +
+                        "-" + config.handlerClass().getName() +
+                        "-" + config.methodName())
                 .schedule(IdempotentExecutor.class)
                 .execute(
                     new IdempotentExecutionContext(
@@ -89,6 +98,7 @@ public final class IdempotencyAwareHandlerExecutorProxy implements HandlerExecut
         }catch (Throwable t){
             if(t.getCause() instanceof InvocationTargetException ite){
                 log.info("Idempotent scheduling failed! {}",ite.getTargetException().getMessage(), t);
+                return false;
             }else{
                 log.error("Unknown scheduling error!", t);
                 throw t;
@@ -114,5 +124,7 @@ public final class IdempotencyAwareHandlerExecutorProxy implements HandlerExecut
     private Optional<IdempotencyConfigurationEntry> idempotencyProtectionConfiguration(ExecutionContext executionContext){
         return idempotencyConfiguration.idempotencyProtectionConfiguration(executionContext);
     }
+
+
 
 }

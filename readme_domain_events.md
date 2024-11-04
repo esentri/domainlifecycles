@@ -54,8 +54,7 @@ public final class Order extends AggregateRootBase<Order.OrderId> {
 }
 ```
 
-DLC DomainEvents also provides options to customize or enhance to technical event publishing mechanisms hidden behind
-this simple interface, see [Configuration](#Configuration).
+DLC DomainEvents also provides options to customize or enhance to technical event publishing mechanisms, see [Configuration](#Configuration).
 
 Additionally, DLC provides the option to add metadata annotations on methods that publish DomainEvents (``@Publishes``, see io.domainlifecycles.domain.types.Publishes). 
 Those annotations have no functional impact, but they currently make it more transparent to developers, where DomainEvents are published. The ``@Publishes`` metadata 
@@ -96,7 +95,9 @@ public class CustomerNotificationDriver implements Driver {
 To route DomainEvents directly to an Aggregate instance, the DomainEvent must implement a special interface ```io.domainlifecycles.domain.types.AggregateDomainEvent```.
 The interface requires the implementor to provide the ``targetId`` of the target AggregateRoot. In this case fetching the AggregateRoot instance by the specified targetId 
 from it's corresponding Repository and calling the event handler method directly on the AggregateRoot instance is done directly by the DLC framework in the background.
-The complete described operation is done in a separate transaction. This case requires a transactional setup of DLC DomainEvents!
+The complete described operation is done in a separate transaction and the Aggregate instance is finally updated using its repository. 
+
+This case requires a transactional setup of DLC DomainEvents!
 
 Example of an AggregateDomainEvent:
 ```Java
@@ -134,9 +135,9 @@ But it's also possible to override some of the interfaces to add customized publ
 
 The configuration of the technical messaging infrastructure typically is done by creating an instance of the ``io.domainlifecycles.events.api.ChannelFactory``class. 
 The Channel Factory provides methods for creating Channels (see below [Channels](#Channels))
-Domain Events of different types could processed on different channels. 
-On the publishing side an implementation of ``io.domainlifecycles.events.api.PublishingRouter`` decides, which Domain Event is published on which Channel.
-The default implementation ``io.domainlifecycles.events.api.DomainEventTypeBasedRouter`` decides this based ión the published Domain Event type.
+Domain Events of different types could be processed by different channels. 
+On the publishing side an implementation of ``io.domainlifecycles.events.api.PublishingRouter`` decides, which Domain Event is published to which Channel.
+The default implementation ``io.domainlifecycles.events.api.DomainEventTypeBasedRouter`` decides this based on the published Domain Event type.
 
 A typical configuration might look like this (Spring based example):
 ```Java
@@ -146,7 +147,7 @@ A typical configuration might look like this (Spring based example):
         //The channel created by this factory publishes Domain Events bound to Spring transactions on the publisher side.
         //Domain Events are published before commit only if the transaction is ready to commit (not if it fails before)
         //Domain Events are provided in memory to the listeners (in this case no external event bus is used)
-        var channel = new SpringTxInMemoryChannelFactory(platformTransactionManager, serviceProvider, 5, false).processingChannel("c1");
+        var channel = new SpringTxInMemoryChannelFactory(platformTransactionManager, serviceProvider, false).processingChannel("c1");
 
         var router = new DomainEventTypeBasedRouter(List.of(channel));
         //The channel named 'c1' is the default channel. All Domain Events in the application are processed by this routing configuration
@@ -162,23 +163,23 @@ a ``io.domainlifecycles.services.ServiceProvider`` must be provided
 #### Channels
 
 A ChannelFactory can typically create 3 types of channels:
-- <b>PublishingOnlyChannel</b>: Domain Events processed via that channel are typically routed to an external message bus, 
+- <b>PublishingOnlyChannel</b>: Domain Events processed by that type of channel are typically routed to an external message bus, 
   where another application (another deployment unit) consumes these Domain Events from
 - <b>ConsumingOnlyChannel</b>: This is a channel configuration which only takes care of consuming of externally 
   provided Domain Events
 - <b>ProcessingChannel</b>: A processing channel handles the publishing and consuming of Domain Events processed within
-  the application (deployment unit) 
+  the same application (deployment unit) 
 
 It is possible to define multiple different channels, which use a different technical messaging infrastructure.
 For example, we could have a situation where some of the Domain Events are processed within the same application 
-(so called internal Domain Events) and others, that are especially targeted to inform
-another application or specific microservice (external Domain Events). 
-To have a reliable handling of the internal Domain Events, one might decide to use the transactional outbox 
-implementation provided by Gruelbox.
-For the publishing of externally handled Domain Events, one might define a dedicated channel publishing those events 
+(so-called internal Domain Events) and others, that are especially targeted to inform
+another application or for example a specific microservice (so-called external Domain Events). 
+To have a reliable handling of internal Domain Events, one might decide to use the transactional outbox 
+implementation provided by [Gruelbox](https://github.com/gruelbox/transaction-outbox).
+To publish externally handled Domain Events, one might define a dedicated channel processing those events 
 using a JMS compliant message broker.
 
-An example for this type of configuration might look like that:
+An example above described event processing is configured like that:
 ```Java
 
     // We need a DomainEventsInstantiator for the outbox
@@ -313,7 +314,7 @@ Example setup:
 <a name="transactional-without-outbox"></a>
 ###### Transactional setup without a transactional outbox
 In this case DomainEvents are published "after commit". So "ghost messages" are avoided. Ghost messages are DomainEvents, 
-that are published but the transaction of the operation that issued the DomainEvent might still be rolled back. 
+that are published, but the transaction of the operation that issued the DomainEvent might still be rolled back. 
 The loss of DomainEvents using this implementation are rare cases but technically possible. This setup routes 
 DomainEvents directly to consuming handlers. The consuming handlers are executed asynchronously in separate transactions.
 Processing failures in the handlers are reported via log (SLF4J). No automatic retry is in place.
@@ -325,7 +326,6 @@ Example setup with Spring transactions:
     var channel = new SpringTxInMemoryChannelFactory(
         platformTransactionManager, 
         services,
-        5,
         true
         )
         .processingChannel("c1");
@@ -342,7 +342,6 @@ Example setup with JTA provided transactions:
     var channel = new JtaInMemoryChannelFactory(
         userTransactionManager, 
         services,
-        5,
         true
         )
         .processingChannel("c1");
@@ -355,7 +354,7 @@ Example setup with JTA provided transactions:
 ###### Transactional setup with a transactional outbox
 Adding a transactional outbox avoids DomainEvent loss as well as ghost events on the publishing side. 
 The setup involves an "outbox" database table, but it's a reliable way of not loosing any DomainEvents 
-and comes into play if a relational database is involved as a part of the main technical infrastructure.
+and comes into play, if a relational database is involved as a part of the main technical infrastructure.
 The main disadvantage of that setup is a reduced throughput in high volume scenarios due to the database involvement. 
 
 For more information on the "transactional outbox pattern" have a look at [Transactional Outbox Pattern](https://microservices.io/patterns/data/transactional-outbox.html)
@@ -436,7 +435,7 @@ The setup is done by configuring the ``com.gruelbox.transactionoutbox.Transactio
 the ``io.domainlifecycles.events.gruelbox.api.GruelboxChannelFactory``. Finally, the channel routing configuration is done like the common
 DLC Domain Events configuration.
 
-A Spring based example:
+A Spring based example using Gruelbox as messaging infrastructure:
 ```Java
     // We need a DomainEventsInstantiator for the outbox
     // It is needed for creating service instances when processing outbox DomainEvents
@@ -452,7 +451,7 @@ A Spring based example:
         return new SpringTransactionalHandlerExecutor(platformTransactionManager);
     }
     
-    //Here we can configure the outbox with all the options, that Gruelbox provides
+    //Here we can configure the outbox
     @Bean
     public TransactionOutbox transactionOutbox(
         SpringTransactionManager springTransactionManager,
@@ -502,11 +501,89 @@ A Spring based example:
 
 ```
 
+Here's another Spring based example of using Gruelbox in combination with idempotency protection.
+```Java
+@Configuration
+@Import({SpringTransactionManager.class})
+@Slf4j
+public class GruelboxIntegrationIdempotencyConfig {
+
+    //Here we can configure the outbox 
+    @Bean
+    public TransactionOutbox transactionOutbox(
+        SpringTransactionManager springTransactionManager,
+        ObjectMapper objectMapper,
+        DomainEventsInstantiator domainEventsInstantiator
+    ) {
+        return TransactionOutbox.builder()
+            .instantiator(domainEventsInstantiator)
+            .transactionManager(springTransactionManager)
+            .blockAfterAttempts(3)
+            .persistor(DefaultPersistor.builder()
+                           .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
+                           .dialect(Dialect.H2)
+                           .build())
+            .build();
+    }
+
+    //Create a ProcessingChannel named 'c1'
+    @Bean
+    public ProcessingChannel gruelboxChannel(
+        ServiceProvider serviceProvider,
+        TransactionOutbox transactionOutbox,
+        TransactionalHandlerExecutor transactionalHandlerExecutor,
+        DomainEventsInstantiator domainEventsInstantiator,
+        IdempotencyConfiguration idempotencyConfiguration
+    ){
+        return new GruelboxChannelFactory(
+            serviceProvider,
+            transactionOutbox,
+            transactionalHandlerExecutor,
+            domainEventsInstantiator,
+            idempotencyConfiguration
+        ).processingChannel("c1");
+    }
+
+    //Route all Domain Events of the application to the default channel 'c1'
+    @Bean
+    public ChannelRoutingConfiguration channelConfiguration(List<PublishingChannel> publishingChannels){
+        var router = new DomainEventTypeBasedRouter(publishingChannels);
+        router.defineDefaultChannel("c1");
+        return new ChannelRoutingConfiguration(router);
+    }
+
+    // We need a DomainEventsInstantiator for the outbox
+    // It is needed for creating service instances when processing outbox DomainEvents
+    @Bean
+    public DomainEventsInstantiator domainEventsInstantiator(){
+        return new DomainEventsInstantiator();
+    }
+
+    // A TransactionalHandlerExecutor is used to wrap all listener executions in independent 
+    // transactions
+    @Bean
+    public TransactionalHandlerExecutor transactionalHandlerExecutor(PlatformTransactionManager platformTransactionManager){
+        return new SpringTransactionalHandlerExecutor(platformTransactionManager);
+    }
+    
+    //The idempotency protection defines which listener operation should be protected, 
+    // to avoid event duplicates being processed multiple times
+    @Bean
+    public IdempotencyConfiguration idempotencyConfiguration(){
+        var config = new IdempotencyConfiguration();
+        config.addConfigurationEntry(new IdempotencyConfigurationEntry(IdemProtectedListener.class, "handle", IdemProtectedDomainEvent.class, (e)-> ((IdemProtectedDomainEvent)e).id()));
+        return config;
+    }
+
+}
+```
+
+
 <a name="transactional-message-broker"></a>
 ###### Transactional setup using an external message broker
 
 In some cases we want to publish Domain Events to an external message broker. DLC supports 
-ActiveMq Classic 5 (which is not fully Jakarta JMS compliant) as well as Jakarta JMS 3.0 message brokers.
+ActiveMq Classic 5 (which is not fully Jakarta JMS compliant, but supported by AWS MQ) as well as Jakarta JMS 3.0 message brokers.
 
 In both cases a transactional setup and a non-transactional setup ist supported. The transactional setup
 is recommended. Domain Events in this case are published just before or after the database transaction commits.
@@ -515,11 +592,11 @@ ghost events or lost events in any case, you can use a transactional outbox prox
 
 With external message brokers Domain Events get published to topics. Each Domain Event type is published to a separate topic. 
 On the consumer side, multiple instances of the same kind of handlers might form a consumer group. The Domain Events on a topic 
-are shared between all handlers of the same consumer group (we have a loadbalancing effect). Different kinds of handlers are 
+are shared between all handlers of the same consumer group (loadbalancing). Different kinds of handlers are 
 guaranteed to receive a 'copy' of each Domain Event instance of the corresponding topic. With Active MQ 5 Classic, we use the [Virtual Topic feature](https://activemq.apache.org/components/classic/documentation/virtual-destinations) to
 achieve this behaviour. With Jakarta JMS 3.0 or above we use so-called [shared subscriptions](https://jakarta.ee/learn/docs/jakartaee-tutorial/current/messaging/jms-concepts/jms-concepts.html).
 
-Currently the transactional setup with external message brokers relies on Spring transactions.
+Currently, the transactional setup with external message brokers relies on Spring transactions.
 
 Example setup of Active Mq 5 classic in a transactional setup:
 ```Java
@@ -611,6 +688,7 @@ Example setup of a Jakarta JMS broker in a transactional setup:
     }
 
     // Declaring the channel
+    // registering a close listener for a correct tear down behaviour
     @Bean(destroyMethod = "close")
     public AbstractMqProcessingChannel channel(SpringtransactionJakartaJmsChannelFactory factory){
         return factory.processingChannel("jmsChannel");
@@ -632,8 +710,8 @@ Example setup of a Jakarta JMS broker in a transactional setup:
 As described above using a message broker even in a transactional setup does not avoid ghost events or lost 
 events in all cases. A solution for these kind of problems is to use a transactional outbox a proxy before 
 publishing the events to an external message queue. With the outbox as a proxy, consumers are not polling the outbox, 
-a dedicated outbox delivery service is reading those messages from the outbox table and sending them out to the broker. 
-This technique is not as performant as going directly to the broker, regarding processing speed and scalability, but it it
+a dedicated outbox delivery service is reading those messages from the outbox table and sending them to the broker. 
+This technique is not as performant as going directly to the broker regarding processing speed and scalability, but it is
 a good tradeoff for the sake of application consistency.
 
 Here's an example configuration for a Gruelbox based outbox proxy with a JMS broker behind the outbox:
@@ -701,6 +779,7 @@ Here's an example configuration for a Gruelbox based outbox proxy with a JMS bro
     }
 
     // Declaring the channel
+    // registering a close listener for a correct tear down behaviour
     @Bean(destroyMethod = "close")
     public AbstractMqProcessingChannel channel(GruelboxProxyJakartaJmsChannelFactory factory){
         return factory.processingChannel("gruelboxJmsChannel");
@@ -713,6 +792,7 @@ Here's an example configuration for a Gruelbox based outbox proxy with a JMS bro
         router.defineDefaultChannel("gruelboxJmsChannel");
         return new ChannelRoutingConfiguration(router);
     }
+    
 ```
 
 The Gruelbox supports also some kind of idempotency protection. Idempotency protection for Domain Events prevents
@@ -725,7 +805,126 @@ was processed once or multiple times.
 Whenever we have situations, where we have no naturally idempotent behaviour, we can use the Gruelbox to
 enforce idempotency on specific handlers. 
 
-Here's an example configuration:
+Here's an example configuration, with idempotency protection applied:
 ```Java
-TODO
+@Configuration
+@Slf4j
+@EnableJms
+@Import({SpringTransactionManager.class})
+public class JakartaJmsGruelboxIdempotencyConfig {
+
+    //The idempotency protection defines which listener operation should be protected, 
+    // to avoid event duplicates being processed multiple times
+    @Bean
+    @DependsOn("initializedDomain")
+    public IdempotencyConfiguration idempotencyConfiguration() {
+        var idempotency = new IdempotencyConfiguration();
+        idempotency
+                .addConfigurationEntry(
+                        new IdempotencyConfigurationEntry(
+                                ADomainService.class,
+                                "onDomainEvent",
+                                ADomainEvent.class,
+                                (e) -> ((ADomainEvent) e).message()
+                        )
+                );
+        return idempotency;
+    }
+
+    // Needed for wiring the outbox with the MQ domain event publisher
+    @Bean
+    public DomainEventsInstantiator domainEventsInstantiator() {
+        return new DomainEventsInstantiator();
+    }
+
+    // the outbox 
+    @Bean
+    public TransactionOutbox transactionOutbox(
+            SpringTransactionManager springTransactionManager,
+            ObjectMapper objectMapper,
+            DomainEventsInstantiator domainEventsInstantiator
+    ) {
+        return TransactionOutbox.builder()
+                .instantiator(domainEventsInstantiator)
+                .transactionManager(springTransactionManager)
+                .blockAfterAttempts(3)
+                .persistor(DefaultPersistor.builder()
+                        .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
+                        .dialect(Dialect.H2)
+                        .build())
+                .build();
+    }
+
+    //plugging in idempotency protection for configured consumers
+    @Bean
+    public SpringTransactionalIdempotencyAwareHandlerExecutorProxy springTransactionalIdempotencyAwareHandlerExecutorProxy(
+            TransactionalHandlerExecutor transactionalHandlerExecutor,
+            IdempotencyConfiguration idempotencyConfiguration,
+            TransactionOutbox transactionOutbox,
+            PlatformTransactionManager platformTransactionManager
+
+
+    ) {
+        return new SpringTransactionalIdempotencyAwareHandlerExecutorProxy(
+                transactionalHandlerExecutor,
+                idempotencyConfiguration,
+                transactionOutbox,
+                platformTransactionManager
+        );
+
+    }
+
+    // The channel factory providing Jakarta JMS based channels with a Gruelbox based outbox ensuring
+    // correct transactional sending behaviour. The outbox in this case also is used to protect against event duplicates
+    // causing problem is non-idempotent consumers
+    @Bean
+    public GruelboxProxyJakartaJmsChannelFactory gruelboxProxyActiveMqChannelFactory(
+            ServiceProvider serviceProvider,
+            ClassProvider classProvider,
+            TransactionalHandlerExecutor transactionalHandlerExecutor,
+            ConnectionFactory jmsConnectionFactory,
+            ObjectMapper objectMapper,
+            TransactionOutbox transactionOutbox,
+            DomainEventsInstantiator domainEventsInstantiator,
+            SpringTransactionalIdempotencyAwareHandlerExecutorProxy springTransactionalIdempotencyAwareHandlerExecutorProxy
+    ) {
+        return new GruelboxProxyJakartaJmsChannelFactory(
+                serviceProvider,
+                classProvider,
+                transactionalHandlerExecutor,
+                objectMapper,
+                transactionOutbox,
+                domainEventsInstantiator,
+                jmsConnectionFactory,
+                springTransactionalIdempotencyAwareHandlerExecutorProxy
+        );
+    }
+
+    // registering a close listener for a correct tear down behaviour
+    @Bean(destroyMethod = "close")
+    public AbstractMqProcessingChannel channel(GruelboxProxyJakartaJmsChannelFactory factory) {
+        return factory.processingChannel("defaultChannel");
+    }
+
+    // Routing all Domain Events to the outbox and from there to the JMS broker
+    @Bean
+    public ChannelRoutingConfiguration channelConfiguration(List<PublishingChannel> publishingChannels) {
+        var router = new DomainEventTypeBasedRouter(publishingChannels);
+        router.defineDefaultChannel("defaultChannel");
+        return new ChannelRoutingConfiguration(router);
+    }
+
+    // A TransactionalHandlerExecutor is used to wrap all listener executions in independent 
+    // transactions
+    @Bean
+    public TransactionalHandlerExecutor transactionalHandlerExecutor(PlatformTransactionManager platformTransactionManager) {
+        return new SpringTransactionalHandlerExecutor(platformTransactionManager);
+    }
+
+    // Our channel factory requires a Class Provider
+    @Bean
+    public ClassProvider classProvider() {
+        return new DefaultClassProvider();
+    }
+}
 ```

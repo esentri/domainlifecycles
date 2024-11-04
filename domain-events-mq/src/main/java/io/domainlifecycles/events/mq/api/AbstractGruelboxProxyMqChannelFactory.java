@@ -30,11 +30,20 @@ package io.domainlifecycles.events.mq.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import io.domainlifecycles.access.classes.ClassProvider;
+import io.domainlifecycles.events.consume.execution.detector.MirrorBasedExecutionContextDetector;
 import io.domainlifecycles.events.consume.execution.handler.HandlerExecutor;
+import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
+import io.domainlifecycles.events.consume.execution.processor.SimpleExecutionContextProcessor;
+import io.domainlifecycles.events.exception.DLCEventsException;
 import io.domainlifecycles.events.gruelbox.api.DomainEventsInstantiator;
 import io.domainlifecycles.events.gruelbox.api.PollerConfiguration;
 import io.domainlifecycles.events.gruelbox.api.PublishingSchedulerConfiguration;
+import io.domainlifecycles.events.gruelbox.idempotent.IdempotentExecutor;
+import io.domainlifecycles.events.gruelbox.poll.GruelboxPoller;
+import io.domainlifecycles.events.mq.consume.TransactionalIdempotencyAwareHandlerExecutorProxy;
 import io.domainlifecycles.services.api.ServiceProvider;
+
+import java.util.Objects;
 
 /**
  * Represents an abstract class for creating Message Queue (MQ) channels that are proxied by a TransactionalOutbox (Gruelbox).
@@ -47,8 +56,10 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
 
     private final TransactionOutbox transactionOutbox;
     private final PollerConfiguration pollerConfiguration;
+    private final GruelboxPoller poller;
     private final PublishingSchedulerConfiguration publishingSchedulerConfiguration;
     private final DomainEventsInstantiator domainEventsInstantiator;
+    private final TransactionalIdempotencyAwareHandlerExecutorProxy transactionalIdempotencyAwareHandlerExecutorProxy;
 
     /**
      * Constructs a new AbstractGruelboxProxyMqChannelFactory with the provided parameters.
@@ -72,7 +83,38 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
         this.transactionOutbox = transactionOutbox;
         this.domainEventsInstantiator = domainEventsInstantiator;
         this.pollerConfiguration = new PollerConfiguration();
+        this.poller = new GruelboxPoller(transactionOutbox, pollerConfiguration);
         this.publishingSchedulerConfiguration = new PublishingSchedulerConfiguration();
+        this.transactionalIdempotencyAwareHandlerExecutorProxy = null;
+    }
+
+    /**
+     * Constructs a new AbstractGruelboxProxyMqChannelFactory with the provided parameters.
+     *
+     * @param serviceProvider The service provider for retrieving instances of various services.
+     * @param classProvider The provider of Class instances based on full qualified class names.
+     * @param handlerExecutor The executor for handling domain event listeners.
+     * @param objectMapper The object mapper for serialization and deserialization.
+     * @param transactionOutbox The transaction outbox for managing message transactions when sending Domain Events.
+     * @param domainEventsInstantiator The instantiator used in the outbox sending process.
+     * @param idempotencyAwareHandlerExecutorProxy The handler executor proxy needed for idempotency handling
+     */
+    public AbstractGruelboxProxyMqChannelFactory(
+        ServiceProvider serviceProvider,
+        ClassProvider classProvider,
+        HandlerExecutor handlerExecutor,
+        ObjectMapper objectMapper,
+        TransactionOutbox transactionOutbox,
+        DomainEventsInstantiator domainEventsInstantiator,
+        TransactionalIdempotencyAwareHandlerExecutorProxy idempotencyAwareHandlerExecutorProxy
+    ) {
+        super(serviceProvider, classProvider, handlerExecutor, objectMapper);
+        this.transactionOutbox = transactionOutbox;
+        this.domainEventsInstantiator = domainEventsInstantiator;
+        this.pollerConfiguration = new PollerConfiguration();
+        this.poller = new GruelboxPoller(transactionOutbox, pollerConfiguration);
+        this.publishingSchedulerConfiguration = new PublishingSchedulerConfiguration();
+        this.transactionalIdempotencyAwareHandlerExecutorProxy = idempotencyAwareHandlerExecutorProxy;
     }
 
     /**
@@ -100,12 +142,46 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
         this.transactionOutbox = transactionOutbox;
         this.domainEventsInstantiator = domainEventsInstantiator;
         this.pollerConfiguration = pollerConfiguration;
+        this.poller = new GruelboxPoller(transactionOutbox, pollerConfiguration);
         this.publishingSchedulerConfiguration = publishingSchedulerConfiguration;
+        this.transactionalIdempotencyAwareHandlerExecutorProxy = null;
     }
 
     /**
      * Constructs a new AbstractGruelboxProxyMqChannelFactory with the provided parameters.
-     * This constructor is only sufficient for consume only channels
+     *
+     * @param serviceProvider The service provider for retrieving instances of various services.
+     * @param classProvider The provider of Class instances based on full qualified class names.
+     * @param handlerExecutor The executor for handling domain event listeners.
+     * @param objectMapper The object mapper for serialization and deserialization.
+     * @param transactionOutbox The transaction outbox for managing message transactions when sending Domain Events.
+     * @param domainEventsInstantiator The instantiator used in the outbox sending process.
+     * @param pollerConfiguration The configuration for a polling mechanism on the outbox.
+     * @param publishingSchedulerConfiguration The configuration for a publishing scheduler regarding the outbox send process.
+     * @param idempotencyAwareHandlerExecutorProxy The handler executor proxy needed for idempotency handling
+     */
+    public AbstractGruelboxProxyMqChannelFactory(
+        ServiceProvider serviceProvider,
+        ClassProvider classProvider,
+        HandlerExecutor handlerExecutor,
+        ObjectMapper objectMapper,
+        TransactionOutbox transactionOutbox,
+        DomainEventsInstantiator domainEventsInstantiator,
+        PollerConfiguration pollerConfiguration,
+        PublishingSchedulerConfiguration publishingSchedulerConfiguration,
+        TransactionalIdempotencyAwareHandlerExecutorProxy idempotencyAwareHandlerExecutorProxy) {
+        super(serviceProvider, classProvider, handlerExecutor, objectMapper);
+        this.transactionOutbox = transactionOutbox;
+        this.domainEventsInstantiator = domainEventsInstantiator;
+        this.pollerConfiguration = pollerConfiguration;
+        this.poller = new GruelboxPoller(transactionOutbox, pollerConfiguration);
+        this.publishingSchedulerConfiguration = publishingSchedulerConfiguration;
+        this.transactionalIdempotencyAwareHandlerExecutorProxy = idempotencyAwareHandlerExecutorProxy;
+    }
+
+    /**
+     * Constructs a new AbstractGruelboxProxyMqChannelFactory with the provided parameters.
+     * This constructor is only sufficient for consume only channels without deduplication/idempotency protection.
      *
      * @param serviceProvider The service provider for retrieving instances of various services.
      * @param classProvider The provider of Class instances based on full qualified class names.
@@ -121,7 +197,9 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
         this.transactionOutbox = null;
         this.domainEventsInstantiator = null;
         this.pollerConfiguration = null;
+        this.poller = null;
         this.publishingSchedulerConfiguration = null;
+        this.transactionalIdempotencyAwareHandlerExecutorProxy = null;
     }
 
     /**
@@ -140,7 +218,9 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
         this.transactionOutbox = transactionOutbox;
         this.domainEventsInstantiator = domainEventsInstantiator;
         this.pollerConfiguration = new PollerConfiguration();
+        this.poller = new GruelboxPoller(transactionOutbox, pollerConfiguration);
         this.publishingSchedulerConfiguration = new PublishingSchedulerConfiguration();
+        this.transactionalIdempotencyAwareHandlerExecutorProxy = null;
     }
 
     /**
@@ -161,7 +241,9 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
         this.transactionOutbox = transactionOutbox;
         this.domainEventsInstantiator = domainEventsInstantiator;
         this.pollerConfiguration = pollerConfiguration;
+        this.poller = new GruelboxPoller(transactionOutbox, pollerConfiguration);
         this.publishingSchedulerConfiguration = publishingSchedulerConfiguration;
+        this.transactionalIdempotencyAwareHandlerExecutorProxy = null;
     }
 
     /**
@@ -185,15 +267,64 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
      *
      * @return A new instance of AbstractGruelboxProxyMqPublishingConfiguration with necessary configurations.
      */
+    @Override
     protected AbstractGruelboxProxyMqPublishingConfiguration publishingConfiguration(){
         return new AbstractGruelboxProxyMqPublishingConfiguration(
             provideMqDomainEventPublisher(super.objectMapper),
             this.transactionOutbox,
-            this.pollerConfiguration,
+            this.poller,
             this.publishingSchedulerConfiguration,
             this.domainEventsInstantiator
         );
     }
+
+    @Override
+    protected AbstractGruelboxProxyMqConsumingConfiguration consumingConfiguration(){
+        if(this.transactionalIdempotencyAwareHandlerExecutorProxy != null){
+            if(!(this.handlerExecutor instanceof TransactionalHandlerExecutor)){
+                throw DLCEventsException.fail("A TransactionalHandlerExecutor is required for idempotency protection!");
+            }
+            return idempotentConsumingConfiguration((TransactionalHandlerExecutor) this.handlerExecutor, this.transactionalIdempotencyAwareHandlerExecutorProxy);
+        }else{
+            return consumingConfiguration(this.handlerExecutor);
+        }
+    }
+
+    /**
+     * Creates a AbstractGruelboxProxyMqConsumingConfiguration with the given parameters.
+     *
+     * @return A new AbstractGruelboxProxyMqConsumingConfiguration instance configured with the provided HandlerExecutor.
+     */
+    AbstractGruelboxProxyMqConsumingConfiguration consumingConfiguration(HandlerExecutor handlerExecutor){
+        Objects.requireNonNull(serviceProvider, "A ServiceProvider is required!");
+        var executionContextDetector = new MirrorBasedExecutionContextDetector(serviceProvider);
+        var executionContextProcessor = new SimpleExecutionContextProcessor(Objects.requireNonNull(handlerExecutor,"A HandlerExecutor is required!"));
+        return new AbstractGruelboxProxyMqConsumingConfiguration(
+            provideMqDomainEventConsumer(
+                this.objectMapper,
+                executionContextDetector,
+                executionContextProcessor,
+                Objects.requireNonNull(this.classProvider, "A ClassProvider is required!")
+            ),
+            handlerExecutor
+        );
+    }
+
+    /**
+     * Configures a GruelboxConsumingConfiguration with the provided IdempotencyConfiguration
+     * and TransactionalHandlerExecutor.
+     *
+
+     * @return A AbstractGruelboxProxyMqConsumingConfiguration instance configured with the specified parameters.
+     */
+    AbstractGruelboxProxyMqConsumingConfiguration idempotentConsumingConfiguration(TransactionalHandlerExecutor transactionalHandlerExecutor, TransactionalIdempotencyAwareHandlerExecutorProxy idempotencyAwareHandlerExecutorProxy){
+        Objects.requireNonNull(domainEventsInstantiator, "A DomainEventsInstantiator is required for idempotency protection!");
+        domainEventsInstantiator.registerIdempotentExecutor(new IdempotentExecutor(serviceProvider, transactionalHandlerExecutor));
+        return consumingConfiguration(idempotencyAwareHandlerExecutorProxy);
+    }
+
+
+
 
 
 }

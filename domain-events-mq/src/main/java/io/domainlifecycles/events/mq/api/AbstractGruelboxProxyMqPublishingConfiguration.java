@@ -51,7 +51,6 @@ import java.util.Objects;
 public class AbstractGruelboxProxyMqPublishingConfiguration extends AbstractMqPublishingConfiguration {
 
     private final TransactionOutbox transactionOutbox;
-    private final PollerConfiguration pollerConfiguration;
     private final GruelboxPoller poller;
     private final PublishingSchedulerConfiguration publishingSchedulerConfiguration;
     private final GruelboxDomainEventPublisher gruelboxDomainEventPublisher;
@@ -63,20 +62,20 @@ public class AbstractGruelboxProxyMqPublishingConfiguration extends AbstractMqPu
      *
      * @param mqDomainEventPublisher The publisher for domain events using a message queue.
      * @param transactionOutbox The transaction outbox used for publishing domain events.
-     * @param pollerConfiguration The configuration for the Poller controlling polling operations on the outbox.
+     * @param poller The Poller controlling polling operations on the outbox.
      * @param publishingSchedulerConfiguration The configuration for the publishing scheduler.
      * @param domainEventsInstantiator The instantiator for domain events.
      */
     AbstractGruelboxProxyMqPublishingConfiguration(MqDomainEventPublisher mqDomainEventPublisher,
                                                    TransactionOutbox transactionOutbox,
-                                                   PollerConfiguration pollerConfiguration,
+                                                   GruelboxPoller poller,
                                                    PublishingSchedulerConfiguration publishingSchedulerConfiguration,
                                                    DomainEventsInstantiator domainEventsInstantiator) {
         super(mqDomainEventPublisher);
         this.transactionOutbox = Objects.requireNonNull(transactionOutbox, "We need a TransactionOutbox for our AbstractGruelboxProxyMqPublishingConfiguration!");
-        this.pollerConfiguration = Objects.requireNonNull(pollerConfiguration, "We need a PollerConfiguration for our AbstractGruelboxProxyMqPublishingConfiguration!");
+        this.poller = Objects.requireNonNull(poller, "We need a GruelboxPoller for our AbstractGruelboxProxyMqPublishingConfiguration!");
         this.domainEventsInstantiator = Objects.requireNonNull(domainEventsInstantiator, "A DomainEventsInstantiator is required!");
-        this.poller = new GruelboxPoller(transactionOutbox, pollerConfiguration);
+
         this.publishingSchedulerConfiguration = Objects.requireNonNull(publishingSchedulerConfiguration, "We need a TransactionOutbox for our AbstractGruelboxProxyMqPublishingConfiguration!");
         this.gruelboxDomainEventPublisher = new GruelboxDomainEventPublisher(transactionOutbox, publishingSchedulerConfiguration);
         this.dispatcher = new MqGruelboxDomainEventDispatcher(Objects.requireNonNull(mqDomainEventPublisher, "A MqDomainEventPublisher is required!"));
@@ -98,15 +97,6 @@ public class AbstractGruelboxProxyMqPublishingConfiguration extends AbstractMqPu
      */
     public TransactionOutbox getTransactionOutbox() {
         return transactionOutbox;
-    }
-
-    /**
-     * Retrieves the PollerConfiguration associated with this object.
-     *
-     * @return The PollerConfiguration object representing the configuration for the Poller.
-     */
-    public PollerConfiguration getPollerConfiguration() {
-        return pollerConfiguration;
     }
 
     /**
