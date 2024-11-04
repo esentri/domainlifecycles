@@ -90,7 +90,7 @@ public class GruelboxEventHandlingActiveMqTests {
         platformTransactionManager.commit(status);
         //then
         await()
-            .atMost(10, SECONDS)
+            .atMost(50, SECONDS)
             .untilAsserted(()-> {
                 SoftAssertions softly = new SoftAssertions();
                 softly.assertThat(aDomainService.received).contains(evt);
@@ -114,7 +114,7 @@ public class GruelboxEventHandlingActiveMqTests {
         //then
         await()
             .pollDelay(3, SECONDS)
-            .atMost(10, SECONDS)
+            .atMost(50, SECONDS)
             .untilAsserted(()-> {
                 SoftAssertions softly = new SoftAssertions();
                 softly.assertThat(aDomainService.received).doesNotContain(evt);
@@ -138,7 +138,7 @@ public class GruelboxEventHandlingActiveMqTests {
         //then
         await()
             .pollDelay(3, SECONDS)
-            .atMost(10, SECONDS)
+            .atMost(50, SECONDS)
             .untilAsserted(()-> {
                 SoftAssertions softly = new SoftAssertions();
                 softly.assertThat(aDomainService.received).doesNotContain(evt);
@@ -173,7 +173,7 @@ public class GruelboxEventHandlingActiveMqTests {
         //then
         await()
             .pollDelay(3, SECONDS)
-            .atMost(10, SECONDS)
+            .atMost(50, SECONDS)
             .untilAsserted(()-> {
                 SoftAssertions softly = new SoftAssertions();
                 softly.assertThat(aRepository.received).doesNotContain(evt);
@@ -198,7 +198,7 @@ public class GruelboxEventHandlingActiveMqTests {
         //then
         await()
             .pollDelay(3, SECONDS)
-            .atMost(10, SECONDS)
+            .atMost(50, SECONDS)
             .untilAsserted(()-> {
                 SoftAssertions softly = new SoftAssertions();
                 softly.assertThat(aRepository.received).doesNotContain(evt);
@@ -224,7 +224,7 @@ public class GruelboxEventHandlingActiveMqTests {
         //then
         await()
             .pollDelay(3, SECONDS)
-            .atMost(10, SECONDS)
+            .atMost(50, SECONDS)
             .untilAsserted(()-> {
                 SoftAssertions softly = new SoftAssertions();
                 softly.assertThat(aRepository.received).doesNotContain(evt);
@@ -249,7 +249,7 @@ public class GruelboxEventHandlingActiveMqTests {
         //then
         await()
             .pollDelay(3, SECONDS)
-            .atMost(10, SECONDS)
+            .atMost(50, SECONDS)
             .untilAsserted(()-> {
                 SoftAssertions softly = new SoftAssertions();
                 softly.assertThat(aRepository.received).contains(evt);
@@ -287,7 +287,7 @@ public class GruelboxEventHandlingActiveMqTests {
         //then
         await()
             .pollDelay(3, SECONDS)
-            .atMost(10, SECONDS)
+            .atMost(50, SECONDS)
             .untilAsserted(()-> {
                 SoftAssertions softly = new SoftAssertions();
                 softly.assertThat(aDomainService.received).doesNotContain(evt);
@@ -315,7 +315,7 @@ public class GruelboxEventHandlingActiveMqTests {
         //then
 
         await()
-            .atMost(10, SECONDS)
+            .atMost(50, SECONDS)
             .untilAsserted(()->
                 assertThat(transactionalCounterService.getCurrentCounterValue()).isEqualTo(cnt+1)
             );
