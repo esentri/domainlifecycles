@@ -61,11 +61,11 @@ ext {
     lombokVersion = '1.18.30'
     logbackClassicVersion = '1.5.3'
     typeResolverVersion = '1.0.3'
-    quiltmcLicenserVersion = '2.0.1'
+    gradleLicenserVersion = '1.1.0'
     nuStuderJooqVersion = '7.1.1'
     releasePluginVersion = '3.0.2'
     flywayVersion = '9.22.1'
-    jaredsburrowsLicenseVersion = '0.9.3'
+    jaredsburrowsLicenseVersion = '0.9.8'
 }
 
 allprojects {
@@ -129,12 +129,11 @@ allprojects {
         }
     }
 
-    plugins.withId('org.quiltmc.gradle.licenser') {
+    plugins.withId('dev.yumi.gradle.licenser') {
         license {
-            checkLicenseMain.enabled(false)
-            checkLicenseTest.enabled(false)
+            checkLicenses.enabled(false)
             // Add a license header rule, at least one must be present.
-            rule file("./copyright/HEADER")
+            rule(file("./copyright/HEADER"))
             // Apply license header ONLY to Java files
             include '**/*.java'
         }

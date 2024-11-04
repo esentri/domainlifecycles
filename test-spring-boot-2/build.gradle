@@ -6,7 +6,7 @@ plugins {
     id 'org.flywaydb.flyway' version "${flywayVersion}"
     // Plugin that integrates the jOOQ code generation tool.
     id 'nu.studer.jooq' version "${nuStuderJooqVersion}"
-    id 'org.quiltmc.gradle.licenser' version "${quiltmcLicenserVersion}"
+    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
     id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
 }
 
