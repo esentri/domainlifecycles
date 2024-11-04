@@ -1,4 +1,5 @@
 plugins {
+    id 'java-library'
     id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
     id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
 }
