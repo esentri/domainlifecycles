@@ -87,9 +87,8 @@ public class GruelboxEventHandlingActiveMqTests {
     private BrokerService brokerService;
 
     @BeforeEach
-    public void checkInit(){
-        Arrays.stream(brokerService.getDestinations()).filter(d -> d.isTopic())
-            .flatMap(d -> Arrays.stream(d.getCompositeDestinations())).forEach(cd -> System.out.println("CD:"+cd.getQualifiedName()));
+    public void checkInit() throws Exception {
+        Arrays.stream(brokerService.getBroker().getDestinations()).forEach(cd -> System.out.println("CD:"+cd.getQualifiedName()));
     }
 
     @Test
