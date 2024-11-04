@@ -81,13 +81,15 @@ public class ActiveMqClassicTransactionalConfig {
         ActiveMQConnectionFactory jmsConnectionFactory,
         ObjectMapper objectMapper
     ){
-        return new SpringTransactionalActiveMqChannelFactory(
+        var factory = new SpringTransactionalActiveMqChannelFactory(
             jmsConnectionFactory,
             serviceProvider,
             classProvider,
             transactionalHandlerExecutor,
             objectMapper
         );
+        factory.setReceiveTimeoutMs(500);
+        return factory;
     }
 
     @Bean(destroyMethod = "close")
