@@ -56,7 +56,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
 @SpringBootTest(classes = TestApplicationActiveMqGruelbox.class)
-@DirtiesContext
 public class GruelboxEventHandlingActiveMqTests {
 
     @Autowired
@@ -81,6 +80,7 @@ public class GruelboxEventHandlingActiveMqTests {
     private TransactionalCounterService transactionalCounterService;
 
     @Test
+    @DirtiesContext
     public void testIntegrationCommit() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
@@ -103,6 +103,7 @@ public class GruelboxEventHandlingActiveMqTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationUnreceivedCommit() throws Exception{
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
@@ -126,6 +127,7 @@ public class GruelboxEventHandlingActiveMqTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationRollback() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
@@ -150,6 +152,7 @@ public class GruelboxEventHandlingActiveMqTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationNoTransaction() {
         //when
         var evt = new ADomainEvent("TestNoTrans");
@@ -160,6 +163,7 @@ public class GruelboxEventHandlingActiveMqTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationAggregateDomainEventCommit() {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
@@ -184,6 +188,7 @@ public class GruelboxEventHandlingActiveMqTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationAggregateDomainEventRollback() throws Exception{
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
@@ -209,6 +214,7 @@ public class GruelboxEventHandlingActiveMqTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationAggregateDomainEventRollbackExceptionOnHandler() {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
@@ -233,6 +239,7 @@ public class GruelboxEventHandlingActiveMqTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationDomainServiceExceptionRollback() throws Exception{
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
@@ -257,6 +264,7 @@ public class GruelboxEventHandlingActiveMqTests {
     }
 
     @Test
+    @DirtiesContext
     public void testExceptionBeforeCommit(){
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
@@ -292,6 +300,7 @@ public class GruelboxEventHandlingActiveMqTests {
     }
 
     @Test
+    @DirtiesContext
     public void testTransactionalBehaviourWithCounterService() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         var cnt = transactionalCounterService.getCurrentCounterValue();
