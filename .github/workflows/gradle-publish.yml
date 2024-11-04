@@ -69,20 +69,16 @@ jobs:
           body: ${{ steps.split.outputs._1 }}
           draft: false
           prerelease: false
-
       - name: Stage Gradle Repo locally
         run: ./gradlew publish
       - name: Deploy Staged Gradle Repo to Maven Central
         run: ./gradlew jreleaserDeploy
         env:
-          JRELEASER_MAVENCENTRAL_STAGE: "UPLOAD"
-          JRELEASER_MAVENCENTRAL_NAMESPACE: "io.domainlifecycles"
+          JRELEASER_MAVENCENTRAL_STAGE: ${{ vars.JRELEASER_MAVENCENTRAL_STAGE }}
+          JRELEASER_MAVENCENTRAL_NAMESPACE: ${{ vars.JRELEASER_MAVENCENTRAL_NAMESPACE }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          JRELEASER_MAVENCENTRAL_USERNAME: ""
-          JRELEASER_MAVENCENTRAL_TOKEN: ""
-          JRELEASER_GPG_PASSPHRASE: ""
-          JRELEASER_GPG_PUBLIC_KEY: ""
-          JRELEASER_GPG_SECRET_KEY: ""
-
-    
-          
+          JRELEASER_MAVENCENTRAL_USERNAME: ${{ secrets.JRELEASER_MAVENCENTRAL_USERNAME }}
+          JRELEASER_MAVENCENTRAL_TOKEN: ${{ secrets.JRELEASER_MAVENCENTRAL_TOKEN }}
+          JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
+          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
