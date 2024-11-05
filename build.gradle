@@ -209,9 +209,6 @@ jreleaser {
         description = 'A Java library for building DDD applications'
         copyright = 'The Apache License, Version 2.0'
     }
-    environment {
-        properties.put('jreleaser.mavencentral.stage', 'upload')
-    }
     signing {
         active = 'ALWAYS'
         armored = true
