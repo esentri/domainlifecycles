@@ -62,7 +62,7 @@ public class ActiveMqClassicJmsConfig {
     @Bean
     public BrokerService broker() throws Exception {
         BrokerService broker = new BrokerService();
-        broker.setPersistent(true);
+        broker.setPersistent(false);
         broker.setUseJmx(true);
         broker.addConnector("tcp://0.0.0.0:61111");
         return broker;
