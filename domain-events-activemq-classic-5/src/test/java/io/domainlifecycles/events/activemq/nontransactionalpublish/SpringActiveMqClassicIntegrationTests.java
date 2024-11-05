@@ -205,7 +205,6 @@ public class SpringActiveMqClassicIntegrationTests {
 
     @Test
     @DirtiesContext
-    @Disabled
     public void testIntegrationReceived() {
         //when
         var evt = new ADomainEvent("Test"+ UUID.randomUUID());
@@ -310,6 +309,7 @@ public class SpringActiveMqClassicIntegrationTests {
 
     @Test
     @DirtiesContext
+    @Disabled
     public void testIntegrationDomainServiceExceptionRollback() {
         //when
 
