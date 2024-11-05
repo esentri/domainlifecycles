@@ -53,6 +53,9 @@ public final class GruelboxPoller {
 
     /**
      * The GruelboxPoller class represents a poller that flushes the transaction outbox at a fixed rate.
+     *
+     * @param transactionOutbox the outbox being polled
+     * @param pollerConfiguration the configuration for this poller instance
      */
     public GruelboxPoller(TransactionOutbox transactionOutbox, PollerConfiguration pollerConfiguration) {
         this.transactionOutbox = Objects.requireNonNull(transactionOutbox, "A TransactionOutbox is required!");

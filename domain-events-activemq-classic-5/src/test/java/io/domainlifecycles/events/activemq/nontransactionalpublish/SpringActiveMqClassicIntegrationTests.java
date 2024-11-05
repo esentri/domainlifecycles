@@ -66,6 +66,7 @@ import static org.awaitility.Awaitility.await;
 
 @SpringBootTest(classes = TestApplicationSpringActiveMqClassicIntegration.class)
 @Slf4j
+@DirtiesContext
 public class SpringActiveMqClassicIntegrationTests {
 
     @Autowired
@@ -93,8 +94,6 @@ public class SpringActiveMqClassicIntegrationTests {
     private AbstractMqProcessingChannel activeMqChannel;
 
     @Test
-    @DirtiesContext
-    @Disabled
     public void testEvents() throws JMSException {
         //given
         MessageProducer producer = null;
@@ -204,7 +203,6 @@ public class SpringActiveMqClassicIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     public void testIntegrationReceived() {
         //when
         var evt = new ADomainEvent("Test"+ UUID.randomUUID());
@@ -212,7 +210,7 @@ public class SpringActiveMqClassicIntegrationTests {
         //then
         await()
             .pollDelay(3, SECONDS)
-            .atMost(20, SECONDS)
+            .atMost(10, SECONDS)
             .untilAsserted(()->
                 {
                     SoftAssertions softly = new SoftAssertions();
@@ -227,8 +225,6 @@ public class SpringActiveMqClassicIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
-    @Disabled
     public void testIntegrationUnreceived() {
 
         //when
@@ -237,7 +233,7 @@ public class SpringActiveMqClassicIntegrationTests {
         //then
         await()
             .pollDelay(3, SECONDS)
-            .atMost(20, SECONDS)
+            .atMost(10, SECONDS)
             .untilAsserted(()->
                 {
                     SoftAssertions softly = new SoftAssertions();
@@ -252,8 +248,6 @@ public class SpringActiveMqClassicIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
-    @Disabled
     public void testIntegrationAggregateDomainEvent() {
         //when
 
@@ -263,7 +257,7 @@ public class SpringActiveMqClassicIntegrationTests {
         //then
         await()
             .pollDelay(3, SECONDS)
-            .atMost(20, SECONDS)
+            .atMost(10, SECONDS)
             .untilAsserted(()->
             {
                 SoftAssertions softly = new SoftAssertions();
@@ -280,8 +274,6 @@ public class SpringActiveMqClassicIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
-    @Disabled
     public void testIntegrationAggregateDomainEventExceptionOnHandler() {
         //when
 
@@ -291,7 +283,7 @@ public class SpringActiveMqClassicIntegrationTests {
         //then
         await()
             .pollDelay(3, SECONDS)
-            .atMost(20, SECONDS)
+            .atMost(10, SECONDS)
             .untilAsserted(()->
             {
                 SoftAssertions softly = new SoftAssertions();
@@ -308,8 +300,6 @@ public class SpringActiveMqClassicIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
-    @Disabled
     public void testIntegrationDomainServiceExceptionRollback() {
         //when
 
@@ -319,7 +309,7 @@ public class SpringActiveMqClassicIntegrationTests {
         //then
         await()
             .pollDelay(3, SECONDS)
-            .atMost(20, SECONDS)
+            .atMost(10, SECONDS)
             .untilAsserted(()-> {
                 SoftAssertions softly = new SoftAssertions();
                 softly.assertThat(aRepository.received).contains(evt);
@@ -335,8 +325,6 @@ public class SpringActiveMqClassicIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
-    @Disabled
     public void testTransactionalBehaviourWithCounterService() {
 
         var cnt = transactionalCounterService.getCurrentCounterValue();
@@ -352,15 +340,13 @@ public class SpringActiveMqClassicIntegrationTests {
 
         await()
             .pollDelay(3, SECONDS)
-            .atMost(20, SECONDS)
+            .atMost(10, SECONDS)
             .untilAsserted(()->
                 assertThat(transactionalCounterService.getCurrentCounterValue()).isEqualTo(cnt+1)
             );
     }
 
     @Test
-    @DirtiesContext
-    @Disabled
     public void testIntegrationReceivedPauseResume() {
         //when
         activeMqChannel.getConsumingConfiguration().getMqDomainEventConsumer().pauseHandler(
@@ -370,7 +356,7 @@ public class SpringActiveMqClassicIntegrationTests {
         );
         await()
             .pollDelay(3, SECONDS)
-            .atMost(20, SECONDS)
+            .atMost(10, SECONDS)
             .untilAsserted(()-> {
                 assertThat(activeMqChannel.getConsumingConfiguration().getMqDomainEventConsumer().isHandlerPaused(
                     ADomainService.class.getName(),
@@ -383,7 +369,7 @@ public class SpringActiveMqClassicIntegrationTests {
         //then
         await()
             .pollDelay(3, SECONDS)
-            .atMost(20, SECONDS)
+            .atMost(10, SECONDS)
             .untilAsserted(()->
                 {
                     SoftAssertions softly = new SoftAssertions();
@@ -404,7 +390,7 @@ public class SpringActiveMqClassicIntegrationTests {
 
         await()
             .pollDelay(3, SECONDS)
-            .atMost(20, SECONDS)
+            .atMost(10, SECONDS)
             .untilAsserted(()-> assertThat(aDomainService.received).contains(evt));
     }
 

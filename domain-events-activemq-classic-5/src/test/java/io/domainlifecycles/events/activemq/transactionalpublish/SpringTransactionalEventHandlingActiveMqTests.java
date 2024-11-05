@@ -54,7 +54,6 @@ import static org.awaitility.Awaitility.await;
 
 @SpringBootTest(classes = TestApplicationActiveMqSpringTx.class)
 @DirtiesContext
-@Disabled
 public class SpringTransactionalEventHandlingActiveMqTests {
 
     @Autowired

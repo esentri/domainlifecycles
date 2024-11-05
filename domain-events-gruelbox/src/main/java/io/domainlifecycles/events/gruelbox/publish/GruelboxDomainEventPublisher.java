@@ -54,6 +54,9 @@ public final class GruelboxDomainEventPublisher implements DomainEventPublisher 
     /**
      * The {@code GruelboxDomainEventPublisher} class is responsible for publishing domain events to a transaction outbox.
      * The outbox schedules calls on a GruelboxDomainEventDispatcher, that dispatches the events later on when the outbox entries are processed.
+     *
+     * @param outbox the outbox receiving the events
+     * @param publishingSchedulerConfiguration the scheduler configuration for the scheduled processing calls
      */
     public GruelboxDomainEventPublisher(TransactionOutbox outbox,
                                         PublishingSchedulerConfiguration publishingSchedulerConfiguration) {

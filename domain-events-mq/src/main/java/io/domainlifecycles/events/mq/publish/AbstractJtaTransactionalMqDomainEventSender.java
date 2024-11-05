@@ -40,6 +40,8 @@ import java.util.Objects;
  *
  * This class is designed to work with a specific type of message queue represented by the generic type TOPIC.
  *
+ * @param <TOPIC> the type the topic,that events are sent to
+ *
  * @author Mario Herb
  */
 public abstract class AbstractJtaTransactionalMqDomainEventSender<TOPIC> extends AbstractJtaTransactionalDomainEventPublisher {
