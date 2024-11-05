@@ -43,34 +43,34 @@ public class DomainDiagramGenerator implements Diagram {
 
     private final DomainMapper domainMapper;
 
-    public static final String AGGREGATE_ROOT_STYLE_TAG = "AggregateRoot";
+    public static final String AGGREGATE_ROOT_STYLE_TAG = "AR";
 
-    public static final String AGGREGATE_FRAME_STYLE_TAG = "AggregateFrame";
+    public static final String AGGREGATE_FRAME_STYLE_TAG = "AF";
 
-    public static final String ENTITY_STYLE_TAG = "Entity";
+    public static final String ENTITY_STYLE_TAG = "E";
 
-    public static final String VALUE_OBJECT_STYLE_TAG = "ValueObject";
+    public static final String VALUE_OBJECT_STYLE_TAG = "VO";
 
-    public static final String ENUM_STYLE_TAG = "Enum";
+    public static final String ENUM_STYLE_TAG = "V";
 
-    public static final String DOMAIN_SERVICE_STYLE_TAG = "DomainService";
+    public static final String DOMAIN_SERVICE_STYLE_TAG = "DS";
 
-    public static final String SERVICE_KIND_STYLE_TAG = "ServiceKind";
+    public static final String SERVICE_KIND_STYLE_TAG = "SK";
 
-    public static final String APPLICATION_SERVICE_STYLE_TAG = "ApplicationService";
+    public static final String APPLICATION_SERVICE_STYLE_TAG = "AS";
 
-    public static final String DOMAIN_EVENT_STYLE_TAG = "DomainEvent";
+    public static final String DOMAIN_EVENT_STYLE_TAG = "DE";
 
-    public static final String REPOSITORY_STYLE_TAG = "Repository";
+    public static final String REPOSITORY_STYLE_TAG = "R";
 
-    public static final String DOMAIN_COMMAND_STYLE_TAG = "DomainCommand";
+    public static final String DOMAIN_COMMAND_STYLE_TAG = "DC";
 
-    public static final String READ_MODEL_STYLE_TAG = "ReadModel";
+    public static final String READ_MODEL_STYLE_TAG = "RM";
 
-    public static final String QUERY_CLIENT_STYLE_TAG = "QueryClient";
-    public static final String OUTBOUND_SERVICE_STYLE_TAG = "OutboundService";
+    public static final String QUERY_CLIENT_STYLE_TAG = "QC";
+    public static final String OUTBOUND_SERVICE_STYLE_TAG = "OS";
 
-    public static final String IDENTITY_STYLE_TAG = "Identity";
+    public static final String IDENTITY_STYLE_TAG = "I";
 
     /**
      * Initializes the DomainDiagramGenerator with a given {@link DomainDiagramConfig}
@@ -152,63 +152,63 @@ public class DomainDiagramGenerator implements Diagram {
 
     private String aggregateFrameStyleDeclaration() {
         if (diagramConfig.getAggregateFrameStyle() != null) {
-            return styleDeclaration(diagramConfig.getAggregateFrameStyle(), AGGREGATE_FRAME_STYLE_TAG);
+            return completeStyleDeclaration(diagramConfig.getAggregateFrameStyle(), AGGREGATE_FRAME_STYLE_TAG);
         }
         return "";
     }
 
     private String aggregateRootStyleDeclaration() {
         if (diagramConfig.getAggregateRootStyle() != null) {
-            return styleDeclaration(diagramConfig.getAggregateRootStyle(), AGGREGATE_ROOT_STYLE_TAG);
+            return completeStyleDeclaration(diagramConfig.getAggregateRootStyle(), AGGREGATE_ROOT_STYLE_TAG);
         }
         return "";
     }
 
     private String entityStyleDeclaration() {
         if (diagramConfig.getEntityStyle() != null) {
-            return styleDeclaration(diagramConfig.getEntityStyle(), ENTITY_STYLE_TAG);
+            return completeStyleDeclaration(diagramConfig.getEntityStyle(), ENTITY_STYLE_TAG);
         }
         return "";
     }
 
     private String valueObjectStyleDeclaration() {
         if (diagramConfig.getValueObjectStyle() != null) {
-            return styleDeclaration(diagramConfig.getValueObjectStyle(), VALUE_OBJECT_STYLE_TAG);
+            return completeStyleDeclaration(diagramConfig.getValueObjectStyle(), VALUE_OBJECT_STYLE_TAG);
         }
         return "";
     }
 
     private String enumStyleDeclaration() {
         if (diagramConfig.getEnumStyle() != null) {
-            return styleDeclaration(diagramConfig.getEnumStyle(), ENUM_STYLE_TAG);
+            return completeStyleDeclaration(diagramConfig.getEnumStyle(), ENUM_STYLE_TAG);
         }
         return "";
     }
 
     private String identityStyleDeclaration() {
         if (diagramConfig.getIdentityStyle() != null) {
-            return styleDeclaration(diagramConfig.getIdentityStyle(), IDENTITY_STYLE_TAG);
+            return completeStyleDeclaration(diagramConfig.getIdentityStyle(), IDENTITY_STYLE_TAG);
         }
         return "";
     }
 
     private String domainCommandStyleDeclaration() {
         if (diagramConfig.getDomainCommandStyle() != null) {
-            return styleDeclaration(diagramConfig.getDomainCommandStyle(), DOMAIN_COMMAND_STYLE_TAG);
+            return completeStyleDeclaration(diagramConfig.getDomainCommandStyle(), DOMAIN_COMMAND_STYLE_TAG);
         }
         return "";
     }
 
     private String domainEventStyleDeclaration() {
         if (diagramConfig.getDomainEventStyle() != null) {
-            return styleDeclaration(diagramConfig.getDomainEventStyle(), DOMAIN_EVENT_STYLE_TAG);
+            return completeStyleDeclaration(diagramConfig.getDomainEventStyle(), DOMAIN_EVENT_STYLE_TAG);
         }
         return "";
     }
 
     private String applicationServiceStyleDeclaration() {
         if (diagramConfig.getApplicationServiceStyle() != null) {
-            return styleDeclaration(diagramConfig.getApplicationServiceStyle(), APPLICATION_SERVICE_STYLE_TAG);
+            return completeStyleDeclaration(diagramConfig.getApplicationServiceStyle(), APPLICATION_SERVICE_STYLE_TAG);
         }
         return "";
     }
@@ -222,41 +222,55 @@ public class DomainDiagramGenerator implements Diagram {
 
     private String repositoryStyleDeclaration() {
         if (diagramConfig.getRepositoryStyle() != null) {
-            return styleDeclaration(diagramConfig.getRepositoryStyle(), REPOSITORY_STYLE_TAG);
+            return completeStyleDeclaration(diagramConfig.getRepositoryStyle(), REPOSITORY_STYLE_TAG);
         }
         return "";
     }
 
     private String outboundServiceStyleDeclaration() {
         if (diagramConfig.getOutboundServiceStyle() != null) {
-            return styleDeclaration(diagramConfig.getOutboundServiceStyle(), OUTBOUND_SERVICE_STYLE_TAG);
+            return completeStyleDeclaration(diagramConfig.getOutboundServiceStyle(), OUTBOUND_SERVICE_STYLE_TAG);
         }
         return "";
     }
 
     private String queryClientStyleDeclaration() {
         if (diagramConfig.getQueryClientStyle() != null) {
-            return styleDeclaration(diagramConfig.getQueryClientStyle(), QUERY_CLIENT_STYLE_TAG);
+            return completeStyleDeclaration(diagramConfig.getQueryClientStyle(), QUERY_CLIENT_STYLE_TAG);
         }
         return "";
     }
 
     private String unspecifiedServiceKindStyleDeclaration() {
         if (diagramConfig.getUnspecifiedServiceKindStyle() != null) {
-            return styleDeclaration(diagramConfig.getUnspecifiedServiceKindStyle(), SERVICE_KIND_STYLE_TAG);
+            return completeStyleDeclaration(diagramConfig.getUnspecifiedServiceKindStyle(), SERVICE_KIND_STYLE_TAG);
         }
         return "";
     }
 
     private String readModelStyleDeclaration() {
         if (diagramConfig.getReadModelStyle() != null) {
-            return styleDeclaration(diagramConfig.getReadModelStyle(), READ_MODEL_STYLE_TAG);
+            return completeStyleDeclaration(diagramConfig.getReadModelStyle(), READ_MODEL_STYLE_TAG);
         }
         return "";
     }
 
+    private String completeStyleDeclaration(String declaration, String tagName){
+        return styleDeclaration(declaration, tagName)
+            + removedStyleDeclaration(declaration, tagName)
+            + addedStyleDeclaration(declaration, tagName);
+    }
+
     private String styleDeclaration(String declaration, String tagName) {
         return "#." + tagName + ":" + declaration + System.lineSeparator();
+    }
+
+    private String removedStyleDeclaration(String declaration, String tagName) {
+        return "#." + tagName + "_R:" + declaration + ";stroke=#FF0000" + System.lineSeparator();
+    }
+
+    private String addedStyleDeclaration(String declaration, String tagName) {
+        return "#." + tagName + "_N:" + declaration + ";stroke=#108738" + System.lineSeparator();
     }
 
     private String fontStyleDeclaration() {

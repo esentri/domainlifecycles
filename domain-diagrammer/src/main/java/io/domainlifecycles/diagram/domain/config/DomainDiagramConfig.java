@@ -110,7 +110,7 @@ public class DomainDiagramConfig implements DiagramConfig {
     /**
      * General font style declaration  (see Nomnoml style options)
      */
-    private String font = "Courier";
+    private String font = "Helvetica";
     /**
      * General layout direction style declaration (see Nomnoml style options, 'down' or 'right' is supported)
      */
@@ -516,7 +516,7 @@ public class DomainDiagramConfig implements DiagramConfig {
     }
 
     private static String $default$font() {
-        return "Courier";
+        return "Helvetica";
     }
 
     private static String $default$direction() {

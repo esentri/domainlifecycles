@@ -61,7 +61,7 @@ public class ReflectiveDomainObjectAccessor implements DynamicDomainObjectAccess
             return field.get(domainObject);
         } catch (IllegalAccessException illegalAccessException) {
             throw DLCAccessException.fail(
-                String.format("Failed to read '%' from '%'!", fieldName, domainObjectClass.getName()),
+                String.format("Failed to read '%s' from '%s'!", fieldName, domainObjectClass.getName()),
                 illegalAccessException);
         }
     }
