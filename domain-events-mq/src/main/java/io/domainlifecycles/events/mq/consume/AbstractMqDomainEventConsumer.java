@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -226,6 +227,9 @@ public abstract class AbstractMqDomainEventConsumer<CONSUMER, MESSAGE> implement
             .map(dtm -> (DomainEventMirror) dtm)
             .flatMap(dem -> handlersForDomainEvent(dem).stream())
             .forEach(this::subscribe);
+
+        log.info("Subscribed handlers count = {}", this.handlers.size() );
+        log.info("ForkJoinPool size = {}", ForkJoinPool.commonPool().getPoolSize());
     }
 
     /**
