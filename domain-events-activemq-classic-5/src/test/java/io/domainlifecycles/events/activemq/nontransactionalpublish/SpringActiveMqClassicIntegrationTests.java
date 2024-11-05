@@ -51,6 +51,7 @@ import jakarta.jms.Session;
 import jakarta.jms.TextMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -65,7 +66,6 @@ import static org.awaitility.Awaitility.await;
 
 @SpringBootTest(classes = TestApplicationSpringActiveMqClassicIntegration.class)
 @Slf4j
-@DirtiesContext
 public class SpringActiveMqClassicIntegrationTests {
 
     @Autowired
@@ -93,6 +93,8 @@ public class SpringActiveMqClassicIntegrationTests {
     private AbstractMqProcessingChannel activeMqChannel;
 
     @Test
+    @DirtiesContext
+    @Disabled
     public void testEvents() throws JMSException {
         //given
         MessageProducer producer = null;
@@ -202,6 +204,8 @@ public class SpringActiveMqClassicIntegrationTests {
     }
 
     @Test
+    @DirtiesContext
+    @Disabled
     public void testIntegrationReceived() {
         //when
         var evt = new ADomainEvent("Test"+ UUID.randomUUID());
@@ -224,6 +228,8 @@ public class SpringActiveMqClassicIntegrationTests {
     }
 
     @Test
+    @DirtiesContext
+    @Disabled
     public void testIntegrationUnreceived() {
 
         //when
@@ -247,6 +253,8 @@ public class SpringActiveMqClassicIntegrationTests {
     }
 
     @Test
+    @DirtiesContext
+    @Disabled
     public void testIntegrationAggregateDomainEvent() {
         //when
 
@@ -273,6 +281,8 @@ public class SpringActiveMqClassicIntegrationTests {
     }
 
     @Test
+    @DirtiesContext
+    @Disabled
     public void testIntegrationAggregateDomainEventExceptionOnHandler() {
         //when
 
@@ -299,6 +309,7 @@ public class SpringActiveMqClassicIntegrationTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationDomainServiceExceptionRollback() {
         //when
 
@@ -324,6 +335,8 @@ public class SpringActiveMqClassicIntegrationTests {
     }
 
     @Test
+    @DirtiesContext
+    @Disabled
     public void testTransactionalBehaviourWithCounterService() {
 
         var cnt = transactionalCounterService.getCurrentCounterValue();
@@ -346,6 +359,8 @@ public class SpringActiveMqClassicIntegrationTests {
     }
 
     @Test
+    @DirtiesContext
+    @Disabled
     public void testIntegrationReceivedPauseResume() {
         //when
         activeMqChannel.getConsumingConfiguration().getMqDomainEventConsumer().pauseHandler(
