@@ -53,7 +53,7 @@ public class InMemoryChannelFactory implements ChannelFactory {
      * Depending on the {@code executorThreads} passed, a synchronous or asynchronous channel is created.
      *
      * @param serviceProvider The service provider used to retrieve instances of various types of services (event handlers).
-     * @param executorThreads, if 0 synchronous handling is activated else asynchronous with the given number of threads
+     * @param executorThreads if 0 synchronous handling is activated else asynchronous with the given number of threads
      */
     public InMemoryChannelFactory(ServiceProvider serviceProvider, int executorThreads) {
         this.serviceProvider = serviceProvider;

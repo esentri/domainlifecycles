@@ -49,6 +49,8 @@ public class DomainEventTypeBasedRouter implements PublishingRouter{
     /**
      * The {@code DomainEventTypeBasedRouter} class is an implementation of the {@link PublishingRouter} interface
      * that routes domain events to the appropriate channel based on their event type.
+     *
+     * @param channels the channel for which routing is applied
      */
     public DomainEventTypeBasedRouter(List<PublishingChannel> channels) {
         channels.forEach(c -> channelMap.put(c.getName(), c));
