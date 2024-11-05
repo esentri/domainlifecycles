@@ -156,7 +156,7 @@ public class ActiveMqDomainEventConsumer extends AbstractMqDomainEventConsumer<M
     @Override
     protected TextMessage consumeMessage(MessageConsumer messageConsumer) {
         try {
-            log.trace("Start consuming");
+            log.trace("Start consuming ");
             Message message = messageConsumer.receive(receiveTimeoutMs);
             return (TextMessage) message;
         } catch (JMSException e) {

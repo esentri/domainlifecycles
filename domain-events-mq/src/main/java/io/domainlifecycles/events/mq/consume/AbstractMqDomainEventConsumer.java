@@ -143,11 +143,12 @@ public abstract class AbstractMqDomainEventConsumer<CONSUMER, MESSAGE> implement
      * @return Void
      */
     protected Void process(CONSUMER consumer, MqDomainEventHandler handler) {
-        log.info("Consumer starting processing");
+        log.info("Consumer starting processing. HandlerId: {}", handler.getHandlerId());
         while (runFlag.get()) {
                 if(handler.isPaused()){
                     continue;
                 }
+                log.trace("Consuming message for HandlerId: {}", handler.getHandlerId());
                 var message = consumeMessage(consumer);
                 if (message == null) {
                     continue;
@@ -155,7 +156,7 @@ public abstract class AbstractMqDomainEventConsumer<CONSUMER, MESSAGE> implement
                 DomainEvent domainEvent = parseMessage(message, handler.getDomainEventType());
                 if(domainEvent != null) {
                     try {
-                        log.trace("Invoking handler", handler.getHandlerId());
+                        log.trace("Invoking handler {}", handler.getHandlerId());
                         handler.handle(domainEvent);
                         log.trace("Handled message {}",  handler.getHandlerId());
                     } catch (Throwable t) {
