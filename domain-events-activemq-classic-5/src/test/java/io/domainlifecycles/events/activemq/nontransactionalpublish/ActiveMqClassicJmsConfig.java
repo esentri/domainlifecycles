@@ -90,7 +90,6 @@ public class ActiveMqClassicJmsConfig {
             transactionalHandlerExecutor,
             objectMapper
         );
-        factory.setReceiveTimeoutMs(500);
         return factory;
     }
 

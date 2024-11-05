@@ -125,7 +125,6 @@ public class ActiveMqClassicGruelboxConfig {
             domainEventsInstantiator,
             jmsConnectionFactory
         );
-        factory.setReceiveTimeoutMs(500);
         return factory;
     }
 

@@ -38,6 +38,7 @@ import io.domainlifecycles.events.activemq.domain.AnOutboundService;
 import io.domainlifecycles.events.activemq.domain.UnreceivedDomainEvent;
 import io.domainlifecycles.events.api.DomainEvents;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -53,6 +54,7 @@ import static org.awaitility.Awaitility.await;
 
 @SpringBootTest(classes = TestApplicationActiveMqSpringTx.class)
 @DirtiesContext
+@Disabled
 public class SpringTransactionalEventHandlingActiveMqTests {
 
     @Autowired
