@@ -45,6 +45,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -71,6 +73,8 @@ public abstract class AbstractMqDomainEventConsumer<CONSUMER, MESSAGE> implement
     protected List<Future<Void>> processingFutures = new ArrayList<>();
 
     protected AtomicBoolean runFlag = new AtomicBoolean(true);
+
+    protected ExecutorService consumerThreadPool;
 
     protected boolean initialized = false;
 
@@ -123,7 +127,7 @@ public abstract class AbstractMqDomainEventConsumer<CONSUMER, MESSAGE> implement
         var consumerName = mqDomainEventHandler.getHandlerId();
         CONSUMER consumer = createConsumer(topicName, consumerName);
         consumers.add(consumer);
-        processingFutures.add(CompletableFuture.supplyAsync(() -> process(consumer, mqDomainEventHandler)));
+        processingFutures.add(CompletableFuture.supplyAsync(() -> process(consumer, mqDomainEventHandler), this.consumerThreadPool));
         log.info("Subscribed handler {}", mqDomainEventHandler.getHandlerId());
     }
 
@@ -219,17 +223,17 @@ public abstract class AbstractMqDomainEventConsumer<CONSUMER, MESSAGE> implement
      * and subscribes them to the event consumer.
      */
     protected void initializeHandlers(){
-        Domain.getInitializedDomain()
+        var handlers = Domain.getInitializedDomain()
             .allTypeMirrors()
             .values()
             .stream()
             .filter(dtm -> !dtm.isAbstract() && dtm.getDomainType().equals(DomainType.DOMAIN_EVENT))
             .map(dtm -> (DomainEventMirror) dtm)
-            .flatMap(dem -> handlersForDomainEvent(dem).stream())
-            .forEach(this::subscribe);
+            .flatMap(dem -> handlersForDomainEvent(dem).stream()).toList();
 
-        log.info("Subscribed handlers count = {}", this.handlers.size() );
-        log.info("ForkJoinPool size = {}", ForkJoinPool.commonPool().getPoolSize());
+        log.info("Subscribing handlers count = {}", handlers.size() );
+        consumerThreadPool = Executors.newFixedThreadPool(handlers.size());
+        handlers.forEach(this::subscribe);
     }
 
     /**
@@ -313,6 +317,7 @@ public abstract class AbstractMqDomainEventConsumer<CONSUMER, MESSAGE> implement
         });
         consumers.forEach(c -> closeConsumer(c));
         closeConnection();
+        consumerThreadPool.shutdown();
         log.info("Closed session and connection");
     }
 
