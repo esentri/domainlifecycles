@@ -88,12 +88,6 @@ public class GruelboxEventHandlingActiveMqTests {
     @Autowired
     private BrokerService brokerService;
 
-    @BeforeEach
-    public void checkInit() throws Exception {
-        await().pollDelay(5, SECONDS).until(()-> true);
-        Arrays.stream(brokerService.getBroker().getDestinations()).forEach(cd -> System.out.println("CD:"+cd.getQualifiedName()));
-    }
-
     @Test
     @DirtiesContext
     public void testIntegrationCommit() {
@@ -105,6 +99,7 @@ public class GruelboxEventHandlingActiveMqTests {
         platformTransactionManager.commit(status);
         //then
         await()
+            .pollDelay(3, SECONDS)
             .atMost(50, SECONDS)
             .untilAsserted(()-> {
                 SoftAssertions softly = new SoftAssertions();
@@ -330,6 +325,7 @@ public class GruelboxEventHandlingActiveMqTests {
         //then
 
         await()
+            .pollDelay(3, SECONDS)
             .atMost(50, SECONDS)
             .untilAsserted(()->
                 assertThat(transactionalCounterService.getCurrentCounterValue()).isEqualTo(cnt+1)

@@ -85,6 +85,7 @@ public class SpringTransactionalEventHandlingActiveMqTests {
         platformTransactionManager.commit(status);
         //then
         await()
+            .pollDelay(3, SECONDS)
             .atMost(10, SECONDS)
             .untilAsserted(()-> {
                 SoftAssertions softly = new SoftAssertions();

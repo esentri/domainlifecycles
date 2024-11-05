@@ -27,11 +27,6 @@
 
 package io.domainlifecycles.events.activemq.transactionalpublish;
 
-import io.domainlifecycles.domain.types.ApplicationService;
-import io.domainlifecycles.domain.types.DomainService;
-import io.domainlifecycles.domain.types.OutboundService;
-import io.domainlifecycles.domain.types.QueryClient;
-import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.activemq.domain.ADomainService;
 import io.domainlifecycles.events.activemq.domain.AQueryClient;
@@ -56,10 +51,6 @@ import java.util.Locale;
 public class TestApplicationActiveMqSpringTx {
 
 
-
-    /**
-     * Setting the Locale to explicitly force the language in default validation error messages.
-     */
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH);
         new SpringApplicationBuilder(TestApplicationActiveMqSpringTx.class).run(args);
@@ -96,10 +87,6 @@ public class TestApplicationActiveMqSpringTx {
         return new AnOutboundService();
     }
 
-    /**
-     * This method creates and configures a ServiceProvider instance, which is responsible for providing instances of various types of services.
-     * It takes three parameters: repositories, applicationServices, and domainServices, which are lists of Repository, ApplicationService, and DomainService instances respectively
-     */
     @Bean
     public ServiceProvider serviceProvider(
         List<ServiceKind> serviceInstances

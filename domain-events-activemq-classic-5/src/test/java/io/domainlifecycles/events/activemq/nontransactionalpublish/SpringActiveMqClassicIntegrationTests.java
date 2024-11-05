@@ -208,6 +208,7 @@ public class SpringActiveMqClassicIntegrationTests {
         DomainEvents.publish(evt);
         //then
         await()
+            .pollDelay(3, SECONDS)
             .atMost(10, SECONDS)
             .untilAsserted(()->
                 {
@@ -230,7 +231,7 @@ public class SpringActiveMqClassicIntegrationTests {
         DomainEvents.publish(evt);
         //then
         await()
-            .pollDelay(5, SECONDS)
+            .pollDelay(3, SECONDS)
             .atMost(10, SECONDS)
             .untilAsserted(()->
                 {
@@ -254,6 +255,7 @@ public class SpringActiveMqClassicIntegrationTests {
 
         //then
         await()
+            .pollDelay(3, SECONDS)
             .atMost(10, SECONDS)
             .untilAsserted(()->
             {
@@ -279,6 +281,7 @@ public class SpringActiveMqClassicIntegrationTests {
 
         //then
         await()
+            .pollDelay(3, SECONDS)
             .atMost(10, SECONDS)
             .untilAsserted(()->
             {
@@ -304,6 +307,7 @@ public class SpringActiveMqClassicIntegrationTests {
 
         //then
         await()
+            .pollDelay(3, SECONDS)
             .atMost(10, SECONDS)
             .untilAsserted(()-> {
                 SoftAssertions softly = new SoftAssertions();
@@ -334,6 +338,7 @@ public class SpringActiveMqClassicIntegrationTests {
         //then
 
         await()
+            .pollDelay(3, SECONDS)
             .atMost(10, SECONDS)
             .untilAsserted(()->
                 assertThat(transactionalCounterService.getCurrentCounterValue()).isEqualTo(cnt+1)
@@ -349,6 +354,7 @@ public class SpringActiveMqClassicIntegrationTests {
             ADomainEvent.class.getName()
         );
         await()
+            .pollDelay(3, SECONDS)
             .atMost(10, SECONDS)
             .untilAsserted(()-> {
                 assertThat(activeMqChannel.getConsumingConfiguration().getMqDomainEventConsumer().isHandlerPaused(
@@ -382,7 +388,7 @@ public class SpringActiveMqClassicIntegrationTests {
         );
 
         await()
-            .pollDelay(2, SECONDS)
+            .pollDelay(3, SECONDS)
             .atMost(10, SECONDS)
             .untilAsserted(()-> assertThat(aDomainService.received).contains(evt));
     }

@@ -57,9 +57,6 @@ import java.util.Locale;
 @SpringBootApplication()
 public class TestApplicationSpringActiveMqClassicIntegration {
 
-    /**
-     * Setting the Locale to explicitly force the language in default validation error messages.
-     */
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH);
         new SpringApplicationBuilder(TestApplicationSpringActiveMqClassicIntegration.class).run(args);
@@ -108,10 +105,7 @@ public class TestApplicationSpringActiveMqClassicIntegration {
     public TransactionalCounterService transactionalCounterService(JdbcTemplate jdbcTemplate){
         return new TransactionalCounterService(jdbcTemplate);
     }
-    /**
-     * This method creates and configures a ServiceProvider instance, which is responsible for providing instances of various types of services.
-     * It takes three parameters: repositories, applicationServices, and domainServices, which are lists of Repository, ApplicationService, and DomainService instances respectively
-     */
+
     @Bean
     public ServiceProvider serviceProvider(
         List<ServiceKind> serviceInstances
