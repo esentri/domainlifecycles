@@ -1,50 +1,78 @@
-#.AggregateFrame:visual=frame align=left
-#.AggregateRoot:fill=#8f8f bold
-#.Entity:fill=#88AAFF bold
-#.ValueObject:fill=#FFFFCC bold
-#.Enum:fill=#FFFFCC bold
-#.Identity:fill=#FFFFCC bold
-#.DomainCommand:fill=#FFB266 bold
-#.DomainEvent:fill=#CCFFFF bold
-#.ApplicationService:bold
-#.DomainService:fill=#E0E0E0 bold
-#.Repository:fill=#C0C0C0 bold
-#.OutboundService:fill=#C0C0C0 bold
-#.ServiceKind:fill=#C0C0C0 bold
-#.QueryClient:fill=#C0C0C0 bold
-#.ReadModel:fill=#FFCCE5 bold
-#font:Courier
+#.AF:visual=frame align=left
+#.AF_R:visual=frame align=left;stroke=#FF0000
+#.AF_N:visual=frame align=left;stroke=#108738
+#.AR:fill=#8f8f bold
+#.AR_R:fill=#8f8f bold;stroke=#FF0000
+#.AR_N:fill=#8f8f bold;stroke=#108738
+#.E:fill=#88AAFF bold
+#.E_R:fill=#88AAFF bold;stroke=#FF0000
+#.E_N:fill=#88AAFF bold;stroke=#108738
+#.VO:fill=#FFFFCC bold
+#.VO_R:fill=#FFFFCC bold;stroke=#FF0000
+#.VO_N:fill=#FFFFCC bold;stroke=#108738
+#.V:fill=#FFFFCC bold
+#.V_R:fill=#FFFFCC bold;stroke=#FF0000
+#.V_N:fill=#FFFFCC bold;stroke=#108738
+#.I:fill=#FFFFCC bold
+#.I_R:fill=#FFFFCC bold;stroke=#FF0000
+#.I_N:fill=#FFFFCC bold;stroke=#108738
+#.DC:fill=#FFB266 bold
+#.DC_R:fill=#FFB266 bold;stroke=#FF0000
+#.DC_N:fill=#FFB266 bold;stroke=#108738
+#.DE:fill=#CCFFFF bold
+#.DE_R:fill=#CCFFFF bold;stroke=#FF0000
+#.DE_N:fill=#CCFFFF bold;stroke=#108738
+#.AS:bold
+#.AS_R:bold;stroke=#FF0000
+#.AS_N:bold;stroke=#108738
+#.DS:fill=#E0E0E0 bold
+#.R:fill=#C0C0C0 bold
+#.R_R:fill=#C0C0C0 bold;stroke=#FF0000
+#.R_N:fill=#C0C0C0 bold;stroke=#108738
+#.OS:fill=#C0C0C0 bold
+#.OS_R:fill=#C0C0C0 bold;stroke=#FF0000
+#.OS_N:fill=#C0C0C0 bold;stroke=#108738
+#.SK:fill=#C0C0C0 bold
+#.SK_R:fill=#C0C0C0 bold;stroke=#FF0000
+#.SK_N:fill=#C0C0C0 bold;stroke=#108738
+#.QC:fill=#C0C0C0 bold
+#.QC_R:fill=#C0C0C0 bold;stroke=#FF0000
+#.QC_N:fill=#C0C0C0 bold;stroke=#108738
+#.RM:fill=#FFCCE5 bold
+#.RM_R:fill=#FFCCE5 bold;stroke=#FF0000
+#.RM_N:fill=#FFCCE5 bold;stroke=#108738
+#font:Helvetica
 #direction:down
 #acycler: greedy
 #ranker: longest-path
 
 // !!! sampleshop.core.domain.customer.ChangeCustomerAddress !!!
-[<DomainCommand> ChangeCustomerAddress <<DomainCommand>> ]
+[<DC> ChangeCustomerAddress <<DomainCommand>> ]
 // !!! sampleshop.core.domain.order.CancelOrder !!!
-[<DomainCommand> CancelOrder <<DomainCommand>> ]
+[<DC> CancelOrder <<DomainCommand>> ]
 // !!! sampleshop.core.domain.customer.ChangeCreditCard !!!
-[<DomainCommand> ChangeCreditCard <<DomainCommand>> ]
+[<DC> ChangeCreditCard <<DomainCommand>> ]
 // !!! sampleshop.core.domain.order.PlaceOrder !!!
-[<DomainCommand> PlaceOrder <<DomainCommand>> ]
+[<DC> PlaceOrder <<DomainCommand>> ]
 // !!! sampleshop.core.domain.order.ShipOrder !!!
-[<DomainCommand> ShipOrder <<DomainCommand>> ]
+[<DC> ShipOrder <<DomainCommand>> ]
 // !!! sampleshop.core.domain.customer.AddNewCustomer !!!
-[<DomainCommand> AddNewCustomer <<DomainCommand>> ]
+[<DC> AddNewCustomer <<DomainCommand>> ]
 // !!! sampleshop.inbound.driver.OrderService !!!
-[<ApplicationService> OrderDriver <<Driver>> |
+[<AS> OrderDriver <<Driver>> |
 + Optional<Order> cancel(CancelOrder)
 + List<Order> find(int,int,OrderStatus\[\])
 + Order place(PlaceOrder)
 + Optional<Order> ship(ShipOrder)
 ]
 // !!! sampleshop.inbound.driver.ProductService !!!
-[<ApplicationService> ProductDriver <<Driver>> |
+[<AS> ProductDriver <<Driver>> |
 + Product create(Product)
 + Optional<Product> find(Product$ProductId)
 + void removeAll()
 ]
 // !!! sampleshop.inbound.driver.CustomerService !!!
-[<ApplicationService> CustomerDriver <<Driver>> |
+[<AS> CustomerDriver <<Driver>> |
 + Customer add(AddNewCustomer)
 + Optional<Customer> changeAddress(ChangeCustomerAddress)
 + Optional<Customer> changeCreditCard(ChangeCreditCard)
@@ -52,33 +80,33 @@
 + List<OrdersByCustomer> reportOrders(String,int,int)
 ]
 // !!! sampleshop.core.domain.customer.CustomerNotificationService !!!
-[<DomainService> CustomerNotificationService <<DomainService>> |
+[<DS> CustomerNotificationService <<DomainService>> |
 + void notifyNewOrderPlaced(NewOrderPlaced)
 + void notifyOrderCanceled(OrderCanceled)
 + void notifyOrderShipped(OrderShipped)
 ]
 // !!! sampleshop.core.domain.order.OrderPlacementService !!!
-[<DomainService> OrderPlacementService <<DomainService>> |
+[<DS> OrderPlacementService <<DomainService>> |
 + Order placeOrder(PlaceOrder)
 ]
 // !!! sampleshop.core.domain.customer.CustomerCreditCardChanged !!!
-[<DomainEvent> CustomerCreditCardChanged <<DomainEvent>> ]
+[<DE> CustomerCreditCardChanged <<DomainEvent>> ]
 // !!! sampleshop.core.domain.customer.NewCustomerAdded !!!
-[<DomainEvent> NewCustomerAdded <<DomainEvent>> ]
+[<DE> NewCustomerAdded <<DomainEvent>> ]
 // !!! sampleshop.core.domain.order.NewOrderPlaced !!!
-[<DomainEvent> NewOrderPlaced <<DomainEvent>> ]
+[<DE> NewOrderPlaced <<DomainEvent>> ]
 // !!! sampleshop.core.domain.order.OrderCanceled !!!
-[<DomainEvent> OrderCanceled <<DomainEvent>> ]
+[<DE> OrderCanceled <<DomainEvent>> ]
 // !!! sampleshop.core.domain.customer.FraudDetected !!!
-[<DomainEvent> FraudDetected <<DomainEvent>> ]
+[<DE> FraudDetected <<DomainEvent>> ]
 // !!! sampleshop.core.domain.customer.CustomerAdressChanged !!!
-[<DomainEvent> CustomerAdressChanged <<DomainEvent>> ]
+[<DE> CustomerAdressChanged <<DomainEvent>> ]
 // !!! sampleshop.core.domain.order.OrderShipped !!!
-[<DomainEvent> OrderShipped <<DomainEvent>> ]
+[<DE> OrderShipped <<DomainEvent>> ]
 // !!! {Frame} sampleshop.core.domain.customer.Customer !!!
-[<AggregateFrame> Customer <<Aggregate>>|
+[<AF> Customer <<Aggregate>>|
 // !!! sampleshop.core.domain.customer.Customer !!!
-[<AggregateRoot> Customer <<AggregateRoot>> |
+[<AR> Customer <<AggregateRoot>> |
 \# +- id:<ID> Customer$CustomerId
 o +- blocked:boolean
 \# +- userName:String\[0,100\]{notEmpty}
@@ -88,7 +116,7 @@ o +- blocked:boolean
 + Customer setUsername(String)
 ]
 // !!! sampleshop.core.domain.customer.Address !!!
-[<ValueObject> Address <<ValueObject>> |
+[<VO> Address <<ValueObject>> |
 \# +- city:String\[0,50\]{notEmpty}
 \# +- country:String\[0,50\]{notEmpty}
 \# +- state:String\[0,50\]{notEmpty}
@@ -97,7 +125,7 @@ o +- blocked:boolean
 |
 ]
 // !!! sampleshop.core.domain.customer.CreditCard !!!
-[<ValueObject> CreditCard <<ValueObject>> |
+[<VO> CreditCard <<ValueObject>> |
 \# +- cardNumber:String\[0,19\]{notEmpty}
 \# +- ccvNumber:String\[0,4\]{notEmpty}
 \# +- expiration:LocalDate
@@ -105,13 +133,13 @@ o +- blocked:boolean
 \# +- type:<ENUM> CreditCardType
 |
 ]
-[<AggregateRoot>Customer <<AggregateRoot>>]  o-[<label> address 1] - [<ValueObject>Address <<ValueObject>>]
-[<AggregateRoot>Customer <<AggregateRoot>>]  o-[<label> creditCard 0..1] - [<ValueObject>CreditCard <<ValueObject>>]
+[<AR>Customer <<AggregateRoot>>]  o-[<label> address 1] - [<VO>Address <<ValueObject>>]
+[<AR>Customer <<AggregateRoot>>]  o-[<label> creditCard 0..1] - [<VO>CreditCard <<ValueObject>>]
 ]
 // !!! {Frame} sampleshop.core.domain.order.Order !!!
-[<AggregateFrame> Order <<Aggregate>>|
+[<AF> Order <<Aggregate>>|
 // !!! sampleshop.core.domain.order.Order !!!
-[<AggregateRoot> Order <<AggregateRoot>> |
+[<AR> Order <<AggregateRoot>> |
 \# +- id:<ID> Order$OrderId
 o +- creation:Instant
 \# +- customerId:<IDREF> Customer$CustomerId
@@ -125,7 +153,7 @@ o +- creation:Instant
 + Price totalPrice()
 ]
 // !!! sampleshop.core.domain.order.OrderItem !!!
-[<Entity> OrderItem <<Entity>> |
+[<E> OrderItem <<Entity>> |
 \# +- id:<ID> OrderItem$OrderItemId
 \# +- productId:<IDREF> Product$ProductId
 \# +- productPrice:<VO> Price
@@ -134,12 +162,12 @@ o +- quantity:int{>0}
 + OrderItem addQuantity(int)
 + Price itemPrice()
 ]
-[<AggregateRoot>Order <<AggregateRoot>>]  +-[<label> items 0..*] - [<Entity>OrderItem <<Entity>>]
+[<AR>Order <<AggregateRoot>>]  +-[<label> items 0..*] - [<E>OrderItem <<Entity>>]
 ]
 // !!! {Frame} sampleshop.core.domain.product.Product !!!
-[<AggregateFrame> Product <<Aggregate>>|
+[<AF> Product <<Aggregate>>|
 // !!! sampleshop.core.domain.product.Product !!!
-[<AggregateRoot> Product <<AggregateRoot>> |
+[<AR> Product <<AggregateRoot>> |
 \# +- id:<ID> Product$ProductId
 o +- description:Optional<String\[0,1000\]>
 o +- image:Optional<URI>
@@ -148,10 +176,10 @@ o +- image:Optional<URI>
 |
 ]
 ]
-[<AggregateFrame> Order <<Aggregate>>]  -[<label> Order.customerId] -> [<AggregateFrame> Customer <<Aggregate>>]
-[<AggregateFrame> Order <<Aggregate>>]  -[<label> OrderItem.productId] -> [<AggregateFrame> Product <<Aggregate>>]
+[<AF> Order <<Aggregate>>]  -[<label> Order.customerId] -> [<AF> Customer <<Aggregate>>]
+[<AF> Order <<Aggregate>>]  -[<label> OrderItem.productId] -> [<AF> Product <<Aggregate>>]
 // !!! sampleshop.outbound.JooqCustomerRepository !!!
-[<Repository> CustomerRepository <<Repository>> |
+[<R> CustomerRepository <<Repository>> |
 + Optional<A> deleteById(Identity)
 + Stream<Customer> find(int,int)
 + Optional<A> findById(Identity)
@@ -160,7 +188,7 @@ o +- image:Optional<URI>
 + AggregateRoot update(AggregateRoot)
 ]
 // !!! sampleshop.outbound.JooqProductRepository !!!
-[<Repository> ProductRepository <<Repository>> |
+[<R> ProductRepository <<Repository>> |
 + Optional<A> deleteById(Identity)
 + Optional<A> findById(Identity)
 + AggregateRoot insert(AggregateRoot)
@@ -169,7 +197,7 @@ o +- image:Optional<URI>
 + AggregateRoot update(AggregateRoot)
 ]
 // !!! sampleshop.outbound.JooqOrderRepository !!!
-[<Repository> OrderRepository <<Repository>> |
+[<R> OrderRepository <<Repository>> |
 + Optional<A> deleteById(Identity)
 + Stream<Order> find(int,int,OrderStatus\[\])
 + Optional<A> findById(Identity)
@@ -179,42 +207,42 @@ o +- image:Optional<URI>
 + AggregateRoot update(AggregateRoot)
 ]
 // !!! sampleshop.core.outport.OrdersByCustomer !!!
-[<ReadModel> OrdersByCustomer <<ReadModel>> |
+[<RM> OrdersByCustomer <<ReadModel>> |
 o +- canceledOrders:int
 o +- customerName:String
 o +- pendingOrders:int
 o +- shippedOrders:int
 ]
 // !!! sampleshop.outbound.JooqOrdersByCustomerQueryClient !!!
-[<QueryClient> OrdersByCustomerQueryClient <<QueryClient>> ]
+[<QC> OrdersByCustomerQueryClient <<QueryClient>> ]
 // !!! sampleshop.outbound.EmailNotifierImpl !!!
-[<OutboundService> EmailNotifierService <<OutboundService>> ]
-[<DomainCommand>ChangeCustomerAddress <<DomainCommand>>]  --> [<ApplicationService>CustomerDriver <<Driver>>]
-[<DomainCommand>CancelOrder <<DomainCommand>>]  --> [<ApplicationService>OrderDriver <<Driver>>]
-[<DomainCommand>ChangeCreditCard <<DomainCommand>>]  --> [<ApplicationService>CustomerDriver <<Driver>>]
-[<DomainCommand>PlaceOrder <<DomainCommand>>]  --> [<ApplicationService>OrderDriver <<Driver>>]
-[<DomainCommand>ShipOrder <<DomainCommand>>]  --> [<ApplicationService>OrderDriver <<Driver>>]
-[<DomainCommand>AddNewCustomer <<DomainCommand>>]  --> [<ApplicationService>CustomerDriver <<Driver>>]
-[<AggregateFrame> Customer <<Aggregate>>]  --> [<DomainEvent>CustomerCreditCardChanged <<DomainEvent>>]
-[<ApplicationService>CustomerDriver <<Driver>>]  --> [<DomainEvent>NewCustomerAdded <<DomainEvent>>]
-[<DomainEvent>NewOrderPlaced <<DomainEvent>>]  --> [<DomainService>CustomerNotificationService <<DomainService>>]
-[<DomainService>OrderPlacementService <<DomainService>>]  --> [<DomainEvent>NewOrderPlaced <<DomainEvent>>]
-[<DomainEvent>OrderCanceled <<DomainEvent>>]  --> [<DomainService>CustomerNotificationService <<DomainService>>]
-[<AggregateFrame> Order <<Aggregate>>]  --> [<DomainEvent>OrderCanceled <<DomainEvent>>]
-[<DomainEvent>FraudDetected <<DomainEvent>>]  --> [Customer <<Aggregate>>]
-[<AggregateFrame> Customer <<Aggregate>>]  --> [<DomainEvent>CustomerAdressChanged <<DomainEvent>>]
-[<DomainEvent>OrderShipped <<DomainEvent>>]  --> [<DomainService>CustomerNotificationService <<DomainService>>]
-[<AggregateFrame> Order <<Aggregate>>]  --> [<DomainEvent>OrderShipped <<DomainEvent>>]
-[<ApplicationService>OrderDriver <<Driver>>]  -- [<DomainService>OrderPlacementService <<DomainService>>]
-[<ApplicationService>OrderDriver <<Driver>>]  -- [<Repository>OrderRepository <<Repository>>]
-[<ApplicationService>ProductDriver <<Driver>>]  -- [<Repository>ProductRepository <<Repository>>]
-[<ApplicationService>CustomerDriver <<Driver>>]  -- [<Repository>CustomerRepository <<Repository>>]
-[<ApplicationService>CustomerDriver <<Driver>>]  -- [<QueryClient>OrdersByCustomerQueryClient <<QueryClient>>]
-[<DomainService>CustomerNotificationService <<DomainService>>]  -- [<OutboundService>EmailNotifierService <<OutboundService>>]
-[<DomainService>CustomerNotificationService <<DomainService>>]  -- [<Repository>CustomerRepository <<Repository>>]
-[<DomainService>OrderPlacementService <<DomainService>>]  -- [<Repository>OrderRepository <<Repository>>]
-[<DomainService>OrderPlacementService <<DomainService>>]  -- [<Repository>ProductRepository <<Repository>>]
-[<Repository>CustomerRepository <<Repository>>]  -- [<AggregateFrame> Customer <<Aggregate>>]
-[<Repository>ProductRepository <<Repository>>]  -- [<AggregateFrame> Product <<Aggregate>>]
-[<Repository>OrderRepository <<Repository>>]  -- [<AggregateFrame> Order <<Aggregate>>]
-[<QueryClient>OrdersByCustomerQueryClient <<QueryClient>>]  -- [<ReadModel>OrdersByCustomer <<ReadModel>>]
+[<OS> EmailNotifierService <<OutboundService>> ]
+[<DC>ChangeCustomerAddress <<DomainCommand>>]  --> [<AS>CustomerDriver <<Driver>>]
+[<DC>CancelOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<Driver>>]
+[<DC>ChangeCreditCard <<DomainCommand>>]  --> [<AS>CustomerDriver <<Driver>>]
+[<DC>PlaceOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<Driver>>]
+[<DC>ShipOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<Driver>>]
+[<DC>AddNewCustomer <<DomainCommand>>]  --> [<AS>CustomerDriver <<Driver>>]
+[<AF> Customer <<Aggregate>>]  --> [<DE>CustomerCreditCardChanged <<DomainEvent>>]
+[<AS>CustomerDriver <<Driver>>]  --> [<DE>NewCustomerAdded <<DomainEvent>>]
+[<DE>NewOrderPlaced <<DomainEvent>>]  --> [<DS>CustomerNotificationService <<DomainService>>]
+[<DS>OrderPlacementService <<DomainService>>]  --> [<DE>NewOrderPlaced <<DomainEvent>>]
+[<DE>OrderCanceled <<DomainEvent>>]  --> [<DS>CustomerNotificationService <<DomainService>>]
+[<AF> Order <<Aggregate>>]  --> [<DE>OrderCanceled <<DomainEvent>>]
+[<DE>FraudDetected <<DomainEvent>>]  --> [Customer <<Aggregate>>]
+[<AF> Customer <<Aggregate>>]  --> [<DE>CustomerAdressChanged <<DomainEvent>>]
+[<DE>OrderShipped <<DomainEvent>>]  --> [<DS>CustomerNotificationService <<DomainService>>]
+[<AF> Order <<Aggregate>>]  --> [<DE>OrderShipped <<DomainEvent>>]
+[<AS>OrderDriver <<Driver>>]  -- [<DS>OrderPlacementService <<DomainService>>]
+[<AS>OrderDriver <<Driver>>]  -- [<R>OrderRepository <<Repository>>]
+[<AS>ProductDriver <<Driver>>]  -- [<R>ProductRepository <<Repository>>]
+[<AS>CustomerDriver <<Driver>>]  -- [<R>CustomerRepository <<Repository>>]
+[<AS>CustomerDriver <<Driver>>]  -- [<QC>OrdersByCustomerQueryClient <<QueryClient>>]
+[<DS>CustomerNotificationService <<DomainService>>]  -- [<OS>EmailNotifierService <<OutboundService>>]
+[<DS>CustomerNotificationService <<DomainService>>]  -- [<R>CustomerRepository <<Repository>>]
+[<DS>OrderPlacementService <<DomainService>>]  -- [<R>OrderRepository <<Repository>>]
+[<DS>OrderPlacementService <<DomainService>>]  -- [<R>ProductRepository <<Repository>>]
+[<R>CustomerRepository <<Repository>>]  -- [<AF> Customer <<Aggregate>>]
+[<R>ProductRepository <<Repository>>]  -- [<AF> Product <<Aggregate>>]
+[<R>OrderRepository <<Repository>>]  -- [<AF> Order <<Aggregate>>]
+[<QC>OrdersByCustomerQueryClient <<QueryClient>>]  -- [<RM>OrdersByCustomer <<ReadModel>>]
