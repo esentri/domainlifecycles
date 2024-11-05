@@ -50,6 +50,7 @@ import java.util.Optional;
  *
  * @param <T> type for which the domain object builder delivers new domain object instances
  * @author Dominik Galler
+ * @author Mario Herb
  */
 public abstract class AbstractDomainObjectBuilder<T extends DomainObject> implements DomainObjectBuilder<T> {
     private final static Logger log = LoggerFactory.getLogger(AbstractDomainObjectBuilder.class);
@@ -86,7 +87,9 @@ public abstract class AbstractDomainObjectBuilder<T extends DomainObject> implem
             instanceType.getName());
         final var fm = domainTypeMirror.fieldByName(fieldName);
         if (!fm.getType().hasCollectionContainer()) {
-            throw DLCBuilderException.fail("Field '%s' does not contain a collection.", fieldName);
+            var msg = String.format("Field '%s' does not contain a collection.", fieldName);
+            log.error(msg);
+            throw DLCBuilderException.fail(msg);
         } else {
             addWithLazyInit(object, fieldName);
         }
@@ -113,9 +116,9 @@ public abstract class AbstractDomainObjectBuilder<T extends DomainObject> implem
             newCollection = new HashSet<>();
         }
         if (newCollection == null) {
-            throw DLCBuilderException.fail(
-                "Was not able to create new collection instance for DomainObjectBuilder for field %s within %s",
-                fieldName, this.instanceType.getName());
+            var msg = String.format("Was not able to create new collection instance for DomainObjectBuilder for field %s within %s", fieldName, this.instanceType.getName());
+            log.error(msg);
+            throw DLCBuilderException.fail(msg);
         }
         return newCollection;
     }
@@ -183,8 +186,9 @@ public abstract class AbstractDomainObjectBuilder<T extends DomainObject> implem
                     () -> DLCBuilderException.fail("%s has no primary Identity!", this.instanceType.getName()));
             return idField.getName();
         } else {
-            throw DLCBuilderException.fail("%s is not an Entity and has no primary Identity!",
-                this.instanceType.getName());
+            var msg = String.format("'%s' is not an Entity and has no primary Identity!", this.instanceType.getName());
+            log.error(msg);
+            throw DLCBuilderException.fail(msg);
         }
     }
 
@@ -199,7 +203,7 @@ public abstract class AbstractDomainObjectBuilder<T extends DomainObject> implem
         return this.instanceType;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"rawtypes" })
     private void addWithLazyInit(Object object, String fieldName) {
         Collection collection = (Collection) getValue(fieldName);
         if (collection == null) {
@@ -209,7 +213,6 @@ public abstract class AbstractDomainObjectBuilder<T extends DomainObject> implem
         collection.add(object);
     }
 
-    @SuppressWarnings({"unchecked"})
     protected <K> K uncheckedCast(Object obj) {
         return (K) obj;
     }

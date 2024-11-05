@@ -27,16 +27,12 @@
 
 package sampleshop.configuration.system;
 
-
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
-import io.domainlifecycles.domain.types.ApplicationService;
-import io.domainlifecycles.domain.types.DomainService;
-import io.domainlifecycles.domain.types.OutboundService;
-import io.domainlifecycles.domain.types.QueryClient;
-import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
+import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
+import io.domainlifecycles.events.spring.api.SpringTxInMemoryChannelFactory;
 import io.domainlifecycles.domain.types.ServiceKind;
-import io.domainlifecycles.events.api.DomainEventsConfiguration;
 import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.jooq.configuration.JooqDomainPersistenceConfiguration;
@@ -147,16 +143,15 @@ public class DLCConfiguration {
         return  new Services(serviceKinds);
     }
 
-    /**
-     * Using the Spring event bus to publish DLC domain events.
-     */
     @Bean
-    public DomainEventsConfiguration domainEventsConfiguration(ServiceProvider serviceProvider,
-                                                               PlatformTransactionManager transactionManager) {
-        return new DomainEventsConfiguration.DomainEventsConfigurationBuilder()
-            .withServiceProvider(serviceProvider)
-            .withSpringPlatformTransactionManager(transactionManager)
-            .make();
+    public ChannelRoutingConfiguration channelConfiguration(PlatformTransactionManager platformTransactionManager, ServiceProvider serviceProvider){
+        var channel = new SpringTxInMemoryChannelFactory(platformTransactionManager, serviceProvider,
+            5,
+            true).processingChannel("default");
+
+        var router = new DomainEventTypeBasedRouter(List.of(channel));
+        router.defineDefaultChannel("default");
+        return new ChannelRoutingConfiguration(router);
     }
 
     /**

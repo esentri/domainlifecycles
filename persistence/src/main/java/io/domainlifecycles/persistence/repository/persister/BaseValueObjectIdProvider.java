@@ -60,7 +60,6 @@ public abstract class BaseValueObjectIdProvider<BASE_RECORD_TYPE, CONTAINER_TECH
      * @param instanceAccessModel the instance access model
      * @param pc                  the persistence context
      */
-    @SuppressWarnings("unchecked")
     public void provideTechnicalIdsForNewVoRecord(BASE_RECORD_TYPE newVoRecord,
                                                   DomainObjectInstanceAccessModel<BASE_RECORD_TYPE> instanceAccessModel,
                                                   PersistenceContext<BASE_RECORD_TYPE> pc) {

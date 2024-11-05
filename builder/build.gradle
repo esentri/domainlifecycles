@@ -10,7 +10,7 @@ plugins {
 
 dependencies {
     implementation project(":mirror")
-    implementation project(":types")
+    api project(":types")
     implementation project(":access")
     compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
     testImplementation "org.assertj:assertj-core:${assertJVersion}"

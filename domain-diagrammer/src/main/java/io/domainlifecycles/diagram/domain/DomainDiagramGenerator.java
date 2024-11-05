@@ -55,6 +55,8 @@ public class DomainDiagramGenerator implements Diagram {
 
     public static final String DOMAIN_SERVICE_STYLE_TAG = "DomainService";
 
+    public static final String SERVICE_KIND_STYLE_TAG = "ServiceKind";
+
     public static final String APPLICATION_SERVICE_STYLE_TAG = "ApplicationService";
 
     public static final String DOMAIN_EVENT_STYLE_TAG = "DomainEvent";
@@ -100,6 +102,7 @@ public class DomainDiagramGenerator implements Diagram {
         builder.append(domainServiceStyleDeclaration());
         builder.append(repositoryStyleDeclaration());
         builder.append(outboundServiceStyleDeclaration());
+        builder.append(unspecifiedServiceKindStyleDeclaration());
         builder.append(queryClientStyleDeclaration());
         builder.append(readModelStyleDeclaration());
         builder.append(fontStyleDeclaration());
@@ -129,6 +132,8 @@ public class DomainDiagramGenerator implements Diagram {
         domainMapper.getQueryClients().forEach(f -> builder.append(f.getDiagramText()));
 
         domainMapper.getOutboundServices().forEach(f -> builder.append(f.getDiagramText()));
+
+        domainMapper.getUnspecifiedServiceKinds().forEach(f -> builder.append(f.getDiagramText()));
 
         domainMapper.getDomainRelationshipMapper().mapAllDomainCommandRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
@@ -232,6 +237,13 @@ public class DomainDiagramGenerator implements Diagram {
     private String queryClientStyleDeclaration() {
         if (diagramConfig.getQueryClientStyle() != null) {
             return styleDeclaration(diagramConfig.getQueryClientStyle(), QUERY_CLIENT_STYLE_TAG);
+        }
+        return "";
+    }
+
+    private String unspecifiedServiceKindStyleDeclaration() {
+        if (diagramConfig.getUnspecifiedServiceKindStyle() != null) {
+            return styleDeclaration(diagramConfig.getUnspecifiedServiceKindStyle(), SERVICE_KIND_STYLE_TAG);
         }
         return "";
     }

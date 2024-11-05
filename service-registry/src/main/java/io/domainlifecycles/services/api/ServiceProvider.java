@@ -45,4 +45,5 @@ public interface ServiceProvider {
      * @return An instance of ServiceKind based on the given type name.
      */
     <S extends ServiceKind> S getServiceKindInstance(String typeName);
+
 }

@@ -11,8 +11,8 @@ dependencies {
     compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
     implementation "net.bytebuddy:byte-buddy:${bytebuddyVersion}"
     implementation "net.bytebuddy:byte-buddy-agent:${bytebuddyVersion}"
-    implementation project(":types")
-    implementation project(":builder")
+    api project(":types")
+    api project(":builder")
     implementation project(":bean-validations")
 
     testImplementation project(":type-utils")

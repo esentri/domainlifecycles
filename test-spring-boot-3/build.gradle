@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '3.2.4'
+    id 'org.springframework.boot' version '3.3.4'
     id 'java'
     id 'checkstyle'
     // Plugin that handles database migration.
@@ -29,7 +29,7 @@ configurations {
 
 
 dependencies {
-    testImplementation platform('org.springframework.boot:spring-boot-dependencies:3.2.3')
+    testImplementation platform('org.springframework.boot:spring-boot-dependencies:3.3.4')
     testImplementation project(":spring-boot-3-jooq-complete")
     testImplementation project(":test-shared-impl")
     testImplementation "org.assertj:assertj-core:${assertJVersion}"

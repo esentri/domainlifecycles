@@ -28,9 +28,6 @@
 package io.domainlifecycles.diagram.nomnoml;
 
 import io.domainlifecycles.diagram.DiagramElement;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 
 import java.util.Objects;
 
@@ -40,9 +37,6 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
-@Builder
-@Getter
-@EqualsAndHashCode
 public class NomnomlParameter implements DiagramElement {
     private final NomnomlType type;
     private final boolean required;
@@ -59,11 +53,74 @@ public class NomnomlParameter implements DiagramElement {
         this.required = required;
     }
 
+    public static NomnomlParameterBuilder builder() {
+        return new NomnomlParameterBuilder();
+    }
+
     /**
      * Returns the Nomnoml text representation of a parameter.
      */
     @Override
     public String getDiagramText() {
         return (required ? "\\# " : "") + type.getDiagramText();
+    }
+
+    public NomnomlType getType() {
+        return this.type;
+    }
+
+    public boolean isRequired() {
+        return this.required;
+    }
+
+    public boolean equals(final Object o) {
+        if (o == this) return true;
+        if (!(o instanceof NomnomlParameter)) return false;
+        final NomnomlParameter other = (NomnomlParameter) o;
+        if (!other.canEqual((Object) this)) return false;
+        final Object this$type = this.getType();
+        final Object other$type = other.getType();
+        if (this$type == null ? other$type != null : !this$type.equals(other$type)) return false;
+        if (this.isRequired() != other.isRequired()) return false;
+        return true;
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof NomnomlParameter;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $type = this.getType();
+        result = result * PRIME + ($type == null ? 43 : $type.hashCode());
+        result = result * PRIME + (this.isRequired() ? 79 : 97);
+        return result;
+    }
+
+    public static class NomnomlParameterBuilder {
+        private NomnomlType type;
+        private boolean required;
+
+        NomnomlParameterBuilder() {
+        }
+
+        public NomnomlParameterBuilder type(NomnomlType type) {
+            this.type = type;
+            return this;
+        }
+
+        public NomnomlParameterBuilder required(boolean required) {
+            this.required = required;
+            return this;
+        }
+
+        public NomnomlParameter build() {
+            return new NomnomlParameter(this.type, this.required);
+        }
+
+        public String toString() {
+            return "NomnomlParameter.NomnomlParameterBuilder(type=" + this.type + ", required=" + this.required + ")";
+        }
     }
 }

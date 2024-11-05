@@ -149,6 +149,7 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
 
     protected abstract void doIncreaseVersion(BASE_RECORD_TYPE record);
 
+
     protected BASE_RECORD_TYPE getRecordFromDomainObject(final PersistenceAction<BASE_RECORD_TYPE> persistenceAction,
                                                          final AggregateRoot<?> root) {
         Objects.requireNonNull(persistenceAction);

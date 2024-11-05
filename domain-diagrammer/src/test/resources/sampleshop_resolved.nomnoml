@@ -10,6 +10,7 @@
 #.DomainService:fill=#E0E0E0 bold
 #.Repository:fill=#C0C0C0 bold
 #.OutboundService:fill=#C0C0C0 bold
+#.ServiceKind:fill=#C0C0C0 bold
 #.QueryClient:fill=#C0C0C0 bold
 #.ReadModel:fill=#FFCCE5 bold
 #font:Courier

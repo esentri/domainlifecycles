@@ -28,9 +28,7 @@
 package io.domainlifecycles.diagram.domain.mapper;
 
 import io.domainlifecycles.mirror.api.DomainType;
-import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.ServiceKindMirror;
-import lombok.Getter;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
@@ -60,19 +58,14 @@ public class FilteredDomainClasses {
 
     private final BoundedContextMirror boundedContextMirror;
 
-    @Getter
     private final List<DomainCommandMirror> domainCommands;
 
-    @Getter
     private final List<DomainEventMirror> domainEvents;
 
-    @Getter
     private final List<AggregateRootMirror> aggregateRoots;
 
-    @Getter
     private final List<ReadModelMirror> readModels;
 
-    @Getter
     private final List<ServiceKindMirror> serviceKinds;
 
     private final TransitiveDomainTypeFilter transitiveDomainTypeFilter;
@@ -204,5 +197,33 @@ public class FilteredDomainClasses {
             .map(s -> (OutboundServiceMirror) s)
             .toList();
     }
+
+    public List<DomainCommandMirror> getDomainCommands() {
+        return domainCommands;
+    }
+
+    public List<DomainEventMirror> getDomainEvents() {
+        return domainEvents;
+    }
+
+    public List<AggregateRootMirror> getAggregateRoots() {
+        return aggregateRoots;
+    }
+
+    public List<ReadModelMirror> getReadModels() {
+        return readModels;
+    }
+
+    public List<ServiceKindMirror> getServiceKinds() {
+        return serviceKinds;
+    }
+
+    public List<ServiceKindMirror> getUnspecifiedServiceKinds() {
+        return serviceKinds
+            .stream()
+            .filter(s -> s.getDomainType().equals(DomainType.SERVICE_KIND))
+            .toList();
+    }
+
 }
 

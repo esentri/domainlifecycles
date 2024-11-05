@@ -1,0 +1,59 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+    id 'checkstyle'
+    id 'org.quiltmc.gradle.licenser' version "${quiltmcLicenserVersion}"
+    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+}
+
+dependencies {
+
+    api project(":access")
+    api project(":domain-events-core")
+    api project(":types")
+    api project(":service-registry")
+    api project (":domain-events-mq")
+    api 'jakarta.jms:jakarta.jms-api:3.1.0'
+    runtimeOnly "org.apache.activemq:activemq-client:${activeMqClassicVersion}"
+    compileOnly "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+    api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
+    runtimeOnly "org.apache.activemq:activemq-client-jakarta:${activeMqClassicVersion}"
+
+    testImplementation project(":access")
+    testImplementation project(":types")
+    testImplementation project(":type-utils")
+    testImplementation project(":mirror")
+    testImplementation project(":service-registry")
+    testImplementation project(":domain-events-core")
+    testImplementation project(":domain-events-spring-tx")
+    testImplementation project(":jackson-integration")
+    testImplementation project(":builder")
+    testImplementation project(":domain-events-activemq-classic-5")
+    testImplementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    testImplementation "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testImplementation "org.assertj:assertj-core:${assertJVersion}"
+    testImplementation "ch.qos.logback:logback-classic:${logbackClassicVersion}"
+    testImplementation 'org.springframework.boot:spring-boot-starter:3.3.3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-json:3.3.3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-jooq:3.3.3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.3.3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-activemq:3.3.3'
+    testImplementation "com.h2database:h2:2.2.222"
+    testImplementation 'org.awaitility:awaitility:4.2.0'
+    testImplementation ("org.apache.activemq:activemq-broker:${activeMqClassicVersion}")  {
+        exclude group: 'org.apache.activemq', module: 'activemq-client-jakarta'
+    }
+    testImplementation "org.apache.activemq:activemq-client-jakarta:${activeMqClassicVersion}"
+    testImplementation 'javax.jms:javax.jms-api:2.0.1'
+    testImplementation "com.gruelbox:transactionoutbox-core:${gruelboxVersion}"
+    testImplementation "com.gruelbox:transactionoutbox-spring:${gruelboxVersion}"
+    testImplementation "com.gruelbox:transactionoutbox-jackson:${gruelboxVersion}"
+
+
+
+
+
+}

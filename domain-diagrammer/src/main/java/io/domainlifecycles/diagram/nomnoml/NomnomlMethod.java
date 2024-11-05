@@ -28,9 +28,6 @@
 package io.domainlifecycles.diagram.nomnoml;
 
 import io.domainlifecycles.diagram.DiagramElement;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 
 import java.util.List;
 import java.util.Objects;
@@ -42,9 +39,6 @@ import java.util.stream.Collectors;
  *
  * @author Mario Herb
  */
-@Builder
-@Getter
-@EqualsAndHashCode
 public class NomnomlMethod implements DiagramElement {
     private final String visibility;
     private final String name;
@@ -67,6 +61,10 @@ public class NomnomlMethod implements DiagramElement {
         this.name = Objects.requireNonNull(name);
         this.returnType = Objects.requireNonNull(returnType);
         this.parameters = Objects.requireNonNull(parameters);
+    }
+
+    public static NomnomlMethodBuilder builder() {
+        return new NomnomlMethodBuilder();
     }
 
     /**
@@ -96,4 +94,98 @@ public class NomnomlMethod implements DiagramElement {
         );
     }
 
+    public String getVisibility() {
+        return this.visibility;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public NomnomlType getReturnType() {
+        return this.returnType;
+    }
+
+    public List<NomnomlParameter> getParameters() {
+        return this.parameters;
+    }
+
+    public boolean equals(final Object o) {
+        if (o == this) return true;
+        if (!(o instanceof NomnomlMethod)) return false;
+        final NomnomlMethod other = (NomnomlMethod) o;
+        if (!other.canEqual((Object) this)) return false;
+        final Object this$visibility = this.getVisibility();
+        final Object other$visibility = other.getVisibility();
+        if (this$visibility == null ? other$visibility != null : !this$visibility.equals(other$visibility))
+            return false;
+        final Object this$name = this.getName();
+        final Object other$name = other.getName();
+        if (this$name == null ? other$name != null : !this$name.equals(other$name)) return false;
+        final Object this$returnType = this.getReturnType();
+        final Object other$returnType = other.getReturnType();
+        if (this$returnType == null ? other$returnType != null : !this$returnType.equals(other$returnType))
+            return false;
+        final Object this$parameters = this.getParameters();
+        final Object other$parameters = other.getParameters();
+        if (this$parameters == null ? other$parameters != null : !this$parameters.equals(other$parameters))
+            return false;
+        return true;
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof NomnomlMethod;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $visibility = this.getVisibility();
+        result = result * PRIME + ($visibility == null ? 43 : $visibility.hashCode());
+        final Object $name = this.getName();
+        result = result * PRIME + ($name == null ? 43 : $name.hashCode());
+        final Object $returnType = this.getReturnType();
+        result = result * PRIME + ($returnType == null ? 43 : $returnType.hashCode());
+        final Object $parameters = this.getParameters();
+        result = result * PRIME + ($parameters == null ? 43 : $parameters.hashCode());
+        return result;
+    }
+
+    public static class NomnomlMethodBuilder {
+        private String visibility;
+        private String name;
+        private NomnomlType returnType;
+        private List<NomnomlParameter> parameters;
+
+        NomnomlMethodBuilder() {
+        }
+
+        public NomnomlMethodBuilder visibility(String visibility) {
+            this.visibility = visibility;
+            return this;
+        }
+
+        public NomnomlMethodBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public NomnomlMethodBuilder returnType(NomnomlType returnType) {
+            this.returnType = returnType;
+            return this;
+        }
+
+        public NomnomlMethodBuilder parameters(List<NomnomlParameter> parameters) {
+            this.parameters = parameters;
+            return this;
+        }
+
+        public NomnomlMethod build() {
+            return new NomnomlMethod(this.visibility, this.name, this.returnType, this.parameters);
+        }
+
+        public String toString() {
+            return "NomnomlMethod.NomnomlMethodBuilder(visibility=" + this.visibility + ", name=" + this.name + ", returnType=" + this.returnType + ", parameters=" + this.parameters + ")";
+        }
+    }
 }

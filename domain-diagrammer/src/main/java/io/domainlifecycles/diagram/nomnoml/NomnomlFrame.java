@@ -28,9 +28,6 @@
 package io.domainlifecycles.diagram.nomnoml;
 
 import io.domainlifecycles.diagram.DiagramElement;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 
 import java.util.List;
 import java.util.Objects;
@@ -42,8 +39,6 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-@Getter
-@EqualsAndHashCode
 public class NomnomlFrame implements DiagramElement {
     private final String name;
 
@@ -65,7 +60,6 @@ public class NomnomlFrame implements DiagramElement {
      * @param styleClassifier for frame
      * @param innerElements   contained
      */
-    @Builder
     public NomnomlFrame(String name,
                         String comment,
                         String type,
@@ -76,6 +70,10 @@ public class NomnomlFrame implements DiagramElement {
         this.type = Objects.requireNonNull(type);
         this.styleClassifier = Objects.requireNonNull(styleClassifier);
         this.innerElements = Objects.requireNonNull(innerElements);
+    }
+
+    public static NomnomlFrameBuilder builder() {
+        return new NomnomlFrameBuilder();
     }
 
     /**
@@ -100,4 +98,112 @@ public class NomnomlFrame implements DiagramElement {
     }
 
 
+    public String getName() {
+        return this.name;
+    }
+
+    public Optional<String> getComment() {
+        return this.comment;
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public String getStyleClassifier() {
+        return this.styleClassifier;
+    }
+
+    public List<DiagramElement> getInnerElements() {
+        return this.innerElements;
+    }
+
+    public boolean equals(final Object o) {
+        if (o == this) return true;
+        if (!(o instanceof NomnomlFrame)) return false;
+        final NomnomlFrame other = (NomnomlFrame) o;
+        if (!other.canEqual((Object) this)) return false;
+        final Object this$name = this.getName();
+        final Object other$name = other.getName();
+        if (this$name == null ? other$name != null : !this$name.equals(other$name)) return false;
+        final Object this$comment = this.getComment();
+        final Object other$comment = other.getComment();
+        if (this$comment == null ? other$comment != null : !this$comment.equals(other$comment)) return false;
+        final Object this$type = this.getType();
+        final Object other$type = other.getType();
+        if (this$type == null ? other$type != null : !this$type.equals(other$type)) return false;
+        final Object this$styleClassifier = this.getStyleClassifier();
+        final Object other$styleClassifier = other.getStyleClassifier();
+        if (this$styleClassifier == null ? other$styleClassifier != null : !this$styleClassifier.equals(other$styleClassifier))
+            return false;
+        final Object this$innerElements = this.getInnerElements();
+        final Object other$innerElements = other.getInnerElements();
+        if (this$innerElements == null ? other$innerElements != null : !this$innerElements.equals(other$innerElements))
+            return false;
+        return true;
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof NomnomlFrame;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $name = this.getName();
+        result = result * PRIME + ($name == null ? 43 : $name.hashCode());
+        final Object $comment = this.getComment();
+        result = result * PRIME + ($comment == null ? 43 : $comment.hashCode());
+        final Object $type = this.getType();
+        result = result * PRIME + ($type == null ? 43 : $type.hashCode());
+        final Object $styleClassifier = this.getStyleClassifier();
+        result = result * PRIME + ($styleClassifier == null ? 43 : $styleClassifier.hashCode());
+        final Object $innerElements = this.getInnerElements();
+        result = result * PRIME + ($innerElements == null ? 43 : $innerElements.hashCode());
+        return result;
+    }
+
+    public static class NomnomlFrameBuilder {
+        private String name;
+        private String comment;
+        private String type;
+        private String styleClassifier;
+        private List<DiagramElement> innerElements;
+
+        NomnomlFrameBuilder() {
+        }
+
+        public NomnomlFrameBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public NomnomlFrameBuilder comment(String comment) {
+            this.comment = comment;
+            return this;
+        }
+
+        public NomnomlFrameBuilder type(String type) {
+            this.type = type;
+            return this;
+        }
+
+        public NomnomlFrameBuilder styleClassifier(String styleClassifier) {
+            this.styleClassifier = styleClassifier;
+            return this;
+        }
+
+        public NomnomlFrameBuilder innerElements(List<DiagramElement> innerElements) {
+            this.innerElements = innerElements;
+            return this;
+        }
+
+        public NomnomlFrame build() {
+            return new NomnomlFrame(this.name, this.comment, this.type, this.styleClassifier, this.innerElements);
+        }
+
+        public String toString() {
+            return "NomnomlFrame.NomnomlFrameBuilder(name=" + this.name + ", comment=" + this.comment + ", type=" + this.type + ", styleClassifier=" + this.styleClassifier + ", innerElements=" + this.innerElements + ")";
+        }
+    }
 }

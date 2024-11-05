@@ -10,9 +10,7 @@ plugins {
 dependencies {
     compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
     implementation project(":types")
-    implementation project(":mirror")
-    implementation "org.projectlombok:lombok:${lombokVersion}"
-    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    api project(":mirror")
 
     testImplementation "org.assertj:assertj-core:${assertJVersion}"
     testImplementation "ch.qos.logback:logback-classic:${logbackClassicVersion}"

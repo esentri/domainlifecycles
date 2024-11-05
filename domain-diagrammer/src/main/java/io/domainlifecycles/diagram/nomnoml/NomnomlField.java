@@ -28,9 +28,6 @@
 package io.domainlifecycles.diagram.nomnoml;
 
 import io.domainlifecycles.diagram.DiagramElement;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -41,9 +38,6 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-@Builder
-@Getter
-@EqualsAndHashCode
 public class NomnomlField implements DiagramElement {
     private final String visibility;
     private final String name;
@@ -73,6 +67,10 @@ public class NomnomlField implements DiagramElement {
         this.required = required;
     }
 
+    public static NomnomlFieldBuilder builder() {
+        return new NomnomlFieldBuilder();
+    }
+
     /**
      * Returns the Nomnoml text representation of a field.
      */
@@ -91,4 +89,109 @@ public class NomnomlField implements DiagramElement {
     }
 
 
+    public String getVisibility() {
+        return this.visibility;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public Optional<String> getTypePrefix() {
+        return this.typePrefix;
+    }
+
+    public NomnomlType getType() {
+        return this.type;
+    }
+
+    public boolean isRequired() {
+        return this.required;
+    }
+
+    public boolean equals(final Object o) {
+        if (o == this) return true;
+        if (!(o instanceof NomnomlField)) return false;
+        final NomnomlField other = (NomnomlField) o;
+        if (!other.canEqual((Object) this)) return false;
+        final Object this$visibility = this.getVisibility();
+        final Object other$visibility = other.getVisibility();
+        if (this$visibility == null ? other$visibility != null : !this$visibility.equals(other$visibility))
+            return false;
+        final Object this$name = this.getName();
+        final Object other$name = other.getName();
+        if (this$name == null ? other$name != null : !this$name.equals(other$name)) return false;
+        final Object this$typePrefix = this.getTypePrefix();
+        final Object other$typePrefix = other.getTypePrefix();
+        if (this$typePrefix == null ? other$typePrefix != null : !this$typePrefix.equals(other$typePrefix))
+            return false;
+        final Object this$type = this.getType();
+        final Object other$type = other.getType();
+        if (this$type == null ? other$type != null : !this$type.equals(other$type)) return false;
+        if (this.isRequired() != other.isRequired()) return false;
+        return true;
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof NomnomlField;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $visibility = this.getVisibility();
+        result = result * PRIME + ($visibility == null ? 43 : $visibility.hashCode());
+        final Object $name = this.getName();
+        result = result * PRIME + ($name == null ? 43 : $name.hashCode());
+        final Object $typePrefix = this.getTypePrefix();
+        result = result * PRIME + ($typePrefix == null ? 43 : $typePrefix.hashCode());
+        final Object $type = this.getType();
+        result = result * PRIME + ($type == null ? 43 : $type.hashCode());
+        result = result * PRIME + (this.isRequired() ? 79 : 97);
+        return result;
+    }
+
+    public static class NomnomlFieldBuilder {
+        private String visibility;
+        private String name;
+        private Optional<String> typePrefix;
+        private NomnomlType type;
+        private boolean required;
+
+        NomnomlFieldBuilder() {
+        }
+
+        public NomnomlFieldBuilder visibility(String visibility) {
+            this.visibility = visibility;
+            return this;
+        }
+
+        public NomnomlFieldBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public NomnomlFieldBuilder typePrefix(Optional<String> typePrefix) {
+            this.typePrefix = typePrefix;
+            return this;
+        }
+
+        public NomnomlFieldBuilder type(NomnomlType type) {
+            this.type = type;
+            return this;
+        }
+
+        public NomnomlFieldBuilder required(boolean required) {
+            this.required = required;
+            return this;
+        }
+
+        public NomnomlField build() {
+            return new NomnomlField(this.visibility, this.name, this.typePrefix, this.type, this.required);
+        }
+
+        public String toString() {
+            return "NomnomlField.NomnomlFieldBuilder(visibility=" + this.visibility + ", name=" + this.name + ", typePrefix=" + this.typePrefix + ", type=" + this.type + ", required=" + this.required + ")";
+        }
+    }
 }
