@@ -27,7 +27,7 @@ dependencies {
     testImplementation project(":test-shared-impl")
     testImplementation project(":builder")
     testImplementation project(":type-utils")
-    testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${junitJupiterParamsVersion}"
     testImplementation "org.projectlombok:lombok:${lombokVersion}"
     testImplementation "org.assertj:assertj-core:${assertJVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"

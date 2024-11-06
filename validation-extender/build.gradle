@@ -25,14 +25,14 @@ dependencies {
     testImplementation "ch.qos.logback:logback-classic:${logbackClassicVersion}"
 
     //jakarta config
-    testImplementation "org.hibernate.validator:hibernate-validator:8.0.1.Final"
-    testImplementation 'org.glassfish:jakarta.el:4.0.2'
-    testImplementation 'jakarta.el:jakarta.el-api:5.0.1'
+    testImplementation "org.hibernate.validator:hibernate-validator:${hibernateValidatorJakartaVersion}"
+    testImplementation "org.glassfish:jakarta.el:${glassfishJakartaVersion}"
+    testImplementation "jakarta.el:jakarta.el-api:${jakartaElVersion}"
 
     //javax config
-    //testImplementation "org.hibernate.validator:hibernate-validator:6.2.3.Final"
-    //testImplementation 'org.glassfish:jakarta.el:3.0.2'
-    //testImplementation 'jakarta.el:jakarta.el-api:3.0.2'
+    //testImplementation "org.hibernate.validator:hibernate-validator:${hibernateValidatorJavaxVersion}"
+    //testImplementation "org.glassfish:jakarta.el:${glassfishJakartaElVersion}"
+    //testImplementation "jakarta.el:jakarta.el-api:${jakartaElApiVersion}"
 }
 
 

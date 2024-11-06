@@ -14,7 +14,7 @@ dependencies {
 
     testImplementation "org.assertj:assertj-core:${assertJVersion}"
     testImplementation "ch.qos.logback:logback-classic:${logbackClassicVersion}"
-    testImplementation "commons-io:commons-io:2.14.0"
+    testImplementation "commons-io:commons-io:${commonsIOVersion}"
     testImplementation project(":assertions")
     testImplementation project(":builder")
     testImplementation project(":access")

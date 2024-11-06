@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.7.18'
+    id 'org.springframework.boot' version "${springBoot2PlatformVersion}"
     id 'java'
     id 'checkstyle'
     // Plugin that handles database migration.
@@ -11,7 +11,6 @@ plugins {
 }
 
 // ----------------------------------------------------------
-def dbVersion = '2.2.224'
 def dbDriver = 'org.h2.Driver'
 def dbUrl = "jdbc:h2:file:${project.projectDir}/build/h2-db/test;NON_KEYWORDS=VALUE;AUTO_SERVER=TRUE"
 def dbUsername = 'sa'
@@ -24,13 +23,13 @@ configurations {
     flywayMigration
 }
 dependencies {
-    testImplementation platform('org.springframework.boot:spring-boot-dependencies:2.7.18')
+    testImplementation platform("org.springframework.boot:spring-boot-dependencies:${springBoot2PlatformVersion}")
     testImplementation project(":spring-boot-2-jooq-complete")
     testImplementation project(":test-shared-impl")
     testImplementation "org.assertj:assertj-core:${assertJVersion}"
 
     testImplementation "javax.validation:validation-api:${javaxValidationApiVersion}"
-    testImplementation 'com.esotericsoftware:kryo:5.3.0'
+    testImplementation "com.esotericsoftware:kryo:${kryoVersion}"
     testImplementation 'org.springframework:spring-web'
     testImplementation 'org.springframework.boot:spring-boot-starter'
     testImplementation 'org.springframework.boot:spring-boot-starter-web'
@@ -38,15 +37,15 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-validation'
     testImplementation 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation "org.springdoc:springdoc-openapi-ui:${openAPIVersion}"
-    testImplementation "org.springdoc:springdoc-openapi-data-rest:${openAPIVersion}"
-    testImplementation 'javax.xml.bind:jaxb-api:2.3.0'
-    testImplementation 'com.sun.xml.bind:jaxb-core:4.0.4'
-    testImplementation 'com.sun.xml.bind:jaxb-impl:4.0.4'
+    testImplementation "org.springdoc:springdoc-openapi-ui:${springDocOpenAPIVersion}"
+    testImplementation "org.springdoc:springdoc-openapi-data-rest:${springDocOpenAPIVersion}"
+    testImplementation "javax.xml.bind:jaxb-api:${jaxBApiVersion}"
+    testImplementation "com.sun.xml.bind:jaxb-core:${jaxBCoreVersion}"
+    testImplementation "com.sun.xml.bind:jaxb-impl:${jaxBImplVersion}"
 
-    testImplementation "com.h2database:h2:${dbVersion}"
-    flywayMigration "com.h2database:h2:${dbVersion}"
-    jooqGenerator "com.h2database:h2:${dbVersion}"
+    testImplementation "com.h2database:h2:${h2Version}"
+    flywayMigration "com.h2database:h2:${h2Version}"
+    jooqGenerator "com.h2database:h2:${h2Version}"
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }

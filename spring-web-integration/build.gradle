@@ -7,8 +7,6 @@ plugins {
     id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
 }
 
-def springWebVersion = '5.3.33'
-
 dependencies {
     api project(":types")
     implementation project(":mirror")
