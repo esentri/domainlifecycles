@@ -8,6 +8,6 @@ plugins {
 }
 
 dependencies {
-    api "org.springdoc:springdoc-openapi-starter-webmvc-ui:${openAPIVersion2}"
+    api "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocOpenAPIVersion2}"
     api project(":swagger-v3-integration")
 }

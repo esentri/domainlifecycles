@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '3.3.4'
+    id 'org.springframework.boot' version "${springBoot3PlatformVersion}"
     id 'java'
     id 'checkstyle'
     // Plugin that handles database migration.
@@ -10,11 +10,7 @@ plugins {
     id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
 }
 
-// ----------------------------------------------------------
-def jooqForcedVersion = '3.17.12'
 
-
-def dbVersion = '2.2.224'
 def dbDriver = 'org.h2.Driver'
 def dbUrl = "jdbc:h2:file:${project.projectDir}/build/h2-db/test;NON_KEYWORDS=VALUE;AUTO_SERVER=TRUE"
 def dbUsername = 'sa'
@@ -29,12 +25,12 @@ configurations {
 
 
 dependencies {
-    testImplementation platform('org.springframework.boot:spring-boot-dependencies:3.3.4')
+    testImplementation platform("org.springframework.boot:spring-boot-dependencies:${springBoot3PlatformVersion}")
     testImplementation project(":spring-boot-3-jooq-complete")
     testImplementation project(":test-shared-impl")
     testImplementation "org.assertj:assertj-core:${assertJVersion}"
     testImplementation "jakarta.validation:jakarta.validation-api:${jakartaValidationApiVersion}"
-    testImplementation 'com.esotericsoftware:kryo:5.3.0'
+    testImplementation "com.esotericsoftware:kryo:${kryoVersion}"
     testImplementation 'org.springframework:spring-web'
     testImplementation 'org.springframework.boot:spring-boot-starter'
     testImplementation 'org.springframework.boot:spring-boot-starter-web'
@@ -42,12 +38,12 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-validation'
     testImplementation 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+    testImplementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocOpenAPIVersion2}"
 
-    flywayMigration "com.h2database:h2:${dbVersion}"
-    jooqGenerator "com.h2database:h2:${dbVersion}"
+    flywayMigration "com.h2database:h2:${h2Version}"
+    jooqGenerator "com.h2database:h2:${h2Version}"
 
-    testImplementation "com.h2database:h2:${dbVersion}"
+    testImplementation "com.h2database:h2:${h2Version}"
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }
@@ -71,7 +67,6 @@ flyway {
 
 // ----------------------------------------------------------
 jooq {
-    version = jooqForcedVersion
     configurations {
         main {
             generationTool {

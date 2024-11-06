@@ -17,7 +17,7 @@ dependencies {
     implementation "org.assertj:assertj-core:${assertJVersion}"
     implementation "javax.validation:validation-api:${javaxValidationApiVersion}"
     implementation "jakarta.validation:jakarta.validation-api:${jakartaValidationApiVersion}"
-    implementation 'com.esotericsoftware:kryo:5.3.0'
+    implementation "com.esotericsoftware:kryo:${kryoVersion}"
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 

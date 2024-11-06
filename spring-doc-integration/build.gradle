@@ -8,8 +8,8 @@ plugins {
 }
 
 dependencies {
-    api "org.springdoc:springdoc-openapi-ui:${openAPIVersion}"
-    compileOnly "org.springdoc:springdoc-openapi-data-rest:${openAPIVersion}"
+    api "org.springdoc:springdoc-openapi-ui:${springDocOpenAPIVersion}"
+    compileOnly "org.springdoc:springdoc-openapi-data-rest:${springDocOpenAPIVersion}"
     api project(":swagger-v3-integration")
 
 }

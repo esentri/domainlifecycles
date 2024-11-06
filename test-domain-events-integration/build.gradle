@@ -24,7 +24,7 @@ dependencies {
     testImplementation "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     testImplementation "org.assertj:assertj-core:${assertJVersion}"
-    testImplementation 'com.atomikos:transactions-jta:6.0.0:jakarta'
+    testImplementation "com.atomikos:transactions-jta:${atomikosJtaVersion}:jakarta"
     testImplementation "jakarta.transaction:jakarta.transaction-api:${jakartaTransactionApiVersion}"
     testImplementation "ch.qos.logback:logback-classic:${logbackClassicVersion}"
     testImplementation 'org.springframework.boot:spring-boot-starter:3.2.3'

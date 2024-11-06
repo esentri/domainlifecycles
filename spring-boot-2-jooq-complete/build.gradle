@@ -20,7 +20,7 @@ dependencies {
     api project(":jackson-integration")
     api project(":spring-web-integration")
     api project(":spring-doc-integration")
-    compileOnly "org.jooq:jooq:3.19.6"
+    compileOnly "org.jooq:jooq:${jooqVersion}"
 
 }
 

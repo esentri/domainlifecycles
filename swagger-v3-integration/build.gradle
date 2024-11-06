@@ -11,7 +11,7 @@ dependencies {
     api "javax.validation:validation-api:${javaxValidationApiVersion}"
     api "jakarta.validation:jakarta.validation-api:${jakartaValidationApiVersion}"
     compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
-    api "io.swagger.core.v3:swagger-core-jakarta:2.2.21"
+    api "io.swagger.core.v3:swagger-core-jakarta:${swaggerVersion}"
     api project(":types")
     implementation project(":reflect")
     implementation project(":access")

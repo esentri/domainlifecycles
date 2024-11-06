@@ -14,7 +14,7 @@ dependencies {
     api project(":types")
     api project(":service-registry")
     api project (":domain-events-mq")
-    api 'jakarta.jms:jakarta.jms-api:3.1.0'
+    api "jakarta.jms:jakarta.jms-api:${jakartaJmsApiVersion}"
     runtimeOnly "org.apache.activemq:activemq-client:${activeMqClassicVersion}"
     compileOnly "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
     api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
@@ -36,18 +36,18 @@ dependencies {
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     testImplementation "org.assertj:assertj-core:${assertJVersion}"
     testImplementation "ch.qos.logback:logback-classic:${logbackClassicVersion}"
-    testImplementation 'org.springframework.boot:spring-boot-starter:3.3.3'
-    testImplementation 'org.springframework.boot:spring-boot-starter-json:3.3.3'
-    testImplementation 'org.springframework.boot:spring-boot-starter-jooq:3.3.3'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.3.3'
-    testImplementation 'org.springframework.boot:spring-boot-starter-activemq:3.3.3'
-    testImplementation "com.h2database:h2:2.2.222"
-    testImplementation 'org.awaitility:awaitility:4.2.0'
+    testImplementation "org.springframework.boot:spring-boot-starter:${springBoot3PlatformVersion}"
+    testImplementation "org.springframework.boot:spring-boot-starter-json:${springBoot3PlatformVersion}"
+    testImplementation "org.springframework.boot:spring-boot-starter-jooq:${springBoot3PlatformVersion}"
+    testImplementation "org.springframework.boot:spring-boot-starter-test:${springBoot3PlatformVersion}"
+    testImplementation "org.springframework.boot:spring-boot-starter-activemq:${springBoot3PlatformVersion}"
+    testImplementation "com.h2database:h2:${h2Version}"
+    testImplementation "org.awaitility:awaitility:${awaitilityVersion}"
     testImplementation ("org.apache.activemq:activemq-broker:${activeMqClassicVersion}")  {
         exclude group: 'org.apache.activemq', module: 'activemq-client-jakarta'
     }
     testImplementation "org.apache.activemq:activemq-client-jakarta:${activeMqClassicVersion}"
-    testImplementation 'javax.jms:javax.jms-api:2.0.1'
+    testImplementation "javax.jms:javax.jms-api:${javaxJmsApiVersion}"
     testImplementation "com.gruelbox:transactionoutbox-core:${gruelboxVersion}"
     testImplementation "com.gruelbox:transactionoutbox-spring:${gruelboxVersion}"
     testImplementation "com.gruelbox:transactionoutbox-jackson:${gruelboxVersion}"
