@@ -130,8 +130,8 @@ allprojects {
     }
 
     plugins.withId('dev.yumi.gradle.licenser') {
-        checkLicenseMain.enabled = false
-        checkLicenseTest.enabled = false
+        checkLicenseMain.enabled = true
+        checkLicenseTest.enabled = true
         license {
             // Add a license header rule, at least one must be present.
             rule(file("./copyright/HEADER"))
