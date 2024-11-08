@@ -136,7 +136,9 @@ allprojects {
             // Add a license header rule, at least one must be present.
             rule(file("./copyright/HEADER"))
             // Apply license header ONLY to Java files
-            exclude('**/records/*.java')
+            exclude("**/tests/**/*.java")
+            exclude("**/test/**/*.java")
+            exclude("**/sampleshop/**/*.java")
         }
     }
 
