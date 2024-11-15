@@ -4,8 +4,6 @@ import io.domainlifecycles.builder.exception.DLCBuilderException;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
-import java.util.HashSet;
-import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tests.shared.TestDataGenerator;
@@ -14,6 +12,8 @@ import tests.shared.persistence.domain.records.RecordTestId;
 import tests.shared.persistence.domain.records.RecordVo;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

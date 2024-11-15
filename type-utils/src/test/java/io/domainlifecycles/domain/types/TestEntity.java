@@ -1,9 +1,9 @@
 package io.domainlifecycles.domain.types;
 
 
+import io.domainlifecycles.assertion.DomainAssertionException;
 import io.domainlifecycles.domain.types.base.EntityBase;
 import lombok.Builder;
-import io.domainlifecycles.assertion.DomainAssertionException;
 
 public class TestEntity extends EntityBase<TestEntityId> {
 

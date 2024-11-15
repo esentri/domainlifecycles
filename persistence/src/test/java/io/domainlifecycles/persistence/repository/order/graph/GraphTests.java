@@ -1,6 +1,5 @@
 package io.domainlifecycles.persistence.repository.order.graph;
 
-import io.domainlifecycles.persistence.repository.order.graph.DirectedGraph;
 import org.junit.jupiter.api.Test;
 
 import java.util.stream.Collectors;

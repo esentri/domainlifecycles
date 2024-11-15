@@ -34,7 +34,7 @@ applied:
 - [DomainCommand](#DomainCommand)
 - [ApplicationService](#ApplicationService)
 - [ReadModel](#ReadModel)
-- [QueryClient](#QueryClient)
+- [QueryHandler](#QueryHandler)
 - [OutboundService](#OutboundService)
 
 We encourage the implementation of "always-valid" domain objects, so all non-service building blocks
@@ -581,7 +581,7 @@ Further information:
 + Keep the Drivers/ApplicationServices slim.
 + Make sure Drivers/ApplicationServices do not contain any domain logic. No domain specific decisions should be
   implemented here,
-  only orchestration to domain logic in Aggregates or DomainServices (or OutboundServices or QueryClients).
+  only orchestration to domain logic in Aggregates or DomainServices (or OutboundServices or QueryHandlers).
 
 ### Example
 
@@ -672,28 +672,28 @@ public record OrdersByCustomer(
 ) implements ReadModel {}
 ```
 
-<a name="QueryClient"></a>
+<a name="QueryHandler"></a>
 
-## QueryClient
+## QueryHandler
 
 ### Pattern description
 
 ReadModels must be provided by some kind of service classes. Because ReadModels are not part of the core domain,
 it's better to have a special kind of service class being responsible for the delivery of ReadModels
 (that are likely to be used in within some kind of read request / read use case in an ApplicationService/Driver).
-QueryClients do not represent a DDD concept, but they might interact with ApplicationService instances.
+QueryHandler do not represent a DDD concept, but they might interact with ApplicationService instances.
 
 ### Implementation suggestions with DLC
 
-+ QueryClients require implementing `io.domainlifecycles.domain.types.QueryClient`.
-+ Make sure QueryClients are not used in write operations of core domain aggregates.
-+ Typically QueryClients instances represent a secondary/driven port adapter,
++ QueryHandlers require implementing `io.domainlifecycles.domain.types.QueryHandler`.
++ Make sure QueryHandlers are not used in write operations of core domain aggregates.
++ Typically QueryHandler instances represent a secondary/driven port adapter,
   if Ports&Adapters architecture is applied
 
 ### Example
 
 ```Java
-public class OrdersByCustomerProvider implements QueryClient<OrdersByCustomer> {
+public class OrdersByCustomerProvider implements QueryHandler<OrdersByCustomer> {
 
     @Override
     public List<OrdersByCustomer> listAll(String customerNameFilter, int offset, int limit) {

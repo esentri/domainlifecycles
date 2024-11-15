@@ -1,10 +1,10 @@
 package io.domainlifecycles.jooq.persistence.tests.tree;
 
 
-import lombok.extern.slf4j.Slf4j;
 import io.domainlifecycles.jooq.imp.JooqAggregateRepository;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import tests.shared.persistence.domain.tree.TreeRoot;
 import tests.shared.persistence.domain.tree.TreeRootId;

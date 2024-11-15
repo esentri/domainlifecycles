@@ -3,6 +3,7 @@ package io.domainlifecycles.access.object;
 import io.domainlifecycles.access.classes.DefaultClassProvider;
 import org.junit.jupiter.api.Test;
 import tests.shared.persistence.domain.valueobjectsNested.MyEnum;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DefaultEnumFactoryTest {

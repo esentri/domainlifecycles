@@ -29,14 +29,14 @@ package io.domainlifecycles.mirror.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.domainlifecycles.mirror.api.DomainCommandMirror;
-import io.domainlifecycles.mirror.api.MethodMirror;
-import io.domainlifecycles.mirror.api.ParamMirror;
-import io.domainlifecycles.mirror.exception.MirrorException;
 import io.domainlifecycles.mirror.api.AccessLevel;
 import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
 import io.domainlifecycles.mirror.api.Domain;
+import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
+import io.domainlifecycles.mirror.api.MethodMirror;
+import io.domainlifecycles.mirror.api.ParamMirror;
+import io.domainlifecycles.mirror.exception.MirrorException;
 
 import java.util.Collections;
 import java.util.List;

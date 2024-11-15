@@ -16,8 +16,6 @@ import tests.shared.persistence.domain.shared.one.GlobalConfigurationTableEntryI
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 
 /*
 Test-Szenario for shared kernel in DDD

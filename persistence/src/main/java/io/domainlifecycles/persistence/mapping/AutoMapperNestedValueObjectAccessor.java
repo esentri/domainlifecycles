@@ -29,7 +29,6 @@ package io.domainlifecycles.persistence.mapping;
 import io.domainlifecycles.access.DlcAccess;
 import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
-import io.domainlifecycles.persistence.mapping.util.BoxTypeNameConverter;
 import io.domainlifecycles.domain.types.ValueObject;
 import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.mirror.api.Domain;
@@ -38,6 +37,7 @@ import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.persistence.mapping.converter.ConverterRegistry;
 import io.domainlifecycles.persistence.mapping.converter.TypeConverter;
 import io.domainlifecycles.persistence.mapping.util.BiMap;
+import io.domainlifecycles.persistence.mapping.util.BoxTypeNameConverter;
 import io.domainlifecycles.persistence.records.RecordProperty;
 import io.domainlifecycles.persistence.records.RecordPropertyAccessor;
 

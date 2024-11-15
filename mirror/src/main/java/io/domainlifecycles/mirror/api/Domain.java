@@ -26,20 +26,20 @@
 
 package io.domainlifecycles.mirror.api;
 
-import io.domainlifecycles.domain.types.Identity;
-import io.domainlifecycles.domain.types.OutboundService;
-import io.domainlifecycles.domain.types.QueryClient;
-import io.domainlifecycles.domain.types.ServiceKind;
-import io.domainlifecycles.mirror.exception.MirrorException;
-import io.domainlifecycles.mirror.resolver.DefaultEmptyGenericTypeResolver;
-import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.domain.types.ApplicationService;
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.Entity;
+import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.domain.types.OutboundService;
+import io.domainlifecycles.domain.types.QueryHandler;
 import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.domain.types.ValueObject;
+import io.domainlifecycles.mirror.exception.MirrorException;
+import io.domainlifecycles.mirror.resolver.DefaultEmptyGenericTypeResolver;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 import java.util.List;
 import java.util.Optional;
@@ -321,23 +321,23 @@ public class Domain {
     }
 
     /**
-     * @param <V> type of QueryClientMirror
-     * @param queryClient the QueryClient to return the mirror for
-     * @return the {@link QueryClientMirror} for the given QueryClient instance.
+     * @param <V> type of QueryHandlerMirror
+     * @param queryHandler the QueryHandler to return the mirror for
+     * @return the {@link QueryHandlerMirror} for the given QueryHandler instance.
      */
-    public static <V extends QueryClientMirror>  V queryClientMirrorFor(QueryClient<?> queryClient){
-        return (V)typeMirror(queryClient.getClass().getName())
-            .orElseThrow(()-> MirrorException.fail("No QueryClientMirror found for %s", queryClient.getClass().getName()));
+    public static <V extends QueryHandlerMirror>  V queryHandlerMirrorFor(QueryHandler<?> queryHandler){
+        return (V)typeMirror(queryHandler.getClass().getName())
+            .orElseThrow(()-> MirrorException.fail("No QueryHandlerMirror found for %s", queryHandler.getClass().getName()));
     }
 
     /**
-     * @param <V>                 type of QueryClientMirror
-     * @param queryClientTypeName name of the QueryClient type
-     * @return the {@link QueryClientMirror} for the given full qualified QueryClient type name.
+     * @param <V>                 type of QueryHandlerMirror
+     * @param queryHandlerTypeName name of the QueryHandler type
+     * @return the {@link QueryHandlerMirror} for the given full qualified QueryHandler type name.
      */
-    public static <V extends QueryClientMirror>  V queryClientMirrorFor(String queryClientTypeName){
-        return (V)typeMirror(queryClientTypeName)
-            .orElseThrow(()-> MirrorException.fail("No QueryClientMirror found for %s", queryClientTypeName));
+    public static <V extends QueryHandlerMirror>  V queryHandlerMirrorFor(String queryHandlerTypeName){
+        return (V)typeMirror(queryHandlerTypeName)
+            .orElseThrow(()-> MirrorException.fail("No QueryHandlerMirror found for %s", queryHandlerTypeName));
     }
 
     /**

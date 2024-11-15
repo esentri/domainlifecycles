@@ -26,15 +26,16 @@
 
 package io.domainlifecycles.jooq.configuration.def;
 
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ScanResult;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.mapping.converter.def.DefaultTypeConverterProvider;
 import io.domainlifecycles.persistence.records.RecordClassProvider;
 import io.domainlifecycles.reflect.JavaReflect;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
 import org.jooq.UpdatableRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.Set;
 import java.util.stream.Collectors;
 

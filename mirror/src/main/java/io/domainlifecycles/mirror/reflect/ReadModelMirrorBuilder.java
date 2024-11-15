@@ -26,9 +26,9 @@
 
 package io.domainlifecycles.mirror.reflect;
 
-import io.domainlifecycles.mirror.model.ReadModelModel;
 import io.domainlifecycles.domain.types.ReadModel;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
+import io.domainlifecycles.mirror.model.ReadModelModel;
 
 /**
  * Builder to create {@link ReadModelMirror}. Uses Java reflection.

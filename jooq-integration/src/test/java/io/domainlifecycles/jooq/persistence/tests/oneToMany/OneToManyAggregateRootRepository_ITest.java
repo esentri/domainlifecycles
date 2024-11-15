@@ -15,8 +15,6 @@ import tests.shared.persistence.domain.oneToMany.TestRootOneToManyId;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class OneToManyAggregateRootRepository_ITest extends BasePersistence_ITest {
 

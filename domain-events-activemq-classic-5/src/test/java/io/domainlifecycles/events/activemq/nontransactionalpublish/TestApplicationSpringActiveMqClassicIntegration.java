@@ -30,7 +30,7 @@ import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.activemq.domain.ADomainService;
-import io.domainlifecycles.events.activemq.domain.AQueryClient;
+import io.domainlifecycles.events.activemq.domain.AQueryHandler;
 import io.domainlifecycles.events.activemq.domain.ARepository;
 import io.domainlifecycles.events.activemq.domain.AnApplicationService;
 import io.domainlifecycles.events.activemq.domain.AnOutboundService;
@@ -83,8 +83,8 @@ public class TestApplicationSpringActiveMqClassicIntegration {
     }
 
     @Bean
-    public AQueryClient aQueryClient(){
-        return new AQueryClient();
+    public AQueryHandler aQueryHandler(){
+        return new AQueryHandler();
     }
 
     @Bean

@@ -26,14 +26,14 @@
 
 package io.domainlifecycles.mirror.reflect;
 
-import io.domainlifecycles.mirror.api.FieldMirror;
-import io.domainlifecycles.mirror.model.ValueReferenceModel;
 import io.domainlifecycles.mirror.api.AccessLevel;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainType;
+import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.model.AggregateRootReferenceModel;
 import io.domainlifecycles.mirror.model.EntityReferenceModel;
 import io.domainlifecycles.mirror.model.FieldModel;
+import io.domainlifecycles.mirror.model.ValueReferenceModel;
 import io.domainlifecycles.reflect.JavaReflect;
 
 import java.lang.reflect.Field;

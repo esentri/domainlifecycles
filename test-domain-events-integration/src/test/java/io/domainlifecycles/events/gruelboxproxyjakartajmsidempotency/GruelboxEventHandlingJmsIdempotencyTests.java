@@ -27,10 +27,9 @@
 package io.domainlifecycles.events.gruelboxproxyjakartajmsidempotency;
 
 import com.gruelbox.transactionoutbox.NoTransactionActiveException;
-import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.events.ADomainEvent;
 import io.domainlifecycles.events.ADomainService;
-import io.domainlifecycles.events.AQueryClient;
+import io.domainlifecycles.events.AQueryHandler;
 import io.domainlifecycles.events.ARepository;
 import io.domainlifecycles.events.AnAggregate;
 import io.domainlifecycles.events.AnAggregateDomainEvent;
@@ -75,7 +74,7 @@ public class GruelboxEventHandlingJmsIdempotencyTests {
     private AnApplicationService anApplicationService;
 
     @Autowired
-    private AQueryClient queryClient;
+    private AQueryHandler queryHandler;
 
     @Autowired
     private AnOutboundService outboundService;
@@ -104,7 +103,7 @@ public class GruelboxEventHandlingJmsIdempotencyTests {
                 var received = new ArrayList<>();
                 received.addAll(aRepository.received);
                 received.addAll(anApplicationService.received);
-                received.addAll(queryClient.received);
+                received.addAll(queryHandler.received);
                 received.addAll(outboundService.received);
                 received.addAll(aDomainService.received);
                 softly.assertThat(received.stream().filter(e -> e.equals(evt)).count()).isEqualTo(5);
@@ -129,7 +128,7 @@ public class GruelboxEventHandlingJmsIdempotencyTests {
                 softly.assertThat(aDomainService.received).doesNotContain(evt);
                 softly.assertThat(aRepository.received).doesNotContain(evt);
                 softly.assertThat(anApplicationService.received).doesNotContain(evt);
-                softly.assertThat(queryClient.received).doesNotContain(evt);
+                softly.assertThat(queryHandler.received).doesNotContain(evt);
                 softly.assertThat(outboundService.received).doesNotContain(evt);
                 softly.assertAll();
             });
@@ -152,7 +151,7 @@ public class GruelboxEventHandlingJmsIdempotencyTests {
                 softly.assertThat(aDomainService.received).doesNotContain(evt);
                 softly.assertThat(aRepository.received).doesNotContain(evt);
                 softly.assertThat(anApplicationService.received).doesNotContain(evt);
-                softly.assertThat(queryClient.received).doesNotContain(evt);
+                softly.assertThat(queryHandler.received).doesNotContain(evt);
                 softly.assertThat(outboundService.received).doesNotContain(evt);
                 softly.assertAll();
             });
@@ -185,7 +184,7 @@ public class GruelboxEventHandlingJmsIdempotencyTests {
                 softly.assertThat(aRepository.received).doesNotContain(evt);
                 softly.assertThat(aDomainService.received).doesNotContain(evt);
                 softly.assertThat(anApplicationService.received).doesNotContain(evt);
-                softly.assertThat(queryClient.received).doesNotContain(evt);
+                softly.assertThat(queryHandler.received).doesNotContain(evt);
                 softly.assertThat(outboundService.received).doesNotContain(evt);
                 var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
                 softly.assertThat(root.received).contains(evt);
@@ -209,7 +208,7 @@ public class GruelboxEventHandlingJmsIdempotencyTests {
                 softly.assertThat(aRepository.received).doesNotContain(evt);
                 softly.assertThat(aDomainService.received).doesNotContain(evt);
                 softly.assertThat(anApplicationService.received).doesNotContain(evt);
-                softly.assertThat(queryClient.received).doesNotContain(evt);
+                softly.assertThat(queryHandler.received).doesNotContain(evt);
                 softly.assertThat(outboundService.received).doesNotContain(evt);
                 var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
                 softly.assertThat(root.received).doesNotContain(evt);
@@ -234,7 +233,7 @@ public class GruelboxEventHandlingJmsIdempotencyTests {
                 softly.assertThat(aRepository.received).doesNotContain(evt);
                 softly.assertThat(aDomainService.received).doesNotContain(evt);
                 softly.assertThat(anApplicationService.received).doesNotContain(evt);
-                softly.assertThat(queryClient.received).doesNotContain(evt);
+                softly.assertThat(queryHandler.received).doesNotContain(evt);
                 softly.assertThat(outboundService.received).doesNotContain(evt);
                 var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
                 softly.assertThat(root.received).doesNotContain(evt);
@@ -271,7 +270,7 @@ public class GruelboxEventHandlingJmsIdempotencyTests {
                 softly.assertThat(aDomainService.received).doesNotContain(evt);
                 softly.assertThat(aRepository.received).doesNotContain(evt);
                 softly.assertThat(anApplicationService.received).doesNotContain(evt);
-                softly.assertThat(queryClient.received).doesNotContain(evt);
+                softly.assertThat(queryHandler.received).doesNotContain(evt);
                 softly.assertThat(outboundService.received).doesNotContain(evt);
                 softly.assertAll();
             });

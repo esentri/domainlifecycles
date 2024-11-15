@@ -31,8 +31,8 @@ import com.github.vladislavsevruk.resolver.resolver.executable.ExecutableTypeRes
 import com.github.vladislavsevruk.resolver.resolver.field.FieldTypeMetaResolver;
 import com.github.vladislavsevruk.resolver.resolver.field.FieldTypeResolver;
 import com.github.vladislavsevruk.resolver.type.TypeMeta;
-import io.domainlifecycles.mirror.api.WildcardBound;
 import io.domainlifecycles.mirror.api.ResolvedGenericTypeMirror;
+import io.domainlifecycles.mirror.api.WildcardBound;
 import io.domainlifecycles.mirror.model.ResolvedGenericTypeModel;
 
 import java.lang.reflect.Field;

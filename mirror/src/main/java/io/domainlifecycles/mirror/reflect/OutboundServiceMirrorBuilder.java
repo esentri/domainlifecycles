@@ -26,8 +26,8 @@
 
 package io.domainlifecycles.mirror.reflect;
 
-import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.domain.types.OutboundService;
+import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.mirror.model.OutboundServiceModel;
 
 import java.util.Arrays;

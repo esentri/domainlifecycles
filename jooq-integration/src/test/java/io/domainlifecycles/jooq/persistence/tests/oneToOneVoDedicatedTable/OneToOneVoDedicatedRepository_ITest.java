@@ -13,8 +13,6 @@ import tests.shared.persistence.domain.oneToOneVoDedicatedTable.VoDedicated;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class OneToOneVoDedicatedRepository_ITest extends BasePersistence_ITest {
 

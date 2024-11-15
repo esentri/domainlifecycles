@@ -30,7 +30,7 @@ import io.domainlifecycles.domain.types.ApplicationService;
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.OutboundService;
-import io.domainlifecycles.domain.types.QueryClient;
+import io.domainlifecycles.domain.types.QueryHandler;
 import io.domainlifecycles.domain.types.Repository;
 
 import java.util.Objects;
@@ -38,7 +38,7 @@ import java.util.Objects;
 /**
  * Represents the execution context for a domain event handler within a service
  * ({@link DomainService}, {@link ApplicationService}, {@link OutboundService},
- * {@link QueryClient} or {@link Repository}).
+ * {@link QueryHandler} or {@link Repository}).
  * <p>
  * It holds the handler object (the service instance), handler method name, and the domain event being dispatched.
  *

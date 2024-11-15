@@ -30,17 +30,17 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
-import io.domainlifecycles.mirror.api.DomainCommandMirror;
-import io.domainlifecycles.mirror.api.OutboundServiceMirror;
-import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
 import io.domainlifecycles.mirror.api.BoundedContextMirror;
 import io.domainlifecycles.mirror.api.Domain;
+import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
-import io.domainlifecycles.mirror.api.QueryClientMirror;
+import io.domainlifecycles.mirror.api.OutboundServiceMirror;
+import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
+import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.ServiceKindMirror;
 
 import java.util.List;
@@ -185,15 +185,15 @@ public class BoundedContextModel implements BoundedContextMirror {
      */
     @JsonIgnore
     @Override
-    public List<QueryClientMirror> getQueryClients() {
+    public List<QueryHandlerMirror> getQueryHandlers() {
         return Domain
             .getInitializedDomain()
             .allTypeMirrors()
             .values()
             .stream()
             .filter(dt -> dt.getTypeName().startsWith(packageName)
-                && DomainType.QUERY_CLIENT.equals(dt.getDomainType()))
-            .map(dt -> (QueryClientMirror) dt)
+                && DomainType.QUERY_HANDLER.equals(dt.getDomainType()))
+            .map(dt -> (QueryHandlerMirror) dt)
             .toList();
     }
 

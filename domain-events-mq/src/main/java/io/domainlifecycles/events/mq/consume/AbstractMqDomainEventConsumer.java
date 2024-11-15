@@ -46,7 +46,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -298,7 +297,7 @@ public abstract class AbstractMqDomainEventConsumer<CONSUMER, MESSAGE> implement
                 .map(me -> newHandler(ds.getTypeName(), me.getName(), domainEventMirror.getTypeName()))
                 .toList())
         );
-        domainEventMirror.getListeningQueryClients().forEach(ds ->
+        domainEventMirror.getListeningQueryHandlers().forEach(ds ->
             handlers.addAll(ds.getMethods().stream()
                 .filter(me -> me.listensTo(domainEventMirror))
                 .map(me -> newHandler(ds.getTypeName(), me.getName(), domainEventMirror.getTypeName()))

@@ -1,7 +1,6 @@
 package io.domainlifecycles.jooq.persistence.events;
 
 
-import lombok.extern.slf4j.Slf4j;
 import io.domainlifecycles.access.DlcAccess;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.companions.Entities;
@@ -9,6 +8,7 @@ import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.jooq.persistence.BasePersistence_ITest;
 import io.domainlifecycles.persistence.provider.DomainObjectInstanceAccessModel;
 import io.domainlifecycles.persistence.repository.actions.PersistenceAction;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.UpdatableRecord;
 import org.junit.jupiter.api.Test;
 import tests.shared.persistence.domain.bestellung.bv2.ArtikelId;

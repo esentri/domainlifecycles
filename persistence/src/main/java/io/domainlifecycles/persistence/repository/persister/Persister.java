@@ -26,8 +26,8 @@
 
 package io.domainlifecycles.persistence.repository.persister;
 
-import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.domain.types.Entity;
+import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.persistence.repository.actions.PersistenceAction;
 import io.domainlifecycles.persistence.repository.actions.PersistenceContext;
 

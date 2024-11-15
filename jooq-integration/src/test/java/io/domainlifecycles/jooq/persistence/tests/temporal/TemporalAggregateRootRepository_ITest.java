@@ -1,7 +1,7 @@
 package io.domainlifecycles.jooq.persistence.tests.temporal;
 
-import lombok.extern.slf4j.Slf4j;
 import io.domainlifecycles.jooq.persistence.BasePersistence_ITest;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -26,8 +26,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

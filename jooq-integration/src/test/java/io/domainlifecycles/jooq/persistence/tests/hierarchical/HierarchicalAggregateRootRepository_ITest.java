@@ -1,8 +1,8 @@
 package io.domainlifecycles.jooq.persistence.tests.hierarchical;
 
 
-import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.jooq.persistence.BasePersistence_ITest;
+import io.domainlifecycles.mirror.api.Domain;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

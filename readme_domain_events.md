@@ -62,16 +62,16 @@ information is also rendered in DLC domain diagrams (see [DLC Domain Diagrammer]
 
 <a name="listening"></a>
 #### Listening to DomainEvents
-Domain Events are typically listened to by ApplicationServices, DomainServices, Repositories, OutboundServices, QueryClients or directly by Aggregate instances. 
+Domain Events are typically listened to by ApplicationServices, DomainServices, Repositories, OutboundServices, QueryHandlers or directly by Aggregate instances. 
 DLC reduces the technical boilerplate normally needed to route consumed DomainEvents to the addressed handler methods.
 Therefor the annotation ``@ListensTo`` (see io.domainlifecycles.domain.types.ListensTo) is used.
 
-Every method (inside an ApplicationService, a DomainService, an OutboundService, a QueryClient or a Repository) that has only one parameter (the consumed DomainEvent) and which is annotated with
+Every method (inside an ApplicationService, a DomainService, an OutboundService, a QueryHandler or a Repository) that has only one parameter (the consumed DomainEvent) and which is annotated with
 ```@ListensTo``` is automatically called, when a new DomainEvent is consumed by the central DLC event consumer (see ``io.domainlifecycles.events.consume.DomainEventConsumer``).
 
 Depending on the transaction configuration of DLC DomainEvents, every handler call might also be automatically wrapped in an independent transaction.
 
-Example of a service event handler methods (applicable on ApplicationServices (aka Drivers), DomainServices, OutboundServices, QueryClients or Repositories):
+Example of a service event handler methods (applicable on ApplicationServices (aka Drivers), DomainServices, OutboundServices, QueryHandlers or Repositories):
 ```Java
 public class CustomerNotificationDriver implements Driver {
     ...
@@ -296,11 +296,11 @@ Example setup:
 ```Java
     //The Services instance must register all services that contain event handler methods
     var services = new Services();
-    services.registerDomainServiceInstance(domainService);
-    services.registerRepositoryInstance(repository);
-    services.registerApplicationServiceInstance(applicationService);
-    services.registerQueryClientInstance(queryClient);
-    services.registerOutboundServiceInstance(outboundService);
+    services.registerServiceKindInstance(domainService);
+    services.registerServiceKindInstance(repository);
+    services.registerServiceKindInstance(applicationService);
+    services.registerServiceKindInstance(queryHandler);
+    services.registerServiceKindInstance(outboundService);
     
     //In memory only a processing channel can be defined
     var inMemoryChannel = new InMemoryChannelFactory(services).processingChannel("default");

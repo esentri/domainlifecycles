@@ -95,9 +95,9 @@ public class DomainDiagramConfig implements DiagramConfig {
      */
     private String readModelStyle = "fill=#FFCCE5 bold";
     /**
-     * Style declaration for QueryClients  (see Nomnoml style options)
+     * Style declaration for QueryHandlers  (see Nomnoml style options)
      */
-    private String queryClientStyle = "fill=#C0C0C0 bold";
+    private String queryHandlerStyle = "fill=#C0C0C0 bold";
     /**
      * Style declaration for OutboundServices  (see Nomnoml style options)
      */
@@ -228,17 +228,17 @@ public class DomainDiagramConfig implements DiagramConfig {
      */
     private boolean showReadModelMethods = false;
     /**
-     * If true, QueryClient classes are included
+     * If true, QueryHandler classes are included
      */
-    private boolean showQueryClients = true;
+    private boolean showQueryHandlers = true;
     /**
-     * If true, fields of QueryClients are included
+     * If true, fields of QueryHandlers are included
      */
-    private boolean showQueryClientFields = false;
+    private boolean showQueryHandlerFields = false;
     /**
-     * If true, methods of QueryClients are included
+     * If true, methods of QueryHandlers are included
      */
-    private boolean showQueryClientMethods = false;
+    private boolean showQueryHandlerMethods = false;
     /**
      * If true, OutboundService classes are included
      */
@@ -336,7 +336,7 @@ public class DomainDiagramConfig implements DiagramConfig {
                         String domainServiceStyle,
                         String repositoryStyle,
                         String readModelStyle,
-                        String queryClientStyle,
+                        String queryHandlerStyle,
                         String outboundServiceStyle,
                         String unspecifiedServiceKindStyle,
                         String font,
@@ -368,9 +368,9 @@ public class DomainDiagramConfig implements DiagramConfig {
                         boolean showReadModels,
                         boolean showReadModelFields,
                         boolean showReadModelMethods,
-                        boolean showQueryClients,
-                        boolean showQueryClientFields,
-                        boolean showQueryClientMethods,
+                        boolean showQueryHandlers,
+                        boolean showQueryHandlerFields,
+                        boolean showQueryHandlerMethods,
                         boolean showOutboundServices,
                         boolean showOutboundServiceFields,
                         boolean showOutboundServiceMethods,
@@ -399,7 +399,7 @@ public class DomainDiagramConfig implements DiagramConfig {
         this.domainServiceStyle = domainServiceStyle;
         this.repositoryStyle = repositoryStyle;
         this.readModelStyle = readModelStyle;
-        this.queryClientStyle = queryClientStyle;
+        this.queryHandlerStyle = queryHandlerStyle;
         this.outboundServiceStyle = outboundServiceStyle;
         this.unspecifiedServiceKindStyle = unspecifiedServiceKindStyle;
         this.font = font;
@@ -431,9 +431,9 @@ public class DomainDiagramConfig implements DiagramConfig {
         this.showReadModels = showReadModels;
         this.showReadModelFields = showReadModelFields;
         this.showReadModelMethods = showReadModelMethods;
-        this.showQueryClients = showQueryClients;
-        this.showQueryClientFields = showQueryClientFields;
-        this.showQueryClientMethods = showQueryClientMethods;
+        this.showQueryHandlers = showQueryHandlers;
+        this.showQueryHandlerFields = showQueryHandlerFields;
+        this.showQueryHandlerMethods = showQueryHandlerMethods;
         this.showOutboundServices = showOutboundServices;
         this.showOutboundServiceFields = showOutboundServiceFields;
         this.showOutboundServiceMethods = showOutboundServiceMethods;
@@ -502,7 +502,7 @@ public class DomainDiagramConfig implements DiagramConfig {
         return "fill=#FFCCE5 bold";
     }
 
-    private static String $default$queryClientStyle() {
+    private static String $default$queryHandlerStyle() {
         return "fill=#C0C0C0 bold";
     }
 
@@ -630,15 +630,15 @@ public class DomainDiagramConfig implements DiagramConfig {
         return false;
     }
 
-    private static boolean $default$showQueryClients() {
+    private static boolean $default$showQueryHandlers() {
         return true;
     }
 
-    private static boolean $default$showQueryClientFields() {
+    private static boolean $default$showQueryHandlerFields() {
         return false;
     }
 
-    private static boolean $default$showQueryClientMethods() {
+    private static boolean $default$showQueryHandlerMethods() {
         return false;
     }
 
@@ -770,8 +770,8 @@ public class DomainDiagramConfig implements DiagramConfig {
         return this.readModelStyle;
     }
 
-    public String getQueryClientStyle() {
-        return this.queryClientStyle;
+    public String getQueryHandlerStyle() {
+        return this.queryHandlerStyle;
     }
 
     public String getOutboundServiceStyle() {
@@ -898,16 +898,16 @@ public class DomainDiagramConfig implements DiagramConfig {
         return this.showReadModelMethods;
     }
 
-    public boolean isShowQueryClients() {
-        return this.showQueryClients;
+    public boolean isShowQueryHandlers() {
+        return this.showQueryHandlers;
     }
 
-    public boolean isShowQueryClientFields() {
-        return this.showQueryClientFields;
+    public boolean isShowQueryHandlerFields() {
+        return this.showQueryHandlerFields;
     }
 
-    public boolean isShowQueryClientMethods() {
-        return this.showQueryClientMethods;
+    public boolean isShowQueryHandlerMethods() {
+        return this.showQueryHandlerMethods;
     }
 
     public boolean isShowOutboundServices() {
@@ -981,7 +981,7 @@ public class DomainDiagramConfig implements DiagramConfig {
             .withDomainServiceStyle(this.domainServiceStyle)
             .withRepositoryStyle(this.repositoryStyle)
             .withReadModelStyle(this.readModelStyle)
-            .withQueryClientStyle(this.queryClientStyle)
+            .withQueryHandlerStyle(this.queryHandlerStyle)
             .withOutboundServiceStyle(this.outboundServiceStyle)
             .withUnspecifiedServiceKindStyle(this.unspecifiedServiceKindStyle)
             .withFont(this.font).withDirection(this.direction)
@@ -1011,9 +1011,9 @@ public class DomainDiagramConfig implements DiagramConfig {
             .withShowReadModels(this.showReadModels)
             .withShowReadModelFields(this.showReadModelFields)
             .withShowReadModelMethods(this.showReadModelMethods)
-            .withShowQueryClients(this.showQueryClients)
-            .withShowQueryClientFields(this.showQueryClientFields)
-            .withShowQueryClientMethods(this.showQueryClientMethods)
+            .withShowQueryHandlers(this.showQueryHandlers)
+            .withShowQueryHandlerFields(this.showQueryHandlerFields)
+            .withShowQueryHandlerMethods(this.showQueryHandlerMethods)
             .withShowOutboundServices(this.showOutboundServices)
             .withShowOutboundServiceFields(this.showOutboundServiceFields)
             .withShowOutboundServiceMethods(this.showOutboundServiceMethods)
@@ -1060,8 +1060,8 @@ public class DomainDiagramConfig implements DiagramConfig {
         private boolean repositoryStyle$set;
         private String readModelStyle$value;
         private boolean readModelStyle$set;
-        private String queryClientStyle$value;
-        private boolean queryClientStyle$set;
+        private String queryHandlerStyle$value;
+        private boolean queryHandlerStyle$set;
         private String outboundServiceStyle$value;
         private boolean outboundServiceStyle$set;
         private String unspecifiedServiceKindStyle$value;
@@ -1124,12 +1124,12 @@ public class DomainDiagramConfig implements DiagramConfig {
         private boolean showReadModelFields$set;
         private boolean showReadModelMethods$value;
         private boolean showReadModelMethods$set;
-        private boolean showQueryClients$value;
-        private boolean showQueryClients$set;
-        private boolean showQueryClientFields$value;
-        private boolean showQueryClientFields$set;
-        private boolean showQueryClientMethods$value;
-        private boolean showQueryClientMethods$set;
+        private boolean showQueryHandlers$value;
+        private boolean showQueryHandlers$set;
+        private boolean showQueryHandlerFields$value;
+        private boolean showQueryHandlerFields$set;
+        private boolean showQueryHandlerMethods$value;
+        private boolean showQueryHandlerMethods$set;
         private boolean showOutboundServices$value;
         private boolean showOutboundServices$set;
         private boolean showOutboundServiceFields$value;
@@ -1240,9 +1240,9 @@ public class DomainDiagramConfig implements DiagramConfig {
             return this;
         }
 
-        public DomainDiagramConfigBuilder withQueryClientStyle(String queryClientStyle) {
-            this.queryClientStyle$value = queryClientStyle;
-            this.queryClientStyle$set = true;
+        public DomainDiagramConfigBuilder withQueryHandlerStyle(String queryHandlerStyle) {
+            this.queryHandlerStyle$value = queryHandlerStyle;
+            this.queryHandlerStyle$set = true;
             return this;
         }
 
@@ -1432,21 +1432,21 @@ public class DomainDiagramConfig implements DiagramConfig {
             return this;
         }
 
-        public DomainDiagramConfigBuilder withShowQueryClients(boolean showQueryClients) {
-            this.showQueryClients$value = showQueryClients;
-            this.showQueryClients$set = true;
+        public DomainDiagramConfigBuilder withShowQueryHandlers(boolean showQueryHandlers) {
+            this.showQueryHandlers$value = showQueryHandlers;
+            this.showQueryHandlers$set = true;
             return this;
         }
 
-        public DomainDiagramConfigBuilder withShowQueryClientFields(boolean showQueryClientFields) {
-            this.showQueryClientFields$value = showQueryClientFields;
-            this.showQueryClientFields$set = true;
+        public DomainDiagramConfigBuilder withShowQueryHandlerFields(boolean showQueryHandlerFields) {
+            this.showQueryHandlerFields$value = showQueryHandlerFields;
+            this.showQueryHandlerFields$set = true;
             return this;
         }
 
-        public DomainDiagramConfigBuilder withShowQueryClientMethods(boolean showQueryClientMethods) {
-            this.showQueryClientMethods$value = showQueryClientMethods;
-            this.showQueryClientMethods$set = true;
+        public DomainDiagramConfigBuilder withShowQueryHandlerMethods(boolean showQueryHandlerMethods) {
+            this.showQueryHandlerMethods$value = showQueryHandlerMethods;
+            this.showQueryHandlerMethods$set = true;
             return this;
         }
 
@@ -1587,9 +1587,9 @@ public class DomainDiagramConfig implements DiagramConfig {
             if (!this.readModelStyle$set) {
                 readModelStyle$value = DomainDiagramConfig.$default$readModelStyle();
             }
-            String queryClientStyle$value = this.queryClientStyle$value;
-            if (!this.queryClientStyle$set) {
-                queryClientStyle$value = DomainDiagramConfig.$default$queryClientStyle();
+            String queryHandlerStyle$value = this.queryHandlerStyle$value;
+            if (!this.queryHandlerStyle$set) {
+                queryHandlerStyle$value = DomainDiagramConfig.$default$queryHandlerStyle();
             }
             String outboundServiceStyle$value = this.outboundServiceStyle$value;
             if (!this.outboundServiceStyle$set) {
@@ -1715,17 +1715,17 @@ public class DomainDiagramConfig implements DiagramConfig {
             if (!this.showReadModelMethods$set) {
                 showReadModelMethods$value = DomainDiagramConfig.$default$showReadModelMethods();
             }
-            boolean showQueryClients$value = this.showQueryClients$value;
-            if (!this.showQueryClients$set) {
-                showQueryClients$value = DomainDiagramConfig.$default$showQueryClients();
+            boolean showQueryHandlers$value = this.showQueryHandlers$value;
+            if (!this.showQueryHandlers$set) {
+                showQueryHandlers$value = DomainDiagramConfig.$default$showQueryHandlers();
             }
-            boolean showQueryClientFields$value = this.showQueryClientFields$value;
-            if (!this.showQueryClientFields$set) {
-                showQueryClientFields$value = DomainDiagramConfig.$default$showQueryClientFields();
+            boolean showQueryHandlerFields$value = this.showQueryHandlerFields$value;
+            if (!this.showQueryHandlerFields$set) {
+                showQueryHandlerFields$value = DomainDiagramConfig.$default$showQueryHandlerFields();
             }
-            boolean showQueryClientMethods$value = this.showQueryClientMethods$value;
-            if (!this.showQueryClientMethods$set) {
-                showQueryClientMethods$value = DomainDiagramConfig.$default$showQueryClientMethods();
+            boolean showQueryHandlerMethods$value = this.showQueryHandlerMethods$value;
+            if (!this.showQueryHandlerMethods$set) {
+                showQueryHandlerMethods$value = DomainDiagramConfig.$default$showQueryHandlerMethods();
             }
             boolean showOutboundServices$value = this.showOutboundServices$value;
             if (!this.showOutboundServices$set) {
@@ -1797,7 +1797,7 @@ public class DomainDiagramConfig implements DiagramConfig {
                 domainServiceStyle$value,
                 repositoryStyle$value,
                 readModelStyle$value,
-                queryClientStyle$value,
+                queryHandlerStyle$value,
                 outboundServiceStyle$value,
                 unspecifiedServiceKindStyle$value,
                 font$value,
@@ -1829,9 +1829,9 @@ public class DomainDiagramConfig implements DiagramConfig {
                 showReadModels$value,
                 showReadModelFields$value,
                 showReadModelMethods$value,
-                showQueryClients$value,
-                showQueryClientFields$value,
-                showQueryClientMethods$value,
+                showQueryHandlers$value,
+                showQueryHandlerFields$value,
+                showQueryHandlerMethods$value,
                 showOutboundServices$value,
                 showOutboundServiceFields$value,
                 showOutboundServiceMethods$value,
@@ -1876,8 +1876,8 @@ public class DomainDiagramConfig implements DiagramConfig {
                 this.repositoryStyle$value +
                 ", readModelStyle$value=" +
                 this.readModelStyle$value +
-                ", queryClientStyle$value=" +
-                this.queryClientStyle$value +
+                ", queryHandlerStyle$value=" +
+                this.queryHandlerStyle$value +
                 ", outboundServiceStyle$value=" +
                 this.outboundServiceStyle$value +
                 ", unspecifiedServiceKindStyle$value=" +
@@ -1940,12 +1940,12 @@ public class DomainDiagramConfig implements DiagramConfig {
                 this.showReadModelFields$value +
                 ", showReadModelMethods$value=" +
                 this.showReadModelMethods$value +
-                ", showQueryClients$value=" +
-                this.showQueryClients$value +
-                ", showQueryClientFields$value=" +
-                this.showQueryClientFields$value +
-                ", showQueryClientMethods$value=" +
-                this.showQueryClientMethods$value +
+                ", showQueryHandlers$value=" +
+                this.showQueryHandlers$value +
+                ", showQueryHandlerFields$value=" +
+                this.showQueryHandlerFields$value +
+                ", showQueryHandlerMethods$value=" +
+                this.showQueryHandlerMethods$value +
                 ", showOutboundServices$value=" +
                 this.showOutboundServices$value +
                 ", showOutboundServiceFields$value=" +

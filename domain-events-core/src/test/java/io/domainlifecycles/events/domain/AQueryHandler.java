@@ -24,22 +24,24 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.events.activemq.domain;
+package io.domainlifecycles.events.domain;
 
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.domain.types.ListensTo;
-import io.domainlifecycles.domain.types.QueryClient;
+import io.domainlifecycles.domain.types.QueryHandler;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class AQueryClient implements QueryClient {
+@Slf4j
+public class AQueryHandler implements QueryHandler {
 
     public Queue<DomainEvent> received = new ConcurrentLinkedQueue<>();
 
     @ListensTo(domainEventType = ADomainEvent.class)
     public void onADomainEvent(ADomainEvent domainEvent){
-        System.out.println("ADomainEvent received in AQueryClient! Message = " + domainEvent.message());
+        log.debug("ADomainEvent received in AQueryHandler! Message = " + domainEvent.message());
         received.add(domainEvent);
     }
 

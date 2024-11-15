@@ -4,12 +4,11 @@ package io.domainlifecycles.jooq.persistence.mapper.manyToManyWithJoinEntity;
 import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.persistence.mapping.AbstractRecordMapper;
+import io.domainlifecycles.test.Tables;
 import io.domainlifecycles.test.tables.records.TestEntityManyToManyBRecord;
 import tests.shared.persistence.domain.manyToManyWithJoinEntity.TestEntityManyToManyB;
 import tests.shared.persistence.domain.manyToManyWithJoinEntity.TestEntityManyToManyBId;
 import tests.shared.persistence.domain.manyToManyWithJoinEntity.TestRootManyToMany;
-
-import io.domainlifecycles.test.Tables;
 
 
 /**

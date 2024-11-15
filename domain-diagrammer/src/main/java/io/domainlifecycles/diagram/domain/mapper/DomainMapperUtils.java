@@ -36,7 +36,7 @@ import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.EntityReferenceMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
-import io.domainlifecycles.mirror.api.QueryClientMirror;
+import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.ValueObjectMirror;
 import io.domainlifecycles.mirror.api.ValueReferenceMirror;
@@ -81,10 +81,10 @@ public class DomainMapperUtils {
                 name = DomainMapperUtils.mapTypeName(
                     outboundServiceMirror.getOutboundServiceInterfaceTypeNames().get(0), domainDiagramConfig);
             }
-        } else if (domainTypeMirror.getDomainType().equals(DomainType.QUERY_CLIENT)) {
-            var queryClientMirror = (QueryClientMirror) domainTypeMirror;
-            if (!queryClientMirror.getQueryClientInterfaceTypeNames().isEmpty() && !queryClientMirror.isAbstract()) {
-                name = DomainMapperUtils.mapTypeName(queryClientMirror.getQueryClientInterfaceTypeNames().get(0),
+        } else if (domainTypeMirror.getDomainType().equals(DomainType.QUERY_HANDLER)) {
+            var queryHandlerMirror = (QueryHandlerMirror) domainTypeMirror;
+            if (!queryHandlerMirror.getQueryHandlerInterfaceTypeNames().isEmpty() && !queryHandlerMirror.isAbstract()) {
+                name = DomainMapperUtils.mapTypeName(queryHandlerMirror.getQueryHandlerInterfaceTypeNames().get(0),
                     domainDiagramConfig);
             }
         }
@@ -114,7 +114,7 @@ public class DomainMapperUtils {
                 || DomainType.DOMAIN_EVENT.equals(domainTypeMirror.getDomainType())
                 || DomainType.DOMAIN_COMMAND.equals(domainTypeMirror.getDomainType())
                 || DomainType.READ_MODEL.equals(domainTypeMirror.getDomainType())
-                || DomainType.QUERY_CLIENT.equals(domainTypeMirror.getDomainType())
+                || DomainType.QUERY_HANDLER.equals(domainTypeMirror.getDomainType())
                 || DomainType.DOMAIN_SERVICE.equals(domainTypeMirror.getDomainType())
                 || DomainType.OUTBOUND_SERVICE.equals(domainTypeMirror.getDomainType())
                 || DomainType.SERVICE_KIND.equals(domainTypeMirror.getDomainType())
@@ -159,7 +159,7 @@ public class DomainMapperUtils {
             case READ_MODEL -> "<" + DomainDiagramGenerator.READ_MODEL_STYLE_TAG + ">";
             case IDENTITY -> "<" + DomainDiagramGenerator.IDENTITY_STYLE_TAG + ">";
             case APPLICATION_SERVICE -> "<" + DomainDiagramGenerator.APPLICATION_SERVICE_STYLE_TAG + ">";
-            case QUERY_CLIENT -> "<" + DomainDiagramGenerator.QUERY_CLIENT_STYLE_TAG + ">";
+            case QUERY_HANDLER -> "<" + DomainDiagramGenerator.QUERY_HANDLER_STYLE_TAG + ">";
             case OUTBOUND_SERVICE -> "<" + DomainDiagramGenerator.OUTBOUND_SERVICE_STYLE_TAG + ">";
             case SERVICE_KIND -> "<" + DomainDiagramGenerator.SERVICE_KIND_STYLE_TAG + ">";
             default -> "";
@@ -204,7 +204,7 @@ public class DomainMapperUtils {
             case DOMAIN_EVENT -> "DomainEvent";
             case IDENTITY -> "Identity";
             case READ_MODEL -> "ReadModel";
-            case QUERY_CLIENT -> "QueryClient";
+            case QUERY_HANDLER -> "QueryHandler";
             case OUTBOUND_SERVICE -> "OutboundService";
             case SERVICE_KIND -> "ServiceKind";
             default -> "";

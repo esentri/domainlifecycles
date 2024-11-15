@@ -3,7 +3,7 @@ package io.domainlifecycles.events.springoutbox;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.events.ADomainEvent;
 import io.domainlifecycles.events.ADomainService;
-import io.domainlifecycles.events.AQueryClient;
+import io.domainlifecycles.events.AQueryHandler;
 import io.domainlifecycles.events.ARepository;
 import io.domainlifecycles.events.AnAggregate;
 import io.domainlifecycles.events.AnAggregateDomainEvent;
@@ -53,7 +53,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
     private AnOutboundService outboundService;
 
     @Autowired
-    private AQueryClient queryClient;
+    private AQueryHandler queryHandler;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -113,7 +113,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
         assertThat(aRepository.received).contains(evt);
         assertThat(anApplicationService.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
-        assertThat(queryClient.received).contains(evt);
+        assertThat(queryHandler.received).contains(evt);
     }
 
     @Test
@@ -138,7 +138,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
-        assertThat(queryClient.received).doesNotContain(evt);
+        assertThat(queryHandler.received).doesNotContain(evt);
 
     }
 
@@ -161,7 +161,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
-        assertThat(queryClient.received).doesNotContain(evt);
+        assertThat(queryHandler.received).doesNotContain(evt);
     }
 
     @Test
@@ -179,7 +179,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
         assertThat(aRepository.received).contains(evt);
         assertThat(anApplicationService.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
-        assertThat(queryClient.received).contains(evt);
+        assertThat(queryHandler.received).contains(evt);
     }
 
     @Test
@@ -198,7 +198,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
-        assertThat(queryClient.received).doesNotContain(evt);
+        assertThat(queryHandler.received).doesNotContain(evt);
         var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).contains(evt);
     }
@@ -220,7 +220,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
-        assertThat(queryClient.received).doesNotContain(evt);
+        assertThat(queryHandler.received).doesNotContain(evt);
         var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).doesNotContain(evt);
     }
@@ -241,7 +241,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(anApplicationService.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
-        assertThat(queryClient.received).contains(evt);
+        assertThat(queryHandler.received).contains(evt);
         var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).doesNotContain(evt);
     }
@@ -271,7 +271,7 @@ public class OutboxSpringTransactionalEventHandlingTests {
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
-        assertThat(queryClient.received).doesNotContain(evt);
+        assertThat(queryHandler.received).doesNotContain(evt);
     }
 
 }

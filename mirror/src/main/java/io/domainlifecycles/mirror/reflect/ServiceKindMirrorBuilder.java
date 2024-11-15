@@ -26,11 +26,8 @@
 
 package io.domainlifecycles.mirror.reflect;
 
-import io.domainlifecycles.domain.types.QueryClient;
 import io.domainlifecycles.domain.types.ServiceKind;
-import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.ServiceKindMirror;
-import io.domainlifecycles.mirror.model.RepositoryModel;
 import io.domainlifecycles.mirror.model.ServiceKindModel;
 
 /**

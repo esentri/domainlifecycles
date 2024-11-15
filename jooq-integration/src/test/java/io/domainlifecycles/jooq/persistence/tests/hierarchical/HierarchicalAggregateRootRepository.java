@@ -1,22 +1,22 @@
 package io.domainlifecycles.jooq.persistence.tests.hierarchical;
 
 
-import lombok.extern.slf4j.Slf4j;
 import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.jooq.imp.JooqPersister;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
-import io.domainlifecycles.persistence.repository.PersistenceActionPublishingRepository;
 import io.domainlifecycles.persistence.fetcher.AggregateFetcher;
 import io.domainlifecycles.persistence.fetcher.FetcherResult;
 import io.domainlifecycles.persistence.fetcher.RecordProvider;
 import io.domainlifecycles.persistence.fetcher.simple.SimpleAggregateFetcher;
 import io.domainlifecycles.persistence.fetcher.simple.SimpleFetcherContext;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
+import io.domainlifecycles.persistence.repository.PersistenceActionPublishingRepository;
 import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
 import io.domainlifecycles.test.Tables;
 import io.domainlifecycles.test.tables.records.TestRootHierarchicalRecord;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.jooq.UpdatableRecord;
 import tests.shared.persistence.domain.hierarchical.TestRootHierarchical;

@@ -30,7 +30,7 @@ import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.ADomainService;
-import io.domainlifecycles.events.AQueryClient;
+import io.domainlifecycles.events.AQueryHandler;
 import io.domainlifecycles.events.ARepository;
 import io.domainlifecycles.events.AnApplicationService;
 import io.domainlifecycles.events.AnOutboundService;
@@ -87,8 +87,8 @@ public class TestApplicationGruelboxIntegrationIdempotency {
     }
 
     @Bean
-    public AQueryClient aQueryClient(){
-        return new AQueryClient();
+    public AQueryHandler aQueryHandler(){
+        return new AQueryHandler();
     }
 
     @Bean

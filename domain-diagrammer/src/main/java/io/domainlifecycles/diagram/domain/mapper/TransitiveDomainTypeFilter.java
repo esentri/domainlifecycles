@@ -34,7 +34,7 @@ import io.domainlifecycles.mirror.api.DomainEventMirror;
 import io.domainlifecycles.mirror.api.DomainEventProcessingMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
-import io.domainlifecycles.mirror.api.QueryClientMirror;
+import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.ServiceKindMirror;
@@ -137,8 +137,8 @@ public class TransitiveDomainTypeFilter {
 
         filteredServiceKinds
             .stream()
-            .filter(s -> s.getDomainType().equals(DomainType.QUERY_CLIENT))
-            .map(s -> (QueryClientMirror) s).
+            .filter(s -> s.getDomainType().equals(DomainType.QUERY_HANDLER))
+            .map(s -> (QueryHandlerMirror) s).
             forEach(
                 r -> {
                     if (r.getProvidedReadModel().isPresent()) {

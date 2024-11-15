@@ -26,16 +26,16 @@
 
 package io.domainlifecycles.mirror.reflect;
 
-import io.domainlifecycles.mirror.api.MethodMirror;
-import io.domainlifecycles.mirror.api.ParamMirror;
-import io.domainlifecycles.mirror.model.MethodModel;
-import io.domainlifecycles.mirror.model.ParamModel;
 import io.domainlifecycles.domain.types.ListensTo;
 import io.domainlifecycles.domain.types.Publishes;
 import io.domainlifecycles.mirror.api.AccessLevel;
 import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
 import io.domainlifecycles.mirror.api.Domain;
+import io.domainlifecycles.mirror.api.MethodMirror;
+import io.domainlifecycles.mirror.api.ParamMirror;
 import io.domainlifecycles.mirror.api.ResolvedGenericTypeMirror;
+import io.domainlifecycles.mirror.model.MethodModel;
+import io.domainlifecycles.mirror.model.ParamModel;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;

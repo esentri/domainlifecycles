@@ -30,10 +30,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
-import io.domainlifecycles.mirror.api.FieldMirror;
-import io.domainlifecycles.mirror.api.MethodMirror;
-import io.domainlifecycles.mirror.api.OutboundServiceMirror;
-import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.AggregateRootReferenceMirror;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
 import io.domainlifecycles.mirror.api.Domain;
@@ -41,7 +37,11 @@ import io.domainlifecycles.mirror.api.DomainEventMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.EntityReferenceMirror;
-import io.domainlifecycles.mirror.api.QueryClientMirror;
+import io.domainlifecycles.mirror.api.FieldMirror;
+import io.domainlifecycles.mirror.api.MethodMirror;
+import io.domainlifecycles.mirror.api.OutboundServiceMirror;
+import io.domainlifecycles.mirror.api.QueryHandlerMirror;
+import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.mirror.api.ValueReferenceMirror;
 
@@ -260,14 +260,14 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
      */
     @JsonIgnore
     @Override
-    public List<QueryClientMirror> getListeningQueryClients() {
+    public List<QueryHandlerMirror> getListeningQueryHandlers() {
         return Domain
             .getInitializedDomain()
             .allTypeMirrors()
             .values()
             .stream()
-            .filter(m -> m instanceof QueryClientMirror)
-            .map(a -> (QueryClientMirror) a)
+            .filter(m -> m instanceof QueryHandlerMirror)
+            .map(a -> (QueryHandlerMirror) a)
             .filter(a -> a.listensTo(this))
             .collect(Collectors.toList());
     }

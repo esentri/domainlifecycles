@@ -29,10 +29,10 @@ package io.domainlifecycles.events;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.DomainEvents;
+import io.domainlifecycles.events.domain.AQueryHandler;
 import io.domainlifecycles.events.inmemory.InMemoryChannelFactory;
 import io.domainlifecycles.events.domain.ADomainEvent;
 import io.domainlifecycles.events.domain.ADomainService;
-import io.domainlifecycles.events.domain.AQueryClient;
 import io.domainlifecycles.events.domain.ARepository;
 import io.domainlifecycles.events.domain.AnAggregate;
 import io.domainlifecycles.events.domain.AnAggregateDomainEvent;
@@ -55,7 +55,7 @@ public class DedicatedChannelsTest {
     private static ADomainService domainService;
     private static ARepository repository;
     private static AnApplicationService applicationService;
-    private static AQueryClient queryClient;
+    private static AQueryHandler queryHandler;
     private static AnOutboundService outboundService;
 
     @BeforeAll
@@ -65,14 +65,14 @@ public class DedicatedChannelsTest {
         domainService = new ADomainService();
         repository = new ARepository();
         applicationService = new AnApplicationService();
-        queryClient = new AQueryClient();
+        queryHandler = new AQueryHandler();
         outboundService = new AnOutboundService();
 
         var services = new Services();
         services.registerServiceKindInstance(domainService);
         services.registerServiceKindInstance(repository);
         services.registerServiceKindInstance(applicationService);
-        services.registerServiceKindInstance(queryClient);
+        services.registerServiceKindInstance(queryHandler);
         services.registerServiceKindInstance(outboundService);
 
         var firstChannel = new InMemoryChannelFactory(services).processingChannel("first");
@@ -92,7 +92,7 @@ public class DedicatedChannelsTest {
         assertThat(domainService.received).contains(evt);
         assertThat(repository.received).contains(evt);
         assertThat(applicationService.received).contains(evt);
-        assertThat(queryClient.received).contains(evt);
+        assertThat(queryHandler.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
     }
 
@@ -105,7 +105,7 @@ public class DedicatedChannelsTest {
         assertThat(domainService.received).doesNotContain(evt);
         assertThat(repository.received).contains(evt);
         assertThat(applicationService.received).contains(evt);
-        assertThat(queryClient.received).contains(evt);
+        assertThat(queryHandler.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
     }
 
@@ -118,7 +118,7 @@ public class DedicatedChannelsTest {
         assertThat(domainService.received).doesNotContain(evt);
         assertThat(repository.received).doesNotContain(evt);
         assertThat(applicationService.received).doesNotContain(evt);
-        assertThat(queryClient.received).doesNotContain(evt);
+        assertThat(queryHandler.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
     }
 
@@ -131,7 +131,7 @@ public class DedicatedChannelsTest {
         assertThat(repository.received).doesNotContain(evt);
         assertThat(domainService.received).doesNotContain(evt);
         assertThat(applicationService.received).doesNotContain(evt);
-        assertThat(queryClient.received).doesNotContain(evt);
+        assertThat(queryHandler.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
         var root = repository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).contains(evt);

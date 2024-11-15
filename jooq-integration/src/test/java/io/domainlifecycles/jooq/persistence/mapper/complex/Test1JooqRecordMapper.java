@@ -1,11 +1,11 @@
 package io.domainlifecycles.jooq.persistence.mapper.complex;
 
-import lombok.RequiredArgsConstructor;
 import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.persistence.mapping.AbstractRecordMapper;
 import io.domainlifecycles.test.Tables;
 import io.domainlifecycles.test.tables.records.TestEntity_1Record;
+import lombok.RequiredArgsConstructor;
 import tests.shared.persistence.domain.complex.TestEntity1;
 import tests.shared.persistence.domain.complex.TestEntity1Id;
 import tests.shared.persistence.domain.complex.TestRoot;

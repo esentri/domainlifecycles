@@ -1,6 +1,5 @@
 package io.domainlifecycles.mirror;
 
-import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.DomainServiceCommand;
@@ -27,6 +26,7 @@ import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.IdentityMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.ParamMirror;
+import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.ValueReferenceMirror;
 import io.domainlifecycles.mirror.model.AssertionType;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;

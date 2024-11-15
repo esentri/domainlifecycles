@@ -26,10 +26,6 @@
 
 package io.domainlifecycles.mirror.reflect;
 
-import io.domainlifecycles.domain.types.ServiceKind;
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfoList;
-import io.github.classgraph.ScanResult;
 import io.domainlifecycles.domain.types.AggregateCommand;
 import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.domain.types.ApplicationService;
@@ -40,10 +36,13 @@ import io.domainlifecycles.domain.types.DomainServiceCommand;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.domain.types.OutboundService;
-import io.domainlifecycles.domain.types.QueryClient;
+import io.domainlifecycles.domain.types.QueryHandler;
 import io.domainlifecycles.domain.types.ReadModel;
 import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.domain.types.ValueObject;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +83,7 @@ public class DomainTypesScanner {
 
     private final List<Class<? extends ReadModel>> readModels;
 
-    private final List<Class<? extends QueryClient<?>>> queryClients;
+    private final List<Class<? extends QueryHandler<?>>> queryHandlers;
 
     private final List<Class<? extends OutboundService>> outboundServices;
 
@@ -106,7 +105,7 @@ public class DomainTypesScanner {
         domainEvents = new ArrayList<>();
         domainCommands = new ArrayList<>();
         readModels = new ArrayList<>();
-        queryClients = new ArrayList<>();
+        queryHandlers = new ArrayList<>();
         outboundServices = new ArrayList<>();
         serviceKinds = new ArrayList<>();
     }
@@ -208,11 +207,11 @@ public class DomainTypesScanner {
                             .map(r -> (Class<? extends ReadModel>) r.loadClass())
                             .toList()
                     );
-                    queryClients.addAll(
-                        scanResult.getClassesImplementing(QueryClient.class)
+                    queryHandlers.addAll(
+                        scanResult.getClassesImplementing(QueryHandler.class)
                             .stream()
-                            .filter(c -> !QueryClient.class.getName().equals(c.getName()))
-                            .map(r -> (Class<? extends QueryClient<?>>) r.loadClass())
+                            .filter(c -> !QueryHandler.class.getName().equals(c.getName()))
+                            .map(r -> (Class<? extends QueryHandler<?>>) r.loadClass())
                             .toList()
                     );
                     outboundServices.addAll(
@@ -230,12 +229,12 @@ public class DomainTypesScanner {
                                         && !ApplicationService.class.getName().equals(c.getName())
                                         && !DomainService.class.getName().equals(c.getName())
                                         && !OutboundService.class.getName().equals(c.getName())
-                                        && !QueryClient.class.getName().equals(c.getName())
+                                        && !QueryHandler.class.getName().equals(c.getName())
                                         && !Repository.class.getName().equals(c.getName()))
                             .filter(c -> !(c.implementsInterface(ApplicationService.class))
                                         && !(c.implementsInterface(DomainService.class))
                                         && !(c.implementsInterface(OutboundService.class))
-                                        && !(c.implementsInterface(QueryClient.class))
+                                        && !(c.implementsInterface(QueryHandler.class))
                                         && !(c.implementsInterface(Repository.class)))
                             .map(r -> (Class<? extends ServiceKind>) r.loadClass())
                             .toList()
@@ -335,10 +334,10 @@ public class DomainTypesScanner {
     }
 
     /**
-     * @return the list of scanned {@link QueryClient} classes
+     * @return the list of scanned {@link QueryHandler} classes
      */
-    public List<Class<? extends QueryClient<?>>> getScannedQueryClients() {
-        return queryClients;
+    public List<Class<? extends QueryHandler<?>>> getScannedQueryHandlers() {
+        return queryHandlers;
     }
 
     /**

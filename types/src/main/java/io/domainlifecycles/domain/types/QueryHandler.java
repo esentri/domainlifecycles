@@ -24,32 +24,14 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.mirror.api;
-
-import io.domainlifecycles.domain.types.QueryClient;
-
-import java.util.List;
-import java.util.Optional;
+package io.domainlifecycles.domain.types;
 
 /**
- * A QueryClientMirror mirrors {@link QueryClient} instances.
+ * This is the common supertype (marker interface) to represent a service
+ * providing queryable {@link ReadModel} instances.
  *
+ * @param <RM> the type of ReadModel used
  * @author Mario Herb
  */
-public interface QueryClientMirror extends ServiceKindMirror {
-
-    /**
-     * @return an Optional containing the mirror the provided ReadModel.
-     * Every QueryClient is supposed to provide exactly one ReadModel.
-     * If no ReadModelMirror could be detected the Optional is empty,
-     */
-    Optional<ReadModelMirror> getProvidedReadModel();
-
-
-    /**
-     * @return the interface type name (full qualified class name) that the mirrored QueryClient implements.
-     * The interfaces therefore must extend {@link QueryClient}.
-     * If separation of concerns is respected, we have at most only one interface, which fulfills that condition.
-     */
-    List<String> getQueryClientInterfaceTypeNames();
+public interface QueryHandler<RM extends ReadModel> extends ServiceKind {
 }

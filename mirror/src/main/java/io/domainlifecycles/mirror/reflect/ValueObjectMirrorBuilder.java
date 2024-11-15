@@ -26,9 +26,9 @@
 
 package io.domainlifecycles.mirror.reflect;
 
+import io.domainlifecycles.domain.types.ValueObject;
 import io.domainlifecycles.mirror.api.ValueObjectMirror;
 import io.domainlifecycles.mirror.model.ValueObjectModel;
-import io.domainlifecycles.domain.types.ValueObject;
 
 /**
  * Builder to create {@link ValueObjectMirror}. Uses Java reflection.

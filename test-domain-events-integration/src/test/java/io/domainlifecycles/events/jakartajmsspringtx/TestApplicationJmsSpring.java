@@ -28,7 +28,7 @@ package io.domainlifecycles.events.jakartajmsspringtx;
 
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.ADomainService;
-import io.domainlifecycles.events.AQueryClient;
+import io.domainlifecycles.events.AQueryHandler;
 import io.domainlifecycles.events.ARepository;
 import io.domainlifecycles.events.AnApplicationService;
 import io.domainlifecycles.events.AnOutboundService;
@@ -79,8 +79,8 @@ public class TestApplicationJmsSpring {
     }
 
     @Bean
-    public AQueryClient aQueryClient(){
-        return new AQueryClient();
+    public AQueryHandler aQueryHandler(){
+        return new AQueryHandler();
     }
 
     @Bean

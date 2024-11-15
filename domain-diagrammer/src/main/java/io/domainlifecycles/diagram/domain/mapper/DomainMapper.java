@@ -120,11 +120,11 @@ public class DomainMapper {
     }
 
     /**
-     * @return all QueryClients connected to the Bounded Context as {@link NomnomlClass}.
+     * @return all QueryHandlers connected to the Bounded Context as {@link NomnomlClass}.
      */
-    public List<NomnomlClass> getQueryClients() {
-        return filteredDomainClasses.getQueryClients().stream()
-            .map(domainClassMapper::mapQueryClientClass)
+    public List<NomnomlClass> getQueryHandlers() {
+        return filteredDomainClasses.getQueryHandlers().stream()
+            .map(domainClassMapper::mapQueryHandlerClass)
             .toList();
     }
 

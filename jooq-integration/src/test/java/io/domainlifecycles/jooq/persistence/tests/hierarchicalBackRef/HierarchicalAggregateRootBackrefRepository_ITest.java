@@ -12,8 +12,6 @@ import tests.shared.persistence.domain.hierarchicalBackRef.TestRootHierarchicalB
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HierarchicalAggregateRootBackrefRepository_ITest extends BasePersistence_ITest {
 

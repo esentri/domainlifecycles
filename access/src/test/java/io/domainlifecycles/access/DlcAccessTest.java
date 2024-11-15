@@ -14,6 +14,7 @@ import tests.shared.persistence.domain.inheritance.Car;
 import tests.shared.persistence.domain.inheritance.Car.Brand;
 import tests.shared.persistence.domain.inheritance.VehicleId;
 import tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DlcAccessTest {

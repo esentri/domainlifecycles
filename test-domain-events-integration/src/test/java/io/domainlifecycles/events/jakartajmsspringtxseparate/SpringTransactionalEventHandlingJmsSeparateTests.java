@@ -28,7 +28,7 @@ package io.domainlifecycles.events.jakartajmsspringtxseparate;
 
 import io.domainlifecycles.events.ADomainEvent;
 import io.domainlifecycles.events.ADomainService;
-import io.domainlifecycles.events.AQueryClient;
+import io.domainlifecycles.events.AQueryHandler;
 import io.domainlifecycles.events.ARepository;
 import io.domainlifecycles.events.AnAggregate;
 import io.domainlifecycles.events.AnAggregateDomainEvent;
@@ -66,7 +66,7 @@ public class SpringTransactionalEventHandlingJmsSeparateTests {
     private AnApplicationService anApplicationService;
 
     @Autowired
-    private AQueryClient queryClient;
+    private AQueryHandler queryHandler;
 
     @Autowired
     private AnOutboundService outboundService;
@@ -88,7 +88,7 @@ public class SpringTransactionalEventHandlingJmsSeparateTests {
                 softly.assertThat(aDomainService.received).contains(evt);
                 softly.assertThat(aRepository.received).contains(evt);
                 softly.assertThat(anApplicationService.received).contains(evt);
-                softly.assertThat(queryClient.received).contains(evt);
+                softly.assertThat(queryHandler.received).contains(evt);
                 softly.assertThat(outboundService.received).contains(evt);
                 softly.assertAll();
             });
@@ -112,7 +112,7 @@ public class SpringTransactionalEventHandlingJmsSeparateTests {
                 softly.assertThat(aDomainService.received).doesNotContain(evt);
                 softly.assertThat(aRepository.received).doesNotContain(evt);
                 softly.assertThat(anApplicationService.received).doesNotContain(evt);
-                softly.assertThat(queryClient.received).doesNotContain(evt);
+                softly.assertThat(queryHandler.received).doesNotContain(evt);
                 softly.assertThat(outboundService.received).doesNotContain(evt);
                 softly.assertAll();
             });
@@ -136,7 +136,7 @@ public class SpringTransactionalEventHandlingJmsSeparateTests {
                 softly.assertThat(aDomainService.received).doesNotContain(evt);
                 softly.assertThat(aRepository.received).doesNotContain(evt);
                 softly.assertThat(anApplicationService.received).doesNotContain(evt);
-                softly.assertThat(queryClient.received).doesNotContain(evt);
+                softly.assertThat(queryHandler.received).doesNotContain(evt);
                 softly.assertThat(outboundService.received).doesNotContain(evt);
                 softly.assertAll();
             });
@@ -171,7 +171,7 @@ public class SpringTransactionalEventHandlingJmsSeparateTests {
                 softly.assertThat(aRepository.received).doesNotContain(evt);
                 softly.assertThat(aDomainService.received).doesNotContain(evt);
                 softly.assertThat(anApplicationService.received).doesNotContain(evt);
-                softly.assertThat(queryClient.received).doesNotContain(evt);
+                softly.assertThat(queryHandler.received).doesNotContain(evt);
                 softly.assertThat(outboundService.received).doesNotContain(evt);
                 var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
                 softly.assertThat(root.received).contains(evt);
@@ -196,7 +196,7 @@ public class SpringTransactionalEventHandlingJmsSeparateTests {
                 softly.assertThat(aRepository.received).doesNotContain(evt);
                 softly.assertThat(aDomainService.received).doesNotContain(evt);
                 softly.assertThat(anApplicationService.received).doesNotContain(evt);
-                softly.assertThat(queryClient.received).doesNotContain(evt);
+                softly.assertThat(queryHandler.received).doesNotContain(evt);
                 softly.assertThat(outboundService.received).doesNotContain(evt);
                 var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
                 softly.assertThat(root.received).doesNotContain(evt);
@@ -222,7 +222,7 @@ public class SpringTransactionalEventHandlingJmsSeparateTests {
                 softly.assertThat(aRepository.received).doesNotContain(evt);
                 softly.assertThat(aDomainService.received).doesNotContain(evt);
                 softly.assertThat(anApplicationService.received).doesNotContain(evt);
-                softly.assertThat(queryClient.received).doesNotContain(evt);
+                softly.assertThat(queryHandler.received).doesNotContain(evt);
                 softly.assertThat(outboundService.received).doesNotContain(evt);
                 var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
                 softly.assertThat(root.received).doesNotContain(evt);
@@ -247,7 +247,7 @@ public class SpringTransactionalEventHandlingJmsSeparateTests {
                 softly.assertThat(aRepository.received).contains(evt);
                 softly.assertThat(aDomainService.received).doesNotContain(evt);
                 softly.assertThat(anApplicationService.received).contains(evt);
-                softly.assertThat(queryClient.received).contains(evt);
+                softly.assertThat(queryHandler.received).contains(evt);
                 softly.assertThat(outboundService.received).contains(evt);
                 var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
                 softly.assertThat(root.received).doesNotContain(evt);
@@ -285,7 +285,7 @@ public class SpringTransactionalEventHandlingJmsSeparateTests {
                 softly.assertThat(aDomainService.received).doesNotContain(evt);
                 softly.assertThat(aRepository.received).doesNotContain(evt);
                 softly.assertThat(anApplicationService.received).doesNotContain(evt);
-                softly.assertThat(queryClient.received).doesNotContain(evt);
+                softly.assertThat(queryHandler.received).doesNotContain(evt);
                 softly.assertThat(outboundService.received).doesNotContain(evt);
                 softly.assertAll();
             });

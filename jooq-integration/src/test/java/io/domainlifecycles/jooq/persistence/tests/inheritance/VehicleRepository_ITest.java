@@ -13,8 +13,6 @@ import tests.shared.persistence.domain.inheritance.VehicleId;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class VehicleRepository_ITest extends BasePersistence_ITest {
 

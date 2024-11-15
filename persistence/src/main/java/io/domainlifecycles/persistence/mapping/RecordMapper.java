@@ -27,9 +27,9 @@
 package io.domainlifecycles.persistence.mapping;
 
 import io.domainlifecycles.builder.DomainObjectBuilder;
-import io.domainlifecycles.persistence.fetcher.AggregateFetcher;
 import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.domain.types.internal.DomainObject;
+import io.domainlifecycles.persistence.fetcher.AggregateFetcher;
 import io.domainlifecycles.persistence.repository.persister.Persister;
 
 /**

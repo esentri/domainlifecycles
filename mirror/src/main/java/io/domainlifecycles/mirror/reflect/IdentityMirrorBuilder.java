@@ -26,9 +26,9 @@
 
 package io.domainlifecycles.mirror.reflect;
 
-import io.domainlifecycles.mirror.model.IdentityModel;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.mirror.api.IdentityMirror;
+import io.domainlifecycles.mirror.model.IdentityModel;
 
 import java.util.Optional;
 

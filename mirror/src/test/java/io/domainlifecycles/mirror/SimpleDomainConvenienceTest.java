@@ -1,7 +1,6 @@
 package io.domainlifecycles.mirror;
 
-import io.domainlifecycles.domain.types.QueryClient;
-import io.domainlifecycles.domain.types.ValueObject;
+import io.domainlifecycles.domain.types.QueryHandler;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
 import io.domainlifecycles.mirror.api.Domain;
@@ -10,7 +9,7 @@ import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.IdentityMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
-import io.domainlifecycles.mirror.api.QueryClientMirror;
+import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.mirror.api.ValueObjectMirror;
@@ -31,13 +30,14 @@ import tests.mirror.IdentityImpl;
 import tests.mirror.IdentityInterface;
 import tests.mirror.OutboundServiceImpl;
 import tests.mirror.OutboundServiceInterface;
-import tests.mirror.QueryClientImpl;
+import tests.mirror.QueryHandlerImpl;
 import tests.mirror.RepositoryImpl;
 import tests.mirror.RepositoryInterface;
 import tests.mirror.ServiceKindImpl;
 import tests.mirror.ServiceKindInterface;
 import tests.mirror.ValueObjectImpl;
 import tests.mirror.ValueObjectInterface;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SimpleDomainConvenienceTest {
@@ -247,20 +247,20 @@ public class SimpleDomainConvenienceTest {
     }
 
     @Test
-    void testQueryClientMirrorByInstance() {
+    void testQueryHandlerMirrorByInstance() {
 
-        QueryClient<?> queryClient = new QueryClientImpl();
+        QueryHandler<?> queryHandler = new QueryHandlerImpl();
 
-        QueryClientMirror queryClientMirror = Domain.queryClientMirrorFor(queryClient);
+        QueryHandlerMirror queryHandlerMirror = Domain.queryHandlerMirrorFor(queryHandler);
 
-        assertThat(queryClientMirror).isNotNull();
+        assertThat(queryHandlerMirror).isNotNull();
     }
 
     @Test
-    void testQueryClientMirrorByTypeName() {
+    void testQueryHandlerMirrorByTypeName() {
 
-        QueryClientMirror queryClientMirror = Domain.queryClientMirrorFor("tests.mirror.QueryClientImpl");
+        QueryHandlerMirror queryHandlerMirror = Domain.queryHandlerMirrorFor("tests.mirror.QueryHandlerImpl");
 
-        assertThat(queryClientMirror).isNotNull();
+        assertThat(queryHandlerMirror).isNotNull();
     }
 }

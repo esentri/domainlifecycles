@@ -3,11 +3,10 @@ package io.domainlifecycles.jooq.persistence.mapper.valueobjects;
 import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.persistence.mapping.AbstractRecordMapper;
+import io.domainlifecycles.test.Tables;
 import io.domainlifecycles.test.tables.records.SimpleVoOneToMany_2Record;
 import tests.shared.persistence.domain.valueobjects.SimpleVoOneToMany2;
 import tests.shared.persistence.domain.valueobjects.VoAggregateRoot;
-
-import io.domainlifecycles.test.Tables;
 
 /**
  * Mapping JOOQ TestRootSimpleIgnoring records.

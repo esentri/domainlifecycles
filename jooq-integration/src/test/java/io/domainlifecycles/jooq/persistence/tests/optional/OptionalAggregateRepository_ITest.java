@@ -19,8 +19,6 @@ import tests.shared.persistence.domain.optional.RefAgg;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class OptionalAggregateRepository_ITest extends BasePersistence_ITest {
 

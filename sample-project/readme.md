@@ -226,7 +226,7 @@ with which a nightly job might be able to "update" the product information (old 
 The [CustomerService](./src/main/java/sampleshop/inbound/driver/CustomerService.java) delivers a specific ReadModel
 [OrdersByCustomer](./src/main/java/sampleshop/core/outport/OrdersByCustomer.java), that is provided by
 the implementation of a
-QueryClient [JooqOrdersByCustomerQueryClient](./src/main/java/sampleshop/outbound/JooqOrdersByCustomerQueryClient.java).
+QueryHandler [JooqOrdersByCustomerQueryHandler](./src/main/java/sampleshop/outbound/JooqOrdersByCustomerQueryHandler.java).
 
 ## Entity-Relationship Model
 

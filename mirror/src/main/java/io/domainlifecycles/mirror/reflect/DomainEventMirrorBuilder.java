@@ -26,9 +26,9 @@
 
 package io.domainlifecycles.mirror.reflect;
 
-import io.domainlifecycles.mirror.model.DomainEventModel;
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
+import io.domainlifecycles.mirror.model.DomainEventModel;
 
 /**
  * Builder to create {@link DomainEventMirror}. Uses Java reflection.

@@ -1,10 +1,12 @@
 package io.domainlifecycles.assertion;
 
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Optional;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

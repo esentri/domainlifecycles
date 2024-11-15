@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0.rc.8] - 2024-10-04
+## [2.0.0.rc.9] - 2024-11-15
 
 ### Added
 
@@ -53,7 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### domain-diagrammer
 
 - Little refactorings due to changes in dlc-mirror
-- Added rendering for QueryClients and OutboundServices
+- Added rendering for QueryHandlers and OutboundServices
 - Added TransitiveDomainTypeFilter option
 - Added more configuration options
 
