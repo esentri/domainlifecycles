@@ -259,7 +259,8 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
                 "Multiple value object record class configurations (" + foundConfigurations + ") found for " +
                     "composition of " +
                     valueObjectTypeName + " within " + entityTypeName);
-        } else if (foundConfigurations.size() == 0) {
+        } else if (foundConfigurations.isEmpty()) {
+
             return null;
         }
         return InternalValueObjectRecordDefinition.of(foundConfigurations.get(0));
@@ -282,7 +283,7 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
             var recordTypes = recordTypeSet
                 .stream()
                 .filter(c -> c.getSimpleName().equals(recordTypeName)).toList();
-            if (recordTypes.size() == 0) {
+            if (recordTypes.isEmpty()) {
                 throw DLCPersistenceException.fail("No value object record type found for composition of " +
                         " '%1$s' within '%2$s', when trying to initiate value object auto mapping. Expected a record " +
                         "with the name '%3$s'",
@@ -345,7 +346,7 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
         if (mapper == null) {
             //Use default mapper, built upon conventions
 
-            mapper = new AutoRecordMapper(
+            mapper = new AutoRecordMapper<>(
                 entityTypeName,
                 recordTypeName,
                 jooqPersistenceConfiguration.recordPropertyMatcher,

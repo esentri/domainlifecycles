@@ -71,6 +71,14 @@ public class EntityDeserializer extends StdDeserializer<Entity<?>> {
     private final EntityIdentityProvider entityIdentityProvider;
 
 
+    /**
+     * Initializes a new EntityDeserializer with provided parameters.
+     *
+     * @param valueType                The JavaType of the entity to be deserialized
+     * @param customizerContainer      The container for customizers
+     * @param domainObjectBuilderProvider The provider for DomainObjectBuilders
+     * @param entityIdentityProvider   The provider for entity identity information
+     */
     public EntityDeserializer(JavaType valueType,
                               DlcJacksonModule.CustomizerContainer customizerContainer,
                               DomainObjectBuilderProvider domainObjectBuilderProvider,
@@ -313,9 +321,11 @@ public class EntityDeserializer extends StdDeserializer<Entity<?>> {
         if (em.getIdentityField().isPresent()) {
             var idFieldName = em.getIdentityField().get().getName();
             JsonNode idNode = objectNode.get(idFieldName);
-            if (idNode == null || idNode.isNull()) {
-                Identity<?> identity = entityIdentityProvider.provideFor(targetEntityTypeName);
-                objectNode.set(idFieldName, JsonNodeFactory.instance.textNode(identity.value().toString()));
+            if(entityIdentityProvider != null) {
+                if (idNode == null || idNode.isNull()) {
+                    Identity<?> identity = entityIdentityProvider.provideFor(targetEntityTypeName);
+                    objectNode.set(idFieldName, JsonNodeFactory.instance.textNode(identity.value().toString()));
+                }
             }
         }
 

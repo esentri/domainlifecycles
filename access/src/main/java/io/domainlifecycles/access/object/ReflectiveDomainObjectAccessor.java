@@ -45,6 +45,11 @@ public class ReflectiveDomainObjectAccessor implements DynamicDomainObjectAccess
     private DomainObject domainObject;
     private Class<? extends DomainObject> domainObjectClass;
 
+    /**
+     * Initializes a new instance of ReflectiveDomainObjectAccessor with the provided domain object.
+     *
+     * @param domainObject the DomainObject instance to be accessed.
+     */
     protected ReflectiveDomainObjectAccessor(DomainObject domainObject) {
         this.domainObject = domainObject;
         this.domainObjectClass = domainObject.getClass();
@@ -60,7 +65,7 @@ public class ReflectiveDomainObjectAccessor implements DynamicDomainObjectAccess
             return field.get(domainObject);
         } catch (IllegalAccessException illegalAccessException) {
             throw DLCAccessException.fail(
-                String.format("Failed to read '%' from '%'!", fieldName, domainObjectClass.getName()),
+                String.format("Failed to read '%s' from '%s'!", fieldName, domainObjectClass.getName()),
                 illegalAccessException);
         }
     }

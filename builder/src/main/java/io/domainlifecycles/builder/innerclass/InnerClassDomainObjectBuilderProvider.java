@@ -32,6 +32,8 @@ import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.exception.DLCBuilderException;
 import io.domainlifecycles.domain.types.internal.DomainObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -40,9 +42,12 @@ import java.lang.reflect.InvocationTargetException;
  * a inner class builder. Can be configured by using {@code DomainBuilderConfiguration}
  *
  * @author Dominik Galler
+ * @author Mario Herb
  * @see DomainObjectBuilderProvider
  */
 public final class InnerClassDomainObjectBuilderProvider extends DomainObjectBuilderProvider {
+
+    private final static Logger log = LoggerFactory.getLogger(InnerClassDomainObjectBuilderProvider.class);
 
     /**
      * Constructor for default configuration.
@@ -79,12 +84,9 @@ public final class InnerClassDomainObjectBuilderProvider extends DomainObjectBui
             builderInstance = builderMethod.invoke(null);
         } catch (NoSuchMethodException | IllegalAccessException |
                  InvocationTargetException e) {
-            throw DLCBuilderException.fail(
-                "Couldn't provide Builder instance for Entity class: '%s'.",
-                e,
-                domainObjectTypeName,
-                e
-            );
+            var msg = String.format("Couldn't provide Builder instance for class: '%s'.", domainObjectTypeName);
+            log.error(msg);
+            throw DLCBuilderException.fail(msg, e);
         }
         return new InnerClassDomainObjectBuilder<>(builderInstance, getBuilderConfiguration());
     }

@@ -42,6 +42,11 @@ public class StringToDomainIdentityConverterFactory implements ConverterFactory<
 
     private final ObjectMapper objectMapper;
 
+    /**
+     * Constructor for StringToDomainIdentityConverterFactory
+     *
+     * @param objectMapper ObjectMapper used
+     */
     public StringToDomainIdentityConverterFactory(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }

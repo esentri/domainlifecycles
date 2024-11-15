@@ -11,12 +11,11 @@ java {
     withSourcesJar()
 }
 
-def springWebVersion = '6.1.5'
 
 dependencies {
-    implementation project(":types")
+    api project(":types")
     implementation project(":mirror")
     compileOnly "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
-    compileOnly "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-    compileOnly "org.springframework:spring-web:${springWebVersion}"
+    api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    api "org.springframework:spring-web:${springWeb6Version}"
 }

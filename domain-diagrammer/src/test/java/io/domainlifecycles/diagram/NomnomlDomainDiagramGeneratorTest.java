@@ -1,6 +1,5 @@
 package io.domainlifecycles.diagram;
 
-import lombok.extern.slf4j.Slf4j;
 import io.domainlifecycles.diagram.domain.DomainDiagramGenerator;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.mirror.api.Domain;
@@ -10,7 +9,6 @@ import io.domainlifecycles.mirror.resolver.TypeMetaResolver;
 
 import org.junit.jupiter.api.Test;
 import sampleshop.core.inport.OrderDriver;
-import tests.shared.persistence.domain.records.RecordTest;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,7 +17,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Slf4j
+
 class NomnomlDomainDiagramGeneratorTest {
 
     @Test

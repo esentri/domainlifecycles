@@ -49,6 +49,11 @@ public class ValueObjectSerializer extends StdSerializer<ValueObject> {
 
     private final JacksonMappingCustomizer<ValueObject> customizer;
 
+    /**
+     * Constructs a ValueObjectSerializer with the provided customizer.
+     *
+     * @param customizer The customizer used to customize the mapping process for ValueObject instances.
+     */
     public ValueObjectSerializer(JacksonMappingCustomizer<ValueObject> customizer) {
         super(ValueObject.class);
         this.customizer = customizer;

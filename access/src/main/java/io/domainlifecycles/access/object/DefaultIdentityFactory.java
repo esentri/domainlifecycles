@@ -43,6 +43,11 @@ public class DefaultIdentityFactory implements IdentityFactory {
 
     private final ClassProvider classProvider;
 
+    /**
+     * Constructs a new DefaultIdentityFactory with the provided ClassProvider.
+     *
+     * @param classProvider a ClassProvider to be used by the factory
+     */
     public DefaultIdentityFactory(ClassProvider classProvider) {
         this.classProvider = classProvider;
     }

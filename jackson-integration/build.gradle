@@ -13,13 +13,14 @@ java {
 
 dependencies {
     compileOnly "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
-    compileOnly "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-    implementation project(":types")
+    api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    api project(":types")
     implementation project(":mirror")
-    implementation project(":builder")
     implementation project(":access")
-    implementation project(":persistence")
-    implementation project(":assertions")
+    api project(":builder")
+    api project(":persistence")
+    api project(":assertions")
+
 
     testImplementation project(":reflect")
     testImplementation project(":type-utils")

@@ -62,8 +62,8 @@ public class Domain {
      * @param fullQualifiedTypeName the full qualified type name to return a mirror instance for
      * @return a mirror instance for a given full qualified type name.
      */
-    public static <V extends DomainTypeMirror> Optional<V> typeMirror(String fullQualifiedTypeName) {
-        if (!initialized) {
+    public static <V extends DomainTypeMirror> Optional<V> typeMirror(String fullQualifiedTypeName){
+        if(!initialized){
             throw MirrorException.fail("Domain was not initialized!");
         }
         var mirror = initializedDomain.allTypeMirrors().get(fullQualifiedTypeName);
@@ -75,10 +75,9 @@ public class Domain {
      * @param aggregateRoot the AggregateRoot to return a mirror for
      * @return the {@link AggregateRootMirror} for the given AggregateRoot instance.
      */
-    public static <A extends AggregateRootMirror> A aggregateRootMirrorFor(AggregateRoot<?> aggregateRoot) {
-        return (A) typeMirror(aggregateRoot.getClass().getName())
-            .orElseThrow(
-                () -> MirrorException.fail("No AggregateRootMirror found for %s", aggregateRoot.getClass().getName()));
+    public static <A extends AggregateRootMirror>  A aggregateRootMirrorFor(AggregateRoot<?> aggregateRoot){
+        return (A)typeMirror(aggregateRoot.getClass().getName())
+            .orElseThrow(()-> MirrorException.fail("No AggregateRootMirror found for %s", aggregateRoot.getClass().getName()));
     }
 
     /**
@@ -91,6 +90,17 @@ public class Domain {
             .orElseThrow(()-> MirrorException.fail("No AggregateRootMirror found for %s", aggregateRootTypeName));
     }
 
+
+    /**
+     * @param <E>            type of EntityMirror
+     * @param entityTypeName full qualified name of the entity type
+     * @return the {@link EntityMirror} for the given full qualified Entity type name.
+     */
+    public static <E extends EntityMirror>  E entityMirrorFor(String entityTypeName) {
+        return (E) typeMirror(entityTypeName)
+            .orElseThrow(() -> MirrorException.fail("No EntityMirror found for %s", entityTypeName));
+    }
+
     /**
      * @param <E>    type of EntityMirror
      * @param entity the entity to return a mirror for
@@ -99,22 +109,13 @@ public class Domain {
     public static <E extends EntityMirror> E entityMirrorFor(Entity<?> entity) {
         return (E) typeMirror(entity.getClass().getName())
             .orElseThrow(() -> MirrorException.fail("No EntityMirror found for %s", entity.getClass().getName()));
+
     }
 
     /**
-     * @param <E>            type of EntityMirror
-     * @param entityTypeName full qualified name of the entity type
-     * @return the {@link EntityMirror} for the given full qualified Entity type name.
-     */
-    public static <E extends EntityMirror> E entityMirrorFor(String entityTypeName) {
-        return (E) typeMirror(entityTypeName)
-            .orElseThrow(() -> MirrorException.fail("No EntityMirror found for %s", entityTypeName));
-    }
-
-    /**
-     * @param <E>              type of EntityMirror
-     * @param identityTypeName name of identity type
-     * @return the {@link EntityMirror} for the given full qualified type name of the Identity type.
+     * @param <E>    type of EntityMirror
+     * @param identityTypeName the full qualified identity type name the entity to return a mirror for
+     * @return the {@link EntityMirror} for the given Entity instance.
      */
     public static <E extends EntityMirror> E entityMirrorForIdentityTypeName(String identityTypeName) {
         if (!initialized) {
@@ -254,19 +255,9 @@ public class Domain {
      * @param repositoryTypeName full qualified Repository type name
      * @return the {@link RepositoryMirror} for the given full qualified Repository type name.
      */
-    public static <R extends RepositoryMirror> R repositoryMirrorFor(String repositoryTypeName) {
-        return (R) typeMirror(repositoryTypeName)
-            .orElseThrow(() -> MirrorException.fail("No RepositoryMirror found for %s", repositoryTypeName));
-    }
-
-    /**
-     * @param <I>              type of IdentityMirror
-     * @param identity the identity to return the mirror for
-     * @return the {@link IdentityMirror} for the given full qualified Identity type name.
-     */
-    public static <I extends IdentityMirror> I identityMirrorFor(Identity<?> identity) {
-        return (I) typeMirror(identity.getClass().getName())
-            .orElseThrow(() -> MirrorException.fail("No IdentityMirror found for %s", identity.getClass().getName()));
+    public static <R extends RepositoryMirror>  R repositoryMirrorFor(String repositoryTypeName){
+        return (R)typeMirror(repositoryTypeName)
+            .orElseThrow(()-> MirrorException.fail("No RepositoryMirror found for %s", repositoryTypeName));
     }
 
     /**
@@ -280,14 +271,23 @@ public class Domain {
     }
 
     /**
+     * @param <I>              type of IdentityMirror
+     * @param identity the identity to return the mirror for
+     * @return the {@link IdentityMirror} for the given full qualified Identity type name.
+     */
+    public static <I extends IdentityMirror> I identityMirrorFor(Identity<?> identity) {
+        return (I) typeMirror(identity.getClass().getName())
+            .orElseThrow(() -> MirrorException.fail("No IdentityMirror found for %s", identity.getClass().getName()));
+    }
+
+    /**
      * @param <V>         type of ValueObjectMirror
      * @param valueObject the ValueObject to return the mirror for
      * @return the {@link ValueObjectMirror} for the given ValueObject instance.
      */
     public static <V extends ValueObjectMirror> V valueObjectMirrorFor(ValueObject valueObject) {
         return (V) typeMirror(valueObject.getClass().getName())
-            .orElseThrow(
-                () -> MirrorException.fail("No ValueObjectMirror found for %s", valueObject.getClass().getName()));
+            .orElseThrow(() -> MirrorException.fail("No ValueObjectMirror found for %s", valueObject.getClass().getName()));
     }
 
     /**

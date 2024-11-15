@@ -408,6 +408,13 @@ public class OpenAPIPropertyBeanValidationExtension {
             }
             addSchemaDescription("beanValidationSizeMax", schema, maxLengthAnnotated.toString());
 
+        }else if(Constants.TYPE_ARRAY.equals(schema.getType())){
+            if (schema.getMinItems() == null || schema.getMinItems() < minLengthAnnotated) {
+                schema.setMinItems(minLengthAnnotated);
+            }
+            if (schema.getMaxItems() == null || schema.getMaxItems() > maxLengthAnnotated) {
+                schema.setMaxItems(maxLengthAnnotated);
+            }
         }
     }
 

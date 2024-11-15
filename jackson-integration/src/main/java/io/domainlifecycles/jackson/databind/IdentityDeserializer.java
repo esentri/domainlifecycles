@@ -46,6 +46,11 @@ import java.io.IOException;
  */
 public class IdentityDeserializer extends StdDeserializer<Identity<?>> {
 
+    /**
+     * Constructs an IdentityDeserializer instance with the specified JavaType.
+     *
+     * @param valueType the JavaType to be used for deserialization
+     */
     public IdentityDeserializer(
         JavaType valueType
     ) {

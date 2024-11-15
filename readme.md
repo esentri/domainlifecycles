@@ -165,16 +165,18 @@ Here's an overview of the most important external dependencies:
 | Runtime class loading in the DLC mirror and DCL persistence           | io.github.classgraph:classgraph                                                                | tested with 4.8.163     |
 | Validation - Javax Bean Validation 2.0 Support                        | (Bean Validation Provider implementation) e.g.: org.hibernate.validator:hibernate-validator    | tested with 6.2.3.Final |
 | Validation - Jakarta Bean Validation 3.0 Support                      | (Bean Validation Provider implementation) e.g.: org.hibernate.validator:hibernate-validator    | tested with 8.0.1.Final |
-| Validation extension vi Byte Buddy                                    | net.bytebuddy:byte-buddy                                                                       | tested with 1.14.9      |
+| Validation extension vi Byte Buddy                                    | net.bytebuddy:byte-buddy                                                                       | tested with 1.15.10     |
 | Persistence                                                           | org.jooq:jooq                                                                                  | tested with 3.19.6      |
-| JSON Mapping                                                          | com.fasterxml.jackson.core:jackson-core <b>and</b> com.fasterxml.jackson.core:jackson-databind | tested with 2.17.0      |
+| JSON Mapping                                                          | com.fasterxml.jackson.core:jackson-core <b>and</b> com.fasterxml.jackson.core:jackson-databind | tested with 2.17.2      |
 | Open API Support (Spring Doc 1)                                       | org.springdoc:springdoc-openapi-data-rest <b>and</b> org.springdoc:springdoc-openapi-ui        | tested with 1.8.0       |
-| Open API Support (Spring Doc 2)                                       | org.springdoc:springdoc-openapi-starter-webmvc-ui                                              | tested with 2.4.0       |
+| Open API Support (Spring Doc 2)                                       | org.springdoc:springdoc-openapi-starter-webmvc-ui                                              | tested with 2.6.0       |
 | Spring Converter Support (needed for Spring-Web, Spring Boot 2)       | org.springframework:spring-core                                                                | tested with 5.3.33      |
-| Spring Converter Support (needed for Spring-Web, Spring Boot 3)       | org.springframework:spring-core                                                                | tested with 6.1.5       |
-| Domain Events, Spring based Transactional Outbox (Spring Boot 3 only) | org.springframework:spring-jdbc                                                                | tested with 6.1.5       |
-| Domain Events, Spring based Transaction Support (Spring Boot 3 only)  | org.springframework:spring-tx                                                                  | tested with 6.1.5       |
+| Spring Converter Support (needed for Spring-Web, Spring Boot 3)       | org.springframework:spring-core                                                                | tested with 6.1.13      |
+| Domain Events, Spring based Transactional Outbox (Spring Boot 3 only) | org.springframework:spring-jdbc                                                                | tested with 6.1.13      |
+| Domain Events, Spring based Transaction Support (Spring Boot 3 only)  | org.springframework:spring-tx                                                                  | tested with 6.1.13      |
 | Domain Events, Jakarta JTA Support                                    | (JTA Provider implementation) e.g.: Atomikos com.atomikos:transactions-jta                     | tested with 6.0.0       |
+| Domain Events Gruelbox Transactional Outbox                           | com.gruelbox:transactionoutbox-core                                                            | tested with 5.5.447     |
+| Domain Events ActiveMq Classic                                        | org.apache.activemq:activemq-client                                                            | tested with 5.18.4      |
 | Logging                                                               | (SLF4J Provider) e.g.: ch.qos.logback:logback-classic                                          | tested with 1.5.3       |           
 
 Run `./gradle dependencies` on the main project or any of the submodules to get a complete overview of the dependencies

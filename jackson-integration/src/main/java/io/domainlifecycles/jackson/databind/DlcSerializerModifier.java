@@ -46,6 +46,11 @@ public class DlcSerializerModifier extends BeanSerializerModifier {
 
     private final DlcJacksonModule.CustomizerContainer customizersContainer;
 
+    /**
+     * Initialize DlcSerializerModifier with the provided CustomizerContainer.
+     *
+     * @param customizersContainer the container for customizers used in serialization
+     */
     public DlcSerializerModifier(DlcJacksonModule.CustomizerContainer customizersContainer) {
         this.customizersContainer = customizersContainer;
     }
@@ -53,7 +58,6 @@ public class DlcSerializerModifier extends BeanSerializerModifier {
     /**
      * Plug in {@link Domain} based serializer modifications
      */
-    @SuppressWarnings("unchecked")
     @Override
     public JsonSerializer<?> modifySerializer(SerializationConfig config, BeanDescription beanDesc,
                                               JsonSerializer<?> serializer) {

@@ -45,6 +45,7 @@ import java.util.Optional;
  */
 public class AggregateRootModel extends EntityModel implements AggregateRootMirror {
 
+
     @JsonCreator
     public AggregateRootModel(@JsonProperty("typeName") String typeName,
                               @JsonProperty("abstract") boolean isAbstract,

@@ -52,6 +52,11 @@ public class EntitySerializer extends StdSerializer<Entity> {
 
     private final JacksonMappingCustomizer<Entity> customizer;
 
+    /**
+     * Constructs a new EntitySerializer with the provided customizer.
+     *
+     * @param customizer the JacksonMappingCustomizer used for mapping customizations
+     */
     public EntitySerializer(JacksonMappingCustomizer<Entity> customizer) {
         super(Entity.class);
         this.customizer = customizer;

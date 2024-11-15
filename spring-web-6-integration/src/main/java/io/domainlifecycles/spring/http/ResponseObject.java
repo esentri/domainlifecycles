@@ -106,7 +106,10 @@ public class ResponseObject<T> {
     }
 
     /**
-     * Returns true, if other is a ResponseObject.
+     * Check if the specified object can be equaled with this ResponseObject instance.
+     *
+     * @param other The object to compare with this ResponseObject instance.
+     * @return true if the specified object is an instance of ResponseObject and can be equaled with this instance, false otherwise.
      */
     protected boolean canEqual(final Object other) {
         return other instanceof ResponseObject;

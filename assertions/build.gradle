@@ -12,12 +12,10 @@ java {
     withSourcesJar()
 }
 
-def commonsValidatorVersion = '1.7'
-
 dependencies {
     implementation "commons-validator:commons-validator:${commonsValidatorVersion}"
     testImplementation "org.assertj:assertj-core:${assertJVersion}"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${junitJupiterParamsVersion}"
 }
 
 test {

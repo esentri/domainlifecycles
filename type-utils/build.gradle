@@ -13,8 +13,8 @@ java {
 
 dependencies {
     implementation project(":mirror")
-    implementation project(":types")
-    implementation project(":builder")
+    api project(":types")
+    api project(":builder")
     implementation project(":access")
 
     testImplementation project(":assertions")

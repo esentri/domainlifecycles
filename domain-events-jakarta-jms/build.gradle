@@ -1,0 +1,25 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'checkstyle'
+    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
+    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+dependencies {
+    api project(":access")
+    api project(":domain-events-core")
+    api project(":types")
+    api project(":service-registry")
+    api project (":domain-events-mq")
+    api "jakarta.jms:jakarta.jms-api:${jakartaJmsApiVersion}"
+    compileOnly "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+    api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
+
+}

@@ -12,8 +12,8 @@ java {
 }
 
 dependencies {
-    implementation "javax.validation:validation-api:${javaxValidationApiVersion}"
-    implementation "jakarta.validation:jakarta.validation-api:${jakartaValidationApiVersion}"
+    api "javax.validation:validation-api:${javaxValidationApiVersion}"
+    api "jakarta.validation:jakarta.validation-api:${jakartaValidationApiVersion}"
     compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
-    implementation project(":assertions")
+    api project(":assertions")
 }

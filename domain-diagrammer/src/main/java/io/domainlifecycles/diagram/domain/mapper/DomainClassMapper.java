@@ -53,6 +53,7 @@ import io.domainlifecycles.mirror.api.ParamMirror;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
 import io.domainlifecycles.mirror.api.QueryClientMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
+import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.mirror.api.ValueObjectMirror;
 import io.domainlifecycles.mirror.model.AssertionType;
 import io.domainlifecycles.mirror.visitor.ContextDomainObjectVisitor;
@@ -185,6 +186,19 @@ public class DomainClassMapper {
         return mapToNomnomlClass(outboundServiceMirror,
             domainDiagramConfig.isShowOutboundServiceFields() && domainDiagramConfig.isShowFields(),
             domainDiagramConfig.isShowOutboundServiceMethods() && domainDiagramConfig.isShowMethods()
+        );
+    }
+
+    /**
+     * Maps ServiceKind structure to a {@link NomnomlClass} representation.
+     *
+     * @param serviceKindMirror mirrored service kind
+     * @return mapped service kind
+     */
+    public NomnomlClass mapUnspecifiedServiceKindClass(ServiceKindMirror serviceKindMirror) {
+        return mapToNomnomlClass(serviceKindMirror,
+            domainDiagramConfig.isShowUnspecifiedServiceKindFields() && domainDiagramConfig.isShowFields(),
+            domainDiagramConfig.isShowUnspecifiedServiceKindMethods() && domainDiagramConfig.isShowMethods()
         );
     }
 

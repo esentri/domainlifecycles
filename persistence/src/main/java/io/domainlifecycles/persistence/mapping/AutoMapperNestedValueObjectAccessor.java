@@ -69,6 +69,14 @@ public class AutoMapperNestedValueObjectAccessor<R, DO extends DomainObject> imp
     private final RecordPropertyAccessor<R> recordPropertyAccessor;
     private final ConverterRegistry converterRegistry;
 
+    /**
+     * Constructs a new AutoMapperNestedValueObjectAccessor instance.
+     *
+     * @param domainObjectBuilderProvider the provider of DomainObjectBuilders
+     * @param valuePathToRecordProperty mapping from ValuePath to RecordProperty
+     * @param recordPropertyAccessor the accessor for RecordProperty
+     * @param converterRegistry the registry for converters
+     */
     public AutoMapperNestedValueObjectAccessor(DomainObjectBuilderProvider domainObjectBuilderProvider,
                                                BiMap<ValuePath, RecordProperty> valuePathToRecordProperty,
                                                RecordPropertyAccessor<R> recordPropertyAccessor,

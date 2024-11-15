@@ -30,6 +30,8 @@ import io.domainlifecycles.builder.exception.DLCBuilderException;
 import io.domainlifecycles.builder.AbstractDomainObjectBuilder;
 import io.domainlifecycles.builder.DomainBuilderConfiguration;
 import io.domainlifecycles.domain.types.internal.DomainObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -45,8 +47,11 @@ import java.util.Optional;
  *
  * @param <T> type for which the domain object builder delivers new domain object instances
  * @author Dominik Galler
+ * @author Mario Herb
  */
 public final class InnerClassDomainObjectBuilder<T extends DomainObject> extends AbstractDomainObjectBuilder<T> {
+
+    private final static Logger log = LoggerFactory.getLogger(InnerClassDomainObjectBuilder.class);
 
     private final Object builderInstance;
     private final Class<?> builderClass;
@@ -59,7 +64,6 @@ public final class InnerClassDomainObjectBuilder<T extends DomainObject> extends
      * @param builderInstance instance of the builder
      */
     public InnerClassDomainObjectBuilder(Object builderInstance) {
-        //noinspection unchecked
         super((Class<T>) builderInstance.getClass().getEnclosingClass());
         this.builderInstance = builderInstance;
         this.builderClass = this.builderInstance.getClass();
@@ -103,10 +107,21 @@ public final class InnerClassDomainObjectBuilder<T extends DomainObject> extends
      */
     @Override
     public boolean canInstantiateField(String fieldName) {
-        return Arrays.stream(builderClass.getDeclaredMethods())
-            .anyMatch(dm ->
-                dm.getName().equals(getSetterNameFromFieldName(fieldName))
-                    && dm.getParameterCount() == 1);
+        var hasSetter = !setterMethods(getSetterNameFromFieldName(fieldName)).isEmpty();
+        if(hasSetter){
+            return true;
+        }
+        if(this.domainBuilderConfiguration instanceof InnerClassDefaultDomainBuilderConfiguration config){
+            if(config.tryFallbacks){
+                var hasReader = !setterMethods(config.mutatorFallbackFromPropertyName(fieldName)).isEmpty();
+                if(hasReader){
+                    return true;
+                }else{
+                    return !setterMethods(config.defaultSetterFallbackFromPropertyName(fieldName)).isEmpty();
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -120,10 +135,9 @@ public final class InnerClassDomainObjectBuilder<T extends DomainObject> extends
             return (DomainObject) m.invoke(builderInstance);
         } catch (NoSuchMethodException | IllegalAccessException |
                  InvocationTargetException e) {
-            throw DLCBuilderException.fail("Was not able to build DomainObjectBuilder! BuilderCLass('%s').",
-                e,
-                builderClass
-            );
+            var msg = String.format("Was not able to build DomainObjectBuilder! BuilderCLass('%s').", builderClass);
+            log.error(msg);
+            throw DLCBuilderException.fail(msg, e);
         }
     }
 
@@ -138,7 +152,6 @@ public final class InnerClassDomainObjectBuilder<T extends DomainObject> extends
      * @param obj object to avoid checks on
      * @return object
      */
-    @SuppressWarnings({"unchecked"})
     public <K> K uncheckedCast(Object obj) {
         return (K) obj;
     }
@@ -149,32 +162,43 @@ public final class InnerClassDomainObjectBuilder<T extends DomainObject> extends
         try {
             return f.get(this.builderInstance);
         } catch (IllegalAccessException e) {
-            throw DLCBuilderException.fail("Was not able to get value from DomainObjectBuilder! BuilderCLass('%s').",
-                e,
-                builderClass
-            );
+            var msg = String.format("Was not able to get value from DomainObjectBuilder! BuilderCLass('%s').", builderClass);
+            log.error(msg);
+            throw DLCBuilderException.fail(msg, e);
         }
     }
 
     @Override
     protected void setValue(String name, Object value) {
         if (value != null) {
-            Method m;
-            List<Method> methods = Arrays.stream(builderClass.getDeclaredMethods())
-                .filter(dm -> dm.getName().equals(getSetterNameFromFieldName(name))
-                    && dm.getParameterCount() == 1)
-                .toList();
-            if (methods.size() == 0) {
-                throw DLCBuilderException.fail("Was not able to set property in DomainObjectBuilder! BuilderClass = "
-                    + builderClass + ", Property = " + name);
+            Method m = null;
+            var methods = setterMethods(this.getSetterNameFromFieldName(name));
+            if (methods.isEmpty()) {
+                if(this.domainBuilderConfiguration instanceof InnerClassDefaultDomainBuilderConfiguration config){
+                    if(config.tryFallbacks){
+                        methods = setterMethods(config.mutatorFallbackFromPropertyName(name));
+                        if(methods.size()!= 1){
+                            methods = setterMethods(config.defaultSetterFallbackFromPropertyName(name));
+                            if(methods.size()==1){
+                                m = methods.get(0);
+                            }
+                        }else{
+                            m = methods.get(0);
+                        }
+                    }
+                }
+                if(m == null) {
+                    var msg = String.format("Was not able to set property in DomainObjectBuilder! BuilderClass = '%s', Property = '%s'", builderClass, name);
+                    log.error(msg);
+                    throw DLCBuilderException.fail(msg);
+                }
             } else if (methods.size() == 1) {
                 m = methods.get(0);
             } else {
-                throw DLCBuilderException
-                    .fail("Was not able to set property in DomainObjectBuilder. " +
-                        "Multiple setters found in Lombok builder! BuilderClass = " + builderClass +
-                        ", Property = " + name
-                    );
+                var msg = String.format("Was not able to set property in DomainObjectBuilder. " +
+                    "Multiple setters found in builder! BuilderClass = '%s', Property = '%s'", builderClass, name);
+                log.error(msg);
+                throw DLCBuilderException.fail(msg);
             }
             Class<?> paramType = m.getParameterTypes()[0];
             Object param = value;
@@ -189,10 +213,18 @@ public final class InnerClassDomainObjectBuilder<T extends DomainObject> extends
                 m.invoke(this.builderInstance, param);
             } catch (IllegalArgumentException | IllegalAccessException |
                      InvocationTargetException e) {
-                throw DLCBuilderException.fail("Was not able to set property in DomainObjectBuilder! BuilderClass = "
-                    + builderClass + ", Property = " + name + ".", e
-                );
+                var msg = String.format("Was not able to set property in DomainObjectBuilder! BuilderClass = '%s'" +
+                    ", Property = '%s'.", builderClass, name);
+                log.error(msg);
+                throw DLCBuilderException.fail(msg, e);
             }
         }
+    }
+
+    private List<Method> setterMethods(String setterFieldName){
+        return Arrays.stream(builderClass.getDeclaredMethods())
+            .filter(dm -> dm.getName().equals(setterFieldName)
+                && dm.getParameterCount() == 1)
+            .toList();
     }
 }

@@ -59,31 +59,31 @@ public class DomainMapperUtils {
         var name = DomainMapperUtils.mapTypeName(domainTypeMirror.getTypeName(), domainDiagramConfig);
         if (domainTypeMirror.getDomainType().equals(DomainType.REPOSITORY)) {
             var repositoryMirror = (RepositoryMirror) domainTypeMirror;
-            if (repositoryMirror.getRepositoryInterfaceTypeNames().size() > 0 && !repositoryMirror.isAbstract()) {
+            if (!repositoryMirror.getRepositoryInterfaceTypeNames().isEmpty() && !repositoryMirror.isAbstract()) {
                 name = DomainMapperUtils.mapTypeName(repositoryMirror.getRepositoryInterfaceTypeNames().get(0),
                     domainDiagramConfig);
             }
         } else if (domainTypeMirror.getDomainType().equals(DomainType.DOMAIN_SERVICE)) {
             var domainServiceMirror = (DomainServiceMirror) domainTypeMirror;
-            if (domainServiceMirror.getDomainServiceInterfaceTypeNames().size() > 0 && !domainServiceMirror.isAbstract()) {
+            if (!domainServiceMirror.getDomainServiceInterfaceTypeNames().isEmpty() && !domainServiceMirror.isAbstract()) {
                 name = DomainMapperUtils.mapTypeName(domainServiceMirror.getDomainServiceInterfaceTypeNames().get(0),
                     domainDiagramConfig);
             }
         } else if (domainTypeMirror.getDomainType().equals(DomainType.APPLICATION_SERVICE)) {
             var applicationServiceMirror = (ApplicationServiceMirror) domainTypeMirror;
-            if (applicationServiceMirror.getApplicationServiceInterfaceTypeNames().size() > 0 && !applicationServiceMirror.isAbstract()) {
+            if (!applicationServiceMirror.getApplicationServiceInterfaceTypeNames().isEmpty() && !applicationServiceMirror.isAbstract()) {
                 name = DomainMapperUtils.mapTypeName(
                     applicationServiceMirror.getApplicationServiceInterfaceTypeNames().get(0), domainDiagramConfig);
             }
         } else if (domainTypeMirror.getDomainType().equals(DomainType.OUTBOUND_SERVICE)) {
             var outboundServiceMirror = (OutboundServiceMirror) domainTypeMirror;
-            if (outboundServiceMirror.getOutboundServiceInterfaceTypeNames().size() > 0 && !outboundServiceMirror.isAbstract()) {
+            if (!outboundServiceMirror.getOutboundServiceInterfaceTypeNames().isEmpty() && !outboundServiceMirror.isAbstract()) {
                 name = DomainMapperUtils.mapTypeName(
                     outboundServiceMirror.getOutboundServiceInterfaceTypeNames().get(0), domainDiagramConfig);
             }
         } else if (domainTypeMirror.getDomainType().equals(DomainType.QUERY_CLIENT)) {
             var queryClientMirror = (QueryClientMirror) domainTypeMirror;
-            if (queryClientMirror.getQueryClientInterfaceTypeNames().size() > 0 && !queryClientMirror.isAbstract()) {
+            if (!queryClientMirror.getQueryClientInterfaceTypeNames().isEmpty() && !queryClientMirror.isAbstract()) {
                 name = DomainMapperUtils.mapTypeName(queryClientMirror.getQueryClientInterfaceTypeNames().get(0),
                     domainDiagramConfig);
             }
@@ -117,6 +117,7 @@ public class DomainMapperUtils {
                 || DomainType.QUERY_CLIENT.equals(domainTypeMirror.getDomainType())
                 || DomainType.DOMAIN_SERVICE.equals(domainTypeMirror.getDomainType())
                 || DomainType.OUTBOUND_SERVICE.equals(domainTypeMirror.getDomainType())
+                || DomainType.SERVICE_KIND.equals(domainTypeMirror.getDomainType())
         ) {
             //for commands and domain events or unknown types we show all properties "inline"
             return true;
@@ -160,6 +161,7 @@ public class DomainMapperUtils {
             case APPLICATION_SERVICE -> "<" + DomainDiagramGenerator.APPLICATION_SERVICE_STYLE_TAG + ">";
             case QUERY_CLIENT -> "<" + DomainDiagramGenerator.QUERY_CLIENT_STYLE_TAG + ">";
             case OUTBOUND_SERVICE -> "<" + DomainDiagramGenerator.OUTBOUND_SERVICE_STYLE_TAG + ">";
+            case SERVICE_KIND -> "<" + DomainDiagramGenerator.SERVICE_KIND_STYLE_TAG + ">";
             default -> "";
         };
     }
@@ -204,6 +206,7 @@ public class DomainMapperUtils {
             case READ_MODEL -> "ReadModel";
             case QUERY_CLIENT -> "QueryClient";
             case OUTBOUND_SERVICE -> "OutboundService";
+            case SERVICE_KIND -> "ServiceKind";
             default -> "";
         };
     }

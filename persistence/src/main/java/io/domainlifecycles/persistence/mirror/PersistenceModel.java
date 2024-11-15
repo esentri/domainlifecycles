@@ -70,7 +70,6 @@ public class PersistenceModel<BASE_RECORD_TYPE> implements PersistenceMirror<BAS
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public RecordMapper<BASE_RECORD_TYPE, ? extends Entity<?>, ? extends AggregateRoot<?>> getEntityRecordMapper(String entityClassName) {
         var erm = entityRecordMap

@@ -12,7 +12,6 @@ java {
 }
 
 dependencies {
-    compileOnly "org.springdoc:springdoc-openapi-starter-webmvc-ui:${openAPIVersion2}"
-    implementation project(":swagger-v3-integration")
-    implementation project(":access")
+    api "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocOpenAPIVersion2}"
+    api project(":swagger-v3-integration")
 }

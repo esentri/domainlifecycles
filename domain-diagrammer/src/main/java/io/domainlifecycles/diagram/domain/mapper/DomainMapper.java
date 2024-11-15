@@ -138,6 +138,15 @@ public class DomainMapper {
     }
 
     /**
+     * @return all unspecified ServiceKinds connected to the Bounded Context as {@link NomnomlClass}.
+     */
+    public List<NomnomlClass> getUnspecifiedServiceKinds() {
+        return filteredDomainClasses.getUnspecifiedServiceKinds().stream()
+            .map(domainClassMapper::mapUnspecifiedServiceKindClass)
+            .toList();
+    }
+
+    /**
      * @return all Aggregates of the Bounded Context as {@link NomnomlFrame}.
      */
     public List<NomnomlFrame> getAggregateFrames() {

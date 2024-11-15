@@ -50,6 +50,6 @@ public class InnerBuilderProviderTest {
         var provider = new InnerClassDomainObjectBuilderProvider();
         assertThatThrownBy(() -> provider.provide(TestValueObjectNoBuilder.class.getName()))
             .isInstanceOf(DLCBuilderException.class)
-            .hasMessageContaining("Couldn't provide Builder instance for Entity class");
+            .hasMessageContaining("Couldn't provide Builder instance for class: 'io.domainlifecycles.builder.helper.TestValueObjectNoBuilder'.");
     }
 }

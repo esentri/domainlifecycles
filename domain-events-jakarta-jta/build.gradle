@@ -1,0 +1,21 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'checkstyle'
+    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
+    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+dependencies {
+    api project(":domain-events-core")
+    api project(":types")
+    api project(":service-registry")
+    compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
+    api "jakarta.transaction:jakarta.transaction-api:${jakartaTransactionApiVersion}"
+
+}

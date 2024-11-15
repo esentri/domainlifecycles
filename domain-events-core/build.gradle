@@ -1,0 +1,32 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'checkstyle'
+    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
+    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+dependencies {
+
+    api project(":types")
+    api project(":service-registry")
+    implementation project(":reflect")
+    implementation project(":mirror")
+    compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
+
+    testImplementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    testImplementation "org.assertj:assertj-core:${assertJVersion}"
+    testImplementation "ch.qos.logback:logback-classic:${logbackClassicVersion}"
+    testImplementation project(":types")
+    testImplementation project(":type-utils")
+    testImplementation project(":mirror")
+    testImplementation project(":service-registry")
+    testImplementation "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+}

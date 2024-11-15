@@ -43,6 +43,9 @@ import java.io.IOException;
 @SuppressWarnings("rawtypes")
 public class IdentitySerializer extends StdSerializer<Identity> {
 
+    /**
+     * Initializes a new IdentitySerializer for serializing objects of type Identity.
+     */
     public IdentitySerializer() {
         super(Identity.class);
     }

@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+    id 'checkstyle'
+    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
+    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+}
+
+dependencies {
+    testImplementation project(":access")
+    testImplementation project(":types")
+    testImplementation project(":type-utils")
+    testImplementation project(":mirror")
+    testImplementation project(":service-registry")
+    testImplementation project(":domain-events-core")
+    testImplementation project(":domain-events-jakarta-jta")
+    testImplementation project(":domain-events-spring-tx")
+    testImplementation project(":domain-events-spring-tx-outbox")
+    testImplementation project(":domain-events-gruelbox")
+    testImplementation project(":jackson-integration")
+    testImplementation project(":builder")
+    testImplementation project(":domain-events-jakarta-jms")
+    testImplementation project(":domain-events-mq")
+    testImplementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    testImplementation "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testImplementation "org.assertj:assertj-core:${assertJVersion}"
+    testImplementation "com.atomikos:transactions-jta:${atomikosJtaVersion}:jakarta"
+    testImplementation "jakarta.transaction:jakarta.transaction-api:${jakartaTransactionApiVersion}"
+    testImplementation "ch.qos.logback:logback-classic:${logbackClassicVersion}"
+    testImplementation 'org.springframework.boot:spring-boot-starter:3.2.3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-json:3.2.3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-jooq:3.2.3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.2.3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-artemis:3.3.3'
+    testImplementation "org.apache.activemq:artemis-jakarta-server:${activeMqArtemisVersion}"
+    testImplementation "com.gruelbox:transactionoutbox-core:${gruelboxVersion}"
+    testImplementation "com.gruelbox:transactionoutbox-spring:${gruelboxVersion}"
+    testImplementation "com.gruelbox:transactionoutbox-jackson:${gruelboxVersion}"
+    testImplementation "com.h2database:h2:2.2.222"
+    testImplementation 'org.awaitility:awaitility:4.2.0'
+
+}
+
+// Although test classes are not scanned by checkstyle, as configured in the root-level build.gradle file,
+// checkstyle will throw errors and hints as soon as you add a JavaDoc in test file methods, which is the case in some
+// of the more complex test files in this module. That's why the checkstyleTest task is explicitly disabled.
+checkstyleTest.enabled = false

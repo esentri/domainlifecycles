@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '3.2.4'
+    id 'org.springframework.boot' version "${springBoot3PlatformVersion}"
     id 'java'
     id 'checkstyle'
     // Plugin that handles database migration.
@@ -12,7 +12,7 @@ plugins {
 
 // ----------------------------------------------------------
 
-def dbVersion = '2.2.224'
+def dbVersion = "${h2Version}"
 def dbDriver = 'org.h2.Driver'
 def dbUrl = "jdbc:h2:file:${project.projectDir}/build/h2-db/test;NON_KEYWORDS=VALUE;AUTO_SERVER=TRUE"
 def dbUsername = 'sa'
@@ -39,7 +39,7 @@ tasks.register('runApp', JavaExec) {
 // ----------------------------------------------------------
 
 dependencies {
-    implementation platform('org.springframework.boot:spring-boot-dependencies:3.1.5')
+    implementation platform("org.springframework.boot:spring-boot-dependencies:${springBoot3PlatformVersion}")
     implementation project(":spring-boot-3-jooq-complete")
     implementation "com.h2database:h2:${dbVersion}"
     implementation "jakarta.validation:jakarta.validation-api:${jakartaValidationApiVersion}"
@@ -50,7 +50,7 @@ dependencies {
     implementation "jakarta.transaction:jakarta.transaction-api:${jakartaTransactionApiVersion}"
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocOpenAPIVersion2}"
     implementation "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
