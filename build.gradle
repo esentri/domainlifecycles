@@ -12,10 +12,6 @@ task printVersion {
     }
 }
 
-task applyLicenses {
-    subprojects { pr -> applyLicenses.dependsOn("${pr.path}:applyLicenses") }
-}
-
 release {
     failOnCommitNeeded = true
     failOnPublishNeeded = true
@@ -235,8 +231,6 @@ allprojects {
         }
     }
 }
-
-tasks.release.dependsOn('applyLicenses')
 
 // ----------------------------------------------------------
 //  RELEASE TO MAVEN CENTRAL
