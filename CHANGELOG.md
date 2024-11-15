@@ -5,14 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0.rc.9] - 2024-11-15
+## [2.0.0] - 2024-11-15
 
 ### Added
 
-#### domain-events
+#### domain-events-core
 
 - First draft of a new module supporting Domain Events, in a way where domain event operations
   and the technical message processing are separated
+
+#### domain-events-activemq-classic-5
+
+- Domain Event support for Active MQ Classic 5
+
+#### domain-events-gruelbox
+
+- Domain Event support for Gruelbox Transactional Outbox
+
+#### domain-events-jakarta-jms
+
+- Domain Event support for Jakarta JMS
+
+#### domain-events-mq
+
+- Domain Event support for Java Messaging (abstract)
+- used by domain-events-jakarta-jms and domain-events-activemq-classic-5
+
+#### domain-events-spring-tx
+
+- Spring transaction support for Domain Event handling
+
+#### domain-events-spring-tx-outbox
+
+- Spring based DLC specific outbox implementation (experimental)
 
 #### service-registry
 
