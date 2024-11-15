@@ -18,8 +18,6 @@ import tests.shared.persistence.domain.oneToOneFollowingLeadingFK.TestRootOneToO
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class OneToOneFollowingLeadingAggregateRootRepository_ITest extends BasePersistence_ITest {
 

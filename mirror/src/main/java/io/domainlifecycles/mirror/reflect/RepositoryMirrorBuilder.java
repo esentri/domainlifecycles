@@ -26,14 +26,10 @@
 
 package io.domainlifecycles.mirror.reflect;
 
+import io.domainlifecycles.domain.types.AggregateRoot;
+import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.model.RepositoryModel;
-import io.domainlifecycles.domain.types.AggregateRoot;
-import io.domainlifecycles.domain.types.OutboundService;
-import io.domainlifecycles.domain.types.QueryClient;
-import io.domainlifecycles.domain.types.Repository;
-import io.domainlifecycles.reflect.JavaReflect;
-import io.domainlifecycles.reflect.MemberSelect;
 
 import java.util.Arrays;
 import java.util.List;

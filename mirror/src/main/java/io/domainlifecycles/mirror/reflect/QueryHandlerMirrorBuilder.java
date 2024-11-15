@@ -26,27 +26,27 @@
 
 package io.domainlifecycles.mirror.reflect;
 
-import io.domainlifecycles.mirror.api.RepositoryMirror;
+import io.domainlifecycles.domain.types.QueryHandler;
 import io.domainlifecycles.domain.types.ReadModel;
-import io.domainlifecycles.domain.types.QueryClient;
-import io.domainlifecycles.mirror.api.QueryClientMirror;
-import io.domainlifecycles.mirror.model.QueryClientModel;
+import io.domainlifecycles.mirror.api.QueryHandlerMirror;
+import io.domainlifecycles.mirror.api.RepositoryMirror;
+import io.domainlifecycles.mirror.model.QueryHandlerModel;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Builder to create {@link QueryClientMirror}. Uses Java reflection.
+ * Builder to create {@link QueryHandlerMirror}. Uses Java reflection.
  *
  * @author Mario Herb
  */
-public class QueryClientMirrorBuilder extends ServiceKindMirrorBuilder {
-    private final Class<? extends QueryClient<?>> queryClientClass;
+public class QueryHandlerMirrorBuilder extends ServiceKindMirrorBuilder {
+    private final Class<? extends QueryHandler<?>> queryHandlerClass;
 
-    public QueryClientMirrorBuilder(Class<? extends QueryClient<?>> queryClientClass) {
-        super(queryClientClass);
-        this.queryClientClass = queryClientClass;
+    public QueryHandlerMirrorBuilder(Class<? extends QueryHandler<?>> queryHandlerClass) {
+        super(queryHandlerClass);
+        this.queryHandlerClass = queryHandlerClass;
     }
 
     /**
@@ -54,29 +54,28 @@ public class QueryClientMirrorBuilder extends ServiceKindMirrorBuilder {
      *
      * @return new instance of RepositoryMirror
      */
-    public QueryClientMirror build() {
-        return new QueryClientModel(
+    public QueryHandlerMirror build() {
+        return new QueryHandlerModel(
             getTypeName(),
             isAbstract(),
             buildFields(),
             buildMethods(),
-            queryClientInterfaceTypeNames(),
+            queryHandlerInterfaceTypeNames(),
             buildInheritanceHierarchy(),
             buildInterfaceTypes(),
-            getProvidedReadModelType(queryClientClass).map(Class::getName).orElse(Object.class.getName())
+            getProvidedReadModelType(queryHandlerClass).map(Class::getName).orElse(Object.class.getName())
         );
     }
 
-    @SuppressWarnings("unchecked")
-    private static Optional<Class<? extends ReadModel>> getProvidedReadModelType(Class<? extends QueryClient<?>> c) {
+    private static Optional<Class<? extends ReadModel>> getProvidedReadModelType(Class<? extends QueryHandler<?>> c) {
         var resolver = new GenericInterfaceTypeResolver(c);
-        var resolved = resolver.resolveFor(QueryClient.class, 0);
+        var resolved = resolver.resolveFor(QueryHandler.class, 0);
         return Optional.ofNullable((Class<? extends ReadModel>) resolved);
     }
 
-    private List<String> queryClientInterfaceTypeNames() {
-        return Arrays.stream(queryClientClass.getInterfaces())
-            .filter(i -> QueryClient.class.isAssignableFrom(i) && !i.getName().equals(QueryClient.class.getName()))
+    private List<String> queryHandlerInterfaceTypeNames() {
+        return Arrays.stream(queryHandlerClass.getInterfaces())
+            .filter(i -> QueryHandler.class.isAssignableFrom(i) && !i.getName().equals(QueryHandler.class.getName()))
             .map(Class::getName)
             .toList();
     }

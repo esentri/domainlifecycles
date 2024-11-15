@@ -24,22 +24,23 @@
  *  limitations under the License.
  */
 
-package sampleshop.core.outport;
+package io.domainlifecycles.events.activemq.domain;
 
-import io.domainlifecycles.domain.types.QueryClient;
+import io.domainlifecycles.domain.types.DomainEvent;
+import io.domainlifecycles.domain.types.ListensTo;
+import io.domainlifecycles.domain.types.QueryHandler;
 
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-/**
- * Defines {@link OrdersByCustomer} readmodel database access.
- *
- * @author Mario Herb
- */
-public interface OrdersByCustomerQueryClient extends QueryClient<OrdersByCustomer> {
+public class AQueryHandler implements QueryHandler {
 
-    /**
-     * Returns a list of the {@link OrdersByCustomer} read model, filtered by customer name, paginated.
-     */
-    public List<OrdersByCustomer> listAll(String customerNameFilter, int offset, int limit);
+    public Queue<DomainEvent> received = new ConcurrentLinkedQueue<>();
+
+    @ListensTo(domainEventType = ADomainEvent.class)
+    public void onADomainEvent(ADomainEvent domainEvent){
+        System.out.println("ADomainEvent received in AQueryHandler! Message = " + domainEvent.message());
+        received.add(domainEvent);
+    }
 
 }

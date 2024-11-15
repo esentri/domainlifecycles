@@ -26,14 +26,9 @@
 
 package io.domainlifecycles.mirror.reflect;
 
-import io.domainlifecycles.mirror.model.DomainServiceModel;
 import io.domainlifecycles.domain.types.DomainService;
-import io.domainlifecycles.domain.types.OutboundService;
-import io.domainlifecycles.domain.types.QueryClient;
-import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
-import io.domainlifecycles.reflect.JavaReflect;
-import io.domainlifecycles.reflect.MemberSelect;
+import io.domainlifecycles.mirror.model.DomainServiceModel;
 
 import java.util.Arrays;
 import java.util.List;

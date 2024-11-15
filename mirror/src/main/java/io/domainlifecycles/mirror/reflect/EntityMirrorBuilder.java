@@ -26,11 +26,11 @@
 
 package io.domainlifecycles.mirror.reflect;
 
-import io.domainlifecycles.mirror.api.EntityMirror;
-import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.domain.types.internal.ConcurrencySafe;
+import io.domainlifecycles.mirror.api.EntityMirror;
+import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.model.EntityModel;
 import io.domainlifecycles.reflect.JavaReflect;
 import io.domainlifecycles.reflect.MemberSelect;

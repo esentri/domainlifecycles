@@ -50,8 +50,8 @@ import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.mirror.api.ParamMirror;
+import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
-import io.domainlifecycles.mirror.api.QueryClientMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.mirror.api.ValueObjectMirror;
@@ -164,15 +164,15 @@ public class DomainClassMapper {
     }
 
     /**
-     * Maps QueryClient structure to a {@link NomnomlClass} representation.
+     * Maps QueryHandler structure to a {@link NomnomlClass} representation.
      *
-     * @param queryClientMirror mirrored query client
-     * @return mapped query client
+     * @param queryHandlerMirror mirrored query handler
+     * @return mapped query handler
      */
-    public NomnomlClass mapQueryClientClass(QueryClientMirror queryClientMirror) {
-        return mapToNomnomlClass(queryClientMirror,
-            domainDiagramConfig.isShowQueryClientFields() && domainDiagramConfig.isShowFields(),
-            domainDiagramConfig.isShowQueryClientMethods() && domainDiagramConfig.isShowMethods()
+    public NomnomlClass mapQueryHandlerClass(QueryHandlerMirror queryHandlerMirror) {
+        return mapToNomnomlClass(queryHandlerMirror,
+            domainDiagramConfig.isShowQueryHandlerFields() && domainDiagramConfig.isShowFields(),
+            domainDiagramConfig.isShowQueryHandlerMethods() && domainDiagramConfig.isShowMethods()
         );
     }
 

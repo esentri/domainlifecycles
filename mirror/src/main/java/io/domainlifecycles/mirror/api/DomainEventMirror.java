@@ -36,10 +36,10 @@ import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.domain.types.ListensTo;
 import io.domainlifecycles.domain.types.OutboundService;
 import io.domainlifecycles.domain.types.Publishes;
+import io.domainlifecycles.domain.types.QueryHandler;
 import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.domain.types.ValueObject;
-import io.domainlifecycles.domain.types.QueryClient;
 
 import java.util.List;
 
@@ -124,10 +124,10 @@ public interface DomainEventMirror extends DomainTypeMirror {
     List<OutboundServiceMirror> getListeningOutboundServices();
 
     /**
-     * @return a list mirrors for the {@link QueryClient} instances listening to the mirrored event.
-     * Therefor the QueryClient must have a method being annotated with {@link ListensTo}.
+     * @return a list mirrors for the {@link QueryHandler} instances listening to the mirrored event.
+     * Therefor the QueryHandler must have a method being annotated with {@link ListensTo}.
      */
-    List<QueryClientMirror> getListeningQueryClients();
+    List<QueryHandlerMirror> getListeningQueryHandlers();
 
     /**
      * @return a list mirrors for the {@link ServiceKind} instances listening to the mirrored event.

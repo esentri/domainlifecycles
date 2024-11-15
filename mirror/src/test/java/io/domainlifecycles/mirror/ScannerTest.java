@@ -1,9 +1,9 @@
 package io.domainlifecycles.mirror;
 
-import lombok.extern.slf4j.Slf4j;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.DomainTypesScanner;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 @Slf4j

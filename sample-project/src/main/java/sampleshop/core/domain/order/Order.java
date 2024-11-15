@@ -26,15 +26,15 @@
 
 package sampleshop.core.domain.order;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import lombok.Builder;
-import lombok.Getter;
 import io.domainlifecycles.assertion.DomainAssertions;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.domain.types.Publishes;
 import io.domainlifecycles.domain.types.base.AggregateRootBase;
 import io.domainlifecycles.events.api.DomainEvents;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import lombok.Builder;
+import lombok.Getter;
 import sampleshop.core.domain.Price;
 import sampleshop.core.domain.customer.Customer;
 import sampleshop.core.domain.product.Product;

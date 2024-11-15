@@ -28,7 +28,7 @@ package io.domainlifecycles.events.spring.before;
 
 import io.domainlifecycles.events.ADomainEvent;
 import io.domainlifecycles.events.ADomainService;
-import io.domainlifecycles.events.AQueryClient;
+import io.domainlifecycles.events.AQueryHandler;
 import io.domainlifecycles.events.ARepository;
 import io.domainlifecycles.events.AnAggregate;
 import io.domainlifecycles.events.AnAggregateDomainEvent;
@@ -65,7 +65,7 @@ public class DirectSpringTransactionalEventHandlingBeforeCommitTests {
     private AnApplicationService anApplicationService;
 
     @Autowired
-    private AQueryClient queryClient;
+    private AQueryHandler queryHandler;
 
     @Autowired
     private AnOutboundService outboundService;
@@ -82,7 +82,7 @@ public class DirectSpringTransactionalEventHandlingBeforeCommitTests {
         assertThat(aDomainService.received).contains(evt);
         assertThat(aRepository.received).contains(evt);
         assertThat(anApplicationService.received).contains(evt);
-        assertThat(queryClient.received).contains(evt);
+        assertThat(queryHandler.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
     }
 
@@ -98,7 +98,7 @@ public class DirectSpringTransactionalEventHandlingBeforeCommitTests {
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
-        assertThat(queryClient.received).doesNotContain(evt);
+        assertThat(queryHandler.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
     }
 
@@ -114,7 +114,7 @@ public class DirectSpringTransactionalEventHandlingBeforeCommitTests {
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
-        assertThat(queryClient.received).doesNotContain(evt);
+        assertThat(queryHandler.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
 
     }
@@ -141,7 +141,7 @@ public class DirectSpringTransactionalEventHandlingBeforeCommitTests {
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
-        assertThat(queryClient.received).doesNotContain(evt);
+        assertThat(queryHandler.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
         var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).contains(evt);
@@ -159,7 +159,7 @@ public class DirectSpringTransactionalEventHandlingBeforeCommitTests {
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
-        assertThat(queryClient.received).doesNotContain(evt);
+        assertThat(queryHandler.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
         var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).doesNotContain(evt);
@@ -177,7 +177,7 @@ public class DirectSpringTransactionalEventHandlingBeforeCommitTests {
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(anApplicationService.received).doesNotContain(evt);
-        assertThat(queryClient.received).doesNotContain(evt);
+        assertThat(queryHandler.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
         var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).doesNotContain(evt);
@@ -195,7 +195,7 @@ public class DirectSpringTransactionalEventHandlingBeforeCommitTests {
         assertThat(aRepository.received).contains(evt);
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(anApplicationService.received).contains(evt);
-        assertThat(queryClient.received).contains(evt);
+        assertThat(queryHandler.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
         var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).doesNotContain(evt);
@@ -223,7 +223,7 @@ public class DirectSpringTransactionalEventHandlingBeforeCommitTests {
         assertThat(aDomainService.received).contains(evt);
         assertThat(aRepository.received).contains(evt);
         assertThat(anApplicationService.received).contains(evt);
-        assertThat(queryClient.received).contains(evt);
+        assertThat(queryHandler.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
     }
 }

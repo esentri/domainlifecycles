@@ -31,7 +31,7 @@ import ch.qos.logback.classic.Logger;
 import com.atomikos.icatch.jta.UserTransactionManager;
 import io.domainlifecycles.events.ADomainEvent;
 import io.domainlifecycles.events.ADomainService;
-import io.domainlifecycles.events.AQueryClient;
+import io.domainlifecycles.events.AQueryHandler;
 import io.domainlifecycles.events.ARepository;
 import io.domainlifecycles.events.AnAggregate;
 import io.domainlifecycles.events.AnAggregateDomainEvent;
@@ -59,7 +59,7 @@ public class DirectJtaTransactionalEventHandlingBeforeCommitTests {
     private static ADomainService domainService;
     private static ARepository repository;
     private static AnApplicationService applicationService;
-    private static AQueryClient queryClient;
+    private static AQueryHandler queryHandler;
     private static AnOutboundService outboundService;
     private static UserTransactionManager userTransactionManager;
 
@@ -76,7 +76,7 @@ public class DirectJtaTransactionalEventHandlingBeforeCommitTests {
         domainService = new ADomainService();
         repository = new ARepository();
         applicationService = new AnApplicationService();
-        queryClient = new AQueryClient();
+        queryHandler = new AQueryHandler();
         outboundService = new AnOutboundService();
 
         var services = new Services();
@@ -84,7 +84,7 @@ public class DirectJtaTransactionalEventHandlingBeforeCommitTests {
         services.registerServiceKindInstance(repository);
         services.registerServiceKindInstance(applicationService);
         services.registerServiceKindInstance(outboundService);
-        services.registerServiceKindInstance(queryClient);
+        services.registerServiceKindInstance(queryHandler);
 
         var channel = new JtaInMemoryChannelFactory(userTransactionManager, services,
             5,
@@ -108,7 +108,7 @@ public class DirectJtaTransactionalEventHandlingBeforeCommitTests {
         assertThat(repository.received).contains(evt);
         assertThat(applicationService.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
-        assertThat(queryClient.received).contains(evt);
+        assertThat(queryHandler.received).contains(evt);
     }
 
     @Test
@@ -123,7 +123,7 @@ public class DirectJtaTransactionalEventHandlingBeforeCommitTests {
         assertThat(repository.received).doesNotContain(evt);
         assertThat(applicationService.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
-        assertThat(queryClient.received).doesNotContain(evt);
+        assertThat(queryHandler.received).doesNotContain(evt);
     }
 
     @Test
@@ -139,7 +139,7 @@ public class DirectJtaTransactionalEventHandlingBeforeCommitTests {
         assertThat(repository.received).doesNotContain(evt);
         assertThat(applicationService.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
-        assertThat(queryClient.received).doesNotContain(evt);
+        assertThat(queryHandler.received).doesNotContain(evt);
 
     }
 
@@ -166,7 +166,7 @@ public class DirectJtaTransactionalEventHandlingBeforeCommitTests {
         assertThat(domainService.received).doesNotContain(evt);
         assertThat(applicationService.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
-        assertThat(queryClient.received).doesNotContain(evt);
+        assertThat(queryHandler.received).doesNotContain(evt);
         var root = repository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).contains(evt);
     }
@@ -184,7 +184,7 @@ public class DirectJtaTransactionalEventHandlingBeforeCommitTests {
         assertThat(domainService.received).doesNotContain(evt);
         assertThat(applicationService.received).doesNotContain(evt);
         assertThat(outboundService.received).doesNotContain(evt);
-        assertThat(queryClient.received).doesNotContain(evt);
+        assertThat(queryHandler.received).doesNotContain(evt);
         var root = repository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).doesNotContain(evt);
     }
@@ -202,7 +202,7 @@ public class DirectJtaTransactionalEventHandlingBeforeCommitTests {
         assertThat(domainService.received).doesNotContain(evt);
         assertThat(applicationService.received).contains(evt);
         assertThat(outboundService.received).contains(evt);
-        assertThat(queryClient.received).contains(evt);
+        assertThat(queryHandler.received).contains(evt);
         var root = repository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
         assertThat(root.received).doesNotContain(evt);
     }

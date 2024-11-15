@@ -26,9 +26,9 @@
 
 package io.domainlifecycles.builder.innerclass;
 
-import io.domainlifecycles.builder.exception.DLCBuilderException;
 import io.domainlifecycles.builder.AbstractDomainObjectBuilder;
 import io.domainlifecycles.builder.DomainBuilderConfiguration;
+import io.domainlifecycles.builder.exception.DLCBuilderException;
 import io.domainlifecycles.domain.types.internal.DomainObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -26,17 +26,17 @@
 
 package io.domainlifecycles.mirror.visitor;
 
-import io.domainlifecycles.mirror.api.AggregateRootMirror;
-import io.domainlifecycles.mirror.api.DomainTypeMirror;
-import io.domainlifecycles.mirror.api.EntityMirror;
-import io.domainlifecycles.mirror.api.FieldMirror;
-import io.domainlifecycles.mirror.api.ValueMirror;
 import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.AggregateRootReferenceMirror;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainObjectMirror;
 import io.domainlifecycles.mirror.api.DomainType;
+import io.domainlifecycles.mirror.api.DomainTypeMirror;
+import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.EntityReferenceMirror;
+import io.domainlifecycles.mirror.api.FieldMirror;
+import io.domainlifecycles.mirror.api.ValueMirror;
 import io.domainlifecycles.mirror.api.ValueReferenceMirror;
 import io.domainlifecycles.mirror.exception.MirrorException;
 import org.slf4j.Logger;

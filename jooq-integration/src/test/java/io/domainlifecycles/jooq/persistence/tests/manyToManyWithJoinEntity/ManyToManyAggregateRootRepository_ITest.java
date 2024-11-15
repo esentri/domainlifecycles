@@ -1,10 +1,10 @@
 package io.domainlifecycles.jooq.persistence.tests.manyToManyWithJoinEntity;
 
-import lombok.extern.slf4j.Slf4j;
-import io.domainlifecycles.domain.types.clone.EntityCloner;
 import io.domainlifecycles.domain.types.Entity;
-import io.domainlifecycles.persistence.exception.DLCPersistenceException;
+import io.domainlifecycles.domain.types.clone.EntityCloner;
 import io.domainlifecycles.jooq.persistence.BasePersistence_ITest;
+import io.domainlifecycles.persistence.exception.DLCPersistenceException;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

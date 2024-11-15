@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tests.shared.persistence.domain.optional.MySimpleValueObject;
 import tests.shared.persistence.domain.valueobjects.SimpleVo;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ReflectiveDomainObjectAccessorTest {

@@ -28,8 +28,8 @@ package io.domainlifecycles.mirror.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.domainlifecycles.mirror.api.ParamMirror;
 import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
+import io.domainlifecycles.mirror.api.ParamMirror;
 
 import java.util.Objects;
 

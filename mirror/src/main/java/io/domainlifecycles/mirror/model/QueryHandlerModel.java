@@ -28,13 +28,11 @@ package io.domainlifecycles.mirror.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.domainlifecycles.mirror.api.DomainCommandMirror;
-import io.domainlifecycles.mirror.api.DomainEventMirror;
+import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
-import io.domainlifecycles.mirror.api.QueryClientMirror;
-import io.domainlifecycles.mirror.api.Domain;
+import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
 
 import java.util.Collections;
@@ -43,31 +41,31 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Model implementation of a {@link QueryClientMirror}.
+ * Model implementation of a {@link QueryHandlerMirror}.
  *
  * @author Mario Herb
  */
-public class QueryClientModel extends ServiceKindModel implements QueryClientMirror {
+public class QueryHandlerModel extends ServiceKindModel implements QueryHandlerMirror {
 
     @JsonProperty
     private final String providedReadModelTypeName;
     @JsonProperty
-    private final List<String> queryClientInterfaceTypeNames;
+    private final List<String> queryHandlerInterfaceTypeNames;
 
     @JsonCreator
-    public QueryClientModel(
+    public QueryHandlerModel(
         @JsonProperty("typeName") String typeName,
         @JsonProperty("abstract") boolean isAbstract,
         @JsonProperty("allFields") List<FieldMirror> allFields,
         @JsonProperty("methods") List<MethodMirror> methods,
-        @JsonProperty("queryClientInterfaceTypeNames") List<String> queryClientInterfaceTypeNames,
+        @JsonProperty("queryHandlerInterfaceTypeNames") List<String> queryHandlerInterfaceTypeNames,
         @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
         @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames,
         @JsonProperty("providedReadModelTypeName") String providedReadModelTypeName
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
         this.providedReadModelTypeName = Objects.requireNonNull(providedReadModelTypeName);
-        this.queryClientInterfaceTypeNames = Collections.unmodifiableList(queryClientInterfaceTypeNames);
+        this.queryHandlerInterfaceTypeNames = Collections.unmodifiableList(queryHandlerInterfaceTypeNames);
     }
 
     /**
@@ -82,8 +80,8 @@ public class QueryClientModel extends ServiceKindModel implements QueryClientMir
      * {@inheritDoc}
      */
     @Override
-    public List<String> getQueryClientInterfaceTypeNames() {
-        return queryClientInterfaceTypeNames;
+    public List<String> getQueryHandlerInterfaceTypeNames() {
+        return queryHandlerInterfaceTypeNames;
     }
 
     /**
@@ -91,7 +89,7 @@ public class QueryClientModel extends ServiceKindModel implements QueryClientMir
      */
     @Override
     public DomainType getDomainType() {
-        return DomainType.QUERY_CLIENT;
+        return DomainType.QUERY_HANDLER;
     }
 
     /**
@@ -99,9 +97,9 @@ public class QueryClientModel extends ServiceKindModel implements QueryClientMir
      */
     @Override
     public String toString() {
-        return "QueryClientModel{" +
+        return "QueryHandlerModel{" +
             "providedReadModelTypeName='" + providedReadModelTypeName + '\'' +
-            ", queryClientInterfaceTypeNames=" + queryClientInterfaceTypeNames +
+            ", queryHandlerInterfaceTypeNames=" + queryHandlerInterfaceTypeNames +
             "} " + super.toString();
     }
 
@@ -113,10 +111,10 @@ public class QueryClientModel extends ServiceKindModel implements QueryClientMir
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        QueryClientModel that = (QueryClientModel) o;
+        QueryHandlerModel that = (QueryHandlerModel) o;
         return providedReadModelTypeName.equals(that.providedReadModelTypeName)
-            && queryClientInterfaceTypeNames.equals(
-            that.queryClientInterfaceTypeNames);
+            && queryHandlerInterfaceTypeNames.equals(
+            that.queryHandlerInterfaceTypeNames);
     }
 
     /**
@@ -124,6 +122,6 @@ public class QueryClientModel extends ServiceKindModel implements QueryClientMir
      */
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), providedReadModelTypeName, queryClientInterfaceTypeNames);
+        return Objects.hash(super.hashCode(), providedReadModelTypeName, queryHandlerInterfaceTypeNames);
     }
 }

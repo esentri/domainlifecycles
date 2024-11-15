@@ -29,12 +29,12 @@ package io.domainlifecycles.mirror.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.domainlifecycles.mirror.api.ValueMirror;
-import io.domainlifecycles.mirror.exception.MirrorException;
 import io.domainlifecycles.mirror.api.AccessLevel;
 import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
 import io.domainlifecycles.mirror.api.Domain;
+import io.domainlifecycles.mirror.api.ValueMirror;
 import io.domainlifecycles.mirror.api.ValueReferenceMirror;
+import io.domainlifecycles.mirror.exception.MirrorException;
 
 /**
  * Model implementation of a {@link ValueReferenceMirror}.

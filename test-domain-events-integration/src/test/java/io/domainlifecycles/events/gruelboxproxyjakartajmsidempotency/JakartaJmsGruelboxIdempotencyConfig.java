@@ -37,7 +37,7 @@ import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.access.classes.DefaultClassProvider;
 import io.domainlifecycles.events.ADomainEvent;
 import io.domainlifecycles.events.ADomainService;
-import io.domainlifecycles.events.AQueryClient;
+import io.domainlifecycles.events.AQueryHandler;
 import io.domainlifecycles.events.ARepository;
 import io.domainlifecycles.events.AnApplicationService;
 import io.domainlifecycles.events.AnOutboundService;
@@ -106,7 +106,7 @@ public class JakartaJmsGruelboxIdempotencyConfig {
         idempotency
             .addConfigurationEntry(
                 new IdempotencyConfigurationEntry(
-                    AQueryClient.class,
+                    AQueryHandler.class,
                     "onADomainEvent",
                     ADomainEvent.class,
                     (e)-> ((ADomainEvent)e).message()

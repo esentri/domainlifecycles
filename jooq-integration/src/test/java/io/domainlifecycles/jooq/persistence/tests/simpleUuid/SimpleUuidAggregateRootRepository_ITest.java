@@ -12,8 +12,6 @@ import tests.shared.persistence.domain.simpleUuid.TestRootSimpleUuidId;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SimpleUuidAggregateRootRepository_ITest extends BasePersistence_ITest {
 

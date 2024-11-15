@@ -14,8 +14,6 @@ import tests.shared.persistence.domain.tree.TreeRootId;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TreeRootRepository_ITest extends BasePersistence_ITest {
 

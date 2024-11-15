@@ -35,9 +35,9 @@
 #.SK:fill=#C0C0C0 bold
 #.SK_R:fill=#C0C0C0 bold;stroke=#FF0000
 #.SK_N:fill=#C0C0C0 bold;stroke=#108738
-#.QC:fill=#C0C0C0 bold
-#.QC_R:fill=#C0C0C0 bold;stroke=#FF0000
-#.QC_N:fill=#C0C0C0 bold;stroke=#108738
+#.QH:fill=#C0C0C0 bold
+#.QH_R:fill=#C0C0C0 bold;stroke=#FF0000
+#.QH_N:fill=#C0C0C0 bold;stroke=#108738
 #.RM:fill=#FFCCE5 bold
 #.RM_R:fill=#FFCCE5 bold;stroke=#FF0000
 #.RM_N:fill=#FFCCE5 bold;stroke=#108738
@@ -213,8 +213,8 @@ o +- customerName:String
 o +- pendingOrders:int
 o +- shippedOrders:int
 ]
-// !!! sampleshop.outbound.JooqOrdersByCustomerQueryClient !!!
-[<QC> OrdersByCustomerQueryClient <<QueryClient>> ]
+// !!! sampleshop.outbound.JooqOrdersByCustomerQueryHandler !!!
+[<QH> OrdersByCustomerQueryHandler <<QueryHandler>> ]
 // !!! sampleshop.outbound.EmailNotifierImpl !!!
 [<OS> EmailNotifierService <<OutboundService>> ]
 [<DC>ChangeCustomerAddress <<DomainCommand>>]  --> [<AS>CustomerDriver <<Driver>>]
@@ -237,7 +237,7 @@ o +- shippedOrders:int
 [<AS>OrderDriver <<Driver>>]  -- [<R>OrderRepository <<Repository>>]
 [<AS>ProductDriver <<Driver>>]  -- [<R>ProductRepository <<Repository>>]
 [<AS>CustomerDriver <<Driver>>]  -- [<R>CustomerRepository <<Repository>>]
-[<AS>CustomerDriver <<Driver>>]  -- [<QC>OrdersByCustomerQueryClient <<QueryClient>>]
+[<AS>CustomerDriver <<Driver>>]  -- [<QH>OrdersByCustomerQueryHandler <<QueryHandler>>]
 [<DS>CustomerNotificationService <<DomainService>>]  -- [<OS>EmailNotifierService <<OutboundService>>]
 [<DS>CustomerNotificationService <<DomainService>>]  -- [<R>CustomerRepository <<Repository>>]
 [<DS>OrderPlacementService <<DomainService>>]  -- [<R>OrderRepository <<Repository>>]
@@ -245,4 +245,4 @@ o +- shippedOrders:int
 [<R>CustomerRepository <<Repository>>]  -- [<AF> Customer <<Aggregate>>]
 [<R>ProductRepository <<Repository>>]  -- [<AF> Product <<Aggregate>>]
 [<R>OrderRepository <<Repository>>]  -- [<AF> Order <<Aggregate>>]
-[<QC>OrdersByCustomerQueryClient <<QueryClient>>]  -- [<RM>OrdersByCustomer <<ReadModel>>]
+[<QH>OrdersByCustomerQueryHandler <<QueryHandler>>]  -- [<RM>OrdersByCustomer <<ReadModel>>]

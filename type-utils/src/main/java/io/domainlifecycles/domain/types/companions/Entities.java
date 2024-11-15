@@ -27,11 +27,10 @@
 package io.domainlifecycles.domain.types.companions;
 
 import io.domainlifecycles.access.DlcAccess;
-
 import io.domainlifecycles.access.object.DynamicDomainObjectAccessor;
-import io.domainlifecycles.domain.types.exception.DLCTypesException;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.domain.types.exception.DLCTypesException;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;

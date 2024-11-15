@@ -55,9 +55,9 @@ public interface ApplicationServiceMirror extends ServiceKindMirror {
     List<OutboundServiceMirror> getReferencedOutboundServices();
 
     /**
-     * @return the list of referenced {@link QueryClientMirror} instances.
+     * @return the list of referenced {@link QueryHandlerMirror} instances.
      */
-    List<QueryClientMirror> getReferencedQueryClients();
+    List<QueryHandlerMirror> getReferencedQueryHandlers();
 
 
     /**

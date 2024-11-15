@@ -24,25 +24,22 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.events.domain;
+package sampleshop.core.outport;
 
-import io.domainlifecycles.domain.types.DomainEvent;
-import io.domainlifecycles.domain.types.ListensTo;
-import io.domainlifecycles.domain.types.QueryClient;
-import lombok.extern.slf4j.Slf4j;
+import io.domainlifecycles.domain.types.QueryHandler;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.List;
 
-@Slf4j
-public class AQueryClient implements QueryClient {
+/**
+ * Defines {@link OrdersByCustomer} readmodel database access.
+ *
+ * @author Mario Herb
+ */
+public interface OrdersByCustomerQueryHandler extends QueryHandler<OrdersByCustomer> {
 
-    public Queue<DomainEvent> received = new ConcurrentLinkedQueue<>();
-
-    @ListensTo(domainEventType = ADomainEvent.class)
-    public void onADomainEvent(ADomainEvent domainEvent){
-        log.debug("ADomainEvent received in AQueryClient! Message = " + domainEvent.message());
-        received.add(domainEvent);
-    }
+    /**
+     * Returns a list of the {@link OrdersByCustomer} read model, filtered by customer name, paginated.
+     */
+    public List<OrdersByCustomer> listAll(String customerNameFilter, int offset, int limit);
 
 }

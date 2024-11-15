@@ -26,12 +26,12 @@
 
 package io.domainlifecycles.mirror.reflect;
 
-import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.domain.types.AggregateCommand;
 import io.domainlifecycles.domain.types.DomainCommand;
 import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.DomainServiceCommand;
 import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.model.DomainCommandModel;
 
 import java.util.Optional;

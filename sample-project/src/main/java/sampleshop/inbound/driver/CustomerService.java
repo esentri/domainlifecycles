@@ -37,7 +37,7 @@ import sampleshop.core.domain.customer.Customer;
 import sampleshop.core.domain.customer.NewCustomerAdded;
 import sampleshop.core.inport.CustomerDriver;
 import sampleshop.core.outport.CustomerRepository;
-import sampleshop.core.outport.OrdersByCustomerQueryClient;
+import sampleshop.core.outport.OrdersByCustomerQueryHandler;
 import sampleshop.core.outport.OrdersByCustomer;
 
 import java.util.List;
@@ -55,10 +55,10 @@ public class CustomerService implements CustomerDriver {
 
     private final CustomerRepository repository;
 
-    private final OrdersByCustomerQueryClient ordersByCustomerQueries;
+    private final OrdersByCustomerQueryHandler ordersByCustomerQueries;
 
 
-    public CustomerService(CustomerRepository repository, OrdersByCustomerQueryClient ordersByCustomerQueries) {
+    public CustomerService(CustomerRepository repository, OrdersByCustomerQueryHandler ordersByCustomerQueries) {
         this.repository = repository;
         this.ordersByCustomerQueries = ordersByCustomerQueries;
     }

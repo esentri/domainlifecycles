@@ -27,8 +27,8 @@
 package io.domainlifecycles.jooq.imp;
 
 import io.domainlifecycles.access.DlcAccess;
-import io.domainlifecycles.jooq.util.NamingUtil;
 import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.jooq.util.NamingUtil;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;

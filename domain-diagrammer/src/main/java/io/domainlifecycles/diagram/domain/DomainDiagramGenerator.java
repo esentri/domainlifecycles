@@ -66,7 +66,7 @@ public class DomainDiagramGenerator implements Diagram {
 
     public static final String READ_MODEL_STYLE_TAG = "RM";
 
-    public static final String QUERY_CLIENT_STYLE_TAG = "QC";
+    public static final String QUERY_HANDLER_STYLE_TAG = "QH";
     public static final String OUTBOUND_SERVICE_STYLE_TAG = "OS";
 
     public static final String IDENTITY_STYLE_TAG = "I";
@@ -102,7 +102,7 @@ public class DomainDiagramGenerator implements Diagram {
         builder.append(repositoryStyleDeclaration());
         builder.append(outboundServiceStyleDeclaration());
         builder.append(unspecifiedServiceKindStyleDeclaration());
-        builder.append(queryClientStyleDeclaration());
+        builder.append(queryHandlerStyleDeclaration());
         builder.append(readModelStyleDeclaration());
         builder.append(fontStyleDeclaration());
         builder.append(directionStyleDeclaration());
@@ -128,7 +128,7 @@ public class DomainDiagramGenerator implements Diagram {
 
         domainMapper.getReadModels().forEach(f -> builder.append(f.getDiagramText()));
 
-        domainMapper.getQueryClients().forEach(f -> builder.append(f.getDiagramText()));
+        domainMapper.getQueryHandlers().forEach(f -> builder.append(f.getDiagramText()));
 
         domainMapper.getOutboundServices().forEach(f -> builder.append(f.getDiagramText()));
 
@@ -143,7 +143,7 @@ public class DomainDiagramGenerator implements Diagram {
 
         domainMapper.getDomainRelationshipMapper().mapAllAggregateRepositoryRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllQueryClientReadModelRelationships()
+        domainMapper.getDomainRelationshipMapper().mapAllQueryHandlerReadModelRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
 
         return builder.toString();
@@ -233,9 +233,9 @@ public class DomainDiagramGenerator implements Diagram {
         return "";
     }
 
-    private String queryClientStyleDeclaration() {
-        if (diagramConfig.getQueryClientStyle() != null) {
-            return completeStyleDeclaration(diagramConfig.getQueryClientStyle(), QUERY_CLIENT_STYLE_TAG);
+    private String queryHandlerStyleDeclaration() {
+        if (diagramConfig.getQueryHandlerStyle() != null) {
+            return completeStyleDeclaration(diagramConfig.getQueryHandlerStyle(), QUERY_HANDLER_STYLE_TAG);
         }
         return "";
     }

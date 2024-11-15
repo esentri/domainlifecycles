@@ -37,10 +37,11 @@ import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
-import io.domainlifecycles.mirror.api.QueryClientMirror;
+import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.mirror.exception.MirrorException;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,7 +98,7 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
                 || DomainType.REPOSITORY.equals(fieldMirror.getType().getDomainType())
                 || DomainType.DOMAIN_SERVICE.equals(fieldMirror.getType().getDomainType())
                 || DomainType.OUTBOUND_SERVICE.equals(fieldMirror.getType().getDomainType())
-                || DomainType.QUERY_CLIENT.equals(fieldMirror.getType().getDomainType())
+                || DomainType.QUERY_HANDLER.equals(fieldMirror.getType().getDomainType())
                 || DomainType.APPLICATION_SERVICE.equals(fieldMirror.getType().getDomainType()))
             .map(this::mapToServiceKindMirror).collect(Collectors.toList());
     }
@@ -128,10 +129,10 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
 
     @Override
     @JsonIgnore
-    public List<QueryClientMirror> getReferencedQueryClients() {
+    public List<QueryHandlerMirror> getReferencedQueryHandlers() {
         return allFields.stream()
-            .filter(fieldMirror -> DomainType.QUERY_CLIENT.equals(fieldMirror.getType().getDomainType()))
-            .map(this::mapToQueryClientMirror).collect(Collectors.toList());
+            .filter(fieldMirror -> DomainType.QUERY_HANDLER.equals(fieldMirror.getType().getDomainType()))
+            .map(this::mapToQueryHandlerMirror).collect(Collectors.toList());
     }
 
     @Override
@@ -163,9 +164,9 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
 
     }
 
-    private QueryClientMirror mapToQueryClientMirror(FieldMirror fieldMirror) {
-        return (QueryClientMirror) Domain.typeMirror(fieldMirror.getType().getTypeName())
-            .orElseThrow(() -> MirrorException.fail(String.format("No QueryClientMirror found for FieldMirror with type name '%s'.", fieldMirror.getType().getTypeName())));
+    private QueryHandlerMirror mapToQueryHandlerMirror(FieldMirror fieldMirror) {
+        return (QueryHandlerMirror) Domain.typeMirror(fieldMirror.getType().getTypeName())
+            .orElseThrow(() -> MirrorException.fail(String.format("No QueryHandlerMirror found for FieldMirror with type name '%s'.", fieldMirror.getType().getTypeName())));
     }
 
     private ApplicationServiceMirror mapToApplicationServiceMirror(FieldMirror fieldMirror) {

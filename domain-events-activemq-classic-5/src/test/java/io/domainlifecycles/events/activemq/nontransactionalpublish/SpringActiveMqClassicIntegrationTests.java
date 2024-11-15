@@ -28,7 +28,7 @@ package io.domainlifecycles.events.activemq.nontransactionalpublish;
 
 import io.domainlifecycles.events.activemq.domain.ADomainEvent;
 import io.domainlifecycles.events.activemq.domain.ADomainService;
-import io.domainlifecycles.events.activemq.domain.AQueryClient;
+import io.domainlifecycles.events.activemq.domain.AQueryHandler;
 import io.domainlifecycles.events.activemq.domain.ARepository;
 import io.domainlifecycles.events.activemq.domain.AnAggregate;
 import io.domainlifecycles.events.activemq.domain.AnAggregateDomainEvent;
@@ -50,7 +50,6 @@ import jakarta.jms.Session;
 import jakarta.jms.TextMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -81,7 +80,7 @@ public class SpringActiveMqClassicIntegrationTests {
     private AnApplicationService anApplicationService;
 
     @Autowired
-    private AQueryClient queryClient;
+    private AQueryHandler queryHandler;
 
     @Autowired
     private AnOutboundService outboundService;
@@ -216,7 +215,7 @@ public class SpringActiveMqClassicIntegrationTests {
                     softly.assertThat(aDomainService.received).contains(evt);
                     softly.assertThat(aRepository.received).contains(evt);
                     softly.assertThat(anApplicationService.received).contains(evt);
-                    softly.assertThat(queryClient.received).contains(evt);
+                    softly.assertThat(queryHandler.received).contains(evt);
                     softly.assertThat(outboundService.received).contains(evt);
                     softly.assertAll();
                 }
@@ -239,7 +238,7 @@ public class SpringActiveMqClassicIntegrationTests {
                     softly.assertThat(aDomainService.received).doesNotContain(evt);
                     softly.assertThat(aRepository.received).doesNotContain(evt);
                     softly.assertThat(anApplicationService.received).doesNotContain(evt);
-                    softly.assertThat(queryClient.received).doesNotContain(evt);
+                    softly.assertThat(queryHandler.received).doesNotContain(evt);
                     softly.assertThat(outboundService.received).doesNotContain(evt);
                     softly.assertAll();
                 }
@@ -263,7 +262,7 @@ public class SpringActiveMqClassicIntegrationTests {
                 softly.assertThat(aRepository.received).doesNotContain(evt);
                 softly.assertThat(aDomainService.received).doesNotContain(evt);
                 softly.assertThat(anApplicationService.received).doesNotContain(evt);
-                softly.assertThat(queryClient.received).doesNotContain(evt);
+                softly.assertThat(queryHandler.received).doesNotContain(evt);
                 softly.assertThat(outboundService.received).doesNotContain(evt);
                 var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
                 softly.assertThat(root.received).contains(evt);
@@ -289,7 +288,7 @@ public class SpringActiveMqClassicIntegrationTests {
                 softly.assertThat(aRepository.received).doesNotContain(evt);
                 softly.assertThat(aDomainService.received).doesNotContain(evt);
                 softly.assertThat(anApplicationService.received).doesNotContain(evt);
-                softly.assertThat(queryClient.received).doesNotContain(evt);
+                softly.assertThat(queryHandler.received).doesNotContain(evt);
                 softly.assertThat(outboundService.received).doesNotContain(evt);
                 var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
                 softly.assertThat(root.received).doesNotContain(evt);
@@ -314,7 +313,7 @@ public class SpringActiveMqClassicIntegrationTests {
                 softly.assertThat(aRepository.received).contains(evt);
                 softly.assertThat(aDomainService.received).doesNotContain(evt);
                 softly.assertThat(anApplicationService.received).contains(evt);
-                softly.assertThat(queryClient.received).contains(evt);
+                softly.assertThat(queryHandler.received).contains(evt);
                 softly.assertThat(outboundService.received).contains(evt);
                 var root = aRepository.findById(new AnAggregate.AggregateId(1L)).orElseThrow();
                 softly.assertThat(root.received).doesNotContain(evt);
@@ -375,7 +374,7 @@ public class SpringActiveMqClassicIntegrationTests {
                     softly.assertThat(aDomainService.received).doesNotContain(evt);
                     softly.assertThat(aRepository.received).contains(evt);
                     softly.assertThat(anApplicationService.received).contains(evt);
-                    softly.assertThat(queryClient.received).contains(evt);
+                    softly.assertThat(queryHandler.received).contains(evt);
                     softly.assertThat(outboundService.received).contains(evt);
                     softly.assertAll();
                 }

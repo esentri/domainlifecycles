@@ -26,20 +26,6 @@
 
 package io.domainlifecycles.mirror.reflect;
 
-import io.domainlifecycles.domain.types.ServiceKind;
-import io.domainlifecycles.mirror.api.AggregateRootMirror;
-import io.domainlifecycles.mirror.api.DomainCommandMirror;
-import io.domainlifecycles.mirror.api.DomainMirrorFactory;
-import io.domainlifecycles.mirror.api.DomainTypeMirror;
-import io.domainlifecycles.mirror.api.EntityMirror;
-import io.domainlifecycles.mirror.api.EnumMirror;
-import io.domainlifecycles.mirror.api.InitializedDomain;
-import io.domainlifecycles.mirror.api.OutboundServiceMirror;
-import io.domainlifecycles.mirror.api.RepositoryMirror;
-import io.domainlifecycles.mirror.api.ServiceKindMirror;
-import io.domainlifecycles.mirror.api.ValueObjectMirror;
-import io.domainlifecycles.mirror.model.BoundedContextModel;
-import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.domain.types.ApplicationService;
 import io.domainlifecycles.domain.types.DomainCommand;
@@ -48,17 +34,31 @@ import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.domain.types.OutboundService;
-import io.domainlifecycles.domain.types.QueryClient;
+import io.domainlifecycles.domain.types.QueryHandler;
 import io.domainlifecycles.domain.types.ReadModel;
 import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.domain.types.ValueObject;
+import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
 import io.domainlifecycles.mirror.api.BoundedContextMirror;
+import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
+import io.domainlifecycles.mirror.api.DomainMirrorFactory;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
+import io.domainlifecycles.mirror.api.DomainTypeMirror;
+import io.domainlifecycles.mirror.api.EntityMirror;
+import io.domainlifecycles.mirror.api.EnumMirror;
 import io.domainlifecycles.mirror.api.IdentityMirror;
+import io.domainlifecycles.mirror.api.InitializedDomain;
+import io.domainlifecycles.mirror.api.OutboundServiceMirror;
+import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
-import io.domainlifecycles.mirror.api.QueryClientMirror;
+import io.domainlifecycles.mirror.api.RepositoryMirror;
+import io.domainlifecycles.mirror.api.ServiceKindMirror;
+import io.domainlifecycles.mirror.api.ValueObjectMirror;
+import io.domainlifecycles.mirror.model.BoundedContextModel;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,7 +130,7 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
         buildReadModelMirrors(domainTypesScanner.getScannedReadModels())
             .forEach(rm -> builtTypeMirrors.put(rm.getTypeName(), rm));
 
-        buildQueryClientMirrors(domainTypesScanner.getScannedQueryClients())
+        buildQueryHandlerMirrors(domainTypesScanner.getScannedQueryHandlers())
             .forEach(qc -> builtTypeMirrors.put(qc.getTypeName(), qc));
 
         buildOutboundServiceMirrors(domainTypesScanner.getScannedOutboundServices())
@@ -238,10 +238,10 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
             .toList();
     }
 
-    private List<QueryClientMirror> buildQueryClientMirrors(List<Class<? extends QueryClient<?>>> queryClientClassList) {
-        return queryClientClassList
+    private List<QueryHandlerMirror> buildQueryHandlerMirrors(List<Class<? extends QueryHandler<?>>> queryHandlerClassList) {
+        return queryHandlerClassList
             .stream()
-            .map(r -> new QueryClientMirrorBuilder(r).build()
+            .map(r -> new QueryHandlerMirrorBuilder(r).build()
             )
             .toList();
     }

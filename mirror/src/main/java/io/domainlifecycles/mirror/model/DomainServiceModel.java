@@ -29,22 +29,14 @@ package io.domainlifecycles.mirror.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.domainlifecycles.mirror.api.DomainCommandMirror;
-import io.domainlifecycles.mirror.api.FieldMirror;
-import io.domainlifecycles.mirror.api.MethodMirror;
-import io.domainlifecycles.mirror.api.OutboundServiceMirror;
-import io.domainlifecycles.mirror.api.RepositoryMirror;
-import io.domainlifecycles.mirror.exception.MirrorException;
-import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.api.DomainEventMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
-import io.domainlifecycles.mirror.api.QueryClientMirror;
+import io.domainlifecycles.mirror.api.FieldMirror;
+import io.domainlifecycles.mirror.api.MethodMirror;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Model implementation of a {@link DomainServiceMirror}.

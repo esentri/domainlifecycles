@@ -42,7 +42,7 @@ import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.EntityReferenceMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
-import io.domainlifecycles.mirror.api.QueryClientMirror;
+import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.ServiceKindMirror;
@@ -111,15 +111,15 @@ public class DomainRelationshipMapper {
     }
 
     /**
-     * Derives a {@link NomnomlRelationship} for all QueryClients to their ReadModels.
+     * Derives a {@link NomnomlRelationship} for all QueryHandlers to their ReadModels.
      *
-     * @return mapped query client - read model relationships
+     * @return mapped query handler - read model relationships
      */
-    public List<NomnomlRelationship> mapAllQueryClientReadModelRelationships() {
+    public List<NomnomlRelationship> mapAllQueryHandlerReadModelRelationships() {
         var relationShips = new ArrayList<NomnomlRelationship>();
-        if (diagramConfig.isShowQueryClients() && diagramConfig.isShowReadModels()) {
-            filteredDomainClasses.getQueryClients()
-                .forEach(r -> relationShips.add(mapQueryClientReadModelRelationship(r)));
+        if (diagramConfig.isShowQueryHandlers() && diagramConfig.isShowReadModels()) {
+            filteredDomainClasses.getQueryHandlers()
+                .forEach(r -> relationShips.add(mapQueryHandlerReadModelRelationship(r)));
         }
         return relationShips;
     }
@@ -240,8 +240,8 @@ public class DomainRelationshipMapper {
                 case OUTBOUND_SERVICE -> {
                     return !((OutboundServiceMirror) referencingType).processes(domainCommandMirror);
                 }
-                case QUERY_CLIENT -> {
-                    return !((QueryClientMirror) referencingType).processes(domainCommandMirror);
+                case QUERY_HANDLER -> {
+                    return !((QueryHandlerMirror) referencingType).processes(domainCommandMirror);
                 }
                 case SERVICE_KIND -> {
                     return !((ServiceKindMirror) referencingType).processes(domainCommandMirror);
@@ -306,19 +306,19 @@ public class DomainRelationshipMapper {
             .build();
     }
 
-    private NomnomlRelationship mapQueryClientReadModelRelationship(QueryClientMirror queryClientMirror) {
+    private NomnomlRelationship mapQueryHandlerReadModelRelationship(QueryHandlerMirror queryHandlerMirror) {
         return NomnomlRelationship
             .builder()
-            .fromName(relationConnectorName(queryClientMirror))
+            .fromName(relationConnectorName(queryHandlerMirror))
             .fromMultiplicity("")
-            .fromStyleClassifier(DomainMapperUtils.styleClassifier(queryClientMirror.getTypeName()))
+            .fromStyleClassifier(DomainMapperUtils.styleClassifier(queryHandlerMirror.getTypeName()))
             .label("")
             .relationshiptype(NomnomlRelationship.RelationshipType.ASSOCIATION)
             .toStyleClassifier(DomainMapperUtils.styleClassifier(
-                queryClientMirror.getProvidedReadModel().map(ReadModelMirror::getTypeName).orElse("java.lang.Object")))
+                queryHandlerMirror.getProvidedReadModel().map(ReadModelMirror::getTypeName).orElse("java.lang.Object")))
             .toMultiplicity("")
             .toName(relationConnectorName(
-                queryClientMirror.getProvidedReadModel().map(ReadModelMirror::getTypeName).orElse("java.lang.Object")))
+                queryHandlerMirror.getProvidedReadModel().map(ReadModelMirror::getTypeName).orElse("java.lang.Object")))
             .build();
     }
 

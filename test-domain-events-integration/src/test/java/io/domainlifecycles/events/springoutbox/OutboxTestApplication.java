@@ -1,14 +1,9 @@
 package io.domainlifecycles.events.springoutbox;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.domainlifecycles.domain.types.ApplicationService;
-import io.domainlifecycles.domain.types.DomainService;
-import io.domainlifecycles.domain.types.OutboundService;
-import io.domainlifecycles.domain.types.QueryClient;
-import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.ADomainService;
-import io.domainlifecycles.events.AQueryClient;
+import io.domainlifecycles.events.AQueryHandler;
 import io.domainlifecycles.events.ARepository;
 import io.domainlifecycles.events.AnApplicationService;
 import io.domainlifecycles.events.AnOutboundService;
@@ -66,8 +61,8 @@ public class OutboxTestApplication {
     }
 
     @Bean
-    public AQueryClient aQueryClient() {
-        return new AQueryClient();
+    public AQueryHandler aQueryHandler() {
+        return new AQueryHandler();
     }
 
     /**

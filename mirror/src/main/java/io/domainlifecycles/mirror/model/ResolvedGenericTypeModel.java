@@ -26,8 +26,8 @@
 
 package io.domainlifecycles.mirror.model;
 
-import io.domainlifecycles.mirror.api.WildcardBound;
 import io.domainlifecycles.mirror.api.ResolvedGenericTypeMirror;
+import io.domainlifecycles.mirror.api.WildcardBound;
 
 import java.util.List;
 import java.util.Objects;

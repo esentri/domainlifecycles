@@ -35,9 +35,9 @@
 #.SK:fill=#C0C0C0 bold
 #.SK_R:fill=#C0C0C0 bold;stroke=#FF0000
 #.SK_N:fill=#C0C0C0 bold;stroke=#108738
-#.QC:fill=#C0C0C0 bold
-#.QC_R:fill=#C0C0C0 bold;stroke=#FF0000
-#.QC_N:fill=#C0C0C0 bold;stroke=#108738
+#.QH:fill=#C0C0C0 bold
+#.QH_R:fill=#C0C0C0 bold;stroke=#FF0000
+#.QH_N:fill=#C0C0C0 bold;stroke=#108738
 #.RM:fill=#FFCCE5 bold
 #.RM_R:fill=#FFCCE5 bold;stroke=#FF0000
 #.RM_N:fill=#FFCCE5 bold;stroke=#108738

@@ -37,7 +37,7 @@ import io.domainlifecycles.mirror.model.EntityModel;
 import io.domainlifecycles.mirror.model.EnumModel;
 import io.domainlifecycles.mirror.model.IdentityModel;
 import io.domainlifecycles.mirror.model.OutboundServiceModel;
-import io.domainlifecycles.mirror.model.QueryClientModel;
+import io.domainlifecycles.mirror.model.QueryHandlerModel;
 import io.domainlifecycles.mirror.model.RepositoryModel;
 import io.domainlifecycles.mirror.model.ServiceKindModel;
 import io.domainlifecycles.mirror.model.ValueObjectModel;
@@ -59,7 +59,7 @@ import io.domainlifecycles.mirror.model.ValueObjectModel;
     @JsonSubTypes.Type(value = EnumModel.class),
     @JsonSubTypes.Type(value = DomainCommandModel.class),
     @JsonSubTypes.Type(value = ApplicationServiceModel.class),
-    @JsonSubTypes.Type(value = QueryClientModel.class),
+    @JsonSubTypes.Type(value = QueryHandlerModel.class),
     @JsonSubTypes.Type(value = OutboundServiceModel.class),
     @JsonSubTypes.Type(value = ServiceKindModel.class)
 })

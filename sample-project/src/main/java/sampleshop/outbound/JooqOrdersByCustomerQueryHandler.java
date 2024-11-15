@@ -31,7 +31,7 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 import sampleshop.core.domain.order.OrderStatus;
 import sampleshop.core.outport.OrdersByCustomer;
-import sampleshop.core.outport.OrdersByCustomerQueryClient;
+import sampleshop.core.outport.OrdersByCustomerQueryHandler;
 
 import java.util.List;
 
@@ -40,16 +40,16 @@ import static sampleshop.Tables.CUSTOMER;
 import static sampleshop.Tables.ORDER;
 
 /**
- * QueryClient implementation to demonstrate 'lightweight' ReadModels {@link OrdersByCustomer}.
+ * QueryHandler implementation to demonstrate 'lightweight' ReadModels {@link OrdersByCustomer}.
  *
  * @author Mario Herb
  */
 @Service
-public class JooqOrdersByCustomerQueryClient implements OrdersByCustomerQueryClient {
+public class JooqOrdersByCustomerQueryHandler implements OrdersByCustomerQueryHandler {
 
     private final DSLContext dslContext;
 
-    public JooqOrdersByCustomerQueryClient(DSLContext dslContext) {
+    public JooqOrdersByCustomerQueryHandler(DSLContext dslContext) {
         this.dslContext = dslContext;
     }
 

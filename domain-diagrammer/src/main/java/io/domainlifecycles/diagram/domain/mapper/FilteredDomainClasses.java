@@ -27,6 +27,7 @@
 package io.domainlifecycles.diagram.domain.mapper;
 
 import io.domainlifecycles.mirror.api.DomainType;
+import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
@@ -37,7 +38,6 @@ import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
-import io.domainlifecycles.mirror.api.QueryClientMirror;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
 import java.util.List;
@@ -47,7 +47,7 @@ import java.util.List;
  * (based on the given diagram configuration).
  * It provides separate lists for various types of domain classes like application services, domain commands, domain
  * events,
- * domain services, repositories, aggregate roots, query clients and read models.
+ * domain services, repositories, aggregate roots, query handlers and read models.
  *
  * @author Mario Herb
  */
@@ -99,7 +99,7 @@ public class FilteredDomainClasses {
                 || (s.getDomainType().equals(DomainType.APPLICATION_SERVICE) && domainDiagramConfig.isShowApplicationServices())
                 || (s.getDomainType().equals(DomainType.DOMAIN_SERVICE) && domainDiagramConfig.isShowDomainServices())
                 || (s.getDomainType().equals(DomainType.OUTBOUND_SERVICE) && domainDiagramConfig.isShowOutboundServices())
-                || (s.getDomainType().equals(DomainType.QUERY_CLIENT) && domainDiagramConfig.isShowQueryClients())
+                || (s.getDomainType().equals(DomainType.QUERY_HANDLER) && domainDiagramConfig.isShowQueryHandlers())
                 || (s.getDomainType().equals(DomainType.SERVICE_KIND) && domainDiagramConfig.isShowUnspecifiedServiceKinds())
             )
             .filter(transitiveDomainTypeFilter::filter)
@@ -181,11 +181,11 @@ public class FilteredDomainClasses {
             .toList();
     }
 
-    public List<QueryClientMirror> getQueryClients() {
+    public List<QueryHandlerMirror> getQueryHandlers() {
         return serviceKinds
             .stream()
-            .filter(s -> s.getDomainType().equals(DomainType.QUERY_CLIENT))
-            .map(s -> (QueryClientMirror) s)
+            .filter(s -> s.getDomainType().equals(DomainType.QUERY_HANDLER))
+            .map(s -> (QueryHandlerMirror) s)
             .toList();
     }
 

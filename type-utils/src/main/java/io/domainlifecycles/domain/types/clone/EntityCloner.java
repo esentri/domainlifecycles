@@ -29,7 +29,6 @@ package io.domainlifecycles.domain.types.clone;
 import io.domainlifecycles.access.DlcAccess;
 import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
-
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.domain.types.exception.DLCTypesException;

@@ -26,9 +26,9 @@
 
 package io.domainlifecycles.mirror.reflect;
 
+import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.model.AggregateRootModel;
-import io.domainlifecycles.domain.types.AggregateRoot;
 
 /**
  * Builder to create {@link AggregateRootMirror}. Uses Java reflection.

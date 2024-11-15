@@ -3,7 +3,7 @@ package io.domainlifecycles.services.api;
 import io.domainlifecycles.domain.types.ApplicationService;
 import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.OutboundService;
-import io.domainlifecycles.domain.types.QueryClient;
+import io.domainlifecycles.domain.types.QueryHandler;
 import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.mirror.api.Domain;
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import sample.TestApplicationService;
 import sample.TestDomainService;
 import sample.TestOutboundService;
-import sample.TestQueryClient;
+import sample.TestQueryHandler;
 import sample.TestRepository;
 import sample.TestServiceKind;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +36,7 @@ class ServiceTest {
         services.registerServiceKindInstance(new TestDomainService());
         services.registerServiceKindInstance(new TestApplicationService());
         services.registerServiceKindInstance(new TestRepository());
-        services.registerServiceKindInstance(new TestQueryClient());
+        services.registerServiceKindInstance(new TestQueryHandler());
         services.registerServiceKindInstance(new TestOutboundService());
         services.registerServiceKindInstance(new TestServiceKind());
 
@@ -71,12 +71,12 @@ class ServiceTest {
     }
 
     @Test
-    void testGetQueryClientOk() {
+    void testGetQueryHandlerOk() {
 
-        QueryClient<?> client = provider.getServiceKindInstance("sample.TestQueryClient");
+        QueryHandler<?> handler = provider.getServiceKindInstance("sample.TestQueryHandler");
 
-        assertThat(client).isNotNull();
-        assertThat(client).isInstanceOf(TestQueryClient.class);
+        assertThat(handler).isNotNull();
+        assertThat(handler).isInstanceOf(TestQueryHandler.class);
     }
 
     @Test

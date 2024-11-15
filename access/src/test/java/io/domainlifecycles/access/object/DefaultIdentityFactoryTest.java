@@ -4,6 +4,7 @@ import io.domainlifecycles.access.classes.DefaultClassProvider;
 import io.domainlifecycles.access.exception.DLCAccessException;
 import io.domainlifecycles.domain.types.Identity;
 import org.junit.jupiter.api.Test;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
