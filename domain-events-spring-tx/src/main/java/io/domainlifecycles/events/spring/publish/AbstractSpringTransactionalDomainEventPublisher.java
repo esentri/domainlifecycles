@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -35,13 +34,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-
-
+/**
+ * Abstract class for a domain event publisher that handles transactions using Spring transaction synchronization.
+ *
+ * @author Mario Herb
+ */
 public abstract class AbstractSpringTransactionalDomainEventPublisher extends AbstractTransactionalDomainEventPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractSpringTransactionalDomainEventPublisher.class);
     private final boolean afterCommit;
 
+    /**
+     * Constructs an AbstractSpringTransactionalDomainEventPublisher with the specified afterCommit flag.
+     * This class handles transactions using Spring transaction synchronization.
+     *
+     * @param afterCommit Flag indicating whether to dispatch events after transaction commit
+     */
     public AbstractSpringTransactionalDomainEventPublisher(
         boolean afterCommit
     ) {

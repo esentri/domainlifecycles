@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -55,6 +54,11 @@ public final class SpringTransactionalHandlerExecutor extends ReflectiveHandlerE
     private final PlatformTransactionManager transactionManager;
     private final Map<ExecutionContext, TransactionStatus> managedTransactions;
 
+    /**
+     * Constructor for SpringTransactionalHandlerExecutor.
+     *
+     * @param transactionManager The PlatformTransactionManager to be used.
+     */
     public SpringTransactionalHandlerExecutor(PlatformTransactionManager transactionManager) {
         this.transactionManager = Objects.requireNonNull(transactionManager, "A PlatformTransactionManager is required!");
         managedTransactions = new ConcurrentHashMap<>();

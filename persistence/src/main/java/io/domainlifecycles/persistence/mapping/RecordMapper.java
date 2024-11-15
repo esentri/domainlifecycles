@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -36,9 +35,11 @@ import io.domainlifecycles.persistence.repository.persister.Persister;
 /**
  * Base interface for all record mappers.
  *
- * @param <R>
- * @param <DO>
- * @param <A>
+ * @param <R> record type
+ * @param <DO> domain object type
+ * @param <A> aggregate root type
+ *
+ * @author Mario Herb
  */
 public interface RecordMapper<R, DO extends DomainObject, A extends AggregateRoot<?>> {
 

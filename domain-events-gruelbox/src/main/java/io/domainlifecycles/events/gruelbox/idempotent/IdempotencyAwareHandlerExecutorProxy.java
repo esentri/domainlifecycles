@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -53,7 +52,13 @@ public class IdempotencyAwareHandlerExecutorProxy implements HandlerExecutor {
     private final IdempotencyConfiguration idempotencyConfiguration;
     private final TransactionOutbox outbox;
 
-
+    /**
+     * Constructor for IdempotencyAwareHandlerExecutorProxy.
+     *
+     * @param handlerExecutorDelegate The TransactionalHandlerExecutor to delegate handler executions
+     * @param idempotencyConfiguration The IdempotencyConfiguration for idempotency protection settings
+     * @param outbox The TransactionOutbox for handling transactions
+     */
     public IdempotencyAwareHandlerExecutorProxy(TransactionalHandlerExecutor handlerExecutorDelegate,
                                                 IdempotencyConfiguration idempotencyConfiguration,
                                                 TransactionOutbox outbox) {
@@ -73,6 +78,13 @@ public class IdempotencyAwareHandlerExecutorProxy implements HandlerExecutor {
         return schedule(executionContext, config.get());
     }
 
+    /**
+     * Schedules an idempotent operation based on the provided ExecutionContext and IdempotencyConfigurationEntry.
+     *
+     * @param executionContext The execution context for the domain event handler.
+     * @param config The configuration entry for idempotency protection.
+     * @return True if scheduling is successful, false otherwise.
+     */
     protected boolean schedule(ExecutionContext executionContext,
                                IdempotencyConfigurationEntry config){
         log.debug("Idempotency configuration detected for {}", executionContext);

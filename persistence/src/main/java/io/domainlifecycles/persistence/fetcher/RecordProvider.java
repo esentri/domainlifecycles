@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -39,8 +38,8 @@ import java.util.Collection;
  * able to define a query the parent record is given. The parent record's values
  * could be used as query parameters.
  *
- * @param <CHILD_RECORD_TYPE>
- * @param <PARENT_RECORD_TYPE>
+ * @param <CHILD_RECORD_TYPE> child record type
+ * @param <PARENT_RECORD_TYPE> parent record type
  * @author Mario Herb
  */
 public interface RecordProvider<CHILD_RECORD_TYPE, PARENT_RECORD_TYPE> {

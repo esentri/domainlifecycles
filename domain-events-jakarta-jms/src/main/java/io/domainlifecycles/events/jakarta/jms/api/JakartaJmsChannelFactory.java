@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -106,10 +105,20 @@ public class JakartaJmsChannelFactory extends AbstractMqChannelFactory {
         );
     }
 
+    /**
+     * Retrieves the receive timeout value in milliseconds.
+     *
+     * @return The receive timeout value in milliseconds
+     */
     public long getReceiveTimeoutMs() {
         return receiveTimeoutMs;
     }
 
+    /**
+     * Sets the receive timeout value in milliseconds.
+     *
+     * @param receiveTimeoutMs The receive timeout value to be set in milliseconds
+     */
     public void setReceiveTimeoutMs(long receiveTimeoutMs) {
         this.receiveTimeoutMs = receiveTimeoutMs;
     }

@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -29,22 +28,39 @@ package io.domainlifecycles.events.api;
 
 import java.util.Objects;
 
+/**
+ * Represents a channel that consumes domain events and provides a name.
+ *
+ * @author Mario Herb
+ */
 public class ConsumingOnlyChannel implements ConsumingChannel, NamedChannel{
 
     private final String name;
     private final ConsumingConfiguration consumingConfiguration;
 
+    /**
+     * Initializes a new ConsumingOnlyChannel with the provided name and consuming configuration.
+     *
+     * @param name The name of the consuming channel
+     * @param consumingConfiguration The configuration for consuming domain events
+     */
     public ConsumingOnlyChannel(String name, ConsumingConfiguration consumingConfiguration) {
         this.name = Objects.requireNonNull(name, "A name is required!");
         this.consumingConfiguration = Objects.requireNonNull(consumingConfiguration, "A ConsumingConfiguration is required!");
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ConsumingConfiguration getConsumingConfiguration() {
         return consumingConfiguration;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return name;

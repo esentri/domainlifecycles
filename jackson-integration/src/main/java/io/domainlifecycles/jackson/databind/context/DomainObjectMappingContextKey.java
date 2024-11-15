@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -41,6 +40,12 @@ public class DomainObjectMappingContextKey {
     private final JsonNode node;
     private final String domainObjectTypeName;
 
+    /**
+     * Constructs a DomainObjectMappingContextKey with the provided JSON node and domain object type name.
+     *
+     * @param node The JSON node representing a DomainObject instance
+     * @param domainObjectTypeName The name of the DomainObject type
+     */
     public DomainObjectMappingContextKey(JsonNode node, String domainObjectTypeName) {
         Objects.requireNonNull(node);
         Objects.requireNonNull(domainObjectTypeName);

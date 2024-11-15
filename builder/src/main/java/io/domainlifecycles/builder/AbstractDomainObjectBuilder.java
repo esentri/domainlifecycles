@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -213,11 +212,30 @@ public abstract class AbstractDomainObjectBuilder<T extends DomainObject> implem
         collection.add(object);
     }
 
+    /**
+     * Performs an unchecked cast of the given object to the specified generic type.
+     *
+     * @param obj the object to be cast
+     * @param <K> the generic type to cast the object to
+     * @return the object after an unchecked cast to the specified generic type
+     */
     protected <K> K uncheckedCast(Object obj) {
         return (K) obj;
     }
 
+    /**
+     * Retrieves the value associated with the specified name.
+     *
+     * @param name the name of the value to retrieve
+     * @return the value associated with the specified name
+     */
     protected abstract Object getValue(String name);
 
+    /**
+     * Sets the value for the specified name.
+     *
+     * @param name  the name of the property to set
+     * @param value the value to be set for the property
+     */
     protected abstract void setValue(String name, Object value);
 }

@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -26,6 +25,7 @@
  */
 
 package io.domainlifecycles.events.api;
+
 
 import io.domainlifecycles.domain.types.DomainEvent;
 

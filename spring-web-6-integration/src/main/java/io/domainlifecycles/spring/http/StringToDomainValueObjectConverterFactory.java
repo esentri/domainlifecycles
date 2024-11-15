@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -44,6 +43,11 @@ public class StringToDomainValueObjectConverterFactory implements ConverterFacto
 
     private final ObjectMapper objectMapper;
 
+    /**
+     * Constructor for StringToDomainValueObjectConverterFactory
+     *
+     * @param objectMapper ObjectMapper used
+     */
     public StringToDomainValueObjectConverterFactory(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }

@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -36,7 +35,7 @@ import java.util.Set;
  *
  * @param <K>
  * @param <V>
- * @author MArio Herb
+ * @author Mario Herb
  */
 public class BiMap<K, V> {
 

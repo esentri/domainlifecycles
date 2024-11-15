@@ -12,7 +12,8 @@ class DefaultIdentityFactoryTest {
     @Test
     void testIdentityFactorySuccess() {
         IdentityFactory identityFactory = new DefaultIdentityFactory(new DefaultClassProvider());
-        Identity<Long> id = identityFactory.newInstance(1L, "tests.shared.persistence.domain.oneToManyIdentityEnum.MyId");
+        Identity<Long> id = identityFactory.newInstance(1L,
+            "tests.shared.persistence.domain.oneToManyIdentityEnum.MyId");
 
         assertThat(id).isNotNull();
         assertThat(id.value()).isEqualTo(1L);

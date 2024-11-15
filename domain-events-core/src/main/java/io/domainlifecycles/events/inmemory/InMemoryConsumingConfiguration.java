@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -24,6 +23,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package io.domainlifecycles.events.inmemory;
 
 import io.domainlifecycles.events.api.ConsumingConfiguration;

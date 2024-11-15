@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -51,6 +50,10 @@ import java.util.Map;
  */
 public class DomainObjectMappingContextHolder {
 
+    /**
+     * Represents the key used to identify a DomainObjectMappingContext instance within the DomainObjectMappingContextHolder.
+     * Used for mapping and deserialization processes.
+     */
     protected static final String KEY = "DOMAIN_OBJECT_MAPPING_CONTEXT_HOLDER";
 
     private final Map<DomainObjectMappingContextKey, DomainObjectMappingContext> contexts = new HashMap<>();

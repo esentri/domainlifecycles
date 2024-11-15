@@ -46,7 +46,7 @@ public class ShopApplication {
 
     static {
         Domain.setGenericTypeResolver(new TypeMetaResolver());
-        Domain.initialize(new ReflectiveDomainMirrorFactory("de.mercator.portal"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleshop"));
     }
 
     public static void main(String[] args) {

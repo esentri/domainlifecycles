@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -45,6 +44,11 @@ public class DomainEvents {
 
     private static ChannelRoutingConfiguration channelConfiguration;
 
+    /**
+     * Registers the given ChannelRoutingConfiguration to be used for routing domain events to appropriate channels for publishing.
+     *
+     * @param channelConfig the ChannelRoutingConfiguration to be registered
+     */
     protected static void registerChannelConfiguration(ChannelRoutingConfiguration channelConfig){
         channelConfiguration = channelConfig;
     }

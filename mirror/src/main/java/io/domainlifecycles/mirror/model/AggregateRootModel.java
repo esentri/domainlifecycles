@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -45,6 +44,7 @@ import java.util.Optional;
  * @author Mario Herb
  */
 public class AggregateRootModel extends EntityModel implements AggregateRootMirror {
+
 
     @JsonCreator
     public AggregateRootModel(@JsonProperty("typeName") String typeName,

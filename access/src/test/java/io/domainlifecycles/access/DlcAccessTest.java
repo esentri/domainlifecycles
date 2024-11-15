@@ -43,7 +43,8 @@ class DlcAccessTest {
     @Test
     void testNewEnumInstanceOk() {
 
-        MyEnum anEnum = DlcAccess.newEnumInstance("ONE", "tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum");
+        MyEnum anEnum = DlcAccess.newEnumInstance("ONE",
+            "tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum");
 
         assertThat(anEnum).isNotNull();
         assertThat(anEnum.name()).isEqualTo("ONE");
@@ -52,7 +53,8 @@ class DlcAccessTest {
     @Test
     void testNewIdentityOk() {
 
-        Identity<Long> anIdentity = DlcAccess.newIdentityInstance(1L, "tests.shared.persistence.domain.inheritance.VehicleId");
+        Identity<Long> anIdentity = DlcAccess.newIdentityInstance(1L,
+            "tests.shared.persistence.domain.inheritance.VehicleId");
 
         assertThat(anIdentity).isNotNull();
         assertThat(anIdentity.value()).isEqualTo(1L);

@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -45,6 +44,13 @@ public class SimpleExecutionContextProcessor implements ExecutionContextProcesso
 
     private static final Logger log = LoggerFactory.getLogger(SimpleExecutionContextProcessor.class);
 
+    /**
+     * The {@code handlerExecutor} variable is a protected final instance of the HandlerExecutor interface.
+     * It is used within the SimpleExecutionContextProcessor class to execute handler actions on execution contexts.
+     * The HandlerExecutor interface defines methods for executing handlers, performing pre-execution tasks, and post-execution tasks.
+     *
+     * @see HandlerExecutor
+     */
     protected final HandlerExecutor handlerExecutor;
 
     /**

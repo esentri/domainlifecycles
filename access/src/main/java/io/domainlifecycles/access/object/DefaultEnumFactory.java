@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -38,6 +37,11 @@ public class DefaultEnumFactory implements EnumFactory {
 
     private final ClassProvider classProvider;
 
+    /**
+     * Constructs a DefaultEnumFactory with the given ClassProvider.
+     *
+     * @param classProvider the ClassProvider to use for class retrieval
+     */
     public DefaultEnumFactory(ClassProvider classProvider) {
         this.classProvider = classProvider;
     }

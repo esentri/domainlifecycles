@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -709,6 +708,11 @@ public class DomainDiagramConfig implements DiagramConfig {
         return Collections.emptyList();
     }
 
+    /**
+     * Returns a new instance of DomainDiagramConfigBuilder used to build configurations for domain diagrams.
+     *
+     * @return a new DomainDiagramConfigBuilder instance
+     */
     public static DomainDiagramConfigBuilder builder() {
         return new DomainDiagramConfigBuilder();
     }
@@ -1026,6 +1030,9 @@ public class DomainDiagramConfig implements DiagramConfig {
             .withTransitiveFilterSeedDomainServiceTypeNames(this.transitiveFilterSeedDomainServiceTypeNames);
     }
 
+    /**
+     *
+     */
     public static class DomainDiagramConfigBuilder {
         private String contextPackageName$value;
         private boolean contextPackageName$set;

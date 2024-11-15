@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -63,6 +62,13 @@ public class ValueObjectDeserializer extends StdDeserializer<ValueObject> {
     private final DomainObjectBuilderProvider domainObjectBuilderProvider;
 
 
+    /**
+     * This constructor creates a ValueObjectDeserializer object.
+     *
+     * @param valueType the JavaType of the value to be deserialized
+     * @param customizer the JacksonMappingCustomizer used for customizing the mapping process
+     * @param domainObjectBuilderProvider the DomainObjectBuilderProvider used to obtain DomainObjectBuilders
+     */
     public ValueObjectDeserializer(JavaType valueType,
                                    JacksonMappingCustomizer<?> customizer,
                                    DomainObjectBuilderProvider domainObjectBuilderProvider) {

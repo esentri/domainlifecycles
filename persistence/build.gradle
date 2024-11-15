@@ -1,10 +1,14 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'signing'
     id 'checkstyle'
-    id 'org.quiltmc.gradle.licenser' version "${quiltmcLicenserVersion}"
+    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
     id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 

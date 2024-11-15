@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -65,7 +64,7 @@ public abstract class AbstractJtaTransactionalMqDomainEventSender<TOPIC> extends
     }
 
     /**
-     * {@inheritDo}
+     * {@inheritDoc}
      */
     @Override
     protected void send(DomainEvent domainEvent) {
@@ -81,7 +80,7 @@ public abstract class AbstractJtaTransactionalMqDomainEventSender<TOPIC> extends
         }
 
         /**
-         * {@inheritDo}
+         * {@inheritDoc}
          */
         @Override
         public void send(DomainEvent domainEvent) {

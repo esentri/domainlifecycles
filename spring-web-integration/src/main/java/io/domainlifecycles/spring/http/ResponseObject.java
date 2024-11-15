@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -43,6 +42,12 @@ public class ResponseObject<T> {
     private T data;
     private List<Error> errors;
 
+    /**
+     * Initializes a new ResponseObject with the specified data and errors.
+     *
+     * @param data The data to be encapsulated within the response.
+     * @param errors The list of errors associated with the response.
+     */
     ResponseObject(T data, List<Error> errors) {
         this.data = data;
         this.errors = errors;

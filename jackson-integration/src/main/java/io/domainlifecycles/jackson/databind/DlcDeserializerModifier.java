@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -50,6 +49,13 @@ public class DlcDeserializerModifier extends BeanDeserializerModifier {
     private final DomainObjectBuilderProvider domainObjectBuilderProvider;
     private final EntityIdentityProvider entityIdentityProvider;
 
+    /**
+     * Constructor for DlcDeserializerModifier
+     *
+     * @param customizersContainer The container for customizers.
+     * @param domainObjectBuilderProvider The provider for DomainObjectBuilders.
+     * @param entityIdentityProvider The provider for entity identities.
+     */
     public DlcDeserializerModifier(DlcJacksonModule.CustomizerContainer customizersContainer,
                                    DomainObjectBuilderProvider domainObjectBuilderProvider,
                                    EntityIdentityProvider entityIdentityProvider) {

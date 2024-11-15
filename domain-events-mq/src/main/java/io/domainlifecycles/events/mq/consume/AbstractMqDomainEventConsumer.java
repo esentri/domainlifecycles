@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -61,21 +60,52 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public abstract class AbstractMqDomainEventConsumer<CONSUMER, MESSAGE> implements MqDomainEventConsumer {
 
-    protected Logger log = LoggerFactory.getLogger(AbstractMqDomainEventConsumer.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractMqDomainEventConsumer.class);
 
+    /**
+     * ObjectMapper for serialization and deserialization.
+     */
     protected final ObjectMapper objectMapper;
+    /**
+     * Represents a detector for execution contexts for a given domain event.
+     */
     protected final ExecutionContextDetector executionContextDetector;
+    /**
+     * The {@code executionContextProcessor} variable is an instance of the {@link ExecutionContextProcessor} interface.
+     */
     protected final ExecutionContextProcessor executionContextProcessor;
+    /**
+     * Represents a provider for Class instances based on fully qualified class names.
+     */
     protected final ClassProvider classProvider;
-
+    /**
+     * Represents a list of MqDomainEventHandler instances for handling domain events.
+     */
     protected List<MqDomainEventHandler> handlers = new ArrayList<>();
+    /**
+     * A list of consumers for handling domain events.
+     */
     protected List<CONSUMER> consumers = new ArrayList<>();
+    /**
+     * Represents a list of processing futures used for asynchronous tasks.
+     * This list stores Future objects with a return type of Void.
+     */
     protected List<Future<Void>> processingFutures = new ArrayList<>();
-
+    /**
+     * Represents a flag that can be used to control the running state of all consumers.
+     * By default, the runFlag is set to true.
+     */
     protected AtomicBoolean runFlag = new AtomicBoolean(true);
 
+    /**
+     * ExecutorService for managing the thread pool used by the consumer to process domain events.
+     */
     protected ExecutorService consumerThreadPool;
 
+    /**
+     * Represents the initialization state of the object.
+     * If set to true, the object has been initialized; otherwise, it has not been initialized yet.
+     */
     protected boolean initialized = false;
 
     /**

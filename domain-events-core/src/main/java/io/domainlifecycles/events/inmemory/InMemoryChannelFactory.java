@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -132,6 +131,12 @@ public class InMemoryChannelFactory implements ChannelFactory {
         );
     }
 
+    /**
+     * Creates and returns a DomainEventPublisher using the provided DomainEventConsumer.
+     *
+     * @param domainEventConsumer The DomainEventConsumer to be associated with the DomainEventPublisher
+     * @return A new instance of DomainEventPublisher
+     */
     protected DomainEventPublisher useDomainEventPublisher(DomainEventConsumer domainEventConsumer){
         return new InMemoryDomainEventPublisher(domainEventConsumer);
     }

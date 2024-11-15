@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -27,11 +26,6 @@
 
 package io.domainlifecycles.events.spring.before;
 
-import io.domainlifecycles.domain.types.ApplicationService;
-import io.domainlifecycles.domain.types.DomainService;
-import io.domainlifecycles.domain.types.OutboundService;
-import io.domainlifecycles.domain.types.QueryClient;
-import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.ADomainService;
 import io.domainlifecycles.events.AQueryClient;

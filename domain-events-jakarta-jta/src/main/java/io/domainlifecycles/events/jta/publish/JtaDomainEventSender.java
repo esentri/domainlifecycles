@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -40,7 +39,7 @@ public interface JtaDomainEventSender {
     /**
      * Sending the event to the specific messagin infrastructure or directly to handler execution.
      *
-     * @param domainEvent
+     * @param domainEvent DomainEvent sent
      */
     void send(DomainEvent domainEvent);
 }

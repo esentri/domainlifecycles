@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -57,12 +56,24 @@ public class DlcJacksonModule extends SimpleModule {
 
     private final EntityIdentityProvider entityIdentityProvider;
 
+
+    /**
+     * Constructor for DlcJacksonModule.
+     *
+     * @param domainObjectBuilderProvider the provider for DomainObjectBuilders
+     * @param entityIdentityProvider the provider for entity identity information
+     */
     public DlcJacksonModule(DomainObjectBuilderProvider domainObjectBuilderProvider,
                             EntityIdentityProvider entityIdentityProvider) {
         this.domainObjectBuilderProvider = domainObjectBuilderProvider;
         this.entityIdentityProvider = entityIdentityProvider;
     }
 
+    /**
+     * Constructor for DlcJacksonModule.
+     *
+     * @param domainObjectBuilderProvider the provider for DomainObjectBuilders
+     */
     public DlcJacksonModule(DomainObjectBuilderProvider domainObjectBuilderProvider) {
         this.domainObjectBuilderProvider = domainObjectBuilderProvider;
         this.entityIdentityProvider = null;
@@ -112,6 +123,12 @@ public class DlcJacksonModule extends SimpleModule {
     public static class CustomizerContainer {
         private final Map<Class<? extends DomainObject>, JacksonMappingCustomizer<?>> customizers = new HashMap<>();
 
+        /**
+         * Finds a JacksonMappingCustomizer for the given beanClass.
+         *
+         * @param beanClass the class for which to find the customizer
+         * @return the JacksonMappingCustomizer for the specified beanClass, or null if not found
+         */
         public JacksonMappingCustomizer<?> findCustomizer(Class<?> beanClass) {
             return customizers.get(beanClass);
         }

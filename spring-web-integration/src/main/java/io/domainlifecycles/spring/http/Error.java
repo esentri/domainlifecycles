@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -40,12 +39,20 @@ public class Error {
     private String code;
     private String message;
 
+    /**
+     * Creates a new Error instance with the specified error code and message.
+     *
+     * @param code the error code
+     * @param message the error message
+     */
     public Error(String code, String message) {
         this.code = code;
         this.message = message;
     }
 
-
+    /**
+     * Default constructor for the error class.
+     */
     public Error() {
     }
 

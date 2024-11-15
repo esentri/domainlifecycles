@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -29,21 +28,39 @@ package io.domainlifecycles.events.api;
 
 import java.util.Objects;
 
+/**
+ * Represents a channel that is used for publishing domain events only.
+ * It implements the PublishingChannel and NamedChannel interfaces.
+ *
+ * @author Mario Herb
+ */
 public class PublishingOnlyChannel implements PublishingChannel, NamedChannel{
 
     private final String name;
     private final PublishingConfiguration publishingConfiguration;
 
+    /**
+     * Represents a channel that is used for publishing domain events only.
+     *
+     * @param name The name of the publishing channel. Cannot be null.
+     * @param publishingConfiguration The configuration for publishing domain events. Cannot be null.
+     */
     public PublishingOnlyChannel(String name, PublishingConfiguration publishingConfiguration) {
         this.name = Objects.requireNonNull(name, "A name is required!");
         this.publishingConfiguration = Objects.requireNonNull(publishingConfiguration, "A PublishingConfiguration is required!");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return name;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PublishingConfiguration getPublishingConfiguration() {
         return publishingConfiguration;

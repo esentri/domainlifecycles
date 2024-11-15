@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -36,6 +35,11 @@ import io.domainlifecycles.domain.types.DomainEvent;
  */
 public interface TransactionalOutbox {
 
+    /**
+     * Inserts a domain event into the transactional outbox for further handling.
+     *
+     * @param domainEvent the domain event to be inserted into the outbox
+     */
     void insert(DomainEvent domainEvent);
 
     /**

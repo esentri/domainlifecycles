@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -26,7 +25,6 @@
  */
 
 package io.domainlifecycles.events.jta;
-
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;

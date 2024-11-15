@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -43,6 +42,11 @@ public class StringToDomainIdentityConverterFactory implements ConverterFactory<
 
     private final ObjectMapper objectMapper;
 
+    /**
+     * Constructor for StringToDomainIdentityConverterFactory
+     *
+     * @param objectMapper the ObjectMapper used
+     */
     public StringToDomainIdentityConverterFactory(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }

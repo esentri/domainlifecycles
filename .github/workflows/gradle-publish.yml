@@ -51,6 +51,8 @@ jobs:
           exit 1
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+        with:
+          gradle-version: '8.10.1'
       - name: Build with Gradle
         run: ./gradlew build
       - uses: rishabhgupta/split-by@v1
@@ -69,24 +71,16 @@ jobs:
           body: ${{ steps.split.outputs._1 }}
           draft: false
           prerelease: false
-      # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
-      # the publishing section of your build.gradle
-      #- name: Publish to GitHub Packages
-      #  run: ./gradlew publish
-      #  env:
-      #    USERNAME: ${{ github.actor }}
-      #    TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v4.3.1
-        with:
-          path: ./*/build/
-          warn: Output a warning but do not fail the action
-            #- name: Publish to Sonatype OSSRH with Gradle
-            #  env:
-            #    ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
-            #    ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
-            #    ORG_GRADLE_PROJECT_signingKey: ${{ secrets.PGP_KEY }}
-            #    ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.PGP_PASSPHRASE }}
-            #  run: ./gradlew publishAllPublicationsToSonatypeRepository --no-daemon
-    
-          
+      - name: Stage Gradle Repo locally
+        run: ./gradlew publish
+      - name: Deploy Staged Gradle Repo to Maven Central
+        run: ./gradlew jreleaserDeploy
+        env:
+          JRELEASER_MAVENCENTRAL_STAGE: ${{ vars.JRELEASER_MAVENCENTRAL_STAGE }}
+          JRELEASER_MAVENCENTRAL_NAMESPACE: ${{ vars.JRELEASER_MAVENCENTRAL_NAMESPACE }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_MAVENCENTRAL_USERNAME: ${{ secrets.JRELEASER_MAVENCENTRAL_USERNAME }}
+          JRELEASER_MAVENCENTRAL_TOKEN: ${{ secrets.JRELEASER_MAVENCENTRAL_TOKEN }}
+          JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
+          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}

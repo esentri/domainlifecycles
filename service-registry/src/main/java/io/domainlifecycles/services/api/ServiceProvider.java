@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -43,6 +42,7 @@ public interface ServiceProvider {
      *
      * @param typeName The full qualified name of the type representing the OutboundService.
      * @return An instance of ServiceKind based on the given type name.
+     * @param <S> ServiceKind type
      */
     <S extends ServiceKind> S getServiceKindInstance(String typeName);
 

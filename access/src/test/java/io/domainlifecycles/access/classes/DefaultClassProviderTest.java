@@ -25,7 +25,8 @@ class DefaultClassProviderTest {
     @Test
     void testGetClassFail() {
         ClassProvider classProvider = new DefaultClassProvider();
-        DLCAccessException exception = assertThrows(DLCAccessException.class, () -> classProvider.getClassForName("someUnknownClass"));
+        DLCAccessException exception = assertThrows(DLCAccessException.class,
+            () -> classProvider.getClassForName("someUnknownClass"));
         assertThat(exception).hasMessageContaining("could not be found");
     }
 
@@ -42,6 +43,6 @@ class DefaultClassProviderTest {
             Arguments.of("java.lang.String", String.class),
             Arguments.of("io.domainlifecycles.access.exception.DLCAccessException", DLCAccessException.class),
             Arguments.of("io.domainlifecycles.access.DlcAccess", DlcAccess.class)
-            );
+        );
     }
 }

@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -64,6 +63,14 @@ public class DomainObjectMappingContext {
      */
     public final DomainObjectMappingContext parentContext;
 
+    /**
+     * Constructs a DomainObjectMappingContext instance with the provided parameters.
+     *
+     * @param contextNode The JSON node representing a DomainObject instance in the deserialization process
+     * @param domainObjectTypeName The target type being mapped currently
+     * @param domainObjectBuilder The DomainObjectBuilder instance associated with the node
+     * @param parentContext The parent DomainObjectMappingContext forming a hierarchy in the deserialized object structure
+     */
     public DomainObjectMappingContext(
         JsonNode contextNode,
         String domainObjectTypeName,

@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -72,6 +71,14 @@ public class EntityDeserializer extends StdDeserializer<Entity<?>> {
     private final EntityIdentityProvider entityIdentityProvider;
 
 
+    /**
+     * Initializes a new EntityDeserializer with provided parameters.
+     *
+     * @param valueType                The JavaType of the entity to be deserialized
+     * @param customizerContainer      The container for customizers
+     * @param domainObjectBuilderProvider The provider for DomainObjectBuilders
+     * @param entityIdentityProvider   The provider for entity identity information
+     */
     public EntityDeserializer(JavaType valueType,
                               DlcJacksonModule.CustomizerContainer customizerContainer,
                               DomainObjectBuilderProvider domainObjectBuilderProvider,

@@ -1,5 +1,4 @@
 /*
- *
  *     ___
  *     │   ╲                 _
  *     │    ╲ ___ _ __  __ _(_)_ _
@@ -50,9 +49,23 @@ import java.util.Objects;
  */
 public abstract class AbstractMqChannelFactory implements ChannelFactory {
 
+    /**
+     * Represents the service provider responsible for providing instances of various types of services.
+     */
     protected final ServiceProvider serviceProvider;
+    /**
+     * Represents a ClassProvider instance used to provide Class instances for full qualified class names.
+     */
     protected final ClassProvider classProvider;
+    /**
+     * Represents an executor for handling domain event listeners.
+     * This HandlerExecutor interface provides methods for executing handlers and performing pre/post-processing tasks.
+     */
     protected final HandlerExecutor handlerExecutor;
+    /**
+     * Represents an ObjectMapper instance used for serialization and deserialization.
+     * This ObjectMapper instance is used within the context of processing and handling domain events.
+     */
     protected final ObjectMapper objectMapper;
 
     /**
