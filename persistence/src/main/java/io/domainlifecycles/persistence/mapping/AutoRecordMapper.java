@@ -355,7 +355,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
             @Override
             public void visitEntityReference(EntityReferenceMirror entityReferenceMirror) {
                 if (isFieldMapped()) {
-                    var rp = findRecordPropertyForForwardReference(entityReferenceMirror);
+                    var rp = findRecordPropertyForEntityReference(entityReferenceMirror);
                     if (isRecordPropertyMapped(rp)) {
                         var valuePath = new ValuePath(getVisitorContext().getCurrentPath());
                         biMap.put(valuePath, rp);
@@ -492,7 +492,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
      * @param entityReferenceMirror the given entity reference
      * @return the matching {@link RecordProperty}, otherwise null
      */
-    private RecordProperty findRecordPropertyForForwardReference(EntityReferenceMirror entityReferenceMirror){
+    private RecordProperty findRecordPropertyForEntityReference(EntityReferenceMirror entityReferenceMirror){
         if(this.ignoredFields != null && this.ignoredFields.isIgnored(entityReferenceMirror)){
             return null;
         }
@@ -515,12 +515,6 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
             log.error(msg);
             return null;
         } else if (matchedRecordProperties.isEmpty()) {
-            var msg = String.format("The field '%s'"
-                    + " of the DomainObject class '%s'"
-                    + " could not be matched to a single record property! No match found!",
-                entityReferenceMirror.getName(),
-                this.typeName);
-            log.error(msg);
             return null;
         }
         return matchedRecordProperties.get(0);
