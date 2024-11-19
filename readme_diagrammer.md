@@ -21,7 +21,7 @@ at `io.domainlifecycles.diagram.domain.config.DomainDiagramConfig`.
 
 ```Groovy
 dependencies{
-    testImplementation 'io.domainlifecycles:domain-diagrammer:2.0.0'
+    testImplementation 'io.domainlifecycles:domain-diagrammer:2.0.1'
 }
 ```
 
