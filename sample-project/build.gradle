@@ -1,11 +1,9 @@
-
 buildscript {
     dependencies {
         classpath "com.h2database:h2:${h2Version}"
         classpath "org.flywaydb:flyway-core:10.17.0"
     }
 }
-
 
 
 // For starters we configure separate versions here where necessary
@@ -16,6 +14,7 @@ plugins {
     // Plugin that handles database migration.
     id 'org.flywaydb.flyway' version "10.17.0"
     id 'org.jooq.jooq-codegen-gradle' version "3.19.10"
+
     id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
     id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
 }
@@ -114,13 +113,17 @@ jooq {
     }
 }
 
-tasks.named("classes") {
-    finalizedBy(tasks.named("jooqCodegen"))
+tasks.named("compileJava") {
+    dependsOn(tasks.named("jooqCodegen"))
 }
 
-tasks.named("flywayMigrate") {
-    dependsOn(tasks.named("classes"))
-}
+//tasks.named("classes") {
+//    finalizedBy(tasks.named("jooqCodegen"))
+//}
+//
+//tasks.named("flywayMigrate") {
+//    dependsOn(tasks.named("classes"))
+//}
 
 tasks.named("jooqCodegen") {
     dependsOn(tasks.named("flywayMigrate"))
