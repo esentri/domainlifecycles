@@ -5,8 +5,6 @@ buildscript {
     }
 }
 
-
-// For starters we configure separate versions here where necessary
 plugins {
     id 'org.springframework.boot' version "${springBoot3PlatformVersion}"
     id 'java'
@@ -103,6 +101,7 @@ jooq {
                 name = "org.jooq.meta.h2.H2Database"
                 includes = ".*"
                 inputSchema = 'SHOP_DOMAIN'
+                recordVersionFields = 'CONCURRENCY_VERSION'
             }
 
             generate {}
@@ -117,31 +116,10 @@ tasks.named("compileJava") {
     dependsOn(tasks.named("jooqCodegen"))
 }
 
-//tasks.named("classes") {
-//    finalizedBy(tasks.named("jooqCodegen"))
-//}
-//
-//tasks.named("flywayMigrate") {
-//    dependsOn(tasks.named("classes"))
-//}
-
 tasks.named("jooqCodegen") {
     dependsOn(tasks.named("flywayMigrate"))
     inputs.files(fileTree("src/main/resources/db/migration"))
 }
-
-
-//jar {
-//    dependsOn(tasks.named("jooqCodegen"))
-//    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-//    manifest {
-//        attributes 'Main-Class': 'sampleshop.ShopApplication'
-//    }
-//    from {
-//        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-//    }
-//}
-
 
 // ----------------------------------------------------------
 
