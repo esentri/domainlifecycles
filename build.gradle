@@ -1,4 +1,5 @@
 plugins {
+    // TODO @Galler
     id 'org.jreleaser' version '1.13.1'
     id 'net.researchgate.release' version '3.0.2'
 }
@@ -42,64 +43,6 @@ release {
 ext {
     dlcGroup = 'io.domainlifecycles'
     dlcVersion = versionProps.getProperty("version")
-
-    //lib versions
-    slf4jVersion = '2.0.16'
-    bytebuddyVersion = '1.15.10'
-    classGraphVersion = '4.8.163'
-    springDocOpenAPIVersion = '1.8.0'
-    springDocOpenAPIVersion2 = '2.6.0'
-    jacksonVersion = '2.17.2'
-    activeMqClassicVersion = '5.18.4'
-    javaxValidationApiVersion = '2.0.1.Final'
-    jakartaValidationApiVersion = '3.0.2'
-    jakartaTransactionApiVersion = '2.0.1'
-    jakartaJmsApiVersion = '3.1.0'
-    springTxVersion = '6.1.13'
-    springJdbcVersion = '6.1.13'
-    swaggerVersion = '2.2.25'
-    springWebVersion = '5.3.33'
-    springWeb6Version = '6.1.13'
-    jooqVersion = '3.19.6'
-    commonsCollectionsVersion = '3.2.2'
-    typeResolverVersion = '1.0.3'
-    gruelboxVersion = '5.5.447'
-    commonsValidatorVersion = '1.7'
-
-    //test lib versions
-    logbackClassicVersion = '1.5.3'
-    hibernateValidatorJakartaVersion = '8.0.1.Final'
-    glassfishJakartaVersion = '4.0.2'
-    jakartaElVersion = '5.0.1'
-    springBoot3PlatformVersion = '3.3.4'
-    springBoot2PlatformVersion = '2.7.18'
-    kryoVersion = '5.3.0'
-    h2Version = '2.2.224'
-    assertJVersion = '3.24.2'
-    activeMqArtemisVersion = '2.37.0'
-    lombokVersion = '1.18.30'
-    jaxBApiVersion = '2.3.0'
-    jaxBCoreVersion = '4.0.4'
-    jaxBImplVersion = '4.0.4'
-    atomikosJtaVersion = '6.0.0'
-    junitJupiterParamsVersion = '5.10.0'
-    mockitoCoreVersion = '5.5.0'
-    awaitilityVersion = '4.2.0'
-    javaxJmsApiVersion = '2.0.1'
-    commonsIOVersion = '2.14.0'
-
-    //test javax based bean validation (even though lib names involve jakarta ;-) )
-    hibernateValidatorJavaxVersion = '6.2.3.Final'
-    glassfishJakartaElVersion = '3.0.2'
-    jakartaElApiVersion = '3.0.2'
-
-    //plugin versions
-    quiltmcLicenserVersion = '2.0.1'
-    nuStuderJooqVersion = '7.1.1'
-    releasePluginVersion = '3.0.2'
-    flywayVersion = '9.22.1'
-    gradleLicenserVersion = '1.1.0'
-    jaredsburrowsLicenseVersion = '0.9.8'
 }
 
 allprojects {
@@ -109,6 +52,7 @@ allprojects {
             mavenCentral()
         }
         dependencies {
+            // TODO @Galler
             testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
             testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
         }

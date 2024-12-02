@@ -24,7 +24,7 @@
 #  limitations under the License.
 #
 
-[verions]
+[versions]
 # productive code versions
 slf4j-version = '2.0.16'
 bytebuddy-version = '1.15.10'
@@ -85,7 +85,7 @@ jareds-burrows-license-version = '0.9.8'
 
 # misc
 dlc-group = 'io.domainlifecycles'
-# TODO Handle?
+# TODO @Galler Handle?
 # dlcVersion = versionProps.getProperty("version")
 
 
