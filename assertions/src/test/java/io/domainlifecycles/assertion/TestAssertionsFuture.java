@@ -444,7 +444,7 @@ public class TestAssertionsFuture {
 
         @Test
         public void testOptionalMonthDayIsFutureOk() {
-            if (!Month.from(LocalDate.now()).minus(1).equals(Month.JANUARY)) {
+            if (!Month.from(LocalDate.now()).plus(1).equals(Month.JANUARY)) {
                 assertThatNoException().isThrownBy(() -> DomainAssertions.optionalIsFuture(
                     Optional.of(MonthDay.from(LocalDate.now().plus(1, ChronoUnit.MONTHS))), "Failed"));
             }
