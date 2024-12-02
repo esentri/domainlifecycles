@@ -144,9 +144,7 @@ public class DLCConfiguration {
 
     @Bean
     public ChannelRoutingConfiguration channelConfiguration(PlatformTransactionManager platformTransactionManager, ServiceProvider serviceProvider){
-        var channel = new SpringTxInMemoryChannelFactory(platformTransactionManager, serviceProvider,
-            5,
-            true).processingChannel("default");
+        var channel = new SpringTxInMemoryChannelFactory(platformTransactionManager, serviceProvider, true).processingChannel("default");
 
         var router = new DomainEventTypeBasedRouter(List.of(channel));
         router.defineDefaultChannel("default");
