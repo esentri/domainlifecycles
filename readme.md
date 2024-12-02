@@ -117,7 +117,7 @@ DLC provides several JARs which enable the DLC features independently
 | General Swagger / Open API v3 support                               | only internally used   | io.domainlifecycles:swagger-v3-integration   | 
 | Spring Web support (Spring Boot 2 compatible)                       | application developers | io.domainlifecycles:spring-web-integration   | 
 | Spring Web support (Spring Boot 3 compatible)                       | application developers | io.domainlifecycles:spring-web-6-integration |
-| Nomnoml based domain diagrams                                       | application developers | io.domainlifecycles:ddomain-diagrammer       | 
+| Nomnoml based domain diagrams                                       | application developers | io.domainlifecycles:domain-diagrammer        | 
 
 To simplify the dependency management using all features in a Spring Boot app using jOOQ for the relational
 database persistence management, we provide JARs for a Spring Boot 2 or Spring Boot 3 setup by adding just a single
