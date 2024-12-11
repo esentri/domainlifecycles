@@ -1,5 +1,0 @@
-# Konfiguration
-
-<hr/>
-
-## Datenbank
