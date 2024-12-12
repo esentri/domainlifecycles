@@ -154,10 +154,34 @@ im Projekt-Ordner liegen muss.
 
 Weitere Informationen zur Konfiguration von JOOQ finden sich <a href="">hier</a>.
 
+### Spring Beans
+Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
+
+```
+@Bean
+public DataSourceConnectionProvider connectionProvider(DataSource dataSource) {
+    return new DataSourceConnectionProvider(new TransactionAwareDataSourceProxy(dataSource));
+}
+
+@Bean
+public DefaultConfiguration configuration(DataSource dataSource) {
+    final var jooqConfig = new DefaultConfiguration();
+    jooqConfig.settings().setExecuteWithOptimisticLocking(true);
+    jooqConfig.setConnectionProvider(connectionProvider(dataSource));
+    jooqConfig.set(SQLDialect.H2);
+    return jooqConfig;
+}
+
+@Bean
+public DefaultDSLContext dslContext(DataSource dataSource) {
+    return new DefaultDSLContext(configuration(dataSource));
+}
+```
+
 <hr/>
 
 ## DLC
-Folgende Beans müssen konfiguriert werden um DLC zu nutzen. Diese können in einer
+Folgende DLC-spezifischen Beans müssen konfiguriert werden um das Framework nutzen zu können. Diese können in einer
 mit ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden.
 
 ### JooqDomainPersistenceProvider
