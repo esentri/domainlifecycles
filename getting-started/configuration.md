@@ -155,3 +155,103 @@ im Projekt-Ordner liegen muss.
 Weitere Informationen zur Konfiguration von JOOQ finden sich <a href="">hier</a>.
 
 <hr/>
+
+## DLC
+Folgende Beans müssen konfiguriert werden um DLC zu nutzen. Diese können in einer
+mit ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden.
+
+### JooqDomainPersistenceProvider
+Der JooqDomainPersistenceProvider ermöglicht einen JOOQ spezifischen Zugriff auf alle Domain-Objekte.
+
+```
+@Bean
+public JooqDomainPersistenceProvider domainPersistenceProvider(DomainObjectBuilderProvider domainObjectBuilderProvider,
+                Set<RecordMapper<?, ?, ?>> customRecordMappers) {
+    return new JooqDomainPersistenceProvider(
+        JooqDomainPersistenceConfiguration.JooqPersistenceConfigurationBuilder
+            .newConfig()
+            .withDomainObjectBuilderProvider(domainObjectBuilderProvider)
+            .withCustomRecordMappers(customRecordMappers)
+            .withRecordPackage(JOOQ_RECORD_PKG)
+            .make());
+}
+```
+
+### DomainObjectBuilderProvider
+Der DomainObjectBuilderProvider wird benötigt um mit inner-Builders oder den Lombok-Builders zu arbeiten.
+```
+@Bean
+DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
+    return new InnerClassDomainObjectBuilderProvider();
+}
+```
+
+### EntityIdentityProvider
+Der EntityIdentityProvider ermöglicht es, dass neue Entitäten oder AggregateRoots 
+von außerhalb (z. B. über einen REST-Controller) in die Anwendung eingebracht werden 
+können und dass für neue Instanzen neue IDs aus den entsprechenden Datenbanksequenzen oder anderen ID-Providern
+abgerufen werden.
+Wird nur benutzt in Zusammenhang mit ```DlcJacksonModule```, siehe unten.
+```
+@Bean
+EntityIdentityProvider identityProvider(DSLContext dslContext) {
+    return new JooqEntityIdentityProvider(dslContext);
+}
+```
+
+### DlcJacksonModule
+Benötigt für DLC-Jackson Integration.
+
+```
+@Bean
+DlcJacksonModule dlcModuleConfiguration(List<? extends JacksonMappingCustomizer<?>> customizers,
+                                        DomainObjectBuilderProvider domainObjectBuilderProvider,
+                                        EntityIdentityProvider entityIdentityProvider
+) {
+    DlcJacksonModule module = new DlcJacksonModule(domainObjectBuilderProvider, entityIdentityProvider);
+        customizers.forEach(c -> module.registerCustomizer(c, c.instanceType));
+    return module;
+}
+```
+
+### SpringPersistenceEventPublisher
+Wird benötigt um DLC-Events über den Spring event bus zu veröffentlichen.
+
+```
+@Bean
+public SpringPersistenceEventPublisher springPersistenceEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+    return new SpringPersistenceEventPublisher(applicationEventPublisher);
+}
+```
+
+### ServiceProvider
+Stellt einen Provider für alle benötigten ```ServiceKind``` Objekte bereit.
+
+```
+public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds){
+    return  new Services(serviceKinds);
+}
+```
+
+### ChannelRoutingConfiguration
+Stellt eine Konfiguration für das Channel Routing bereit.
+```
+@Bean
+public ChannelRoutingConfiguration channelConfiguration(PlatformTransactionManager platformTransactionManager, ServiceProvider serviceProvider){
+        var channel = new SpringTxInMemoryChannelFactory(platformTransactionManager, serviceProvider, true).processingChannel("default");
+        var router = new DomainEventTypeBasedRouter(List.of(channel));
+        router.defineDefaultChannel("default");
+        return new ChannelRoutingConfiguration(router);
+}
+```
+
+### DlcOpenApiCustomizer
+Stellt die Konfiguration/Anpassungen der DLC-/OpenAPI-Integration bereit.
+```
+@Bean
+public DlcOpenApiCustomizer openApiCustomizer(SpringDocConfigProperties springDocConfigProperties) {
+    return new DlcOpenApiCustomizer(springDocConfigProperties);
+}
+```
+
+<hr/>
