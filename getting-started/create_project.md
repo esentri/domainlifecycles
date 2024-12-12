@@ -7,7 +7,7 @@ Als Build-Management-Tool lassen sich Maven oder Gradle nutzen, welche beide im 
 Grundlage bildet in diesem Guide ein minimales Spring-Boot-Projekt. 
 
 <details>
-<summary><img style="height: 12px" src="./gradle.svg"> <i>build.gradle</i></summary>
+<summary><img style="height: 12px" src="./gradle.svg"> <b>build.gradle</b></summary>
 
 ```groovy
 plugins {
@@ -42,7 +42,7 @@ tasks.named('test') {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="./file-type-maven.svg"> <i>pom.xml</i></summary>
+<summary><img style="height: 12px" src="./file-type-maven.svg"> <b>pom.xml</b></summary>
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -110,7 +110,7 @@ Um die DLC-Funktionalität zu nutzen, reicht es bereits folgendes Artefakt einzu
 welches die wichtigsten DLC-Funktionen bündelt. Kompatibel mit Spring-Boot Version 2 & 3.
 
 <details>
-<summary><img style="height: 12px" src="./gradle.svg"> <i>build.gradle</i></summary>
+<summary><img style="height: 12px" src="./gradle.svg"> <b>build.gradle</b></summary>
 
 ```groovy
 dependencies {
@@ -120,7 +120,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="./file-type-maven.svg"> <i>pom.xml</i></summary>
+<summary><img style="height: 12px" src="./file-type-maven.svg"> <b>pom.xml</b></summary>
 
 ```xml
 <dependencies>

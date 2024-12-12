@@ -11,7 +11,7 @@ Eine Auflistung aller unterstützten Datenbanken findet sich <a href="https://ww
 Im Folgenden wird für die beispielhafte Konfigurationen eine interne H2-Datenbank genutzt.
 
 <details>
-<summary><img style="height: 12px" src="./gradle.svg"> <i>build.gradle</i></summary>
+<summary><img style="height: 12px" src="./gradle.svg"> <b>build.gradle</b></summary>
 
 ```groovy
 dependencies {
@@ -21,7 +21,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="./file-type-maven.svg"> <i>pom.xml</i></summary>
+<summary><img style="height: 12px" src="./file-type-maven.svg"> <b>pom.xml</b></summary>
 
 ```xml name="index.js"
 <dependencies>
@@ -37,7 +37,7 @@ dependencies {
 Zusätzlich zur benötigten Dependency noch die jeweilige Konfiguration:
 
 <details>
-<summary><b><i>application.properties</i></b></summary>
+<summary><b>application.properties</b></summary>
 
 ```properties
 spring.datasource.url=jdbc:h2:./dlc-sample/build/h2-db/test;AUTO_SERVER=TRUE
@@ -53,7 +53,7 @@ relationalen Datenbanken zu erleichtern.
 Hierfür wird zusätzlich noch die Spring-Boot spezifische JOOQ Dependency gebraucht:
 
 <details>
-<summary><img style="height: 12px" src="./gradle.svg"> <i>build.gradle</i></summary>
+<summary><img style="height: 12px" src="./gradle.svg"> <b>build.gradle</b></summary>
 
 ```groovy
 dependencies {
@@ -63,7 +63,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="./file-type-maven.svg"> <i>pom.xml</i></summary>
+<summary><img style="height: 12px" src="./file-type-maven.svg"> <b>pom.xml</b></summary>
 
 ```xml
 <dependencies>
@@ -79,7 +79,7 @@ Anschließend kann man den JOOQ Code-Generator nach Belieben konfigurieren
 Im Folgenden findet sich eine beispielhafte Konfiguration, für ein bereits bestehendes Datenbank-Schema:
 
 <details>
-<summary><img style="height: 12px" src="./gradle.svg"> <i>build.gradle</i></summary>
+<summary><img style="height: 12px" src="./gradle.svg"> <b>build.gradle</b></summary>
 
 ```groovy
 jooq {
@@ -120,7 +120,7 @@ Die Konfiguration für Maven findet nicht in der pom.xml statt, sondern in einer
 im Projekt-Ordner liegen muss.
 
 <details>
-<summary><img style="height: 12px" src="./file-type-maven.svg"> <i>library.xml</i></summary>
+<summary><img style="height: 12px" src="./file-type-maven.svg"> <b>library.xml</b></summary>
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
