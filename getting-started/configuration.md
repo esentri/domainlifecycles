@@ -3,6 +3,8 @@
 <hr/>
 
 ## Persistence
+Zusätzlich zur folgenden Konfiguration finden sich <a href="./features/persistence.md">hier</a> Beispiele zur Implementierung.
+
 ### Datenbank Driver
 Zunächst muss allgemein zur Nutzung einer Datenbank der jeweilige Database-Driver eingebunden werden.
 Da DLC JOOQ nutzt (siehe unten), werden hierfür nahezu alle relationalen SQL basierten Datenbanken unterstützt.
@@ -229,8 +231,7 @@ EntityIdentityProvider identityProvider(DSLContext dslContext) {
 
 
 ## Domain-Object-Builders
-Folgende DLC-spezifischen Beans müssen konfiguriert werden um das Framework nutzen zu können. Diese können in einer
-mit ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden.
+Zusätzlich zur folgenden Konfiguration finden sich <a href="./features/domainobject_builders.md">hier</a> Beispiele zur Implementierung.
 
 ### Spring-Beans
 Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
@@ -250,6 +251,7 @@ DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
 
 
 ## JSON-Mapping
+Zusätzlich zur folgenden Konfiguration finden sich <a href="./features/json_mapping.md">hier</a> Beispiele zur Implementierung.
 
 ### Spring-Beans
 Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
@@ -270,6 +272,7 @@ DlcJacksonModule dlcModuleConfiguration(List<? extends JacksonMappingCustomizer<
 ```
 
 ## Domain-Events
+Zusätzlich zur folgenden Konfiguration finden sich <a href="./features/domain_events.md">hier</a> Beispiele zur Implementierung.
 
 ### Spring-Beans
 Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
@@ -300,6 +303,8 @@ public ChannelRoutingConfiguration channelConfiguration(PlatformTransactionManag
 ```
 
 ## Domain-Types
+Zusätzlich zur folgenden Konfiguration finden sich <a href="./features/domain_types.md">hier</a> Beispiele zur Implementierung.
+
 ### Spring-Beans
 Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
 
@@ -316,6 +321,7 @@ public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds){
 
 
 ## Open-API-Extension
+Zusätzlich zur folgenden Konfiguration finden sich <a href="./features/open_api_extension.md">hier</a> Beispiele zur Implementierung.
 
 ### Spring-Beans
 Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
