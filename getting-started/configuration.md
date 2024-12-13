@@ -2,16 +2,16 @@
 
 <hr/>
 
-## Datenbank
+## Persistence
 ### Datenbank Driver
 Zunächst muss allgemein zur Nutzung einer Datenbank der jeweilige Database-Driver eingebunden werden.
 Da DLC JOOQ nutzt (siehe unten), werden hierfür nahezu alle relationalen SQL basierten Datenbanken unterstützt.
 Eine Auflistung aller unterstützten Datenbanken findet sich <a href="https://www.jooq.org/doc/latest/manual/reference/supported-rdbms/">hier</a>.
 
-Im Folgenden wird für die beispielhafte Konfigurationen eine interne H2-Datenbank genutzt.
+Im Folgenden wird für die beispielhaften Konfigurationen eine interne H2-Datenbank genutzt.
 
 <details>
-<summary><img style="height: 12px" src="./gradle.svg"> <b>build.gradle</b></summary>
+<summary><img style="height: 12px" src="icons/gradle.svg"> <b>build.gradle</b></summary>
 
 ```groovy
 dependencies {
@@ -21,7 +21,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="./file-type-maven.svg"> <b>pom.xml</b></summary>
+<summary><img style="height: 12px" src="icons/file-type-maven.svg"> <b>pom.xml</b></summary>
 
 ```xml name="index.js"
 <dependencies>
@@ -53,7 +53,7 @@ relationalen Datenbanken zu erleichtern.
 Hierfür wird zusätzlich noch die Spring-Boot spezifische JOOQ Dependency gebraucht:
 
 <details>
-<summary><img style="height: 12px" src="./gradle.svg"> <b>build.gradle</b></summary>
+<summary><img style="height: 12px" src="icons/gradle.svg"> <b>build.gradle</b></summary>
 
 ```groovy
 dependencies {
@@ -63,7 +63,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="./file-type-maven.svg"> <b>pom.xml</b></summary>
+<summary><img style="height: 12px" src="icons/file-type-maven.svg"> <b>pom.xml</b></summary>
 
 ```xml
 <dependencies>
@@ -79,7 +79,7 @@ Anschließend kann man den JOOQ Code-Generator nach Belieben konfigurieren
 Im Folgenden findet sich eine beispielhafte Konfiguration, für ein bereits bestehendes Datenbank-Schema:
 
 <details>
-<summary><img style="height: 12px" src="./gradle.svg"> <b>build.gradle</b></summary>
+<summary><img style="height: 12px" src="icons/gradle.svg"> <b>build.gradle</b></summary>
 
 ```groovy
 jooq {
@@ -120,7 +120,7 @@ Die Konfiguration für Maven findet nicht in der pom.xml statt, sondern in einer
 im Projekt-Ordner liegen muss.
 
 <details>
-<summary><img style="height: 12px" src="./file-type-maven.svg"> <b>library.xml</b></summary>
+<summary><img style="height: 12px" src="icons/file-type-maven.svg"> <b>library.xml</b></summary>
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -157,12 +157,18 @@ Weitere Informationen zur Konfiguration von JOOQ finden sich <a href="">hier</a>
 ### Spring Beans
 Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
 
+#### DataSourceConnectionProvider
 ```
 @Bean
 public DataSourceConnectionProvider connectionProvider(DataSource dataSource) {
     return new DataSourceConnectionProvider(new TransactionAwareDataSourceProxy(dataSource));
 }
+```
 
+<br/>
+
+#### DefaultConfiguration
+```
 @Bean
 public DefaultConfiguration configuration(DataSource dataSource) {
     final var jooqConfig = new DefaultConfiguration();
@@ -171,20 +177,21 @@ public DefaultConfiguration configuration(DataSource dataSource) {
     jooqConfig.set(SQLDialect.H2);
     return jooqConfig;
 }
+```
 
+<br/>
+
+#### DefaultDSLContext
+```
 @Bean
 public DefaultDSLContext dslContext(DataSource dataSource) {
     return new DefaultDSLContext(configuration(dataSource));
 }
 ```
 
-<hr/>
+<br/>
 
-## DLC
-Folgende DLC-spezifischen Beans müssen konfiguriert werden um das Framework nutzen zu können. Diese können in einer
-mit ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden.
-
-### JooqDomainPersistenceProvider
+#### JooqDomainPersistenceProvider
 Der JooqDomainPersistenceProvider ermöglicht einen JOOQ spezifischen Zugriff auf alle Domain-Objekte.
 
 ```
@@ -201,21 +208,15 @@ public JooqDomainPersistenceProvider domainPersistenceProvider(DomainObjectBuild
 }
 ```
 
-### DomainObjectBuilderProvider
-Der DomainObjectBuilderProvider wird benötigt um mit inner-Builders oder den Lombok-Builders zu arbeiten.
-```
-@Bean
-DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
-    return new InnerClassDomainObjectBuilderProvider();
-}
-```
+<br/>
 
-### EntityIdentityProvider
-Der EntityIdentityProvider ermöglicht es, dass neue Entitäten oder AggregateRoots 
-von außerhalb (z. B. über einen REST-Controller) in die Anwendung eingebracht werden 
+#### EntityIdentityProvider
+Der EntityIdentityProvider ermöglicht es, dass neue Entitäten oder AggregateRoots
+von außerhalb (z. B. über einen REST-Controller) in die Anwendung eingebracht werden
 können und dass für neue Instanzen neue IDs aus den entsprechenden Datenbanksequenzen oder anderen ID-Providern
 abgerufen werden.
 Wird nur benutzt in Zusammenhang mit ```DlcJacksonModule```, siehe unten.
+
 ```
 @Bean
 EntityIdentityProvider identityProvider(DSLContext dslContext) {
@@ -223,7 +224,37 @@ EntityIdentityProvider identityProvider(DSLContext dslContext) {
 }
 ```
 
-### DlcJacksonModule
+
+<hr/>
+
+
+## Domain-Object-Builders
+Folgende DLC-spezifischen Beans müssen konfiguriert werden um das Framework nutzen zu können. Diese können in einer
+mit ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden.
+
+### Spring-Beans
+Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
+
+#### DomainObjectBuilderProvider
+Der DomainObjectBuilderProvider wird benötigt um mit inner-Builders oder den Lombok-Builders zu arbeiten.
+
+```
+@Bean
+DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
+    return new InnerClassDomainObjectBuilderProvider();
+}
+```
+
+
+<hr/>
+
+
+## JSON-Mapping
+
+### Spring-Beans
+Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
+
+#### DlcJacksonModule
 Benötigt für DLC-Jackson Integration.
 
 ```
@@ -238,8 +269,13 @@ DlcJacksonModule dlcModuleConfiguration(List<? extends JacksonMappingCustomizer<
 }
 ```
 
-### SpringPersistenceEventPublisher
-Wird benötigt um DLC-Events über den Spring event bus zu veröffentlichen.
+## Domain-Events
+
+### Spring-Beans
+Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
+
+#### SpringPersistenceEventPublisher
+Wird benötigt, um DLC-Events über den Spring event bus zu veröffentlichen.
 
 ```
 @Bean
@@ -248,17 +284,11 @@ public SpringPersistenceEventPublisher springPersistenceEventPublisher(Applicati
 }
 ```
 
-### ServiceProvider
-Stellt einen Provider für alle benötigten ```ServiceKind``` Objekte bereit.
+<br/>
 
-```
-public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds){
-    return  new Services(serviceKinds);
-}
-```
-
-### ChannelRoutingConfiguration
+#### ChannelRoutingConfiguration
 Stellt eine Konfiguration für das Channel Routing bereit.
+
 ```
 @Bean
 public ChannelRoutingConfiguration channelConfiguration(PlatformTransactionManager platformTransactionManager, ServiceProvider serviceProvider){
@@ -269,8 +299,30 @@ public ChannelRoutingConfiguration channelConfiguration(PlatformTransactionManag
 }
 ```
 
-### DlcOpenApiCustomizer
+## Domain-Types
+### Spring-Beans
+Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
+
+#### ServiceProvider
+Stellt einen Provider für alle benötigten ```ServiceKind``` Objekte bereit.
+
+```
+public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds){
+    return  new Services(serviceKinds);
+}
+```
+
+<hr/>
+
+
+## Open-API-Extension
+
+### Spring-Beans
+Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
+
+#### DlcOpenApiCustomizer
 Stellt die Konfiguration/Anpassungen der DLC-/OpenAPI-Integration bereit.
+
 ```
 @Bean
 public DlcOpenApiCustomizer openApiCustomizer(SpringDocConfigProperties springDocConfigProperties) {
