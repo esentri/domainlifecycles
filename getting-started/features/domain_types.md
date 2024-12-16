@@ -1,4 +1,4 @@
-<a href="../getting_started.md">Getting Started</a> / <a href="./features.md">Features</a> / <a href="./domain_types.md">Domain Types</a>
+<a href="../getting_started.md">Getting Started</a> / <a href="../features.md">Features</a> / <a href="./domain_types.md">Domain Types</a>
 
 <hr/>
 

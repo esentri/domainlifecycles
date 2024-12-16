@@ -1,4 +1,4 @@
-<a href="../getting_started.md">Getting Started</a> / <a href="./features.md">Features</a> / <a href="./domain_events.md">Domain Events</a>
+<a href="../index.md">Getting Started</a> / <a href="../features.md">Features</a> / <a href="./domain_events.md">Domain Events</a>
 
 <hr/>
 
@@ -18,6 +18,6 @@ Vereinfacht und kapselt einige Funktionen von Event-Publishing/-Listening von Do
 
 <hr/>
 
-|            **Persistence**             |           **Validation**            |
-|:--------------------------------------:|:-----------------------------------:|
-| [<< Vorherige Seite](./persistence.md) | [Nächste Seite >>](./validation.md) |
+|            **Persistence**             |               **Validation**                |
+|:--------------------------------------:|:-------------------------------------------:|
+| [<< Vorherige Seite](./persistence.md) | [Nächste Seite >>](./validation_support.md) |

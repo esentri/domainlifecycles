@@ -1,4 +1,4 @@
-<a href="../getting_started.md">Getting Started</a> / <a href="./create_project.md">Projekt erstellen</a>
+<a href="./index.md">Getting Started</a> / <a href="./create_project.md">Projekt erstellen</a>
 
 <hr/>
 

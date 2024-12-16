@@ -1,4 +1,4 @@
-<a href="../getting_started.md">Getting Started</a> / <a href="./run_application.md">DLC starten</a>
+<a href="./index.md">Getting Started</a> / <a href="./run_application.md">DLC starten</a>
 
 <hr/>
 

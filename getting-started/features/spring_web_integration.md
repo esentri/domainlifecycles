@@ -1,4 +1,4 @@
-<a href="../getting_started.md">Getting Started</a> / <a href="./features.md">Features</a> / <a href="./spring_web_integration.md">Spring-Web-Integration</a>
+<a href="../getting_started.md">Getting Started</a> / <a href="../features.md">Features</a> / <a href="./spring_web_integration.md">Spring-Web-Integration</a>
 
 <hr/>
 

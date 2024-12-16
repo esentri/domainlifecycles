@@ -1,4 +1,4 @@
-<a href="./_index.md">Getting Started</a> / <a href="./configuration.md">Konfiguration</a>
+<a href="./index.md">Getting Started</a> / <a href="./configuration.md">Konfiguration</a>
 
 <hr/>
 

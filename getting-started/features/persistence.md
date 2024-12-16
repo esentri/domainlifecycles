@@ -1,4 +1,4 @@
-<a href="../getting_started.md">Getting Started</a> / <a href="./features.md">Features</a> / <a href="./persstence.md">Persistence</a>
+<a href="../getting_started.md">Getting Started</a> / <a href="../features.md">Features</a> / <a href="./persstence.md">Persistence</a>
 
 <hr/>
 
