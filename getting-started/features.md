@@ -25,6 +25,6 @@ samt Code-Beispiele und zugehörigen Unit-Tests.
 
 <hr/>
 
-| [<< Vorherige Seite](./configuration.md) | [Nächste Seite >>](./run_application.md) |
-|:----------------------------------------:|:----------------------------------------:|
-|            **Konfiguration**             |             **DLC starten**              |
+|              **DLC starten**               |
+|:------------------------------------------:|
+| [<< Vorherige Seite](./run_application.md) |
