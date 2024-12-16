@@ -139,6 +139,6 @@ dependencies {
 
 <hr/>
 
-<div style="display: inline">
-    <a style="float: right"><h4>Nächste Seite >> <br/>Konfiguration</h4></a>
-</div>
+| [Nächste Seite >>](./configuration.md) |
+|:--------------------------------------:|
+|           **Konfiguration**            |

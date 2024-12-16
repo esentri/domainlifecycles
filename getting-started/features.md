@@ -22,3 +22,9 @@ samt Code-Beispiele und zugehörigen Unit-Tests.
 ### <a href="./features/validation.md">Validation</a>
 ### <a href="./features/spring_web_integration.md">Spring-Web-Integration</a>
 ### <a href="./features/domain_diagrammer.md">Domain-Diagrammer</a>
+
+<hr/>
+
+| [<< Vorherige Seite](./configuration.md) | [Nächste Seite >>](./run_application.md) |
+|:----------------------------------------:|:----------------------------------------:|
+|            **Konfiguration**             |             **DLC starten**              |

@@ -26,3 +26,10 @@ public class SampleApplication {
 }
 ```
 </details>
+
+<hr/>
+
+
+| [<< Vorherige Seite](./features.md) |
+|:-----------------------------------:|
+|            **Features**             |

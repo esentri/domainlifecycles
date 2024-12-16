@@ -342,18 +342,6 @@ public DlcOpenApiCustomizer openApiCustomizer(SpringDocConfigProperties springDo
 
 <hr/>
 
-<div style="display: flex; justify-content: space-between;">
-    <!-- Previous Button -->
-    <div style="border: 1px solid #E0E0E0; padding: 10px; border-radius: 5px; width: 45%; text-align: left;">
-        <a href="./create_project.md" style="text-decoration: none; color: #1A73E8;">
-            <div style="font-size: 14px; color: #6B7280;">Vorherige Seite</div>
-            <div style="font-size: 18px; font-weight: bold;">Getting Started</div>
-        </a>
-    </div>
-    <div style="border: 1px solid #E0E0E0; padding: 10px; border-radius: 5px; width: 45%; text-align: right;">
-        <a href="./features.md.md" style="text-decoration: none; color: #1A73E8;">
-            <div style="font-size: 14px; color: #6B7280;">Nächste Seite</div>
-            <div style="font-size: 18px; font-weight: bold;">Features</div>
-        </a>
-    </div>
-</div>
+| [<< Vorherige Seite](./create_project.md) | [Nächste Seite >>](./features.md) |
+|:-----------------------------------------:|:---------------------------------:|
+|           **Projekt erstellen**           |           **Features**            |
