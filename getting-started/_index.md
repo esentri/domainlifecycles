@@ -1,4 +1,4 @@
-<a href="../getting_started.md">Getting Started</a>
+<a href="./_index.md">Getting Started</a>
 
 <hr/>
 

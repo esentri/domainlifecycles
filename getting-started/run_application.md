@@ -29,7 +29,6 @@ public class SampleApplication {
 
 <hr/>
 
-
-| [<< Vorherige Seite](./features.md) |
-|:-----------------------------------:|
-|            **Features**             |
+|      << Vorherige Seite       |
+|:-----------------------------:|
+| [**Features**](./features.md) |

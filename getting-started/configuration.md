@@ -1,4 +1,4 @@
-<a href="../getting_started.md">Getting Started</a> / <a href="./configuration.md">Konfiguration</a>
+<a href="./_index.md">Getting Started</a> / <a href="./configuration.md">Konfiguration</a>
 
 <hr/>
 
@@ -342,6 +342,6 @@ public DlcOpenApiCustomizer openApiCustomizer(SpringDocConfigProperties springDo
 
 <hr/>
 
-| [<< Vorherige Seite](./create_project.md) | [Nächste Seite >>](./features.md) |
-|:-----------------------------------------:|:---------------------------------:|
-|           **Projekt erstellen**           |           **Features**            |
+| [<< Vorherige Seite](./create_project.md) | [Nächste Seite >>](./run_application.md) |
+|:-----------------------------------------:|:----------------------------------------:|
+|           **Projekt erstellen**           |             **DLC starten**              |
