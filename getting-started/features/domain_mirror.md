@@ -12,3 +12,9 @@ vereinfachten Zugriff auf die Werte der Domain `Aggregates`,`Entities`  und  `Va
 ## Implementierung
 
 ## Unit-Tests
+
+<hr/>
+
+|            **Domain Types**             |           **Domain-Object Builders**           |
+|:---------------------------------------:|:----------------------------------------------:|
+| [<< Vorherige Seite](./domain_types.md) | [Nächste Seite >>](./domainobject_builders.md) |

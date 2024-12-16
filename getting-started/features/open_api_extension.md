@@ -13,3 +13,9 @@ API Dokumentation der DDD Bausteine basierend auf [Spring Doc Open API](https://
 ## Implementierung
 
 ## Unit-Tests
+
+<hr/>
+
+|            **JSON-Mapping**             |           **Persistence**            |
+|:---------------------------------------:|:------------------------------------:|
+| [<< Vorherige Seite](./json_mapping.md) | [Nächste Seite >>](./persistence.md) |

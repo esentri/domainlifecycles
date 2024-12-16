@@ -18,3 +18,9 @@ Zu den Funktionen gehören unter anderem:
 ## Implementierung
 
 ## Tests
+
+<hr/>
+
+|             **OpenAPI-Extension**             |           **Domain-Events**            |
+|:---------------------------------------------:|:--------------------------------------:|
+| [<< Vorherige Seite](./open_api_extension.md) | [Nächste Seite >>](./domain_events.md) |

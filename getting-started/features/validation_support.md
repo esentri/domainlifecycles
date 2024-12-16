@@ -13,3 +13,9 @@ Leichte Implementierung von Geschäftslogik-Regeln und Domänen spezifische Inva
 ## Implementierung
 
 ## Unit-Tests
+
+<hr/>
+
+|            **Domain-Events**             |           **Spring-Web-Integration**            |
+|:----------------------------------------:|:-----------------------------------------------:|
+| [<< Vorherige Seite](./domain_events.md) | [Nächste Seite >>](./spring_web_integration.md) |

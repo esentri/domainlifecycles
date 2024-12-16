@@ -15,3 +15,9 @@ Vereinfacht und kapselt einige Funktionen von Event-Publishing/-Listening von Do
 ## Implementierung 
 
 ## Unit-Tests
+
+<hr/>
+
+|            **Persistence**             |           **Validation**            |
+|:--------------------------------------:|:-----------------------------------:|
+| [<< Vorherige Seite](./persistence.md) | [Nächste Seite >>](./validation.md) |

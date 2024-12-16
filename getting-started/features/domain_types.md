@@ -12,3 +12,10 @@ Implementierung von DDD Bausteinen mittels DLC Interfaces oder Base-Klassen.
 ## Implementierung
 
 ## Unit-Tests
+
+<hr/>
+
+|           **Domain Mirror**            |
+|:--------------------------------------:|
+| [Nächste Seite >>](./domain_mirror.md) |
+

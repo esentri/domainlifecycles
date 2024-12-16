@@ -14,3 +14,9 @@
 ## Implementierung
 
 ## Unit-Tests
+
+<hr/>
+
+|            **Domain-Object Builders**             |            **OpenAPI-Extension**            |
+|:-------------------------------------------------:|:-------------------------------------------:|
+| [<< Vorherige Seite](./dommainobject_builders.md) | [Nächste Seite >>](./open_api_extension.md) |

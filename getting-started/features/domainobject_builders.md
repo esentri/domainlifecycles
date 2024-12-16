@@ -13,3 +13,9 @@ Support für das Builder-Pattern.
 ## Implementierung
 
 ## Unit-Tests
+
+<hr/>
+
+|            **Domain Mirror**             |           **JSON-Mapping**            |
+|:----------------------------------------:|:-------------------------------------:|
+| [<< Vorherige Seite](./domain_mirror.md) | [Nächste Seite >>](./json_mapping.md) |
