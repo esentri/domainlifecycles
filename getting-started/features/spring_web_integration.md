@@ -17,6 +17,6 @@ Pfad-/Query-Parameters zu nutzen
 
 <hr/>
 
-|            **Validation**             |           **Domain-Diagrammer**            |
-|:-------------------------------------:|:------------------------------------------:|
-| [<< Vorherige Seite](./validation.md) | [Nächste Seite >>](./domain_diagrammer.md) |
+|                **Validation**                 |           **Domain-Diagrammer**            |
+|:---------------------------------------------:|:------------------------------------------:|
+| [<< Vorherige Seite](./validation_support.md) | [Nächste Seite >>](./domain_diagrammer.md) |

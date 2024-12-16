@@ -17,4 +17,4 @@ Erstellen eines Text-Basierten Klassendiagramms des Projekts aller DDD Bausteine
 
 |            **Spring-Web-Integration**             |
 |:-------------------------------------------------:|
-| [<< Vorherige Seite](./spring_web_intergation.md) |
+| [<< Vorherige Seite](./spring_web_integration.md) |
