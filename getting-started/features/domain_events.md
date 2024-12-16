@@ -1,4 +1,4 @@
-<a href="../index.md">Getting Started</a> / <a href="../features.md">Features</a> / <a href="./domain_events.md">Domain Events</a>
+[Getting Started](../index.md) / [Features](../features.md) / [Domain Events](domain_events.md)
 
 <hr/>
 
@@ -13,6 +13,8 @@ Vereinfacht und kapselt einige Funktionen von Event-Publishing/-Listening von Do
 <hr/>
 
 ## Implementierung 
+
+### Domain-Events definieren
 
 ## Unit-Tests
 

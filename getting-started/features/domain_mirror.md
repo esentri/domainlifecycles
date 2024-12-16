@@ -1,4 +1,4 @@
-<a href="../getting_started.md">Getting Started</a> / <a href="../features.md">Features</a> / <a href="./domain_mirror.md">Domain Mirror</a>
+[Getting Started](../index.md) / [Features](../features.md) / [Domain Mirror](domain_mirror.md)
 
 <hr/>
 

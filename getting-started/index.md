@@ -1,4 +1,4 @@
-<a href="./index.md">Getting Started</a>
+[Getting Started](index.md)
 
 <hr/>
 

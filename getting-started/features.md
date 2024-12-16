@@ -1,4 +1,4 @@
-<a href="./index.md">Getting Started</a> / <a href="./features.md">Features</a>
+[Getting Started](index.md) / [Features](features.md)
 
 <hr/>
 

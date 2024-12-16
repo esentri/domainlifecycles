@@ -1,4 +1,4 @@
-<a href="../getting_started.md">Getting Started</a> / <a href="../features.md">Features</a> / <a href="./json_mapping.md">JSON-Mapping</a>
+[Getting Started](../index.md) / [Features](../features.md) / [JSON-Mapping](json_mapping.md)
 
 <hr/>
 

@@ -1,4 +1,4 @@
-<a href="../getting_started.md">Getting Started</a> / <a href="../features.md">Features</a> / <a href="./open_api_extension.md">Open-API-Extension</a>
+[Getting Started](../index.md) / [Features](../features.md) / [Open-API Extension](open_api_extension.md)
 
 <hr/>
 

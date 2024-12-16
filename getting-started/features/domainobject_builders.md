@@ -1,8 +1,8 @@
-<a href="../getting_started.md">Getting Started</a> / <a href="../features.md">Features</a> / <a href="./domainobject_builders.md">Domain-Object Builders</a>
+[Getting Started](../index.md) / [Features](../features.md) / [Domain-Objects Builders](domainobject_builders.md)
 
 <hr/>
 
-# DomainObject Builders
+# Domain-Object Builders
 
 Support für das Builder-Pattern.
 -   Ermöglicht das DDD Factory-Pattern
