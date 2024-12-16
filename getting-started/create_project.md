@@ -139,6 +139,6 @@ dependencies {
 
 <hr/>
 
-| [Nächste Seite >>](./configuration.md) |
-|:--------------------------------------:|
 |           **Konfiguration**            |
+|:--------------------------------------:|
+| [Nächste Seite >>](./configuration.md) |
