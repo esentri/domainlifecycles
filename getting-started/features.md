@@ -1,3 +1,7 @@
+<a href="../getting_started.md">Getting Started</a> / <a href="./features.md">Features</a>
+
+<hr/>
+
 # Features
 
 <hr/>

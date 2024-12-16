@@ -1,3 +1,7 @@
+<a href="../getting_started.md">Getting Started</a> / <a href="./run_application.md">DLC starten</a>
+
+<hr/>
+
 # DLC starten
 
 <hr/>

@@ -1,3 +1,7 @@
+<a href="../getting_started.md">Getting Started</a> / <a href="./features.md">Features</a> / <a href="./persstence.md">Persistence</a>
+
+<hr/>
+
 # Persistence
 
 Das Persistence-Modul von DLC ermöglicht ein vereinfachtes Mapping für in der Datenbank persistierte DomainObjects.

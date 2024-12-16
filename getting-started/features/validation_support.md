@@ -1,3 +1,7 @@
+<a href="../getting_started.md">Getting Started</a> / <a href="./features.md">Features</a> / <a href="./validation_support.md">Validation Support</a>
+
+<hr/>
+
 # Validation Support
 Leichte Implementierung von Geschäftslogik-Regeln und Domänen spezifische Invarianten.
 -   DomainAssertion API

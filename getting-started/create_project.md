@@ -1,3 +1,7 @@
+<a href="../getting_started.md">Getting Started</a> / <a href="./create_project.md">Projekt erstellen</a>
+
+<hr/>
+
 # Projekt erstellen
 
 <hr/>
@@ -134,3 +138,7 @@ dependencies {
 </details>
 
 <hr/>
+
+<div style="display: inline">
+    <a style="float: right"><h4>Nächste Seite >> <br/>Konfiguration</h4></a>
+</div>
