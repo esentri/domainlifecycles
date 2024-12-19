@@ -94,6 +94,22 @@ public List<Customer> findCustomersPaginatedAndCustomerFirstNameEqualTo(String f
 
 ## Tests
 
+```
+class CustomerRepositoryTest {
+
+    @Autowired
+    CustomerRepository customerRepository;
+
+    @Test
+    void testFindAll() {
+        
+        
+    }
+
+}
+```
+
+
 ---
 
 |             **OpenAPI-Extension**             |           **Domain-Events**            |

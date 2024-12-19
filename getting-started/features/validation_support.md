@@ -62,7 +62,30 @@ Andernfalls können die Aufrufe `BeanValidations.validate(this);` und `validate(
 auch immer explizit vorgenommen werden.
 
 ## Unit-Tests
-
+```
+class CustomerTest {
+    
+    @Test
+    void testSuccessfulInit() {
+        assertThatNoException().isThrownBy(() -> 
+        Customer.builder()
+            .id(CustomerId.builder().id(1L).build())
+            .birthDate(LocalDate.of("1990-01-01"))
+            .build());
+    }
+    
+    @Test
+    void testAssertionFail() {
+        assertThatThrownBy(() -> 
+            Customer.builder()
+                .id(CustomerId.builder().id(1L).build())
+                .birthDate(LocalDate.of("2016-01-01"))
+                .build())
+        ).isInstanceOf(DomainAssertionException.class)
+        .withMessageContaining("Customer has to be at least 18 years old!");
+    }
+}
+```
 ---
 
 |            **Domain-Events**             |           **Spring-Web-Integration**            |

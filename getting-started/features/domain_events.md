@@ -48,7 +48,43 @@ public void listenToEvent(NewCustomerAdded newCustomerAdded) {
 ```
 
 ## Unit-Tests
+```
+public class InMemoryChannelTest {
 
+    private static CustomerService customerService;
+
+    @BeforeAll
+    public static void init(){
+        Domain.initialize(new ReflectiveDomainMirrorFactory("tests"));
+        customerService = new CustomerService();
+
+        var services = new Services();
+        services.registerServiceKindInstance(domainService);
+        services.registerServiceKindInstance(repository);
+        services.registerServiceKindInstance(applicationService);
+        services.registerServiceKindInstance(queryHandler);
+        services.registerServiceKindInstance(outboundService);
+
+        var inMemoryChannel = new InMemoryChannelFactory(services).processingChannel("default");
+        var router = new DomainEventTypeBasedRouter(List.of(inMemoryChannel));
+        router.defineDefaultChannel("default");
+        new ChannelRoutingConfiguration(router);
+    }
+
+    @Test
+    public void testIntegrationDomainEvent() {
+        //when
+        var evt = new ADomainEvent("Test");
+        DomainEvents.publish(evt);
+        //then
+        assertThat(domainService.received).contains(evt);
+        assertThat(repository.received).contains(evt);
+        assertThat(applicationService.received).contains(evt);
+        assertThat(queryHandler.received).contains(evt);
+        assertThat(outboundService.received).contains(evt);
+    }
+}
+```
 
 ---
 

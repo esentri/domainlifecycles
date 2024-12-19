@@ -3,10 +3,9 @@
 ---
 
 # Open-API Extension
-API Dokumentation der DDD Bausteine basierend auf [Spring Doc Open API](https://springdoc.org/)
--   API Documentation konsistent mit den DLCs Jackson AutoMapping Features (out-of-the-box)
--   Spring kompatibel
--   Fügt Bean Validation Information in API Documentation (zusammen mit DLC Bean Validation Support) hinzu
+API Dokumentation auf Basis von [Spring Doc Open API](https://springdoc.org/), angepasst auf die Bedürfnisse von DDD,
+wie zum Beispiel out-of-the-box Nutzung des DLC Jackson Auto-Mapping Features und auch Aufnehmen von Bean-Validations 
+in die API-Doku.
 
 ---
 
@@ -35,8 +34,6 @@ public interface CustomerAPI {
 ...
 ```
 
-
-
 Zusätzlich zur Default-Konfiguration kann auch hier ein Customizer definiert werden:
 ```
 @Bean
@@ -46,7 +43,6 @@ public DlcOpenApiCustomizer openApiCustomizer(
     return new DlcOpenApiCustomizer(springDocConfigProperties, classProvider);
 }
 ```
-## Unit-Tests
 
 ---
 

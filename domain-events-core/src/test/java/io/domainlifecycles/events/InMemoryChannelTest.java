@@ -48,6 +48,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
 public class InMemoryChannelTest {
 
@@ -59,6 +60,7 @@ public class InMemoryChannelTest {
 
     @BeforeAll
     public static void init(){
+
         Domain.initialize(new ReflectiveDomainMirrorFactory("io.domainlifecycles.events.domain"));
         domainService = new ADomainService();
         repository = new ARepository();

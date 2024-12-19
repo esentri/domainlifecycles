@@ -4,16 +4,16 @@
 
 # Spring-Web-Integration
 
-Spring Web Integration:
-
-- Ermöglicht Integration von Spring Web zu DLC um so direkt Identites und "single-valued" ValueObjects als 
-Pfad-/Query-Parameters zu nutzen
+Nahtlose Integration zwischen Spring-Web und DLC, um Identities und "single-valued" ValueObjects als
+Pfad-/Query-Parameters zu nutzen.
 
 ---
 
 ## Implementierung
+Keine weitere Implementierung nötig.
 
 ## Unit-Tests
+Unit-Tests erfolgen hierfür wie gewohnt entsprechend der Spring-Web Unit-Tests.
 
 ---
 

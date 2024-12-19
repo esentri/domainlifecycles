@@ -50,6 +50,64 @@ public class JacksonConfiguration {
 }
 ```
 
+## Unit-Tests
+Für entsprechende Unit-Tests kann sowohl die Serialisierung als auch Deserialisierung getestete werden.
+Ein Beispiel zum Testen einer erfolgreichen Serialisierung:
+
+```
+public class JacksonTest {
+
+    private final ObjectMapper objectMapper;
+    
+    @BeforeAll
+    public static void init() {
+        ReflectiveDomainMirrorFactory factory = new ReflectiveDomainMirrorFactory("tests");
+        Domain.initialize(factory);
+    }
+
+    public JacksonTest() {
+        this.objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        
+        var entityIdentityProvider = new EntityIdentityProvider() {
+            @Override
+            public Identity<?> provideFor(String entityTypeName) {
+                if (entityTypeName.equals(CustomerId.class.getName())) {
+                    return new CustomerId(Long.randomLong());
+                }
+                return null;
+            }
+        };
+
+        objectMapper.registerModule(
+            new DlcJacksonModule(
+                new InnerClassDomainObjectBuilderProvider(),
+                entityIdentityProvider
+            )
+        );
+        objectMapper.registerModule(new Jdk8Module());
+        objectMapper.registerModule(new ParameterNamesModule());
+    }
+    
+    @Test
+    void testJsonSerialization() {
+        Customer curstomer = Customer.builder()
+            .id(CustomerId.builder().id(1L).build())
+            .firstName("Tom")
+            .someProperty("Test")
+            .build();
+            
+        String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(curstomer);
+        Customer serializedCustomer = objectMapper.readValue(json, Customer.class);
+        
+        assertEquals(customer.getId().get(), serializedCustomer.getId().get());
+        assertEquals(customer.getFirstName(), serializedCustomer.getFirstName());
+        assertEquals(customer.getSomeProperty(), serializedCustomer.getSomeProperty());
+    }
+}
+```
+
+
 ---
 
 |            **Domain-Object Builders**             |            **OpenAPI-Extension**            |
