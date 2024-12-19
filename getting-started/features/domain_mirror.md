@@ -10,6 +10,26 @@ vereinfachten Zugriff auf die Werte der Domain `Aggregates`,`Entities`  und  `Va
 <hr/>
 
 ## Implementierung
+Um den Domain-Mirror zu nutzen, muss dieser zuerst initialisiert werden:
+```
+@SpringBootApplication
+public class SampleApplication {
+
+    static {
+        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleapp"));
+    }
+
+    public static void main(String[] args) {
+        ...
+    }
+}
+```
+Anschließend können über die statischen Methoden des Interface `io.domainlifecycles.mirror.api.Domain`
+die DDD-Strukturen des Projekts auf verschiedene Arten nachvollzogen werden.
+Ein Beispiel hierfür wäre:
+```
+Customer customer = Domain.typeMirror("io.sampleapp.customer");
+```
 
 ## Unit-Tests
 

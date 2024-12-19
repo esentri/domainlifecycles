@@ -11,6 +11,55 @@ Leichte Implementierung von Geschäftslogik-Regeln und Domänen spezifische Inva
 <hr/>
 
 ## Implementierung
+In jedem der Domain-Types kann eine Validierung und Umsetzung von Geschäftslogik implementiert werden.
+
+Zum Beispiel so:
+```
+public class Customer extends AggregateRootBase<CustomerId> {
+    private final CustomerId id;
+    private final LocalDate birthDate;
+    
+    public Customer(final CustomerId id,
+                    final long concurrencyVersion,
+                    final LocalDate birthDate) {
+        super(concurrencyVersion);
+        this.id = id;
+        //BeanValidations.validate(this); --> inserted by byte code extension.
+        //validate(); --> inserted by byte code extension.
+    }
+    
+    @Override
+    public void validate() {
+        DomainAssertions.isPast(
+            numberOfCurrenciesUsed
+            "BirthDate has to be in the past!"
+        );
+        
+        DomainAssertions.isBefore(
+            numberOfCurrenciesUsed,
+            LocalDate.now().minusYears(18),
+            "Customer has to be at least 18 years old!"
+        );
+    }
+    
+    public void setBirthDate(final LocalDate birthDate) {
+        this.birthDate = birthDate;
+        //BeanValidations.validate(this); --> inserted by byte code extension.
+        //validate(); --> inserted by byte code extension.
+    }
+    
+    @Query //--> no byte code extension of this method
+    private void doSomething() {
+        // some logic
+    }
+}
+```
+
+Die hier verwendete Byte-Code-Extension funktioniert natürlich nur, sofern diese
+auch wie in der [Konfiguration](../configuration.md) gezeigt aktiviert wurde.
+
+Andernfalls können die Aufrufe `BeanValidations.validate(this);` und `validate();` 
+auch immer explizit vorgenommen werden.
 
 ## Unit-Tests
 
