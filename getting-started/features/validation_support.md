@@ -1,6 +1,6 @@
 [Getting Started](../index.md) / [Features](../features.md) / [Validation Support](validation_support.md)
 
-<hr/>
+---
 
 # Validation Support
 Leichte Implementierung von Geschäftslogik-Regeln und Domänen spezifische Invarianten.
@@ -8,7 +8,7 @@ Leichte Implementierung von Geschäftslogik-Regeln und Domänen spezifische Inva
 -   Optional: Erweiterter Support der Java Bean Validation Annotations innerhalb eines DomainObjects um Invarianten oder Pre-/Post/-Conditions auf Methoden zu implementieren
 -   Optional: ByteCode Erweiterung um die Implementierung einer “Always-Valid-Strategy” zu vereinfachen
 
-<hr/>
+---
 
 ## Implementierung
 In jedem der Domain-Types kann eine Validierung und Umsetzung von Geschäftslogik implementiert werden.
@@ -63,7 +63,7 @@ auch immer explizit vorgenommen werden.
 
 ## Unit-Tests
 
-<hr/>
+---
 
 |            **Domain-Events**             |           **Spring-Web-Integration**            |
 |:----------------------------------------:|:-----------------------------------------------:|

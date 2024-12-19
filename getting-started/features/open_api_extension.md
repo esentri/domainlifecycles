@@ -1,6 +1,6 @@
 [Getting Started](../index.md) / [Features](../features.md) / [Open-API Extension](open_api_extension.md)
 
-<hr/>
+---
 
 # Open-API Extension
 API Dokumentation der DDD Bausteine basierend auf [Spring Doc Open API](https://springdoc.org/)
@@ -8,7 +8,7 @@ API Dokumentation der DDD Bausteine basierend auf [Spring Doc Open API](https://
 -   Spring kompatibel
 -   Fügt Bean Validation Information in API Documentation (zusammen mit DLC Bean Validation Support) hinzu
 
-<hr/>
+---
 
 ## Implementierung
 DLC unterstützt die Spring Open-API Dokumentation der REST-Schnittstellen,
@@ -48,7 +48,7 @@ public DlcOpenApiCustomizer openApiCustomizer(
 ```
 ## Unit-Tests
 
-<hr/>
+---
 
 |            **JSON-Mapping**             |           **Persistence**            |
 |:---------------------------------------:|:------------------------------------:|

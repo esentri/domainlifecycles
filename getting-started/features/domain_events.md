@@ -1,6 +1,6 @@
 [Getting Started](../index.md) / [Features](../features.md) / [Domain Events](domain_events.md)
 
-<hr/>
+---
 
 # Domain Events
 Vereinfacht und kapselt einige Funktionen von Event-Publishing/-Listening von DomainEvents.
@@ -10,7 +10,7 @@ Vereinfacht und kapselt einige Funktionen von Event-Publishing/-Listening von Do
 -   Optional: Support für Spring oder JTA basiertes Transaktions-Handling
 -   Optional: Support für "transactional outbox" Pattern für besseres Publishen von DomainEvents
 
-<hr/>
+---
 
 ## Implementierung 
 
@@ -50,7 +50,7 @@ public void listenToEvent(NewCustomerAdded newCustomerAdded) {
 ## Unit-Tests
 
 
-<hr/>
+---
 
 |            **Persistence**             |               **Validation**                |
 |:--------------------------------------:|:-------------------------------------------:|

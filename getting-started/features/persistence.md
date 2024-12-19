@@ -1,6 +1,6 @@
 [Getting Started](../index.md) / [Features](../features.md) / [Persistence](persistence.md)
 
-<hr/>
+---
 
 # Persistence
 
@@ -16,7 +16,7 @@ Zu den Funktionen gehören unter anderem:
 -   Unterstützt Java  `final`  Keywords und Java-Optionals innerhalb persistierter Strukturen
 
 ## Implementierung
-<b>Hinweis:</b> Damit eine reibungslose Implementierung des Repositories möglich ist,
+**Hinweis:** Damit eine reibungslose Implementierung des Repositories möglich ist,
 muss das Projekt zuerst einmal kompiliert werden, sodass die entsprechenden JOOQ-Records/-Tabellen erstellt werden.
 
 ### Repository anlegen
@@ -94,7 +94,7 @@ public List<Customer> findCustomersPaginatedAndCustomerFirstNameEqualTo(String f
 
 ## Tests
 
-<hr/>
+---
 
 |             **OpenAPI-Extension**             |           **Domain-Events**            |
 |:---------------------------------------------:|:--------------------------------------:|

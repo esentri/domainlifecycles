@@ -1,29 +1,29 @@
 [Getting Started](index.md) / [Features](features.md)
 
-<hr/>
+---
 
 # Features
 
-<hr/>
+---
 
-Im Folgenden findet sich eine Auflistung aller Features, welche DLC zu bieten hat.
-Auf den jeweiligen Seiten dieser ist eine ausführliche Erklärung,
-samt Code-Beispiele und zugehörigen Unit-Tests.
+DLC bietet viele verschiedene Features und Extensions, welche im Folgenden alle erläutert werden.
+Hierbei wird immer, wie auch schon bei den vorangegangenen Erklärungen und Anleitungen von einem 
+Webshop in den Beispielen ausgegangen.
 
-<hr/>
+---
 
-### <a href="./features/domain_types.md">Domain Types</a>
-### <a href="./features/domain_mirror.md">Domain Mirror</a>
-### <a href="./features/domainobject_builders.md">Domain-Object Builders</a>
-### <a href="./features/json_mapping.md">JSON-Mappping</a>
-### <a href="./features/open_api_extension.md">OpenAPI-Extension</a>
-### <a href="./features/persistence.md">Persistence</a>
-### <a href="./features/domain_events.md">Domain-Events</a>
-### <a href="./features/validation.md">Validation</a>
-### <a href="./features/spring_web_integration.md">Spring-Web-Integration</a>
-### <a href="./features/domain_diagrammer.md">Domain-Diagrammer</a>
+### [Domain Types](./features/domain_types.md)
+### [Domain Mirror](./features/domain_mirror.md)
+### [Domain-Object Builders](./features/domainobject_builders.md)
+### [JSON-Mapping](./features/json_mapping.md)
+### [Open-API Extension](./features/open_api_extension.md)
+### [Persistence](./features/persistence.md)
+### [Domain Events](./features/domain_events.md)
+### [Validation](./features/validation_support.md)
+### [Spring-Web-Integration](./features/spring_web_integration.md)
+### [Domain Diagrammer](./features/domain_diagrammer.md)
 
-<hr/>
+---
 
 |              **DLC starten**               |
 |:------------------------------------------:|

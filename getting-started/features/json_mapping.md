@@ -1,15 +1,12 @@
 [Getting Started](../index.md) / [Features](../features.md) / [JSON-Mapping](json_mapping.md)
 
-<hr/>
+---
 
 # JSON-Mapping
-[Jackson](https://github.com/FasterXML/jackson) based JSON mapping.
--   Auto Mapping DDD Bausteine von JSON zu Java und vice versa
--   Spring kompatibel
--   MappingCustomizer API um Mapping zu individualisieren
--   Optional: Sequenz basiertes Bereitstellen einer ID durch Datenbank innerhalb des JSON-Mappers
+Bietet JSON-Mapping basierend auf [Jackson](https://github.com/FasterXML/jackson), mit DDD spezifischen Anpassungen
+und Möglichkeiten zur Konfiguration.
 
-<hr/>
+---
 
 ## Implementierung
 Ein an DDD angepasstes, besseres JSON-Mapping wird bereits sichergestellt durch die 
@@ -53,7 +50,7 @@ public class JacksonConfiguration {
 }
 ```
 
-<hr/>
+---
 
 |            **Domain-Object Builders**             |            **OpenAPI-Extension**            |
 |:-------------------------------------------------:|:-------------------------------------------:|

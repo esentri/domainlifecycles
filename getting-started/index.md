@@ -1,16 +1,18 @@
 [Getting Started](index.md)
 
-<hr/>
+---
 
 # Getting Started
-<hr/>
 
-In diesem Getting-Started Guide findet sich eine vollständige Anleitung, wie man eine simple DLC-Applikation erstellt, 
-um grundlegende CRUD-Operationen auf einer Datenbank auszuführen.
+---
 
-<hr/>
+Dieser Guide stellt eine vollständige Anleitung bereit, wie man DLC einrichtet und 
+anschließend benutzen kann. Die im Guide genutzten Beispiele basieren immer
+auf einem Spring-Boot Projekt, und alles Domänen spezifische basiert auf einem beispielhaften Webshop.
 
-### <a href="./create_project.md">Projekt erstellen</a>
-### <a href="./configuration.md">Konfiguration</a>
-### <a href="./run_application.md">DLC starten</a>
-### <a href="./features.md">Features</a>
+---
+
+### [Projekt erstellen](create_project.md)
+### [Konfiguration](configuration.md)
+### [DLC starten](run_application.md)
+### [Features](features.md)

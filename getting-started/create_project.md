@@ -1,10 +1,10 @@
 [Getting Started](index.md) / [Projekt erstellen](create_project.md)
 
-<hr/>
+---
 
 # Projekt erstellen
 
-<hr/>
+---
 
 ## Grundlagen
 Als Build-Management-Tool lassen sich Maven oder Gradle nutzen, welche beide im Folgenden berücksichtigt werden.
@@ -107,7 +107,7 @@ tasks.named('test') {
 ```
 </details>
 
-<hr/>
+---
 
 ## DLC einbinden
 Um die DLC-Funktionalität zu nutzen, reicht es bereits folgendes Artefakt einzubinden, 
@@ -137,7 +137,7 @@ dependencies {
 ```
 </details>
 
-<hr/>
+---
 
 |           **Konfiguration**            |
 |:--------------------------------------:|

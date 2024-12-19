@@ -1,10 +1,10 @@
 [Getting Started](index.md) / [DLC starten](run_application.md)
 
-<hr/>
+---
 
 # DLC starten
 
-<hr/>
+---
 
 Nachdem alles Nötige konfiguriert wurde, muss der DLC Mirror beim Starten der Applikation
 initialisiert werden:
@@ -27,7 +27,7 @@ public class SampleApplication {
 ```
 </details>
 
-<hr/>
+---
 
 |            **Konfiguration**             |           **Features**            |
 |:----------------------------------------:|:---------------------------------:|

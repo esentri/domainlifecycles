@@ -1,19 +1,18 @@
 [Getting Started](../index.md) / [Features](../features.md) / [Domain Diagrammer](domain_diagrammer.md)
 
-<hr/>
+---
 
 # Domain Diagrammer
-Erstellen eines Text-Basierten Klassendiagramms des Projekts aller DDD Bausteine.
+Erstellen eines Text basierten Klassendiagramms des Projekts aller DDD Bausteine.
 
+Eckpunkte:
 - Basierend auf [Nomnoml](https://nomnoml.com/)
 
-<hr/>
+---
 
 ## Implementierung
 
-## Unit-Tests
-
-<hr/>
+---
 
 |            **Spring-Web-Integration**             |
 |:-------------------------------------------------:|

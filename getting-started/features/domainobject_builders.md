@@ -1,20 +1,18 @@
 [Getting Started](../index.md) / [Features](../features.md) / [Domain-Objects Builders](domainobject_builders.md)
 
-<hr/>
+---
 
 # Domain-Object Builders
 
-Support für das Builder-Pattern.
--   Ermöglicht das DDD Factory-Pattern
--   Optional: Lombok Builder Kompatibilität
+Das Builder-Modul ermöglicht Support für das DDD-Factory-Pattern und bietet optional
+noch Lombok Builder Kompatibilität
 
-<hr/>
+---
 
 ## Implementierung
-DLC baut stark auf dem Builder-Pattern auf.
-Verpflichtend ist hierfür zuerst einmal die Bereitrstellung
-einer Konfiguration für den Default-Builder,
-welche bereits unter [Projekt erstellen](../configuration.md#DomainObjectBuilderProvider) erläutert wurde.
+DLC baut stark auf dem Builder-Pattern auf. Verpflichtend ist hierfür zuerst einmal die Bereitstellung einer 
+Konfiguration für den Default-Builder, welche bereits unter 
+[Projekt erstellen](../configuration.md#DomainObjectBuilderProvider) erläutert wurde.
 
 Für den Builder lässt sich hier am einfachsten Lombok nutzen:
 ```
@@ -36,7 +34,8 @@ public class Customer extends AggregateRootBase<CustomerId> {
 }
 ```
 
-Andernfalls geht man folgendermaßen vor:
+Möchte man jedoch auf Lombok verzichten, geht man **folgendermaßen** vor:
+
 Für alle Fields werden Setter benötigt, ebenfalls statischer Zugriff
 auf den Builder und eine statische `build()` Methode.
 
@@ -84,8 +83,11 @@ public class Customer extends AggregateRootBase<CustomerId> {
 ```
 
 ## Unit-Tests
+Sinnvolle Unit-Tests würden hierbei die Setter, und die `build()` Methode des Builders umfassen,
+bzw. damit auch den Konstruktor des jeweiligen Domain-Objects. 
+Diese wurden hier der Einfachheit halber ausgelassen.
 
-<hr/>
+---
 
 |            **Domain Mirror**             |           **JSON-Mapping**            |
 |:----------------------------------------:|:-------------------------------------:|

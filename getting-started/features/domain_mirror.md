@@ -1,13 +1,13 @@
 [Getting Started](../index.md) / [Features](../features.md) / [Domain Mirror](domain_mirror.md)
 
-<hr/>
+---
 
 # Domain Mirror
-Mirrored das Meta-Modell der Design-Strukturen innerhalb eines Bounded-Contexts.
--   Liefert strukturierte Queries and Navigation innerhalb eines Bounded-Context's strukturierten Meta-Models sowie 
-vereinfachten Zugriff auf die Werte der Domain `Aggregates`,`Entities`  und  `ValueObjects` mittels Reflection.
+Der Domain-Mirror spiegelt das Meta-Modell der Design/-Projekt-Strukturen innerhalb eines Bounded-Contexts.
+Damit ermöglicht er strukturierte Queries und Navigation innerhalb eines Bounded-Context und aber auch
+vereinfachten Zugriff auf die Werte der `Aggregates`,`Entities`  und  `ValueObjects` mittels Reflection.
 
-<hr/>
+---
 
 ## Implementierung
 Um den Domain-Mirror zu nutzen, muss dieser zuerst initialisiert werden:
@@ -33,7 +33,21 @@ Customer customer = Domain.typeMirror("io.sampleapp.customer");
 
 ## Unit-Tests
 
-<hr/>
+Möchten man Funktionen seines Codes testen, welche sich auf den DLC-Mirror stützen,
+ist es wichtig diesen in der Test-Klasse auch zu initialisieren mit dem korrekten Context-Package:
+
+```
+public class SomeDomainMirrorTest {
+
+    @BeforeAll
+    public static void init() {
+        ReflectiveDomainMirrorFactory factory = new ReflectiveDomainMirrorFactory("tests");
+        Domain.initialize(factory);
+    }
+}
+```
+
+---
 
 |            **Domain Types**             |           **Domain-Object Builders**           |
 |:---------------------------------------:|:----------------------------------------------:|

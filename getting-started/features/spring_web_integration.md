@@ -1,6 +1,6 @@
 [Getting Started](../index.md) / [Features](../features.md) / [Spring-Web-Integration](spring_web_integration.md)
 
-<hr/>
+---
 
 # Spring-Web-Integration
 
@@ -9,13 +9,13 @@ Spring Web Integration:
 - Ermöglicht Integration von Spring Web zu DLC um so direkt Identites und "single-valued" ValueObjects als 
 Pfad-/Query-Parameters zu nutzen
 
-<hr/>
+---
 
 ## Implementierung
 
 ## Unit-Tests
 
-<hr/>
+---
 
 |                **Validation**                 |           **Domain-Diagrammer**            |
 |:---------------------------------------------:|:------------------------------------------:|

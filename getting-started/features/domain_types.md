@@ -1,13 +1,12 @@
 [Getting Started](../index.md) / [Features](../features.md) / [Domain Types](domain_types.md)
 
-<hr/>
+---
 
 # Domain Types
-Implementierung von DDD Bausteinen mittels DLC Interfaces oder Base-Klassen.
--   DDD Bausteine im Java-Code kennzeichnen: Transparenteres Design
--   Grundlage für Java Typisierung Meta-Daten (siehe Domain Mirror)
+Das Domain Types Modul ermöglicht die Implementierung (und damit auch Kennzeichnung) von DDD Bausteinen mittels 
+DLC Interfaces oder Base-Klassen, welche später extended werden können.
 
-<hr/>
+---
 
 ## Implementierung
 DLC bietet grundsätzlich verschiedene abstrakte Klassen und Interfaces, welche extended bzw. 
@@ -31,11 +30,14 @@ oder als innere Klasse des Aggregates definiert sein:
 ```
 public record CustomerId(@NotNull Long value) implements Identity<Long> {}
 ```
-
+Eine Identity gehört hierbei genauso zu den Domain Types, wie ein Aggregate auch. Eine aushürlichere Auflistung 
+und Erläuterung aller Domain Types findet sich [hier](../../readme_building_blocks.md).
 
 ## Unit-Tests
+Unit-Tests zu den Domain-Types würden vielmehr Erfüllung der Validierungen und der Funktionsweise
+des Builders dienen, weshalb auf diese in den jeweiligen Kapiteln erst eingegangen wird.
 
-<hr/>
+---
 
 |           **Domain Mirror**            |
 |:--------------------------------------:|
