@@ -1,24 +1,30 @@
-[Getting Started](index.md) / [Konfiguration](configuration.md)
+[Getting Started](../index_en.md) / [Configuration](configuration_en.md)
 
 ---
 
-# Konfiguration
+# Configuration
 
-DLC bietet viele Möglichkeiten für Anpassungen und spezifische Konfiguration, manche Konfigurationen 
-müssen aber auch verpflichtend vorgenommen werden damit der volle Funktionsumfang gewährleistet werden kann.
-Im Folgenden befinden sich alle Konfigurationen (bzw. in diesem Beispiel per Spring-Beans), welche für die grundlegenden DLC-Funktionen
+DLC bietet viele Möglichkeiten für Individualisierung und Konfiguration, manche 
+müssen aber auch verpflichtend vorgenommen werden bevor der volle Funktionsumfang gewährleistet werden kann.
+Im Folgenden befinden sich alle Konfigurationen (bzw. Spring-Beans), welche für die grundlegenden DLC-Funktionen
 benötigt werden. Hierbei sind alle Beans sortiert nach dem jeweiligen DLC-Feature, welchem sie zuzuordnen sind.
-Im Guide zu den [Features](features.md) wird an vielen Stellen nochmal näher auf einige Stellen eingegangen und 
+Im Guide zu den [Features](features_en.md) wird an vielen Stellen nochmal näher auf einige Stellen eingegangen und 
 rückverwiesen.
+
+DLC offers many possibilities for individualization and configuration, but some
+have to be made before the full range of functions can be guaranteed.
+Below are all the configurations (or Spring beans) that are required for the basic DLC functions.
+All beans are sorted according to the respective DLC feature to which they belong.
+The guide to the [Features](features_en.md) goes into more detail in many places and refers back to some of them.
 
 ---
 
 ## Persistence
 Das Persistence Modul ist zuständig für alle Interaktionen zwischen DLC und einer relationalen Datenbank.
 
-Zusätzlich zur folgenden Konfiguration finden sich [hier](./features/persistence.md) Beispiele zur Implementierung.
+Zusätzlich zur folgenden Konfiguration finden sich [hier](../features/persistence_en.md) Beispiele zur Implementation.
 
-### Datenbank Driver
+### Database Driver
 Zunächst muss allgemein zur Nutzung einer Datenbank der jeweilige Database-Driver eingebunden werden.
 Da DLC JOOQ nutzt (siehe unten), werden hierfür nahezu alle relationalen SQL basierten Datenbanken unterstützt.
 Eine Auflistung aller unterstützten Datenbanken findet sich <a href="https://www.jooq.org/doc/latest/manual/reference/supported-rdbms/">hier</a>.
@@ -26,7 +32,7 @@ Eine Auflistung aller unterstützten Datenbanken findet sich <a href="https://ww
 Im Folgenden wird für die beispielhaften Konfigurationen eine interne H2-Datenbank genutzt.
 
 <details>
-<summary><img style="height: 12px" src="icons/gradle.svg"> <b>build.gradle</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle</b></summary>
 
 ```groovy
 dependencies {
@@ -36,7 +42,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="icons/file-type-maven.svg"> <b>pom.xml</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>pom.xml</b></summary>
 
 ```xml name="index.js"
 <dependencies>
@@ -49,7 +55,7 @@ dependencies {
 ```
 </details>
 
-Außerdem zur benötigten Dependency noch die jeweilige Konfiguration in den Spring Application Properties:
+Außerdem zur benötigten Dependency noch die jeweilige Konfiguration:
 
 <details>
 <summary><b>application.properties</b></summary>
@@ -62,13 +68,13 @@ spring.datasource.password=
 ```
 </details>
 
-### jOOQ
-Für den Datenbank-Zugriff kommt bei DLC jOOQ zum Einsatz, um das Arbeiten mit SQL basierten 
+### JOOQ
+Als JDBC-Ersatz und Code-Generator kommt bei DLC JOOQ zum Einsatz, um das Arbeiten mit SQL basierten 
 relationalen Datenbanken zu erleichtern. 
-Hierfür wird zusätzlich noch die Spring-Boot spezifische jOOQ-Dependency benötigt:
+Hierfür wird zusätzlich noch die Spring-Boot spezifische JOOQ Dependency gebraucht:
 
 <details>
-<summary><img style="height: 12px" src="icons/gradle.svg"> <b>build.gradle</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle</b></summary>
 
 ```groovy
 dependencies {
@@ -78,7 +84,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="icons/file-type-maven.svg"> <b>pom.xml</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>pom.xml</b></summary>
 
 ```xml
 <dependencies>
@@ -89,12 +95,12 @@ dependencies {
 </dependencies>
 ```
 </details>
-Bei jOOQ werden typischerweise Java-Klassen für den Zugriff auf Datenbank-Objekte (z.B. Tabellen und Sequences) generiert.
-Hierfür muss der jOOQ Code-Generator im Build-Management eingebunden werden.
+
+Anschließend kann man den JOOQ Code-Generator nach Belieben konfigurieren.
 Hier eine beispielhafte Konfiguration, für ein bereits bestehendes Datenbank-Schema:
 
 <details>
-<summary><img style="height: 12px" src="icons/gradle.svg"> <b>build.gradle</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle</b></summary>
 
 ```groovy
 jooq {
@@ -135,7 +141,7 @@ Die Konfiguration für Maven findet nicht in der pom.xml statt, sondern in einer
 im Projekt-Ordner liegen muss.
 
 <details>
-<summary><img style="height: 12px" src="icons/file-type-maven.svg"> <b>library.xml</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>library.xml</b></summary>
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -167,16 +173,10 @@ im Projekt-Ordner liegen muss.
 ```
 </details>
 
-Für DLC Persistence ist hierbei insbesondere die notwendige ```CONCURRENCY_VERSION``` zu beachten, damit das optimistische 
-Locking von Aggregaten und Entities korrekt umgesetzt wird. 
-
 Weitere Informationen zur Konfiguration von JOOQ finden sich <a href="">hier</a>.
 
 ### Spring Beans
 Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
-
-Speziell für den Datenbank-Zugriff mit jOOQ werden folgende Konfigurationen benötigt:
-```DataSourceConnectionProvider```, ```DefaultConfiguration```, ```DefaultDSLContext```.
 
 #### `DataSourceConnectionProvider`
 ```
@@ -199,8 +199,6 @@ public DefaultConfiguration configuration(DataSource dataSource) {
 }
 ```
 
-Der passende SQLDialect und die Aktivierung von Optimistic Locking ist hier zu beachten.
-
 
 #### `DefaultDSLContext`
 ```
@@ -210,10 +208,9 @@ public DefaultDSLContext dslContext(DataSource dataSource) {
 }
 ```
 
-Weitere Konfigurationen, müssen speziell für DLC Persistence vorgenommen werden:
 
 #### `JooqDomainPersistenceProvider`
-Der JooqDomainPersistenceProvider ermöglicht einen jOOQ spezifischen Zugriff auf alle Domain-Objekte.
+Der JooqDomainPersistenceProvider ermöglicht einen JOOQ spezifischen Zugriff auf alle Domain-Objekte.
 
 ```
 @Bean
@@ -229,8 +226,6 @@ public JooqDomainPersistenceProvider domainPersistenceProvider(DomainObjectBuild
 }
 ```
 
-Angepasste RecordMappers für abweichendes Mapping-Verhalten zwischen Datenbank-Tabellen und Domänen-Objekten können hier übergeben werden.
-Das ```recordPackage``` muss das Package der vom jOOQ-Generator erzeugten Klassen für den Zugriff auf Datenbankobjekte zeigen.  
 
 #### `EntityIdentityProvider`
 Der EntityIdentityProvider ermöglicht es, dass neue Entitäten oder AggregateRoots
@@ -246,31 +241,18 @@ EntityIdentityProvider identityProvider(DSLContext dslContext) {
 }
 ```
 
-#### `SpringPersistenceEventPublisher`
-Optional, wird benötigt, um DLC-Persistence-Events über den Spring Event Bus zu veröffentlichen.
-DLC Persistence Events veröffentlichen Informationen über Veränderungen an Aggregates 
-im Rahmen von schreibenden Repository-Zugriffen.
-
-```
-@Bean
-public SpringPersistenceEventPublisher springPersistenceEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-    return new SpringPersistenceEventPublisher(applicationEventPublisher);
-}
-```
-
 
 ---
 
 
 ## Domain-Object-Builders
-Domain Object Builder werden von DLC intern benötigt, beispielsweise um Instanzen von Domänenobjekten beim objekt-relationalen Mapping oder bei der
-JSON De-Serialisierung zu erzeugen. Zusätzlich zur folgenden Konfiguration finden sich [hier](./features/domainobject_builders.md) Beispiele zur Implementierung.
+Zusätzlich zur folgenden Konfiguration finden sich [hier](../features/domainobject_builders_en.md) Beispiele zur Implementation.
 
 ### Spring-Beans
 Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
 
 #### `DomainObjectBuilderProvider`
-Der DomainObjectBuilderProvider wird benötigt um mit inner-Builders oder den Lombok-Builders (Lombok @Builder-Annotation) zu arbeiten.
+Der DomainObjectBuilderProvider wird benötigt um mit inner-Builders oder den Lombok-Builders zu arbeiten.
 
 ```
 @Bean
@@ -284,13 +266,13 @@ DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
 
 
 ## JSON-Mapping
-Zusätzlich zur folgenden Konfiguration finden sich <a href="./features/json_mapping.md">hier</a> Beispiele zur Implementierung.
+Zusätzlich zur folgenden Konfiguration finden sich <a href="./features/json_mapping.md">hier</a> Beispiele zur Implementation.
 
 ### Spring-Beans
 Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
 
 #### `DlcJacksonModule`
-Benötigt für DLC-Jackson Integration, d.h. für JSON-De-Serialisierung.
+Benötigt für DLC-Jackson Integration.
 
 ```
 @Bean
@@ -305,10 +287,20 @@ DlcJacksonModule dlcModuleConfiguration(List<? extends JacksonMappingCustomizer<
 ```
 
 ## Domain-Events
-Zusätzlich zur folgenden Konfiguration finden sich <a href="./features/domain_events.md">hier</a> Beispiele zur Implementierung.
+Zusätzlich zur folgenden Konfiguration finden sich <a href="./features/domain_events.md">hier</a> Beispiele zur Implementation.
 
 ### Spring-Beans
 Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
+
+#### `SpringPersistenceEventPublisher`
+Wird benötigt, um DLC-Events über den Spring event bus zu veröffentlichen.
+
+```
+@Bean
+public SpringPersistenceEventPublisher springPersistenceEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+    return new SpringPersistenceEventPublisher(applicationEventPublisher);
+}
+```
 
 #### `ChannelRoutingConfiguration`
 Stellt eine Konfiguration für das Channel Routing bereit.
@@ -316,23 +308,25 @@ Stellt eine Konfiguration für das Channel Routing bereit.
 ```
 @Bean
 public ChannelRoutingConfiguration channelConfiguration(PlatformTransactionManager platformTransactionManager, ServiceProvider serviceProvider){
-    var channel = new SpringTxInMemoryChannelFactory(platformTransactionManager, serviceProvider, true).processingChannel("default");
-    var router = new DomainEventTypeBasedRouter(List.of(channel));
-    router.defineDefaultChannel("default");
-    return new ChannelRoutingConfiguration(router);
+        var channel = new SpringTxInMemoryChannelFactory(platformTransactionManager, serviceProvider, true).processingChannel("default");
+        var router = new DomainEventTypeBasedRouter(List.of(channel));
+        router.defineDefaultChannel("default");
+        return new ChannelRoutingConfiguration(router);
 }
 ```
-Über dieses Routing wird definiert, wie Domain Events technisch verarbeitet werden. In diesem Fall, werden Domain Events
-in-memory und transaktionsgebunden von DLC an entsprechende Listener zugestellt. Alternativ zur in-memory Variante könnten diese Domain Events 
-auch über einen externen Event Bus (bspw. per JMS) zugestellt werden. Transaktionsgebunden bedeutet, dass die Veröffentlichung der Domain Events je nach Konfiguration
-immer über eine Auslöser-Transaktion je nach Konfiguration ```beforeCommit``` oder ```afterCommit``` erfolgt. 
+
+## Domain-Types
+Zusätzlich zur folgenden Konfiguration finden sich [hier](../features/domain_types_en.md) Beispiele zur Implementation.
+
+### Spring-Beans
+Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
 
 #### `ServiceProvider`
-Stellt einen Provider für alle benötigten ```ServiceKind``` Objekte bereit. Dies wird benötigt für die in der Route definierte Event-Zustellung.
+Stellt einen Provider für alle benötigten ```ServiceKind``` Objekte bereit.
 
 ```
 public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds){
-    return new Services(serviceKinds);
+    return  new Services(serviceKinds);
 }
 ```
 
@@ -340,13 +334,13 @@ public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds){
 
 
 ## Open-API-Extension
-Zusätzlich zur folgenden Konfiguration finden sich [hier](./features/open_api_extension.md) Beispiele zur Implementierung.
+Zusätzlich zur folgenden Konfiguration finden sich [hier](../features/open_api_extension_en.md) Beispiele zur Implementation.
 
 ### Spring-Beans
 Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
 
 #### `DlcOpenApiCustomizer`
-Aktiviert die DLC-/OpenAPI-Integration.
+Stellt die Konfiguration/Anpassungen der DLC-/OpenAPI-Integration bereit.
 
 ```
 @Bean
@@ -357,6 +351,10 @@ public DlcOpenApiCustomizer openApiCustomizer(SpringDocConfigProperties springDo
 
 ---
 
-|            **Projekt erstellen**            |             **DLC starten**              |
-|:-------------------------------------------:|:----------------------------------------:|
-| [<< Vorherige Seite](./build_management.md) | [Nächste Seite >>](./run_application.md) |
+|        **Projekt erstellen**         |          **DLC starten**           |
+|:------------------------------------:|:----------------------------------:|
+| [<< Previous](create_project_en.md)  | [Next >>](run_application_en.md)   |
+
+---
+
+**EN** / [DE](../../german/guides/configuration_de.md)

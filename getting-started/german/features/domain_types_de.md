@@ -1,4 +1,4 @@
-[Getting Started](../index.md) / [Features](../features.md) / [Domain Types](domain_types.md)
+[Getting Started](../index_de.md) / [Features](../guides/features_de.md) / [Domain Types](domain_types_de.md)
 
 ---
 
@@ -25,7 +25,7 @@ public class Customer extends AggregateRootBase<CustomerId> {
 }
 ```
 
-Da für ein Aggregate auch zwingend eine ID benötigt wird, muss diese folgendermaßen im Voraus
+Da für ein Aggregate auch zwingend eine ID (Identity) benötigt wird, muss diese folgendermaßen im Voraus
 oder als innere Klasse des Aggregates definiert sein:
 ```
 public record CustomerId(@NotNull Long value) implements Identity<Long> {}
@@ -37,5 +37,8 @@ und Erläuterung aller Domain Types findet sich [hier](../../readme_building_blo
 
 |           **Domain Mirror**            |
 |:--------------------------------------:|
-| [Nächste Seite >>](./domain_mirror.md) |
+| [Nächste Seite >>](domain_mirror_de.md) |
 
+---
+
+**DE** / [EN](../../english/features/domain_types_en.md)

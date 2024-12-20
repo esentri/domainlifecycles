@@ -1,4 +1,4 @@
-[Getting Started](index.md) / [Build Management](build_management.md)
+[Getting Started](index.md) / [Build Management](build_management_de)
 
 ---
 
@@ -11,7 +11,7 @@ Als Build-Management-Tool lassen sich Maven oder Gradle nutzen, welche beide im 
 Den Ausgangspunkt bildet in diesem Guide ein Build-Setup für ein minimales Spring-Boot-Projekt. 
 
 <details>
-<summary><img style="height: 12px" src="icons/gradle.svg"> <b>build.gradle</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle</b></summary>
 
 ```groovy
 plugins {
@@ -40,7 +40,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="icons/file-type-maven.svg"> <b>pom.xml</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>pom.xml</b></summary>
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -87,7 +87,7 @@ Um die DLC-Funktionalität zu nutzen, reicht es bereits folgendes Artefakt einzu
 welches die wichtigsten DLC-Funktionen bündelt.
 
 <details>
-<summary><img style="height: 12px" src="icons/gradle.svg"> <b>build.gradle für Spring Boot 3</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle für Spring Boot 3</b></summary>
 
 ```groovy
 dependencies {
@@ -96,7 +96,7 @@ dependencies {
 ```
 </details>
 <details>
-<summary><img style="height: 12px" src="icons/gradle.svg"> <b>build.gradle für Spring Boot 2</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle für Spring Boot 2</b></summary>
 
 ```groovy
 dependencies {
@@ -106,7 +106,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="icons/file-type-maven.svg"> <b>pom.xml für Spring Boot 3</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>pom.xml für Spring Boot 3</b></summary>
 
 ```xml
 <dependencies>
@@ -120,7 +120,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="icons/file-type-maven.svg"> <b>pom.xml für Spring Boot 2</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>pom.xml für Spring Boot 2</b></summary>
 
 ```xml
 <dependencies>
@@ -138,3 +138,7 @@ dependencies {
 |           **Konfiguration**            |
 |:--------------------------------------:|
 | [Nächste Seite >>](./configuration.md) |
+
+---
+
+**DE** / [EN](../../english/guides/build_management_en.md)

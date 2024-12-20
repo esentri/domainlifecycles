@@ -1,4 +1,4 @@
-[Getting Started](index.md)
+[Getting Started](index_de.md)
 
 ---
 
@@ -16,3 +16,8 @@ auf Spring-Boot. Die Beispiel-Domäne entspricht dem vollständigen [sample-proj
 ### [Konfiguration](configuration.md)
 ### [DLC starten](run_application.md)
 ### [Features](features.md)
+
+---
+
+**DE** / [EN](../english/index_en.md)
+

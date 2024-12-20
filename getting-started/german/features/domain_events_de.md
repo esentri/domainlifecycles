@@ -1,4 +1,4 @@
-[Getting Started](../index.md) / [Features](../features.md) / [Domain Events](domain_events.md)
+[Getting Started](../index_de.md) / [Features](../guides/features_de.md) / [Domain Events](domain_events_de.md)
 
 ---
 
@@ -50,4 +50,8 @@ public void listenToEvent(NewCustomerAdded newCustomerAdded) {
 
 |            **Persistence**             |               **Validation**                |
 |:--------------------------------------:|:-------------------------------------------:|
-| [<< Vorherige Seite](./persistence.md) | [Nächste Seite >>](./validation_support.md) |
+| [<< Previous](persistence_de.md) | [Nächste Seite >>](validation_support_de.md) |
+
+---
+
+**DE** / [EN](../../english/features/validation_support_en.md)

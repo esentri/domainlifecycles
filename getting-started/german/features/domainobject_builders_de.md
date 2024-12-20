@@ -1,4 +1,4 @@
-[Getting Started](../index.md) / [Features](../features.md) / [Domain-Objects Builders](domainobject_builders.md)
+[Getting Started](../index_de.md) / [Features](../guides/features_de.md) / [Domain-Objects Builders](domainobject_builders_de.md)
 
 ---
 
@@ -12,7 +12,7 @@ noch Lombok Builder Kompatibilität.
 ## Implementierung
 DLC baut stark auf dem Builder-Pattern auf. Verpflichtend ist hierfür zuerst einmal die Bereitstellung einer 
 Konfiguration für den Default-Builder, welche bereits unter 
-[Projekt erstellen](../configuration.md#DomainObjectBuilderProvider) erläutert wurde.
+[Projekt erstellen](../guides/configuration_de.md#DomainObjectBuilderProvider) erläutert wurde.
 
 Für den Builder lässt sich hier am einfachsten Lombok nutzen:
 ```
@@ -38,4 +38,8 @@ public class Customer extends AggregateRootBase<CustomerId> {
 
 |            **Domain Mirror**             |           **JSON-Mapping**            |
 |:----------------------------------------:|:-------------------------------------:|
-| [<< Vorherige Seite](./domain_mirror.md) | [Nächste Seite >>](./json_mapping.md) |
+| [<< Previous](domain_mirror_de.md) | [Nächste Seite >>](json_mapping_de.md) |
+
+---
+
+**DE** / [EN](../../english/features/domainobject_builders_en.md)

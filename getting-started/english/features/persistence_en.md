@@ -1,21 +1,23 @@
-[Getting Started](../index.md) / [Features](../features.md) / [Persistence](persistence.md)
+[Getting Started](../index_en.md) / [Features](../guides/features_en.md) / [Persistence](persistence_en.md)
 
 ---
 
 # Persistence
+The persistence module of DLC makes it easy to combine the DDD approach with 
+a relational database.
+Some of the functions it offers are:
+- Type-safe Queries based on jOOQ
+- Support and abstraction of many database engines using JOOQ
+- Simplified aggregate queries (DLC Fetcher)
+- Simplified aggregate CRUD support (DLC repositories)
+- Object relational auto mapping
+- Persistence Action Event hooks
+- Full ValueObject support regarding persistence
+- Supports Java `final` keywords and Java optionals within persisted structures
 
-Das Persistence-Modul von DLC ermöglicht ein vereinfachtes Mapping für in der Datenbank persistierten DomainObjects.
-Zu den Funktionen gehören unter anderem:
--   Vereinfachte Aggregate Queries (DLC Fetcher)
--   Vereinfachte Aggregate CRUD Unterstützung (DLC Repositories)
--   Object relationales Auto Mapping
--   Persistenz Action Event Hooks
--   Vollumfänglicher ValueObject support bezüglich Persistenz
--   Unterstützt Java  `final`  Keywords und Java-Optionals innerhalb persistierter Strukturen
-
-## Implementierung
-**Hinweis:** Damit eine reibungslose Implementierung des Repositories möglich ist,
-muss das Projekt zuerst einmal kompiliert werden, sodass die entsprechenden JOOQ-Records erstellt werden.
+## Implementation
+**Hinweis:** Damit eine reibungslose Implementation des Repositories möglich ist,
+muss das Projekt zuerst einmal kompiliert werden, sodass die entsprechenden JOOQ-Records/-Tabellen erstellt werden.
 
 ### Repository anlegen
 Wie auch schon bei den anderen Domain-Types, lässt sich ein Repository definieren,
@@ -42,13 +44,12 @@ public class CustomerRepository extends JooqAggregateRepository<Customer, Custom
 }
 ```
 
-Bereits durch diese grundlegende Definition sind simple CRUD-Operationen für Aggregates möglich, wobei DLC die Aggregate Struktur auf potentiell mehrere
-auf Datenbank Ebene abgebildete Tabellen unterstützt.
+Bereits durch diese grundlegende Definition sind simple CRUD-Operationen möglich.
 
 ### Eigene Datenbank-Operationen definieren
 Komplexere Operationen lassen sich hervorragend durch das Zusammenspiel zwischen DLC und JOOQ definieren.
 Hierbei findet oft der `Fetcher` Anwendung, welcher vereinfachtes Laden der Aggregates aus der Datenbank ermöglicht.
-Beispielhafte Implementierungen können dann so aussehen:
+Beispielhafte Implementationen können dann so aussehen:
 
 #### Find All
 ```
@@ -61,8 +62,6 @@ public List<Customer> findAllCustomers() {
     }
 ```
 `CUSTOMER` ist hierbei die JOOQ Repräsentation der Customer-Tabelle und entsprechende JOOQ-Records der Datenbank.
-Der Fechter übernimmt per `fetchDeep` das Laden weiterer jOOQ-Records aus den Tabellen aus welchen sich das Aggregate zusammensetzt.
-Zudem übernimmt der das Mapping in die gewünschte Aggregate-Struktur in der Java-Ebene.
 
 #### Find Paginated
 ```
@@ -93,8 +92,30 @@ public List<Customer> findCustomersPaginatedAndCustomerFirstNameEqualTo(String f
 }
 ```
 
+## Tests
+
+```
+class CustomerRepositoryTest {
+
+    @Autowired
+    CustomerRepository customerRepository;
+
+    @Test
+    void testFindAll() {
+        
+        
+    }
+
+}
+```
+
+
 ---
 
-|             **OpenAPI-Extension**             |           **Domain-Events**            |
-|:---------------------------------------------:|:--------------------------------------:|
-| [<< Vorherige Seite](./open_api_extension.md) | [Nächste Seite >>](./domain_events.md) |
+|          **OpenAPI-Extension**           |           **Domain-Events**            |
+|:----------------------------------------:|:--------------------------------------:|
+| [<< Previous](open_api_extension_en.md)  | [Next >>](domain_events_en.md) |
+
+---
+
+**EN** / [DE](../../german/features/persistence_de.md)

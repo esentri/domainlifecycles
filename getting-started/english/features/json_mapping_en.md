@@ -1,18 +1,18 @@
-[Getting Started](../index.md) / [Features](../features.md) / [JSON-Mapping](json_mapping.md)
+[Getting Started](../index_en.md) / [Features](../guides/features_en.md) / [JSON-Mapping](json_mapping_en.md)
 
 ---
 
 # JSON-Mapping
-Bietet JSON-Mapping basierend auf [Jackson](https://github.com/FasterXML/jackson), mit DDD spezifischen Anpassungen
-und Möglichkeiten zur Konfiguration.
+Offers JSON mapping based on [Jackson](https://github.com/FasterXML/jackson), with DDD specific customization 
+and configuration options.
 
 ---
 
-## Implementierung
+## Implementation
 Ein an DDD angepasstes, besseres JSON-Mapping wird bereits sichergestellt durch die 
-vorgenommene Konfiguration unter [Projekt erstellen](../configuration.md#JSON-Mapping).
+vorgenommene Konfiguration unter [Projekt erstellen](../guides/configuration_en.md#JSON-Mapping).
 
-Im weiteren Verlauf kann das Default-Mapping angepasst werden durch das Überschreiben einer oder mehrerer Methoden des
+Im weiteren Verlauf kann das Default-Mapping angepasst werden durch das überschreiben einer oder mehrerer Methoden des
 `JacksonMappingCustomizer`, wie folgt:
 ```
 public class CustomerMappingCustomizer extends JacksonMappingCustomizer<Customer>{
@@ -24,17 +24,13 @@ public class CustomerMappingCustomizer extends JacksonMappingCustomizer<Customer
     @Override
     public void afterObjectRead(PersistableMappingContext mappingContext, ObjectCodec codec) {
         DomainObjectBuilder<?> b = mappingContext.domainObjectBuilder;
-     
+        
+        // alter some of the mapping configurations
     }
-
 }
 ```
 
-In diesem obigen Beispiel wird die Methode ```afterObjectRead``` von DLC aufgerufen, wenn zuvor ein entsprechendes JSON-Objekt 
-geparst und dessen Werte bereits in die DomainObjectBuilder-Instanz übergeben wurde. Nun kann der Builder manipuliert werden,
-bevor DLC aus diesem das Ziel-Domänenobjekt erzeugt.
-
-Der `JacksonMappingCustomizer` muss über die folgende Konfiguration aktiviert werden per ````module.registerCustomizer````:
+und die Konfiguration anschließend aktivieren:
 
 ```
 @Configuration
@@ -54,7 +50,7 @@ public class JacksonConfiguration {
 ```
 
 ## Unit-Tests
-Für entsprechende Unit-Tests kann sowohl die Serialisierung als auch Deserialisierung getestet werden.
+Für entsprechende Unit-Tests kann sowohl die Serialisierung als auch Deserialisierung getestete werden.
 Ein Beispiel zum Testen einer erfolgreichen Serialisierung:
 
 ```
@@ -70,15 +66,7 @@ public class JacksonTest {
 
     public JacksonTest() {
         this.objectMapper = new ObjectMapper();
-      
-        var dlcJacksonModule = new DlcJacksonModule(
-            new InnerClassDomainObjectBuilderProvider(),
-            entityIdentityProvider
-        );
-        
-        var customerMappingCustomizer = new CustomerMappingCustomizer();
-        
-        dlcJacksonModule.registerCustomizer(customerMappingCustomizer, customerMappingCustomizer.instanceType);
+        objectMapper.registerModule(new JavaTimeModule());
         
         var entityIdentityProvider = new EntityIdentityProvider() {
             @Override
@@ -91,9 +79,13 @@ public class JacksonTest {
         };
 
         objectMapper.registerModule(
-            dlcJacksonModule
+            new DlcJacksonModule(
+                new InnerClassDomainObjectBuilderProvider(),
+                entityIdentityProvider
+            )
         );
-        
+        objectMapper.registerModule(new Jdk8Module());
+        objectMapper.registerModule(new ParameterNamesModule());
     }
     
     @Test
@@ -114,9 +106,12 @@ public class JacksonTest {
 }
 ```
 
-
 ---
 
 |            **Domain-Object Builders**             |            **OpenAPI-Extension**            |
 |:-------------------------------------------------:|:-------------------------------------------:|
-| [<< Vorherige Seite](./dommainobject_builders.md) | [Nächste Seite >>](./open_api_extension.md) |
+| [<< Previous](./dommainobject_builders.md) | [Next >>](open_api_extension_en.md) |
+
+---
+
+**EN** / [DE](../../german/features/json_mapping_de.md)

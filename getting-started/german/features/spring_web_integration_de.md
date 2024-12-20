@@ -1,4 +1,4 @@
-[Getting Started](../index.md) / [Features](../features.md) / [Spring-Web-Integration](spring_web_integration.md)
+[Getting Started](../index_de.md) / [Features](../guides/features_de.md) / [Spring-Web-Integration](spring_web_integration_de.md)
 
 ---
 
@@ -48,4 +48,8 @@ public class WebConfiguration implements WebMvcConfigurer {
 
 |                **Validation**                 |           **Domain-Diagrammer**            |
 |:---------------------------------------------:|:------------------------------------------:|
-| [<< Vorherige Seite](./validation_support.md) | [Nächste Seite >>](./domain_diagrammer.md) |
+| [<< Previous](validation_support_de.md) | [Nächste Seite >>](domain_diagrammer_de.md) |
+
+---
+
+**DE** / [EN](../../english/features/spring_web_integration_en.md)

@@ -1,22 +1,21 @@
-[Getting Started](../index.md) / [Features](../features.md) / [Validation Support](validation_support.md)
+[Getting Started](../index_en.md) / [Features](../guides/features_en.md) / [Validation Support](validation_support_en.md)
 
 ---
 
 # Validation Support
-Leichte Implementierung von Geschäftslogik-Regeln und Domänen spezifische Invarianten.
--   DomainAssertion API
--   Optional: Erweiterter Support der Java Bean Validation Annotations innerhalb eines DomainObjects um Invarianten oder Pre-/Post/-Conditions auf Methoden zu implementieren
--   Optional: ByteCode Erweiterung um die Implementierung einer “Always-Valid-Strategy” zu vereinfachen
+Implementation of business logic rules and domain-specific invariants using the DomainAssertion API. 
+Optionally, DLC also offers extended support of Java Bean Validation Annotations within a DomainObject to implement 
+invariants or pre/post/conditions on methods and also ByteCode extension to simplify the implementation of 
+an “Always-Valid-Strategy”.
 
 ---
-## Implementierung
+
+## Implementation
 In jedem der Domain-Types kann eine Validierung und Umsetzung von Geschäftslogik implementiert werden.
 
 Zum Beispiel so:
 ```
 public class Customer extends AggregateRootBase<CustomerId> {
-
-    @NotNull
     private final CustomerId id;
     private final LocalDate birthDate;
     
@@ -55,36 +54,9 @@ public class Customer extends AggregateRootBase<CustomerId> {
     }
 }
 ```
-In diesem Beispiel werden sowohl BeanValidation-Annotations (siehe `@NotNull`) als auch programmatische
-`DomainAssertions` verwendet. Die ByteCode-Erweiterung von DLC fügt die Aufrufe von `validate()` und `BeanValidations-validate(this);`
-automatisch an den passenden Stellen ein. Der Einsatz von Bean Validations ist dabei Optional. Alternativ lassen sich 
-alle Validierungen auch als DomainAssertion abbilden.
 
 Die hier verwendete Byte-Code-Extension funktioniert natürlich nur, sofern diese
-auch aktiviert wurde, beispielsweise in der Spring Boot Application Klasse mit `@PostConstruct`-Aufruf:
-
-```Java
-@SpringBootApplication
-public class ShopApplication {
-
-    static {
-        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleshop"));
-    }
-    
-    public static void main(String[] args) {
-        new SpringApplicationBuilder(ShopApplication.class).run(args);
-    }
-
-    /**
-     * Enable DLC byte code extension for the domain model of the "sampleshop"
-     */
-    @PostConstruct
-    public void postConstruct() {
-        ValidationDomainClassExtender.extend("sampleshop");
-    }
-}
-```
-
+auch wie in der [Konfiguration](../guides/configuration_en.md) gezeigt aktiviert wurde.
 
 Andernfalls können die Aufrufe `BeanValidations.validate(this);` und `validate();` 
 auch immer explizit vorgenommen werden.
@@ -116,6 +88,10 @@ class CustomerTest {
 ```
 ---
 
-|            **Domain-Events**             |           **Spring-Web-Integration**            |
-|:----------------------------------------:|:-----------------------------------------------:|
-| [<< Vorherige Seite](./domain_events.md) | [Nächste Seite >>](./spring_web_integration.md) |
+|          **Domain-Events**           |        **Spring-Web-Integration**         |
+|:------------------------------------:|:-----------------------------------------:|
+| [<< Previous](domain_events_en.md)   | [Next >>](spring_web_integration_en.md)   |
+
+---
+
+**EN** / [DE](../../german/features/validation_support_de.md)

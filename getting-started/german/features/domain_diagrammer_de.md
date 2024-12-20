@@ -1,4 +1,4 @@
-[Getting Started](../index.md) / [Features](../features.md) / [Domain Diagrammer](domain_diagrammer.md)
+[Getting Started](../index_de.md) / [Features](../guides/features_de.md) / [Domain Diagrammer](domain_diagrammer_de.md)
 
 ---
 
@@ -25,4 +25,8 @@ FileUtils.writeStringToFile(file, actualDiagramText, StandardCharsets.UTF_8);
 
 |            **Spring-Web-Integration**             |
 |:-------------------------------------------------:|
-| [<< Vorherige Seite](./spring_web_integration.md) |
+| [<< Previous](spring_web_integration_de.md) |
+
+---
+
+**DE** / [EN](../../english/features/domain_diagrammer_en.md)
