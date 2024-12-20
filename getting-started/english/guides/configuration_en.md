@@ -1,4 +1,4 @@
-[Getting Started](index.md) / [Konfiguration](configuration.md)
+[Getting Started](../index_en.md) / [Konfiguration](configuration_en.md)
 
 ---
 
@@ -8,7 +8,7 @@ DLC bietet viele Möglichkeiten für Individualisierung und Konfiguration, manch
 müssen aber auch verpflichtend vorgenommen werden bevor der volle Funktionsumfang gewährleistet werden kann.
 Im Folgenden befinden sich alle Konfigurationen (bzw. Spring-Beans), welche für die grundlegenden DLC-Funktionen
 benötigt werden. Hierbei sind alle Beans sortiert nach dem jeweiligen DLC-Feature, welchem sie zuzuordnen sind.
-Im Guide zu den [Features](features.md) wird an vielen Stellen nochmal näher auf einige Stellen eingegangen und 
+Im Guide zu den [Features](features_en.md) wird an vielen Stellen nochmal näher auf einige Stellen eingegangen und 
 rückverwiesen.
 
 ---
@@ -16,7 +16,7 @@ rückverwiesen.
 ## Persistence
 Das Persistence Modul ist zuständig für alle Interaktionen zwischen DLC und einer relationalen Datenbank.
 
-Zusätzlich zur folgenden Konfiguration finden sich [hier](./features/persistence.md) Beispiele zur Implementierung.
+Zusätzlich zur folgenden Konfiguration finden sich [hier](../features/persistence_en.md) Beispiele zur Implementation.
 
 ### Datenbank Driver
 Zunächst muss allgemein zur Nutzung einer Datenbank der jeweilige Database-Driver eingebunden werden.
@@ -26,7 +26,7 @@ Eine Auflistung aller unterstützten Datenbanken findet sich <a href="https://ww
 Im Folgenden wird für die beispielhaften Konfigurationen eine interne H2-Datenbank genutzt.
 
 <details>
-<summary><img style="height: 12px" src="icons/gradle.svg"> <b>build.gradle</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle</b></summary>
 
 ```groovy
 dependencies {
@@ -36,7 +36,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="icons/file-type-maven.svg"> <b>pom.xml</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>pom.xml</b></summary>
 
 ```xml name="index.js"
 <dependencies>
@@ -68,7 +68,7 @@ relationalen Datenbanken zu erleichtern.
 Hierfür wird zusätzlich noch die Spring-Boot spezifische JOOQ Dependency gebraucht:
 
 <details>
-<summary><img style="height: 12px" src="icons/gradle.svg"> <b>build.gradle</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle</b></summary>
 
 ```groovy
 dependencies {
@@ -78,7 +78,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="icons/file-type-maven.svg"> <b>pom.xml</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>pom.xml</b></summary>
 
 ```xml
 <dependencies>
@@ -94,7 +94,7 @@ Anschließend kann man den JOOQ Code-Generator nach Belieben konfigurieren.
 Hier eine beispielhafte Konfiguration, für ein bereits bestehendes Datenbank-Schema:
 
 <details>
-<summary><img style="height: 12px" src="icons/gradle.svg"> <b>build.gradle</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle</b></summary>
 
 ```groovy
 jooq {
@@ -135,7 +135,7 @@ Die Konfiguration für Maven findet nicht in der pom.xml statt, sondern in einer
 im Projekt-Ordner liegen muss.
 
 <details>
-<summary><img style="height: 12px" src="icons/file-type-maven.svg"> <b>library.xml</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>library.xml</b></summary>
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -240,7 +240,7 @@ EntityIdentityProvider identityProvider(DSLContext dslContext) {
 
 
 ## Domain-Object-Builders
-Zusätzlich zur folgenden Konfiguration finden sich [hier](./features/domainobject_builders.md) Beispiele zur Implementierung.
+Zusätzlich zur folgenden Konfiguration finden sich [hier](../features/domainobject_builders_en.md) Beispiele zur Implementation.
 
 ### Spring-Beans
 Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
@@ -260,7 +260,7 @@ DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
 
 
 ## JSON-Mapping
-Zusätzlich zur folgenden Konfiguration finden sich <a href="./features/json_mapping.md">hier</a> Beispiele zur Implementierung.
+Zusätzlich zur folgenden Konfiguration finden sich <a href="./features/json_mapping.md">hier</a> Beispiele zur Implementation.
 
 ### Spring-Beans
 Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
@@ -281,7 +281,7 @@ DlcJacksonModule dlcModuleConfiguration(List<? extends JacksonMappingCustomizer<
 ```
 
 ## Domain-Events
-Zusätzlich zur folgenden Konfiguration finden sich <a href="./features/domain_events.md">hier</a> Beispiele zur Implementierung.
+Zusätzlich zur folgenden Konfiguration finden sich <a href="./features/domain_events.md">hier</a> Beispiele zur Implementation.
 
 ### Spring-Beans
 Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
@@ -310,7 +310,7 @@ public ChannelRoutingConfiguration channelConfiguration(PlatformTransactionManag
 ```
 
 ## Domain-Types
-Zusätzlich zur folgenden Konfiguration finden sich [hier](./features/domain_types.md) Beispiele zur Implementierung.
+Zusätzlich zur folgenden Konfiguration finden sich [hier](../features/domain_types_en.md) Beispiele zur Implementation.
 
 ### Spring-Beans
 Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
@@ -328,7 +328,7 @@ public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds){
 
 
 ## Open-API-Extension
-Zusätzlich zur folgenden Konfiguration finden sich [hier](./features/open_api_extension.md) Beispiele zur Implementierung.
+Zusätzlich zur folgenden Konfiguration finden sich [hier](../features/open_api_extension_en.md) Beispiele zur Implementation.
 
 ### Spring-Beans
 Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
@@ -347,4 +347,8 @@ public DlcOpenApiCustomizer openApiCustomizer(SpringDocConfigProperties springDo
 
 |          **Projekt erstellen**            |             **DLC starten**              |
 |:-----------------------------------------:|:----------------------------------------:|
-| [<< Vorherige Seite](./create_project.md) | [Nächste Seite >>](./run_application.md) |
+| [<< Previous](create_project_en.md) | [Next >>](run_application_en.md) |
+
+---
+
+**EN** / [DE](../../german/guides/configuration_de.md)

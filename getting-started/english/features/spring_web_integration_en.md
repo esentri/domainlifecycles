@@ -1,4 +1,4 @@
-[Getting Started](../index.md) / [Features](../features.md) / [Spring-Web-Integration](spring_web_integration.md)
+[Getting Started](../index_en.md) / [Features](../guides/features_en.md) / [Spring-Web-Integration](spring_web_integration_en.md)
 
 ---
 
@@ -9,8 +9,8 @@ Pfad-/Query-Parameters zu nutzen.
 
 ---
 
-## Implementierung
-Keine weitere Implementierung nötig.
+## Implementation
+Keine weitere Implementation nötig.
 
 ## Unit-Tests
 Unit-Tests erfolgen hierfür wie gewohnt entsprechend der Spring-Web Unit-Tests.
@@ -19,4 +19,8 @@ Unit-Tests erfolgen hierfür wie gewohnt entsprechend der Spring-Web Unit-Tests.
 
 |                **Validation**                 |           **Domain-Diagrammer**            |
 |:---------------------------------------------:|:------------------------------------------:|
-| [<< Vorherige Seite](./validation_support.md) | [Nächste Seite >>](./domain_diagrammer.md) |
+| [<< Previous](validation_support_en.md) | [Next >>](domain_diagrammer_en.md) |
+
+---
+
+**EN** / [DE](../../german/features/spring_web_integration_de.md)

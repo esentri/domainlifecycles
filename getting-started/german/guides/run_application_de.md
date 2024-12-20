@@ -1,4 +1,4 @@
-[Getting Started](index.md) / [DLC starten](run_application.md)
+[Getting Started](../index_de.md) / [DLC starten](run_application_de.md)
 
 ---
 
@@ -10,7 +10,7 @@ Nachdem alles Nötige konfiguriert wurde, muss der DLC Mirror beim Starten der A
 initialisiert werden:
 
 <details>
-<summary><img style="height: 12px" src="icons/java.svg"> <b>Application.java</b></summary>
+<summary><img style="height: 12px" src="../icons/java.svg"> <b>Application.java</b></summary>
 
 ```java
 @SpringBootApplication
@@ -31,4 +31,8 @@ public class SampleApplication {
 
 |            **Konfiguration**             |           **Features**            |
 |:----------------------------------------:|:---------------------------------:|
-| [<< Vorherige Seite](./configuration.md) | [Nächste Seite >>](./features.md) |
+| [<< Previous](configuration_de.md) | [Nächste Seite >>](features_de.md) |
+
+---
+
+**DE** / [EN](../../english/guides/run_application_en.md)

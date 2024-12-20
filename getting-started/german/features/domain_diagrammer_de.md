@@ -1,10 +1,10 @@
-[Getting Started](../index.md) / [Features](../features.md) / [Domain Diagrammer](domain_diagrammer.md)
+[Getting Started](../index_de.md) / [Features](../guides/features_de.md) / [Domain Diagrammer](domain_diagrammer_de.md)
 
 ---
 
 # Domain Diagrammer
 Das Domain-Diagrammer Modul ist im Stande dazu ein UMl-Klassendiagramm aller DDD-Bausteine 
-des Projekts zu erstellen. Das Ergebnis ist hierbei Text basiert im NomNoml [Nomnoml](https://nomnoml.com/)-Format.
+des Projekts zu erstellen. Das Ergebnis ist hierbei Text basiert im [Nomnoml](https://nomnoml.com/)-Format.
 
 ---
 
@@ -21,7 +21,7 @@ FileUtils.writeStringToFile(file, actualDiagramText, StandardCharsets.UTF_8);
 
 ```
 
-## Implementierung
+## Unit-Tests
 Ein geeigneter Unit-Test wäre hierbei der Abgleich des generierten Nomnomls und der gewollten
 "Soll"-Version des Nomnomls, worauf aber hier der Einfachheit halber nicht näher eingegangen wird.
 
@@ -29,4 +29,8 @@ Ein geeigneter Unit-Test wäre hierbei der Abgleich des generierten Nomnomls und
 
 |            **Spring-Web-Integration**             |
 |:-------------------------------------------------:|
-| [<< Vorherige Seite](./spring_web_integration.md) |
+| [<< Previous](spring_web_integration_de.md) |
+
+---
+
+**DE** / [EN](../../english/features/domain_diagrammer_en.md)

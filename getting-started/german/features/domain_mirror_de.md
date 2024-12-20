@@ -1,4 +1,4 @@
-[Getting Started](../index.md) / [Features](../features.md) / [Domain Mirror](domain_mirror.md)
+[Getting Started](../index_de.md) / [Features](../guides/features_de.md) / [Domain Mirror](domain_mirror_de.md)
 
 ---
 
@@ -51,4 +51,8 @@ public class SomeDomainMirrorTest {
 
 |            **Domain Types**             |           **Domain-Object Builders**           |
 |:---------------------------------------:|:----------------------------------------------:|
-| [<< Vorherige Seite](./domain_types.md) | [Nächste Seite >>](./domainobject_builders.md) |
+| [<< Previous](domain_types_de.md) | [Nächste Seite >>](domainobject_builders_de.md) |
+
+---
+
+**DE** / [EN](../../english/features/domain_mirror_en.md)

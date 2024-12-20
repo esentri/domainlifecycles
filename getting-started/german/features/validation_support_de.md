@@ -1,4 +1,4 @@
-[Getting Started](../index.md) / [Features](../features.md) / [Validation Support](validation_support.md)
+[Getting Started](../index_de.md) / [Features](../guides/features_de.md) / [Validation Support](validation_support_de.md)
 
 ---
 
@@ -56,7 +56,7 @@ public class Customer extends AggregateRootBase<CustomerId> {
 ```
 
 Die hier verwendete Byte-Code-Extension funktioniert natürlich nur, sofern diese
-auch wie in der [Konfiguration](../configuration.md) gezeigt aktiviert wurde.
+auch wie in der [Konfiguration](../guides/configuration_de.md) gezeigt aktiviert wurde.
 
 Andernfalls können die Aufrufe `BeanValidations.validate(this);` und `validate();` 
 auch immer explizit vorgenommen werden.
@@ -90,4 +90,8 @@ class CustomerTest {
 
 |            **Domain-Events**             |           **Spring-Web-Integration**            |
 |:----------------------------------------:|:-----------------------------------------------:|
-| [<< Vorherige Seite](./domain_events.md) | [Nächste Seite >>](./spring_web_integration.md) |
+| [<< Previous](domain_events_de.md) | [Nächste Seite >>](spring_web_integration_de.md) |
+
+---
+
+**DE** / [EN](../../english/features/validation_support_en.md)

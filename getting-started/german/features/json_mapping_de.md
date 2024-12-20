@@ -1,4 +1,4 @@
-[Getting Started](../index.md) / [Features](../features.md) / [JSON-Mapping](json_mapping.md)
+[Getting Started](../index_de.md) / [Features](../guides/features_de.md) / [JSON-Mapping](json_mapping_de.md)
 
 ---
 
@@ -10,7 +10,7 @@ und Möglichkeiten zur Konfiguration.
 
 ## Implementierung
 Ein an DDD angepasstes, besseres JSON-Mapping wird bereits sichergestellt durch die 
-vorgenommene Konfiguration unter [Projekt erstellen](../configuration.md#JSON-Mapping).
+vorgenommene Konfiguration unter [Projekt erstellen](../guides/configuration_de.md#JSON-Mapping).
 
 Im weiteren Verlauf kann das Default-Mapping angepasst werden durch das überschreiben einer oder mehrerer Methoden des
 `JacksonMappingCustomizer`, wie folgt:
@@ -107,9 +107,12 @@ public class JacksonTest {
 }
 ```
 
-
 ---
 
 |            **Domain-Object Builders**             |            **OpenAPI-Extension**            |
 |:-------------------------------------------------:|:-------------------------------------------:|
-| [<< Vorherige Seite](./dommainobject_builders.md) | [Nächste Seite >>](./open_api_extension.md) |
+| [<< Previous](./dommainobject_builders.md) | [Nächste Seite >>](open_api_extension_de.md) |
+
+---
+
+**DE** / [EN](../../english/features/json_mapping_en.md)

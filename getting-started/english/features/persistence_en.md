@@ -1,4 +1,4 @@
-[Getting Started](../index.md) / [Features](../features.md) / [Persistence](persistence.md)
+[Getting Started](../index_en.md) / [Features](../guides/features_en.md) / [Persistence](persistence_en.md)
 
 ---
 
@@ -15,8 +15,8 @@ Zu den Funktionen gehören unter anderem:
 -   Vollumfänglicher ValueObject support bezüglich Persistenz
 -   Unterstützt Java  `final`  Keywords und Java-Optionals innerhalb persistierter Strukturen
 
-## Implementierung
-**Hinweis:** Damit eine reibungslose Implementierung des Repositories möglich ist,
+## Implementation
+**Hinweis:** Damit eine reibungslose Implementation des Repositories möglich ist,
 muss das Projekt zuerst einmal kompiliert werden, sodass die entsprechenden JOOQ-Records/-Tabellen erstellt werden.
 
 ### Repository anlegen
@@ -49,7 +49,7 @@ Bereits durch diese grundlegende Definition sind simple CRUD-Operationen möglic
 ### Eigene Datenbank-Operationen definieren
 Komplexere Operationen lassen sich hervorragend durch das Zusammenspiel zwischen DLC und JOOQ definieren.
 Hierbei findet oft der `Fetcher` Anwendung, welcher vereinfachtes Laden der Aggregates aus der Datenbank ermöglicht.
-Beispielhafte Implementierungen können dann so aussehen:
+Beispielhafte Implementationen können dann so aussehen:
 
 #### Find All
 ```
@@ -114,4 +114,8 @@ class CustomerRepositoryTest {
 
 |             **OpenAPI-Extension**             |           **Domain-Events**            |
 |:---------------------------------------------:|:--------------------------------------:|
-| [<< Vorherige Seite](./open_api_extension.md) | [Nächste Seite >>](./domain_events.md) |
+| [<< Previous](open_api_extension_en.md) | [Next >>](domain_events_en.md) |
+
+---
+
+**EN** / [DE](../../german/features/persistence_de.md)

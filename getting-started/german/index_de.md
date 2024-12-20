@@ -1,4 +1,4 @@
-[Getting Started](index.md)
+[Getting Started](index_de.md)
 
 ---
 
@@ -12,7 +12,11 @@ auf einem Spring-Boot Projekt, und alles Domänen spezifische basiert auf einem 
 
 ---
 
-### [Projekt erstellen](create_project.md)
-### [Konfiguration](configuration.md)
-### [DLC starten](run_application.md)
-### [Features](features.md)
+### [Projekt erstellen](guides/create_project_de.md)
+### [Konfiguration](guides/configuration_de.md)
+### [DLC starten](guides/run_application_de.md)
+### [Features](guides/features_de.md)
+
+---
+
+**DE** / [EN](../english/index_en.md)

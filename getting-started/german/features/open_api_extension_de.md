@@ -1,4 +1,4 @@
-[Getting Started](../index.md) / [Features](../features.md) / [Open-API Extension](open_api_extension.md)
+[Getting Started](../index_de.md) / [Features](../guides/features_de.md) / [Open-API Extension](open_api_extension_de.md)
 
 ---
 
@@ -11,12 +11,12 @@ in die API-Doku.
 
 ## Implementierung
 DLC unterstützt die Spring Open-API Dokumentation der REST-Schnittstellen,
-und zwar konform zum unter [JSON-Mapping](json_mapping.md) definierten Mapping.
+und zwar konform zum unter [JSON-Mapping](json_mapping_de.md) definierten Mapping.
 Insbesondere relevant für Objekte wie ID's oder 'single valued' Value-Objects.
 Diese werden dementsprechend leserlicher in der Open-API Dokumentation dargestellt.
 Die Implementierung erfolgt dabei analog zur allgemeinen Nutzung der Open-API Dokumentation
 in Spring-Boot Projekten, DLC beeinflusst lediglich die Schema-Beschreibungen der Parameter und
-Rückgabe-Werte, und jedoch auch das Hinzufügen von Validations, sofern hier welche definiert wurden (siehe [Validations](validation_support.md)).
+Rückgabe-Werte, und jedoch auch das Hinzufügen von Validations, sofern hier welche definiert wurden (siehe [Validations](validation_support_de.md)).
 
 ```
 @RequestMapping("/api/customer")
@@ -48,4 +48,8 @@ public DlcOpenApiCustomizer openApiCustomizer(
 
 |            **JSON-Mapping**             |           **Persistence**            |
 |:---------------------------------------:|:------------------------------------:|
-| [<< Vorherige Seite](./json_mapping.md) | [Nächste Seite >>](./persistence.md) |
+| [<< Previous](json_mapping_de.md) | [Nächste Seite >>](persistence_de.md) |
+
+---
+
+**DE** / [EN](../../english/features/open_api_extension_en.md)
