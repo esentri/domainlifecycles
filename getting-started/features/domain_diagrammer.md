@@ -3,8 +3,8 @@
 ---
 
 # Domain Diagrammer
-Das Domain-Diagrammer Modul ist im Stande dazu ein UMl-Klassendiagramm aller DDD-Bausteine 
-des Projekts zu erstellen. Das Ergebnis ist hierbei Text basiert im NomNoml [Nomnoml](https://nomnoml.com/)-Format.
+Das Domain-Diagrammer Modul ist imstande ein UML-Klassendiagramm aller DDD Building Blocks 
+des Projekts zu erstellen. Das Ergebnis ist hierbei Text-basiert im NomNoml [Nomnoml](https://nomnoml.com/)-Format.
 
 ---
 
@@ -20,10 +20,6 @@ File file = new File("generated_nomnoml_example.nomnoml");
 FileUtils.writeStringToFile(file, actualDiagramText, StandardCharsets.UTF_8);
 
 ```
-
-## Implementierung
-Ein geeigneter Unit-Test wäre hierbei der Abgleich des generierten Nomnomls und der gewollten
-"Soll"-Version des Nomnomls, worauf aber hier der Einfachheit halber nicht näher eingegangen wird.
 
 ---
 

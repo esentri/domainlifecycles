@@ -12,7 +12,7 @@ und Möglichkeiten zur Konfiguration.
 Ein an DDD angepasstes, besseres JSON-Mapping wird bereits sichergestellt durch die 
 vorgenommene Konfiguration unter [Projekt erstellen](../configuration.md#JSON-Mapping).
 
-Im weiteren Verlauf kann das Default-Mapping angepasst werden durch das überschreiben einer oder mehrerer Methoden des
+Im weiteren Verlauf kann das Default-Mapping angepasst werden durch das Überschreiben einer oder mehrerer Methoden des
 `JacksonMappingCustomizer`, wie folgt:
 ```
 public class CustomerMappingCustomizer extends JacksonMappingCustomizer<Customer>{
@@ -24,14 +24,17 @@ public class CustomerMappingCustomizer extends JacksonMappingCustomizer<Customer
     @Override
     public void afterObjectRead(PersistableMappingContext mappingContext, ObjectCodec codec) {
         DomainObjectBuilder<?> b = mappingContext.domainObjectBuilder;
-        
-        // alter some of the mapping configurations
+     
     }
 
 }
 ```
 
-und die Konfiguration anschließend aktivieren:
+In diesem obigen Beispiel wird die Methode ```afterObjectRead``` von DLC aufgerufen, wenn zuvor ein entsprechendes JSON-Objekt 
+geparst und dessen Werte bereits in die DomainObjectBuilder-Instanz übergeben wurde. Nun kann der Builder manipuliert werden,
+bevor DLC aus diesem das Ziel-Domänenobjekt erzeugt.
+
+Der `JacksonMappingCustomizer` muss über die folgende Konfiguration aktiviert werden per ````module.registerCustomizer````:
 
 ```
 @Configuration
@@ -51,7 +54,7 @@ public class JacksonConfiguration {
 ```
 
 ## Unit-Tests
-Für entsprechende Unit-Tests kann sowohl die Serialisierung als auch Deserialisierung getestete werden.
+Für entsprechende Unit-Tests kann sowohl die Serialisierung als auch Deserialisierung getestet werden.
 Ein Beispiel zum Testen einer erfolgreichen Serialisierung:
 
 ```
@@ -67,7 +70,15 @@ public class JacksonTest {
 
     public JacksonTest() {
         this.objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
+      
+        var dlcJacksonModule = new DlcJacksonModule(
+            new InnerClassDomainObjectBuilderProvider(),
+            entityIdentityProvider
+        );
+        
+        var customerMappingCustomizer = new CustomerMappingCustomizer();
+        
+        dlcJacksonModule.registerCustomizer(customerMappingCustomizer, customerMappingCustomizer.instanceType);
         
         var entityIdentityProvider = new EntityIdentityProvider() {
             @Override
@@ -80,13 +91,9 @@ public class JacksonTest {
         };
 
         objectMapper.registerModule(
-            new DlcJacksonModule(
-                new InnerClassDomainObjectBuilderProvider(),
-                entityIdentityProvider
-            )
+            dlcJacksonModule
         );
-        objectMapper.registerModule(new Jdk8Module());
-        objectMapper.registerModule(new ParameterNamesModule());
+        
     }
     
     @Test

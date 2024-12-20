@@ -3,14 +3,15 @@
 ---
 
 # Domain Mirror
-Der Domain-Mirror spiegelt das Meta-Modell der Design/-Projekt-Strukturen innerhalb eines Bounded-Contexts.
-Damit ermöglicht er strukturierte Queries und Navigation innerhalb eines Bounded-Context und aber auch
-vereinfachten Zugriff auf die Werte der `Aggregates`,`Entities`  und  `ValueObjects` mittels Reflection.
+Der Domain-Mirror spiegelt das Meta-Modell der DDD Building Blocks innerhalb eines Bounded-Contexts wider.
+Damit ermöglicht er strukturierte Queries und Navigation über das Modell innerhalb eines Bounded-Context.
 
 ---
 
 ## Implementierung
-Um den Domain-Mirror zu nutzen, muss dieser zuerst initialisiert werden:
+Der Domain-Mirror bildet die Grundlage für alle DLC Features und muss vor allen anderen Konfigurationen initialisiert werden. 
+Dies kann per static Konstruktor geschehen, oder aber auch als Spring Configuration Bean, von welchem dann alle anderen DLC spezifischen 
+Configuration-Beans abhängen (per Spring-Configuration mit ```@DependsOn```):
 ```
 @SpringBootApplication
 public class SampleApplication {
@@ -21,28 +22,6 @@ public class SampleApplication {
 
     public static void main(String[] args) {
         ...
-    }
-}
-```
-Anschließend können über die statischen Methoden des Interface `io.domainlifecycles.mirror.api.Domain`
-die DDD-Strukturen des Projekts auf verschiedene Arten nachvollzogen werden.
-Ein Beispiel hierfür wäre:
-```
-Customer customer = Domain.typeMirror("io.sampleapp.customer");
-```
-
-## Unit-Tests
-
-Möchten man Funktionen seines Codes testen, welche sich auf den DLC-Mirror stützen,
-ist es wichtig diesen in der Test-Klasse auch zu initialisieren mit dem korrekten Context-Package:
-
-```
-public class SomeDomainMirrorTest {
-
-    @BeforeAll
-    public static void init() {
-        ReflectiveDomainMirrorFactory factory = new ReflectiveDomainMirrorFactory("tests");
-        Domain.initialize(factory);
     }
 }
 ```

@@ -9,13 +9,14 @@ Leichte Implementierung von Geschäftslogik-Regeln und Domänen spezifische Inva
 -   Optional: ByteCode Erweiterung um die Implementierung einer “Always-Valid-Strategy” zu vereinfachen
 
 ---
-
 ## Implementierung
 In jedem der Domain-Types kann eine Validierung und Umsetzung von Geschäftslogik implementiert werden.
 
 Zum Beispiel so:
 ```
 public class Customer extends AggregateRootBase<CustomerId> {
+
+    @NotNull
     private final CustomerId id;
     private final LocalDate birthDate;
     
@@ -54,9 +55,36 @@ public class Customer extends AggregateRootBase<CustomerId> {
     }
 }
 ```
+In diesem Beispiel werden sowohl BeanValidation-Annotations (siehe `@NotNull`) als auch programmatische
+`DomainAssertions` verwendet. Die ByteCode-Erweiterung von DLC fügt die Aufrufe von `validate()` und `BeanValidations-validate(this);`
+automatisch an den passenden Stellen ein. Der Einsatz von Bean Validations ist dabei Optional. Alternativ lassen sich 
+alle Validierungen auch als DomainAssertion abbilden.
 
 Die hier verwendete Byte-Code-Extension funktioniert natürlich nur, sofern diese
-auch wie in der [Konfiguration](../configuration.md) gezeigt aktiviert wurde.
+auch aktiviert wurde, beispielsweise in der Spring Boot Application Klasse mit `@PostConstruct`-Aufruf:
+
+```Java
+@SpringBootApplication
+public class ShopApplication {
+
+    static {
+        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleshop"));
+    }
+    
+    public static void main(String[] args) {
+        new SpringApplicationBuilder(ShopApplication.class).run(args);
+    }
+
+    /**
+     * Enable DLC byte code extension for the domain model of the "sampleshop"
+     */
+    @PostConstruct
+    public void postConstruct() {
+        ValidationDomainClassExtender.extend("sampleshop");
+    }
+}
+```
+
 
 Andernfalls können die Aufrufe `BeanValidations.validate(this);` und `validate();` 
 auch immer explizit vorgenommen werden.

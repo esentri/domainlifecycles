@@ -4,20 +4,18 @@
 
 # Persistence
 
-Das Persistence-Modul von DLC ermöglicht ein vereinfachtes Mapping für in der Datenbank persistierte DomainObjects.
+Das Persistence-Modul von DLC ermöglicht ein vereinfachtes Mapping für in der Datenbank persistierten DomainObjects.
 Zu den Funktionen gehören unter anderem:
--   Type-safe Queries basierend auf jOOQ
--   Unterstützen und abstrahieren vieler Datenbank Engines mittels JOOQ
 -   Vereinfachte Aggregate Queries (DLC Fetcher)
 -   Vereinfachte Aggregate CRUD Unterstützung (DLC Repositories)
--   Object relational auto mapping
--   Persistenz Action Event hooks
+-   Object relationales Auto Mapping
+-   Persistenz Action Event Hooks
 -   Vollumfänglicher ValueObject support bezüglich Persistenz
 -   Unterstützt Java  `final`  Keywords und Java-Optionals innerhalb persistierter Strukturen
 
 ## Implementierung
 **Hinweis:** Damit eine reibungslose Implementierung des Repositories möglich ist,
-muss das Projekt zuerst einmal kompiliert werden, sodass die entsprechenden JOOQ-Records/-Tabellen erstellt werden.
+muss das Projekt zuerst einmal kompiliert werden, sodass die entsprechenden JOOQ-Records erstellt werden.
 
 ### Repository anlegen
 Wie auch schon bei den anderen Domain-Types, lässt sich ein Repository definieren,
@@ -44,7 +42,8 @@ public class CustomerRepository extends JooqAggregateRepository<Customer, Custom
 }
 ```
 
-Bereits durch diese grundlegende Definition sind simple CRUD-Operationen möglich.
+Bereits durch diese grundlegende Definition sind simple CRUD-Operationen für Aggregates möglich, wobei DLC die Aggregate Struktur auf potentiell mehrere
+auf Datenbank Ebene abgebildete Tabellen unterstützt.
 
 ### Eigene Datenbank-Operationen definieren
 Komplexere Operationen lassen sich hervorragend durch das Zusammenspiel zwischen DLC und JOOQ definieren.
@@ -62,6 +61,8 @@ public List<Customer> findAllCustomers() {
     }
 ```
 `CUSTOMER` ist hierbei die JOOQ Repräsentation der Customer-Tabelle und entsprechende JOOQ-Records der Datenbank.
+Der Fechter übernimmt per `fetchDeep` das Laden weiterer jOOQ-Records aus den Tabellen aus welchen sich das Aggregate zusammensetzt.
+Zudem übernimmt der das Mapping in die gewünschte Aggregate-Struktur in der Java-Ebene.
 
 #### Find Paginated
 ```
@@ -91,24 +92,6 @@ public List<Customer> findCustomersPaginatedAndCustomerFirstNameEqualTo(String f
     return result;
 }
 ```
-
-## Tests
-
-```
-class CustomerRepositoryTest {
-
-    @Autowired
-    CustomerRepository customerRepository;
-
-    @Test
-    void testFindAll() {
-        
-        
-    }
-
-}
-```
-
 
 ---
 

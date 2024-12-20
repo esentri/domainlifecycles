@@ -16,7 +16,7 @@ Vereinfacht und kapselt einige Funktionen von Event-Publishing/-Listening von Do
 
 ### Domain-Events definieren
 Ein neues Domain-Event lässt sich ganz einfach definieren, indem eine Klasse das `DomainEvent` Interface implementiert.
-Der Einfachheit halber können hierfür auch genauso gut Java-Records genutzt werden:
+Idealerweise werden hierfür Java-Records genutzt:
 
 ```
 public record NewCustomerAdded(@NotNull Customer customer) implements DomainEvent {}
@@ -36,53 +36,13 @@ Hierbei relevant sind die Annotation `@Publishes(domainEventTypes = {})` und der
 Methode `DomainEvents.publish()`.
 
 ### Auf Domain-Events hören
-Eine Methode hört auf das veröffentlichen von Domain-Events, sofern sie mit der `@ListensTo(domainEventtype = ...)`
-Annotation versehen wurde.
-Dies könnte bspw. so aussehen:
+Eine Methode hört auf veröffentlichte Domain-Events, sofern sie mit der `@ListensTo(domainEventType = ...)`
+Annotation versehen wurde:
 
 ```
 @ListensTo(domainEventType = NewCustomerAdded.class)
 public void listenToEvent(NewCustomerAdded newCustomerAdded) {
     return;
-}
-```
-
-## Unit-Tests
-```
-public class InMemoryChannelTest {
-
-    private static CustomerService customerService;
-
-    @BeforeAll
-    public static void init(){
-        Domain.initialize(new ReflectiveDomainMirrorFactory("tests"));
-        customerService = new CustomerService();
-
-        var services = new Services();
-        services.registerServiceKindInstance(domainService);
-        services.registerServiceKindInstance(repository);
-        services.registerServiceKindInstance(applicationService);
-        services.registerServiceKindInstance(queryHandler);
-        services.registerServiceKindInstance(outboundService);
-
-        var inMemoryChannel = new InMemoryChannelFactory(services).processingChannel("default");
-        var router = new DomainEventTypeBasedRouter(List.of(inMemoryChannel));
-        router.defineDefaultChannel("default");
-        new ChannelRoutingConfiguration(router);
-    }
-
-    @Test
-    public void testIntegrationDomainEvent() {
-        //when
-        var evt = new ADomainEvent("Test");
-        DomainEvents.publish(evt);
-        //then
-        assertThat(domainService.received).contains(evt);
-        assertThat(repository.received).contains(evt);
-        assertThat(applicationService.received).contains(evt);
-        assertThat(queryHandler.received).contains(evt);
-        assertThat(outboundService.received).contains(evt);
-    }
 }
 ```
 

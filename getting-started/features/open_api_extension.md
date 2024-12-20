@@ -5,7 +5,7 @@
 # Open-API Extension
 API Dokumentation auf Basis von [Spring Doc Open API](https://springdoc.org/), angepasst auf die Bedürfnisse von DDD,
 wie zum Beispiel out-of-the-box Nutzung des DLC Jackson Auto-Mapping Features und auch Aufnehmen von Bean-Validations 
-in die API-Doku.
+in die API-Dokumentation.
 
 ---
 
@@ -13,7 +13,8 @@ in die API-Doku.
 DLC unterstützt die Spring Open-API Dokumentation der REST-Schnittstellen,
 und zwar konform zum unter [JSON-Mapping](json_mapping.md) definierten Mapping.
 Insbesondere relevant für Objekte wie ID's oder 'single valued' Value-Objects.
-Diese werden dementsprechend leserlicher in der Open-API Dokumentation dargestellt.
+Referenzen auf diese werden dementsprechend leserlicher ohne die im Jackson Default-Verhalten erzeugte Verschachtelung serialisiert.
+In der Open-API Dokumentation wird dies dann dazu passend dargestellt.
 Die Implementierung erfolgt dabei analog zur allgemeinen Nutzung der Open-API Dokumentation
 in Spring-Boot Projekten, DLC beeinflusst lediglich die Schema-Beschreibungen der Parameter und
 Rückgabe-Werte, und jedoch auch das Hinzufügen von Validations, sofern hier welche definiert wurden (siehe [Validations](validation_support.md)).
@@ -32,16 +33,6 @@ public interface CustomerAPI {
     @ResponseBody
     ResponseEntity<ResponseObject<Customer>> get(@PathVariable("id") Customer.CustomerId id);
 ...
-```
-
-Zusätzlich zur Default-Konfiguration kann auch hier ein Customizer definiert werden:
-```
-@Bean
-public DlcOpenApiCustomizer openApiCustomizer(
-                                        SpringDocConfigProperties springDocConfigProperties,
-                                        ClassProvider classProvider) {
-    return new DlcOpenApiCustomizer(springDocConfigProperties, classProvider);
-}
 ```
 
 ---
