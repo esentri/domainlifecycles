@@ -4,8 +4,8 @@
 
 # Domain-Object Builders
 
-Das Builder-Modul ermöglicht Support für das DDD-Factory-Pattern und bietet optional
-noch Lombok Builder Kompatibilität.
+The Builder module enables support for the DDD Factory pattern and offers optional
+Lombok Builder compatibility.
 
 ---
 

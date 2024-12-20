@@ -2,7 +2,7 @@
 
 ---
 
-# Konfiguration
+# Configuration
 
 DLC bietet viele Möglichkeiten für Individualisierung und Konfiguration, manche 
 müssen aber auch verpflichtend vorgenommen werden bevor der volle Funktionsumfang gewährleistet werden kann.
@@ -11,6 +11,12 @@ benötigt werden. Hierbei sind alle Beans sortiert nach dem jeweiligen DLC-Featu
 Im Guide zu den [Features](features_en.md) wird an vielen Stellen nochmal näher auf einige Stellen eingegangen und 
 rückverwiesen.
 
+DLC offers many possibilities for individualization and configuration, but some
+have to be made before the full range of functions can be guaranteed.
+Below are all the configurations (or Spring beans) that are required for the basic DLC functions.
+All beans are sorted according to the respective DLC feature to which they belong.
+The guide to the [Features](features_en.md) goes into more detail in many places and refers back to some of them.
+
 ---
 
 ## Persistence
@@ -18,7 +24,7 @@ Das Persistence Modul ist zuständig für alle Interaktionen zwischen DLC und ei
 
 Zusätzlich zur folgenden Konfiguration finden sich [hier](../features/persistence_en.md) Beispiele zur Implementation.
 
-### Datenbank Driver
+### Database Driver
 Zunächst muss allgemein zur Nutzung einer Datenbank der jeweilige Database-Driver eingebunden werden.
 Da DLC JOOQ nutzt (siehe unten), werden hierfür nahezu alle relationalen SQL basierten Datenbanken unterstützt.
 Eine Auflistung aller unterstützten Datenbanken findet sich <a href="https://www.jooq.org/doc/latest/manual/reference/supported-rdbms/">hier</a>.

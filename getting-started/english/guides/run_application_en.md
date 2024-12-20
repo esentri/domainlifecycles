@@ -1,13 +1,12 @@
-[Getting Started](../index_en.md) / [DLC starten](run_application_en.md)
+[Getting Started](../index_en.md) / [Run DLC](run_application_en.md)
 
 ---
 
-# DLC starten
+# Run DLC
 
 ---
 
-Nachdem alles Nötige konfiguriert wurde, muss der DLC Mirror beim Starten der Applikation
-initialisiert werden:
+After everything has been configured properly, the DLC mirror has to be initialized when starting the application:
 
 <details>
 <summary><img style="height: 12px" src="../../icons/java.svg"> <b>Application.java</b></summary>
@@ -29,8 +28,8 @@ public class SampleApplication {
 
 ---
 
-|            **Konfiguration**             |           **Features**            |
-|:----------------------------------------:|:---------------------------------:|
+|         **Configuration**          |           **Features**            |
+|:----------------------------------:|:---------------------------------:|
 | [<< Previous](configuration_en.md) | [Next >>](features_en.md) |
 
 ---

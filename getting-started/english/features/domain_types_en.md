@@ -3,8 +3,8 @@
 ---
 
 # Domain Types
-Das Domain Types Modul ermöglicht die Implementation (und damit auch Kennzeichnung) von DDD Bausteinen mittels 
-DLC Interfaces oder Base-Klassen, welche später extended werden können.
+The Domain Types module enables the implementation (and therefore also the labeling) of DDD blocks by making use of 
+the DLC interfaces or base classes, which can be extended later.
 
 ---
 

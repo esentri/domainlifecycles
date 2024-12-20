@@ -6,9 +6,8 @@
 
 ---
 
-DLC bietet viele verschiedene Features und Extensions, welche im Folgenden alle erläutert werden.
-Hierbei wird immer, wie auch schon bei den vorangegangenen Erklärungen und Anleitungen von einem 
-Webshop in den Beispielen ausgegangen.
+DLC offers many different features and extensions, all of which are explained below.
+As with the previous explanations and instructions, a sample webshop is always assumed in the examples.
 
 ---
 
@@ -25,8 +24,8 @@ Webshop in den Beispielen ausgegangen.
 
 ---
 
-|              **DLC starten**               |
-|:------------------------------------------:|
+|             **Run DLC**              |
+|:------------------------------------:|
 | [<< Previous](run_application_en.md) |
 
 ---

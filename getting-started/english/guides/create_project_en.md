@@ -1,8 +1,8 @@
-[Getting Started](../index_en.md) / [Projekt erstellen](create_project_en.md)
+[Getting Started](../index_en.md) / [Create Project](create_project_en.md)
 
 ---
 
-# Projekt erstellen
+# Create Project
 
 ---
 
@@ -139,8 +139,8 @@ dependencies {
 
 ---
 
-|           **Konfiguration**            |
-|:--------------------------------------:|
+|       **Configuration**        |
+|:------------------------------:|
 | [Next >>](configuration_en.md) |
 
 ---

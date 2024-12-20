@@ -3,8 +3,8 @@
 ---
 
 # Domain Diagrammer
-Das Domain-Diagrammer Modul ist im Stande dazu ein UMl-Klassendiagramm aller DDD-Bausteine 
-des Projekts zu erstellen. Das Ergebnis ist hierbei Text basiert im [Nomnoml](https://nomnoml.com/)-Format.
+The Domain Diagrammer module is able to create an UMl class diagram of all the DDD components in the project.
+The result is text-based in [Nomnoml](https://nomnoml.com/) format.
 
 ---
 

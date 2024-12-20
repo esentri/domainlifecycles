@@ -3,17 +3,17 @@
 ---
 
 # Persistence
-
-Das Persistence-Modul von DLC ermöglicht ein vereinfachtes Mapping für in der Datenbank persistierte DomainObjects.
-Zu den Funktionen gehören unter anderem:
--   Type-safe Queries basierend auf jOOQ
--   Unterstützen und abstrahieren vieler Datenbank Engines mittels JOOQ
--   Vereinfachte Aggregate Queries (DLC Fetcher)
--   Vereinfachte Aggregate CRUD Unterstützung (DLC Repositories)
--   Object relational auto mapping
--   Persistenz Action Event hooks
--   Vollumfänglicher ValueObject support bezüglich Persistenz
--   Unterstützt Java  `final`  Keywords und Java-Optionals innerhalb persistierter Strukturen
+The persistence module of DLC makes it easy to combine the DDD approach with 
+a relational database.
+Some of the functions it offers are:
+- Type-safe Queries based on jOOQ
+- Support and abstraction of many database engines using JOOQ
+- Simplified aggregate queries (DLC Fetcher)
+- Simplified aggregate CRUD support (DLC repositories)
+- Object relational auto mapping
+- Persistence Action Event hooks
+- Full ValueObject support regarding persistence
+- Supports Java `final` keywords and Java optionals within persisted structures
 
 ## Implementation
 **Hinweis:** Damit eine reibungslose Implementation des Repositories möglich ist,

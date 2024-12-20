@@ -3,9 +3,9 @@
 ---
 
 # Open-API Extension
-API Dokumentation auf Basis von [Spring Doc Open API](https://springdoc.org/), angepasst auf die Bedürfnisse von DDD,
-wie zum Beispiel out-of-the-box Nutzung des DLC Jackson Auto-Mapping Features und auch Aufnehmen von Bean-Validations 
-in die API-Doku.
+API documentation based on [Spring Doc Open API](https://springdoc.org/), adapted to the needs of DDD, 
+such as out-of-the-box use of the DLC Jackson auto-mapping feature and also showing the bean validations 
+in the API documentation.
 
 ---
 

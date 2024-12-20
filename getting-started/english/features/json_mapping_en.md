@@ -3,8 +3,8 @@
 ---
 
 # JSON-Mapping
-Bietet JSON-Mapping basierend auf [Jackson](https://github.com/FasterXML/jackson), mit DDD spezifischen Anpassungen
-und Möglichkeiten zur Konfiguration.
+Offers JSON mapping based on [Jackson](https://github.com/FasterXML/jackson), with DDD specific customization 
+and configuration options.
 
 ---
 

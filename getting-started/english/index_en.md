@@ -6,15 +6,15 @@
 
 ---
 
-Dieser Guide stellt eine vollständige Anleitung bereit, wie man DLC einrichtet und 
-anschließend benutzen kann. Die im Guide genutzten Beispiele basieren immer
-auf einem Spring-Boot Projekt, und alles Domänen spezifische basiert auf einem beispielhaften Webshop.
+This guide provides complete instructions on how to set up and use DLC. 
+The examples used in the guide are always based on a Spring-Boot project, 
+and anything domain specific is based on an example webshop.
 
 ---
 
-### [Projekt erstellen](guides/create_project_en.md)
-### [Konfiguration](guides/configuration_en.md)
-### [DLC starten](guides/run_application_en.md)
+### [Create project](guides/create_project_en.md)
+### [Configuration](guides/configuration_en.md)
+### [Start DLC](guides/run_application_en.md)
 ### [Features](guides/features_en.md)
 
 ---

@@ -4,8 +4,8 @@
 
 # Spring-Web-Integration
 
-Nahtlose Integration zwischen Spring-Web und DLC, um Identities und "single-valued" ValueObjects als
-Pfad-/Query-Parameters zu nutzen.
+Seamless integration between Spring-Web and DLC to use identities and single-valued ValueObjects 
+as path/query parameters.
 
 ---
 

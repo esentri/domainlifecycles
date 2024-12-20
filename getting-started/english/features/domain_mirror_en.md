@@ -3,9 +3,9 @@
 ---
 
 # Domain Mirror
-Der Domain-Mirror spiegelt das Meta-Modell der Design/-Projekt-Strukturen innerhalb eines Bounded-Contexts.
-Damit ermöglicht er strukturierte Queries und Navigation innerhalb eines Bounded-Context und aber auch
-vereinfachten Zugriff auf die Werte der `Aggregates`,`Entities`  und  `ValueObjects` mittels Reflection.
+The domain mirror mirrors the meta-model of the design/project structures within a bounded context.
+This enables structured queries and navigation within a bounded context and also simplified access to the values 
+of `Aggregates`, `Entities` and `ValueObjects` with the use of reflection.
 
 ---
 
