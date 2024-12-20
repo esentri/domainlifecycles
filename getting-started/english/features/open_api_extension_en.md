@@ -46,9 +46,9 @@ public DlcOpenApiCustomizer openApiCustomizer(
 
 ---
 
-|            **JSON-Mapping**             |           **Persistence**            |
-|:---------------------------------------:|:------------------------------------:|
-| [<< Previous](json_mapping_en.md) | [Next >>](persistence_en.md) |
+|          **JSON-Mapping**           |           **Persistence**            |
+|:-----------------------------------:|:------------------------------------:|
+| [<< Previous](json_mapping_en.md)   | [Next >>](persistence_en.md) |
 
 ---
 

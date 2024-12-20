@@ -49,9 +49,9 @@ public class SomeDomainMirrorTest {
 
 ---
 
-|            **Domain Types**             |           **Domain-Object Builders**           |
-|:---------------------------------------:|:----------------------------------------------:|
-| [<< Previous](domain_types_en.md) | [Next >>](domainobject_builders_en.md) |
+|          **Domain Types**           |           **Domain-Object Builders**           |
+|:-----------------------------------:|:----------------------------------------------:|
+| [<< Previous](domain_types_en.md)   | [Next >>](domainobject_builders_en.md) |
 
 ---
 

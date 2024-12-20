@@ -112,9 +112,9 @@ class CustomerRepositoryTest {
 
 ---
 
-|             **OpenAPI-Extension**             |           **Domain-Events**            |
-|:---------------------------------------------:|:--------------------------------------:|
-| [<< Previous](open_api_extension_en.md) | [Next >>](domain_events_en.md) |
+|          **OpenAPI-Extension**           |           **Domain-Events**            |
+|:----------------------------------------:|:--------------------------------------:|
+| [<< Previous](open_api_extension_en.md)  | [Next >>](domain_events_en.md) |
 
 ---
 

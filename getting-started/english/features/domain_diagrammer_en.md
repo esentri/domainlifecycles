@@ -27,9 +27,9 @@ Ein geeigneter Unit-Test wäre hierbei der Abgleich des generierten Nomnomls und
 
 ---
 
-|            **Spring-Web-Integration**             |
-|:-------------------------------------------------:|
-| [<< Previous](spring_web_integration_en.md) |
+|          **Spring-Web-Integration**           |
+|:---------------------------------------------:|
+| [<< Previous](spring_web_integration_en.md)   |
 
 ---
 

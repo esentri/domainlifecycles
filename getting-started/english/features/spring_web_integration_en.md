@@ -17,9 +17,9 @@ Unit-Tests erfolgen hierfür wie gewohnt entsprechend der Spring-Web Unit-Tests.
 
 ---
 
-|                **Validation**                 |           **Domain-Diagrammer**            |
-|:---------------------------------------------:|:------------------------------------------:|
-| [<< Previous](validation_support_en.md) | [Next >>](domain_diagrammer_en.md) |
+|              **Validation**              |           **Domain-Diagrammer**            |
+|:----------------------------------------:|:------------------------------------------:|
+| [<< Previous](validation_support_en.md)  | [Next >>](domain_diagrammer_en.md) |
 
 ---
 

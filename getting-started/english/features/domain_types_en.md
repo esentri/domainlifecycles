@@ -39,9 +39,9 @@ des Builders dienen, weshalb auf diese in den jeweiligen Kapiteln erst eingegang
 
 ---
 
-|           **Domain Mirror**            |
-|:--------------------------------------:|
-| [Next >>](domain_mirror_en.md) |
+|        **Domain Mirror**        |
+|:-------------------------------:|
+| [Next >>](domain_mirror_en.md)  |
 
 ---
 

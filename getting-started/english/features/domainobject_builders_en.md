@@ -89,9 +89,9 @@ Diese wurden hier der Einfachheit halber ausgelassen.
 
 ---
 
-|            **Domain Mirror**             |           **JSON-Mapping**            |
-|:----------------------------------------:|:-------------------------------------:|
-| [<< Previous](domain_mirror_en.md) | [Next >>](json_mapping_en.md) |
+|          **Domain Mirror**          |       **JSON-Mapping**          |
+|:-----------------------------------:|:-------------------------------:|
+| [<< Previous](domain_mirror_en.md)  |  [Next >>](json_mapping_en.md)  |
 
 ---
 

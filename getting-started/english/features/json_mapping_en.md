@@ -27,7 +27,6 @@ public class CustomerMappingCustomizer extends JacksonMappingCustomizer<Customer
         
         // alter some of the mapping configurations
     }
-
 }
 ```
 

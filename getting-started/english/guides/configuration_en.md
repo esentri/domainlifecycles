@@ -1,4 +1,4 @@
-[Getting Started](../index_en.md) / [Konfiguration](configuration_en.md)
+[Getting Started](../index_en.md) / [Configuration](configuration_en.md)
 
 ---
 
@@ -351,9 +351,9 @@ public DlcOpenApiCustomizer openApiCustomizer(SpringDocConfigProperties springDo
 
 ---
 
-|          **Projekt erstellen**            |             **DLC starten**              |
-|:-----------------------------------------:|:----------------------------------------:|
-| [<< Previous](create_project_en.md) | [Next >>](run_application_en.md) |
+|        **Projekt erstellen**         |          **DLC starten**           |
+|:------------------------------------:|:----------------------------------:|
+| [<< Previous](create_project_en.md)  | [Next >>](run_application_en.md)   |
 
 ---
 
