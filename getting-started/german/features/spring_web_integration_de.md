@@ -46,9 +46,9 @@ public class WebConfiguration implements WebMvcConfigurer {
 
 ---
 
-|                **Validation**                 |           **Domain-Diagrammer**            |
-|:---------------------------------------------:|:------------------------------------------:|
-| [<< Previous](validation_support_de.md) | [Nächste Seite >>](domain_diagrammer_de.md) |
+|                 **Validation**                 |            **Domain-Diagrammer**            |
+|:----------------------------------------------:|:-------------------------------------------:|
+| [<< Vorherige Seite](validation_support_de.md) | [Nächste Seite >>](domain_diagrammer_de.md) |
 
 ---
 

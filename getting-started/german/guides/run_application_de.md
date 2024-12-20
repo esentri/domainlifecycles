@@ -29,9 +29,9 @@ public class SampleApplication {
 
 ---
 
-|            **Konfiguration**             |           **Features**            |
-|:----------------------------------------:|:---------------------------------:|
-| [<< Previous](configuration_de.md) | [Nächste Seite >>](features_de.md) |
+|             **Konfiguration**             |            **Features**            |
+|:-----------------------------------------:|:----------------------------------:|
+| [<< Vorherige Seite](configuration_de.md) | [Nächste Seite >>](features_de.md) |
 
 ---
 

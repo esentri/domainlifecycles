@@ -18,17 +18,20 @@ Vereinfacht und kapselt einige Funktionen von Event-Publishing/-Listening von Do
 Ein neues Domain-Event lässt sich ganz einfach definieren, indem eine Klasse das `DomainEvent` Interface implementiert.
 Idealerweise werden hierfür Java-Records genutzt:
 
-```
+```Java
 public record NewCustomerAdded(@NotNull Customer customer) implements DomainEvent {}
 ```
 
 ### Domain-Events veröffentlichen
 Ein Domain-Event kann folgendermaßen veröffentlicht werden:
 
-```
-@Publishes(domainEventTypes = {NewCustomerAdded.class})
-public void publishEvent(Customer customer) {
-    DomainEvents.publish(new NewCustomerAdded(addedCustomer));
+```Java
+class EventPublisher {
+    
+    @Publishes(domainEventTypes = {NewCustomerAdded.class})
+    public void publishEvent(Customer customer) {
+        DomainEvents.publish(new NewCustomerAdded(addedCustomer));
+    }
 }
 ```
 
@@ -39,10 +42,11 @@ Methode `DomainEvents.publish()`.
 Eine Methode hört auf veröffentlichte Domain-Events, sofern sie mit der `@ListensTo(domainEventType = ...)`
 Annotation versehen wurde:
 
-```
-@ListensTo(domainEventType = NewCustomerAdded.class)
-public void listenToEvent(NewCustomerAdded newCustomerAdded) {
-    return;
+```Java
+class EventListener {
+    
+    @ListensTo(domainEventType = NewCustomerAdded.class)
+    public void listenToEvent(NewCustomerAdded newCustomerAdded) {}
 }
 ```
 
@@ -50,7 +54,7 @@ public void listenToEvent(NewCustomerAdded newCustomerAdded) {
 
 |            **Persistence**             |               **Validation**                |
 |:--------------------------------------:|:-------------------------------------------:|
-| [<< Previous](persistence_de.md) | [Nächste Seite >>](validation_support_de.md) |
+| [<< Vorherige Seite](persistence_de.md) | [Nächste Seite >>](validation_support_de.md) |
 
 ---
 

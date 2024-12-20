@@ -15,7 +15,7 @@ Konfiguration für den Default-Builder, welche bereits unter
 [Projekt erstellen](../guides/configuration_de.md#DomainObjectBuilderProvider) erläutert wurde.
 
 Für den Builder lässt sich hier am einfachsten Lombok nutzen:
-```
+```Java
 public class Customer extends AggregateRootBase<CustomerId> {
     private final CustomerId id;
     private final int someProperty;
@@ -36,9 +36,9 @@ public class Customer extends AggregateRootBase<CustomerId> {
 
 ---
 
-|            **Domain Mirror**             |           **JSON-Mapping**            |
+|            **Domain Mirror**             |            **JSON-Mapping**           |
 |:----------------------------------------:|:-------------------------------------:|
-| [<< Previous](domain_mirror_de.md) | [Nächste Seite >>](json_mapping_de.md) |
+|[<< Vorherige Seite](domain_mirror_de.md) | [Nächste Seite >>](json_mapping_de.md)|
 
 ---
 

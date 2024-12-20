@@ -13,7 +13,7 @@ DLC bietet grundsätzlich verschiedene abstrakte Klassen und Interfaces, welche 
 implementiert werden können, um entsprechende Domain Types zu definieren.
 
 Im Folgenden ein Beispiel, um ein neues Aggregate zu definieren:
-```
+```Java
 public class Customer extends AggregateRootBase<CustomerId> {
     private final CustomerId id;
     
@@ -30,14 +30,14 @@ oder als innere Klasse des Aggregates definiert sein:
 ```
 public record CustomerId(@NotNull Long value) implements Identity<Long> {}
 ```
-Eine Identity gehört hierbei genauso zu den Domain Types, wie ein Aggregate auch. Eine ausfürhlichere Auflistung 
-und Erläuterung aller Domain Types findet sich [hier](../../readme_building_blocks.md).
+Eine Identity gehört hierbei genauso zu den Domain Types, wie ein Aggregate auch. Eine ausführlichere Auflistung 
+und Erläuterung aller Domain Types findet sich [hier](../../../readme_building_blocks.md).
 
 ---
 
 |           **Domain Mirror**            |
 |:--------------------------------------:|
-| [Nächste Seite >>](domain_mirror_de.md) |
+|[Nächste Seite >>](domain_mirror_de.md) |
 
 ---
 

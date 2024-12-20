@@ -10,22 +10,25 @@ des Projekts zu erstellen. Das Ergebnis ist hierbei Text-basiert im NomNoml [Nom
 
 ## Implementierung
 
-```
-Domain.initialize(new ReflectiveDomainMirrorFactory("sampleshop"));
-DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withContextPackageName("sampleshop").build();
-DomainDiagramGenerator generator = new DomainDiagramGenerator(diagramConfig);
+```Java
+class Diagrammer {
+    public void generateDiagram() {
+        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleshop"));
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withContextPackageName("sampleshop").build();
+        DomainDiagramGenerator generator = new DomainDiagramGenerator(diagramConfig);
 
-String diagramTextNomnoml = generator.generateDiagramText();
-File file = new File("generated_nomnoml_example.nomnoml");
-FileUtils.writeStringToFile(file, actualDiagramText, StandardCharsets.UTF_8);
-
+        String diagramTextNomnoml = generator.generateDiagramText();
+        File file = new File("generated_nomnoml_example.nomnoml");
+        FileUtils.writeStringToFile(file, actualDiagramText, StandardCharsets.UTF_8);
+    }
+}
 ```
 
 ---
 
 |            **Spring-Web-Integration**             |
 |:-------------------------------------------------:|
-| [<< Previous](spring_web_integration_de.md) |
+|[<< Vorherige Seite](spring_web_integration_de.md) |
 
 ---
 

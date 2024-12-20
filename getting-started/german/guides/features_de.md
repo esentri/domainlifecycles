@@ -25,9 +25,9 @@ Webshop in den Beispielen ausgegangen.
 
 ---
 
-|              **DLC starten**               |
-|:------------------------------------------:|
-| [<< Previous](run_application_de.md) |
+|               **DLC starten**                |
+|:--------------------------------------------:|
+| [<< Vorherige Seite](run_application_de.md)  |
 
 ---
 

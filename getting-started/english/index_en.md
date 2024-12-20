@@ -12,7 +12,7 @@ and anything domain specific is based on an example webshop.
 
 ---
 
-### [Create project](guides/create_project_en.md)
+### [Create project](guides/build_management_en.md)
 ### [Configuration](guides/configuration_en.md)
 ### [Start DLC](guides/run_application_en.md)
 ### [Features](guides/features_en.md)

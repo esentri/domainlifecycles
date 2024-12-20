@@ -21,7 +21,7 @@ muss das Projekt zuerst einmal kompiliert werden, sodass die entsprechenden JOOQ
 Wie auch schon bei den anderen Domain-Types, lässt sich ein Repository definieren,
 indem man von der entsprechenden Klasse erbt. Ein beispielhaftes Repository mit den grundlegenden 
 Operationen für die eingangs verwendete Customer-Klasse, könnte so aussehen:
-```
+```Java
 @Component
 public class CustomerRepository extends JooqAggregateRepository<Customer, CustomerId> {
 
@@ -51,53 +51,59 @@ Hierbei findet oft der `Fetcher` Anwendung, welcher vereinfachtes Laden der Aggr
 Beispielhafte Implementierungen können dann so aussehen:
 
 #### Find All
-```
-public List<Customer> findAllCustomers() {
-        List<Customers> result = dslContext.select()
-        .from(CUSTOMER)
-        .fetch().stream()
-        .map(r -> getFetcher().fetchDeep(r.into(CUSTOMER)).resultValue().get()).collect(Collectors.toList());
-        return result;
+```Java
+@Component
+public class CustomerRepository extends JooqAggregateRepository<Customer, CustomerId> {
+    public List<Customer> findAllCustomers() {
+        return dslContext.select()
+            .from(CUSTOMER)
+            .fetch().stream()
+            .map(r -> getFetcher().fetchDeep(r.into(CUSTOMER)).resultValue().get()).collect(Collectors.toList());
     }
+}
 ```
 `CUSTOMER` ist hierbei die JOOQ Repräsentation der Customer-Tabelle und entsprechende JOOQ-Records der Datenbank.
 Der Fechter übernimmt per `fetchDeep` das Laden weiterer jOOQ-Records aus den Tabellen aus welchen sich das Aggregate zusammensetzt.
 Zudem übernimmt der das Mapping in die gewünschte Aggregate-Struktur in der Java-Ebene.
 
 #### Find Paginated
-```
-public List<Customer> findCustomersPaginated(int offset, int pageSize) {
-    List<Customer> result = dslContext.select()
-        .from(Customer)
-        .orderBy(CUSTOMER.ID)
-        .offset(offset)
-        .limit(pageSize)
-        .fetch().stream()
-        .map(r -> getFetcher().fetchDeep(r.into(CUSTOMER)).resultValue().get()).collect(Collectors.toList());
-    return result;
+```Java
+@Component
+public class CustomerRepository extends JooqAggregateRepository<Customer, CustomerId> {
+    public List<Customer> findCustomersPaginated(int offset, int pageSize) {
+        return dslContext.select()
+            .from(Customer)
+            .orderBy(CUSTOMER.ID)
+            .offset(offset)
+            .limit(pageSize)
+            .fetch().stream()
+            .map(r -> getFetcher().fetchDeep(r.into(CUSTOMER)).resultValue().get()).collect(Collectors.toList());
+    }
 }
 ```
 
 #### Find Paginated und gefiltert
-```
-public List<Customer> findCustomersPaginatedAndCustomerFirstNameEqualTo(String firstName, int offset, int pageSize) {
-    List<Customer> result = dslContext.select()
-        .from(CUSTOMER)
-        .where(ORDER.FIRST_NAME.eq(firstName)) 
-        .orderBy(CUSTOMER.ID)
-        .offset(offset)
-        .limit(pageSize)
-        .fetch().stream()
-        .map(r -> getFetcher().fetchDeep(r.into(CUSTOMER)).resultValue().get()).collect(Collectors.toList());
-    return result;
+```Java
+@Component
+public class CustomerRepository extends JooqAggregateRepository<Customer, CustomerId> {
+    public List<Customer> findCustomersPaginatedAndCustomerFirstNameEqualTo(String firstName, int offset, int pageSize) {
+        return dslContext.select()
+            .from(CUSTOMER)
+            .where(ORDER.FIRST_NAME.eq(firstName))
+            .orderBy(CUSTOMER.ID)
+            .offset(offset)
+            .limit(pageSize)
+            .fetch().stream()
+            .map(r -> getFetcher().fetchDeep(r.into(CUSTOMER)).resultValue().get()).collect(Collectors.toList());
+    }
 }
 ```
 
 ---
 
-|             **OpenAPI-Extension**             |           **Domain-Events**            |
-|:---------------------------------------------:|:--------------------------------------:|
-| [<< Previous](open_api_extension_de.md) | [Nächste Seite >>](domain_events_de.md) |
+|             **OpenAPI-Extension**              |            **Domain-Events**             |
+|:----------------------------------------------:|:----------------------------------------:|
+| [<< Vorherige Seite](open_api_extension_de.md) |  [Nächste Seite >>](domain_events_de.md) |
 
 ---
 

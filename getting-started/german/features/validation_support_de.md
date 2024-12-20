@@ -13,7 +13,7 @@ Implementierung einer “Always-Valid-Strategy” zu vereinfachen.
 In jedem der Domain-Types kann eine Validierung und Umsetzung von Geschäftslogik implementiert werden.
 
 Zum Beispiel so:
-```
+```Java
 public class Customer extends AggregateRootBase<CustomerId> {
 
     @NotNull
@@ -32,7 +32,7 @@ public class Customer extends AggregateRootBase<CustomerId> {
     @Override
     public void validate() {
         DomainAssertions.isPast(
-            numberOfCurrenciesUsed
+            numberOfCurrenciesUsed,
             "BirthDate has to be in the past!"
         );
         
@@ -89,16 +89,16 @@ Andernfalls können die Aufrufe `BeanValidations.validate(this);` und `validate(
 auch immer explizit vorgenommen werden.
 
 ## Unit-Tests
-```
+```Java
 class CustomerTest {
     
     @Test
     void testSuccessfulInit() {
         assertThatNoException().isThrownBy(() -> 
-        Customer.builder()
-            .id(CustomerId.builder().id(1L).build())
-            .birthDate(LocalDate.of("1990-01-01"))
-            .build());
+            Customer.builder()
+                .id(CustomerId.builder().id(1L).build())
+                .birthDate(LocalDate.of("1990-01-01"))
+                .build());
     }
     
     @Test
@@ -108,16 +108,16 @@ class CustomerTest {
                 .id(CustomerId.builder().id(1L).build())
                 .birthDate(LocalDate.of("2016-01-01"))
                 .build())
-        ).isInstanceOf(DomainAssertionException.class)
-        .withMessageContaining("Customer has to be at least 18 years old!");
+            .isInstanceOf(DomainAssertionException.class)
+            .withMessageContaining("Customer has to be at least 18 years old!");
     }
 }
 ```
 ---
 
-|            **Domain-Events**             |           **Spring-Web-Integration**            |
-|:----------------------------------------:|:-----------------------------------------------:|
-| [<< Previous](domain_events_de.md) | [Nächste Seite >>](spring_web_integration_de.md) |
+|             **Domain-Events**             |            **Spring-Web-Integration**            |
+|:-----------------------------------------:|:------------------------------------------------:|
+| [<< Vorherige Seite](domain_events_de.md) | [Nächste Seite >>](spring_web_integration_de.md) |
 
 ---
 

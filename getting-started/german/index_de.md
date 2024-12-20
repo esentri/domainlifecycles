@@ -8,16 +8,15 @@
 
 Dieser Guide stellt eine vollständige Anleitung bereit, wie man DLC einrichtet und 
 anschließend benutzen kann. Die im Guide genutzten Beispiele basieren immer
-auf Spring-Boot. Die Beispiel-Domäne entspricht dem vollständigen [sample-project](./../sample-project).
+auf Spring-Boot. Die Beispiel-Domäne entspricht dem vollständigen [sample-project](../../sample-project).
 
 ---
 
-### [Build Management](build_management.md)
-### [Konfiguration](configuration.md)
-### [DLC starten](run_application.md)
-### [Features](features.md)
+### [Build-Management](guides/build_management_de.md)
+### [Konfiguration](guides/configuration_de.md)
+### [DLC starten](guides/run_application_de.md)
+### [Features](guides/features_de.md)
 
 ---
 
 **DE** / [EN](../english/index_en.md)
-

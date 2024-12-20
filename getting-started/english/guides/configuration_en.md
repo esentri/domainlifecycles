@@ -353,7 +353,7 @@ public DlcOpenApiCustomizer openApiCustomizer(SpringDocConfigProperties springDo
 
 |        **Projekt erstellen**         |          **DLC starten**           |
 |:------------------------------------:|:----------------------------------:|
-| [<< Previous](create_project_en.md)  | [Next >>](run_application_en.md)   |
+| [<< Previous](build_management_en.md)  | [Next >>](run_application_en.md)   |
 
 ---
 

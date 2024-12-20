@@ -14,7 +14,7 @@ vorgenommene Konfiguration unter [Projekt erstellen](../guides/configuration_de.
 
 Im weiteren Verlauf kann das Default-Mapping angepasst werden durch das Überschreiben einer oder mehrerer Methoden des
 `JacksonMappingCustomizer`, wie folgt:
-```
+```Java
 public class CustomerMappingCustomizer extends JacksonMappingCustomizer<Customer>{
 
     public CustomerMappingCustomizer() {
@@ -36,7 +36,7 @@ bevor DLC aus diesem das Ziel-Domänenobjekt erzeugt.
 
 Der `JacksonMappingCustomizer` muss über die folgende Konfiguration aktiviert werden per ````module.registerCustomizer````:
 
-```
+```Java
 @Configuration
 public class JacksonConfiguration {
 
@@ -57,7 +57,7 @@ public class JacksonConfiguration {
 Für entsprechende Unit-Tests kann sowohl die Serialisierung als auch Deserialisierung getestet werden.
 Ein Beispiel zum Testen einer erfolgreichen Serialisierung:
 
-```
+```Java
 public class JacksonTest {
 
     private final ObjectMapper objectMapper;
@@ -116,9 +116,9 @@ public class JacksonTest {
 
 ---
 
-|            **Domain-Object Builders**             |            **OpenAPI-Extension**            |
-|:-------------------------------------------------:|:-------------------------------------------:|
-| [<< Previous](./dommainobject_builders.md) | [Nächste Seite >>](open_api_extension_de.md) |
+|             **Domain-Object Builders**             |            **OpenAPI-Extension**             |
+|:--------------------------------------------------:|:--------------------------------------------:|
+| [<< Vorherige Seite](./dommainobject_builders.md)  | [Nächste Seite >>](open_api_extension_de.md) |
 
 ---
 

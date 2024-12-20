@@ -19,11 +19,11 @@ Die Implementierung erfolgt dabei analog zur allgemeinen Nutzung der Open-API Do
 in Spring-Boot Projekten, DLC beeinflusst lediglich die Schema-Beschreibungen der Parameter und
 Rückgabe-Werte, und jedoch auch das Hinzufügen von Validations, sofern hier welche definiert wurden (siehe [Validations](validation_support_de.md)).
 
-```
+```Java
 @RequestMapping("/api/customer")
 public interface CustomerAPI {
 
-...
+    //...
 
     @Operation(summary = "Get existing customer by id")
     @ApiResponse(responseCode = "200", description = "Success")
@@ -32,14 +32,16 @@ public interface CustomerAPI {
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     ResponseEntity<ResponseObject<Customer>> get(@PathVariable("id") Customer.CustomerId id);
-...
+    
+    //...
+
 ```
 
 ---
 
-|            **JSON-Mapping**             |           **Persistence**            |
-|:---------------------------------------:|:------------------------------------:|
-| [<< Previous](json_mapping_de.md) | [Nächste Seite >>](persistence_de.md) |
+|             **JSON-Mapping**             |            **Persistence**            |
+|:----------------------------------------:|:-------------------------------------:|
+| [<< Vorherige Seite](json_mapping_de.md) | [Nächste Seite >>](persistence_de.md) |
 
 ---
 

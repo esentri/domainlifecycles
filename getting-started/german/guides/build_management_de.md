@@ -2,11 +2,11 @@
 
 ---
 
-# Build Management
+# Build-Management
 
 ---
 
-## Grundlagen fürs Build Management
+## Grundlagen für das Build-Management
 Als Build-Management-Tool lassen sich Maven oder Gradle nutzen, welche beide im Folgenden berücksichtigt werden.
 Den Ausgangspunkt bildet in diesem Guide ein Build-Setup für ein minimales Spring-Boot-Projekt. 
 
