@@ -43,7 +43,7 @@ import io.domainlifecycles.domain.types.internal.DomainObject;
  * or even access to fields of {@link DomainObject} instances.
  * <p>
  * These accesses need to access the class loader or need to work with reflection by default.
- * This class provides a customizing mechanism to use other means, if for example reflection is not appropriate (e.g.
+ * This class provides a customizing mechanism to use other means, if, for example, reflection is not appropriate (e.g.
  * Graal).
  *
  * @author Mario Herb

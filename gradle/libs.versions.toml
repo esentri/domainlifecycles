@@ -42,6 +42,7 @@ spring-jdbc-version = '6.1.13'
 swagger-version = '2.2.25'
 spring-web-version = '5.3.33'
 spring-web6-version = '6.1.13'
+# TODO @Galler bump version for plugins
 jooq-version = '3.19.6'
 commons-collections-version = '3.2.2'
 type-resolver-version = '1.0.3'
@@ -53,6 +54,9 @@ logback-classic-version = '1.5.3'
 hibernate-validator-jakarta-version = '8.0.1.Final'
 glassfish-jakarta-version = '4.0.2'
 jakarta-el-version = '5.0.1'
+# TODO @Galler maybe platform and starter versions can be combined?
+spring-boot3-starter-version = '3.2.3'
+spring-boot3-starter-artemis-version = '3.3.3'
 spring-boot3-platform-version = '3.3.4'
 spring-boot2-platform-version = '2.7.18'
 kryo-version = '5.3.0'
@@ -88,6 +92,50 @@ dlc-group = 'io.domainlifecycles'
 # TODO @Galler Handle?
 # dlcVersion = versionProps.getProperty("version")
 
+[libraries]
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j-version" }
+byte-buddy = { module = "net.bytebuddy:byte-buddy", version.ref = "bytebuddy-version" }
+byte-buddy-agent = { module = "net.bytebuddy:byte-buddy-agent", version.ref = "bytebuddy-version" }
+assertj = { module = "org.assertj:assertj-core", version.ref = "assertj-version" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok-version" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback-classic-version" }
+hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", version.ref = "hibernate-validator-jakarta-version" }
+glassfish-jakarta-el = { module = "org.glassfish:jakarta.el", version.ref = "glassfish-jakarta-version" }
+jakarta-el-api = { module = "jakarta.el:jakarta.el-api", version.ref = "jakarta-el-version" }
+jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api", version.ref = "jakarta-validation-api-version" }
+jakarta-transaction-api = { module = "jakarta.transaction:jakarta.transaction-api", version.ref = "jakarta-transaction-api-version"}
+javax-validation-api = { module = "javax.validation:validation-api", version.ref = "javax-validation-api-version" }
+kryo = { module = "com.esotericsoftware:kryo", version.ref = "kryo-version" }
+atomikos-transactions-jta = { module = "com.atomikos:transactions-jta", version.ref = "atomikos-jta-version" }
+spring-boot3-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "spring-boot3-starter-version"}
+spring-boot3-starter-json = { module = "org.springframework.boot:spring-boot-starter-json", version.ref = "spring-boot3-starter-version"}
+spring-boot3-starter-jooq = { module = "org.springframework.boot:spring-boot-starter-jooq", version.ref = "spring-boot3-starter-version"}
+spring-boot3-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "spring-boot3-starter-version"}
+spring-boot3-starter-artemis = { module = "org.springframework.boot:spring-boot-starter-artemis", version.ref = "spring-boot3-starter-artemis-version"}
+apache-active-mq-artemis-jakarter-server = { module = "org.apache.activemq:artemis-jakarta-server", version.ref = "active-mq-artemis-version"}
+gruelbox-transactionoutbox-core = { module = "com.gruelbox:transactionoutbox-core", version.ref = "gruelbox-version"}
+gruelbox-transactionoutbox-spring = { module = "com.gruelbox:transactionoutbox-spring", version.ref = "gruelbox-version"}
+gruelbox-transactionoutbox-jackson = { module = "com.gruelbox:transactionoutbox-jackson", version.ref = "gruelbox-version"}
+h2 = { module = "com.h2database:h2", version.ref = "h2-version"}
+awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility-version"}
+swagger = { module = "io.swagger.core.v3:swagger-core-jakarta", version.ref = "swagger-version" }
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson-version" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson-version" }
+spring-web = { module = "org.springframework:spring-web", version.ref = "spring-web-version" }
+spring-doc-openapi-ui = { module = "org.springdoc:springdoc-openapi-ui", version.ref = "spring-doc-open-api-version" }
+spring-doc-openapi-data-rest = { module = "org.springdoc:springdoc-openapi-data-rest", version.ref = "spring-doc-open-api-version" }
+spring-doc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "spring-doc-open-api-2-version" }
+jooq = { module = "org.jooq:jooq", version.ref = "jooq-version" }
+classgraph = { module = "io.github.classgraph:classgraph", version-ref = "classgraph-version" }
+commons-collections = { module = "commons-collections:commons-collections", version.ref = "commons-collections-version" }
 
+[bundles]
+gruelbox-transactionoutbox = ['gruelbox-transactionoutbox-core', 'gruelbox-transactionoutbox-spring', 'gruelbox-transactionoutbox-jackson']
+
+[plugins]
+yumi-gradle-licenser-plugin = { id = "dev.yumi.gradle.licenser", version.ref = "gradle-licenser-version" }
+jaredsburrows-license-plugin = { id = "com.jaredsburrows.license", version.ref = "jareds-burrows-license-version" }
+#flyway-plugin = { id = "org.flywaydb.flyway", version.ref = "flyway-version" }
+#jooq-codegen-gradle = { id = "org.jooq.jooq-codegen-gradle", version.ref = "jooq-version" }
 
 

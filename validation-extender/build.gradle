@@ -2,8 +2,9 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
-    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
-    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+    // TODO @Galler probably add a license-convention to bundle these two plugins
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
 }
 
 java {
@@ -12,9 +13,11 @@ java {
 }
 
 dependencies {
-    compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
-    implementation "net.bytebuddy:byte-buddy:${bytebuddyVersion}"
-    implementation "net.bytebuddy:byte-buddy-agent:${bytebuddyVersion}"
+
+    compileOnly libs.slf4j.api
+    implementation libs.byte.buddy
+    implementation libs.byte.buddy.agent
+
     api project(":types")
     api project(":builder")
     implementation project(":bean-validations")
@@ -22,21 +25,17 @@ dependencies {
     testImplementation project(":type-utils")
     testImplementation project(":assertions")
     testImplementation project(":test-shared-impl")
-    testImplementation "org.slf4j:slf4j-api:${slf4jVersion}"
-    testImplementation "org.assertj:assertj-core:${assertJVersion}"
-    testImplementation "org.projectlombok:lombok:${lombokVersion}"
-    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-    testImplementation "ch.qos.logback:logback-classic:${logbackClassicVersion}"
+
+    testImplementation libs.slf4j.api
+    testImplementation libs.assertj
+    testImplementation libs.lombok
+    testImplementation libs.logback.classic
+    testAnnotationProcessor libs.lombok
 
     //jakarta config
-    testImplementation "org.hibernate.validator:hibernate-validator:${hibernateValidatorJakartaVersion}"
-    testImplementation "org.glassfish:jakarta.el:${glassfishJakartaVersion}"
-    testImplementation "jakarta.el:jakarta.el-api:${jakartaElVersion}"
-
-    //javax config
-    //testImplementation "org.hibernate.validator:hibernate-validator:${hibernateValidatorJavaxVersion}"
-    //testImplementation "org.glassfish:jakarta.el:${glassfishJakartaElVersion}"
-    //testImplementation "jakarta.el:jakarta.el-api:${jakartaElApiVersion}"
+    testImplementation libs.hibernate.validator
+    testImplementation libs.glassfish.jakarta.el
+    testImplementation libs.jakarta.el.api
 }
 
 

@@ -19,10 +19,11 @@ dependencies {
 
     testImplementation project(":type-utils")
     testImplementation project(":test-shared-impl")
-    testImplementation "org.slf4j:slf4j-api:${slf4jVersion}"
-    testImplementation "org.projectlombok:lombok:${lombokVersion}"
-    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-    testImplementation "org.assertj:assertj-core:${assertJVersion}"
+
+    testImplementation libs.slf4j.api
+    testImplementation libs.lombok
+    testAnnotationProcessor libs.lombok
+    testImplementation libs.assertj
 
 
 }

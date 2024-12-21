@@ -1,3 +1,4 @@
+// TODO @Galler skipped
 plugins {
     id 'org.springframework.boot' version "${springBoot2PlatformVersion}"
     id 'java'

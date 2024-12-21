@@ -12,8 +12,8 @@ java {
 }
 
 dependencies {
-    api "org.springdoc:springdoc-openapi-ui:${springDocOpenAPIVersion}"
-    compileOnly "org.springdoc:springdoc-openapi-data-rest:${springDocOpenAPIVersion}"
+    api libs.spring.doc.openapi.ui
+    compileOnly libs.spring.doc.openapi.data.rest
     api project(":swagger-v3-integration")
 
 }

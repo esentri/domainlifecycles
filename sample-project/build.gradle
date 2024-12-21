@@ -4,7 +4,7 @@ buildscript {
         classpath "org.flywaydb:flyway-core:10.17.0"
     }
 }
-
+// TODO @Galler rework
 plugins {
     id 'org.springframework.boot' version "${springBoot3PlatformVersion}"
     id 'java'
