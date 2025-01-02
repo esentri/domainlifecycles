@@ -4,7 +4,7 @@
 
 # Domain Diagrammer
 The Domain Diagrammer module is able to create a UML class diagram of all DDD Building Blocks of the project. 
-The result is text-based in NomNoml [Nomnoml](https://nomnoml.com/) format.
+The result is text-based in [Nomnoml](https://nomnoml.com/) format.
 
 ---
 
@@ -28,7 +28,7 @@ class Diagrammer {
 
 |          **Spring-Web-Integration**           |
 |:---------------------------------------------:|
-| [<< Previous](spring_web_integration_en.md)   |
+|  [<< Previous](spring_web_integration_en.md)  |
 
 ---
 

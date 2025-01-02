@@ -27,7 +27,7 @@ Eine Auflistung aller unterstützten Datenbanken findet sich
 Im Folgenden wird für die beispielhaften Konfigurationen eine interne H2-Datenbank genutzt.
 
 <details>
-<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle</b></summary>
 
 ```groovy
 dependencies {
@@ -37,7 +37,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>pom.xml</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"> <b>pom.xml</b></summary>
 
 ```xml name="index.js"
 <dependencies>
@@ -68,7 +68,7 @@ DLC uses JOOQ as a JDBC replacement and code generator to facilitate working wit
 The Spring-Boot-specific JOOQ dependency is required for this exact purpose:
 
 <details>
-<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle</b></summary>
 
 ```groovy
 dependencies {
@@ -78,7 +78,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>pom.xml</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"> <b>pom.xml</b></summary>
 
 ```xml
 <dependencies>
@@ -95,7 +95,7 @@ Hierfür muss der jOOQ Code-Generator im Build-Management eingebunden werden.
 Hier eine beispielhafte Konfiguration, für ein bereits bestehendes Datenbank-Schema:
 
 <details>
-<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle</b></summary>
 
 ```groovy
 jooq {
@@ -136,7 +136,7 @@ Die Konfiguration für Maven findet nicht in der pom.xml statt, sondern in einer
 im Projekt-Ordner liegen muss.
 
 <details>
-<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>library.xml</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"> <b>library.xml</b></summary>
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>

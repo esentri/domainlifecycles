@@ -10,7 +10,7 @@ Nachdem alles Nötige konfiguriert wurde, muss der DLC Mirror beim Starten der A
 initialisiert werden:
 
 <details>
-<summary><img style="height: 12px" src="../icons/java.svg"> <b>Application.java</b></summary>
+<summary><img style="height: 12px" src="../../icons/java.svg" alt="java"> <b>Application.java</b></summary>
 
 ```java
 @SpringBootApplication

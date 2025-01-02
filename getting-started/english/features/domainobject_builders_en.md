@@ -37,7 +37,7 @@ public class Customer extends AggregateRootBase<CustomerId> {
 
 ---
 
-|          **Domain Mirror**          |       **JSON-Mapping**          |
+|          **Domain Mirror**          |        **JSON-Mapping**         |
 |:-----------------------------------:|:-------------------------------:|
 | [<< Previous](domain_mirror_en.md)  |  [Next >>](json_mapping_en.md)  |
 

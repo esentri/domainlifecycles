@@ -116,9 +116,9 @@ public class JacksonTest {
 
 ---
 
-|             **Domain-Object Builders**             |            **OpenAPI-Extension**             |
-|:--------------------------------------------------:|:--------------------------------------------:|
-| [<< Vorherige Seite](./dommainobject_builders.md)  | [Nächste Seite >>](open_api_extension_de.md) |
+|             **Domain-Object Builders**              |            **OpenAPI-Extension**             |
+|:---------------------------------------------------:|:--------------------------------------------:|
+| [<< Vorherige Seite](./domainobject_builders_de.md) | [Nächste Seite >>](open_api_extension_de.md) |
 
 ---
 

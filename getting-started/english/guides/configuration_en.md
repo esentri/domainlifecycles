@@ -26,7 +26,7 @@ A list of all supported databases can be found
 In the following, an internal H2 database is used for the exemplary configurations.
 
 <details>
-<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle</b></summary>
 
 ```groovy
 dependencies {
@@ -36,7 +36,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>pom.xml</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"> <b>pom.xml</b></summary>
 
 ```xml
 <dependencies>
@@ -68,7 +68,7 @@ relationalen Datenbanken zu erleichtern.
 Hierfür wird zusätzlich noch die Spring-Boot spezifische JOOQ Dependency gebraucht:
 
 <details>
-<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle</b></summary>
 
 ```groovy
 dependencies {
@@ -78,7 +78,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>pom.xml</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"> <b>pom.xml</b></summary>
 
 ```xml
 <dependencies>
@@ -95,7 +95,7 @@ To do this, the jOOQ code generator must be integrated into the build management
 Here is an example configuration for an existing database schema:
 
 <details>
-<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle</b></summary>
 
 ```groovy
 jooq {
@@ -136,7 +136,7 @@ The configuration for Maven is not made in the pom.xml, but in a separate config
 the project folder.
 
 <details>
-<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>library.xml</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"> <b>library.xml</b></summary>
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>

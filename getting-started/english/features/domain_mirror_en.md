@@ -3,7 +3,7 @@
 ---
 
 # Domain Mirror
-The domain mirror mirrors the meta-model of the design/project structures within a bounded context.
+The domain mirror mirrors the metamodel of the design/project structures within a bounded context.
 This enables structured queries and navigation through the model within a bounded context.
 
 ---

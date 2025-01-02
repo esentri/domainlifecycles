@@ -10,7 +10,7 @@ Once everything necessary has been configured properly , the DLC Mirror must be 
 started:
 
 <details>
-<summary><img style="height: 12px" src="../../icons/java.svg"> <b>Application.java</b></summary>
+<summary><img style="height: 12px" src="../../icons/java.svg" alt="java"> <b>Application.java</b></summary>
 
 ```java
 @SpringBootApplication

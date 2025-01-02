@@ -12,7 +12,7 @@ The starting point in this guide is a build setup for a minimal Spring Boot proj
 
 
 <details>
-<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"><b>build.gradle</b></summary>
 
 ```groovy
 plugins {
@@ -41,7 +41,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>pom.xml</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"><b>pom.xml</b></summary>
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -87,7 +87,7 @@ To use the DLC functionality, it is enough to include the following artifact, wh
 functions:
 
 <details>
-<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle for Spring Boot 3</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle for Spring Boot 3</b></summary>
 
 ```groovy
 dependencies {
@@ -96,7 +96,7 @@ dependencies {
 ```
 </details>
 <details>
-<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle for Spring Boot 2</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle for Spring Boot 2</b></summary>
 
 ```groovy
 dependencies {
@@ -106,7 +106,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>pom.xml for Spring Boot 3</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"><b>pom.xml for Spring Boot 3</b></summary>
 
 ```xml
 <dependencies>
@@ -120,7 +120,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>pom.xml for Spring Boot 2</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"><b>pom.xml for Spring Boot 2</b></summary>
 
 ```xml
 <dependencies>

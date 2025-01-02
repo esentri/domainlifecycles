@@ -35,9 +35,9 @@ und Erläuterung aller Domain Types findet sich [hier](../../../readme_building_
 
 ---
 
-|           **Domain Mirror**            |
-|:--------------------------------------:|
-|[Nächste Seite >>](domain_mirror_de.md) |
+|            **Domain Mirror**            |
+|:---------------------------------------:|
+| [Nächste Seite >>](domain_mirror_de.md) |
 
 ---
 

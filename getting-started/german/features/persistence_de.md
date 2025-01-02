@@ -42,7 +42,7 @@ public class CustomerRepository extends JooqAggregateRepository<Customer, Custom
 }
 ```
 
-Bereits durch diese grundlegende Definition sind simple CRUD-Operationen für Aggregates möglich, wobei DLC die Aggregate Struktur auf potentiell mehrere
+Bereits durch diese grundlegende Definition sind simple CRUD-Operationen für Aggregates möglich, wobei DLC die Aggregate Struktur auf potenziell mehrere
 auf Datenbank Ebene abgebildete Tabellen unterstützt.
 
 ### Eigene Datenbank-Operationen definieren
@@ -103,7 +103,7 @@ public class CustomerRepository extends JooqAggregateRepository<Customer, Custom
 
 |             **OpenAPI-Extension**              |            **Domain-Events**             |
 |:----------------------------------------------:|:----------------------------------------:|
-| [<< Vorherige Seite](open_api_extension_de.md) |  [Nächste Seite >>](domain_events_de.md) |
+| [<< Vorherige Seite](open_api_extension_de.md) | [Nächste Seite >>](domain_events_de.md)  |
 
 ---
 
