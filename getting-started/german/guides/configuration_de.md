@@ -21,7 +21,8 @@ Zusätzlich zur folgenden Konfiguration finden sich [hier](../features/persisten
 ### Datenbank Driver
 Zunächst muss allgemein zur Nutzung einer Datenbank der jeweilige Database-Driver eingebunden werden.
 Da DLC JOOQ nutzt (siehe unten), werden hierfür nahezu alle relationalen SQL basierten Datenbanken unterstützt.
-Eine Auflistung aller unterstützten Datenbanken findet sich <a href="https://www.jooq.org/doc/latest/manual/reference/supported-rdbms/">hier</a>.
+Eine Auflistung aller unterstützten Datenbanken findet sich 
+[hier](https://www.jooq.org/doc/latest/manual/reference/supported-rdbms/").
 
 Im Folgenden wird für die beispielhaften Konfigurationen eine interne H2-Datenbank genutzt.
 
@@ -63,9 +64,8 @@ spring.datasource.password=
 </details>
 
 ### jOOQ
-Für den Datenbank-Zugriff kommt bei DLC jOOQ zum Einsatz, um das Arbeiten mit SQL basierten 
-relationalen Datenbanken zu erleichtern. 
-Hierfür wird zusätzlich noch die Spring-Boot spezifische jOOQ-Dependency benötigt:
+DLC uses JOOQ as a JDBC replacement and code generator to facilitate working with SQL-based relational databases.
+The Spring-Boot-specific JOOQ dependency is required for this exact purpose:
 
 <details>
 <summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle</b></summary>
@@ -89,6 +89,7 @@ dependencies {
 </dependencies>
 ```
 </details>
+
 Bei jOOQ werden typischerweise Java-Klassen für den Zugriff auf Datenbank-Objekte (z.B. Tabellen und Sequences) generiert.
 Hierfür muss der jOOQ Code-Generator im Build-Management eingebunden werden.
 Hier eine beispielhafte Konfiguration, für ein bereits bestehendes Datenbank-Schema:
@@ -170,11 +171,10 @@ im Projekt-Ordner liegen muss.
 Für DLC Persistence ist hierbei insbesondere die notwendige ```CONCURRENCY_VERSION``` zu beachten, damit das optimistische 
 Locking von Aggregaten und Entities korrekt umgesetzt wird. 
 
-Weitere Informationen zur Konfiguration von JOOQ finden sich <a href="">hier</a>.
+Weitere Informationen zur Konfiguration von JOOQ finden sich 
+(https://www.jooq.org/doc/latest/manual/code-generation/codegen-configuration/)[hier].
 
 ### Spring Beans
-Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
-
 Speziell für den Datenbank-Zugriff mit jOOQ werden folgende Konfigurationen benötigt:
 ```DataSourceConnectionProvider```, ```DefaultConfiguration```, ```DefaultDSLContext```.
 
@@ -248,29 +248,29 @@ EntityIdentityProvider identityProvider(DSLContext dslContext) {
 
 #### `SpringPersistenceEventPublisher`
 Optional, wird benötigt, um DLC-Persistence-Events über den Spring Event Bus zu veröffentlichen.
-DLC Persistence Events veröffentlichen Informationen über Veränderungen an Aggregates 
+DLC Persistence Events veröffentlichen Informationen über Veränderungen an Aggregates
 im Rahmen von schreibenden Repository-Zugriffen.
 
 ```
 @Bean
 public SpringPersistenceEventPublisher springPersistenceEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-    return new SpringPersistenceEventPublisher(applicationEventPublisher);
+return new SpringPersistenceEventPublisher(applicationEventPublisher);
 }
 ```
-
 
 ---
 
 
 ## Domain-Object-Builders
-Domain Object Builder werden von DLC intern benötigt, beispielsweise um Instanzen von Domänenobjekten beim objekt-relationalen Mapping oder bei der
-JSON De-Serialisierung zu erzeugen. Zusätzlich zur folgenden Konfiguration finden sich [hier](./features/domainobject_builders.md) Beispiele zur Implementierung.
+Domain Object Builder werden von DLC intern benötigt, beispielsweise um Instanzen von Domänenobjekten beim 
+objekt-relationalen Mapping oder bei der JSON De-Serialisierung zu erzeugen. Zusätzlich zur folgenden Konfiguration 
+finden sich [hier](../features/domainobject_builders_de.md) Beispiele zur Implementierung.
 
 ### Spring-Beans
 Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
 
 #### `DomainObjectBuilderProvider`
-Der DomainObjectBuilderProvider wird benötigt um mit inner-Builders oder den Lombok-Builders (Lombok @Builder-Annotation) zu arbeiten.
+Der DomainObjectBuilderProvider wird benötigt um mit inner-Builders oder den Lombok-Builders (Lombok ```@Builder```-Annotation) zu arbeiten.
 
 ```
 @Bean
@@ -279,12 +279,11 @@ DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
 }
 ```
 
-
 ---
 
 
 ## JSON-Mapping
-Zusätzlich zur folgenden Konfiguration finden sich <a href="./features/json_mapping.md">hier</a> Beispiele zur Implementierung.
+Zusätzlich zur folgenden Konfiguration finden sich [hier](../features/json_mapping_de.md) Beispiele zur Implementierung.
 
 ### Spring-Beans
 Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
@@ -305,7 +304,7 @@ DlcJacksonModule dlcModuleConfiguration(List<? extends JacksonMappingCustomizer<
 ```
 
 ## Domain-Events
-Zusätzlich zur folgenden Konfiguration finden sich <a href="./features/domain_events.md">hier</a> Beispiele zur Implementierung.
+Zusätzlich zur folgenden Konfiguration finden sich [hier](../features/domain_events_de.md) Beispiele zur Implementierung.
 
 ### Spring-Beans
 Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configuration``` Klasse als ```@Bean``` bereitgestellt werden:
@@ -358,9 +357,9 @@ public DlcOpenApiCustomizer openApiCustomizer(SpringDocConfigProperties springDo
 ---
 
 
-|          **Projekt erstellen**            |              **DLC starten**              |
-|:-----------------------------------------:|:-----------------------------------------:|
-| [<< Vorherige Seite](create_project_de.md) | [Nächste Seite >>](run_application_de.md) |
+|             **Build-Management**             |              **DLC starten**              |
+|:--------------------------------------------:|:-----------------------------------------:|
+| [<< Vorherige Seite](build_management_de.md) | [Nächste Seite >>](run_application_de.md) |
 
 ---
 

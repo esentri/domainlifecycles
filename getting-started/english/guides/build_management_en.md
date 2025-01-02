@@ -7,8 +7,9 @@
 ---
 
 ## Grundlagen
-Als Build-Management-Tool lassen sich Maven oder Gradle nutzen, welche beide im Folgenden berücksichtigt werden.
-Grundlage bildet in diesem Guide ein minimales Spring-Boot-Projekt. 
+Maven or Gradle can be used as a build management tool, both of which are considered below.
+The starting point in this guide is a build setup for a minimal Spring Boot project.
+
 
 <details>
 <summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle</b></summary>
@@ -35,12 +36,6 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
 }
 ```
 </details>
@@ -62,21 +57,6 @@ tasks.named('test') {
     <groupId>com.example</groupId>
     <artifactId>demo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>demo</name>
-    <description>Demo DLC Application</description>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
-    <developers>
-        <developer/>
-    </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
     <properties>
         <java.version>17</java.version>
     </properties>
@@ -84,12 +64,6 @@ tasks.named('test') {
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -101,7 +75,6 @@ tasks.named('test') {
             </plugin>
         </plugins>
     </build>
-
 </project>
 
 ```
@@ -110,28 +83,51 @@ tasks.named('test') {
 ---
 
 ## DLC einbinden
-Um die DLC-Funktionalität zu nutzen, reicht es bereits folgendes Artefakt einzubinden, 
-welches die wichtigsten DLC-Funktionen bündelt. Kompatibel mit Spring-Boot Version 2 & 3.
+To use the DLC functionality, it is enough to include the following artifact, which bundles the most important DLC 
+functions:
 
 <details>
-<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle for Spring Boot 3</b></summary>
 
 ```groovy
 dependencies {
-    implementation 'io.domainlifecycles:spring-boot-3-jooq-complete:2.0.0'
+    implementation 'io.domainlifecycles:spring-boot-3-jooq-complete:2.0.1'
+}
+```
+</details>
+<details>
+<summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle for Spring Boot 2</b></summary>
+
+```groovy
+dependencies {
+    implementation 'io.domainlifecycles:spring-boot-2-jooq-complete:2.0.1'
 }
 ```
 </details>
 
 <details>
-<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>pom.xml</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>pom.xml for Spring Boot 3</b></summary>
 
 ```xml
 <dependencies>
     <dependency>
         <groupId>io.domainlifecycles</groupId>
         <artifactId>spring-boot-3-jooq-complete</artifactId>
-        <version>2.0.0</version>
+        <version>2.0.1</version>
+    </dependency>
+</dependencies>
+```
+</details>
+
+<details>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg"> <b>pom.xml for Spring Boot 2</b></summary>
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>io.domainlifecycles</groupId>
+        <artifactId>spring-boot-2-jooq-complete</artifactId>
+        <version>2.0.1</version>
     </dependency>
 </dependencies>
 ```
@@ -145,4 +141,4 @@ dependencies {
 
 ---
 
-**EN** / [DE](../../german/guides/configuration_de.md)
+**EN** / [DE](../../german/guides/build_management_de.md)

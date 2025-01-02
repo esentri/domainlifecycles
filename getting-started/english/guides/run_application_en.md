@@ -6,7 +6,8 @@
 
 ---
 
-After everything has been configured properly, the DLC mirror has to be initialized when starting the application:
+Once everything necessary has been configured properly , the DLC Mirror must be initialized when the application is 
+started:
 
 <details>
 <summary><img style="height: 12px" src="../../icons/java.svg"> <b>Application.java</b></summary>
@@ -28,8 +29,8 @@ public class SampleApplication {
 
 ---
 
-|         **Configuration**          |           **Features**            |
-|:----------------------------------:|:---------------------------------:|
+|         **Configuration**          |       **Features**        |
+|:----------------------------------:|:-------------------------:|
 | [<< Previous](configuration_en.md) | [Next >>](features_en.md) |
 
 ---

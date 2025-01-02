@@ -1,4 +1,4 @@
-[Getting Started](index.md) / [Build Management](build_management_de)
+[Getting Started](../index_de.md) / [Build Management](build_management_de)
 
 ---
 
@@ -74,7 +74,6 @@ dependencies {
             </plugin>
         </plugins>
     </build>
-
 </project>
 
 ```
@@ -84,7 +83,7 @@ dependencies {
 
 ## DLC einbinden
 Um die DLC-Funktionalität zu nutzen, reicht es bereits folgendes Artefakt einzubinden, 
-welches die wichtigsten DLC-Funktionen bündelt.
+welches die wichtigsten DLC-Funktionen bündelt:
 
 <details>
 <summary><img style="height: 12px" src="../../icons/gradle.svg"> <b>build.gradle für Spring Boot 3</b></summary>
@@ -135,9 +134,9 @@ dependencies {
 
 ---
 
-|           **Konfiguration**            |
-|:--------------------------------------:|
-| [Nächste Seite >>](./configuration.md) |
+|             **Konfiguration**             |
+|:-----------------------------------------:|
+| [Nächste Seite >>](./configuration_de.md) |
 
 ---
 
