@@ -27,7 +27,7 @@ public class Customer extends AggregateRootBase<CustomerId> {
 
 Da für ein Aggregate auch zwingend eine ID (Identity) benötigt wird, muss diese folgendermaßen im Voraus
 oder als innere Klasse des Aggregates definiert sein:
-```
+```Java
 public record CustomerId(@NotNull Long value) implements Identity<Long> {}
 ```
 Eine Identity gehört hierbei genauso zu den Domain Types, wie ein Aggregate auch. Eine ausführlichere Auflistung 

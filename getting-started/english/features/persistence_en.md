@@ -6,24 +6,24 @@
 The persistence module of DLC makes it easy to combine the DDD approach with 
 a relational database.
 Some of the functions it offers are:
-- Type-safe Queries based on jOOQ
-- Support and abstraction of many database engines using JOOQ
-- Simplified aggregate queries (DLC Fetcher)
-- Simplified aggregate CRUD support (DLC repositories)
-- Object relational auto mapping
-- Persistence Action Event hooks
-- Full ValueObject support regarding persistence
-- Supports Java `final` keywords and Java optionals within persisted structures
+-  Type-safe Queries based on jOOQ
+-  Support and abstraction of many database engines using JOOQ
+-  Simplified aggregate queries (DLC Fetcher)
+-  Simplified aggregate CRUD support (DLC repositories)
+-  Object relational auto mapping
+-  Persistence Action Event hooks
+-  Full ValueObject support regarding persistence
+-  Supports Java `final` keywords and Java optionals within persisted structures
 
 ## Implementation
-**Hinweis:** Damit eine reibungslose Implementation des Repositories möglich ist,
-muss das Projekt zuerst einmal kompiliert werden, sodass die entsprechenden JOOQ-Records/-Tabellen erstellt werden.
+**Note:** In order for the repository to be implemented smoothly, the project must first be compiled so that the 
+corresponding JOOQ records/tables are created.
 
-### Repository anlegen
-Wie auch schon bei den anderen Domain-Types, lässt sich ein Repository definieren,
-indem man von der entsprechenden Klasse erbt. Ein beispielhaftes Repository mit den grundlegenden 
-Operationen für die eingangs verwendete Customer-Klasse, könnte so aussehen:
-```
+### Create repository
+As with the other domain types, a repository can be defined,
+by extending the corresponding class. An exemplary repository with the basic operations for the
+operations for the customer class used at the beginning could look like this:
+```Java
 @Component
 public class CustomerRepository extends JooqAggregateRepository<Customer, CustomerId> {
 
@@ -44,77 +44,67 @@ public class CustomerRepository extends JooqAggregateRepository<Customer, Custom
 }
 ```
 
-Bereits durch diese grundlegende Definition sind simple CRUD-Operationen möglich.
+This basic definition already makes simple CRUD operations possible.
 
-### Eigene Datenbank-Operationen definieren
-Komplexere Operationen lassen sich hervorragend durch das Zusammenspiel zwischen DLC und JOOQ definieren.
-Hierbei findet oft der `Fetcher` Anwendung, welcher vereinfachtes Laden der Aggregates aus der Datenbank ermöglicht.
-Beispielhafte Implementationen können dann so aussehen:
+### Define custom database operations
+More complex operations can be excellently defined through the interaction between DLC and JOOQ.
+The `Fetcher` is often used here, which enables simplified loading of the aggregates from the database.
+Exemplary implementations can then look like this:
 
 #### Find All
-```
-public List<Customer> findAllCustomers() {
-        List<Customers> result = dslContext.select()
-        .from(CUSTOMER)
-        .fetch().stream()
-        .map(r -> getFetcher().fetchDeep(r.into(CUSTOMER)).resultValue().get()).collect(Collectors.toList());
-        return result;
+```Java
+@Component
+public class CustomerRepository extends JooqAggregateRepository<Customer, CustomerId> {
+    public List<Customer> findAllCustomers() {
+        return dslContext.select()
+            .from(CUSTOMER)
+            .fetch().stream()
+            .map(r -> getFetcher().fetchDeep(r.into(CUSTOMER)).resultValue().get()).collect(Collectors.toList());
     }
+}
 ```
-`CUSTOMER` ist hierbei die JOOQ Repräsentation der Customer-Tabelle und entsprechende JOOQ-Records der Datenbank.
+'CUSTOMER' is the JOOQ representation of the customer table and the corresponding JOOQ records of the database.
+The fetcher uses `fetchDeep` to load further JOOQ records from the tables that make up the aggregate.
+It also performs the mapping to the desired aggregate structure at Java level.
 
 #### Find Paginated
-```
-public List<Customer> findCustomersPaginated(int offset, int pageSize) {
-    List<Customer> result = dslContext.select()
-        .from(Customer)
-        .orderBy(CUSTOMER.ID)
-        .offset(offset)
-        .limit(pageSize)
-        .fetch().stream()
-        .map(r -> getFetcher().fetchDeep(r.into(CUSTOMER)).resultValue().get()).collect(Collectors.toList());
-    return result;
-}
-```
-
-#### Find Paginated und gefiltert
-```
-public List<Customer> findCustomersPaginatedAndCustomerFirstNameEqualTo(String firstName, int offset, int pageSize) {
-    List<Customer> result = dslContext.select()
-        .from(CUSTOMER)
-        .where(ORDER.FIRST_NAME.eq(firstName)) 
-        .orderBy(CUSTOMER.ID)
-        .offset(offset)
-        .limit(pageSize)
-        .fetch().stream()
-        .map(r -> getFetcher().fetchDeep(r.into(CUSTOMER)).resultValue().get()).collect(Collectors.toList());
-    return result;
-}
-```
-
-## Tests
-
-```
-class CustomerRepositoryTest {
-
-    @Autowired
-    CustomerRepository customerRepository;
-
-    @Test
-    void testFindAll() {
-        
-        
+```Java
+@Component
+public class CustomerRepository extends JooqAggregateRepository<Customer, CustomerId> {
+    public List<Customer> findCustomersPaginated(int offset, int pageSize) {
+        return dslContext.select()
+            .from(Customer)
+            .orderBy(CUSTOMER.ID)
+            .offset(offset)
+            .limit(pageSize)
+            .fetch().stream()
+            .map(r -> getFetcher().fetchDeep(r.into(CUSTOMER)).resultValue().get()).collect(Collectors.toList());
     }
-
 }
 ```
 
+#### Find Paginated and filtered
+```Java
+@Component
+public class CustomerRepository extends JooqAggregateRepository<Customer, CustomerId> {
+    public List<Customer> findCustomersPaginatedAndCustomerFirstNameEqualTo(String firstName, int offset, int pageSize) {
+        return dslContext.select()
+            .from(CUSTOMER)
+            .where(ORDER.FIRST_NAME.eq(firstName))
+            .orderBy(CUSTOMER.ID)
+            .offset(offset)
+            .limit(pageSize)
+            .fetch().stream()
+            .map(r -> getFetcher().fetchDeep(r.into(CUSTOMER)).resultValue().get()).collect(Collectors.toList());
+    }
+}
+```
 
 ---
 
-|          **OpenAPI-Extension**           |           **Domain-Events**            |
-|:----------------------------------------:|:--------------------------------------:|
-| [<< Previous](open_api_extension_en.md)  | [Next >>](domain_events_en.md) |
+|          **OpenAPI-Extension**          |       **Domain-Events**        |
+|:---------------------------------------:|:------------------------------:|
+| [<< Previous](open_api_extension_en.md) | [Next >>](domain_events_en.md) |
 
 ---
 

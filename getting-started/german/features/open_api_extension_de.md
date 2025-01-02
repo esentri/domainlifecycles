@@ -32,9 +32,9 @@ public interface CustomerAPI {
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     ResponseEntity<ResponseObject<Customer>> get(@PathVariable("id") Customer.CustomerId id);
-    
-    //...
 
+    //...
+}
 ```
 
 ---

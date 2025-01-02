@@ -12,6 +12,7 @@ Damit ermöglicht er strukturierte Queries und Navigation über das Modell inner
 Der Domain-Mirror bildet die Grundlage für alle DLC Features und muss vor allen anderen Konfigurationen initialisiert werden. 
 Dies kann per static Konstruktor geschehen, oder aber auch als Spring Configuration Bean, von welchem dann alle anderen DLC spezifischen 
 Configuration-Beans abhängen (per Spring-Configuration mit `@DependsOn`):
+
 ```Java
 @SpringBootApplication
 public class SampleApplication {
@@ -28,9 +29,9 @@ public class SampleApplication {
 
 ---
 
-|            **Domain Types**             |           **Domain-Object Builders**           |
-|:---------------------------------------:|:----------------------------------------------:|
-| [<< Vorherige Seite](domain_types_de.md) | [Nächste Seite >>](domainobject_builders_de.md) |
+|             **Domain Types**              |           **Domain-Object Builders**            |
+|:-----------------------------------------:|:-----------------------------------------------:|
+| [<< Vorherige Seite](domain_types_de.md)  | [Nächste Seite >>](domainobject_builders_de.md) |
 
 ---
 

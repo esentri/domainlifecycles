@@ -4,11 +4,9 @@
 
 # Domain Events
 Vereinfacht und kapselt einige Funktionen von Event-Publishing/-Listening von DomainEvents.
-
--   Deutlich weniger Publisher Boilerplate-Code durch die statische  `DomainEvents.publish()`  API
--   Weniger Listener und Event-Routing Boilerplate Code durch  `@ListensTo`  Annotation
--   Optional: Support für Spring oder JTA basiertes Transaktions-Handling
--   Optional: Support für "transactional outbox" Pattern für besseres Publishen von DomainEvents
+Deutlich weniger Publisher Boilerplate-Code durch die statische  `DomainEvents.publish()` API, weniger Listener und 
+Event-Routing Boilerplate Code durch  `@ListensTo`  Annotation und optional Support für Spring oder JTA basiertes 
+Transaktions-Handling oder Support für "transactional outbox" Pattern für besseres Publishen von DomainEvents
 
 ---
 
@@ -52,9 +50,9 @@ class EventListener {
 
 ---
 
-|            **Persistence**             |               **Validation**                |
-|:--------------------------------------:|:-------------------------------------------:|
-| [<< Vorherige Seite](persistence_de.md) | [Nächste Seite >>](validation_support_de.md) |
+|             **Persistence**              |                **Validation**                |
+|:----------------------------------------:|:--------------------------------------------:|
+| [<< Vorherige Seite](persistence_de.md)  | [Nächste Seite >>](validation_support_de.md) |
 
 ---
 

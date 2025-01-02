@@ -8,13 +8,12 @@ and configuration options.
 
 ---
 
-## Implementation
-Ein an DDD angepasstes, besseres JSON-Mapping wird bereits sichergestellt durch die 
-vorgenommene Konfiguration unter [Projekt erstellen](../guides/configuration_en.md#JSON-Mapping).
+## Implementierung
+A better JSON mapping adapted to DDD is already ensured by the configuration made under configuration made under [Create project](../guides/configuration_en.md#JSON-Mapping).
 
-Im weiteren Verlauf kann das Default-Mapping angepasst werden durch das überschreiben einer oder mehrerer Methoden des
-`JacksonMappingCustomizer`, wie folgt:
-```
+The default mapping can then be adapted by overwriting one or more methods of the
+`JacksonMappingCustomizer`, as follows:
+```Java
 public class CustomerMappingCustomizer extends JacksonMappingCustomizer<Customer>{
 
     public CustomerMappingCustomizer() {
@@ -24,15 +23,19 @@ public class CustomerMappingCustomizer extends JacksonMappingCustomizer<Customer
     @Override
     public void afterObjectRead(PersistableMappingContext mappingContext, ObjectCodec codec) {
         DomainObjectBuilder<?> b = mappingContext.domainObjectBuilder;
-        
-        // alter some of the mapping configurations
+     
     }
+
 }
 ```
 
-und die Konfiguration anschließend aktivieren:
+In this example above, the ```afterObjectRead``` method of DLC is called if a corresponding JSON object has been parsed 
+and its values have already been transferred to the DomainObjectBuilder instance. The builder can now be manipulated,
+before DLC creates the target domain object from it.
 
-```
+The `JacksonMappingCustomizer` must be activated via the following configuration using ````module.registerCustomizer````:
+
+```Java
 @Configuration
 public class JacksonConfiguration {
 
@@ -50,10 +53,10 @@ public class JacksonConfiguration {
 ```
 
 ## Unit-Tests
-Für entsprechende Unit-Tests kann sowohl die Serialisierung als auch Deserialisierung getestete werden.
-Ein Beispiel zum Testen einer erfolgreichen Serialisierung:
+Both serialization and deserialization can be tested for corresponding unit tests.
+An example of how to test successful serialization:
 
-```
+```Java
 public class JacksonTest {
 
     private final ObjectMapper objectMapper;
@@ -66,7 +69,15 @@ public class JacksonTest {
 
     public JacksonTest() {
         this.objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
+      
+        var dlcJacksonModule = new DlcJacksonModule(
+            new InnerClassDomainObjectBuilderProvider(),
+            entityIdentityProvider
+        );
+        
+        var customerMappingCustomizer = new CustomerMappingCustomizer();
+        
+        dlcJacksonModule.registerCustomizer(customerMappingCustomizer, customerMappingCustomizer.instanceType);
         
         var entityIdentityProvider = new EntityIdentityProvider() {
             @Override
@@ -79,13 +90,9 @@ public class JacksonTest {
         };
 
         objectMapper.registerModule(
-            new DlcJacksonModule(
-                new InnerClassDomainObjectBuilderProvider(),
-                entityIdentityProvider
-            )
+            dlcJacksonModule
         );
-        objectMapper.registerModule(new Jdk8Module());
-        objectMapper.registerModule(new ParameterNamesModule());
+        
     }
     
     @Test
@@ -108,9 +115,9 @@ public class JacksonTest {
 
 ---
 
-|            **Domain-Object Builders**             |            **OpenAPI-Extension**            |
-|:-------------------------------------------------:|:-------------------------------------------:|
-| [<< Previous](./dommainobject_builders.md) | [Next >>](open_api_extension_en.md) |
+|          **Domain-Object Builders**          |        **OpenAPI-Extension**        |
+|:--------------------------------------------:|:-----------------------------------:|
+| [<< Previous](./domainobject_builders_en.md) | [Next >>](open_api_extension_en.md) |
 
 ---
 

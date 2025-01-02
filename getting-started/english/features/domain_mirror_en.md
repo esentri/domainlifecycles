@@ -4,14 +4,16 @@
 
 # Domain Mirror
 The domain mirror mirrors the meta-model of the design/project structures within a bounded context.
-This enables structured queries and navigation within a bounded context and also simplified access to the values 
-of `Aggregates`, `Entities` and `ValueObjects` with the use of reflection.
+This enables structured queries and navigation through the model within a bounded context.
 
 ---
 
 ## Implementation
-Um den Domain-Mirror zu nutzen, muss dieser zuerst initialisiert werden:
-```
+The domain mirror forms the basis for all DLC features and must be initialized before all other configurations.
+This can be done using either a static constructor or with a Spring configuration bean, on which all other DLC-specific
+configuration beans then depend (via Spring configuration with `@DependsOn`):
+
+```Java
 @SpringBootApplication
 public class SampleApplication {
 
@@ -20,38 +22,16 @@ public class SampleApplication {
     }
 
     public static void main(String[] args) {
-        ...
-    }
-}
-```
-Anschließend können über die statischen Methoden des Interface `io.domainlifecycles.mirror.api.Domain`
-die DDD-Strukturen des Projekts auf verschiedene Arten nachvollzogen werden.
-Ein Beispiel hierfür wäre:
-```
-Customer customer = Domain.typeMirror("io.sampleapp.customer");
-```
-
-## Unit-Tests
-
-Möchten man Funktionen seines Codes testen, welche sich auf den DLC-Mirror stützen,
-ist es wichtig diesen in der Test-Klasse auch zu initialisieren mit dem korrekten Context-Package:
-
-```
-public class SomeDomainMirrorTest {
-
-    @BeforeAll
-    public static void init() {
-        ReflectiveDomainMirrorFactory factory = new ReflectiveDomainMirrorFactory("tests");
-        Domain.initialize(factory);
+        //...
     }
 }
 ```
 
 ---
 
-|          **Domain Types**           |           **Domain-Object Builders**           |
-|:-----------------------------------:|:----------------------------------------------:|
-| [<< Previous](domain_types_en.md)   | [Next >>](domainobject_builders_en.md) |
+|          **Domain Types**          |       **Domain-Object Builders**        |
+|:----------------------------------:|:---------------------------------------:|
+| [<< Previous](domain_types_en.md)  | [Next >>](domainobject_builders_en.md)  |
 
 ---
 
