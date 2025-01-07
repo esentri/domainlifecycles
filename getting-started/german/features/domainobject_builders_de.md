@@ -12,7 +12,7 @@ noch Lombok Builder Kompatibilität.
 ## Implementierung
 DLC baut stark auf dem Builder-Pattern auf. Verpflichtend ist hierfür zuerst einmal die Bereitstellung einer 
 Konfiguration für den Default-Builder, welche bereits unter 
-[Projekt erstellen](../guides/configuration_de.md#DomainObjectBuilderProvider) erläutert wurde.
+[Konfiguration](../guides/configuration_de.md#DomainObjectBuilderProvider) erläutert wurde.
 
 Für den Builder lässt sich hier am einfachsten Lombok nutzen:
 ```Java

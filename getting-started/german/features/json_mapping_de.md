@@ -10,7 +10,9 @@ und Möglichkeiten zur Konfiguration.
 
 ## Implementierung
 Ein an DDD angepasstes, besseres JSON-Mapping wird bereits sichergestellt durch die 
-vorgenommene Konfiguration unter [Projekt erstellen](../guides/configuration_de.md#JSON-Mapping).
+vorgenommene Konfiguration unter [Projekt erstellen](../guides/configuration_de.md#JSON-Mapping). Bei einer typische DDD Implementierung von Building Blocks wird stark mit 
+unveränderlichen Strukturen (Immuzablility) gearbeitet oder es werden beispielsweise typisierte Ids eingesetzt, welche 
+bei den gängigen JSON-Mapping Framework Probleme bzw. zusätzlichen Aufwand verursachen.
 
 Im weiteren Verlauf kann das Default-Mapping angepasst werden durch das Überschreiben einer oder mehrerer Methoden des
 `JacksonMappingCustomizer`, wie folgt:

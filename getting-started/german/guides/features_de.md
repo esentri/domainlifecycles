@@ -6,7 +6,7 @@
 
 ---
 
-DLC bietet viele verschiedene Features und Extensions, welche im Folgenden alle erläutert werden.
+DLC bietet viele verschiedene Features und Extensions, welche im Folgenden erläutert werden.
 Hierbei wird immer, wie auch schon bei den vorangegangenen Erklärungen und Anleitungen von einem 
 Webshop in den Beispielen ausgegangen.
 

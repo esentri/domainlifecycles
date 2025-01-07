@@ -6,14 +6,15 @@
 
 DLC offers many possibilities for individualization and configuration, but some
 have to be made before the full range of functions can be guaranteed.
-Below are all the configurations (or Spring beans) that are required for the basic DLC functions.
+Below you can see all configurations (or Spring beans) that are required for the basic DLC functions.
 All beans are sorted according to the respective DLC feature to which they belong.
 The guide to the [Features](features_en.md) goes into more detail in many places and refers back to some of them.
 
 ---
 
 ## Persistence
-The Persistence module cares about all interactions between DLC and a relational database.
+The Persistence module cares about all interactions between DLC and a relational database
+regarding the mapping of aggregates and the corresponding persistence access via repositories.
 
 In addition to the following configuration, examples of implementation can be found [here](../features/persistence_en.md).
 
@@ -132,43 +133,65 @@ jooq {
 ```
 </details>
 
-The configuration for Maven is not made in the pom.xml, but in a separate configuration file, which must be located in 
-the project folder.
+The configuration for Maven is made in the pom.xml.
 
 <details>
 <summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"> <b>library.xml</b></summary>
 
 ```xml
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.12.0.xsd">
-    <jdbc>
-        <driver>org.h2.Driver</driver>
-        <url>jdbc:h2:file:./build/h2-db/test;NON_KEYWORDS=VALUE;AUTO_SERVER=TRUE</url>
-        <user>sa</user>
-        <password></password>
-    </jdbc>
-    <generator>
-        <database>
-            <name>org.jooq.meta.h2.H2Database</name>
-            <includes>.*</includes>
-            <inputSchema>${your_input_schema_name}</inputSchema>
-            <recordVersionFields>CONCURRENCY_VERSION</recordVersionFields>
-            <forceIntegerTypesOnZeroScaleDecimals>true</forceIntegerTypesOnZeroScaleDecimals>
-        </database>
-        <generate>
-            <generatedAnnotation>false</generatedAnnotation>
-            <generatedAnnotationType>DETECT_FROM_JDK</generatedAnnotationType>
-            <javaTimeTypes>true</javaTimeTypes>
-        </generate>
-        <target>
-            <packageName>${your_package_name}</packageName>
-        </target>
-    </generator>
-</configuration>
+<plugin>
+    <groupId>org.jooq</groupId>
+    <artifactId>jooq-codegen-maven</artifactId>
+    <version>3.19.16</version>
+
+    <!-- The plugin should hook into the generate goal -->
+    <executions>
+        <execution>
+            <goals>
+                <goal>generate</goal>
+            </goals>
+        </execution>
+    </executions>
+
+    <!-- Manage the plugin's dependency. In this example, we'll use a H2 database -->
+    <dependencies>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.3.232</version>
+        </dependency>
+    </dependencies>
+
+    <configuration>
+        <jdbc>
+            <driver>org.h2.Driver</driver>
+            <url>jdbc:h2:file:./build/h2-db/test;NON_KEYWORDS=VALUE;AUTO_SERVER=TRUE</url>
+            <user>sa</user>
+            <password></password>
+        </jdbc>
+        <generator>
+            <database>
+                <name>org.jooq.meta.h2.H2Database</name>
+                <includes>.*</includes>
+                <inputSchema>${your_input_schema_name}</inputSchema>
+                <recordVersionFields>CONCURRENCY_VERSION</recordVersionFields>
+                <forceIntegerTypesOnZeroScaleDecimals>true</forceIntegerTypesOnZeroScaleDecimals>
+            </database>
+            <generate>
+                <generatedAnnotation>false</generatedAnnotation>
+                <generatedAnnotationType>DETECT_FROM_JDK</generatedAnnotationType>
+                <javaTimeTypes>true</javaTimeTypes>
+            </generate>
+            <target>
+                <packageName>${your_package_name}</packageName>
+            </target>
+        </generator>
+    </configuration>
+</plugin>
 ```
 </details>
 
-For DLC Persistence, the necessary ```CONCURRENCY_VERSION``` is super important so that the optimistic locking of 
+For DLC Persistence, the necessary ```CONCURRENCY_VERSION``` is super important, so that the optimistic locking of 
 aggregates and entities will work correctly.
 
 Additional information regarding the configuration of JOOQ can be found

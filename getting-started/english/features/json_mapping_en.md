@@ -4,12 +4,14 @@
 
 # JSON-Mapping
 Offers JSON mapping based on [Jackson](https://github.com/FasterXML/jackson), with DDD specific customization 
-and configuration options.
+and configuration options. 
 
 ---
 
 ## Implementierung
 A better JSON mapping adapted to DDD is already ensured by the configuration made under configuration made under [Create project](../guides/configuration_en.md#JSON-Mapping).
+In a typical DDD implementation of building blocks, immutable structures are heavily used, or, for example, typed IDs are employed, 
+which can cause problems or require additional effort when working with common JSON-mapping frameworks.
 
 The default mapping can then be adapted by overwriting one or more methods of the
 `JacksonMappingCustomizer`, as follows:

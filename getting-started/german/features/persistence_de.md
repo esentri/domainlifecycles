@@ -45,8 +45,8 @@ public class CustomerRepository extends JooqAggregateRepository<Customer, Custom
 Bereits durch diese grundlegende Definition sind simple CRUD-Operationen für Aggregates möglich, wobei DLC die Aggregate Struktur auf potenziell mehrere
 auf Datenbank Ebene abgebildete Tabellen unterstützt.
 
-### Eigene Datenbank-Operationen definieren
-Komplexere Operationen lassen sich hervorragend durch das Zusammenspiel zwischen DLC und JOOQ definieren.
+### Eigene Queries definieren
+Komplexere Datenbank-Abfragen lassen sich hervorragend durch das Zusammenspiel zwischen DLC und JOOQ definieren.
 Hierbei findet oft der `Fetcher` Anwendung, welcher vereinfachtes Laden der Aggregates aus der Datenbank ermöglicht.
 Beispielhafte Implementierungen können dann so aussehen:
 

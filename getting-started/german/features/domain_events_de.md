@@ -38,7 +38,8 @@ Methode `DomainEvents.publish()`.
 
 ### Auf Domain-Events hören
 Eine Methode hört auf veröffentlichte Domain-Events, sofern sie mit der `@ListensTo(domainEventType = ...)`
-Annotation versehen wurde:
+Annotation versehen wurde. Die Zustellung des Events und den Aufruf der Methode bei Event-Empfang 
+wie auch die zugehörige Transaktionssteuerung übernimmt das Framework:
 
 ```Java
 class EventListener {

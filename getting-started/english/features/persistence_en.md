@@ -46,8 +46,8 @@ public class CustomerRepository extends JooqAggregateRepository<Customer, Custom
 
 This basic definition already makes simple CRUD operations possible.
 
-### Define custom database operations
-More complex operations can be excellently defined through the interaction between DLC and JOOQ.
+### Define custom queries
+More complex queries can be excellently defined through the interaction between DLC and JOOQ.
 The `Fetcher` is often used here, which enables simplified loading of the aggregates from the database.
 Exemplary implementations can then look like this:
 

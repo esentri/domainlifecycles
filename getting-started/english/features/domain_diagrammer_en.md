@@ -24,6 +24,14 @@ class Diagrammer {
 }
 ```
 
+## Sample Diagramm
+
+Here's an example of a generated diagram for the [DLC Sample App](./../../../sample-project).
+
+![What a pity you cannot see it](./../../../documentation/resources/images/sample_diagram.png "Domain Diagram")
+
+
+
 ---
 
 |          **Spring-Web-Integration**           |

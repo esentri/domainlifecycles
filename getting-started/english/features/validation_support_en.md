@@ -3,10 +3,11 @@
 ---
 
 # Validation Support
-Implementation of business logic rules and domain-specific invariants using the DomainAssertion API. 
+The implementation of business logic rules and domain-specific invariants can be simplified using the DomainAssertion API. 
 Optionally, DLC also offers extended support of Java Bean Validation Annotations within a DomainObject to implement 
-invariants or pre/post/conditions on methods and also ByteCode extension to simplify the implementation of 
-an “Always-Valid-Strategy”.
+invariants or pre/post/conditions on methods.  Also a ByteCode extension is avaliable to simplify the implementation of 
+an “Always-Valid-Strategy”. "Always-Valid" means that all domain objects can only be created with validations adhered to at all times. 
+The ByteCode extension, for example, adds corresponding validation calls to all relevant constructors.
 
 ---
 

@@ -12,7 +12,7 @@ Lombok Builder compatibility.
 ## Implementation
 DLC is strongly based on the builder pattern. The first mandatory requirement for this is the provision of a
 configuration for the default builder, which can be found under
-[Create project](../guides/configuration_en.md#DomainObjectBuilderProvider).
+[Configuration](../guides/configuration_en.md#DomainObjectBuilderProvider).
 
 
 Lombok is the easiest option for the builder:

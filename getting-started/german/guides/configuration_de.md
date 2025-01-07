@@ -4,8 +4,8 @@
 
 # Konfiguration
 
-DLC bietet viele Möglichkeiten für Anpassungen und spezifische Konfiguration, manche Konfigurationen 
-müssen aber auch verpflichtend vorgenommen werden damit der volle Funktionsumfang gewährleistet werden kann.
+DLC bietet viele Möglichkeiten für Anpassungen und spezifische Konfiguration. Einige Konfigurationen 
+müssen verpflichtend vorgenommen werden, damit der volle Funktionsumfang gewährleistet werden kann.
 Im Folgenden befinden sich alle Konfigurationen (bzw. in diesem Beispiel per Spring-Beans), welche für die grundlegenden DLC-Funktionen
 benötigt werden. Hierbei sind alle Beans sortiert nach dem jeweiligen DLC-Feature, welchem sie zuzuordnen sind.
 Im Guide zu den [Features](features_de.md) wird an vielen Stellen nochmal näher auf einige Stellen eingegangen und 
@@ -14,7 +14,8 @@ rückverwiesen.
 ---
 
 ## Persistence
-Das Persistence Modul ist zuständig für alle Interaktionen zwischen DLC und einer relationalen Datenbank.
+Das Persistence Modul ist zuständig für alle Interaktionen zwischen DLC und einer relationalen Datenbank bzgl. 
+der entsprechenden Abbildung von Aggregaten und dem entsprechenden Persistenz-Zugriff per Repositories.
 
 Zusätzlich zur folgenden Konfiguration finden sich [hier](../features/persistence_de.md) Beispiele zur Implementierung.
 
@@ -132,39 +133,61 @@ jooq {
 ```
 </details>
 
-Die Konfiguration für Maven findet nicht in der pom.xml statt, sondern in einer separaten Konfigurations-Datei, welche
-im Projekt-Ordner liegen muss.
+Die Konfiguration für Maven findet in der pom.xml statt.
 
 <details>
-<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"> <b>library.xml</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"> <b>pom.xml</b></summary>
 
 ```xml
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.12.0.xsd">
-    <jdbc>
-        <driver>org.h2.Driver</driver>
-        <url>jdbc:h2:file:./build/h2-db/test;NON_KEYWORDS=VALUE;AUTO_SERVER=TRUE</url>
-        <user>sa</user>
-        <password></password>
-    </jdbc>
-    <generator>
-        <database>
-            <name>org.jooq.meta.h2.H2Database</name>
-            <includes>.*</includes>
-            <inputSchema>${your_input_schema_name}</inputSchema>
-            <recordVersionFields>CONCURRENCY_VERSION</recordVersionFields>
-            <forceIntegerTypesOnZeroScaleDecimals>true</forceIntegerTypesOnZeroScaleDecimals>
-        </database>
-        <generate>
-            <generatedAnnotation>false</generatedAnnotation>
-            <generatedAnnotationType>DETECT_FROM_JDK</generatedAnnotationType>
-            <javaTimeTypes>true</javaTimeTypes>
-        </generate>
-        <target>
-            <packageName>${your_package_name}</packageName>
-        </target>
-    </generator>
-</configuration>
+<plugin>
+    <groupId>org.jooq</groupId>
+    <artifactId>jooq-codegen-maven</artifactId>
+    <version>3.19.16</version>
+
+    <!-- The plugin should hook into the generate goal -->
+    <executions>
+        <execution>
+            <goals>
+                <goal>generate</goal>
+            </goals>
+        </execution>
+    </executions>
+
+    <!-- Manage the plugin's dependency. In this example, we'll use a H2 database -->
+    <dependencies>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.3.232</version>
+        </dependency>
+    </dependencies>
+    
+    <configuration>
+        <jdbc>
+            <driver>org.h2.Driver</driver>
+            <url>jdbc:h2:file:./build/h2-db/test;NON_KEYWORDS=VALUE;AUTO_SERVER=TRUE</url>
+            <user>sa</user>
+            <password></password>
+        </jdbc>
+        <generator>
+            <database>
+                <name>org.jooq.meta.h2.H2Database</name>
+                <includes>.*</includes>
+                <inputSchema>${your_input_schema_name}</inputSchema>
+                <recordVersionFields>CONCURRENCY_VERSION</recordVersionFields>
+                <forceIntegerTypesOnZeroScaleDecimals>true</forceIntegerTypesOnZeroScaleDecimals>
+            </database>
+            <generate>
+                <generatedAnnotation>false</generatedAnnotation>
+                <generatedAnnotationType>DETECT_FROM_JDK</generatedAnnotationType>
+                <javaTimeTypes>true</javaTimeTypes>
+            </generate>
+            <target>
+                <packageName>${your_package_name}</packageName>
+            </target>
+        </generator>
+    </configuration>
+</plugin>
 ```
 </details>
 
