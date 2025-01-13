@@ -75,7 +75,7 @@ public final class OrderItem extends EntityBase<OrderItem.OrderItemId> {
     @Positive
     private int quantity;
 
-    @Builder(setterPrefix = "set")
+    @Builder
     private OrderItem(final long concurrencyVersion,
                       final OrderItem.OrderItemId id,
                       final Product.ProductId productId,

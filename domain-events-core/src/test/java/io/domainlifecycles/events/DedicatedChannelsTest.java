@@ -85,6 +85,7 @@ public class DedicatedChannelsTest {
 
     @Test
     public void testIntegrationDomainEvent(){
+
         //when
         var evt = new ADomainEvent("Test");
         DomainEvents.publish(evt);

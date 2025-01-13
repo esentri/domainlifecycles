@@ -63,7 +63,7 @@ public final class Customer extends AggregateRootBase<Customer.CustomerId> {
     private Optional<CreditCard> creditCard;
     private boolean blocked;
 
-    @Builder(setterPrefix = "set")
+    @Builder
     public Customer(final CustomerId id,
                     final long concurrencyVersion,
                     final String userName,

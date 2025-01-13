@@ -39,7 +39,7 @@ import java.time.LocalDate;
  *
  * @author Mario Herb
  */
-@Builder(setterPrefix = "set")
+@Builder
 public record CreditCard(
     @NotNull CreditCardType type,
     @NotEmpty @Size(max = 19) String cardNumber,

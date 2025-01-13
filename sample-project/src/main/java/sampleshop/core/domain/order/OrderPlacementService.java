@@ -60,20 +60,20 @@ public final class OrderPlacementService implements DomainService {
     public Order placeOrder(final PlaceOrder placeOrder) {
         var placed = orderRepository.insert(
             Order.builder()
-                .setId(orderRepository.newOrderId())
-                .setCustomerId(placeOrder.customerId())
-                .setStatus(OrderStatus.PENDING)
-                .setCreation(Instant.now())
-                .setItems(
+                .id(orderRepository.newOrderId())
+                .customerId(placeOrder.customerId())
+                .status(OrderStatus.PENDING)
+                .creation(Instant.now())
+                .items(
                     placeOrder.items()
                         .stream()
                         .map(item ->
                             OrderItem
                                 .builder()
-                                .setId(orderRepository.newOrderItemId())
-                                .setProductId(item.productId())
-                                .setQuantity(item.quantity())
-                                .setProductPrice(
+                                .id(orderRepository.newOrderItemId())
+                                .productId(item.productId())
+                                .quantity(item.quantity())
+                                .productPrice(
                                     productRepository
                                         .findById(item.productId())
                                         .map(Product::getPrice)
