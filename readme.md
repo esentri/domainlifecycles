@@ -89,6 +89,9 @@ DLC provides following core features:
 - [`Domain Diagrammer`](./readme_diagrammer.md): Generate text based class diagram for DDD building blocks
     * based on [Nomnoml](https://nomnoml.com/)
 
+## Getting started
+You can find our "Getting Started Guide" [here](./getting-started/english/index_en.md)
+
 ## DLC Project Setup
 
 ### DLC dependencies
@@ -190,3 +193,4 @@ Remember to provide a SLF4J-Provider in your classpath.
 ### Sample projects
 
 A Gradle based sample project that demonstrates all DLC features can be found [here](./sample-project)
+
