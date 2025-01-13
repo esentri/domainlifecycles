@@ -157,14 +157,13 @@ public class DefaultTests {
         assertThat(t).hasMessageContaining("addItem.quantity");
         log.info("Exception message: " + t.getMessage());
 
-
         //order without a status is invalid
         var t2 = catchThrowable(() ->
             Order.builder()
-                .setCustomerId(new Customer.CustomerId(1L))
-                .setId(new Order.OrderId(2L))
-                .setItems(new ArrayList<>())
-                .setCreation(Instant.now())
+                .customerId(new Customer.CustomerId(1L))
+                .id(new Order.OrderId(2L))
+                .items(new ArrayList<>())
+                .creation(Instant.now())
                 .build()
         );
 

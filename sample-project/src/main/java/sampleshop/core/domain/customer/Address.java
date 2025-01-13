@@ -36,7 +36,7 @@ import io.domainlifecycles.domain.types.ValueObject;
  *
  * @author Mario Herb
  */
-@Builder(setterPrefix = "set")
+@Builder
 public record Address(
     @NotEmpty @Size(max = 50) String street,
     @NotEmpty @Size(max = 50) String city,

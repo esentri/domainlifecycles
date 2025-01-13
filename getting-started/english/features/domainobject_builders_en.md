@@ -34,6 +34,8 @@ public class Customer extends AggregateRootBase<CustomerId> {
     }
 }
 ```
+The simplest approach is to define constructors with all fields of the respective object 
+for each Entity, each AggregateRoot, and each ValueObject, and to use Lombok's @Builder for these constructors.
 
 ---
 

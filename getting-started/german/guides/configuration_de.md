@@ -20,8 +20,8 @@ der entsprechenden Abbildung von Aggregaten und dem entsprechenden Persistenz-Zu
 Zusätzlich zur folgenden Konfiguration finden sich [hier](../features/persistence_de.md) Beispiele zur Implementierung.
 
 ### Datenbank Driver
-Zunächst muss allgemein zur Nutzung einer Datenbank der jeweilige Database-Driver eingebunden werden.
-Da DLC JOOQ nutzt (siehe unten), werden hierfür nahezu alle relationalen SQL basierten Datenbanken unterstützt.
+Zunächst muss allgemein zur Nutzung einer Datenbank der jeweilige Datenbank Treiber eingebunden werden.
+Da DLC jOOQ nutzt (siehe unten), werden hierfür nahezu alle relationalen SQL basierten Datenbanken unterstützt.
 Eine Auflistung aller unterstützten Datenbanken findet sich 
 [hier](https://www.jooq.org/doc/latest/manual/reference/supported-rdbms/").
 
@@ -65,8 +65,9 @@ spring.datasource.password=
 </details>
 
 ### jOOQ
-DLC uses JOOQ as a JDBC replacement and code generator to facilitate working with SQL-based relational databases.
-The Spring-Boot-specific JOOQ dependency is required for this exact purpose:
+Für einfacheren und vor allem typsicheren JDBC-Zugriff kommt bei DLC, das Framework jOOQ zum Einsatz.
+Das erleichtert die Arbeit mit SQL basierten relationalen Datenbanken und abstrahiert SQL Dialekt spezifische Eigenheiten.
+Hierfür wird zusätzlich noch die Spring-Boot spezifische jOOQ Dependency benötigt:
 
 <details>
 <summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle</b></summary>
@@ -93,8 +94,8 @@ dependencies {
 
 Bei jOOQ werden typischerweise Java-Klassen für den Zugriff auf Datenbank-Objekte (z.B. Tabellen und Sequences) generiert.
 Hierfür muss der jOOQ Code-Generator im Build-Management eingebunden werden.
-Hier eine beispielhafte Konfiguration, für ein bereits bestehendes Datenbank-Schema:
 
+Hier eine beispielhafte Konfiguration, für ein bereits bestehendes Datenbank-Schema:
 <details>
 <summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle</b></summary>
 

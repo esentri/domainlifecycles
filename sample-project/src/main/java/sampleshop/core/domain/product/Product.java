@@ -82,7 +82,7 @@ public final class Product extends AggregateRootBase<Product.ProductId> {
     @NotNull
     private Price price;
 
-    @Builder(setterPrefix = "set")
+    @Builder
     private Product(final long concurrencyVersion,
                     final Product.ProductId id,
                     final String description,

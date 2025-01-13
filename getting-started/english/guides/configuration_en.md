@@ -4,8 +4,8 @@
 
 # Configuration
 
-DLC offers many possibilities for individualization and configuration, but some
-have to be made before the full range of functions can be guaranteed.
+DLC offers many options for individualization and configuration. Some specific configurations are mandatory
+to make the full range of functions available.
 Below you can see all configurations (or Spring beans) that are required for the basic DLC functions.
 All beans are sorted according to the respective DLC feature to which they belong.
 The guide to the [Features](features_en.md) goes into more detail in many places and refers back to some of them.
@@ -20,7 +20,7 @@ In addition to the following configuration, examples of implementation can be fo
 
 ### Database Driver
 First of all, the respective database driver must be integrated in order to use a database.
-As DLC uses JOOQ (see below), almost all relational SQL-based databases are supported.
+As DLC uses jOOQ (see below), almost all relational SQL-based databases are supported.
 A list of all supported databases can be found 
 [here](https://www.jooq.org/doc/latest/manual/reference/supported-rdbms/").
 
@@ -64,9 +64,9 @@ spring.datasource.password=
 </details>
 
 ### JOOQ
-Als JDBC-Ersatz und Code-Generator kommt bei DLC JOOQ zum Einsatz, um das Arbeiten mit SQL basierten 
-relationalen Datenbanken zu erleichtern. 
-Hierfür wird zusätzlich noch die Spring-Boot spezifische JOOQ Dependency gebraucht:
+For simpler and, above all, type-safe JDBC access, the jOOQ framework is used at DLC. 
+This facilitates working with SQL-based relational databases and abstracts SQL dialect-specific peculiarities. 
+Additionally, the Spring Boot-specific jOOQ dependency is required for this purpose:
 
 <details>
 <summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle</b></summary>

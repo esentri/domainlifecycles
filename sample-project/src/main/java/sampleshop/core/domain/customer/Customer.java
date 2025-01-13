@@ -26,7 +26,6 @@
 
 package sampleshop.core.domain.customer;
 
-import io.domainlifecycles.mirror.api.Domain;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -64,7 +63,7 @@ public final class Customer extends AggregateRootBase<Customer.CustomerId> {
     private Optional<CreditCard> creditCard;
     private boolean blocked;
 
-    @Builder(setterPrefix = "set")
+    @Builder
     public Customer(final CustomerId id,
                     final long concurrencyVersion,
                     final String userName,

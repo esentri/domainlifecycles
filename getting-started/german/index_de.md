@@ -6,7 +6,7 @@
 
 ---
 
-Dieser Guide stellt eine vollständige Anleitung bereit, wie man DLC einrichtet und 
+Dieser Guide stellt eine vollständige Anleitung bereit, wie man DLC (das Domainlifecycles Framework) einrichtet und 
 anschließend benutzen kann. Die im Guide genutzten Beispiele basieren immer
 auf Spring-Boot. Die Beispiel-Domäne entspricht dem vollständigen [sample-project](../../sample-project).
 

@@ -6,7 +6,7 @@
 
 ---
 
-This guide provides a complete guide on how to set up and use DLC. The examples used in the guide are always based
+This guide provides a complete guide on how to set up and use DLC (the Domainlifecycles framework). The examples used in the guide are always based
 on Spring-Boot. The domain used corresponds to the complete [sample-project](../../sample-project).
 
 ---

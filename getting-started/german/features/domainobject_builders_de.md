@@ -21,7 +21,7 @@ public class Customer extends AggregateRootBase<CustomerId> {
     private final int someProperty;
     private String anotherProperty;
     
-    @Builder(setterPrefix = "set")
+    @Builder
     public Customer(final CustomerId id,
                     final long concurrencyVersion,
                     final int someProperty,
@@ -33,6 +33,10 @@ public class Customer extends AggregateRootBase<CustomerId> {
     }
 }
 ```
+D.h. die einfachste Variante ist es für jedes Entity, jedes AggregateRoot bzw. jedes ValueObject, 
+Konstruktoren mit allen Feldern des entsprechenden Objekts zu definieren und für diesen 
+Konstruktor von Lombok @Builder zu verwenden.
+
 
 ---
 
