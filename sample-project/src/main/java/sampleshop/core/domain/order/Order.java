@@ -72,7 +72,7 @@ public final class Order extends AggregateRootBase<Order.OrderId> {
     @NotNull
     private OrderStatus status;
 
-    @Builder(setterPrefix = "set")
+    @Builder
     private Order(final long concurrencyVersion,
                   final Order.OrderId id,
                   final Customer.CustomerId customerId,
@@ -130,7 +130,7 @@ public final class Order extends AggregateRootBase<Order.OrderId> {
         items().filter(item -> item.getProductId().equals(id))
             .findFirst().ifPresentOrElse(
                 item -> item.addQuantity(quantity),
-                () -> items.add(OrderItem.builder().setProductId(id).setQuantity(quantity).build())
+                () -> items.add(OrderItem.builder().productId(id).quantity(quantity).build())
             );
         return this;
     }

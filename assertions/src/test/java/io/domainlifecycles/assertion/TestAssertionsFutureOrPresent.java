@@ -231,7 +231,7 @@ public class TestAssertionsFutureOrPresent {
 
         @Test
         public void testIsFutureOrPresentMonthDayOk() {
-            if (!Month.from(LocalDate.now()).minus(1).equals(Month.JANUARY)) {
+            if (!Month.from(LocalDate.now()).plus(1).equals(Month.JANUARY)) {
                 assertThatNoException().isThrownBy(
                     () -> DomainAssertions.isFutureOrPresent(MonthDay.from(LocalDate.now().plus(1, ChronoUnit.MONTHS)),
                         "Failed"));
@@ -245,7 +245,7 @@ public class TestAssertionsFutureOrPresent {
 
         @Test
         public void testIsFutureOrPresentMonthDayFail() {
-            if (!Month.from(LocalDate.now()).minus(1).equals(Month.JANUARY)) {
+            if (!Month.from(LocalDate.now()).minus(1).equals(Month.DECEMBER)) {
                 assertThatThrownBy(
                     () -> DomainAssertions.isFutureOrPresent(MonthDay.from(LocalDate.now().minus(1, ChronoUnit.MONTHS)),
                         "Failed")).isInstanceOf(DomainAssertionException.class);
@@ -389,7 +389,7 @@ public class TestAssertionsFutureOrPresent {
 
         @Test
         public void testOptionalIsFutureOrPresentMonthDayOk() {
-            if (!Month.from(LocalDate.now()).minus(1).equals(Month.JANUARY)) {
+            if (!Month.from(LocalDate.now()).plus(1).equals(Month.JANUARY)) {
                 assertThatNoException().isThrownBy(() -> DomainAssertions.optionalIsFutureOrPresent(
                     Optional.of(MonthDay.from(LocalDate.now().plus(1, ChronoUnit.MONTHS))), "Failed"));
             }
@@ -397,7 +397,7 @@ public class TestAssertionsFutureOrPresent {
 
         @Test
         public void testOptionalIsFutureOrPresentMonthDayFail() {
-            if (!Month.from(LocalDate.now()).minus(1).equals(Month.JANUARY)) {
+            if (!Month.from(LocalDate.now()).minus(1).equals(Month.DECEMBER)) {
                 assertThatThrownBy(() -> DomainAssertions.optionalIsFutureOrPresent(
                     Optional.of(MonthDay.from(LocalDate.now().minus(1, ChronoUnit.MONTHS))), "Failed")).isInstanceOf(
                     DomainAssertionException.class);

@@ -1,9 +1,9 @@
 package sampleshop;
 
 import io.domainlifecycles.domain.types.AggregateDomainEvent;
+import io.domainlifecycles.events.api.DomainEvents;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import io.domainlifecycles.events.api.DomainEvents;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import sampleshop.core.domain.customer.Customer;
+import sampleshop.core.domain.customer.CustomerNotificationService;
 import sampleshop.core.domain.customer.FraudDetected;
 import sampleshop.core.domain.order.Order;
 import sampleshop.core.domain.order.OrderItem;
@@ -23,8 +24,6 @@ import sampleshop.core.domain.order.OrderStatus;
 import sampleshop.core.domain.product.Product;
 import sampleshop.core.outport.CustomerRepository;
 import sampleshop.core.outport.OrderRepository;
-import sampleshop.core.domain.customer.CustomerNotificationService;
-
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -59,11 +58,9 @@ public class DefaultTests {
 
     /**
      * This test demonstrates the usage of an {@link AggregateDomainEvent} in a transactional setup.
-     * The FraudDetected event is published within this application. DLC recognizes the event, start a new
-     * transaction (if needed),
-     * loads the target aggregate and calls the event handler directly on the aggregate and finally persists the
-     * updates on the aggregate
-     * and commits the transaction.
+     * The FraudDetected event is published within this application. DLC recognizes the event, starts a new
+     * transaction (if needed), loads the target aggregate and calls the event handler directly on the aggregate
+     * and finally persists the updates on the aggregate and commits the transaction.
      * <br/>
      * This way the domain event is automatically part of the aggregate interface. A lot of boilerplate code for the
      * "purely technical" event handling is reduced.
@@ -72,6 +69,7 @@ public class DefaultTests {
      */
     @Test
     public void fraudDetected(){
+        log.info("STARTING TEST 'FRAUD DETECTED'");
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         var fraud = new FraudDetected(new Customer.CustomerId(1L));
         DomainEvents.publish(fraud);
@@ -80,6 +78,7 @@ public class DefaultTests {
         var customer = customerRepository.findById(new Customer.CustomerId(1L));
         assertThat(customer).isPresent();
         assertThat(customer.get().isBlocked()).isTrue();
+        log.info("TEST 'FRAUD DETECTED' FINISHED");
     }
 
     /**
@@ -113,6 +112,8 @@ public class DefaultTests {
      */
     @Test
     public void newOrder() throws Exception {
+        log.info("STARTING TEST 'NEW ORDER'");
+
         final var body = "{" +
             "\"customerId\":1," +
             "\"items\":[ " +
@@ -134,6 +135,7 @@ public class DefaultTests {
 
         var order = orderRepository.deleteById(orders.get(0).getId());
         assertThat(order).isPresent();
+        log.info("TEST 'NEW ORDER' FINISHED");
     }
 
     /**
@@ -155,14 +157,13 @@ public class DefaultTests {
         assertThat(t).hasMessageContaining("addItem.quantity");
         log.info("Exception message: " + t.getMessage());
 
-
         //order without a status is invalid
         var t2 = catchThrowable(() ->
             Order.builder()
-                .setCustomerId(new Customer.CustomerId(1L))
-                .setId(new Order.OrderId(2L))
-                .setItems(new ArrayList<>())
-                .setCreation(Instant.now())
+                .customerId(new Customer.CustomerId(1L))
+                .id(new Order.OrderId(2L))
+                .items(new ArrayList<>())
+                .creation(Instant.now())
                 .build()
         );
 

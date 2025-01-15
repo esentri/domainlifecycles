@@ -71,11 +71,11 @@ public class CustomerService implements CustomerDriver {
     public Customer add(AddNewCustomer addNewCustomer) {
         var addedCustomer = repository.insert(Customer
             .builder()
-            .setId(repository.newCustomerId())
-            .setUserName(addNewCustomer.userName())
-            .setAddress(addNewCustomer.address())
-            .setCreditCard(addNewCustomer.creditCard().orElse(null))
-            .setBlocked(false)
+            .id(repository.newCustomerId())
+            .userName(addNewCustomer.userName())
+            .address(addNewCustomer.address())
+            .creditCard(addNewCustomer.creditCard().orElse(null))
+            .blocked(false)
             .build()
         );
         DomainEvents.publish(new NewCustomerAdded(addedCustomer));

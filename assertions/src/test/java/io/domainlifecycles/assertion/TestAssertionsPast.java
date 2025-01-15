@@ -119,7 +119,7 @@ public class TestAssertionsPast {
 
         @Test
         public void testIsPastMonthDayOk() {
-            if (!Month.from(LocalDate.now()).minus(1).equals(Month.JANUARY)) {
+            if (!Month.from(LocalDate.now()).minus(1).equals(Month.DECEMBER)) {
                 assertThatNoException().isThrownBy(
                     () -> DomainAssertions.isPast(MonthDay.from(LocalDate.now().minus(1, ChronoUnit.MONTHS)),
                         "Failed"));
@@ -328,7 +328,7 @@ public class TestAssertionsPast {
 
         @Test
         public void testOptionalIsPastMonthDayOk() {
-            if (!Month.from(LocalDate.now()).minus(1).equals(Month.JANUARY)) {
+            if (!Month.from(LocalDate.now()).minus(1).equals(Month.DECEMBER)) {
                 assertThatNoException().isThrownBy(() -> DomainAssertions.optionalIsPast(
                     Optional.of(MonthDay.from(LocalDate.now().minus(1, ChronoUnit.MONTHS))), "Failed"));
             }

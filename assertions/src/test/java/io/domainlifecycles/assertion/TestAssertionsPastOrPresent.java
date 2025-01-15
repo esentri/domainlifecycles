@@ -228,7 +228,7 @@ public class TestAssertionsPastOrPresent {
 
         @Test
         public void testIsPastOrPresentMonthDayOk() {
-            if (!Month.from(LocalDate.now()).minus(1).equals(Month.JANUARY)) {
+            if (!Month.from(LocalDate.now()).minus(1).equals(Month.DECEMBER)) {
                 assertThatNoException().isThrownBy(
                     () -> DomainAssertions.isPastOrPresent(MonthDay.from(LocalDate.now().minus(1, ChronoUnit.MONTHS)),
                         "Failed"));
@@ -321,7 +321,7 @@ public class TestAssertionsPastOrPresent {
 
         @Test
         public void testOptionalIsPastOrPresentMonthDayOk() {
-            if (!Month.from(LocalDate.now()).minus(1).equals(Month.JANUARY)) {
+            if (!Month.from(LocalDate.now()).minus(1).equals(Month.DECEMBER)) {
                 assertThatNoException().isThrownBy(() -> DomainAssertions.optionalIsPastOrPresent(
                     Optional.of(MonthDay.from(LocalDate.now().minus(1, ChronoUnit.MONTHS))), "Failed"));
             }

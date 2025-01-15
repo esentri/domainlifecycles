@@ -89,6 +89,9 @@ DLC provides following core features:
 - [`Domain Diagrammer`](./readme_diagrammer.md): Generate text based class diagram for DDD building blocks
     * based on [Nomnoml](https://nomnoml.com/)
 
+## Getting started
+You can find our "Getting Started Guide" [here](./getting-started/english/index_en.md)
+
 ## DLC Project Setup
 
 ### DLC dependencies
@@ -117,7 +120,7 @@ DLC provides several JARs which enable the DLC features independently
 | General Swagger / Open API v3 support                               | only internally used   | io.domainlifecycles:swagger-v3-integration   | 
 | Spring Web support (Spring Boot 2 compatible)                       | application developers | io.domainlifecycles:spring-web-integration   | 
 | Spring Web support (Spring Boot 3 compatible)                       | application developers | io.domainlifecycles:spring-web-6-integration |
-| Nomnoml based domain diagrams                                       | application developers | io.domainlifecycles:ddomain-diagrammer       | 
+| Nomnoml based domain diagrams                                       | application developers | io.domainlifecycles:domain-diagrammer        | 
 
 To simplify the dependency management using all features in a Spring Boot app using jOOQ for the relational
 database persistence management, we provide JARs for a Spring Boot 2 or Spring Boot 3 setup by adding just a single
@@ -190,3 +193,4 @@ Remember to provide a SLF4J-Provider in your classpath.
 ### Sample projects
 
 A Gradle based sample project that demonstrates all DLC features can be found [here](./sample-project)
+
