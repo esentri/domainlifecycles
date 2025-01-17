@@ -1,25 +1,23 @@
 buildscript {
     dependencies {
-        classpath "com.h2database:h2:${h2Version}"
-        classpath "org.flywaydb:flyway-core:10.17.0"
+        classpath libs.h2
+        classpath libs.flyway.core
     }
 }
-// TODO @Galler rework
+
 plugins {
-    id 'org.springframework.boot' version "${springBoot3PlatformVersion}"
     id 'java'
     id 'checkstyle'
-    // Plugin that handles database migration.
-    id 'org.flywaydb.flyway' version "10.17.0"
-    id 'org.jooq.jooq-codegen-gradle' version "3.19.10"
-
-    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
-    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+    alias libs.plugins.spring.boot.plugin
+    alias libs.plugins.flyway.plugin
+    alias libs.plugins.jooq.codegen.gradle
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
 }
 
 // ----------------------------------------------------------
 
-def dbVersion = "${h2Version}"
+def dbVersion = libs.versions.h2.version.get()
 def dbDriver = 'org.h2.Driver'
 def dbUrl = "jdbc:h2:file:${project.projectDir}/build/h2-db/test;NON_KEYWORDS=VALUE;AUTO_SERVER=TRUE"
 def dbUsername = 'sa'
@@ -42,29 +40,31 @@ tasks.register('runApp', JavaExec) {
 // ----------------------------------------------------------
 
 dependencies {
-    implementation platform("org.springframework.boot:spring-boot-dependencies:${springBoot3PlatformVersion}")
+    implementation platform( libs.spring.boot3.dependencies)
     implementation project(":spring-boot-3-jooq-complete")
-    implementation "com.h2database:h2:${dbVersion}"
-    implementation "jakarta.validation:jakarta.validation-api:${jakartaValidationApiVersion}"
-    implementation 'org.springframework:spring-web'
-    implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-jooq'
-    implementation "jakarta.transaction:jakarta.transaction-api:${jakartaTransactionApiVersion}"
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocOpenAPIVersion2}"
-    implementation "org.projectlombok:lombok:${lombokVersion}"
-    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    implementation libs.h2
+    implementation libs.jakarta.validation.api
+    implementation libs.spring.web
+    implementation libs.spring.boot3.starter
+    implementation libs.spring.boot3.starter.web
+    implementation libs.spring.boot3.starter.jooq
+    implementation libs.spring.boot3.starter.validation
+    implementation libs.jakarta.transaction.api
 
-    runtimeOnly "org.jooq:jooq-codegen:3.19.10"
-    jooqCodegen "org.jooq:jooq-meta:3.19.10"
+    implementation libs.spring.doc.openapi.starter.webmvc.ui
+    implementation libs.lombok
+    annotationProcessor libs.lombok
+
+    runtimeOnly libs.jooq.codegen
+    jooqCodegen libs.jooq.meta
 
 
-    testImplementation "org.assertj:assertj-core:${assertJVersion}"
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
-    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testImplementation libs.assertj
+    testImplementation libs.spring.boot3.starter.test
+    testCompileOnly libs.lombok
+    // TODO @Galler ist es wirklich nötig, wenn lombok eh drin ist, das nochmal auf den test scope zu nutzen? #idaudit
+    testAnnotationProcessor libs.lombok
 
 
 }

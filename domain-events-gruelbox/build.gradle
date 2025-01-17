@@ -2,8 +2,8 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
-    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
-    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
 }
 
 java {
@@ -15,7 +15,7 @@ dependencies {
     api project(":domain-events-core")
     api project(":types")
     api project(":service-registry")
-    api "com.gruelbox:transactionoutbox-core:${gruelboxVersion}"
+    api libs.gruelbox.transactionoutbox.core
     api project(":mirror")
-    compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
+    compileOnly libs.slf4j.api
 }

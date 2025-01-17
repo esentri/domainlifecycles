@@ -2,8 +2,8 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
-    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
-    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
 }
 
 java {
@@ -17,16 +17,16 @@ dependencies {
     api project(":service-registry")
     implementation project(":reflect")
     implementation project(":mirror")
-    compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
+    compileOnly libs.slf4j.api
 
-    testImplementation "org.slf4j:slf4j-api:${slf4jVersion}"
-    testImplementation "org.assertj:assertj-core:${assertJVersion}"
-    testImplementation "ch.qos.logback:logback-classic:${logbackClassicVersion}"
+    testImplementation libs.slf4j.api
+    testImplementation libs.assertj
+    testImplementation libs.logback.classic
     testImplementation project(":types")
     testImplementation project(":type-utils")
     testImplementation project(":mirror")
     testImplementation project(":service-registry")
-    testImplementation "org.projectlombok:lombok:${lombokVersion}"
-    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testImplementation libs.lombok
+    testAnnotationProcessor libs.lombok
 
 }
