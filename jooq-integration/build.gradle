@@ -28,7 +28,7 @@ def dbDriver = 'org.h2.Driver'
 def dbUrl = "jdbc:h2:file:${project.projectDir}/build/h2-db/test;NON_KEYWORDS=VALUE;AUTO_SERVER=TRUE"
 def dbUsername = 'sa'
 def dbPassword = ''
-def dbMigration = 'src/main/resources/db/migration'
+def dbMigration = 'src/test/resources/db/migration'
 
 // ----------------------------------------------------------
 
@@ -75,7 +75,7 @@ flyway {
     user = dbUsername
     password = dbPassword
     driver = dbDriver
-    defaultSchema = 'SHOP_DOMAIN_FLYWAY'
+    defaultSchema = 'TEST_DOMAIN_FLYWAY'
     createSchemas = true
     encoding = 'UTF-8'
     locations = ["filesystem:./${dbMigration}"]
@@ -121,6 +121,11 @@ tasks.named("compileJava") {
 tasks.named("jooqCodegen") {
     dependsOn(tasks.named("flywayMigrate"))
     inputs.files(fileTree("src/main/resources/db/migration"))
+}
+
+tasks.named('sourcesJar') {
+    dependsOn(tasks.named('jooqCodegen'))
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 jar {
