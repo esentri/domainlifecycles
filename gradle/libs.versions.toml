@@ -117,7 +117,7 @@ spring-boot3-starter-jooq = { module = "org.springframework.boot:spring-boot-sta
 spring-boot3-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "spring-boot3-starter-version"}
 spring-boot3-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "spring-boot3-starter-version"}
 spring-boot3-starter-artemis = { module = "org.springframework.boot:spring-boot-starter-artemis", version.ref = "spring-boot3-starter-artemis-version"}
-spring-boot3-starter-activemq = { module = "org.springframework.boot:spring-boot-starter-activemq", version.ref = "spring-boot3-starter-version"}
+spring-boot3-starter-activemq = { module = "org.springframework.boot:spring-boot-starter-activemq", version.ref = "spring-boot3-platform-version"}
 spring-boot2-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot2-platform-version" }
 spring-boot2-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "spring-boot2-starter-version"}
 spring-boot2-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "spring-boot2-starter-version"}

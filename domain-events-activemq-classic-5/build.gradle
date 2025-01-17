@@ -17,7 +17,7 @@ dependencies {
     api project(":domain-events-core")
     api project(":types")
     api project(":service-registry")
-    api project (":domain-events-mq")
+    api project(":domain-events-mq")
 
     api libs.jakarta.jms.api
     runtimeOnly libs.active.mq.client
@@ -40,20 +40,25 @@ dependencies {
     testImplementation libs.slf4j.api
     testImplementation libs.lombok
     testAnnotationProcessor libs.lombok
+
     testImplementation libs.assertj
     testImplementation libs.logback.classic
+
     testImplementation libs.spring.boot3.starter
     testImplementation libs.spring.boot3.starter.json
     testImplementation libs.spring.boot3.starter.jooq
     testImplementation libs.spring.boot3.starter.test
+
     testImplementation libs.spring.boot3.starter.activemq
+
     testImplementation libs.h2
     testImplementation libs.awaitility
+
     testImplementation (libs.active.mq.broker) {
         exclude (group: 'org.apache.activemq', module: 'activemq-client-jakarta')
     }
+
     testImplementation libs.active.mq.client.jakarta
     testImplementation libs.javax.jms.api
     testImplementation libs.bundles.gruelbox.transactionoutbox
-
 }
