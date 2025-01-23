@@ -17,5 +17,5 @@ dependencies {
     implementation project(":mirror")
     compileOnly libs.jackson.core
     api libs.jackson.databind
-    api libs.spring.web
+    api libs.spring.web6
 }

@@ -135,6 +135,7 @@ swagger = { module = "io.swagger.core.v3:swagger-core-jakarta", version.ref = "s
 jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson-version" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson-version" }
 spring-web = { module = "org.springframework:spring-web", version.ref = "spring-web-version" }
+spring-web6 = { module = "org.springframework:spring-web", version.ref = "spring-web6-version" }
 spring-tx = { module = "org.springframework:spring-tx", version.ref = "spring-tx-version" }
 spring-doc-openapi-ui = { module = "org.springdoc:springdoc-openapi-ui", version.ref = "spring-doc-open-api-version" }
 spring-doc-openapi-data-rest = { module = "org.springdoc:springdoc-openapi-data-rest", version.ref = "spring-doc-open-api-version" }

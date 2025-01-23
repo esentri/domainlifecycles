@@ -6,6 +6,7 @@ plugins {
 }
 
 dependencies {
+    testImplementation libs.h2
     testImplementation project(":access")
     testImplementation project(":types")
     testImplementation project(":type-utils")
@@ -37,7 +38,7 @@ dependencies {
     testImplementation libs.apache.active.mq.artemis.jakarter.server
     testImplementation libs.bundles.gruelbox.transactionoutbox
     // TODO @Galler was 2.222 is now 2.224
-    testImplementation libs.h2
+
     testImplementation libs.awaitility
 
 }

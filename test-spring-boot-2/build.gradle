@@ -1,6 +1,12 @@
-// TODO @Galler skipped
+buildscript {
+    dependencies {
+        classpath libs.h2
+        classpath libs.flyway.core
+    }
+}
+
 plugins {
-    id 'java'
+    id 'java-library'
     id 'checkstyle'
     alias libs.plugins.spring.boot2.plugin
     alias libs.plugins.flyway.plugin
@@ -16,11 +22,13 @@ def dbDriver = 'org.h2.Driver'
 def dbUrl = "jdbc:h2:file:${project.projectDir}/build/h2-db/test;NON_KEYWORDS=VALUE;AUTO_SERVER=TRUE"
 def dbUsername = 'sa'
 def dbPassword = ''
-def dbMigration = 'src/main/resources/db/migration'
+def dbMigration = 'src/test/resources/db/migration'
 
 // ----------------------------------------------------------
 
 dependencies {
+    api libs.jooq
+
     testImplementation platform(libs.spring.boot2.dependencies)
 
     testImplementation project(":spring-boot-2-jooq-complete")
@@ -59,7 +67,7 @@ flyway {
     user = dbUsername
     password = dbPassword
     driver = dbDriver
-    defaultSchema = 'SHOP_DOMAIN_FLYWAY'
+    defaultSchema = 'TEST_DOMAIN_FLYWAY'
     createSchemas = true
     encoding = 'UTF-8'
     locations = ["filesystem:./${dbMigration}"]
