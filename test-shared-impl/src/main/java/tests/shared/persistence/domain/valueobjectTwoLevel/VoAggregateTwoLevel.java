@@ -26,10 +26,10 @@
 
 package tests.shared.persistence.domain.valueobjectTwoLevel;
 
+import io.domainlifecycles.domain.types.base.AggregateRootBase;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import io.domainlifecycles.domain.types.base.AggregateRootBase;
 
 @Getter
 public class VoAggregateTwoLevel extends AggregateRootBase<VoAggregateTwoLevelId> {

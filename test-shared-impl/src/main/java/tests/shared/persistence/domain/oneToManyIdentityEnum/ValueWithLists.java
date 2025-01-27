@@ -26,8 +26,8 @@
 
 package tests.shared.persistence.domain.oneToManyIdentityEnum;
 
-import lombok.Builder;
 import io.domainlifecycles.domain.types.ValueObject;
+import lombok.Builder;
 
 import java.util.List;
 

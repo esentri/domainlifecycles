@@ -26,10 +26,10 @@
 
 package tests.shared.validation.javax;
 
-import lombok.Builder;
-import lombok.Getter;
 import io.domainlifecycles.assertion.DomainAssertions;
 import io.domainlifecycles.domain.types.base.ValueObjectBase;
+import lombok.Builder;
+import lombok.Getter;
 
 import javax.validation.constraints.NotEmpty;
 

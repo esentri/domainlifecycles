@@ -26,8 +26,8 @@
 
 package tests.shared.persistence.domain.inheritanceExtended;
 
-import lombok.Getter;
 import io.domainlifecycles.domain.types.base.AggregateRootBase;
+import lombok.Getter;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;

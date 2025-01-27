@@ -26,10 +26,10 @@
 
 package tests.shared.persistence.domain.valueobjectsPrimitive;
 
+import io.domainlifecycles.domain.types.base.AggregateRootBase;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import io.domainlifecycles.domain.types.base.AggregateRootBase;
 
 import java.util.Optional;
 

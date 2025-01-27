@@ -26,11 +26,11 @@
 
 package io.domainlifecycles.springdoc2.openapi;
 
-import io.swagger.v3.oas.models.OpenAPI;
 import io.domainlifecycles.swagger.v3.MirrorBasedOpenApiExtension;
 import io.domainlifecycles.swagger.v3.OpenAPIPrimitivePropertyExtension;
 import io.domainlifecycles.swagger.v3.OpenAPIPropertyBeanValidationExtension;
 import io.domainlifecycles.swagger.v3.OpenAPITemporalTypeExtension;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.customizers.OpenApiCustomizer;

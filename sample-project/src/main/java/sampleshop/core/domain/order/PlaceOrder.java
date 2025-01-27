@@ -26,8 +26,8 @@
 
 package sampleshop.core.domain.order;
 
-import jakarta.validation.constraints.NotNull;
 import io.domainlifecycles.domain.types.DomainCommand;
+import jakarta.validation.constraints.NotNull;
 import sampleshop.core.domain.customer.Customer;
 import sampleshop.core.domain.product.Product;
 

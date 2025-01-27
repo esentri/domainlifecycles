@@ -26,9 +26,9 @@
 
 package io.domainlifecycles.events.consume.execution.processor;
 
-import io.domainlifecycles.events.exception.DLCEventsException;
 import io.domainlifecycles.events.consume.execution.detector.ExecutionContext;
 import io.domainlifecycles.events.consume.execution.handler.HandlerExecutor;
+import io.domainlifecycles.events.exception.DLCEventsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

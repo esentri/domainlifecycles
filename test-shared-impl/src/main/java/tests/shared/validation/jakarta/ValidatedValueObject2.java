@@ -26,11 +26,11 @@
 
 package tests.shared.validation.jakarta;
 
+import io.domainlifecycles.assertion.DomainAssertions;
+import io.domainlifecycles.domain.types.base.ValueObjectBase;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Getter;
-import io.domainlifecycles.assertion.DomainAssertions;
-import io.domainlifecycles.domain.types.base.ValueObjectBase;
 
 @Getter
 public class ValidatedValueObject2 extends ValueObjectBase {

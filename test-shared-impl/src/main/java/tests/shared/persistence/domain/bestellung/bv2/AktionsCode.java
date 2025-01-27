@@ -26,9 +26,9 @@
 
 package tests.shared.persistence.domain.bestellung.bv2;
 
+import io.domainlifecycles.domain.types.base.ValueObjectBase;
 import lombok.Builder;
 import lombok.Getter;
-import io.domainlifecycles.domain.types.base.ValueObjectBase;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;

@@ -26,9 +26,9 @@
 
 package tests.shared.persistence.domain.records;
 
+import io.domainlifecycles.domain.types.ValueObject;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
-import io.domainlifecycles.domain.types.ValueObject;
 
 @Builder(setterPrefix = "set")
 public record RecordVo(@NotEmpty String value1, Long value2) implements ValueObject {

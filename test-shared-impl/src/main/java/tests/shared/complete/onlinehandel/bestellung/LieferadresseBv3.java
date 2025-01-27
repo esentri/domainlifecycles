@@ -26,11 +26,11 @@
 
 package tests.shared.complete.onlinehandel.bestellung;
 
+import io.domainlifecycles.domain.types.base.EntityBase;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
-import io.domainlifecycles.domain.types.base.EntityBase;
 
 @Getter
 public class LieferadresseBv3 extends EntityBase<LieferadresseIdBv3> {

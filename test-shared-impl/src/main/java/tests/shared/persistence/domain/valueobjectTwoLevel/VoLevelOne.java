@@ -26,8 +26,8 @@
 
 package tests.shared.persistence.domain.valueobjectTwoLevel;
 
-import lombok.Builder;
 import io.domainlifecycles.domain.types.ValueObject;
+import lombok.Builder;
 
 @Builder(setterPrefix = "set")
 public record VoLevelOne(VoLevelTwoA first, VoLevelTwoA second, VoLevelTwoB third) implements ValueObject {

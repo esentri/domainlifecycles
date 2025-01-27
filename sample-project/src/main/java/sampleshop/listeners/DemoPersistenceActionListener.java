@@ -26,8 +26,8 @@
 
 package sampleshop.listeners;
 
-import lombok.extern.slf4j.Slf4j;
 import io.domainlifecycles.persistence.repository.actions.PersistenceAction;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 

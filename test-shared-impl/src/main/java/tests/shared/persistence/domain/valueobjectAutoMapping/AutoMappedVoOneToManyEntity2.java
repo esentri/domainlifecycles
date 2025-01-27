@@ -26,9 +26,9 @@
 
 package tests.shared.persistence.domain.valueobjectAutoMapping;
 
-import lombok.Builder;
 import io.domainlifecycles.assertion.DomainAssertions;
 import io.domainlifecycles.domain.types.base.ValueObjectBase;
+import lombok.Builder;
 
 public class AutoMappedVoOneToManyEntity2 extends ValueObjectBase {
 

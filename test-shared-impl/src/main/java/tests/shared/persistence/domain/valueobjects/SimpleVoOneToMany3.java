@@ -26,9 +26,9 @@
 
 package tests.shared.persistence.domain.valueobjects;
 
-import lombok.Builder;
 import io.domainlifecycles.assertion.DomainAssertions;
 import io.domainlifecycles.domain.types.base.ValueObjectBase;
+import lombok.Builder;
 
 public class SimpleVoOneToMany3 extends ValueObjectBase {
 

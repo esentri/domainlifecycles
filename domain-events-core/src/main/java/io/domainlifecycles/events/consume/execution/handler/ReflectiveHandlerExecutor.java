@@ -29,10 +29,10 @@ package io.domainlifecycles.events.consume.execution.handler;
 
 import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.domain.types.Identity;
-import io.domainlifecycles.events.exception.DLCEventsException;
 import io.domainlifecycles.events.consume.execution.detector.AggregateExecutionContext;
 import io.domainlifecycles.events.consume.execution.detector.ExecutionContext;
 import io.domainlifecycles.events.consume.execution.detector.ServiceExecutionContext;
+import io.domainlifecycles.events.exception.DLCEventsException;
 import io.domainlifecycles.reflect.JavaReflect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

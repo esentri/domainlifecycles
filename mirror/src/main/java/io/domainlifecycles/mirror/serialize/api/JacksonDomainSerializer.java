@@ -77,7 +77,6 @@ public class JacksonDomainSerializer implements DomainSerializer {
         objectMapper.addMixIn(BoundedContextMirror.class, BoundedContextMirrorMixin.class);
         objectMapper.addMixIn(InitializedDomain.class, InitializedDomainMixin.class);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        //objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
         if (prettyPrint) {
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT);

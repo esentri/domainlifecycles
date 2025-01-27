@@ -26,8 +26,8 @@
 
 package tests.shared.complete.onlinehandel.bestellung;
 
-import jakarta.validation.constraints.NotNull;
 import io.domainlifecycles.domain.types.Identity;
+import jakarta.validation.constraints.NotNull;
 
 public record BestellPositionIdBv3(@NotNull Long value) implements Identity<Long> {
 }

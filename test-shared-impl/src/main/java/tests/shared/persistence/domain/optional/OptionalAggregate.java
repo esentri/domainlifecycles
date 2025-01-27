@@ -26,10 +26,10 @@
 
 package tests.shared.persistence.domain.optional;
 
-import lombok.Builder;
-import lombok.Getter;
 import io.domainlifecycles.assertion.DomainAssertions;
 import io.domainlifecycles.domain.types.base.AggregateRootBase;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.util.List;
 import java.util.Optional;

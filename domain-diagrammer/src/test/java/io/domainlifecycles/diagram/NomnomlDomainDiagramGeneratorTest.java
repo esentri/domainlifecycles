@@ -6,7 +6,6 @@ import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.mirror.resolver.DefaultEmptyGenericTypeResolver;
 import io.domainlifecycles.mirror.resolver.TypeMetaResolver;
-
 import org.junit.jupiter.api.Test;
 import sampleshop.core.inport.OrderDriver;
 

@@ -26,10 +26,10 @@
 
 package tests.shared.persistence.domain.multilevelvo;
 
-import lombok.Builder;
-import lombok.Getter;
 import io.domainlifecycles.assertion.DomainAssertions;
 import io.domainlifecycles.domain.types.base.AggregateRootBase;
+import lombok.Builder;
+import lombok.Getter;
 import tests.shared.persistence.domain.valueobjects.ComplexVo;
 
 @Getter

@@ -27,13 +27,14 @@
 package io.domainlifecycles.events.gruelbox.api;
 
 import com.gruelbox.transactionoutbox.TransactionOutbox;
+import io.domainlifecycles.events.api.ChannelFactory;
 import io.domainlifecycles.events.api.ConsumingOnlyChannel;
 import io.domainlifecycles.events.api.ProcessingChannel;
-import io.domainlifecycles.events.api.ChannelFactory;
 import io.domainlifecycles.events.api.PublishingOnlyChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.events.gruelbox.idempotent.IdempotencyConfiguration;
 import io.domainlifecycles.services.api.ServiceProvider;
+
 import java.util.Objects;
 
 /**
