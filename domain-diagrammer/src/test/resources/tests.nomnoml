@@ -45,6 +45,7 @@
 #direction:down
 #acycler: greedy
 #ranker: longest-path
+#background: transparent
 
 // !!! tests.shared.complete.onlinehandel.zustellung.StarteAuslieferung !!!
 [<DC> StarteAuslieferung <<DomainCommand>> ]
