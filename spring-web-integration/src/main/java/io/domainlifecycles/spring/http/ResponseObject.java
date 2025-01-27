@@ -112,7 +112,8 @@ public class ResponseObject<T> {
     }
 
     /**
-     * Returns true, if other is a ResponseObject
+     * @param other other Object to check
+     * @return true, if other is a ResponseObject
      */
     protected boolean canEqual(final Object other) {
         return other instanceof ResponseObject;

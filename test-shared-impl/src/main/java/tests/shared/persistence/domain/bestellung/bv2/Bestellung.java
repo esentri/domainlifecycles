@@ -26,11 +26,11 @@
 
 package tests.shared.persistence.domain.bestellung.bv2;
 
-import lombok.Builder;
-import lombok.Getter;
 import io.domainlifecycles.assertion.DomainAssertionException;
 import io.domainlifecycles.assertion.DomainAssertions;
 import io.domainlifecycles.domain.types.base.AggregateRootBase;
+import lombok.Builder;
+import lombok.Getter;
 
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;

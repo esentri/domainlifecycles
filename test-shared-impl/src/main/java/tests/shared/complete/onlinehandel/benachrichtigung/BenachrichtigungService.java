@@ -26,9 +26,9 @@
 
 package tests.shared.complete.onlinehandel.benachrichtigung;
 
-import jakarta.validation.constraints.NotNull;
 import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.ListensTo;
+import jakarta.validation.constraints.NotNull;
 import tests.shared.complete.onlinehandel.zustellung.AuslieferungGestartet;
 
 public class BenachrichtigungService implements DomainService {

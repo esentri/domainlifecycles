@@ -1,9 +1,9 @@
 package io.domainlifecycles.springboot2.openapi;
 
-import io.swagger.v3.oas.models.media.Schema;
-import lombok.extern.slf4j.Slf4j;
 import io.domainlifecycles.assertion.DomainAssertionException;
 import io.domainlifecycles.validation.BeanValidations;
+import io.swagger.v3.oas.models.media.Schema;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;

@@ -26,8 +26,8 @@
 
 package tests.shared.complete.onlinehandel.zustellung;
 
-import jakarta.validation.constraints.NotNull;
 import io.domainlifecycles.domain.types.DomainEvent;
+import jakarta.validation.constraints.NotNull;
 import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
 
 public record AuslieferungGestartet(@NotNull BestellungBv3 bestellung, boolean premiumVersand)

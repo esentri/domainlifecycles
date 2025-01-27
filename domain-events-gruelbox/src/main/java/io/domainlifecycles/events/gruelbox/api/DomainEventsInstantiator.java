@@ -30,7 +30,6 @@ import com.gruelbox.transactionoutbox.Instantiator;
 import io.domainlifecycles.events.gruelbox.dispatch.GruelboxDomainEventDispatcher;
 import io.domainlifecycles.events.gruelbox.idempotent.IdempotentExecutor;
 
-
 import java.util.Objects;
 
 /**

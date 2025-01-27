@@ -26,9 +26,9 @@
 
 package tests.shared.persistence.domain.bestellung.bv2;
 
+import io.domainlifecycles.domain.types.base.EntityBase;
 import lombok.Builder;
 import lombok.Getter;
-import io.domainlifecycles.domain.types.base.EntityBase;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;

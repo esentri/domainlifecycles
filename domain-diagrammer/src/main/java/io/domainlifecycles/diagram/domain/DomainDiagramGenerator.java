@@ -108,6 +108,7 @@ public class DomainDiagramGenerator implements Diagram {
         builder.append(directionStyleDeclaration());
         builder.append(acyclerStyleDeclaration());
         builder.append(rankerStyleDeclaration());
+        builder.append(backgroundColorStyleDeclaration());
 
         builder.append(System.lineSeparator());
 
@@ -296,6 +297,13 @@ public class DomainDiagramGenerator implements Diagram {
     private String rankerStyleDeclaration() {
         if (diagramConfig.getDirection() != null) {
             return "#ranker: " + diagramConfig.getRanker() + System.lineSeparator();
+        }
+        return "";
+    }
+
+    private String backgroundColorStyleDeclaration() {
+        if (diagramConfig.getBackgroundColor() != null) {
+            return "#background: " + diagramConfig.getBackgroundColor() + System.lineSeparator();
         }
         return "";
     }

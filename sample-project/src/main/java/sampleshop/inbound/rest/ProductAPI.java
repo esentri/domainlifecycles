@@ -26,9 +26,9 @@
 
 package sampleshop.inbound.rest;
 
+import io.domainlifecycles.spring.http.ResponseObject;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.domainlifecycles.spring.http.ResponseObject;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

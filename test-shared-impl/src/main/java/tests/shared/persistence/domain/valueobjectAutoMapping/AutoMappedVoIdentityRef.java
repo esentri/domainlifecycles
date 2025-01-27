@@ -26,9 +26,9 @@
 
 package tests.shared.persistence.domain.valueobjectAutoMapping;
 
+import io.domainlifecycles.domain.types.base.ValueObjectBase;
 import lombok.Builder;
 import lombok.Getter;
-import io.domainlifecycles.domain.types.base.ValueObjectBase;
 
 @Getter
 public class AutoMappedVoIdentityRef extends ValueObjectBase {

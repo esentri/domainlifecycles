@@ -26,10 +26,10 @@
 
 package tests.shared.persistence.domain.complex;
 
-import lombok.Builder;
-import lombok.Getter;
 import io.domainlifecycles.assertion.DomainAssertions;
 import io.domainlifecycles.domain.types.base.EntityBase;
+import lombok.Builder;
+import lombok.Getter;
 
 @Getter
 public class TestEntity1 extends EntityBase<TestEntity1Id> {

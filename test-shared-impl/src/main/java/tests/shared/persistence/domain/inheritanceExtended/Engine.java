@@ -26,9 +26,9 @@
 
 package tests.shared.persistence.domain.inheritanceExtended;
 
+import io.domainlifecycles.domain.types.base.EntityBase;
 import lombok.Builder;
 import lombok.Getter;
-import io.domainlifecycles.domain.types.base.EntityBase;
 
 @Getter
 public class Engine extends EntityBase<EngineId> {

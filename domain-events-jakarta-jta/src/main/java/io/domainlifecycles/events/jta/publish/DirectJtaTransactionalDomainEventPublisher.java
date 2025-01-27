@@ -30,7 +30,6 @@ import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.events.consume.DomainEventConsumer;
 import jakarta.transaction.TransactionManager;
 
-import java.util.Collection;
 import java.util.Objects;
 
 /**

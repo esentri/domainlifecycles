@@ -26,9 +26,9 @@
 
 package io.domainlifecycles.events.mq.gruelbox;
 
-import io.domainlifecycles.events.mq.publish.MqDomainEventPublisher;
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.events.gruelbox.dispatch.GruelboxDomainEventDispatcher;
+import io.domainlifecycles.events.mq.publish.MqDomainEventPublisher;
 
 /**
  * The {@code MqGruelboxDomainEventDispatcher} class is an implementation of the {@link GruelboxDomainEventDispatcher}

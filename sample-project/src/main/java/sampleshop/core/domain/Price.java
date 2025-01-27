@@ -26,11 +26,11 @@
 
 package sampleshop.core.domain;
 
+import io.domainlifecycles.domain.types.ValueObject;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Builder;
-import io.domainlifecycles.domain.types.ValueObject;
 
 import java.math.BigDecimal;
 

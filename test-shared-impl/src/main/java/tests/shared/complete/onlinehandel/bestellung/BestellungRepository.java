@@ -26,9 +26,9 @@
 
 package tests.shared.complete.onlinehandel.bestellung;
 
-import jakarta.validation.constraints.NotNull;
 import io.domainlifecycles.domain.types.Publishes;
 import io.domainlifecycles.domain.types.Repository;
+import jakarta.validation.constraints.NotNull;
 import tests.shared.persistence.domain.bestellung.bv2.BestellStatusCodeEnum;
 
 import java.util.Optional;

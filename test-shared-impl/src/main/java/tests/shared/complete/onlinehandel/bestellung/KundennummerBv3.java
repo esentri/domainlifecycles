@@ -26,8 +26,8 @@
 
 package tests.shared.complete.onlinehandel.bestellung;
 
-import jakarta.validation.constraints.NotEmpty;
 import io.domainlifecycles.domain.types.Identity;
+import jakarta.validation.constraints.NotEmpty;
 
 public record KundennummerBv3(@NotEmpty String value) implements Identity<String> {
 }

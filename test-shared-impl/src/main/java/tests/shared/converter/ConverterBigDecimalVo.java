@@ -26,8 +26,8 @@
 
 package tests.shared.converter;
 
-import lombok.Builder;
 import io.domainlifecycles.domain.types.base.ValueObjectBase;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 

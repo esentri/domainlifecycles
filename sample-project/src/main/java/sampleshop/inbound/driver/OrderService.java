@@ -34,7 +34,6 @@ import sampleshop.core.domain.order.OrderPlacementService;
 import sampleshop.core.domain.order.OrderStatus;
 import sampleshop.core.domain.order.PlaceOrder;
 import sampleshop.core.domain.order.ShipOrder;
-
 import sampleshop.core.inport.OrderDriver;
 import sampleshop.core.outport.OrderRepository;
 

@@ -45,6 +45,7 @@
 #direction:down
 #acycler: greedy
 #ranker: longest-path
+#background: transparent
 
 // !!! sampleshop.core.domain.order.CancelOrder !!!
 [<DC> CancelOrder <<DomainCommand>> ]

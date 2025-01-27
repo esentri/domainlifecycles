@@ -29,16 +29,16 @@ package io.domainlifecycles.events;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.DomainEvents;
-import io.domainlifecycles.events.domain.AQueryHandler;
-import io.domainlifecycles.events.inmemory.InMemoryChannelFactory;
 import io.domainlifecycles.events.domain.ADomainEvent;
 import io.domainlifecycles.events.domain.ADomainService;
+import io.domainlifecycles.events.domain.AQueryHandler;
 import io.domainlifecycles.events.domain.ARepository;
 import io.domainlifecycles.events.domain.AnAggregate;
 import io.domainlifecycles.events.domain.AnAggregateDomainEvent;
 import io.domainlifecycles.events.domain.AnApplicationService;
 import io.domainlifecycles.events.domain.AnOutboundService;
 import io.domainlifecycles.events.domain.UnreceivedDomainEvent;
+import io.domainlifecycles.events.inmemory.InMemoryChannelFactory;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.services.Services;
@@ -48,7 +48,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
 
 public class InMemoryChannelTest {
 

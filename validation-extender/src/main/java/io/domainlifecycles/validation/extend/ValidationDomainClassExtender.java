@@ -26,15 +26,15 @@
 
 package io.domainlifecycles.validation.extend;
 
+import io.domainlifecycles.builder.DomainBuilderConfiguration;
+import io.domainlifecycles.builder.innerclass.InnerClassDefaultDomainBuilderConfiguration;
+import io.domainlifecycles.domain.types.Validatable;
+import io.domainlifecycles.validation.BeanValidations;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatchers;
-import io.domainlifecycles.builder.DomainBuilderConfiguration;
-import io.domainlifecycles.builder.innerclass.InnerClassDefaultDomainBuilderConfiguration;
-import io.domainlifecycles.domain.types.Validatable;
-import io.domainlifecycles.validation.BeanValidations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

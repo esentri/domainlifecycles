@@ -26,9 +26,9 @@
 
 package tests.shared.validation.jakarta;
 
+import io.domainlifecycles.domain.types.ValueObject;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
-import io.domainlifecycles.domain.types.ValueObject;
 
 @Builder
 public record ValidatedReordVo2(@NotNull String name) implements ValueObject {

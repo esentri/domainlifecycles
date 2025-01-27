@@ -114,18 +114,19 @@ public class DomainDiagramConfig implements DiagramConfig {
      * General layout direction style declaration (see Nomnoml style options, 'down' or 'right' is supported)
      */
     private String direction = "down";
-
     /**
      * General layout direction style declaration (see Nomnoml style options, 'network-simplex' or 'tight-tree' or
      * 'longest-path' is supported)
      */
     private String ranker = "longest-path";
-
     /**
      * General acycling style declaration  (see Nomnoml style options, only 'greedy' supported)
      */
     private String acycler = "greedy";
-
+    /**
+     * Background color style declaration (see Nomnoml style options, only 'transparent' or HEX color-codes supported)
+     */
+    private String backgroundColor = "transparent";
     /**
      * Full qualified class names to be excluded from the diagram
      */
@@ -343,6 +344,7 @@ public class DomainDiagramConfig implements DiagramConfig {
                         String direction,
                         String ranker,
                         String acycler,
+                        String backgroundColor,
                         List<String> classesBlacklist,
                         boolean showFields,
                         boolean showFullQualifiedClassNames,
@@ -406,6 +408,7 @@ public class DomainDiagramConfig implements DiagramConfig {
         this.direction = direction;
         this.ranker = ranker;
         this.acycler = acycler;
+        this.backgroundColor = backgroundColor;
         this.classesBlacklist = classesBlacklist;
         this.showFields = showFields;
         this.showFullQualifiedClassNames = showFullQualifiedClassNames;
@@ -528,6 +531,10 @@ public class DomainDiagramConfig implements DiagramConfig {
 
     private static String $default$acycler() {
         return "greedy";
+    }
+
+    private static String $default$backgroundColor() {
+        return "transparent";
     }
 
     private static List<String> $default$classesBlacklist() {
@@ -798,6 +805,10 @@ public class DomainDiagramConfig implements DiagramConfig {
         return this.acycler;
     }
 
+    public String getBackgroundColor() {
+        return backgroundColor;
+    }
+
     public List<String> getClassesBlacklist() {
         return this.classesBlacklist;
     }
@@ -986,6 +997,7 @@ public class DomainDiagramConfig implements DiagramConfig {
             .withUnspecifiedServiceKindStyle(this.unspecifiedServiceKindStyle)
             .withFont(this.font).withDirection(this.direction)
             .withRanker(this.ranker).withAcycler(this.acycler)
+            .withBackgroundColor(this.backgroundColor)
             .withClassesBlacklist(this.classesBlacklist)
             .withShowFields(this.showFields)
             .withShowFullQualifiedClassNames(this.showFullQualifiedClassNames)
@@ -1074,6 +1086,8 @@ public class DomainDiagramConfig implements DiagramConfig {
         private boolean ranker$set;
         private String acycler$value;
         private boolean acycler$set;
+        private String backgroundColor$value;
+        private boolean backgroundColor$set;
         private List<String> classesBlacklist$value;
         private boolean classesBlacklist$set;
         private boolean showFields$value;
@@ -1279,6 +1293,12 @@ public class DomainDiagramConfig implements DiagramConfig {
         public DomainDiagramConfigBuilder withAcycler(String acycler) {
             this.acycler$value = acycler;
             this.acycler$set = true;
+            return this;
+        }
+
+        public DomainDiagramConfigBuilder withBackgroundColor(String backgroundColor) {
+            this.backgroundColor$value = backgroundColor;
+            this.backgroundColor$set = true;
             return this;
         }
 
@@ -1615,6 +1635,10 @@ public class DomainDiagramConfig implements DiagramConfig {
             if (!this.acycler$set) {
                 acycler$value = DomainDiagramConfig.$default$acycler();
             }
+            String backgroundColor$value = this.backgroundColor$value;
+            if (!this.backgroundColor$set) {
+                backgroundColor$value = DomainDiagramConfig.$default$backgroundColor();
+            }
             List<String> classesBlacklist$value = this.classesBlacklist$value;
             if (!this.classesBlacklist$set) {
                 classesBlacklist$value = DomainDiagramConfig.$default$classesBlacklist();
@@ -1804,6 +1828,7 @@ public class DomainDiagramConfig implements DiagramConfig {
                 direction$value,
                 ranker$value,
                 acycler$value,
+                backgroundColor$value,
                 classesBlacklist$value,
                 showFields$value,
                 showFullQualifiedClassNames$value,
@@ -1890,6 +1915,8 @@ public class DomainDiagramConfig implements DiagramConfig {
                 this.ranker$value +
                 ", acycler$value=" +
                 this.acycler$value +
+                ", backgroundColor$value=" +
+                this.backgroundColor$value +
                 ", classesBlacklist$value=" +
                 this.classesBlacklist$value +
                 ", showFields$value=" +

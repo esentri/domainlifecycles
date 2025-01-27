@@ -26,10 +26,10 @@
 
 package tests.shared.complete.onlinehandel.bestellung;
 
+import io.domainlifecycles.domain.types.ValueObject;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
-import io.domainlifecycles.domain.types.ValueObject;
 
 
 @Builder(setterPrefix = "set")

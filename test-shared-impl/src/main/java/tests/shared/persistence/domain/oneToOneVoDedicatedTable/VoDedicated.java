@@ -26,8 +26,8 @@
 
 package tests.shared.persistence.domain.oneToOneVoDedicatedTable;
 
-import lombok.Builder;
 import io.domainlifecycles.domain.types.ValueObject;
+import lombok.Builder;
 
 @Builder(setterPrefix = "set")
 public record VoDedicated(String name) implements ValueObject {

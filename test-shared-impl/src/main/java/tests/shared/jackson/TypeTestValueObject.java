@@ -26,10 +26,10 @@
 
 package tests.shared.jackson;
 
+import io.domainlifecycles.domain.types.base.ValueObjectBase;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import io.domainlifecycles.domain.types.base.ValueObjectBase;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

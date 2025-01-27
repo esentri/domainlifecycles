@@ -26,12 +26,12 @@
 
 package sampleshop.core.domain.order;
 
+import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.domain.types.base.EntityBase;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Getter;
-import io.domainlifecycles.domain.types.Identity;
-import io.domainlifecycles.domain.types.base.EntityBase;
 import sampleshop.core.domain.Price;
 import sampleshop.core.domain.product.Product;
 

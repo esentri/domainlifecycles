@@ -27,7 +27,6 @@
 package io.domainlifecycles.events.gruelboxproxyjakartajms;
 
 import com.gruelbox.transactionoutbox.NoTransactionActiveException;
-
 import io.domainlifecycles.events.ADomainEvent;
 import io.domainlifecycles.events.ADomainService;
 import io.domainlifecycles.events.AQueryHandler;

@@ -26,10 +26,10 @@
 
 package tests.shared.complete.onlinehandel.bestellung;
 
+import io.domainlifecycles.domain.types.base.EntityBase;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
-import io.domainlifecycles.domain.types.base.EntityBase;
 
 import java.time.LocalDateTime;
 

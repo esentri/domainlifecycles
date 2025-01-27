@@ -1,8 +1,8 @@
 package io.domainlifecycles.validation.extend.javax;
 
-import lombok.extern.slf4j.Slf4j;
 import io.domainlifecycles.assertion.DomainAssertionException;
 import io.domainlifecycles.validation.extend.ValidationDomainClassExtender;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;

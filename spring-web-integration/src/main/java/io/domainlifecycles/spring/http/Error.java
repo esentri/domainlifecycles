@@ -107,7 +107,8 @@ public class Error {
     }
 
     /**
-     * Returns true, if other is an Error.
+     * @param other other Object to check
+     * @return true, if other is an Error.
      */
     protected boolean canEqual(final Object other) {
         return other instanceof Error;

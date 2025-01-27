@@ -27,9 +27,8 @@
 package io.domainlifecycles.events.jakarta.jms.publish;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.domainlifecycles.events.mq.publish.AbstractMqDomainEventPublisher;
 import io.domainlifecycles.events.exception.DLCEventsException;
-
+import io.domainlifecycles.events.mq.publish.AbstractMqDomainEventPublisher;
 import io.domainlifecycles.events.mq.publish.MqDomainEventPublisher;
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
@@ -40,6 +39,7 @@ import jakarta.jms.Session;
 import jakarta.jms.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.Objects;
 
 /**
