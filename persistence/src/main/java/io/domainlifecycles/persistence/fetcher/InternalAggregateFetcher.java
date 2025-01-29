@@ -55,8 +55,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-
 /**
  * InternalAggregateFetcher is the base class for all internal aggregate fetchers.
  *
@@ -71,7 +69,7 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
 
     private final Map<PropertyProviderKey, RecordProvider<? extends BASE_RECORD_TYPE, ? extends BASE_RECORD_TYPE>> recordProviderMap = new HashMap<>();
 
-    private final DomainPersistenceProvider domainPersistenceProvider;
+    private final DomainPersistenceProvider<?> domainPersistenceProvider;
 
 
     /**
@@ -81,7 +79,7 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
      * @param domainPersistenceProvider the persistence provider
      */
     public InternalAggregateFetcher(Class<A> aggregateRootEntityClass,
-                                    DomainPersistenceProvider domainPersistenceProvider
+                                    DomainPersistenceProvider<?> domainPersistenceProvider
     ) {
         this.aggregateRootEntityClass = aggregateRootEntityClass;
         this.domainPersistenceProvider = domainPersistenceProvider;
@@ -107,7 +105,7 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
     private void checkValidRecordProviderAssignment(Class<? extends Entity<?>> containingEntityClass,
                                                     Class<? extends DomainObject> propertyClass,
                                                     List<String> propertyPath) {
-        if (propertyPath == null || propertyPath.size() == 0) {
+        if (propertyPath == null || propertyPath.isEmpty()) {
             throw DLCPersistenceException.fail("A property path of a RecordProvider cannot be null or empty!");
         }
 
@@ -158,7 +156,6 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     public FetcherResult<A, BASE_RECORD_TYPE> fetchDeep(BASE_RECORD_TYPE aggregateRecord) {
 
         final InternalFetcherContext<BASE_RECORD_TYPE> fetcherContext = new InternalFetcherContext<>();
@@ -228,7 +225,6 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
         );
     }
 
-    @SuppressWarnings("unchecked")
     private DomainObject fetchEntityReferencesAndValues(BASE_RECORD_TYPE baseEntityRecord,
                                                         String baseEntityClassName,
                                                         InternalFetcherContext<BASE_RECORD_TYPE> fetcherContext) {
@@ -261,7 +257,6 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
         return domainObjectBuilt;
     }
 
-    @SuppressWarnings("unchecked")
     private void fetchEntityReference(FieldMirror entityReferenceMirror,
                                       DomainObjectBuilder<? extends DomainObject> baseRecordBuilder,
                                       BASE_RECORD_TYPE baseEntityRecord,
@@ -332,8 +327,7 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
         //phew, thats weird stuff
         if (vorms != null) {
             var vormsSorted = (List<? extends ValueObjectRecordMirror<BASE_RECORD_TYPE>>) vorms.stream().sorted(
-                Comparator.comparingInt((ValueObjectRecordMirror o) -> o.pathSegments().size())).collect(
-                Collectors.toList());
+                Comparator.comparingInt((ValueObjectRecordMirror<?> o) -> o.pathSegments().size())).toList();
 
             final Map<FetchedRecord<BASE_RECORD_TYPE>, BuilderAndBuilt> builderMap = new HashMap<>();
             final List<ValueObjectRecordComposition> compositions = new ArrayList<>();
@@ -432,13 +426,12 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
         return false;
     }
 
-    @SuppressWarnings("unchecked")
     private void resetCurrentContainers(List<FetchedRecord<BASE_RECORD_TYPE>> currentContainers,
                                         ValueObjectRecordMirror<BASE_RECORD_TYPE> vorm,
                                         List<ValueObjectRecordComposition> compositions,
                                         FetchedRecord<BASE_RECORD_TYPE> parent) {
         currentContainers.clear();
-        if (compositions.size() > 0) {
+        if (!compositions.isEmpty()) {
             List<ValueObjectRecordComposition> compositionsReversed = new ArrayList<>(compositions);
             Collections.reverse(compositionsReversed);
             ValueObjectRecordComposition predecessorComp = null;
