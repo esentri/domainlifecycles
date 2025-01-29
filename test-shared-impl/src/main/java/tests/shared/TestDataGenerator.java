@@ -1262,6 +1262,68 @@ public class TestDataGenerator {
             .build();
     }
 
+    public static VoAggregateRoot buildVoAggregateDuplicates() {
+        return VoAggregateRoot.builder()
+            .setId(new VoAggregateRootId(3L))
+            .setMySimpleVo(SimpleVo.builder()
+                .setValue("ValueSimpleOneToOe2")
+                .build()
+            )
+            .setValueObjectsOneToMany(
+                newArrayListOf(
+                    SimpleVoOneToMany.builder()
+                        .setValue("NEU")
+                        .build(),
+                    SimpleVoOneToMany.builder()
+                        .setValue("NEU")
+                        .build()
+                )
+            )
+            .build();
+    }
+
+    public static VoAggregateRoot buildVoAggregateDuplicatesMultipleCollections() {
+        return VoAggregateRoot.builder()
+            .setId(new VoAggregateRootId(4L))
+            .setMySimpleVo(SimpleVo.builder()
+                .setValue("ValueSimpleOneToOe2")
+                .build()
+            )
+            .setValueObjectsOneToMany(
+                newArrayListOf(
+                    SimpleVoOneToMany.builder()
+                        .setValue("NEU")
+                        .build(),
+                    SimpleVoOneToMany.builder()
+                        .setValue("NEU")
+                        .build()
+                )
+            )
+            .setValueObjectsOneToMany2(
+                newArrayListOf(
+                    SimpleVoOneToMany2.builder()
+                        .setOneToMany3Set(new HashSet<>(newArrayListOf(
+                            SimpleVoOneToMany3.builder()
+                                .setValue("Duplicate")
+                                .build()
+                            ))
+                        )
+                        .setValue("NEU")
+                        .build(),
+                    SimpleVoOneToMany2.builder()
+                        .setOneToMany3Set(new HashSet<>(newArrayListOf(
+                                SimpleVoOneToMany3.builder()
+                                    .setValue("Duplicate")
+                                    .build()
+                            ))
+                        )
+                        .setValue("NEU")
+                        .build()
+                )
+            )
+            .build();
+    }
+
     public static AutoMappedVoAggregateRoot buildAutoMappedVoAggregateMin() {
         return AutoMappedVoAggregateRoot.builder()
             .setId(new AutoMappedVoAggregateRootId(2L))
