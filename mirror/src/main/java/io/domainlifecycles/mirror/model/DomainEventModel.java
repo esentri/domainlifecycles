@@ -126,7 +126,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @Override
     public List<AggregateRootMirror> getPublishingAggregates() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -143,7 +143,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @Override
     public List<DomainServiceMirror> getPublishingDomainServices() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -160,7 +160,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @Override
     public List<RepositoryMirror> getPublishingRepositories() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -177,7 +177,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @Override
     public List<AggregateRootMirror> getListeningAggregates() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -194,7 +194,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @Override
     public List<DomainServiceMirror> getListeningDomainServices() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -211,7 +211,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @Override
     public List<RepositoryMirror> getListeningRepositories() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -228,7 +228,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @Override
     public List<ApplicationServiceMirror> getListeningApplicationServices() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -245,7 +245,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @Override
     public List<OutboundServiceMirror> getListeningOutboundServices() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -262,7 +262,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @Override
     public List<QueryHandlerMirror> getListeningQueryHandlers() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -279,7 +279,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @Override
     public List<ServiceKindMirror> getListeningServiceKinds() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()

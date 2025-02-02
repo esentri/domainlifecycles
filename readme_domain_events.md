@@ -236,7 +236,7 @@ An example above described event processing is configured like that:
     //This channel factory is used to create the external channel, routing event via JMS 
     // (using the Active MQ implementation of a Jakarta JMS compliant message broker )
     @Bean
-    @DependsOn("initializedDomain") 
+    @DependsOn("domainModel") 
     //@DependsOn: Depending on the rest of the application config it's sometimes necessary to make sure the 
     //Domain mirror is initialized before
     public SpringtransactionJakartaJmsChannelFactory springtransactionJakartaJmsChannelFactory(
@@ -816,7 +816,7 @@ public class JakartaJmsGruelboxIdempotencyConfig {
     //The idempotency protection defines which listener operation should be protected, 
     // to avoid event duplicates being processed multiple times
     @Bean
-    @DependsOn("initializedDomain")
+    @DependsOn("domainModel")
     public IdempotencyConfiguration idempotencyConfiguration() {
         var idempotency = new IdempotencyConfiguration();
         idempotency

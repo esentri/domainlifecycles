@@ -24,15 +24,19 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.mirror.serialize.api;
+package io.domainlifecycles.mirror.api;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Jackson mixin interface for proper serialization of {@link io.domainlifecycles.mirror.api.InitializedDomain}.
+ * This record is a container for all mirrors in a mirrored Domain.
  *
+ * @param allTypeMirrors        all the DomainTypeMirrors
+ * @param boundedContextMirrors all the BoundedContextMirrors
  * @author Mario Herb
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public interface InitializedDomainMixin {
+public record DomainModel(Map<String, ? extends DomainTypeMirror> allTypeMirrors,
+                          List<BoundedContextMirror> boundedContextMirrors) {
 }
+

@@ -49,7 +49,7 @@ import java.util.Optional;
  * To enable generic type resolving in the mirror, set the TypeMetaResolver before initializing the domain:
  * <pre>{@code
  *  Domain.setGenericTypeResolver(new TypeMetaResolver());
- *  ReflectiveDomainMirrorFactory factory = new ReflectiveDomainMirrorFactory("tests");
+ *  ReflectiveDomainModelFactory factory = new ReflectiveDomainModelFactory("tests");
  *  Domain.initialize(factory);
  * }</pre>
  * <p>

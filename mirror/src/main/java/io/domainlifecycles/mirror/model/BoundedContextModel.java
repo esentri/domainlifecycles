@@ -68,7 +68,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @Override
     public List<AggregateRootMirror> getAggregateRoots() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -85,7 +85,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @Override
     public List<DomainServiceMirror> getDomainServices() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -102,7 +102,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @Override
     public List<RepositoryMirror> getRepositories() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -119,7 +119,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @Override
     public List<ReadModelMirror> getReadModels() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -136,7 +136,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @Override
     public List<DomainCommandMirror> getDomainCommands() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -153,7 +153,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @Override
     public List<DomainEventMirror> getDomainEvents() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -170,7 +170,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @Override
     public List<ApplicationServiceMirror> getApplicationServices() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -187,7 +187,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @Override
     public List<QueryHandlerMirror> getQueryHandlers() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -204,7 +204,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @Override
     public List<OutboundServiceMirror> getOutboundServices() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -221,7 +221,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @Override
     public List<ServiceKindMirror> getServiceKinds() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()

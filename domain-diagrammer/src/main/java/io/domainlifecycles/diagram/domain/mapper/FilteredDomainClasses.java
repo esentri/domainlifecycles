@@ -30,9 +30,9 @@ import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
 import io.domainlifecycles.mirror.api.BoundedContextMirror;
-import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
+import io.domainlifecycles.mirror.api.DomainModel;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
@@ -70,9 +70,9 @@ public class FilteredDomainClasses {
 
     private final TransitiveDomainTypeFilter transitiveDomainTypeFilter;
 
-    public FilteredDomainClasses(DomainDiagramConfig domainDiagramConfig) {
+    public FilteredDomainClasses(DomainDiagramConfig domainDiagramConfig, DomainModel domainModel) {
         this.domainDiagramConfig = domainDiagramConfig;
-        this.boundedContextMirror = Domain.getBoundedContexts()
+        this.boundedContextMirror = domainModel.boundedContextMirrors()
             .stream()
             .filter(a -> a.getPackageName().equals(domainDiagramConfig.getContextPackageName()))
             .findFirst().orElseThrow(() -> new IllegalStateException(

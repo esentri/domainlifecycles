@@ -145,7 +145,7 @@ public class MirrorBasedOpenApiExtension {
     }
 
     private void modifyEntitySchemata(OpenAPI openAPI, String... entitiesWithExternallyProvidedIds) {
-        Domain.getInitializedDomain()
+        Domain.getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -192,7 +192,7 @@ public class MirrorBasedOpenApiExtension {
     }
 
     private void modifyValueObjectSchemata(OpenAPI openAPI) {
-        Domain.getInitializedDomain()
+        Domain.getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()

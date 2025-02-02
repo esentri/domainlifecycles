@@ -2,7 +2,7 @@ package io.domainlifecycles.access.object;
 
 import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tests.shared.persistence.domain.optional.MySimpleValueObject;
@@ -14,7 +14,7 @@ class ReflectiveDomainObjectAccessorTest {
 
     @BeforeAll
     static void beforeAll() {
-        Domain.initialize(new ReflectiveDomainMirrorFactory("tests", "io.domainlifecycles"));
+        Domain.initialize(new ReflectiveDomainModelFactory("tests", "io.domainlifecycles"));
     }
 
     @Test

@@ -26,15 +26,15 @@
 
 package io.domainlifecycles.mirror.serialize.api;
 
-import io.domainlifecycles.mirror.api.InitializedDomain;
+import io.domainlifecycles.mirror.api.DomainModel;
 
 /**
- * Generic interface to de-/serialize the InitializedDomain.
+ * Generic interface to de-/serialize the DomainModel.
  *
  * @author Mario Herb
  */
 public interface DomainSerializer {
-    String serialize(InitializedDomain initializedDomain);
+    String serialize(DomainModel domainModel);
 
-    InitializedDomain deserialize(String serializedDomain);
+    DomainModel deserialize(String serializedDomain);
 }

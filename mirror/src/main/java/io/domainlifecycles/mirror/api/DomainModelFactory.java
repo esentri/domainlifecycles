@@ -26,17 +26,20 @@
 
 package io.domainlifecycles.mirror.api;
 
-import java.util.List;
-import java.util.Map;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 /**
- * This record is a container for all mirrors in a mirrored Domain.
+ * The implementations of this interface decide how the DomainModel is provided.
+ * E.g. created by reflection or read from a config file. The default implementation initializes the domain by
+ * reflection {@see ReflectiveDomainModelFactory}.
  *
- * @param allTypeMirrors        all the DomainTypeMirrors
- * @param boundedContextMirrors all the BoundedContextMirrors
  * @author Mario Herb
  */
-public record InitializedDomain(Map<String, ? extends DomainTypeMirror> allTypeMirrors,
-                                List<BoundedContextMirror> boundedContextMirrors) {
-}
+public interface DomainModelFactory {
 
+    /**
+     * @param typeResolver type resolver
+     * @return the DomainModel, containing all the mirrors provided by this factory for the corresponding Domain.
+     */
+    DomainModel initializeDomainModel(GenericTypeResolver typeResolver);
+}

@@ -91,7 +91,7 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
             }
         }
 
-        var allEntityMirrors = Domain.getInitializedDomain()
+        var allEntityMirrors = Domain.getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()

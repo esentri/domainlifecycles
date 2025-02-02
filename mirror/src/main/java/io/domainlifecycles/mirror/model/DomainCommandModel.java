@@ -137,7 +137,7 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
             .map(n -> Domain.typeMirror(n).orElseThrow(
                 () -> MirrorException.fail("AggregateRootMirror not found for '%s'", n)))
             .map(m -> (IdentityMirror) m);
-        return identity.flatMap(identityMirror -> Domain.getInitializedDomain()
+        return identity.flatMap(identityMirror -> Domain.getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
