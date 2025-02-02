@@ -203,7 +203,7 @@ Speziell für den Datenbank-Zugriff mit jOOQ werden folgende Konfigurationen ben
 ```DataSourceConnectionProvider```, ```DefaultConfiguration```, ```DefaultDSLContext```.
 
 #### `DataSourceConnectionProvider`
-```
+```Java
 @Bean
 public DataSourceConnectionProvider connectionProvider(DataSource dataSource) {
     return new DataSourceConnectionProvider(new TransactionAwareDataSourceProxy(dataSource));
@@ -212,7 +212,7 @@ public DataSourceConnectionProvider connectionProvider(DataSource dataSource) {
 
 
 #### `DefaultConfiguration`
-```
+```Java
 @Bean
 public DefaultConfiguration configuration(DataSource dataSource) {
     final var jooqConfig = new DefaultConfiguration();
@@ -227,7 +227,7 @@ Der passende SQLDialect und die Aktivierung von Optimistic Locking ist hier zu b
 
 
 #### `DefaultDSLContext`
-```
+```Java
 @Bean
 public DefaultDSLContext dslContext(DataSource dataSource) {
     return new DefaultDSLContext(configuration(dataSource));
@@ -239,7 +239,7 @@ Weitere Konfigurationen, müssen speziell für DLC Persistence vorgenommen werde
 #### `JooqDomainPersistenceProvider`
 Der JooqDomainPersistenceProvider ermöglicht einen jOOQ spezifischen Zugriff auf alle Domain-Objekte.
 
-```
+```Java
 @Bean
 public JooqDomainPersistenceProvider domainPersistenceProvider(DomainObjectBuilderProvider domainObjectBuilderProvider,
                 Set<RecordMapper<?, ?, ?>> customRecordMappers) {
@@ -263,7 +263,7 @@ können und dass für neue Instanzen neue IDs aus den entsprechenden Datenbankse
 abgerufen werden.
 Wird nur benutzt in Zusammenhang mit ```DlcJacksonModule```, siehe unten.
 
-```
+```Java
 @Bean
 EntityIdentityProvider identityProvider(DSLContext dslContext) {
     return new JooqEntityIdentityProvider(dslContext);
@@ -275,7 +275,7 @@ Optional, wird benötigt, um DLC-Persistence-Events über den Spring Event Bus z
 DLC Persistence Events veröffentlichen Informationen über Veränderungen an Aggregates
 im Rahmen von schreibenden Repository-Zugriffen.
 
-```
+```Java
 @Bean
 public SpringPersistenceEventPublisher springPersistenceEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
 return new SpringPersistenceEventPublisher(applicationEventPublisher);
@@ -296,7 +296,7 @@ Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configur
 #### `DomainObjectBuilderProvider`
 Der DomainObjectBuilderProvider wird benötigt um mit inner-Builders oder den Lombok-Builders (Lombok ```@Builder```-Annotation) zu arbeiten.
 
-```
+```Java
 @Bean
 DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
     return new InnerClassDomainObjectBuilderProvider();
@@ -315,7 +315,7 @@ Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configur
 #### `DlcJacksonModule`
 Benötigt für DLC-Jackson Integration, d.h. für JSON-De-Serialisierung.
 
-```
+```Java
 @Bean
 DlcJacksonModule dlcModuleConfiguration(List<? extends JacksonMappingCustomizer<?>> customizers,
                                         DomainObjectBuilderProvider domainObjectBuilderProvider,
@@ -336,7 +336,7 @@ Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configur
 #### `ChannelRoutingConfiguration`
 Stellt eine Konfiguration für das Channel Routing bereit.
 
-```
+```Java
 @Bean
 public ChannelRoutingConfiguration channelConfiguration(PlatformTransactionManager platformTransactionManager, ServiceProvider serviceProvider){
     var channel = new SpringTxInMemoryChannelFactory(platformTransactionManager, serviceProvider, true).processingChannel("default");
@@ -353,7 +353,7 @@ immer über eine Auslöser-Transaktion je nach Konfiguration ```beforeCommit``` 
 #### `ServiceProvider`
 Stellt einen Provider für alle benötigten ```ServiceKind``` Objekte bereit. Dies wird benötigt für die in der Route definierte Event-Zustellung.
 
-```
+```Java
 public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds){
     return new Services(serviceKinds);
 }
@@ -371,7 +371,7 @@ Die folgenden Spring-Beans müssen konfiguriert werden und in einer ```@Configur
 #### `DlcOpenApiCustomizer`
 Aktiviert die DLC-/OpenAPI-Integration.
 
-```
+```Java
 @Bean
 public DlcOpenApiCustomizer openApiCustomizer(SpringDocConfigProperties springDocConfigProperties) {
     return new DlcOpenApiCustomizer(springDocConfigProperties);

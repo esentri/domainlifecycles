@@ -15,7 +15,7 @@ class Diagrammer {
     public void generateDiagram() {
         Domain.initialize(new ReflectiveDomainMirrorFactory("sampleshop"));
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withContextPackageName("sampleshop").build();
-        DomainDiagramGenerator generator = new DomainDiagramGenerator(diagramConfig);
+        DomainDiagramGenerator generator = new DomainDiagramGenerator(diagramConfig, Domain.getDomainModel());
 
         String diagramTextNomnoml = generator.generateDiagramText();
         File file = new File("generated_nomnoml_example.nomnoml");
