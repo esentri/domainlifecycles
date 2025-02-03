@@ -42,6 +42,7 @@ import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.domain.types.ValueObject;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import org.slf4j.Logger;
@@ -62,22 +63,26 @@ public class ClassGraphDomainTypesScanner {
 
     private static final Logger log = LoggerFactory.getLogger(ClassGraphDomainTypesScanner.class);
 
-
-    private ClassLoader classLoader;
+    private final ClassLoader classLoader;
+    private final GenericTypeResolver genericTypeResolver;
 
     /**
      * Create scanner based on dedicated ClassLoader.
      *
      * @param classLoader pass a dynamically created URLCLassLoader with dynamically loaded classes
      */
-    public ClassGraphDomainTypesScanner(ClassLoader classLoader) {
-        this.classLoader = classLoader;
+    public ClassGraphDomainTypesScanner(ClassLoader classLoader, GenericTypeResolver genericTypeResolver) {
+        this.classLoader = Objects.requireNonNull(classLoader, "Please provide a ClassLoader.");
+        this.genericTypeResolver = Objects.requireNonNull(genericTypeResolver, "A GenericTypeResolver must be provided!");
+
     }
 
     /**
      * Constructor
      */
-    public ClassGraphDomainTypesScanner() {
+    public ClassGraphDomainTypesScanner(GenericTypeResolver genericTypeResolver) {
+        this.genericTypeResolver = Objects.requireNonNull(genericTypeResolver, "A GenericTypeResolver must be provided!");
+        this.classLoader = null;
     }
 
     /**
@@ -105,21 +110,21 @@ public class ClassGraphDomainTypesScanner {
                 scanResult.getAllEnums()
                     .stream()
                     .map(r -> (Class<? extends Enum<?>>) r.loadClass())
-                    .map(dt -> new EnumMirrorBuilder(dt).build())
+                    .map(dt -> new EnumMirrorBuilder(dt, genericTypeResolver).build())
                     .forEach(domainTypes::add);
 
                 scanResult.getClassesImplementing(Identity.class)
                     .stream()
                     .filter(c -> !Identity.class.getName().equals(c.getName()))
                     .map(r -> (Class<? extends Identity<?>>) r.loadClass())
-                    .map(dt -> new IdentityMirrorBuilder(dt).build())
+                    .map(dt -> new IdentityMirrorBuilder(dt, genericTypeResolver).build())
                     .forEach(domainTypes::add);
 
                 scanResult.getClassesImplementing(ValueObject.class)
                     .stream()
                     .filter(c -> !ValueObject.class.getName().equals(c.getName()))
                     .map(r -> (Class<? extends ValueObject>) r.loadClass())
-                    .map(dt -> new ValueObjectMirrorBuilder(dt).build())
+                    .map(dt -> new ValueObjectMirrorBuilder(dt, genericTypeResolver).build())
                     .forEach(domainTypes::add);
 
                 scanResult.getClassesImplementing(Entity.class)
@@ -128,42 +133,42 @@ public class ClassGraphDomainTypesScanner {
                     .filter(c -> !AggregateRoot.class.getName().equals(c.getName()))
                     .stream()
                     .map(r -> (Class<? extends Entity<?>>) r.loadClass())
-                    .map(dt -> new EntityMirrorBuilder(dt).build())
+                    .map(dt -> new EntityMirrorBuilder(dt, genericTypeResolver).build())
                     .forEach(domainTypes::add);
 
                 scanResult.getClassesImplementing(AggregateRoot.class)
                     .stream()
                     .filter(c -> !AggregateRoot.class.getName().equals(c.getName()))
                     .map(r -> (Class<? extends AggregateRoot<?>>) r.loadClass())
-                    .map(dt -> new AggregateRootMirrorBuilder(dt).build())
+                    .map(dt -> new AggregateRootMirrorBuilder(dt, genericTypeResolver).build())
                     .forEach(domainTypes::add);
 
                 scanResult.getClassesImplementing(DomainService.class)
                     .stream()
                     .filter(c -> !DomainService.class.getName().equals(c.getName()))
                     .map(r -> (Class<? extends DomainService>) r.loadClass())
-                    .map(dt -> new DomainServiceMirrorBuilder(dt).build())
+                    .map(dt -> new DomainServiceMirrorBuilder(dt, genericTypeResolver).build())
                     .forEach(domainTypes::add);
 
                 scanResult.getClassesImplementing(ApplicationService.class)
                     .stream()
                     .filter(c -> !ApplicationService.class.getName().equals(c.getName()))
                     .map(r -> (Class<? extends ApplicationService>) r.loadClass())
-                    .map(dt -> new ApplicationServiceMirrorBuilder(dt).build())
+                    .map(dt -> new ApplicationServiceMirrorBuilder(dt, genericTypeResolver).build())
                     .forEach(domainTypes::add);
 
                 scanResult.getClassesImplementing(DomainEvent.class)
                     .stream()
                     .filter(c -> !DomainEvent.class.getName().equals(c.getName()))
                     .map(r -> (Class<? extends DomainEvent>) r.loadClass())
-                    .map(dt -> new DomainEventMirrorBuilder(dt).build())
+                    .map(dt -> new DomainEventMirrorBuilder(dt, genericTypeResolver).build())
                     .forEach(domainTypes::add);
 
                 scanResult.getClassesImplementing(Repository.class)
                     .stream()
                     .filter(c -> !Repository.class.getName().equals(c.getName()))
                     .map(r -> (Class<? extends Repository<?, ?>>) r.loadClass())
-                    .map(dt -> new RepositoryMirrorBuilder(dt).build())
+                    .map(dt -> new RepositoryMirrorBuilder(dt, genericTypeResolver).build())
                     .forEach(domainTypes::add);
 
                 scanResult.getClassesImplementing(DomainCommand.class)
@@ -172,28 +177,28 @@ public class ClassGraphDomainTypesScanner {
                     .filter(c -> !AggregateCommand.class.getName().equals(c.getName()))
                     .filter(c -> !DomainServiceCommand.class.getName().equals(c.getName()))
                     .map(r -> (Class<? extends DomainCommand>) r.loadClass())
-                    .map(dt -> new DomainCommandMirrorBuilder(dt).build())
+                    .map(dt -> new DomainCommandMirrorBuilder(dt, genericTypeResolver).build())
                     .forEach(domainTypes::add);
 
                 scanResult.getClassesImplementing(ReadModel.class)
                     .stream()
                     .filter(c -> !ReadModel.class.getName().equals(c.getName()))
                     .map(r -> (Class<? extends ReadModel>) r.loadClass())
-                    .map(dt -> new ReadModelMirrorBuilder(dt).build())
+                    .map(dt -> new ReadModelMirrorBuilder(dt, genericTypeResolver).build())
                     .forEach(domainTypes::add);
 
                 scanResult.getClassesImplementing(QueryHandler.class)
                     .stream()
                     .filter(c -> !QueryHandler.class.getName().equals(c.getName()))
                     .map(r -> (Class<? extends QueryHandler<?>>) r.loadClass())
-                    .map(dt -> new QueryHandlerMirrorBuilder(dt).build())
+                    .map(dt -> new QueryHandlerMirrorBuilder(dt, genericTypeResolver).build())
                     .forEach(domainTypes::add);
 
                 scanResult.getClassesImplementing(OutboundService.class)
                     .stream()
                     .filter(c -> !OutboundService.class.getName().equals(c.getName()))
                     .map(r -> (Class<? extends OutboundService>) r.loadClass())
-                    .map(dt -> new OutboundServiceMirrorBuilder(dt).build())
+                    .map(dt -> new OutboundServiceMirrorBuilder(dt, genericTypeResolver).build())
                     .forEach(domainTypes::add);
 
                 scanResult.getClassesImplementing(ServiceKind.class)
@@ -210,7 +215,7 @@ public class ClassGraphDomainTypesScanner {
                                 && !(c.implementsInterface(QueryHandler.class))
                                 && !(c.implementsInterface(Repository.class)))
                     .map(r -> (Class<? extends ServiceKind>) r.loadClass())
-                    .map(dt -> new ServiceKindMirrorBuilder(dt).build())
+                    .map(dt -> new ServiceKindMirrorBuilder(dt, genericTypeResolver).build())
                     .forEach(domainTypes::add);
             } catch (Throwable t) {
                 log.error("Scanning bounded context package '{}' failed!", packageNames);

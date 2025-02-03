@@ -29,6 +29,7 @@ package io.domainlifecycles.mirror.reflect;
 import io.domainlifecycles.domain.types.ReadModel;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
 import io.domainlifecycles.mirror.model.ReadModelModel;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 /**
  * Builder to create {@link ReadModelMirror}. Uses Java reflection.
@@ -37,8 +38,17 @@ import io.domainlifecycles.mirror.model.ReadModelModel;
  */
 public class ReadModelMirrorBuilder extends DomainTypeMirrorBuilder {
 
-    public ReadModelMirrorBuilder(Class<? extends ReadModel> readModelClass) {
-        super(readModelClass);
+    /**
+     * Constructor
+     *
+     * @param readModelClass class being mirrored
+     * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     */
+    public ReadModelMirrorBuilder(
+        Class<? extends ReadModel> readModelClass,
+        GenericTypeResolver genericTypeResolver
+    ) {
+        super(readModelClass, genericTypeResolver);
     }
 
     /**

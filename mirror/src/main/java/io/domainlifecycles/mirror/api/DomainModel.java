@@ -26,8 +26,17 @@
 
 package io.domainlifecycles.mirror.api;
 
+import io.domainlifecycles.mirror.model.BoundedContextModel;
+import io.domainlifecycles.mirror.model.DomainTypeModel;
+import io.domainlifecycles.mirror.model.EntityModel;
+import io.domainlifecycles.mirror.model.FieldModel;
+import io.domainlifecycles.mirror.model.MethodModel;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This record is a container for all mirrors in a mirrored Domain.
@@ -38,5 +47,39 @@ import java.util.Map;
  */
 public record DomainModel(Map<String, ? extends DomainTypeMirror> allTypeMirrors,
                           List<BoundedContextMirror> boundedContextMirrors) {
+
+    public DomainModel(Map<String, ? extends DomainTypeMirror> allTypeMirrors, List<BoundedContextMirror> boundedContextMirrors) {
+        this.allTypeMirrors = new HashMap<>(allTypeMirrors);
+        this.boundedContextMirrors = new ArrayList<>(boundedContextMirrors);
+        allTypeMirrors
+            .values()
+            .stream()
+            .map(m -> (DomainTypeModel)m)
+            .forEach(m -> {
+                m.setDomainModel(this);
+                if(m instanceof EntityModel e) {
+                    e.getIdentityField()
+                        .map(f -> (FieldModel) f)
+                        .ifPresent(f -> f.setDomainModel(this));
+                }
+                m.getAllFields()
+                    .stream()
+                    .map(f -> (FieldModel) f)
+                    .forEach(f -> f.setDomainModel(this));
+                m.getMethods()
+                    .stream()
+                    .map(meth -> (MethodModel) meth)
+                    .forEach(meth -> meth.setDomainModel(this));
+
+            });
+        boundedContextMirrors.forEach(m -> {
+            var bc = (BoundedContextModel)m;
+            bc.setDomainModel(this);
+        });
+    }
+
+    public <T extends DomainTypeMirror> Optional<T> getDomainTypeMirror(String typeName) {
+        return  Optional.ofNullable((T)allTypeMirrors.get(typeName));
+    }
 }
 

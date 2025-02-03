@@ -38,7 +38,6 @@ import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.domain.types.ValueObject;
 import io.domainlifecycles.mirror.exception.MirrorException;
-import io.domainlifecycles.mirror.resolver.DefaultEmptyGenericTypeResolver;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 import java.util.List;
@@ -54,8 +53,6 @@ public class Domain {
     private static boolean initialized = false;
 
     private static DomainModel domainModel;
-
-    private static GenericTypeResolver genericTypeResolver = new DefaultEmptyGenericTypeResolver();
 
     /**
      * @param <V>                   type of DomainTypeMirror
@@ -364,24 +361,8 @@ public class Domain {
      * @param domainModelFactory the factory
      */
     public static void initialize(DomainModelFactory domainModelFactory) {
-        domainModel = domainModelFactory.initializeDomainModel(genericTypeResolver);
+        domainModel = domainModelFactory.initializeDomainModel();
         initialized = true;
-    }
-
-    /**
-     * Sets the GenericTypeResolver for the Domain to resolve generic types within domain classes.
-     *
-     * @param genericTypeResolver the type resolver to be set
-     */
-    public static void setGenericTypeResolver(GenericTypeResolver genericTypeResolver) {
-        Domain.genericTypeResolver = genericTypeResolver;
-    }
-
-    /**
-     * @return the GenericTypeResolver for the Domain
-     */
-    public static GenericTypeResolver getGenericTypeResolver() {
-        return genericTypeResolver;
     }
 
     /**

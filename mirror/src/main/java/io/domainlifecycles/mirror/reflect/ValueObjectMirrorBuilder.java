@@ -29,6 +29,7 @@ package io.domainlifecycles.mirror.reflect;
 import io.domainlifecycles.domain.types.ValueObject;
 import io.domainlifecycles.mirror.api.ValueObjectMirror;
 import io.domainlifecycles.mirror.model.ValueObjectModel;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 /**
  * Builder to create {@link ValueObjectMirror}. Uses Java reflection.
@@ -37,8 +38,17 @@ import io.domainlifecycles.mirror.model.ValueObjectModel;
  */
 public class ValueObjectMirrorBuilder extends DomainTypeMirrorBuilder {
 
-    public ValueObjectMirrorBuilder(Class<? extends ValueObject> valueObjectClass) {
-        super(valueObjectClass);
+    /**
+     * Constructor
+     *
+     * @param valueObjectClass class being mirrored
+     * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     */
+    public ValueObjectMirrorBuilder(
+        Class<? extends ValueObject> valueObjectClass,
+        GenericTypeResolver genericTypeResolver
+    ) {
+        super(valueObjectClass, genericTypeResolver);
     }
 
     /**

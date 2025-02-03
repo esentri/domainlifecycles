@@ -34,6 +34,7 @@ import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
+import io.domainlifecycles.mirror.api.DomainModel;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.ParamMirror;
 import io.domainlifecycles.mirror.exception.MirrorException;
@@ -56,6 +57,9 @@ public class MethodModel implements MethodMirror {
     private final AccessLevel accessLevel;
     private final List<ParamMirror> parameters;
     private final AssertedContainableTypeMirror returnType;
+
+    DomainModel domainModel;
+    private boolean domainModelSet = false;
 
     @JsonProperty
     private final List<String> publishedEventTypeNames;
@@ -137,7 +141,7 @@ public class MethodModel implements MethodMirror {
     public List<DomainEventMirror> getPublishedEvents() {
         return this.publishedEventTypeNames
             .stream()
-            .map(n -> (DomainEventMirror) Domain.typeMirror(n).orElseThrow(
+            .map(n -> (DomainEventMirror) domainModel.getDomainTypeMirror(n).orElseThrow(
                 () -> MirrorException.fail("DomainEventMirror not found for '%s'", n)))
             .collect(Collectors.toList());
     }
@@ -149,7 +153,7 @@ public class MethodModel implements MethodMirror {
     @Override
     public Optional<DomainEventMirror> getListenedEvent() {
         return listenedEventTypeName
-            .map(n -> (DomainEventMirror) Domain.typeMirror(n).orElseThrow(
+            .map(n -> (DomainEventMirror) domainModel.getDomainTypeMirror(n).orElseThrow(
                 () -> MirrorException.fail("DomainEventMirror not found for '%s'", n)));
     }
 
@@ -183,7 +187,7 @@ public class MethodModel implements MethodMirror {
     @Override
     public boolean isGetter() {
         if (parameters.size() == 0 && AccessLevel.PUBLIC.equals(accessLevel)) {
-            var declaringDomainTypeOptional = Domain.typeMirror(declaredByTypeName);
+            var declaringDomainTypeOptional = domainModel.getDomainTypeMirror(declaredByTypeName);
             if (declaringDomainTypeOptional.isPresent()) {
                 var declaringDomainType = declaringDomainTypeOptional.get();
                 var propName = name;
@@ -212,7 +216,7 @@ public class MethodModel implements MethodMirror {
     @Override
     public boolean isSetter() {
         if (parameters.size() == 1 && AccessLevel.PUBLIC.equals(accessLevel)) {
-            var declaringDomainTypeOptional = Domain.typeMirror(declaredByTypeName);
+            var declaringDomainTypeOptional = domainModel.getDomainTypeMirror(declaredByTypeName);
             if (declaringDomainTypeOptional.isPresent()) {
                 var declaringDomainType = declaringDomainTypeOptional.get();
                 var propName = name;
@@ -281,4 +285,13 @@ public class MethodModel implements MethodMirror {
         return Objects.hash(name, declaredByTypeName, accessLevel, parameters, returnType, publishedEventTypeNames,
             listenedEventTypeName);
     }
+
+    public void setDomainModel(DomainModel domainModel) {
+        if(!domainModelSet) {
+            this.domainModel = domainModel;
+            this.domainModelSet = true;
+        }
+    }
+
+    public DomainModel innerDomainModelReference() {return this.domainModel;}
 }

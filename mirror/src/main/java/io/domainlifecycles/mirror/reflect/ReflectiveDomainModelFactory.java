@@ -32,6 +32,7 @@ import io.domainlifecycles.mirror.api.DomainModel;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.exception.MirrorException;
 import io.domainlifecycles.mirror.model.BoundedContextModel;
+import io.domainlifecycles.mirror.resolver.DefaultEmptyGenericTypeResolver;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +53,23 @@ public class ReflectiveDomainModelFactory implements DomainModelFactory {
     private static final Logger log = LoggerFactory.getLogger(ReflectiveDomainModelFactory.class);
     private final ClassGraphDomainTypesScanner classGraphDomainTypesScanner;
     private final String[] boundedContextPackages;
+    private final GenericTypeResolver genericTypeResolver;
 
     private static final Pattern packagePattern = Pattern.compile("^[a-z]+(\\.[a-zA-Z_][a-zA-Z0-9_]*)*$");
 
+
+    /**
+     * Initialize the factory with the boundedContextPackages to be scanned.
+     *
+     * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param boundedContextPackages the bounded context packages
+     */
+    public ReflectiveDomainModelFactory(GenericTypeResolver genericTypeResolver, String... boundedContextPackages) {
+        this.boundedContextPackages = boundedContextPackages;
+        this.genericTypeResolver = genericTypeResolver == null ? new DefaultEmptyGenericTypeResolver() : genericTypeResolver;
+        validatePackages(boundedContextPackages);
+        this.classGraphDomainTypesScanner = new ClassGraphDomainTypesScanner(genericTypeResolver);
+    }
 
     /**
      * Initialize the factory with the boundedContextPackages to be scanned.
@@ -63,8 +78,24 @@ public class ReflectiveDomainModelFactory implements DomainModelFactory {
      */
     public ReflectiveDomainModelFactory(String... boundedContextPackages) {
         this.boundedContextPackages = boundedContextPackages;
+        this.genericTypeResolver = new DefaultEmptyGenericTypeResolver();
         validatePackages(boundedContextPackages);
-        this.classGraphDomainTypesScanner = new ClassGraphDomainTypesScanner();
+        this.classGraphDomainTypesScanner = new ClassGraphDomainTypesScanner(genericTypeResolver);
+    }
+
+    /**
+     * Initialize the factory with the boundedContextPackages to be scanned.
+     * And a dedicated class loader (potentially a sub classloader that provides access to dynamically loaded classes)
+     *
+     * @param classLoader pass a dynamically created URLCLassLoader with dynamically loaded classes
+     * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param boundedContextPackages the bounded context packages
+     */
+    public ReflectiveDomainModelFactory(ClassLoader classLoader, GenericTypeResolver genericTypeResolver, String... boundedContextPackages) {
+        this.boundedContextPackages = boundedContextPackages;
+        this.genericTypeResolver = genericTypeResolver == null ? new DefaultEmptyGenericTypeResolver() : genericTypeResolver;
+        validatePackages(boundedContextPackages);
+        this.classGraphDomainTypesScanner = new ClassGraphDomainTypesScanner(classLoader, genericTypeResolver);
     }
 
     /**
@@ -74,10 +105,11 @@ public class ReflectiveDomainModelFactory implements DomainModelFactory {
      * @param classLoader pass a dynamically created URLCLassLoader with dynamically loaded classes
      * @param boundedContextPackages the bounded context packages
      */
-    public ReflectiveDomainModelFactory(ClassLoader classLoader, String... boundedContextPackages) {
+    public ReflectiveDomainModelFactory(ClassLoader classLoader,String... boundedContextPackages) {
         this.boundedContextPackages = boundedContextPackages;
+        this.genericTypeResolver = new DefaultEmptyGenericTypeResolver();
         validatePackages(boundedContextPackages);
-        this.classGraphDomainTypesScanner = new ClassGraphDomainTypesScanner(classLoader);
+        this.classGraphDomainTypesScanner = new ClassGraphDomainTypesScanner(classLoader, genericTypeResolver);
     }
 
     /**
@@ -86,7 +118,7 @@ public class ReflectiveDomainModelFactory implements DomainModelFactory {
      * @return DomainModel - a container for all mirrors that are available in the analyzed bounded contexts.
      */
     @Override
-    public DomainModel initializeDomainModel(GenericTypeResolver typeResolver) {
+    public DomainModel initializeDomainModel() {
         Map<String, ? extends DomainTypeMirror> builtTypeMirrors =
             classGraphDomainTypesScanner
                 .scan(boundedContextPackages)
@@ -100,9 +132,13 @@ public class ReflectiveDomainModelFactory implements DomainModelFactory {
 
         builtTypeMirrors
             .values()
-            .forEach(m -> log.debug("Created Mirror:" + m));
+            .forEach(m -> {
+                log.debug("Created Mirror:" + m);
+
+            });
 
         return new DomainModel(builtTypeMirrors, buildBoundedContextMirrors());
+
     }
 
     private List<BoundedContextMirror> buildBoundedContextMirrors() {

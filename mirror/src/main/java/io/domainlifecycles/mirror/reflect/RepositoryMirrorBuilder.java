@@ -30,6 +30,7 @@ import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.model.RepositoryModel;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 import java.util.Arrays;
 import java.util.List;
@@ -43,8 +44,17 @@ import java.util.Optional;
 public class RepositoryMirrorBuilder extends ServiceKindMirrorBuilder {
     private final Class<? extends Repository<?, ?>> repositoryClass;
 
-    public RepositoryMirrorBuilder(Class<? extends Repository<?, ?>> repositoryClass) {
-        super(repositoryClass);
+    /**
+     * Constructor
+     *
+     * @param repositoryClass class being mirrored
+     * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     */
+    public RepositoryMirrorBuilder(
+        Class<? extends Repository<?, ?>> repositoryClass,
+        GenericTypeResolver genericTypeResolver
+    ) {
+        super(repositoryClass, genericTypeResolver);
         this.repositoryClass = repositoryClass;
     }
 

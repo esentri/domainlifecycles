@@ -43,8 +43,7 @@ class NomnomlDomainDiagramGeneratorTest {
     
     @Test
     void generateSampleApp() throws Exception {
-        Domain.setGenericTypeResolver(new TypeMetaResolver());
-        Domain.initialize(new ReflectiveDomainMirrorFactory("yourdomain"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory( new TypeMetaResolver(), "yourdomain"));
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withContextPackageName("yourdomain").build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
                 diagramConfig, domain.getDomainModel());

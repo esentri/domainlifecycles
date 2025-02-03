@@ -38,8 +38,7 @@ import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 public interface DomainModelFactory {
 
     /**
-     * @param typeResolver type resolver
      * @return the DomainModel, containing all the mirrors provided by this factory for the corresponding Domain.
      */
-    DomainModel initializeDomainModel(GenericTypeResolver typeResolver);
+    DomainModel initializeDomainModel();
 }

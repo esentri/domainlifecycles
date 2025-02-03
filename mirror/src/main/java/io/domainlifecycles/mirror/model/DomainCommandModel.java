@@ -134,10 +134,10 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     @Override
     public Optional<AggregateRootMirror> getAggregateTarget() {
         var identity = aggregateTargetIdentityTypeName
-            .map(n -> Domain.typeMirror(n).orElseThrow(
+            .map(n -> domainModel.getDomainTypeMirror(n).orElseThrow(
                 () -> MirrorException.fail("AggregateRootMirror not found for '%s'", n)))
             .map(m -> (IdentityMirror) m);
-        return identity.flatMap(identityMirror -> Domain.getDomainModel()
+        return identity.flatMap(identityMirror -> domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -155,7 +155,7 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     @Override
     public Optional<DomainServiceMirror> getDomainServiceTarget() {
         return domainServiceTargetTypeName
-            .map(n -> Domain.typeMirror(n).orElseThrow(
+            .map(n -> domainModel.getDomainTypeMirror(n).orElseThrow(
                 () -> MirrorException.fail("DomainServiceMirror not found for '%s'", n)))
             .map(m -> (DomainServiceMirror) m);
     }

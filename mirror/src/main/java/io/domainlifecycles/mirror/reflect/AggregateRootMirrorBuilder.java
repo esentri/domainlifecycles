@@ -29,6 +29,7 @@ package io.domainlifecycles.mirror.reflect;
 import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.model.AggregateRootModel;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 /**
  * Builder to create {@link AggregateRootMirror}. Uses Java reflection.
@@ -40,10 +41,14 @@ public class AggregateRootMirrorBuilder extends EntityMirrorBuilder {
     /**
      * Initialize the builder with the corresponding {@link AggregateRoot} class.
      *
-     * @param aggregateRootClass type of AggregateRoot
+     * @param aggregateRootClass mirrored type of AggregateRoot
+     * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
      */
-    public AggregateRootMirrorBuilder(Class<? extends AggregateRoot<?>> aggregateRootClass) {
-        super(aggregateRootClass);
+    public AggregateRootMirrorBuilder(
+        Class<? extends AggregateRoot<?>> aggregateRootClass,
+        GenericTypeResolver genericTypeResolver
+    ) {
+        super(aggregateRootClass, genericTypeResolver);
     }
 
     /**

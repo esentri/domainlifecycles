@@ -30,6 +30,7 @@ import io.domainlifecycles.mirror.api.EnumMirror;
 import io.domainlifecycles.mirror.api.EnumOptionMirror;
 import io.domainlifecycles.mirror.model.EnumModel;
 import io.domainlifecycles.mirror.model.EnumOptionModel;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,9 +45,17 @@ import java.util.stream.Collectors;
 public class EnumMirrorBuilder extends DomainTypeMirrorBuilder {
     private final Class<? extends Enum<?>> enumClass;
 
-    public EnumMirrorBuilder(Class<? extends Enum<?>> enumClass
+    /**
+     * Constructor
+     *
+     * @param enumClass class being mirrored
+     * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     */
+    public EnumMirrorBuilder(
+        Class<? extends Enum<?>> enumClass,
+        GenericTypeResolver genericTypeResolver
     ) {
-        super(enumClass);
+        super(enumClass, genericTypeResolver);
         this.enumClass = enumClass;
     }
 

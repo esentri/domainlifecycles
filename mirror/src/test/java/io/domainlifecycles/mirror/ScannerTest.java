@@ -8,6 +8,7 @@ import io.domainlifecycles.mirror.api.IdentityMirror;
 import io.domainlifecycles.mirror.api.ValueObjectMirror;
 import io.domainlifecycles.mirror.reflect.ClassGraphDomainTypesScanner;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
+import io.domainlifecycles.mirror.resolver.DefaultEmptyGenericTypeResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +17,7 @@ public class ScannerTest {
 
     @Test
     public void testScan() {
-        var scanner = new ClassGraphDomainTypesScanner();
+        var scanner = new ClassGraphDomainTypesScanner(new DefaultEmptyGenericTypeResolver());
         var scanned = scanner.scan("tests");
 
         log.info("Identity Class info: " + scanned.stream().filter(dt -> dt instanceof IdentityMirror).count());

@@ -29,6 +29,7 @@ package io.domainlifecycles.mirror.reflect;
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
 import io.domainlifecycles.mirror.model.DomainEventModel;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 /**
  * Builder to create {@link DomainEventMirror}. Uses Java reflection.
@@ -37,8 +38,17 @@ import io.domainlifecycles.mirror.model.DomainEventModel;
  */
 public class DomainEventMirrorBuilder extends DomainTypeMirrorBuilder {
 
-    public DomainEventMirrorBuilder(Class<? extends DomainEvent> domainEventClass) {
-        super(domainEventClass);
+    /**
+     * Constructor
+     *
+     * @param domainEventClass class being mirrored
+     * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     */
+    public DomainEventMirrorBuilder(
+        Class<? extends DomainEvent> domainEventClass,
+        GenericTypeResolver genericTypeResolver
+    ) {
+        super(domainEventClass, genericTypeResolver);
     }
 
     /**

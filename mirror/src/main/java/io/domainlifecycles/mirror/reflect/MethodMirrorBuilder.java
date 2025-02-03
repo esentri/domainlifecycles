@@ -30,12 +30,12 @@ import io.domainlifecycles.domain.types.ListensTo;
 import io.domainlifecycles.domain.types.Publishes;
 import io.domainlifecycles.mirror.api.AccessLevel;
 import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
-import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.ParamMirror;
 import io.domainlifecycles.mirror.api.ResolvedGenericTypeMirror;
 import io.domainlifecycles.mirror.model.MethodModel;
 import io.domainlifecycles.mirror.model.ParamModel;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -58,10 +58,21 @@ public class MethodMirrorBuilder {
 
     private final boolean overridden;
 
-    public MethodMirrorBuilder(Method m, Class<?> topLevelClass, boolean overridden) {
+    private final GenericTypeResolver genericTypeResolver;
+
+    /**
+     * Constructor
+     *
+     * @param m Method being mirrored
+     * @param topLevelClass most specific class containing this method
+     * @param overridden boolean stating the fact, if the method is overridden by the given top-level class
+     * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     */
+    public MethodMirrorBuilder(Method m, Class<?> topLevelClass, boolean overridden, GenericTypeResolver genericTypeResolver) {
         this.m = Objects.requireNonNull(m);
         this.topLevelClass = Objects.requireNonNull(topLevelClass, "The corresponding top level class cannot be null!");
         this.overridden = overridden;
+        this.genericTypeResolver = Objects.requireNonNull(genericTypeResolver, "The generic type resolver cannot be null!");
     }
 
     /**
@@ -87,12 +98,12 @@ public class MethodMirrorBuilder {
             m.getReturnType(),
             m.getAnnotatedReturnType(),
             m.getGenericReturnType(),
-            Domain.getGenericTypeResolver().resolveExecutableReturnType(m, topLevelClass));
+            genericTypeResolver.resolveExecutableReturnType(m, topLevelClass));
         return builder.build();
     }
 
     private List<ParamMirror> getParameters() {
-        var resolvedParameters = Domain.getGenericTypeResolver().resolveExecutableParameters(m, topLevelClass);
+        var resolvedParameters = genericTypeResolver.resolveExecutableParameters(m, topLevelClass);
         List<ParamMirror> mirroredParams = new ArrayList<>();
         int i = 0;
         for (Parameter p : m.getParameters()) {

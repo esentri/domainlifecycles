@@ -56,6 +56,14 @@ public class AssertionMirrorBuilder {
     private final String VALID_PACKAGE_NAME_JAVAX = "javax.validation.constraints";
     private final String VALID_PACKAGE_NAME_JAKARTA = "jakarta.validation.constraints";
 
+    /**
+     * Constructor
+     *
+     * @param annotatedType type being annotated
+     * @param annotation Annotation analyzed
+     * @param contained if true type is in a container (Collection or Optional)
+     * @param isCollection if true type is in a Collection
+     */
     public AssertionMirrorBuilder(Type annotatedType, Annotation annotation, boolean contained, boolean isCollection) {
         this.annotatedType = Objects.requireNonNull(annotatedType);
         this.annotation = Objects.requireNonNull(annotation);

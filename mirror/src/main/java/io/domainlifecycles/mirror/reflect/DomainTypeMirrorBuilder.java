@@ -29,6 +29,7 @@ package io.domainlifecycles.mirror.reflect;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import io.domainlifecycles.reflect.JavaReflect;
 import io.domainlifecycles.reflect.MemberSelect;
 
@@ -48,9 +49,17 @@ public abstract class DomainTypeMirrorBuilder {
     protected final Class<?> domainClass;
 
     protected final List<Field> fields;
+    protected final GenericTypeResolver genericTypeResolver;
 
-    public DomainTypeMirrorBuilder(final Class<?> domainClass) {
+    /**
+     * Constructor
+     *
+     * @param domainClass class being mirrored
+     * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     */
+    public DomainTypeMirrorBuilder(final Class<?> domainClass, GenericTypeResolver genericTypeResolver) {
         this.domainClass = domainClass;
+        this.genericTypeResolver = genericTypeResolver;
         this.fields = JavaReflect.fields(domainClass, MemberSelect.HIERARCHY);
     }
 
@@ -61,7 +70,8 @@ public abstract class DomainTypeMirrorBuilder {
             .map(f -> new FieldMirrorBuilder(
                     f,
                     domainClass,
-                    isHidden(f)
+                    isHidden(f),
+                    genericTypeResolver
                 ).build()
             )
             .toList();
@@ -82,7 +92,7 @@ public abstract class DomainTypeMirrorBuilder {
         var meth = JavaReflect.methods(domainClass, MemberSelect.HIERARCHY);
         return meth.stream()
             .filter(m -> !m.isSynthetic() && !m.isBridge())
-            .map(m -> new MethodMirrorBuilder(m, domainClass, isOverridden(m, meth)).build())
+            .map(m -> new MethodMirrorBuilder(m, domainClass, isOverridden(m, meth), genericTypeResolver).build())
             .collect(Collectors.toList());
     }
 
