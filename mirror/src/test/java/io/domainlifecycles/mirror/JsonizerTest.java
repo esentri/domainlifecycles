@@ -1,12 +1,14 @@
 package io.domainlifecycles.mirror;
 
 import io.domainlifecycles.mirror.api.Domain;
+import io.domainlifecycles.mirror.api.DomainModelFactory;
 import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.model.DomainTypeModel;
 import io.domainlifecycles.mirror.model.EntityModel;
 import io.domainlifecycles.mirror.model.FieldModel;
 import io.domainlifecycles.mirror.model.MethodModel;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
+import io.domainlifecycles.mirror.resolver.TypeMetaResolver;
 import io.domainlifecycles.mirror.serialize.api.JacksonDomainSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,25 +22,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 public class JsonizerTest {
 
-    @BeforeAll
-    public static void init() {
+    @Test
+    public void testJsonizeWithoutTypeMeta() {
         ReflectiveDomainModelFactory factory = new ReflectiveDomainModelFactory("tests");
-        Domain.initialize(factory);
+        testJsonize(factory);
     }
 
     @Test
-    public void testJsonize() {
+    public void testJsonizeWithTypeMeta() {
+        ReflectiveDomainModelFactory factory = new ReflectiveDomainModelFactory(new TypeMetaResolver(), "tests");
+        testJsonize(factory);
+    }
+
+    private  void testJsonize(DomainModelFactory factory) {
         var serializer = new JacksonDomainSerializer(true);
-        var result = serializer.serialize(Domain.getDomainModel());
+        var dm = factory.initializeDomainModel();
+        var result = serializer.serialize(dm);
         var init = serializer.deserialize(result);
-        assertThat(init.boundedContextMirrors()).isEqualTo(Domain.getDomainModel().boundedContextMirrors());
-        assertThat(init.allTypeMirrors().size()).isEqualTo(Domain.getDomainModel().allTypeMirrors().size());
+        assertThat(init.boundedContextMirrors()).isEqualTo(dm.boundedContextMirrors());
+        assertThat(init.allTypeMirrors().size()).isEqualTo(dm.allTypeMirrors().size());
         for (String key : init.allTypeMirrors().keySet()) {
-            assertThat(Domain.getDomainModel().allTypeMirrors().containsKey(key)).isTrue();
+            assertThat(dm.allTypeMirrors().containsKey(key)).isTrue();
             assertThat(init.allTypeMirrors().get(key)).isEqualTo(
-                Domain.getDomainModel().allTypeMirrors().get(key));
+                dm.allTypeMirrors().get(key));
         }
-        assertThat(init).isEqualTo(Domain.getDomainModel());
+        assertThat(init).isEqualTo(dm);
         assertThat(init.allTypeMirrors()
                 .values()
                 .stream()
@@ -66,6 +74,8 @@ public class JsonizerTest {
         var result2 = serializer.serialize(init);
         assertThat(result).isEqualTo(result2);
     }
+
+
 
 
 }

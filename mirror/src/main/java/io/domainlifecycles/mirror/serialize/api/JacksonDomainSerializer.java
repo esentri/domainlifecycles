@@ -42,6 +42,7 @@ import io.domainlifecycles.mirror.api.EnumOptionMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.ParamMirror;
+import io.domainlifecycles.mirror.api.ResolvedGenericTypeMirror;
 import io.domainlifecycles.mirror.exception.MirrorException;
 
 /**
@@ -67,6 +68,7 @@ public class JacksonDomainSerializer implements DomainSerializer {
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.registerModule(new Jdk8Module());
         objectMapper.registerModule(new ParameterNamesModule());
+        objectMapper.addMixIn(ResolvedGenericTypeMirror.class, ResolvedGenericTypeMirrorMixin.class);
         objectMapper.addMixIn(DomainTypeMirror.class, DomainTypeMirrorMixin.class);
         objectMapper.addMixIn(FieldMirror.class, FieldMirrorMixin.class);
         objectMapper.addMixIn(AssertedContainableTypeMirror.class, AssertedContainableTypeMirrorMixin.class);
