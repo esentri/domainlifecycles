@@ -6,7 +6,6 @@ buildscript {
 }
 
 plugins {
-    // TODO @Galler does not compile with 'java' oddly enough it is seems to be because of the "api libs.jooq" line in dependencies...
     id 'java-library'
     id 'checkstyle'
     alias libs.plugins.spring.boot.plugin
@@ -24,7 +23,6 @@ def dbPassword = ''
 def dbMigration = 'src/test/resources/db/migration'
 
 dependencies {
-    // TODO @Galler so wiredo shit <-- same for test-spring-boot-2
     api libs.jooq
     testImplementation platform(libs.spring.boot3.dependencies)
     testImplementation project(":spring-boot-3-jooq-complete")

@@ -63,8 +63,6 @@ dependencies {
     testImplementation libs.assertj
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testCompileOnly libs.lombok
-    // TODO @Galler ist es wirklich nötig, wenn lombok eh drin ist, das nochmal auf den test scope zu nutzen? #idaudit
-    testAnnotationProcessor libs.lombok
 
 
 }

@@ -2,7 +2,6 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
-    // TODO @Galler probably add a license-convention to bundle these two plugins
     alias libs.plugins.yumi.gradle.licenser.plugin
     alias libs.plugins.jaredsburrows.license.plugin
 }

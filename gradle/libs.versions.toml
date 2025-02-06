@@ -42,7 +42,6 @@ spring-jdbc-version = '6.1.13'
 swagger-version = '2.2.25'
 spring-web-version = '5.3.33'
 spring-web6-version = '6.1.13'
-# TODO @Galler bump version for plugins
 jooq-version = '3.19.10'
 commons-collections-version = '3.2.2'
 type-resolver-version = '1.0.3'
@@ -54,12 +53,10 @@ logback-classic-version = '1.5.3'
 hibernate-validator-jakarta-version = '8.0.1.Final'
 glassfish-jakarta-version = '4.0.2'
 jakarta-el-version = '5.0.1'
-# TODO @Galler maybe platform and starter versions can be combined?
 spring-boot3-starter-version = '3.2.3'
 spring-boot3-starter-artemis-version = '3.3.3'
 spring-boot3-platform-version = '3.3.4'
 spring-boot2-platform-version = '2.7.18'
-spring-boot2-starter-version = '2.7.18'
 kryo-version = '5.3.0'
 h2-version = '2.2.224'
 assertj-version = '3.24.2'
@@ -74,25 +71,14 @@ mockito-core-version = '5.5.0'
 awaitility-version = '4.2.0'
 javax-jms-api-version = '2.0.1'
 commons-io-version = '2.14.0'
-
-# test javax based bean validation (even though lib names involve jakarta
-hibernate-validator-javax-version = '6.2.3.Final'
-glassfish-jakarta-el-version = '3.0.2'
-jakarta-el-api-version = '3.0.2'
+junit-jupiter-version = '5.10.0'
 
 # plugin versions
-quiltmc-licenser-version = '2.0.1'
-#nuStuderJooqVersion = '7.1.1'
-release-plugin-version = '3.0.2'
-flyway-version-old = '9.22.1'
+researchgate-release-version = '3.0.2'
+jreleaser-version = '1.13.1'
 flyway-version = '10.17.0'
 gradle-licenser-version = '1.1.0'
 jareds-burrows-license-version = '0.9.8'
-
-# misc
-dlc-group = 'io.domainlifecycles'
-# TODO @Galler Handle?
-# dlcVersion = versionProps.getProperty("version")
 
 [libraries]
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j-version" }
@@ -111,20 +97,12 @@ kryo = { module = "com.esotericsoftware:kryo", version.ref = "kryo-version" }
 atomikos-transactions-jta = { module = "com.atomikos:transactions-jta", version.ref = "atomikos-jta-version" }
 spring-boot3-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot3-platform-version" }
 spring-boot3-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "spring-boot3-starter-version"}
-spring-boot3-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "spring-boot3-starter-version"}
 spring-boot3-starter-json = { module = "org.springframework.boot:spring-boot-starter-json", version.ref = "spring-boot3-starter-version"}
 spring-boot3-starter-jooq = { module = "org.springframework.boot:spring-boot-starter-jooq", version.ref = "spring-boot3-starter-version"}
 spring-boot3-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "spring-boot3-starter-version"}
-spring-boot3-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "spring-boot3-starter-version"}
 spring-boot3-starter-artemis = { module = "org.springframework.boot:spring-boot-starter-artemis", version.ref = "spring-boot3-starter-artemis-version"}
 spring-boot3-starter-activemq = { module = "org.springframework.boot:spring-boot-starter-activemq", version.ref = "spring-boot3-platform-version"}
 spring-boot2-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot2-platform-version" }
-spring-boot2-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "spring-boot2-starter-version"}
-spring-boot2-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "spring-boot2-starter-version"}
-spring-boot2-starter-json = { module = "org.springframework.boot:spring-boot-starter-json", version.ref = "spring-boot2-starter-version"}
-spring-boot2-starter-jooq = { module = "org.springframework.boot:spring-boot-starter-jooq", version.ref = "spring-boot2-starter-version"}
-spring-boot2-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "spring-boot2-starter-version"}
-spring-boot2-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "spring-boot3-starter-version"}
 apache-active-mq-artemis-jakarter-server = { module = "org.apache.activemq:artemis-jakarta-server", version.ref = "active-mq-artemis-version"}
 gruelbox-transactionoutbox-core = { module = "com.gruelbox:transactionoutbox-core", version.ref = "gruelbox-version"}
 gruelbox-transactionoutbox-spring = { module = "com.gruelbox:transactionoutbox-spring", version.ref = "gruelbox-version"}
@@ -163,6 +141,9 @@ type-resolver = { module = "com.github.vladislavsevruk:type-resolver", version.r
 jaxb-api = { module = "javax.xml.bind:jaxb-api", version.ref = "jaxb-api-version" }
 jaxb-core = { module = "com.sun.xml.bind:jaxb-core", version.ref = "jaxb-core-version" }
 jaxb-impl = { module = "com.sun.xml.bind:jaxb-impl", version.ref = "jaxb-impl-version" }
+junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter-version" }
+junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit-jupiter-version" }
+
 
 [bundles]
 gruelbox-transactionoutbox = ['gruelbox-transactionoutbox-core', 'gruelbox-transactionoutbox-spring', 'gruelbox-transactionoutbox-jackson']
@@ -175,5 +156,6 @@ spring-boot-plugin = { id = "org.springframework.boot", version.ref = "spring-bo
 spring-boot2-plugin = { id = "org.springframework.boot", version.ref = "spring-boot2-platform-version" }
 flyway-plugin = { id = "org.flywaydb.flyway", version.ref = "flyway-version" }
 jooq-codegen-gradle = { id = "org.jooq.jooq-codegen-gradle", version.ref = "jooq-version" }
-
+release-plugin = { id = "net.researchgate.release", version.ref = "researchgate-release-version" }
+release-automation-plugin = { id = "org.jreleaser", version.ref = "jreleaser-version"}
 

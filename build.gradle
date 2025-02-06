@@ -1,13 +1,12 @@
 plugins {
-    // TODO @Galler
-    id 'org.jreleaser' version '1.13.1'
-    id 'net.researchgate.release' version '3.0.2'
+    alias libs.plugins.release.automation.plugin
+    alias libs.plugins.release.plugin
 }
 
 def versionProps = new Properties()
 file("version.properties").withInputStream { versionProps.load(it) }
 
-task printVersion {
+tasks.register('printVersion') {
     doFirst {
         println('Domain Lifecycles Version: ' + versionProps.getProperty("version"))
     }
@@ -47,14 +46,13 @@ ext {
 
 allprojects {
 
-    plugins.withType(JavaPlugin) {
+    plugins.withType(JavaPlugin).configureEach {
         repositories {
             mavenCentral()
         }
         dependencies {
-            // TODO @Galler
-            testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
-            testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+            testImplementation libs.junit.api
+            testRuntimeOnly libs.junit.engine
         }
         test {
             useJUnitPlatform()
