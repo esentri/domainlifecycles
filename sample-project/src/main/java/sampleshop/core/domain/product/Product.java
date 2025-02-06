@@ -26,14 +26,14 @@
 
 package sampleshop.core.domain.product;
 
+import io.domainlifecycles.assertion.DomainAssertions;
+import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.domain.types.base.AggregateRootBase;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
-import io.domainlifecycles.assertion.DomainAssertions;
-import io.domainlifecycles.domain.types.Identity;
-import io.domainlifecycles.domain.types.base.AggregateRootBase;
 import sampleshop.core.domain.Price;
 
 import java.net.URI;

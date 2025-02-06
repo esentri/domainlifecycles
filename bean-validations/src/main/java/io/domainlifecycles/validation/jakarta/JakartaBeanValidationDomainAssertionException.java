@@ -26,8 +26,8 @@
 
 package io.domainlifecycles.validation.jakarta;
 
-import jakarta.validation.ConstraintViolation;
 import io.domainlifecycles.assertion.DomainAssertionException;
+import jakarta.validation.ConstraintViolation;
 
 import java.util.Set;
 

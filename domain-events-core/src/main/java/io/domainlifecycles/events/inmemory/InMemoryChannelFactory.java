@@ -26,9 +26,9 @@
 
 package io.domainlifecycles.events.inmemory;
 
+import io.domainlifecycles.events.api.ChannelFactory;
 import io.domainlifecycles.events.api.ConsumingOnlyChannel;
 import io.domainlifecycles.events.api.ProcessingChannel;
-import io.domainlifecycles.events.api.ChannelFactory;
 import io.domainlifecycles.events.api.PublishingOnlyChannel;
 import io.domainlifecycles.events.consume.DomainEventConsumer;
 import io.domainlifecycles.events.consume.execution.handler.HandlerExecutor;

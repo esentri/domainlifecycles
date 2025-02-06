@@ -26,16 +26,16 @@
 
 package sampleshop.core.domain.customer;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.Builder;
-import lombok.Getter;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.domain.types.ListensTo;
 import io.domainlifecycles.domain.types.Publishes;
 import io.domainlifecycles.domain.types.base.AggregateRootBase;
 import io.domainlifecycles.events.api.DomainEvents;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.util.Optional;
 

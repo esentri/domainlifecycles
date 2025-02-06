@@ -29,11 +29,11 @@ package io.domainlifecycles.diagram.domain.mapper;
 
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.diagram.nomnoml.NomnomlClass;
+import io.domainlifecycles.diagram.nomnoml.NomnomlField;
 import io.domainlifecycles.diagram.nomnoml.NomnomlMethod;
 import io.domainlifecycles.diagram.nomnoml.NomnomlParameter;
-import io.domainlifecycles.diagram.nomnoml.NomnomlType;
-import io.domainlifecycles.diagram.nomnoml.NomnomlField;
 import io.domainlifecycles.diagram.nomnoml.NomnomlStereotype;
+import io.domainlifecycles.diagram.nomnoml.NomnomlType;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.mirror.api.AccessLevel;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;

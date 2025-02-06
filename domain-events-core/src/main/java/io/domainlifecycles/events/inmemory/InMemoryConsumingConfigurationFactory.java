@@ -29,7 +29,6 @@ package io.domainlifecycles.events.inmemory;
 import io.domainlifecycles.events.consume.GeneralDomainEventConsumer;
 import io.domainlifecycles.events.consume.execution.detector.MirrorBasedExecutionContextDetector;
 import io.domainlifecycles.events.consume.execution.handler.HandlerExecutor;
-
 import io.domainlifecycles.events.consume.execution.processor.AsyncExecutionContextProcessor;
 import io.domainlifecycles.events.consume.execution.processor.SimpleExecutionContextProcessor;
 import io.domainlifecycles.services.api.ServiceProvider;

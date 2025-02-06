@@ -37,8 +37,8 @@ import sampleshop.core.domain.customer.Customer;
 import sampleshop.core.domain.customer.NewCustomerAdded;
 import sampleshop.core.inport.CustomerDriver;
 import sampleshop.core.outport.CustomerRepository;
-import sampleshop.core.outport.OrdersByCustomerQueryHandler;
 import sampleshop.core.outport.OrdersByCustomer;
+import sampleshop.core.outport.OrdersByCustomerQueryHandler;
 
 import java.util.List;
 import java.util.Optional;

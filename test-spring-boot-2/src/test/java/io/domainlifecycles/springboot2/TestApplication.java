@@ -1,6 +1,5 @@
 package io.domainlifecycles.springboot2;
 
-import lombok.extern.slf4j.Slf4j;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.Identity;
@@ -17,6 +16,7 @@ import io.domainlifecycles.persistence.records.EntityValueObjectRecordTypeConfig
 import io.domainlifecycles.springdoc.openapi.DlcOpenApiCustomizer;
 import io.domainlifecycles.test.springboot2.tables.records.AktionsCodeRecord;
 import io.domainlifecycles.validation.extend.ValidationDomainClassExtender;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DataSourceConnectionProvider;

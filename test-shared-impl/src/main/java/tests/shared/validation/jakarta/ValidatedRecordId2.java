@@ -26,8 +26,8 @@
 
 package tests.shared.validation.jakarta;
 
-import jakarta.validation.constraints.NotNull;
 import io.domainlifecycles.domain.types.Identity;
+import jakarta.validation.constraints.NotNull;
 
 public record ValidatedRecordId2(@NotNull Long value) implements Identity<Long> {
 }

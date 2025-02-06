@@ -26,11 +26,12 @@
 
 package tests.shared.persistence.domain.valueobjects;
 
-import lombok.Builder;
-import lombok.Getter;
 import io.domainlifecycles.assertion.DomainAssertions;
 import io.domainlifecycles.domain.types.base.AggregateRootBase;
+import lombok.Builder;
+import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -73,7 +74,12 @@ public class VoAggregateRoot extends AggregateRootBase<VoAggregateRootId> {
     }
 
     public void setValueObjectsOneToMany(List<SimpleVoOneToMany> valueObjectsOneToMany) {
-        this.valueObjectsOneToMany = valueObjectsOneToMany;
+        if(valueObjectsOneToMany == null) {
+            this.valueObjectsOneToMany = new ArrayList<>();
+        }else{
+            this.valueObjectsOneToMany = valueObjectsOneToMany;
+        }
+
     }
 
     public void setSimpleVo(SimpleVo simpleVo) {

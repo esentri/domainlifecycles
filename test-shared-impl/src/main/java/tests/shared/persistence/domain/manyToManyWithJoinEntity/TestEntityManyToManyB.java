@@ -26,10 +26,10 @@
 
 package tests.shared.persistence.domain.manyToManyWithJoinEntity;
 
-import lombok.Builder;
-import lombok.Getter;
 import io.domainlifecycles.assertion.DomainAssertions;
 import io.domainlifecycles.domain.types.base.EntityBase;
+import lombok.Builder;
+import lombok.Getter;
 
 @Getter
 public class TestEntityManyToManyB extends EntityBase<TestEntityManyToManyBId> {

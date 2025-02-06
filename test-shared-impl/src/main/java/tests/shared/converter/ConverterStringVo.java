@@ -26,9 +26,9 @@
 
 package tests.shared.converter;
 
+import io.domainlifecycles.domain.types.base.ValueObjectBase;
 import lombok.Builder;
 import lombok.Getter;
-import io.domainlifecycles.domain.types.base.ValueObjectBase;
 
 @Getter
 public class ConverterStringVo extends ValueObjectBase {

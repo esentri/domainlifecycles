@@ -30,6 +30,7 @@ import com.gruelbox.transactionoutbox.TransactionOutbox;
 import io.domainlifecycles.events.api.PublishingConfiguration;
 import io.domainlifecycles.events.gruelbox.publish.GruelboxDomainEventPublisher;
 import io.domainlifecycles.events.publish.DomainEventPublisher;
+
 import java.util.Objects;
 
 /**

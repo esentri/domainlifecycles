@@ -28,7 +28,6 @@ package io.domainlifecycles.events.mq.api;
 
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import io.domainlifecycles.events.gruelbox.api.DomainEventsInstantiator;
-import io.domainlifecycles.events.gruelbox.api.PollerConfiguration;
 import io.domainlifecycles.events.gruelbox.api.PublishingSchedulerConfiguration;
 import io.domainlifecycles.events.gruelbox.poll.GruelboxPoller;
 import io.domainlifecycles.events.gruelbox.publish.GruelboxDomainEventPublisher;

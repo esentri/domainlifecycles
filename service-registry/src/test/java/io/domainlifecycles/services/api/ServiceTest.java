@@ -17,6 +17,7 @@ import sample.TestOutboundService;
 import sample.TestQueryHandler;
 import sample.TestRepository;
 import sample.TestServiceKind;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ServiceTest {

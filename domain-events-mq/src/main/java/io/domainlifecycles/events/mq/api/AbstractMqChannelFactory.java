@@ -29,8 +29,6 @@ package io.domainlifecycles.events.mq.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.events.api.ChannelFactory;
-import io.domainlifecycles.events.api.ProcessingChannel;
-import io.domainlifecycles.events.api.PublishingOnlyChannel;
 import io.domainlifecycles.events.consume.execution.detector.ExecutionContextDetector;
 import io.domainlifecycles.events.consume.execution.detector.MirrorBasedExecutionContextDetector;
 import io.domainlifecycles.events.consume.execution.handler.HandlerExecutor;

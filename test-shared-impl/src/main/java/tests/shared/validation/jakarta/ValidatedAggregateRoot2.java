@@ -26,13 +26,13 @@
 
 package tests.shared.validation.jakarta;
 
+import io.domainlifecycles.assertion.DomainAssertions;
+import io.domainlifecycles.domain.types.base.AggregateRootBase;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
-import io.domainlifecycles.assertion.DomainAssertions;
-import io.domainlifecycles.domain.types.base.AggregateRootBase;
 
 import java.util.Optional;
 

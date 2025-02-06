@@ -1,12 +1,12 @@
 package io.domainlifecycles.springboot3.openapi;
 
+import io.domainlifecycles.assertion.DomainAssertionException;
+import io.domainlifecycles.validation.BeanValidations;
 import io.swagger.v3.oas.models.media.Schema;
 import jakarta.validation.Validation;
 import jakarta.validation.metadata.ConstraintDescriptor;
 import jakarta.validation.metadata.ContainerElementTypeDescriptor;
 import lombok.extern.slf4j.Slf4j;
-import io.domainlifecycles.assertion.DomainAssertionException;
-import io.domainlifecycles.validation.BeanValidations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;

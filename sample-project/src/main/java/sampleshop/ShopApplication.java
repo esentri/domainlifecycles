@@ -34,10 +34,10 @@
 
 package sampleshop;
 
-import jakarta.annotation.PostConstruct;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.validation.extend.ValidationDomainClassExtender;
+import jakarta.annotation.PostConstruct;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 

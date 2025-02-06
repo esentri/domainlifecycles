@@ -24,34 +24,15 @@
  *  limitations under the License.
  */
 
-package tests.shared.persistence.domain.ignoring;
+package io.domainlifecycles.mirror.serialize.api;
 
-import io.domainlifecycles.assertion.DomainAssertions;
-import io.domainlifecycles.domain.types.base.AggregateRootBase;
-import lombok.Builder;
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
-@Getter
-public class TestRootSimpleIgnoring extends AggregateRootBase<TestRootSimpleIgnoringId> {
-
-    private TestRootSimpleIgnoringId id;
-    private String name;
-    private String ignoredField;
-
-    @Builder(setterPrefix = "set")
-    public TestRootSimpleIgnoring(TestRootSimpleIgnoringId id,
-                                  long concurrencyVersion,
-                                  String name
-
-    ) {
-        super(concurrencyVersion);
-        this.id = id;
-        DomainAssertions.isNotNull(id, "Eine Root ID muss angegeben sein!");
-        setName(name);
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
+/**
+ * Jackson mixin interface for proper serialization of {@link io.domainlifecycles.mirror.api.InitializedDomain}.
+ *
+ * @author Mario Herb
+ */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+public interface InitializedDomainMixin {
 }

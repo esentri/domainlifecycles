@@ -27,9 +27,9 @@
 package tests.shared.converter;
 
 
+import io.domainlifecycles.domain.types.base.ValueObjectBase;
 import lombok.Builder;
 import lombok.ToString;
-import io.domainlifecycles.domain.types.base.ValueObjectBase;
 
 @ToString(callSuper = true)
 public class ConverterSimpleVo extends ValueObjectBase {

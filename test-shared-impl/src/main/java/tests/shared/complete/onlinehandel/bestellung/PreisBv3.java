@@ -26,10 +26,10 @@
 
 package tests.shared.complete.onlinehandel.bestellung;
 
+import io.domainlifecycles.domain.types.ValueObject;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
-import io.domainlifecycles.domain.types.ValueObject;
 
 import java.math.BigDecimal;
 

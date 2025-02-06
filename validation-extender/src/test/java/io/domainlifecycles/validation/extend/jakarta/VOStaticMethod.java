@@ -1,7 +1,7 @@
 package io.domainlifecycles.validation.extend.jakarta;
 
-import jakarta.validation.constraints.NotNull;
 import io.domainlifecycles.domain.types.ValueObject;
+import jakarta.validation.constraints.NotNull;
 
 public record VOStaticMethod(@NotNull Long value) implements ValueObject {
 

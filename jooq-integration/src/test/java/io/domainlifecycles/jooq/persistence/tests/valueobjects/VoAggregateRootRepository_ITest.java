@@ -20,10 +20,12 @@ import tests.shared.persistence.domain.valueobjects.VoOneToManyEntity;
 import tests.shared.persistence.domain.valueobjects.VoOneToManyEntity2;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class VoAggregateRootRepository_ITest extends BasePersistence_ITest {
@@ -886,6 +888,167 @@ public class VoAggregateRootRepository_ITest extends BasePersistence_ITest {
         Assertions.assertThat(found).isEmpty();
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted);
         persistenceEventTestHelper.assertEvents();
+    }
+
+    @Test
+    public void testInsertVoDuplicates(){
+        //given
+        VoAggregateRoot root = TestDataGenerator.buildVoAggregateDuplicates();
+        //when
+        VoAggregateRoot inserted = voAggregateRootRepository.insert(root);
+        //then
+        assertThat(inserted).isNotNull();
+        assertThat(inserted.getValueObjectsOneToMany()).isNotNull();
+        assertThat(inserted.getValueObjectsOneToMany()).hasSize(2);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getValueObjectsOneToMany().get(1), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getValueObjectsOneToMany().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
+        persistenceEventTestHelper.assertEvents();
+        var fetched = voAggregateRootRepository.findById(root.getId());
+        assertThat(fetched).isPresent();
+        assertThat(fetched.get().getValueObjectsOneToMany()).isNotNull();
+        assertThat(fetched.get().getValueObjectsOneToMany()).hasSize(2);
+    }
+
+    @Test
+    public void testDeleteAggregateWithVoDuplicates(){
+        //given
+        VoAggregateRoot root = TestDataGenerator.buildVoAggregateDuplicates();
+        VoAggregateRoot inserted = voAggregateRootRepository.insert(root);
+        persistenceEventTestHelper.resetEventsCaught();
+        //when
+        voAggregateRootRepository.deleteById(root.getId());
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getValueObjectsOneToMany().get(1), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getValueObjectsOneToMany().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted);
+        persistenceEventTestHelper.assertEvents();
+    }
+
+    @Test
+    public void testDeleteAllDuplicatesOnly(){
+        //given
+        VoAggregateRoot root = TestDataGenerator.buildVoAggregateDuplicates();
+        VoAggregateRoot inserted = voAggregateRootRepository.insert(root);
+        VoAggregateRoot copy = persistenceEventTestHelper.kryo.copy(inserted);
+        persistenceEventTestHelper.resetEventsCaught();
+        //
+        root.getValueObjectsOneToMany().clear();
+        var updated = voAggregateRootRepository.update(root);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, copy.getValueObjectsOneToMany().get(1), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, copy.getValueObjectsOneToMany().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
+
+        persistenceEventTestHelper.assertEvents();
+    }
+
+    @Test
+    public void testDeleteOneEntryOfDuplicatesOnly(){
+        //given
+        VoAggregateRoot root = TestDataGenerator.buildVoAggregateDuplicates();
+        VoAggregateRoot inserted = voAggregateRootRepository.insert(root);
+        persistenceEventTestHelper.resetEventsCaught();
+        //
+        root.getValueObjectsOneToMany().remove(0);
+        var updated = voAggregateRootRepository.update(root);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getValueObjectsOneToMany().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
+        persistenceEventTestHelper.assertEvents();
+    }
+
+    @Test
+    public void testDeleteAllDuplicatesAndAddOthers(){
+        //given
+        VoAggregateRoot root = TestDataGenerator.buildVoAggregateDuplicates();
+        VoAggregateRoot inserted = voAggregateRootRepository.insert(root);
+        VoAggregateRoot copy = persistenceEventTestHelper.kryo.copy(inserted);
+        persistenceEventTestHelper.resetEventsCaught();
+        //when
+        root.getValueObjectsOneToMany().clear();
+        root.getValueObjectsOneToMany().add(
+            SimpleVoOneToMany.builder().setValue("ADDED").build()
+        );
+        root.getValueObjectsOneToMany().add(
+            SimpleVoOneToMany.builder().setValue("ADDED").build()
+        );
+        var updated = voAggregateRootRepository.update(root);
+        //then
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getValueObjectsOneToMany().get(1), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, updated.getValueObjectsOneToMany().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, copy.getValueObjectsOneToMany().get(1), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, copy.getValueObjectsOneToMany().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
+        persistenceEventTestHelper.assertEvents();
+    }
+
+    @Test
+    public void testInsertVoDuplicatesInMultipleCollections(){
+        //given
+        VoAggregateRoot root = TestDataGenerator.buildVoAggregateDuplicatesMultipleCollections();
+        //when
+        VoAggregateRoot inserted = voAggregateRootRepository.insert(root);
+        //then
+        assertThat(inserted).isNotNull();
+        assertThat(inserted.getValueObjectsOneToMany()).isNotNull();
+        assertThat(inserted.getValueObjectsOneToMany()).hasSize(2);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getValueObjectsOneToMany2().get(0).getOneToMany3Set().toArray(i -> new SimpleVoOneToMany3[i])[0], inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED,
+            inserted.getValueObjectsOneToMany2().get(1).getOneToMany3Set().toArray(i -> new SimpleVoOneToMany3[i])[0], inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getValueObjectsOneToMany2().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getValueObjectsOneToMany2().get(1), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getValueObjectsOneToMany().get(1), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted.getValueObjectsOneToMany().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
+        persistenceEventTestHelper.assertEvents();
+        var fetched = voAggregateRootRepository.findById(root.getId());
+        assertThat(fetched).isPresent();
+        assertThat(fetched.get().getValueObjectsOneToMany()).isNotNull();
+        assertThat(fetched.get().getValueObjectsOneToMany()).hasSize(2);
+    }
+
+    @Test
+    public void testDeleteVoDuplicatesInMultipleCollections(){
+        //given
+        VoAggregateRoot root = TestDataGenerator.buildVoAggregateDuplicatesMultipleCollections();
+        VoAggregateRoot inserted = voAggregateRootRepository.insert(root);
+        persistenceEventTestHelper.resetEventsCaught();
+        //when
+        voAggregateRootRepository.deleteById(root.getId());
+        //then
+        assertThat(inserted).isNotNull();
+        assertThat(inserted.getValueObjectsOneToMany()).isNotNull();
+        assertThat(inserted.getValueObjectsOneToMany()).hasSize(2);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getValueObjectsOneToMany2().get(0).getOneToMany3Set().toArray(i -> new SimpleVoOneToMany3[i])[0], inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED,
+            inserted.getValueObjectsOneToMany2().get(1).getOneToMany3Set().toArray(i -> new SimpleVoOneToMany3[i])[0], inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getValueObjectsOneToMany().get(1), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getValueObjectsOneToMany().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getValueObjectsOneToMany2().get(1), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted.getValueObjectsOneToMany2().get(0), inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted);
+        persistenceEventTestHelper.assertEvents();
+        var fetched = voAggregateRootRepository.findById(root.getId());
+        assertThat(fetched).isEmpty();
+    }
+
+    @Test
+    public void testUpdateMinAddedEntityDuplicate() {
+        //given
+        VoAggregateRoot r = TestDataGenerator.buildVoAggregateMin();
+        VoAggregateRoot inserted = voAggregateRootRepository.insert(r);
+        persistenceEventTestHelper.resetEventsCaught();
+        //when
+        var entity = VoEntity
+            .builder()
+            .setRootId(r.getId())
+            .setId(new VoEntityId(1l))
+            .setText("boom")
+            .build();
+        inserted.setEntities(List.of(entity, entity));
+        //then
+        assertThatThrownBy(() -> voAggregateRootRepository.update(inserted))
+            .hasMessageStartingWith("More than one instance of the same entity passed to be inserted");
     }
 
 }

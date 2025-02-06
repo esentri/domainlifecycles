@@ -28,12 +28,12 @@ package tests.shared.persistence;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
-import lombok.extern.slf4j.Slf4j;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.ValueObject;
 import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
 import io.domainlifecycles.persistence.repository.actions.PersistenceAction;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import tests.shared.events.PersistenceEvent;

@@ -26,16 +26,16 @@
 
 package tests.shared.complete.onlinehandel.bestellung;
 
+import io.domainlifecycles.assertion.DomainAssertionException;
+import io.domainlifecycles.assertion.DomainAssertions;
+import io.domainlifecycles.domain.types.Publishes;
+import io.domainlifecycles.domain.types.base.AggregateRootBase;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
-import io.domainlifecycles.assertion.DomainAssertionException;
-import io.domainlifecycles.assertion.DomainAssertions;
-import io.domainlifecycles.domain.types.Publishes;
-import io.domainlifecycles.domain.types.base.AggregateRootBase;
 import tests.shared.complete.onlinehandel.zustellung.AuslieferungGestartet;
 
 import java.math.BigDecimal;

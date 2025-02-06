@@ -26,10 +26,10 @@
 
 package tests.shared.persistence.domain.temporal;
 
-import lombok.Builder;
-import lombok.Getter;
 import io.domainlifecycles.assertion.DomainAssertions;
 import io.domainlifecycles.domain.types.base.AggregateRootBase;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.time.Instant;
 import java.time.LocalDate;

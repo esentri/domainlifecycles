@@ -26,9 +26,9 @@
 
 package tests.shared.persistence.domain.shared.one;
 
+import io.domainlifecycles.domain.types.base.AggregateRootBase;
 import lombok.Builder;
 import lombok.Getter;
-import io.domainlifecycles.domain.types.base.AggregateRootBase;
 
 @Getter
 public class Configuration extends AggregateRootBase<ConfigurationId> {

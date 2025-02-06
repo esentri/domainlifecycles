@@ -28,9 +28,9 @@ package io.domainlifecycles.events.spring.outbox.poll;
 
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.events.consume.DomainEventConsumer;
+import io.domainlifecycles.events.consume.execution.processor.ExecutionResult;
 import io.domainlifecycles.events.spring.outbox.api.ProcessingResult;
 import io.domainlifecycles.events.spring.outbox.api.TransactionalOutbox;
-import io.domainlifecycles.events.consume.execution.processor.ExecutionResult;
 
 import java.util.Objects;
 

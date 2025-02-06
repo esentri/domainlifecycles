@@ -26,10 +26,10 @@
 
 package tests.shared.persistence.domain.complex;
 
-import lombok.Builder;
-import lombok.Getter;
 import io.domainlifecycles.assertion.DomainAssertions;
 import io.domainlifecycles.domain.types.base.AggregateRootBase;
+import lombok.Builder;
+import lombok.Getter;
 
 @Getter
 public class TestRoot extends AggregateRootBase<TestRootId> {

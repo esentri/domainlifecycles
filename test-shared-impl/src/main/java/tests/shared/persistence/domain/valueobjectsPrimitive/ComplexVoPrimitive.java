@@ -26,8 +26,8 @@
 
 package tests.shared.persistence.domain.valueobjectsPrimitive;
 
-import lombok.Builder;
 import io.domainlifecycles.domain.types.ValueObject;
+import lombok.Builder;
 
 @Builder(setterPrefix = "set")
 public record ComplexVoPrimitive(Long num, long val) implements ValueObject {

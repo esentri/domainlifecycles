@@ -1,9 +1,9 @@
 package io.domainlifecycles.springboot3.persistence.base;
 
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
 import io.domainlifecycles.persistence.repository.actions.PersistenceAction;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import tests.shared.events.PersistenceEvent;

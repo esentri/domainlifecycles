@@ -1,6 +1,7 @@
 package sample;
 
 import io.domainlifecycles.domain.types.Repository;
+
 import java.util.Optional;
 
 public class TestRepository implements Repository<TestIdentity, TestAggregateRoot> {

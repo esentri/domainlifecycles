@@ -26,8 +26,8 @@
 
 package sampleshop.core.domain.order;
 
-import jakarta.validation.constraints.NotNull;
 import io.domainlifecycles.domain.types.DomainEvent;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Domain event announcing the fact, that an {@link Order} was canceled.

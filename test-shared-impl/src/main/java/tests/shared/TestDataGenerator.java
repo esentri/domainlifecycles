@@ -163,13 +163,13 @@ import tests.shared.persistence.domain.valueobjects.VoEntityId;
 import tests.shared.persistence.domain.valueobjects.VoIdentityRef;
 import tests.shared.persistence.domain.valueobjects.VoOneToManyEntity;
 import tests.shared.persistence.domain.valueobjects.VoOneToManyEntity2;
+import tests.shared.persistence.domain.valueobjectsNested.MyEnum;
+import tests.shared.persistence.domain.valueobjectsNested.NestedEnumSingleValued;
+import tests.shared.persistence.domain.valueobjectsNested.NestedId;
 import tests.shared.persistence.domain.valueobjectsNested.NestedSimpleVo;
 import tests.shared.persistence.domain.valueobjectsNested.VoAggregateNested;
 import tests.shared.persistence.domain.valueobjectsNested.VoAggregateNestedId;
 import tests.shared.persistence.domain.valueobjectsPrimitive.ComplexVoPrimitive;
-import tests.shared.persistence.domain.valueobjectsNested.MyEnum;
-import tests.shared.persistence.domain.valueobjectsNested.NestedEnumSingleValued;
-import tests.shared.persistence.domain.valueobjectsNested.NestedId;
 import tests.shared.persistence.domain.valueobjectsPrimitive.NestedVoPrimitive;
 import tests.shared.persistence.domain.valueobjectsPrimitive.SimpleVoPrimitive;
 import tests.shared.persistence.domain.valueobjectsPrimitive.VoAggregatePrimitive;
@@ -1258,6 +1258,68 @@ public class TestDataGenerator {
             .setMySimpleVo(SimpleVo.builder()
                 .setValue("ValueSimpleOneToOe2")
                 .build()
+            )
+            .build();
+    }
+
+    public static VoAggregateRoot buildVoAggregateDuplicates() {
+        return VoAggregateRoot.builder()
+            .setId(new VoAggregateRootId(3L))
+            .setMySimpleVo(SimpleVo.builder()
+                .setValue("ValueSimpleOneToOe2")
+                .build()
+            )
+            .setValueObjectsOneToMany(
+                newArrayListOf(
+                    SimpleVoOneToMany.builder()
+                        .setValue("NEU")
+                        .build(),
+                    SimpleVoOneToMany.builder()
+                        .setValue("NEU")
+                        .build()
+                )
+            )
+            .build();
+    }
+
+    public static VoAggregateRoot buildVoAggregateDuplicatesMultipleCollections() {
+        return VoAggregateRoot.builder()
+            .setId(new VoAggregateRootId(4L))
+            .setMySimpleVo(SimpleVo.builder()
+                .setValue("ValueSimpleOneToOe2")
+                .build()
+            )
+            .setValueObjectsOneToMany(
+                newArrayListOf(
+                    SimpleVoOneToMany.builder()
+                        .setValue("NEU")
+                        .build(),
+                    SimpleVoOneToMany.builder()
+                        .setValue("NEU")
+                        .build()
+                )
+            )
+            .setValueObjectsOneToMany2(
+                newArrayListOf(
+                    SimpleVoOneToMany2.builder()
+                        .setOneToMany3Set(new HashSet<>(newArrayListOf(
+                            SimpleVoOneToMany3.builder()
+                                .setValue("Duplicate")
+                                .build()
+                            ))
+                        )
+                        .setValue("NEU")
+                        .build(),
+                    SimpleVoOneToMany2.builder()
+                        .setOneToMany3Set(new HashSet<>(newArrayListOf(
+                                SimpleVoOneToMany3.builder()
+                                    .setValue("Duplicate")
+                                    .build()
+                            ))
+                        )
+                        .setValue("NEU")
+                        .build()
+                )
             )
             .build();
     }

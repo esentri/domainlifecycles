@@ -30,11 +30,11 @@ import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
-import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
-import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.domain.types.ValueObject;
+import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
+import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.mirror.api.Domain;
 
 /**

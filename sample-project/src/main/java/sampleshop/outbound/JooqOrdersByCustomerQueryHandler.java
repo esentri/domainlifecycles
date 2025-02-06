@@ -27,7 +27,6 @@
 package sampleshop.outbound;
 
 import org.jooq.DSLContext;
-
 import org.springframework.stereotype.Service;
 import sampleshop.core.domain.order.OrderStatus;
 import sampleshop.core.outport.OrdersByCustomer;

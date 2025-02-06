@@ -34,10 +34,8 @@ import io.domainlifecycles.persistence.mirror.api.RecordMirror;
 import org.apache.commons.collections.list.UnmodifiableList;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Represents a domain object instance access model.
@@ -139,11 +137,10 @@ public class DomainObjectInstanceAccessModel<RECORD> {
      *
      * @return the child instances of the domain object instance
      */
-    public Set<DomainObjectInstanceAccessModel<RECORD>> getAllContainedInstances() {
-        Set<DomainObjectInstanceAccessModel<RECORD>> contained = new HashSet<>();
+    public List<DomainObjectInstanceAccessModel<RECORD>> getAllContainedInstances() {
+        List<DomainObjectInstanceAccessModel<RECORD>> contained = new ArrayList<>();
         contained.add(this);
         for (DomainObjectInstanceAccessModel<RECORD> child : children) {
-            contained.add(child);
             contained.addAll(child.getAllContainedInstances());
         }
         return contained;

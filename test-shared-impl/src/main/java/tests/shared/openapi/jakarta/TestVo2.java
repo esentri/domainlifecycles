@@ -26,6 +26,7 @@
 
 package tests.shared.openapi.jakarta;
 
+import io.domainlifecycles.domain.types.ValueObject;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
@@ -38,7 +39,6 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
-import io.domainlifecycles.domain.types.ValueObject;
 import tests.shared.openapi.TestId;
 import tests.shared.openapi.TestIdInterface;
 

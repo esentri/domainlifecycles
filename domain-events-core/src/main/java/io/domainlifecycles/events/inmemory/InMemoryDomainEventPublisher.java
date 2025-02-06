@@ -27,8 +27,8 @@
 package io.domainlifecycles.events.inmemory;
 
 import io.domainlifecycles.domain.types.DomainEvent;
-import io.domainlifecycles.events.publish.DomainEventPublisher;
 import io.domainlifecycles.events.consume.DomainEventConsumer;
+import io.domainlifecycles.events.publish.DomainEventPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
