@@ -63,7 +63,7 @@ dependencies {
     testImplementation libs.assertj
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testCompileOnly libs.lombok
-
+    testAnnotationProcessor libs.lombok
 
 }
 
