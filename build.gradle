@@ -203,6 +203,36 @@ jreleaser {
 }
 
 // ----------------------------------------------------------
+//  AUTOMATE SETTING PROJECT VERSION IN readme.md
+// ----------------------------------------------------------
+
+
+tasks.register("updateReadme") {
+    doLast {
+        def projectVersion= versionProps.getProperty("version")
+        def readmeFile = file("readme.md")
+        def content = readmeFile.text
+
+        // Gradle in Readme
+        def updatedContent = content.replaceAll(
+            /io\.domainlifecycles:spring-boot-3-jooq-complete:\d+\.\d+\.\d+/,
+            "io.domainlifecycles:spring-boot-3-jooq-complete:${projectVersion}"
+        ).replaceAll(
+            /(<groupId>io\.domainlifecycles<\/groupId>\s*<artifactId>spring-boot-3-jooq-complete<\/artifactId>\s*<version>)(\d+\.\d+\.\d+)(<\/version>)/,
+            "\$1${projectVersion}\$3"
+        )
+
+        readmeFile.text = updatedContent
+        println("Updated README.md with version $projectVersion")
+    }
+}
+
+// Sets the version in readme.md when build is triggered!
+tasks.named("build") {
+    dependsOn("updateReadme")
+}
+
+// ----------------------------------------------------------
 //  GRADLE.WRAPPER
 // ----------------------------------------------------------
 
