@@ -90,7 +90,7 @@ welches die wichtigsten DLC-Funktionen bündelt:
 
 ```groovy
 dependencies {
-    implementation 'io.domainlifecycles:spring-boot-3-jooq-complete:2.0.1'
+    implementation 'io.domainlifecycles:spring-boot-3-jooq-complete:2.0.4'
 }
 ```
 </details>
@@ -99,7 +99,7 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation 'io.domainlifecycles:spring-boot-2-jooq-complete:2.0.1'
+    implementation 'io.domainlifecycles:spring-boot-2-jooq-complete:2.0.4'
 }
 ```
 </details>
@@ -112,7 +112,7 @@ dependencies {
     <dependency>
         <groupId>io.domainlifecycles</groupId>
         <artifactId>spring-boot-3-jooq-complete</artifactId>
-        <version>2.0.1</version>
+        <version>2.0.4</version>
     </dependency>
 </dependencies>
 ```
@@ -126,7 +126,7 @@ dependencies {
     <dependency>
         <groupId>io.domainlifecycles</groupId>
         <artifactId>spring-boot-2-jooq-complete</artifactId>
-        <version>2.0.1</version>
+        <version>2.0.4</version>
     </dependency>
 </dependencies>
 ```
