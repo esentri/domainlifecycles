@@ -36,7 +36,7 @@ import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
  *
  * @author Mario Herb
  */
-public class ReadModelMirrorBuilder extends DomainTypeMirrorBuilder {
+public class ReadModelMirrorBuilder extends DomainTypeMirrorBuilder<ReadModelMirror> {
 
     /**
      * Constructor
@@ -56,6 +56,7 @@ public class ReadModelMirrorBuilder extends DomainTypeMirrorBuilder {
      *
      * @return new instance of ReadModelMirror
      */
+    @Override
     public ReadModelMirror build() {
         return new ReadModelModel(
             getTypeName(),

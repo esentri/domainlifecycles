@@ -36,7 +36,7 @@ import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
  *
  * @author Mario Herb
  */
-public class DomainEventMirrorBuilder extends DomainTypeMirrorBuilder {
+public class DomainEventMirrorBuilder extends DomainTypeMirrorBuilder<DomainEventMirror> {
 
     /**
      * Constructor
@@ -56,6 +56,7 @@ public class DomainEventMirrorBuilder extends DomainTypeMirrorBuilder {
      *
      * @return new instance of DomainEventMirror
      */
+    @Override
     public DomainEventMirror build() {
         return new DomainEventModel(
             getTypeName(),

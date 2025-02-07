@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  *
  * @author Mario Herb
  */
-public class DomainServiceMirrorBuilder extends ServiceKindMirrorBuilder {
+public class DomainServiceMirrorBuilder extends ServiceKindMirrorBuilder<DomainServiceMirror> {
 
     private final Class<? extends DomainService> domainServiceClass;
 
@@ -63,6 +63,7 @@ public class DomainServiceMirrorBuilder extends ServiceKindMirrorBuilder {
      *
      * @return new instance of DomainServiceMirror
      */
+    @Override
     public DomainServiceMirror build() {
         return new DomainServiceModel(
                 getTypeName(),

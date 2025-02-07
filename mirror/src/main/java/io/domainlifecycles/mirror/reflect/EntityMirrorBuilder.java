@@ -44,7 +44,7 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public class EntityMirrorBuilder extends DomainTypeMirrorBuilder {
+public class EntityMirrorBuilder<T extends EntityMirror> extends DomainTypeMirrorBuilder<T> {
     private final Class<? extends Entity<?>> entityClass;
 
     /**
@@ -67,8 +67,9 @@ public class EntityMirrorBuilder extends DomainTypeMirrorBuilder {
      *
      * @return new instance of EntityMirror
      */
-    public EntityMirror build() {
-        return new EntityModel(
+    @Override
+    public T build() {
+        return (T) new EntityModel(
             getTypeName(),
             isAbstract(),
             buildFields(),
@@ -125,7 +126,6 @@ public class EntityMirrorBuilder extends DomainTypeMirrorBuilder {
         return Optional.empty();
     }
 
-    @SuppressWarnings("unchecked")
     private static Optional<Class<? extends Identity<?>>> getIdentityType(Class<? extends Entity<?
         extends Identity<?>>> c) {
         var resolver = new GenericInterfaceTypeResolver(c);

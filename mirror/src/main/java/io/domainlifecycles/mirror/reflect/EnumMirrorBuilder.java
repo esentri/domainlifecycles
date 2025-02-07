@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  *
  * @author Mario Herb
  */
-public class EnumMirrorBuilder extends DomainTypeMirrorBuilder {
+public class EnumMirrorBuilder extends DomainTypeMirrorBuilder<EnumMirror> {
     private final Class<? extends Enum<?>> enumClass;
 
     /**
@@ -64,6 +64,7 @@ public class EnumMirrorBuilder extends DomainTypeMirrorBuilder {
      *
      * @return new instance of EnumMirror
      */
+    @Override
     public EnumMirror build() {
         return new EnumModel(
             getTypeName(),

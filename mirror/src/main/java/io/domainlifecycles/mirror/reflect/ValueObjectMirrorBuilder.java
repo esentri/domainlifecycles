@@ -36,7 +36,7 @@ import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
  *
  * @author Mario Herb
  */
-public class ValueObjectMirrorBuilder extends DomainTypeMirrorBuilder {
+public class ValueObjectMirrorBuilder extends DomainTypeMirrorBuilder<ValueObjectMirror> {
 
     /**
      * Constructor
@@ -56,6 +56,7 @@ public class ValueObjectMirrorBuilder extends DomainTypeMirrorBuilder {
      *
      * @return new instance of ValueObjectMirror
      */
+    @Override
     public ValueObjectMirror build() {
         return new ValueObjectModel(
             getTypeName(),

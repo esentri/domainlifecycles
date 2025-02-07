@@ -36,7 +36,7 @@ import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
  *
  * @author leonvoellinger
  */
-public class ServiceKindMirrorBuilder extends DomainTypeMirrorBuilder {
+public class ServiceKindMirrorBuilder<T extends ServiceKindMirror> extends DomainTypeMirrorBuilder<T> {
 
 
     /**
@@ -54,8 +54,9 @@ public class ServiceKindMirrorBuilder extends DomainTypeMirrorBuilder {
      *
      * @return new instance of ServiceKindMirror
      */
-    public ServiceKindMirror build() {
-        return new ServiceKindModel(
+    @Override
+    public T build() {
+        return (T) new ServiceKindModel(
             getTypeName(),
             isAbstract(),
             buildFields(),

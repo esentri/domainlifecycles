@@ -41,7 +41,7 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public class RepositoryMirrorBuilder extends ServiceKindMirrorBuilder {
+public class RepositoryMirrorBuilder extends ServiceKindMirrorBuilder<RepositoryMirror> {
     private final Class<? extends Repository<?, ?>> repositoryClass;
 
     /**
@@ -63,6 +63,7 @@ public class RepositoryMirrorBuilder extends ServiceKindMirrorBuilder {
      *
      * @return new instance of RepositoryMirror
      */
+    @Override
     public RepositoryMirror build() {
         return new RepositoryModel(
             getTypeName(),

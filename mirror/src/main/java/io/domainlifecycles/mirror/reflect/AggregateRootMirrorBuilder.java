@@ -36,7 +36,7 @@ import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
  *
  * @author Mario Herb
  */
-public class AggregateRootMirrorBuilder extends EntityMirrorBuilder {
+public class AggregateRootMirrorBuilder extends EntityMirrorBuilder<AggregateRootMirror> {
 
     /**
      * Initialize the builder with the corresponding {@link AggregateRoot} class.

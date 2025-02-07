@@ -42,7 +42,7 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public class QueryHandlerMirrorBuilder extends ServiceKindMirrorBuilder {
+public class QueryHandlerMirrorBuilder extends ServiceKindMirrorBuilder<QueryHandlerMirror> {
     private final Class<? extends QueryHandler<?>> queryHandlerClass;
 
     /**
@@ -64,6 +64,7 @@ public class QueryHandlerMirrorBuilder extends ServiceKindMirrorBuilder {
      *
      * @return new instance of RepositoryMirror
      */
+    @Override
     public QueryHandlerMirror build() {
         return new QueryHandlerModel(
             getTypeName(),

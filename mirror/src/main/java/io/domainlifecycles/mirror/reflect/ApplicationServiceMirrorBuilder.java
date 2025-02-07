@@ -41,7 +41,7 @@ import java.util.List;
  *
  * @author Mario Herb
  */
-public class ApplicationServiceMirrorBuilder extends ServiceKindMirrorBuilder {
+public class ApplicationServiceMirrorBuilder extends ServiceKindMirrorBuilder<ApplicationServiceMirror> {
     private final Class<? extends ApplicationService> applicationServiceClass;
 
     /**
@@ -63,6 +63,7 @@ public class ApplicationServiceMirrorBuilder extends ServiceKindMirrorBuilder {
      *
      * @return new instance of ApplicationServiceMirror
      */
+    @Override
     public ApplicationServiceMirror build() {
         return new ApplicationServiceModel(
             getTypeName(),

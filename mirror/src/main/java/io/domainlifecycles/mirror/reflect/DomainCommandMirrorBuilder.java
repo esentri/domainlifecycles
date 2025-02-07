@@ -42,7 +42,7 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public class DomainCommandMirrorBuilder extends DomainTypeMirrorBuilder {
+public class DomainCommandMirrorBuilder extends DomainTypeMirrorBuilder<DomainCommandMirror> {
 
     private final Class<? extends DomainCommand> domainCommandClass;
 
@@ -65,6 +65,7 @@ public class DomainCommandMirrorBuilder extends DomainTypeMirrorBuilder {
      *
      * @return new instance of DomainCommandMirror
      */
+    @Override
     public DomainCommandMirror build() {
 
         var targetType = getTargetType(domainCommandClass);

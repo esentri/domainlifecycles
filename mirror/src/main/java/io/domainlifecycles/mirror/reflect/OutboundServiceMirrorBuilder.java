@@ -39,7 +39,7 @@ import java.util.List;
  *
  * @author Mario Herb
  */
-public class OutboundServiceMirrorBuilder extends ServiceKindMirrorBuilder {
+public class OutboundServiceMirrorBuilder extends ServiceKindMirrorBuilder<OutboundServiceMirror> {
     private final Class<? extends OutboundService> outboundServiceClass;
 
     /**
@@ -61,6 +61,7 @@ public class OutboundServiceMirrorBuilder extends ServiceKindMirrorBuilder {
      *
      * @return new instance of OutboundServiceMirror
      */
+    @Override
     public OutboundServiceMirror build() {
         return new OutboundServiceModel(
             getTypeName(),

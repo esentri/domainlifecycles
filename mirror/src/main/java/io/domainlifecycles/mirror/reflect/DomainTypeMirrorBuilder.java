@@ -32,12 +32,16 @@ import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import io.domainlifecycles.reflect.JavaReflect;
 import io.domainlifecycles.reflect.MemberSelect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -45,11 +49,20 @@ import java.util.stream.Collectors;
  *
  * @author Mario Herb
  */
-public abstract class DomainTypeMirrorBuilder {
+public abstract class DomainTypeMirrorBuilder<T extends DomainTypeMirror> {
+
+    private static final Logger log = LoggerFactory.getLogger(DomainTypeMirrorBuilder.class);
+
     protected final Class<?> domainClass;
 
     protected final List<Field> fields;
     protected final GenericTypeResolver genericTypeResolver;
+
+    /**
+     * Build and return the built mirror
+     * @return built mirror
+     */
+    public abstract T build();
 
     /**
      * Constructor
@@ -60,20 +73,35 @@ public abstract class DomainTypeMirrorBuilder {
     public DomainTypeMirrorBuilder(final Class<?> domainClass, GenericTypeResolver genericTypeResolver) {
         this.domainClass = domainClass;
         this.genericTypeResolver = genericTypeResolver;
-        this.fields = JavaReflect.fields(domainClass, MemberSelect.HIERARCHY);
+        List<Field> theFields = Collections.emptyList();
+        try {
+            theFields = JavaReflect.fields(domainClass, MemberSelect.HIERARCHY);
+        }catch (Throwable t){
+            log.error("Accessing fields for {} failed!", domainClass.getName(), t);
+        }
+        this.fields = theFields;
     }
 
     protected List<FieldMirror> buildFields() {
         return fields
             .stream()
             .filter(f -> !f.isSynthetic())
-            .map(f -> new FieldMirrorBuilder(
-                    f,
-                    domainClass,
-                    isHidden(f),
-                    genericTypeResolver
-                ).build()
+            .map(f -> {
+                    try {
+                        return new FieldMirrorBuilder(
+                            f,
+                            domainClass,
+                            isHidden(f),
+                            genericTypeResolver
+                        ).build();
+                    }catch (Throwable t) {
+                        //ignore
+                        log.error("Building FieldMirror failed {}.{}", domainClass.getName(), f.getName(), t);
+                        return null;
+                    }
+                }
             )
+            .filter(Objects::nonNull)
             .toList();
     }
 
@@ -92,7 +120,17 @@ public abstract class DomainTypeMirrorBuilder {
         var meth = JavaReflect.methods(domainClass, MemberSelect.HIERARCHY);
         return meth.stream()
             .filter(m -> !m.isSynthetic() && !m.isBridge())
-            .map(m -> new MethodMirrorBuilder(m, domainClass, isOverridden(m, meth), genericTypeResolver).build())
+            .map(m -> {
+                    try{
+                        return new MethodMirrorBuilder(m, domainClass, isOverridden(m, meth), genericTypeResolver).build();
+                    }catch (Throwable t){
+                        //ignore
+                        log.error("Building MethodMirror failed {}.{}", domainClass.getName(), m.getName(), t);
+                        return null;
+                    }
+                }
+            )
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 
