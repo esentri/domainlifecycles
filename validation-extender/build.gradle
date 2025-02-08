@@ -24,6 +24,7 @@ dependencies {
     testImplementation project(":type-utils")
     testImplementation project(":assertions")
     testImplementation project(":test-shared-impl")
+    testImplementation project(":mirror")
 
     testImplementation libs.slf4j.api
     testImplementation libs.assertj
