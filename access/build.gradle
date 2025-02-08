@@ -2,9 +2,9 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
-    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
-    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
     id 'jacoco'
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
 }
 
 java {
@@ -16,10 +16,12 @@ dependencies {
     api project(":types")
     implementation project(":reflect")
     testImplementation project(":mirror")
-    testImplementation "org.assertj:assertj-core:${assertJVersion}"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:${junitJupiterParamsVersion}"
+
     testImplementation project(path: ':test-shared-impl')
     testImplementation project(":type-utils")
+
+    testImplementation libs.assertj
+    testImplementation libs.junit.jupiter.params
 }
 
 test {

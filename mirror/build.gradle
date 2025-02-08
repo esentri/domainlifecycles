@@ -2,8 +2,8 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
-    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
-    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
 }
 
 java {
@@ -12,29 +12,31 @@ java {
 }
 
 dependencies {
-    compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
+    compileOnly libs.slf4j.api
 
-    implementation "io.github.classgraph:classgraph:${classGraphVersion}"
-    compileOnly "javax.validation:validation-api:${javaxValidationApiVersion}"
-    compileOnly "jakarta.validation:jakarta.validation-api:${jakartaValidationApiVersion}"
-    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${jacksonVersion}"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
-    implementation "com.fasterxml.jackson.module:jackson-module-parameter-names:${jacksonVersion}"
-    implementation("com.github.vladislavsevruk:type-resolver:${typeResolverVersion}") {
-        exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
+    implementation libs.classgraph
+    compileOnly libs.javax.validation.api
+    compileOnly libs.jakarta.validation.api
+    implementation libs.jackson.databind
+    implementation libs.jackson.datatype.jdk8
+    implementation libs.jackson.datatype.jsr310
+    implementation libs.jackson.module.parameter.names
+
+    implementation (libs.type.resolver) {
+        exclude (group: 'org.apache.logging.log4j', module: 'log4j-core')
     }
+
     api project(":types")
     implementation project(":reflect")
 
-    testImplementation "ch.qos.logback:logback-classic:${logbackClassicVersion}"
+    testImplementation libs.logback.classic
     testImplementation project(":test-shared-impl")
     testImplementation project(":builder")
     testImplementation project(":type-utils")
-    testImplementation "org.junit.jupiter:junit-jupiter-params:${junitJupiterParamsVersion}"
-    testImplementation "org.projectlombok:lombok:${lombokVersion}"
-    testImplementation "org.assertj:assertj-core:${assertJVersion}"
-    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testImplementation libs.junit.jupiter.params
+    testImplementation libs.lombok
+    testImplementation libs.assertj
+    testAnnotationProcessor libs.lombok
 
 
 }

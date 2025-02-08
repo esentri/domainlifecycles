@@ -2,8 +2,8 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
-    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
-    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
 }
 
 java {
@@ -19,7 +19,7 @@ dependencies {
 
     testImplementation project(":assertions")
     testImplementation project(":test-shared-impl")
-    testImplementation "org.assertj:assertj-core:${assertJVersion}"
-    testImplementation "org.projectlombok:lombok:${lombokVersion}"
-    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testImplementation libs.assertj
+    testImplementation libs.lombok
+    testAnnotationProcessor libs.lombok
 }

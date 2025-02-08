@@ -2,8 +2,8 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
-    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
-    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
 }
 
 java {
@@ -13,15 +13,15 @@ java {
 
 
 dependencies {
-    compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
-    implementation "io.github.classgraph:classgraph:${classGraphVersion}"
+    compileOnly libs.slf4j.api
+    implementation libs.classgraph
     api project(":types")
     implementation project(":type-utils")
     implementation project(":mirror")
     implementation project(":access")
     api project(":builder")
 
-    implementation "commons-collections:commons-collections:${commonsCollectionsVersion}"
+    implementation libs.commons.collections
 
-    testImplementation "org.assertj:assertj-core:${assertJVersion}"
+    testImplementation libs.assertj
 }

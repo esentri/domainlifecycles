@@ -57,7 +57,7 @@ Flyway is a database migration tool that
   versions or systems.
 + Flyway is compatible with DLC, but not mandatory
 
-### Domain Lifecyclesn(DLC)
+### Domain Lifecycles (DLC)
 
 DLC constructs the mechanics for the
 control of a proper domain model implementation in Java together with its relational persistence.

@@ -2,8 +2,8 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
-    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
-    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
 }
 
 java {
@@ -12,6 +12,6 @@ java {
 }
 
 dependencies {
-    api "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocOpenAPIVersion2}"
+    api libs.spring.doc.openapi.starter.webmvc.ui
     api project(":swagger-v3-integration")
 }

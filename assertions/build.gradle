@@ -2,9 +2,9 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
-    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
-    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
     id 'jacoco'
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
 }
 
 java {
@@ -13,9 +13,10 @@ java {
 }
 
 dependencies {
-    implementation "commons-validator:commons-validator:${commonsValidatorVersion}"
-    testImplementation "org.assertj:assertj-core:${assertJVersion}"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:${junitJupiterParamsVersion}"
+    implementation libs.commons.validator
+
+    testImplementation libs.assertj
+    testImplementation libs.junit.jupiter.params
 }
 
 test {

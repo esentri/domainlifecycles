@@ -2,8 +2,8 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
-    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
-    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
 }
 
 java {
@@ -14,7 +14,7 @@ java {
 dependencies {
     testImplementation project(":types")
     testImplementation project(":persistence")
-    testImplementation "org.assertj:assertj-core:${assertJVersion}"
+    testImplementation libs.assertj
 }
 
 

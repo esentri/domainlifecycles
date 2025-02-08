@@ -2,8 +2,8 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
-    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
-    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
 }
 
 java {
@@ -15,7 +15,7 @@ java {
 dependencies {
     api project(":types")
     implementation project(":mirror")
-    compileOnly "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
-    api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-    api "org.springframework:spring-web:${springWeb6Version}"
+    compileOnly libs.jackson.core
+    api libs.jackson.databind
+    api libs.spring.web6
 }
