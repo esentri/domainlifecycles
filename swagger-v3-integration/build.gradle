@@ -2,8 +2,8 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
-    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
-    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
 }
 
 java {
@@ -12,10 +12,10 @@ java {
 }
 
 dependencies {
-    api "javax.validation:validation-api:${javaxValidationApiVersion}"
-    api "jakarta.validation:jakarta.validation-api:${jakartaValidationApiVersion}"
-    compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
-    api "io.swagger.core.v3:swagger-core-jakarta:${swaggerVersion}"
+    api libs.javax.validation.api
+    api libs.jakarta.validation.api
+    compileOnly libs.slf4j.api
+    api libs.swagger
     api project(":types")
     implementation project(":reflect")
     implementation project(":access")

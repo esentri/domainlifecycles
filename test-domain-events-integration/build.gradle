@@ -1,11 +1,12 @@
 plugins {
     id 'java'
     id 'checkstyle'
-    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
-    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
 }
 
 dependencies {
+    testImplementation libs.h2
     testImplementation project(":access")
     testImplementation project(":types")
     testImplementation project(":type-utils")
@@ -20,24 +21,22 @@ dependencies {
     testImplementation project(":builder")
     testImplementation project(":domain-events-jakarta-jms")
     testImplementation project(":domain-events-mq")
-    testImplementation "org.slf4j:slf4j-api:${slf4jVersion}"
-    testImplementation "org.projectlombok:lombok:${lombokVersion}"
-    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-    testImplementation "org.assertj:assertj-core:${assertJVersion}"
-    testImplementation "com.atomikos:transactions-jta:${atomikosJtaVersion}:jakarta"
-    testImplementation "jakarta.transaction:jakarta.transaction-api:${jakartaTransactionApiVersion}"
-    testImplementation "ch.qos.logback:logback-classic:${logbackClassicVersion}"
-    testImplementation 'org.springframework.boot:spring-boot-starter:3.2.3'
-    testImplementation 'org.springframework.boot:spring-boot-starter-json:3.2.3'
-    testImplementation 'org.springframework.boot:spring-boot-starter-jooq:3.2.3'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.2.3'
-    testImplementation 'org.springframework.boot:spring-boot-starter-artemis:3.3.3'
-    testImplementation "org.apache.activemq:artemis-jakarta-server:${activeMqArtemisVersion}"
-    testImplementation "com.gruelbox:transactionoutbox-core:${gruelboxVersion}"
-    testImplementation "com.gruelbox:transactionoutbox-spring:${gruelboxVersion}"
-    testImplementation "com.gruelbox:transactionoutbox-jackson:${gruelboxVersion}"
-    testImplementation "com.h2database:h2:2.2.222"
-    testImplementation 'org.awaitility:awaitility:4.2.0'
+    testImplementation libs.slf4j.api
+    testImplementation libs.lombok
+    testAnnotationProcessor libs.lombok
+    testImplementation libs.assertj
+    testImplementation variantOf(libs.atomikos.transactions.jta) { classifier("jakarta") }
+    testImplementation libs.jakarta.transaction.api
+    testImplementation libs.logback.classic
+    testImplementation libs.spring.boot3.starter
+    testImplementation libs.spring.boot3.starter.json
+    testImplementation libs.spring.boot3.starter.jooq
+    testImplementation libs.spring.boot3.starter.test
+    testImplementation libs.spring.boot3.starter.artemis
+    testImplementation libs.apache.active.mq.artemis.jakarter.server
+    testImplementation libs.bundles.gruelbox.transactionoutbox
+
+    testImplementation libs.awaitility
 
 }
 

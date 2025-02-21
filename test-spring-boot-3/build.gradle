@@ -1,36 +1,35 @@
-plugins {
-    id 'org.springframework.boot' version "${springBoot3PlatformVersion}"
-    id 'java'
-    id 'checkstyle'
-    // Plugin that handles database migration.
-    id 'org.flywaydb.flyway' version "${flywayVersion}"
-    // Plugin that integrates the jOOQ code generation tool.
-    id 'nu.studer.jooq' version "${nuStuderJooqVersion}"
-    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
-    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+buildscript {
+    dependencies {
+        classpath libs.h2
+        classpath libs.flyway.core
+    }
 }
 
+plugins {
+    id 'java-library'
+    id 'checkstyle'
+    alias libs.plugins.spring.boot.plugin
+    alias libs.plugins.flyway.plugin
+    alias libs.plugins.jooq.codegen.gradle
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
+}
 
+def dbVersion = libs.versions.h2.version.get()
 def dbDriver = 'org.h2.Driver'
 def dbUrl = "jdbc:h2:file:${project.projectDir}/build/h2-db/test;NON_KEYWORDS=VALUE;AUTO_SERVER=TRUE"
 def dbUsername = 'sa'
 def dbPassword = ''
 def dbMigration = 'src/test/resources/db/migration'
 
-// ----------------------------------------------------------
-
-configurations {
-    flywayMigration
-}
-
-
 dependencies {
-    testImplementation platform("org.springframework.boot:spring-boot-dependencies:${springBoot3PlatformVersion}")
+    api libs.jooq
+    testImplementation platform(libs.spring.boot3.dependencies)
     testImplementation project(":spring-boot-3-jooq-complete")
     testImplementation project(":test-shared-impl")
-    testImplementation "org.assertj:assertj-core:${assertJVersion}"
-    testImplementation "jakarta.validation:jakarta.validation-api:${jakartaValidationApiVersion}"
-    testImplementation "com.esotericsoftware:kryo:${kryoVersion}"
+    testImplementation libs.assertj
+    testImplementation libs.jakarta.validation.api
+    testImplementation libs.kryo
     testImplementation 'org.springframework:spring-web'
     testImplementation 'org.springframework.boot:spring-boot-starter'
     testImplementation 'org.springframework.boot:spring-boot-starter-web'
@@ -38,14 +37,14 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-validation'
     testImplementation 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocOpenAPIVersion2}"
+    testImplementation libs.spring.doc.openapi.starter.webmvc.ui
+    testImplementation libs.h2
 
-    flywayMigration "com.h2database:h2:${h2Version}"
-    jooqGenerator "com.h2database:h2:${h2Version}"
+    runtimeOnly libs.jooq.codegen
+    jooqCodegen libs.jooq.meta
 
-    testImplementation "com.h2database:h2:${h2Version}"
-    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
-    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testCompileOnly libs.lombok
+    testAnnotationProcessor libs.lombok
 }
 
 bootJar {
@@ -55,10 +54,10 @@ bootJar {
 // ----------------------------------------------------------
 
 flyway {
-    configurations = ['flywayMigration']
     url = dbUrl
     user = dbUsername
     password = dbPassword
+    driver = dbDriver
     defaultSchema = 'TEST_DOMAIN_FLYWAY'
     createSchemas = true
     encoding = 'UTF-8'
@@ -66,110 +65,45 @@ flyway {
 }
 
 // ----------------------------------------------------------
+
 jooq {
-    configurations {
-        main {
-            generationTool {
+    configuration {
 
-                // Configures a JDBC connection.
-                // Link: https://www.jooq.org/doc/latest/manual/code-generation/codegen-advanced/codegen-config-jdbc/
-                //
-                jdbc {
-                    driver = dbDriver
-                    url = flyway.url
-                    user = dbUsername
-                    password = dbPassword
-                }
+        jdbc {
+            driver = dbDriver
+            url = dbUrl
+            user = dbUsername
+            password = dbPassword
+        }
 
-                // Configures code generation, including the overridable code generator class.
-                // Link: https://www.jooq.org/doc/latest/manual/code-generation/codegen-advanced/codegen-config-generator/
-                //
-                generator {
+        generator {
+            database {
+                name = "org.jooq.meta.h2.H2Database"
+                includes = ".*"
+                inputSchema = 'TEST_DOMAIN'
+                recordVersionFields = 'CONCURRENCY_VERSION'
+                forceIntegerTypesOnZeroScaleDecimals = true
+            }
 
-                    // Configures the 'jooq-meta' module, which reads the configured database meta data.
-                    // In its simplest form, it can be left empty, when meaningful defaults will apply.
-                    // Link: https://www.jooq.org/doc/latest/manual/code-generation/codegen-advanced/codegen-config-database/
-                    //
-                    database {
-
-                        name = 'org.jooq.meta.h2.H2Database'
-
-                        // All elements that are generated from your schema. Watch out for case-sensitivity.
-                        // Depending on your database, this might be important! You can create case-insensitive
-                        // regular expressions using syntax: (?i:expr) Whitespace ignored / comment possible.
-                        //
-                        includes = '.*'
-
-                        // The schema that is used locally as a source for meta information. This could be your
-                        // development schema or the production schema, etc This cannot be combined with the
-                        // schemata element. If left empty, jOOQ will generate all available schemata.
-                        // See the manual's next section to learn how to generate several schemata.
-                        //
-                        inputSchema = 'TEST_DOMAIN'
-
-                        // jOOQ's 'UpdatableRecord' supports an optimistic locking feature, which can be enabled
-                        // in the code generator by specifying a regular expression that defines such a record's
-                        // version and/or timestamp fields.
-                        //
-                        // These regular expressions should match at most one column per table, again either by
-                        // their fully qualified names (catalog.schema.table.column_name) or by their names only
-                        // (column_name).
-                        //
-                        recordVersionFields = 'CONCURRENCY_VERSION'
-
-                        // A zero-scale decimal, such as DECIMAL(10) or NUMBER(10, 0) is really an integer
-                        // type with a decimal precision rather than a binary / bitwise precision. Some
-                        // databases (e.g. Oracle) do not support actual integer types at all, only decimal
-                        // types.
-                        //
-                        // If this is not a desirable default, it can be deactivated either explicitly on
-                        // a per-column basis using forced types, or globally using the following flag:
-                        //
-                        forceIntegerTypesOnZeroScaleDecimals = true
-                    }
-
-                    // Configures the the jooq-codegen module, which generates Java or Scala code, or XML from your database.
-                    // Link: https://www.jooq.org/doc/latest/manual/code-generation/codegen-advanced/codegen-config-generate/
-                    //
-                    generate {
-                        generatedAnnotation = false
-                        generatedAnnotationType = 'DETECT_FROM_JDK'
-                        javaTimeTypes = true
-                    }
-
-                    // Configures the location of your generated output. Optional.
-                    // Link: https://www.jooq.org/doc/latest/manual/code-generation/codegen-advanced/codegen-config-target/
-                    //
-                    target {
-
-                        // The root package name inside of which all generated code is located.
-                        //
-                        packageName = 'io.domainlifecycles.test.springboot3'
-                    }
-                }
+            generate {
+                generatedAnnotation = false
+                generatedAnnotationType = 'DETECT_FROM_JDK'
+                javaTimeTypes = true
+            }
+            target {
+                packageName = "io.domainlifecycles.test.springboot3"
             }
         }
     }
 }
 
-// configure jOOQ task such that it only executes when something
-// has changed that potentially affects the generated JOOQ sources:
-// - the jOOQ configuration has changed (Jdbc, Generator, Strategy, etc.)
-// - the classpath used to execute the jOOQ generation tool has changed
-//   (jOOQ library, database driver, strategy classes, etc.)
-// - the schema files from which the schema is generated and which is used by
-//   jOOQ to generate the sources have changed (scripts added, modified, etc.)
-tasks.named('generateJooq').configure {
-    // ensure database schema has been prepared by Flyway before generating the jOOQ sources
-    dependsOn tasks.named('flywayMigrate')
+tasks.named("compileJava") {
+    dependsOn(tasks.named("jooqCodegen"))
+}
 
-    // declare Flyway migration scripts as inputs on the jOOQ task
-    inputs.files(fileTree("./${dbMigration}"))
-    //.withPropertyName('migrations')
-            .withPathSensitivity(PathSensitivity.RELATIVE)
-
-    // make jOOQ task participate in incremental builds (and build caching)
-    allInputsDeclared = true
+tasks.named("jooqCodegen") {
+    dependsOn(tasks.named("flywayMigrate"))
+    inputs.files(fileTree("src/main/resources/db/migration"))
 }
 
 // ----------------------------------------------------------
