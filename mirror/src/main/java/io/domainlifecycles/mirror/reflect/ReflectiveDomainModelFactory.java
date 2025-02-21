@@ -27,8 +27,8 @@
 package io.domainlifecycles.mirror.reflect;
 
 import io.domainlifecycles.mirror.api.BoundedContextMirror;
-import io.domainlifecycles.mirror.api.DomainModelFactory;
 import io.domainlifecycles.mirror.api.DomainModel;
+import io.domainlifecycles.mirror.api.DomainModelFactory;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.exception.MirrorException;
 import io.domainlifecycles.mirror.model.BoundedContextModel;

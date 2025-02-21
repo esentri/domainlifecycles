@@ -9,16 +9,8 @@ import io.domainlifecycles.mirror.api.ValueObjectMirror;
 import io.domainlifecycles.mirror.reflect.ClassGraphDomainTypesScanner;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
 import io.domainlifecycles.mirror.resolver.DefaultEmptyGenericTypeResolver;
-import io.domainlifecycles.mirror.resolver.TypeMetaResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 public class ScannerTest {

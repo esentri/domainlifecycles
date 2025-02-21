@@ -34,7 +34,6 @@ import sampleshop.core.outport.OrdersByCustomerQueryHandler;
 
 import java.util.List;
 
-import static org.jooq.impl.DSL.field;
 import static sampleshop.Tables.CUSTOMER;
 import static sampleshop.Tables.ORDER;
 

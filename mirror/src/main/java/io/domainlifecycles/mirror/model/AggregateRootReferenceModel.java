@@ -33,7 +33,6 @@ import io.domainlifecycles.mirror.api.AccessLevel;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.AggregateRootReferenceMirror;
 import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
-import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.exception.MirrorException;
 
 /**

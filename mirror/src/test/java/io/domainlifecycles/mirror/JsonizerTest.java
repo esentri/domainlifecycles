@@ -1,8 +1,6 @@
 package io.domainlifecycles.mirror;
 
-import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainModelFactory;
-import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.model.DomainTypeModel;
 import io.domainlifecycles.mirror.model.EntityModel;
 import io.domainlifecycles.mirror.model.FieldModel;
@@ -11,7 +9,6 @@ import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
 import io.domainlifecycles.mirror.resolver.TypeMetaResolver;
 import io.domainlifecycles.mirror.serialize.api.JacksonDomainSerializer;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
