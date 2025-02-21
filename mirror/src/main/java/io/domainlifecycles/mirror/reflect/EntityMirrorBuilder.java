@@ -32,6 +32,7 @@ import io.domainlifecycles.domain.types.internal.ConcurrencySafe;
 import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.model.EntityModel;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import io.domainlifecycles.reflect.JavaReflect;
 import io.domainlifecycles.reflect.MemberSelect;
 
@@ -43,12 +44,21 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public class EntityMirrorBuilder extends DomainTypeMirrorBuilder {
+public class EntityMirrorBuilder<T extends EntityMirror> extends DomainTypeMirrorBuilder<T> {
     private final Class<? extends Entity<?>> entityClass;
 
-    public EntityMirrorBuilder(Class<? extends Entity<?>> entityClass
+    /**
+     * Constructor
+     *
+     * @param entityClass class being mirrored
+     * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     */
+    public EntityMirrorBuilder(
+        Class<? extends Entity<?>> entityClass,
+        GenericTypeResolver genericTypeResolver
+
     ) {
-        super(entityClass);
+        super(entityClass, genericTypeResolver);
         this.entityClass = entityClass;
     }
 
@@ -57,8 +67,9 @@ public class EntityMirrorBuilder extends DomainTypeMirrorBuilder {
      *
      * @return new instance of EntityMirror
      */
-    public EntityMirror build() {
-        return new EntityModel(
+    @Override
+    public T build() {
+        return (T) new EntityModel(
             getTypeName(),
             isAbstract(),
             buildFields(),
@@ -93,7 +104,7 @@ public class EntityMirrorBuilder extends DomainTypeMirrorBuilder {
             }
             if (idProperty.isPresent()) {
                 return Optional.of(
-                    new FieldMirrorBuilder(idProperty.get(), entityClass, isHidden(idProperty.get())).build());
+                    new FieldMirrorBuilder(idProperty.get(), entityClass, isHidden(idProperty.get()), genericTypeResolver).build());
             }
         }
         return Optional.empty();
@@ -110,12 +121,11 @@ public class EntityMirrorBuilder extends DomainTypeMirrorBuilder {
         if (concurrencyFieldCandidates.size() == 1) {
             concurrencyField = concurrencyFieldCandidates.get(0);
             return Optional.of(
-                new FieldMirrorBuilder(concurrencyField, entityClass, isHidden(concurrencyField)).build());
+                new FieldMirrorBuilder(concurrencyField, entityClass, isHidden(concurrencyField), genericTypeResolver).build());
         }
         return Optional.empty();
     }
 
-    @SuppressWarnings("unchecked")
     private static Optional<Class<? extends Identity<?>>> getIdentityType(Class<? extends Entity<?
         extends Identity<?>>> c) {
         var resolver = new GenericInterfaceTypeResolver(c);

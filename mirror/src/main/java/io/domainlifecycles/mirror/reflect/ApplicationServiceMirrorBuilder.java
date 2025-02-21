@@ -31,6 +31,7 @@ import io.domainlifecycles.domain.types.ApplicationService;
 import io.domainlifecycles.domain.types.Driver;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
 import io.domainlifecycles.mirror.model.ApplicationServiceModel;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,16 +41,20 @@ import java.util.List;
  *
  * @author Mario Herb
  */
-public class ApplicationServiceMirrorBuilder extends ServiceKindMirrorBuilder {
+public class ApplicationServiceMirrorBuilder extends ServiceKindMirrorBuilder<ApplicationServiceMirror> {
     private final Class<? extends ApplicationService> applicationServiceClass;
 
     /**
      * Initialize the builder with the corresponding {@link AggregateRoot} class.
      *
-     * @param applicationServiceClass the application service type
+     * @param applicationServiceClass the mirrored application service type
+     * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
      */
-    public ApplicationServiceMirrorBuilder(Class<? extends ApplicationService> applicationServiceClass) {
-        super(applicationServiceClass);
+    public ApplicationServiceMirrorBuilder(
+        Class<? extends ApplicationService> applicationServiceClass,
+        GenericTypeResolver genericTypeResolver
+    ) {
+        super(applicationServiceClass, genericTypeResolver);
         this.applicationServiceClass = applicationServiceClass;
     }
 
@@ -58,6 +63,7 @@ public class ApplicationServiceMirrorBuilder extends ServiceKindMirrorBuilder {
      *
      * @return new instance of ApplicationServiceMirror
      */
+    @Override
     public ApplicationServiceMirror build() {
         return new ApplicationServiceModel(
             getTypeName(),

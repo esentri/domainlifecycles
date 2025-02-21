@@ -46,11 +46,10 @@ import java.util.Optional;
  * It provides methods for resolving generic types in fields and executable elements (methods, constructors).
  *
  * <p>
- * To enable generic type resolving in the mirror, set the TypeMetaResolver before initializing the domain:
+ * To enable generic type resolving in the DomainModel, set the TypeMetaResolver before initializing the domain:
  * <pre>{@code
- *  Domain.setGenericTypeResolver(new TypeMetaResolver());
- *  ReflectiveDomainMirrorFactory factory = new ReflectiveDomainMirrorFactory("tests");
- *  Domain.initialize(factory);
+ *  ReflectiveDomainModelFactory factory = new ReflectiveDomainModelFactory("tests");
+ *  DomainModel dm = factory.initializeDomainModel(factory, new TypeMetaResolver());
  * }</pre>
  * <p>
  * A current use case is the DomainDiagrammer {@see io.domainlifecycles.diagram.domain.DomainDiagramGenerator}.

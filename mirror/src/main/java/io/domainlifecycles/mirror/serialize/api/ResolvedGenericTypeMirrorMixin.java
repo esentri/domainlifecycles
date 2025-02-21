@@ -24,19 +24,20 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.mirror.api;
+package io.domainlifecycles.mirror.serialize.api;
 
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import io.domainlifecycles.mirror.model.ResolvedGenericTypeModel;
 
 /**
- * This record is a container for all mirrors in a mirrored Domain.
+ * Jackson mixin interface for proper serialization of {@link ResolvedGenericTypeModel}.
  *
- * @param allTypeMirrors        all the DomainTypeMirrors
- * @param boundedContextMirrors all the BoundedContextMirrors
  * @author Mario Herb
  */
-public record InitializedDomain(Map<String, ? extends DomainTypeMirror> allTypeMirrors,
-                                List<BoundedContextMirror> boundedContextMirrors) {
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = ResolvedGenericTypeModel.class),
+})
+public interface ResolvedGenericTypeMirrorMixin {
 }
-

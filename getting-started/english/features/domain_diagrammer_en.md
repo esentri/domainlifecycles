@@ -13,9 +13,9 @@ The result is text-based in [Nomnoml](https://nomnoml.com/) format.
 ```Java
 class Diagrammer {
     public void generateDiagram() {
-        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleshop"));
+        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "sampleshop"));
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withContextPackageName("sampleshop").build();
-        DomainDiagramGenerator generator = new DomainDiagramGenerator(diagramConfig);
+        DomainDiagramGenerator generator = new DomainDiagramGenerator(diagramConfig, Domain.getDomainModel());
 
         String diagramTextNomnoml = generator.generateDiagramText();
         File file = new File("generated_nomnoml_example.nomnoml");

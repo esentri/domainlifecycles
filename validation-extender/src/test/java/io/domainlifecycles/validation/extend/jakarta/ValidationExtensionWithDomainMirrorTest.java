@@ -1,7 +1,7 @@
 package io.domainlifecycles.validation.extend.jakarta;
 
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
 import io.domainlifecycles.mirror.resolver.TypeMetaResolver;
 import io.domainlifecycles.validation.extend.ValidationDomainClassExtender;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +21,7 @@ class ValidationExtensionWithDomainMirrorTest {
 
         Locale.setDefault(Locale.ENGLISH);
 
-        Domain.setGenericTypeResolver(new TypeMetaResolver());
-        Domain.initialize(new ReflectiveDomainMirrorFactory(packages));
+        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), packages));
 
         assertThatNoException()
             .isThrownBy(() -> ValidationDomainClassExtender.extend(packages));

@@ -40,8 +40,8 @@ import io.domainlifecycles.events.TransactionalCounterService;
 import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.api.InitializedDomain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
+import io.domainlifecycles.mirror.api.DomainModel;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
 import io.domainlifecycles.services.Services;
 import io.domainlifecycles.services.api.ServiceProvider;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -65,9 +65,9 @@ public class TestApplicationSpringJmsIntegration {
     }
 
     @Bean
-    InitializedDomain initializedDomain(){
-        Domain.initialize(new ReflectiveDomainMirrorFactory("io.domainlifecycles.events"));
-        return Domain.getInitializedDomain();
+    DomainModel initializedDomain(){
+        Domain.initialize(new ReflectiveDomainModelFactory("io.domainlifecycles.events"));
+        return Domain.getDomainModel();
     }
 
     @Bean

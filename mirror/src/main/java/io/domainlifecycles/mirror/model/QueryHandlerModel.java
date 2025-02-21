@@ -73,7 +73,7 @@ public class QueryHandlerModel extends ServiceKindModel implements QueryHandlerM
      */
     @Override
     public Optional<ReadModelMirror> getProvidedReadModel() {
-        return Optional.ofNullable((ReadModelMirror) Domain.typeMirror(providedReadModelTypeName).orElse(null));
+        return Optional.ofNullable((ReadModelMirror) domainModel.getDomainTypeMirror(providedReadModelTypeName).orElse(null));
     }
 
     /**

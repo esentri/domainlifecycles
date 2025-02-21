@@ -3,7 +3,7 @@ package io.domainlifecycles.domain.types;
 import io.domainlifecycles.domain.types.companions.Entities;
 import io.domainlifecycles.domain.types.companions.ValueObjects;
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,7 +22,7 @@ public class SimpleCompanionTest {
 
     @BeforeAll
     static void beforeAll() {
-        Domain.initialize(new ReflectiveDomainMirrorFactory("tests", "io.domainlifecycles"));
+        Domain.initialize(new ReflectiveDomainModelFactory("tests", "io.domainlifecycles"));
     }
 
     @Test

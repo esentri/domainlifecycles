@@ -32,6 +32,7 @@ import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.diagram.nomnoml.NomnomlClass;
 import io.domainlifecycles.diagram.nomnoml.NomnomlFrame;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
+import io.domainlifecycles.mirror.api.DomainModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,12 +57,12 @@ public class DomainMapper {
      *
      * @param domainDiagramConfig diagram configuration
      */
-    public DomainMapper(DomainDiagramConfig domainDiagramConfig) {
+    public DomainMapper(DomainDiagramConfig domainDiagramConfig, DomainModel domainModel) {
         this.domainDiagramConfig = domainDiagramConfig;
-        this.filteredDomainClasses = new FilteredDomainClasses(domainDiagramConfig);
+        this.filteredDomainClasses = new FilteredDomainClasses(domainDiagramConfig, domainModel);
 
         this.domainClassMapper = new DomainClassMapper(domainDiagramConfig);
-        this.domainRelationshipMapper = new DomainRelationshipMapper(domainDiagramConfig, filteredDomainClasses);
+        this.domainRelationshipMapper = new DomainRelationshipMapper(domainDiagramConfig, domainModel, filteredDomainClasses);
 
     }
 

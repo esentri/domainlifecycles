@@ -38,8 +38,6 @@ import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.domain.types.ValueObject;
 import io.domainlifecycles.mirror.exception.MirrorException;
-import io.domainlifecycles.mirror.resolver.DefaultEmptyGenericTypeResolver;
-import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,9 +51,7 @@ public class Domain {
 
     private static boolean initialized = false;
 
-    private static InitializedDomain initializedDomain;
-
-    private static GenericTypeResolver genericTypeResolver = new DefaultEmptyGenericTypeResolver();
+    private static DomainModel domainModel;
 
     /**
      * @param <V>                   type of DomainTypeMirror
@@ -66,7 +62,7 @@ public class Domain {
         if(!initialized){
             throw MirrorException.fail("Domain was not initialized!");
         }
-        var mirror = initializedDomain.allTypeMirrors().get(fullQualifiedTypeName);
+        var mirror = domainModel.allTypeMirrors().get(fullQualifiedTypeName);
         return Optional.ofNullable((V) mirror);
     }
 
@@ -122,7 +118,7 @@ public class Domain {
             throw MirrorException.fail("Domain was not initialized!");
         }
 
-        return (E) initializedDomain.allTypeMirrors()
+        return (E) domainModel.allTypeMirrors()
             .values()
             .stream()
             .filter(dm -> {
@@ -227,7 +223,7 @@ public class Domain {
      * @return the {@link RepositoryMirror} for the given Repository instance for a given {@link AggregateRootMirror}.
      */
     public static <R extends RepositoryMirror> R repositoryMirrorFor(AggregateRootMirror arm) {
-        return (R) initializedDomain
+        return (R) domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -347,41 +343,25 @@ public class Domain {
         if (!initialized) {
             throw MirrorException.fail("Domain was not initialized!");
         }
-        return initializedDomain.boundedContextMirrors();
+        return domainModel.boundedContextMirrors();
     }
 
     /**
-     * @return the {@link InitializedDomain} containing all type mirrors created upon initialization
+     * @return the {@link DomainModel} containing all type mirrors created upon initialization
      */
-    public static InitializedDomain getInitializedDomain() {
-        return initializedDomain;
+    public static DomainModel getDomainModel() {
+        return domainModel;
     }
 
     /**
      * Initializes the domain by a given factory.
      * The factory decides the source of Domain meta information (reflection or something else).
      *
-     * @param domainMirrorFactory the factory
+     * @param domainModelFactory the factory
      */
-    public static void initialize(DomainMirrorFactory domainMirrorFactory) {
-        initializedDomain = domainMirrorFactory.initializeDomain(genericTypeResolver);
+    public static void initialize(DomainModelFactory domainModelFactory) {
+        domainModel = domainModelFactory.initializeDomainModel();
         initialized = true;
-    }
-
-    /**
-     * Sets the GenericTypeResolver for the Domain to resolve generic types within domain classes.
-     *
-     * @param genericTypeResolver the type resolver to be set
-     */
-    public static void setGenericTypeResolver(GenericTypeResolver genericTypeResolver) {
-        Domain.genericTypeResolver = genericTypeResolver;
-    }
-
-    /**
-     * @return the GenericTypeResolver for the Domain
-     */
-    public static GenericTypeResolver getGenericTypeResolver() {
-        return genericTypeResolver;
     }
 
     /**

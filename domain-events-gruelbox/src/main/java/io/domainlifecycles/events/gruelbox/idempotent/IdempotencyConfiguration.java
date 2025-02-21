@@ -89,7 +89,7 @@ public final class IdempotencyConfiguration {
     }
 
     private boolean isDomainEventHandlerMethodWithExpectedName(IdempotencyConfigurationEntry entry){
-        var mirror = Domain.getInitializedDomain().allTypeMirrors().get(entry.handlerClass().getName());
+        var mirror = Domain.getDomainModel().allTypeMirrors().get(entry.handlerClass().getName());
         if(mirror != null){
             try {
                 var methodMirror = mirror.methodByName(entry.methodName());

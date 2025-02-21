@@ -29,7 +29,6 @@ package io.domainlifecycles.diagram.domain.mapper;
 import io.domainlifecycles.diagram.domain.DomainDiagramGenerator;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
-import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
@@ -147,6 +146,9 @@ public class DomainMapperUtils {
      * @return style classifier for given domain type
      */
     public static String styleClassifier(DomainTypeMirror domainTypeMirror) {
+        if(domainTypeMirror==null){
+            return "";
+        }
         return switch (domainTypeMirror.getDomainType()) {
             case AGGREGATE_ROOT -> "<" + DomainDiagramGenerator.AGGREGATE_ROOT_STYLE_TAG + ">";
             case ENTITY -> "<" + DomainDiagramGenerator.ENTITY_STYLE_TAG + ">";
@@ -164,18 +166,6 @@ public class DomainMapperUtils {
             case SERVICE_KIND -> "<" + DomainDiagramGenerator.SERVICE_KIND_STYLE_TAG + ">";
             default -> "";
         };
-    }
-
-    /**
-     * @param typeName type name
-     * @return style classifier for given domain type
-     */
-    public static String styleClassifier(String typeName) {
-        var domainTypeMirrorOptional = Domain.typeMirror(typeName);
-        if (domainTypeMirrorOptional.isPresent()) {
-            return styleClassifier(domainTypeMirrorOptional.get());
-        }
-        return "";
     }
 
     private static String simpleTypeName(String fullQualifiedTypeName) {

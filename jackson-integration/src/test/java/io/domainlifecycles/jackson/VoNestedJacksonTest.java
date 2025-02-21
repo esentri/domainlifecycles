@@ -8,7 +8,7 @@ import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvi
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ public class VoNestedJacksonTest {
     public VoNestedJacksonTest() {
         this.objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        Domain.initialize(new ReflectiveDomainMirrorFactory("tests"));
+        Domain.initialize(new ReflectiveDomainModelFactory("tests"));
         var entityIdentityProvider = new EntityIdentityProvider() {
 
             @Override

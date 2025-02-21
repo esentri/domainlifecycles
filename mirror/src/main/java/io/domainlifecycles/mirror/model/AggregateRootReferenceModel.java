@@ -63,7 +63,7 @@ public class AggregateRootReferenceModel extends FieldModel implements Aggregate
     @JsonIgnore
     @Override
     public AggregateRootMirror getAggregateRoot() {
-        return Domain.typeMirror(type.getTypeName())
+        return domainModel.getDomainTypeMirror(type.getTypeName())
             .map(e -> (AggregateRootMirror) e)
             .orElseThrow(() -> MirrorException.fail("AggregateRootMirror not found for '%s'", getType().getTypeName()));
     }

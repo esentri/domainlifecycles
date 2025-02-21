@@ -64,7 +64,7 @@ public class EntityReferenceModel extends FieldModel implements EntityReferenceM
     @JsonIgnore
     @Override
     public EntityMirror getEntity() {
-        return Domain.typeMirror(getType().getTypeName())
+        return domainModel.getDomainTypeMirror(getType().getTypeName())
             .map(e -> (EntityMirror) e)
             .orElseThrow(() -> MirrorException.fail("EntityMirror not found for '%s'", getType().getTypeName()));
     }

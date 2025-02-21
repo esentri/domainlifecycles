@@ -34,8 +34,8 @@ import io.domainlifecycles.events.activemq.domain.AnApplicationService;
 import io.domainlifecycles.events.activemq.domain.AnOutboundService;
 import io.domainlifecycles.events.activemq.domain.TransactionalCounterService;
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.api.InitializedDomain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
+import io.domainlifecycles.mirror.api.DomainModel;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
 import io.domainlifecycles.services.Services;
 import io.domainlifecycles.services.api.ServiceProvider;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -57,9 +57,9 @@ public class TestApplicationActiveMqGruelbox {
     }
 
     @Bean
-    InitializedDomain initializedDomain(){
-        Domain.initialize(new ReflectiveDomainMirrorFactory("io.domainlifecycles.events"));
-        return Domain.getInitializedDomain();
+    DomainModel initializedDomain(){
+        Domain.initialize(new ReflectiveDomainModelFactory("io.domainlifecycles.events"));
+        return Domain.getDomainModel();
     }
 
     @Bean

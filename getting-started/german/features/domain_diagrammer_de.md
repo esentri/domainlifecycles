@@ -13,9 +13,9 @@ des Projekts zu erstellen. Das Ergebnis ist hierbei Text-basiert im [Nomnoml](ht
 ```Java
 class Diagrammer {
     public void generateDiagram() {
-        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleshop"));
+        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "sampleshop"));
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withContextPackageName("sampleshop").build();
-        DomainDiagramGenerator generator = new DomainDiagramGenerator(diagramConfig);
+        DomainDiagramGenerator generator = new DomainDiagramGenerator(diagramConfig, Domain.getDomainModel());
 
         String diagramTextNomnoml = generator.generateDiagramText();
         File file = new File("generated_nomnoml_example.nomnoml");

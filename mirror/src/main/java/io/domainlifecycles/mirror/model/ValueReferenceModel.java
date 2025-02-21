@@ -65,7 +65,7 @@ public class ValueReferenceModel extends FieldModel implements ValueReferenceMir
     @JsonIgnore
     @Override
     public ValueMirror getValue() {
-        return Domain.typeMirror(getType().getTypeName())
+        return domainModel.getDomainTypeMirror(getType().getTypeName())
             .map(e -> (ValueMirror) e)
             .orElseThrow(() -> MirrorException.fail("ValueMirror not found for '%s'", getType().getTypeName()));
     }

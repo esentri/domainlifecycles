@@ -13,7 +13,7 @@ import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.mirror.api.ValueObjectMirror;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tests.mirror.AggregateRootImpl;
@@ -44,7 +44,7 @@ public class SimpleDomainConvenienceTest {
 
     @BeforeAll
     public static void init() {
-        ReflectiveDomainMirrorFactory factory = new ReflectiveDomainMirrorFactory("tests");
+        ReflectiveDomainModelFactory factory = new ReflectiveDomainModelFactory("tests");
         Domain.initialize(factory);
     }
 

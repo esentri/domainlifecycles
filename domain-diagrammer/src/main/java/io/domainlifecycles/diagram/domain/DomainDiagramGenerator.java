@@ -29,6 +29,7 @@ package io.domainlifecycles.diagram.domain;
 import io.domainlifecycles.diagram.Diagram;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.diagram.domain.mapper.DomainMapper;
+import io.domainlifecycles.mirror.api.DomainModel;
 
 /**
  * The DomainDiagramGenerator generates the Nomnoml diagram text
@@ -76,9 +77,9 @@ public class DomainDiagramGenerator implements Diagram {
      *
      * @param diagramConfig diagram configuration
      */
-    public DomainDiagramGenerator(final DomainDiagramConfig diagramConfig) {
+    public DomainDiagramGenerator(final DomainDiagramConfig diagramConfig, DomainModel domainModel) {
         this.diagramConfig = diagramConfig;
-        this.domainMapper = new DomainMapper(diagramConfig);
+        this.domainMapper = new DomainMapper(diagramConfig, domainModel);
     }
 
     /**

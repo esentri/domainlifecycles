@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Upgrade Flyway Plugin to version 10 and modify usage accordingly
 - Replace version in readme.md with version defined in version.properties with `gradle build`
 - Upgrade Gruelbox (Domain Events outbox feature) dependency to version 6.0.553
+- Renamed "io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory" to "io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory"
+- Renamed "io.domainlifecycles.mirror.api.InitializedDomain" to "io.domainlifecycles.mirror.api.DomainModel"
+- An instance of "io.domainlifecycles.mirror.resolver.GenericTypeResolver" can only be applied via "io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory" 
+- Fixed serialization bugs with "io.domainlifecycles.mirror.api.DomainModel"
+- Removed static "io.domainlifecycles.mirror.api.Domain" dependency from Domain Diagrammer
 
 ## [2.0.4] - 2025-02-06
 - Bytebuddy (ValidationDomainClassExtender) must not try to extend static methods

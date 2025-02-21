@@ -74,7 +74,7 @@ public class RepositoryModel extends ServiceKindModel implements RepositoryMirro
     @JsonIgnore
     @Override
     public Optional<AggregateRootMirror> getManagedAggregate() {
-        return Optional.ofNullable((AggregateRootMirror) Domain.typeMirror(managedAggregateTypeName).orElse(null));
+        return Optional.ofNullable((AggregateRootMirror) domainModel.getDomainTypeMirror(managedAggregateTypeName).orElse(null));
     }
 
     /**

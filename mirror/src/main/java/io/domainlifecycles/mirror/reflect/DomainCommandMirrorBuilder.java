@@ -33,6 +33,7 @@ import io.domainlifecycles.domain.types.DomainServiceCommand;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.model.DomainCommandModel;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 import java.util.Optional;
 
@@ -41,12 +42,21 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public class DomainCommandMirrorBuilder extends DomainTypeMirrorBuilder {
+public class DomainCommandMirrorBuilder extends DomainTypeMirrorBuilder<DomainCommandMirror> {
 
     private final Class<? extends DomainCommand> domainCommandClass;
 
-    public DomainCommandMirrorBuilder(Class<? extends DomainCommand> domainCommandClass) {
-        super(domainCommandClass);
+    /**
+     * Constructor
+     *
+     * @param domainCommandClass class being mirrored
+     * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     */
+    public DomainCommandMirrorBuilder(
+        Class<? extends DomainCommand> domainCommandClass,
+        GenericTypeResolver genericTypeResolver
+    ) {
+        super(domainCommandClass, genericTypeResolver);
         this.domainCommandClass = domainCommandClass;
     }
 
@@ -55,6 +65,7 @@ public class DomainCommandMirrorBuilder extends DomainTypeMirrorBuilder {
      *
      * @return new instance of DomainCommandMirror
      */
+    @Override
     public DomainCommandMirror build() {
 
         var targetType = getTargetType(domainCommandClass);

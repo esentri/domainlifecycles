@@ -252,7 +252,7 @@ public abstract class AbstractMqDomainEventConsumer<CONSUMER, MESSAGE> implement
      * and subscribes them to the event consumer.
      */
     protected void initializeHandlers(){
-        var handlers = Domain.getInitializedDomain()
+        var handlers = Domain.getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()

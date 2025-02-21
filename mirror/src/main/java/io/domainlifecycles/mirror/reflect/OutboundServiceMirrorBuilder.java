@@ -29,6 +29,7 @@ package io.domainlifecycles.mirror.reflect;
 import io.domainlifecycles.domain.types.OutboundService;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.mirror.model.OutboundServiceModel;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,11 +39,20 @@ import java.util.List;
  *
  * @author Mario Herb
  */
-public class OutboundServiceMirrorBuilder extends ServiceKindMirrorBuilder {
+public class OutboundServiceMirrorBuilder extends ServiceKindMirrorBuilder<OutboundServiceMirror> {
     private final Class<? extends OutboundService> outboundServiceClass;
 
-    public OutboundServiceMirrorBuilder(Class<? extends OutboundService> outboundServiceClass) {
-        super(outboundServiceClass);
+    /**
+     * Constructor
+     *
+     * @param outboundServiceClass class being mirrored
+     * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     */
+    public OutboundServiceMirrorBuilder(
+        Class<? extends OutboundService> outboundServiceClass,
+        GenericTypeResolver genericTypeResolver
+    ) {
+        super(outboundServiceClass, genericTypeResolver);
         this.outboundServiceClass = outboundServiceClass;
     }
 
@@ -51,6 +61,7 @@ public class OutboundServiceMirrorBuilder extends ServiceKindMirrorBuilder {
      *
      * @return new instance of OutboundServiceMirror
      */
+    @Override
     public OutboundServiceMirror build() {
         return new OutboundServiceModel(
             getTypeName(),
