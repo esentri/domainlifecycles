@@ -63,7 +63,7 @@ ext {
     jooqVersion = '3.19.6'
     commonsCollectionsVersion = '3.2.2'
     typeResolverVersion = '1.0.3'
-    gruelboxVersion = '5.5.447'
+    gruelboxVersion = '6.0.553'
     commonsValidatorVersion = '1.7'
 
     //test lib versions
