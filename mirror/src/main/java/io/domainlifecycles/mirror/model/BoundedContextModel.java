@@ -35,6 +35,7 @@ import io.domainlifecycles.mirror.api.BoundedContextMirror;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
+import io.domainlifecycles.mirror.api.DomainModel;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
@@ -54,6 +55,8 @@ import java.util.Objects;
 public class BoundedContextModel implements BoundedContextMirror {
 
     private final String packageName;
+    DomainModel domainModel;
+    private boolean domainModelSet = false;
 
     @JsonCreator
     public BoundedContextModel(@JsonProperty("packageName") String packageName) {
@@ -67,8 +70,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @JsonIgnore
     @Override
     public List<AggregateRootMirror> getAggregateRoots() {
-        return Domain
-            .getInitializedDomain()
+        return domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -85,7 +87,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @Override
     public List<DomainServiceMirror> getDomainServices() {
         return Domain
-            .getInitializedDomain()
+            .getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -101,8 +103,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @JsonIgnore
     @Override
     public List<RepositoryMirror> getRepositories() {
-        return Domain
-            .getInitializedDomain()
+        return domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -118,8 +119,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @JsonIgnore
     @Override
     public List<ReadModelMirror> getReadModels() {
-        return Domain
-            .getInitializedDomain()
+        return domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -135,8 +135,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @JsonIgnore
     @Override
     public List<DomainCommandMirror> getDomainCommands() {
-        return Domain
-            .getInitializedDomain()
+        return domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -152,8 +151,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @JsonIgnore
     @Override
     public List<DomainEventMirror> getDomainEvents() {
-        return Domain
-            .getInitializedDomain()
+        return domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -169,8 +167,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @JsonIgnore
     @Override
     public List<ApplicationServiceMirror> getApplicationServices() {
-        return Domain
-            .getInitializedDomain()
+        return domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -186,8 +183,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @JsonIgnore
     @Override
     public List<QueryHandlerMirror> getQueryHandlers() {
-        return Domain
-            .getInitializedDomain()
+        return domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -203,8 +199,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @JsonIgnore
     @Override
     public List<OutboundServiceMirror> getOutboundServices() {
-        return Domain
-            .getInitializedDomain()
+        return domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -220,8 +215,7 @@ public class BoundedContextModel implements BoundedContextMirror {
     @JsonIgnore
     @Override
     public List<ServiceKindMirror> getServiceKinds() {
-        return Domain
-            .getInitializedDomain()
+        return domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -265,5 +259,12 @@ public class BoundedContextModel implements BoundedContextMirror {
     @Override
     public int hashCode() {
         return Objects.hash(packageName);
+    }
+
+    public void setDomainModel(DomainModel domainModel) {
+        if(!domainModelSet) {
+            this.domainModel = domainModel;
+            this.domainModelSet = true;
+        }
     }
 }

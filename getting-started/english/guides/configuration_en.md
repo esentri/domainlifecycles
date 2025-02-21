@@ -93,45 +93,84 @@ dependencies {
 
 With jOOQ, Java classes are usually generated for accessing database objects (e.g. tables and sequences).
 To do this, the jOOQ code generator must be integrated into the build management.
-Here is an example configuration for an existing database schema:
+
+Starting from jOOQ version 3.19, the Gradle jOOQ code generator can be integrated via plugins.
+It is strongly recommended to use these versions.
+
+First, the dependencies for the generator must be defined
 
 <details>
 <summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle</b></summary>
 
 ```groovy
+dependencies {
+    runtimeOnly 'org.jooq:jooq-codegen:3.19:10'
+    jooqCodegen 'org.jooq:jooq-meta:3.19:10'
+}
+```
+</details>
+
+Next, the generator can be configured.
+To illustrate this, here is an example configuration for an existing database schema:
+<details>
+<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle</b></summary>
+
+```groovy
 jooq {
-    configurations {
-        main {
-            generationTool {
-                jdbc {
-                    driver = 'org.h2.Driver'
-                    url = "jdbc:h2:file:./build/h2-db/test;NON_KEYWORDS=VALUE;AUTO_SERVER=TRUE"
-                    user = 'sa'
-                    password = ''
-                }
-                generator {
-                    database {
-                        name = 'org.jooq.meta.h2.H2Database'
-                        includes = '.*'
-                        inputSchema = "${your_input_schema_name}"
-                        recordVersionFields = 'CONCURRENCY_VERSION'
-                        forceIntegerTypesOnZeroScaleDecimals = true
-                    }
-                    generate {
-                        generatedAnnotation = false
-                        generatedAnnotationType = 'DETECT_FROM_JDK'
-                        javaTimeTypes = true
-                    }
-                    target {
-                        packageName = "${your_package_name}"
-                    }
-                }
+    configuration {
+
+        jdbc {
+            driver = dbDriver
+            url = dbUrl
+            user = dbUsername
+            password = dbPassword
+        }
+
+        generator {
+            database {
+                name = "org.jooq.meta.h2.H2Database"
+                includes = ".*"
+                inputSchema = 'SHOP_DOMAIN'
+                recordVersionFields = 'CONCURRENCY_VERSION'
+            }
+
+            generate {}
+            target {
+                packageName = "sampleshop"
             }
         }
     }
 }
 ```
 </details>
+
+Furthermore, it is important to define when the code generator should be executed.
+
+<details>
+<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle</b></summary>
+
+```groovy
+tasks.named("compileJava") {
+    dependsOn(tasks.named("jooqCodegen"))
+}
+```
+</details>
+
+If tools like Flyway or similar are used, the correct execution of the jOOQ code generator must be ensured.
+
+<details>
+<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle</b></summary>
+
+```groovy
+tasks.named("jooqCodegen") {
+    dependsOn(tasks.named("flywayMigrate"))
+    inputs.files(fileTree("src/main/resources/db/migration"))
+}
+```
+</details>
+
+Detailed information can be found in the [jOOQ Documentation](https://www.jooq.org/doc/latest/manual/code-generation/codegen-gradle/).
+
 
 The configuration for Maven is made in the pom.xml.
 
@@ -202,7 +241,7 @@ The following configurations are required specifically for database access with 
 ```DataSourceConnectionProvider```, ```DefaultConfiguration```, ```DefaultDSLContext```.
 
 #### `DataSourceConnectionProvider`
-```
+```Java
 @Bean
 public DataSourceConnectionProvider connectionProvider(DataSource dataSource) {
     return new DataSourceConnectionProvider(new TransactionAwareDataSourceProxy(dataSource));
@@ -210,7 +249,7 @@ public DataSourceConnectionProvider connectionProvider(DataSource dataSource) {
 ```
 
 #### `DefaultConfiguration`
-```
+```Java
 @Bean
 public DefaultConfiguration configuration(DataSource dataSource) {
     final var jooqConfig = new DefaultConfiguration();
@@ -224,7 +263,7 @@ public DefaultConfiguration configuration(DataSource dataSource) {
 The correct SQLDialect and enabling optimistic locking is important.
 
 #### `DefaultDSLContext`
-```
+```Java
 @Bean
 public DefaultDSLContext dslContext(DataSource dataSource) {
     return new DefaultDSLContext(configuration(dataSource));
@@ -236,7 +275,7 @@ Further configurations must be made specifically for DLC Persistence:
 #### `JooqDomainPersistenceProvider`
 The JooqDomainPersistenceProvider enables jOOQ-specific access to all domain objects.
 
-```
+```Java
 @Bean
 public JooqDomainPersistenceProvider domainPersistenceProvider(DomainObjectBuilderProvider domainObjectBuilderProvider,
                 Set<RecordMapper<?, ?, ?>> customRecordMappers) {
@@ -260,7 +299,7 @@ from outside (e.g. via a REST controller) and for new IDs to be retrieved from t
 or other ID providers for new instances.
 Only used in conjunction with ```DlcJacksonModule```, see below.
 
-```
+```Java
 @Bean
 EntityIdentityProvider identityProvider(DSLContext dslContext) {
     return new JooqEntityIdentityProvider(dslContext);
@@ -271,7 +310,7 @@ EntityIdentityProvider identityProvider(DSLContext dslContext) {
 Optional, required to publish DLC persistence events via the Spring Event Bus.
 DLC persistence events have information about changes to aggregates after writing operations in the repository.
 
-```
+```Java
 @Bean
 public SpringPersistenceEventPublisher springPersistenceEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
 return new SpringPersistenceEventPublisher(applicationEventPublisher);
@@ -292,7 +331,7 @@ The following Spring beans must be configured and provided in a ```@Configuratio
 #### `DomainObjectBuilderProvider`
 The DomainObjectBuilderProvider is required to work with inner-Builders or the Lombok-Builders (Lombok ```@Builder``` annotation).
 
-```
+```Java
 @Bean
 DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
     return new InnerClassDomainObjectBuilderProvider();
@@ -311,7 +350,7 @@ The following Spring beans must be configured and provided in a ```@Configuratio
 #### `DlcJacksonModule`
 Required for DLC-Jackson integration, i.e. for JSON de-serialization.
 
-```
+```Java
 @Bean
 DlcJacksonModule dlcModuleConfiguration(List<? extends JacksonMappingCustomizer<?>> customizers,
                                         DomainObjectBuilderProvider domainObjectBuilderProvider,
@@ -332,7 +371,7 @@ The following Spring beans must be configured and provided in a ```@Configuratio
 #### `ChannelRoutingConfiguration`
 Provides a configuration for channel routing.
 
-```
+```Java
 @Bean
 public ChannelRoutingConfiguration channelConfiguration(PlatformTransactionManager platformTransactionManager, ServiceProvider serviceProvider){
     var channel = new SpringTxInMemoryChannelFactory(platformTransactionManager, serviceProvider, true).processingChannel("default");
@@ -350,7 +389,7 @@ configuration ```beforeCommit``` or ```afterCommit```.
 #### `ServiceProvider`
 Provides a provider for all required ```ServiceKind``` objects. This is required for the event delivery defined in the route.
 
-```
+```Java
 public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds){
     return new Services(serviceKinds);
 }
@@ -367,7 +406,7 @@ The following Spring beans must be configured and provided in a ```@Configuratio
 #### `DlcOpenApiCustomizer`
 Activates the DLC/OpenAPI integration.
 
-```
+```Java
 @Bean
 public DlcOpenApiCustomizer openApiCustomizer(SpringDocConfigProperties springDocConfigProperties) {
     return new DlcOpenApiCustomizer(springDocConfigProperties);

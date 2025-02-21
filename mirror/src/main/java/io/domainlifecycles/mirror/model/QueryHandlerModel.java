@@ -28,7 +28,6 @@ package io.domainlifecycles.mirror.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
@@ -73,7 +72,7 @@ public class QueryHandlerModel extends ServiceKindModel implements QueryHandlerM
      */
     @Override
     public Optional<ReadModelMirror> getProvidedReadModel() {
-        return Optional.ofNullable((ReadModelMirror) Domain.typeMirror(providedReadModelTypeName).orElse(null));
+        return Optional.ofNullable((ReadModelMirror) domainModel.getDomainTypeMirror(providedReadModelTypeName).orElse(null));
     }
 
     /**

@@ -26,7 +26,7 @@ application's main class:
 public class ShopApplication {
 
     static {
-        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleshop"));
+        Domain.initialize(new ReflectiveDomainModelFactory("sampleshop"));
     }
 
     public static void main(String[] args) {
@@ -45,8 +45,7 @@ setting a special type resolver (`io.domainlifecycles.mirror.resolver.TypeMetaRe
 public class ShopApplication {
 
     static {
-        Domain.setGenericTypeResolver(new TypeMetaResolver());
-        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleshop"));
+        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "sampleshop"));
     }
 
     public static void main(String[] args) {

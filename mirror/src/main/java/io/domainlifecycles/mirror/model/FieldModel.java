@@ -31,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AccessLevel;
 import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
-import io.domainlifecycles.mirror.api.Domain;
+import io.domainlifecycles.mirror.api.DomainModel;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
@@ -54,6 +54,9 @@ public class FieldModel implements FieldMirror {
     protected final boolean modifiable;
     protected final boolean isStatic;
     protected final boolean hidden;
+
+    DomainModel domainModel;
+    private boolean domainModelSet = false;
 
     @JsonCreator
     public FieldModel(@JsonProperty("name") String name,
@@ -159,7 +162,7 @@ public class FieldModel implements FieldMirror {
     @JsonIgnore
     @Override
     public boolean isIdentityField() {
-        var domainTypeMirrorOptional = Domain.typeMirror(declaredByTypeName);
+        var domainTypeMirrorOptional = domainModel.getDomainTypeMirror(declaredByTypeName);
         if (domainTypeMirrorOptional.isPresent()) {
             var domainTypeMirror = domainTypeMirrorOptional.get();
             if (domainTypeMirror.getDomainType().equals(DomainType.AGGREGATE_ROOT)
@@ -212,4 +215,13 @@ public class FieldModel implements FieldMirror {
         return Objects.hash(name, type, accessLevel, declaredByTypeName, publicReadable, publicWriteable, modifiable,
             isStatic, hidden);
     }
+
+    public void setDomainModel(DomainModel domainModel) {
+        if(!domainModelSet) {
+            this.domainModel = domainModel;
+            this.domainModelSet = true;
+        }
+    }
+
+    public DomainModel innerDomainModelReference() {return this.domainModel;}
 }

@@ -2,9 +2,9 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
-    id 'dev.yumi.gradle.licenser' version "${gradleLicenserVersion}"
-    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
     id 'jacoco'
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
 }
 
 java {
@@ -16,12 +16,15 @@ dependencies {
     implementation project(":mirror")
     api project(":types")
     implementation project(":access")
-    compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
-    testImplementation "org.assertj:assertj-core:${assertJVersion}"
+
+    compileOnly libs.slf4j.api
+    testImplementation libs.assertj
+
     testImplementation project(":test-shared-impl")
     testImplementation project(":type-utils")
-    testImplementation "org.projectlombok:lombok:${lombokVersion}"
-    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    testImplementation libs.lombok
+    testAnnotationProcessor libs.lombok
 }
 
 test {

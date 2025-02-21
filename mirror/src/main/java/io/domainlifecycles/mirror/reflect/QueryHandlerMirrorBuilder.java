@@ -31,6 +31,7 @@ import io.domainlifecycles.domain.types.ReadModel;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.model.QueryHandlerModel;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,11 +42,20 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public class QueryHandlerMirrorBuilder extends ServiceKindMirrorBuilder {
+public class QueryHandlerMirrorBuilder extends ServiceKindMirrorBuilder<QueryHandlerMirror> {
     private final Class<? extends QueryHandler<?>> queryHandlerClass;
 
-    public QueryHandlerMirrorBuilder(Class<? extends QueryHandler<?>> queryHandlerClass) {
-        super(queryHandlerClass);
+    /**
+     * Constructor
+     *
+     * @param queryHandlerClass class being mirrored
+     * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     */
+    public QueryHandlerMirrorBuilder(
+        Class<? extends QueryHandler<?>> queryHandlerClass,
+        GenericTypeResolver genericTypeResolver
+    ) {
+        super(queryHandlerClass, genericTypeResolver);
         this.queryHandlerClass = queryHandlerClass;
     }
 
@@ -54,6 +64,7 @@ public class QueryHandlerMirrorBuilder extends ServiceKindMirrorBuilder {
      *
      * @return new instance of RepositoryMirror
      */
+    @Override
     public QueryHandlerMirror build() {
         return new QueryHandlerModel(
             getTypeName(),

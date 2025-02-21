@@ -26,6 +26,7 @@
 
 package io.domainlifecycles.mirror.model;
 
+import io.domainlifecycles.mirror.api.DomainModel;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
@@ -42,6 +43,9 @@ import java.util.Objects;
  * @author Mario Herb
  */
 public abstract class DomainTypeModel implements DomainTypeMirror {
+
+    DomainModel domainModel;
+    private boolean domainModelSet = false;
 
     protected final String typeName;
     protected final List<FieldMirror> allFields;
@@ -190,4 +194,13 @@ public abstract class DomainTypeModel implements DomainTypeMirror {
         return Objects.hash(typeName, allFields, methods, isAbstract, inheritanceHierarchyTypeNames,
             allInterfaceTypeNames);
     }
+
+    public void setDomainModel(DomainModel domainModel) {
+        if(!domainModelSet) {
+            this.domainModel = domainModel;
+            this.domainModelSet = true;
+        }
+    }
+
+    public DomainModel innerDomainModelReference() {return this.domainModel;}
 }

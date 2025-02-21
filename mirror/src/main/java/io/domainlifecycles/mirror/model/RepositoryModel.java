@@ -30,7 +30,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
-import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
@@ -74,7 +73,7 @@ public class RepositoryModel extends ServiceKindModel implements RepositoryMirro
     @JsonIgnore
     @Override
     public Optional<AggregateRootMirror> getManagedAggregate() {
-        return Optional.ofNullable((AggregateRootMirror) Domain.typeMirror(managedAggregateTypeName).orElse(null));
+        return Optional.ofNullable((AggregateRootMirror) domainModel.getDomainTypeMirror(managedAggregateTypeName).orElse(null));
     }
 
     /**

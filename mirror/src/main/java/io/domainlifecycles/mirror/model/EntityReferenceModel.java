@@ -31,7 +31,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AccessLevel;
 import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
-import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.EntityReferenceMirror;
 import io.domainlifecycles.mirror.exception.MirrorException;
@@ -64,7 +63,7 @@ public class EntityReferenceModel extends FieldModel implements EntityReferenceM
     @JsonIgnore
     @Override
     public EntityMirror getEntity() {
-        return Domain.typeMirror(getType().getTypeName())
+        return domainModel.getDomainTypeMirror(getType().getTypeName())
             .map(e -> (EntityMirror) e)
             .orElseThrow(() -> MirrorException.fail("EntityMirror not found for '%s'", getType().getTypeName()));
     }

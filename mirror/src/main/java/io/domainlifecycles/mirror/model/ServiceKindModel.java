@@ -29,7 +29,6 @@ package io.domainlifecycles.mirror.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
-import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
@@ -144,33 +143,33 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
     }
 
     private ServiceKindMirror mapToServiceKindMirror(FieldMirror fieldMirror) {
-        return (ServiceKindMirror) Domain.typeMirror(fieldMirror.getType().getTypeName())
+        return (ServiceKindMirror) domainModel.getDomainTypeMirror(fieldMirror.getType().getTypeName())
             .orElseThrow(() -> MirrorException.fail(String.format("No ServiceKindMirror found for FieldMirror with type name '%s'.", fieldMirror.getType().getTypeName())));
     }
 
     private RepositoryMirror mapToRepositoryMirror(FieldMirror fieldMirror) {
-        return (RepositoryMirror) Domain.typeMirror(fieldMirror.getType().getTypeName())
+        return (RepositoryMirror) domainModel.getDomainTypeMirror(fieldMirror.getType().getTypeName())
             .orElseThrow(() -> MirrorException.fail(String.format("No RepositoryMirror found for FieldMirror with type name '%s'.", fieldMirror.getType().getTypeName())));
     }
 
     private DomainServiceMirror mapToDomainServiceMirror(FieldMirror fieldMirror) {
-        return (DomainServiceMirror) Domain.typeMirror(fieldMirror.getType().getTypeName())
+        return (DomainServiceMirror) domainModel.getDomainTypeMirror(fieldMirror.getType().getTypeName())
             .orElseThrow(() -> MirrorException.fail(String.format("No DomainServiceMirror found for FieldMirror with type name '%s'.", fieldMirror.getType().getTypeName())));
     }
 
     private OutboundServiceMirror mapToOutboundServiceMirror(FieldMirror fieldMirror) {
-        return (OutboundServiceMirror) Domain.typeMirror(fieldMirror.getType().getTypeName())
+        return (OutboundServiceMirror) domainModel.getDomainTypeMirror(fieldMirror.getType().getTypeName())
             .orElseThrow(() -> MirrorException.fail(String.format("No OutboundServiceMirror found for FieldMirror with type name '%s'.", fieldMirror.getType().getTypeName())));
 
     }
 
     private QueryHandlerMirror mapToQueryHandlerMirror(FieldMirror fieldMirror) {
-        return (QueryHandlerMirror) Domain.typeMirror(fieldMirror.getType().getTypeName())
+        return (QueryHandlerMirror) domainModel.getDomainTypeMirror(fieldMirror.getType().getTypeName())
             .orElseThrow(() -> MirrorException.fail(String.format("No QueryHandlerMirror found for FieldMirror with type name '%s'.", fieldMirror.getType().getTypeName())));
     }
 
     private ApplicationServiceMirror mapToApplicationServiceMirror(FieldMirror fieldMirror) {
-        return (ApplicationServiceMirror) Domain.typeMirror(fieldMirror.getType().getTypeName())
+        return (ApplicationServiceMirror) domainModel.getDomainTypeMirror(fieldMirror.getType().getTypeName())
             .orElseThrow(() -> MirrorException.fail(String.format("No ApplicationServiceMirror found for FieldMirror with type name '%s'.", fieldMirror.getType().getTypeName())));
     }
 }

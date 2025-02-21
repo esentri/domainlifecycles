@@ -66,7 +66,7 @@ public class JacksonTest {
     
     @BeforeAll
     public static void init() {
-        ReflectiveDomainMirrorFactory factory = new ReflectiveDomainMirrorFactory("tests");
+        ReflectiveDomainModelFactory factory = new ReflectiveDomainModelFactory("tests");
         Domain.initialize(factory);
     }
 

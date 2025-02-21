@@ -32,7 +32,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.AggregateRootReferenceMirror;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
-import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
@@ -125,8 +124,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<AggregateRootMirror> getPublishingAggregates() {
-        return Domain
-            .getInitializedDomain()
+        return domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -142,8 +140,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<DomainServiceMirror> getPublishingDomainServices() {
-        return Domain
-            .getInitializedDomain()
+        return domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -159,8 +156,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<RepositoryMirror> getPublishingRepositories() {
-        return Domain
-            .getInitializedDomain()
+        return domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -176,8 +172,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<AggregateRootMirror> getListeningAggregates() {
-        return Domain
-            .getInitializedDomain()
+        return domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -193,8 +188,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<DomainServiceMirror> getListeningDomainServices() {
-        return Domain
-            .getInitializedDomain()
+        return domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -210,8 +204,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<RepositoryMirror> getListeningRepositories() {
-        return Domain
-            .getInitializedDomain()
+        return domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -227,8 +220,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<ApplicationServiceMirror> getListeningApplicationServices() {
-        return Domain
-            .getInitializedDomain()
+        return domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -244,8 +236,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<OutboundServiceMirror> getListeningOutboundServices() {
-        return Domain
-            .getInitializedDomain()
+        return domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -261,8 +252,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<QueryHandlerMirror> getListeningQueryHandlers() {
-        return Domain
-            .getInitializedDomain()
+        return domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -278,8 +268,7 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<ServiceKindMirror> getListeningServiceKinds() {
-        return Domain
-            .getInitializedDomain()
+        return domainModel
             .allTypeMirrors()
             .values()
             .stream()

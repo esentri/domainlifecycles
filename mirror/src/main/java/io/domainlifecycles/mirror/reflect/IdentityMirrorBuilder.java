@@ -29,6 +29,7 @@ package io.domainlifecycles.mirror.reflect;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.mirror.api.IdentityMirror;
 import io.domainlifecycles.mirror.model.IdentityModel;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 import java.util.Optional;
 
@@ -37,11 +38,17 @@ import java.util.Optional;
  *
  * @author Mario Herb
  */
-public class IdentityMirrorBuilder extends DomainTypeMirrorBuilder {
+public class IdentityMirrorBuilder extends DomainTypeMirrorBuilder<IdentityMirror> {
     private final Class<? extends Identity<?>> identityClass;
 
-    public IdentityMirrorBuilder(Class<? extends Identity<?>> identityClass) {
-        super(identityClass);
+    /**
+     * Constructor
+     *
+     * @param identityClass class being mirrored
+     * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     */
+    public IdentityMirrorBuilder(Class<? extends Identity<?>> identityClass, GenericTypeResolver genericTypeResolver) {
+        super(identityClass, genericTypeResolver);
         this.identityClass = identityClass;
     }
 
@@ -50,6 +57,7 @@ public class IdentityMirrorBuilder extends DomainTypeMirrorBuilder {
      *
      * @return new instance of IdentityMirror
      */
+    @Override
     public IdentityMirror build() {
         return new IdentityModel(
             getTypeName(),

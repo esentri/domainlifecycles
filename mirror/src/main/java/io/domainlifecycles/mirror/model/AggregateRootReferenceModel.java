@@ -33,7 +33,6 @@ import io.domainlifecycles.mirror.api.AccessLevel;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.AggregateRootReferenceMirror;
 import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
-import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.exception.MirrorException;
 
 /**
@@ -63,7 +62,7 @@ public class AggregateRootReferenceModel extends FieldModel implements Aggregate
     @JsonIgnore
     @Override
     public AggregateRootMirror getAggregateRoot() {
-        return Domain.typeMirror(type.getTypeName())
+        return domainModel.getDomainTypeMirror(type.getTypeName())
             .map(e -> (AggregateRootMirror) e)
             .orElseThrow(() -> MirrorException.fail("AggregateRootMirror not found for '%s'", getType().getTypeName()));
     }

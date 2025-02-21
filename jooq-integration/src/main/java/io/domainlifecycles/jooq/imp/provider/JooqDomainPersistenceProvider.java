@@ -91,7 +91,7 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
             }
         }
 
-        var allEntityMirrors = Domain.getInitializedDomain()
+        var allEntityMirrors = Domain.getDomainModel()
             .allTypeMirrors()
             .values()
             .stream()
@@ -138,7 +138,7 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
             .stream()
             .map(em -> {
                 List<ValueObjectRecordMirror<UpdatableRecord<?>>> valueObjectRecordMirrors = new ArrayList<>();
-                var v = new ContextDomainObjectVisitor(em.getTypeName(), true) {
+                var v = new ContextDomainObjectVisitor(em, true) {
                     @Override
                     public boolean visitEnterEntity(EntityMirror entityMirror) {
                         var context = getVisitorContext();

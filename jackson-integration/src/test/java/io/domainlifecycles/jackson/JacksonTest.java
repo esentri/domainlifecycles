@@ -9,7 +9,7 @@ import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvi
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
@@ -79,7 +79,7 @@ public class JacksonTest {
 
     public JacksonTest() {
         Locale.setDefault(Locale.GERMAN);
-        Domain.initialize(new ReflectiveDomainMirrorFactory("tests"));
+        Domain.initialize(new ReflectiveDomainModelFactory("tests"));
         this.objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 

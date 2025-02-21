@@ -31,7 +31,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.AggregateRootReferenceMirror;
-import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
@@ -134,10 +133,10 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     @Override
     public Optional<AggregateRootMirror> getAggregateTarget() {
         var identity = aggregateTargetIdentityTypeName
-            .map(n -> Domain.typeMirror(n).orElseThrow(
+            .map(n -> domainModel.getDomainTypeMirror(n).orElseThrow(
                 () -> MirrorException.fail("AggregateRootMirror not found for '%s'", n)))
             .map(m -> (IdentityMirror) m);
-        return identity.flatMap(identityMirror -> Domain.getInitializedDomain()
+        return identity.flatMap(identityMirror -> domainModel
             .allTypeMirrors()
             .values()
             .stream()
@@ -155,7 +154,7 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     @Override
     public Optional<DomainServiceMirror> getDomainServiceTarget() {
         return domainServiceTargetTypeName
-            .map(n -> Domain.typeMirror(n).orElseThrow(
+            .map(n -> domainModel.getDomainTypeMirror(n).orElseThrow(
                 () -> MirrorException.fail("DomainServiceMirror not found for '%s'", n)))
             .map(m -> (DomainServiceMirror) m);
     }

@@ -29,7 +29,7 @@ import io.domainlifecycles.mirror.api.ParamMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.ValueReferenceMirror;
 import io.domainlifecycles.mirror.model.AssertionType;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -86,11 +86,11 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-public class ReflectiveDomainMirrorFactoryTest {
+public class ReflectiveDomainModelFactoryTest {
 
     @BeforeAll
     public static void init() {
-        ReflectiveDomainMirrorFactory factory = new ReflectiveDomainMirrorFactory("tests");
+        ReflectiveDomainModelFactory factory = new ReflectiveDomainModelFactory("tests");
         Domain.initialize(factory);
     }
 

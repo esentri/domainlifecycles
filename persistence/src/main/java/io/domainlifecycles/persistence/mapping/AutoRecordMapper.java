@@ -35,6 +35,7 @@ import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.domain.types.ValueObject;
 import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.mirror.api.Domain;
+import io.domainlifecycles.mirror.api.DomainObjectMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.EntityMirror;
@@ -313,7 +314,8 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
 
     private BiMap<ValuePath, RecordProperty> initializeMappedValuePaths() {
         var biMap = new BiMap<ValuePath, RecordProperty>();
-        var visitor = new ContextDomainObjectVisitor(typeName, false) {
+        var om = (DomainObjectMirror)Domain.typeMirror(typeName).orElseThrow(()-> DLCPersistenceException.fail("DomainObjectMirror not found for %s!", typeName));
+        var visitor = new ContextDomainObjectVisitor(om, false) {
             @Override
             public void visitBasic(FieldMirror basicFieldMirror) {
                 if (isFieldMapped()) {

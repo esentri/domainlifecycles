@@ -2,8 +2,8 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
-    id 'org.quiltmc.gradle.licenser' version "${quiltmcLicenserVersion}"
-    id 'com.jaredsburrows.license' version "${jaredsburrowsLicenseVersion}"
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
 }
 
 java {
@@ -17,11 +17,11 @@ dependencies {
     api project(":types")
     api project(":service-registry")
     api project(":domain-events-spring-tx")
-    api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    api libs.jackson.databind
 
-    compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
-    compileOnly "org.springframework:spring-jdbc:${springJdbcVersion}"
-    compileOnly "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+    compileOnly libs.slf4j.api
+    compileOnly libs.spring.jdbc
+    compileOnly libs.jackson.core
 
 
 }

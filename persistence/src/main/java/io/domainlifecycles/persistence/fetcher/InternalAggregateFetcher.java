@@ -34,6 +34,7 @@ import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.mirror.api.AggregateRootReferenceMirror;
 import io.domainlifecycles.mirror.api.Domain;
+import io.domainlifecycles.mirror.api.DomainObjectMirror;
 import io.domainlifecycles.mirror.api.EntityReferenceMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.ValueReferenceMirror;
@@ -110,7 +111,9 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
         }
 
         var correctPropertyCoordinates = new AtomicBoolean(false);
-        var visitor = new ContextDomainObjectVisitor(containingEntityClass.getName()) {
+        var em = (DomainObjectMirror) Domain.typeMirror(containingEntityClass.getName()).orElseThrow(() -> DLCPersistenceException.fail("EntityMirror not found for %s!", containingEntityClass.getName()));
+
+        var visitor = new ContextDomainObjectVisitor(em) {
 
             @Override
             public void visitAggregateRootReference(AggregateRootReferenceMirror aggregateRootReferenceMirror) {

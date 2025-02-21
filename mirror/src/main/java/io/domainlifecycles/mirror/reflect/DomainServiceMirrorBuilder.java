@@ -29,6 +29,7 @@ package io.domainlifecycles.mirror.reflect;
 import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.model.DomainServiceModel;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,12 +40,21 @@ import java.util.stream.Collectors;
  *
  * @author Mario Herb
  */
-public class DomainServiceMirrorBuilder extends ServiceKindMirrorBuilder {
+public class DomainServiceMirrorBuilder extends ServiceKindMirrorBuilder<DomainServiceMirror> {
 
     private final Class<? extends DomainService> domainServiceClass;
 
-    public DomainServiceMirrorBuilder(Class<? extends DomainService> domainServiceClass) {
-        super(domainServiceClass);
+    /**
+     * Constructor
+     *
+     * @param domainServiceClass class being mirrored
+     * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     */
+    public DomainServiceMirrorBuilder(
+        Class<? extends DomainService> domainServiceClass,
+        GenericTypeResolver genericTypeResolver
+    ) {
+        super(domainServiceClass, genericTypeResolver);
         this.domainServiceClass = domainServiceClass;
     }
 
@@ -53,6 +63,7 @@ public class DomainServiceMirrorBuilder extends ServiceKindMirrorBuilder {
      *
      * @return new instance of DomainServiceMirror
      */
+    @Override
     public DomainServiceMirror build() {
         return new DomainServiceModel(
                 getTypeName(),

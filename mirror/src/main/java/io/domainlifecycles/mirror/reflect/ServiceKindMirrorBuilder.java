@@ -29,19 +29,24 @@ package io.domainlifecycles.mirror.reflect;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.mirror.model.ServiceKindModel;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 /**
  * Builder to create {@link ServiceKindMirrorBuilder}
  *
  * @author leonvoellinger
  */
-public class ServiceKindMirrorBuilder extends DomainTypeMirrorBuilder {
+public class ServiceKindMirrorBuilder<T extends ServiceKindMirror> extends DomainTypeMirrorBuilder<T> {
 
-    private final Class<? extends ServiceKind> serviceKindClass;
 
-    public ServiceKindMirrorBuilder(Class<? extends ServiceKind> serviceKindClass) {
-        super(serviceKindClass);
-        this.serviceKindClass = serviceKindClass;
+    /**
+     * Constructor
+     *
+     * @param serviceKindClass class being mirrored
+     * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     */
+    public ServiceKindMirrorBuilder(Class<? extends ServiceKind> serviceKindClass, GenericTypeResolver genericTypeResolver) {
+        super(serviceKindClass, genericTypeResolver);
     }
 
     /**
@@ -49,8 +54,9 @@ public class ServiceKindMirrorBuilder extends DomainTypeMirrorBuilder {
      *
      * @return new instance of ServiceKindMirror
      */
-    public ServiceKindMirror build() {
-        return new ServiceKindModel(
+    @Override
+    public T build() {
+        return (T) new ServiceKindModel(
             getTypeName(),
             isAbstract(),
             buildFields(),

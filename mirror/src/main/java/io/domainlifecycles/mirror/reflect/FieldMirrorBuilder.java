@@ -27,13 +27,13 @@
 package io.domainlifecycles.mirror.reflect;
 
 import io.domainlifecycles.mirror.api.AccessLevel;
-import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.model.AggregateRootReferenceModel;
 import io.domainlifecycles.mirror.model.EntityReferenceModel;
 import io.domainlifecycles.mirror.model.FieldModel;
 import io.domainlifecycles.mirror.model.ValueReferenceModel;
+import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import io.domainlifecycles.reflect.JavaReflect;
 
 import java.lang.reflect.Field;
@@ -49,18 +49,28 @@ import java.util.Objects;
 public class FieldMirrorBuilder {
     private final Field field;
 
+    private final GenericTypeResolver genericTypeResolver;
+
     private final Class<?> topLevelClass;
     private final AssertedContainableTypeMirrorBuilder typeMirrorBuilder;
     private final boolean hidden;
 
-    public FieldMirrorBuilder(Field field, Class<?> topLevelClass, boolean hidden) {
+    /**
+     * Constructor
+     * @param field field being mirrored
+     * @param topLevelClass most specific class that contains this field
+     * @param hidden boolean flag stating the fact, that this field is hiding by other field definitions
+     * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     */
+    public FieldMirrorBuilder(Field field, Class<?> topLevelClass, boolean hidden, GenericTypeResolver genericTypeResolver) {
         this.field = field;
         this.topLevelClass = Objects.requireNonNull(topLevelClass, "The corresponding top level class cannot be null!");
+        this.genericTypeResolver = genericTypeResolver;
         this.typeMirrorBuilder = new AssertedContainableTypeMirrorBuilder(
             field.getType(),
             field.getAnnotatedType(),
             field.getGenericType(),
-            Domain.getGenericTypeResolver().resolveFieldType(field, topLevelClass)
+            genericTypeResolver.resolveFieldType(field, topLevelClass)
         );
         this.hidden = hidden;
     }

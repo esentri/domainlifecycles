@@ -29,7 +29,6 @@ package io.domainlifecycles.mirror.visitor;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.AggregateRootReferenceMirror;
-import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainObjectMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
@@ -38,7 +37,6 @@ import io.domainlifecycles.mirror.api.EntityReferenceMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.ValueMirror;
 import io.domainlifecycles.mirror.api.ValueReferenceMirror;
-import io.domainlifecycles.mirror.exception.MirrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,18 +55,6 @@ public abstract class ContextDomainObjectVisitor implements DomainObjectVisitor 
     private boolean ignoreHiddenFields = true;
 
     /**
-     * Creates a new visitor instance by passing a starting domain object type name (full qualified type name)
-     * and the visitTypesOnlyOnce switch.
-     *
-     * @param startingTypeName   full qualified type name of domain type to start depth-first visit
-     * @param visitTypesOnlyOnce prevents endless loops, by assuring that every type is visited only once
-     */
-    public ContextDomainObjectVisitor(String startingTypeName, boolean visitTypesOnlyOnce) {
-        this(startingTypeName);
-        this.visitTypesOnlyOnce = visitTypesOnlyOnce;
-    }
-
-    /**
      * Creates a new visitor instance by passing a starting domain object mirror.
      *
      * @param domainTypeMirror   mirror for domain object
@@ -78,18 +64,6 @@ public abstract class ContextDomainObjectVisitor implements DomainObjectVisitor 
     public ContextDomainObjectVisitor(DomainObjectMirror domainTypeMirror, boolean visitTypesOnlyOnce) {
         this(domainTypeMirror);
         this.visitTypesOnlyOnce = visitTypesOnlyOnce;
-    }
-
-    /**
-     * Creates a new visitor instance by passing a starting domain object type name (full qualified type name).
-     *
-     * @param startingTypeName full qualified type name of domain type to start depth-first visit
-     */
-    public ContextDomainObjectVisitor(String startingTypeName) {
-        this.visitorContext = new VisitorContext(startingTypeName);
-        startingMirror = (DomainObjectMirror) Domain.typeMirror(visitorContext.startingTypeName)
-            .orElseThrow(() -> MirrorException.fail("DomainTypeMirror `%s` not found!",
-                visitorContext.startingTypeName));
     }
 
     /**
