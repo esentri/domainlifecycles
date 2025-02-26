@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -44,7 +44,12 @@ import io.domainlifecycles.domain.types.Repository;
  * @param domainEvent                domain event
  * @author Mario Herb
  */
-public record AggregateExecutionContext<I extends Identity<?>, A extends AggregateRoot<I>>(Repository<I,A> aggregateRepository, String aggregateHandlerMethodName, AggregateDomainEvent<I,A> domainEvent) implements ExecutionContext {
+public record AggregateExecutionContext<I extends Identity<?>, A extends AggregateRoot<I>>(
+    Repository<I,A> aggregateRepository,
+    String aggregateHandlerMethodName,
+    String aggregateRepositoryTypeName,
+    AggregateDomainEvent<I,A> domainEvent
+) implements ExecutionContext {
 
     /**
      * Returns the aggregate repository instance associated with the execution context of a domain event handler.
@@ -54,6 +59,17 @@ public record AggregateExecutionContext<I extends Identity<?>, A extends Aggrega
     @Override
     public Object handler() {
         return aggregateRepository;
+    }
+
+    /**
+     * Returns the full qualified type name  of the
+     * aggregate repository instance associated with the execution context of a domain event handler.
+     *
+     * @return the aggregate repository instance
+     */
+    @Override
+    public String handlerTypeName() {
+        return aggregateRepositoryTypeName;
     }
 
     /**

@@ -49,6 +49,7 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
+@Deprecated
 public class DirectOutboxPoller extends AbstractOutboxPoller {
 
     private final DomainEventConsumer domainEventConsumer;

@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -64,4 +64,14 @@ public interface DomainEventConsumer {
      * @return The list of execution results
      */
     List<ExecutionResult> consume(DomainEvent domainEvent);
+
+    /**
+     * Handles a received domain event and returns the execution result for the specified
+     * target execution context.
+     *
+     * @param domainEvent The domain event to be handled
+     * @param executionContext The target context, where the event should be processed
+     * @return The execution result
+     */
+    ExecutionResult consume(DomainEvent domainEvent, TargetExecutionContext executionContext);
 }

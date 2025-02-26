@@ -100,9 +100,10 @@ public class GruelboxIntegrationTests {
         //then
         await()
             .atMost(10, SECONDS)
-            .untilAsserted(()->
-                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
-            );
+            .untilAsserted(()-> {
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(5);
+                assertThat(outboxListener.blockedEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+            });
 
         assertThat(aDomainService.received).contains(evt);
         assertThat(aRepository.received).contains(evt);
@@ -123,9 +124,10 @@ public class GruelboxIntegrationTests {
         //then
         await()
             .atMost(10, SECONDS)
-            .untilAsserted(()->
-                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
-            );
+            .untilAsserted(()-> {
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+                assertThat(outboxListener.blockedEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+            });
 
 
         assertThat(aDomainService.received).doesNotContain(evt);
@@ -147,8 +149,10 @@ public class GruelboxIntegrationTests {
         await()
             .atMost(10, SECONDS)
             .pollDelay(9, SECONDS)
-            .untilAsserted(()->
-                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0)
+            .untilAsserted(()-> {
+                    assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+                    assertThat(outboxListener.blockedEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+                }
             );
         //then
         assertThat(aDomainService.received).doesNotContain(evt);
@@ -169,9 +173,10 @@ public class GruelboxIntegrationTests {
         //then
         await()
             .atMost(10, SECONDS)
-            .untilAsserted(()->
-                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
-            );
+            .untilAsserted(()-> {
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1);
+                assertThat(outboxListener.blockedEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+            });
 
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(aDomainService.received).doesNotContain(evt);
@@ -194,8 +199,10 @@ public class GruelboxIntegrationTests {
         await()
             .atMost(10, SECONDS)
             .pollDelay(9, SECONDS)
-            .untilAsserted(()->
-                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0)
+            .untilAsserted(()-> {
+                    assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+                    assertThat(outboxListener.blockedEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+                }
             );
 
         assertThat(aRepository.received).doesNotContain(evt);
@@ -218,8 +225,10 @@ public class GruelboxIntegrationTests {
         //then
         await()
             .atMost(10, SECONDS)
-            .untilAsserted(()->
-                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
+            .untilAsserted(()-> {
+                    assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+                    assertThat(outboxListener.blockedEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1);
+                }
             );
 
         assertThat(aRepository.received).doesNotContain(evt);
@@ -242,8 +251,10 @@ public class GruelboxIntegrationTests {
         //then
         await()
             .atMost(10, SECONDS)
-            .untilAsserted(()->
-                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
+            .untilAsserted(()->{
+                    assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(4);
+                    assertThat(outboxListener.blockedEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1);
+                }
             );
 
         assertThat(aRepository.received).contains(evt);

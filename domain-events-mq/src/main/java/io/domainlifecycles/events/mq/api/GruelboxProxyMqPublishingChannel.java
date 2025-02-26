@@ -24,43 +24,37 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.events.consume.execution.detector;
+package io.domainlifecycles.events.mq.api;
 
-import io.domainlifecycles.domain.types.DomainEvent;
+import io.domainlifecycles.events.api.CloseableChannel;
+import io.domainlifecycles.events.api.PublishingOnlyChannel;
 
 /**
- * The {@code ExecutionContext} interface represents the execution context for a domain event handler within a service or an aggregate.
- * Its implementations provide information about the handler object, handler method name, and the domain event being dispatched.
+ * A specific type of PublishingChannel that represents a channel for publishing domain events using a message broker
+ * and proxying the sending process with an outbox to avoid ghost events or event loss.
  *
  * @author Mario Herb
  */
-public interface ExecutionContext {
+public class GruelboxProxyMqPublishingChannel extends PublishingOnlyChannel implements CloseableChannel {
+
+    private final MqPublishingConfiguration mqPublishingConfiguration;
 
     /**
-     * Retrieves the Domain Event associated with the execution context.
+     * Creates a new GruelboxProxyMqPublishingChannel.
      *
-     * @return The domain event object.
+     * @param name name of the channel
+     * @param mqPublishingConfiguration publishing configuration
      */
-    DomainEvent domainEvent();
+    public GruelboxProxyMqPublishingChannel(String name, MqPublishingConfiguration mqPublishingConfiguration) {
+        super(name, mqPublishingConfiguration);
+        this.mqPublishingConfiguration = mqPublishingConfiguration;
+    }
 
     /**
-     * This method returns the Domain Event handler object.
-     *
-     * @return The handler object.
+     * {@inheritDoc}
      */
-    Object handler();
-
-    /**
-     * This method returns the mirrored handler type name.
-     *
-     * @return The handler object.
-     */
-    String handlerTypeName();
-
-    /**
-     * Retrieves the handler method name associated with the execution context.
-     *
-     * @return The handler method name.
-     */
-    String handlerMethodName();
+    @Override
+    public void close() {
+        mqPublishingConfiguration.close();
+    }
 }

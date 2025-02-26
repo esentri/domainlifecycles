@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,22 +24,25 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.events.mq.api;
+package io.domainlifecycles.events.consume;
 
-import io.domainlifecycles.events.api.Channel;
+import java.util.Objects;
 
 /**
- * A CloseableChannel is a sub-interface of Channel representing a channel that can be closed.
- * Depending on the messaging infrastructure used, the connections for example to a message broker
- * must be closed, when the channel is shut down. This class enables explicit shut down management.
+ * The TargetExecutionContext is needed in cases where the consumer service should be known before
+ * domain events are processed (Gruelbox).
  *
  * @author Mario Herb
  */
-public interface CloseableChannel extends Channel {
+public record TargetExecutionContext(String handlerTypeName, String handlerMethodName) {
 
     /**
-     * Closes the channel, releasing any resources associated with it.
-     * It is important to call this method when the channel is no longer needed to ensure proper cleanup.
+     * Constructor
+     * @param handlerTypeName of the target event handler
+     * @param handlerMethodName of the target event handler
      */
-    void close();
+    public TargetExecutionContext(String handlerTypeName, String handlerMethodName) {
+        this.handlerTypeName = Objects.requireNonNull(handlerTypeName, "A handler type name is required!");
+        this.handlerMethodName = Objects.requireNonNull(handlerMethodName, "A handler method name is required!");
+    }
 }

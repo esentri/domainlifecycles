@@ -41,7 +41,7 @@ import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.events.gruelbox.api.DomainEventsInstantiator;
 import io.domainlifecycles.events.jakarta.jms.api.GruelboxProxyJakartaJmsChannelFactory;
-import io.domainlifecycles.events.mq.api.AbstractMqProcessingChannel;
+import io.domainlifecycles.events.mq.api.MqProcessingChannel;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
 import jakarta.jms.ConnectionFactory;
@@ -106,7 +106,7 @@ public class JakartaJmsGruelboxConfig {
     }
 
     @Bean(destroyMethod = "close")
-    public AbstractMqProcessingChannel channel(GruelboxProxyJakartaJmsChannelFactory factory){
+    public MqProcessingChannel channel(GruelboxProxyJakartaJmsChannelFactory factory){
         return factory.processingChannel("gruelboxJmsChannel");
     }
 

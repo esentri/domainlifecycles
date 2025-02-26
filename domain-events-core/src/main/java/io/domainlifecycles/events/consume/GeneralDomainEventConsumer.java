@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.events.consume.execution.detector.ExecutionContextDetector;
 import io.domainlifecycles.events.consume.execution.processor.ExecutionContextProcessor;
 import io.domainlifecycles.events.consume.execution.processor.ExecutionResult;
+import io.domainlifecycles.events.exception.DLCEventsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,5 +84,32 @@ public final class GeneralDomainEventConsumer implements DomainEventConsumer {
             return Collections.emptyList();
         }
         return executionContextProcessor.process(executionContexts);
+    }
+
+    @Override
+    public ExecutionResult consume(DomainEvent domainEvent, TargetExecutionContext targetExecutionContext) {
+        log.debug("Received {}", domainEvent);
+        var executionContexts = executionContextDetector.detectExecutionContexts(domainEvent);
+        if (executionContexts == null || executionContexts.isEmpty()) {
+            log.debug("No execution contexts detected for {}", domainEvent);
+            return null;
+        }
+        var specifiedContext = executionContexts.stream().filter(executionContext ->
+            targetExecutionContext.handlerMethodName().equals(executionContext.handlerMethodName())
+            && targetExecutionContext.handlerTypeName().equals(executionContext.handlerTypeName())
+        ).findFirst();
+        if(specifiedContext.isPresent()) {
+            var results = executionContextProcessor.process(List.of(specifiedContext.get()));
+            if(results.size() != 1) {
+                var msg = String.format("ExecutionResults do not match specified target execution context %s. Target context:%s", domainEvent, targetExecutionContext);
+                log.error(msg);
+                throw DLCEventsException.fail(msg);
+            }
+            return results.get(0);
+        }else{
+            var msg = String.format("No execution context detectable for specified target execution context %s. Target context: %s", domainEvent, targetExecutionContext);
+            log.error(msg);
+            throw DLCEventsException.fail(msg);
+        }
     }
 }

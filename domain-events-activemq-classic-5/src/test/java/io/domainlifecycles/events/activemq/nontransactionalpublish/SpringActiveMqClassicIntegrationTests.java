@@ -38,7 +38,7 @@ import io.domainlifecycles.events.activemq.domain.CounterDomainEvent;
 import io.domainlifecycles.events.activemq.domain.TransactionalCounterService;
 import io.domainlifecycles.events.activemq.domain.UnreceivedDomainEvent;
 import io.domainlifecycles.events.api.DomainEvents;
-import io.domainlifecycles.events.mq.api.AbstractMqProcessingChannel;
+import io.domainlifecycles.events.mq.api.MqProcessingChannel;
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.DeliveryMode;
@@ -89,7 +89,7 @@ public class SpringActiveMqClassicIntegrationTests {
     private TransactionalCounterService transactionalCounterService;
 
     @Autowired
-    private AbstractMqProcessingChannel activeMqChannel;
+    private MqProcessingChannel activeMqChannel;
 
     @Test
     public void testEvents() throws JMSException {

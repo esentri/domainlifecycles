@@ -51,4 +51,5 @@ class GruelboxBackgroundProcessor {
             log.error("Error flushing transaction outbox. Pausing", t);
         }
     }
+
 }

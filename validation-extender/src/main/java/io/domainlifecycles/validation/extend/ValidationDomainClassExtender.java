@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -119,6 +119,14 @@ public class ValidationDomainClassExtender {
      * ByteBuddy advice to validate all constraints on the parameters passed to the method before execution.
      */
     public static class BeanValidationParameterAdvice {
+
+        /**
+         * Applied on method enter
+         *
+         * @param thisObject object extended
+         * @param method method extended
+         * @param args args
+         */
         @Advice.OnMethodEnter
         public static void before(@Advice.This Object thisObject,
                                   @Advice.Origin Method method,
@@ -131,6 +139,13 @@ public class ValidationDomainClassExtender {
      * ByteBuddy advice to validate all constraints on the return value of the method after execution.
      */
     public static class BeanValidationReturnValueAdvice {
+
+        /**
+         * Applied on method exit
+         * @param thisObject object extended
+         * @param method method extended
+         * @param returnValue return value of method
+         */
         @Advice.OnMethodExit
         public static void after(@Advice.This Object thisObject,
                                  @Advice.Origin Method method,

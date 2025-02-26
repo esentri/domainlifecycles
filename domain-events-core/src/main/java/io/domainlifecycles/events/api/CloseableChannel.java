@@ -24,35 +24,20 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.events.mq.api;
-
-import io.domainlifecycles.events.api.PublishingOnlyChannel;
+package io.domainlifecycles.events.api;
 
 /**
- * Represents a channel for publishing domain events via a dedicated message broker infrastructure.
+ * A CloseableChannel is a sub-interface of Channel representing a channel that can be closed.
+ * Depending on the messaging infrastructure or other resources used, the connections for example to a message broker
+ * must be closed, when the channel is shut down. This class enables explicit shut down management.
  *
  * @author Mario Herb
  */
-public class AbstractMqPublishingChannel extends PublishingOnlyChannel implements CloseableChannel {
-
-    private final AbstractMqPublishingConfiguration abstractMqPublishingConfiguration;
+public interface CloseableChannel extends Channel {
 
     /**
-     * Constructs an AbstractMqPublishingChannel with the provided name and AbstractMqPublishingConfiguration.
-     *
-     * @param name The name of the channel
-     * @param abstractMqPublishingConfiguration The AbstractMqPublishingConfiguration associated with the channel
+     * Closes the channel, releasing any resources associated with it.
+     * It is important to call this method when the channel is no longer needed to ensure proper cleanup.
      */
-    public AbstractMqPublishingChannel(String name, AbstractMqPublishingConfiguration abstractMqPublishingConfiguration) {
-        super(name, abstractMqPublishingConfiguration);
-        this.abstractMqPublishingConfiguration = abstractMqPublishingConfiguration;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() {
-        abstractMqPublishingConfiguration.close();
-    }
+    void close();
 }

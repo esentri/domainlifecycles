@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -103,7 +103,14 @@ public final class MirrorBasedExecutionContextDetector implements ExecutionConte
             return skm.getMethods()
                 .stream()
                 .filter(m -> m.listensTo(dem))
-                .map(m -> new ServiceExecutionContext(ds, m.getName(), de))
+                .map(m ->
+                    new ServiceExecutionContext(
+                        ds,
+                        skm.getTypeName(),
+                        m.getName(),
+                        de
+                    )
+                )
                 .toList();
         } else {
             var msg = String.format("No ServiceKind instance found for %s", skm.getTypeName());
@@ -122,7 +129,14 @@ public final class MirrorBasedExecutionContextDetector implements ExecutionConte
             return arm.getMethods()
                 .stream()
                 .filter(m -> m.listensTo(dem))
-                .map(m -> new AggregateExecutionContext<>(r, m.getName(), ade))
+                .map(m ->
+                    new AggregateExecutionContext<>(
+                        r,
+                        m.getName(),
+                        rm.getTypeName(),
+                        ade
+                    )
+                )
                 .toList();
         } else {
             var msg = String.format("No Repository instance found for %s", rm.getTypeName());

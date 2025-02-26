@@ -46,11 +46,34 @@ import java.util.Optional;
  */
 public interface Repository <ID extends Identity<?>, A extends AggregateRoot<ID>> extends ServiceKind {
 
+    /**
+     * Find an Aggregate by id
+     *
+     * @param id ID of queried Aggregate
+     * @return Optional of an Aggregate instance found, empty if nothing found
+     */
     Optional<A> findById(ID id);
 
+    /**
+     * Insert given Aggregate
+     *
+     * @param aggregateRoot Aggregate instance to be inserted
+     * @return Aggregate inserted
+     */
     A insert(A aggregateRoot);
 
+    /**
+     * Update given aggregate
+     *
+     * @param aggregateRoot Aggregate instance to be updated
+     * @return Aggregate updated
+     */
     A update(A aggregateRoot);
 
+    /**
+     * Delete Aggregate instance by the given id
+     * @param id of Aggregate to be deleted
+     * @return Optional with the deleted instance, empty if nothing was deleted
+     */
     Optional<A> deleteById(ID id);
 }

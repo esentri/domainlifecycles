@@ -41,6 +41,8 @@ import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.events.gruelbox.api.DomainEventsInstantiator;
 import io.domainlifecycles.events.gruelbox.api.GruelboxChannelFactory;
+import io.domainlifecycles.events.gruelbox.api.GruelboxConsumingChannel;
+import io.domainlifecycles.events.gruelbox.api.GruelboxPublishingChannel;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +51,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.time.Duration;
 import java.util.List;
 
 @Configuration
@@ -67,6 +70,7 @@ public class GruelboxIntegrationSeparateConfig {
             .instantiator(domainEventsInstantiator)
             .transactionManager(springTransactionManager)
             .blockAfterAttempts(3)
+            .attemptFrequency(Duration.ofSeconds(1))
             .persistor(DefaultPersistor.builder()
                            .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
                            .dialect(Dialect.H2)
@@ -91,14 +95,14 @@ public class GruelboxIntegrationSeparateConfig {
     }
 
     @Bean
-    public PublishingChannel gruelboxPublishingChannel(
+    public GruelboxPublishingChannel gruelboxPublishingChannel(
         GruelboxChannelFactory gruelboxChannelFactory
     ){
         return gruelboxChannelFactory.publishOnlyChannel("c1");
     }
 
-    @Bean
-    public ConsumingChannel gruelboxConsumingChannel(
+    @Bean(destroyMethod = "close")
+    public GruelboxConsumingChannel gruelboxConsumingChannel(
         GruelboxChannelFactory gruelboxChannelFactory
     ){
         return gruelboxChannelFactory.consumeOnlyChannel("c2");

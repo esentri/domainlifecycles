@@ -51,6 +51,7 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
+@Deprecated
 public class SpringTransactionalOutboxChannelFactory implements ChannelFactory {
 
     private final PlatformTransactionManager platformTransactionManager;

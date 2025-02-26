@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,9 +28,8 @@ package io.domainlifecycles.events.gruelbox.api;
 
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import io.domainlifecycles.events.api.ChannelFactory;
-import io.domainlifecycles.events.api.ConsumingOnlyChannel;
-import io.domainlifecycles.events.api.ProcessingChannel;
-import io.domainlifecycles.events.api.PublishingOnlyChannel;
+import io.domainlifecycles.events.consume.execution.detector.ExecutionContextDetector;
+import io.domainlifecycles.events.consume.execution.detector.MirrorBasedExecutionContextDetector;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.events.gruelbox.idempotent.IdempotencyConfiguration;
 import io.domainlifecycles.services.api.ServiceProvider;
@@ -52,6 +51,7 @@ public class GruelboxChannelFactory implements ChannelFactory {
     private final TransactionOutbox transactionOutbox;
     private final TransactionalHandlerExecutor transactionalHandlerExecutor;
     private final DomainEventsInstantiator domainEventsInstantiator;
+    private final ExecutionContextDetector executionContextDetector;
     private final IdempotencyConfiguration idempotencyConfiguration;
     private final PollerConfiguration pollerConfiguration;
     private final PublishingSchedulerConfiguration publishingSchedulerConfiguration;
@@ -78,6 +78,7 @@ public class GruelboxChannelFactory implements ChannelFactory {
         this.transactionOutbox = Objects.requireNonNull(transactionOutbox, "A TransactionOutbox is required!");
         this.transactionalHandlerExecutor = transactionalHandlerExecutor;
         this.domainEventsInstantiator = Objects.requireNonNull(domainEventsInstantiator, "A DomainEventsInstantiator is required!");
+        this.executionContextDetector = new MirrorBasedExecutionContextDetector(serviceProvider);
         this.idempotencyConfiguration = idempotencyConfiguration;
         this.pollerConfiguration = (pollerConfiguration == null ?
             new PollerConfiguration() : pollerConfiguration);
@@ -137,24 +138,24 @@ public class GruelboxChannelFactory implements ChannelFactory {
      * {@inheritDoc}
      */
     @Override
-    public ConsumingOnlyChannel consumeOnlyChannel(String channelName) {
-        return new ConsumingOnlyChannel(channelName, createGruelboxConsumingConfiguration());
+    public GruelboxConsumingChannel consumeOnlyChannel(String channelName) {
+        return new GruelboxConsumingChannel(channelName, createGruelboxConsumingConfiguration());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public PublishingOnlyChannel publishOnlyChannel(String channelName) {
-        return new PublishingOnlyChannel(channelName, createGruelboxPublishingConfiguration());
+    public GruelboxPublishingChannel publishOnlyChannel(String channelName) {
+        return new GruelboxPublishingChannel(channelName, createGruelboxPublishingConfiguration());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ProcessingChannel processingChannel(String channelName) {
-        return new ProcessingChannel(channelName, createGruelboxPublishingConfiguration(), createGruelboxConsumingConfiguration());
+    public GruelboxProcessingChannel processingChannel(String channelName) {
+        return new GruelboxProcessingChannel(channelName, createGruelboxPublishingConfiguration(), createGruelboxConsumingConfiguration());
     }
 
     private GruelboxConsumingConfiguration createGruelboxConsumingConfiguration(){
@@ -172,7 +173,7 @@ public class GruelboxChannelFactory implements ChannelFactory {
     }
 
     private GruelboxPublishingConfiguration createGruelboxPublishingConfiguration(){
-        return new GruelboxPublishingConfiguration(transactionOutbox, publishingSchedulerConfiguration);
+        return new GruelboxPublishingConfiguration(transactionOutbox, publishingSchedulerConfiguration, executionContextDetector);
     }
 
 }

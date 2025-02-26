@@ -37,6 +37,7 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
+@Deprecated
 public class SpringOutboxPublishingConfiguration implements PublishingConfiguration {
 
     private final SpringOutboxDomainEventPublisher springOutboxDomainEventPublisher;

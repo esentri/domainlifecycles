@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2025-02-26
+- Added shutdown hooks for Gruelbox Domain Event channels, to avoid irritating exceptions for example in tests
+- Gruelbox based Domain Event handling now provides distinct outbox entries for each Domain Event Consumer, which
+  allows now consumer specific retry behaviour, that can be managed using natural Gruelbox features 
+- DLC spring-tx-outbox deprecated for future removal
+
 ## [2.1.0] - 2025-02-21
 - Introduce version catalog for dependency management
 - Replace nu.studer.jooq generator with jOOQ native generator

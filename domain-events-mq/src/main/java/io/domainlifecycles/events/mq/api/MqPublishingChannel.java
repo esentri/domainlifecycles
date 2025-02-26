@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,27 +26,27 @@
 
 package io.domainlifecycles.events.mq.api;
 
-import io.domainlifecycles.events.api.ConsumingOnlyChannel;
+import io.domainlifecycles.events.api.CloseableChannel;
+import io.domainlifecycles.events.api.PublishingOnlyChannel;
 
 /**
- * AbstractMqConsumingChannel extends ConsumingOnlyChannel and implements CloseableChannel.
- * It represents a channel for consuming domain events using Message Queue (MQ) Domain Event Consumer.
+ * Represents a channel for publishing domain events via a dedicated message broker infrastructure.
  *
  * @author Mario Herb
  */
-public class AbstractMqConsumingChannel extends ConsumingOnlyChannel implements CloseableChannel {
+public class MqPublishingChannel extends PublishingOnlyChannel implements CloseableChannel {
 
-    private final AbstractMqConsumingConfiguration consumingConfiguration;
+    private final MqPublishingConfiguration mqPublishingConfiguration;
 
     /**
-     * Initializes a new AbstractMqConsumingChannel with the specified name and consuming configuration.
+     * Constructs an MqPublishingChannel with the provided name and MqPublishingConfiguration.
      *
-     * @param name The name of the consuming channel
-     * @param consumingConfiguration The configuration for consuming domain events
+     * @param name The name of the channel
+     * @param mqPublishingConfiguration The MqPublishingConfiguration associated with the channel
      */
-    public AbstractMqConsumingChannel(String name, AbstractMqConsumingConfiguration consumingConfiguration) {
-        super(name, consumingConfiguration);
-        this.consumingConfiguration = consumingConfiguration;
+    public MqPublishingChannel(String name, MqPublishingConfiguration mqPublishingConfiguration) {
+        super(name, mqPublishingConfiguration);
+        this.mqPublishingConfiguration = mqPublishingConfiguration;
     }
 
     /**
@@ -54,14 +54,6 @@ public class AbstractMqConsumingChannel extends ConsumingOnlyChannel implements 
      */
     @Override
     public void close() {
-        consumingConfiguration.close();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public AbstractMqConsumingConfiguration getConsumingConfiguration() {
-        return consumingConfiguration;
+        mqPublishingConfiguration.close();
     }
 }

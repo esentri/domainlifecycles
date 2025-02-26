@@ -43,6 +43,7 @@ import java.util.UUID;
  *
  * @author Mario Herb
  */
+@Deprecated
 public final class OutboxBatch {
 
     final UUID batchId = UUID.randomUUID();

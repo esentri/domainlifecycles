@@ -40,7 +40,7 @@ import io.domainlifecycles.events.UnreceivedDomainEvent;
 import io.domainlifecycles.events.api.DomainEvents;
 import io.domainlifecycles.events.api.ProcessingChannel;
 import io.domainlifecycles.events.exception.DLCEventsException;
-import io.domainlifecycles.events.mq.api.AbstractMqConsumingConfiguration;
+import io.domainlifecycles.events.mq.api.MqConsumingConfiguration;
 import jakarta.jms.Connection;
 import jakarta.jms.DeliveryMode;
 import jakarta.jms.JMSException;
@@ -308,7 +308,7 @@ public class SpringJmsIntegrationTests {
     @DirtiesContext
     public void testIntegrationReceivedPauseResume() {
         //when
-        var config = ((AbstractMqConsumingConfiguration)channel.getConsumingConfiguration());
+        var config = ((MqConsumingConfiguration)channel.getConsumingConfiguration());
         config.getMqDomainEventConsumer().pauseHandler(
             ADomainService.class.getName(),
             "onDomainEvent",

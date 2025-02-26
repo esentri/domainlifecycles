@@ -65,6 +65,7 @@ import java.util.UUID;
  *
  * @author Mario Herb
  */
+@Deprecated
 public class SpringJdbcOutbox extends AbstractCleaningOutbox {
 
     private static final Logger log = LoggerFactory.getLogger(SpringJdbcOutbox.class);

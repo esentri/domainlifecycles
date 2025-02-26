@@ -58,6 +58,7 @@ import java.util.concurrent.TimeUnit;
  * @see TransactionalOutbox
  * @see DirectOutboxPoller
  */
+@Deprecated
 public abstract class AbstractOutboxPoller {
 
     private final TransactionalOutbox transactionalOutbox;

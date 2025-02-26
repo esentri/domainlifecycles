@@ -35,7 +35,7 @@ import io.domainlifecycles.domain.types.internal.DomainObject;
  * the application domain. They can help you write better code that is less
  * error-prone, more performant and more expressive. Value objects have three
  * main characteristics:
- * <p><ul>
+ * <ul>
  * <li> Value Equality: Value objects are defined by their attributes. They are
  * equal if their attributes are equal. A value object differs from an entity in
  * that it does not have a concept of identity. For example, if we consider a
@@ -51,12 +51,11 @@ import io.domainlifecycles.domain.types.internal.DomainObject;
  * not be created and an error or exception should be raised. For instance, if
  * we have a concept of Age it wouldn’t make sense to create an instance of age
  * with a negative value.
- * </ul><p>
- * <p>
+ * </ul>
  * Technically a value object is a shallowly immutable, transparent carrier for
  * a fixed set of values, called the value object components. In terms of
  * implementation, instances of a value object class
- * <p><ul>
+ * <ul>
  * <li> are final and immutable (though may contain references to mutable objects);
  * <li> have implementations of equals, hashCode, and toString which are computed
  * solely from the instance's state and not from its identity or the state of any
@@ -69,7 +68,7 @@ import io.domainlifecycles.domain.types.internal.DomainObject;
  * <li> are freely substitutable when equal, meaning that interchanging any two
  * instances x and y that are equal according to equals() in any computation or
  * method invocation should produce no visible change in behavior.
- * </ul><p>
+ * </ul>
  * A program may produce unpredictable results if it attempts to distinguish
  * two references to equal values of a value object class, whether directly via
  * reference equality or indirectly via an appeal to synchronization, identity

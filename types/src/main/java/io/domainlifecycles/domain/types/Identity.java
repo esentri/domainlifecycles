@@ -64,7 +64,12 @@ public interface Identity<V> extends Validatable {
         return String.format("%s@%s(value=%s)", id.getClass().getName(), System.identityHashCode(id), id.value());
     }
 
-
+    /**
+     * Method to campare to Identities for equality
+     * @param a an Identity
+     * @param b another Identity
+     * @return true, if both Identities are equal by value
+     */
     static boolean equals(final Identity<?> a, final Identity<?> b) {
         if (a == b) return true;
         if (a == null || b == null || a.getClass() != b.getClass()) {

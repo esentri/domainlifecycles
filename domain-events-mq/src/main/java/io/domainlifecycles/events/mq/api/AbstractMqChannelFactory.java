@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -99,38 +99,38 @@ public abstract class AbstractMqChannelFactory implements ChannelFactory {
      * {@inheritDoc}
      */
     @Override
-    public AbstractMqConsumingChannel consumeOnlyChannel(String channelName) {
-        return new AbstractMqConsumingChannel(channelName, consumingConfiguration());
+    public MqConsumingChannel consumeOnlyChannel(String channelName) {
+        return new MqConsumingChannel(channelName, consumingConfiguration());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public AbstractMqPublishingChannel publishOnlyChannel(String channelName) {
-        return new AbstractMqPublishingChannel(channelName, publishingConfiguration());
+    public MqPublishingChannel publishOnlyChannel(String channelName) {
+        return new MqPublishingChannel(channelName, publishingConfiguration());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public AbstractMqProcessingChannel processingChannel(String channelName) {
-        return new AbstractMqProcessingChannel(channelName, consumingConfiguration(), publishingConfiguration());
+    public MqProcessingChannel processingChannel(String channelName) {
+        return new MqProcessingChannel(channelName, consumingConfiguration(), publishingConfiguration());
     }
 
     /**
-     * This method creates and returns an instance of AbstractMqConsumingConfiguration
+     * This method creates and returns an instance of MqConsumingConfiguration
      * which contains a Message Queue (MQ) Domain Event Consumer configuration.
      *
-     * @return a new instance of AbstractMqConsumingConfiguration populated with the necessary configurations
+     * @return a new instance of MqConsumingConfiguration populated with the necessary configurations
      */
-    protected AbstractMqConsumingConfiguration consumingConfiguration(){
+    protected MqConsumingConfiguration consumingConfiguration(){
         Objects.requireNonNull(serviceProvider, "A ServiceProvider is required!");
         var executionContextDetector = new MirrorBasedExecutionContextDetector(serviceProvider);
         var executionContextProcessor = new SimpleExecutionContextProcessor(Objects.requireNonNull(handlerExecutor,"A HandlerExecutor is required!"));
 
-        return new AbstractMqConsumingConfiguration(provideMqDomainEventConsumer(
+        return new MqConsumingConfiguration(provideMqDomainEventConsumer(
             this.objectMapper,
             executionContextDetector,
             executionContextProcessor,
@@ -139,12 +139,12 @@ public abstract class AbstractMqChannelFactory implements ChannelFactory {
     }
 
     /**
-     * Returns an AbstractMqPublishingConfiguration object that represents a configuration for publishing domain events via a dedicated message broker infrastructure.
+     * Returns an MqPublishingConfiguration object that represents a configuration for publishing domain events via a dedicated message broker infrastructure.
      *
-     * @return An instance of AbstractMqPublishingConfiguration populated with the necessary configurations
+     * @return An instance of MqPublishingConfiguration populated with the necessary configurations
      */
-    protected AbstractMqPublishingConfiguration publishingConfiguration(){
-        return new AbstractMqPublishingConfiguration(provideMqDomainEventPublisher(this.objectMapper));
+    protected MqPublishingConfiguration publishingConfiguration(){
+        return new MqPublishingConfiguration(provideMqDomainEventPublisher(this.objectMapper));
     }
 
     /**

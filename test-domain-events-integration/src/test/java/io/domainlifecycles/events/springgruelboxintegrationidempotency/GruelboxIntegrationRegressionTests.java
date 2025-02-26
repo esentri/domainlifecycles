@@ -49,6 +49,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import java.util.UUID;
+
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -91,7 +93,7 @@ public class GruelboxIntegrationRegressionTests {
     public void testIntegrationCommit() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
-        var evt = new ADomainEvent("TestCommitRegression");
+        var evt = new ADomainEvent("TestCommitRegression"+ UUID.randomUUID());
         DomainEvents.publish(evt);
 
         platformTransactionManager.commit(status);
@@ -99,9 +101,10 @@ public class GruelboxIntegrationRegressionTests {
         //then
         await()
             .atMost(15, SECONDS)
-            .untilAsserted(()->
-                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
-            );
+            .untilAsserted(()-> {
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(5);
+                assertThat(outboxListener.blockedEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+            });
 
         assertThat(aDomainService.received).contains(evt);
         assertThat(aRepository.received).contains(evt);
@@ -115,16 +118,17 @@ public class GruelboxIntegrationRegressionTests {
     public void testIntegrationUnreceivedCommit() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
-        var evt = new UnreceivedDomainEvent("TestUnReceivedCommitRegression");
+        var evt = new UnreceivedDomainEvent("TestUnReceivedCommitRegression"+ UUID.randomUUID());
         DomainEvents.publish(evt);
 
         platformTransactionManager.commit(status);
         //then
         await()
             .atMost(10, SECONDS)
-            .untilAsserted(()->
-                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
-            );
+            .untilAsserted(()-> {
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+                assertThat(outboxListener.blockedEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+            });
 
 
         assertThat(aDomainService.received).doesNotContain(evt);
@@ -140,16 +144,17 @@ public class GruelboxIntegrationRegressionTests {
     public void testIntegrationRollback() {
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         //when
-        var evt = new ADomainEvent("TestRollbackRegression");
+        var evt = new ADomainEvent("TestRollbackRegression"+ UUID.randomUUID());
         DomainEvents.publish(evt);
 
         platformTransactionManager.rollback(status);
         await()
             .atMost(10, SECONDS)
             .pollDelay(9, SECONDS)
-            .untilAsserted(()->
-                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0)
-            );
+            .untilAsserted(()-> {
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+                assertThat(outboxListener.blockedEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+            });
         //then
         assertThat(aDomainService.received).doesNotContain(evt);
         assertThat(aRepository.received).doesNotContain(evt);
@@ -164,15 +169,16 @@ public class GruelboxIntegrationRegressionTests {
     public void testIntegrationAggregateDomainEventCommit() {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        var evt = new AnAggregateDomainEvent("TestAggregateDomainEventCommitRegression");
+        var evt = new AnAggregateDomainEvent("TestAggregateDomainEventCommitRegression"+ UUID.randomUUID());
         DomainEvents.publish(evt);
         platformTransactionManager.commit(status);
         //then
         await()
             .atMost(10, SECONDS)
-            .untilAsserted(()->
-                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
-            );
+            .untilAsserted(()-> {
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1);
+                assertThat(outboxListener.blockedEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+            });
 
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(aDomainService.received).doesNotContain(evt);
@@ -188,16 +194,17 @@ public class GruelboxIntegrationRegressionTests {
     public void testIntegrationAggregateDomainEventRollback() {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        var evt = new AnAggregateDomainEvent("TestAggregateDomainEventRollbackRegression");
+        var evt = new AnAggregateDomainEvent("TestAggregateDomainEventRollbackRegression"+ UUID.randomUUID());
         DomainEvents.publish(evt);
         platformTransactionManager.rollback(status);
         //then
         await()
             .atMost(10, SECONDS)
             .pollDelay(9, SECONDS)
-            .untilAsserted(()->
-                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0)
-            );
+            .untilAsserted(()-> {
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+                assertThat(outboxListener.blockedEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+            });
 
         assertThat(aRepository.received).doesNotContain(evt);
         assertThat(aDomainService.received).doesNotContain(evt);
@@ -213,14 +220,17 @@ public class GruelboxIntegrationRegressionTests {
     public void testIntegrationAggregateDomainEventRollbackExceptionOnHandler() {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        var evt = new AnAggregateDomainEvent("TestAggregateDomainWithExceptionRegression");
+        var evt = new AnAggregateDomainEvent("TestAggregateDomainWithExceptionRegression"+ UUID.randomUUID());
         DomainEvents.publish(evt);
         platformTransactionManager.commit(status);
         //then
         await()
             .atMost(10, SECONDS)
-            .untilAsserted(()->
-                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
+            .untilAsserted(()-> {
+                    assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+                    assertThat(outboxListener.blockedEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1);
+                }
+
             );
 
         assertThat(aRepository.received).doesNotContain(evt);
@@ -237,15 +247,16 @@ public class GruelboxIntegrationRegressionTests {
     public void testIntegrationDomainServiceExceptionRollback() {
         //when
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        var evt = new ADomainEvent("TestDomainServiceRollbackRegression");
+        var evt = new ADomainEvent("TestDomainServiceRollbackRegression"+ UUID.randomUUID());
         DomainEvents.publish(evt);
         platformTransactionManager.commit(status);
         //then
         await()
             .atMost(10, SECONDS)
-            .untilAsserted(()->
-                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
-            );
+            .untilAsserted(()-> {
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(4);
+                assertThat(outboxListener.blockedEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1);
+            });
 
         assertThat(aRepository.received).contains(evt);
         assertThat(aDomainService.received).doesNotContain(evt);
@@ -273,9 +284,10 @@ public class GruelboxIntegrationRegressionTests {
         //then
         await()
             .atMost(10, SECONDS)
-            .untilAsserted(() ->
-                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
-            );
+            .untilAsserted(() -> {
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1);
+                assertThat(outboxListener.blockedEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+            });
 
         assertThat(transactionalCounterService.getCurrentCounterValue()).isEqualTo(cnt + 1);
     }

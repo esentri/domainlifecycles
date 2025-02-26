@@ -179,6 +179,11 @@ implementation provided by [Gruelbox](https://github.com/gruelbox/transaction-ou
 To publish externally handled Domain Events, one might define a dedicated channel processing those events 
 using a JMS compliant message broker.
 
+As in case of Gruelbox or MQ based Domain Event processing, some channel rely on external resources 
+(database tables, a polling thread or message brokers). So these channels offer a ```shutdown()``` hook 
+for proper releasing of those resources. See the configuration example below using the Spring bean destroy method configured as 
+```shutdown```.
+
 An example above described event processing is configured like that:
 ```Java
 
@@ -226,8 +231,8 @@ An example above described event processing is configured like that:
     //The internal channel uses the outbox as technical infrastructure
     //The outbox ensures proper transactional event processing, 
     // avoiding ghost events or lost events 
-    @Bean
-    public PublishingChannel internalChannel(
+    @Bean(destroyMethod = "close")
+    public GruelboxProcessingChannel internalChannel(
         GruelboxChannelFactory gruelboxChannelFactory
     ){
         return gruelboxChannelFactory.processingChannel("internal");
@@ -250,7 +255,7 @@ An example above described event processing is configured like that:
     }
 
     //The external channel uses a JMS broker as technical infrastructure
-    @Bean
+    @Bean(destroyMethod = "close")
     public PublishingChannel externalChannel(
             SpringtransactionJakartaJmsChannelFactory springtransactionJakartaJmsChannelFactory
     ){
@@ -359,10 +364,9 @@ The main disadvantage of that setup is a reduced throughput in high volume scena
 
 For more information on the "transactional outbox pattern" have a look at [Transactional Outbox Pattern](https://microservices.io/patterns/data/transactional-outbox.html)
 
-DLC works out of the box with an own transactional outbox implementation which depends on Spring Transactions.
-Alternatively DLC works fine with [Gruelbox](https://github.com/gruelbox/transaction-outbox), a very flexible and reliable transactional outbox implementation.
+DLC works fine with [Gruelbox](https://github.com/gruelbox/transaction-outbox), a very flexible and reliable transactional outbox implementation.
 
-###### DLC Outbox
+###### DLC Outbox (Deprecated, use gruelbox instead)
 This implementation relies heavily on Spring transactions, Spring JDBC and Jackson, see ``io.domainlifecycles.events.publish.outbox.impl.SpringJdbcOutbox``.
 
 Example setup with the DLC provided Spring based outbox implementation is shown below. This setup routes polled DomainEvents from the outbox directly to consuming handlers 
@@ -487,7 +491,8 @@ A Spring based example using Gruelbox as messaging infrastructure:
     }
     
     //Create a ProcessingChannel named 'default'
-    public ProcessingChannel defaultChannel(GruelboxChannelFactory gruelboxChannelFactory){
+    @Bean(destroyMethod = "close")
+    public GruelboxProcessingChannel defaultChannel(GruelboxChannelFactory gruelboxChannelFactory){
         return gruelboxChannelFactory.processingChannel("default");
     }
 
@@ -527,8 +532,8 @@ public class GruelboxIntegrationIdempotencyConfig {
     }
 
     //Create a ProcessingChannel named 'c1'
-    @Bean
-    public ProcessingChannel gruelboxChannel(
+    @Bean(destroyMethod = "close")
+    public GruelboxProcessingChannel gruelboxChannel(
         ServiceProvider serviceProvider,
         TransactionOutbox transactionOutbox,
         TransactionalHandlerExecutor transactionalHandlerExecutor,
@@ -639,7 +644,7 @@ Example setup of Active Mq 5 classic in a transactional setup:
 
     // Declaring the channel
     @Bean(destroyMethod = "close")
-    public AbstractMqProcessingChannel channel(ActiveMqChannelFactory factory){
+    public MqProcessingChannel channel(ActiveMqChannelFactory factory){
         return factory.processingChannel("activeMqTxChannel");
     }
 
@@ -690,7 +695,7 @@ Example setup of a Jakarta JMS broker in a transactional setup:
     // Declaring the channel
     // registering a close listener for a correct tear down behaviour
     @Bean(destroyMethod = "close")
-    public AbstractMqProcessingChannel channel(SpringtransactionJakartaJmsChannelFactory factory){
+    public MqProcessingChannel channel(SpringtransactionJakartaJmsChannelFactory factory){
         return factory.processingChannel("jmsChannel");
     }
 
@@ -781,7 +786,7 @@ Here's an example configuration for a Gruelbox based outbox proxy with a JMS bro
     // Declaring the channel
     // registering a close listener for a correct tear down behaviour
     @Bean(destroyMethod = "close")
-    public AbstractMqProcessingChannel channel(GruelboxProxyJakartaJmsChannelFactory factory){
+    public MqProcessingChannel channel(GruelboxProxyJakartaJmsChannelFactory factory){
         return factory.processingChannel("gruelboxJmsChannel");
     }
 
@@ -902,7 +907,7 @@ public class JakartaJmsGruelboxIdempotencyConfig {
 
     // registering a close listener for a correct tear down behaviour
     @Bean(destroyMethod = "close")
-    public AbstractMqProcessingChannel channel(GruelboxProxyJakartaJmsChannelFactory factory) {
+    public MqProcessingChannel channel(GruelboxProxyJakartaJmsChannelFactory factory) {
         return factory.processingChannel("defaultChannel");
     }
 

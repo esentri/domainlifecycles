@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ package io.domainlifecycles.events.gruelbox.dispatch;
 
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.events.consume.DomainEventConsumer;
+import io.domainlifecycles.events.consume.TargetExecutionContext;
+import io.domainlifecycles.events.exception.DLCEventsException;
 
 import java.util.Objects;
 
@@ -45,6 +47,7 @@ public final class DirectGruelboxDomainEventDispatcher implements GruelboxDomain
 
     private final DomainEventConsumer domainEventConsumer;
 
+
     /**
      * Creates a DirectGruelboxDomainEventDispatcher object.
      *
@@ -60,9 +63,19 @@ public final class DirectGruelboxDomainEventDispatcher implements GruelboxDomain
      * Dispatches a domain event to a receiving domain event handler for processing.
      *
      * @param domainEvent The domain event to be dispatched
+     * @param executionContext The execution context supplied to the outbox
      */
     @Override
-    public void dispatch(DomainEvent domainEvent) {
-        domainEventConsumer.consume(domainEvent);
+    public void dispatch(DomainEvent domainEvent, TargetExecutionContext executionContext) {
+        if(executionContext != null){
+            var res = domainEventConsumer.consume(domainEvent, executionContext);
+            if(!res.success()){
+                throw DLCEventsException.fail("Execution failed for domainEvent: "
+                    + domainEvent + "in executionContext: " + executionContext);
+            }
+        }else{
+            domainEventConsumer.consume(domainEvent);
+        }
+
     }
 }
