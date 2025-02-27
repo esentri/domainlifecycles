@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -229,6 +229,9 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
         this.notifyChanges(pc, rootUpdated);
 
         if (isRootVersionIncreasedWithoutPropertyUpdate) {
+            if(pc.updatedRootAccessModel == null){
+                throw DLCPersistenceException.fail("The updatedRootAccessModel was null! Root:" + rootUpdated);
+            };
             var rm =
                 (RecordMapper<BASE_RECORD_TYPE, DomainObject, AggregateRoot<?>>) pc.updatedRootAccessModel.recordMirror.recordMapper();
             BASE_RECORD_TYPE rootRecord = rm.from(pc.updatedRootAccessModel.domainObject(),
@@ -310,8 +313,8 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
 
         //Below: Integer.compare actions --> are sorted in descending order by their structural position
         //which means form leafs to root --> within hierarchical structures we need this order of applying deletes
-        deletionOrderClasses.forEach(c ->
-            context.getActionsPartitioned(c, PersistenceAction.ActionType.DELETE)
+        deletionOrderClasses.forEach(c -> {
+            var deleteActions = context.getActionsPartitioned(c, PersistenceAction.ActionType.DELETE)
                 .stream()
                 .sorted((a1, a2) -> Integer.compare(
                     a2.instanceAccessModel
@@ -322,8 +325,9 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
                         .structuralPosition
                         .accessPathFromRoot
                         .size()))
-                .forEach(a -> persister.deleteOne(a, context))
-        );
+                .toList();
+            deleteActions.forEach(a -> persister.deleteOne(a, context))
+        });
         //UPDATEs and INSERTs must be executed in insertion order ordered by record typ
         //but executing all UPDATES first and then all INSERTs causes problems with 1-1-forward referenced
         //entity relations
@@ -335,11 +339,12 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
                 });
             //Below: Integer.compare actions --> actions are sorted in ascending order by their structural position
             //which means form root to leafs --> within hierarchical structures we need this order of applying inserts
-            context.getActionsPartitioned(c, PersistenceAction.ActionType.INSERT)
+            var insertActions = context.getActionsPartitioned(c, PersistenceAction.ActionType.INSERT)
                 .stream()
                 .sorted(
                     Comparator.comparingInt(a -> a.instanceAccessModel.structuralPosition.accessPathFromRoot.size()))
-                .forEach(a -> {
+                .toList();
+            insertActions.forEach(a -> {
                         persister.insertOne(a, context);
                         if (a.instanceAccessModel.isEntity()) {
                             applyChangesToAllDuplicates((Entity<?>) a.instanceAccessModel.domainObject(), context);

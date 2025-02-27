@@ -217,7 +217,7 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
                         recordCanonicalNameToDomainObjectTypeMap
                     );
             })
-            .toArray(i -> new EntityRecordMirror[i]);
+            .toArray(EntityRecordMirror[]::new);
 
         return new PersistenceModel(entityRecordMirrors);
     }
