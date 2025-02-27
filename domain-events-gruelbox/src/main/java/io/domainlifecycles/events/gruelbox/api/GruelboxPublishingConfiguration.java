@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,8 @@ package io.domainlifecycles.events.gruelbox.api;
 
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import io.domainlifecycles.events.api.PublishingConfiguration;
-import io.domainlifecycles.events.gruelbox.publish.GruelboxDomainEventPublisher;
+import io.domainlifecycles.events.consume.execution.detector.ExecutionContextDetector;
+import io.domainlifecycles.events.gruelbox.publish.GruelboxBroadcastingDomainEventPublisher;
 import io.domainlifecycles.events.publish.DomainEventPublisher;
 
 import java.util.Objects;
@@ -42,22 +43,25 @@ import java.util.Objects;
 class GruelboxPublishingConfiguration implements PublishingConfiguration {
 
     private final TransactionOutbox transactionOutbox;
-    private final GruelboxDomainEventPublisher gruelboxDomainEventPublisher;
+    private final GruelboxBroadcastingDomainEventPublisher gruelboxDomainEventPublisher;
 
     /**
      * Creates a new GruelboxPublishingConfiguration
      *
-     * @param transactionOutbox
-     * @param publishingSchedulerConfiguration
+     * @param transactionOutbox outbox instance used
+     * @param publishingSchedulerConfiguration scheduler config for publishing events
+     * @param executionContextDetector  execution context detector used for detecting target execution contexts
      */
     GruelboxPublishingConfiguration(
         TransactionOutbox transactionOutbox,
-        PublishingSchedulerConfiguration publishingSchedulerConfiguration
+        PublishingSchedulerConfiguration publishingSchedulerConfiguration,
+        ExecutionContextDetector executionContextDetector
     ) {
         this.transactionOutbox = Objects.requireNonNull(transactionOutbox, "A TransactionOutbox is required!");
-        this.gruelboxDomainEventPublisher = new GruelboxDomainEventPublisher(
+        this.gruelboxDomainEventPublisher = new GruelboxBroadcastingDomainEventPublisher(
             this.transactionOutbox,
-            publishingSchedulerConfiguration
+            publishingSchedulerConfiguration,
+            executionContextDetector
         );
     }
 

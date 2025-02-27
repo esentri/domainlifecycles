@@ -51,7 +51,7 @@ import io.domainlifecycles.events.gruelbox.api.DomainEventsInstantiator;
 import io.domainlifecycles.events.gruelbox.idempotent.IdempotencyConfiguration;
 import io.domainlifecycles.events.gruelbox.idempotent.IdempotencyConfigurationEntry;
 import io.domainlifecycles.events.jakarta.jms.api.GruelboxProxyJakartaJmsChannelFactory;
-import io.domainlifecycles.events.mq.api.AbstractMqProcessingChannel;
+import io.domainlifecycles.events.mq.api.MqProcessingChannel;
 import io.domainlifecycles.events.mq.consume.SpringTransactionalIdempotencyAwareHandlerExecutorProxy;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
@@ -199,7 +199,7 @@ public class JakartaJmsGruelboxIdempotencyConfig {
     }
 
     @Bean(destroyMethod = "close")
-    public AbstractMqProcessingChannel channel(GruelboxProxyJakartaJmsChannelFactory factory){
+    public MqProcessingChannel channel(GruelboxProxyJakartaJmsChannelFactory factory){
         return factory.processingChannel("gruelboxJmsChannelIdempotency");
     }
 

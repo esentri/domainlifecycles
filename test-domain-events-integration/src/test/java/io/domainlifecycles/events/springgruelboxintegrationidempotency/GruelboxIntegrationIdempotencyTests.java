@@ -96,9 +96,11 @@ public class GruelboxIntegrationIdempotencyTests {
         await()
             .pollDelay(5, SECONDS)
             .atMost(10, SECONDS)
-            .untilAsserted(()->
-                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0)
-            );
+            .untilAsserted(()-> {
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+                assertThat(outboxListener.blockedEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(0);
+
+            });
         assertThat(idemProtectedListener.received).doesNotContain(evt);
     }
 
@@ -123,7 +125,7 @@ public class GruelboxIntegrationIdempotencyTests {
         await()
             .atMost(10, SECONDS)
             .untilAsserted(()->
-                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isGreaterThan(1)
+                assertThat(outboxListener.successfulEntries.stream().filter(e -> match(e, evt)).count()).isEqualTo(1)
             );
         assertThat(idemProtectedListener.received).containsOnlyOnceElementsOf(List.of(evt));
     }

@@ -34,8 +34,8 @@ import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.events.jakarta.jms.api.SpringTransactionJakartaJmsChannelFactory;
-import io.domainlifecycles.events.mq.api.AbstractMqConsumingChannel;
-import io.domainlifecycles.events.mq.api.AbstractMqPublishingChannel;
+import io.domainlifecycles.events.mq.api.MqConsumingChannel;
+import io.domainlifecycles.events.mq.api.MqPublishingChannel;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -70,12 +70,12 @@ public class SpringJmsConfigSeparate {
     }
 
     @Bean(destroyMethod = "close")
-    public AbstractMqPublishingChannel channelPub(SpringTransactionJakartaJmsChannelFactory factory){
+    public MqPublishingChannel channelPub(SpringTransactionJakartaJmsChannelFactory factory){
         return factory.publishOnlyChannel("jms2Pub");
     }
 
     @Bean(destroyMethod = "close")
-    public AbstractMqConsumingChannel channelCons(SpringTransactionJakartaJmsChannelFactory factory){
+    public MqConsumingChannel channelCons(SpringTransactionJakartaJmsChannelFactory factory){
         return factory.consumeOnlyChannel("jms2Cons");
     }
 

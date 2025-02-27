@@ -35,7 +35,7 @@ import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
-import io.domainlifecycles.events.mq.api.AbstractMqProcessingChannel;
+import io.domainlifecycles.events.mq.api.MqProcessingChannel;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
 import jakarta.jms.ConnectionFactory;
@@ -91,7 +91,7 @@ public class ActiveMqClassicTransactionalConfig {
     }
 
     @Bean(destroyMethod = "close")
-    public AbstractMqProcessingChannel channel(ActiveMqChannelFactory factory){
+    public MqProcessingChannel channel(ActiveMqChannelFactory factory){
         return factory.processingChannel("activeMqTxChannel");
     }
 

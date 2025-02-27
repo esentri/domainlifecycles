@@ -33,6 +33,7 @@ import io.domainlifecycles.domain.types.DomainEvent;
  *
  * @author Mario Herb
  */
+@Deprecated
 public interface TransactionalOutbox {
 
     /**

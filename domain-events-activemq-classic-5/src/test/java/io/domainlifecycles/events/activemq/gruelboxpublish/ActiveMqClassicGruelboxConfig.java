@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.events.gruelbox.api.DomainEventsInstantiator;
-import io.domainlifecycles.events.mq.api.AbstractMqProcessingChannel;
+import io.domainlifecycles.events.mq.api.MqProcessingChannel;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
 import jakarta.jms.ConnectionFactory;
@@ -55,6 +55,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.time.Duration;
 import java.util.List;
 
 @Configuration
@@ -94,6 +95,7 @@ public class ActiveMqClassicGruelboxConfig {
             .instantiator(domainEventsInstantiator)
             .transactionManager(springTransactionManager)
             .blockAfterAttempts(3)
+            .attemptFrequency(Duration.ofSeconds(1))
             .persistor(DefaultPersistor.builder()
                 .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
                 .dialect(Dialect.H2)
@@ -128,7 +130,7 @@ public class ActiveMqClassicGruelboxConfig {
 
 
     @Bean(destroyMethod = "close")
-    public AbstractMqProcessingChannel channel(GruelboxProxyActiveMqChannelFactory factory){
+    public MqProcessingChannel channel(GruelboxProxyActiveMqChannelFactory factory){
         return factory.processingChannel("gruelboxActiveMqChannel");
     }
 

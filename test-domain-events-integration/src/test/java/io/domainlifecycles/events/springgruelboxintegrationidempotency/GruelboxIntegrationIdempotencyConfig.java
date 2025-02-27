@@ -43,6 +43,7 @@ import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.events.gruelbox.api.DomainEventsInstantiator;
 import io.domainlifecycles.events.gruelbox.api.GruelboxChannelFactory;
+import io.domainlifecycles.events.gruelbox.api.GruelboxProcessingChannel;
 import io.domainlifecycles.events.gruelbox.api.PollerConfiguration;
 import io.domainlifecycles.events.gruelbox.api.PublishingSchedulerConfiguration;
 import io.domainlifecycles.events.gruelbox.idempotent.IdempotencyConfiguration;
@@ -55,6 +56,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.time.Duration;
 import java.util.List;
 
 @Configuration
@@ -73,6 +75,7 @@ public class GruelboxIntegrationIdempotencyConfig {
             .instantiator(domainEventsInstantiator)
             .transactionManager(springTransactionManager)
             .blockAfterAttempts(3)
+            .attemptFrequency(Duration.ofSeconds(1))
             .persistor(DefaultPersistor.builder()
                            .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
                            .dialect(Dialect.H2)
@@ -81,8 +84,8 @@ public class GruelboxIntegrationIdempotencyConfig {
             .build();
     }
 
-    @Bean
-    public ProcessingChannel gruelboxChannel(
+    @Bean(destroyMethod = "close")
+    public GruelboxProcessingChannel gruelboxChannel(
         ServiceProvider serviceProvider,
         TransactionOutbox transactionOutbox,
         TransactionalHandlerExecutor transactionalHandlerExecutor,

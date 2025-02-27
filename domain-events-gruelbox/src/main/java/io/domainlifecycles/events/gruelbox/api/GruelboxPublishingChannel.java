@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,36 +24,27 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.events.mq.api;
+package io.domainlifecycles.events.gruelbox.api;
 
+import io.domainlifecycles.events.api.PublishingConfiguration;
 import io.domainlifecycles.events.api.PublishingOnlyChannel;
 
 /**
- * A specific type of PublishingChannel that represents a channel for publishing domain events using a message broker
- * and proxying the sending process with an outbox to avoid ghost events or event loss.
+ * A specific type of PublishingChannel that represents a channel for publishing domain events using
+ * the Gruelbox transactional outbox.
  *
  * @author Mario Herb
  */
-public class AbstractGruelboxProxyMqPublishingChannel extends PublishingOnlyChannel implements CloseableChannel {
-
-    private final AbstractMqPublishingConfiguration abstractMqPublishingConfiguration;
+public class GruelboxPublishingChannel extends PublishingOnlyChannel {
 
     /**
-     * Creates a new AbstractGruelboxProxyMqPublishingChannel.
+     * Represents a channel that is used for publishing domain events only.
      *
-     * @param name name of the channel
-     * @param abstractMqPublishingConfiguration publishing configuration
+     * @param name                    The name of the publishing channel. Cannot be null.
+     * @param publishingConfiguration The configuration for publishing domain events. Cannot be null.
      */
-    public AbstractGruelboxProxyMqPublishingChannel(String name, AbstractMqPublishingConfiguration abstractMqPublishingConfiguration) {
-        super(name, abstractMqPublishingConfiguration);
-        this.abstractMqPublishingConfiguration = abstractMqPublishingConfiguration;
+    public GruelboxPublishingChannel(String name, PublishingConfiguration publishingConfiguration) {
+        super(name, publishingConfiguration);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() {
-        abstractMqPublishingConfiguration.close();
-    }
 }

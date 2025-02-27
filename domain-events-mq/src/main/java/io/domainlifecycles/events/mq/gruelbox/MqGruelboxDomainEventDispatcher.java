@@ -27,6 +27,8 @@
 package io.domainlifecycles.events.mq.gruelbox;
 
 import io.domainlifecycles.domain.types.DomainEvent;
+import io.domainlifecycles.events.consume.TargetExecutionContext;
+import io.domainlifecycles.events.exception.DLCEventsException;
 import io.domainlifecycles.events.gruelbox.dispatch.GruelboxDomainEventDispatcher;
 import io.domainlifecycles.events.mq.publish.MqDomainEventPublisher;
 
@@ -37,11 +39,6 @@ import io.domainlifecycles.events.mq.publish.MqDomainEventPublisher;
  *
  * Gruelbox ensures that the events are transactionally consistent,
  * that means no ghost events occur or events cannot be lost.
- *
- * <p>This class must be extended and the {@link #dispatch(DomainEvent)} method must be implemented.
- *
- * <p><b>Note:</b> It is important to ensure that a non-null domainEvent is provided to the
- * {@link #dispatch(DomainEvent)} method.
  *
  * {@inheritDoc}
  *
@@ -64,9 +61,10 @@ public class MqGruelboxDomainEventDispatcher implements GruelboxDomainEventDispa
      * It takes a domain event as a parameter and publishes it using the MqDomainEventPublisher.
      *
      * @param domainEvent the domain event to dispatch
+     * @param targetExecutionContext Target Context not relevant
      */
     @Override
-    public void dispatch(DomainEvent domainEvent) {
+    public void dispatch(DomainEvent domainEvent, TargetExecutionContext targetExecutionContext) {
         mqDomainEventPublisher.publish(domainEvent);
     }
 }

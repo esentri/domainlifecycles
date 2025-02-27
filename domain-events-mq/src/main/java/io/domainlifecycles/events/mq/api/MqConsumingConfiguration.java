@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,39 +26,41 @@
 
 package io.domainlifecycles.events.mq.api;
 
-import io.domainlifecycles.events.consume.execution.handler.HandlerExecutor;
+import io.domainlifecycles.events.api.ConsumingConfiguration;
 import io.domainlifecycles.events.mq.consume.MqDomainEventConsumer;
 
 /**
- * The AbstractGruelboxProxyMqConsumingConfiguration represents a specialized configuration for consuming domain events
- * using a Message Queue (MQ) Domain Event Consumer and GruelBox TransactionOutbox as a proxy.
+ * The MqConsumingConfiguration class implements the ConsumingConfiguration interface
+ * and represents a configuration for consuming domain events using a Message Queue (MQ) Domain Event Consumer.
  *
  * @author Mario Herb
- *
  */
-public class AbstractGruelboxProxyMqConsumingConfiguration extends AbstractMqConsumingConfiguration{
+public class MqConsumingConfiguration implements ConsumingConfiguration {
 
-    private final HandlerExecutor usedHandlerExecutor;
+    private final MqDomainEventConsumer mqDomainEventConsumer;
 
     /**
-     * Constructs a new AbstractMqConsumingConfiguration with the provided MqDomainEventConsumer.
+     * Constructs a new MqConsumingConfiguration with the provided MqDomainEventConsumer.
      *
      * @param mqDomainEventConsumer the MqDomainEventConsumer used for consuming domain events
-     * @param usedHandlerExecutor the handler Executor instance used in this configuration
      */
-    AbstractGruelboxProxyMqConsumingConfiguration(MqDomainEventConsumer mqDomainEventConsumer,
-                                                  HandlerExecutor usedHandlerExecutor) {
-        super(mqDomainEventConsumer);
-        this.usedHandlerExecutor = usedHandlerExecutor;
+    MqConsumingConfiguration(MqDomainEventConsumer mqDomainEventConsumer) {
+        this.mqDomainEventConsumer = mqDomainEventConsumer;
     }
 
     /**
-     * Retrieves the HandlerExecutor instance used in this configuration.
-     *
-     * @return The HandlerExecutor instance used in this configuration
+     * Closes the Message Queue Domain Event Consumer associated with this configuration.
      */
-    public HandlerExecutor getUsedHandlerExecutor() {
-        return usedHandlerExecutor;
+    void close(){
+        mqDomainEventConsumer.closeAll();
     }
 
+    /**
+     * Retrieves the MqDomainEventConsumer associated with this configuration.
+     *
+     * @return the MqDomainEventConsumer used for consuming domain events
+     */
+    public MqDomainEventConsumer getMqDomainEventConsumer() {
+        return mqDomainEventConsumer;
+    }
 }

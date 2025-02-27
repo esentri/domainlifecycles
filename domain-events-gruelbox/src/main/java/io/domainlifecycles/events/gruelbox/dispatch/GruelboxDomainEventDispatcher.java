@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@
 package io.domainlifecycles.events.gruelbox.dispatch;
 
 import io.domainlifecycles.domain.types.DomainEvent;
+import io.domainlifecycles.events.consume.TargetExecutionContext;
 
 /**
  * The {@code GruelboxDomainEventDispatcher} interface defines a contract for classes
@@ -36,12 +37,6 @@ import io.domainlifecycles.domain.types.DomainEvent;
  * <p>A domain event dispatcher is responsible for routing domain events to the appropriate
  * receiving domain event handler based on the type of the event.
  *
- * <p>Each implementation of this interface should provide an implementation for the
- * {@link #dispatch(DomainEvent)} method, which takes a domain event and dispatches it
- * to the domain event handler.
- *
- * <p><b>Note:</b> It is important to ensure that a non-null domainEvent is provided to the
- * {@link #dispatch(DomainEvent)} method.
  *
  * @see DomainEvent
  *
@@ -53,6 +48,7 @@ public interface GruelboxDomainEventDispatcher {
      * Dispatches the given domain event to the appropriate domain event handler.
      *
      * @param domainEvent the domain event to dispatch
+     * @param targetExecutionContext the target execution context detected
      */
-    void dispatch(DomainEvent domainEvent);
+    void dispatch(DomainEvent domainEvent, TargetExecutionContext targetExecutionContext);
 }

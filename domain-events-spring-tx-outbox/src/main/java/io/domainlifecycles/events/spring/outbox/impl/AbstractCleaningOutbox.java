@@ -39,6 +39,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Mario Herb
  */
+@Deprecated
 public abstract class AbstractCleaningOutbox implements TransactionalOutbox {
 
     private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(2);

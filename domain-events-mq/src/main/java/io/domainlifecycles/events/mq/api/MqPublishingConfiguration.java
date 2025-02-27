@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,16 +35,16 @@ import io.domainlifecycles.events.publish.DomainEventPublisher;
  *
  * @author Mario Herb
  */
-public class AbstractMqPublishingConfiguration implements PublishingConfiguration {
+public class MqPublishingConfiguration implements PublishingConfiguration {
 
     private final MqDomainEventPublisher mqDomainEventPublisher;
 
     /**
-     * Constructs a new AbstractMqPublishingConfiguration with the provided MqDomainEventPublisher.
+     * Constructs a new MqPublishingConfiguration with the provided MqDomainEventPublisher.
      *
      * @param mqDomainEventPublisher The MqDomainEventPublisher to be associated with this configuration.
      */
-    AbstractMqPublishingConfiguration(MqDomainEventPublisher mqDomainEventPublisher) {
+    MqPublishingConfiguration(MqDomainEventPublisher mqDomainEventPublisher) {
         this.mqDomainEventPublisher = mqDomainEventPublisher;
     }
 

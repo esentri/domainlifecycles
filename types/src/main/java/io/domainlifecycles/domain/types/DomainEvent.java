@@ -28,7 +28,7 @@ package io.domainlifecycles.domain.types;
 
 /**
  * This is the common supertype (marker interface) to represent DomainEvents.
- * <p>DomainEvents are used to express something happened, that domain experts care about.
+ * DomainEvents are used to express something happened, that domain experts care about.
  * DomainEvents are often used to express domain rules, in form of a choreography:
  * "When the event A happened, then typically B has to do something". That way DomainEvents enable a good
  * separation of concerns for different Aggregates playing together with lesser coupling between them.
@@ -36,16 +36,14 @@ package io.domainlifecycles.domain.types;
  * of what happened in the domain (audit trail) or to improve performance and scalability of the system.
  * Apart from pure technical advantages, the use of DomainEvents makes important side effects explicit within the domain
  * and thus improves the readability and understandability of the code.
- * <p>
- * <p>
  * Further
  * Information:
- *
- * @author Mario Herb
  * @see
  * <a href="https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf">Design Reference - Domain Events</a>
  * @see
  * <a href="https://learn.microsoft.com/de-de/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-events-design-implementation">Microsoft DotNet Patterns (not Java but the concepts are described in a very nice way)</a>
+ *
+ * @author Mario Herb
  */
 public interface DomainEvent extends Validatable {
 

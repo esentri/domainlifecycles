@@ -34,7 +34,7 @@ import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.events.jakarta.jms.api.SpringTransactionJakartaJmsChannelFactory;
-import io.domainlifecycles.events.mq.api.AbstractMqProcessingChannel;
+import io.domainlifecycles.events.mq.api.MqProcessingChannel;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +71,7 @@ public class SpringJmsConfig {
     }
 
     @Bean(destroyMethod = "close")
-    public AbstractMqProcessingChannel channel(SpringTransactionJakartaJmsChannelFactory factory){
+    public MqProcessingChannel channel(SpringTransactionJakartaJmsChannelFactory factory){
         return factory.processingChannel("jms2");
     }
 

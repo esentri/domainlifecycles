@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -249,26 +249,26 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
      * {@inheritDoc}
      */
     @Override
-    public AbstractMqPublishingChannel publishOnlyChannel(String channelName) {
-        return new AbstractMqPublishingChannel(channelName, publishingConfiguration());
+    public MqPublishingChannel publishOnlyChannel(String channelName) {
+        return new MqPublishingChannel(channelName, publishingConfiguration());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public AbstractMqProcessingChannel processingChannel(String channelName) {
-        return new AbstractMqProcessingChannel(channelName, consumingConfiguration(), publishingConfiguration());
+    public MqProcessingChannel processingChannel(String channelName) {
+        return new MqProcessingChannel(channelName, consumingConfiguration(), publishingConfiguration());
     }
 
     /**
-     * Constructs a new AbstractGruelboxProxyMqPublishingConfiguration instance with the provided parameters.
+     * Constructs a new GruelboxProxyMqPublishingConfiguration instance with the provided parameters.
      *
-     * @return A new instance of AbstractGruelboxProxyMqPublishingConfiguration with necessary configurations.
+     * @return A new instance of GruelboxProxyMqPublishingConfiguration with necessary configurations.
      */
     @Override
-    protected AbstractGruelboxProxyMqPublishingConfiguration publishingConfiguration(){
-        return new AbstractGruelboxProxyMqPublishingConfiguration(
+    protected GruelboxProxyMqPublishingConfiguration publishingConfiguration(){
+        return new GruelboxProxyMqPublishingConfiguration(
             provideMqDomainEventPublisher(super.objectMapper),
             this.transactionOutbox,
             this.poller,
@@ -278,7 +278,7 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
     }
 
     @Override
-    protected AbstractGruelboxProxyMqConsumingConfiguration consumingConfiguration(){
+    protected GruelboxProxyMqConsumingConfiguration consumingConfiguration(){
         if(this.transactionalIdempotencyAwareHandlerExecutorProxy != null){
             if(!(this.handlerExecutor instanceof TransactionalHandlerExecutor)){
                 throw DLCEventsException.fail("A TransactionalHandlerExecutor is required for idempotency protection!");
@@ -290,15 +290,15 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
     }
 
     /**
-     * Creates a AbstractGruelboxProxyMqConsumingConfiguration with the given parameters.
+     * Creates a GruelboxProxyMqConsumingConfiguration with the given parameters.
      *
-     * @return A new AbstractGruelboxProxyMqConsumingConfiguration instance configured with the provided HandlerExecutor.
+     * @return A new GruelboxProxyMqConsumingConfiguration instance configured with the provided HandlerExecutor.
      */
-    AbstractGruelboxProxyMqConsumingConfiguration consumingConfiguration(HandlerExecutor handlerExecutor){
+    GruelboxProxyMqConsumingConfiguration consumingConfiguration(HandlerExecutor handlerExecutor){
         Objects.requireNonNull(serviceProvider, "A ServiceProvider is required!");
         var executionContextDetector = new MirrorBasedExecutionContextDetector(serviceProvider);
         var executionContextProcessor = new SimpleExecutionContextProcessor(Objects.requireNonNull(handlerExecutor,"A HandlerExecutor is required!"));
-        return new AbstractGruelboxProxyMqConsumingConfiguration(
+        return new GruelboxProxyMqConsumingConfiguration(
             provideMqDomainEventConsumer(
                 this.objectMapper,
                 executionContextDetector,
@@ -314,9 +314,9 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
      * and TransactionalHandlerExecutor.
      *
 
-     * @return A AbstractGruelboxProxyMqConsumingConfiguration instance configured with the specified parameters.
+     * @return A GruelboxProxyMqConsumingConfiguration instance configured with the specified parameters.
      */
-    AbstractGruelboxProxyMqConsumingConfiguration idempotentConsumingConfiguration(TransactionalHandlerExecutor transactionalHandlerExecutor, TransactionalIdempotencyAwareHandlerExecutorProxy idempotencyAwareHandlerExecutorProxy){
+    GruelboxProxyMqConsumingConfiguration idempotentConsumingConfiguration(TransactionalHandlerExecutor transactionalHandlerExecutor, TransactionalIdempotencyAwareHandlerExecutorProxy idempotencyAwareHandlerExecutorProxy){
         Objects.requireNonNull(domainEventsInstantiator, "A DomainEventsInstantiator is required for idempotency protection!");
         domainEventsInstantiator.registerIdempotentExecutor(new IdempotentExecutor(serviceProvider, transactionalHandlerExecutor));
         return consumingConfiguration(idempotencyAwareHandlerExecutorProxy);

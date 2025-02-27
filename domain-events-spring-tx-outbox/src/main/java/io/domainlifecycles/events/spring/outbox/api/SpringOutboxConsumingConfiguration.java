@@ -38,6 +38,7 @@ import io.domainlifecycles.events.spring.outbox.poll.AbstractOutboxPoller;
  *
  * @author Mario Herb
  */
+@Deprecated
 public class SpringOutboxConsumingConfiguration implements ConsumingConfiguration {
 
     private final AbstractOutboxPoller outboxPoller;

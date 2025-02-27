@@ -36,6 +36,7 @@ package io.domainlifecycles.events.spring.outbox.api;
  *
  * @author Mario Herb
  */
+@Deprecated
 public enum ProcessingResult {
     OK,
     FAILED,

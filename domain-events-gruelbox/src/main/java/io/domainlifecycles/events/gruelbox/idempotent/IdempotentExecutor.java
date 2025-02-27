@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -67,9 +67,9 @@ public class IdempotentExecutor {
         ExecutionContext executionContext = null;
         var service = serviceProvider.getServiceKindInstance(idempotentExecutionContext.handlerClass().getName());
         if(Repository.class.isAssignableFrom(idempotentExecutionContext.handlerClass()) && (idempotentExecutionContext.domainEvent() instanceof AggregateDomainEvent)){
-            executionContext = new AggregateExecutionContext<>((Repository) service, idempotentExecutionContext.handlerMethod(), (AggregateDomainEvent)idempotentExecutionContext.domainEvent());
+            executionContext = new AggregateExecutionContext<>((Repository) service, idempotentExecutionContext.handlerMethod(), idempotentExecutionContext.handlerClass().getName(), (AggregateDomainEvent)idempotentExecutionContext.domainEvent());
         }else{
-            executionContext = new ServiceExecutionContext(service, idempotentExecutionContext.handlerMethod(), idempotentExecutionContext.domainEvent());
+            executionContext = new ServiceExecutionContext(service, idempotentExecutionContext.handlerClass().getName(), idempotentExecutionContext.handlerMethod(), idempotentExecutionContext.domainEvent());
         }
         handlerExecutor.execute(executionContext);
     }

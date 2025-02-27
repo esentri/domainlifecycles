@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@
 
 package io.domainlifecycles.events.mq.api;
 
+import io.domainlifecycles.events.api.CloseableChannel;
 import io.domainlifecycles.events.api.ProcessingChannel;
 
 /**
@@ -33,10 +34,10 @@ import io.domainlifecycles.events.api.ProcessingChannel;
  *
  * @author Mario Herb
  */
-public class AbstractMqProcessingChannel extends ProcessingChannel implements CloseableChannel {
+public class MqProcessingChannel extends ProcessingChannel implements CloseableChannel {
 
-    private final AbstractMqConsumingConfiguration consumingConfiguration;
-    private final AbstractMqPublishingConfiguration publishingConfiguration;
+    private final MqConsumingConfiguration consumingConfiguration;
+    private final MqPublishingConfiguration publishingConfiguration;
 
     /**
      * Initializes a new Abstract MQ (Message Queue) Processing Channel with the given name, consuming configuration,
@@ -46,10 +47,10 @@ public class AbstractMqProcessingChannel extends ProcessingChannel implements Cl
      * @param consumingConfiguration The consuming configuration for the channel.
      * @param publishingConfiguration The publishing configuration for the channel.
      */
-    public AbstractMqProcessingChannel(
+    public MqProcessingChannel(
         String name,
-        AbstractMqConsumingConfiguration consumingConfiguration,
-        AbstractMqPublishingConfiguration publishingConfiguration
+        MqConsumingConfiguration consumingConfiguration,
+        MqPublishingConfiguration publishingConfiguration
     ) {
         super(name, publishingConfiguration, consumingConfiguration);
         this.consumingConfiguration = consumingConfiguration;
@@ -69,7 +70,7 @@ public class AbstractMqProcessingChannel extends ProcessingChannel implements Cl
      * {@inheritDoc}
      */
     @Override
-    public AbstractMqConsumingConfiguration getConsumingConfiguration() {
+    public MqConsumingConfiguration getConsumingConfiguration() {
         return consumingConfiguration;
     }
 
@@ -77,7 +78,7 @@ public class AbstractMqProcessingChannel extends ProcessingChannel implements Cl
      * {@inheritDoc}
      */
     @Override
-    public AbstractMqPublishingConfiguration getPublishingConfiguration() {
+    public MqPublishingConfiguration getPublishingConfiguration() {
         return publishingConfiguration;
     }
 }

@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import com.gruelbox.transactionoutbox.TransactionOutbox;
 import io.domainlifecycles.events.gruelbox.api.DomainEventsInstantiator;
 import io.domainlifecycles.events.gruelbox.api.PublishingSchedulerConfiguration;
 import io.domainlifecycles.events.gruelbox.poll.GruelboxPoller;
-import io.domainlifecycles.events.gruelbox.publish.GruelboxDomainEventPublisher;
+import io.domainlifecycles.events.gruelbox.publish.SimpleGruelboxDomainEventPublisher;
 import io.domainlifecycles.events.mq.gruelbox.MqGruelboxDomainEventDispatcher;
 import io.domainlifecycles.events.mq.publish.MqDomainEventPublisher;
 import io.domainlifecycles.events.publish.DomainEventPublisher;
@@ -46,12 +46,12 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
-public class AbstractGruelboxProxyMqPublishingConfiguration extends AbstractMqPublishingConfiguration {
+public class GruelboxProxyMqPublishingConfiguration extends MqPublishingConfiguration {
 
     private final TransactionOutbox transactionOutbox;
     private final GruelboxPoller poller;
     private final PublishingSchedulerConfiguration publishingSchedulerConfiguration;
-    private final GruelboxDomainEventPublisher gruelboxDomainEventPublisher;
+    private final DomainEventPublisher gruelboxDomainEventPublisher;
     private final DomainEventsInstantiator domainEventsInstantiator;
     private final MqGruelboxDomainEventDispatcher dispatcher;
 
@@ -64,18 +64,18 @@ public class AbstractGruelboxProxyMqPublishingConfiguration extends AbstractMqPu
      * @param publishingSchedulerConfiguration The configuration for the publishing scheduler.
      * @param domainEventsInstantiator The instantiator for domain events.
      */
-    AbstractGruelboxProxyMqPublishingConfiguration(MqDomainEventPublisher mqDomainEventPublisher,
-                                                   TransactionOutbox transactionOutbox,
-                                                   GruelboxPoller poller,
-                                                   PublishingSchedulerConfiguration publishingSchedulerConfiguration,
-                                                   DomainEventsInstantiator domainEventsInstantiator) {
+    GruelboxProxyMqPublishingConfiguration(MqDomainEventPublisher mqDomainEventPublisher,
+                                           TransactionOutbox transactionOutbox,
+                                           GruelboxPoller poller,
+                                           PublishingSchedulerConfiguration publishingSchedulerConfiguration,
+                                           DomainEventsInstantiator domainEventsInstantiator) {
         super(mqDomainEventPublisher);
-        this.transactionOutbox = Objects.requireNonNull(transactionOutbox, "We need a TransactionOutbox for our AbstractGruelboxProxyMqPublishingConfiguration!");
-        this.poller = Objects.requireNonNull(poller, "We need a GruelboxPoller for our AbstractGruelboxProxyMqPublishingConfiguration!");
+        this.transactionOutbox = Objects.requireNonNull(transactionOutbox, "We need a TransactionOutbox for our GruelboxProxyMqPublishingConfiguration!");
+        this.poller = Objects.requireNonNull(poller, "We need a GruelboxPoller for our GruelboxProxyMqPublishingConfiguration!");
         this.domainEventsInstantiator = Objects.requireNonNull(domainEventsInstantiator, "A DomainEventsInstantiator is required!");
 
-        this.publishingSchedulerConfiguration = Objects.requireNonNull(publishingSchedulerConfiguration, "We need a TransactionOutbox for our AbstractGruelboxProxyMqPublishingConfiguration!");
-        this.gruelboxDomainEventPublisher = new GruelboxDomainEventPublisher(transactionOutbox, publishingSchedulerConfiguration);
+        this.publishingSchedulerConfiguration = Objects.requireNonNull(publishingSchedulerConfiguration, "We need a TransactionOutbox for our GruelboxProxyMqPublishingConfiguration!");
+        this.gruelboxDomainEventPublisher = new SimpleGruelboxDomainEventPublisher(transactionOutbox, publishingSchedulerConfiguration);
         this.dispatcher = new MqGruelboxDomainEventDispatcher(Objects.requireNonNull(mqDomainEventPublisher, "A MqDomainEventPublisher is required!"));
         domainEventsInstantiator.registerGruelboxDomainEventDispatcher(this.dispatcher);
     }
@@ -116,11 +116,11 @@ public class AbstractGruelboxProxyMqPublishingConfiguration extends AbstractMqPu
     }
 
     /**
-     * Retrieves the GruelboxDomainEventPublisher associated with this configuration.
+     * Retrieves the GruelboxBroadcastingDomainEventPublisher associated with this configuration.
      *
-     * @return The GruelboxDomainEventPublisher responsible for publishing domain events to a transaction outbox.
+     * @return The GruelboxBroadcastingDomainEventPublisher responsible for publishing domain events to a transaction outbox.
      */
-    public GruelboxDomainEventPublisher getGruelboxDomainEventPublisher() {
+    public DomainEventPublisher getDomainEventPublisher() {
         return gruelboxDomainEventPublisher;
     }
 
@@ -140,5 +140,14 @@ public class AbstractGruelboxProxyMqPublishingConfiguration extends AbstractMqPu
      */
     public MqGruelboxDomainEventDispatcher getDispatcher() {
         return dispatcher;
+    }
+
+    /**
+     * Closes resources used, when channel is closed
+     */
+    @Override
+    void close() {
+        this.poller.getScheduler().shutdown();
+        super.close();
     }
 }

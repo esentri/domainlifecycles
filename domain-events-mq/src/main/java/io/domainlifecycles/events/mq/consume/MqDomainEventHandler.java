@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -94,10 +94,13 @@ public class MqDomainEventHandler {
         final var finalHandlerName = executionContextHandlerName;
         var filteredExecutionContexts = executionContextDetector.detectExecutionContexts(domainEvent)
             .stream()
-            .filter(ec ->
-                finalHandlerName.equals(ec.handler().getClass().getName())
-                && handlerMethodName.equals(ec.handlerMethodName())
-                && domainEventType.getName().equals(ec.domainEvent().getClass().getName())
+            .filter(ec ->{
+                var b =  finalHandlerName.equals(ec.handler().getClass().getName())
+                    && handlerMethodName.equals(ec.handlerMethodName())
+                    && domainEventType.getName().equals(ec.domainEvent().getClass().getName());
+                return b;
+                }
+
             ).toList();
         log.debug("Detected execution contexts for {} - {}", domainEvent, filteredExecutionContexts);
         executionContextProcessor.process(filteredExecutionContexts);
