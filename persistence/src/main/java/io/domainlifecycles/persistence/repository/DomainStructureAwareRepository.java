@@ -326,7 +326,7 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
                         .accessPathFromRoot
                         .size()))
                 .toList();
-            deleteActions.forEach(a -> persister.deleteOne(a, context))
+            deleteActions.forEach(a -> persister.deleteOne(a, context));
         });
         //UPDATEs and INSERTs must be executed in insertion order ordered by record typ
         //but executing all UPDATES first and then all INSERTs causes problems with 1-1-forward referenced
