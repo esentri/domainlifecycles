@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -78,7 +78,6 @@ public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     protected UpdatableRecord<?> getEntityRecordById(I id) {
         var entityClassName = Domain.entityMirrorForIdentityTypeName(id.getClass().getName()).getTypeName();
         String recordClassName = domainPersistenceProvider.persistenceMirror.getEntityRecordMirror(
@@ -86,7 +85,7 @@ public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
         var recordInstance = (UpdatableRecord<?>) newRecordInstanceProvider.provideNewRecord(recordClassName);
 
         var pk = recordInstance.getTable().getPrimaryKey();
-        if (pk.getFields().size() > 1) {
+        if (pk != null && pk.getFields().size() > 1) {
             throw DLCPersistenceException.fail(
                 "Find by ID. Currently only single valued primary key are supported. The primary key '%s' contains " +
                     "multiple fields!",
@@ -177,7 +176,7 @@ public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
                     "relation!",
                 fkCandidate.getName());
         }
-        if (r.size() > 0) {
+        if (!r.isEmpty()) {
             return (UpdatableRecord<?>) r.get(0);
         }
         return null;
@@ -194,7 +193,7 @@ public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
         var fks = dummyChildRecord.getTable().getReferencesTo(parentRecord.getTable());
 
 
-        if (fks.size() == 0) {
+        if (fks.isEmpty()) {
             throw DLCPersistenceException.fail("No foreign key references between tables '%s' and '%s' were found!",
                 parentRecord.getTable().getName(), dummyChildRecord.getTable().getName());
         }
@@ -222,7 +221,6 @@ public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
         return fetchChildren(parentRecord, referencedEntityRecordClassName);
     }
 
-    @SuppressWarnings("unchecked")
     private Collection<UpdatableRecord<?>> fetchChildren(Object parentRecord, String referencedRecordClassName) {
         var parentRecordInstance = (TableRecord<?>) parentRecord;
         var o = newRecordInstanceProvider.provideNewRecord(referencedRecordClassName);
