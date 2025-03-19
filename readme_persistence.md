@@ -702,7 +702,10 @@ regarding data types:
   PropertyName (Attention: Not the type name, because only property names are always unique))
   If the naming convention for 'record mapped' ValueObjects is unfavorable,
   then an alternative table name can be defined by configuration
-  [EntityValueObjectRecordTypeConfiguration](#entityvalueobjectrecordtypeconfiguration)
+  [EntityValueObjectRecordTypeConfiguration](#entityvalueobjectrecordtypeconfiguration). 
+- Nested structures are supported: For nested ValueObjects with 1-n relations just follow that convention:
+  If `ActionCode` had another property 'vals' containing a list of `CodeValue`ValueObjects, the corresponding table name
+  would be `ORDER_ACTION_CODES_VALS`. And so on...
 
 In the [Sample App](./dlc-sample) you can view a fully AutoMapping capable complex example.
 
@@ -797,8 +800,12 @@ Custom RecordMappers must be made known to DLC Persistence by configuration:
 
 Each ValueObject, which is in 1:n relation to its containing Entity
 is relationally mapped in an own table. These ValueObjects are called
-called 'record mapped' ValueObjects. But DLC persistence provides mechanisms to define
-explicit ValueObject-to-database-table mappings (see below "EntityValueObjectRecordTypeConfiguration").
+called 'record mapped' ValueObjects. 
+'record mapped' ValueObjects can be mapped just by naming and structure conventions (see [AutoMapping](#automapping)).
+DLC support multiple deeply nested structures of 'record mapped' ValueObjects. 
+
+DLC persistence provides mechanisms to deviate from naming convention requirements.
+It is possible to define explicit ValueObject-to-database-table mappings (see below "EntityValueObjectRecordTypeConfiguration").
 'Record mapped' ValueObjects must also fulfill certain requirements in their
 relational structures (database definition):
 
