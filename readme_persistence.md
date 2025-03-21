@@ -630,6 +630,7 @@ The following conventions must be followed:
 <b>structural conventions:</b>
 
 - Each Entity must correspond to exactly 1 Entity table.
+- The `parent_id` Column of an Entity table must be `NOT NULL`.
 - Each ValueObject which is in 1:1 relation to its containing Entity will be
   embedded in the Entity table with respect to its relational mapping.
 - Each ValueObject, which is in 1:n relation to its containing Entity
