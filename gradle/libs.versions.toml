@@ -51,6 +51,7 @@ spring-web-version = '5.3.33'
 spring-web6-version = '6.1.13'
 swagger-version = '2.2.25'
 type-resolver-version = '1.0.3'
+docker-java-version = '3.4.0'
 
 # test-versions
 active-mq-artemis-version = '2.37.0'
@@ -147,7 +148,8 @@ spring-web6 = { module = "org.springframework:spring-web", version.ref = "spring
 spring-tx = { module = "org.springframework:spring-tx", version.ref = "spring-tx-version" }
 swagger = { module = "io.swagger.core.v3:swagger-core-jakarta", version.ref = "swagger-version" }
 type-resolver = { module = "com.github.vladislavsevruk:type-resolver", version.ref = "type-resolver-version" }
-
+docker-java-core = { module = "com.github.docker-java:docker-java-core", version.ref = "docker-java-version" }
+docker-java-transport-httpclient5 = { module = "com.github.docker-java:docker-java-transport-httpclient5", version.ref = "docker-java-version" }
 
 [bundles]
 gruelbox-transactionoutbox = ['gruelbox-transactionoutbox-core', 'gruelbox-transactionoutbox-spring', 'gruelbox-transactionoutbox-jackson']

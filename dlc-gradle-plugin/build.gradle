@@ -1,0 +1,32 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'checkstyle'
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
+    id 'java-gradle-plugin'
+}
+
+group = dlcGroup
+version = dlcVersion
+
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+gradlePlugin {
+    plugins {
+        create('dlcGradlePlugin') {
+            id = 'io.domainlifecycles.dlc-gradle-plugin'
+            implementationClass = 'io.domainlifecycles.plugin.DlcGradlePlugin'
+        }
+    }
+}
+
+dependencies {
+    implementation project(":dlc-plugins")
+    implementation project(":mirror")
+    implementation project(":types")
+}
