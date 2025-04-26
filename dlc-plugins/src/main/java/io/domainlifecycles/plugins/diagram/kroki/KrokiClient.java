@@ -72,6 +72,13 @@ public class KrokiClient {
     }
 
     /**
+     * Initializes the KrokiClient by starting the associated Kroki Docker container.
+     * This method must be invoked before performing any actions involving the Kroki server.
+     * It ensures that the necessary Docker container is running and available for use.
+     */
+    public void initialize() { krokiDockerAdapter.start(); }
+
+    /**
      * Has to be called after all Kroki actions have been performed, otherwise Docker-Container
      * keeps running.
      */
@@ -116,7 +123,6 @@ public class KrokiClient {
                     return response.body();
                 }
                 if (response.statusCode() >= 400) {
-                    krokiDockerAdapter.stop();
                     throw DLCPluginsException.fail(String.format("Kroki Docker container returned error for conversion: %s",
                         new String(response.body(), StandardCharsets.UTF_8)));
                 }
@@ -126,7 +132,6 @@ public class KrokiClient {
                 } catch (InterruptedException ignored) { }
             }
         }
-        krokiDockerAdapter.stop();
         throw DLCPluginsException.fail(String.format("Kroki server couldn't be reached in specified retry limit (Retries: %s, Timeout: %s)", MAX_RETRIES, WAIT_TIMEOUT_MS));
     }
 

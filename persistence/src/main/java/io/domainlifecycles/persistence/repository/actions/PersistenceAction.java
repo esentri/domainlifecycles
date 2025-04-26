@@ -102,8 +102,6 @@ public class PersistenceAction<BASE_RECORD_TYPE> {
 
     /**
      * {@inheritDoc}
-     *
-     * @return
      */
     @Override
     public boolean equals(Object o) {
@@ -115,8 +113,6 @@ public class PersistenceAction<BASE_RECORD_TYPE> {
 
     /**
      * {@inheritDoc}
-     *
-     * @return
      */
     @Override
     public int hashCode() {

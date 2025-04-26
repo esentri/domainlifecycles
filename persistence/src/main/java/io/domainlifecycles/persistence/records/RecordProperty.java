@@ -109,8 +109,6 @@ public class RecordProperty {
 
     /**
      * {@inheritDoc}
-     *
-     * @return
      */
     @Override
     public boolean equals(Object o) {
@@ -124,8 +122,6 @@ public class RecordProperty {
 
     /**
      * {@inheritDoc}
-     *
-     * @return
      */
     @Override
     public int hashCode() {
@@ -134,8 +130,6 @@ public class RecordProperty {
 
     /**
      * {@inheritDoc}
-     *
-     * @return
      */
     @Override
     public String toString() {

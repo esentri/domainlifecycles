@@ -33,5 +33,19 @@ package io.domainlifecycles.jackson.api;
  * @author Mario Herb
  */
 public enum MappingAction {
-    SKIP_DEFAULT_ACTION, CONTINUE_WITH_DEFAULT_ACTION
+    /**
+     * Indicates that the default mapping action for a specified step in the JSON-object transformation process
+     * (e.g., reading or writing a field or object) should be skipped in user-defined customization callbacks
+     * of the {@link JacksonMappingCustomizer}.
+     *
+     * This allows fine-grained control over the mapping process to override or bypass default behavior.
+     */
+    SKIP_DEFAULT_ACTION,
+    /**
+     * Indicates that the default mapping action for a specified step in the JSON-object transformation process
+     * (e.g., reading or writing a field or object) should proceed as defined in the standard behavior.
+     * This serves as a directive in customization callbacks of the {@link JacksonMappingCustomizer}
+     * to allow the default behavior to continue without interruption or modification.
+     */
+    CONTINUE_WITH_DEFAULT_ACTION
 }

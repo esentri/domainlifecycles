@@ -41,6 +41,7 @@ public class DiagramGeneratorFactory {
      * Creates a new DomainDiagramGenerator
      *
      * @param diagramConfig diagram generator configuration
+     * @param domainModel the Domain Model operated on
      * @return new instance of DomainDiagramGenerator
      */
     public static Diagram getDomainDiagramGenerator(DiagramConfig diagramConfig, DomainModel domainModel) {

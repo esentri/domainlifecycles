@@ -120,6 +120,7 @@ public abstract class CreateDiagramTask extends DefaultTask {
     public void action() {
         diagramGenerator = new DiagramGeneratorImpl();
         getDiagrams().forEach(this::createAndSaveDiagram);
+        diagramGenerator.tearDown();
     }
 
     private void createAndSaveDiagram(PluginDiagramConfigurationExtension diagramConfigExtension) {

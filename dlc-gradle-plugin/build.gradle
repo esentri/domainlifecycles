@@ -27,6 +27,4 @@ gradlePlugin {
 
 dependencies {
     implementation project(":dlc-plugins")
-    implementation project(":mirror")
-    implementation project(":types")
 }

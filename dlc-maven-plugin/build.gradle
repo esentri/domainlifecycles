@@ -4,7 +4,11 @@ plugins {
     id 'checkstyle'
     alias libs.plugins.yumi.gradle.licenser.plugin
     alias libs.plugins.jaredsburrows.license.plugin
+    alias libs.plugins.maven.plugin.development.plugin
 }
+
+group = dlcGroup
+version = dlcVersion
 
 java {
     withJavadocJar()
@@ -12,8 +16,9 @@ java {
 }
 
 dependencies {
-    api libs.jakarta.validation.api
-    api libs.javax.validation.api
-    compileOnly libs.slf4j.api
-    api project(":assertions")
+    implementation libs.maven.core
+    implementation libs.maven.artifact
+    implementation libs.maven.plugin.api
+    compileOnly libs.maven.plugin.tools.annotations
+    implementation project(":dlc-plugins")
 }

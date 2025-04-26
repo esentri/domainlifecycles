@@ -148,11 +148,23 @@ public class ResponseObject<T> {
         ResponseObjectBuilder() {
         }
 
+        /**
+         * Sets the data for the {@link ResponseObjectBuilder}.
+         *
+         * @param data the data object to be set
+         * @return the current instance of {@link ResponseObjectBuilder} for method chaining
+         */
         public ResponseObjectBuilder<T> data(T data) {
             this.data = data;
             return this;
         }
 
+        /**
+         * Sets the list of errors for the {@link ResponseObjectBuilder}.
+         *
+         * @param errors the list of {@link java.lang.Error} objects to be set
+         * @return the current instance of {@link ResponseObjectBuilder} for method chaining
+         */
         public ResponseObjectBuilder<T> errors(List<Error> errors) {
             this.errors = errors;
             return this;
@@ -167,6 +179,12 @@ public class ResponseObject<T> {
             return new ResponseObject<>(data, errors);
         }
 
+        /**
+         * Generates a string representation of the {@code ResponseObjectBuilder} instance,
+         * including the {@code data} and {@code errors} properties.
+         *
+         * @return a string representation of the builder instance
+         */
         public String toString() {
             return "ResponseObject.ResponseObjectBuilder(data=" + this.data + ", errors=" + this.errors + ")";
         }

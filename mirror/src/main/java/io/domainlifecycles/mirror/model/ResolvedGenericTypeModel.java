@@ -43,8 +43,7 @@ import java.util.stream.Collectors;
  * @param wildcardBound the wildcard bound
  * @author Mario Herb
  */
-public record ResolvedGenericTypeModel(String typeName, boolean isArray, List<ResolvedGenericTypeMirror> genericTypes,
-                                       Optional<WildcardBound> wildcardBound) implements ResolvedGenericTypeMirror {
+public record ResolvedGenericTypeModel(String typeName, boolean isArray, List<ResolvedGenericTypeMirror> genericTypes, Optional<WildcardBound> wildcardBound) implements ResolvedGenericTypeMirror {
 
     /**
      * {@inheritDoc}

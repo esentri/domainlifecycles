@@ -105,7 +105,10 @@ public class Error {
     }
 
     /**
-     * Returns true, if other is an Error.
+     * Checks if the specified object can be equaled with this Error instance.
+     *
+     * @param other The object to compare with this Error instance.
+     * @return true if the specified object is an instance of Error, false otherwise.
      */
     protected boolean canEqual(final Object other) {
         return other instanceof Error;

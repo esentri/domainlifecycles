@@ -37,5 +37,8 @@ import java.util.List;
  * @author Leon Völlinger
  */
 public interface DiagramGenerator {
+
     byte[] generateDiagram(List<URL> classPathFiles, DiagramConfig diagramConfig);
+
+    void tearDown();
 }

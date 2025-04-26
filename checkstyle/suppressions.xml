@@ -31,11 +31,11 @@
 <suppressions>
     <!-- Supresses most checks for test classes. -->
     <suppress checks="PatternVariableName"
-              files=".*Test.java"/>
+              files=".*Test\.java"/>
     <suppress checks="MethodName"
-              files=".*Test.java"/>
+              files=".*Test\.java"/>
     <suppress checks="ConstantName"
-              files=".*Test.java"/>
+              files=".*Test\.java"/>
     <supress checks="JavadocMethod"
-             files=".*Test.java"/>
+             files=".*Test\.java"/>
 </suppressions>

@@ -468,11 +468,25 @@ public enum JavaReflect {
         return count == 1;
     }
 
+    /**
+     * Determines whether the given method belongs to a lambda type.
+     *
+     * @param method the method to be checked; must not be null
+     * @return true if the method's declaring class is an interface and a lambda type, false otherwise
+     */
     public static boolean isLambdaMethod(final Method method) {
         final Class<?> declaring = method.getDeclaringClass();
         return declaring.isInterface() && isLambdaType(declaring);
     }
 
+    /**
+     * Retrieves the first eligible method from the specified class that meets the criteria 
+     * for being considered a lambda-related method.
+     *
+     * @param type The class being inspected for a lambda-related method. Must not be null.
+     * @return An {@code Optional} containing the discovered method if it adheres to 
+     *         the necessary conditions, otherwise {@code Optional.empty()}.
+     */
     public static Optional<Method> lambdaMethod(final Class<?> type) {
         if (!isLambdaType(type)) return Optional.empty();
         return methods(type, MemberSelect.HIERARCHY)
@@ -984,7 +998,7 @@ public enum JavaReflect {
         }
         return Object.class;
     }
-
+    
     public static boolean isSubclassOf(Class<?> queryClass, Class<?> ofClass) {
         while (queryClass != null) {
             if (queryClass == ofClass) {

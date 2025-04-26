@@ -53,6 +53,12 @@ public class StructuralPosition {
      * Whether the {@link DomainObject} instance is a back reference or not.
      */
     public final boolean isBackReference;
+    /**
+     * Represents the parent structural position in a hierarchy.
+     * This variable holds a reference to the parent {@link StructuralPosition},
+     * allowing navigation up the structural hierarchy. It is immutable and
+     * final once assigned.
+     */
     protected final StructuralPosition parentStructuralPosition;
 
     private StructuralPosition(DomainObject instance,

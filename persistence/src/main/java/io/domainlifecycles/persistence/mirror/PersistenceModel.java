@@ -48,6 +48,14 @@ public class PersistenceModel<BASE_RECORD_TYPE> implements PersistenceMirror<BAS
 
     private final Map<String, EntityRecordMirror<BASE_RECORD_TYPE>> entityRecordMap;
 
+    /**
+     * Constructs a new PersistenceModel and initializes the entity record map using the provided
+     * array of EntityRecordMirror instances.
+     *
+     * @param entityRecordMirrors an array of EntityRecordMirror instances that map domain object
+     *                            type names to their corresponding record mirrors. These are
+     *                            used to populate the entity record map within the persistence model.
+     */
     public PersistenceModel(EntityRecordMirror<BASE_RECORD_TYPE>[] entityRecordMirrors) {
         this.entityRecordMap = new HashMap<>();
         Arrays.stream(entityRecordMirrors).forEach(erm -> entityRecordMap.put(erm.domainObjectTypeName(), erm));

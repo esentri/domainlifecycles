@@ -17,6 +17,7 @@ dependencies {
     implementation libs.classgraph
     compileOnly libs.javax.validation.api
     compileOnly libs.jakarta.validation.api
+    implementation libs.jackson.core
     implementation libs.jackson.databind
     implementation libs.jackson.datatype.jdk8
     implementation libs.jackson.datatype.jsr310

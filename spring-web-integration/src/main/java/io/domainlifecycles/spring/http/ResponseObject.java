@@ -153,20 +153,42 @@ public class ResponseObject<T> {
         ResponseObjectBuilder() {
         }
 
+        /**
+         * Sets the data in the ResponseObjectBuilder and returns the builder instance.
+         *
+         * @param data the data to be set in the ResponseObjectBuilder
+         * @return the updated ResponseObjectBuilder instance
+         */
         public ResponseObjectBuilder<T> data(T data) {
             this.data = data;
             return this;
         }
 
+        /**
+         * Sets the list of errors in the ResponseObjectBuilder and returns the builder instance.
+         *
+         * @param errors the list of Error objects to be set
+         * @return the updated ResponseObjectBuilder instance
+         */
         public ResponseObjectBuilder<T> errors(List<Error> errors) {
             this.errors = errors;
             return this;
         }
 
+        /**
+         * Builds a new instance of {@link ResponseObject} using the data and errors set in the builder.
+         *
+         * @return a new {@link ResponseObject} instance containing the current state of the builder
+         */
         public ResponseObject<T> build() {
             return new ResponseObject<>(data, errors);
         }
 
+        /**
+         * Returns a string representation of the ResponseObjectBuilder, including its data and errors values.
+         *
+         * @return a string detailing the current state of the ResponseObjectBuilder
+         */
         public String toString() {
             return "ResponseObject.ResponseObjectBuilder(data=" + this.data + ", errors=" + this.errors + ")";
         }

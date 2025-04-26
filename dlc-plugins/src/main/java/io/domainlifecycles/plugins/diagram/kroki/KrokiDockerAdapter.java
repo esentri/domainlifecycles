@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.github.dockerjava.api.model.HostConfig.newHostConfig;
 
@@ -51,52 +52,74 @@ import static com.github.dockerjava.api.model.HostConfig.newHostConfig;
  */
 class KrokiDockerAdapter {
 
-    private final static String KROKI_CONTAINER_NAME = "kroki";
-    private final static String KROKI_CONTAINER_HOST_NAME = "esentri";
+    private final static String KROKI_CONTAINER_NAME = "kroki-dlc";
+    private final static String KROKI_CONTAINER_HOST_NAME = "kroki-dlc-host";
     private final static String KROKI_CONTAINER_IMAGE_NAME = "yuzutech/kroki";
     private final static Logger log = LoggerFactory.getLogger(KrokiDockerAdapter.class);
 
     private final DockerClient dockerClient;
-    private final String krokiContainerId;
+    private String krokiContainerId;
 
     KrokiDockerAdapter() {
         dockerClient = initializeDockerClient();
-        krokiContainerId = createOrGetKrokiDockerContainerId();
-        start(krokiContainerId);
+    }
+
+    void start() {
+        if(krokiContainerId == null) {
+            krokiContainerId = createOrGetKrokiDockerContainerId();
+        }
+        startContainer();
     }
 
     void stop() {
-        try {
-            dockerClient.stopContainerCmd(krokiContainerId).exec();
-        } catch(Throwable t) {
-            throw DLCPluginsException.fail("Could not stop Kroki Docker container.", t);
+        if(krokiContainerId != null) {
+            try {
+                dockerClient.stopContainerCmd(krokiContainerId).exec();
+            } catch (Throwable t) {
+                throw DLCPluginsException.fail("Could not stop Kroki Docker container.", t);
+            }
+            log.debug("Kroki container stopped");
         }
-        log.debug("Kroki container stopped");
     }
 
-    private void start(final String containerId) {
+    private void startContainer() {
         try {
-            dockerClient.startContainerCmd(containerId).exec();
+            var res = dockerClient.listContainersCmd()
+                .withShowAll(true)
+                .withIdFilter(List.of(krokiContainerId))
+                .exec();
+            if(!res.isEmpty()){
+                log.debug("Kroki container state:" + res.stream().map(Container::getState).collect(Collectors.joining()));
+                var running = res.stream().allMatch(c -> c.getState().equalsIgnoreCase("running"));
+                if(!running){
+                    dockerClient.startContainerCmd(krokiContainerId).exec();
+                }
+            }else {
+                throw DLCPluginsException.fail(
+                    "Kroki container not found");
+            }
         } catch(Throwable t) {
             throw DLCPluginsException.fail(
-                "Could not start Kroki Docker container. Please check whether you have another instance of this container running.", t);
+                "Could not start or access Kroki Docker container.", t);
         }
-        log.debug("Kroki container started");
+        log.debug("Kroki container running");
     }
 
     private String createOrGetKrokiDockerContainerId() {
         try {
-            final List<Container> foundKrokiContainers = dockerClient
+            final List<Container> foundContainers = dockerClient
                 .listContainersCmd()
-                .withAncestorFilter(List.of(KROKI_CONTAINER_IMAGE_NAME))
+                .withShowAll(true)
+                .withNameFilter(List.of(KROKI_CONTAINER_NAME))
                 .exec();
 
-            if(!foundKrokiContainers.isEmpty()) {
-                String krokiContainerId = foundKrokiContainers.get(0).getId();
+            if(!foundContainers.isEmpty()) {
+                log.debug("Found containers: {}", foundContainers.stream().map(c -> c.getId() + " " + c.getNames() ).collect(Collectors.joining("\n")));
+                String krokiContainerId = foundContainers.stream().findFirst().get().getId();
                 log.debug(String.format("Found existing Kroki Docker container with ID: %s. Reusing this.", krokiContainerId));
                 return krokiContainerId;
-            }
 
+            }
             log.debug("No existing Kroki Docker container found. Creating new one...");
         } catch(Throwable t) {
             throw DLCPluginsException.fail(

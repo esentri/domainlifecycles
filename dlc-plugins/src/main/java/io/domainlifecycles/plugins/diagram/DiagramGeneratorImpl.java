@@ -89,20 +89,31 @@ public class DiagramGeneratorImpl implements DiagramGenerator {
         final String rawNomnomlDiagramText = generateRawNomnomlDiagramText(classPathFiles, diagramConfig);
 
         if(FileType.NOMNOML.equals(diagramConfig.getFileType())) {
-            krokiClient.finish();
             return rawNomnomlDiagramText.getBytes(StandardCharsets.UTF_8);
         }
 
         try {
+            krokiClient.initialize();
             byte[] convertedDiagram = krokiClient.convertTo(rawNomnomlDiagramText, diagramConfig.getFileType());
-            krokiClient.finish();
             return convertedDiagram;
         } catch (Exception e) {
-            krokiClient.finish();
             throw DLCPluginsException.fail(
                 String.format("Error occurred while generating diagram '%s' (Of type: %s)",
                     diagramConfig.getFileName(), diagramConfig.getFileType().name()), e);
         }
+    }
+
+    /**
+     * Cleans up resources used by the {@code DiagramGeneratorImpl} instance.
+     *
+     * This method ensures that the {@code krokiClient} completes its operations
+     * and stops any associated Docker containers to prevent resource leakage.
+     * It is essential to invoke this method after all diagram generation tasks
+     * are complete.
+     */
+    @Override
+    public void tearDown() {
+        krokiClient.finish();
     }
 
     private String generateRawNomnomlDiagramText(List<URL> classPathFiles, final DiagramConfig diagramConfig) {

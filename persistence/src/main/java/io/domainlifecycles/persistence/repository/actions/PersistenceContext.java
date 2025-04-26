@@ -101,6 +101,18 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
     private final EntityCloner entityCloner;
     private final DomainPersistenceProvider<BASE_RECORD_TYPE> domainPersistenceProvider;
 
+    /**
+     * Constructs a PersistenceContext instance to manage and track persistence operations and changes
+     * for a specific aggregate root in a domain-driven design context. The context allows comparison
+     * between the updated state and the database state, detects changes, and organizes persistence actions.
+     *
+     * @param domainPersistenceProvider the persistence provider responsible for handling domain-specific
+     *                                  persistence logic and configurations
+     * @param updatedRoot              the aggregate root containing the updated state that needs to be persisted.
+     *                                  This can be null if no updates occur
+     * @param databaseStateRootFetched the previously persisted state of the aggregate root as fetched from
+     *                                  the database, which is used for comparison to detect changes
+     */
     public PersistenceContext(
         DomainPersistenceProvider<BASE_RECORD_TYPE> domainPersistenceProvider,
         AggregateRoot<?> updatedRoot,
@@ -305,6 +317,15 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
         return databaseStateRootFetched;
     }
 
+    /**
+     * Compares two entities field by field to detect if there are differences in their values.
+     * The method checks specific types of fields such as value objects, identities, enums, and non-domain types.
+     * It considers collections and their elements for changes, ensuring a comprehensive comparison.
+     *
+     * @param a the first entity to compare
+     * @param b the second entity to compare
+     * @return true if there are changes between the two entities, false otherwise
+     */
     protected boolean hasChangesCompareFieldByField(Entity<?> a, Entity<?> b) {
         var em = Domain.entityMirrorFor(a);
 
