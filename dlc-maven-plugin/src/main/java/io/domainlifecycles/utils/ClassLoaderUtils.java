@@ -29,6 +29,8 @@ package io.domainlifecycles.utils;
 import io.domainlifecycles.exception.DLCMavenPluginException;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -51,6 +53,8 @@ import java.util.stream.Collectors;
  */
 public class ClassLoaderUtils {
 
+    private final static Logger log = LoggerFactory.getLogger(ClassLoaderUtils.class);
+
     /**
      * Generates a list of URLs representing the classpath elements of the provided Maven project.
      * This includes compile classpath elements, runtime classpath elements, and the build output directory.
@@ -64,6 +68,8 @@ public class ClassLoaderUtils {
             List<String> classpathElements = project.getCompileClasspathElements();
             classpathElements.addAll(project.getRuntimeClasspathElements());
             classpathElements.add(project.getBuild().getOutputDirectory());
+
+            classpathElements.forEach(element -> log.debug("Identified classpath element: {}", element));
 
             return classpathElements.stream()
                 .map(File::new)

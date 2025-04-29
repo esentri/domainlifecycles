@@ -28,6 +28,8 @@ package io.domainlifecycles.utils;
 
 import io.domainlifecycles.exception.DLCGradlePluginException;
 import org.gradle.api.Project;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -42,6 +44,8 @@ import java.util.List;
  * @author Leon Völlinger
  */
 public class ClassLoaderUtils {
+
+    private final static Logger log = LoggerFactory.getLogger(ClassLoaderUtils.class);
 
     /**
      * Retrieves a list of classpath files for the parent project, including the build directory
@@ -68,6 +72,9 @@ public class ClassLoaderUtils {
                         throw new RuntimeException(e);
                     }
                 });
+
+            parentClasspath.forEach(element -> log.debug("Identified classpath element: {}", element));
+
 
             return parentClasspath;
         } catch (Exception e) {
