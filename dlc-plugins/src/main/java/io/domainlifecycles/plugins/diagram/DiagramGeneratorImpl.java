@@ -31,12 +31,11 @@ import io.domainlifecycles.mirror.api.DomainModel;
 import io.domainlifecycles.plugins.diagram.kroki.KrokiClient;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
 import io.domainlifecycles.plugins.util.DLCUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation class for generating visual domain diagrams based on class path inputs and configuration details.
@@ -61,7 +60,7 @@ import java.util.List;
  */
 public class DiagramGeneratorImpl implements DiagramGenerator {
 
-    private final static Logger log = LoggerFactory.getLogger(DiagramGeneratorImpl.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(DiagramGeneratorImpl.class);
 
     private final KrokiClient krokiClient;
 
@@ -85,7 +84,7 @@ public class DiagramGeneratorImpl implements DiagramGenerator {
      */
     @Override
     public byte[] generateDiagram(List<URL> classPathFiles, final DiagramConfig diagramConfig) {
-        log.info(String.format("Generating diagram %s of type %s", diagramConfig.getFileName(), diagramConfig.getFileType().name()));
+        LOGGER.info(String.format("Generating diagram %s of type %s", diagramConfig.getFileName(), diagramConfig.getFileType().name()));
         final String rawNomnomlDiagramText = generateRawNomnomlDiagramText(classPathFiles, diagramConfig);
 
         if(FileType.NOMNOML.equals(diagramConfig.getFileType())) {
@@ -94,8 +93,7 @@ public class DiagramGeneratorImpl implements DiagramGenerator {
 
         try {
             krokiClient.initialize();
-            byte[] convertedDiagram = krokiClient.convertTo(rawNomnomlDiagramText, diagramConfig.getFileType());
-            return convertedDiagram;
+            return krokiClient.convertTo(rawNomnomlDiagramText, diagramConfig.getFileType());
         } catch (Exception e) {
             throw DLCPluginsException.fail(
                 String.format("Error occurred while generating diagram '%s' (Of type: %s)",
@@ -118,7 +116,7 @@ public class DiagramGeneratorImpl implements DiagramGenerator {
 
     private String generateRawNomnomlDiagramText(List<URL> classPathFiles, final DiagramConfig diagramConfig) {
         final String[] contextPackages = diagramConfig.getContextPackages().toArray(new String[0]);
-        DomainModel dm = null;
+        DomainModel dm;
         try {
             dm = DLCUtils.initializeDomainModelFromClassPath(classPathFiles, contextPackages);
         } catch(RuntimeException e) {

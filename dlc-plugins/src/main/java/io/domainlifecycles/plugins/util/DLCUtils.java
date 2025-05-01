@@ -30,12 +30,12 @@ import io.domainlifecycles.mirror.api.DomainModel;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
 import io.domainlifecycles.mirror.resolver.TypeMetaResolver;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class providing methods to assist with initializing a domain model
@@ -84,6 +84,4 @@ public class DLCUtils {
             return Optional.empty();
         }
     }
-
-
 }

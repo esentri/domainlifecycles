@@ -27,7 +27,6 @@
 package io.domainlifecycles.utils;
 
 import io.domainlifecycles.exception.DLCMavenPluginException;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

@@ -27,16 +27,15 @@
 package io.domainlifecycles.utils;
 
 import io.domainlifecycles.exception.DLCMavenPluginException;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.project.MavenProject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for handling classloader-related operations within a Maven project.

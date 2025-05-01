@@ -29,8 +29,10 @@ package io.domainlifecycles.plugin;
 import io.domainlifecycles.plugin.diagram.CreateDiagramTask;
 import io.domainlifecycles.plugin.extensions.DiagramTaskConfigurationExtension;
 import io.domainlifecycles.plugin.extensions.DlcGradlePluginExtension;
+import io.domainlifecycles.plugin.extensions.DomainModelUploadTaskConfigurationExtension;
 import io.domainlifecycles.plugin.extensions.JsonTaskConfigurationExtension;
 import io.domainlifecycles.plugin.json.JsonRenderTask;
+import io.domainlifecycles.plugin.viewer.UploadDomainModelTask;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -79,10 +81,13 @@ public class DlcGradlePlugin implements Plugin<Project> {
 
         JsonTaskConfigurationExtension jsonModelExtension;
         DiagramTaskConfigurationExtension diagramExtension;
+        DomainModelUploadTaskConfigurationExtension domainModelUploadTaskConfigurationExtension;
 
         if (pluginExtension instanceof ExtensionAware extensionAware) {
             jsonModelExtension = extensionAware.getExtensions().create("jsonModel", JsonTaskConfigurationExtension.class);
             diagramExtension = extensionAware.getExtensions().create("diagram", DiagramTaskConfigurationExtension.class);
+            domainModelUploadTaskConfigurationExtension = extensionAware.getExtensions()
+                .create("domainModelUpload", DomainModelUploadTaskConfigurationExtension.class);
         }
         else {
             throw DLCPluginsException.fail("Could not create Gradle extension of DlcGradlePluginExtension.");
@@ -97,6 +102,13 @@ public class DlcGradlePlugin implements Plugin<Project> {
             project.getTasks().register("renderJson", JsonRenderTask.class, task -> {
                 task.getFileOutputDir().set(jsonModelExtension.getFileOutputDir());
                 task.getSerializations().addAll(jsonModelExtension.getSerializations());
+            });
+
+            project.getTasks().register("domainModelUpload", UploadDomainModelTask.class, task -> {
+                task.getProjectName().set(domainModelUploadTaskConfigurationExtension.getProjectName());
+                task.getApiKey().set(domainModelUploadTaskConfigurationExtension.getApiKey());
+                task.getDiagramViewerBaseUrl().set(domainModelUploadTaskConfigurationExtension.getDiagramViewerBaseUrl());
+                task.getContextPackages().set(domainModelUploadTaskConfigurationExtension.getContextPackages());
             });
         });
     }

@@ -33,6 +33,7 @@ import io.domainlifecycles.plugins.diagram.DiagramGenerator;
 import io.domainlifecycles.plugins.diagram.DiagramGeneratorImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
 import io.domainlifecycles.utils.FileIOUtils;
+import java.nio.file.Path;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.file.DirectoryProperty;
@@ -41,8 +42,6 @@ import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.nio.file.Path;
 
 /**
  * Abstract task for creating UML-like diagrams based on domain models or other configurations.

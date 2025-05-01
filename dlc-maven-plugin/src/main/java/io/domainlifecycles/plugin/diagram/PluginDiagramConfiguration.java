@@ -26,9 +26,8 @@
 
 package io.domainlifecycles.plugin.diagram;
 
-import org.apache.maven.plugins.annotations.Parameter;
-
 import java.util.List;
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * This class represents the configuration for a plugin diagram generation process.

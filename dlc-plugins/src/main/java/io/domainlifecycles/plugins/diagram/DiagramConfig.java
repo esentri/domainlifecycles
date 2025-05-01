@@ -28,7 +28,6 @@ package io.domainlifecycles.plugins.diagram;
 
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig.DomainDiagramConfigBuilder;
-
 import java.util.List;
 
 /**

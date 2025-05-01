@@ -28,9 +28,6 @@ package io.domainlifecycles.plugins.diagram.kroki;
 
 import io.domainlifecycles.plugins.diagram.FileType;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -39,7 +36,9 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import static java.lang.Thread.sleep;
 
 /**
  * The KrokiClient class serves as a client for interacting with a Kroki Docker container.
@@ -128,7 +127,7 @@ public class KrokiClient {
                 }
             } catch (IOException | InterruptedException e) {
                 try {
-                    TimeUnit.MILLISECONDS.sleep(WAIT_TIMEOUT_MS);
+                    sleep(WAIT_TIMEOUT_MS);
                 } catch (InterruptedException ignored) { }
             }
         }
