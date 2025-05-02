@@ -27,15 +27,14 @@
 package io.domainlifecycles.utils;
 
 import io.domainlifecycles.exception.DLCGradlePluginException;
-import org.gradle.api.Project;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import org.gradle.api.Project;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class that provides methods for obtaining classpath details related to a given project.

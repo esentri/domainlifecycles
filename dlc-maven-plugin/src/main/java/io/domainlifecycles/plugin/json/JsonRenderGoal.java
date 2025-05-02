@@ -31,6 +31,8 @@ import io.domainlifecycles.plugins.json.JsonSerializer;
 import io.domainlifecycles.plugins.json.JsonSerializerImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
 import io.domainlifecycles.utils.FileIOUtils;
+import java.nio.file.Path;
+import java.util.List;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -39,9 +41,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.nio.file.Path;
-import java.util.List;
 
 /**
  * Mojo implementation for rendering and saving domain models as JSON files based on Maven project configurations.
@@ -81,7 +80,7 @@ import java.util.List;
 @Mojo(name = "renderJson", requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.INITIALIZE)
 public class JsonRenderGoal extends AbstractMojo {
 
-    private final static Logger log = LoggerFactory.getLogger(CreateDiagramGoal.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(CreateDiagramGoal.class);
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
@@ -112,7 +111,7 @@ public class JsonRenderGoal extends AbstractMojo {
      */
     @Override
     public void execute() {
-        log.info("Running Json Render Goal");
+        LOGGER.info("Running Json Render Goal...");
         jsonSerializer = new JsonSerializerImpl(true);
         serializations.forEach(this::renderAndSaveModelAsJson);
     }
@@ -122,7 +121,7 @@ public class JsonRenderGoal extends AbstractMojo {
 
         final Path filePath = Path.of(fileOutputDir, pluginSerializationConfiguration.getFileName() + ".json");
 
-        log.info(String.format("Saving JSON model to %s/%s.json", fileOutputDir, pluginSerializationConfiguration.getFileName()));
+        LOGGER.info(String.format("Saving JSON model to %s/%s.json", fileOutputDir, pluginSerializationConfiguration.getFileName()));
         FileIOUtils.writeFileTo(filePath, jsonContent);
     }
 }

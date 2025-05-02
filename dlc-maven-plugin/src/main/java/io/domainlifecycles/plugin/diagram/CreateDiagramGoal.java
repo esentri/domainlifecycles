@@ -32,6 +32,8 @@ import io.domainlifecycles.plugins.diagram.DiagramGenerator;
 import io.domainlifecycles.plugins.diagram.DiagramGeneratorImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
 import io.domainlifecycles.utils.FileIOUtils;
+import java.nio.file.Path;
+import java.util.List;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -40,9 +42,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.nio.file.Path;
-import java.util.List;
 
 /**
  * Mojo implementation for generating diagrams based on Maven project configurations.
@@ -83,7 +82,7 @@ import java.util.List;
 @Mojo(name = "createDiagram", requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.INITIALIZE)
 public class CreateDiagramGoal extends AbstractMojo {
 
-    private final static Logger log = LoggerFactory.getLogger(CreateDiagramGoal.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(CreateDiagramGoal.class);
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
@@ -108,6 +107,7 @@ public class CreateDiagramGoal extends AbstractMojo {
      */
     @Override
     public void execute() {
+        LOGGER.info("Running Create Diagram Goal...");
         diagramGenerator = new DiagramGeneratorImpl();
         diagrams.forEach(this::createAndSaveDiagram);
         diagramGenerator.tearDown();
@@ -124,7 +124,7 @@ public class CreateDiagramGoal extends AbstractMojo {
         final Path filePath = Path.of(fileOutputDir,
             diagramConfig.getFileName() + diagramConfig.getFileType().getFileSuffix());
 
-        log.info(String.format("Saving diagram to %s/%s.%s",
+        LOGGER.info(String.format("Saving diagram to %s/%s.%s",
             fileOutputDir, mavenDiagramConfiguration.getFileName(), mavenDiagramConfiguration.getFormat()));
         FileIOUtils.writeFileTo(filePath, diagramFileContent);
     }

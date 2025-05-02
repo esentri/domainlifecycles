@@ -26,9 +26,8 @@
 
 package io.domainlifecycles.plugin.json;
 
-import org.apache.maven.plugins.annotations.Parameter;
-
 import java.util.List;
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Represents the configuration required for serializing domain models into JSON files.

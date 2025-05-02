@@ -63,4 +63,16 @@ public abstract class DlcGradlePluginExtension {
      *         which contains the settings related to JSON model generation tasks.
      */
     public abstract Property<JsonTaskConfigurationExtension> getJsonModel();
+
+    /**
+     * Retrieves the configuration for Domain model upload tasks.
+     *
+     * This method provides access to the configuration properties specific
+     * to the upload of Domain models, such as the Diagram-Viewer projectname, API-KEY, Context-Packages,
+     * and Diagram Viewer base url.
+     *
+     * @return a {@code Property} encapsulating the {@code DomainModelUploadTaskConfigurationExtension},
+     *         which contains the settings related to JSON model generation tasks.
+     */
+    public abstract Property<DomainModelUploadTaskConfigurationExtension> getDomainModelUpload();
 }
