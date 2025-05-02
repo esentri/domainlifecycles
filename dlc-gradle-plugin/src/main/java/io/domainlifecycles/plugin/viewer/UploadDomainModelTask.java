@@ -66,7 +66,6 @@ public abstract class UploadDomainModelTask extends DefaultTask {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(UploadDomainModelTask.class);
 
-
     @Input
     public abstract Property<String> getDiagramViewerBaseUrl();
 

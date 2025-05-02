@@ -27,14 +27,15 @@
 package io.domainlifecycles.plugin.extensions;
 
 import org.gradle.api.provider.ListProperty;
+import org.gradle.api.provider.Property;
 
 public abstract class DomainModelUploadTaskConfigurationExtension {
 
-    public abstract String getDiagramViewerBaseUrl();
+    public abstract Property<String> getDiagramViewerBaseUrl();
 
-    public abstract String getApiKey();
+    public abstract Property<String> getApiKey();
 
-    public abstract String getProjectName();
+    public abstract Property<String> getProjectName();
 
     public abstract ListProperty<String> getContextPackages();
 }

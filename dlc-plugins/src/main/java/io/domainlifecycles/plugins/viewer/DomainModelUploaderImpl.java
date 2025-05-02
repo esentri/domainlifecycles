@@ -44,11 +44,11 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
     private static final String API_KEY_HEADER_NAME = "X-API-KEY";
 
     @Override
-    public void uploadDomainModel(String domainModelJson, String projectName, String apiKey, String diagramViewerBaseUrl) {
+    public void uploadDomainModel(String domainModelJson, String apiKey, String projectName, String diagramViewerBaseUrl) {
         LOGGER.debug(String.format("Trying to upload Domain-Model to Diagram-Viewer project '%s' with base url '%s'.", projectName, diagramViewerBaseUrl));
 
         final HttpClient client = HttpClient.newHttpClient();
-        final HttpRequest request = buildDomainModelUploadRequest(domainModelJson, apiKey, diagramViewerBaseUrl);
+        final HttpRequest request = buildDomainModelUploadRequest(domainModelJson, projectName, apiKey, diagramViewerBaseUrl);
 
         try {
             final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -59,9 +59,9 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
         }
     }
 
-    private HttpRequest buildDomainModelUploadRequest(String domainModelJson, String apiKey, String diagramViewerBaseUrl) {
+    private HttpRequest buildDomainModelUploadRequest(String domainModelJson, String projectName, String apiKey, String diagramViewerBaseUrl) {
         return HttpRequest.newBuilder()
-            .uri(URI.create(diagramViewerBaseUrl + DIAGRAM_VIEWER_DOMAIN_MODEL_UPLOAD_PATH))
+            .uri(URI.create(diagramViewerBaseUrl + DIAGRAM_VIEWER_DOMAIN_MODEL_UPLOAD_PATH + projectName))
             .header("Content-Type", "application/json")
             .header(API_KEY_HEADER_NAME, apiKey)
             .PUT(BodyPublishers.ofString(domainModelJson))
