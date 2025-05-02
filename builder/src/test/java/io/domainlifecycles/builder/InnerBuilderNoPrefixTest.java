@@ -6,7 +6,7 @@ import io.domainlifecycles.builder.helper.TestValueObject;
 import io.domainlifecycles.builder.helper.TestValueOptionalObject;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +23,7 @@ public class InnerBuilderNoPrefixTest {
 
     @BeforeAll
     static void beforeAll() {
-        Domain.initialize(new ReflectiveDomainModelFactory("tests", "io.domainlifecycles"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory("tests", "io.domainlifecycles"));
     }
 
     private static final DomainBuilderConfiguration config = new DomainBuilderConfiguration() {

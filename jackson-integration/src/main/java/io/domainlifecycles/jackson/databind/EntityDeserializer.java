@@ -310,6 +310,12 @@ public class EntityDeserializer extends StdDeserializer<Entity<?>> {
         }
     }
 
+    /**
+     * Injects identifier fields into the provided ObjectNode for the entity's corresponding type.
+     * This method ensures that IDs for associated entities and collections are also recursively injected.
+     *
+     * @param objectNode the ObjectNode representing the JSON structure of the entity.
+     */
     public void injectIds(ObjectNode objectNode) {
         injectIds(objectNode, this._valueType.getRawClass().getName());
     }

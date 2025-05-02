@@ -59,4 +59,5 @@ public interface ServiceKindMirror extends DomainTypeMirror, DomainCommandProces
      * @return the list of referenced {@link ApplicationServiceMirror} instances.
      */
     List<ApplicationServiceMirror> getReferencedApplicationServices();
+
 }

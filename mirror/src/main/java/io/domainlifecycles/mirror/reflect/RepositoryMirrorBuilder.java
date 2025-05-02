@@ -77,7 +77,6 @@ public class RepositoryMirrorBuilder extends ServiceKindMirrorBuilder<Repository
         );
     }
 
-    @SuppressWarnings("unchecked")
     private static Optional<Class<? extends AggregateRoot<?>>> getManagedAggregateType(Class<? extends Repository<?,
         ?>> c) {
         var resolver = new GenericInterfaceTypeResolver(c);

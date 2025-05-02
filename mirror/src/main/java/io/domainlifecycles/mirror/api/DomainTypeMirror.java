@@ -87,6 +87,14 @@ public interface DomainTypeMirror extends Mirror {
     boolean isSubClassOf(String typeName);
 
     /**
+     * Determines whether the mirrored type implements the specified interface.
+     *
+     * @param interfaceName the full qualified name of the interface to check
+     * @return true if the mirrored type implements the specified interface, false otherwise
+     */
+    boolean implementsInterface(String interfaceName);
+
+    /**
      * @return a list of full qualified type names, that represent the
      * interface list of this type (implements). It is ordered according to the definition order
      * of {@code implements}.

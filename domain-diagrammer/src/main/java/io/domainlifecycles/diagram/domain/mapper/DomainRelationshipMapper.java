@@ -34,7 +34,7 @@ import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainCommandProcessingMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
-import io.domainlifecycles.mirror.api.DomainModel;
+import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
@@ -64,7 +64,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class DomainRelationshipMapper {
 
     private final DomainDiagramConfig diagramConfig;
-    private final DomainModel domainModel;
+    private final DomainMirror domainMirror;
 
     private final FilteredDomainClasses filteredDomainClasses;
 
@@ -74,12 +74,12 @@ public class DomainRelationshipMapper {
      * {@link FilteredDomainClasses}
      *
      * @param diagramConfig         diagram configuration
-     * @param domainModel           the domain model
+     * @param domainMirror           the domain model
      * @param filteredDomainClasses filtered domain classes
      */
-    public DomainRelationshipMapper(DomainDiagramConfig diagramConfig, DomainModel domainModel, FilteredDomainClasses filteredDomainClasses) {
+    public DomainRelationshipMapper(DomainDiagramConfig diagramConfig, DomainMirror domainMirror, FilteredDomainClasses filteredDomainClasses) {
         this.diagramConfig = diagramConfig;
-        this.domainModel = domainModel;
+        this.domainMirror = domainMirror;
         this.filteredDomainClasses = filteredDomainClasses;
     }
 
@@ -199,7 +199,7 @@ public class DomainRelationshipMapper {
 
     private boolean isTopLevelConsumerForCommand(DomainTypeMirror domainTypeMirror,
                                                  DomainCommandMirror domainCommandMirror) {
-        var typesReferencing = domainModel.allTypeMirrors().values()
+        var typesReferencing = domainMirror.getAllDomainTypeMirrors()
             .stream()
             .filter(dt -> {
                     return dt.getAllFields()
@@ -213,8 +213,7 @@ public class DomainRelationshipMapper {
 
             ).toList();
         if (domainTypeMirror.getDomainType().equals(DomainType.AGGREGATE_ROOT)) {
-            return domainModel.allTypeMirrors()
-                .values()
+            return domainMirror.getAllDomainTypeMirrors()
                 .stream()
                 .filter(dtm -> dtm instanceof DomainCommandProcessingMirror)
                 .filter(dtm ->
@@ -460,14 +459,14 @@ public class DomainRelationshipMapper {
     }
 
     private Optional<NomnomlRelationship> mapInheritance(DomainTypeMirror domainTypeMirror) {
-        if (domainTypeMirror.getInheritanceHierarchyTypeNames().get(0).startsWith(
-            diagramConfig.getContextPackageName())) {
+        if (diagramConfig.getFilteredPackageNames().stream().anyMatch(pack -> domainTypeMirror.getInheritanceHierarchyTypeNames().get(0).startsWith(
+            pack))) {
             var superClassName = domainTypeMirror.getInheritanceHierarchyTypeNames().get(0);
             return Optional.of(
                 NomnomlRelationship
                     .builder()
                     .fromName(relationConnectorName(superClassName))
-                    .fromStyleClassifier(DomainMapperUtils.styleClassifier(domainModel.allTypeMirrors().get(superClassName)))
+                    .fromStyleClassifier(DomainMapperUtils.styleClassifier(domainMirror.getDomainTypeMirror(superClassName).orElse(null)))
                     .fromMultiplicity("")
                     .label("")
                     .toName(relationConnectorName(domainTypeMirror))
@@ -494,9 +493,9 @@ public class DomainRelationshipMapper {
             .builder()
             .fromName(relationConnectorName(entityReferenceMirror.getDeclaredByTypeName()))
             .fromMultiplicity("")
-            .fromStyleClassifier(DomainMapperUtils.styleClassifier(domainModel.allTypeMirrors().get(entityReferenceMirror.getDeclaredByTypeName())))
+            .fromStyleClassifier(DomainMapperUtils.styleClassifier(domainMirror.getDomainTypeMirror(entityReferenceMirror.getDeclaredByTypeName()).orElse(null)))
             .label(label)
-            .toStyleClassifier(DomainMapperUtils.styleClassifier(domainModel.allTypeMirrors().get(entityReferenceMirror.getType().getTypeName())))
+            .toStyleClassifier(DomainMapperUtils.styleClassifier(domainMirror.getDomainTypeMirror(entityReferenceMirror.getType().getTypeName()).orElse(null)))
             .toMultiplicity(toMultiplicity)
             .toName(relationConnectorName(entityReferenceMirror.getType().getTypeName()))
             .relationshiptype(NomnomlRelationship.RelationshipType.COMPOSITION)
@@ -516,9 +515,9 @@ public class DomainRelationshipMapper {
             .builder()
             .fromName(relationConnectorName(valueReferenceMirror.getDeclaredByTypeName()))
             .fromMultiplicity("")
-            .fromStyleClassifier(DomainMapperUtils.styleClassifier(domainModel.allTypeMirrors().get(valueReferenceMirror.getDeclaredByTypeName())))
+            .fromStyleClassifier(DomainMapperUtils.styleClassifier(domainMirror.getDomainTypeMirror(valueReferenceMirror.getDeclaredByTypeName()).orElse(null)))
             .label(label)
-            .toStyleClassifier(DomainMapperUtils.styleClassifier(domainModel.allTypeMirrors().get(valueReferenceMirror.getType().getTypeName())))
+            .toStyleClassifier(DomainMapperUtils.styleClassifier(domainMirror.getDomainTypeMirror(valueReferenceMirror.getType().getTypeName()).orElse(null)))
             .toMultiplicity(toMultiplicity)
             .toName(relationConnectorName(valueReferenceMirror.getType().getTypeName()))
             .relationshiptype(NomnomlRelationship.RelationshipType.AGGREGATION)
@@ -583,7 +582,7 @@ public class DomainRelationshipMapper {
     }
 
     private String connectorStereotype(String typeName) {
-        var domainTypeMirror = Optional.ofNullable(domainModel.allTypeMirrors().get(typeName));
+        var domainTypeMirror = domainMirror.getDomainTypeMirror(typeName);
         if (domainTypeMirror.isPresent()) {
             var stereotype = DomainMapperUtils.stereotype(domainTypeMirror.get(), diagramConfig);
             if (!"".equals(stereotype)) {

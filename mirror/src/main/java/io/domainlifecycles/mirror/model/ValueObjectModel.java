@@ -45,6 +45,16 @@ import java.util.Optional;
  */
 public class ValueObjectModel extends DomainObjectModel implements ValueObjectMirror, DomainObjectMirror {
 
+    /**
+     * Constructs a new instance of ValueObjectModel.
+     *
+     * @param typeName the name of the type that this value object represents
+     * @param isAbstract indicates whether the type is abstract
+     * @param allFields a list of all fields mirrored by this value object
+     * @param methods a list of methods mirrored by this value object
+     * @param inheritanceHierarchyTypeNames a list of type names representing the inheritance hierarchy of the type
+     * @param allInterfaceTypeNames a list of interface type names implemented by the type
+     */
     @JsonCreator
     public ValueObjectModel(
         @JsonProperty("typeName") String typeName,

@@ -35,7 +35,6 @@ import com.gruelbox.transactionoutbox.jackson.JacksonInvocationSerializer;
 import com.gruelbox.transactionoutbox.spring.SpringTransactionManager;
 import io.domainlifecycles.events.MyTransactionOutboxListener;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
-import io.domainlifecycles.events.api.ConsumingChannel;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;

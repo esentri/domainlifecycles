@@ -33,7 +33,8 @@ import io.domainlifecycles.mirror.api.AccessLevel;
 import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
-import io.domainlifecycles.mirror.api.DomainModel;
+import io.domainlifecycles.mirror.api.DomainMirror;
+import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.ParamMirror;
 import io.domainlifecycles.mirror.exception.MirrorException;
@@ -49,7 +50,7 @@ import java.util.stream.Collectors;
  *
  * @author Mario Herb
  */
-public class MethodModel implements MethodMirror {
+public class MethodModel implements MethodMirror, ProvidedDomain {
 
     private final String name;
     private final String declaredByTypeName;
@@ -57,8 +58,8 @@ public class MethodModel implements MethodMirror {
     private final List<ParamMirror> parameters;
     private final AssertedContainableTypeMirror returnType;
 
-    DomainModel domainModel;
-    private boolean domainModelSet = false;
+    DomainMirror domainMirror;
+    private boolean domainMirrorSet = false;
 
     @JsonProperty
     private final List<String> publishedEventTypeNames;
@@ -68,6 +69,20 @@ public class MethodModel implements MethodMirror {
 
     private final boolean overridden;
 
+    /**
+     * Constructs a MethodModel instance that represents metadata about a method, such as its name,
+     * declaring type, access level, parameters, return type, and other characteristics including
+     * the events it interacts with.
+     *
+     * @param name the name of the method; must not be null
+     * @param declaredByTypeName the fully qualified name of the type declaring this method; must not be null
+     * @param accessLevel the access level of the method (e.g., PUBLIC, PROTECTED); must not be null
+     * @param parameters the list of parameters of the method, represented as {@link ParamMirror} instances; must not be null
+     * @param returnType the return type of the method, represented as an {@link AssertedContainableTypeMirror}; must not be null
+     * @param overridden a boolean indicating if this method overrides a method from a superclass or interface
+     * @param publishedEventTypeNames the list of names of events published by this method; must not be null
+     * @param listenedEventTypeName an {@link Optional} containing the name of the event type this method listens to; must not be null
+     */
     @JsonCreator
     public MethodModel(@JsonProperty("name") String name,
                        @JsonProperty("declaredByTypeName") String declaredByTypeName,
@@ -140,8 +155,9 @@ public class MethodModel implements MethodMirror {
     public List<DomainEventMirror> getPublishedEvents() {
         return this.publishedEventTypeNames
             .stream()
-            .map(n -> (DomainEventMirror) domainModel.getDomainTypeMirror(n).orElseThrow(
+            .map(n -> (DomainEventMirror) domainMirror.getDomainTypeMirror(n).orElseThrow(
                 () -> MirrorException.fail("DomainEventMirror not found for '%s'", n)))
+            .distinct()
             .collect(Collectors.toList());
     }
 
@@ -152,8 +168,22 @@ public class MethodModel implements MethodMirror {
     @Override
     public Optional<DomainEventMirror> getListenedEvent() {
         return listenedEventTypeName
-            .map(n -> (DomainEventMirror) domainModel.getDomainTypeMirror(n).orElseThrow(
+            .map(n -> (DomainEventMirror) domainMirror.getDomainTypeMirror(n).orElseThrow(
                 () -> MirrorException.fail("DomainEventMirror not found for '%s'", n)));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @JsonIgnore
+    @Override
+    public List<DomainCommandMirror> getProcessedCommands() {
+        return parameters.stream()
+            .filter(p -> p.getType().getDomainType().equals(DomainType.DOMAIN_COMMAND))
+            .map(p -> (DomainCommandMirror) domainMirror.getDomainTypeMirror(p.getType().getTypeName()).orElseThrow(
+                () -> MirrorException.fail("DomainCommandMirror not found for '%s'", p.getType().getTypeName())))
+            .distinct()
+            .toList();
     }
 
     /**
@@ -185,8 +215,8 @@ public class MethodModel implements MethodMirror {
      */
     @Override
     public boolean isGetter() {
-        if (parameters.size() == 0 && AccessLevel.PUBLIC.equals(accessLevel)) {
-            var declaringDomainTypeOptional = domainModel.getDomainTypeMirror(declaredByTypeName);
+        if (parameters.isEmpty() && AccessLevel.PUBLIC.equals(accessLevel)) {
+            var declaringDomainTypeOptional = domainMirror.getDomainTypeMirror(declaredByTypeName);
             if (declaringDomainTypeOptional.isPresent()) {
                 var declaringDomainType = declaringDomainTypeOptional.get();
                 var propName = name;
@@ -195,7 +225,7 @@ public class MethodModel implements MethodMirror {
                 } else if (name.startsWith("is")) {
                     propName = propName.substring(2);
                 }
-                if (propName.length() > 0) {
+                if (!propName.isEmpty()) {
                     propName = propName.substring(0, 1).toLowerCase() + propName.substring(1);
                     final var propNameFinal = propName;
                     return declaringDomainType
@@ -215,14 +245,14 @@ public class MethodModel implements MethodMirror {
     @Override
     public boolean isSetter() {
         if (parameters.size() == 1 && AccessLevel.PUBLIC.equals(accessLevel)) {
-            var declaringDomainTypeOptional = domainModel.getDomainTypeMirror(declaredByTypeName);
+            var declaringDomainTypeOptional = domainMirror.getDomainTypeMirror(declaredByTypeName);
             if (declaringDomainTypeOptional.isPresent()) {
                 var declaringDomainType = declaringDomainTypeOptional.get();
                 var propName = name;
                 if (name.startsWith("set")) {
                     propName = propName.substring(3);
                 }
-                if (propName.length() > 0) {
+                if (!propName.isEmpty()) {
                     propName = propName.substring(0, 1).toLowerCase() + propName.substring(1);
                     final var propNameFinal = propName;
                     final var firstParam = parameters.get(0);
@@ -285,12 +315,22 @@ public class MethodModel implements MethodMirror {
             listenedEventTypeName);
     }
 
-    public void setDomainModel(DomainModel domainModel) {
-        if(!domainModelSet) {
-            this.domainModel = domainModel;
-            this.domainModelSet = true;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setDomainMirror(DomainMirror domainModel) {
+        if(!domainMirrorSet) {
+            this.domainMirror = domainModel;
+            this.domainMirrorSet = true;
         }
     }
 
-    public DomainModel innerDomainModelReference() {return this.domainModel;}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean domainMirrorSet() {
+        return this.domainMirrorSet;
+    }
 }

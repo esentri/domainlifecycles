@@ -56,8 +56,7 @@ public class DiagramConfig {
 
     private FileType fileType;
     private String fileName;
-    private List<String> contextPackages;
-
+    private List<String> domainModelPackageNames;
 
     private String aggregateRootStyle;
     private String aggregateFrameStyle;
@@ -120,6 +119,9 @@ public class DiagramConfig {
     private Boolean multiplicityInLabel;
     private Boolean fieldStereotypes;
     private List<String> transitiveFilterSeedDomainServiceTypeNames;
+    private List<String> filteredPackageNames;
+    private Boolean showAbstractTypes;
+    private Boolean useAbstractTypeNameForConcreteServiceKinds;
 
     public FileType getFileType() {
         return fileType;
@@ -137,12 +139,12 @@ public class DiagramConfig {
         this.fileName = fileName;
     }
 
-    public List<String> getContextPackages() {
-        return contextPackages;
+    public List<String> getDomainModelPackageNames() {
+        return domainModelPackageNames;
     }
 
-    public void setContextPackages(List<String> contextPackages) {
-        this.contextPackages = contextPackages;
+    public void setDomainModelPackageNames(List<String> domainModelPackageNames) {
+        this.domainModelPackageNames = domainModelPackageNames;
     }
 
     public String getAggregateRootStyle() {
@@ -633,10 +635,35 @@ public class DiagramConfig {
         this.transitiveFilterSeedDomainServiceTypeNames = transitiveFilterSeedDomainServiceTypeNames;
     }
 
+    public List<String> getFilteredPackageNames() {
+        return filteredPackageNames;
+    }
+
+    public void setFilteredPackageNames(List<String> filteredPackageNames) {
+        this.filteredPackageNames = filteredPackageNames;
+    }
+
+    public Boolean isShowAbstractTypes() {
+        return showAbstractTypes;
+    }
+
+    public void setShowAbstractTypes(Boolean showAbstractTypes) {
+        this.showAbstractTypes = showAbstractTypes;
+    }
+
+    public Boolean isUseAbstractTypeNameForConcreteServiceKinds() {
+        return useAbstractTypeNameForConcreteServiceKinds;
+    }
+
+    public void setUseAbstractTypeNameForConcreteServiceKinds(Boolean useAbstractTypeNameForConcreteServiceKinds) {
+        this.useAbstractTypeNameForConcreteServiceKinds = useAbstractTypeNameForConcreteServiceKinds;
+    }
+
+
+
     public DomainDiagramConfig map() {
         DomainDiagramConfigBuilder builder = DomainDiagramConfig.builder();
 
-        if(contextPackages != null && contextPackages.size()>0) builder.withContextPackageName(contextPackages.get(0));
         if(aggregateRootStyle != null) builder.withAggregateRootStyle(aggregateRootStyle);
         if(aggregateFrameStyle != null) builder.withAggregateFrameStyle(aggregateFrameStyle);
         if(entityStyle != null) builder.withEntityStyle(entityStyle);
@@ -698,6 +725,9 @@ public class DiagramConfig {
         if(multiplicityInLabel != null) builder.withMultiplicityInLabel(multiplicityInLabel);
         if(fieldStereotypes != null) builder.withFieldStereotypes(fieldStereotypes);
         if(transitiveFilterSeedDomainServiceTypeNames != null && !transitiveFilterSeedDomainServiceTypeNames.isEmpty()) builder.withTransitiveFilterSeedDomainServiceTypeNames(transitiveFilterSeedDomainServiceTypeNames);
+        if(filteredPackageNames != null && !filteredPackageNames.isEmpty()) builder.withFilteredPackageNames(filteredPackageNames);
+        if(useAbstractTypeNameForConcreteServiceKinds != null) builder.withUseAbstractTypeNameForConcreteServiceKinds(useAbstractTypeNameForConcreteServiceKinds);
+        if(showAbstractTypes != null) builder.withShowAbstractTypes(showAbstractTypes);
 
         return builder.build();
     }

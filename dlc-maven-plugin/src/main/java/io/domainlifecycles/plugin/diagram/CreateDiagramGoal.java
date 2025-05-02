@@ -30,7 +30,6 @@ package io.domainlifecycles.plugin.diagram;
 import io.domainlifecycles.plugins.diagram.DiagramConfig;
 import io.domainlifecycles.plugins.diagram.DiagramGenerator;
 import io.domainlifecycles.plugins.diagram.DiagramGeneratorImpl;
-import io.domainlifecycles.plugins.util.DLCUtils;
 import io.domainlifecycles.utils.ClassLoaderUtils;
 import io.domainlifecycles.utils.FileIOUtils;
 import org.apache.maven.plugin.AbstractMojo;
@@ -79,6 +78,7 @@ import java.util.List;
  * is necessary for successful execution.
  *
  * @author Leon Völlinger
+ * @author Mario Herb
  */
 @Mojo(name = "createDiagram", requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.INITIALIZE)
 public class CreateDiagramGoal extends AbstractMojo {
@@ -115,7 +115,11 @@ public class CreateDiagramGoal extends AbstractMojo {
 
     private void createAndSaveDiagram(PluginDiagramConfiguration mavenDiagramConfiguration) {
         DiagramConfig diagramConfig = DiagramConfigMapper.map(mavenDiagramConfiguration);
-        byte[] diagramFileContent = diagramGenerator.generateDiagram(ClassLoaderUtils.getParentClasspathFiles(project), diagramConfig);
+        byte[] diagramFileContent = diagramGenerator.generateDiagram(
+            ClassLoaderUtils.getParentClasspathFiles(project),
+            diagramConfig,
+            mavenDiagramConfiguration.getDomainModelPackages().toArray(String[]::new)
+        );
 
         final Path filePath = Path.of(fileOutputDir,
             diagramConfig.getFileName() + diagramConfig.getFileType().getFileSuffix());

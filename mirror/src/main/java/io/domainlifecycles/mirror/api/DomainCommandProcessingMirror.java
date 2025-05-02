@@ -28,6 +28,8 @@ package io.domainlifecycles.mirror.api;
 
 import io.domainlifecycles.domain.types.DomainCommand;
 
+import java.util.List;
+
 /**
  * All domain types mirrored, that can process {@link DomainCommand} instances, implement this interface.
  *
@@ -45,4 +47,13 @@ public interface DomainCommandProcessingMirror {
      * @return true, if the given command is processed.
      */
     boolean processes(DomainCommandMirror command);
+
+    /**
+     * Retrieves the list of domain commands processed by the implementing class.
+     *
+     * @return a list of {@link DomainCommandMirror} instances that are processed by this mirror.
+     */
+    List<DomainCommandMirror> processedDomainCommands();
+
+
 }

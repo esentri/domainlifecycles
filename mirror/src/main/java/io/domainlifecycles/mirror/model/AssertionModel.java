@@ -44,6 +44,15 @@ public class AssertionModel implements AssertionMirror {
     private final String param2;
     private final String message;
 
+    /**
+     * Constructs an instance of {@code AssertionModel} which represents a specific assertion
+     * with its defined type and parameters.
+     *
+     * @param assertionType the type of the assertion; must not be null
+     * @param param1 the first parameter associated with the assertion
+     * @param param2 the second parameter associated with the assertion
+     * @param message the message or description related to the assertion
+     */
     @JsonCreator
     public AssertionModel(@JsonProperty("assertionType") AssertionType assertionType,
                           @JsonProperty("param1") String param1,

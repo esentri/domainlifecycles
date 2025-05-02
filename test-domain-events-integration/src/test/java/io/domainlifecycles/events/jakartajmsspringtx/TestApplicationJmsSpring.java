@@ -33,8 +33,8 @@ import io.domainlifecycles.events.ARepository;
 import io.domainlifecycles.events.AnApplicationService;
 import io.domainlifecycles.events.AnOutboundService;
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.api.DomainModel;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
+import io.domainlifecycles.mirror.api.DomainMirror;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.services.Services;
 import io.domainlifecycles.services.api.ServiceProvider;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -58,9 +58,9 @@ public class TestApplicationJmsSpring {
     }
 
     @Bean
-    DomainModel initializedDomain(){
-        Domain.initialize(new ReflectiveDomainModelFactory("io.domainlifecycles.events"));
-        return Domain.getDomainModel();
+    DomainMirror initializedDomain(){
+        Domain.initialize(new ReflectiveDomainMirrorFactory("io.domainlifecycles.events"));
+        return Domain.getDomainMirror();
     }
 
     @Bean

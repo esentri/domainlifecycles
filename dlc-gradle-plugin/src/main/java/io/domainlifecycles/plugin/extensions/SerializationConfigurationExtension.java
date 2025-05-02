@@ -26,6 +26,7 @@
 
 package io.domainlifecycles.plugin.extensions;
 
+import org.gradle.api.Named;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 
@@ -38,18 +39,17 @@ import org.gradle.api.provider.Property;
  *
  * @author Leon Völlinger
  */
-public abstract class SerializationConfigurationExtension {
+public abstract class SerializationConfigurationExtension implements Named {
 
     /**
-     * Retrieves the list of context packages for serialization configuration.
+     * Retrieves the list of domain model packages for serialization configuration.
      *
-     * This method provides access to a list property where context packages
-     * related to serialization can be defined. These packages are utilized as
-     * part of the serialization configuration process.
+     * This method provides access to a list property where packages containing the domain model
+     * can be defined.
      *
-     * @return a {@code ListProperty} of {@code String} representing the context packages involved in serialization.
+     * @return a {@code ListProperty} of {@code String} representing the domain model packages involved in serialization.
      */
-    public abstract ListProperty<String> getContextPackages();
+    public abstract ListProperty<String> getDomainModelPackages();
 
     /**
      * Retrieves the file name associated with the serialization configuration.

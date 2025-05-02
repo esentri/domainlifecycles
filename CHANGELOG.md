@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2025-05-02
+- Added [Maven plugin](./dlc-maven-plugin) with the ability to export DomainModels and to draw Domain diagrams unsing Docker/Kroki
+- Added [Gradle plugin](./dlc-gradle-plugin) with the ability to export DomainModels and to draw Domain diagrams unsing Docker/Kroki
+- Added [DLC plugins](./dlc-plugins) containing the general plugin logic
+- Changed Mirror added DomainMirror interface as the primary mirror containing the complete domain model
+- Added completeness check for Domain Mirror ensuring all references to model elements within the domain model can be resolved, 
+  when a DomainMirror instance is created either by reflection or by deserialization form a JSON export
+- Extended domain diagrammer for filtering options (abstract types and packages) and fixed several exisiting filtering options (especially transitive filtering)
+
 ## [2.2.1] - 2025-02-28
 - Replaced some critical stream operations in "io.domainlifecycles.persistence.repositoryDomainStructureAwareRepository"
 
@@ -20,10 +29,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Upgrade Flyway Plugin to version 10 and modify usage accordingly
 - Replace version in readme.md with version defined in version.properties with `gradle build`
 - Upgrade Gruelbox (Domain Events outbox feature) dependency to version 6.0.553
-- Renamed "io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory" to "io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory"
-- Renamed "io.domainlifecycles.mirror.api.InitializedDomain" to "io.domainlifecycles.mirror.api.DomainModel"
-- An instance of "io.domainlifecycles.mirror.resolver.GenericTypeResolver" can only be applied via "io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory" 
-- Fixed serialization bugs with "io.domainlifecycles.mirror.api.DomainModel"
+- Renamed "io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory" to "io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory"
+- Renamed "io.domainlifecycles.mirror.api.InitializedDomain" to "io.domainlifecycles.mirror.model.DomainModel"
+- An instance of "io.domainlifecycles.mirror.resolver.GenericTypeResolver" can only be applied via "io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory" 
+- Fixed serialization bugs with "io.domainlifecycles.mirror.model.DomainModel"
 - Removed static "io.domainlifecycles.mirror.api.Domain" dependency from Domain Diagrammer
 
 ## [2.0.4] - 2025-02-06

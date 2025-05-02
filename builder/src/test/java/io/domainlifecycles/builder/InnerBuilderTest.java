@@ -3,7 +3,7 @@ package io.domainlifecycles.builder;
 import io.domainlifecycles.builder.exception.DLCBuilderException;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tests.shared.TestDataGenerator;
@@ -21,7 +21,7 @@ public class InnerBuilderTest {
 
     @BeforeAll
     static void beforeAll() {
-        Domain.initialize(new ReflectiveDomainModelFactory("tests", "io.domainlifecycles"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory("tests", "io.domainlifecycles"));
     }
 
     @Test

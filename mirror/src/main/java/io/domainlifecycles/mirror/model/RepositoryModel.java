@@ -52,6 +52,18 @@ public class RepositoryModel extends ServiceKindModel implements RepositoryMirro
     @JsonProperty
     private final List<String> repositoryInterfaceTypeNames;
 
+    /**
+     * Constructs a new instance of the RepositoryModel.
+     *
+     * @param typeName the fully qualified name of the type represented by this model.
+     * @param isAbstract a boolean indicating whether the represented type is abstract.
+     * @param allFields a list of {@code FieldMirror} instances representing all fields in the type.
+     * @param methods a list of {@code MethodMirror} instances representing all methods in the type.
+     * @param managedAggregateTypeName the name of the managed aggregate type associated with the repository.
+     * @param repositoryInterfaceTypeNames a list of fully qualified names of repository interface types that the repository implements.
+     * @param inheritanceHierarchyTypeNames a list of fully qualified type names representing the inheritance hierarchy of the represented type.
+     * @param allInterfaceTypeNames a list of fully qualified type names representing all interfaces implemented by the represented type.
+     */
     @JsonCreator
     public RepositoryModel(@JsonProperty("typeName") String typeName,
                            @JsonProperty("abstract") boolean isAbstract,
@@ -73,7 +85,7 @@ public class RepositoryModel extends ServiceKindModel implements RepositoryMirro
     @JsonIgnore
     @Override
     public Optional<AggregateRootMirror> getManagedAggregate() {
-        return Optional.ofNullable((AggregateRootMirror) domainModel.getDomainTypeMirror(managedAggregateTypeName).orElse(null));
+        return Optional.ofNullable((AggregateRootMirror) domainMirror.getDomainTypeMirror(managedAggregateTypeName).orElse(null));
     }
 
     /**

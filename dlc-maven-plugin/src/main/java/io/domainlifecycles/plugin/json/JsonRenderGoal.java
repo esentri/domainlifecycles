@@ -29,7 +29,6 @@ package io.domainlifecycles.plugin.json;
 import io.domainlifecycles.plugin.diagram.CreateDiagramGoal;
 import io.domainlifecycles.plugins.json.JsonSerializer;
 import io.domainlifecycles.plugins.json.JsonSerializerImpl;
-import io.domainlifecycles.plugins.util.DLCUtils;
 import io.domainlifecycles.utils.ClassLoaderUtils;
 import io.domainlifecycles.utils.FileIOUtils;
 import org.apache.maven.plugin.AbstractMojo;
@@ -76,6 +75,7 @@ import java.util.List;
  * - Proper configuration of the `serializations` parameter and the `fileOutputDir` property is essential for successful execution.
  * - This class is dependent on the `PluginSerializationConfiguration` and a compatible `JsonSerializer` implementation.
  *
+ * @author Mario Herb
  * @author Leon Völlinger
  */
 @Mojo(name = "renderJson", requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.INITIALIZE)
@@ -118,7 +118,7 @@ public class JsonRenderGoal extends AbstractMojo {
     }
 
     private void renderAndSaveModelAsJson(final PluginSerializationConfiguration pluginSerializationConfiguration) {
-        final String jsonContent = jsonSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(project), pluginSerializationConfiguration.getContextPackages());
+        final String jsonContent = jsonSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(project), pluginSerializationConfiguration.getDomainModelPackages());
 
         final Path filePath = Path.of(fileOutputDir, pluginSerializationConfiguration.getFileName() + ".json");
 

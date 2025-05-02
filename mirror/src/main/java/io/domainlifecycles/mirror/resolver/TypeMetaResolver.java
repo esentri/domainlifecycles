@@ -48,7 +48,7 @@ import java.util.Optional;
  * <p>
  * To enable generic type resolving in the DomainModel, set the TypeMetaResolver before initializing the domain:
  * <pre>{@code
- *  ReflectiveDomainModelFactory factory = new ReflectiveDomainModelFactory("tests");
+ *  ReflectiveDomainMirrorFactory factory = new ReflectiveDomainMirrorFactory("tests");
  *  DomainModel dm = factory.initializeDomainModel(factory, new TypeMetaResolver());
  * }</pre>
  * <p>

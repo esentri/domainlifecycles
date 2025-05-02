@@ -54,6 +54,17 @@ import java.util.stream.Collectors;
  */
 public class DomainEventModel extends DomainTypeModel implements DomainEventMirror {
 
+    /**
+     * Constructs a new instance of the DomainEventModel.
+     *
+     * @param typeName the name of the type being modeled. Must not be null.
+     * @param isAbstract indicates whether the type being modeled is abstract.
+     * @param allFields a list of all fields in the type being modeled. Must not be null.
+     * @param methods a list of methods in the type being modeled. Must not be null.
+     * @param inheritanceHierarchyTypeNames a list of type names representing the inheritance hierarchy
+     *                                       of the type being modeled. Must not be null.
+     * @param allInterfaceTypeNames a list of all interface type names implemented by the type being modeled. Must not be null.
+     */
     @JsonCreator
     public DomainEventModel(@JsonProperty("typeName") String typeName,
                             @JsonProperty("abstract") boolean isAbstract,
@@ -124,13 +135,14 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<AggregateRootMirror> getPublishingAggregates() {
-        return domainModel
-            .allTypeMirrors()
-            .values()
+        return domainMirror.getAllAggregateRootMirrors()
             .stream()
-            .filter(m -> m instanceof AggregateRootMirror)
-            .map(a -> (AggregateRootMirror) a)
-            .filter(a -> a.publishes(this))
+            .filter(a ->
+                a.publishes(this) || a.getEntityReferences()
+                    .stream()
+                    .map(EntityReferenceMirror::getEntity)
+                    .anyMatch(e -> e.publishes(this))
+            )
             .collect(Collectors.toList());
     }
 
@@ -140,12 +152,9 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<DomainServiceMirror> getPublishingDomainServices() {
-        return domainModel
-            .allTypeMirrors()
-            .values()
+        return domainMirror
+            .getAllDomainServiceMirrors()
             .stream()
-            .filter(m -> m instanceof DomainServiceMirror)
-            .map(ds -> (DomainServiceMirror) ds)
             .filter(ds -> ds.publishes(this))
             .collect(Collectors.toList());
     }
@@ -156,12 +165,9 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<RepositoryMirror> getPublishingRepositories() {
-        return domainModel
-            .allTypeMirrors()
-            .values()
+        return domainMirror
+            .getAllRepositoryMirrors()
             .stream()
-            .filter(m -> m instanceof RepositoryMirror)
-            .map(ds -> (RepositoryMirror) ds)
             .filter(r -> r.publishes(this))
             .collect(Collectors.toList());
     }
@@ -172,13 +178,14 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<AggregateRootMirror> getListeningAggregates() {
-        return domainModel
-            .allTypeMirrors()
-            .values()
+        return domainMirror.getAllAggregateRootMirrors()
             .stream()
-            .filter(m -> m instanceof AggregateRootMirror)
-            .map(a -> (AggregateRootMirror) a)
-            .filter(a -> a.listensTo(this))
+            .filter(a ->
+                a.listensTo(this) || a.getEntityReferences()
+                    .stream()
+                    .map(EntityReferenceMirror::getEntity)
+                    .anyMatch(e -> e.listensTo(this))
+            )
             .collect(Collectors.toList());
     }
 
@@ -188,12 +195,9 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<DomainServiceMirror> getListeningDomainServices() {
-        return domainModel
-            .allTypeMirrors()
-            .values()
+        return domainMirror
+            .getAllDomainServiceMirrors()
             .stream()
-            .filter(m -> m instanceof DomainServiceMirror)
-            .map(ds -> (DomainServiceMirror) ds)
             .filter(ds -> ds.listensTo(this))
             .collect(Collectors.toList());
     }
@@ -204,12 +208,9 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<RepositoryMirror> getListeningRepositories() {
-        return domainModel
-            .allTypeMirrors()
-            .values()
+        return domainMirror
+            .getAllRepositoryMirrors()
             .stream()
-            .filter(m -> m instanceof RepositoryMirror)
-            .map(ds -> (RepositoryMirror) ds)
             .filter(r -> r.listensTo(this))
             .collect(Collectors.toList());
     }
@@ -220,12 +221,9 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<ApplicationServiceMirror> getListeningApplicationServices() {
-        return domainModel
-            .allTypeMirrors()
-            .values()
+        return domainMirror
+            .getAllApplicationServiceMirrors()
             .stream()
-            .filter(m -> m instanceof ApplicationServiceMirror)
-            .map(as -> (ApplicationServiceMirror) as)
             .filter(r -> r.listensTo(this))
             .collect(Collectors.toList());
     }
@@ -236,12 +234,9 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<OutboundServiceMirror> getListeningOutboundServices() {
-        return domainModel
-            .allTypeMirrors()
-            .values()
+        return domainMirror
+            .getAllOutboundServiceMirrors()
             .stream()
-            .filter(m -> m instanceof OutboundServiceMirror)
-            .map(a -> (OutboundServiceMirror) a)
             .filter(a -> a.listensTo(this))
             .collect(Collectors.toList());
     }
@@ -252,12 +247,9 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<QueryHandlerMirror> getListeningQueryHandlers() {
-        return domainModel
-            .allTypeMirrors()
-            .values()
+        return domainMirror
+            .getAllQueryHandlerMirrors()
             .stream()
-            .filter(m -> m instanceof QueryHandlerMirror)
-            .map(a -> (QueryHandlerMirror) a)
             .filter(a -> a.listensTo(this))
             .collect(Collectors.toList());
     }
@@ -268,14 +260,59 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     @JsonIgnore
     @Override
     public List<ServiceKindMirror> getListeningServiceKinds() {
-        return domainModel
-            .allTypeMirrors()
-            .values()
+        return domainMirror
+            .getAllServiceKindMirrors()
             .stream()
-            .filter(m -> m instanceof ServiceKindMirror)
-            .map(a -> (ServiceKindMirror) a)
             .filter(a -> a.listensTo(this))
             .collect(Collectors.toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @JsonIgnore
+    @Override
+    public List<ApplicationServiceMirror> getPublishingApplicationServices() {
+        return domainMirror.getAllApplicationServiceMirrors()
+            .stream()
+            .filter(s -> s.publishes(this))
+            .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @JsonIgnore
+    @Override
+    public List<OutboundServiceMirror> getPublishingOutboundServices() {
+        return domainMirror.getAllOutboundServiceMirrors()
+            .stream()
+            .filter(s -> s.publishes(this))
+            .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @JsonIgnore
+    @Override
+    public List<QueryHandlerMirror> getPublishingQueryHandlers() {
+        return domainMirror.getAllQueryHandlerMirrors()
+            .stream()
+            .filter(s -> s.publishes(this))
+            .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @JsonIgnore
+    @Override
+    public List<ServiceKindMirror> getPublishingServiceKinds() {
+        return domainMirror.getAllServiceKindMirrors()
+            .stream()
+            .filter(s -> s.publishes(this))
+            .toList();
     }
 
     /**

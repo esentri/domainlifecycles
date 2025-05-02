@@ -27,7 +27,7 @@
 package io.domainlifecycles.diagram.domain.config;
 
 import io.domainlifecycles.diagram.DiagramConfig;
-import io.domainlifecycles.diagram.domain.mapper.TransitiveDomainTypeFilter;
+import io.domainlifecycles.diagram.domain.mapper.TransitiveDomainTypeAnPackageFilter;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,13 +38,6 @@ import java.util.List;
  * @author Mario Herb
  */
 public class DomainDiagramConfig implements DiagramConfig {
-
-    /**
-     * A DomainDiagram is meant focus on domain elements which are contained in one specific package (e.g. bounded
-     * context).
-     * The package name must be specified.
-     */
-    private String contextPackageName = null;
 
     /**
      * Style declaration for AggregateRoots (see Nomnoml style options)
@@ -320,12 +313,31 @@ public class DomainDiagramConfig implements DiagramConfig {
     private boolean fieldStereotypes = true;
 
     /**
-     * Enabling and initializing the seed for the {@link TransitiveDomainTypeFilter}.
+     * Enabling and initializing the seed for the {@link TransitiveDomainTypeAnPackageFilter}.
      */
     private List<String> transitiveFilterSeedDomainServiceTypeNames = Collections.emptyList();
 
-    DomainDiagramConfig(String contextPackageName,
-                        String aggregateRootStyle,
+    /**
+     * Filter shown domain types by packageName
+     */
+    private List<String> filteredPackageNames = Collections.emptyList();
+
+    /**
+     * A flag that determines whether abstract types should be displayed in the domain diagram.
+     * If set to true, abstract types will be included in the generated diagram; if false, 
+     * abstract types will be omitted. This is used to control the inclusion of more high-level 
+     * or generalized types that may not always be relevant in specific diagram views.
+     */
+    private boolean showAbstractTypes = false;
+
+    /**
+     * Indicates whether to use an abstract type name for concrete service kinds.
+     * If set to true, the diagram will show most specific abstract type names when
+     * displaying concrete service kinds.
+     */
+    private boolean useAbstractTypeNameForConcreteServiceKinds = true;
+
+    DomainDiagramConfig(String aggregateRootStyle,
                         String aggregateFrameStyle,
                         String entityStyle,
                         String valueObjectStyle,
@@ -386,9 +398,11 @@ public class DomainDiagramConfig implements DiagramConfig {
                         boolean showObjectMembersInClasses,
                         boolean multiplicityInLabel,
                         boolean fieldStereotypes,
-                        List<String> transitiveFilterSeedDomainServiceTypeNames
+                        List<String> transitiveFilterSeedDomainServiceTypeNames,
+                        List<String> filteredPackageNames,
+                        boolean showAbstractTypes,
+                        boolean useAbstractTypeNameForConcreteServiceKinds
     ) {
-        this.contextPackageName = contextPackageName;
         this.aggregateRootStyle = aggregateRootStyle;
         this.aggregateFrameStyle = aggregateFrameStyle;
         this.entityStyle = entityStyle;
@@ -451,10 +465,9 @@ public class DomainDiagramConfig implements DiagramConfig {
         this.multiplicityInLabel = multiplicityInLabel;
         this.fieldStereotypes = fieldStereotypes;
         this.transitiveFilterSeedDomainServiceTypeNames = transitiveFilterSeedDomainServiceTypeNames;
-    }
-
-    private static String $default$contextPackageName() {
-        return null;
+        this.filteredPackageNames = filteredPackageNames;
+        this.showAbstractTypes = showAbstractTypes;
+        this.useAbstractTypeNameForConcreteServiceKinds = useAbstractTypeNameForConcreteServiceKinds;
     }
 
     private static String $default$aggregateRootStyle() {
@@ -715,6 +728,19 @@ public class DomainDiagramConfig implements DiagramConfig {
         return Collections.emptyList();
     }
 
+    private static List<String> $default$filteredPackageNames() {
+        return Collections.emptyList();
+    }
+
+    private static boolean $default$showAbstractTypes() {
+        return false;
+    }
+
+    private static boolean $default$useAbstractTypeNameForConcreteServiceKinds() {
+        return true;
+
+    }
+
     /**
      * Returns a new instance of DomainDiagramConfigBuilder used to build configurations for domain diagrams.
      *
@@ -724,262 +750,598 @@ public class DomainDiagramConfig implements DiagramConfig {
         return new DomainDiagramConfigBuilder();
     }
 
-
-    public String getContextPackageName() {
-        return this.contextPackageName;
-    }
-
+    /**
+     * Retrieves the style configuration for the aggregate root representation.
+     *
+     * @return the style string for the aggregate root
+     */
     public String getAggregateRootStyle() {
         return this.aggregateRootStyle;
     }
 
+    /**
+     * Retrieves the style configuration for the aggregate frame representation.
+     *
+     * @return the style string for the aggregate frame
+     */
     public String getAggregateFrameStyle() {
         return this.aggregateFrameStyle;
     }
 
+    /**
+     * Retrieves the style configuration for the entity representation.
+     *
+     * @return the style string for the entity
+     */
     public String getEntityStyle() {
         return this.entityStyle;
     }
 
+    /**
+     * Retrieves the style associated with the value object.
+     *
+     * @return the style of the value object as a String
+     */
     public String getValueObjectStyle() {
         return this.valueObjectStyle;
     }
 
+    /**
+     * Retrieves the style format of the enum as a string.
+     *
+     * @return the enum style as a string
+     */
     public String getEnumStyle() {
         return this.enumStyle;
     }
 
+    /**
+     * Retrieves the identity style associated with this instance.
+     *
+     * @return the identity style as a string
+     */
     public String getIdentityStyle() {
         return this.identityStyle;
     }
 
+    /**
+     * Retrieves the style associated with the domain event.
+     *
+     * @return a string representing the domain event style.
+     */
     public String getDomainEventStyle() {
         return this.domainEventStyle;
     }
 
+    /**
+     * Retrieves the domain command style.
+     *
+     * @return the domain command style as a String
+     */
     public String getDomainCommandStyle() {
         return this.domainCommandStyle;
     }
 
+    /**
+     * Retrieves the style of the application service.
+     *
+     * @return a string representing the application service style.
+     */
     public String getApplicationServiceStyle() {
         return this.applicationServiceStyle;
     }
 
+    /**
+     * Retrieves the style configuration for the domain service.
+     *
+     * @return the domain service style as a String
+     */
     public String getDomainServiceStyle() {
         return this.domainServiceStyle;
     }
 
+    /**
+     * Retrieves the repository style.
+     *
+     * @return the repository style as a String
+     */
     public String getRepositoryStyle() {
         return this.repositoryStyle;
     }
 
+    /**
+     * Retrieves the style of the read model currently set.
+     *
+     * @return the style of the read model as a String
+     */
     public String getReadModelStyle() {
         return this.readModelStyle;
     }
 
+    /**
+     * Retrieves the query handler style used in the current context.
+     *
+     * @return the query handler style as a String
+     */
     public String getQueryHandlerStyle() {
         return this.queryHandlerStyle;
     }
 
+    /**
+     * Retrieves the style configuration for the outbound service.
+     *
+     * @return the style of the outbound service as a String
+     */
     public String getOutboundServiceStyle() {
         return this.outboundServiceStyle;
     }
 
+    /**
+     * Retrieves the style associated with an unspecified service kind.
+     *
+     * @return a String representing the style for unspecified service kind.
+     */
     public String getUnspecifiedServiceKindStyle() {
         return unspecifiedServiceKindStyle;
     }
 
+    /**
+     * Retrieves the font associated with the current object.
+     *
+     * @return the name of the font as a String
+     */
     public String getFont() {
         return this.font;
     }
 
+    /**
+     * Retrieves the current Nomnoml diagram direction.
+     *
+     * @return the current direction as a String
+     */
     public String getDirection() {
         return this.direction;
     }
 
+    /**
+     * Retrieves the Nomnoml ranker associated with this instance.
+     *
+     * @return the ranker as a String
+     */
     public String getRanker() {
         return this.ranker;
     }
 
+    /**
+     * Retrieves the value of the Nomnoml acycler field.
+     *
+     * @return the current value of the acycler field
+     */
     public String getAcycler() {
         return this.acycler;
     }
 
+    /**
+     * Retrieves the background color.
+     *
+     * @return the background color as a String
+     */
     public String getBackgroundColor() {
         return backgroundColor;
     }
 
+    /**
+     * Retrieves the list of full qualified class names that are blacklisted.
+     *
+     * @return a list of class names that are currently blacklisted
+     */
     public List<String> getClassesBlacklist() {
         return this.classesBlacklist;
     }
 
+    /**
+     * Determines whether fields should be shown.
+     *
+     * @return true if fields are set to be shown, false otherwise
+     */
     public boolean isShowFields() {
         return this.showFields;
     }
 
+    /**
+     * Determines whether fully qualified class names are displayed.
+     *
+     * @return true if fully qualified class names are displayed, false otherwise.
+     */
     public boolean isShowFullQualifiedClassNames() {
         return this.showFullQualifiedClassNames;
     }
 
+    /**
+     * Indicates whether assertions are enabled.
+     *
+     * @return true if assertions are enabled, false otherwise
+     */
     public boolean isShowAssertions() {
         return this.showAssertions;
     }
 
+    /**
+     * Checks whether methods are set to be shown.
+     *
+     * @return true if methods are configured to be shown, false otherwise
+     */
     public boolean isShowMethods() {
         return this.showMethods;
     }
 
+    /**
+     * Determines whether only public methods are set to be shown.
+     *
+     * @return true if only public methods are to be shown; false otherwise.
+     */
     public boolean isShowOnlyPublicMethods() {
         return this.showOnlyPublicMethods;
     }
 
+    /**
+     * Determines whether domain events should be shown.
+     *
+     * @return true if domain events are to be displayed, false otherwise.
+     */
     public boolean isShowDomainEvents() {
         return this.showDomainEvents;
     }
 
+    /**
+     * Indicates whether the domain event fields should be displayed.
+     *
+     * @return true if domain event fields are to be shown, false otherwise
+     */
     public boolean isShowDomainEventFields() {
         return this.showDomainEventFields;
     }
 
+    /**
+     * Determines whether domain event methods should be displayed.
+     *
+     * @return true if domain event methods are set to be shown, false otherwise
+     */
     public boolean isShowDomainEventMethods() {
         return this.showDomainEventMethods;
     }
 
+    /**
+     * Determines if domain commands should be displayed.
+     *
+     * @return {@code true} if domain commands are to be displayed, {@code false} otherwise.
+     */
     public boolean isShowDomainCommands() {
         return this.showDomainCommands;
     }
 
+    /**
+     * Determines whether only top-level domain command relations are shown.
+     *
+     * @return true if only top-level domain command relations are shown; false otherwise
+     */
     public boolean isShowOnlyTopLevelDomainCommandRelations() {
         return this.showOnlyTopLevelDomainCommandRelations;
     }
 
+    /**
+     * Determines whether the domain command fields are set to be displayed.
+     *
+     * @return true if the domain command fields are set to be displayed, false otherwise
+     */
     public boolean isShowDomainCommandFields() {
         return this.showDomainCommandFields;
     }
 
+    /**
+     * Determines whether the domain command methods should be displayed.
+     *
+     * @return true if the domain command methods should be displayed, false otherwise.
+     */
     public boolean isShowDomainCommandMethods() {
         return this.showDomainCommandMethods;
     }
 
+    /**
+     * Determines if the domain services should be displayed.
+     *
+     * @return true if domain services are to be shown, false otherwise
+     */
     public boolean isShowDomainServices() {
         return this.showDomainServices;
     }
 
+    /**
+     * Determines whether the domain service fields should be displayed.
+     *
+     * @return true if the domain service fields should be shown, false otherwise
+     */
     public boolean isShowDomainServiceFields() {
         return this.showDomainServiceFields;
     }
 
+    /**
+     * Determines if domain service methods should be displayed.
+     *
+     * @return true if domain service methods are to be displayed, false otherwise.
+     */
     public boolean isShowDomainServiceMethods() {
         return this.showDomainServiceMethods;
     }
 
+    /**
+     * Indicates whether the application services should be displayed.
+     *
+     * @return true if application services are set to be shown, false otherwise
+     */
     public boolean isShowApplicationServices() {
         return this.showApplicationServices;
     }
 
+    /**
+     * Determines whether application service fields should be displayed.
+     *
+     * @return true if application service fields should be shown, false otherwise.
+     */
     public boolean isShowApplicationServiceFields() {
         return this.showApplicationServiceFields;
     }
 
+    /**
+     * Determines if application service methods should be displayed.
+     *
+     * @return true if application service methods should be displayed; false otherwise
+     */
     public boolean isShowApplicationServiceMethods() {
         return this.showApplicationServiceMethods;
     }
 
+    /**
+     * Checks whether the repositories should be shown or not.
+     *
+     * @return true if repositories are to be displayed, otherwise false.
+     */
     public boolean isShowRepositories() {
         return this.showRepositories;
     }
 
+    /**
+     * Determines whether repository fields should be displayed.
+     *
+     * @return true if repository fields are to be shown, false otherwise
+     */
     public boolean isShowRepositoryFields() {
         return this.showRepositoryFields;
     }
 
+    /**
+     * Determines whether repository methods should be shown.
+     *
+     * @return true if repository methods are to be shown, false otherwise.
+     */
     public boolean isShowRepositoryMethods() {
         return this.showRepositoryMethods;
     }
 
+    /**
+     * Determines if the read models should be displayed.
+     *
+     * @return true if read models are to be shown; false otherwise.
+     */
     public boolean isShowReadModels() {
         return this.showReadModels;
     }
 
+    /**
+     * Determines whether the read model fields should be displayed.
+     *
+     * @return true if the read model fields are to be displayed; false otherwise.
+     */
     public boolean isShowReadModelFields() {
         return this.showReadModelFields;
     }
 
+    /**
+     * Checks whether the read model methods should be shown.
+     *
+     * @return true if the read model methods are set to be shown, false otherwise
+     */
     public boolean isShowReadModelMethods() {
         return this.showReadModelMethods;
     }
 
+    /**
+     * Determines whether the display of query handlers is enabled.
+     *
+     * @return true if query handlers are set to be shown, false otherwise
+     */
     public boolean isShowQueryHandlers() {
         return this.showQueryHandlers;
     }
 
+    /**
+     * Determines whether the query handler fields should be displayed.
+     *
+     * @return true if the query handler fields should be shown; false otherwise.
+     */
     public boolean isShowQueryHandlerFields() {
         return this.showQueryHandlerFields;
     }
 
+    /**
+     * Determines if query handler methods should be displayed.
+     *
+     * @return true if query handler methods are set to be shown, false otherwise
+     */
     public boolean isShowQueryHandlerMethods() {
         return this.showQueryHandlerMethods;
     }
 
+    /**
+     * Determines whether outbound services should be displayed.
+     *
+     * @return true if outbound services are to be shown, false otherwise.
+     */
     public boolean isShowOutboundServices() {
         return this.showOutboundServices;
     }
 
+    /**
+     * Determines whether the outbound service fields should be displayed.
+     *
+     * @return true if the outbound service fields should be displayed; false otherwise.
+     */
     public boolean isShowOutboundServiceFields() {
         return this.showOutboundServiceFields;
     }
 
+    /**
+     * Determines if outbound service methods should be displayed.
+     *
+     * @return true if outbound service methods are set to be displayed, false otherwise.
+     */
     public boolean isShowOutboundServiceMethods() {
         return this.showOutboundServiceMethods;
     }
 
+    /**
+     * Determines whether unspecified service kinds should be displayed.
+     *
+     * @return true if unspecified service kinds are to be shown, false otherwise
+     */
     public boolean isShowUnspecifiedServiceKinds() {
         return this.showUnspecifiedServiceKinds;
     }
 
+    /**
+     * Determines whether unspecified service kind fields should be displayed.
+     *
+     * @return true if unspecified service kind fields should be shown; false otherwise.
+     */
     public boolean isShowUnspecifiedServiceKindFields() {
         return this.showUnspecifiedServiceKindFields;
     }
 
+    /**
+     * Determines whether methods for unspecified service kinds should be displayed.
+     *
+     * @return true if unspecified service kind methods are to be shown; false otherwise.
+     */
     public boolean isShowUnspecifiedServiceKindMethods() {
         return this.showUnspecifiedServiceKindMethods;
     }
 
+    /**
+     * Determines whether the call application service driver is enabled.
+     *
+     * @return true if the call application service driver is enabled; false otherwise.
+     */
     public boolean isCallApplicationServiceDriver() {
         return this.callApplicationServiceDriver;
     }
 
+    /**
+     * Retrieves the list of fields that are blacklisted.
+     *
+     * @return a list of strings representing the blacklisted fields.
+     */
     public List<String> getFieldBlacklist() {
         return this.fieldBlacklist;
     }
 
+    /**
+     * Retrieves the list of blacklisted method names.
+     *
+     * @return a list of method names that are blacklisted.
+     */
     public List<String> getMethodBlacklist() {
         return this.methodBlacklist;
     }
 
+    /**
+     * Determines whether inherited members in classes should be displayed.
+     *
+     * @return true if inherited members are set to be shown in classes, false otherwise.
+     */
     public boolean isShowInheritedMembersInClasses() {
         return this.showInheritedMembersInClasses;
     }
 
+    /**
+     * Determines whether object members are displayed within classes.
+     *
+     * @return true if object members are shown in classes; false otherwise.
+     */
     public boolean isShowObjectMembersInClasses() {
         return this.showObjectMembersInClasses;
     }
 
+    /**
+     * Checks whether the multiplicity is included in the label.
+     *
+     * @return true if the multiplicity is included in the label, false otherwise.
+     */
     public boolean isMultiplicityInLabel() {
         return this.multiplicityInLabel;
     }
 
+    /**
+     * Checks weather field stereotypes should be shown.
+     *
+     * @return true if the field stereotypes are used, false otherwise.
+     */
     public boolean isFieldStereotypes() {
         return this.fieldStereotypes;
     }
 
+    /**
+     * Retrieves the list of transitive filter seed domain service type names (fullqualified).
+     *
+     * @return a list of strings representing the transitive filter seed domain service type names
+     */
     public List<String> getTransitiveFilterSeedDomainServiceTypeNames() {
         return this.transitiveFilterSeedDomainServiceTypeNames;
     }
 
+    /**
+     * Retrieves the list of filtered package names.
+     *
+     * @return a list of strings representing the filtered package names.
+     */
+    public List<String> getFilteredPackageNames() {
+        return this.filteredPackageNames;
+    }
+
+    /**
+     * Determines whether abstract types are set to be shown.
+     *
+     * @return true if abstract types are to be displayed; false otherwise.
+     */
+    public boolean isShowAbstractTypes() {
+        return this.showAbstractTypes;
+    }
+
+    /**
+     * Checks if the system is configured to use abstract type names for concrete service kinds.
+     *
+     * @return true if abstract type names are used for concrete service kinds, false otherwise.
+     */
+    public boolean isUseAbstractTypeNameForConcreteServiceKinds() {
+        return this.useAbstractTypeNameForConcreteServiceKinds;
+    }
+
+    /**
+     * Converts the current DomainDiagramConfig object into a builder instance, allowing further modifications.
+     *
+     * @return a {@link DomainDiagramConfigBuilder} pre-populated with the settings of the current DomainDiagramConfig object.
+     */
     public DomainDiagramConfigBuilder toBuilder() {
         return new DomainDiagramConfigBuilder()
-            .withContextPackageName(this.contextPackageName)
             .withAggregateRootStyle(this.aggregateRootStyle)
             .withAggregateFrameStyle(this.aggregateFrameStyle)
             .withEntityStyle(this.entityStyle)
@@ -1039,15 +1401,23 @@ public class DomainDiagramConfig implements DiagramConfig {
             .withShowObjectMembersInClasses(this.showObjectMembersInClasses)
             .withMultiplicityInLabel(this.multiplicityInLabel)
             .withFieldStereotypes(this.fieldStereotypes)
-            .withTransitiveFilterSeedDomainServiceTypeNames(this.transitiveFilterSeedDomainServiceTypeNames);
+            .withTransitiveFilterSeedDomainServiceTypeNames(this.transitiveFilterSeedDomainServiceTypeNames)
+            .withFilteredPackageNames(this.filteredPackageNames)
+            .withShowAbstractTypes(this.showAbstractTypes)
+            .withUseAbstractTypeNameForConcreteServiceKinds(this.useAbstractTypeNameForConcreteServiceKinds);
     }
 
     /**
+     * A builder class for configuring the domain diagram representation settings.
+     * This class provides a fluent API to define various visual and structural elements
+     * of a domain model diagram, including styles, visibility of elements, and filtering capabilities.
      *
+     * The configuration options allow customization of the appearance of domain entities, services,
+     * commands, events, and other relevant components in the diagram.
+     *
+     * This class supports chaining of method calls to enable concise and expressive configurations.
      */
     public static class DomainDiagramConfigBuilder {
-        private String contextPackageName$value;
-        private boolean contextPackageName$set;
         private String aggregateRootStyle$value;
         private boolean aggregateRootStyle$set;
         private String aggregateFrameStyle$value;
@@ -1172,393 +1542,810 @@ public class DomainDiagramConfig implements DiagramConfig {
         private boolean fieldStereotypes$set;
         private List<String> transitiveFilterSeedDomainServiceTypeNames$value;
         private boolean transitiveFilterSeedDomainServiceTypeNames$set;
+        private List<String> filteredPackageNames$value;
+        private boolean filteredPackageNames$set;
+        private boolean showAbstractTypes$value;
+        private boolean showAbstractTypes$set;
+        private boolean useAbstractTypeNameForConcreteServiceKinds$value;
+        private boolean useAbstractTypeNameForConcreteServiceKinds$set;
 
         DomainDiagramConfigBuilder() {
         }
 
-        public DomainDiagramConfigBuilder withContextPackageName(String contextPackageName) {
-            this.contextPackageName$value = contextPackageName;
-            this.contextPackageName$set = true;
-            return this;
-        }
-
+        /**
+         * Sets the style to be used for aggregate root elements in the domain diagram configuration.
+         *
+         * @param aggregateRootStyle the style to apply to aggregate root elements
+         * @return the current instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withAggregateRootStyle(String aggregateRootStyle) {
             this.aggregateRootStyle$value = aggregateRootStyle;
             this.aggregateRootStyle$set = true;
             return this;
         }
 
+        /**
+         * Sets the style for the aggregate frame in the domain diagram configuration.
+         *
+         * @param aggregateFrameStyle the style to be applied to the aggregate frame
+         * @return the current instance of DomainDiagramConfigBuilder for method chaining
+         */
         public DomainDiagramConfigBuilder withAggregateFrameStyle(String aggregateFrameStyle) {
             this.aggregateFrameStyle$value = aggregateFrameStyle;
             this.aggregateFrameStyle$set = true;
             return this;
         }
 
+        /**
+         * Sets the style for entities in the domain diagram configuration.
+         *
+         * @param entityStyle the style to be applied to entities
+         * @return the current instance of DomainDiagramConfigBuilder for method chaining
+         */
         public DomainDiagramConfigBuilder withEntityStyle(String entityStyle) {
             this.entityStyle$value = entityStyle;
             this.entityStyle$set = true;
             return this;
         }
 
+        /**
+         * Sets the value object style for the Domain Diagram configuration.
+         *
+         * @param valueObjectStyle the value object style to be applied
+         * @return the current instance of DomainDiagramConfigBuilder
+         */
         public DomainDiagramConfigBuilder withValueObjectStyle(String valueObjectStyle) {
             this.valueObjectStyle$value = valueObjectStyle;
             this.valueObjectStyle$set = true;
             return this;
         }
 
+        /**
+         * Sets the style to be used for enums in the domain diagram configuration.
+         *
+         * @param enumStyle the style to apply to enums
+         * @return the updated DomainDiagramConfigBuilder instance
+         */
         public DomainDiagramConfigBuilder withEnumStyle(String enumStyle) {
             this.enumStyle$value = enumStyle;
             this.enumStyle$set = true;
             return this;
         }
 
+        /**
+         * Sets the identity style for the domain diagram configuration.
+         *
+         * @param identityStyle the style to be used for identity representation in the diagram
+         * @return the updated instance of DomainDiagramConfigBuilder
+         */
         public DomainDiagramConfigBuilder withIdentityStyle(String identityStyle) {
             this.identityStyle$value = identityStyle;
             this.identityStyle$set = true;
             return this;
         }
 
+        /**
+         * Sets the style for domain events in the DomainDiagramConfigBuilder.
+         *
+         * @param domainEventStyle the style to be applied to domain events
+         * @return the updated instance of DomainDiagramConfigBuilder
+         */
         public DomainDiagramConfigBuilder withDomainEventStyle(String domainEventStyle) {
             this.domainEventStyle$value = domainEventStyle;
             this.domainEventStyle$set = true;
             return this;
         }
 
+        /**
+         * Sets the style for domain commands in the domain diagram configuration.
+         *
+         * @param domainCommandStyle the style to be applied for domain commands
+         * @return the updated DomainDiagramConfigBuilder instance
+         */
         public DomainDiagramConfigBuilder withDomainCommandStyle(String domainCommandStyle) {
             this.domainCommandStyle$value = domainCommandStyle;
             this.domainCommandStyle$set = true;
             return this;
         }
 
+        /**
+         * Sets the application service style for the domain diagram configuration.
+         *
+         * @param applicationServiceStyle the style to be applied to the application service
+         * @return the updated DomainDiagramConfigBuilder instance
+         */
         public DomainDiagramConfigBuilder withApplicationServiceStyle(String applicationServiceStyle) {
             this.applicationServiceStyle$value = applicationServiceStyle;
             this.applicationServiceStyle$set = true;
             return this;
         }
 
+        /**
+         * Sets the style for the domain service in the domain diagram configuration.
+         *
+         * @param domainServiceStyle the style to be applied for the domain service
+         * @return the current instance of DomainDiagramConfigBuilder for method chaining
+         */
         public DomainDiagramConfigBuilder withDomainServiceStyle(String domainServiceStyle) {
             this.domainServiceStyle$value = domainServiceStyle;
             this.domainServiceStyle$set = true;
             return this;
         }
 
+        /**
+         * Sets the repository style for the domain diagram configuration.
+         *
+         * @param repositoryStyle the repository style to be used
+         * @return the current instance of DomainDiagramConfigBuilder for method chaining
+         */
         public DomainDiagramConfigBuilder withRepositoryStyle(String repositoryStyle) {
             this.repositoryStyle$value = repositoryStyle;
             this.repositoryStyle$set = true;
             return this;
         }
 
+        /**
+         * Sets the read model style configuration for the domain diagram.
+         *
+         * @param readModelStyle the style to be applied to the read model
+         * @return the updated DomainDiagramConfigBuilder instance
+         */
         public DomainDiagramConfigBuilder withReadModelStyle(String readModelStyle) {
             this.readModelStyle$value = readModelStyle;
             this.readModelStyle$set = true;
             return this;
         }
 
+        /**
+         * Sets the query handler style for the domain diagram configuration.
+         *
+         * @param queryHandlerStyle the query handler style to be set
+         * @return the current instance of DomainDiagramConfigBuilder
+         */
         public DomainDiagramConfigBuilder withQueryHandlerStyle(String queryHandlerStyle) {
             this.queryHandlerStyle$value = queryHandlerStyle;
             this.queryHandlerStyle$set = true;
             return this;
         }
 
+        /**
+         * Sets the outbound service style for the domain diagram configuration.
+         *
+         * @param outboundServiceStyle the style to be applied for outbound services in the domain diagram
+         * @return the current instance of DomainDiagramConfigBuilder for method chaining
+         */
         public DomainDiagramConfigBuilder withOutboundServiceStyle(String outboundServiceStyle) {
             this.outboundServiceStyle$value = outboundServiceStyle;
             this.outboundServiceStyle$set = true;
             return this;
         }
 
+        /**
+         * Sets the style to be used for unspecified service kinds in the domain diagram.
+         *
+         * @param unspecifiedServiceKindStyle the style to use for unspecified service kinds
+         * @return the current instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withUnspecifiedServiceKindStyle(String unspecifiedServiceKindStyle) {
             this.unspecifiedServiceKindStyle$value = unspecifiedServiceKindStyle;
             this.unspecifiedServiceKindStyle$set = true;
             return this;
         }
 
+        /**
+         * Sets the font configuration for the domain diagram.
+         *
+         * @param font the font to be used in the domain diagram
+         * @return the current instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withFont(String font) {
             this.font$value = font;
             this.font$set = true;
             return this;
         }
 
+        /**
+         * Configures the direction of the layout in the domain diagram.
+         *
+         * @param direction the direction to apply for the layout (e.g., "right", "down")
+         * @return the current instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withDirection(String direction) {
             this.direction$value = direction;
             this.direction$set = true;
             return this;
         }
 
+        /**
+         * Sets the ranker configuration for the domain diagram.
+         *
+         * @param ranker the ranker style to use for organizing elements (e.g., "network-simplex")
+         * @return the current instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withRanker(String ranker) {
             this.ranker$value = ranker;
             this.ranker$set = true;
             return this;
         }
 
+        /**
+         * Configures the acycler setting for the domain diagram.
+         *
+         * @param acycler the acycler algorithm to be used for edge rendering
+         * @return the current instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withAcycler(String acycler) {
             this.acycler$value = acycler;
             this.acycler$set = true;
             return this;
         }
 
+        /**
+         * Sets the background color of the domain diagram.
+         *
+         * @param backgroundColor the color to be used as the background of the diagram
+         * @return the current instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withBackgroundColor(String backgroundColor) {
             this.backgroundColor$value = backgroundColor;
             this.backgroundColor$set = true;
             return this;
         }
 
+        /**
+         * Specifies a list of classes that should be blacklisted in the diagram (full qualified class names).
+         *
+         * @param classesBlacklist a list of class names to exclude from the diagram
+         * @return the updated instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withClassesBlacklist(List<String> classesBlacklist) {
             this.classesBlacklist$value = classesBlacklist;
             this.classesBlacklist$set = true;
             return this;
         }
 
+        /**
+         * Configures whether fields should be displayed in the diagram.
+         *
+         * @param showFields a boolean value indicating whether fields should be shown
+         * @return the updated instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withShowFields(boolean showFields) {
             this.showFields$value = showFields;
             this.showFields$set = true;
             return this;
         }
 
+        /**
+         * Configures whether fully qualified class names should be displayed.
+         *
+         * @param showFullQualifiedClassNames a boolean value indicating whether to show fully qualified class names
+         * @return the updated instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withShowFullQualifiedClassNames(boolean showFullQualifiedClassNames) {
             this.showFullQualifiedClassNames$value = showFullQualifiedClassNames;
             this.showFullQualifiedClassNames$set = true;
             return this;
         }
 
+        /**
+         * Configures whether assertions should be displayed in the diagram.
+         *
+         * @param showAssertions a boolean value indicating whether assertions should be shown
+         * @return the updated instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withShowAssertions(boolean showAssertions) {
             this.showAssertions$value = showAssertions;
             this.showAssertions$set = true;
             return this;
         }
 
+        /**
+         * Configures whether methods should be displayed in the diagram.
+         *
+         * @param showMethods a boolean value indicating whether methods should be shown
+         * @return the updated instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withShowMethods(boolean showMethods) {
             this.showMethods$value = showMethods;
             this.showMethods$set = true;
             return this;
         }
 
+        /**
+         * Configures whether only public methods should be displayed in the diagram.
+         *
+         * @param showOnlyPublicMethods a boolean value indicating whether only public methods should be shown
+         * @return the updated instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withShowOnlyPublicMethods(boolean showOnlyPublicMethods) {
             this.showOnlyPublicMethods$value = showOnlyPublicMethods;
             this.showOnlyPublicMethods$set = true;
             return this;
         }
 
+        /**
+         * Configures whether domain events should be displayed in the diagram.
+         *
+         * @param showDomainEvents a boolean value indicating whether domain events should be shown
+         * @return the updated instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withShowDomainEvents(boolean showDomainEvents) {
             this.showDomainEvents$value = showDomainEvents;
             this.showDomainEvents$set = true;
             return this;
         }
 
+        /**
+         * Configures whether fields of domain events should be displayed in the diagram.
+         *
+         * @param showDomainEventFields a boolean value indicating whether domain event fields should be shown
+         * @return the updated instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withShowDomainEventFields(boolean showDomainEventFields) {
             this.showDomainEventFields$value = showDomainEventFields;
             this.showDomainEventFields$set = true;
             return this;
         }
 
+        /**
+         * Configures whether methods of domain events should be displayed in the diagram.
+         *
+         * @param showDomainEventMethods a boolean value indicating whether domain event methods should be shown
+         * @return the updated instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withShowDomainEventMethods(boolean showDomainEventMethods) {
             this.showDomainEventMethods$value = showDomainEventMethods;
             this.showDomainEventMethods$set = true;
             return this;
         }
 
+        /**
+         * Configures whether domain commands should be displayed in the diagram.
+         *
+         * @param showDomainCommands a boolean value indicating whether domain commands should be shown
+         * @return the updated instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withShowDomainCommands(boolean showDomainCommands) {
             this.showDomainCommands$value = showDomainCommands;
             this.showDomainCommands$set = true;
             return this;
         }
 
+        /**
+         * Configures whether only top-level domain command relations should be displayed.
+         *
+         * @param showOnlyTopLevelDomainCommandRelations a boolean value indicating whether to show only top-level domain command relations
+         * @return the updated instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withShowOnlyTopLevelDomainCommandRelations(boolean showOnlyTopLevelDomainCommandRelations) {
             this.showOnlyTopLevelDomainCommandRelations$value = showOnlyTopLevelDomainCommandRelations;
             this.showOnlyTopLevelDomainCommandRelations$set = true;
             return this;
         }
 
+        /**
+         * Configures whether fields of domain commands should be displayed in the diagram.
+         *
+         * @param showDomainCommandFields a boolean value indicating whether domain command fields should be shown
+         * @return the updated instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withShowDomainCommandFields(boolean showDomainCommandFields) {
             this.showDomainCommandFields$value = showDomainCommandFields;
             this.showDomainCommandFields$set = true;
             return this;
         }
 
+        /**
+         * Configures whether to show domain command methods in the domain diagram.
+         *
+         * @param showDomainCommandMethods a boolean flag indicating whether to display domain command methods
+         * @return the updated DomainDiagramConfigBuilder instance
+         */
         public DomainDiagramConfigBuilder withShowDomainCommandMethods(boolean showDomainCommandMethods) {
             this.showDomainCommandMethods$value = showDomainCommandMethods;
             this.showDomainCommandMethods$set = true;
             return this;
         }
 
+        /**
+         * Configures whether domain services should be displayed in the domain diagram.
+         *
+         * @param showDomainServices a boolean indicating whether to show domain services
+         * @return the updated DomainDiagramConfigBuilder instance
+         */
         public DomainDiagramConfigBuilder withShowDomainServices(boolean showDomainServices) {
             this.showDomainServices$value = showDomainServices;
             this.showDomainServices$set = true;
             return this;
         }
 
+        /**
+         * Configures whether domain service fields should be displayed in the domain diagram.
+         *
+         * @param showDomainServiceFields a boolean flag indicating whether to display domain service fields
+         * @return the updated instance of DomainDiagramConfigBuilder
+         */
         public DomainDiagramConfigBuilder withShowDomainServiceFields(boolean showDomainServiceFields) {
             this.showDomainServiceFields$value = showDomainServiceFields;
             this.showDomainServiceFields$set = true;
             return this;
         }
 
+        /**
+         * Sets whether to display domain service methods in the domain diagram configuration.
+         *
+         * @param showDomainServiceMethods a boolean indicating if domain service methods should be shown
+         * @return the updated DomainDiagramConfigBuilder instance
+         */
         public DomainDiagramConfigBuilder withShowDomainServiceMethods(boolean showDomainServiceMethods) {
             this.showDomainServiceMethods$value = showDomainServiceMethods;
             this.showDomainServiceMethods$set = true;
             return this;
         }
 
+        /**
+         * Configures whether application services should be shown in the domain diagram.
+         *
+         * @param showApplicationServices a boolean indicating if application services should be shown
+         * @return the updated DomainDiagramConfigBuilder instance
+         */
         public DomainDiagramConfigBuilder withShowApplicationServices(boolean showApplicationServices) {
             this.showApplicationServices$value = showApplicationServices;
             this.showApplicationServices$set = true;
             return this;
         }
 
+        /**
+         * Sets the flag to determine whether application service fields should be displayed.
+         *
+         * @param showApplicationServiceFields a boolean value indicating whether to show application service fields
+         * @return the updated DomainDiagramConfigBuilder instance
+         */
         public DomainDiagramConfigBuilder withShowApplicationServiceFields(boolean showApplicationServiceFields) {
             this.showApplicationServiceFields$value = showApplicationServiceFields;
             this.showApplicationServiceFields$set = true;
             return this;
         }
 
+        /**
+         * Sets the flag to determine whether application service methods should be displayed.
+         *
+         * @param showApplicationServiceMethods a boolean indicating if application service methods should be shown
+         * @return the updated DomainDiagramConfigBuilder instance
+         */
         public DomainDiagramConfigBuilder withShowApplicationServiceMethods(boolean showApplicationServiceMethods) {
             this.showApplicationServiceMethods$value = showApplicationServiceMethods;
             this.showApplicationServiceMethods$set = true;
             return this;
         }
 
+        /**
+         * Configures whether repositories should be shown in the domain diagram.
+         *
+         * @param showRepositories a boolean indicating if repositories should be displayed (true) or not (false).
+         * @return the updated instance of {@code DomainDiagramConfigBuilder}.
+         */
         public DomainDiagramConfigBuilder withShowRepositories(boolean showRepositories) {
             this.showRepositories$value = showRepositories;
             this.showRepositories$set = true;
             return this;
         }
 
+        /**
+         * Sets the value indicating whether repository fields should be displayed in the domain diagram.
+         *
+         * @param showRepositoryFields a boolean specifying whether to show repository fields
+         * @return the current instance of DomainDiagramConfigBuilder for method chaining
+         */
         public DomainDiagramConfigBuilder withShowRepositoryFields(boolean showRepositoryFields) {
             this.showRepositoryFields$value = showRepositoryFields;
             this.showRepositoryFields$set = true;
             return this;
         }
 
+        /**
+         * Sets the flag to specify whether repository methods should be displayed in the domain diagram configuration.
+         *
+         * @param showRepositoryMethods a boolean indicating whether to show repository methods
+         * @return the updated instance of DomainDiagramConfigBuilder
+         */
         public DomainDiagramConfigBuilder withShowRepositoryMethods(boolean showRepositoryMethods) {
             this.showRepositoryMethods$value = showRepositoryMethods;
             this.showRepositoryMethods$set = true;
             return this;
         }
 
+        /**
+         * Sets the flag indicating whether to show read models in the domain diagram.
+         *
+         * @param showReadModels a boolean value indicating whether read models should be shown
+         * @return the updated DomainDiagramConfigBuilder instance
+         */
         public DomainDiagramConfigBuilder withShowReadModels(boolean showReadModels) {
             this.showReadModels$value = showReadModels;
             this.showReadModels$set = true;
             return this;
         }
 
+        /**
+         * Sets the flag to determine whether read model fields should be displayed.
+         *
+         * @param showReadModelFields a boolean value indicating whether read model fields should be shown
+         * @return the current instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withShowReadModelFields(boolean showReadModelFields) {
             this.showReadModelFields$value = showReadModelFields;
             this.showReadModelFields$set = true;
             return this;
         }
 
+        /**
+         * Sets the flag indicating whether to show read model methods in the domain diagram configuration.
+         *
+         * @param showReadModelMethods a boolean value indicating whether read model methods should be displayed
+         * @return the updated instance of DomainDiagramConfigBuilder
+         */
         public DomainDiagramConfigBuilder withShowReadModelMethods(boolean showReadModelMethods) {
             this.showReadModelMethods$value = showReadModelMethods;
             this.showReadModelMethods$set = true;
             return this;
         }
 
+        /**
+         * Sets whether to include query handlers in the domain diagram configuration.
+         *
+         * @param showQueryHandlers a boolean indicating whether query handlers should be shown
+         * @return the current instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withShowQueryHandlers(boolean showQueryHandlers) {
             this.showQueryHandlers$value = showQueryHandlers;
             this.showQueryHandlers$set = true;
             return this;
         }
 
+        /**
+         * Sets whether to show query handler fields in the domain diagram configuration.
+         *
+         * @param showQueryHandlerFields a boolean indicating whether query handler fields should be displayed
+         * @return the updated instance of DomainDiagramConfigBuilder
+         */
         public DomainDiagramConfigBuilder withShowQueryHandlerFields(boolean showQueryHandlerFields) {
             this.showQueryHandlerFields$value = showQueryHandlerFields;
             this.showQueryHandlerFields$set = true;
             return this;
         }
 
+        /**
+         * Sets whether query handler methods should be shown in the domain diagram configuration.
+         *
+         * @param showQueryHandlerMethods a boolean indicating whether query handler methods should be included
+         * @return the updated instance of DomainDiagramConfigBuilder
+         */
         public DomainDiagramConfigBuilder withShowQueryHandlerMethods(boolean showQueryHandlerMethods) {
             this.showQueryHandlerMethods$value = showQueryHandlerMethods;
             this.showQueryHandlerMethods$set = true;
             return this;
         }
 
+        /**
+         * Configures whether outbound services should be displayed in the domain diagram.
+         *
+         * @param showOutboundServices a boolean indicating whether to show outbound services
+         * @return the updated DomainDiagramConfigBuilder instance
+         */
         public DomainDiagramConfigBuilder withShowOutboundServices(boolean showOutboundServices) {
             this.showOutboundServices$value = showOutboundServices;
             this.showOutboundServices$set = true;
             return this;
         }
 
+        /**
+         * Configures the builder to display or hide outbound service fields in the domain diagram.
+         *
+         * @param showOutboundServiceFields a boolean indicating whether outbound service fields should be shown 
+         *                                  (true to display, false to hide).
+         * @return the current instance of DomainDiagramConfigBuilder for method chaining*/
         public DomainDiagramConfigBuilder withShowOutboundServiceFields(boolean showOutboundServiceFields) {
             this.showOutboundServiceFields$value = showOutboundServiceFields;
             this.showOutboundServiceFields$set = true;
             return this;
         }
 
+        /**
+         * Sets whether to show outbound service methods in the domain diagram.
+         *
+         * @param showOutboundServiceMethods a boolean indicating whether outbound service methods should be displayed
+         * @return the current instance of the {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withShowOutboundServiceMethods(boolean showOutboundServiceMethods) {
             this.showOutboundServiceMethods$value = showOutboundServiceMethods;
             this.showOutboundServiceMethods$set = true;
             return this;
         }
 
+        /**
+         * Configures whether to display unspecified service kinds in the domain diagram.
+         *
+         * @param showUnspecifiedServiceKinds a boolean indicating whether to show unspecified service kinds
+         * @return the {@code DomainDiagramConfigBuilder} instance for method chaining
+         */
         public DomainDiagramConfigBuilder withShowUnspecifiedServiceKinds(boolean showUnspecifiedServiceKinds) {
             this.showUnspecifiedServiceKinds$value = showUnspecifiedServiceKinds;
             this.showUnspecifiedServiceKinds$set = true;
             return this;
         }
 
+        /**
+         * Configures whether fields with unspecified service kinds will be displayed in the domain diagram.
+         *
+         * @param showUnspecifiedServiceKindFields a boolean value indicating whether to show fields 
+         *                                         with unspecified service kinds
+         * @return the updated instance of DomainDiagramConfigBuilder
+         */
         public DomainDiagramConfigBuilder withShowUnspecifiedServiceKindFields(boolean showUnspecifiedServiceKindFields) {
             this.showUnspecifiedServiceKindFields$value = showUnspecifiedServiceKindFields;
             this.showUnspecifiedServiceKindFields$set = true;
             return this;
         }
 
+        /**
+         * Configures whether to display methods with unspecified service kinds in the domain diagram.
+         *
+         * @param showUnspecifiedServiceKindMethods a boolean indicating whether to show methods with unspecified service kinds
+         * @return the current instance of DomainDiagramConfigBuilder for method chaining
+         */
         public DomainDiagramConfigBuilder withShowUnspecifiedServiceKindMethods(boolean showUnspecifiedServiceKindMethods) {
             this.showUnspecifiedServiceKindMethods$value = showUnspecifiedServiceKindMethods;
             this.showUnspecifiedServiceKindMethods$set = true;
             return this;
         }
 
+        /**
+         * Sets whether the application service should be called driver.
+         *
+         * @param callApplicationServiceDriver a boolean indicating if the application service should be called 
+         *                                     'driver' in the diagram
+         * @return the updated DomainDiagramConfigBuilder instance
+         */
         public DomainDiagramConfigBuilder withCallApplicationServiceDriver(boolean callApplicationServiceDriver) {
             this.callApplicationServiceDriver$value = callApplicationServiceDriver;
             this.callApplicationServiceDriver$set = true;
             return this;
         }
 
+        /**
+         * Specifies a blacklist of fields that should be excluded from the domain diagram configuration.
+         *
+         * @param fieldBlacklist a list of field names to be blacklisted
+         * @return the current instance of DomainDiagramConfigBuilder with the specified field blacklist applied
+         */
         public DomainDiagramConfigBuilder withFieldBlacklist(List<String> fieldBlacklist) {
             this.fieldBlacklist$value = fieldBlacklist;
             this.fieldBlacklist$set = true;
             return this;
         }
 
+        /**
+         * Sets the blacklist of method names for the domain diagram configuration.
+         *
+         * @param methodBlacklist a list of method names to be blacklisted
+         * @return the current instance of DomainDiagramConfigBuilder for method chaining
+         */
         public DomainDiagramConfigBuilder withMethodBlacklist(List<String> methodBlacklist) {
             this.methodBlacklist$value = methodBlacklist;
             this.methodBlacklist$set = true;
             return this;
         }
 
+        /**
+         * Sets the visibility of inherited members in classes for the domain diagram configuration.
+         *
+         * @param showInheritedMembersInClasses a boolean value indicating whether inherited members 
+         *                                       should be shown in classes.
+         * @return the current instance of DomainDiagramConfigBuilder with the updated configuration.
+         */
         public DomainDiagramConfigBuilder withShowInheritedMembersInClasses(boolean showInheritedMembersInClasses) {
             this.showInheritedMembersInClasses$value = showInheritedMembersInClasses;
             this.showInheritedMembersInClasses$set = true;
             return this;
         }
 
+        /**
+         * Sets whether object members should be displayed in classes within the domain diagram configuration.
+         *
+         * @param showObjectMembersInClasses a boolean indicating whether object members should be shown in classes
+         * @return the current instance of DomainDiagramConfigBuilder for method chaining
+         */
         public DomainDiagramConfigBuilder withShowObjectMembersInClasses(boolean showObjectMembersInClasses) {
             this.showObjectMembersInClasses$value = showObjectMembersInClasses;
             this.showObjectMembersInClasses$set = true;
             return this;
         }
 
+        /**
+         * Sets whether multiplicity information should be included in the label.
+         *
+         * @param multiplicityInLabel a boolean value indicating if multiplicity 
+         *                            should be included in the label
+         * @return the updated DomainDiagramConfigBuilder instance
+         */
         public DomainDiagramConfigBuilder withMultiplicityInLabel(boolean multiplicityInLabel) {
             this.multiplicityInLabel$value = multiplicityInLabel;
             this.multiplicityInLabel$set = true;
             return this;
         }
 
+        /**
+         * Configures whether field stereotypes should be included in the domain diagram.
+         *
+         * @param fieldStereotypes a boolean value indicating whether to include field stereotypes
+         * @return the updated instance of DomainDiagramConfigBuilder
+         */
         public DomainDiagramConfigBuilder withFieldStereotypes(boolean fieldStereotypes) {
             this.fieldStereotypes$value = fieldStereotypes;
             this.fieldStereotypes$set = true;
             return this;
         }
 
+        /**
+         * Sets the list of transitive filter seed domain service type names for the domain diagram configuration.
+         * This allows specific domain service types to be used as seeds for transitive filtering.
+         *
+         * @param transitiveFilterSeedDomainServiceTypeNames the list of domain service type names to be used as transitive filter seeds
+         * @return the current instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
         public DomainDiagramConfigBuilder withTransitiveFilterSeedDomainServiceTypeNames(List<String> transitiveFilterSeedDomainServiceTypeNames) {
             this.transitiveFilterSeedDomainServiceTypeNames$value = transitiveFilterSeedDomainServiceTypeNames;
             this.transitiveFilterSeedDomainServiceTypeNames$set = true;
             return this;
         }
 
+        /**
+         * Sets the list of package names to be filtered in the domain diagram configuration. 
+         * This allows specific packages to be included during diagram generation.
+         *
+         * @param filteredPackageNames the list of package names to filter
+         * @return the current instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
+        public DomainDiagramConfigBuilder withFilteredPackageNames(List<String> filteredPackageNames) {
+            this.filteredPackageNames$value = filteredPackageNames;
+            this.filteredPackageNames$set = true;
+            return this;
+        }
+
+        /**
+         * Sets whether abstract types should be shown in the domain diagram.
+         *
+         * @param showAbstractTypes a boolean indicating if abstract types should be displayed
+         * @return the current instance of DomainDiagramConfigBuilder for method chaining
+         */
+        public DomainDiagramConfigBuilder withShowAbstractTypes(boolean showAbstractTypes) {
+            this.showAbstractTypes$value = showAbstractTypes;
+            this.showAbstractTypes$set = true;
+            return this;
+        }
+
+        /**
+         * Configures whether to use the abstract type name for concrete service kinds in the domain diagram.
+         *
+         * @param useAbstractTypeNameForConcreteServiceKinds a boolean value indicating whether to use the abstract type name for concrete service kinds
+         * @return the updated instance of DomainDiagramConfigBuilder
+         */
+        public DomainDiagramConfigBuilder withUseAbstractTypeNameForConcreteServiceKinds(boolean useAbstractTypeNameForConcreteServiceKinds) {
+            this.useAbstractTypeNameForConcreteServiceKinds$value = useAbstractTypeNameForConcreteServiceKinds;
+            this.useAbstractTypeNameForConcreteServiceKinds$set = true;
+            return this;
+        };
+
+        /**
+         * Builds and returns a complete instance of {@code DomainDiagramConfig} using the current state
+         * of the builder. If any configuration parameter is not explicitly set, its default value will be used.
+         *
+         * @return a fully constructed {@code DomainDiagramConfig} instance with all specified or default configurations
+         */
         public DomainDiagramConfig build() {
-            String contextPackageName$value = this.contextPackageName$value;
-            if (!this.contextPackageName$set) {
-                contextPackageName$value = DomainDiagramConfig.$default$contextPackageName();
-            }
+
             String aggregateRootStyle$value = this.aggregateRootStyle$value;
             if (!this.aggregateRootStyle$set) {
                 aggregateRootStyle$value = DomainDiagramConfig.$default$aggregateRootStyle();
@@ -1807,8 +2594,19 @@ public class DomainDiagramConfig implements DiagramConfig {
             if (!this.transitiveFilterSeedDomainServiceTypeNames$set) {
                 transitiveFilterSeedDomainServiceTypeNames$value = DomainDiagramConfig.$default$transitiveFilterSeedDomainServiceTypeNames();
             }
+            List<String> filteredPackageNames$value = this.filteredPackageNames$value;
+            if (!this.filteredPackageNames$set) {
+                filteredPackageNames$value = DomainDiagramConfig.$default$filteredPackageNames();
+            }
+            boolean showAbstractTypes$value = this.showAbstractTypes$value;
+            if (!this.showAbstractTypes$set) {
+                showAbstractTypes$value = DomainDiagramConfig.$default$showAbstractTypes();
+            }
+            boolean useAbstractTypeNameForConcreteServiceKinds$value = this.useAbstractTypeNameForConcreteServiceKinds$value;
+            if (!this.showAbstractTypes$set) {
+                useAbstractTypeNameForConcreteServiceKinds$value = DomainDiagramConfig.$default$useAbstractTypeNameForConcreteServiceKinds();
+            }
             return new DomainDiagramConfig(
-                contextPackageName$value,
                 aggregateRootStyle$value,
                 aggregateFrameStyle$value,
                 entityStyle$value,
@@ -1870,13 +2668,21 @@ public class DomainDiagramConfig implements DiagramConfig {
                 showObjectMembersInClasses$value,
                 multiplicityInLabel$value,
                 fieldStereotypes$value,
-                transitiveFilterSeedDomainServiceTypeNames$value
+                transitiveFilterSeedDomainServiceTypeNames$value,
+                filteredPackageNames$value,
+                showAbstractTypes$value,
+                useAbstractTypeNameForConcreteServiceKinds$value
             );
         }
 
+        /**
+         * Returns a string representation of the DomainDiagramConfig.DomainDiagramConfigBuilder object.
+         * The representation includes the values of various configuration properties.
+         *
+         * @return a string describing the DomainDiagramConfig.DomainDiagramConfigBuilder object
+         */
         public String toString() {
-            return "DomainDiagramConfig.DomainDiagramConfigBuilder(contextPackageName$value=" +
-                this.contextPackageName$value +
+            return "DomainDiagramConfig.DomainDiagramConfigBuilder(" +
                 ", aggregateRootStyle$value=" +
                 this.aggregateRootStyle$value +
                 ", aggregateFrameStyle$value=" +
@@ -2001,6 +2807,12 @@ public class DomainDiagramConfig implements DiagramConfig {
                 this.fieldStereotypes$value +
                 ", transitiveFilterSeedDomainServiceTypeNames$value=" +
                 this.transitiveFilterSeedDomainServiceTypeNames$value +
+                ", filteredPackageNames$value=" +
+                this.filteredPackageNames$value +
+                ", showAbstractTypes$value=" +
+                this.showAbstractTypes$value +
+                ", useAbstractTypeNameForConcreteServiceKinds$value=" +
+                this.useAbstractTypeNameForConcreteServiceKinds$value +
                 ")";
         }
     }

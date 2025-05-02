@@ -28,17 +28,26 @@ package io.domainlifecycles.events.spring.outbox.api;
 
 /**
  * The ProcessingResult enum represents the processing result of sending a domain event.
- * <p>
- * The possible values are:
- * - OK: The domain event was sent successfully.
- * - FAILED: The domain event failed to send.
- * - FAILED_PARTIALLY: Some of the execution contexts of  the domain event could not be executed successfully.
  *
  * @author Mario Herb
  */
 @Deprecated
 public enum ProcessingResult {
+
+    /**
+     * Indicates that the domain event was sent successfully.
+     */
     OK,
+
+    /**
+     * Indicates that the domain event failed to send.
+     */
     FAILED,
+
+    /**
+     * Indicates that some execution contexts of the domain event could not be
+     * executed successfully. This status represents a partial failure during the
+     * processing of a domain event.
+     */
     FAILED_PARTIALLY
 }

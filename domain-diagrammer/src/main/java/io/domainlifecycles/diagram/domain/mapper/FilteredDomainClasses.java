@@ -29,10 +29,9 @@ package io.domainlifecycles.diagram.domain.mapper;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
-import io.domainlifecycles.mirror.api.BoundedContextMirror;
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
-import io.domainlifecycles.mirror.api.DomainModel;
+import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
@@ -54,9 +53,9 @@ import java.util.List;
  */
 public class FilteredDomainClasses {
 
-    private final DomainDiagramConfig domainDiagramConfig;
+    private final DomainMirror domainMirror;
 
-    private final BoundedContextMirror boundedContextMirror;
+    private final DomainDiagramConfig domainDiagramConfig;
 
     private final List<DomainCommandMirror> domainCommands;
 
@@ -68,19 +67,22 @@ public class FilteredDomainClasses {
 
     private final List<ServiceKindMirror> serviceKinds;
 
-    private final TransitiveDomainTypeFilter transitiveDomainTypeFilter;
+    private final TransitiveDomainTypeAnPackageFilter transitiveDomainTypeAnPackageFilter;
 
-    public FilteredDomainClasses(DomainDiagramConfig domainDiagramConfig, DomainModel domainModel) {
+    /**
+     * Constructs a new instance of FilteredDomainClasses with the given configuration and domain mirror.
+     *
+     * @param domainDiagramConfig the configuration defining filters for domain diagrams
+     * @param domainMirror the representation of the domain used to extract and filter domain elements
+     */
+    public FilteredDomainClasses(DomainDiagramConfig domainDiagramConfig, DomainMirror domainMirror) {
         this.domainDiagramConfig = domainDiagramConfig;
-        this.boundedContextMirror = domainModel.boundedContextMirrors()
-            .stream()
-            .filter(a -> a.getPackageName().equals(domainDiagramConfig.getContextPackageName()))
-            .findFirst().orElseThrow(() -> new IllegalStateException(
-                String.format("Bounded Context '%s' not found!", domainDiagramConfig.getContextPackageName())
-            ));
-        transitiveDomainTypeFilter = new TransitiveDomainTypeFilter(
-            domainDiagramConfig.getTransitiveFilterSeedDomainServiceTypeNames(),
-            boundedContextMirror
+        this.domainMirror = domainMirror;
+
+        transitiveDomainTypeAnPackageFilter = new TransitiveDomainTypeAnPackageFilter(
+            domainMirror,
+            domainDiagramConfig.getFilteredPackageNames(),
+            domainDiagramConfig.getTransitiveFilterSeedDomainServiceTypeNames()
         );
         this.domainCommands = initFilteredDomainCommands();
         this.domainEvents = initFilteredDomainEvents();
@@ -91,10 +93,10 @@ public class FilteredDomainClasses {
     }
 
     private List<ServiceKindMirror> initFilteredServiceKinds() {
-        return boundedContextMirror
-            .getServiceKinds()
+        return domainMirror
+            .getAllServiceKindMirrors()
             .stream()
-            .filter(s -> !s.isAbstract())
+            .filter(s -> !s.isAbstract() || domainDiagramConfig.isShowAbstractTypes())
             .filter(s ->
                 (s.getDomainType().equals(DomainType.REPOSITORY) && domainDiagramConfig.isShowRepositories() && !s.getTypeName().equals("io.domainlifecycles.jooq.imp.JooqAggregateRepository"))
                 || (s.getDomainType().equals(DomainType.APPLICATION_SERVICE) && domainDiagramConfig.isShowApplicationServices())
@@ -103,11 +105,19 @@ public class FilteredDomainClasses {
                 || (s.getDomainType().equals(DomainType.QUERY_HANDLER) && domainDiagramConfig.isShowQueryHandlers())
                 || (s.getDomainType().equals(DomainType.SERVICE_KIND) && domainDiagramConfig.isShowUnspecifiedServiceKinds())
             )
-            .filter(transitiveDomainTypeFilter::filter)
+            .filter(transitiveDomainTypeAnPackageFilter::filter)
             .filter(s -> !domainDiagramConfig.getClassesBlacklist().contains(s.getTypeName()))
             .toList();
     }
 
+    /**
+     * Checks whether the current list of service kinds contains a specific {@code ServiceKindMirror}.
+     * The comparison is based on the type name or the interface type names of the {@code ServiceKindMirror}.
+     *
+     * @param serviceKindMirror the {@code ServiceKindMirror} to check for existence in the current list
+     * @return {@code true} if the current list contains the specified {@code ServiceKindMirror} based on the type name
+     *         or interface type names; {@code false} otherwise
+     */
     public boolean contains(ServiceKindMirror serviceKindMirror){
         return this.serviceKinds.stream().anyMatch(
             s -> s.getTypeName().equals(serviceKindMirror.getTypeName())
@@ -115,6 +125,122 @@ public class FilteredDomainClasses {
         );
     }
 
+    private List<DomainCommandMirror> initFilteredDomainCommands() {
+        return domainMirror
+            .getAllDomainCommandMirrors()
+            .stream()
+            .filter(dc -> !dc.isAbstract() || domainDiagramConfig.isShowAbstractTypes())
+            .filter(dc -> domainDiagramConfig.isShowDomainCommands())
+            .filter(transitiveDomainTypeAnPackageFilter::filter)
+            .filter(dc -> !domainDiagramConfig.getClassesBlacklist().contains(dc.getTypeName()))
+            .toList();
+    }
+
+    private List<DomainEventMirror> initFilteredDomainEvents() {
+        return domainMirror
+            .getAllDomainEventMirrors()
+            .stream()
+            .filter(de -> !de.isAbstract() || domainDiagramConfig.isShowAbstractTypes())
+            .filter(dc -> domainDiagramConfig.isShowDomainEvents())
+            .filter(transitiveDomainTypeAnPackageFilter::filter)
+            .filter(de -> !domainDiagramConfig.getClassesBlacklist().contains(de.getTypeName()))
+            .toList();
+    }
+
+    private List<ReadModelMirror> initFilteredReadModels() {
+        return domainMirror
+            .getAllReadModelMirrors()
+            .stream()
+            .filter(r -> !r.isAbstract() || domainDiagramConfig.isShowAbstractTypes())
+            .filter(r -> domainDiagramConfig.isShowReadModels())
+            .filter(transitiveDomainTypeAnPackageFilter::filter)
+            .filter(r -> !domainDiagramConfig.getClassesBlacklist().contains(r.getTypeName()))
+            .toList();
+    }
+
+    private List<AggregateRootMirror> initFilteredAggregateRoots() {
+        return domainMirror
+            .getAllAggregateRootMirrors()
+            .stream()
+            .filter(ar -> !ar.isAbstract() || domainDiagramConfig.isShowAbstractTypes())
+            .filter(transitiveDomainTypeAnPackageFilter::filter)
+            .filter(ar -> !domainDiagramConfig.getClassesBlacklist().contains(ar.getTypeName()))
+            .toList();
+    }
+
+    /**
+     * Retrieves the list of filtered {@link DomainCommandMirror} instances associated with the domain.
+     *
+     * These instances represent domain commands identified and filtered based on the domain mirror
+     * and filter configuration. Domain commands are used to model intent within the system and represent
+     * the actions to be performed.
+     *
+     * @return a list of {@link DomainCommandMirror} instances representing the filtered domain commands.
+     */
+    public List<DomainCommandMirror> getDomainCommands() {
+        return domainCommands;
+    }
+
+    /**
+     * Retrieves the list of filtered {@link DomainEventMirror} instances associated with the domain.
+     *
+     * These mirrors represent the domain events within the system that are identified
+     * and filtered based on the domain mirror and filter configuration.
+     *
+     * @return a list of {@link DomainEventMirror} instances representing the filtered domain events.
+     */
+    public List<DomainEventMirror> getDomainEvents() {
+        return domainEvents;
+    }
+
+    /**
+     * Retrieves the list of filtered {@link AggregateRootMirror} instances associated with the domain.
+     *
+     * These mirrors represent the aggregate roots within the system, identified and filtered
+     * based on the domain mirror and filter configuration. Aggregate roots are the primary entities
+     * responsible for maintaining the consistency boundary in the domain model.
+     *
+     * @return a list of {@link AggregateRootMirror} instances representing the filtered aggregate roots.
+     */
+    public List<AggregateRootMirror> getAggregateRoots() {
+        return aggregateRoots;
+    }
+
+    /**
+     * Retrieves the list of filtered {@link ReadModelMirror} instances associated with the domain.
+     *
+     * These mirrors represent the read models within the system, identified and filtered based on the
+     * domain mirror and filter configuration. A read model is typically used for querying and presenting
+     * data in the domain.
+     *
+     * @return a list of {@link ReadModelMirror} instances representing the filtered read models.
+     */
+    public List<ReadModelMirror> getReadModels() {
+        return readModels;
+    }
+
+    /**
+     * Retrieves the list of filtered {@link ServiceKindMirror} instances associated with the domain.
+     *
+     * These instances represent various service kinds identified and filtered based on the domain
+     * mirror and filter configuration. Service kinds may include application services, domain services,
+     * repositories, or other categorized service types defined in the domain.
+     *
+     * @return a list of {@link ServiceKindMirror} instances representing the filtered service kinds.
+     */
+    public List<ServiceKindMirror> getServiceKinds() {
+        return serviceKinds;
+    }
+
+    /**
+     * Retrieves the list of filtered {@link ApplicationServiceMirror} instances associated with the domain.
+     *
+     * These instances represent application services identified and filtered based on the domain mirror
+     * and filter configuration. Application services typically contain application-specific business logic
+     * and orchestrate domain operations.
+     *
+     * @return a list of {@link ApplicationServiceMirror} instances representing the filtered application services.
+     */
     public List<ApplicationServiceMirror>getApplicationServices() {
         return serviceKinds
             .stream()
@@ -123,28 +249,14 @@ public class FilteredDomainClasses {
             .toList();
     }
 
-    private List<DomainCommandMirror> initFilteredDomainCommands() {
-        return boundedContextMirror
-            .getDomainCommands()
-            .stream()
-            .filter(dc -> !dc.isAbstract())
-            .filter(dc -> domainDiagramConfig.isShowDomainCommands())
-            .filter(transitiveDomainTypeFilter::filter)
-            .filter(dc -> !domainDiagramConfig.getClassesBlacklist().contains(dc.getTypeName()))
-            .toList();
-    }
-
-    private List<DomainEventMirror> initFilteredDomainEvents() {
-        return boundedContextMirror
-            .getDomainEvents()
-            .stream()
-            .filter(de -> !de.isAbstract())
-            .filter(dc -> domainDiagramConfig.isShowDomainEvents())
-            .filter(transitiveDomainTypeFilter::filter)
-            .filter(de -> !domainDiagramConfig.getClassesBlacklist().contains(de.getTypeName()))
-            .toList();
-    }
-
+    /**
+     * Retrieves the list of filtered {@link DomainServiceMirror} instances from the available service kinds.
+     *
+     * The method filters service kinds to include only those with a domain type of {@link DomainType#DOMAIN_SERVICE}.
+     * These filtered instances are then cast to {@link DomainServiceMirror}.
+     *
+     * @return a list of {@link DomainServiceMirror} instances representing the filtered domain services.
+     */
     public List<DomainServiceMirror> getDomainServices() {
         return serviceKinds
             .stream()
@@ -153,6 +265,14 @@ public class FilteredDomainClasses {
             .toList();
     }
 
+    /**
+     * Retrieves the list of filtered {@link RepositoryMirror} instances from the available service kinds.
+     *
+     * The method filters service kinds to include only those with a domain type of {@link DomainType#REPOSITORY}.
+     * These filtered instances are then cast to {@link RepositoryMirror}.
+     *
+     * @return a list of {@link RepositoryMirror} instances representing the filtered repositories.
+     */
     public List<RepositoryMirror> getRepositories() {
         return serviceKinds
             .stream()
@@ -161,27 +281,14 @@ public class FilteredDomainClasses {
             .toList();
     }
 
-    private List<ReadModelMirror> initFilteredReadModels() {
-        return boundedContextMirror
-            .getReadModels()
-            .stream()
-            .filter(r -> !r.isAbstract())
-            .filter(r -> domainDiagramConfig.isShowReadModels())
-            .filter(transitiveDomainTypeFilter::filter)
-            .filter(r -> !domainDiagramConfig.getClassesBlacklist().contains(r.getTypeName()))
-            .toList();
-    }
-
-    private List<AggregateRootMirror> initFilteredAggregateRoots() {
-        return boundedContextMirror
-            .getAggregateRoots()
-            .stream()
-            .filter(ar -> !ar.isAbstract())
-            .filter(transitiveDomainTypeFilter::filter)
-            .filter(ar -> !domainDiagramConfig.getClassesBlacklist().contains(ar.getTypeName()))
-            .toList();
-    }
-
+    /**
+     * Retrieves the list of filtered {@link QueryHandlerMirror} instances from the available service kinds.
+     *
+     * The method filters service kinds to include only those with a domain type of {@link DomainType#QUERY_HANDLER}.
+     * These filtered instances are then cast to {@link QueryHandlerMirror}.
+     *
+     * @return a list of {@link QueryHandlerMirror} instances representing the filtered query handlers.
+     */
     public List<QueryHandlerMirror> getQueryHandlers() {
         return serviceKinds
             .stream()
@@ -190,6 +297,15 @@ public class FilteredDomainClasses {
             .toList();
     }
 
+    /**
+     * Retrieves the list of filtered {@link OutboundServiceMirror} instances.
+     *
+     * This method filters the collection of service kinds by selecting only those with a
+     * domain type of {@link DomainType#OUTBOUND_SERVICE}. The filtered service kinds are
+     * then cast to {@link OutboundServiceMirror}.
+     *
+     * @return a list of {@link OutboundServiceMirror} instances representing the filtered outbound services.
+     */
     public List<OutboundServiceMirror> getOutboundServices() {
         return serviceKinds
             .stream()
@@ -198,26 +314,16 @@ public class FilteredDomainClasses {
             .toList();
     }
 
-    public List<DomainCommandMirror> getDomainCommands() {
-        return domainCommands;
-    }
-
-    public List<DomainEventMirror> getDomainEvents() {
-        return domainEvents;
-    }
-
-    public List<AggregateRootMirror> getAggregateRoots() {
-        return aggregateRoots;
-    }
-
-    public List<ReadModelMirror> getReadModels() {
-        return readModels;
-    }
-
-    public List<ServiceKindMirror> getServiceKinds() {
-        return serviceKinds;
-    }
-
+    /**
+     * Retrieves the list of unspecified {@link ServiceKindMirror} instances from the available service kinds.
+     *
+     * This method filters the collection of service kinds to include only those with a domain type of
+     * {@link DomainType#SERVICE_KIND}. These filtered instances represent service kinds that are not categorized
+     * into a more specific domain type.
+     *
+     * @return a list of {@link ServiceKindMirror} instances where the domain type is {@link DomainType#SERVICE_KIND},
+     *         representing unspecified service kinds.
+     */
     public List<ServiceKindMirror> getUnspecifiedServiceKinds() {
         return serviceKinds
             .stream()

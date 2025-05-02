@@ -58,8 +58,7 @@ public class TopologicalPersistenceActionOrderProvider implements PersistenceAct
 
     public TopologicalPersistenceActionOrderProvider(DomainPersistenceProvider<?> domainPersistenceProvider) {
         this.domainPersistenceProvider = domainPersistenceProvider;
-        Domain.getDomainModel().allTypeMirrors()
-            .values()
+        Domain.getDomainMirror().getAllDomainTypeMirrors()
             .stream()
             .filter(t -> DomainType.AGGREGATE_ROOT.equals(t.getDomainType()) && !t.isAbstract())
             .forEach(

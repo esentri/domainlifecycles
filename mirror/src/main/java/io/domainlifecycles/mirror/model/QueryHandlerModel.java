@@ -51,6 +51,21 @@ public class QueryHandlerModel extends ServiceKindModel implements QueryHandlerM
     @JsonProperty
     private final List<String> queryHandlerInterfaceTypeNames;
 
+    /**
+     * Constructs an instance of QueryHandlerModel.
+     *
+     * @param typeName the fully qualified name of the type represented by this model.
+     * @param isAbstract a boolean indicating whether the represented type is abstract.
+     * @param allFields a list of {@code FieldMirror} instances representing all fields in the type.
+     * @param methods a list of {@code MethodMirror} instances representing all methods in the type.
+     * @param queryHandlerInterfaceTypeNames a list of fully qualified type names representing all query handler interfaces
+     *                                        implemented by the represented type.
+     * @param inheritanceHierarchyTypeNames a list of fully qualified type names representing the inheritance hierarchy
+     *                                       of the represented type.
+     * @param allInterfaceTypeNames a list of fully qualified type names representing all interfaces implemented
+     *                               by the represented type.
+     * @param providedReadModelTypeName the fully qualified type name of the read model provided by the query handler.
+     */
     @JsonCreator
     public QueryHandlerModel(
         @JsonProperty("typeName") String typeName,
@@ -72,7 +87,7 @@ public class QueryHandlerModel extends ServiceKindModel implements QueryHandlerM
      */
     @Override
     public Optional<ReadModelMirror> getProvidedReadModel() {
-        return Optional.ofNullable((ReadModelMirror) domainModel.getDomainTypeMirror(providedReadModelTypeName).orElse(null));
+        return Optional.ofNullable((ReadModelMirror) domainMirror.getDomainTypeMirror(providedReadModelTypeName).orElse(null));
     }
 
     /**

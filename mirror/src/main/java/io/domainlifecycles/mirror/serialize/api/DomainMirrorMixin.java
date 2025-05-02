@@ -24,21 +24,22 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.mirror.api;
+package io.domainlifecycles.mirror.serialize.api;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import io.domainlifecycles.mirror.model.DomainModel;
 
 /**
- * The WildcardBound enum represents the type of bound for a wildcard in generics.
- *
- * This enum provides two constants:
- * - LOWER: Indicates a lower-bound wildcard (e.g., `? super T`).
- * - UPPER: Indicates an upper-bound wildcard (e.g., `? extends T`).
- *
- * It is used to distinguish between the types of bounds that can be applied
- * to a wildcard generic in type parameter definitions.
+ * Jackson mixin interface for proper serialization of {@link DomainModel}.
  *
  * @author Mario Herb
  */
-public enum WildcardBound {
-    LOWER,
-    UPPER
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = DomainModel.class),
+})
+public interface DomainMirrorMixin {
 }

@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
+import java.util.Collections;
 
 /**
  * Abstract task for creating UML-like diagrams based on domain models or other configurations.
@@ -125,7 +126,11 @@ public abstract class CreateDiagramTask extends DefaultTask {
 
     private void createAndSaveDiagram(PluginDiagramConfigurationExtension diagramConfigExtension) {
         final DiagramConfig diagramConfig = DiagramConfigMapper.map(diagramConfigExtension);
-        byte[] diagramFileContent = diagramGenerator.generateDiagram(ClassLoaderUtils.getParentClasspathFiles(getProject()),diagramConfig);
+        byte[] diagramFileContent = diagramGenerator.generateDiagram(
+            ClassLoaderUtils.getParentClasspathFiles(getProject()),
+            diagramConfig,
+            diagramConfigExtension.getDomainModelPackages().getOrElse(Collections.emptyList()).toArray(String[]::new)
+        );
 
         final Path filePath = Path.of(getFileOutputDir().get().toString(),
             diagramConfig.getFileName() + diagramConfig.getFileType().getFileSuffix());

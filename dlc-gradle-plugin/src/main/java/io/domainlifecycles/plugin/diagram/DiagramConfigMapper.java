@@ -57,8 +57,9 @@ public class DiagramConfigMapper {
 
         diagramConfig.setFileType(FileType.byName(extension.getFormat().getOrNull()));
         diagramConfig.setFileName(extension.getFileName().getOrElse(DEFAULT_DIAGRAM_FILE_NAME));
-        diagramConfig.setContextPackages(extension.getContextPackages().getOrNull());
-
+        diagramConfig.setFilteredPackageNames(extension.getFilteredPackages().getOrNull());
+        diagramConfig.setShowAbstractTypes(extension.getShowAbstractTypes().getOrNull());
+        diagramConfig.setUseAbstractTypeNameForConcreteServiceKinds(extension.getUseAbstractTypeNameForConcreteServiceKinds().getOrNull());
         diagramConfig.setAggregateRootStyle(extension.getAggregateRootStyle().getOrNull());
         diagramConfig.setAggregateFrameStyle(extension.getAggregateFrameStyle().getOrNull());
         diagramConfig.setEntityStyle(extension.getEntityStyle().getOrNull());

@@ -49,6 +49,7 @@ import java.util.List;
  * - As part of a Maven plugin configuration, where instances of this class define the details of
  *   the serialization process to be executed during a build lifecycle phase.
  *
+ * @author Mario Herb
  * @author Leon Völlinger
  */
 public class PluginSerializationConfiguration {
@@ -56,8 +57,8 @@ public class PluginSerializationConfiguration {
     @Parameter(property = "fileName", required = true)
     private String fileName;
 
-    @Parameter(property = "contextPackages", required = true)
-    private List<String> contextPackages;
+    @Parameter(property = "domainModelPackages", required = true)
+    private List<String> domainModelPackages;
 
     /**
      * Retrieves the name of the file associated with this configuration.
@@ -72,14 +73,14 @@ public class PluginSerializationConfiguration {
     }
 
     /**
-     * Retrieves the list of context packages defined in the serialization configuration.
+     * Retrieves the list of domain model packages defined in the serialization configuration.
      *
      * The context packages represent the package names required during the serialization
      * process to include relevant domain models or resources.
      *
      * @return a list of context package names to be used for JSON serialization
      */
-    public List<String> getContextPackages() {
-        return contextPackages;
+    public List<String> getDomainModelPackages() {
+        return domainModelPackages;
     }
 }

@@ -3,7 +3,7 @@ package io.domainlifecycles.diagram;
 import io.domainlifecycles.diagram.domain.DomainDiagramGenerator;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.mirror.resolver.TypeMetaResolver;
 import org.junit.jupiter.api.Test;
 import sampleshop.core.inport.OrderDriver;
@@ -20,10 +20,10 @@ class NomnomlDomainDiagramGeneratorTest {
 
     @Test
     void generateSampleApp() {
-        Domain.initialize(new ReflectiveDomainModelFactory("sampleshop"));
-        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withContextPackageName("sampleshop").build();
+        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleshop"));
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withFilteredPackageNames(List.of("sampleshop")).build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-            diagramConfig, Domain.getDomainModel());
+            diagramConfig, Domain.getDomainMirror());
 
         // when
         String actualDiagramText = generator.generateDiagramText();
@@ -42,12 +42,12 @@ class NomnomlDomainDiagramGeneratorTest {
 
     @Test
     void generateAllTests() {
-        Domain.initialize(new ReflectiveDomainModelFactory("tests.shared"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory("tests.shared"));
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
-            .withContextPackageName("tests.shared")
+            .withFilteredPackageNames(List.of("tests.shared"))
             .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-            diagramConfig, Domain.getDomainModel());
+            diagramConfig, Domain.getDomainMirror());
 
         // when
         String actualDiagramText = generator.generateDiagramText();
@@ -65,10 +65,15 @@ class NomnomlDomainDiagramGeneratorTest {
 
     @Test
     void generateSampleAppWithResolvedGenerics() {
-        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "sampleshop"));
-        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withContextPackageName("sampleshop").build();
+        var factory = new ReflectiveDomainMirrorFactory("sampleshop");
+        factory.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(factory);
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig
+            .builder()
+            .withFilteredPackageNames(List.of("sampleshop"))
+            .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-            diagramConfig, Domain.getDomainModel());
+            diagramConfig, Domain.getDomainMirror());
 
         // when
         String actualDiagramText = generator.generateDiagramText();
@@ -86,14 +91,16 @@ class NomnomlDomainDiagramGeneratorTest {
 
     @Test
     void generateSampleAppWithResolvedGenericsWithTransitiveFilter() {
-        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "sampleshop"));
+        var factory = new ReflectiveDomainMirrorFactory("sampleshop");
+        factory.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(factory);
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
-            .withContextPackageName("sampleshop")
+            .withFilteredPackageNames(List.of("sampleshop"))
             .withTransitiveFilterSeedDomainServiceTypeNames(List.of(OrderDriver.class.getName()))
             .build();
 
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-            diagramConfig, Domain.getDomainModel());
+            diagramConfig, Domain.getDomainMirror());
 
         // when
         String actualDiagramText = generator.generateDiagramText();
@@ -111,12 +118,14 @@ class NomnomlDomainDiagramGeneratorTest {
 
     @Test
     void generateAllTestsWithResolvedGenerics() {
-        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "tests.shared"));
+        var factory = new ReflectiveDomainMirrorFactory("tests.shared");
+        factory.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(factory);
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
-            .withContextPackageName("tests.shared")
+            .withFilteredPackageNames(List.of("tests.shared"))
             .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-            diagramConfig, Domain.getDomainModel());
+            diagramConfig, Domain.getDomainMirror());
 
         // when
         String actualDiagramText = generator.generateDiagramText();

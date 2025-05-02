@@ -26,7 +26,7 @@
 
 package io.domainlifecycles.plugins.json;
 
-import io.domainlifecycles.mirror.api.DomainModel;
+import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.serialize.api.DomainSerializer;
 import io.domainlifecycles.mirror.serialize.api.JacksonDomainSerializer;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
@@ -46,6 +46,7 @@ import java.util.List;
  * the domain model into a JSON format. It supports pretty print
  * serialization through configuration at initialization.
  *
+ * @author Mario Herb
  * @author Leon Völlinger
  */
 public class JsonSerializerImpl implements JsonSerializer {
@@ -72,15 +73,15 @@ public class JsonSerializerImpl implements JsonSerializer {
      * using the provided classpath files and context packages.
      *
      * @param classPathFiles a list of URLs representing the classpath files from which the domain model is initialized
-     * @param contextPackages a list of string package names that provide the context for initializing the domain model
+     * @param domainModelPackages a list of string package names that contain the classes defining the domain model
      * @return a JSON string representation of the serialized domain model
      * @throws DLCPluginsException if the domain model could not be initialized from the provided classpath files
      */
     @Override
-    public String serialize(List<URL> classPathFiles, final List<String> contextPackages) {
-        DomainModel dm = null;
+    public String serialize(List<URL> classPathFiles, final List<String> domainModelPackages) {
+        DomainMirror dm = null;
         try {
-            dm = DLCUtils.initializeDomainModelFromClassPath(classPathFiles, contextPackages.toArray(new String[0]));
+            dm = DLCUtils.initializeDomainMirrorFromClassPath(classPathFiles, domainModelPackages.toArray(String[]::new));
         } catch(RuntimeException e) {
             throw DLCPluginsException.fail("DLC couldn't be initialized.", e);
         }

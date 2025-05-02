@@ -36,9 +36,26 @@ import java.lang.reflect.Member;
  * @author Mario Herb
  */
 public enum AccessLevel {
+    /**
+     * Represents the public access level in Java, indicating that the associated field
+     * or method is accessible from any other class without restriction.
+     */
     PUBLIC,
+    /**
+     * Represents the protected access level in Java, indicating that the associated field
+     * or method is accessible within its own package and by subclasses.
+     */
     PROTECTED,
+    /**
+     * Represents the private access level in Java, indicating that the associated field
+     * or method is accessible only within its own class.
+     */
     PRIVATE,
+    /**
+     * Represents the package-private access level in Java, indicating that the associated field
+     * or method is accessible only within its own package and not from classes in other packages,
+     * unless they are declared within the same package.
+     */
     PACKAGE;
 
     /**

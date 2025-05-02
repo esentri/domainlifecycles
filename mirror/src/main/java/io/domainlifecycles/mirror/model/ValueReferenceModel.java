@@ -43,6 +43,19 @@ import io.domainlifecycles.mirror.exception.MirrorException;
 public class ValueReferenceModel extends FieldModel implements ValueReferenceMirror {
 
 
+    /**
+     * Constructs a new instance of {@code ValueReferenceModel}.
+     *
+     * @param name the name of the value reference
+     * @param type the type of the value reference, represented as an {@link AssertedContainableTypeMirror}
+     * @param accessLevel the access level of the value reference, as an {@link AccessLevel}
+     * @param declaredByTypeName the name of the type that declares this value reference
+     * @param modifiable a boolean indicating whether the value reference is modifiable
+     * @param publicReadable a boolean indicating whether the value reference is publicly readable
+     * @param publicWriteable a boolean indicating whether the value reference is publicly writable
+     * @param isStatic a boolean indicating whether the value reference is static
+     * @param hidden a boolean indicating whether the value reference is hidden
+     */
     @JsonCreator
     public ValueReferenceModel(@JsonProperty("name") String name,
                                @JsonProperty("type") AssertedContainableTypeMirror type,
@@ -64,7 +77,7 @@ public class ValueReferenceModel extends FieldModel implements ValueReferenceMir
     @JsonIgnore
     @Override
     public ValueMirror getValue() {
-        return domainModel.getDomainTypeMirror(getType().getTypeName())
+        return domainMirror.getDomainTypeMirror(getType().getTypeName())
             .map(e -> (ValueMirror) e)
             .orElseThrow(() -> MirrorException.fail("ValueMirror not found for '%s'", getType().getTypeName()));
     }

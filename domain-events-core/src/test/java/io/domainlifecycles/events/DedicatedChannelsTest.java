@@ -40,7 +40,7 @@ import io.domainlifecycles.events.domain.AnOutboundService;
 import io.domainlifecycles.events.domain.UnreceivedDomainEvent;
 import io.domainlifecycles.events.inmemory.InMemoryChannelFactory;
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.services.Services;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -60,7 +60,7 @@ public class DedicatedChannelsTest {
 
     @BeforeAll
     public static void init(){
-        Domain.initialize(new ReflectiveDomainModelFactory("io.domainlifecycles.events.domain"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory("io.domainlifecycles.events.domain"));
 
         domainService = new ADomainService();
         repository = new ARepository();

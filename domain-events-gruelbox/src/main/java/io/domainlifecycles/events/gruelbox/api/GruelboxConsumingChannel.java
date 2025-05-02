@@ -27,7 +27,6 @@
 package io.domainlifecycles.events.gruelbox.api;
 
 import io.domainlifecycles.events.api.CloseableChannel;
-
 import io.domainlifecycles.events.api.ConsumingConfiguration;
 import io.domainlifecycles.events.api.ConsumingOnlyChannel;
 

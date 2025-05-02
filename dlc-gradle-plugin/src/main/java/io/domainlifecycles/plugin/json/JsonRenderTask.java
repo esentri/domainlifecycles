@@ -35,7 +35,6 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
@@ -106,7 +105,7 @@ public abstract class JsonRenderTask extends DefaultTask {
     }
 
     private void renderAndSaveModelAsJson(final SerializationConfigurationExtension serializationConfigurationExtension) {
-        final String jsonContent = jsonSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(getProject()), serializationConfigurationExtension.getContextPackages().getOrNull());
+        final String jsonContent = jsonSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(getProject()), serializationConfigurationExtension.getDomainModelPackages().getOrNull());
         final Path filePath = Path.of(String.valueOf(getFileOutputDir().getOrNull()), serializationConfigurationExtension.getFileName().getOrElse(DEFAULT_JSON_RENDER_FILE_NAME) + ".json");
 
         log.info(String.format("Saving JSON model to %s", filePath));

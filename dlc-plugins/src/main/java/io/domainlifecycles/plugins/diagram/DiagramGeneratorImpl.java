@@ -27,7 +27,7 @@
 package io.domainlifecycles.plugins.diagram;
 
 import io.domainlifecycles.diagram.domain.DomainDiagramGenerator;
-import io.domainlifecycles.mirror.api.DomainModel;
+import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.plugins.diagram.kroki.KrokiClient;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
 import io.domainlifecycles.plugins.util.DLCUtils;
@@ -80,13 +80,14 @@ public class DiagramGeneratorImpl implements DiagramGenerator {
      *
      * @param classPathFiles a list of URLs pointing to the classpath resources used for generating the diagram
      * @param diagramConfig the configuration settings for the diagram, including file name and file type
+     * @param domainPackages the packages containing all relevant domain classes
      * @return a byte array representing the generated diagram in the specified format
      * @throws DLCPluginsException if an error occurs during the diagram generation process
      */
     @Override
-    public byte[] generateDiagram(List<URL> classPathFiles, final DiagramConfig diagramConfig) {
+    public byte[] generateDiagram(List<URL> classPathFiles, final DiagramConfig diagramConfig, final String... domainPackages) {
         log.info(String.format("Generating diagram %s of type %s", diagramConfig.getFileName(), diagramConfig.getFileType().name()));
-        final String rawNomnomlDiagramText = generateRawNomnomlDiagramText(classPathFiles, diagramConfig);
+        final String rawNomnomlDiagramText = generateRawNomnomlDiagramText(classPathFiles, diagramConfig, domainPackages);
 
         if(FileType.NOMNOML.equals(diagramConfig.getFileType())) {
             return rawNomnomlDiagramText.getBytes(StandardCharsets.UTF_8);
@@ -116,13 +117,13 @@ public class DiagramGeneratorImpl implements DiagramGenerator {
         krokiClient.finish();
     }
 
-    private String generateRawNomnomlDiagramText(List<URL> classPathFiles, final DiagramConfig diagramConfig) {
-        final String[] contextPackages = diagramConfig.getContextPackages().toArray(new String[0]);
-        DomainModel dm = null;
+    private String generateRawNomnomlDiagramText(List<URL> classPathFiles, final DiagramConfig diagramConfig, final String... domainPackages) {
+
+        DomainMirror dm = null;
         try {
-            dm = DLCUtils.initializeDomainModelFromClassPath(classPathFiles, contextPackages);
+            dm = DLCUtils.initializeDomainMirrorFromClassPath(classPathFiles, domainPackages);
         } catch(RuntimeException e) {
-            throw DLCPluginsException.fail("DomainModel couldn't be initialized.", e);
+            throw DLCPluginsException.fail("DomainMirror couldn't be initialized.", e);
         }
 
         final DomainDiagramGenerator generator = new DomainDiagramGenerator(diagramConfig.map(), dm);

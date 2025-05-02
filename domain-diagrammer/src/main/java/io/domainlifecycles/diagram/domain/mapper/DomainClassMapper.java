@@ -501,6 +501,15 @@ public class DomainClassMapper {
 
     private static class MethodComparator implements Comparator<MethodMirror> {
 
+        /**
+         * Compares two {@link MethodMirror} instances based on their method names, parameter count,
+         * parameter types, and access level to determine their order.
+         *
+         * @param o1 the first {@link MethodMirror} to be compared
+         * @param o2 the second {@link MethodMirror} to be compared
+         * @return a negative integer, zero, or a positive integer as the first argument is less than,
+         * equal to, or greater than the second, respectively
+         */
         @Override
         public int compare(MethodMirror o1, MethodMirror o2) {
             // compare method names
@@ -538,6 +547,15 @@ public class DomainClassMapper {
 
     private static class AssertionComparator implements Comparator<AssertionMirror> {
 
+        /**
+         * Compares two AssertionMirror objects based on their predefined order index.
+         * The order index is determined by the type of assertion they represent.
+         *
+         * @param o1 the first AssertionMirror object to be compared
+         * @param o2 the second AssertionMirror object to be compared
+         * @return a negative integer, zero, or a positive integer as the first argument is less than,
+         *         equal to, or greater than the second, based on their order indices
+         */
         @Override
         public int compare(AssertionMirror o1, AssertionMirror o2) {
             return assertionOrderIndex(o1) - assertionOrderIndex(o2);

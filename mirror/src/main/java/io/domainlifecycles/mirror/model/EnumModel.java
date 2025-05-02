@@ -49,6 +49,17 @@ public class EnumModel extends DomainTypeModel implements EnumMirror {
 
     private final List<EnumOptionMirror> enumOptions;
 
+    /**
+     * Constructs an instance of the EnumModel class.
+     *
+     * @param typeName the name of the enum type, cannot be null.
+     * @param isAbstract specifies whether the enum type is abstract.
+     * @param allFields the list of all fields associated with the enum type, cannot be null.
+     * @param methods the list of methods declared in the enum type, cannot be null.
+     * @param enumOptions a list of enum option mirrors representing the unique enum values, cannot be null.
+     * @param inheritanceHierarchyTypeNames the list of type names in the inheritance hierarchy of the enum, cannot be null.
+     * @param allInterfaceTypeNames the list of interface type names implemented by the enum, cannot be null.
+     */
     @JsonCreator
     public EnumModel(@JsonProperty("typeName") String typeName,
                      @JsonProperty("abstract") boolean isAbstract,

@@ -7,7 +7,7 @@ import io.domainlifecycles.mirror.api.EnumMirror;
 import io.domainlifecycles.mirror.api.IdentityMirror;
 import io.domainlifecycles.mirror.api.ValueObjectMirror;
 import io.domainlifecycles.mirror.reflect.ClassGraphDomainTypesScanner;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.mirror.resolver.DefaultEmptyGenericTypeResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ public class ScannerTest {
 
     @Test
     public void testReflectiveFactory() {
-        var factory = new ReflectiveDomainModelFactory("tests");
+        var factory = new ReflectiveDomainMirrorFactory("tests");
         Domain.initialize(factory);
     }
 

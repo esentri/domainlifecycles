@@ -53,7 +53,8 @@ import java.util.List;
  * - Filters for transitive relations and domain-specific types.
  *
  * Getters are provided for all configuration fields to allow easy access to their values at runtime.
- * 
+ *
+ * @author Mario Herb
  * @author Leon Völlinger
  */
 public class PluginDiagramConfiguration {
@@ -64,11 +65,17 @@ public class PluginDiagramConfiguration {
      @Parameter(property = "fileName", required = true)
      private String fileName;
 
-     @Parameter(property = "contextPackages", required = true)
-     private List<String> contextPackages;
+     @Parameter(property = "domainModelPackages", required = true)
+     private List<String> domainModelPackages;
 
-     @Parameter(property = "contextPackageName", required = false)
-     private String contextPackageName;
+     @Parameter(property = "filteredPackages", required = true)
+     private List<String> filteredPackages;
+
+     @Parameter(property = "showAbstractTypes", required = false)
+     private Boolean showAbstractTypes;
+
+    @Parameter(property = "useAbstractTypeNameForConcreteServiceKinds", required = false)
+     private Boolean useAbstractTypeNameForConcreteServiceKinds;
 
      @Parameter(property = "aggregateRootStyle", required = false)
      private String aggregateRootStyle;
@@ -272,21 +279,41 @@ public class PluginDiagramConfiguration {
     }
 
     /**
-     * Gets the context packages considered for diagram generation.
+     * Retrieves the list of domain model packages.
      *
-     * @return the list of context packages.
+     * @return a list of strings containing the names of domain model packages
      */
-    public List<String> getContextPackages() {
-        return contextPackages;
+    public List<String> getDomainModelPackages() {
+        return domainModelPackages;
     }
 
     /**
-     * Gets the context package name for diagram generation.
+     * Retrieves a list of filtered packages.
      *
-     * @return the context package name.
+     * @return a list of package names that have been filtered
      */
-    public String getContextPackageName() {
-        return contextPackageName;
+    public List<String> getFilteredPackages() {
+        return filteredPackages;
+    }
+
+    /**
+     * Retrieves the visibility status of abstract types.
+     *
+     * @return a Boolean indicating whether abstract types should be shown (true) or not (false)
+     */
+    public Boolean getShowAbstractTypes() {
+        return showAbstractTypes;
+    }
+
+    /**
+     * Determines whether the system should use an abstract type name
+     * for concrete service kinds.
+     *
+     * @return a Boolean indicating if abstract type names are used for
+     *         concrete service kinds.
+     */
+    public Boolean getUseAbstractTypeNameForConcreteServiceKinds() {
+        return useAbstractTypeNameForConcreteServiceKinds;
     }
 
     /**

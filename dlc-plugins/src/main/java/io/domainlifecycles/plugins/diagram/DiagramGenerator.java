@@ -38,7 +38,21 @@ import java.util.List;
  */
 public interface DiagramGenerator {
 
-    byte[] generateDiagram(List<URL> classPathFiles, DiagramConfig diagramConfig);
+    /**
+     * Generates a visual diagram based on the provided class path files, configuration, and specified domain packages.
+     *
+     * @param classPathFiles the list of class path files to be analyzed for diagram generation
+     * @param diagramConfig the configuration settings for the diagram, including formatting and display options
+     * @param domainModelPackages parameter that specifies the domain model packages to include in the diagram
+     * @return a byte array representing the generated diagram
+     */
+    byte[] generateDiagram(List<URL> classPathFiles, DiagramConfig diagramConfig, String... domainModelPackages);
 
+    /**
+     * Performs necessary cleanup and resource deallocation associated with the diagram generation process.
+     * This method is intended to be called when the implementation of the DiagramGenerator
+     * is no longer needed, ensuring proper release of resources like memory, file handles, or other
+     * system resources used during the diagram creation lifecycle.
+     */
     void tearDown();
 }

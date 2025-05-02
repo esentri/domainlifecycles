@@ -33,8 +33,18 @@ import java.util.List;
  * Interface for serializing information from given classpath files and context packages into a JSON string.
  * Implementations of this interface are responsible for processing domain models and producing serialized JSON output.
  *
+ * @author Mario Herb
  * @author Leon Völlinger
  */
 public interface JsonSerializer {
-    String serialize(List<URL> classPathFiles, final List<String> contextPackages);
+
+    /**
+     * Serializes domain models into a JSON string representation.
+     * Initializes the domain model using the provided classpath files and domain model packages.
+     *
+     * @param classPathFiles a list of URLs representing the classpath files used to initialize the domain model
+     * @param domainModelPackages a list of strings specifying the package names that contain the classes defining the domain model
+     * @return a JSON string representation of the serialized domain model
+     */
+    String serialize(List<URL> classPathFiles, final List<String> domainModelPackages);
 }

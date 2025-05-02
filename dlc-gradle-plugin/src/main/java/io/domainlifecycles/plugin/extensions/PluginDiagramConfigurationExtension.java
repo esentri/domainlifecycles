@@ -64,11 +64,41 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
     public abstract Property<String> getFileName();
 
     /**
-     * Gets the list of context package names to include in the diagram.
+     * Retrieves the file extension represented as a string.
      *
-     * @return the list of context package names to include in the diagram
+     * @return a {@code Property<String>} representing the file extension
      */
-    public abstract ListProperty<String> getContextPackages();
+    public abstract Property<String> getFileExtension();
+
+    /**
+     * Retrieves a list property representing the filtered packages.
+     *
+     * @return a ListProperty containing the filtered package names as strings.
+     */
+    public abstract ListProperty<String> getFilteredPackages();
+
+    /**
+     * Retrieves the property indicating whether abstract types should be shown.
+     *
+     * @return a Property object containing a Boolean value that determines if abstract types are shown
+     */
+    public abstract Property<Boolean> getShowAbstractTypes();
+
+    /**
+     * Determines whether the system should use an abstract type name
+     * for concrete service kinds.
+     *
+     * @return a Boolean indicating if abstract type names are used for
+     *         concrete service kinds.
+     */
+    public abstract Property<Boolean> getUseAbstractTypeNameForConcreteServiceKinds();
+
+    /**
+     * Retrieves a list property containing the domain model package names.
+     *
+     * @return a ListProperty of Strings representing the domain model package names.
+     */
+    public abstract ListProperty<String> getDomainModelPackages();
 
     /**
      * Gets the style for aggregate root elements in the diagram.

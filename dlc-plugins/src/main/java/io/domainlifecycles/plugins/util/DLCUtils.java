@@ -26,12 +26,13 @@
 
 package io.domainlifecycles.plugins.util;
 
-import io.domainlifecycles.mirror.api.DomainModel;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
+import io.domainlifecycles.mirror.api.DomainMirror;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.mirror.resolver.TypeMetaResolver;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
@@ -54,24 +55,26 @@ public class DLCUtils {
      * the required data to build the domain model.
      *
      * @param classPathFiles a list of URLs pointing to the classpath entries to be loaded
-     * @param boundedContextPackages an optional list of package names representing the bounded contexts to be scanned
-     * @return the initialized domain model containing all mirrored domain types and bounded context mirrors
-     * @throws DLCPluginsException if the domain model could not be initialized due to missing or invalid classpath data
+     * @param domainMirrorPackages a list of package names to be scanned
+     * @return the initialized DomainMirror containing all mirrored domain types and bounded context mirrors
+     * @throws DLCPluginsException if the DomainMirror could not be initialized due to missing or invalid classpath data
      */
-    public static DomainModel initializeDomainModelFromClassPath(List<URL> classPathFiles, String... boundedContextPackages){
+    public static DomainMirror initializeDomainMirrorFromClassPath(List<URL> classPathFiles, String... domainMirrorPackages){
 
         if(classPathFiles != null) {
             var cl = subClassLoader(classPathFiles);
             if (cl.isPresent()) {
                 log.info("Classes loaded - Initializing domain model");
-                final ReflectiveDomainModelFactory domainModelFactory = new ReflectiveDomainModelFactory(cl.get(), new TypeMetaResolver(), boundedContextPackages);
-                var dm = domainModelFactory.initializeDomainModel();
+                final ReflectiveDomainMirrorFactory domainModelFactory = new ReflectiveDomainMirrorFactory(domainMirrorPackages);
+                domainModelFactory.setExternalClassLoader(cl.get());
+                domainModelFactory.setGenericTypeResolver(new TypeMetaResolver());
+                var dm = domainModelFactory.initializeDomainMirror();
                 log.info("Domain model initialized");
-                log.info("Mirrored types count = " + dm.allTypeMirrors().size());
+                log.info("Mirrored types count = " + dm.getAllDomainTypeMirrors().size());
                 return dm;
             }
         }
-        throw DLCPluginsException.fail("Domain model could not be initialized!");
+        throw DLCPluginsException.fail("DomainMirror could not be initialized!");
     }
 
     private static Optional<ClassLoader> subClassLoader(final List<URL> filesToAddToClasspath) {

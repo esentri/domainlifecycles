@@ -45,7 +45,18 @@ import java.util.Optional;
  */
 public class AggregateRootModel extends EntityModel implements AggregateRootMirror {
 
-
+    /**
+     * Constructs an instance of {@code AggregateRootModel}.
+     *
+     * @param typeName the name of the type being mirrored
+     * @param isAbstract indicates whether the type is abstract
+     * @param allFields a list of all fields in the mirrored type
+     * @param methods a list of methods in the mirrored type
+     * @param identityField the optional field representing the identity of the aggregate root
+     * @param concurrencyVersionField the optional field used for concurrency versioning
+     * @param inheritanceHierarchyTypeNames a list of type names in the inheritance hierarchy of the mirrored type
+     * @param allInterfaceTypeNames a list of all interface type names implemented by the mirrored type
+     */
     @JsonCreator
     public AggregateRootModel(@JsonProperty("typeName") String typeName,
                               @JsonProperty("abstract") boolean isAbstract,

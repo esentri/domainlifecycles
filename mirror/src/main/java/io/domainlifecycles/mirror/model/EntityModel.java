@@ -59,6 +59,18 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
     private final Optional<FieldMirror> identityField;
     private final Optional<FieldMirror> concurrencyVersionField;
 
+    /**
+     * Constructs an instance of {@code EntityModel}.
+     *
+     * @param typeName the name of the type being mirrored
+     * @param isAbstract indicates whether the type is abstract
+     * @param allFields a list of all fields in the mirrored type
+     * @param methods a list of methods in the mirrored type
+     * @param identityField the optional field representing the identity of the entity
+     * @param concurrencyVersionField the optional field used for concurrency versioning
+     * @param inheritanceHierarchyTypeNames a list of type names in the inheritance hierarchy of the mirrored type
+     * @param allInterfaceTypeNames a list of all interface type names implemented by the mirrored type
+     */
     @JsonCreator
     public EntityModel(@JsonProperty("typeName") String typeName,
                        @JsonProperty("abstract") boolean isAbstract,
@@ -235,6 +247,45 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
         };
         visitor.start();
         return processes.get();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @JsonIgnore
+    @Override
+    public List<DomainCommandMirror> processedDomainCommands() {
+        return methods
+            .stream()
+            .flatMap(m -> m.getProcessedCommands().stream())
+            .distinct()
+            .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @JsonIgnore
+    @Override
+    public List<DomainEventMirror> publishedDomainEvents() {
+        return methods
+            .stream()
+            .flatMap(m -> m.getPublishedEvents().stream())
+            .distinct()
+            .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @JsonIgnore
+    @Override
+    public List<DomainEventMirror> listenedDomainEvents() {
+        return methods
+            .stream()
+            .flatMap(m -> m.getListenedEvent().stream())
+            .distinct()
+            .toList();
     }
 
     /**

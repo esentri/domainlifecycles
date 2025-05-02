@@ -38,6 +38,7 @@ import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.domain.types.ValueObject;
 import io.domainlifecycles.mirror.exception.MirrorException;
+import io.domainlifecycles.mirror.model.DomainModel;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,7 +52,7 @@ public class Domain {
 
     private static boolean initialized = false;
 
-    private static DomainModel domainModel;
+    private static DomainMirror domainMirror;
 
     /**
      * @param <V>                   type of DomainTypeMirror
@@ -62,8 +63,7 @@ public class Domain {
         if(!initialized){
             throw MirrorException.fail("Domain was not initialized!");
         }
-        var mirror = domainModel.allTypeMirrors().get(fullQualifiedTypeName);
-        return Optional.ofNullable((V) mirror);
+        return domainMirror.getDomainTypeMirror(fullQualifiedTypeName);
     }
 
     /**
@@ -118,8 +118,7 @@ public class Domain {
             throw MirrorException.fail("Domain was not initialized!");
         }
 
-        return (E) domainModel.allTypeMirrors()
-            .values()
+        return (E) domainMirror.getAllDomainTypeMirrors()
             .stream()
             .filter(dm -> {
                 if (dm instanceof EntityMirror em) {
@@ -223,9 +222,8 @@ public class Domain {
      * @return the {@link RepositoryMirror} for the given Repository instance for a given {@link AggregateRootMirror}.
      */
     public static <R extends RepositoryMirror> R repositoryMirrorFor(AggregateRootMirror arm) {
-        return (R) domainModel
-            .allTypeMirrors()
-            .values()
+        return (R) domainMirror
+            .getAllDomainTypeMirrors()
             .stream()
             .filter(tm -> tm.getDomainType().equals(DomainType.REPOSITORY))
             .map(tm -> (RepositoryMirror) tm)
@@ -343,24 +341,24 @@ public class Domain {
         if (!initialized) {
             throw MirrorException.fail("Domain was not initialized!");
         }
-        return domainModel.boundedContextMirrors();
+        return domainMirror.getAllBoundedContextMirrors();
     }
 
     /**
      * @return the {@link DomainModel} containing all type mirrors created upon initialization
      */
-    public static DomainModel getDomainModel() {
-        return domainModel;
+    public static DomainMirror getDomainMirror() {
+        return domainMirror;
     }
 
     /**
      * Initializes the domain by a given factory.
      * The factory decides the source of Domain meta information (reflection or something else).
      *
-     * @param domainModelFactory the factory
+     * @param domainMirrorFactory the factory
      */
-    public static void initialize(DomainModelFactory domainModelFactory) {
-        domainModel = domainModelFactory.initializeDomainModel();
+    public static void initialize(DomainMirrorFactory domainMirrorFactory) {
+        domainMirror = domainMirrorFactory.initializeDomainMirror();
         initialized = true;
     }
 

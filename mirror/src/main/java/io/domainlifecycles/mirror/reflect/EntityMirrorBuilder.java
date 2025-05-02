@@ -81,6 +81,16 @@ public class EntityMirrorBuilder<T extends EntityMirror> extends DomainTypeMirro
         );
     }
 
+    /**
+     * Identifies and constructs a {@link FieldMirror} representing the identity field of the `entityClass`.
+     * The identity field is determined based on its compatibility with the identity type of the class or whether
+     * it implements the {@link Identity} interface. If multiple candidate fields are found, preference is given
+     * to fields annotated with {@link Entity.Id}. If no such field is found or if there are no suitable candidates,
+     * the method returns an empty {@link Optional}.
+     *
+     * @return an {@link Optional} containing the constructed {@link FieldMirror} for the identity field
+     *         if one exists and is uniquely identifiable; otherwise, an empty {@link Optional}.
+     */
     protected Optional<FieldMirror> identityField() {
         var identityType = getIdentityType(entityClass);
         if (identityType.isPresent()) {
@@ -110,6 +120,15 @@ public class EntityMirrorBuilder<T extends EntityMirror> extends DomainTypeMirro
         return Optional.empty();
     }
 
+    /**
+     * Identifies and constructs a {@link FieldMirror} for the field annotated with
+     * {@link ConcurrencySafe.ConcurrencyVersion}, if such a field exists and is unique within the hierarchy
+     * of the `entityClass`. If multiple fields are annotated with the specified annotation, or no such field is
+     * found, the method returns an empty {@link Optional}.
+     *
+     * @return an {@link Optional} containing the constructed {@link FieldMirror} for the concurrency version field
+     *         if one uniquely exists; otherwise, an empty {@link Optional}.
+     */
     protected Optional<FieldMirror> concurrencyVersionField() {
         var concurrencyFieldCandidates = JavaReflect.fields(entityClass, MemberSelect.HIERARCHY)
             .stream()

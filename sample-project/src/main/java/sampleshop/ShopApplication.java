@@ -35,7 +35,7 @@
 package sampleshop;
 
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.validation.extend.ValidationDomainClassExtender;
 import jakarta.annotation.PostConstruct;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -53,7 +53,7 @@ import java.util.Locale;
 public class ShopApplication {
 
     static {
-        Domain.initialize(new ReflectiveDomainModelFactory("sampleshop"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleshop"));
     }
 
     /**

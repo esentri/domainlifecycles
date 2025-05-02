@@ -80,7 +80,11 @@ public class ClassGraphDomainTypesScanner {
     }
 
     /**
-     * Constructor
+     * Constructs a ClassGraphDomainTypesScanner with the specified GenericTypeResolver.
+     *
+     * @param genericTypeResolver the GenericTypeResolver to be used by the scanner. It must not be null.
+     *                            This resolver is responsible for determining generic type information.
+     * @throws NullPointerException if the provided genericTypeResolver is null.
      */
     public ClassGraphDomainTypesScanner(GenericTypeResolver genericTypeResolver) {
         this.genericTypeResolver = Objects.requireNonNull(genericTypeResolver, "A GenericTypeResolver must be provided!");
@@ -88,9 +92,12 @@ public class ClassGraphDomainTypesScanner {
     }
 
     /**
-     * Scans the given packages for Domain Model classes.
+     * Scans the specified package(s) to discover domain types, including enums, interfaces,
+     * and classes implementing or extending various domain-related interfaces and types.
+     * This method uses ClassGraph to perform the scanning.
      *
-     * @param packages the packages to be scanned
+     * @param packages the array of package names to scan. If no packages are provided, the scan will include all available packages.
+     * @return a list of discovered domain types represented as {@code DomainTypeMirror} instances.
      */
     public List<DomainTypeMirror> scan(String... packages) {
         List<DomainTypeMirror> domainTypes = new ArrayList<>();

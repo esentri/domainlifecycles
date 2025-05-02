@@ -42,6 +42,19 @@ import io.domainlifecycles.mirror.exception.MirrorException;
  */
 public class AggregateRootReferenceModel extends FieldModel implements AggregateRootReferenceMirror {
 
+    /**
+     * Constructs a new instance of the AggregateRootReferenceModel class.
+     *
+     * @param name the name of the field; must not be null.
+     * @param type the type of the field, represented by an AssertedContainableTypeMirror; must not be null.
+     * @param accessLevel the access level of the field, as specified by the AccessLevel enum; must not be null.
+     * @param declaredByTypeName the fully qualified name of the type declaring the field; must not be null.
+     * @param modifiable a boolean indicating whether the field is modifiable.
+     * @param publicReadable a boolean indicating whether the field is publicly readable.
+     * @param publicWriteable a boolean indicating whether the field is publicly writable.
+     * @param isStatic a boolean indicating whether the field is static.
+     * @param hidden a boolean indicating whether the field is hidden.
+     */
     @JsonCreator
     public AggregateRootReferenceModel(@JsonProperty("name") String name,
                                        @JsonProperty("type") AssertedContainableTypeMirror type,
@@ -62,7 +75,7 @@ public class AggregateRootReferenceModel extends FieldModel implements Aggregate
     @JsonIgnore
     @Override
     public AggregateRootMirror getAggregateRoot() {
-        return domainModel.getDomainTypeMirror(type.getTypeName())
+        return domainMirror.getDomainTypeMirror(type.getTypeName())
             .map(e -> (AggregateRootMirror) e)
             .orElseThrow(() -> MirrorException.fail("AggregateRootMirror not found for '%s'", getType().getTypeName()));
     }

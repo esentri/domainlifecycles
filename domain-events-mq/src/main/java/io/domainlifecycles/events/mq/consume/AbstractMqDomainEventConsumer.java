@@ -252,9 +252,8 @@ public abstract class AbstractMqDomainEventConsumer<CONSUMER, MESSAGE> implement
      * and subscribes them to the event consumer.
      */
     protected void initializeHandlers(){
-        var handlers = Domain.getDomainModel()
-            .allTypeMirrors()
-            .values()
+        var handlers = Domain.getDomainMirror()
+            .getAllDomainTypeMirrors()
             .stream()
             .filter(dtm -> !dtm.isAbstract() && dtm.getDomainType().equals(DomainType.DOMAIN_EVENT))
             .map(dtm -> (DomainEventMirror) dtm)
@@ -344,7 +343,7 @@ public abstract class AbstractMqDomainEventConsumer<CONSUMER, MESSAGE> implement
                 log.error("Getting data from future failed", e);
             }
         });
-        consumers.forEach(c -> closeConsumer(c));
+        consumers.forEach(this::closeConsumer);
         closeConnection();
         consumerThreadPool.shutdown();
         log.info("Closed session and connection");

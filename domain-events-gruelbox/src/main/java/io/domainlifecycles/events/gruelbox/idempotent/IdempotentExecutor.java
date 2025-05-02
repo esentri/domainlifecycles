@@ -67,7 +67,7 @@ public class IdempotentExecutor {
         ExecutionContext executionContext = null;
         var service = serviceProvider.getServiceKindInstance(idempotentExecutionContext.handlerClass().getName());
         if(Repository.class.isAssignableFrom(idempotentExecutionContext.handlerClass()) && (idempotentExecutionContext.domainEvent() instanceof AggregateDomainEvent)){
-            executionContext = new AggregateExecutionContext<>((Repository) service, idempotentExecutionContext.handlerMethod(), idempotentExecutionContext.handlerClass().getName(), (AggregateDomainEvent)idempotentExecutionContext.domainEvent());
+            executionContext = new AggregateExecutionContext<>((Repository<?,?>) service, idempotentExecutionContext.handlerMethod(), idempotentExecutionContext.handlerClass().getName(), (AggregateDomainEvent)idempotentExecutionContext.domainEvent());
         }else{
             executionContext = new ServiceExecutionContext(service, idempotentExecutionContext.handlerClass().getName(), idempotentExecutionContext.handlerMethod(), idempotentExecutionContext.domainEvent());
         }

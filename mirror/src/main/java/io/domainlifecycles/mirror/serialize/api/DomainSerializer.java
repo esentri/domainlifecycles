@@ -26,7 +26,7 @@
 
 package io.domainlifecycles.mirror.serialize.api;
 
-import io.domainlifecycles.mirror.api.DomainModel;
+import io.domainlifecycles.mirror.api.DomainMirror;
 
 /**
  * Generic interface to de-/serialize the DomainModel.
@@ -34,7 +34,20 @@ import io.domainlifecycles.mirror.api.DomainModel;
  * @author Mario Herb
  */
 public interface DomainSerializer {
-    String serialize(DomainModel domainModel);
 
-    DomainModel deserialize(String serializedDomain);
+    /**
+     * Serializes a given DomainMirror instance into its string representation.
+     *
+     * @param domainMirror the DomainMirror instance to be serialized
+     * @return a string representation of the serialized DomainMirror
+     */
+    String serialize(DomainMirror domainMirror);
+
+    /**
+     * Deserializes the given string representation of a domain into a DomainMirror object.
+     *
+     * @param serializedDomain the string representation of a serialized domain
+     * @return the deserialized DomainMirror object
+     */
+    DomainMirror deserialize(String serializedDomain);
 }

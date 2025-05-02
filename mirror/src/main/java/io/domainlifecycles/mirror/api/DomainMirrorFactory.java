@@ -24,16 +24,20 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.mirror.serialize.api;
+package io.domainlifecycles.mirror.api;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import io.domainlifecycles.mirror.api.DomainModel;
 
 /**
- * Jackson mixin interface for proper serialization of {@link DomainModel}.
+ * The implementations of this interface decide how the DomainMirror is provided.
+ * E.g. created by reflection or read from a config file. The default implementation initializes the domain by
+ * reflection {@see ReflectiveDomainMirrorFactory}.
  *
  * @author Mario Herb
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public interface DomainModelMixin {
+public interface DomainMirrorFactory {
+
+    /**
+     * @return the domainMirror, containing all the mirrors provided by this factory for the corresponding Domain.
+     */
+    DomainMirror initializeDomainMirror();
 }
