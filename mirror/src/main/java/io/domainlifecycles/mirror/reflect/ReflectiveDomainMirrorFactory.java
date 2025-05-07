@@ -37,6 +37,8 @@ import io.domainlifecycles.mirror.validate.CompletenessChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -79,9 +81,12 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
     @Override
     public DomainMirror initializeDomainMirror() {
         initializeForScanning();
+        var domainModelPackagesExtended = Arrays.copyOf(domainModelPackages, domainModelPackages.length+1);
+        domainModelPackagesExtended[domainModelPackages.length] = "io.domainlifecycles";
+
         Map<String, ? extends DomainTypeMirror> builtTypeMirrors =
             classGraphDomainTypesScanner
-                .scan(domainModelPackages)
+                .scan(domainModelPackagesExtended)
                 .stream()
                 .collect(
                     Collectors.toMap(
