@@ -106,7 +106,9 @@ public class FilteredDomainClasses {
                 || (s.getDomainType().equals(DomainType.SERVICE_KIND) && domainDiagramConfig.isShowUnspecifiedServiceKinds())
             )
             .filter(transitiveDomainTypeAnPackageFilter::filter)
-            .filter(s -> !domainDiagramConfig.getClassesBlacklist().contains(s.getTypeName()))
+            .filter(s ->
+                !domainDiagramConfig.getClassesBlacklist().contains(s.getTypeName())
+                && s.getAllInterfaceTypeNames().stream().noneMatch(it -> domainDiagramConfig.getClassesBlacklist().contains(it)))
             .toList();
     }
 
@@ -123,6 +125,14 @@ public class FilteredDomainClasses {
             s -> s.getTypeName().equals(serviceKindMirror.getTypeName())
             || s.getAllInterfaceTypeNames().contains(serviceKindMirror.getTypeName())
         );
+    }
+
+    public boolean contains(AggregateRootMirror aggregateRootMirror){
+        return this.aggregateRoots.stream().anyMatch(a -> a.equals(aggregateRootMirror));
+    }
+
+    public boolean contains(ReadModelMirror readModelMirror){
+        return this.readModels.stream().anyMatch(r -> r.equals(readModelMirror));
     }
 
     private List<DomainCommandMirror> initFilteredDomainCommands() {

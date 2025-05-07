@@ -108,6 +108,14 @@ public class DomainRelationshipMapper {
     public List<NomnomlRelationship> mapAllAggregateRepositoryRelationships() {
         var relationShips = new ArrayList<NomnomlRelationship>();
         filteredDomainClasses.getRepositories()
+            .stream()
+            .filter(r -> {
+                    if(r.getManagedAggregate().isPresent()){
+                        return filteredDomainClasses.contains(r.getManagedAggregate().get());
+                    }
+                    return false;
+                }
+            )
             .forEach(r -> relationShips.add(mapAggregateRepositoryRelationship(r)));
         return relationShips;
     }
@@ -120,7 +128,14 @@ public class DomainRelationshipMapper {
     public List<NomnomlRelationship> mapAllQueryHandlerReadModelRelationships() {
         var relationShips = new ArrayList<NomnomlRelationship>();
         if (diagramConfig.isShowQueryHandlers() && diagramConfig.isShowReadModels()) {
-            filteredDomainClasses.getQueryHandlers()
+            filteredDomainClasses.getQueryHandlers().stream()
+                .filter(r -> {
+                        if(r.getProvidedReadModel().isPresent()){
+                            return filteredDomainClasses.contains(r.getProvidedReadModel().get());
+                        }
+                        return false;
+                    }
+                )
                 .forEach(r -> relationShips.add(mapQueryHandlerReadModelRelationship(r)));
         }
         return relationShips;
