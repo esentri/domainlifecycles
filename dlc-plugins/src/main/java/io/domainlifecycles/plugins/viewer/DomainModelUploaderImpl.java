@@ -26,13 +26,17 @@
 
 package io.domainlifecycles.plugins.viewer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
+import io.domainlifecycles.plugins.viewer.model.DomainMirrorUploadDto;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,11 +48,11 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
     private static final String API_KEY_HEADER_NAME = "X-API-KEY";
 
     @Override
-    public void uploadDomainModel(String domainModelJson, String apiKey, String projectName, String diagramViewerBaseUrl) {
+    public void uploadDomainModel(String domainModelJson, List<String> domainModelPackages, String apiKey, String projectName, String diagramViewerBaseUrl) {
         LOGGER.debug(String.format("Trying to upload Domain-Model to Diagram-Viewer project '%s' with base url '%s'.", projectName, diagramViewerBaseUrl));
 
         final HttpClient client = HttpClient.newHttpClient();
-        final HttpRequest request = buildDomainModelUploadRequest(domainModelJson, projectName, apiKey, diagramViewerBaseUrl);
+        final HttpRequest request = buildDomainModelUploadRequest(domainModelJson, domainModelPackages, projectName, apiKey, diagramViewerBaseUrl);
 
         try {
             final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -59,13 +63,25 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
         }
     }
 
-    private HttpRequest buildDomainModelUploadRequest(String domainModelJson, String projectName, String apiKey, String diagramViewerBaseUrl) {
+    private HttpRequest buildDomainModelUploadRequest(String domainModelJson, List<String> domainModelPackages, String projectName, String apiKey, String diagramViewerBaseUrl) {
+        final String domainMirrorUploadDtoJsonString = generateJsonRequestBody(domainModelJson, domainModelPackages);
+
         return HttpRequest.newBuilder()
             .uri(URI.create(diagramViewerBaseUrl + DIAGRAM_VIEWER_DOMAIN_MODEL_UPLOAD_PATH + projectName))
             .header("Content-Type", "application/json")
             .header(API_KEY_HEADER_NAME, apiKey)
-            .PUT(BodyPublishers.ofString(domainModelJson))
+            .PUT(BodyPublishers.ofString(domainMirrorUploadDtoJsonString))
             .build();
+    }
+
+    private static String generateJsonRequestBody(String domainModelJson, List<String> domainModelPackages) {
+        DomainMirrorUploadDto domainMirrorUploadDto = new DomainMirrorUploadDto(domainModelJson, domainModelPackages);
+        ObjectMapper o = new ObjectMapper();
+        try {
+            return o.writeValueAsString(domainMirrorUploadDto);
+        } catch (JsonProcessingException e) {
+            throw DLCPluginsException.fail("Could not serialize DomainMirrorUploadDTO to JSON.", e);
+        }
     }
 
     private void handleResponseErrors(HttpResponse<String> response) {

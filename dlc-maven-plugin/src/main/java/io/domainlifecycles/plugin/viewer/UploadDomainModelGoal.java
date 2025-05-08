@@ -73,6 +73,6 @@ public class UploadDomainModelGoal extends AbstractMojo {
     private void uploadDomainModel() {
         JsonSerializer jsonSerializer = new JsonSerializerImpl(true);
         final String domainModelJson = jsonSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(project), contextPackages);
-        domainModelUploader.uploadDomainModel(domainModelJson, apiKey, projectName, diagramViewerBaseUrl);
+        domainModelUploader.uploadDomainModel(domainModelJson, contextPackages, apiKey, projectName, diagramViewerBaseUrl);
     }
 }

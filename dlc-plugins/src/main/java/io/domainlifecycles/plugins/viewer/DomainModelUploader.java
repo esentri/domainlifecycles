@@ -26,7 +26,9 @@
 
 package io.domainlifecycles.plugins.viewer;
 
+import java.util.List;
+
 public interface DomainModelUploader {
 
-    void uploadDomainModel(String domainModelJson, String apiKey, String projectName, String diagramViewerBaseUrl);
+    void uploadDomainModel(String domainModelJson, List<String> domainModelPackages, String apiKey, String projectName, String diagramViewerBaseUrl);
 }

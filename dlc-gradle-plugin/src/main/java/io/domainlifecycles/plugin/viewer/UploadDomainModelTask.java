@@ -93,6 +93,6 @@ public abstract class UploadDomainModelTask extends DefaultTask {
             getContextPackages().get());
 
         domainModelUploader.uploadDomainModel(
-            domainModelJson, getApiKey().get(), getProjectName().get(), getDiagramViewerBaseUrl().get());
+            domainModelJson, getContextPackages().get(), getApiKey().get(), getProjectName().get(), getDiagramViewerBaseUrl().get());
     }
 }

@@ -55,7 +55,6 @@ public class DiagramConfig {
 
     private FileType fileType;
     private String fileName;
-    private List<String> domainModelPackageNames;
 
     private String aggregateRootStyle;
     private String aggregateFrameStyle;
@@ -136,14 +135,6 @@ public class DiagramConfig {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
-    }
-
-    public List<String> getDomainModelPackageNames() {
-        return domainModelPackageNames;
-    }
-
-    public void setDomainModelPackageNames(List<String> domainModelPackageNames) {
-        this.domainModelPackageNames = domainModelPackageNames;
     }
 
     public String getAggregateRootStyle() {
