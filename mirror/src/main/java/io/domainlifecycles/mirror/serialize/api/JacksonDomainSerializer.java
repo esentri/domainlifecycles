@@ -112,4 +112,13 @@ public class JacksonDomainSerializer implements DomainSerializer {
             throw MirrorException.fail("Jackson deserialization failed!", e);
         }
     }
+
+    public <T extends DomainTypeMirror> T deserializeTypeMirror(String serializedTypeMirror) {
+        try {
+            var dm =  (T) objectMapper.readValue(serializedTypeMirror, DomainTypeMirror.class);
+            return dm;
+        } catch (JsonProcessingException e) {
+            throw MirrorException.fail("Jackson deserialization failed!", e);
+        }
+    }
 }

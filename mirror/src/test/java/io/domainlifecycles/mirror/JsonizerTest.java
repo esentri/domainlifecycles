@@ -1,5 +1,6 @@
 package io.domainlifecycles.mirror;
 
+import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.DomainMirrorFactory;
 import io.domainlifecycles.mirror.model.EntityModel;
 import io.domainlifecycles.mirror.model.FieldModel;
@@ -66,7 +67,161 @@ public class JsonizerTest {
         assertThat(result).isEqualTo(result2);
     }
 
+    @Test
+    public void testDeserializeConcreteDomainTypeMirror(){
+        var serializer = new JacksonDomainSerializer(true);
+        AggregateRootMirror ar = serializer.deserializeTypeMirror(
+            """
+                {
+                  "@class": "io.domainlifecycles.mirror.model.AggregateRootModel",
+                  "methods": [
+                    {
+                      "name": "builder",
+                      "@class": "io.domainlifecycles.mirror.model.MethodModel",
+                      "getter": false,
+                      "setter": false,
+                      "overridden": false,
+                      "parameters": [],
+                      "returnType": {
+                        "array": false,
+                        "@class": "io.domainlifecycles.mirror.model.AssertedContainableTypeModel",
+                        "isArray": false,
+                        "typeName": "de.mercator.esprit.vendor.core.domain.haendler.Haendler$HaendlerBuilder",
+                        "assertions": [],
+                        "domainType": "NON_DOMAIN",
+                        "hasSetContainer": false,
+                        "hasListContainer": false,
+                        "containerTypeName": null,
+                        "hasStreamContainer": false,
+                        "containerAssertions": [],
+                        "resolvedGenericType": {
+                          "@class": "io.domainlifecycles.mirror.model.ResolvedGenericTypeModel",
+                          "isArray": false,
+                          "typeName": "de.mercator.esprit.vendor.core.domain.haendler.Haendler$HaendlerBuilder",
+                          "genericTypes": [],
+                          "wildcardBound": null
+                        },
+                        "hasOptionalContainer": false,
+                        "hasCollectionContainer": false
+                      },
+                      "accessLevel": "PUBLIC",
+                      "declaredByTypeName": "de.mercator.esprit.vendor.core.domain.haendler.Haendler",
+                      "listenedEventTypeName": null,
+                      "publishedEventTypeNames": []
+                    },
+                    {
+                      "name": "getId",
+                      "@class": "io.domainlifecycles.mirror.model.MethodModel",
+                      "getter": true,
+                      "setter": false,
+                      "overridden": false,
+                      "parameters": [],
+                      "returnType": {
+                        "array": false,
+                        "@class": "io.domainlifecycles.mirror.model.AssertedContainableTypeModel",
+                        "isArray": false,
+                        "typeName": "de.mercator.esprit.vendor.core.domain.haendler.HaendlerId",
+                        "assertions": [],
+                        "domainType": "IDENTITY",
+                        "hasSetContainer": false,
+                        "hasListContainer": false,
+                        "containerTypeName": null,
+                        "hasStreamContainer": false,
+                        "containerAssertions": [],
+                        "resolvedGenericType": {
+                          "@class": "io.domainlifecycles.mirror.model.ResolvedGenericTypeModel",
+                          "isArray": false,
+                          "typeName": "de.mercator.esprit.vendor.core.domain.haendler.HaendlerId",
+                          "genericTypes": [],
+                          "wildcardBound": null
+                        },
+                        "hasOptionalContainer": false,
+                        "hasCollectionContainer": false
+                      },
+                      "accessLevel": "PUBLIC",
+                      "declaredByTypeName": "de.mercator.esprit.vendor.core.domain.haendler.Haendler",
+                      "listenedEventTypeName": null,
+                      "publishedEventTypeNames": []
+                    }
+                  ],
+                  "abstract": false,
+                  "typeName": "de.mercator.esprit.vendor.core.domain.haendler.Haendler",
+                  "allFields": [
+                    {
+                      "name": "id",
+                      "type": {
+                        "array": false,
+                        "@class": "io.domainlifecycles.mirror.model.AssertedContainableTypeModel",
+                        "isArray": false,
+                        "typeName": "de.mercator.esprit.vendor.core.domain.haendler.HaendlerId",
+                        "assertions": [],
+                        "domainType": "IDENTITY",
+                        "hasSetContainer": false,
+                        "hasListContainer": false,
+                        "containerTypeName": null,
+                        "hasStreamContainer": false,
+                        "containerAssertions": [],
+                        "resolvedGenericType": {
+                          "@class": "io.domainlifecycles.mirror.model.ResolvedGenericTypeModel",
+                          "isArray": false,
+                          "typeName": "de.mercator.esprit.vendor.core.domain.haendler.HaendlerId",
+                          "genericTypes": [],
+                          "wildcardBound": null
+                        },
+                        "hasOptionalContainer": false,
+                        "hasCollectionContainer": false
+                      },
+                      "@class": "io.domainlifecycles.mirror.model.ValueReferenceModel",
+                      "hidden": false,
+                      "static": false,
+                      "modifiable": false,
+                      "accessLevel": "PRIVATE",
+                      "publicReadable": true,
+                      "publicWriteable": false,
+                      "declaredByTypeName": "de.mercator.esprit.vendor.core.domain.haendler.Haendler"
+                    }
+                  ],
+                  "identityField": {
+                    "name": "id",
+                    "type": {
+                      "array": false,
+                      "@class": "io.domainlifecycles.mirror.model.AssertedContainableTypeModel",
+                      "isArray": false,
+                      "typeName": "de.mercator.esprit.vendor.core.domain.haendler.HaendlerId",
+                      "assertions": [],
+                      "domainType": "IDENTITY",
+                      "hasSetContainer": false,
+                      "hasListContainer": false,
+                      "containerTypeName": null,
+                      "hasStreamContainer": false,
+                      "containerAssertions": [],
+                      "resolvedGenericType": {
+                        "@class": "io.domainlifecycles.mirror.model.ResolvedGenericTypeModel",
+                        "isArray": false,
+                        "typeName": "de.mercator.esprit.vendor.core.domain.haendler.HaendlerId",
+                        "genericTypes": [],
+                        "wildcardBound": null
+                      },
+                      "hasOptionalContainer": false,
+                      "hasCollectionContainer": false
+                    },
+                    "@class": "io.domainlifecycles.mirror.model.ValueReferenceModel",
+                    "hidden": false,
+                    "static": false,
+                    "modifiable": false,
+                    "accessLevel": "PRIVATE",
+                    "publicReadable": true,
+                    "publicWriteable": false,
+                    "declaredByTypeName": "de.mercator.esprit.vendor.core.domain.haendler.Haendler"
+                  },
+                  "allInterfaceTypeNames": [],
+                  "inheritanceHierarchyTypeNames": ["io.domainlifecycles.domain.types.base.AggregateRootBase", "io.domainlifecycles.domain.types.base.EntityBase", "java.lang.Object"]
+                }
+                """
 
+        );
+        assertThat(ar).isNotNull();
+    }
 
 
 }
