@@ -1,6 +1,6 @@
 # DLC Plugins
 
-The DLC plugin provide several functions to integrate DLC in the build phase:
+The DLC plugins provide several functions to integrate DLC in the build phase:
 - creating domain diagrams of the build domain classes within the bounded contexts
 - exporting a JSON domain model
 
@@ -128,12 +128,11 @@ Besides creating class diagrams, the plugin is also able to generate a JSON-File
 An example configuration in your project could look like the following:
 ```groovy
 dlcGradlePlugin {
-
     jsonModel {
         fileOutputDir = layout.buildDirectory
         serializations{
             [
-                serial{
+                serial {
                     fileName = "model"
                     domainModelPackages = ["io.domainlifecycles.test"]
                 }
@@ -152,6 +151,33 @@ All classes that the model consists of must be defined within the `domainModelPa
 #### Run
 ```bash
 gradle renderJson
+```
+
+### Diagram-Viewer Integration
+If you have an instance of the Diagram-Viewer app running, whether it be on your local machine or on a hosted platform,
+you are able to quickly create new or update existing projects, without the need to upload a packaged archive file of
+your project in the UI.
+
+#### Configuration
+An example configuration in your project could look like the following:
+```groovy
+dlcGradlePlugin {
+    domainModelUpload {
+        contextPackages = ["io.domainlifecycles.test"]
+        projectName = "test-project"
+        apiKey = "<YOUR-API-KEY>"
+        diagramViewerBaseUrl = "http://localhost:8090"
+    }
+}
+```
+Specify the packages you want to be scanned by the Diagram-Viewer. These can later on be changed, or your diagrams 
+can be filtered even further.
+You can generate a new API-Key by clicking on the profile tab in the Diagram-Viewer App.
+All classes that the model consists of must be defined within the `contextPackages`.
+
+#### Run
+```bash
+gradle domainModelUpload
 ```
 
 ### Troubleshooting
@@ -296,7 +322,6 @@ Besides creating class diagrams, the plugin is also able to generate a JSON-File
 #### Configuration
 An example configuration in your project could look like the following:
 ```xml
-
 <build>
     <plugins>
         <plugin>
@@ -332,6 +357,51 @@ and finally the packages where the model should be read from.
 
 #### Run
 Depending on the Maven phase you specified:
+```bash
+mvn clean compile
+```
+
+### Diagram-Viewer Integration
+If you have an instance of the Diagram-Viewer app running, whether it be on your local machine or on a hosted platform,
+you are able to quickly create new or update existing projects, without the need to upload a packaged archive file of
+your project in the UI.
+
+#### Configuration
+An example configuration in your project could look like the following:
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>io.domainlifecycles</groupId>
+            <artifactId>dlc-maven-plugin</artifactId>
+            <version>2.3.0</version>
+            <executions>
+                <execution>
+                    <id>renderJson</id>
+                    <phase>compile</phase>
+                    <goals>
+                        <goal>domainModelUpload</goal>
+                    </goals>
+                    <configuration>
+                    <contextPackages>
+                        <contextPackage>io.domainlifecycles.test</contextPackage>
+                    </contextPackages>
+                    <diagramViewerBaseUrl>http://localhost:8090</diagramViewerBaseUrl>
+                    <apiKey>YOUR-API-KEY</apiKey>
+                    <projectName>test-project</projectName>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+```
+Specify the packages you want to be scanned by the Diagram-Viewer. These can later on be changed, or your diagrams
+can be filtered even further.
+You can generate a new API-Key by clicking on the profile tab in the Diagram-Viewer App.
+All classes that the model consists of must be defined within the `contextPackages`.
+
+#### Run
 ```bash
 mvn clean compile
 ```
