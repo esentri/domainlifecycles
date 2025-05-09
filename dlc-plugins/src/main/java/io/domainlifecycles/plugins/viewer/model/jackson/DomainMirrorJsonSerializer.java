@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2025 the original author or authors.
+ *  Copyright 2019-2024 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,28 +24,22 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.plugins.viewer.model;
+package io.domainlifecycles.plugins.viewer.model.jackson;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.domainlifecycles.plugins.viewer.model.jackson.DomainMirrorJsonSerializer;
-import java.util.List;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
-public class DomainMirrorUploadDto {
+import java.io.IOException;
 
-    @JsonSerialize(using = DomainMirrorJsonSerializer.class)
-    private final String domainMirror;
-    private final List<String> domainModelPackages;
+public class DomainMirrorJsonSerializer extends StdSerializer<String> {
 
-    public DomainMirrorUploadDto(String domainMirror, List<String> domainModelPackages) {
-        this.domainMirror = domainMirror;
-        this.domainModelPackages = domainModelPackages;
+    public DomainMirrorJsonSerializer() {
+        super(String.class);
     }
 
-    public String getDomainMirror() {
-        return domainMirror;
-    }
-
-    public List<String> getDomainModelPackages() {
-        return domainModelPackages;
+    @Override
+    public void serialize(String value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+        gen.writeRawValue(value);
     }
 }
