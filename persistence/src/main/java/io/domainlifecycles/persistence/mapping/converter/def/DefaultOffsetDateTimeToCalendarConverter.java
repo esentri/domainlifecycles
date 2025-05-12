@@ -40,6 +40,10 @@ import java.util.GregorianCalendar;
  */
 public class DefaultOffsetDateTimeToCalendarConverter extends TypeConverter<OffsetDateTime, Calendar> {
 
+    /**
+     * Creates a new instance of DefaultOffsetDateTimeToCalendarConverter.
+     * This converter is used to transform an OffsetDateTime into a Calendar.
+     */
     public DefaultOffsetDateTimeToCalendarConverter() {
         super(OffsetDateTime.class, Calendar.class);
     }

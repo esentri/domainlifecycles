@@ -37,6 +37,11 @@ import java.math.BigInteger;
  */
 public class DefaultBigIntegerToByteConverter extends TypeConverter<BigInteger, Byte> {
 
+    /**
+     * Constructs a DefaultBigIntegerToByteConverter, which is a TypeConverter that defines
+     * conversion behavior from a BigInteger to a Byte. This ensures type-safe conversions
+     * between the specified types.
+     */
     public DefaultBigIntegerToByteConverter() {
         super(BigInteger.class, Byte.class);
     }

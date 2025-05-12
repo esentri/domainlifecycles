@@ -43,6 +43,13 @@ import java.util.Objects;
 public record DatabaseDependencyEdge(String sourceClassName,
                                      String targetClassName) {
 
+    /**
+     * Constructs a new instance of {@code DatabaseDependencyEdge}.
+     *
+     * @param sourceClassName the source class name, representing the entity that must be persisted before the target entity
+     * @param targetClassName the target class name, representing the entity that should be persisted after the source entity
+     * @throws NullPointerException if {@code sourceClassName} or {@code targetClassName} is null
+     */
     public DatabaseDependencyEdge {
         Objects.requireNonNull(sourceClassName);
         Objects.requireNonNull(targetClassName);

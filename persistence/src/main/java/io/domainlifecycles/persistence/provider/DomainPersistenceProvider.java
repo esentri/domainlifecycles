@@ -88,6 +88,11 @@ public abstract class DomainPersistenceProvider<BASE_RECORD> {
 
     }
 
+    /**
+     * Constructs and returns an instance of {@link PersistenceMirror} for the domain persistence provider.
+     *
+     * @return an instance of {@link PersistenceMirror} configured for the underlying domain persistence implementation
+     */
     protected abstract PersistenceMirror<BASE_RECORD> buildPersistenceMirror();
 
     /**

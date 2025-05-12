@@ -210,8 +210,6 @@ public class StructuralPosition {
 
         /**
          * {@inheritDoc}
-         *
-         * @return
          */
         @Override
         public boolean equals(Object o) {
@@ -222,8 +220,6 @@ public class StructuralPosition {
 
         /**
          * {@inheritDoc}
-         *
-         * @return
          */
         @Override
         public int hashCode() {
@@ -232,8 +228,6 @@ public class StructuralPosition {
 
         /**
          * {@inheritDoc}
-         *
-         * @return
          */
         @Override
         public String toString() {

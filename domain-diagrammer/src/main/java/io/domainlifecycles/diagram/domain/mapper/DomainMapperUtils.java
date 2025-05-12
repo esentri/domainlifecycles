@@ -104,12 +104,14 @@ public class DomainMapperUtils {
     }
 
     /**
-     * @param propertyMirror   mirrored property
-     * @param domainTypeMirror mirrored domain type
-     * @return whether a property should be included "inline" in a class or
-     * if it should be represented as a relationship.
+     * Determines whether a given property should be shown inline based on its type, domain type, and diagram configuration.
+     *
+     * @param propertyMirror the mirrored field representing the property to check
+     * @param domainTypeMirror the mirrored type of the domain to which the property belongs
+     * @param domainDiagramConfig the configuration of the domain diagram specifying certain rules and filters
+     * @return true if the property should be shown inline; false otherwise
      */
-    public static boolean showPropertyInline(FieldMirror propertyMirror, DomainTypeMirror domainTypeMirror) {
+    public static boolean showPropertyInline(FieldMirror propertyMirror, DomainTypeMirror domainTypeMirror, DomainDiagramConfig domainDiagramConfig) {
         if (
             DomainType.NON_DOMAIN.equals(domainTypeMirror.getDomainType())
                 || DomainType.DOMAIN_EVENT.equals(domainTypeMirror.getDomainType())
@@ -127,13 +129,14 @@ public class DomainMapperUtils {
             || DomainType.VALUE_OBJECT.equals(domainTypeMirror.getDomainType())) {
             //for aggregate roots, entities or value objects we filter
             if (propertyMirror instanceof EntityReferenceMirror) {
-                return false;
+                var erm = (EntityReferenceMirror) propertyMirror;
+                return domainDiagramConfig.getClassesBlacklist().contains(erm.getType().getTypeName());
             } else if (propertyMirror instanceof ValueReferenceMirror valueRef) {
                 if (valueRef.getValue().isEnum() || valueRef.getValue().isIdentity()) {
                     return true;
                 } else {
                     var valueObjectMirror = (ValueObjectMirror) valueRef.getValue();
-                    return valueObjectMirror.isSingledValued();
+                    return valueObjectMirror.isSingledValued() || domainDiagramConfig.getClassesBlacklist().contains(valueObjectMirror.getTypeName());
                 }
             }
             return true;

@@ -29,13 +29,57 @@ package io.domainlifecycles.plugin.extensions;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 
+/**
+ * Represents the configuration for domain model upload tasks in a Gradle plugin.
+ *
+ * This abstract class defines methods for accessing configuration properties required
+ * to upload domain models to an external server or system. These configurations include
+ * the base URL for the diagram viewer, API key for authentication, project name for
+ * association, and a list of context package names related to the domain model.
+ *
+ * @author Leon Völlinger
+ */
 public abstract class DomainModelUploadTaskConfigurationExtension {
 
+    /**
+     * Retrieves the base URL for the diagram viewer.
+     *
+     * This property specifies the base URL used to access or interact with the diagram viewer
+     * in the domain model upload configuration.
+     *
+     * @return a {@code Property<String>} representing the base URL for the diagram viewer.
+     */
     public abstract Property<String> getDiagramViewerBaseUrl();
 
+    /**
+     * Retrieves the API key property for authentication.
+     *
+     * This method provides access to the API key that is required
+     * for authenticating requests made during the domain model upload tasks.
+     *
+     * @return a {@code Property<String>} representing the API key.
+     */
     public abstract Property<String> getApiKey();
 
+    /**
+     * Retrieves the project name property for the domain model upload task configuration.
+     *
+     * This method provides access to the project name associated with the domain model upload task.
+     * The project name is used to identify and associate the uploaded domain models with a specific
+     * project in the external system or service.
+     *
+     * @return a {@code Property<String>} representing the project name.
+     */
     public abstract Property<String> getProjectName();
 
+    /**
+     * Retrieves the list of context package names relevant to the domain model.
+     *
+     * This method provides access to the context packages, which specify the
+     * scoped Java packages associated with the domain model in the upload task configuration.
+     * These packages are typically used to identify and isolate specific parts of the domain model.
+     *
+     * @return a {@code ListProperty<String>} representing the list of context package names.
+     */
     public abstract ListProperty<String> getContextPackages();
 }

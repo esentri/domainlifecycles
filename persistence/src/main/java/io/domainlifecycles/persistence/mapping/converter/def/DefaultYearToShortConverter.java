@@ -37,6 +37,10 @@ import java.time.Year;
  */
 public class DefaultYearToShortConverter extends TypeConverter<Year, Short> {
 
+    /**
+     * Default constructor for the DefaultYearToShortConverter class.
+     * Initializes the type conversion from Year to Short.
+     */
     public DefaultYearToShortConverter() {
         super(Year.class, Short.class);
     }

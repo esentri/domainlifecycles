@@ -78,6 +78,16 @@ public class NomnomlRelationship implements DiagramElement {
         this.relationshiptype = Objects.requireNonNull(relationshiptype);
     }
 
+    /**
+     * Creates and returns a new instance of {@code NomnomlRelationshipBuilder}.
+     *
+     * The builder allows for a fluent configuration of the properties required
+     * to construct a {@code NomnomlRelationship} instance, such as source and
+     * target names, styles, multiplicities, label, and relationship type.
+     *
+     * @return a new instance of {@code NomnomlRelationshipBuilder} for constructing
+     *         {@code NomnomlRelationship} objects.
+     */
     public static NomnomlRelationshipBuilder builder() {
         return new NomnomlRelationshipBuilder();
     }
@@ -108,7 +118,7 @@ public class NomnomlRelationship implements DiagramElement {
         } else {
             builder.append(relationshiptype.transposedLineStart);
         }
-        if (!"".equals(label)) {
+        if (!label.isEmpty()) {
             builder.append("[<label> ");
             builder.append(label);
             builder.append("] ");
@@ -135,38 +145,83 @@ public class NomnomlRelationship implements DiagramElement {
         return builder.toString();
     }
 
+    /**
+     * Retrieves the name of the source element (from side) of the relationship.
+     *
+     * @return the String representing the source element's name
+     */
     public String getFromName() {
         return this.fromName;
     }
 
+    /**
+     * Retrieves the style classifier of the source element (from side) of the relationship.
+     *
+     * @return the String representing the style classifier of the source element
+     */
     public String getFromStyleClassifier() {
         return this.fromStyleClassifier;
     }
 
+    /**
+     * Retrieves the multiplicity of the source element (from side) of the relationship.
+     *
+     * @return the String representing the source element's multiplicity
+     */
     public String getFromMultiplicity() {
         return this.fromMultiplicity;
     }
 
+    /**
+     * Retrieves the name of the target element (to side) of the relationship.
+     *
+     * @return the String representing the target element's name
+     */
     public String getToName() {
         return this.toName;
     }
 
+    /**
+     * Retrieves the style classifier of the target element (to side) of the relationship.
+     *
+     * @return the String representing the style classifier of the target element
+     */
     public String getToStyleClassifier() {
         return this.toStyleClassifier;
     }
 
+    /**
+     * Retrieves the multiplicity of the target element (to side) of the relationship.
+     *
+     * @return the String representing the target element's multiplicity
+     */
     public String getToMultiplicity() {
         return this.toMultiplicity;
     }
 
+    /**
+     * Retrieves the label of the relationship.
+     *
+     * @return the label of the relationship as a String
+     */
     public String getLabel() {
         return this.label;
     }
 
+    /**
+     * Retrieves the type of relationship.
+     *
+     * @return the RelationshipType representing the type of the relationship
+     */
     public RelationshipType getRelationshiptype() {
         return this.relationshiptype;
     }
 
+    /**
+     * Checks whether the relationship is in a transposed state.
+     *
+     * @return true if the relationship is transposed, false otherwise
+     */
     public boolean isTransposed() {
         return this.transposed;
     }
@@ -221,10 +276,21 @@ public class NomnomlRelationship implements DiagramElement {
         }
     }
 
+    /**
+     * Toggles the transposed state of the relationship.
+     * This method changes the orientation of the relationship by inverting its
+     * current transposed state. If the relationship was not transposed, it will
+     * become transposed, and vice versa.
+     */
     public void transpose() {
         this.transposed = !transposed;
     }
 
+    /**
+     * Builder class for constructing instances of {@code NomnomlRelationship}.
+     * This class provides a fluent interface for setting various attributes of a relationship
+     * such as the source and target names, styles, multiplicities, label, and relationship type.
+     */
     public static class NomnomlRelationshipBuilder {
         private String fromName;
         private String fromStyleClassifier;
@@ -238,50 +304,111 @@ public class NomnomlRelationship implements DiagramElement {
         NomnomlRelationshipBuilder() {
         }
 
+        /**
+         * Sets the name of the source side of the relationship being built.
+         *
+         * @param fromName the name to assign to the source of the relationship
+         * @return the current instance of {@code NomnomlRelationshipBuilder} for method chaining
+         */
         public NomnomlRelationshipBuilder fromName(String fromName) {
             this.fromName = fromName;
             return this;
         }
 
+        /**
+         * Sets the style classifier of the source side of the relationship being built.
+         *
+         * @param fromStyleClassifier the style classifier to assign to the source of the relationship
+         * @return the current instance of {@code NomnomlRelationshipBuilder} for method chaining
+         */
         public NomnomlRelationshipBuilder fromStyleClassifier(String fromStyleClassifier) {
             this.fromStyleClassifier = fromStyleClassifier;
             return this;
         }
 
+        /**
+         * Sets the multiplicity of the source side of the relationship being built.
+         *
+         * @param fromMultiplicity the multiplicity to assign to the source of the relationship
+         * @return the current instance of {@code NomnomlRelationshipBuilder} for method chaining
+         */
         public NomnomlRelationshipBuilder fromMultiplicity(String fromMultiplicity) {
             this.fromMultiplicity = fromMultiplicity;
             return this;
         }
 
+        /**
+         * Sets the name of the target side of the relationship being built.
+         *
+         * @param toName the name to assign to the target of the relationship
+         * @return the current instance of {@code NomnomlRelationshipBuilder} for method chaining
+         */
         public NomnomlRelationshipBuilder toName(String toName) {
             this.toName = toName;
             return this;
         }
 
+        /**
+         * Sets the style classifier of the target side of the relationship being built.
+         *
+         * @param toStyleClassifier the style classifier to assign to the target of the relationship
+         * @return the current instance of {@code NomnomlRelationshipBuilder} for method chaining
+         */
         public NomnomlRelationshipBuilder toStyleClassifier(String toStyleClassifier) {
             this.toStyleClassifier = toStyleClassifier;
             return this;
         }
 
+        /**
+         * Sets the multiplicity of the target side of the relationship being built.
+         *
+         * @param toMultiplicity the multiplicity to assign to the target of the relationship
+         * @return the current instance of {@code NomnomlRelationshipBuilder} for method chaining
+         */
         public NomnomlRelationshipBuilder toMultiplicity(String toMultiplicity) {
             this.toMultiplicity = toMultiplicity;
             return this;
         }
 
+        /**
+         * Sets the label for the relationship being built.
+         *
+         * @param label the label to be assigned to the relationship
+         * @return the current instance of {@code NomnomlRelationshipBuilder} for method chaining
+         */
         public NomnomlRelationshipBuilder label(String label) {
             this.label = label;
             return this;
         }
 
+        /**
+         * Sets the relationship type for this builder.
+         *
+         * @param relationshiptype the type of relationship to be set, represented by the {@link RelationshipType} enum
+         * @return the current instance of {@code NomnomlRelationshipBuilder} for method chaining
+         */
         public NomnomlRelationshipBuilder relationshiptype(RelationshipType relationshiptype) {
             this.relationshiptype = relationshiptype;
             return this;
         }
 
+        /**
+         * Constructs a new NomnomlRelationship object using the configured values
+         * in the NomnomlRelationshipBuilder.
+         *
+         * @return a new NomnomlRelationship instance initialized with the current state
+         *         of the builder.
+         */
         public NomnomlRelationship build() {
             return new NomnomlRelationship(this.fromName, this.fromStyleClassifier, this.fromMultiplicity, this.toName, this.toStyleClassifier, this.toMultiplicity, this.label, this.relationshiptype);
         }
 
+        /**
+         * Returns a string representation of the NomnomlRelationshipBuilder object.
+         * The string includes all the fields and their values in the builder.
+         *
+         * @return a string representation of the current state of the NomnomlRelationshipBuilder.
+         */
         public String toString() {
             return "NomnomlRelationship.NomnomlRelationshipBuilder(fromName=" + this.fromName + ", fromStyleClassifier=" + this.fromStyleClassifier + ", fromMultiplicity=" + this.fromMultiplicity + ", toName=" + this.toName + ", toStyleClassifier=" + this.toStyleClassifier + ", toMultiplicity=" + this.toMultiplicity + ", label=" + this.label + ", relationshiptype=" + this.relationshiptype + ")";
         }

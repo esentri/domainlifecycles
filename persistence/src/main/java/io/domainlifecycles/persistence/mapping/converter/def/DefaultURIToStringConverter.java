@@ -37,6 +37,14 @@ import java.net.URI;
  */
 public class DefaultURIToStringConverter extends TypeConverter<URI, String> {
 
+    /**
+     * Default implementation of a converter that transforms a URI object into its String representation.
+     * This converter is specifically designed to work with the source type {@link URI}
+     * and the target type {@link String}.
+     *
+     * It uses the superclass {@link TypeConverter} to declare and handle the type conversion process between
+     * these data types.
+     */
     public DefaultURIToStringConverter() {
         super(URI.class, String.class);
     }

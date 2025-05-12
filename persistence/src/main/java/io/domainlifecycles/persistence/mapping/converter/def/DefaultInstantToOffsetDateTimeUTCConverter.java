@@ -39,6 +39,11 @@ import java.time.ZoneOffset;
  */
 public class DefaultInstantToOffsetDateTimeUTCConverter extends TypeConverter<Instant, OffsetDateTime> {
 
+    /**
+     * Constructs a DefaultInstantToOffsetDateTimeUTCConverter, which is a TypeConverter
+     * defining conversion behavior from an Instant to an OffsetDateTime with a UTC offset.
+     * This ensures type-safe conversions between the specified source and target types.
+     */
     public DefaultInstantToOffsetDateTimeUTCConverter() {
         super(Instant.class, OffsetDateTime.class);
     }

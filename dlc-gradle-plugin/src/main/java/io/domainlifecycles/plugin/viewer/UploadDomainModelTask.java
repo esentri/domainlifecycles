@@ -66,20 +66,60 @@ public abstract class UploadDomainModelTask extends DefaultTask {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(UploadDomainModelTask.class);
 
+    /**
+     * Retrieves the base URL of the diagram viewer used for displaying rendered diagrams.
+     *
+     * @return a {@code Property<String>} representing the base URL of the diagram viewer
+     */
     @Input
     public abstract Property<String> getDiagramViewerBaseUrl();
 
+    /**
+     * Retrieves the API key required for authenticating the domain model upload process.
+     *
+     * @return a {@code Property<String>} representing the API key used for authentication
+     */
     @Input
     public abstract Property<String> getApiKey();
 
+    /**
+     * Retrieves the name of the project associated with the domain model upload task.
+     *
+     * @return a {@code Property<String>} representing the name of the project
+     */
     @Input
     public abstract Property<String> getProjectName();
 
+    /**
+     * Retrieves the list of context packages that define the domain model classes
+     * to be considered for processing and uploading.
+     *
+     * @return a {@code ListProperty<String>} representing the list of context packages
+     */
     @Input
     public abstract ListProperty<String> getContextPackages();
 
     private DomainModelUploader domainModelUploader;
 
+    /**
+     * Executes the primary task logic for uploading a domain model to the specified
+     * project on the diagram viewer platform. This method initializes the
+     * {@link DomainModelUploaderImpl} implementation and triggers the domain model
+     * upload process.
+     *
+     * The method logs the start of the upload process, creates an instance of
+     * {@link DomainModelUploaderImpl}, and delegates the task of uploading the
+     * serialized domain model to the diagram viewer platform by invoking
+     * {@code uploadDomainModel()}.
+     *
+     * This action makes use of class-specific configurations, such as the API key,
+     * project name, context packages, and diagram viewer base URL, to properly
+     * prepare and execute the upload process.
+     *
+     * The task may throw runtime exceptions if the domain model cannot be serialized,
+     * the HTTP request fails, or the diagram viewer platform returns an error
+     * response.
+     */
     @TaskAction
     public void action() {
         LOGGER.info("Running Upload Domain Model Goal...");

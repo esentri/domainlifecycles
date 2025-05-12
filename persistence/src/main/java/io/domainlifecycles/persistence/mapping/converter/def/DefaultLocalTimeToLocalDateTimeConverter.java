@@ -39,6 +39,11 @@ import java.time.LocalTime;
  */
 public class DefaultLocalTimeToLocalDateTimeConverter extends TypeConverter<LocalTime, LocalDateTime> {
 
+    /**
+     * Constructs a DefaultLocalTimeToLocalDateTimeConverter, which is a TypeConverter
+     * that defines conversion behavior from a LocalTime to a LocalDateTime.
+     * This allows type-safe transformations between the specified types.
+     */
     public DefaultLocalTimeToLocalDateTimeConverter() {
         super(LocalTime.class, LocalDateTime.class);
     }

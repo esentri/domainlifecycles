@@ -39,6 +39,11 @@ import java.time.ZoneId;
  */
 public class DefaultOffsetDateTimeToLocalDateConverter extends TypeConverter<OffsetDateTime, LocalDate> {
 
+    /**
+     * Constructs a new DefaultOffsetDateTimeToLocalDateConverter.
+     * This converter is specifically designed to convert objects of type OffsetDateTime
+     * to objects of type LocalDate.
+     */
     public DefaultOffsetDateTimeToLocalDateConverter() {
         super(OffsetDateTime.class, LocalDate.class);
     }

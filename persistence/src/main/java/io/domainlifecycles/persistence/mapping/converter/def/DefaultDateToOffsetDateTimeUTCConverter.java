@@ -39,6 +39,11 @@ import java.util.Date;
  */
 public class DefaultDateToOffsetDateTimeUTCConverter extends TypeConverter<Date, OffsetDateTime> {
 
+    /**
+     * Constructs a DefaultDateToOffsetDateTimeUTCConverter, which is a TypeConverter that defines
+     * conversion behavior from a Date to an OffsetDateTime using the {@code ZoneOffset.UTC}.
+     * This ensures type-safe conversions between the specified types.
+     */
     public DefaultDateToOffsetDateTimeUTCConverter() {
         super(Date.class, OffsetDateTime.class);
     }

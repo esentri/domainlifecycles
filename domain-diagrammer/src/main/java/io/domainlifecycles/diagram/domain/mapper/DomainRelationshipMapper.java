@@ -154,7 +154,7 @@ public class DomainRelationshipMapper {
                     @Override
                     public void visitValueReference(ValueReferenceMirror valueReferenceMirror) {
                         if (valueReferenceMirror.getValue().isIdentity() && !valueReferenceMirror.isIdentityField()) {
-                            relationShips.addAll(mapIdReferences(valueReferenceMirror));
+                            relationShips.addAll(mapFrameIdReferences(valueReferenceMirror));
                         }
                     }
                 };
@@ -447,22 +447,38 @@ public class DomainRelationshipMapper {
             .build();
     }
 
+    /**
+     * Derives a list of {@link NomnomlRelationship} objects for all aggregate relationships
+     * defined within the given {@code AggregateRootMirror}.
+     *
+     * @param aggregateRootMirror the aggregate root that provides the domain references to map relationships from
+     * @return a list of {@link NomnomlRelationship} representing the relationships derived from the aggregate
+     */
     public List<NomnomlRelationship> mapAllAggregateRelationships(AggregateRootMirror aggregateRootMirror) {
         var relationShips = new ArrayList<NomnomlRelationship>();
         var visitor = new ContextDomainObjectVisitor(aggregateRootMirror) {
 
+            /**
+             * {inheritDoc}
+             */
             @Override
             public void visitEntityReference(EntityReferenceMirror entityReferenceMirror) {
                 relationShips.add(mapEntityReference(entityReferenceMirror));
             }
 
+            /**
+             * {inheritDoc}
+             */
             @Override
             public void visitValueReference(ValueReferenceMirror valueReferenceMirror) {
-                if (!DomainMapperUtils.showPropertyInline(valueReferenceMirror, aggregateRootMirror)) {
+                if (!DomainMapperUtils.showPropertyInline(valueReferenceMirror, aggregateRootMirror, diagramConfig)) {
                     relationShips.add(mapValueReference(valueReferenceMirror));
                 }
             }
 
+            /**
+             * {inheritDoc}
+             */
             @Override
             public void visitEnterAnyDomainType(DomainTypeMirror domainTypeMirror) {
                 mapInheritance(domainTypeMirror).ifPresent(relationShips::add);
@@ -539,7 +555,7 @@ public class DomainRelationshipMapper {
             .build();
     }
 
-    private List<NomnomlRelationship> mapIdReferences(ValueReferenceMirror idReferenceMirror) {
+    private List<NomnomlRelationship> mapFrameIdReferences(ValueReferenceMirror idReferenceMirror) {
         var declaringAggregates = filteredDomainClasses
             .getAggregateRoots()
             .stream()
@@ -568,6 +584,7 @@ public class DomainRelationshipMapper {
         if (!declaringAggregates.isEmpty() && targetAggregate.isPresent()) {
             return declaringAggregates
                 .stream()
+                .filter(decl -> !decl.getTypeName().equals(targetAggregate.get().getTypeName()))
                 .map(da -> NomnomlRelationship
                     .builder()
                     .fromName(DomainMapperUtils.mapTypeName(da.getTypeName(), diagramConfig) + " <<Aggregate>>")

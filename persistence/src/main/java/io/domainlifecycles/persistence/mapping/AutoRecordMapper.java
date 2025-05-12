@@ -114,6 +114,22 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
 
     private final RecordClassProvider<?> recordClassProvider;
 
+    /**
+     * Constructs an instance of AutoRecordMapper.
+     *
+     * @param typeName the name of the domain type.
+     * @param recordTypeName the name of the record type.
+     * @param recordPropertyMatcher an instance used to match record properties with entity fields.
+     * @param domainObjectBuilderProvider a provider for DomainObjectBuilders, used to build domain objects.
+     * @param ignoredFields a provider defining entity or value object fields to be ignored during auto mapping.
+     * @param ignoredRecordPropertyProvider a provider defining record properties to be ignored during auto mapping.
+     * @param converterRegistry a registry for converters used to transform values between record and domain object.
+     * @param newRecordInstanceProvider a provider for new record instances.
+     * @param recordPropertyAccessor used to access the properties of a record.
+     * @param recordPropertyProvider a provider for the properties of a record.
+     * @param entityValueObjectRecordClassProvider a provider for configurations of value objects contained within an entity.
+     * @param recordClassProvider a provider for record class information.
+     */
     public AutoRecordMapper(
         String typeName,
         String recordTypeName,
@@ -162,10 +178,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
 
     /**
      * {@inheritDoc}
-     *
-     * @return
      */
-
     @Override
     @SuppressWarnings({"rawtypes"})
     public DomainObjectBuilder<DO> recordToDomainObjectBuilder(R record) {
@@ -223,8 +236,6 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
 
     /**
      * {@inheritDoc}
-     *
-     * @return
      */
     @Override
     @SuppressWarnings("rawtypes")
@@ -369,7 +380,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
             public boolean visitEnterEntity(EntityMirror entityMirror) {
                 var context = getVisitorContext();
                 return context.startingTypeName.equals(
-                    entityMirror.getTypeName()) && context.getCurrentPath().size() == 0;
+                    entityMirror.getTypeName()) && context.getCurrentPath().isEmpty();
             }
 
             @Override

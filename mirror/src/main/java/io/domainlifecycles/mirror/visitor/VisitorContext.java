@@ -53,24 +53,52 @@ public class VisitorContext {
     private final Set<DomainTypeMirror> alreadyVisitedTypeMirrors = new HashSet<>();
     private Optional<FieldMirror> currentFieldMirror;
 
+    /**
+     * Constructs a new VisitorContext instance with the specified starting type name.
+     *
+     * @param startingTypeName the fully qualified class name of the starting type for this context
+     */
     protected VisitorContext(String startingTypeName) {
         this.startingTypeName = startingTypeName;
     }
 
+    /**
+     * Adds the specified domain type to the context by marking it as the currently visited type and recording it in the
+     * set of already visited types.
+     *
+     * @param type the domain type to be entered and marked as currently visited
+     */
     protected void enterType(DomainTypeMirror type) {
         currentDomainTypeMirror = type;
         alreadyVisitedTypeMirrors.add(type);
     }
 
+    /**
+     * Marks the end of the visitation of a domain type, updating the current domain type context.
+     *
+     * @param type the domain type that is being left
+     */
     protected void leaveType(DomainTypeMirror type) {
         currentDomainTypeMirror = type;
     }
 
+    /**
+     * Signals the start of the visitation process for a given field in the context of a domain type.
+     * Updates the current field mirror being visited and records it in the current path.
+     *
+     * @param fieldMirror the field mirror that represents the field being visited
+     */
     protected void visitFieldStart(FieldMirror fieldMirror) {
         currentFieldMirror = Optional.of(fieldMirror);
         currentPath.add(fieldMirror);
     }
 
+    /**
+     * Marks the end of the visitation process for a given field in the context of a domain type.
+     * This method clears the current field mirror and removes the last entry from the current path.
+     *
+     * @param fieldMirror the field mirror that represents the field being visited
+     */
     protected void visitFieldEnd(FieldMirror fieldMirror) {
         currentFieldMirror = Optional.empty();
         removeLastPathEntry();

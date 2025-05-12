@@ -37,6 +37,11 @@ import java.time.YearMonth;
  */
 public class DefaultIntegerToYearMonthConverter extends TypeConverter<Integer, YearMonth> {
 
+    /**
+     * Constructs a DefaultIntegerToYearMonthConverter, which is a TypeConverter that defines
+     * conversion behavior from an Integer to a YearMonth. This ensures type-safe conversions
+     * between the specified types.
+     */
     public DefaultIntegerToYearMonthConverter() {
         super(Integer.class, YearMonth.class);
     }

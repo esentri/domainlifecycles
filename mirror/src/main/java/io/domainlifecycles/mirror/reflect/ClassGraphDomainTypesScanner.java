@@ -69,9 +69,13 @@ public class ClassGraphDomainTypesScanner {
     private final GenericTypeResolver genericTypeResolver;
 
     /**
-     * Create scanner based on dedicated ClassLoader.
+     * Constructs a new instance of the ClassGraphDomainTypesScanner with the provided ClassLoader
+     * and GenericTypeResolver. This scanner utilizes ClassGraph to discover domain-related
+     * types within specified packages.
      *
-     * @param classLoader pass a dynamically created URLCLassLoader with dynamically loaded classes
+     * @param classLoader the ClassLoader to be used for loading classes during scanning. It must not be null.
+     * @param genericTypeResolver the GenericTypeResolver to resolve generic type details during scanning. It must not be null.
+     * @throws NullPointerException if either the classLoader or genericTypeResolver is null.
      */
     public ClassGraphDomainTypesScanner(ClassLoader classLoader, GenericTypeResolver genericTypeResolver) {
         this.classLoader = Objects.requireNonNull(classLoader, "Please provide a ClassLoader.");

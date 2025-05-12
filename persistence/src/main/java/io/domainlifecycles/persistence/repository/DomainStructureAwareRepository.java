@@ -136,7 +136,12 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
 
     private final DomainPersistenceProvider<BASE_RECORD_TYPE> domainPersistenceProvider;
 
-
+    /**
+     * Constructs a DomainStructureAwareRepository with the given persister and domain persistence provider.
+     *
+     * @param persister the Persister instance to handle basic persistence operations for the domain objects
+     * @param domainPersistenceProvider the provider for domain-specific persistence functionalities and operations
+     */
     protected DomainStructureAwareRepository(final Persister<BASE_RECORD_TYPE> persister,
                                              final DomainPersistenceProvider<BASE_RECORD_TYPE> domainPersistenceProvider) {
         this.persister = persister;
@@ -211,6 +216,16 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
         return Optional.empty();
     }
 
+    /**
+     * Processes the aggregates by applying detected persistence actions, managing
+     * version control, and notifying relevant changes. This ensures consistent
+     * handling of aggregate roots and their changes within the database.
+     *
+     * @param rootUpdated         the updated aggregate root entity or null if no
+     *                            root updates are detected
+     * @param databaseStateRoot   the current database state associated with the
+     *                            aggregate root, wrapped in a FetcherResult
+     */
     protected void processAggregates(A rootUpdated, FetcherResult<A, BASE_RECORD_TYPE> databaseStateRoot) {
         var pc = new PersistenceContext<>(domainPersistenceProvider, rootUpdated, databaseStateRoot);
 

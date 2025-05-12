@@ -227,8 +227,6 @@ public class DomainObjectInstanceAccessModel<RECORD> {
 
     /**
      * {@inheritDoc}
-     *
-     * @return
      */
     @Override
     public boolean equals(Object o) {
@@ -239,8 +237,6 @@ public class DomainObjectInstanceAccessModel<RECORD> {
 
     /**
      * {@inheritDoc}
-     *
-     * @return
      */
     @Override
     public int hashCode() {
@@ -249,8 +245,6 @@ public class DomainObjectInstanceAccessModel<RECORD> {
 
     /**
      * {@inheritDoc}
-     *
-     * @return
      */
     @Override
     public String toString() {

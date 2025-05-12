@@ -39,7 +39,20 @@ import java.util.Objects;
  */
 public class FetchedRecord<RECORD> {
 
+    /**
+     * The `record` field represents the record instance associated with this object.
+     * It serves as the primary data entity tied to the context or lifecycle operations
+     * within the fetcher or persistence mechanism.
+     */
     public final RECORD record;
+    /**
+     * Represents the name of the record type associated with a fetched record.
+     * <p>
+     * This field is used to distinguish between different types of records within
+     * contexts that may handle multiple types of records. It helps avoid unwanted
+     * collisions in collections such as sets or maps by identifying records at the
+     * type level.
+     */
     public final String recordTypeName;
 
     private FetchedRecord(RECORD record, String recordTypeName) {

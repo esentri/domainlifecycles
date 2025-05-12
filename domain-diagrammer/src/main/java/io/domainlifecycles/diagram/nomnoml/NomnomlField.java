@@ -66,6 +66,12 @@ public class NomnomlField implements DiagramElement {
         this.required = required;
     }
 
+    /**
+     * Creates and returns a new {@code NomnomlFieldBuilder} instance, which can be used to construct
+     * {@code NomnomlField} objects with specific attributes.
+     *
+     * @return a new instance of {@code NomnomlFieldBuilder}
+     */
     public static NomnomlFieldBuilder builder() {
         return new NomnomlFieldBuilder();
     }
@@ -87,27 +93,58 @@ public class NomnomlField implements DiagramElement {
         return builder.toString();
     }
 
-
+    /**
+     * Retrieves the visibility of the field.
+     *
+     * @return the visibility of the field as a String
+     */
     public String getVisibility() {
         return this.visibility;
     }
 
+    /**
+     * Retrieves the name of the field.
+     *
+     * @return the name of the field as a String
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * Retrieves the optional type prefix of the field.
+     *
+     * @return an {@link Optional} containing the type prefix if present, otherwise an empty {@link Optional}
+     */
     public Optional<String> getTypePrefix() {
         return this.typePrefix;
     }
 
+    /**
+     * Retrieves the type of the field.
+     *
+     * @return the {@link NomnomlType} representing the type of the field
+     */
     public NomnomlType getType() {
         return this.type;
     }
 
+    /**
+     * Checks if the field is marked as required.
+     *
+     * @return true if the field is required, false otherwise
+     */
     public boolean isRequired() {
         return this.required;
     }
 
+    /**
+     * Compares this object with the specified object for equality. Provides a detailed equality check
+     * by comparing the properties of this instance with the specified object.
+     *
+     * @param o the object to be compared for equality with this instance
+     * @return true if the specified object is equal to this instance, false otherwise
+     */
     public boolean equals(final Object o) {
         if (o == this) return true;
         if (!(o instanceof NomnomlField)) return false;
@@ -131,10 +168,21 @@ public class NomnomlField implements DiagramElement {
         return true;
     }
 
+    /**
+     * Checks whether the specified object can be considered equal to the current instance.
+     *
+     * @param other the object to compare with the current instance
+     * @return true if the provided object is an instance of NomnomlField, false otherwise
+     */
     protected boolean canEqual(final Object other) {
         return other instanceof NomnomlField;
     }
 
+    /**
+     * Computes the hash code for the object based on its properties.
+     *
+     * @return the computed hash code for the object
+     */
     public int hashCode() {
         final int PRIME = 59;
         int result = 1;
@@ -150,6 +198,13 @@ public class NomnomlField implements DiagramElement {
         return result;
     }
 
+    /**
+     * Builder class for constructing instances of {@link NomnomlField}.
+     * <p>
+     * This class provides a fluent API for setting the attributes of a {@link NomnomlField}.
+     * Each method allows setting a specific field property and returns the builder instance,
+     * enabling method chaining for easily constructing {@link NomnomlField} objects with the desired properties.
+     */
     public static class NomnomlFieldBuilder {
         private String visibility;
         private String name;
@@ -160,35 +215,78 @@ public class NomnomlField implements DiagramElement {
         NomnomlFieldBuilder() {
         }
 
+        /**
+         * Sets the visibility of the field and returns the updated builder instance.
+         *
+         * @param visibility the visibility of the field (e.g., public, private, protected)
+         * @return the updated {@code NomnomlFieldBuilder} instance
+         */
         public NomnomlFieldBuilder visibility(String visibility) {
             this.visibility = visibility;
             return this;
         }
 
+        /**
+         * Sets the name of the field and returns the updated builder instance.
+         *
+         * @param name the name of the field
+         * @return the updated {@code NomnomlFieldBuilder} instance
+         */
         public NomnomlFieldBuilder name(String name) {
             this.name = name;
             return this;
         }
 
+        /**
+         * Sets the type prefix of the field and returns the updated builder instance.
+         *
+         * @param typePrefix an {@code Optional} containing the type prefix for the field, or an empty {@code Optional} if no prefix is required
+         * @return the updated {@code NomnomlFieldBuilder} instance
+         */
         public NomnomlFieldBuilder typePrefix(Optional<String> typePrefix) {
             this.typePrefix = typePrefix;
             return this;
         }
 
+        /**
+         * Sets the type of the field and returns the updated builder instance.
+         *
+         * @param type the {@code NomnomlType} representing the type of the field
+         * @return the updated {@code NomnomlFieldBuilder} instance
+         */
         public NomnomlFieldBuilder type(NomnomlType type) {
             this.type = type;
             return this;
         }
 
+        /**
+         * Sets whether the field is required and returns the updated builder instance.
+         *
+         * @param required a boolean indicating if the field is required
+         * @return the updated {@code NomnomlFieldBuilder} instance
+         */
         public NomnomlFieldBuilder required(boolean required) {
             this.required = required;
             return this;
         }
 
+        /**
+         * Creates and returns a new instance of {@link NomnomlField} based on the current state
+         * of this {@code NomnomlFieldBuilder}.
+         *
+         * @return a new instance of {@link NomnomlField} populated with the values configured
+         *         in the builder
+         */
         public NomnomlField build() {
             return new NomnomlField(this.visibility, this.name, this.typePrefix, this.type, this.required);
         }
 
+        /**
+         * Returns a string representation of the {@code NomnomlFieldBuilder} instance, including the
+         * state of its fields such as visibility, name, type prefix, type, and required status.
+         *
+         * @return a string representation of this {@code NomnomlFieldBuilder} instance with its field values
+         */
         public String toString() {
             return "NomnomlField.NomnomlFieldBuilder(visibility=" + this.visibility + ", name=" + this.name + ", typePrefix=" + this.typePrefix + ", type=" + this.type + ", required=" + this.required + ")";
         }

@@ -36,16 +36,39 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-
+/**
+ * A utility class for resolving actual class types of generic type parameters for interfaces,
+ * given a specific concrete subclass and its type hierarchy.
+ * <p>
+ * This class traverses the class hierarchy of a specified subtype to determine the resolved
+ * class type for a generic type parameter defined in an interface. It provides methods to analyze the
+ * relationships between the subtype and its implemented interfaces or extended classes and extract
+ * the required type information.
+ *
+ * @author Mario Herb
+ */
 public class GenericInterfaceTypeResolver {
     private final Class<?> subType;
     private final List<Class<?>> hierarchy;
 
+    /**
+     * Constructs a GenericInterfaceTypeResolver instance for the specified subtype.
+     *
+     * @param subType the concrete subclass type used for resolving generic type information
+     */
     public GenericInterfaceTypeResolver(Class<?> subType) {
         this.subType = subType;
         this.hierarchy = JavaReflect.allSupertypes(subType);
     }
 
+    /**
+     * Resolves the actual class type for a specified generic type parameter of a given interface type.
+     *
+     * @param interfaceType the interface type for which the generic type parameter is resolved
+     * @param parameterIndex the index of the generic type parameter in the interface type
+     * @return the resolved class type of the specified generic type parameter, or null if it cannot be resolved
+     * @throws MirrorException if the provided interface type is not an interface, is not generic, or if the parameter index is invalid
+     */
     public Class<?> resolveFor(Class<?> interfaceType, int parameterIndex) {
         if (!interfaceType.isInterface()) {
             throw MirrorException.fail("Tried to resolve generic type parameter for non interface type %s",

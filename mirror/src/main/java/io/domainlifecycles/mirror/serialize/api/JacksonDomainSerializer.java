@@ -113,6 +113,14 @@ public class JacksonDomainSerializer implements DomainSerializer {
         }
     }
 
+    /**
+     * Deserializes a serialized string representation of a {@code DomainTypeMirror} into an object of the specified type.
+     *
+     * @param <T> the target type of the deserialized object, which must extend {@code DomainTypeMirror}
+     * @param serializedTypeMirror the string representation of the serialized {@code DomainTypeMirror}
+     * @return the deserialized {@code DomainTypeMirror} object of type {@code T}
+     * @throws MirrorException if the deserialization process encounters an error
+     */
     public <T extends DomainTypeMirror> T deserializeTypeMirror(String serializedTypeMirror) {
         try {
             var dm =  (T) objectMapper.readValue(serializedTypeMirror, DomainTypeMirror.class);

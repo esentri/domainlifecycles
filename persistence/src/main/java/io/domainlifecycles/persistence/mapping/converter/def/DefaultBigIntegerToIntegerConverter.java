@@ -37,6 +37,11 @@ import java.math.BigInteger;
  */
 public class DefaultBigIntegerToIntegerConverter extends TypeConverter<BigInteger, Integer> {
 
+    /**
+     * Constructs a DefaultBigIntegerToIntegerConverter, which is a TypeConverter
+     * that defines conversion behavior from a BigInteger to an Integer.
+     * This ensures type-safe conversions between the specified types.
+     */
     public DefaultBigIntegerToIntegerConverter() {
         super(BigInteger.class, Integer.class);
     }

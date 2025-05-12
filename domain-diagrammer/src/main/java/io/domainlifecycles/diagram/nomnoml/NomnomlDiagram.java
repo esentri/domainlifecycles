@@ -54,6 +54,11 @@ public class NomnomlDiagram implements Diagram {
         this.diagramElements = Objects.requireNonNull(diagramElements);
     }
 
+    /**
+     * Creates a new instance of {@link NomnomlDiagramBuilder} to construct a {@link NomnomlDiagram}.
+     *
+     * @return a new instance of {@link NomnomlDiagramBuilder} for building a {@link NomnomlDiagram}.
+     */
     public static NomnomlDiagramBuilder builder() {
         return new NomnomlDiagramBuilder();
     }
@@ -73,14 +78,30 @@ public class NomnomlDiagram implements Diagram {
         return builder.toString();
     }
 
+    /**
+     * Retrieves the list of style declarations associated with this diagram.
+     *
+     * @return a list of style declarations as strings
+     */
     public List<String> getStyleDeclarations() {
         return this.styleDeclarations;
     }
 
+    /**
+     * Retrieves the list of diagram elements associated with this diagram.
+     *
+     * @return a list of {@link DiagramElement} instances representing the elements in the diagram
+     */
     public List<DiagramElement> getDiagramElements() {
         return this.diagramElements;
     }
 
+    /**
+     * Compares this object with the given object to determine equality.
+     *
+     * @param o the object to be compared with this instance
+     * @return true if the given object is equal to this instance; otherwise, false
+     */
     public boolean equals(final Object o) {
         if (o == this) return true;
         if (!(o instanceof NomnomlDiagram)) return false;
@@ -97,10 +118,21 @@ public class NomnomlDiagram implements Diagram {
         return true;
     }
 
+    /**
+     * Determines if the provided object can be considered equal to this object.
+     *
+     * @param other the object to be compared
+     * @return true if the provided object is an instance of NomnomlDiagram, otherwise false
+     */
     protected boolean canEqual(final Object other) {
         return other instanceof NomnomlDiagram;
     }
 
+    /**
+     * Computes the hash code for this object based on its style declarations and diagram elements.
+     *
+     * @return the hash code value for this object
+     */
     public int hashCode() {
         final int PRIME = 59;
         int result = 1;
@@ -111,6 +143,11 @@ public class NomnomlDiagram implements Diagram {
         return result;
     }
 
+    /**
+     * Builder class for constructing instances of {@link NomnomlDiagram}.
+     * This builder provides methods to set style declarations and diagram elements
+     * that make up the diagram.
+     */
     public static class NomnomlDiagramBuilder {
         private List<String> styleDeclarations;
         private List<DiagramElement> diagramElements;
@@ -118,20 +155,50 @@ public class NomnomlDiagram implements Diagram {
         NomnomlDiagramBuilder() {
         }
 
+        /**
+         * Sets the style declarations for the Nomnoml diagram builder.
+         * Style declarations are used to define the visual appearance and formatting
+         * of diagram elements.
+         *
+         * @param styleDeclarations a list of strings representing style declarations
+         *                          to be applied to the diagram
+         * @return the current instance of {@code NomnomlDiagramBuilder} for method chaining
+         */
         public NomnomlDiagramBuilder styleDeclarations(List<String> styleDeclarations) {
             this.styleDeclarations = styleDeclarations;
             return this;
         }
 
+        /**
+         * Sets the diagram elements for the Nomnoml diagram builder.
+         * Diagram elements define the structure of the diagram, including nodes and relationships.
+         *
+         * @param diagramElements a list of {@link DiagramElement} objects that represent the components of the diagram
+         * @return the current instance of {@code NomnomlDiagramBuilder} for method chaining
+         */
         public NomnomlDiagramBuilder diagramElements(List<DiagramElement> diagramElements) {
             this.diagramElements = diagramElements;
             return this;
         }
 
+        /**
+         * Builds and returns a new {@link NomnomlDiagram} instance populated with the
+         * current style declarations and diagram elements set on the builder.
+         *
+         * @return a new {@link NomnomlDiagram} containing the configured style declarations
+         *         and diagram elements
+         */
         public NomnomlDiagram build() {
             return new NomnomlDiagram(this.styleDeclarations, this.diagramElements);
         }
 
+        /**
+         * Returns a string representation of the {@code NomnomlDiagramBuilder} instance.
+         * The string includes the style declarations and diagram elements configured
+         * in this builder.
+         *
+         * @return a string representation of the {@code NomnomlDiagramBuilder} object
+         */
         public String toString() {
             return "NomnomlDiagram.NomnomlDiagramBuilder(styleDeclarations=" + this.styleDeclarations + ", diagramElements=" + this.diagramElements + ")";
         }

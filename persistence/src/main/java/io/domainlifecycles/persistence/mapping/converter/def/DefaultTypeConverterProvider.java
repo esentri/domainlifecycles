@@ -46,6 +46,11 @@ import java.util.stream.Collectors;
  */
 public class DefaultTypeConverterProvider implements TypeConverterProvider {
 
+    /**
+     * Specifies the package location for the default type converters.
+     * This constant defines the base package used to scan and load
+     * type converter implementations provided as defaults.
+     */
     public static final String DEFAULT_CONVERTERS_PACKAGE = "io.domainlifecycles.persistence.mapping.converter.def";
 
     private static final Logger log = LoggerFactory.getLogger(DefaultTypeConverterProvider.class);

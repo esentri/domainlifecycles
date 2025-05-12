@@ -35,9 +35,25 @@ package io.domainlifecycles.persistence.mapping.converter;
  */
 public abstract class TypeConverter<FROM, TO> {
 
+    /**
+     * Represents the class of the source type in the type conversion process.
+     * This field is used to define the type being converted from and acts as an
+     * identifier for the source type of a {@link TypeConverter}.
+     */
     public final Class<FROM> fromClass;
+    /**
+     * Represents the class type of the target type in a type conversion process.
+     * This field is used to define the type being converted to and acts as an
+     * identifier for the destination type utilized by a {@link TypeConverter}.
+     */
     public final Class<TO> toClass;
 
+    /**
+     * Constructs a new TypeConverter with the provided source and target type classes.
+     *
+     * @param fromClass the class of the source type to be converted
+     * @param toClass the class of the target type after conversion
+     */
     public TypeConverter(Class<FROM> fromClass, Class<TO> toClass) {
         this.fromClass = fromClass;
         this.toClass = toClass;

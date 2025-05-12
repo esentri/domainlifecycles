@@ -35,6 +35,11 @@ import io.domainlifecycles.persistence.mapping.converter.TypeConverter;
  */
 public class DefaultByteToBooleanConverter extends TypeConverter<Byte, Boolean> {
 
+    /**
+     * Constructs a DefaultByteToBooleanConverter, which is a TypeConverter that defines
+     * conversion behavior from a Byte to a Boolean. This ensures type-safe conversions
+     * between the specified types.
+     */
     public DefaultByteToBooleanConverter() {
         super(Byte.class, Boolean.class);
     }

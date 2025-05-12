@@ -123,8 +123,6 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
 
     /**
      * {@inheritDoc}
-     *
-     * @return
      */
     @Override
     public AccessLevel getAccessLevel() {

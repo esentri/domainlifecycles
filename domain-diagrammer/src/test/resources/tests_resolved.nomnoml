@@ -656,7 +656,7 @@ o +- optionalText:Optional<String\[0,10\]>
 // !!! tests.shared.persistence.domain.hierarchical.TestRootHierarchical !!!
 [<AR> TestRootHierarchical <<AggregateRoot>> |
 \# +- id:<ID> TestRootHierarchicalId
-o +- child:TestRootHierarchical
+o +- child:<AR> TestRootHierarchical
 o +- name:String
 o +- parentId:<IDREF> TestRootHierarchicalId
 |
@@ -748,9 +748,9 @@ o +- testRootId:<IDREF> TestRootOneToOneFollowingLeadingId
 // !!! tests.shared.persistence.domain.hierarchicalBackRef.TestRootHierarchicalBackref !!!
 [<AR> TestRootHierarchicalBackref <<AggregateRoot>> |
 \# +- id:<ID> TestRootHierarchicalBackrefId
-o +- child:TestRootHierarchicalBackref
+o +- child:<AR> TestRootHierarchicalBackref
 o +- name:String
-o +- parent:TestRootHierarchicalBackref
+o +- parent:<AR> TestRootHierarchicalBackref
 |
 ]
 ]
@@ -817,7 +817,7 @@ o +- name:String
 [<E> TestEntityManyToManyA <<Entity>> |
 \# +- id:<ID> TestEntityManyToManyAId
 o +- name:String
-o +- testRootManyToMany:TestRootManyToMany
+o +- testRootManyToMany:<AR> TestRootManyToMany
 |
 ]
 // !!! tests.shared.persistence.domain.manyToManyWithJoinEntity.TestEntityManyToManyJoin !!!
@@ -851,23 +851,8 @@ o +- optionalText:Optional<String\[0,10\]>
 + String{notBlank} textSetzenReturnVal(String)
 ]
 ]
-[<AF> TestRoot <<Aggregate>>]  <-[<label> TestEntity1.testRootId] - [<AF> TestRoot <<Aggregate>>]
-[<AF> TestRoot <<Aggregate>>]  -[<label> TestEntity2.testRootId] -> [<AF> TestRoot <<Aggregate>>]
-[<AF> TestRoot <<Aggregate>>]  <-[<label> TestEntity3.testRootId] - [<AF> TestRoot <<Aggregate>>]
-[<AF> TestRoot <<Aggregate>>]  -[<label> TestEntity5.testRootId] -> [<AF> TestRoot <<Aggregate>>]
-[<AF> AnotherConfiguration <<Aggregate>>]  <-[<label> TangibleConfigurationTableEntry.anotherConfigurationId] - [<AF> AnotherConfiguration <<Aggregate>>]
-[<AF> AutoMappedVoAggregateRoot <<Aggregate>>]  <-[<label> AutoMappedVoEntity.rootId] - [<AF> AutoMappedVoAggregateRoot <<Aggregate>>]
-[<AF> TreeRoot <<Aggregate>>]  <-[<label> TreeNode.rootId] - [<AF> TreeRoot <<Aggregate>>]
-[<AF> Configuration <<Aggregate>>]  <-[<label> GlobalConfigurationTableEntry.configurationId] - [<AF> Configuration <<Aggregate>>]
-[<AF> TestRootOneToMany <<Aggregate>>]  <-[<label> TestEntityOneToMany.testRootId] - [<AF> TestRootOneToMany <<Aggregate>>]
-[<AF> TestRootOneToOneFollowing <<Aggregate>>]  <-[<label> TestEntityOneToOneFollowing.testRootId] - [<AF> TestRootOneToOneFollowing <<Aggregate>>]
-[<AF> VoAggregateRoot <<Aggregate>>]  <-[<label> VoEntity.rootId] - [<AF> VoAggregateRoot <<Aggregate>>]
-[<AF> TestRootHierarchical <<Aggregate>>]  <-[<label> TestRootHierarchical.parentId] - [<AF> TestRootHierarchical <<Aggregate>>]
 [<AF> OptionalAggregate <<Aggregate>>]  -[<label> OptionalAggregate.optionalRefId] -> [<AF> RefAgg <<Aggregate>>]
 [<AF> OptionalAggregate <<Aggregate>>]  -[<label> RefValueObject.optionalRef] -> [<AF> RefAgg <<Aggregate>>]
-[<AF> TestRootOneToOneFollowingLeading <<Aggregate>>]  <-[<label> TestEntityAOneToOneFollowingLeading.testRootId] - [<AF> TestRootOneToOneFollowingLeading <<Aggregate>>]
-[<AF> TestRootOneToOneFollowingLeading <<Aggregate>>]  -[<label> TestEntityBOneToOneFollowingLeading.testRootId] -> [<AF> TestRootOneToOneFollowingLeading <<Aggregate>>]
-[<AF> VoAggregateNested <<Aggregate>>]  <-[<label> NestedId.idRef] - [<AF> VoAggregateNested <<Aggregate>>]
 // !!! tests.shared.complete.onlinehandel.bestellung.BestellungRepository !!!
 [<R> BestellungRepository <<Repository>> |
 + BestellungIdBv3 create(\# BestellungBv3)

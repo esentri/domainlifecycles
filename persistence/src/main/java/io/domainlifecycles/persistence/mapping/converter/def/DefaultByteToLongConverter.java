@@ -35,6 +35,11 @@ import io.domainlifecycles.persistence.mapping.converter.TypeConverter;
  */
 public class DefaultByteToLongConverter extends TypeConverter<Byte, Long> {
 
+    /**
+     * Constructs a DefaultByteToLongConverter, which is a TypeConverter that defines
+     * conversion behavior from a Byte to a Long. This ensures type-safe conversions
+     * between the specified types.
+     */
     public DefaultByteToLongConverter() {
         super(Byte.class, Long.class);
     }

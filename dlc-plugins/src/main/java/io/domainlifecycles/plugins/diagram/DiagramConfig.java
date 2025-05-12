@@ -650,7 +650,14 @@ public class DiagramConfig {
     }
 
 
-
+    /**
+     * Maps various configuration styles, filters, and properties into a {@link DomainDiagramConfig} object
+     * by utilizing a builder pattern. This method processes multiple optional style configurations,
+     * filtering options, and display preferences to generate a comprehensive domain diagram configuration.
+     *
+     * @return a {@link DomainDiagramConfig} instance containing the mapped configuration based on
+     *         the provided styles and settings.
+     */
     public DomainDiagramConfig map() {
         DomainDiagramConfigBuilder builder = DomainDiagramConfig.builder();
 

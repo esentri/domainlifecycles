@@ -38,6 +38,11 @@ import java.time.ZonedDateTime;
  */
 public class DefaultZonedDateTimeToOffsetDateTimeConverter extends TypeConverter<ZonedDateTime, OffsetDateTime> {
 
+    /**
+     * Constructs a DefaultZonedDateTimeToOffsetDateTimeConverter instance.
+     * This converter facilitates the conversion of objects from the ZonedDateTime type
+     * to the OffsetDateTime type.
+     */
     public DefaultZonedDateTimeToOffsetDateTimeConverter() {
         super(ZonedDateTime.class, OffsetDateTime.class);
     }

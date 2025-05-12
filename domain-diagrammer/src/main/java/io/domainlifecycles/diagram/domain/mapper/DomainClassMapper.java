@@ -219,15 +219,17 @@ public class DomainClassMapper {
                     DomainType.ENTITY,
                     DomainType.VALUE_OBJECT
                 ).contains(domainTypeMirror.getDomainType())) {
-                    if (DomainType.VALUE_OBJECT.equals(domainTypeMirror.getDomainType())) {
-                        var voMirror = (ValueObjectMirror) domainTypeMirror;
-                        if (!voMirror.isSingledValued()) {
+                    if (!domainDiagramConfig.getClassesBlacklist().contains(domainTypeMirror.getTypeName())) {
+                        if (DomainType.VALUE_OBJECT.equals(domainTypeMirror.getDomainType())) {
+                            var voMirror = (ValueObjectMirror) domainTypeMirror;
+                            if (!voMirror.isSingledValued()) {
+                                aggregateClasses.add(mapToNomnomlClass(domainTypeMirror, domainDiagramConfig.isShowFields(),
+                                    domainDiagramConfig.isShowMethods()));
+                            }
+                        } else {
                             aggregateClasses.add(mapToNomnomlClass(domainTypeMirror, domainDiagramConfig.isShowFields(),
                                 domainDiagramConfig.isShowMethods()));
                         }
-                    } else {
-                        aggregateClasses.add(mapToNomnomlClass(domainTypeMirror, domainDiagramConfig.isShowFields(),
-                            domainDiagramConfig.isShowMethods()));
                     }
                 }
             }
@@ -270,7 +272,7 @@ public class DomainClassMapper {
                 .filter(p -> !p.isStatic())
                 .filter(p -> !p.getName().equals(inheritedIdentityNameFinal))
                 .filter(p -> !domainDiagramConfig.getFieldBlacklist().contains(p.getName()))
-                .filter(p -> DomainMapperUtils.showPropertyInline(p, domainTypeMirror))
+                .filter(p -> DomainMapperUtils.showPropertyInline(p, domainTypeMirror, domainDiagramConfig))
                 .filter(p -> {
                     if (!domainDiagramConfig.isShowInheritedMembersInClasses()) {
                         return p.getDeclaredByTypeName().equals(domainTypeMirror.getTypeName());
@@ -408,6 +410,10 @@ public class DomainClassMapper {
                     return Optional.of("<ENUM>");
                 } else if (fieldMirror.getType().getDomainType().equals(DomainType.VALUE_OBJECT)) {
                     return Optional.of("<VO>");
+                }  else if (fieldMirror.getType().getDomainType().equals(DomainType.ENTITY)) {
+                    return Optional.of("<ENTITY>");
+                } else if (fieldMirror.getType().getDomainType().equals(DomainType.AGGREGATE_ROOT)) {
+                    return Optional.of("<AR>");
                 } else if (fieldMirror.getType().getDomainType().equals(DomainType.IDENTITY)) {
                     return Optional.of("<IDREF>");
                 }

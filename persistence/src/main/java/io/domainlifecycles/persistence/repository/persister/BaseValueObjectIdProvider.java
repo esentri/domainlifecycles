@@ -79,14 +79,37 @@ public abstract class BaseValueObjectIdProvider<BASE_RECORD_TYPE, CONTAINER_TECH
         provideNewTechIdForValueObjectRecord(newVoRecord);
     }
 
-
+    /**
+     * Sets the container technical ID in the specified new value object record.
+     * The method ensures that the container's unique technical identifier is
+     * associated with the new record.
+     *
+     * @param newVoRecord     the new value object record into which the container ID should be set
+     * @param containerTechId the technical ID of the container to be set in the value object record
+     */
     protected abstract void setContainerIdInNewVoRecord(BASE_RECORD_TYPE newVoRecord,
                                                         CONTAINER_TECH_ID_TYPE containerTechId);
 
     //The implementor must know that the given record instance does not contain the id
     //It must be selected by using equals on all values --> it a value object
     // the technical Id should be completely hidden from the domain
+    /**
+     * Retrieves the existing technical ID of the value object associated with the given container record.
+     * This method queries for and returns a unique identifier that represents the container, ensuring
+     * the correct mapping of the value object within the persistence layer.
+     *
+     * @param voContainerRecord the container record of the value object for which the technical ID
+     *                          is to be retrieved
+     * @return the technical ID of the container associated with the specified value object
+     */
     protected abstract CONTAINER_TECH_ID_TYPE selectExistingTechIdOfValueObject(BASE_RECORD_TYPE voContainerRecord);
 
+    /**
+     * Provides a new technical ID for the specified value object record.
+     * The method must ensure that the provided record receives a unique,
+     * internal identifier to distinguish it within the persistence layer.
+     *
+     * @param newVoRecord the value object record for which a new technical ID should be generated
+     */
     protected abstract void provideNewTechIdForValueObjectRecord(BASE_RECORD_TYPE newVoRecord);
 }

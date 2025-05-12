@@ -71,6 +71,14 @@ public class NomnomlFrame implements DiagramElement {
         this.innerElements = Objects.requireNonNull(innerElements);
     }
 
+    /**
+     * Creates a new instance of the NomnomlFrameBuilder. The builder provides a
+     * convenient way to construct a fully configured instance of NomnomlFrame
+     * with specified properties such as name, comment, type, styleClassifier,
+     * and innerElements.
+     *
+     * @return a new instance of NomnomlFrameBuilder
+     */
     public static NomnomlFrameBuilder builder() {
         return new NomnomlFrameBuilder();
     }
@@ -96,27 +104,59 @@ public class NomnomlFrame implements DiagramElement {
         return builder.toString();
     }
 
-
+    /**
+     * Retrieves the name associated with this frame.
+     *
+     * @return the name of the frame
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * Retrieves the optional comment associated with this frame.
+     *
+     * @return an Optional containing the comment if present, or an empty Optional if no comment is set
+     */
     public Optional<String> getComment() {
         return this.comment;
     }
 
+    /**
+     * Retrieves the type associated with this frame.
+     *
+     * @return the type of the frame
+     */
     public String getType() {
         return this.type;
     }
 
+    /**
+     * Retrieves the style classifier associated with this frame.
+     *
+     * @return the style classifier as a string
+     */
     public String getStyleClassifier() {
         return this.styleClassifier;
     }
 
+    /**
+     * Retrieves the list of inner elements contained within this frame.
+     *
+     * @return a list of DiagramElement instances representing the inner elements of the frame
+     */
     public List<DiagramElement> getInnerElements() {
         return this.innerElements;
     }
 
+    /**
+     * Compares this object with the specified object for equality. Returns true
+     * if the specified object is also an instance of NomnomlFrame, and all
+     * relevant fields match between the two objects.
+     *
+     * @param o the object to be compared for equality with this instance
+     * @return true if the specified object is equal to this instance; false otherwise
+     */
     public boolean equals(final Object o) {
         if (o == this) return true;
         if (!(o instanceof NomnomlFrame)) return false;
@@ -142,10 +182,26 @@ public class NomnomlFrame implements DiagramElement {
         return true;
     }
 
+    /**
+     * Determines whether the specified object can be considered equal to this instance
+     * based on type compatibility. This method is used in the equality check logic
+     * to ensure that only objects of the same type are considered for detailed comparison.
+     *
+     * @param other the object to check for type compatibility
+     * @return true if the specified object is an instance of NomnomlFrame; false otherwise
+     */
     protected boolean canEqual(final Object other) {
         return other instanceof NomnomlFrame;
     }
 
+    /**
+     * Computes the hash code for this instance. The hash code is calculated based on
+     * the values of the frame's attributes including name, comment, type, styleClassifier,
+     * and innerElements. The hash code provides a unique numerical representation of
+     * the object's state, which is used in hash-based collections like HashMap.
+     *
+     * @return an integer value representing the hash code of this instance
+     */
     public int hashCode() {
         final int PRIME = 59;
         int result = 1;
@@ -162,6 +218,16 @@ public class NomnomlFrame implements DiagramElement {
         return result;
     }
 
+    /**
+     * The NomnomlFrameBuilder class is a builder utility for creating instances of the
+     * NomnomlFrame class. This builder follows the builder design pattern, allowing for
+     * step-by-step configuration of a NomnomlFrame object with a fluent API.
+     *
+     * The builder provides methods to set the properties of the NomnomlFrame, including
+     * name, comment, type, styleClassifier, and innerElements. Once all desired
+     * properties have been configured, the {@code build()} method can be called to
+     * create a fully configured instance of NomnomlFrame.
+     */
     public static class NomnomlFrameBuilder {
         private String name;
         private String comment;
@@ -172,35 +238,82 @@ public class NomnomlFrame implements DiagramElement {
         NomnomlFrameBuilder() {
         }
 
+        /**
+         * Sets the name for the NomnomlFrame being built.
+         * This value will be assigned to the name property of the resulting NomnomlFrame instance.
+         *
+         * @param name the name of the frame
+         * @return the current instance of NomnomlFrameBuilder, allowing for method chaining
+         */
         public NomnomlFrameBuilder name(String name) {
             this.name = name;
             return this;
         }
 
+        /**
+         * Sets the comment for the NomnomlFrame being built.
+         * This value will be assigned to the comment property of the resulting NomnomlFrame instance.
+         *
+         * @param comment the comment of the frame
+         * @return the current instance of NomnomlFrameBuilder, allowing for method chaining
+         */
         public NomnomlFrameBuilder comment(String comment) {
             this.comment = comment;
             return this;
         }
 
+        /**
+         * Sets the type for the NomnomlFrame being built.
+         * This value will be assigned to the type property of the resulting NomnomlFrame instance.
+         *
+         * @param type the type of the frame
+         * @return the current instance of NomnomlFrameBuilder, allowing for method chaining
+         */
         public NomnomlFrameBuilder type(String type) {
             this.type = type;
             return this;
         }
 
+        /**
+         * Sets the style classifier for the NomnomlFrame being built.
+         * This value will be assigned to the styleClassifier property of the resulting NomnomlFrame instance.
+         *
+         * @param styleClassifier the style classifier to apply to the frame
+         * @return the current instance of NomnomlFrameBuilder, allowing for method chaining
+         */
         public NomnomlFrameBuilder styleClassifier(String styleClassifier) {
             this.styleClassifier = styleClassifier;
             return this;
         }
 
+        /**
+         * Sets the inner elements for the NomnomlFrame being built.
+         * This value will be assigned to the innerElements property of the resulting NomnomlFrame instance.
+         *
+         * @param innerElements the list of inner elements to include in the frame
+         * @return the current instance of NomnomlFrameBuilder, allowing for method chaining
+         */
         public NomnomlFrameBuilder innerElements(List<DiagramElement> innerElements) {
             this.innerElements = innerElements;
             return this;
         }
 
+        /**
+         * Builds and returns a new instance of NomnomlFrame based on the properties set
+         * in the NomnomlFrameBuilder instance.
+         *
+         * @return a new NomnomlFrame instance configured with the specified properties
+         */
         public NomnomlFrame build() {
             return new NomnomlFrame(this.name, this.comment, this.type, this.styleClassifier, this.innerElements);
         }
 
+        /**
+         * Provides a string representation of the NomnomlFrameBuilder object, including
+         * its properties such as name, comment, type, styleClassifier, and innerElements.
+         *
+         * @return a string describing the current state of the NomnomlFrameBuilder instance
+         */
         public String toString() {
             return "NomnomlFrame.NomnomlFrameBuilder(name=" + this.name + ", comment=" + this.comment + ", type=" + this.type + ", styleClassifier=" + this.styleClassifier + ", innerElements=" + this.innerElements + ")";
         }

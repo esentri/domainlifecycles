@@ -37,6 +37,12 @@ import java.math.BigInteger;
  */
 public class DefaultLongToBigIntegerConverter extends TypeConverter<Long, BigInteger> {
 
+    /**
+     * Constructs a DefaultLongToBigIntegerConverter, which is a TypeConverter
+     * specifically designed to convert values between Long and BigInteger types.
+     * This ensures type-safe conversions and facilitates handling of these
+     * numeric types in a controlled manner.
+     */
     public DefaultLongToBigIntegerConverter() {
         super(Long.class, BigInteger.class);
     }

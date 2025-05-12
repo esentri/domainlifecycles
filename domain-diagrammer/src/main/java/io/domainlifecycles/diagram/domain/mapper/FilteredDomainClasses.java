@@ -127,10 +127,31 @@ public class FilteredDomainClasses {
         );
     }
 
+    /**
+     * Checks whether the given {@code AggregateRootMirror} exists within the current collection
+     * of aggregate roots.
+     *
+     * The method iterates through the collection of aggregate roots and determines if any match
+     * the specified {@code AggregateRootMirror} based on equality.
+     *
+     * @param aggregateRootMirror the {@code AggregateRootMirror} to check for existence in the collection
+     * @return {@code true} if the specified {@code AggregateRootMirror} is present in the collection;
+     *         {@code false} otherwise
+     */
     public boolean contains(AggregateRootMirror aggregateRootMirror){
         return this.aggregateRoots.stream().anyMatch(a -> a.equals(aggregateRootMirror));
     }
 
+    /**
+     * Checks whether the current collection of read models contains the specified {@code ReadModelMirror}.
+     *
+     * This method iterates through the list of read models and determines if any match the given
+     * {@code ReadModelMirror} based on equality.
+     *
+     * @param readModelMirror the {@code ReadModelMirror} to check for existence in the collection
+     * @return {@code true} if the specified {@code ReadModelMirror} is present in the collection;
+     *         {@code false} otherwise
+     */
     public boolean contains(ReadModelMirror readModelMirror){
         return this.readModels.stream().anyMatch(r -> r.equals(readModelMirror));
     }

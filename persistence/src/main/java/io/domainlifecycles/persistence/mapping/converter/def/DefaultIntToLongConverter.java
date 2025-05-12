@@ -35,6 +35,11 @@ import io.domainlifecycles.persistence.mapping.converter.TypeConverter;
  */
 public class DefaultIntToLongConverter extends TypeConverter<Integer, Long> {
 
+    /**
+     * Constructs a DefaultIntToLongConverter, which is a TypeConverter that defines
+     * conversion behavior from an Integer to a Long. This ensures type-safe conversions
+     * between the specified types.
+     */
     public DefaultIntToLongConverter() {
         super(Integer.class, Long.class);
     }

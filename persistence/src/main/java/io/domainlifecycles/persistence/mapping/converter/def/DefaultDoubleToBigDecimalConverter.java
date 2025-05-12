@@ -37,7 +37,11 @@ import java.math.BigDecimal;
  */
 public class DefaultDoubleToBigDecimalConverter extends TypeConverter<Double, BigDecimal> {
 
-
+    /**
+     * Constructs a DefaultDoubleToBigDecimalConverter, which is a TypeConverter that defines
+     * conversion behavior from a Double to a BigDecimal. This ensures type-safe conversions
+     * between the specified types.
+     */
     public DefaultDoubleToBigDecimalConverter() {
         super(Double.class, BigDecimal.class);
     }

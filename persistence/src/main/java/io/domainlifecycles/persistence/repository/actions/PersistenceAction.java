@@ -57,7 +57,26 @@ public class PersistenceAction<BASE_RECORD_TYPE> {
     /**
      * The type of the action that has to be applied to the database.
      */
-    public enum ActionType {INSERT, UPDATE, DELETE, DELETE_UPDATE}
+    public enum ActionType {
+        /**
+         * Represents an action type that indicates an insertion operation to the database.
+         */
+        INSERT,
+        /**
+         * Represents an action type that indicates an update operation to the database.
+         */
+        UPDATE,
+        /**
+         * Represents an action type that indicates a delete operation to the database.
+         */
+        DELETE,
+        /**
+         * Represents an action type that indicates a combined delete and update operation to the database.
+         * Sometimes before being able to delete a record. A
+         * reference to record being deleted must be set to "null". This is necessary to
+         * comply with foreign key constraints and to keep all the changes consistent.
+         */
+        DELETE_UPDATE}
 
     /**
      * The {@link DomainObjectInstanceAccessModel} on which a change was detected.
