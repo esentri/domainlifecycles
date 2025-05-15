@@ -26,7 +26,6 @@
 
 package io.domainlifecycles.diagram.domain.mapper;
 
-
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.diagram.nomnoml.NomnomlClass;
 import io.domainlifecycles.diagram.nomnoml.NomnomlField;
@@ -223,12 +222,14 @@ public class DomainClassMapper {
                         if (DomainType.VALUE_OBJECT.equals(domainTypeMirror.getDomainType())) {
                             var voMirror = (ValueObjectMirror) domainTypeMirror;
                             if (!voMirror.isSingledValued()) {
-                                aggregateClasses.add(mapToNomnomlClass(domainTypeMirror, domainDiagramConfig.isShowFields(),
-                                    domainDiagramConfig.isShowMethods()));
+                                aggregateClasses.add(mapToNomnomlClass(domainTypeMirror,
+                                    domainDiagramConfig.isShowAggregateFields() && domainDiagramConfig.isShowFields(),
+                                    domainDiagramConfig.isShowAggregateMethods() && domainDiagramConfig.isShowMethods()));
                             }
                         } else {
-                            aggregateClasses.add(mapToNomnomlClass(domainTypeMirror, domainDiagramConfig.isShowFields(),
-                                domainDiagramConfig.isShowMethods()));
+                            aggregateClasses.add(mapToNomnomlClass(domainTypeMirror,
+                                domainDiagramConfig.isShowAggregateFields() && domainDiagramConfig.isShowFields(),
+                                domainDiagramConfig.isShowAggregateMethods() && domainDiagramConfig.isShowMethods()));
                         }
                     }
                 }

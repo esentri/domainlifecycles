@@ -276,6 +276,27 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
     public abstract Property<Boolean> getShowOnlyPublicMethods();
 
     /**
+     * Indicates whether aggregates should be shown in the diagram.
+     *
+     * @return true if aggregates should be shown, false otherwise
+     */
+    public abstract Property<Boolean> getShowAggregates();
+
+    /**
+     * Indicates whether fields of aggregates should be shown in the diagram.
+     *
+     * @return true if fields of aggregates should be shown, false otherwise
+     */
+    public abstract Property<Boolean> getShowAggregateFields();
+
+    /**
+     * Indicates whether methods of aggregates should be shown in the diagram.
+     *
+     * @return true if methods of aggregates should be shown, false otherwise
+     */
+    public abstract Property<Boolean> getShowAggregateMethods();
+
+    /**
      * Indicates whether domain events should be shown in the diagram.
      *
      * @return true if domain events should be shown, false otherwise

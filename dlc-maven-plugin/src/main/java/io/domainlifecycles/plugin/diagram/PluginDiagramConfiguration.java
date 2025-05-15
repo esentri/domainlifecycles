@@ -151,6 +151,15 @@ public class PluginDiagramConfiguration {
      @Parameter(property = "showOnlyPublicMethods", required = false)
      private Boolean showOnlyPublicMethods;
 
+    @Parameter(property = "showAggregates", required = false)
+    private Boolean showAggregates;
+
+    @Parameter(property = "showAggregateFields", required = false)
+    private Boolean showAggregateFields;
+
+    @Parameter(property = "showAggregateMethods", required = false)
+    private Boolean showAggregateMethods;
+
      @Parameter(property = "showDomainEvents", required = false)
      private Boolean showDomainEvents;
 
@@ -538,6 +547,33 @@ public class PluginDiagramConfiguration {
      */
     public Boolean getShowOnlyPublicMethods() {
         return showOnlyPublicMethods;
+    }
+
+    /**
+     * Retrieves the current state of whether aggregates should be displayed.
+     *
+     * @return a Boolean value indicating if aggregates are displayed (true) or not (false).
+     */
+    public Boolean getShowAggregates() {
+        return showAggregates;
+    }
+
+    /**
+     * Retrieves the current state of the showAggregateFields property.
+     *
+     * @return a Boolean value indicating whether aggregate fields should be shown.
+     */
+    public Boolean getShowAggregateFields() {
+        return showAggregateFields;
+    }
+
+    /**
+     * Retrieves the status indicating whether aggregate methods should be displayed.
+     *
+     * @return a Boolean value; true if aggregate methods should be shown, false otherwise.
+     */
+    public Boolean getShowAggregateMethods() {
+        return showAggregateMethods;
     }
 
     /**

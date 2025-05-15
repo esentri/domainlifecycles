@@ -48,27 +48,27 @@ public class DomainDiagramConfig implements DiagramConfig {
      */
     private String aggregateFrameStyle = "visual=frame align=left";
     /**
-     * Style declaration for Entities  (see Nomnoml style options)
+     * Style declaration for Entities (see Nomnoml style options)
      */
     private String entityStyle = "fill=#88AAFF bold";
     /**
-     * Style declaration for ValueObjects  (see Nomnoml style options)
+     * Style declaration for ValueObjects (see Nomnoml style options)
      */
     private String valueObjectStyle = "fill=#FFFFCC bold";
     /**
-     * Style declaration for Enums  (see Nomnoml style options)
+     * Style declaration for Enums (see Nomnoml style options)
      */
     private String enumStyle = "fill=#FFFFCC bold";
     /**
-     * Style declaration for Identities  (see Nomnoml style options)
+     * Style declaration for Identities (see Nomnoml style options)
      */
     private String identityStyle = "fill=#FFFFCC bold";
     /**
-     * Style declaration for DomainEvents  (see Nomnoml style options)
+     * Style declaration for DomainEvents (see Nomnoml style options)
      */
     private String domainEventStyle = "fill=#CCFFFF bold";
     /**
-     * Style declaration for DomainCommands  (see Nomnoml style options)
+     * Style declaration for DomainCommands (see Nomnoml style options)
      */
     private String domainCommandStyle = "fill=#FFB266 bold";
     /**
@@ -76,31 +76,31 @@ public class DomainDiagramConfig implements DiagramConfig {
      */
     private String applicationServiceStyle = "bold";
     /**
-     * Style declaration for DomainServices  (see Nomnoml style options)
+     * Style declaration for DomainServices (see Nomnoml style options)
      */
     private String domainServiceStyle = "fill=#E0E0E0 bold";
     /**
-     * Style declaration for Repositories  (see Nomnoml style options)
+     * Style declaration for Repositories (see Nomnoml style options)
      */
     private String repositoryStyle = "fill=#C0C0C0 bold";
     /**
-     * Style declaration for ReadModels  (see Nomnoml style options)
+     * Style declaration for ReadModels (see Nomnoml style options)
      */
     private String readModelStyle = "fill=#FFCCE5 bold";
     /**
-     * Style declaration for QueryHandlers  (see Nomnoml style options)
+     * Style declaration for QueryHandlers (see Nomnoml style options)
      */
     private String queryHandlerStyle = "fill=#C0C0C0 bold";
     /**
-     * Style declaration for OutboundServices  (see Nomnoml style options)
+     * Style declaration for OutboundServices (see Nomnoml style options)
      */
     private String outboundServiceStyle = "fill=#C0C0C0 bold";
     /**
-     * Style declaration for unspecified ServiceKinds  (see Nomnoml style options)
+     * Style declaration for unspecified ServiceKinds (see Nomnoml style options)
      */
     private String unspecifiedServiceKindStyle = "fill=#C0C0C0 bold";
     /**
-     * General font style declaration  (see Nomnoml style options)
+     * General font style declaration (see Nomnoml style options)
      */
     private String font = "Helvetica";
     /**
@@ -113,7 +113,7 @@ public class DomainDiagramConfig implements DiagramConfig {
      */
     private String ranker = "longest-path";
     /**
-     * General acycling style declaration  (see Nomnoml style options, only 'greedy' supported)
+     * General acycling style declaration (see Nomnoml style options, only 'greedy' supported)
      */
     private String acycler = "greedy";
     /**
@@ -144,6 +144,18 @@ public class DomainDiagramConfig implements DiagramConfig {
      * If true, generally only public methods are included
      */
     private boolean showOnlyPublicMethods = true;
+    /**
+     * If true, Aggregates classes (nad contained Entities and ValueObjects) are included
+     */
+    private boolean showAggregates = true;
+    /**
+     * If true, fields of Aggregates are included
+     */
+    private boolean showAggregateFields = true;
+    /**
+     * If true, methods of Aggregates are included
+     */
+    private boolean showAggregateMethods = true;
     /**
      * If true, DomainEvent classes are included
      */
@@ -265,12 +277,12 @@ public class DomainDiagramConfig implements DiagramConfig {
     private boolean callApplicationServiceDriver = true;
 
     /**
-     * Fields with named like elements of this black list are excluded
+     * Fields with named like elements of this blacklist are excluded
      */
     private List<String> fieldBlacklist = List.of("concurrencyVersion");
 
     /**
-     * Methods with named like elements of this black list are excluded
+     * Methods with named like elements of this blacklist are excluded
      */
     private List<String> methodBlacklist = List.of(
         "builder",
@@ -306,7 +318,7 @@ public class DomainDiagramConfig implements DiagramConfig {
      *   <li>{@code <ENUM>}: Indicates that the field is an enumeration, a distinct type that consists of a
      *       set of named constants.</li>
      *   <li>{@code <IDREF>}: Denotes an identifier reference field that holds a reference to another AggregateRoot
-     *   .</li>
+     *   </li>
      *   <li>{@code <VO>}: Signifies a value object.</li>
      * </ul>
      */
@@ -363,6 +375,9 @@ public class DomainDiagramConfig implements DiagramConfig {
                         boolean showAssertions,
                         boolean showMethods,
                         boolean showOnlyPublicMethods,
+                        boolean showAggregates,
+                        boolean showAggregateFields,
+                        boolean showAggregateMethods,
                         boolean showDomainEvents,
                         boolean showDomainEventFields,
                         boolean showDomainEventMethods,
@@ -429,6 +444,9 @@ public class DomainDiagramConfig implements DiagramConfig {
         this.showAssertions = showAssertions;
         this.showMethods = showMethods;
         this.showOnlyPublicMethods = showOnlyPublicMethods;
+        this.showAggregates= showAggregates;
+        this.showAggregateFields = showAggregateFields;
+        this.showAggregateMethods = showAggregateMethods;
         this.showDomainEvents = showDomainEvents;
         this.showDomainEventFields = showDomainEventFields;
         this.showDomainEventMethods = showDomainEventMethods;
@@ -571,6 +589,18 @@ public class DomainDiagramConfig implements DiagramConfig {
     }
 
     private static boolean $default$showOnlyPublicMethods() {
+        return true;
+    }
+
+    private static boolean $default$showAggregates() {
+        return true;
+    }
+
+    private static boolean $default$showAggregateFields() {
+        return true;
+    }
+
+    private static boolean $default$showAggregateMethods() {
         return true;
     }
 
@@ -879,7 +909,7 @@ public class DomainDiagramConfig implements DiagramConfig {
     /**
      * Retrieves the style associated with an unspecified service kind.
      *
-     * @return a String representing the style for unspecified service kind.
+     * @return a String representing the style for an unspecified service kind.
      */
     public String getUnspecifiedServiceKindStyle() {
         return unspecifiedServiceKindStyle;
@@ -982,6 +1012,33 @@ public class DomainDiagramConfig implements DiagramConfig {
      */
     public boolean isShowOnlyPublicMethods() {
         return this.showOnlyPublicMethods;
+    }
+
+    /**
+     * Determines whether aggregates should be shown.
+     *
+     * @return true if aggregates are to be displayed, false otherwise.
+     */
+    public boolean isShowAggregates() {
+        return this.showAggregates;
+    }
+
+    /**
+     * Indicates whether the aggregate fields should be displayed.
+     *
+     * @return true if aggregate fields are to be shown, false otherwise
+     */
+    public boolean isShowAggregateFields() {
+        return this.showAggregateFields;
+    }
+
+    /**
+     * Determines whether aggregate methods should be displayed.
+     *
+     * @return true if aggregate methods are set to be shown, false otherwise
+     */
+    public boolean isShowAggregateMethods() {
+        return this.showAggregateMethods;
     }
 
     /**
@@ -1340,71 +1397,74 @@ public class DomainDiagramConfig implements DiagramConfig {
      *
      * @return a {@link DomainDiagramConfigBuilder} pre-populated with the settings of the current DomainDiagramConfig object.
      */
-    public DomainDiagramConfigBuilder toBuilder() {
-        return new DomainDiagramConfigBuilder()
-            .withAggregateRootStyle(this.aggregateRootStyle)
-            .withAggregateFrameStyle(this.aggregateFrameStyle)
-            .withEntityStyle(this.entityStyle)
-            .withValueObjectStyle(this.valueObjectStyle)
-            .withEnumStyle(this.enumStyle)
-            .withIdentityStyle(this.identityStyle)
-            .withDomainEventStyle(this.domainEventStyle)
-            .withDomainCommandStyle(this.domainCommandStyle)
-            .withApplicationServiceStyle(this.applicationServiceStyle)
-            .withDomainServiceStyle(this.domainServiceStyle)
-            .withRepositoryStyle(this.repositoryStyle)
-            .withReadModelStyle(this.readModelStyle)
-            .withQueryHandlerStyle(this.queryHandlerStyle)
-            .withOutboundServiceStyle(this.outboundServiceStyle)
-            .withUnspecifiedServiceKindStyle(this.unspecifiedServiceKindStyle)
-            .withFont(this.font).withDirection(this.direction)
-            .withRanker(this.ranker).withAcycler(this.acycler)
-            .withBackgroundColor(this.backgroundColor)
-            .withClassesBlacklist(this.classesBlacklist)
-            .withShowFields(this.showFields)
-            .withShowFullQualifiedClassNames(this.showFullQualifiedClassNames)
-            .withShowAssertions(this.showAssertions)
-            .withShowMethods(this.showMethods)
-            .withShowOnlyPublicMethods(this.showOnlyPublicMethods)
-            .withShowDomainEvents(this.showDomainEvents)
-            .withShowDomainEventFields(this.showDomainEventFields)
-            .withShowDomainEventMethods(this.showDomainEventMethods)
-            .withShowDomainCommands(this.showDomainCommands)
-            .withShowOnlyTopLevelDomainCommandRelations(this.showOnlyTopLevelDomainCommandRelations)
-            .withShowDomainCommandFields(this.showDomainCommandFields)
-            .withShowDomainCommandMethods(this.showDomainCommandMethods)
-            .withShowDomainServices(this.showDomainServices)
-            .withShowDomainServiceFields(this.showDomainServiceFields)
-            .withShowDomainServiceMethods(this.showDomainServiceMethods)
-            .withShowApplicationServices(this.showApplicationServices)
-            .withShowApplicationServiceFields(this.showApplicationServiceFields)
-            .withShowApplicationServiceMethods(this.showApplicationServiceMethods)
-            .withShowRepositories(this.showRepositories)
-            .withShowRepositoryFields(this.showRepositoryFields)
-            .withShowRepositoryMethods(this.showRepositoryMethods)
-            .withShowReadModels(this.showReadModels)
-            .withShowReadModelFields(this.showReadModelFields)
-            .withShowReadModelMethods(this.showReadModelMethods)
-            .withShowQueryHandlers(this.showQueryHandlers)
-            .withShowQueryHandlerFields(this.showQueryHandlerFields)
-            .withShowQueryHandlerMethods(this.showQueryHandlerMethods)
-            .withShowOutboundServices(this.showOutboundServices)
-            .withShowOutboundServiceFields(this.showOutboundServiceFields)
-            .withShowOutboundServiceMethods(this.showOutboundServiceMethods)
-            .withShowUnspecifiedServiceKinds(this.showUnspecifiedServiceKinds)
-            .withShowUnspecifiedServiceKindFields(this.showUnspecifiedServiceKindFields)
-            .withShowUnspecifiedServiceKindMethods(this.showUnspecifiedServiceKindMethods)
-            .withCallApplicationServiceDriver(this.callApplicationServiceDriver)
-            .withFieldBlacklist(this.fieldBlacklist)
-            .withMethodBlacklist(this.methodBlacklist)
-            .withShowInheritedMembersInClasses(this.showInheritedMembersInClasses)
-            .withShowObjectMembersInClasses(this.showObjectMembersInClasses)
-            .withMultiplicityInLabel(this.multiplicityInLabel)
-            .withFieldStereotypes(this.fieldStereotypes)
-            .withTransitiveFilterSeedDomainServiceTypeNames(this.transitiveFilterSeedDomainServiceTypeNames)
-            .withFilteredPackageNames(this.filteredPackageNames)
-            .withShowAbstractTypes(this.showAbstractTypes)
-            .withUseAbstractTypeNameForConcreteServiceKinds(this.useAbstractTypeNameForConcreteServiceKinds);
+     DomainDiagramConfigBuilder toBuilder() {
+         return new DomainDiagramConfigBuilder()
+             .withAggregateRootStyle(this.aggregateRootStyle)
+             .withAggregateFrameStyle(this.aggregateFrameStyle)
+             .withEntityStyle(this.entityStyle)
+             .withValueObjectStyle(this.valueObjectStyle)
+             .withEnumStyle(this.enumStyle)
+             .withIdentityStyle(this.identityStyle)
+             .withDomainEventStyle(this.domainEventStyle)
+             .withDomainCommandStyle(this.domainCommandStyle)
+             .withApplicationServiceStyle(this.applicationServiceStyle)
+             .withDomainServiceStyle(this.domainServiceStyle)
+             .withRepositoryStyle(this.repositoryStyle)
+             .withReadModelStyle(this.readModelStyle)
+             .withQueryHandlerStyle(this.queryHandlerStyle)
+             .withOutboundServiceStyle(this.outboundServiceStyle)
+             .withUnspecifiedServiceKindStyle(this.unspecifiedServiceKindStyle)
+             .withFont(this.font).withDirection(this.direction)
+             .withRanker(this.ranker).withAcycler(this.acycler)
+             .withBackgroundColor(this.backgroundColor)
+             .withClassesBlacklist(this.classesBlacklist)
+             .withShowFields(this.showFields)
+             .withShowFullQualifiedClassNames(this.showFullQualifiedClassNames)
+             .withShowAssertions(this.showAssertions)
+             .withShowMethods(this.showMethods)
+             .withShowOnlyPublicMethods(this.showOnlyPublicMethods)
+             .withShowAggregates(this.showAggregates)
+             .withShowAggregateFields(this.showAggregateFields)
+             .withShowAggregateMethods(this.showAggregateMethods)
+             .withShowDomainEvents(this.showDomainEvents)
+             .withShowDomainEventFields(this.showDomainEventFields)
+             .withShowDomainEventMethods(this.showDomainEventMethods)
+             .withShowDomainCommands(this.showDomainCommands)
+             .withShowOnlyTopLevelDomainCommandRelations(this.showOnlyTopLevelDomainCommandRelations)
+             .withShowDomainCommandFields(this.showDomainCommandFields)
+             .withShowDomainCommandMethods(this.showDomainCommandMethods)
+             .withShowDomainServices(this.showDomainServices)
+             .withShowDomainServiceFields(this.showDomainServiceFields)
+             .withShowDomainServiceMethods(this.showDomainServiceMethods)
+             .withShowApplicationServices(this.showApplicationServices)
+             .withShowApplicationServiceFields(this.showApplicationServiceFields)
+             .withShowApplicationServiceMethods(this.showApplicationServiceMethods)
+             .withShowRepositories(this.showRepositories)
+             .withShowRepositoryFields(this.showRepositoryFields)
+             .withShowRepositoryMethods(this.showRepositoryMethods)
+             .withShowReadModels(this.showReadModels)
+             .withShowReadModelFields(this.showReadModelFields)
+             .withShowReadModelMethods(this.showReadModelMethods)
+             .withShowQueryHandlers(this.showQueryHandlers)
+             .withShowQueryHandlerFields(this.showQueryHandlerFields)
+             .withShowQueryHandlerMethods(this.showQueryHandlerMethods)
+             .withShowOutboundServices(this.showOutboundServices)
+             .withShowOutboundServiceFields(this.showOutboundServiceFields)
+             .withShowOutboundServiceMethods(this.showOutboundServiceMethods)
+             .withShowUnspecifiedServiceKinds(this.showUnspecifiedServiceKinds)
+             .withShowUnspecifiedServiceKindFields(this.showUnspecifiedServiceKindFields)
+             .withShowUnspecifiedServiceKindMethods(this.showUnspecifiedServiceKindMethods)
+             .withCallApplicationServiceDriver(this.callApplicationServiceDriver)
+             .withFieldBlacklist(this.fieldBlacklist)
+             .withMethodBlacklist(this.methodBlacklist)
+             .withShowInheritedMembersInClasses(this.showInheritedMembersInClasses)
+             .withShowObjectMembersInClasses(this.showObjectMembersInClasses)
+             .withMultiplicityInLabel(this.multiplicityInLabel)
+             .withFieldStereotypes(this.fieldStereotypes)
+             .withTransitiveFilterSeedDomainServiceTypeNames(this.transitiveFilterSeedDomainServiceTypeNames)
+             .withFilteredPackageNames(this.filteredPackageNames)
+             .withShowAbstractTypes(this.showAbstractTypes)
+             .withUseAbstractTypeNameForConcreteServiceKinds(this.useAbstractTypeNameForConcreteServiceKinds);
     }
 
     /**
@@ -1476,6 +1536,12 @@ public class DomainDiagramConfig implements DiagramConfig {
         private boolean showDomainEventFields$set;
         private boolean showDomainEventMethods$value;
         private boolean showDomainEventMethods$set;
+        private boolean showAggregates$value;
+        private boolean showAggregates$set;
+        private boolean showAggregateFields$value;
+        private boolean showAggregateFields$set;
+        private boolean showAggregateMethods$value;
+        private boolean showAggregateMethods$set;
         private boolean showDomainCommands$value;
         private boolean showDomainCommands$set;
         private boolean showOnlyTopLevelDomainCommandRelations$value;
@@ -1861,6 +1927,42 @@ public class DomainDiagramConfig implements DiagramConfig {
         public DomainDiagramConfigBuilder withShowOnlyPublicMethods(boolean showOnlyPublicMethods) {
             this.showOnlyPublicMethods$value = showOnlyPublicMethods;
             this.showOnlyPublicMethods$set = true;
+            return this;
+        }
+
+        /**
+         * Configures whether aggregates should be displayed in the diagram.
+         *
+         * @param showAggregates a boolean value indicating whether aggregates should be shown
+         * @return the updated instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
+        public DomainDiagramConfigBuilder withShowAggregates(boolean showAggregates) {
+            this.showAggregates$value = showAggregates;
+            this.showAggregates$set = true;
+            return this;
+        }
+
+        /**
+         * Configures whether fields of aggregates should be displayed in the diagram.
+         *
+         * @param showAggregateFields a boolean value indicating whether aggregate fields should be shown
+         * @return the updated instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
+        public DomainDiagramConfigBuilder withShowAggregateFields(boolean showAggregateFields) {
+            this.showAggregateFields$value = showAggregateFields;
+            this.showAggregateFields$set = true;
+            return this;
+        }
+
+        /**
+         * Configures whether methods of aggregates should be displayed in the diagram.
+         *
+         * @param showAggregateMethods a boolean value indicating whether aggregate methods should be shown
+         * @return the updated instance of {@code DomainDiagramConfigBuilder} for method chaining
+         */
+        public DomainDiagramConfigBuilder withShowAggregateMethods(boolean showAggregateMethods) {
+            this.showAggregateMethods$value = showAggregateMethods;
+            this.showAggregateMethods$set = true;
             return this;
         }
 
@@ -2336,7 +2438,7 @@ public class DomainDiagramConfig implements DiagramConfig {
             this.useAbstractTypeNameForConcreteServiceKinds$value = useAbstractTypeNameForConcreteServiceKinds;
             this.useAbstractTypeNameForConcreteServiceKinds$set = true;
             return this;
-        };
+        }
 
         /**
          * Builds and returns a complete instance of {@code DomainDiagramConfig} using the current state
@@ -2449,6 +2551,18 @@ public class DomainDiagramConfig implements DiagramConfig {
             boolean showOnlyPublicMethods$value = this.showOnlyPublicMethods$value;
             if (!this.showOnlyPublicMethods$set) {
                 showOnlyPublicMethods$value = DomainDiagramConfig.$default$showOnlyPublicMethods();
+            }
+            boolean showAggregates$value = this.showAggregates$value;
+            if (!this.showAggregates$set) {
+                showAggregates$value = DomainDiagramConfig.$default$showAggregates();
+            }
+            boolean showAggregateFields$value = this.showAggregateFields$value;
+            if (!this.showAggregateFields$set) {
+                showAggregateFields$value = DomainDiagramConfig.$default$showAggregateFields();
+            }
+            boolean showAggregateMethods$value = this.showAggregateMethods$value;
+            if (!this.showAggregateMethods$set) {
+                showAggregateMethods$value = DomainDiagramConfig.$default$showAggregateMethods();
             }
             boolean showDomainEvents$value = this.showDomainEvents$value;
             if (!this.showDomainEvents$set) {
@@ -2603,7 +2717,7 @@ public class DomainDiagramConfig implements DiagramConfig {
                 showAbstractTypes$value = DomainDiagramConfig.$default$showAbstractTypes();
             }
             boolean useAbstractTypeNameForConcreteServiceKinds$value = this.useAbstractTypeNameForConcreteServiceKinds$value;
-            if (!this.showAbstractTypes$set) {
+            if (!this.useAbstractTypeNameForConcreteServiceKinds$set) {
                 useAbstractTypeNameForConcreteServiceKinds$value = DomainDiagramConfig.$default$useAbstractTypeNameForConcreteServiceKinds();
             }
             return new DomainDiagramConfig(
@@ -2633,6 +2747,9 @@ public class DomainDiagramConfig implements DiagramConfig {
                 showAssertions$value,
                 showMethods$value,
                 showOnlyPublicMethods$value,
+                showAggregates$value,
+                showAggregateFields$value,
+                showAggregateMethods$value,
                 showDomainEvents$value,
                 showDomainEventFields$value,
                 showDomainEventMethods$value,
@@ -2735,6 +2852,12 @@ public class DomainDiagramConfig implements DiagramConfig {
                 this.showMethods$value +
                 ", showOnlyPublicMethods$value=" +
                 this.showOnlyPublicMethods$value +
+                ", showAggregates$value=" +
+                this.showAggregates$value +
+                ", showAggregateFields$value=" +
+                this.showAggregateFields$value +
+                ", showAggregateMethods$value=" +
+                this.showAggregateMethods$value +
                 ", showDomainEvents$value=" +
                 this.showDomainEvents$value +
                 ", showDomainEventFields$value=" +

@@ -194,6 +194,7 @@ public class FilteredDomainClasses {
             .getAllAggregateRootMirrors()
             .stream()
             .filter(ar -> !ar.isAbstract() || domainDiagramConfig.isShowAbstractTypes())
+            .filter(r -> domainDiagramConfig.isShowAggregates())
             .filter(transitiveDomainTypeAnPackageFilter::filter)
             .filter(ar -> !domainDiagramConfig.getClassesBlacklist().contains(ar.getTypeName()))
             .toList();

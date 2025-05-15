@@ -2,8 +2,8 @@ package io.domainlifecycles.builder;
 
 
 import io.domainlifecycles.builder.exception.DLCBuilderException;
-import io.domainlifecycles.builder.helper.TestValueObject;
-import io.domainlifecycles.builder.helper.TestValueOptionalObject;
+import helper.TestValueObject;
+import helper.TestValueOptionalObject;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
@@ -23,7 +23,7 @@ public class InnerBuilderNoPrefixTest {
 
     @BeforeAll
     static void beforeAll() {
-        Domain.initialize(new ReflectiveDomainMirrorFactory("tests", "io.domainlifecycles"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory("tests", "helper"));
     }
 
     private static final DomainBuilderConfiguration config = new DomainBuilderConfiguration() {

@@ -41,6 +41,8 @@ import io.domainlifecycles.mirror.api.DomainMirror;
 public class DomainDiagramGenerator implements Diagram {
     private final DomainDiagramConfig diagramConfig;
 
+    //TODO add options for external notes
+
     private final DomainMapper domainMapper;
 
     /**

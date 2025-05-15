@@ -77,6 +77,9 @@ public class DiagramConfigMapper {
         diagramConfig.setShowAssertions(mavenDiagramConfig.getShowAssertions());
         diagramConfig.setShowMethods(mavenDiagramConfig.getShowMethods());
         diagramConfig.setShowOnlyPublicMethods(mavenDiagramConfig.getShowOnlyPublicMethods());
+        diagramConfig.setShowAggregates(mavenDiagramConfig.getShowAggregates());
+        diagramConfig.setShowAggregateFields(mavenDiagramConfig.getShowAggregateFields());
+        diagramConfig.setShowAggregateMethods(mavenDiagramConfig.getShowAggregateMethods());
         diagramConfig.setShowDomainEvents(mavenDiagramConfig.getShowDomainEvents());
         diagramConfig.setShowDomainEventFields(mavenDiagramConfig.getShowDomainEventFields());
         diagramConfig.setShowDomainEventMethods(mavenDiagramConfig.getShowDomainEventMethods());

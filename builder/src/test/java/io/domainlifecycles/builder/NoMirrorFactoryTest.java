@@ -1,7 +1,7 @@
 package io.domainlifecycles.builder;
 
 import io.domainlifecycles.builder.exception.DLCBuilderException;
-import io.domainlifecycles.builder.helper.TestValueObject;
+import helper.TestValueObject;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
@@ -23,7 +23,7 @@ public class NoMirrorFactoryTest {
         assertThatThrownBy(() -> new InnerClassDomainObjectBuilder<>(testBuilder))
             .isInstanceOf(DLCBuilderException.class)
             .hasMessageContaining(
-                "DomainTypeMirror for 'io.domainlifecycles.builder.helper.TestValueObject' not found!");
+                "DomainTypeMirror for 'helper.TestValueObject' not found!");
     }
 
     private TestValueObject.TestValueObjectBuilder preInitializedLombokBuilder() {

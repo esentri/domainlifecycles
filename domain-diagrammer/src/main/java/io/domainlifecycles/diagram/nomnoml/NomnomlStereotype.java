@@ -49,6 +49,13 @@ public class NomnomlStereotype implements DiagramElement {
         this.name = Objects.requireNonNull(name);
     }
 
+    /**
+     * Creates and returns a new instance of {@link NomnomlStereotypeBuilder}.
+     * The builder provides a fluent API for configuring and constructing instances
+     * of {@link NomnomlStereotype}.
+     *
+     * @return a new {@link NomnomlStereotypeBuilder} instance for constructing {@link NomnomlStereotype} objects
+     */
     public static NomnomlStereotypeBuilder builder() {
         return new NomnomlStereotypeBuilder();
     }

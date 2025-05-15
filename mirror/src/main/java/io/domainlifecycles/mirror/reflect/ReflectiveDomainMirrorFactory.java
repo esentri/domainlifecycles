@@ -106,7 +106,6 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
         c.checkForCompleteness();
 
         return dm;
-
     }
 
     private void initializeForScanning(){

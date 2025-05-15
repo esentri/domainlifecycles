@@ -1,4 +1,4 @@
-package io.domainlifecycles.builder.helper;
+package helper;
 
 import io.domainlifecycles.domain.types.ValueObject;
 import lombok.Builder;

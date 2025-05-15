@@ -793,6 +793,13 @@ public enum JavaReflect {
     // ----------------------------------------------------------
 
     /// GENERIC TYPES.
+    /**
+     * Retrieves the first parameter type of a given generic type, if it is parameterized.
+     *
+     * @param genericType the generic type to extract the first parameter type from
+     * @return an {@code Optional} containing the first parameter type if the given
+     *         type is parameterized; otherwise, an empty {@code Optional}
+     */
     public static Optional<Type> getFirstParameterType(Type genericType) {
         if (ParameterizedType.class.isAssignableFrom(genericType.getClass())) {
             return Optional.of(((ParameterizedType) genericType).getActualTypeArguments()[0]);
@@ -998,7 +1005,14 @@ public enum JavaReflect {
         }
         return Object.class;
     }
-    
+
+    /**
+     * Determines if a given class is a subclass of another class.
+     *
+     * @param queryClass the class to check if it is a subclass
+     * @param ofClass the class to compare against
+     * @return true if the queryClass is a subclass of ofClass, otherwise false
+     */
     public static boolean isSubclassOf(Class<?> queryClass, Class<?> ofClass) {
         while (queryClass != null) {
             if (queryClass == ofClass) {
@@ -1013,6 +1027,13 @@ public enum JavaReflect {
     //  LEXICAL-SCOPE RELATION.
     // ----------------------------------------------------------
 
+    /**
+     * Returns an {@link Optional} containing the enclosing class of the provided class,
+     * or an empty {@link Optional} if the provided class does not have an enclosing class.
+     *
+     * @param type the class for which to retrieve the enclosing class; may be null
+     * @return an {@link Optional} containing the enclosing class, or an empty {@link Optional} if none exists
+     */
     public static Optional<Class<?>> enclosingType(final Class<?> type) {
         return Optional.ofNullable(type).map(Class::getEnclosingClass);
     }
@@ -1095,7 +1116,7 @@ public enum JavaReflect {
                     .flatMap(x -> Stream.of(x.getDeclaredFields()))
                     .filter(x -> isPublic(x) || isProtected(x)
                         || (isPackagePrivate(x) && isSamePackage(x.getDeclaringClass(), declaring)))
-                    .collect(Collectors.toList());
+                    .toList();
                 final List<Field> visibleFields = new ArrayList<>();
                 visibleFields.addAll(List.of(declaring.getDeclaredFields()));
                 visibleFields.addAll(fields);
@@ -1110,10 +1131,25 @@ public enum JavaReflect {
         }
     }
 
+    /**
+     * Finds a field within the specified class by name and returns it as an optional.
+     *
+     * @param declaring the class in which the field is to be searched. Must not be null.
+     * @param name the name of the field to find. Must not be null or empty.
+     * @return an {@code Optional} containing the field if found, or an empty {@code Optional} if the field is not found.
+     */
     public static Optional<Field> findField(final Class<?> declaring, final String name) {
         return findField(declaring, MemberSelect.DECLARED, name);
     }
 
+    /**
+     * Searches for a field in the given class that matches the specified name and member selection criteria.
+     *
+     * @param declaring the class in which to search for the field
+     * @param select the selection criteria for filtering fields
+     * @param name the name of the field to search for
+     * @return an {@link Optional} containing the matching field if found, otherwise an empty {@link Optional}
+     */
     public static Optional<Field> findField(final Class<?> declaring, final MemberSelect select, final String name) {
         return fields(declaring, select)
             .stream()
@@ -1174,11 +1210,29 @@ public enum JavaReflect {
         }
     }
 
+    /**
+     * Searches for a method within the specified class that matches the given name and parameter types.
+     *
+     * @param declaring the class in which to search for the method
+     * @param name the name of the method to search for
+     * @param parameters the parameter types of the method to search for
+     * @return an Optional containing the found method if it exists, or an empty Optional if no method matches
+     */
     public static Optional<Method> findMethod(final Class<?> declaring,
                                               final String name, final Class<?>... parameters) {
         return findMethod(declaring, MemberSelect.DECLARED, name, parameters);
     }
 
+    /**
+     * Searches for a method in the specified class based on the given criteria.
+     *
+     * @param declaring the class in which to search for the method
+     * @param select the member select strategy to filter methods
+     * @param name the name of the method to find
+     * @param parameters the parameter types of the method to match
+     * @return an {@code Optional} containing the matching {@code Method} if found,
+     *         otherwise an empty {@code Optional}
+     */
     public static Optional<Method> findMethod(final Class<?> declaring,
                                               final MemberSelect select,
                                               final String name, final Class<?>... parameters) {
@@ -1251,6 +1305,13 @@ public enum JavaReflect {
         return List.of(declaring.getDeclaredConstructors());
     }
 
+    /**
+     * Searches for a constructor in the specified class that matches the given parameter types.
+     *
+     * @param declaring the class in which to search for the constructor
+     * @param parameters the parameter types of the constructor being searched for
+     * @return an {@code Optional} containing the matching constructor if found, or an empty {@code Optional} otherwise
+     */
     public static Optional<Constructor<?>> findConstructor(final Class<?> declaring, final Class<?>... parameters) {
         return constructors(declaring, null)
             .stream()
@@ -1440,11 +1501,34 @@ public enum JavaReflect {
         return lhs.isAssignableFrom(rhs);
     }
 
+    /**
+     * Checks if an array of classes on the left-hand side can be assigned
+     * to an array of classes on the right-hand side.
+     *
+     * @param lhs the array of classes to check for assignability on the left-hand side,
+     *            null values are treated as an empty array
+     * @param rhs the array of classes to check for assignability on the right-hand side,
+     *            null values are treated as an empty array
+     * @return true if each class of the left-hand side array is assignable to
+     *         the corresponding class of the right-hand side array, false otherwise
+     */
     public static boolean isAssignable(final Class<?>[] lhs,
                                        final Class<?>[] rhs) {
         return isAssignable(lhs, rhs, true);
     }
 
+    /**
+     * Checks if an array of classes represented by the first parameter can be
+     * assigned to an array of classes represented by the second parameter,
+     * taking into account the option for boxing or unboxing of types.
+     *
+     * @param lhs an array of Class objects representing the left-hand side of the assignment
+     * @param rhs an array of Class objects representing the right-hand side of the assignment
+     * @param boxing a boolean parameter indicating whether boxing/unboxing conversions
+     *               between primitive and wrapper types should be considered
+     * @return true if each class in the lhs array can be assigned from the respective
+     *         class in the rhs array according to the rules of assignment, false otherwise
+     */
     public static boolean isAssignable(final Class<?>[] lhs,
                                        final Class<?>[] rhs,
                                        final boolean boxing) {
@@ -1502,18 +1586,51 @@ public enum JavaReflect {
     //  SUPERTYPE ITERATOR.
     // ----------------------------------------------------------
 
+    /**
+     * The {@code SuperclassIterator} class provides an implementation of {@link Iterator}
+     * to traverse the inheritance hierarchy of a given class.
+     * <p>
+     * Starting from the specified class, the iterator proceeds through each of its superclasses,
+     * up to but excluding the {@link Object} class.
+     * <p>
+     * This iterator is particularly useful for applications that need to process or inspect
+     * types along the inheritance chain of a class in sequential order.
+     * <p>
+     * Instances of this class are immutable once constructed.
+     */
     public static final class SuperclassIterator implements Iterator<Class<?>> {
         private Class<?> superclass;
 
+        /**
+         * Creates a new {@code SuperclassIterator} instance for a given class type.
+         * The iterator allows traversal through the specified class's inheritance hierarchy,
+         * starting from the given class and proceeding upward to its highest superclass
+         * (excluding {@code Object}).
+         *
+         * @param type the starting class for the iteration; must not be null
+         */
         public SuperclassIterator(final Class<?> type) {
             this.superclass = type;
         }
 
+        /**
+         * Determines if there are more superclasses remaining in the iteration.
+         *
+         * @return true if the current superclass is not null and is not the {@code Object} class,
+         *         false otherwise
+         */
         @Override
         public final boolean hasNext() {
             return null != superclass && superclass != Object.class;
         }
 
+        /**
+         * Returns the current superclass in the iteration and advances the iterator to the next superclass.
+         * Throws a {@code NoSuchElementException} if no more superclasses are available in the iteration.
+         *
+         * @return the current superclass in the iteration
+         * @throws NoSuchElementException if there are no more superclasses to iterate
+         */
         @Override
         public final Class<?> next() {
             if (!hasNext()) throw new NoSuchElementException();
@@ -1522,6 +1639,14 @@ public enum JavaReflect {
             return next;
         }
 
+        /**
+         * Processes all remaining elements in the iteration, from the current class
+         * up to its highest accessible superclass, applying the specified action
+         * to each of them.
+         *
+         * @param action the action to be performed for each class; must not be null
+         * @throws NullPointerException if the specified action is null
+         */
         @Override
         public final void forEachRemaining(final Consumer<? super Class<?>> action) {
             Objects.requireNonNull(action);
@@ -1533,6 +1658,14 @@ public enum JavaReflect {
             superclass = null;
         }
 
+        /**
+         * Converts the remaining elements of this iterator into a list of classes,
+         * specifically including the current class and all its superclasses up to
+         * but not including {@code Object}.
+         *
+         * @return a list of classes from the current class up to its superclasses,
+         *         ordered from the current class to its highest accessible superclass.
+         */
         public List<Class<?>> toList() {
             List<Class<?>> superClasses = new ArrayList<>();
             while (hasNext()) {
@@ -1546,14 +1679,46 @@ public enum JavaReflect {
     //  INTERFACE ITERATOR.
     // ----------------------------------------------------------
 
+    /**
+     * The InterfaceIterator class provides a mechanism to iterate over all the interfaces
+     * implemented by a given class and its parent interfaces in a depth-first manner.
+     * This iterator ensures that each interface is visited only once, even if it is
+     * implemented indirectly through multiple paths in the class hierarchy.
+     * This class is immutable when initialized with a predefined set of visited interfaces.
+     * The iteration starts with the interfaces directly implemented by the specified type
+     * and continues recursively for each subsequent interface encountered.
+     * Features include:
+     * - Tracking of visited interfaces to prevent duplicates.
+     * - Lazy iteration of interfaces using the Iterator interface.
+     * - A utility method to retrieve the interfaces as a list.
+     * Implements the {@code Iterator<Class<?>>} interface.
+     */
     public static final class InterfaceIterator implements Iterator<Class<?>> {
         private final LinkedList<Class<?>> stack = new LinkedList<>();
         private final HashSet<Class<?>> visited;
 
+        /**
+         * Constructs a new {@code InterfaceIterator} instance to iterate over
+         * all interfaces implemented by the specified class and its parent interfaces
+         * in a depth-first manner.
+         *
+         * @param type the class whose interfaces will be iterated
+         * @throws NullPointerException if the provided {@code type} is {@code null}
+         */
         public InterfaceIterator(final Class<?> type) {
             this(new HashSet<>(), type);
         }
 
+        /**
+         * Constructs a new {@code InterfaceIterator} instance to iterate over
+         * all interfaces implemented by the specified class and its parent interfaces
+         * in a depth-first manner. This constructor allows for reusing an existing
+         * set of visited interfaces to prevent duplicates during iteration.
+         *
+         * @param visited the set of already visited interfaces to track duplicates
+         * @param type the class whose interfaces will be iterated
+         * @throws NullPointerException if the provided {@code visited} set or {@code type} is {@code null}
+         */
         public InterfaceIterator(final HashSet<Class<?>> visited, final Class<?> type) {
             this.visited = Objects.requireNonNull(visited);
             Stream.of(type.getInterfaces())
@@ -1561,11 +1726,26 @@ public enum JavaReflect {
                 .forEach(stack::push);
         }
 
+        /**
+         * Checks if there are more elements to iterate over in the current stack.
+         *
+         * @return true if the stack is not empty and there are more elements to iterate, false otherwise
+         */
         @Override
         public final boolean hasNext() {
             return !stack.isEmpty();
         }
 
+        /**
+         * Retrieves the next interface in the iteration based on a depth-first traversal
+         * of the current class' implemented interfaces and their parent interfaces.
+         * This method keeps track of visited interfaces to avoid duplicates and proceeds
+         * by examining the interface hierarchy. If there are additional interfaces reachable
+         * from the current interface, they are added to the traversal stack.
+         *
+         * @return the next interface in the iteration
+         * @throws NoSuchElementException if there are no more elements to iterate
+         */
         @Override
         public final Class<?> next() {
             if (!hasNext()) throw new NoSuchElementException();
@@ -1576,6 +1756,13 @@ public enum JavaReflect {
             return next;
         }
 
+        /**
+         * Converts all interfaces available in the current iteration into a list.
+         * The iteration follows a depth-first traversal of the interfaces implemented
+         * by the specified class and its parent interfaces while avoiding duplicate entries.
+         *
+         * @return a list of all interfaces discovered during the iteration
+         */
         public List<Class<?>> toList() {
             List<Class<?>> superInterfaces = new ArrayList<>();
             while (hasNext()) {
@@ -1589,10 +1776,28 @@ public enum JavaReflect {
     //  SUPERCLASS ITERATOR.
     // ----------------------------------------------------------
 
+    /**
+     * The SupertypeIterator class provides an iterator to traverse the supertypes
+     * of a given class or interface. The iteration includes the immediate superclass
+     * (if applicable) as well as all directly implemented interfaces. The traversal
+     * is breadth-first and ensures no duplicate classes or interfaces are processed.
+     * This iterator is particularly useful for analyzing class hierarchies and interfaces,
+     * enabling the collection of all supertypes of a specified type.
+     */
     public static final class SupertypeIterator implements Iterator<Class<?>> {
         private final Set<Class<?>> visited = new LinkedHashSet<>();
         private final Queue<Class<?>> workset = new LinkedList<>();
 
+        /**
+         * Constructs a SupertypeIterator for the specified type.
+         * This iterator traverses the supertypes of a given class or interface,
+         * including its immediate superclass and interfaces.
+         * If the provided class type is not an interface, its superclass is added
+         * to the iteration queue. All interfaces implemented by the class are also added.
+         *
+         * @param type the class or interface whose supertypes will be traversed
+         *             during the iteration; must not be null
+         */
         public SupertypeIterator(Class<?> type) {
             if (!type.isInterface()) {
                 push(type.getSuperclass());
@@ -1600,11 +1805,25 @@ public enum JavaReflect {
             push(type.getInterfaces());
         }
 
+        /**
+         * Determines whether there are more elements in the iteration.
+         *
+         * @return true if there are additional elements to iterate, false otherwise
+         */
         @Override
         public final boolean hasNext() {
-            return workset.size() > 0;
+            return !workset.isEmpty();
         }
 
+        /**
+         * Retrieves and removes the next class in the iteration and processes its supertypes
+         * (immediate superclass and all interfaces). If the next class is null or no additional
+         * elements are present, an exception is thrown. The supertypes are then added to
+         * the internal work queue for subsequent iteration.
+         *
+         * @return the next class in the iteration
+         * @throws NoSuchElementException if there are no more elements to iterate
+         */
         @Override
         public final Class<?> next() {
             if (!hasNext()) throw new NoSuchElementException();
@@ -1628,6 +1847,11 @@ public enum JavaReflect {
             }
         }
 
+        /**
+         * Collects all the elements from the iterator into a list.
+         *
+         * @return a list of all classes visited by the iterator in the order they were traversed
+         */
         public List<Class<?>> toList() {
             List<Class<?>> superTypes = new ArrayList<>();
             while (hasNext()) {
@@ -1639,6 +1863,25 @@ public enum JavaReflect {
 
     // ----------------------------------------------------------
 
+    /**
+     * Represents the categories or kinds of primitive types in a programming language or type system.
+     * This enumeration defines a set of classifications for primitive data types that may include
+     * distinctions like numeric, integral, floating-point, signed, and unsigned types.
+     * The enumeration is primarily used to associate specific kinds of primitive characteristics
+     * with data types that share similar properties or functions. These classifications may help
+     * in organizing type systems, performing type-checking, or optimizing low-level computations.
+     * Enum constants:
+     * - PRIMITIVE: Represents a generic primitive type.
+     * - NUMERIC: Represents numeric types including integers and floating-point numbers.
+     * - INTEGRAL: Represents integer types without fractional components.
+     * - FLOATING: Represents floating-point types with fractional components.
+     * - SIGNED: Represents signed numeric types capable of representing both positive and negative values.
+     * - UNSIGNED: Represents unsigned numeric types that can only represent non-negative values.
+     * - DOUBLE_WORD: Represents types that occupy two words of memory.
+     * - SINGLE_WORD: Represents types that occupy a single word of memory.
+     * - SUB_WORD: Represents types that occupy less than a single word of memory.
+     * - VOID: Represents the absence of a type or a return type in certain contexts.
+     */
     public enum PrimitiveKind {
         PRIMITIVE, NUMERIC, INTEGRAL, FLOATING, SIGNED, UNSIGNED, DOUBLE_WORD, SINGLE_WORD, SUB_WORD, VOID
     }

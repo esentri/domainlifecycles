@@ -81,6 +81,9 @@ public class DiagramConfig {
     private Boolean showAssertions;
     private Boolean showMethods;
     private Boolean showOnlyPublicMethods;
+    private Boolean showAggregates;
+    private Boolean showAggregateFields;
+    private Boolean showAggregateMethods;
     private Boolean showDomainEvents;
     private Boolean showDomainEventFields;
     private Boolean showDomainEventMethods;
@@ -335,6 +338,30 @@ public class DiagramConfig {
 
     public void setShowOnlyPublicMethods(Boolean showOnlyPublicMethods) {
         this.showOnlyPublicMethods = showOnlyPublicMethods;
+    }
+
+    public Boolean getShowAggregates() {
+        return showAggregates;
+    }
+
+    public void setShowAggregates(Boolean showAggregates) {
+        this.showAggregates = showAggregates;
+    }
+
+    public Boolean getShowAggregateFields() {
+        return showAggregateFields;
+    }
+
+    public void setShowAggregateFields(Boolean showAggregateFields) {
+        this.showAggregateFields = showAggregateFields;
+    }
+
+    public Boolean getShowAggregateMethods() {
+        return showAggregateMethods;
+    }
+
+    public void setShowAggregateMethods(Boolean showAggregateMethods) {
+        this.showAggregateMethods = showAggregateMethods;
     }
 
     public Boolean getShowDomainEvents() {
@@ -686,6 +713,9 @@ public class DiagramConfig {
         if(showAssertions != null) builder.withShowAssertions(showAssertions);
         if(showMethods != null) builder.withShowMethods(showMethods);
         if(showOnlyPublicMethods != null) builder.withShowOnlyPublicMethods(showOnlyPublicMethods);
+        if(showAggregates != null) builder.withShowAggregates(showAggregates);
+        if(showAggregateFields != null) builder.withShowAggregateFields(showAggregateFields);
+        if(showAggregateMethods != null) builder.withShowAggregateMethods(showAggregateMethods);
         if(showDomainEvents != null) builder.withShowDomainEvents(showDomainEvents);
         if(showDomainEventFields != null) builder.withShowDomainEventFields(showDomainEventFields);
         if(showDomainEventMethods != null) builder.withShowDomainEventMethods(showDomainEventMethods);

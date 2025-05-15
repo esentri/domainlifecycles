@@ -47,10 +47,17 @@ public class NomnomlType implements DiagramElement {
     private final Optional<String> containerTypeName;
     private final List<String> containerTypeAssertions;
 
-    @SuppressWarnings("all")
     /**
-     * Initializes the type.
+     * The {@code NomnomlType} constructor initializes a type with its name, type assertions,
+     * container type name (if present), and container type assertions. It ensures that all
+     * provided parameters are not null during initialization.
+     *
+     * @param typeName the name of the type to be represented
+     * @param typeAssertions a list of strings representing the type assertions
+     * @param containerTypeName an {@code Optional} containing the name of the container type, if specified
+     * @param containerTypeAssertions a list of strings representing the container type assertions
      */
+    @SuppressWarnings("all")
     public NomnomlType(String typeName,
                        List<String> typeAssertions,
                        Optional<String> containerTypeName,
