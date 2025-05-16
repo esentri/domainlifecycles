@@ -21,7 +21,7 @@ at `io.domainlifecycles.diagram.domain.config.DomainDiagramConfig`.
 
 ```Groovy
 dependencies{
-    testImplementation 'io.domainlifecycles:domain-diagrammer:2.2.1'
+    testImplementation 'io.domainlifecycles:domain-diagrammer:2.3.0'
 }
 ```
 
@@ -31,7 +31,7 @@ Maven setup:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>domain-diagrammer</artifactId>
-    <version>2.2.1</version>
+    <version>2.2.3</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -44,7 +44,10 @@ class NomnomlDomainDiagramGeneratorTest {
     @Test
     void generateSampleApp() throws Exception {
         Domain.initialize(new ReflectiveDomainModelFactory( new TypeMetaResolver(), "yourdomain"));
-        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withContextPackageName("yourdomain").build();
+        var trim = DiagramTrimSettings.builder()
+                .withExplicitlyIncludedPackageNames(List.of("yourdomain.specific"))
+                .build();
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withDiagramTrimSettings(trim).build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
                 diagramConfig, domain.getDomainModel());
         
@@ -86,8 +89,8 @@ Those dependencies are provided like:
 
 ```Groovy
 dependencies{
-    implementation 'io.domainlifecycles:mirror:2.2.1'
-    implementation 'io.domainlifecycles:types:2.2.1'
+    implementation 'io.domainlifecycles:mirror:2.3.0'
+    implementation 'io.domainlifecycles:types:2.3.0'
 }
 ```
 
@@ -97,11 +100,11 @@ Maven setup:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>mirror</artifactId>
-    <version>2.2.1</version>
+    <version>2.3.0</version>
 </dependency>
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>types</artifactId>
-    <version>2.2.1</version>
+    <version>2.3.0</version>
 </dependency>
 ```

@@ -93,7 +93,7 @@ public class NomnomlStereotype implements DiagramElement {
         if (!other.canEqual((Object) this)) return false;
         final Object this$name = this.getName();
         final Object other$name = other.getName();
-        if (this$name == null ? other$name != null : !this$name.equals(other$name)) return false;
+        if (!Objects.equals(this$name, other$name)) return false;
         return true;
     }
 
@@ -121,7 +121,7 @@ public class NomnomlStereotype implements DiagramElement {
     }
 
     /**
-     * Builder class for creating instances of {@link NomnomlStereotype}.
+     * StyleSettingsBuilder class for creating instances of {@link NomnomlStereotype}.
      * Provides a fluent API for setting the properties of a {@link NomnomlStereotype}
      * and constructing a new instance.
      */

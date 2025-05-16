@@ -127,7 +127,7 @@ public class DomainRelationshipMapper {
      */
     public List<NomnomlRelationship> mapAllQueryHandlerReadModelRelationships() {
         var relationShips = new ArrayList<NomnomlRelationship>();
-        if (diagramConfig.isShowQueryHandlers() && diagramConfig.isShowReadModels()) {
+        if (diagramConfig.getGeneralVisualSettings().isShowQueryHandlers() && diagramConfig.getGeneralVisualSettings().isShowReadModels()) {
             filteredDomainClasses.getQueryHandlers().stream()
                 .filter(r -> {
                         if(r.getProvidedReadModel().isPresent()){
@@ -181,14 +181,14 @@ public class DomainRelationshipMapper {
      */
     public List<NomnomlRelationship> mapAllDomainCommandRelationships() {
         var relationShips = new ArrayList<NomnomlRelationship>();
-        if (diagramConfig.isShowDomainCommands()) {
+        if (diagramConfig.getGeneralVisualSettings().isShowDomainCommands()) {
             filteredDomainClasses.getDomainCommands()
                 .forEach(c -> {
                     filteredDomainClasses.getAggregateRoots()
                         .forEach(
                             ar -> {
                                 if (ar.processes(c)) {
-                                    if (!diagramConfig.isShowOnlyTopLevelDomainCommandRelations() || isTopLevelConsumerForCommand(
+                                    if (!diagramConfig.getGeneralVisualSettings().isShowOnlyTopLevelDomainCommandRelations() || isTopLevelConsumerForCommand(
                                         ar, c)) {
                                         relationShips.add(mapDomainCommandAggregateRelationship(c, ar));
                                     }
@@ -200,7 +200,7 @@ public class DomainRelationshipMapper {
                         .forEach(
                             ds -> {
                                 if (ds.processes(c)) {
-                                    if (!diagramConfig.isShowOnlyTopLevelDomainCommandRelations() || isTopLevelConsumerForCommand(
+                                    if (!diagramConfig.getGeneralVisualSettings().isShowOnlyTopLevelDomainCommandRelations() || isTopLevelConsumerForCommand(
                                         ds, c)) {
                                         relationShips.add(mapDomainCommandServiceKindRelationship(c, ds));
                                     }
@@ -490,7 +490,7 @@ public class DomainRelationshipMapper {
     }
 
     private Optional<NomnomlRelationship> mapInheritance(DomainTypeMirror domainTypeMirror) {
-        if (diagramConfig.getFilteredPackageNames().stream().anyMatch(pack -> domainTypeMirror.getInheritanceHierarchyTypeNames().get(0).startsWith(
+        if (diagramConfig.getDiagramTrimSettings().getExplicitlyIncludedPackageNames().stream().anyMatch(pack -> domainTypeMirror.getInheritanceHierarchyTypeNames().get(0).startsWith(
             pack))) {
             var superClassName = domainTypeMirror.getInheritanceHierarchyTypeNames().get(0);
             return Optional.of(
@@ -515,7 +515,7 @@ public class DomainRelationshipMapper {
 
         var toMultiplicity = toMultiplicity(entityReferenceMirror);
         var label = entityReferenceMirror.getName();
-        if (diagramConfig.isMultiplicityInLabel()) {
+        if (diagramConfig.getGeneralVisualSettings().isMultiplicityInLabel()) {
             label = label + " " + toMultiplicity;
             toMultiplicity = "";
         }
@@ -537,7 +537,7 @@ public class DomainRelationshipMapper {
 
         var toMultiplicity = toMultiplicity(valueReferenceMirror);
         var label = valueReferenceMirror.getName();
-        if (diagramConfig.isMultiplicityInLabel()) {
+        if (diagramConfig.getGeneralVisualSettings().isMultiplicityInLabel()) {
             label = label + " " + toMultiplicity;
             toMultiplicity = "";
         }

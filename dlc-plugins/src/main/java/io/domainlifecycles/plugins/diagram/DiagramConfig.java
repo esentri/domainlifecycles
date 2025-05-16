@@ -26,8 +26,13 @@
 
 package io.domainlifecycles.plugins.diagram;
 
+import io.domainlifecycles.diagram.domain.config.DiagramTrimSettings;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig.DomainDiagramConfigBuilder;
+import io.domainlifecycles.diagram.domain.config.GeneralVisualSettings;
+import io.domainlifecycles.diagram.domain.config.LayoutSettings;
+import io.domainlifecycles.diagram.domain.config.StyleSettings;
+
 import java.util.List;
 
 /**
@@ -120,7 +125,7 @@ public class DiagramConfig {
     private Boolean multiplicityInLabel;
     private Boolean fieldStereotypes;
     private List<String> transitiveFilterSeedDomainServiceTypeNames;
-    private List<String> filteredPackageNames;
+    private List<String> explicitlyIncludedPackageNames;
     private Boolean showAbstractTypes;
     private Boolean useAbstractTypeNameForConcreteServiceKinds;
 
@@ -652,12 +657,12 @@ public class DiagramConfig {
         this.transitiveFilterSeedDomainServiceTypeNames = transitiveFilterSeedDomainServiceTypeNames;
     }
 
-    public List<String> getFilteredPackageNames() {
-        return filteredPackageNames;
+    public List<String> getExplicitlyIncludedPackageNames() {
+        return explicitlyIncludedPackageNames;
     }
 
-    public void setFilteredPackageNames(List<String> filteredPackageNames) {
-        this.filteredPackageNames = filteredPackageNames;
+    public void setExplicitlyIncludedPackageNames(List<String> explicitlyIncludedPackageNames) {
+        this.explicitlyIncludedPackageNames = explicitlyIncludedPackageNames;
     }
 
     public Boolean isShowAbstractTypes() {
@@ -686,76 +691,85 @@ public class DiagramConfig {
      *         the provided styles and settings.
      */
     public DomainDiagramConfig map() {
-        DomainDiagramConfigBuilder builder = DomainDiagramConfig.builder();
+        DomainDiagramConfigBuilder configBuilder = DomainDiagramConfig.builder();
+        var styleBuilder = StyleSettings.builder();
+        var visualBuilder = GeneralVisualSettings.builder();
+        var layoutBuilder = LayoutSettings.builder();
+        var trimBuilder = DiagramTrimSettings.builder();
 
-        if(aggregateRootStyle != null) builder.withAggregateRootStyle(aggregateRootStyle);
-        if(aggregateFrameStyle != null) builder.withAggregateFrameStyle(aggregateFrameStyle);
-        if(entityStyle != null) builder.withEntityStyle(entityStyle);
-        if(valueObjectStyle != null) builder.withValueObjectStyle(valueObjectStyle);
-        if(enumStyle != null) builder.withEnumStyle(enumStyle);
-        if(identityStyle != null) builder.withIdentityStyle(identityStyle);
-        if(domainEventStyle != null) builder.withDomainEventStyle(domainEventStyle);
-        if(domainCommandStyle != null) builder.withDomainCommandStyle(domainCommandStyle);
-        if(applicationServiceStyle != null) builder.withApplicationServiceStyle(applicationServiceStyle);
-        if(domainServiceStyle != null) builder.withDomainServiceStyle(domainServiceStyle);
-        if(repositoryStyle != null) builder.withRepositoryStyle(repositoryStyle);
-        if(readModelStyle != null) builder.withReadModelStyle(readModelStyle);
-        if(queryHandlerStyle != null) builder.withQueryHandlerStyle(queryHandlerStyle);
-        if(outboundServiceStyle != null) builder.withOutboundServiceStyle(outboundServiceStyle);
-        if(font != null) builder.withFont(font);
-        if(direction != null) builder.withDirection(direction);
-        if(ranker != null) builder.withRanker(ranker);
-        if(acycler != null) builder.withAcycler(acycler);
-        if(backgroundColor != null) builder.withBackgroundColor(backgroundColor);
-        if(classesBlacklist != null && !classesBlacklist.isEmpty()) builder.withClassesBlacklist(classesBlacklist);
-        if(showFields != null) builder.withShowFields(showFields);
-        if(showFullQualifiedClassNames != null) builder.withShowFullQualifiedClassNames(showFullQualifiedClassNames);
-        if(showAssertions != null) builder.withShowAssertions(showAssertions);
-        if(showMethods != null) builder.withShowMethods(showMethods);
-        if(showOnlyPublicMethods != null) builder.withShowOnlyPublicMethods(showOnlyPublicMethods);
-        if(showAggregates != null) builder.withShowAggregates(showAggregates);
-        if(showAggregateFields != null) builder.withShowAggregateFields(showAggregateFields);
-        if(showAggregateMethods != null) builder.withShowAggregateMethods(showAggregateMethods);
-        if(showDomainEvents != null) builder.withShowDomainEvents(showDomainEvents);
-        if(showDomainEventFields != null) builder.withShowDomainEventFields(showDomainEventFields);
-        if(showDomainEventMethods != null) builder.withShowDomainEventMethods(showDomainEventMethods);
-        if(showDomainCommands != null) builder.withShowDomainCommands(showDomainCommands);
-        if(showOnlyTopLevelDomainCommandRelations != null) builder.withShowOnlyTopLevelDomainCommandRelations(showOnlyTopLevelDomainCommandRelations);
-        if(showDomainCommandFields != null) builder.withShowDomainCommandFields(showDomainCommandFields);
-        if(showDomainCommandMethods != null) builder.withShowDomainCommandMethods(showDomainCommandMethods);
-        if(showDomainServices != null) builder.withShowDomainServices(showDomainServices);
-        if(showDomainServiceFields != null) builder.withShowDomainServiceFields(showDomainServiceFields);
-        if(showDomainServiceMethods != null) builder.withShowDomainServiceMethods(showDomainServiceMethods);
-        if(showApplicationServices != null) builder.withShowApplicationServices(showApplicationServices);
-        if(showApplicationServiceFields != null) builder.withShowApplicationServiceFields(showApplicationServiceFields);
-        if(showApplicationServiceMethods != null) builder.withShowApplicationServiceMethods(showApplicationServiceMethods);
-        if(showRepositories != null) builder.withShowRepositories(showRepositories);
-        if(showRepositoryFields != null) builder.withShowRepositoryFields(showRepositoryFields);
-        if(showRepositoryMethods != null) builder.withShowRepositoryMethods(showRepositoryMethods);
-        if(showReadModels != null) builder.withShowReadModels(showReadModels);
-        if(showReadModelFields != null) builder.withShowReadModelFields(showReadModelFields);
-        if(showReadModelMethods != null) builder.withShowReadModelMethods(showReadModelMethods);
-        if(showQueryHandlers != null) builder.withShowQueryHandlers(showQueryHandlers);
-        if(showQueryHandlerFields != null) builder.withShowQueryHandlerFields(showQueryHandlerFields);
-        if(showQueryHandlerMethods != null) builder.withShowQueryHandlerMethods(showQueryHandlerMethods);
-        if(showOutboundServices != null) builder.withShowOutboundServices(showOutboundServices);
-        if(showOutboundServiceFields != null) builder.withShowOutboundServiceFields(showOutboundServiceFields);
-        if(showOutboundServiceMethods != null) builder.withShowOutboundServiceMethods(showOutboundServiceMethods);
-        if(showUnspecifiedServiceKinds != null) builder.withShowUnspecifiedServiceKinds(showUnspecifiedServiceKinds);
-        if(showUnspecifiedServiceKindFields != null) builder.withShowUnspecifiedServiceKindFields(showUnspecifiedServiceKindFields);
-        if(showUnspecifiedServiceKindMethods != null) builder.withShowUnspecifiedServiceKindMethods(showUnspecifiedServiceKindMethods);
-        if(callApplicationServiceDriver != null) builder.withCallApplicationServiceDriver(callApplicationServiceDriver);
-        if(fieldBlacklist != null && !fieldBlacklist.isEmpty()) builder.withFieldBlacklist(fieldBlacklist);
-        if(methodBlacklist != null && !methodBlacklist.isEmpty()) builder.withMethodBlacklist(classesBlacklist);
-        if(showInheritedMembersInClasses != null) builder.withShowInheritedMembersInClasses(showInheritedMembersInClasses);
-        if(showObjectMembersInClasses != null) builder.withShowObjectMembersInClasses(showObjectMembersInClasses);
-        if(multiplicityInLabel != null) builder.withMultiplicityInLabel(multiplicityInLabel);
-        if(fieldStereotypes != null) builder.withFieldStereotypes(fieldStereotypes);
-        if(transitiveFilterSeedDomainServiceTypeNames != null && !transitiveFilterSeedDomainServiceTypeNames.isEmpty()) builder.withTransitiveFilterSeedDomainServiceTypeNames(transitiveFilterSeedDomainServiceTypeNames);
-        if(filteredPackageNames != null && !filteredPackageNames.isEmpty()) builder.withFilteredPackageNames(filteredPackageNames);
-        if(useAbstractTypeNameForConcreteServiceKinds != null) builder.withUseAbstractTypeNameForConcreteServiceKinds(useAbstractTypeNameForConcreteServiceKinds);
-        if(showAbstractTypes != null) builder.withShowAbstractTypes(showAbstractTypes);
+        if(aggregateRootStyle != null) styleBuilder.withAggregateRootStyle(aggregateRootStyle);
+        if(aggregateFrameStyle != null) styleBuilder.withAggregateFrameStyle(aggregateFrameStyle);
+        if(entityStyle != null) styleBuilder.withEntityStyle(entityStyle);
+        if(valueObjectStyle != null) styleBuilder.withValueObjectStyle(valueObjectStyle);
+        if(enumStyle != null) styleBuilder.withEnumStyle(enumStyle);
+        if(identityStyle != null) styleBuilder.withIdentityStyle(identityStyle);
+        if(domainEventStyle != null) styleBuilder.withDomainEventStyle(domainEventStyle);
+        if(domainCommandStyle != null) styleBuilder.withDomainCommandStyle(domainCommandStyle);
+        if(applicationServiceStyle != null) styleBuilder.withApplicationServiceStyle(applicationServiceStyle);
+        if(domainServiceStyle != null) styleBuilder.withDomainServiceStyle(domainServiceStyle);
+        if(repositoryStyle != null) styleBuilder.withRepositoryStyle(repositoryStyle);
+        if(readModelStyle != null) styleBuilder.withReadModelStyle(readModelStyle);
+        if(queryHandlerStyle != null) styleBuilder.withQueryHandlerStyle(queryHandlerStyle);
+        if(outboundServiceStyle != null) styleBuilder.withOutboundServiceStyle(outboundServiceStyle);
+        if(font != null) styleBuilder.withFont(font);
+        if(direction != null) layoutBuilder.withDirection(direction);
+        if(ranker != null) layoutBuilder.withRanker(ranker);
+        if(acycler != null) layoutBuilder.withAcycler(acycler);
+        if(backgroundColor != null) styleBuilder.withBackgroundColor(backgroundColor);
+        if(classesBlacklist != null && !classesBlacklist.isEmpty()) trimBuilder.withClassesBlacklist(classesBlacklist);
+        if(showFields != null) visualBuilder.withShowFields(showFields);
+        if(showFullQualifiedClassNames != null) visualBuilder.withShowFullQualifiedClassNames(showFullQualifiedClassNames);
+        if(showAssertions != null) visualBuilder.withShowAssertions(showAssertions);
+        if(showMethods != null) visualBuilder.withShowMethods(showMethods);
+        if(showOnlyPublicMethods != null) visualBuilder.withShowOnlyPublicMethods(showOnlyPublicMethods);
+        if(showAggregates != null) visualBuilder.withShowAggregates(showAggregates);
+        if(showAggregateFields != null) visualBuilder.withShowAggregateFields(showAggregateFields);
+        if(showAggregateMethods != null) visualBuilder.withShowAggregateMethods(showAggregateMethods);
+        if(showDomainEvents != null) visualBuilder.withShowDomainEvents(showDomainEvents);
+        if(showDomainEventFields != null) visualBuilder.withShowDomainEventFields(showDomainEventFields);
+        if(showDomainEventMethods != null) visualBuilder.withShowDomainEventMethods(showDomainEventMethods);
+        if(showDomainCommands != null) visualBuilder.withShowDomainCommands(showDomainCommands);
+        if(showOnlyTopLevelDomainCommandRelations != null) visualBuilder.withShowOnlyTopLevelDomainCommandRelations(showOnlyTopLevelDomainCommandRelations);
+        if(showDomainCommandFields != null) visualBuilder.withShowDomainCommandFields(showDomainCommandFields);
+        if(showDomainCommandMethods != null) visualBuilder.withShowDomainCommandMethods(showDomainCommandMethods);
+        if(showDomainServices != null) visualBuilder.withShowDomainServices(showDomainServices);
+        if(showDomainServiceFields != null) visualBuilder.withShowDomainServiceFields(showDomainServiceFields);
+        if(showDomainServiceMethods != null) visualBuilder.withShowDomainServiceMethods(showDomainServiceMethods);
+        if(showApplicationServices != null) visualBuilder.withShowApplicationServices(showApplicationServices);
+        if(showApplicationServiceFields != null) visualBuilder.withShowApplicationServiceFields(showApplicationServiceFields);
+        if(showApplicationServiceMethods != null) visualBuilder.withShowApplicationServiceMethods(showApplicationServiceMethods);
+        if(showRepositories != null) visualBuilder.withShowRepositories(showRepositories);
+        if(showRepositoryFields != null) visualBuilder.withShowRepositoryFields(showRepositoryFields);
+        if(showRepositoryMethods != null) visualBuilder.withShowRepositoryMethods(showRepositoryMethods);
+        if(showReadModels != null) visualBuilder.withShowReadModels(showReadModels);
+        if(showReadModelFields != null) visualBuilder.withShowReadModelFields(showReadModelFields);
+        if(showReadModelMethods != null) visualBuilder.withShowReadModelMethods(showReadModelMethods);
+        if(showQueryHandlers != null) visualBuilder.withShowQueryHandlers(showQueryHandlers);
+        if(showQueryHandlerFields != null) visualBuilder.withShowQueryHandlerFields(showQueryHandlerFields);
+        if(showQueryHandlerMethods != null) visualBuilder.withShowQueryHandlerMethods(showQueryHandlerMethods);
+        if(showOutboundServices != null) visualBuilder.withShowOutboundServices(showOutboundServices);
+        if(showOutboundServiceFields != null) visualBuilder.withShowOutboundServiceFields(showOutboundServiceFields);
+        if(showOutboundServiceMethods != null) visualBuilder.withShowOutboundServiceMethods(showOutboundServiceMethods);
+        if(showUnspecifiedServiceKinds != null) visualBuilder.withShowUnspecifiedServiceKinds(showUnspecifiedServiceKinds);
+        if(showUnspecifiedServiceKindFields != null) visualBuilder.withShowUnspecifiedServiceKindFields(showUnspecifiedServiceKindFields);
+        if(showUnspecifiedServiceKindMethods != null) visualBuilder.withShowUnspecifiedServiceKindMethods(showUnspecifiedServiceKindMethods);
+        if(callApplicationServiceDriver != null) visualBuilder.withCallApplicationServiceDriver(callApplicationServiceDriver);
+        if(fieldBlacklist != null && !fieldBlacklist.isEmpty()) visualBuilder.withFieldBlacklist(fieldBlacklist);
+        if(methodBlacklist != null && !methodBlacklist.isEmpty()) visualBuilder.withMethodBlacklist(classesBlacklist);
+        if(showInheritedMembersInClasses != null) visualBuilder.withShowInheritedMembersInClasses(showInheritedMembersInClasses);
+        if(showObjectMembersInClasses != null) visualBuilder.withShowObjectMembersInClasses(showObjectMembersInClasses);
+        if(multiplicityInLabel != null) visualBuilder.withMultiplicityInLabel(multiplicityInLabel);
+        if(fieldStereotypes != null) visualBuilder.withFieldStereotypes(fieldStereotypes);
+        if(transitiveFilterSeedDomainServiceTypeNames != null && !transitiveFilterSeedDomainServiceTypeNames.isEmpty()) trimBuilder.withTransitiveFilterSeedDomainServiceTypeNames(transitiveFilterSeedDomainServiceTypeNames);
+        if(explicitlyIncludedPackageNames != null && !explicitlyIncludedPackageNames.isEmpty()) trimBuilder.withExplicitlyIncludedPackageNames(explicitlyIncludedPackageNames);
+        if(useAbstractTypeNameForConcreteServiceKinds != null) visualBuilder.withUseAbstractTypeNameForConcreteServiceKinds(useAbstractTypeNameForConcreteServiceKinds);
+        if(showAbstractTypes != null) visualBuilder.withShowAbstractTypes(showAbstractTypes);
 
-        return builder.build();
+        configBuilder
+            .withDiagramTrimSettings(trimBuilder.build())
+            .withLayoutSettings(layoutBuilder.build())
+            .withStyleSettings(styleBuilder.build())
+            .withGeneralVisualSettings(visualBuilder.build());
+        return configBuilder.build();
     }
 }

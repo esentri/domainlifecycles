@@ -92,8 +92,8 @@ public class DomainClassMapper {
      */
     public NomnomlClass mapDomainEventClass(DomainEventMirror domainEventMirror) {
         return mapToNomnomlClass(domainEventMirror,
-            domainDiagramConfig.isShowDomainEventFields() && domainDiagramConfig.isShowFields(),
-            domainDiagramConfig.isShowDomainEventMethods() && domainDiagramConfig.isShowMethods()
+            domainDiagramConfig.getGeneralVisualSettings().isShowDomainEventFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
+            domainDiagramConfig.getGeneralVisualSettings().isShowDomainEventMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()
         );
     }
 
@@ -105,8 +105,8 @@ public class DomainClassMapper {
      */
     public NomnomlClass mapDomainCommandClass(DomainCommandMirror domainCommandMirror) {
         return mapToNomnomlClass(domainCommandMirror,
-            domainDiagramConfig.isShowDomainCommandFields() && domainDiagramConfig.isShowFields(),
-            domainDiagramConfig.isShowDomainCommandMethods() && domainDiagramConfig.isShowMethods()
+            domainDiagramConfig.getGeneralVisualSettings().isShowDomainCommandFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
+            domainDiagramConfig.getGeneralVisualSettings().isShowDomainCommandMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()
         );
     }
 
@@ -118,8 +118,8 @@ public class DomainClassMapper {
      */
     public NomnomlClass mapDomainServiceClass(DomainServiceMirror domainServiceMirror) {
         return mapToNomnomlClass(domainServiceMirror,
-            domainDiagramConfig.isShowDomainServiceFields() && domainDiagramConfig.isShowFields(),
-            domainDiagramConfig.isShowDomainServiceMethods() && domainDiagramConfig.isShowMethods()
+            domainDiagramConfig.getGeneralVisualSettings().isShowDomainServiceFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
+            domainDiagramConfig.getGeneralVisualSettings().isShowDomainServiceMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()
         );
     }
 
@@ -131,8 +131,8 @@ public class DomainClassMapper {
      */
     public NomnomlClass mapApplicationServiceClass(ApplicationServiceMirror applicationServiceMirror) {
         return mapToNomnomlClass(applicationServiceMirror,
-            domainDiagramConfig.isShowDomainServiceFields() && domainDiagramConfig.isShowFields(),
-            domainDiagramConfig.isShowDomainServiceMethods() && domainDiagramConfig.isShowMethods()
+            domainDiagramConfig.getGeneralVisualSettings().isShowDomainServiceFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
+            domainDiagramConfig.getGeneralVisualSettings().isShowDomainServiceMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()
         );
     }
 
@@ -144,8 +144,8 @@ public class DomainClassMapper {
      */
     public NomnomlClass mapRepositoryClass(RepositoryMirror repositoryMirror) {
         return mapToNomnomlClass(repositoryMirror,
-            domainDiagramConfig.isShowRepositoryFields() && domainDiagramConfig.isShowFields(),
-            domainDiagramConfig.isShowRepositoryMethods() && domainDiagramConfig.isShowMethods()
+            domainDiagramConfig.getGeneralVisualSettings().isShowRepositoryFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
+            domainDiagramConfig.getGeneralVisualSettings().isShowRepositoryMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()
         );
     }
 
@@ -157,8 +157,8 @@ public class DomainClassMapper {
      */
     public NomnomlClass mapReadModelClass(ReadModelMirror readModelMirror) {
         return mapToNomnomlClass(readModelMirror,
-            domainDiagramConfig.isShowReadModelFields() && domainDiagramConfig.isShowFields(),
-            domainDiagramConfig.isShowReadModelMethods() && domainDiagramConfig.isShowMethods()
+            domainDiagramConfig.getGeneralVisualSettings().isShowReadModelFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
+            domainDiagramConfig.getGeneralVisualSettings().isShowReadModelMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()
         );
     }
 
@@ -170,8 +170,8 @@ public class DomainClassMapper {
      */
     public NomnomlClass mapQueryHandlerClass(QueryHandlerMirror queryHandlerMirror) {
         return mapToNomnomlClass(queryHandlerMirror,
-            domainDiagramConfig.isShowQueryHandlerFields() && domainDiagramConfig.isShowFields(),
-            domainDiagramConfig.isShowQueryHandlerMethods() && domainDiagramConfig.isShowMethods()
+            domainDiagramConfig.getGeneralVisualSettings().isShowQueryHandlerFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
+            domainDiagramConfig.getGeneralVisualSettings().isShowQueryHandlerMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()
         );
     }
 
@@ -183,8 +183,8 @@ public class DomainClassMapper {
      */
     public NomnomlClass mapOutboundServiceClass(OutboundServiceMirror outboundServiceMirror) {
         return mapToNomnomlClass(outboundServiceMirror,
-            domainDiagramConfig.isShowOutboundServiceFields() && domainDiagramConfig.isShowFields(),
-            domainDiagramConfig.isShowOutboundServiceMethods() && domainDiagramConfig.isShowMethods()
+            domainDiagramConfig.getGeneralVisualSettings().isShowOutboundServiceFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
+            domainDiagramConfig.getGeneralVisualSettings().isShowOutboundServiceMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()
         );
     }
 
@@ -196,8 +196,8 @@ public class DomainClassMapper {
      */
     public NomnomlClass mapUnspecifiedServiceKindClass(ServiceKindMirror serviceKindMirror) {
         return mapToNomnomlClass(serviceKindMirror,
-            domainDiagramConfig.isShowUnspecifiedServiceKindFields() && domainDiagramConfig.isShowFields(),
-            domainDiagramConfig.isShowUnspecifiedServiceKindMethods() && domainDiagramConfig.isShowMethods()
+            domainDiagramConfig.getGeneralVisualSettings().isShowUnspecifiedServiceKindFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
+            domainDiagramConfig.getGeneralVisualSettings().isShowUnspecifiedServiceKindMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()
         );
     }
 
@@ -218,18 +218,18 @@ public class DomainClassMapper {
                     DomainType.ENTITY,
                     DomainType.VALUE_OBJECT
                 ).contains(domainTypeMirror.getDomainType())) {
-                    if (!domainDiagramConfig.getClassesBlacklist().contains(domainTypeMirror.getTypeName())) {
+                    if (!domainDiagramConfig.getDiagramTrimSettings().getClassesBlacklist().contains(domainTypeMirror.getTypeName())) {
                         if (DomainType.VALUE_OBJECT.equals(domainTypeMirror.getDomainType())) {
                             var voMirror = (ValueObjectMirror) domainTypeMirror;
                             if (!voMirror.isSingledValued()) {
                                 aggregateClasses.add(mapToNomnomlClass(domainTypeMirror,
-                                    domainDiagramConfig.isShowAggregateFields() && domainDiagramConfig.isShowFields(),
-                                    domainDiagramConfig.isShowAggregateMethods() && domainDiagramConfig.isShowMethods()));
+                                    domainDiagramConfig.getGeneralVisualSettings().isShowAggregateFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
+                                    domainDiagramConfig.getGeneralVisualSettings().isShowAggregateMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()));
                             }
                         } else {
                             aggregateClasses.add(mapToNomnomlClass(domainTypeMirror,
-                                domainDiagramConfig.isShowAggregateFields() && domainDiagramConfig.isShowFields(),
-                                domainDiagramConfig.isShowAggregateMethods() && domainDiagramConfig.isShowMethods()));
+                                domainDiagramConfig.getGeneralVisualSettings().isShowAggregateFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
+                                domainDiagramConfig.getGeneralVisualSettings().isShowAggregateMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()));
                         }
                     }
                 }
@@ -272,16 +272,16 @@ public class DomainClassMapper {
                 .filter(p -> !p.isHidden())
                 .filter(p -> !p.isStatic())
                 .filter(p -> !p.getName().equals(inheritedIdentityNameFinal))
-                .filter(p -> !domainDiagramConfig.getFieldBlacklist().contains(p.getName()))
+                .filter(p -> !domainDiagramConfig.getGeneralVisualSettings().getFieldBlacklist().contains(p.getName()))
                 .filter(p -> DomainMapperUtils.showPropertyInline(p, domainTypeMirror, domainDiagramConfig))
                 .filter(p -> {
-                    if (!domainDiagramConfig.isShowInheritedMembersInClasses()) {
+                    if (!domainDiagramConfig.getGeneralVisualSettings().isShowInheritedMembersInClasses()) {
                         return p.getDeclaredByTypeName().equals(domainTypeMirror.getTypeName());
                     }
                     return true;
                 })
                 .filter(p -> {
-                    if (!domainDiagramConfig.isShowObjectMembersInClasses()) {
+                    if (!domainDiagramConfig.getGeneralVisualSettings().isShowObjectMembersInClasses()) {
                         return !p.getDeclaredByTypeName().equals(Object.class.getName());
                     }
                     return true;
@@ -308,19 +308,19 @@ public class DomainClassMapper {
             nomnomlClassBuilder.methods(
                 domainTypeMirror.getMethods()
                     .stream()
-                    .filter(m -> !domainDiagramConfig.isShowOnlyPublicMethods()
+                    .filter(m -> !domainDiagramConfig.getGeneralVisualSettings().isShowOnlyPublicMethods()
                         || m.getAccessLevel().equals(AccessLevel.PUBLIC)
                     )
                     .filter(m -> !m.isOverridden())
-                    .filter(m -> !domainDiagramConfig.getMethodBlacklist().contains(m.getName()))
+                    .filter(m -> !domainDiagramConfig.getGeneralVisualSettings().getMethodBlacklist().contains(m.getName()))
                     .filter(m -> {
-                        if (!domainDiagramConfig.isShowInheritedMembersInClasses()) {
+                        if (!domainDiagramConfig.getGeneralVisualSettings().isShowInheritedMembersInClasses()) {
                             return m.getDeclaredByTypeName().equals(domainTypeMirror.getTypeName());
                         }
                         return true;
                     })
                     .filter(m -> {
-                        if (!domainDiagramConfig.isShowObjectMembersInClasses()) {
+                        if (!domainDiagramConfig.getGeneralVisualSettings().isShowObjectMembersInClasses()) {
                             return !m.getDeclaredByTypeName().equals(Object.class.getName());
                         }
                         return true;
@@ -403,7 +403,7 @@ public class DomainClassMapper {
      */
     private Optional<String> fieldStereoType(FieldMirror fieldMirror) {
         Optional<String> typePrefix = Optional.empty();
-        if (domainDiagramConfig.isFieldStereotypes()) {
+        if (domainDiagramConfig.getGeneralVisualSettings().isFieldStereotypes()) {
             if (fieldMirror.isIdentityField()) {
                 return Optional.of("<ID>");
             } else {
@@ -488,7 +488,7 @@ public class DomainClassMapper {
     }
 
     private List<String> assertionList(List<AssertionMirror> assertionMirrors) {
-        if (assertionMirrors != null && domainDiagramConfig.isShowAssertions()) {
+        if (assertionMirrors != null && domainDiagramConfig.getGeneralVisualSettings().isShowAssertions()) {
             return assertionMirrors
                 .stream()
                 .sorted(new AssertionComparator())

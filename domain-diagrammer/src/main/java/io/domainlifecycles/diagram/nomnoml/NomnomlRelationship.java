@@ -287,7 +287,7 @@ public class NomnomlRelationship implements DiagramElement {
     }
 
     /**
-     * Builder class for constructing instances of {@code NomnomlRelationship}.
+     * StyleSettingsBuilder class for constructing instances of {@code NomnomlRelationship}.
      * This class provides a fluent interface for setting various attributes of a relationship
      * such as the source and target names, styles, multiplicities, label, and relationship type.
      */

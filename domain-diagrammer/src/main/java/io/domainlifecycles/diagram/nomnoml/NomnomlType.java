@@ -169,18 +169,18 @@ public class NomnomlType implements DiagramElement {
         if (!other.canEqual((Object) this)) return false;
         final Object this$typeName = this.getTypeName();
         final Object other$typeName = other.getTypeName();
-        if (this$typeName == null ? other$typeName != null : !this$typeName.equals(other$typeName)) return false;
+        if (!Objects.equals(this$typeName, other$typeName)) return false;
         final Object this$typeAssertions = this.getTypeAssertions();
         final Object other$typeAssertions = other.getTypeAssertions();
-        if (this$typeAssertions == null ? other$typeAssertions != null : !this$typeAssertions.equals(other$typeAssertions))
+        if (!Objects.equals(this$typeAssertions, other$typeAssertions))
             return false;
         final Object this$containerTypeName = this.getContainerTypeName();
         final Object other$containerTypeName = other.getContainerTypeName();
-        if (this$containerTypeName == null ? other$containerTypeName != null : !this$containerTypeName.equals(other$containerTypeName))
+        if (!Objects.equals(this$containerTypeName, other$containerTypeName))
             return false;
         final Object this$containerTypeAssertions = this.getContainerTypeAssertions();
         final Object other$containerTypeAssertions = other.getContainerTypeAssertions();
-        if (this$containerTypeAssertions == null ? other$containerTypeAssertions != null : !this$containerTypeAssertions.equals(other$containerTypeAssertions))
+        if (!Objects.equals(this$containerTypeAssertions, other$containerTypeAssertions))
             return false;
         return true;
     }

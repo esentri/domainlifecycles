@@ -234,106 +234,106 @@ public class DomainDiagramGenerator implements Diagram {
     }
 
     private String aggregateFrameStyleDeclaration() {
-        if (diagramConfig.getAggregateFrameStyle() != null) {
-            return completeStyleDeclaration(diagramConfig.getAggregateFrameStyle(), AGGREGATE_FRAME_STYLE_TAG);
+        if (diagramConfig.getStyleSettings().getAggregateFrameStyle() != null) {
+            return completeStyleDeclaration(diagramConfig.getStyleSettings().getAggregateFrameStyle(), AGGREGATE_FRAME_STYLE_TAG);
         }
         return "";
     }
 
     private String aggregateRootStyleDeclaration() {
-        if (diagramConfig.getAggregateRootStyle() != null) {
-            return completeStyleDeclaration(diagramConfig.getAggregateRootStyle(), AGGREGATE_ROOT_STYLE_TAG);
+        if (diagramConfig.getStyleSettings().getAggregateRootStyle() != null) {
+            return completeStyleDeclaration(diagramConfig.getStyleSettings().getAggregateRootStyle(), AGGREGATE_ROOT_STYLE_TAG);
         }
         return "";
     }
 
     private String entityStyleDeclaration() {
-        if (diagramConfig.getEntityStyle() != null) {
-            return completeStyleDeclaration(diagramConfig.getEntityStyle(), ENTITY_STYLE_TAG);
+        if (diagramConfig.getStyleSettings().getEntityStyle() != null) {
+            return completeStyleDeclaration(diagramConfig.getStyleSettings().getEntityStyle(), ENTITY_STYLE_TAG);
         }
         return "";
     }
 
     private String valueObjectStyleDeclaration() {
-        if (diagramConfig.getValueObjectStyle() != null) {
-            return completeStyleDeclaration(diagramConfig.getValueObjectStyle(), VALUE_OBJECT_STYLE_TAG);
+        if (diagramConfig.getStyleSettings().getValueObjectStyle() != null) {
+            return completeStyleDeclaration(diagramConfig.getStyleSettings().getValueObjectStyle(), VALUE_OBJECT_STYLE_TAG);
         }
         return "";
     }
 
     private String enumStyleDeclaration() {
-        if (diagramConfig.getEnumStyle() != null) {
-            return completeStyleDeclaration(diagramConfig.getEnumStyle(), ENUM_STYLE_TAG);
+        if (diagramConfig.getStyleSettings().getEnumStyle() != null) {
+            return completeStyleDeclaration(diagramConfig.getStyleSettings().getEnumStyle(), ENUM_STYLE_TAG);
         }
         return "";
     }
 
     private String identityStyleDeclaration() {
-        if (diagramConfig.getIdentityStyle() != null) {
-            return completeStyleDeclaration(diagramConfig.getIdentityStyle(), IDENTITY_STYLE_TAG);
+        if (diagramConfig.getStyleSettings().getIdentityStyle() != null) {
+            return completeStyleDeclaration(diagramConfig.getStyleSettings().getIdentityStyle(), IDENTITY_STYLE_TAG);
         }
         return "";
     }
 
     private String domainCommandStyleDeclaration() {
-        if (diagramConfig.getDomainCommandStyle() != null) {
-            return completeStyleDeclaration(diagramConfig.getDomainCommandStyle(), DOMAIN_COMMAND_STYLE_TAG);
+        if (diagramConfig.getStyleSettings().getDomainCommandStyle() != null) {
+            return completeStyleDeclaration(diagramConfig.getStyleSettings().getDomainCommandStyle(), DOMAIN_COMMAND_STYLE_TAG);
         }
         return "";
     }
 
     private String domainEventStyleDeclaration() {
-        if (diagramConfig.getDomainEventStyle() != null) {
-            return completeStyleDeclaration(diagramConfig.getDomainEventStyle(), DOMAIN_EVENT_STYLE_TAG);
+        if (diagramConfig.getStyleSettings().getDomainEventStyle() != null) {
+            return completeStyleDeclaration(diagramConfig.getStyleSettings().getDomainEventStyle(), DOMAIN_EVENT_STYLE_TAG);
         }
         return "";
     }
 
     private String applicationServiceStyleDeclaration() {
-        if (diagramConfig.getApplicationServiceStyle() != null) {
-            return completeStyleDeclaration(diagramConfig.getApplicationServiceStyle(), APPLICATION_SERVICE_STYLE_TAG);
+        if (diagramConfig.getStyleSettings().getApplicationServiceStyle() != null) {
+            return completeStyleDeclaration(diagramConfig.getStyleSettings().getApplicationServiceStyle(), APPLICATION_SERVICE_STYLE_TAG);
         }
         return "";
     }
 
     private String domainServiceStyleDeclaration() {
-        if (diagramConfig.getDomainServiceStyle() != null) {
-            return styleDeclaration(diagramConfig.getDomainServiceStyle(), DOMAIN_SERVICE_STYLE_TAG);
+        if (diagramConfig.getStyleSettings().getDomainServiceStyle() != null) {
+            return styleDeclaration(diagramConfig.getStyleSettings().getDomainServiceStyle(), DOMAIN_SERVICE_STYLE_TAG);
         }
         return "";
     }
 
     private String repositoryStyleDeclaration() {
-        if (diagramConfig.getRepositoryStyle() != null) {
-            return completeStyleDeclaration(diagramConfig.getRepositoryStyle(), REPOSITORY_STYLE_TAG);
+        if (diagramConfig.getStyleSettings().getRepositoryStyle() != null) {
+            return completeStyleDeclaration(diagramConfig.getStyleSettings().getRepositoryStyle(), REPOSITORY_STYLE_TAG);
         }
         return "";
     }
 
     private String outboundServiceStyleDeclaration() {
-        if (diagramConfig.getOutboundServiceStyle() != null) {
-            return completeStyleDeclaration(diagramConfig.getOutboundServiceStyle(), OUTBOUND_SERVICE_STYLE_TAG);
+        if (diagramConfig.getStyleSettings().getOutboundServiceStyle() != null) {
+            return completeStyleDeclaration(diagramConfig.getStyleSettings().getOutboundServiceStyle(), OUTBOUND_SERVICE_STYLE_TAG);
         }
         return "";
     }
 
     private String queryHandlerStyleDeclaration() {
-        if (diagramConfig.getQueryHandlerStyle() != null) {
-            return completeStyleDeclaration(diagramConfig.getQueryHandlerStyle(), QUERY_HANDLER_STYLE_TAG);
+        if (diagramConfig.getStyleSettings().getQueryHandlerStyle() != null) {
+            return completeStyleDeclaration(diagramConfig.getStyleSettings().getQueryHandlerStyle(), QUERY_HANDLER_STYLE_TAG);
         }
         return "";
     }
 
     private String unspecifiedServiceKindStyleDeclaration() {
-        if (diagramConfig.getUnspecifiedServiceKindStyle() != null) {
-            return completeStyleDeclaration(diagramConfig.getUnspecifiedServiceKindStyle(), SERVICE_KIND_STYLE_TAG);
+        if (diagramConfig.getStyleSettings().getUnspecifiedServiceKindStyle() != null) {
+            return completeStyleDeclaration(diagramConfig.getStyleSettings().getUnspecifiedServiceKindStyle(), SERVICE_KIND_STYLE_TAG);
         }
         return "";
     }
 
     private String readModelStyleDeclaration() {
-        if (diagramConfig.getReadModelStyle() != null) {
-            return completeStyleDeclaration(diagramConfig.getReadModelStyle(), READ_MODEL_STYLE_TAG);
+        if (diagramConfig.getStyleSettings().getReadModelStyle() != null) {
+            return completeStyleDeclaration(diagramConfig.getStyleSettings().getReadModelStyle(), READ_MODEL_STYLE_TAG);
         }
         return "";
     }
@@ -357,36 +357,36 @@ public class DomainDiagramGenerator implements Diagram {
     }
 
     private String fontStyleDeclaration() {
-        if (diagramConfig.getFont() != null) {
-            return "#font:" + diagramConfig.getFont() + System.lineSeparator();
+        if (diagramConfig.getStyleSettings().getFont() != null) {
+            return "#font:" + diagramConfig.getStyleSettings().getFont() + System.lineSeparator();
         }
         return "";
     }
 
     private String directionStyleDeclaration() {
-        if (diagramConfig.getDirection() != null) {
-            return "#direction:" + diagramConfig.getDirection() + System.lineSeparator();
+        if (diagramConfig.getLayoutSettings().getDirection() != null) {
+            return "#direction:" + diagramConfig.getLayoutSettings().getDirection() + System.lineSeparator();
         }
         return "";
     }
 
     private String acyclerStyleDeclaration() {
-        if (diagramConfig.getDirection() != null) {
-            return "#acycler: " + diagramConfig.getAcycler() + System.lineSeparator();
+        if (diagramConfig.getLayoutSettings().getAcycler() != null) {
+            return "#acycler: " + diagramConfig.getLayoutSettings().getAcycler() + System.lineSeparator();
         }
         return "";
     }
 
     private String rankerStyleDeclaration() {
-        if (diagramConfig.getDirection() != null) {
-            return "#ranker: " + diagramConfig.getRanker() + System.lineSeparator();
+        if (diagramConfig.getLayoutSettings().getRanker() != null) {
+            return "#ranker: " + diagramConfig.getLayoutSettings().getRanker() + System.lineSeparator();
         }
         return "";
     }
 
     private String backgroundColorStyleDeclaration() {
-        if (diagramConfig.getBackgroundColor() != null) {
-            return "#background: " + diagramConfig.getBackgroundColor() + System.lineSeparator();
+        if (diagramConfig.getStyleSettings().getBackgroundColor() != null) {
+            return "#background: " + diagramConfig.getStyleSettings().getBackgroundColor() + System.lineSeparator();
         }
         return "";
     }

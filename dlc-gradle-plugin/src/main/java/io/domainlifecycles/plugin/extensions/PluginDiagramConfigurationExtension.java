@@ -71,11 +71,11 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
     public abstract Property<String> getFileExtension();
 
     /**
-     * Retrieves a list property representing the filtered packages.
+     * Retrieves a list property representing the explicitly included packages.
      *
-     * @return a ListProperty containing the filtered package names as strings.
+     * @return a ListProperty containing the explicitly included package names as strings.
      */
-    public abstract ListProperty<String> getFilteredPackages();
+    public abstract ListProperty<String> getExplicitlyIncludedPackages();
 
     /**
      * Retrieves the property indicating whether abstract types should be shown.

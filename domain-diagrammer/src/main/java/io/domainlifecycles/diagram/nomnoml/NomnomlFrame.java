@@ -164,20 +164,20 @@ public class NomnomlFrame implements DiagramElement {
         if (!other.canEqual((Object) this)) return false;
         final Object this$name = this.getName();
         final Object other$name = other.getName();
-        if (this$name == null ? other$name != null : !this$name.equals(other$name)) return false;
+        if (!Objects.equals(this$name, other$name)) return false;
         final Object this$comment = this.getComment();
         final Object other$comment = other.getComment();
-        if (this$comment == null ? other$comment != null : !this$comment.equals(other$comment)) return false;
+        if (!Objects.equals(this$comment, other$comment)) return false;
         final Object this$type = this.getType();
         final Object other$type = other.getType();
-        if (this$type == null ? other$type != null : !this$type.equals(other$type)) return false;
+        if (!Objects.equals(this$type, other$type)) return false;
         final Object this$styleClassifier = this.getStyleClassifier();
         final Object other$styleClassifier = other.getStyleClassifier();
-        if (this$styleClassifier == null ? other$styleClassifier != null : !this$styleClassifier.equals(other$styleClassifier))
+        if (!Objects.equals(this$styleClassifier, other$styleClassifier))
             return false;
         final Object this$innerElements = this.getInnerElements();
         final Object other$innerElements = other.getInnerElements();
-        if (this$innerElements == null ? other$innerElements != null : !this$innerElements.equals(other$innerElements))
+        if (!Objects.equals(this$innerElements, other$innerElements))
             return false;
         return true;
     }

@@ -75,6 +75,10 @@ import static java.lang.reflect.Modifier.VOLATILE;
  */
 public enum JavaReflect {
     ;
+    /**
+     * A constant representing the file extension for Java class files.
+     * The value of this constant is ".class".
+     */
     public static final String CLASS_FILE_EXT = ".class";
 
     // ----------------------------------------------------------
@@ -1870,20 +1874,64 @@ public enum JavaReflect {
      * The enumeration is primarily used to associate specific kinds of primitive characteristics
      * with data types that share similar properties or functions. These classifications may help
      * in organizing type systems, performing type-checking, or optimizing low-level computations.
-     * Enum constants:
-     * - PRIMITIVE: Represents a generic primitive type.
-     * - NUMERIC: Represents numeric types including integers and floating-point numbers.
-     * - INTEGRAL: Represents integer types without fractional components.
-     * - FLOATING: Represents floating-point types with fractional components.
-     * - SIGNED: Represents signed numeric types capable of representing both positive and negative values.
-     * - UNSIGNED: Represents unsigned numeric types that can only represent non-negative values.
-     * - DOUBLE_WORD: Represents types that occupy two words of memory.
-     * - SINGLE_WORD: Represents types that occupy a single word of memory.
-     * - SUB_WORD: Represents types that occupy less than a single word of memory.
-     * - VOID: Represents the absence of a type or a return type in certain contexts.
+     /**
+     * Represents the categories or kinds of primitive types in a programming language or type system.
+     * This enumeration defines a set of classifications for primitive data types that may include
+     * distinctions like numeric, integral, floating-point, signed, and unsigned types.
+     * The enumeration is primarily used to associate specific kinds of primitive characteristics
+     * with data types that share similar properties or functions. These classifications may help
+     * in organizing type systems, performing type-checking, or optimizing low-level computations.
      */
     public enum PrimitiveKind {
-        PRIMITIVE, NUMERIC, INTEGRAL, FLOATING, SIGNED, UNSIGNED, DOUBLE_WORD, SINGLE_WORD, SUB_WORD, VOID
+        /**
+         * Represents a generic primitive type
+         */
+        PRIMITIVE,
+
+        /**
+         * Represents numeric types including integers and floating-point numbers
+         */
+        NUMERIC,
+
+        /**
+         * Represents integer types without fractional components
+         */
+        INTEGRAL,
+
+        /**
+         * Represents floating-point types with fractional components
+         */
+        FLOATING,
+
+        /**
+         * Represents signed numeric types capable of representing both positive and negative values
+         */
+        SIGNED,
+
+        /**
+         * Represents unsigned numeric types that can only represent non-negative values
+         */
+        UNSIGNED,
+
+        /**
+         * Represents types that occupy two words of memory
+         */
+        DOUBLE_WORD,
+
+        /**
+         * Represents types that occupy a single word of memory
+         */
+        SINGLE_WORD,
+
+        /**
+         * Represents types that occupy less than a single word of memory
+         */
+        SUB_WORD,
+
+        /**
+         * Represents the absence of a type or a return type in certain contexts
+         */
+        VOID
     }
 
     private static final Class<?>[][] PRIMITIVES = {

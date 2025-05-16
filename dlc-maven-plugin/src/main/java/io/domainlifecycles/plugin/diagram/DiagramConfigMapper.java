@@ -48,7 +48,7 @@ public class DiagramConfigMapper {
 
         diagramConfig.setFileType(FileType.byName(mavenDiagramConfig.getFormat()));
         diagramConfig.setFileName(mavenDiagramConfig.getFileName());
-        diagramConfig.setFilteredPackageNames(mavenDiagramConfig.getFilteredPackages());
+        diagramConfig.setExplicitlyIncludedPackageNames(mavenDiagramConfig.getExplicitlyIncludedPackages());
         diagramConfig.setUseAbstractTypeNameForConcreteServiceKinds(mavenDiagramConfig.getUseAbstractTypeNameForConcreteServiceKinds());
         diagramConfig.setShowAbstractTypes(mavenDiagramConfig.getShowAbstractTypes());
 

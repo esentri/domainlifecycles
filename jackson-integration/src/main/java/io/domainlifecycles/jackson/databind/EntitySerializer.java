@@ -50,6 +50,17 @@ import java.io.IOException;
 @SuppressWarnings("rawtypes")
 public class EntitySerializer extends StdSerializer<Entity> {
 
+    /**
+     * A Jackson mapping customizer specifically designed for {@link Entity} objects.
+     * This customizer allows for the modification and customization of the serialization
+     * and deserialization processes of {@link Entity} instances. It provides various
+     * callback methods to control the behavior during JSON-to-object and object-to-JSON
+     * transformations, enabling precise fine-tuning for {@link Entity} types.
+     *
+     * The {@code customizer} is a final field, ensuring that the instantiation and
+     * configuration of the {@link JacksonMappingCustomizer} are immutable throughout
+     * the lifecycle of the {@link EntitySerializer}.
+     */
     private final JacksonMappingCustomizer<Entity> customizer;
 
     /**

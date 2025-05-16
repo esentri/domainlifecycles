@@ -225,23 +225,23 @@ public class NomnomlClass implements DiagramElement {
         if (!other.canEqual((Object) this)) return false;
         final Object this$comment = this.getComment();
         final Object other$comment = other.getComment();
-        if (this$comment == null ? other$comment != null : !this$comment.equals(other$comment)) return false;
+        if (!Objects.equals(this$comment, other$comment)) return false;
         final Object this$name = this.getName();
         final Object other$name = other.getName();
-        if (this$name == null ? other$name != null : !this$name.equals(other$name)) return false;
+        if (!Objects.equals(this$name, other$name)) return false;
         final Object this$styleClassifier = this.getStyleClassifier();
         final Object other$styleClassifier = other.getStyleClassifier();
-        if (this$styleClassifier == null ? other$styleClassifier != null : !this$styleClassifier.equals(other$styleClassifier))
+        if (!Objects.equals(this$styleClassifier, other$styleClassifier))
             return false;
         final Object this$fields = this.getFields();
         final Object other$fields = other.getFields();
-        if (this$fields == null ? other$fields != null : !this$fields.equals(other$fields)) return false;
+        if (!Objects.equals(this$fields, other$fields)) return false;
         final Object this$methods = this.getMethods();
         final Object other$methods = other.getMethods();
-        if (this$methods == null ? other$methods != null : !this$methods.equals(other$methods)) return false;
+        if (!Objects.equals(this$methods, other$methods)) return false;
         final Object this$stereotypes = this.getStereotypes();
         final Object other$stereotypes = other.getStereotypes();
-        if (this$stereotypes == null ? other$stereotypes != null : !this$stereotypes.equals(other$stereotypes))
+        if (!Objects.equals(this$stereotypes, other$stereotypes))
             return false;
         if (this.isShowFields() != other.isShowFields()) return false;
         if (this.isShowMethods() != other.isShowMethods()) return false;

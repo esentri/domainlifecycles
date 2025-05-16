@@ -81,8 +81,8 @@ public class FilteredDomainClasses {
 
         transitiveDomainTypeAnPackageFilter = new TransitiveDomainTypeAnPackageFilter(
             domainMirror,
-            domainDiagramConfig.getFilteredPackageNames(),
-            domainDiagramConfig.getTransitiveFilterSeedDomainServiceTypeNames()
+            domainDiagramConfig.getDiagramTrimSettings().getExplicitlyIncludedPackageNames(),
+            domainDiagramConfig.getDiagramTrimSettings().getTransitiveFilterSeedDomainServiceTypeNames()
         );
         this.domainCommands = initFilteredDomainCommands();
         this.domainEvents = initFilteredDomainEvents();
@@ -96,19 +96,19 @@ public class FilteredDomainClasses {
         return domainMirror
             .getAllServiceKindMirrors()
             .stream()
-            .filter(s -> !s.isAbstract() || domainDiagramConfig.isShowAbstractTypes())
+            .filter(s -> !s.isAbstract() || domainDiagramConfig.getGeneralVisualSettings().isShowAbstractTypes())
             .filter(s ->
-                (s.getDomainType().equals(DomainType.REPOSITORY) && domainDiagramConfig.isShowRepositories() && !s.getTypeName().equals("io.domainlifecycles.jooq.imp.JooqAggregateRepository"))
-                || (s.getDomainType().equals(DomainType.APPLICATION_SERVICE) && domainDiagramConfig.isShowApplicationServices())
-                || (s.getDomainType().equals(DomainType.DOMAIN_SERVICE) && domainDiagramConfig.isShowDomainServices())
-                || (s.getDomainType().equals(DomainType.OUTBOUND_SERVICE) && domainDiagramConfig.isShowOutboundServices())
-                || (s.getDomainType().equals(DomainType.QUERY_HANDLER) && domainDiagramConfig.isShowQueryHandlers())
-                || (s.getDomainType().equals(DomainType.SERVICE_KIND) && domainDiagramConfig.isShowUnspecifiedServiceKinds())
+                (s.getDomainType().equals(DomainType.REPOSITORY) && domainDiagramConfig.getGeneralVisualSettings().isShowRepositories() && !s.getTypeName().equals("io.domainlifecycles.jooq.imp.JooqAggregateRepository"))
+                || (s.getDomainType().equals(DomainType.APPLICATION_SERVICE) && domainDiagramConfig.getGeneralVisualSettings().isShowApplicationServices())
+                || (s.getDomainType().equals(DomainType.DOMAIN_SERVICE) && domainDiagramConfig.getGeneralVisualSettings().isShowDomainServices())
+                || (s.getDomainType().equals(DomainType.OUTBOUND_SERVICE) && domainDiagramConfig.getGeneralVisualSettings().isShowOutboundServices())
+                || (s.getDomainType().equals(DomainType.QUERY_HANDLER) && domainDiagramConfig.getGeneralVisualSettings().isShowQueryHandlers())
+                || (s.getDomainType().equals(DomainType.SERVICE_KIND) && domainDiagramConfig.getGeneralVisualSettings().isShowUnspecifiedServiceKinds())
             )
             .filter(transitiveDomainTypeAnPackageFilter::filter)
             .filter(s ->
-                !domainDiagramConfig.getClassesBlacklist().contains(s.getTypeName())
-                && s.getAllInterfaceTypeNames().stream().noneMatch(it -> domainDiagramConfig.getClassesBlacklist().contains(it)))
+                !domainDiagramConfig.getDiagramTrimSettings().getClassesBlacklist().contains(s.getTypeName())
+                && s.getAllInterfaceTypeNames().stream().noneMatch(it -> domainDiagramConfig.getDiagramTrimSettings().getClassesBlacklist().contains(it)))
             .toList();
     }
 
@@ -160,10 +160,10 @@ public class FilteredDomainClasses {
         return domainMirror
             .getAllDomainCommandMirrors()
             .stream()
-            .filter(dc -> !dc.isAbstract() || domainDiagramConfig.isShowAbstractTypes())
-            .filter(dc -> domainDiagramConfig.isShowDomainCommands())
+            .filter(dc -> !dc.isAbstract() || domainDiagramConfig.getGeneralVisualSettings().isShowAbstractTypes())
+            .filter(dc -> domainDiagramConfig.getGeneralVisualSettings().isShowDomainCommands())
             .filter(transitiveDomainTypeAnPackageFilter::filter)
-            .filter(dc -> !domainDiagramConfig.getClassesBlacklist().contains(dc.getTypeName()))
+            .filter(dc -> !domainDiagramConfig.getDiagramTrimSettings().getClassesBlacklist().contains(dc.getTypeName()))
             .toList();
     }
 
@@ -171,10 +171,10 @@ public class FilteredDomainClasses {
         return domainMirror
             .getAllDomainEventMirrors()
             .stream()
-            .filter(de -> !de.isAbstract() || domainDiagramConfig.isShowAbstractTypes())
-            .filter(dc -> domainDiagramConfig.isShowDomainEvents())
+            .filter(de -> !de.isAbstract() || domainDiagramConfig.getGeneralVisualSettings().isShowAbstractTypes())
+            .filter(dc -> domainDiagramConfig.getGeneralVisualSettings().isShowDomainEvents())
             .filter(transitiveDomainTypeAnPackageFilter::filter)
-            .filter(de -> !domainDiagramConfig.getClassesBlacklist().contains(de.getTypeName()))
+            .filter(de -> !domainDiagramConfig.getDiagramTrimSettings().getClassesBlacklist().contains(de.getTypeName()))
             .toList();
     }
 
@@ -182,10 +182,10 @@ public class FilteredDomainClasses {
         return domainMirror
             .getAllReadModelMirrors()
             .stream()
-            .filter(r -> !r.isAbstract() || domainDiagramConfig.isShowAbstractTypes())
-            .filter(r -> domainDiagramConfig.isShowReadModels())
+            .filter(r -> !r.isAbstract() || domainDiagramConfig.getGeneralVisualSettings().isShowAbstractTypes())
+            .filter(r -> domainDiagramConfig.getGeneralVisualSettings().isShowReadModels())
             .filter(transitiveDomainTypeAnPackageFilter::filter)
-            .filter(r -> !domainDiagramConfig.getClassesBlacklist().contains(r.getTypeName()))
+            .filter(r -> !domainDiagramConfig.getDiagramTrimSettings().getClassesBlacklist().contains(r.getTypeName()))
             .toList();
     }
 
@@ -193,10 +193,10 @@ public class FilteredDomainClasses {
         return domainMirror
             .getAllAggregateRootMirrors()
             .stream()
-            .filter(ar -> !ar.isAbstract() || domainDiagramConfig.isShowAbstractTypes())
-            .filter(r -> domainDiagramConfig.isShowAggregates())
+            .filter(ar -> !ar.isAbstract() || domainDiagramConfig.getGeneralVisualSettings().isShowAbstractTypes())
+            .filter(r -> domainDiagramConfig.getGeneralVisualSettings().isShowAggregates())
             .filter(transitiveDomainTypeAnPackageFilter::filter)
-            .filter(ar -> !domainDiagramConfig.getClassesBlacklist().contains(ar.getTypeName()))
+            .filter(ar -> !domainDiagramConfig.getDiagramTrimSettings().getClassesBlacklist().contains(ar.getTypeName()))
             .toList();
     }
 

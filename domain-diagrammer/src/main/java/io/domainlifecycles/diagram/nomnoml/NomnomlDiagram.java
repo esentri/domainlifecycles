@@ -109,11 +109,11 @@ public class NomnomlDiagram implements Diagram {
         if (!other.canEqual((Object) this)) return false;
         final Object this$styleDeclarations = this.getStyleDeclarations();
         final Object other$styleDeclarations = other.getStyleDeclarations();
-        if (this$styleDeclarations == null ? other$styleDeclarations != null : !this$styleDeclarations.equals(other$styleDeclarations))
+        if (!Objects.equals(this$styleDeclarations, other$styleDeclarations))
             return false;
         final Object this$diagramElements = this.getDiagramElements();
         final Object other$diagramElements = other.getDiagramElements();
-        if (this$diagramElements == null ? other$diagramElements != null : !this$diagramElements.equals(other$diagramElements))
+        if (!Objects.equals(this$diagramElements, other$diagramElements))
             return false;
         return true;
     }
@@ -144,7 +144,7 @@ public class NomnomlDiagram implements Diagram {
     }
 
     /**
-     * Builder class for constructing instances of {@link NomnomlDiagram}.
+     * StyleSettingsBuilder class for constructing instances of {@link NomnomlDiagram}.
      * This builder provides methods to set style declarations and diagram elements
      * that make up the diagram.
      */

@@ -56,7 +56,7 @@ public class DomainMapperUtils {
      */
     public static String domainTypeName(DomainTypeMirror domainTypeMirror, DomainDiagramConfig domainDiagramConfig) {
         var name = DomainMapperUtils.mapTypeName(domainTypeMirror.getTypeName(), domainDiagramConfig);
-        if(domainDiagramConfig.isUseAbstractTypeNameForConcreteServiceKinds()) {
+        if(domainDiagramConfig.getGeneralVisualSettings().isUseAbstractTypeNameForConcreteServiceKinds()) {
             if (domainTypeMirror.getDomainType().equals(DomainType.REPOSITORY)) {
                 var repositoryMirror = (RepositoryMirror) domainTypeMirror;
                 if (!repositoryMirror.getRepositoryInterfaceTypeNames().isEmpty() && !repositoryMirror.isAbstract()) {
@@ -99,7 +99,7 @@ public class DomainMapperUtils {
      * used {@link DomainDiagramConfig}.
      */
     public static String mapTypeName(String fullQualifiedName, DomainDiagramConfig domainDiagramConfig) {
-        return (domainDiagramConfig.isShowFullQualifiedClassNames()) ?
+        return (domainDiagramConfig.getGeneralVisualSettings().isShowFullQualifiedClassNames()) ?
             fullQualifiedName : simpleTypeName(fullQualifiedName);
     }
 
@@ -130,13 +130,13 @@ public class DomainMapperUtils {
             //for aggregate roots, entities or value objects we filter
             if (propertyMirror instanceof EntityReferenceMirror) {
                 var erm = (EntityReferenceMirror) propertyMirror;
-                return domainDiagramConfig.getClassesBlacklist().contains(erm.getType().getTypeName());
+                return domainDiagramConfig.getDiagramTrimSettings().getClassesBlacklist().contains(erm.getType().getTypeName());
             } else if (propertyMirror instanceof ValueReferenceMirror valueRef) {
                 if (valueRef.getValue().isEnum() || valueRef.getValue().isIdentity()) {
                     return true;
                 } else {
                     var valueObjectMirror = (ValueObjectMirror) valueRef.getValue();
-                    return valueObjectMirror.isSingledValued() || domainDiagramConfig.getClassesBlacklist().contains(valueObjectMirror.getTypeName());
+                    return valueObjectMirror.isSingledValued() || domainDiagramConfig.getDiagramTrimSettings().getClassesBlacklist().contains(valueObjectMirror.getTypeName());
                 }
             }
             return true;
@@ -193,7 +193,7 @@ public class DomainMapperUtils {
             case ENUM -> "Enum";
             case DOMAIN_SERVICE -> "DomainService";
             case APPLICATION_SERVICE ->
-                (domainDiagramConfig.isCallApplicationServiceDriver() ? "Driver" : "ApplicationService");
+                (domainDiagramConfig.getGeneralVisualSettings().isCallApplicationServiceDriver() ? "Driver" : "ApplicationService");
             case REPOSITORY -> "Repository";
             case DOMAIN_COMMAND -> "DomainCommand";
             case DOMAIN_EVENT -> "DomainEvent";

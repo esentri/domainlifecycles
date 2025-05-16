@@ -152,18 +152,18 @@ public class NomnomlField implements DiagramElement {
         if (!other.canEqual((Object) this)) return false;
         final Object this$visibility = this.getVisibility();
         final Object other$visibility = other.getVisibility();
-        if (this$visibility == null ? other$visibility != null : !this$visibility.equals(other$visibility))
+        if (!Objects.equals(this$visibility, other$visibility))
             return false;
         final Object this$name = this.getName();
         final Object other$name = other.getName();
-        if (this$name == null ? other$name != null : !this$name.equals(other$name)) return false;
+        if (!Objects.equals(this$name, other$name)) return false;
         final Object this$typePrefix = this.getTypePrefix();
         final Object other$typePrefix = other.getTypePrefix();
-        if (this$typePrefix == null ? other$typePrefix != null : !this$typePrefix.equals(other$typePrefix))
+        if (!Objects.equals(this$typePrefix, other$typePrefix))
             return false;
         final Object this$type = this.getType();
         final Object other$type = other.getType();
-        if (this$type == null ? other$type != null : !this$type.equals(other$type)) return false;
+        if (!Objects.equals(this$type, other$type)) return false;
         if (this.isRequired() != other.isRequired()) return false;
         return true;
     }
@@ -199,7 +199,7 @@ public class NomnomlField implements DiagramElement {
     }
 
     /**
-     * Builder class for constructing instances of {@link NomnomlField}.
+     * StyleSettingsBuilder class for constructing instances of {@link NomnomlField}.
      * <p>
      * This class provides a fluent API for setting the attributes of a {@link NomnomlField}.
      * Each method allows setting a specific field property and returns the builder instance,

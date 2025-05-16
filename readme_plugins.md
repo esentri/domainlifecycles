@@ -21,7 +21,7 @@ dlcGradlePlugin {
         diagrams {
             diagramNomnoml {
                 domainModelPackages = ["io.domainlifecycles.test"]
-                filteredPackageNames = ["io.domainlifecycles.test.mycontext"]
+                explicitlyIncludedPackages = ["io.domainlifecycles.test.mycontext"]
                 format = "nomnoml"
                 fileName = "diagram"
             }
@@ -40,7 +40,7 @@ Below that you can specify as many diagram configurations as you want, with diff
 and even different packages which should be used to read the model with `domainModelPackages`.
 
 The specified DomainModel must be complete an self-contained. All classes that the model consists of must be defined within the `domainModelPackages`.
-To render only a specific part of the model, use the `filteredPackageNames`configuration option.
+To render only a specific part of the model, use the `explicitlyIncludedPackages`configuration option.
 
 \
 You can rename `diagramNomnoml` and `diagramSvg` of course according to your needs, however it's important
@@ -112,7 +112,7 @@ Supported Diagram configuration options are
 - multiplicityInLabel
 - fieldStereotypes
 - transitiveFilterSeedDomainServiceTypeNames
-- filteredPackageNames: packages explicitly included in the diagram   
+- explicitlyIncludedPackages: packages explicitly included in the diagram   
 - showAbstractTypes: boolean, default false
 - useAbstractTypeNameForConcreteServiceKinds: boolean, default true
 
@@ -171,7 +171,7 @@ dlcGradlePlugin {
 }
 ```
 Specify the packages you want to be scanned by the Diagram-Viewer. These can later on be changed, or your diagrams 
-can be filtered even further.
+can be specified even further.
 You can generate a new API-Key by clicking on the profile tab in the Diagram-Viewer App.
 All classes that the model consists of must be defined within the `contextPackages`.
 
@@ -221,9 +221,9 @@ An example configuration in your project's build plugins could look like the fol
                                 <domainModelPackages>
                                     <domainModelPackage>io.domainlifecycles.test</domainModelPackage>
                                 </domainModelPackages>
-                                <filteredPackages>
-                                    <filteredPackage>io.domainlifecycles.test.mycontext</filteredPackage>
-                                </filteredPackages>
+                                <explicitlyIncludedPackages>
+                                    <explicitlyIncludedPackage>io.domainlifecycles.test.mycontext</explicitlyIncludedPackage>
+                                </explicitlyIncludedPackages>
                                 <format>svg</format>
                                 <fileName>diagram-mycontext</fileName>
                                 <aggregateRootStyle>fill=#333333 bold</aggregateRootStyle>
@@ -306,7 +306,7 @@ Supported Diagram configuration options are
 - multiplicityInLabel
 - fieldStereotypes
 - transitiveFilterSeedDomainServiceTypeNames
-- filteredPackageNames: packages explicitly included in the diagram
+- explicitlyIncludedPackages: packages explicitly included in the diagram
 - showAbstractTypes: boolean, default false
 - useAbstractTypeNameForConcreteServiceKinds: boolean, default true
 
@@ -397,7 +397,7 @@ An example configuration in your project could look like the following:
 </build>
 ```
 Specify the packages you want to be scanned by the Diagram-Viewer. These can later on be changed, or your diagrams
-can be filtered even further.
+can be specified even further.
 You can generate a new API-Key by clicking on the profile tab in the Diagram-Viewer App.
 All classes that the model consists of must be defined within the `contextPackages`.
 

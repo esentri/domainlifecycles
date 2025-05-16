@@ -1,6 +1,7 @@
 package io.domainlifecycles.diagram;
 
 import io.domainlifecycles.diagram.domain.DomainDiagramGenerator;
+import io.domainlifecycles.diagram.domain.config.DiagramTrimSettings;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
@@ -21,7 +22,8 @@ class NomnomlDomainDiagramGeneratorTest {
     @Test
     void generateSampleApp() {
         Domain.initialize(new ReflectiveDomainMirrorFactory("sampleshop"));
-        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withFilteredPackageNames(List.of("sampleshop")).build();
+        var trim = DiagramTrimSettings.builder().withExplicitlyIncludedPackageNames(List.of("sampleshop")).build();
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withDiagramTrimSettings(trim).build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
             diagramConfig, Domain.getDomainMirror());
 
@@ -43,9 +45,8 @@ class NomnomlDomainDiagramGeneratorTest {
     @Test
     void generateAllTests() {
         Domain.initialize(new ReflectiveDomainMirrorFactory("tests.shared"));
-        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
-            .withFilteredPackageNames(List.of("tests.shared"))
-            .build();
+        var trim = DiagramTrimSettings.builder().withExplicitlyIncludedPackageNames(List.of("tests.shared")).build();
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withDiagramTrimSettings(trim).build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
             diagramConfig, Domain.getDomainMirror());
 
@@ -68,10 +69,8 @@ class NomnomlDomainDiagramGeneratorTest {
         var factory = new ReflectiveDomainMirrorFactory("sampleshop");
         factory.setGenericTypeResolver(new TypeMetaResolver());
         Domain.initialize(factory);
-        DomainDiagramConfig diagramConfig = DomainDiagramConfig
-            .builder()
-            .withFilteredPackageNames(List.of("sampleshop"))
-            .build();
+        var trim = DiagramTrimSettings.builder().withExplicitlyIncludedPackageNames(List.of("sampleshop")).build();
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withDiagramTrimSettings(trim).build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
             diagramConfig, Domain.getDomainMirror());
 
@@ -94,10 +93,12 @@ class NomnomlDomainDiagramGeneratorTest {
         var factory = new ReflectiveDomainMirrorFactory("sampleshop");
         factory.setGenericTypeResolver(new TypeMetaResolver());
         Domain.initialize(factory);
-        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
-            .withFilteredPackageNames(List.of("sampleshop"))
+        var trim = DiagramTrimSettings.builder()
+            .withExplicitlyIncludedPackageNames(List.of("sampleshop"))
             .withTransitiveFilterSeedDomainServiceTypeNames(List.of(OrderDriver.class.getName()))
             .build();
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withDiagramTrimSettings(trim).build();
+
 
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
             diagramConfig, Domain.getDomainMirror());
@@ -121,9 +122,9 @@ class NomnomlDomainDiagramGeneratorTest {
         var factory = new ReflectiveDomainMirrorFactory("tests.shared");
         factory.setGenericTypeResolver(new TypeMetaResolver());
         Domain.initialize(factory);
-        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
-            .withFilteredPackageNames(List.of("tests.shared"))
-            .build();
+        var trim = DiagramTrimSettings.builder().withExplicitlyIncludedPackageNames(List.of("tests.shared")).build();
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withDiagramTrimSettings(trim).build();
+
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
             diagramConfig, Domain.getDomainMirror());
 

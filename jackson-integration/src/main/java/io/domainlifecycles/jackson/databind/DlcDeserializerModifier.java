@@ -30,10 +30,12 @@ import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
+import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.domain.types.ValueObject;
+import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
@@ -45,8 +47,36 @@ import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
  */
 public class DlcDeserializerModifier extends BeanDeserializerModifier {
 
+    /**
+     * A container for managing Jackson mapping customizers associated with specific domain object types.
+     * This field is used to locate and apply domain-specific customizations during the deserialization process.
+     * It holds mappings between domain object classes and their respective {@link JacksonMappingCustomizer} instances.
+     */
     private final DlcJacksonModule.CustomizerContainer customizersContainer;
+    /**
+     * A provider for creating instances of {@link DomainObjectBuilder} for domain object deserialization.
+     * This field holds a reference to a {@link DomainObjectBuilderProvider} implementation, which is used
+     * to supply builders for specific domain object types based on their type information.
+     *
+     * It is utilized during the deserialization process to customize and construct domain objects
+     * as per the provided configurations and conventions.
+     */
     private final DomainObjectBuilderProvider domainObjectBuilderProvider;
+    /**
+     * Responsible for providing identity information for entities. This field is
+     * used within the context of the deserialization process to retrieve and handle
+     * identity-related data for {@link Entity} instances.
+     *
+     * The field is initialized via the {@link DlcDeserializerModifier} constructor
+     * and remains immutable throughout the object's lifecycle. It facilitates integration
+     * with the {@link EntityIdentityProvider}, enabling dynamic deserialization
+     * adjustments based on the identity of domain-specific entities.
+     *
+     * This ensures that deserialization of entities can be customized depending
+     * on their identity, which is particularly useful for maintaining consistency
+     * across the domain model and preserving referential integrity during
+     * the JSON-to-object transformation process.
+     */
     private final EntityIdentityProvider entityIdentityProvider;
 
     /**

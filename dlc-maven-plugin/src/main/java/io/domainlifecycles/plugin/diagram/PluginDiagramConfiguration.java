@@ -67,8 +67,8 @@ public class PluginDiagramConfiguration {
      @Parameter(property = "domainModelPackages", required = true)
      private List<String> domainModelPackages;
 
-     @Parameter(property = "filteredPackages", required = true)
-     private List<String> filteredPackages;
+     @Parameter(property = "explicitlyIncludedPackages", required = true)
+     private List<String> explicitlyIncludedPackages;
 
      @Parameter(property = "showAbstractTypes", required = false)
      private Boolean showAbstractTypes;
@@ -300,8 +300,8 @@ public class PluginDiagramConfiguration {
      *
      * @return a list of package names that have been filtered
      */
-    public List<String> getFilteredPackages() {
-        return filteredPackages;
+    public List<String> getExplicitlyIncludedPackages() {
+        return explicitlyIncludedPackages;
     }
 
     /**

@@ -47,6 +47,15 @@ import java.io.IOException;
  */
 public class ValueObjectSerializer extends StdSerializer<ValueObject> {
 
+    /**
+     * A customizer used to modify the JSON mapping process for {@link ValueObject} instances.
+     * <p>
+     * This field holds an instance of {@link JacksonMappingCustomizer}, which provides
+     * hooks for customizing the behavior during JSON serialization and deserialization
+     * of {@link ValueObject} types. The customizer defines various entry points
+     * for intervening in the mapping process before and after reading or writing
+     * JSON fields and objects.
+     */
     private final JacksonMappingCustomizer<ValueObject> customizer;
 
     /**

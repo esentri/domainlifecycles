@@ -150,18 +150,18 @@ public class NomnomlMethod implements DiagramElement {
         if (!other.canEqual((Object) this)) return false;
         final Object this$visibility = this.getVisibility();
         final Object other$visibility = other.getVisibility();
-        if (this$visibility == null ? other$visibility != null : !this$visibility.equals(other$visibility))
+        if (!Objects.equals(this$visibility, other$visibility))
             return false;
         final Object this$name = this.getName();
         final Object other$name = other.getName();
-        if (this$name == null ? other$name != null : !this$name.equals(other$name)) return false;
+        if (!Objects.equals(this$name, other$name)) return false;
         final Object this$returnType = this.getReturnType();
         final Object other$returnType = other.getReturnType();
-        if (this$returnType == null ? other$returnType != null : !this$returnType.equals(other$returnType))
+        if (!Objects.equals(this$returnType, other$returnType))
             return false;
         final Object this$parameters = this.getParameters();
         final Object other$parameters = other.getParameters();
-        if (this$parameters == null ? other$parameters != null : !this$parameters.equals(other$parameters))
+        if (!Objects.equals(this$parameters, other$parameters))
             return false;
         return true;
     }

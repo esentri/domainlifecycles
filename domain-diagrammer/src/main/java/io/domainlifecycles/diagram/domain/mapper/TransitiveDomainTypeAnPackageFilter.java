@@ -63,39 +63,39 @@ public class TransitiveDomainTypeAnPackageFilter {
 
     private final List<String> seedTypeNames;
 
-    private final Set<ServiceKindMirror> filteredServiceKinds;
+    private final Set<ServiceKindMirror> includedServiceKinds;
 
-    private final Set<DomainCommandMirror> filteredDomainCommands;
+    private final Set<DomainCommandMirror> includedDomainCommands;
 
-    private final Set<DomainEventMirror> filteredDomainEvents;
+    private final Set<DomainEventMirror> includedDomainEvents;
 
-    private final Set<AggregateRootMirror> filteredAggregates;
+    private final Set<AggregateRootMirror> includedAggregates;
 
-    private final Set<ReadModelMirror> filteredReadModels;
+    private final Set<ReadModelMirror> includedReadModels;
 
     private final DomainMirror domainMirror;
 
-    private final List<String> filteredPackageNames;
+    private final List<String> explicitlyIncludedPackageNames;
 
     /**
      * Constructs a new instance of TransitiveDomainTypeAnPackageFilter with the specified parameters.
      *
      * @param domainMirror The DomainMirror instance representing the domain structure
      *                     used for filtering. Must not be null.
-     * @param filteredPackageNames A list of package names to be filtered. If null, an empty list is used.
+     * @param explicitlyIncludedPackageNames A list of package names to be filtered. If null, an empty list is used.
      * @param seedTypeNames A list of seed type names used to populate filters. If null, an empty list is used.
      */
-    public TransitiveDomainTypeAnPackageFilter(DomainMirror domainMirror, List<String> filteredPackageNames, List<String> seedTypeNames) {
+    public TransitiveDomainTypeAnPackageFilter(DomainMirror domainMirror, List<String> explicitlyIncludedPackageNames, List<String> seedTypeNames) {
         this.domainMirror = Objects.requireNonNull(domainMirror, "A DomainMirror must be provided!");
-        this.filteredServiceKinds = new HashSet<>();
-        this.filteredDomainCommands = new HashSet<>();
-        this.filteredDomainEvents = new HashSet<>();
-        this.filteredAggregates = new HashSet<>();
-        this.filteredReadModels = new HashSet<>();
-        if(filteredPackageNames == null) {
-            this.filteredPackageNames = Collections.emptyList();
+        this.includedServiceKinds = new HashSet<>();
+        this.includedDomainCommands = new HashSet<>();
+        this.includedDomainEvents = new HashSet<>();
+        this.includedAggregates = new HashSet<>();
+        this.includedReadModels = new HashSet<>();
+        if(explicitlyIncludedPackageNames == null) {
+            this.explicitlyIncludedPackageNames = Collections.emptyList();
         }else{
-            this.filteredPackageNames = filteredPackageNames;
+            this.explicitlyIncludedPackageNames = explicitlyIncludedPackageNames;
         }
         if (seedTypeNames == null) {
             this.seedTypeNames = Collections.emptyList();
@@ -114,22 +114,22 @@ public class TransitiveDomainTypeAnPackageFilter {
                 .toList()
         );
 
-        this.filteredAggregates.addAll(domainMirror.getAllAggregateRootMirrors()
+        this.includedAggregates.addAll(domainMirror.getAllAggregateRootMirrors()
             .stream()
             .filter(s -> seedTypeNames.stream().anyMatch(s::isSubClassOf))
             .toList());
 
-        this.filteredDomainEvents.addAll(domainMirror.getAllDomainEventMirrors()
+        this.includedDomainEvents.addAll(domainMirror.getAllDomainEventMirrors()
             .stream()
             .filter(s -> seedTypeNames.stream().anyMatch(s::isSubClassOf))
             .toList());
 
-        this.filteredDomainCommands.addAll(domainMirror.getAllDomainCommandMirrors()
+        this.includedDomainCommands.addAll(domainMirror.getAllDomainCommandMirrors()
             .stream()
             .filter(s -> seedTypeNames.stream().anyMatch(s::isSubClassOf))
             .toList());
 
-        this.filteredReadModels.addAll(domainMirror.getAllReadModelMirrors()
+        this.includedReadModels.addAll(domainMirror.getAllReadModelMirrors()
             .stream()
             .filter(s -> seedTypeNames.stream().anyMatch(s::isSubClassOf))
             .toList());
@@ -137,39 +137,39 @@ public class TransitiveDomainTypeAnPackageFilter {
         var filteredServicesCnt = 0;
         var filteredDomainEventsCnt = 0;
         var filteredDomainCommandsCnt = 0;
-        while (filteredServicesCnt != filteredServiceKinds.size()
-            || filteredDomainEventsCnt != filteredDomainEvents.size()
-            || filteredDomainCommandsCnt != filteredDomainCommands.size()
+        while (filteredServicesCnt != includedServiceKinds.size()
+            || filteredDomainEventsCnt != includedDomainEvents.size()
+            || filteredDomainCommandsCnt != includedDomainCommands.size()
         ) {
-            filteredServicesCnt = filteredServiceKinds.size();
-            filteredDomainEventsCnt = filteredDomainEvents.size();
-            filteredDomainCommandsCnt = filteredDomainCommands.size();
+            filteredServicesCnt = includedServiceKinds.size();
+            filteredDomainEventsCnt = includedDomainEvents.size();
+            filteredDomainCommandsCnt = includedDomainCommands.size();
 
             var newServices = new ArrayList<ServiceKindMirror>();
 
             newServices.addAll(
-                filteredServiceKinds
+                includedServiceKinds
                     .stream()
                     .flatMap(ds -> ds.getReferencedServiceKinds().stream())
                     .toList()
             );
 
             newServices.addAll(
-                filteredDomainCommands
+                includedDomainCommands
                     .stream()
                     .flatMap(c -> c.getProcessingServiceKinds().stream())
                     .toList()
             );
 
             newServices.addAll(
-                filteredDomainEvents
+                includedDomainEvents
                     .stream()
                     .flatMap(de -> de.getListeningServiceKinds().stream())
                     .toList()
             );
 
             newServices.addAll(
-                filteredDomainEvents
+                includedDomainEvents
                     .stream()
                     .flatMap(de -> de.getPublishingServiceKinds().stream())
                     .toList()
@@ -177,48 +177,48 @@ public class TransitiveDomainTypeAnPackageFilter {
 
             var newEvents = new ArrayList<DomainEventMirror>();
 
-            newEvents.addAll(filteredServiceKinds.stream().flatMap(
+            newEvents.addAll(includedServiceKinds.stream().flatMap(
             ds -> ds.listenedDomainEvents().stream()).toList());
 
-            newEvents.addAll(filteredServiceKinds.stream().flatMap(
+            newEvents.addAll(includedServiceKinds.stream().flatMap(
                 ds -> ds.publishedDomainEvents().stream()).toList());
 
-            filteredDomainEvents.addAll(newEvents);
+            includedDomainEvents.addAll(newEvents);
 
             var newCommands = new ArrayList<DomainCommandMirror>();
-            newCommands.addAll(filteredServiceKinds.stream().flatMap(
+            newCommands.addAll(includedServiceKinds.stream().flatMap(
                 ds -> ds.processedDomainCommands().stream()).toList());
 
-            filteredDomainCommands.addAll(newCommands);
+            includedDomainCommands.addAll(newCommands);
 
             addReferencedServiceKinds(newServices);
 
-            filteredAggregates.addAll(
-                filteredDomainEvents.stream().flatMap(d -> d.getListeningAggregates().stream()).toList()
+            includedAggregates.addAll(
+                includedDomainEvents.stream().flatMap(d -> d.getListeningAggregates().stream()).toList()
             );
 
-            filteredAggregates.addAll(
-                filteredDomainEvents.stream().flatMap(d -> d.getPublishingAggregates().stream()).toList()
+            includedAggregates.addAll(
+                includedDomainEvents.stream().flatMap(d -> d.getPublishingAggregates().stream()).toList()
             );
         }
 
-        filteredServiceKinds
+        includedServiceKinds
         .stream()
         .filter(s -> s.getDomainType().equals(DomainType.REPOSITORY))
         .map(s -> (RepositoryMirror) s)
         .forEach(
         r -> {
-            r.getManagedAggregate().ifPresent(filteredAggregates::add);
+            r.getManagedAggregate().ifPresent(includedAggregates::add);
         });
 
-        filteredServiceKinds
+        includedServiceKinds
         .stream()
         .filter(s -> s.getDomainType().equals(DomainType.QUERY_HANDLER))
         .map(s -> (QueryHandlerMirror) s).
         forEach(
             r -> {
                 if (r.getProvidedReadModel().isPresent()) {
-                    filteredReadModels.add(r.getProvidedReadModel().get());
+                    includedReadModels.add(r.getProvidedReadModel().get());
                 }
             }
         );
@@ -226,11 +226,11 @@ public class TransitiveDomainTypeAnPackageFilter {
     }
 
     private void addReferencedServiceKinds(List<ServiceKindMirror> ref) {
-        filteredServiceKinds.addAll(ref);
+        includedServiceKinds.addAll(ref);
         ref.forEach(abstractDs -> {
                 domainMirror.getAllServiceKindMirrors().stream()
                     .filter(ds -> ds.implementsInterface(abstractDs.getTypeName()))
-                    .forEach(filteredServiceKinds::add);
+                    .forEach(includedServiceKinds::add);
             });
     }
 
@@ -249,15 +249,15 @@ public class TransitiveDomainTypeAnPackageFilter {
         boolean contained = true;
         if (!this.seedTypeNames.isEmpty()) {
             contained = switch (dtm.getDomainType()) {
-                case AGGREGATE_ROOT -> filteredAggregates.contains(dtm);
-                case DOMAIN_EVENT -> filteredDomainEvents.contains(dtm);
-                case DOMAIN_COMMAND -> filteredDomainCommands.contains(dtm);
-                case READ_MODEL -> filteredReadModels.contains(dtm);
-                default ->  filteredServiceKinds.contains(dtm);
+                case AGGREGATE_ROOT -> includedAggregates.contains(dtm);
+                case DOMAIN_EVENT -> includedDomainEvents.contains(dtm);
+                case DOMAIN_COMMAND -> includedDomainCommands.contains(dtm);
+                case READ_MODEL -> includedReadModels.contains(dtm);
+                default ->  includedServiceKinds.contains(dtm);
             };
         }
-        if(!this.filteredPackageNames.isEmpty()) {
-            contained = contained && this.filteredPackageNames.stream().anyMatch(p -> dtm.getTypeName().startsWith(p));
+        if(!this.explicitlyIncludedPackageNames.isEmpty()) {
+            contained = contained && this.explicitlyIncludedPackageNames.stream().anyMatch(p -> dtm.getTypeName().startsWith(p));
         }
         return contained;
     }
