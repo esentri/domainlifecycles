@@ -50,8 +50,8 @@ public class DiagramConfigMapper {
         diagramConfig.setFileName(mavenDiagramConfig.getFileName());
         diagramConfig.setExplicitlyIncludedPackageNames(mavenDiagramConfig.getExplicitlyIncludedPackages());
         diagramConfig.setUseAbstractTypeNameForConcreteServiceKinds(mavenDiagramConfig.getUseAbstractTypeNameForConcreteServiceKinds());
-        diagramConfig.setShowAbstractTypes(mavenDiagramConfig.getShowAbstractTypes());
-
+        diagramConfig.setShowAllAbstractTypes(mavenDiagramConfig.getShowAllAbstractTypes());
+        diagramConfig.setShowAbstractTypesInAggregates(mavenDiagramConfig.getShowAbstractTypesInAggregates());
         diagramConfig.setAggregateRootStyle(mavenDiagramConfig.getAggregateRootStyle());
         diagramConfig.setAggregateFrameStyle(mavenDiagramConfig.getAggregateFrameStyle());
         diagramConfig.setEntityStyle(mavenDiagramConfig.getEntityStyle());
@@ -115,7 +115,11 @@ public class DiagramConfigMapper {
         diagramConfig.setShowObjectMembersInClasses(mavenDiagramConfig.getShowObjectMembersInClasses());
         diagramConfig.setMultiplicityInLabel(mavenDiagramConfig.getMultiplicityInLabel());
         diagramConfig.setFieldStereotypes(mavenDiagramConfig.getFieldStereotypes());
-        diagramConfig.setTransitiveFilterSeedDomainServiceTypeNames(mavenDiagramConfig.getTransitiveFilterSeedDomainServiceTypeNames());
+        diagramConfig.setIncludeConnectedTo(mavenDiagramConfig.getIncludeConnectedTo());
+        diagramConfig.setIncludeConnectedToIngoing(mavenDiagramConfig.getIncludeConnectedToIngoing());
+        diagramConfig.setIncludeConnectedToOutgoing(mavenDiagramConfig.getIncludeConnectedToOutgoing());
+        diagramConfig.setExcludeConnectedToIngoing(mavenDiagramConfig.getExcludeConnectedToIngoing());
+        diagramConfig.setExcludeConnectedToOutgoing(mavenDiagramConfig.getExcludeConnectedToOutgoing());
         return diagramConfig;
     }
 }

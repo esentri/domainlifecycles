@@ -40,8 +40,13 @@ import java.util.List;
 public class DiagramTrimSettings {
 
     private final List<String> classesBlacklist;
-    private final List<String> transitiveFilterSeedDomainServiceTypeNames;
     private final List<String> explicitlyIncludedPackageNames;
+
+    private final List<String> includeConnectedTo;
+    private final List<String> includeConnectedToIngoing;
+    private final List<String> includeConnectedToOutgoing;
+    private final List<String> excludeConnectedToIngoing;
+    private final List<String> excludeConnectedToOutgoing;
 
     /**
      * Gets the list of blacklisted class names that should be excluded from the diagram.
@@ -53,12 +58,48 @@ public class DiagramTrimSettings {
     }
 
     /**
-     * Gets the list of domain service type names that will be used as seed points for transitive filtering.
+     * Gets the list of class names that should be included in the diagram along with their connected nodes.
      *
-     * @return List of domain service type names for transitive filtering
+     * @return List of fully qualified class names whose connected nodes should be included
      */
-    public List<String> getTransitiveFilterSeedDomainServiceTypeNames() {
-        return transitiveFilterSeedDomainServiceTypeNames;
+    public List<String> getIncludeConnectedTo() {
+        return includeConnectedTo;
+    }
+
+    /**
+     * Gets the list of class names that should be included in the diagram along with nodes that have ingoing connections to them.
+     *
+     * @return List of fully qualified class names whose ingoing connected nodes should be included
+     */
+    public List<String> getIncludeConnectedToIngoing() {
+        return includeConnectedToIngoing;
+    }
+
+    /**
+     * Gets the list of class names that should be included in the diagram along with nodes that have outgoing connections from them.
+     *
+     * @return List of fully qualified class names whose outgoing connected nodes should be included
+     */
+    public List<String> getIncludeConnectedToOutgoing() {
+        return includeConnectedToOutgoing;
+    }
+
+    /**
+     * Gets the list of class names whose ingoing connections should be excluded from the diagram.
+     *
+     * @return List of fully qualified class names whose ingoing connections should be excluded
+     */
+    public List<String> getExcludeConnectedToIngoing() {
+        return excludeConnectedToIngoing;
+    }
+
+    /**
+     * Gets the list of class names whose outgoing connections should be excluded from the diagram.
+     *
+     * @return List of fully qualified class names whose outgoing connections should be excluded
+     */
+    public List<String> getExcludeConnectedToOutgoing() {
+        return excludeConnectedToOutgoing;
     }
 
     /**
@@ -70,13 +111,48 @@ public class DiagramTrimSettings {
         return explicitlyIncludedPackageNames;
     }
 
+    /**
+     * Determines whether there are any included settings for connected types in the diagram.
+     * Connected types can include incoming, outgoing, or directly connected nodes.
+     *
+     * @return {@code true} if there are any non-empty settings for included connected types,
+     *         such as for directly connected nodes or for nodes with incoming or outgoing connections;
+     *         {@code false} otherwise
+     */
+    public boolean hasIncludedConnectedTypeSettings(){
+        return !(this.getIncludeConnectedToIngoing().isEmpty()
+            && this.getIncludeConnectedToOutgoing().isEmpty()
+            && this.getIncludeConnectedTo().isEmpty());
+    }
+
+    /**
+     * Determines whether there are any excluded settings for connected types in the diagram.
+     * Connected types can include nodes with either ingoing or outgoing excluded connections.
+     *
+     * @return {@code true} if there are any non-empty settings for excluded connected types,
+     *         such as for nodes with ingoing or outgoing excluded connections; {@code false} otherwise.
+     */
+    public boolean hasExcludedConnectedTypeSettings(){
+        return !(this.getExcludeConnectedToIngoing().isEmpty()
+            && this.getExcludeConnectedToOutgoing().isEmpty());
+    }
+
     private DiagramTrimSettings(
         List<String> classesBlacklist,
-        List<String> transitiveFilterSeedDomainServiceTypeNames,
-        List<String> explicitlyIncludedPackageNames) {
+        List<String> explicitlyIncludedPackageNames, 
+        List<String> includeConnectedTo, 
+        List<String> includeConnectedToIngoing, 
+        List<String> includeConnectedToOutgoing, 
+        List<String> excludeConnectedToIngoing, 
+        List<String> excludeConnectedToOutgoing
+    ) {
         this.classesBlacklist = classesBlacklist;
-        this.transitiveFilterSeedDomainServiceTypeNames = transitiveFilterSeedDomainServiceTypeNames;
         this.explicitlyIncludedPackageNames = explicitlyIncludedPackageNames;
+        this.includeConnectedTo = includeConnectedTo;
+        this.includeConnectedToIngoing = includeConnectedToIngoing;
+        this.includeConnectedToOutgoing = includeConnectedToOutgoing;
+        this.excludeConnectedToIngoing = excludeConnectedToIngoing;
+        this.excludeConnectedToOutgoing = excludeConnectedToOutgoing;
     }
 
     /**
@@ -93,8 +169,12 @@ public class DiagramTrimSettings {
      */
     public static class DiagramTrimSettingsBuilder {
         private List<String> classesBlacklist$value;
-        private List<String> transitiveFilterSeedDomainServiceTypeNames$value;
         private List<String> explicitlyIncludedPackageNames$value;
+        private List<String> includeConnectedTo$value;
+        private List<String> includeConnectedToIngoing$value;
+        private List<String> includeConnectedToOutgoing$value;
+        private List<String> excludeConnectedToIngoing$value;
+        private List<String> excludeConnectedToOutgoing$value;
 
         /**
          * Sets the list of blacklisted classes.
@@ -104,17 +184,6 @@ public class DiagramTrimSettings {
          */
         public DiagramTrimSettingsBuilder withClassesBlacklist(List<String> classesBlacklist) {
             this.classesBlacklist$value = classesBlacklist;
-            return this;
-        }
-
-        /**
-         * Sets the list of domain service type names for transitive filtering.
-         *
-         * @param transitiveFilterSeedDomainServiceTypeNames List of domain service type names
-         * @return This builder instance
-         */
-        public DiagramTrimSettingsBuilder withTransitiveFilterSeedDomainServiceTypeNames(List<String> transitiveFilterSeedDomainServiceTypeNames) {
-            this.transitiveFilterSeedDomainServiceTypeNames$value = transitiveFilterSeedDomainServiceTypeNames;
             return this;
         }
 
@@ -129,6 +198,60 @@ public class DiagramTrimSettings {
             return this;
         }
 
+        /**
+         * Sets the list of class names that should be included in the diagram along with their connected nodes.
+         *
+         * @param includeConnectedTo List of fully qualified class names whose connected nodes should be included
+         * @return This builder instance
+         */
+        public DiagramTrimSettingsBuilder withIncludeConnectedTo(List<String> includeConnectedTo) {
+            this.includeConnectedTo$value = includeConnectedTo;
+            return this;
+        }
+
+        /**
+         * Sets the list of class names that should be included in the diagram along with nodes that have ingoing connections to them.
+         *
+         * @param includeConnectedToIngoing List of fully qualified class names whose ingoing connected nodes should be included
+         * @return This builder instance
+         */
+        public DiagramTrimSettingsBuilder withIncludeConnectedToIngoing(List<String> includeConnectedToIngoing) {
+            this.includeConnectedToIngoing$value = includeConnectedToIngoing;
+            return this;
+        }
+
+        /**
+         * Sets the list of class names that should be included in the diagram along with nodes that have outgoing connections from them.
+         *
+         * @param includeConnectedToOutgoing List of fully qualified class names whose outgoing connected nodes should be included
+         * @return This builder instance
+         */
+        public DiagramTrimSettingsBuilder withIncludeConnectedToOutgoing(List<String> includeConnectedToOutgoing) {
+            this.includeConnectedToOutgoing$value = includeConnectedToOutgoing;
+            return this;
+        }
+
+        /**
+         * Sets the list of class names whose ingoing connections should be excluded from the diagram.
+         *
+         * @param excludeConnectedToIngoing List of fully qualified class names whose ingoing connections should be excluded
+         * @return This builder instance
+         */
+        public DiagramTrimSettingsBuilder withExcludeConnectedToIngoing(List<String> excludeConnectedToIngoing) {
+            this.excludeConnectedToIngoing$value = excludeConnectedToIngoing;
+            return this;
+        }
+
+        /**
+         * Sets the list of class names whose outgoing connections should be excluded from the diagram.
+         *
+         * @param excludeConnectedToOutgoing List of fully qualified class names whose outgoing connections should be excluded
+         * @return This builder instance
+         */
+        public DiagramTrimSettingsBuilder withExcludeConnectedToOutgoing(List<String> excludeConnectedToOutgoing) {
+            this.excludeConnectedToOutgoing$value = excludeConnectedToOutgoing;
+            return this;
+        }
 
         /**
          * Builds and returns a new DiagramTrimSettings instance.
@@ -138,9 +261,12 @@ public class DiagramTrimSettings {
         public DiagramTrimSettings build() {
             return new DiagramTrimSettings(
                 classesBlacklist$value == null ? Collections.emptyList() : classesBlacklist$value,
-                transitiveFilterSeedDomainServiceTypeNames$value == null ? Collections.emptyList() : transitiveFilterSeedDomainServiceTypeNames$value,
-                explicitlyIncludedPackageNames$value == null ? Collections.emptyList() : explicitlyIncludedPackageNames$value
-            );
+                explicitlyIncludedPackageNames$value == null ? Collections.emptyList() : explicitlyIncludedPackageNames$value,
+                includeConnectedTo$value == null ? Collections.emptyList() : includeConnectedTo$value,
+                includeConnectedToIngoing$value == null ? Collections.emptyList() : includeConnectedToIngoing$value,
+                includeConnectedToOutgoing$value == null ? Collections.emptyList() : includeConnectedToOutgoing$value,
+                excludeConnectedToIngoing$value == null ? Collections.emptyList() : excludeConnectedToIngoing$value,
+                excludeConnectedToOutgoing$value == null ? Collections.emptyList() : excludeConnectedToOutgoing$value);
         }
     }
 

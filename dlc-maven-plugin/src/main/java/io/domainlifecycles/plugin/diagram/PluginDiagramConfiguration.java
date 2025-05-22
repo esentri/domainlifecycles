@@ -70,8 +70,11 @@ public class PluginDiagramConfiguration {
      @Parameter(property = "explicitlyIncludedPackages", required = true)
      private List<String> explicitlyIncludedPackages;
 
-     @Parameter(property = "showAbstractTypes", required = false)
-     private Boolean showAbstractTypes;
+     @Parameter(property = "showAllAbstractTypes", required = false)
+     private Boolean showAllAbstractTypes;
+
+    @Parameter(property = "showAbstractTypesInAggregates", required = false)
+    private Boolean showAbstractTypesInAggregates;
 
     @Parameter(property = "useAbstractTypeNameForConcreteServiceKinds", required = false)
      private Boolean useAbstractTypeNameForConcreteServiceKinds;
@@ -265,8 +268,20 @@ public class PluginDiagramConfiguration {
      @Parameter(property = "fieldStereotypes", required = false)
      private Boolean fieldStereotypes;
 
-     @Parameter(property = "transitiveFilterSeedDomainServiceTypeNames", required = false)
-     private List<String> transitiveFilterSeedDomainServiceTypeNames;
+    @Parameter(property = "includeConnectedTo", required = false)
+    private List<String> includeConnectedTo;
+    
+    @Parameter(property = "includeConnectedToIngoing", required = false)
+    private List<String> includeConnectedToIngoing;
+    
+    @Parameter(property = "includeConnectedToOutgoing", required = false)
+    private List<String> includeConnectedToOutgoing;
+    
+    @Parameter(property = "excludeConnectedToIngoing", required = false)
+    private List<String> excludeConnectedToIngoing;
+    
+    @Parameter(property = "excludeConnectedToOutgoing", required = false)
+    private List<String> excludeConnectedToOutgoing;
 
     /**
      * Gets the output format of the diagram.
@@ -305,12 +320,21 @@ public class PluginDiagramConfiguration {
     }
 
     /**
-     * Retrieves the visibility status of abstract types.
+     * Retrieves the value indicating whether all abstract types are displayed.
      *
-     * @return a Boolean indicating whether abstract types should be shown (true) or not (false)
+     * @return a Boolean value where true indicates all abstract types are shown, and false otherwise
      */
-    public Boolean getShowAbstractTypes() {
-        return showAbstractTypes;
+    public Boolean getShowAllAbstractTypes() {
+        return showAllAbstractTypes;
+    }
+
+    /**
+     * Retrieves the current state of the showAbstractTypesInAggregates flag.
+     *
+     * @return a Boolean indicating whether abstract types are shown in aggregates.
+     */
+    public Boolean getShowAbstractTypesInAggregates() {
+        return showAbstractTypesInAggregates;
     }
 
     /**
@@ -892,12 +916,54 @@ public class PluginDiagramConfiguration {
         return fieldStereotypes;
     }
 
+
     /**
-     * Gets the list of domain service type names used as seed for transitive filtering.
+     * Gets the list of class names to include in the diagram based on their connectivity to other classes.
+     * This filter includes classes that are connected in any direction (ingoing or outgoing).
      *
-     * @return the list of seed domain service type names.
+     * @return a list of fully qualified class names to include based on connectivity
      */
-    public List<String> getTransitiveFilterSeedDomainServiceTypeNames() {
-        return transitiveFilterSeedDomainServiceTypeNames;
+    public List<String> getIncludeConnectedTo() {
+        return includeConnectedTo;
+    }
+
+    /**
+     * Gets the list of class names to include in the diagram based on ingoing connections.
+     * This filter includes classes that have ingoing connections to the specified classes.
+     *
+     * @return a list of fully qualified class names to include based on ingoing connections
+     */
+    public List<String> getIncludeConnectedToIngoing() {
+        return includeConnectedToIngoing;
+    }
+
+    /**
+     * Gets the list of class names to include in the diagram based on outgoing connections.
+     * This filter includes classes that have outgoing connections from the specified classes.
+     *
+     * @return a list of fully qualified class names to include based on outgoing connections
+     */
+    public List<String> getIncludeConnectedToOutgoing() {
+        return includeConnectedToOutgoing;
+    }
+
+    /**
+     * Gets the list of class names to exclude from the diagram based on ingoing connections.
+     * This filter excludes classes that have ingoing connections to the specified classes.
+     *
+     * @return a list of fully qualified class names to exclude based on ingoing connections
+     */
+    public List<String> getExcludeConnectedToIngoing() {
+        return excludeConnectedToIngoing;
+    }
+
+    /**
+     * Gets the list of class names to exclude from the diagram based on outgoing connections.
+     * This filter excludes classes that have outgoing connections from the specified classes.
+     *
+     * @return a list of fully qualified class names to exclude based on outgoing connections
+     */
+    public List<String> getExcludeConnectedToOutgoing() {
+        return excludeConnectedToOutgoing;
     }
 }

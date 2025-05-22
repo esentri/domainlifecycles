@@ -97,6 +97,13 @@ public class DomainRelationshipMapper {
                 .filter(filteredDomainClasses::contains)
                 .forEach(t -> relationShips.add(mapServiceKindRelationship(s, t)))
             );
+        if(diagramConfig.getGeneralVisualSettings().isShowAllAbstractTypes()) {
+            filteredDomainClasses
+                .getServiceKinds().forEach(s -> {
+                    relationShips.addAll(mapImplementsInterface(s));
+                    mapInheritance(s).ifPresent(relationShips::add);
+                });
+        }
         return relationShips;
     }
 
@@ -182,6 +189,13 @@ public class DomainRelationshipMapper {
     public List<NomnomlRelationship> mapAllDomainCommandRelationships() {
         var relationShips = new ArrayList<NomnomlRelationship>();
         if (diagramConfig.getGeneralVisualSettings().isShowDomainCommands()) {
+            if(diagramConfig.getGeneralVisualSettings().isShowAllAbstractTypes()) {
+                filteredDomainClasses
+                    .getDomainCommands().forEach(s -> {
+                        relationShips.addAll(mapImplementsInterface(s));
+                        mapInheritance(s).ifPresent(relationShips::add);
+                    });
+            }
             filteredDomainClasses.getDomainCommands()
                 .forEach(c -> {
                     filteredDomainClasses.getAggregateRoots()
@@ -278,6 +292,13 @@ public class DomainRelationshipMapper {
      */
     public List<NomnomlRelationship> mapAllDomainEventRelationships() {
         var relationShips = new ArrayList<NomnomlRelationship>();
+        if(diagramConfig.getGeneralVisualSettings().isShowAllAbstractTypes()) {
+            filteredDomainClasses
+                .getDomainEvents().forEach(s -> {
+                    relationShips.addAll(mapImplementsInterface(s));
+                    mapInheritance(s).ifPresent(relationShips::add);
+                });
+        }
             filteredDomainClasses.getDomainEvents()
                 .forEach(de -> {
 
@@ -481,7 +502,11 @@ public class DomainRelationshipMapper {
              */
             @Override
             public void visitEnterAnyDomainType(DomainTypeMirror domainTypeMirror) {
-                mapInheritance(domainTypeMirror).ifPresent(relationShips::add);
+                if(diagramConfig.getGeneralVisualSettings().isShowAbstractTypesInAggregates()
+                    || diagramConfig.getGeneralVisualSettings().isShowAllAbstractTypes()) {
+                    mapInheritance(domainTypeMirror).ifPresent(relationShips::add);
+                    relationShips.addAll(mapImplementsInterface(domainTypeMirror));
+                }
             }
         };
         visitor.start();
@@ -490,26 +515,55 @@ public class DomainRelationshipMapper {
     }
 
     private Optional<NomnomlRelationship> mapInheritance(DomainTypeMirror domainTypeMirror) {
-        if (diagramConfig.getDiagramTrimSettings().getExplicitlyIncludedPackageNames().stream().anyMatch(pack -> domainTypeMirror.getInheritanceHierarchyTypeNames().get(0).startsWith(
-            pack))) {
-            var superClassName = domainTypeMirror.getInheritanceHierarchyTypeNames().get(0);
-            return Optional.of(
-                NomnomlRelationship
-                    .builder()
-                    .fromName(relationConnectorName(superClassName))
-                    .fromStyleClassifier(DomainMapperUtils.styleClassifier(domainMirror.getDomainTypeMirror(superClassName).orElse(null)))
-                    .fromMultiplicity("")
-                    .label("")
-                    .toName(relationConnectorName(domainTypeMirror))
-                    .toStyleClassifier(DomainMapperUtils.styleClassifier(domainTypeMirror))
-                    .toMultiplicity("")
-                    .relationshiptype(NomnomlRelationship.RelationshipType.INHERITANCE)
-                    .build()
-            );
-        }
+            if(domainTypeMirror.getInheritanceHierarchyTypeNames() != null && !domainTypeMirror.getInheritanceHierarchyTypeNames().isEmpty()){
+                var superClassName = domainTypeMirror.getInheritanceHierarchyTypeNames().get(0);
+                if(!superClassName.startsWith("io.domainlifecycles")) {
+                    var superType = domainMirror.getDomainTypeMirror(superClassName);
+                    if (superType.isPresent() && filteredDomainClasses.contains(superType.get())) {
+                        return Optional.of(
+                            NomnomlRelationship
+                                .builder()
+                                .fromName(relationConnectorName(superClassName))
+                                .fromStyleClassifier(DomainMapperUtils.styleClassifier(domainMirror.getDomainTypeMirror(superClassName).orElse(null)))
+                                .fromMultiplicity("")
+                                .label("")
+                                .toName(relationConnectorName(domainTypeMirror))
+                                .toStyleClassifier(DomainMapperUtils.styleClassifier(domainTypeMirror))
+                                .toMultiplicity("")
+                                .relationshiptype(NomnomlRelationship.RelationshipType.INHERITANCE)
+                                .build()
+                        );
+                    }
+                }
+            }
         return Optional.empty();
     }
 
+    private List<NomnomlRelationship> mapImplementsInterface(DomainTypeMirror domainTypeMirror) {
+        if(domainTypeMirror.getAllInterfaceTypeNames() != null){
+            return domainTypeMirror.getAllInterfaceTypeNames()
+                .stream()
+                .filter(interfaceName -> !interfaceName.startsWith("io.domainlifecycles"))
+                .map(domainMirror::getDomainTypeMirror)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .filter(filteredDomainClasses::contains)
+                .map(i -> NomnomlRelationship
+                                .builder()
+                                .fromName(relationConnectorName(i))
+                                .fromStyleClassifier(DomainMapperUtils.styleClassifier(i))
+                                .fromMultiplicity("")
+                                .label("")
+                                .toName(relationConnectorName(domainTypeMirror))
+                                .toStyleClassifier(DomainMapperUtils.styleClassifier(domainTypeMirror))
+                                .toMultiplicity("")
+                                .relationshiptype(NomnomlRelationship.RelationshipType.INHERITANCE)
+                                .build()
+                        )
+                .toList();
+        }
+        return Collections.emptyList();
+    }
 
     private NomnomlRelationship mapEntityReference(EntityReferenceMirror entityReferenceMirror) {
 

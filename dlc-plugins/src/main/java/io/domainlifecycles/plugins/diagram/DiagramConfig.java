@@ -124,9 +124,14 @@ public class DiagramConfig {
     private Boolean showObjectMembersInClasses;
     private Boolean multiplicityInLabel;
     private Boolean fieldStereotypes;
-    private List<String> transitiveFilterSeedDomainServiceTypeNames;
+    private List<String> includeConnectedTo;
+    private List<String> includeConnectedToIngoing;
+    private List<String> includeConnectedToOutgoing;
+    private List<String> excludeConnectedToIngoing;
+    private List<String> excludeConnectedToOutgoing;
     private List<String> explicitlyIncludedPackageNames;
-    private Boolean showAbstractTypes;
+    private Boolean showAbstractAllTypes;
+    private Boolean showAbstractTypesInAggregates;
     private Boolean useAbstractTypeNameForConcreteServiceKinds;
 
     public FileType getFileType() {
@@ -649,12 +654,52 @@ public class DiagramConfig {
         this.fieldStereotypes = fieldStereotypes;
     }
 
-    public List<String> getTransitiveFilterSeedDomainServiceTypeNames() {
-        return transitiveFilterSeedDomainServiceTypeNames;
+    public List<String> getIncludeConnectedTo() {
+        return includeConnectedTo;
     }
 
-    public void setTransitiveFilterSeedDomainServiceTypeNames(List<String> transitiveFilterSeedDomainServiceTypeNames) {
-        this.transitiveFilterSeedDomainServiceTypeNames = transitiveFilterSeedDomainServiceTypeNames;
+    public void setIncludeConnectedTo(List<String> includeConnectedTo) {
+        this.includeConnectedTo = includeConnectedTo;
+    }
+
+    public List<String> getIncludeConnectedToIngoing() {
+        return includeConnectedToIngoing;
+    }
+
+    public void setIncludeConnectedToIngoing(List<String> includeConnectedToIngoing) {
+        this.includeConnectedToIngoing = includeConnectedToIngoing;
+    }
+
+    public List<String> getIncludeConnectedToOutgoing() {
+        return includeConnectedToOutgoing;
+    }
+
+    public void setIncludeConnectedToOutgoing(List<String> includeConnectedToOutgoing) {
+        this.includeConnectedToOutgoing = includeConnectedToOutgoing;
+    }
+
+    public List<String> getExcludeConnectedToIngoing() {
+        return excludeConnectedToIngoing;
+    }
+
+    public void setExcludeConnectedToIngoing(List<String> excludeConnectedToIngoing) {
+        this.excludeConnectedToIngoing = excludeConnectedToIngoing;
+    }
+
+    public List<String> getExcludeConnectedToOutgoing() {
+        return excludeConnectedToOutgoing;
+    }
+
+    public void setExcludeConnectedToOutgoing(List<String> excludeConnectedToOutgoing) {
+        this.excludeConnectedToOutgoing = excludeConnectedToOutgoing;
+    }
+
+    public Boolean getShowAbstractTypesInAggregates() {
+        return showAbstractTypesInAggregates;
+    }
+
+    public Boolean getUseAbstractTypeNameForConcreteServiceKinds() {
+        return useAbstractTypeNameForConcreteServiceKinds;
     }
 
     public List<String> getExplicitlyIncludedPackageNames() {
@@ -665,12 +710,16 @@ public class DiagramConfig {
         this.explicitlyIncludedPackageNames = explicitlyIncludedPackageNames;
     }
 
-    public Boolean isShowAbstractTypes() {
-        return showAbstractTypes;
+    public Boolean isShowAllAbstractTypes() {
+        return showAbstractAllTypes;
     }
 
-    public void setShowAbstractTypes(Boolean showAbstractTypes) {
-        this.showAbstractTypes = showAbstractTypes;
+    public void setShowAllAbstractTypes(Boolean showAbstractAllTypes) {
+        this.showAbstractAllTypes = showAbstractAllTypes;
+    }
+
+    public void setShowAbstractTypesInAggregates(Boolean showAbstractTypesInAggregates) {
+        this.showAbstractTypesInAggregates = showAbstractTypesInAggregates;
     }
 
     public Boolean isUseAbstractTypeNameForConcreteServiceKinds() {
@@ -760,10 +809,15 @@ public class DiagramConfig {
         if(showObjectMembersInClasses != null) visualBuilder.withShowObjectMembersInClasses(showObjectMembersInClasses);
         if(multiplicityInLabel != null) visualBuilder.withMultiplicityInLabel(multiplicityInLabel);
         if(fieldStereotypes != null) visualBuilder.withFieldStereotypes(fieldStereotypes);
-        if(transitiveFilterSeedDomainServiceTypeNames != null && !transitiveFilterSeedDomainServiceTypeNames.isEmpty()) trimBuilder.withTransitiveFilterSeedDomainServiceTypeNames(transitiveFilterSeedDomainServiceTypeNames);
+        if(includeConnectedTo != null && !includeConnectedTo.isEmpty()) trimBuilder.withIncludeConnectedTo(includeConnectedTo);
+        if(includeConnectedToIngoing != null && !includeConnectedToIngoing.isEmpty()) trimBuilder.withIncludeConnectedToIngoing(includeConnectedToIngoing);
+        if(includeConnectedToOutgoing != null && !includeConnectedToOutgoing.isEmpty()) trimBuilder.withIncludeConnectedToOutgoing(includeConnectedToOutgoing);
+        if(excludeConnectedToIngoing != null && !excludeConnectedToIngoing.isEmpty()) trimBuilder.withExcludeConnectedToIngoing(excludeConnectedToIngoing);
+        if(excludeConnectedToOutgoing != null && !excludeConnectedToOutgoing.isEmpty()) trimBuilder.withExcludeConnectedToOutgoing(excludeConnectedToOutgoing);
         if(explicitlyIncludedPackageNames != null && !explicitlyIncludedPackageNames.isEmpty()) trimBuilder.withExplicitlyIncludedPackageNames(explicitlyIncludedPackageNames);
         if(useAbstractTypeNameForConcreteServiceKinds != null) visualBuilder.withUseAbstractTypeNameForConcreteServiceKinds(useAbstractTypeNameForConcreteServiceKinds);
-        if(showAbstractTypes != null) visualBuilder.withShowAbstractTypes(showAbstractTypes);
+        if(showAbstractAllTypes != null) visualBuilder.withShowAllAbstractTypes(showAbstractAllTypes);
+        if(showAbstractTypesInAggregates != null) visualBuilder.withShowAbstractTypesInAggregates(showAbstractTypesInAggregates);
 
         configBuilder
             .withDiagramTrimSettings(trimBuilder.build())

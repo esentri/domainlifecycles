@@ -90,7 +90,8 @@ public class GeneralVisualSettings {
     private static final boolean DEFAULT_SHOW_OBJECT_MEMBERS_IN_CLASSES = true;
     private static final boolean DEFAULT_MULTIPLICITY_IN_LABEL = true;
     private static final boolean DEFAULT_FIELD_STEREOTYPES = true;
-    private static final boolean DEFAULT_SHOW_ABSTRACT_TYPES = false;
+    private static final boolean DEFAULT_SHOW_ALL_ABSTRACT_TYPES = false;
+    private static final boolean DEFAULT_SHOW_ABSTRACT_TYPES_IN_AGGREGATES = true;
     private static final boolean DEFAULT_USE_ABSTRACT_TYPE_NAME_FOR_CONCRETE_SERVICE_KINDS = true;
 
     private final boolean showFields;
@@ -136,7 +137,8 @@ public class GeneralVisualSettings {
     private final boolean showObjectMembersInClasses;
     private final boolean multiplicityInLabel;
     private final boolean fieldStereotypes;
-    private final boolean showAbstractTypes;
+    private final boolean showAllAbstractTypes;
+    private final boolean showAbstractTypesInAggregates;
     private final boolean useAbstractTypeNameForConcreteServiceKinds;
 
     private GeneralVisualSettings(
@@ -183,7 +185,8 @@ public class GeneralVisualSettings {
         boolean showObjectMembersInClasses, 
         boolean multiplicityInLabel, 
         boolean fieldStereotypes, 
-        boolean showAbstractTypes, 
+        boolean showAllAbstractTypes,
+        boolean showAbstractTypesInAggregates,
         boolean useAbstractTypeNameForConcreteServiceKinds
     ) {
         this.showFields = showFields;
@@ -229,7 +232,8 @@ public class GeneralVisualSettings {
         this.showObjectMembersInClasses = showObjectMembersInClasses;
         this.multiplicityInLabel = multiplicityInLabel;
         this.fieldStereotypes = fieldStereotypes;
-        this.showAbstractTypes = showAbstractTypes;
+        this.showAllAbstractTypes = showAllAbstractTypes;
+        this.showAbstractTypesInAggregates = showAbstractTypesInAggregates;
         this.useAbstractTypeNameForConcreteServiceKinds = useAbstractTypeNameForConcreteServiceKinds;
     }
 
@@ -621,12 +625,21 @@ public class GeneralVisualSettings {
     }
 
     /**
-     * Returns whether abstract types should be shown in the diagram.
+     * Determines whether all abstract types are being shown.
      *
-     * @return true if abstract types should be shown, false otherwise
+     * @return true if all abstract types should be displayed, false otherwise
      */
-    public boolean isShowAbstractTypes() {
-        return showAbstractTypes;
+    public boolean isShowAllAbstractTypes() {
+        return showAllAbstractTypes;
+    }
+
+    /**
+     * Indicates whether abstract types in aggregates should be displayed.
+     *
+     * @return true if abstract types in aggregates are to be shown, false otherwise
+     */
+    public boolean isShowAbstractTypesInAggregates() {
+        return showAbstractTypesInAggregates;
     }
 
     /**
@@ -709,7 +722,8 @@ public class GeneralVisualSettings {
         private boolean showObjectMembersInClasses$value = DEFAULT_SHOW_OBJECT_MEMBERS_IN_CLASSES;
         private boolean multiplicityInLabel$value = DEFAULT_MULTIPLICITY_IN_LABEL;
         private boolean fieldStereotypes$value = DEFAULT_FIELD_STEREOTYPES;
-        private boolean showAbstractTypes$value = DEFAULT_SHOW_ABSTRACT_TYPES;
+        private boolean showAllAbstractTypes$value = DEFAULT_SHOW_ALL_ABSTRACT_TYPES;
+        private boolean showAbstractTypesInAggregates$value = DEFAULT_SHOW_ABSTRACT_TYPES_IN_AGGREGATES;
         private boolean useAbstractTypeNameForConcreteServiceKinds$value = DEFAULT_USE_ABSTRACT_TYPE_NAME_FOR_CONCRETE_SERVICE_KINDS;
 
         /**
@@ -1194,11 +1208,23 @@ public class GeneralVisualSettings {
         /**
          * Sets whether to show abstract types in the diagram.
          *
-         * @param showAbstractTypes true to show abstract types, false to hide
+         * @param showAllAbstractTypes true to show all abstract types, false to hide
          * @return this builder instance
          */
-        public GeneralVisualSettingsBuilder withShowAbstractTypes(boolean showAbstractTypes) {
-            this.showAbstractTypes$value = showAbstractTypes;
+        public GeneralVisualSettingsBuilder withShowAllAbstractTypes(boolean showAllAbstractTypes) {
+            this.showAllAbstractTypes$value = showAllAbstractTypes;
+            return this;
+        }
+
+        /**
+         * Sets whether abstract types should be displayed in aggregates.
+         *
+         * @param showAbstractTypesInAggregates a boolean flag indicating whether abstract types
+         *                                      should be included in the display of aggregates
+         * @return the current instance of {@code GeneralVisualSettingsBuilder} for method chaining
+         */
+        public GeneralVisualSettingsBuilder withShowAbstractTypesInAggregates(boolean showAbstractTypesInAggregates) {
+            this.showAbstractTypesInAggregates$value = showAbstractTypesInAggregates;
             return this;
         }
 
@@ -1265,7 +1291,8 @@ public class GeneralVisualSettings {
                 showObjectMembersInClasses$value,
                 multiplicityInLabel$value,
                 fieldStereotypes$value,
-                showAbstractTypes$value,
+                showAllAbstractTypes$value,
+                showAbstractTypesInAggregates$value,
                 useAbstractTypeNameForConcreteServiceKinds$value
             );
         }

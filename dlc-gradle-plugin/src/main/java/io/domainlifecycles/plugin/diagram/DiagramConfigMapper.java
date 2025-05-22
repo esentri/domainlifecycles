@@ -58,7 +58,8 @@ public class DiagramConfigMapper {
         diagramConfig.setFileType(FileType.byName(extension.getFormat().getOrNull()));
         diagramConfig.setFileName(extension.getFileName().getOrElse(DEFAULT_DIAGRAM_FILE_NAME));
         diagramConfig.setExplicitlyIncludedPackageNames(extension.getExplicitlyIncludedPackages().getOrNull());
-        diagramConfig.setShowAbstractTypes(extension.getShowAbstractTypes().getOrNull());
+        diagramConfig.setShowAllAbstractTypes(extension.getShowAllAbstractTypes().getOrNull());
+        diagramConfig.setShowAbstractTypesInAggregates(extension.getShowAbstractTypesInAggregates().getOrNull());
         diagramConfig.setUseAbstractTypeNameForConcreteServiceKinds(extension.getUseAbstractTypeNameForConcreteServiceKinds().getOrNull());
         diagramConfig.setAggregateRootStyle(extension.getAggregateRootStyle().getOrNull());
         diagramConfig.setAggregateFrameStyle(extension.getAggregateFrameStyle().getOrNull());
@@ -123,7 +124,11 @@ public class DiagramConfigMapper {
         diagramConfig.setShowObjectMembersInClasses(extension.getShowObjectMembersInClasses().getOrNull());
         diagramConfig.setMultiplicityInLabel(extension.getMultiplicityInLabel().getOrNull());
         diagramConfig.setFieldStereotypes(extension.getFieldStereotypes().getOrNull());
-        diagramConfig.setTransitiveFilterSeedDomainServiceTypeNames(extension.getTransitiveFilterSeedDomainServiceTypeNames().getOrNull());
+        diagramConfig.setIncludeConnectedToIngoing(extension.getIncludeConnectedToIngoing().getOrNull());
+        diagramConfig.setIncludeConnectedToOutgoing(extension.getIncludeConnectedToOutgoing().getOrNull());
+        diagramConfig.setIncludeConnectedTo(extension.getIncludeConnectedTo().getOrNull());
+        diagramConfig.setExcludeConnectedToIngoing(extension.getExcludeConnectedToIngoing().getOrNull());
+        diagramConfig.setExcludeConnectedToOutgoing(extension.getExcludeConnectedToOutgoing().getOrNull());
         return diagramConfig;
     }
 }

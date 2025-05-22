@@ -60,7 +60,10 @@ public class DomainMapper {
      */
     public DomainMapper(DomainDiagramConfig domainDiagramConfig, DomainMirror domainMirror) {
         this.domainDiagramConfig = domainDiagramConfig;
-        this.filteredDomainClasses = new FilteredDomainClasses(domainDiagramConfig, domainMirror);
+        this.filteredDomainClasses = new FilteredDomainClasses(
+            domainDiagramConfig.getDiagramTrimSettings(),
+            domainDiagramConfig.getGeneralVisualSettings(),
+            domainMirror);
 
         this.domainClassMapper = new DomainClassMapper(domainDiagramConfig);
         this.domainRelationshipMapper = new DomainRelationshipMapper(domainDiagramConfig, domainMirror, filteredDomainClasses);

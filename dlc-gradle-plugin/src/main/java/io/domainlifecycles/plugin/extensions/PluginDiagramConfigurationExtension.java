@@ -78,11 +78,18 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
     public abstract ListProperty<String> getExplicitlyIncludedPackages();
 
     /**
-     * Retrieves the property indicating whether abstract types should be shown.
+     * Gets the property indicating whether all abstract types should be shown.
      *
-     * @return a Property object containing a Boolean value that determines if abstract types are shown
+     * @return a {@link Property} object representing the Boolean value of the show-all-abstract-types setting
      */
-    public abstract Property<Boolean> getShowAbstractTypes();
+    public abstract Property<Boolean> getShowAllAbstractTypes();
+
+    /**
+     * Retrieves the property that determines whether abstract types should be displayed in aggregates.
+     *
+     * @return a Property object of type Boolean indicating whether abstract types are shown in aggregates.
+     */
+    public abstract Property<Boolean> getShowAbstractTypesInAggregates();
 
     /**
      * Determines whether the system should use an abstract type name
@@ -543,10 +550,38 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
     public abstract Property<Boolean> getFieldStereotypes();
 
     /**
-     * Gets the list of type names used as seeds for transitive filtering of domain services.
+     * Gets the list of classes to include in the diagram based on their connections.
      *
-     * @return the list of type names used as seeds for transitive filtering of domain services
+     * @return ListProperty of class names to include based on their connections
      */
-    public abstract ListProperty<String> getTransitiveFilterSeedDomainServiceTypeNames();
+    public abstract ListProperty<String> getIncludeConnectedTo();
+
+    /**
+     * Gets the list of classes to include in the diagram based on their ingoing connections.
+     *
+     * @return ListProperty of class names to include based on ingoing connections
+     */
+    public abstract ListProperty<String> getIncludeConnectedToIngoing();
+
+    /**
+     * Gets the list of classes to include in the diagram based on their outgoing connections.
+     *
+     * @return ListProperty of class names to include based on outgoing connections
+     */
+    public abstract ListProperty<String> getIncludeConnectedToOutgoing();
+
+    /**
+     * Gets the list of classes to exclude from the diagram based on their ingoing connections.
+     *
+     * @return ListProperty of class names to exclude based on ingoing connections
+     */
+    public abstract ListProperty<String> getExcludeConnectedToIngoing();
+
+    /**
+     * Gets the list of classes to exclude from the diagram based on their outgoing connections.
+     *
+     * @return ListProperty of class names to exclude based on outgoing connections
+     */
+    public abstract ListProperty<String> getExcludeConnectedToOutgoing();
 
 }
