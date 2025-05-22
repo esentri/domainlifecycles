@@ -111,9 +111,15 @@ Supported Diagram configuration options are
 - showObjectMembersInClasses
 - multiplicityInLabel
 - fieldStereotypes
-- transitiveFilterSeedDomainServiceTypeNames
+- includeConnectedTo: list of full qualified classnames (all classes connected are included)
+- includeConnectedToIngoing: list of full qualified classnames (classes and ingoing connected classes are included)
+- includeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are included)
+- excludeConnectedToIngoing: : list of full qualified classnames (classes and ingoing connected classes are excluded)
+- excludeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are excluded)
+
 - explicitlyIncludedPackages: packages explicitly included in the diagram   
-- showAbstractTypes: boolean, default false
+- showAllAbstractTypes: boolean, default false
+- showAbstractTypesInAggregates: boolean, default true
 - useAbstractTypeNameForConcreteServiceKinds: boolean, default true
 
 #### Run
@@ -305,9 +311,14 @@ Supported Diagram configuration options are
 - showObjectMembersInClasses
 - multiplicityInLabel
 - fieldStereotypes
-- transitiveFilterSeedDomainServiceTypeNames
-- explicitlyIncludedPackages: packages explicitly included in the diagram
-- showAbstractTypes: boolean, default false
+- includeConnectedTo: list of full qualified classnames (all classes connected are included)
+- includeConnectedToIngoing: list of full qualified classnames (classes and ingoing connected classes are included)
+- includeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are included)
+- excludeConnectedToIngoing: : list of full qualified classnames (classes and ingoing connected classes are excluded)
+- excludeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are excluded)
+- explicitlyIncludedPackages: list of packages explicitly included in the diagram
+- showAllAbstractTypes: boolean, default false
+- showAbstractTypesInAggregates: boolean, default true
 - useAbstractTypeNameForConcreteServiceKinds: boolean, default true
 
 #### Run
