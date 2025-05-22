@@ -32,12 +32,44 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import java.io.IOException;
 
+/**
+ * Custom serializer for serializing a string in its raw JSON form.
+ *
+ * This class extends the {@link StdSerializer} to customize the way string values
+ * are serialized in JSON. By default, it bypasses escaping or other transformations
+ * and writes the string as raw JSON content.
+ *
+ * It is useful for cases where the string contains pre-formatted or raw JSON that
+ * should be directly included in the serialized output without alteration.
+ *
+ * @author Leon Völlinger
+ */
 public class DomainMirrorJsonSerializer extends StdSerializer<String> {
 
+    /**
+     * Default constructor for the {@code DomainMirrorJsonSerializer}.
+     *
+     * Initializes the serializer with the default handled type as {@code String}.
+     * This serializer is specifically designed to handle Strings to retain their
+     * raw JSON representation during serialization.
+     */
     public DomainMirrorJsonSerializer() {
         super(String.class);
     }
 
+    /**
+     * Serializes a string into its raw JSON representation.
+     *
+     * This method writes the string value directly to the JSON output without escaping
+     * or additional formatting, treating it as raw JSON content. It is particularly
+     * useful for serializing strings that already represent JSON to prevent unnecessary
+     * transformations.
+     *
+     * @param value the string value to serialize
+     * @param gen the JSON generator used to write the serialized output
+     * @param provider the serializer provider for accessing serializers and configuration
+     * @throws IOException if an I/O error occurs during serialization
+     */
     @Override
     public void serialize(String value, JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeRawValue(value);

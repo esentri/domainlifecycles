@@ -28,7 +28,38 @@ package io.domainlifecycles.plugins.viewer;
 
 import java.util.List;
 
+/**
+ * The DomainModelUploader interface defines a contract for components that facilitate
+ * the process of uploading a serialized domain model to a designated Diagram Viewer system.
+ *
+ * This interface requires the implementation of a method to handle the uploading process
+ * by providing the necessary domain model data, configuration parameters, and communication
+ * details for the target system.
+ *
+ * Responsibilities:
+ * - Handle the serialization and packaging of the domain model data.
+ * - Ensure the delivery of the domain model to the Diagram Viewer through an HTTP-based API.
+ * - Manage authentication and project-specific configurations during the upload.
+ *
+ * @author Leon Völlinger
+ */
 public interface DomainModelUploader {
 
+    /**
+     * Uploads a serialized domain model to a specific project in the Diagram Viewer platform.
+     *
+     * This method facilitates the process of uploading a domain model, represented in JSON format,
+     * along with corresponding configuration details required for proper association with the
+     * target project on the Diagram Viewer.
+     *
+     * The method prepares and sends the required HTTP request, including authentication and
+     * project-specific headers, and handles any potential errors during the upload process.
+     *
+     * @param domainModelJson       a JSON-string representation of the domain model to be uploaded
+     * @param domainModelPackages   a list of package names defining the domain model classes for processing
+     * @param apiKey                the API key required for authentication with the Diagram Viewer platform
+     * @param projectName           the name of the target project on the Diagram Viewer platform
+     * @param diagramViewerBaseUrl  the base URL of the Diagram Viewer instance where the domain model should be uploaded
+     */
     void uploadDomainModel(String domainModelJson, List<String> domainModelPackages, String apiKey, String projectName, String diagramViewerBaseUrl);
 }

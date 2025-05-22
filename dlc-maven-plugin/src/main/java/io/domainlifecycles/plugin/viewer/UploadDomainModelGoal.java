@@ -81,8 +81,8 @@ public class UploadDomainModelGoal extends AbstractMojo {
     @Parameter(property = "projectName", required = true)
     private String projectName;
 
-    @Parameter(property = "contextPackages", required = true)
-    private List<String> contextPackages;
+    @Parameter(property = "domainModelPackages", required = true)
+    private List<String> domainModelPackages;
 
     private DomainModelUploader domainModelUploader;
 
@@ -108,7 +108,7 @@ public class UploadDomainModelGoal extends AbstractMojo {
 
     private void uploadDomainModel() {
         JsonSerializer jsonSerializer = new JsonSerializerImpl(true);
-        final String domainModelJson = jsonSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(project), contextPackages);
-        domainModelUploader.uploadDomainModel(domainModelJson, contextPackages, apiKey, projectName, diagramViewerBaseUrl);
+        final String domainModelJson = jsonSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(project), domainModelPackages);
+        domainModelUploader.uploadDomainModel(domainModelJson, domainModelPackages, apiKey, projectName, diagramViewerBaseUrl);
     }
 }

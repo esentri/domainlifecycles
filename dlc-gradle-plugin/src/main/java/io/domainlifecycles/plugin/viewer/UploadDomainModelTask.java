@@ -91,13 +91,13 @@ public abstract class UploadDomainModelTask extends DefaultTask {
     public abstract Property<String> getProjectName();
 
     /**
-     * Retrieves the list of context packages that define the domain model classes
+     * Retrieves the list of packages that define the domain model classes
      * to be considered for processing and uploading.
      *
-     * @return a {@code ListProperty<String>} representing the list of context packages
+     * @return a {@code ListProperty<String>} representing the list of packages containing domain model classes
      */
     @Input
-    public abstract ListProperty<String> getContextPackages();
+    public abstract ListProperty<String> getDomainModelPackages();
 
     private DomainModelUploader domainModelUploader;
 
@@ -130,9 +130,9 @@ public abstract class UploadDomainModelTask extends DefaultTask {
     private void uploadDomainModel() {
         JsonSerializer jsonSerializer = new JsonSerializerImpl(true);
         final String domainModelJson = jsonSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(getProject()),
-            getContextPackages().get());
+            getDomainModelPackages().get());
 
         domainModelUploader.uploadDomainModel(
-            domainModelJson, getContextPackages().get(), getApiKey().get(), getProjectName().get(), getDiagramViewerBaseUrl().get());
+            domainModelJson, getDomainModelPackages().get(), getApiKey().get(), getProjectName().get(), getDiagramViewerBaseUrl().get());
     }
 }

@@ -40,6 +40,20 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Implementation of the DomainModelUploader interface for uploading a serialized domain model
+ * to a designated Diagram Viewer system. This implementation handles the process of preparing
+ * and executing an HTTP PUT request to upload the domain model, along with necessary metadata
+ * and authorization headers.
+ *
+ * Responsibilities:
+ * - Prepares an HTTP request to upload the domain model to the Diagram Viewer system.
+ * - Ensures proper error handling and logging during the upload process.
+ * - Formats the domain model data and additional configuration into a JSON request body.
+ * - Configures required authentication headers for secure communication.
+ *
+ * @author Leon Völlinger
+ */
 public class DomainModelUploaderImpl implements DomainModelUploader {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DomainModelUploaderImpl.class);
@@ -47,6 +61,19 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
     private static final String DIAGRAM_VIEWER_DOMAIN_MIRROR_UPLOAD_PATH = "/api/upload/domain-mirror/";
     private static final String API_KEY_HEADER_NAME = "X-API-KEY";
 
+    /**
+     * Uploads a domain model to a Diagram Viewer project using the provided configuration and authentication details.
+     *
+     * This method sends a serialized domain model in JSON format to a specified Diagram Viewer instance,
+     * associating it with the target project. It handles request preparation, API key authentication,
+     * error handling, and logs pertinent information during the process.
+     *
+     * @param domainMirrorJson       a JSON-string representation of the domain model to be uploaded
+     * @param domainModelPackages    a list of package names that define the domain model classes to be included
+     * @param apiKey                 the API key required for authenticating with the Diagram Viewer platform
+     * @param projectName            the name of the target project where the domain model will be uploaded
+     * @param diagramViewerBaseUrl   the base URL of the Diagram Viewer instance to which the upload request is sent
+     */
     @Override
     public void uploadDomainModel(String domainMirrorJson, List<String> domainModelPackages, String apiKey, String projectName, String diagramViewerBaseUrl) {
         LOGGER.debug(String.format("Trying to upload Domain-Model to Diagram-Viewer project '%s' with base url '%s'.", projectName, diagramViewerBaseUrl));
