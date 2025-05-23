@@ -116,7 +116,6 @@ Supported Diagram configuration options are
 - includeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are included)
 - excludeConnectedToIngoing: : list of full qualified classnames (classes and ingoing connected classes are excluded)
 - excludeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are excluded)
-
 - explicitlyIncludedPackages: packages explicitly included in the diagram   
 - showAllAbstractTypes: boolean, default false
 - showAbstractTypesInAggregates: boolean, default true
@@ -169,7 +168,7 @@ An example configuration in your project could look like the following:
 ```groovy
 dlcGradlePlugin {
     domainModelUpload {
-        contextPackages = ["io.domainlifecycles.test"]
+        domainModelPackages = ["io.domainlifecycles.test"]
         projectName = "test-project"
         apiKey = "<YOUR-API-KEY>"
         diagramViewerBaseUrl = "http://localhost:8090"
@@ -179,7 +178,7 @@ dlcGradlePlugin {
 Specify the packages you want to be scanned by the Diagram-Viewer. These can later on be changed, or your diagrams 
 can be specified even further.
 You can generate a new API-Key by clicking on the profile tab in the Diagram-Viewer App.
-All classes that the model consists of must be defined within the `contextPackages`.
+All classes that the model consists of must be defined within the `domainModelPackages`.
 
 #### Run
 ```bash
@@ -388,15 +387,15 @@ An example configuration in your project could look like the following:
             <version>2.3.0</version>
             <executions>
                 <execution>
-                    <id>renderJson</id>
+                    <id>upload</id>
                     <phase>compile</phase>
                     <goals>
                         <goal>domainModelUpload</goal>
                     </goals>
                     <configuration>
-                    <contextPackages>
-                        <contextPackage>io.domainlifecycles.test</contextPackage>
-                    </contextPackages>
+                    <domainModelPackages>
+                        <domainModelPackage>io.domainlifecycles.test</domainModelPackage>
+                    </domainModelPackages>
                     <diagramViewerBaseUrl>http://localhost:8090</diagramViewerBaseUrl>
                     <apiKey>YOUR-API-KEY</apiKey>
                     <projectName>test-project</projectName>
@@ -410,7 +409,7 @@ An example configuration in your project could look like the following:
 Specify the packages you want to be scanned by the Diagram-Viewer. These can later on be changed, or your diagrams
 can be specified even further.
 You can generate a new API-Key by clicking on the profile tab in the Diagram-Viewer App.
-All classes that the model consists of must be defined within the `contextPackages`.
+All classes that the model consists of must be defined within the `domainModelPackages`.
 
 #### Run
 ```bash

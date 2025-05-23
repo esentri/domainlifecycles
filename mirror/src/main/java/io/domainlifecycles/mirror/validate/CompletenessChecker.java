@@ -135,7 +135,7 @@ public class CompletenessChecker {
             String.format(
                 "The model class '%s' references an unknown domain type '%s' by the method param declaration of method '%s'",
                 method.getDeclaredByTypeName(),
-                method.getReturnType().getTypeName(),
+                param.getType().getTypeName(),
                 method.getName()
             )
         );

@@ -74,6 +74,7 @@ public class DiagramSettingsFilter {
      *                     used for filtering. Must not be null.
      * @param diagramTrimSettings Configuration settings that determine how the diagram should be trimmed
      *                           and which elements should be included or excluded
+     * @param generalVisualSettings  Configuration for general visual settings
      */
     public DiagramSettingsFilter(DomainMirror domainMirror,
                                  DiagramTrimSettings diagramTrimSettings,

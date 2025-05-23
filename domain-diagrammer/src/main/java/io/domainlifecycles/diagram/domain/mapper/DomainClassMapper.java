@@ -343,7 +343,10 @@ public class DomainClassMapper {
     private NomnomlType mapToNomnomlType(AssertedContainableTypeMirror assertedContainableTypeMirror) {
         String typeName;
         Optional<String> containerTypeName;
-        if (assertedContainableTypeMirror.getResolvedGenericType() == null) {
+        if (assertedContainableTypeMirror.getResolvedGenericType() == null
+            || assertedContainableTypeMirror.getResolvedGenericType().genericTypes() == null
+            || assertedContainableTypeMirror.getResolvedGenericType().genericTypes().isEmpty()
+        ) {
             typeName = DomainMapperUtils.mapTypeName(assertedContainableTypeMirror.getTypeName(), domainDiagramConfig);
             if (assertedContainableTypeMirror.isArray()) {
                 typeName += "[]";
