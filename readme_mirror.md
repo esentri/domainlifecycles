@@ -3,7 +3,7 @@
 The DLC Domain Mirror is a DDD specific implementation of the ideas of Gilad Bracha and David Ungar, who described
 [Design Principles for Meta-level Facilities of Object-Oriented Programming Languages](https://bracha.org/mirrors.pdf)
 
-The DCL Domain Mirror contains a metamodel of the tactical design structures within bounded contexts. This metamodel is
+The DLC Domain Mirror contains a metamodel of the tactical design structures within bounded contexts. This metamodel is
 typically
 instantiated at application startup using Java reflection. It mirrors the current implementation state of the
 implemented

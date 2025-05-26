@@ -165,7 +165,7 @@ Here's an overview of the most important external dependencies:
 |-----------------------------------------------------------------------|------------------------------------------------------------------------------------------------|-------------------------|
 | Optional Object Builders Lombok Support                               | org.projectlombok:lombok                                                                       | tested with 1.18.30     |     
 | Optional fine grained type resolving in the DLC mirror                | com.github.vladislavsevruk:type-resolver                                                       | tested with 1.0.3       |
-| Runtime class loading in the DLC mirror and DCL persistence           | io.github.classgraph:classgraph                                                                | tested with 4.8.163     |
+| Runtime class loading in the DLC mirror and DLC persistence           | io.github.classgraph:classgraph                                                                | tested with 4.8.163     |
 | Validation - Javax Bean Validation 2.0 Support                        | (Bean Validation Provider implementation) e.g.: org.hibernate.validator:hibernate-validator    | tested with 6.2.3.Final |
 | Validation - Jakarta Bean Validation 3.0 Support                      | (Bean Validation Provider implementation) e.g.: org.hibernate.validator:hibernate-validator    | tested with 8.0.1.Final |
 | Validation extension vi Byte Buddy                                    | net.bytebuddy:byte-buddy                                                                       | tested with 1.15.10     |
