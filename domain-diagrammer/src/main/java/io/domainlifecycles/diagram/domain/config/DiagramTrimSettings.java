@@ -282,7 +282,8 @@ public class DiagramTrimSettings {
         }
     }
 
-    public static void checkNoOverlap(Collection<String>... collections) {
+    @SafeVarargs
+    private static void checkNoOverlap(Collection<String>... collections) {
         Set<String> seen = new HashSet<>();
         for (Collection<String> collection : collections) {
             if (collection != null) {
