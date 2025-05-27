@@ -1,15 +1,15 @@
 plugins {
+    id 'java-gradle-plugin'
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
     alias libs.plugins.yumi.gradle.licenser.plugin
     alias libs.plugins.jaredsburrows.license.plugin
-    id 'java-gradle-plugin'
+
 }
 
 group = dlcGroup
 version = dlcVersion
-
 
 java {
     withJavadocJar()
@@ -23,6 +23,8 @@ gradlePlugin {
             implementationClass = 'io.domainlifecycles.plugin.DlcGradlePlugin'
         }
     }
+    //maven publishing is managed by parent pom
+    automatedPublishing = false
 }
 
 dependencies {

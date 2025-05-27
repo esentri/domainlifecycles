@@ -131,8 +131,8 @@ allprojects {
 
                         pom {
                             name = 'Domain Lifecycles'
-                            description = 'A Java framework for developing applications using Domain-Driven Design.'
-                            url = 'https://www.esentri.com'
+                            description = 'Simplify developing Java applications using Domain-Driven Design.'
+                            url = 'https://www.domainlifecycles.io'
 
                             licenses {
                                 license {
