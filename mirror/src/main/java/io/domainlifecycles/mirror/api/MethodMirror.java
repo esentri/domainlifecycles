@@ -79,6 +79,15 @@ public interface MethodMirror {
      */
     Optional<DomainEventMirror> getListenedEvent();
 
+
+    /**
+     * Returns a list of {@link DomainCommandMirror} instances that represent the commands
+     * processed by the mirrored method.
+     *
+     * @return a list of {@link DomainCommandMirror} instances processed by this method.
+     */
+    List<DomainCommandMirror> getProcessedCommands();
+
     /**
      * @param domainEvent the DomainEvent to publish
      * @return whether the mirrored method publishes {@link DomainEvent} instances for the given corresponding mirror.

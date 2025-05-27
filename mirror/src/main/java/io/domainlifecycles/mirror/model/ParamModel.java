@@ -43,6 +43,12 @@ public class ParamModel implements ParamMirror {
     private final String name;
     private final AssertedContainableTypeMirror type;
 
+    /**
+     * Constructor for creating an instance of ParamModel.
+     *
+     * @param name the name of the parameter, must not be null
+     * @param type the type of the parameter, must not be null
+     */
     @JsonCreator
     public ParamModel(@JsonProperty("name") String name,
                       @JsonProperty("type") AssertedContainableTypeMirror type) {

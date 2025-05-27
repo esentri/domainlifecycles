@@ -40,6 +40,12 @@ import java.util.Objects;
 public class EnumOptionModel implements EnumOptionMirror {
     private final String value;
 
+    /**
+     * Constructs an instance of {@code EnumOptionModel} with the specified value.
+     *
+     * @param value the value of the enum option; must not be null
+     * @throws NullPointerException if the value is null
+     */
     @JsonCreator
     public EnumOptionModel(@JsonProperty("value") String value) {
         this.value = Objects.requireNonNull(value);

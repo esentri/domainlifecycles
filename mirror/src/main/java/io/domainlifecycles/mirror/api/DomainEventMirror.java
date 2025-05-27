@@ -92,6 +92,45 @@ public interface DomainEventMirror extends DomainTypeMirror {
     List<RepositoryMirror> getPublishingRepositories();
 
     /**
+     * Retrieves a list of mirrors representing the {@link ApplicationService} instances
+     * that are responsible for publishing the mirrored event.
+     * An ApplicationService must include a method annotated with {@link Publishes}
+     * to qualify as a publisher of the event.
+     *
+     * @return a list of {@link ApplicationServiceMirror} instances corresponding to
+     *         the application services publishing the event.
+     */
+    List<ApplicationServiceMirror> getPublishingApplicationServices();
+
+    /**
+     * Retrieves a list of mirrors representing the {@link OutboundService} instances
+     * that are responsible for publishing the mirrored event.
+     * An {@link OutboundService} must include a method annotated with {@link Publishes}
+     * to qualify as a publisher of the event.
+     *
+     * @return a list of {@link OutboundServiceMirror} instances corresponding to the outbound services publishing the event.
+     */
+    List<OutboundServiceMirror> getPublishingOutboundServices();
+
+    /**
+     * Retrieves a list of mirrors representing the {@link QueryHandler} instances
+     * responsible for publishing the mirrored event. Each {@link QueryHandler}
+     * must have at least one method annotated with {@link Publishes} to be
+     * considered as a publisher of the event.
+     *
+     * @return a list of {@link QueryHandlerMirror} instances corresponding to
+     *         the query handlers publishing the event.
+     */
+    List<QueryHandlerMirror> getPublishingQueryHandlers();
+
+    /**
+     * Retrieves a list of mirrors representing the kinds of services that publish the mirrored event.
+     *
+     * @return a list of ServiceKindMirror instances representing the service kinds publishing the event.
+     */
+    List<ServiceKindMirror> getPublishingServiceKinds();
+
+    /**
      * @return a list mirrors for the {@link AggregateRoot} instances representing the Aggregates listening to the
      * mirrored event.
      * Therefor the AggregateRoot or nay contained DomainObject must have a method being annotated with

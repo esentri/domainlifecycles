@@ -37,6 +37,9 @@ import java.math.BigInteger;
  */
 public class DefaultShortToBigIntegerConverter extends TypeConverter<Short, BigInteger> {
 
+    /**
+     * Constructs a new converter to handle conversion from Short to BigInteger.
+     */
     public DefaultShortToBigIntegerConverter() {
         super(Short.class, BigInteger.class);
     }

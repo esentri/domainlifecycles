@@ -83,6 +83,12 @@ public class NomnomlClass implements DiagramElement {
         this.showMethods = showMethods;
     }
 
+    /**
+     * Creates and returns a new instance of the {@code NomnomlClassBuilder}.
+     * The builder allows for constructing instances of {@code NomnomlClass}.
+     *
+     * @return a new {@code NomnomlClassBuilder} instance to construct a {@code NomnomlClass}.
+     */
     public static NomnomlClassBuilder builder() {
         return new NomnomlClassBuilder();
     }
@@ -130,38 +136,88 @@ public class NomnomlClass implements DiagramElement {
         methods.forEach(f -> builder.append(f.getDiagramText()));
     }
 
+    /**
+     * Retrieves the optional comment associated with the Nomnoml class.
+     *
+     * @return an {@code Optional<String>} representing the comment, if it exists.
+     */
     public Optional<String> getComment() {
         return this.comment;
     }
 
+    /**
+     * Retrieves the name of the Nomnoml class.
+     *
+     * @return a {@code String} representing the name of this class.
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * Retrieves the style classifier associated with the Nomnoml class.
+     *
+     * @return a {@code String} value representing the style classifier of the class.
+     */
     public String getStyleClassifier() {
         return this.styleClassifier;
     }
 
+    /**
+     * Retrieves the list of fields associated with the Nomnoml class.
+     *
+     * @return a list of {@code NomnomlField} objects that represent the fields defined for this class.
+     */
     public List<NomnomlField> getFields() {
         return this.fields;
     }
 
+    /**
+     * Retrieves the list of methods associated with the Nomnoml class.
+     *
+     * @return a list of {@code NomnomlMethod} objects that represent the methods
+     *         defined for this class.
+     */
     public List<NomnomlMethod> getMethods() {
         return this.methods;
     }
 
+    /**
+     * Retrieves the list of stereotypes associated with the Nomnoml class.
+     *
+     * @return a list of {@code NomnomlStereotype} objects that represent the stereotypes
+     *         defined for this class.
+     */
     public List<NomnomlStereotype> getStereotypes() {
         return this.stereotypes;
     }
 
+    /**
+     * Determines whether fields are set to be displayed in the Nomnoml class diagram.
+     *
+     * @return true if fields are set to be displayed, false otherwise
+     */
     public boolean isShowFields() {
         return this.showFields;
     }
 
+    /**
+     * Determines whether methods are set to be displayed in the Nomnoml class diagram.
+     *
+     * @return true if methods are set to be displayed, false otherwise
+     */
     public boolean isShowMethods() {
         return this.showMethods;
     }
 
+    /**
+     * Compares this object with the specified object for equality. This method checks if the given
+     * object is an instance of NomnomlClass and compares all relevant fields including comment, name,
+     * styleClassifier, fields, methods, stereotypes, showFields, and showMethods for equivalence.
+     *
+     * @param o the object to compare for equality
+     * @return true if the specified object is equal to this instance, false otherwise
+     */
     public boolean equals(final Object o) {
         if (o == this) return true;
         if (!(o instanceof NomnomlClass)) return false;
@@ -169,33 +225,47 @@ public class NomnomlClass implements DiagramElement {
         if (!other.canEqual((Object) this)) return false;
         final Object this$comment = this.getComment();
         final Object other$comment = other.getComment();
-        if (this$comment == null ? other$comment != null : !this$comment.equals(other$comment)) return false;
+        if (!Objects.equals(this$comment, other$comment)) return false;
         final Object this$name = this.getName();
         final Object other$name = other.getName();
-        if (this$name == null ? other$name != null : !this$name.equals(other$name)) return false;
+        if (!Objects.equals(this$name, other$name)) return false;
         final Object this$styleClassifier = this.getStyleClassifier();
         final Object other$styleClassifier = other.getStyleClassifier();
-        if (this$styleClassifier == null ? other$styleClassifier != null : !this$styleClassifier.equals(other$styleClassifier))
+        if (!Objects.equals(this$styleClassifier, other$styleClassifier))
             return false;
         final Object this$fields = this.getFields();
         final Object other$fields = other.getFields();
-        if (this$fields == null ? other$fields != null : !this$fields.equals(other$fields)) return false;
+        if (!Objects.equals(this$fields, other$fields)) return false;
         final Object this$methods = this.getMethods();
         final Object other$methods = other.getMethods();
-        if (this$methods == null ? other$methods != null : !this$methods.equals(other$methods)) return false;
+        if (!Objects.equals(this$methods, other$methods)) return false;
         final Object this$stereotypes = this.getStereotypes();
         final Object other$stereotypes = other.getStereotypes();
-        if (this$stereotypes == null ? other$stereotypes != null : !this$stereotypes.equals(other$stereotypes))
+        if (!Objects.equals(this$stereotypes, other$stereotypes))
             return false;
         if (this.isShowFields() != other.isShowFields()) return false;
         if (this.isShowMethods() != other.isShowMethods()) return false;
         return true;
     }
 
+    /**
+     * Checks if the given object can be considered equal to this instance, specifically verifying
+     * if the provided object is an instance of NomnomlClass.
+     *
+     * @param other the object to check equality against
+     * @return true if the given object is an instance of NomnomlClass, false otherwise
+     */
     protected boolean canEqual(final Object other) {
         return other instanceof NomnomlClass;
     }
 
+    /**
+     * Computes the hash code for this object based on its fields.
+     * The hash code is calculated using the values of comment, name, styleClassifier,
+     * fields, methods, stereotypes, showFields, and showMethods.
+     *
+     * @return the hash code of this object
+     */
     public int hashCode() {
         final int PRIME = 59;
         int result = 1;
@@ -216,6 +286,20 @@ public class NomnomlClass implements DiagramElement {
         return result;
     }
 
+    /**
+     * The NomnomlClassBuilder provides a builder pattern implementation to create and configure
+     * instances of the NomnomlClass.
+     *
+     * It allows setting various attributes such as:
+     * - The name of the class
+     * - An optional comment for the class
+     * - A style classifier for visual representation
+     * - A list of fields and methods
+     * - Stereotypes and visibility of fields or methods
+     *
+     * Each method in the builder returns the builder itself, supporting a fluent and chainable API.
+     * Once configured, the `build` method can be invoked to generate the final NomnomlClass instance.
+     */
     public static class NomnomlClassBuilder {
         private String name;
         private String comment;
@@ -229,50 +313,118 @@ public class NomnomlClass implements DiagramElement {
         NomnomlClassBuilder() {
         }
 
+        /**
+         * Sets the name of the class being built and returns the builder instance to allow
+         * for a fluent and chainable API.
+         *
+         * @param name the name of the class
+         * @return the current instance of the NomnomlClassBuilder for method chaining
+         */
         public NomnomlClassBuilder name(String name) {
             this.name = name;
             return this;
         }
 
+        /**
+         * Sets the comment of the class being built and returns the builder instance to allow
+         * for a fluent and chainable API.
+         *
+         * @param comment the comment to associate with the class
+         * @return the current instance of the NomnomlClassBuilder for method chaining
+         */
         public NomnomlClassBuilder comment(String comment) {
             this.comment = comment;
             return this;
         }
 
+        /**
+         * Sets the style classifier of the class being built and returns the builder instance
+         * to allow for a fluent and chainable API.
+         *
+         * @param styleClassifier the style classifier to apply to the class
+         * @return the current instance of the NomnomlClassBuilder for method chaining
+         */
         public NomnomlClassBuilder styleClassifier(String styleClassifier) {
             this.styleClassifier = styleClassifier;
             return this;
         }
 
+        /**
+         * Sets the fields of the class being built and returns the builder instance to allow
+         * for a fluent and chainable API.
+         *
+         * @param fields the list of fields to be assigned to the class
+         * @return the current instance of the NomnomlClassBuilder for method chaining
+         */
         public NomnomlClassBuilder fields(List<NomnomlField> fields) {
             this.fields = fields;
             return this;
         }
 
+        /**
+         * Sets the methods of the class being built and returns the builder instance
+         * to allow for a fluent and chainable API.
+         *
+         * @param methods the list of methods to be assigned to the class
+         * @return the current instance of the NomnomlClassBuilder for method chaining
+         */
         public NomnomlClassBuilder methods(List<NomnomlMethod> methods) {
             this.methods = methods;
             return this;
         }
+
+        /**
+         * Sets the stereotypes of the class being built and returns the builder instance
+         * to allow for a fluent and chainable API.
+         *
+         * @param stereotypes the list of stereotypes to be assigned to the class
+         * @return the current instance of the NomnomlClassBuilder for method chaining
+         */
 
         public NomnomlClassBuilder stereotypes(List<NomnomlStereotype> stereotypes) {
             this.stereotypes = stereotypes;
             return this;
         }
 
+        /**
+         * Sets whether the fields of the class should be displayed and returns the builder instance
+         * to allow for a fluent and chainable API.
+         *
+         * @param showFields a boolean indicating whether to display the fields
+         * @return the current instance of the NomnomlClassBuilder for method chaining
+         */
         public NomnomlClassBuilder showFields(boolean showFields) {
             this.showFields = showFields;
             return this;
         }
 
+        /**
+         * Sets whether the methods of the class should be displayed and returns the builder
+         * instance to allow for a fluent and chainable API.
+         *
+         * @param showMethods a boolean indicating whether to display the methods
+         * @return the current instance of the NomnomlClassBuilder for method chaining
+         */
         public NomnomlClassBuilder showMethods(boolean showMethods) {
             this.showMethods = showMethods;
             return this;
         }
 
+        /**
+         * Builds and returns a new instance of the NomnomlClass based on the current state of the builder.
+         *
+         * @return a new NomnomlClass instance initialized with the values provided to the builder
+         */
         public NomnomlClass build() {
             return new NomnomlClass(this.name, this.comment, this.styleClassifier, this.fields, this.methods, this.stereotypes, this.showFields, this.showMethods);
         }
 
+        /**
+         * Returns a string representation of the NomnomlClassBuilder instance, including its current state
+         * with details about its fields, methods, and other attributes.
+         *
+         * @return a string representation of the NomnomlClassBuilder instance
+         */
         public String toString() {
             return "NomnomlClass.NomnomlClassBuilder(name=" + this.name + ", comment=" + this.comment + ", styleClassifier=" + this.styleClassifier + ", fields=" + this.fields + ", methods=" + this.methods + ", stereotypes=" + this.stereotypes + ", showFields=" + this.showFields + ", showMethods=" + this.showMethods + ")";
         }

@@ -56,10 +56,21 @@ public class TopologicalPersistenceActionOrderProvider implements PersistenceAct
 
     private final DomainPersistenceProvider<?> domainPersistenceProvider;
 
+    /**
+     * Constructs a TopologicalPersistenceActionOrderProvider instance.
+     *
+     * This constructor initializes the provider by calculating and maintaining
+     * a topological order of persistable aggregate roots based on their domain
+     * dependencies. It utilizes the provided DomainPersistenceProvider to gain
+     * insights into the domain's structure and persistence configuration.
+     *
+     * @param domainPersistenceProvider the DomainPersistenceProvider instance used
+     *                                  to interact with the domain persistence structure
+     *                                  and configuration.
+     */
     public TopologicalPersistenceActionOrderProvider(DomainPersistenceProvider<?> domainPersistenceProvider) {
         this.domainPersistenceProvider = domainPersistenceProvider;
-        Domain.getDomainModel().allTypeMirrors()
-            .values()
+        Domain.getDomainMirror().getAllDomainTypeMirrors()
             .stream()
             .filter(t -> DomainType.AGGREGATE_ROOT.equals(t.getDomainType()) && !t.isAbstract())
             .forEach(
@@ -69,9 +80,6 @@ public class TopologicalPersistenceActionOrderProvider implements PersistenceAct
 
     /**
      * {@inheritDoc}
-     *
-     * @param aggregateRootClassName the aggregate root full qualified class name
-     * @return
      */
     @Override
     public List<String> insertionOrder(String aggregateRootClassName) {
@@ -80,9 +88,6 @@ public class TopologicalPersistenceActionOrderProvider implements PersistenceAct
 
     /**
      * {@inheritDoc}
-     *
-     * @param aggregateRootClassName the aggregate root full qualified class name
-     * @return
      */
     @Override
     public List<String> deletionOrder(String aggregateRootClassName) {

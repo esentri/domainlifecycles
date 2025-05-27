@@ -13,7 +13,7 @@ The result is text-based in [Nomnoml](https://nomnoml.com/) format.
 ```Java
 class Diagrammer {
     public void generateDiagram() {
-        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "sampleshop"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory(new TypeMetaResolver(), "sampleshop"));
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withContextPackageName("sampleshop").build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(diagramConfig, Domain.getDomainModel());
 

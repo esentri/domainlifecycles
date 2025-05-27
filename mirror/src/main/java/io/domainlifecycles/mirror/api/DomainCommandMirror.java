@@ -79,4 +79,64 @@ public interface DomainCommandMirror extends DomainTypeMirror {
      */
     Optional<DomainServiceMirror> getDomainServiceTarget();
 
+    /**
+     * Returns a list of {@link ServiceKindMirror} instances that represent the kinds of services
+     * involved in processing the mirrored {@link DomainCommand}. These service kinds typically describe
+     * the processing capabilities or roles relevant to the command's lifecycle.
+     *
+     * @return a list of {@link ServiceKindMirror} defining the processing service kinds associated
+     * with the mirrored {@link DomainCommand}.
+     */
+    List<ServiceKindMirror> getProcessingServiceKinds();
+
+    /**
+     * Retrieves a list of mirrors representing the {@link ApplicationServiceMirror} instances
+     * involved in processing the mirrored {@link DomainCommand}. These mirrors reflect the
+     * application services that play a role in the command's lifecycle or processing logic.
+     *
+     * @return a list of {@link ApplicationServiceMirror} instances that represent the application
+     * services associated with processing the mirrored {@link DomainCommand}.
+     */
+    List<ApplicationServiceMirror> getProcessingApplicationServices();
+
+    /**
+     * Retrieves a list of mirrors representing the {@link DomainServiceMirror} instances
+     * involved in processing the mirrored {@link DomainCommand}. These mirrors reflect
+     * the domain services that play a role in the command's lifecycle or processing logic.
+     *
+     * @return a list of {@link DomainServiceMirror} instances that represent the domain
+     * services associated with processing the mirrored {@link DomainCommand}.
+     */
+    List<DomainServiceMirror> getProcessingDomainServices();
+
+    /**
+     * Retrieves a list of mirrors representing the {@link RepositoryMirror} instances
+     * involved in processing the mirrored {@link DomainCommand}. These mirrors reflect
+     * the repositories that play a role in the command's lifecycle or processing logic.
+     *
+     * @return a list of {@link RepositoryMirror} instances that represent the repositories
+     *         associated with processing the mirrored {@link DomainCommand}.
+     */
+    List<RepositoryMirror> getProcessingRepositories();
+
+    /**
+     * Retrieves a list of mirrors representing the {@link OutboundServiceMirror} instances
+     * involved in processing the mirrored {@link DomainCommand}. These mirrors reflect
+     * the outbound services that play a role in the command's lifecycle or processing logic.
+     *
+     * @return a list of {@link OutboundServiceMirror} instances that represent the outbound
+     * services associated with processing the mirrored {@link DomainCommand}.
+     */
+    List<OutboundServiceMirror> getProcessingOutboundServices();
+
+    /**
+     * Retrieves a list of mirrors representing the {@link QueryHandlerMirror} instances involved in
+     * processing the mirrored {@link DomainCommand}. These mirrors reflect the query handlers that
+     * play a role in handling and processing query-related logic of the command.
+     *
+     * @return a list of {@link QueryHandlerMirror} instances that represent the query handlers
+     *         associated with processing the mirrored {@link DomainCommand}.
+     */
+    List<QueryHandlerMirror> getProcessingQueryHandlers();
+
 }

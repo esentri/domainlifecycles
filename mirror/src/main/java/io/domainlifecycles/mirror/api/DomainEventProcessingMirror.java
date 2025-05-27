@@ -30,6 +30,8 @@ import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.domain.types.ListensTo;
 import io.domainlifecycles.domain.types.Publishes;
 
+import java.util.List;
+
 /**
  * All domain types mirrored, that can process {@link DomainEvent} instances, implement this interface.
  *
@@ -54,4 +56,21 @@ public interface DomainEventProcessingMirror {
      * @return true, if the underlying mirrored instance listens to the corresponding DomainEvent
      */
     boolean listensTo(DomainEventMirror domainEvent);
+
+    /**
+     * Retrieves a list of domain events that are published by the domain type.
+     * This method provides access to all {@link DomainEventMirror} instances that the underlying
+     * mirrored type is explicitly designed to publish.
+     *
+     * @return a list of {@link DomainEventMirror} instances that are published by the domain.
+     */
+    List<DomainEventMirror> publishedDomainEvents();
+
+    /**
+     * Retrieves a list of domain events that the mirrored type is explicitly designed to listen to.
+     * This method identifies all {@link DomainEventMirror} instances that are explicitly annotated to be listened to by the domain.
+     *
+     * @return a list of {@link DomainEventMirror} instances that the domain is capable of listening to.
+     */
+    List<DomainEventMirror> listenedDomainEvents();
 }

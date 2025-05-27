@@ -38,6 +38,13 @@ import java.time.OffsetDateTime;
  */
 public class DefaultOffsetDateTimeToInstantConverter extends TypeConverter<OffsetDateTime, Instant> {
 
+    /**
+     * Default implementation of a converter that converts an {@link OffsetDateTime}
+     * to an {@link Instant}.
+     *
+     * This constructor initializes the converter with {@link OffsetDateTime} as the
+     * source type and {@link Instant} as the target type.
+     */
     public DefaultOffsetDateTimeToInstantConverter() {
         super(OffsetDateTime.class, Instant.class);
     }

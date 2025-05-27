@@ -32,7 +32,7 @@ import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.diagram.nomnoml.NomnomlClass;
 import io.domainlifecycles.diagram.nomnoml.NomnomlFrame;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
-import io.domainlifecycles.mirror.api.DomainModel;
+import io.domainlifecycles.mirror.api.DomainMirror;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,13 +56,17 @@ public class DomainMapper {
      * Initializes the Domain Mapper with a given {@link DomainDiagramConfig}.
      *
      * @param domainDiagramConfig diagram configuration
+     * @param domainMirror mapped domain
      */
-    public DomainMapper(DomainDiagramConfig domainDiagramConfig, DomainModel domainModel) {
+    public DomainMapper(DomainDiagramConfig domainDiagramConfig, DomainMirror domainMirror) {
         this.domainDiagramConfig = domainDiagramConfig;
-        this.filteredDomainClasses = new FilteredDomainClasses(domainDiagramConfig, domainModel);
+        this.filteredDomainClasses = new FilteredDomainClasses(
+            domainDiagramConfig.getDiagramTrimSettings(),
+            domainDiagramConfig.getGeneralVisualSettings(),
+            domainMirror);
 
         this.domainClassMapper = new DomainClassMapper(domainDiagramConfig);
-        this.domainRelationshipMapper = new DomainRelationshipMapper(domainDiagramConfig, domainModel, filteredDomainClasses);
+        this.domainRelationshipMapper = new DomainRelationshipMapper(domainDiagramConfig, domainMirror, filteredDomainClasses);
 
     }
 

@@ -47,6 +47,17 @@ public class IdentityModel extends DomainTypeModel implements IdentityMirror {
 
     private final Optional<String> valueTypeName;
 
+    /**
+     * Constructs an instance of IdentityModel.
+     *
+     * @param typeName the fully qualified name of the type.
+     * @param isAbstract whether the type is abstract.
+     * @param allFields a list of all the fields of the type.
+     * @param methods a list of all the methods of the type.
+     * @param valueTypeName an optional value type name associated with the identity.
+     * @param inheritanceHierarchyTypeNames a list of type names representing the inheritance hierarchy.
+     * @param allInterfaceTypeNames a list of type names representing all implemented interfaces.
+     */
     @JsonCreator
     public IdentityModel(@JsonProperty("typeName") String typeName,
                          @JsonProperty("abstract") boolean isAbstract,

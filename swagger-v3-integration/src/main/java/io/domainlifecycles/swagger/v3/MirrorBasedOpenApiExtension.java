@@ -145,9 +145,8 @@ public class MirrorBasedOpenApiExtension {
     }
 
     private void modifyEntitySchemata(OpenAPI openAPI, String... entitiesWithExternallyProvidedIds) {
-        Domain.getDomainModel()
-            .allTypeMirrors()
-            .values()
+        Domain.getDomainMirror()
+            .getAllDomainTypeMirrors()
             .stream()
             .filter(dtm -> DomainType.ENTITY.equals(dtm.getDomainType()) || DomainType.AGGREGATE_ROOT.equals(
                 dtm.getDomainType()))
@@ -192,9 +191,8 @@ public class MirrorBasedOpenApiExtension {
     }
 
     private void modifyValueObjectSchemata(OpenAPI openAPI) {
-        Domain.getDomainModel()
-            .allTypeMirrors()
-            .values()
+        Domain.getDomainMirror()
+            .getAllDomainTypeMirrors()
             .stream()
             .filter(dtm -> DomainType.VALUE_OBJECT.equals(dtm.getDomainType()))
             .map(dtm -> (ValueObjectMirror) dtm)
@@ -345,12 +343,10 @@ public class MirrorBasedOpenApiExtension {
 
     private void modifySingleValuedTypeSchema(Parameter param, Schema<?> refTypeSchema, String referencedTypeFqn) {
         if (refTypeSchema.getProperties() != null) {
-            @SuppressWarnings("rawtypes") var propSchema =
-                (Optional<Schema>) refTypeSchema.getProperties().values().stream().findFirst();
+             var propSchema = refTypeSchema.getProperties().values().stream().findFirst();
             if (propSchema.isPresent()) {
                 var newSchema = copyValueSchema(propSchema.get(), param.getName() + "." + refTypeSchema.getName());
                 if (Constants.TYPE_ARRAY.equals(param.getSchema().getType())) {
-                    //noinspection unchecked
                     param.getSchema().setItems(newSchema);
                 } else {
                     param.schema(newSchema);
@@ -368,7 +364,6 @@ public class MirrorBasedOpenApiExtension {
                     var dtmOptional = Domain.typeMirror(typeName);
                     if (dtmOptional.isEmpty()) {
                         if (typeSchema.getProperties() != null) {
-                            //noinspection unchecked
                             typeSchema.getProperties().forEach(
                                 (n, p) -> {
                                     String pName = (String) n;

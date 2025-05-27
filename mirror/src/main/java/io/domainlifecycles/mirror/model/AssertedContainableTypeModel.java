@@ -63,6 +63,23 @@ public class AssertedContainableTypeModel implements AssertedContainableTypeMirr
     private final List<AssertionMirror> containerAssertions;
     private final ResolvedGenericTypeMirror resolvedGenericType;
 
+    /**
+     * Constructs an instance of the AssertedContainableTypeModel, representing a type model
+     * with details about containment, assertions, and container characteristics.
+     *
+     * @param typeName              the name of the type, must not be null
+     * @param domainType            the domain type of the model, must not be null
+     * @param assertions            a list of assertion mirrors associated with the type, must not be null
+     * @param hasOptionalContainer  specifies if the type is contained within an Optional container
+     * @param hasCollectionContainer specifies if the type is contained within a Collection container
+     * @param hasListContainer      specifies if the type is contained within a List container
+     * @param hasSetContainer       specifies if the type is contained within a Set container
+     * @param hasStreamContainer    specifies if the type is contained within a Stream container
+     * @param isArray               indicates if the type is an array
+     * @param containerTypeName     the name of the container type, if applicable
+     * @param containerAssertions   a list of assertion mirrors for the container type, must not be null
+     * @param resolvedGenericType   the resolved generic type mirror associated with this model, can be null
+     */
     @JsonCreator
     public AssertedContainableTypeModel(@JsonProperty("typeName") String typeName,
                                         @JsonProperty("domainType") DomainType domainType,

@@ -38,6 +38,10 @@ import java.time.OffsetTime;
  */
 public class DefaultOffsetDateTimeToOffsetTimeConverter extends TypeConverter<OffsetDateTime, OffsetTime> {
 
+    /**
+     * Default converter for transforming an {@link OffsetDateTime} to an {@link OffsetTime}.
+     * This constructor initializes the source and target types for conversion.
+     */
     public DefaultOffsetDateTimeToOffsetTimeConverter() {
         super(OffsetDateTime.class, OffsetTime.class);
     }

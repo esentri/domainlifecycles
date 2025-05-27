@@ -39,6 +39,12 @@ import java.time.ZoneOffset;
  */
 public class DefaultLocalDateTimeToOffsetDateTimeUTCConverter extends TypeConverter<LocalDateTime, OffsetDateTime> {
 
+    /**
+     * Constructs a DefaultLocalDateTimeToOffsetDateTimeUTCConverter, defining
+     * the conversion behavior between a LocalDateTime and an OffsetDateTime
+     * at the {@code ZoneOffset.UTC} time zone. This ensures type-safe
+     * mappings between these two types.
+     */
     public DefaultLocalDateTimeToOffsetDateTimeUTCConverter() {
         super(LocalDateTime.class, OffsetDateTime.class);
     }

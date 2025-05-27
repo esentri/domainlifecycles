@@ -35,6 +35,11 @@ import io.domainlifecycles.persistence.mapping.converter.TypeConverter;
  */
 public class DefaultDoubleToFloatConverter extends TypeConverter<Double, Float> {
 
+    /**
+     * Constructs a DefaultDoubleToFloatConverter, which is a TypeConverter that defines
+     * conversion behavior from a Double to a Float. This ensures type-safe conversions
+     * between the specified types.
+     */
     public DefaultDoubleToFloatConverter() {
         super(Double.class, Float.class);
     }

@@ -48,6 +48,24 @@ public class ApplicationServiceModel extends ServiceKindModel implements Applica
     @JsonProperty
     private final List<String> applicationServiceInterfaceTypeNames;
 
+    /**
+     * Constructs an instance of ApplicationServiceModel, representing an application service type
+     * with details about its fields, methods, and interfaces.
+     *
+     * @param typeName the fully qualified name of the application service type being represented.
+     * @param isAbstract a boolean indicating whether the application service type is abstract.
+     * @param allFields a list of {@code FieldMirror} instances representing all fields declared
+     *                  in the application service type.
+     * @param methods a list of {@code MethodMirror} instances representing all methods declared
+     *                in the application service type.
+     * @param applicationServiceInterfaceTypeNames a list of fully qualified names of interfaces
+     *                                             that this application service type implements or uses
+     *                                             for its operations.
+     * @param inheritanceHierarchyTypeNames a list of fully qualified type names representing the
+     *                                      inheritance hierarchy of the application service type.
+     * @param allInterfaceTypeNames a list of fully qualified type names for all interfaces implemented
+     *                               by the application service type or its ancestors.
+     */
     @JsonCreator
     public ApplicationServiceModel(@JsonProperty("typeName") String typeName,
                                    @JsonProperty("abstract") boolean isAbstract,

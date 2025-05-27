@@ -26,7 +26,25 @@
 
 package io.domainlifecycles.mirror.api;
 
+/**
+ * The WildcardBound enum represents the type of bound for a wildcard in generics.
+ * It is used to distinguish between the types of bounds that can be applied
+ * to a wildcard generic in type parameter definitions.
+ *
+ * @author Mario Herb
+ */
 public enum WildcardBound {
+    /**
+     * Represents a lower-bound wildcard in generics, denoted by `? super T`.
+     * The LOWER constant is used to indicate that a wildcard is restricted
+     * by a lower bound, specifying a type or its superclasses.
+     */
     LOWER,
+
+    /**
+     * Represents an upper-bound wildcard in generics, denoted by `? extends T`.
+     * The UPPER constant is used to indicate that a wildcard is restricted
+     * by an upper bound, specifying a type or its subclasses.
+     */
     UPPER
 }

@@ -47,6 +47,18 @@ public class OutboundServiceModel extends ServiceKindModel implements OutboundSe
     @JsonProperty
     private final List<String> outboundServiceInterfaceTypeNames;
 
+    /**
+     * Constructs a new instance of the OutboundServiceModel, representing the model
+     * for an outbound service type with its fields, methods, and type information.
+     *
+     * @param typeName the fully qualified name of the type represented by this model.
+     * @param isAbstract a boolean indicating whether the represented type is abstract.
+     * @param allFields a list of {@code FieldMirror} instances representing all fields in the type.
+     * @param methods a list of {@code MethodMirror} instances representing all methods in the type.
+     * @param outboundServiceInterfaceTypeNames a list of fully qualified type names representing the outbound service interfaces.
+     * @param inheritanceHierarchyTypeNames a list of fully qualified type names representing the inheritance hierarchy of the represented type.
+     * @param allInterfaceTypeNames a list of fully qualified type names representing all interfaces implemented by the represented type.
+     */
     @JsonCreator
     public OutboundServiceModel(
         @JsonProperty("typeName") String typeName,

@@ -7,7 +7,7 @@ import io.domainlifecycles.domain.types.QueryHandler;
 import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.services.Services;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ class ServiceTest {
 
     @BeforeAll
     static void beforeAll() {
-        Domain.initialize(new ReflectiveDomainModelFactory("sample", "io.domainlifecycles"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory("sample", "io.domainlifecycles"));
         provider = initServices();
     }
 

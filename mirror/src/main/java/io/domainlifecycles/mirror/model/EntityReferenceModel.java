@@ -42,6 +42,19 @@ import io.domainlifecycles.mirror.exception.MirrorException;
  */
 public class EntityReferenceModel extends FieldModel implements EntityReferenceMirror {
 
+    /**
+     * Creates an instance of EntityReferenceModel.
+     *
+     * @param name the name of the entity reference; must not be null.
+     * @param type the type of the entity reference, represented by an AssertedContainableTypeMirror; must not be null.
+     * @param accessLevel the access level of the entity reference, as specified by the AccessLevel enum; must not be null.
+     * @param declaredByTypeName the fully qualified name of the type declaring the entity reference; must not be null.
+     * @param modifiable a boolean indicating whether the entity reference is modifiable.
+     * @param publicReadable a boolean indicating whether the entity reference is publicly readable.
+     * @param publicWriteable a boolean indicating whether the entity reference is publicly writable.
+     * @param isStatic a boolean indicating whether the entity reference is static.
+     * @param hidden a boolean indicating whether the entity reference is hidden.
+     */
     @JsonCreator
     public EntityReferenceModel(@JsonProperty("name") String name,
                                 @JsonProperty("type") AssertedContainableTypeMirror type,
@@ -63,7 +76,7 @@ public class EntityReferenceModel extends FieldModel implements EntityReferenceM
     @JsonIgnore
     @Override
     public EntityMirror getEntity() {
-        return domainModel.getDomainTypeMirror(getType().getTypeName())
+        return domainMirror.getDomainTypeMirror(getType().getTypeName())
             .map(e -> (EntityMirror) e)
             .orElseThrow(() -> MirrorException.fail("EntityMirror not found for '%s'", getType().getTypeName()));
     }

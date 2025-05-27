@@ -28,6 +28,13 @@ package io.domainlifecycles.mirror.api;
 
 import java.util.List;
 
+/**
+ * Represents a mirror interface that aggregates various functionalities for service kinds in a domain architecture context.
+ * It extends multiple mirror interfaces to combine the ability to mirror domain types, process domain commands,
+ * and handle domain events.
+ *
+ * @author Mario Herb
+ */
 public interface ServiceKindMirror extends DomainTypeMirror, DomainCommandProcessingMirror, DomainEventProcessingMirror {
 
     /**
@@ -59,4 +66,5 @@ public interface ServiceKindMirror extends DomainTypeMirror, DomainCommandProces
      * @return the list of referenced {@link ApplicationServiceMirror} instances.
      */
     List<ApplicationServiceMirror> getReferencedApplicationServices();
+
 }

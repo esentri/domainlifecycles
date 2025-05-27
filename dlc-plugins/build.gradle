@@ -1,0 +1,25 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'checkstyle'
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation libs.docker.java.core
+    implementation libs.docker.java.transport.httpclient5
+    implementation project(":mirror")
+    implementation project(":types")
+    implementation project(":domain-diagrammer")
+    implementation libs.javax.validation.api
+    implementation libs.jakarta.validation.api
+    compileOnly libs.slf4j.api
+
+}

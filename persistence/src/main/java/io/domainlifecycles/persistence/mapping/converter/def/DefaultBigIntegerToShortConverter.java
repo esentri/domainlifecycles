@@ -37,6 +37,11 @@ import java.math.BigInteger;
  */
 public class DefaultBigIntegerToShortConverter extends TypeConverter<BigInteger, Short> {
 
+    /**
+     * Constructs a DefaultBigIntegerToShortConverter, which is a TypeConverter that defines
+     * conversion behavior from a BigInteger to a Short. This ensures type-safe conversions
+     * between the specified types.
+     */
     public DefaultBigIntegerToShortConverter() {
         super(BigInteger.class, Short.class);
     }

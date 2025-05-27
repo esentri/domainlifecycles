@@ -49,6 +49,13 @@ public class NomnomlStereotype implements DiagramElement {
         this.name = Objects.requireNonNull(name);
     }
 
+    /**
+     * Creates and returns a new instance of {@link NomnomlStereotypeBuilder}.
+     * The builder provides a fluent API for configuring and constructing instances
+     * of {@link NomnomlStereotype}.
+     *
+     * @return a new {@link NomnomlStereotypeBuilder} instance for constructing {@link NomnomlStereotype} objects
+     */
     public static NomnomlStereotypeBuilder builder() {
         return new NomnomlStereotypeBuilder();
     }
@@ -63,10 +70,22 @@ public class NomnomlStereotype implements DiagramElement {
             ">>";
     }
 
+    /**
+     * Retrieves the name of the stereotype associated with this instance.
+     *
+     * @return the name of the stereotype
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * Compares the specified object with this one to determine equality.
+     * The comparison is based on the `name` property of the `NomnomlStereotype`
+     * class and ensures type compatibility via the `canEqual` method.
+     *
+     * @param o the object to be compared for equality with this instance
+     * @return true if the specified object*/
     public boolean equals(final Object o) {
         if (o == this) return true;
         if (!(o instanceof NomnomlStereotype)) return false;
@@ -74,14 +93,25 @@ public class NomnomlStereotype implements DiagramElement {
         if (!other.canEqual((Object) this)) return false;
         final Object this$name = this.getName();
         final Object other$name = other.getName();
-        if (this$name == null ? other$name != null : !this$name.equals(other$name)) return false;
+        if (!Objects.equals(this$name, other$name)) return false;
         return true;
     }
 
+    /**
+     * Determines if the provided object is eligible for equality comparison with this instance.
+     *
+     * @param other the object to check for compatibility with this instance
+     * @return true if the provided object is an instance of NomnomlStereotype, false otherwise
+     */
     protected boolean canEqual(final Object other) {
         return other instanceof NomnomlStereotype;
     }
 
+    /**
+     * Computes the hash code for this object based on its name property.
+     *
+     * @return an integer hash code value for this object
+     */
     public int hashCode() {
         final int PRIME = 59;
         int result = 1;
@@ -90,21 +120,44 @@ public class NomnomlStereotype implements DiagramElement {
         return result;
     }
 
+    /**
+     * StyleSettingsBuilder class for creating instances of {@link NomnomlStereotype}.
+     * Provides a fluent API for setting the properties of a {@link NomnomlStereotype}
+     * and constructing a new instance.
+     */
     public static class NomnomlStereotypeBuilder {
         private String name;
 
         NomnomlStereotypeBuilder() {
         }
 
+        /**
+         * Sets the name of the stereotype and returns the builder instance.
+         *
+         * @param name the name of the stereotype
+         * @return this builder instance for method chaining
+         */
         public NomnomlStereotypeBuilder name(String name) {
             this.name = name;
             return this;
         }
 
+        /**
+         * Builds and returns a new instance of {@link NomnomlStereotype} using the properties
+         * set in this builder.
+         *
+         * @return a new {@link NomnomlStereotype} instance
+         */
         public NomnomlStereotype build() {
             return new NomnomlStereotype(this.name);
         }
 
+        /**
+         * Returns a string representation of the NomnomlStereotypeBuilder object.
+         * The returned string includes the value of the name property.
+         *
+         * @return a string representation of the NomnomlStereotypeBuilder instance
+         */
         public String toString() {
             return "NomnomlStereotype.NomnomlStereotypeBuilder(name=" + this.name + ")";
         }

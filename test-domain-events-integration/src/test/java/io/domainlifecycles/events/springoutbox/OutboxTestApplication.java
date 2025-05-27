@@ -13,7 +13,7 @@ import io.domainlifecycles.events.api.ProcessingChannel;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.spring.outbox.api.SpringTransactionalOutboxChannelFactory;
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.services.Services;
 import io.domainlifecycles.services.api.ServiceProvider;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -29,7 +29,7 @@ import java.util.Locale;
 public class OutboxTestApplication {
 
     static {
-        Domain.initialize(new ReflectiveDomainModelFactory("io.domainlifecycles.events"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory("io.domainlifecycles.events"));
     }
 
     /**

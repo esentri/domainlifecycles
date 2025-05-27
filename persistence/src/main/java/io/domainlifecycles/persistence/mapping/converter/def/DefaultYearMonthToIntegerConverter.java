@@ -37,6 +37,11 @@ import java.time.YearMonth;
  */
 public class DefaultYearMonthToIntegerConverter extends TypeConverter<YearMonth, Integer> {
 
+    /**
+     * Default converter that transforms a {@link YearMonth} into an {@link Integer}.
+     * This converter encodes the year and month into a single integer, where the year is multiplied
+     * by 100 and the month is added to it. If the year is negative, the month is also negated.
+     */
     public DefaultYearMonthToIntegerConverter() {
         super(YearMonth.class, Integer.class);
     }

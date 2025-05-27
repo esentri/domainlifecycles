@@ -2,11 +2,11 @@ package io.domainlifecycles.builder;
 
 
 import io.domainlifecycles.builder.exception.DLCBuilderException;
-import io.domainlifecycles.builder.helper.TestValueObject;
-import io.domainlifecycles.builder.helper.TestValueObjectNoBuilder;
+import helper.TestValueObject;
+import helper.TestValueObjectNoBuilder;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ public class InnerBuilderProviderTest {
 
     @BeforeAll
     static void beforeAll() {
-        Domain.initialize(new ReflectiveDomainModelFactory("tests", "io.domainlifecycles.builder"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory("tests", "helper"));
     }
 
     private static final DomainBuilderConfiguration config = new DomainBuilderConfiguration() {
@@ -50,6 +50,6 @@ public class InnerBuilderProviderTest {
         var provider = new InnerClassDomainObjectBuilderProvider();
         assertThatThrownBy(() -> provider.provide(TestValueObjectNoBuilder.class.getName()))
             .isInstanceOf(DLCBuilderException.class)
-            .hasMessageContaining("Couldn't provide Builder instance for class: 'io.domainlifecycles.builder.helper.TestValueObjectNoBuilder'.");
+            .hasMessageContaining("Couldn't provide Builder instance for class: 'helper.TestValueObjectNoBuilder'.");
     }
 }

@@ -36,7 +36,7 @@ import io.domainlifecycles.jooq.persistence.mapper.valueobjects.SimpleVoOneToMan
 import io.domainlifecycles.jooq.persistence.mapper.valueobjects.VoOneToManyEntity2JooqRecordMapper;
 import io.domainlifecycles.jooq.persistence.mapper.valueobjects.VoOneToManyEntityJooqRecordMapper;
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
 import io.domainlifecycles.persistence.records.EntityValueObjectRecordClassProvider;
 import io.domainlifecycles.persistence.records.EntityValueObjectRecordTypeConfiguration;
@@ -133,7 +133,7 @@ public class BaseDLCTestPersistenceConfiguration {
     }
 
     private void initDomainMirror() {
-        Domain.initialize(new ReflectiveDomainModelFactory("tests"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory("tests"));
     }
 
     private DomainObjectBuilderProvider initDomainObjectBuilderProvider() {

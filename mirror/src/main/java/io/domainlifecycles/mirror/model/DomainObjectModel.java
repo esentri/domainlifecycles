@@ -44,6 +44,17 @@ import java.util.stream.Collectors;
  */
 public abstract class DomainObjectModel extends DomainTypeModel implements DomainObjectMirror {
 
+    /**
+     * Constructs a new instance of the DomainObjectModel.
+     *
+     * @param typeName the name of the type being modeled. Must not be null.
+     * @param isAbstract indicates whether the type being modeled is abstract.
+     * @param allFields a list of all fields in the type being modeled. Must not be null.
+     * @param methods a list of methods in the type being modeled. Must not be null.
+     * @param inheritanceHierarchyTypeNames a list of type names representing the inheritance hierarchy
+     *                                       of the type being modeled. Must not be null.
+     * @param allInterfaceTypeNames a list of all interface type names implemented by the type being modeled. Must not be null.
+     */
     public DomainObjectModel(String typeName,
                              boolean isAbstract,
                              List<FieldMirror> allFields,

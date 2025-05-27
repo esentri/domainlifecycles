@@ -28,6 +28,7 @@ package io.domainlifecycles.jackson.module;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
@@ -51,9 +52,29 @@ public class DlcJacksonModule extends SimpleModule {
     private static final long serialVersionUID = 1L;
     private static final String MODULE_NAME = "dlc-module";
 
+    /**
+     * Manages the container for registered customizers used within the DlcJacksonModule.
+     * This container holds mappings between domain object types and their respective
+     * {@link JacksonMappingCustomizer} instances. It enables flexible customization
+     * of Jackson serialization and deserialization based on domain-specific requirements.
+     */
     private final CustomizerContainer customizerContainer = new CustomizerContainer();
+
+    /**
+     * A provider of {@link DomainObjectBuilder} instances used for constructing domain objects.
+     * This field ensures that the module has access to domain object builder functionality
+     * required for mapping and customization processes.
+     *
+     * Utilized by the {@code DlcJacksonModule} for tasks such as registering customizations
+     * and configuring domain object builders for specific domain types.
+     */
     private final DomainObjectBuilderProvider domainObjectBuilderProvider;
 
+    /**
+     * Provides access to entity identity information within the module.
+     * This component is used to facilitate the retrieval of identity details
+     * for entity types during operations such as serialization and deserialization.
+     */
     private final EntityIdentityProvider entityIdentityProvider;
 
 

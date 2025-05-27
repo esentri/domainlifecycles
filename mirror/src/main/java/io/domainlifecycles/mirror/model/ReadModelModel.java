@@ -47,6 +47,16 @@ import java.util.stream.Collectors;
  */
 public class ReadModelModel extends DomainTypeModel implements ReadModelMirror {
 
+    /**
+     * Constructor for creating a new instance of the ReadModelModel class.
+     *
+     * @param typeName                    the name of the type being mirrored.
+     * @param isAbstract                  a boolean indicating whether the type is abstract.
+     * @param allFields                   a list of {@link FieldMirror} instances representing all fields in the type.
+     * @param methods                     a list of {@link MethodMirror} instances representing all methods in the type.
+     * @param inheritanceHierarchyTypeNames a list of type names representing the inheritance hierarchy of the type.
+     * @param allInterfaceTypeNames       a list of type names representing all interface types implemented by the type.
+     */
     @JsonCreator
     public ReadModelModel(@JsonProperty("typeName") String typeName,
                           @JsonProperty("abstract") boolean isAbstract,
@@ -56,7 +66,6 @@ public class ReadModelModel extends DomainTypeModel implements ReadModelMirror {
                           @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
-
     }
 
     /**

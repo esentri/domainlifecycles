@@ -26,7 +26,7 @@
 
 package io.domainlifecycles.mirror.model;
 
-import io.domainlifecycles.mirror.api.DomainModel;
+import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
@@ -42,18 +42,81 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
-public abstract class DomainTypeModel implements DomainTypeMirror {
+public abstract class DomainTypeModel implements DomainTypeMirror, ProvidedDomain {
 
-    DomainModel domainModel;
-    private boolean domainModelSet = false;
+    DomainMirror domainMirror;
+    private boolean domainMirrorSet = false;
 
+    /**
+     * The typeName field represents the name of the type being modeled.
+     * It is a non-null, immutable string uniquely identifying a specific type.
+     * This field is set during the instantiation of the DomainTypeModel and remains
+     * constant throughout the lifecycle of the object.
+     */
     protected final String typeName;
+
+    /**
+     * Represents a list of all fields associated with the type being modeled.
+     * This list includes metadata for each field, such as its name, type, and accessibility,
+     * among others. The fields represented in this list are typically used to mirror the
+     * structure and characteristics of a specific domain type in the system.
+     *
+     * This variable is immutable and initialized during the construction of the
+     * {@code DomainTypeModel} or its subclasses, ensuring consistency throughout
+     * the lifecycle of the model instance.
+     *
+     * The {@code allFields} list is expected to not be null and provides access
+     * to the underlying {@link FieldMirror} instances.
+     */
     protected final List<FieldMirror> allFields;
+
+    /**
+     * A list of {@link MethodMirror} instances representing the methods defined in the type being modeled.
+     * Each {@link MethodMirror} mirrors a specific Java method, providing details such as its name,
+     * parameters, return type, and additional metadata, including annotations relevant to domain lifecycle events.
+     *
+     * This field is immutable and cannot be modified once the instance of the containing class is created.
+     */
     protected final List<MethodMirror> methods;
+
+    /**
+     * Indicates whether the modeled type is abstract.
+     *
+     * This field is used to define if the type represented by the model
+     * is abstract, which means it cannot be directly instantiated and may
+     * contain abstract methods that must be implemented by concrete subclasses.
+     */
     protected final boolean isAbstract;
+
+    /**
+     * A list of type names that represents the inheritance hierarchy of the type being modeled.
+     * This list provides the fully qualified names of all the superclasses in the hierarchy
+     * starting from the modeled type up to the root of the type hierarchy.
+     *
+     * The list is immutable and cannot be null. It serves as an essential component in understanding
+     * the class hierarchy and relationships of the modeled type within its domain.
+     */
     protected final List<String> inheritanceHierarchyTypeNames;
+
+    /**
+     * Represents a list of all interface type names implemented by the type being modeled.
+     * This list includes the fully qualified names of all interfaces associated with the type.
+     * It is initialized when the model is constructed and remains constant throughout the lifecycle
+     * of the object to ensure immutability.
+     */
     protected final List<String> allInterfaceTypeNames;
 
+    /**
+     * Constructs a new instance of the DomainTypeModel.
+     *
+     * @param typeName the name of the type being modeled. Must not be null.
+     * @param isAbstract indicates whether the type being modeled is abstract.
+     * @param allFields a list of all fields in the type being modeled. Must not be null.
+     * @param methods a list of methods in the type being modeled. Must not be null.
+     * @param inheritanceHierarchyTypeNames a list of type names representing the inheritance hierarchy
+     *                                       of the type being modeled. Must not be null.
+     * @param allInterfaceTypeNames a list of all interface type names implemented by the type being modeled. Must not be null.
+     */
     public DomainTypeModel(String typeName,
                            boolean isAbstract,
                            List<FieldMirror> allFields,
@@ -147,7 +210,15 @@ public abstract class DomainTypeModel implements DomainTypeMirror {
      */
     @Override
     public boolean isSubClassOf(String typeName) {
-        return inheritanceHierarchyTypeNames.contains(typeName);
+        return typeName.equals(this.typeName) || this.inheritanceHierarchyTypeNames.contains(typeName);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean implementsInterface(String interfaceName) {
+        return allInterfaceTypeNames.contains(interfaceName);
     }
 
     /**
@@ -195,12 +266,22 @@ public abstract class DomainTypeModel implements DomainTypeMirror {
             allInterfaceTypeNames);
     }
 
-    public void setDomainModel(DomainModel domainModel) {
-        if(!domainModelSet) {
-            this.domainModel = domainModel;
-            this.domainModelSet = true;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setDomainMirror(DomainMirror domainMirror) {
+        if(!domainMirrorSet) {
+            this.domainMirror = domainMirror;
+            this.domainMirrorSet = true;
         }
     }
 
-    public DomainModel innerDomainModelReference() {return this.domainModel;}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean domainMirrorSet() {
+        return this.domainMirrorSet;
+    }
 }

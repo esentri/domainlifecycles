@@ -54,6 +54,13 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
     private final ValueObjectIdProvider<BASE_RECORD_TYPE> valueObjectIdProvider;
     private final EntityParentReferenceProvider<BASE_RECORD_TYPE> entityParentReferenceProvider;
 
+    /**
+     * Constructs a new BasePersister instance.
+     *
+     * @param domainPersistenceProvider the provider that handles persistence operations for the domain objects
+     * @param valueObjectIdProvider the provider responsible for managing value object identifiers
+     * @param entityParentReferenceProvider the provider that manages parent reference relationships for entities
+     */
     public BasePersister(DomainPersistenceProvider<BASE_RECORD_TYPE> domainPersistenceProvider,
                          ValueObjectIdProvider<BASE_RECORD_TYPE> valueObjectIdProvider,
                          EntityParentReferenceProvider<BASE_RECORD_TYPE> entityParentReferenceProvider) {
@@ -83,6 +90,11 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
         return record;
     }
 
+    /**
+     * Handles the insertion of a given record into the persistence layer.
+     *
+     * @param record the record to be inserted into the database
+     */
     protected abstract void doInsert(BASE_RECORD_TYPE record);
 
     /**
@@ -98,6 +110,11 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
         return record;
     }
 
+    /**
+     * Updates the provided record in the persistence layer.
+     *
+     * @param record the record to be updated
+     */
     protected abstract void doUpdate(BASE_RECORD_TYPE record);
 
     /**
@@ -119,12 +136,16 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
         }
     }
 
+    /**
+     * Deletes the specified record from the persistence layer.
+     *
+     * @param record the record to be deleted
+     */
     protected abstract void doDelete(BASE_RECORD_TYPE record);
 
     /**
      * {@inheritDoc}
      */
-
     @Override
     public BASE_RECORD_TYPE increaseVersion(Entity<?> entity, PersistenceContext<BASE_RECORD_TYPE> pc) {
         var em = Domain.entityMirrorFor(entity);
@@ -146,9 +167,24 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
         return null;
     }
 
+    /**
+     * Handles the operation to increase the version of the provided record in the persistence layer.
+     *
+     * @param record the record for which the version will be increased
+     */
     protected abstract void doIncreaseVersion(BASE_RECORD_TYPE record);
 
-
+    /**
+     * Maps a {@link DomainObject} and its related {@link AggregateRoot} into a record representation
+     * based on the provided persistence action. This method also ensures additional actions, such as
+     * setting references for parent entities, are applied where necessary.
+     *
+     * @param persistenceAction the persistence action that encapsulates the context and metadata for the mapping
+     *                          process, including the domain object instance and the type of action being performed
+     * @param root              the root aggregate object associated with the domain object being processed
+     * @return the mapped record of type BASE_RECORD_TYPE generated from the given domain object and aggregate root
+     * @throws NullPointerException if persistenceAction or root is null
+     */
     protected BASE_RECORD_TYPE getRecordFromDomainObject(final PersistenceAction<BASE_RECORD_TYPE> persistenceAction,
                                                          final AggregateRoot<?> root) {
         Objects.requireNonNull(persistenceAction);
@@ -166,6 +202,15 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
         return record;
     }
 
+    /**
+     * Deletes a record mapped to the provided domain object within the given persistence context.
+     * Retrieves the database record corresponding to the domain object, deletes it,
+     * and returns the deleted record.
+     *
+     * @param domainObject the domain object for which the corresponding database record will be deleted
+     * @param pc the persistence context used to fetch the database record and execute the deletion operation
+     * @return the record that was deleted from the persistence layer
+     */
     protected BASE_RECORD_TYPE deleteRecordMappedValueObject(final DomainObject domainObject,
                                                              final PersistenceContext<BASE_RECORD_TYPE> pc) {
         Objects.requireNonNull(domainObject);

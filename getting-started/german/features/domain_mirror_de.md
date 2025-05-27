@@ -18,7 +18,7 @@ Configuration-Beans abhängen (per Spring-Configuration mit `@DependsOn`):
 public class SampleApplication {
 
     static {
-        Domain.initialize(new ReflectiveDomainModelFactory("sampleapp"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleapp"));
     }
 
     public static void main(String[] args) {

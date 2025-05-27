@@ -28,8 +28,6 @@ package io.domainlifecycles.events.gruelbox.publish;
 
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import io.domainlifecycles.domain.types.DomainEvent;
-import io.domainlifecycles.events.consume.TargetExecutionContext;
-import io.domainlifecycles.events.consume.execution.detector.ExecutionContextDetector;
 import io.domainlifecycles.events.gruelbox.api.PublishingSchedulerConfiguration;
 import io.domainlifecycles.events.gruelbox.dispatch.GruelboxDomainEventDispatcher;
 import io.domainlifecycles.events.publish.DomainEventPublisher;

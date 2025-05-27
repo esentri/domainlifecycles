@@ -38,10 +38,12 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.domainlifecycles.access.DlcAccess;
 import io.domainlifecycles.assertion.DomainAssertionException;
+import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.domain.types.ValueObject;
+import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson.api.MappingAction;
 import io.domainlifecycles.jackson.databind.context.DomainObjectMappingContext;
@@ -64,10 +66,56 @@ import java.util.Optional;
  */
 public class EntityDeserializer extends StdDeserializer<Entity<?>> {
 
+    /**
+     * A container that manages customizers for domain object serialization
+     * and deserialization processes.
+     *
+     * This field is used to store and access instances of {@code DlcJacksonModule.CustomizerContainer},
+     * which map domain object types to their associated {@link JacksonMappingCustomizer} instances.
+     * It facilitates the customization of the deserialization process based on specific domain
+     * requirements.
+     */
     private final DlcJacksonModule.CustomizerContainer customizerContainer;
+    /**
+     * Represents the {@link EntityMirror} associated with the deserialization process in the {@code EntityDeserializer}.
+     * This instance provides metadata and reflective capabilities for interacting with {@link Entity} instances.
+     *
+     * The {@code entityMirror} is used to access and manipulate information about the structure and relationships
+     * of the entity being deserialized, such as identity fields, concurrency version fields, and entity references.
+     */
     private final EntityMirror entityMirror;
+    /**
+     * Represents a customizer used to modify the mapping process of {@link DomainObject}s
+     * within the deserialization context. This field is utilized to apply specific
+     * customizations or behaviors during the mapping process.
+     *
+     * The customizer interacts with the mapping process to accommodate specific needs
+     * for certain types of domain objects, as defined by the logic implemented
+     * in its respective methods.
+     *
+     * It is an immutable, thread-safe reference to ensure consistent behavior
+     * during the deserialization process.
+     */
     private final JacksonMappingCustomizer<?> customizer;
+    /**
+     * Provider for obtaining {@link DomainObjectBuilder} instances, facilitating the creation
+     * and configuration of domain objects during deserialization processes.
+     * Used within the {@code EntityDeserializer} to manage domain object construction
+     * based on provided metadata or JSON input.
+     */
     private final DomainObjectBuilderProvider domainObjectBuilderProvider;
+    /**
+     * Provides access to an {@link EntityIdentityProvider} instance for managing
+     * identity information of entities during deserialization.
+     *
+     * This field is utilized within the deserialization process of the containing class
+     * to ensure entities are correctly identified based on their specific identity
+     * characteristics. It integrates with the domain model and identity mechanisms
+     * to enable accurate mapping and reconstruction of entity objects from JSON.
+     *
+     * The {@code entityIdentityProvider} is immutable, ensuring consistency and
+     * reliability throughout the lifecycle of the deserialization process.
+     */
     private final EntityIdentityProvider entityIdentityProvider;
 
 
@@ -310,6 +358,12 @@ public class EntityDeserializer extends StdDeserializer<Entity<?>> {
         }
     }
 
+    /**
+     * Injects identifier fields into the provided ObjectNode for the entity's corresponding type.
+     * This method ensures that IDs for associated entities and collections are also recursively injected.
+     *
+     * @param objectNode the ObjectNode representing the JSON structure of the entity.
+     */
     public void injectIds(ObjectNode objectNode) {
         injectIds(objectNode, this._valueType.getRawClass().getName());
     }

@@ -28,7 +28,6 @@ package io.domainlifecycles.events.mq.gruelbox;
 
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.events.consume.TargetExecutionContext;
-import io.domainlifecycles.events.exception.DLCEventsException;
 import io.domainlifecycles.events.gruelbox.dispatch.GruelboxDomainEventDispatcher;
 import io.domainlifecycles.events.mq.publish.MqDomainEventPublisher;
 

@@ -26,6 +26,7 @@
 
 package io.domainlifecycles.persistence.configuration;
 
+import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
 
@@ -39,8 +40,26 @@ import java.util.Set;
  */
 public abstract class DomainPersistenceConfiguration {
 
-
+    /**
+     * A provider of {@link DomainObjectBuilder} instances for building domain objects.
+     * This field is used to obtain {@link DomainObjectBuilder} implementations based on
+     * domain object types. It is core to the domain persistence configuration and enables
+     * the dynamic creation of domain objects.
+     */
     public final DomainObjectBuilderProvider domainObjectBuilderProvider;
+
+    /**
+     * A set of custom record mappers used for mapping between database records and domain objects.
+     * This field allows the customization of how specific types of records are transformed
+     * into domain objects and vice versa. Each mapper in the set implements the {@link RecordMapper}
+     * interface and is responsible for handling a specific record type and domain object type.
+     *
+     * By providing custom record mappers, it becomes possible to support unique mapping requirements
+     * or unusual database and domain model structures that cannot be managed with default mapping mechanisms.
+     *
+     * Typically used in domain persistence configurations to perform database operations, leveraging custom
+     * transformation logic where necessary.
+     */
     public final Set<RecordMapper<?, ?, ?>> customRecordMappers;
 
     /**

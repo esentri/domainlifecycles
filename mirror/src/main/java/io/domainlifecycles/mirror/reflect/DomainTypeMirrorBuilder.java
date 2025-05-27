@@ -53,9 +53,30 @@ public abstract class DomainTypeMirrorBuilder<T extends DomainTypeMirror> {
 
     private static final Logger log = LoggerFactory.getLogger(DomainTypeMirrorBuilder.class);
 
+    /**
+     * Represents the class being mirrored. This variable holds the domain class type
+     * that is used as the basis for building type information and reflective metadata
+     * within the `DomainTypeMirrorBuilder`.
+     *
+     * It is a final, protected field to ensure immutability after initialization and
+     * restricts access to the containing class or subclasses.
+     */
     protected final Class<?> domainClass;
 
+    /**
+     * A list of fields that are part of the domain class being mirrored.
+     * These fields are analyzed and processed during the mirror-building process.
+     */
     protected final List<Field> fields;
+
+    /**
+     * A specialized {@link GenericTypeResolver} instance used to resolve generic types and type arguments
+     * for fields, methods, and other domain-specific elements within a given class context.
+     *
+     * This field is a final and protected member, ensuring that it is immutable and accessible
+     * by subclasses of {@link DomainTypeMirrorBuilder}. It provides essential functionality
+     * for resolving and handling type-related information during the building of domain type mirrors.
+     */
     protected final GenericTypeResolver genericTypeResolver;
 
     /**
@@ -82,6 +103,13 @@ public abstract class DomainTypeMirrorBuilder<T extends DomainTypeMirror> {
         this.fields = theFields;
     }
 
+    /**
+     * Builds a list of {@link FieldMirror} instances by processing the fields of the associated domain class.
+     * Filters out synthetic fields, constructs each field's corresponding {@link FieldMirror} using the
+     * {@link FieldMirrorBuilder}, and excludes any fields that fail during the building process.
+     *
+     * @return a list of {@link FieldMirror} instances representing the non-synthetic, successfully constructed fields of the domain class
+     */
     protected List<FieldMirror> buildFields() {
         return fields
             .stream()
@@ -105,10 +133,27 @@ public abstract class DomainTypeMirrorBuilder<T extends DomainTypeMirror> {
             .toList();
     }
 
+    /**
+     * Determines if the specified field is hidden by any other field in the current context.
+     *
+     * @param f the field to check for hidden status
+     * @return true if the specified field is hidden, false otherwise
+     */
     protected boolean isHidden(Field f) {
         return fields.stream().anyMatch(c -> isHiddenBy(f, c));
     }
 
+    /**
+     * Determines if a given field is hidden by another candidate field.
+     *
+     * A field is considered hidden by another if they belong to related classes
+     * (i.e., the declaring class of the candidate is assignable from the declaring class of the field)
+     * and have the same name, but are not the same instance.
+     *
+     * @param f the original field to check
+     * @param candidate the candidate field to determine if it hides the original field
+     * @return true if the candidate field hides the given field, false otherwise
+     */
     private boolean isHiddenBy(Field f, Field candidate) {
         if (f.equals(candidate) || !f.getDeclaringClass().isAssignableFrom(candidate.getDeclaringClass())) {
             return false;
@@ -116,6 +161,15 @@ public abstract class DomainTypeMirrorBuilder<T extends DomainTypeMirror> {
         return f.getName().equals(candidate.getName());
     }
 
+    /**
+     * Builds a list of {@link MethodMirror} instances by processing the methods of the associated domain class.
+     * Filters out synthetic and bridge methods, constructs each method's corresponding {@link MethodMirror} using
+     * the {@link MethodMirrorBuilder}, determines whether each method is overridden, and excludes any methods
+     * that fail during the building process.
+     *
+     * @return a list of {@link MethodMirror} instances representing the non-synthetic and non-bridge methods
+     * of the domain class that were successfully constructed.
+     */
     protected List<MethodMirror> buildMethods() {
         var meth = JavaReflect.methods(domainClass, MemberSelect.HIERARCHY);
         return meth.stream()
@@ -172,6 +226,15 @@ public abstract class DomainTypeMirrorBuilder<T extends DomainTypeMirror> {
         return subclassModifiers <= superclassModifiers;
     }
 
+    /**
+     * Constructs the inheritance hierarchy of the associated domain class, starting from its immediate superclass
+     * and continuing up the hierarchy until reaching the root {@code java.lang.Object} class.
+     *
+     * The hierarchy is represented as a list of fully qualified class names, ordered from the closest
+     * superclass of the domain class to the {@code java.lang.Object}.
+     *
+     * @return a list of fully qualified class names representing the inheritance hierarchy of the domain class.
+     */
     protected List<String> buildInheritanceHierarchy() {
         var superClass = domainClass.getSuperclass();
         var hierarchy = new ArrayList<String>();
@@ -187,16 +250,33 @@ public abstract class DomainTypeMirrorBuilder<T extends DomainTypeMirror> {
         return hierarchy;
     }
 
+    /**
+     * Builds a list of fully qualified names of the interfaces implemented by the associated domain class.
+     * The method retrieves all the interfaces of the domain class and converts their class objects into their
+     * fully qualified names.
+     *
+     * @return a list of fully qualified interface names implemented by the domain class
+     */
     protected List<String> buildInterfaceTypes() {
         return Arrays.stream(domainClass.getInterfaces())
             .map(Class::getName)
             .toList();
     }
 
+    /**
+     * Retrieves the fully qualified name of the associated domain class.
+     *
+     * @return the fully qualified name of the domain class
+     */
     protected String getTypeName() {
         return domainClass.getName();
     }
 
+    /**
+     * Determines whether the associated domain class is abstract.
+     *
+     * @return true if the domain class is abstract, false otherwise
+     */
     protected boolean isAbstract() {
         return JavaReflect.isAbstract(domainClass);
     }

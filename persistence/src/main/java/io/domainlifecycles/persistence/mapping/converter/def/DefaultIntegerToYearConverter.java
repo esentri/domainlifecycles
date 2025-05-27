@@ -37,6 +37,11 @@ import java.time.Year;
  */
 public class DefaultIntegerToYearConverter extends TypeConverter<Integer, Year> {
 
+    /**
+     * Constructs a DefaultIntegerToYearConverter, which is a TypeConverter that defines
+     * conversion behavior from an Integer to a Year. This ensures type-safe conversions
+     * between the specified types.
+     */
     public DefaultIntegerToYearConverter() {
         super(Integer.class, Year.class);
     }

@@ -38,6 +38,10 @@ import java.util.Date;
  */
 public class DefaultOffsetDateTimeToDateConverter extends TypeConverter<OffsetDateTime, Date> {
 
+    /**
+     * Default constructor for the DefaultOffsetDateTimeToDateConverter.
+     * Initializes the converter to transform objects of type OffsetDateTime to type Date.
+     */
     public DefaultOffsetDateTimeToDateConverter() {
         super(OffsetDateTime.class, Date.class);
     }

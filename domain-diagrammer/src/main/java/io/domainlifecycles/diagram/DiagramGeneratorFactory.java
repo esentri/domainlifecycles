@@ -28,7 +28,7 @@ package io.domainlifecycles.diagram;
 
 import io.domainlifecycles.diagram.domain.DomainDiagramGenerator;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
-import io.domainlifecycles.mirror.api.DomainModel;
+import io.domainlifecycles.mirror.api.DomainMirror;
 
 /**
  * Factory to create new {@link Diagram}a by a given {@link DiagramConfig}.
@@ -41,11 +41,12 @@ public class DiagramGeneratorFactory {
      * Creates a new DomainDiagramGenerator
      *
      * @param diagramConfig diagram generator configuration
+     * @param domainMirror the Domain Model operated on
      * @return new instance of DomainDiagramGenerator
      */
-    public static Diagram getDomainDiagramGenerator(DiagramConfig diagramConfig, DomainModel domainModel) {
+    public static Diagram getDomainDiagramGenerator(DiagramConfig diagramConfig, DomainMirror domainMirror) {
         if (diagramConfig instanceof DomainDiagramConfig) {
-            return new DomainDiagramGenerator((DomainDiagramConfig) diagramConfig, domainModel);
+            return new DomainDiagramGenerator((DomainDiagramConfig) diagramConfig, domainMirror);
         }
         return null;
     }

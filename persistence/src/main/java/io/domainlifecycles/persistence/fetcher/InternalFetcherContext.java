@@ -52,6 +52,13 @@ public class InternalFetcherContext<RECORD> extends SimpleFetcherContext<RECORD>
         return this.backReferences;
     }
 
+    /**
+     * Adds a back reference to the set of back references managed by this context.
+     *
+     * @param entityReferenceMirror the {@code FieldMirror} that represents the field creating the back reference
+     * @param ownerRecord the record that owns the back reference
+     * @param referencedRecord the record that is referenced
+     */
     protected void addBackRef(FieldMirror entityReferenceMirror, RECORD ownerRecord, RECORD referencedRecord) {
         backReferences.add(new BackRef<>(entityReferenceMirror, ownerRecord, referencedRecord));
     }

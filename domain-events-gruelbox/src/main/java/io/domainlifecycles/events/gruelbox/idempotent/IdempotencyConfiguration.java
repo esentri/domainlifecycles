@@ -52,7 +52,7 @@ public final class IdempotencyConfiguration {
     private static final Duration PUBLISHING_SCHEDULING_DELAY_DEFAULT = Duration.ZERO;
     private static final boolean PUBLISHING_ORDERED_BY_DOMAIN_EVENT_TYPE_DEFAULT = false;
 
-    private List<IdempotencyConfigurationEntry> configurationEntries = new ArrayList<>();
+    private final List<IdempotencyConfigurationEntry> configurationEntries = new ArrayList<>();
     private final Duration idempotencySchedulingDelay;
     private final boolean idempotencyOrderedByDomainEventType;
 
@@ -89,10 +89,10 @@ public final class IdempotencyConfiguration {
     }
 
     private boolean isDomainEventHandlerMethodWithExpectedName(IdempotencyConfigurationEntry entry){
-        var mirror = Domain.getDomainModel().allTypeMirrors().get(entry.handlerClass().getName());
-        if(mirror != null){
+        var mirror = Domain.getDomainMirror().getDomainTypeMirror(entry.handlerClass().getName());
+        if(mirror.isPresent()){
             try {
-                var methodMirror = mirror.methodByName(entry.methodName());
+                var methodMirror = mirror.get().methodByName(entry.methodName());
                 var domainEventMirror = methodMirror.getListenedEvent().orElseThrow();
                 return domainEventMirror.getTypeName().equals(entry.domainEventClass().getName());
             }catch(Throwable t){

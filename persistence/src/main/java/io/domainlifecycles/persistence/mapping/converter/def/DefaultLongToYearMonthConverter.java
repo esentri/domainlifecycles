@@ -37,6 +37,10 @@ import java.time.YearMonth;
  */
 public class DefaultLongToYearMonthConverter extends TypeConverter<Long, YearMonth> {
 
+    /**
+     * Creates an instance of the DefaultLongToYearMonthConverter.
+     * This converter is responsible for converting a Long value to a YearMonth.
+     */
     public DefaultLongToYearMonthConverter() {
         super(Long.class, YearMonth.class);
     }

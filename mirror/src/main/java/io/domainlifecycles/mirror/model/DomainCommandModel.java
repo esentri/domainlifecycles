@@ -31,6 +31,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.AggregateRootReferenceMirror;
+import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
@@ -38,6 +39,10 @@ import io.domainlifecycles.mirror.api.EntityReferenceMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.IdentityMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
+import io.domainlifecycles.mirror.api.OutboundServiceMirror;
+import io.domainlifecycles.mirror.api.QueryHandlerMirror;
+import io.domainlifecycles.mirror.api.RepositoryMirror;
+import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.mirror.api.ValueReferenceMirror;
 import io.domainlifecycles.mirror.exception.MirrorException;
 
@@ -58,6 +63,22 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     @JsonProperty
     private final Optional<String> domainServiceTargetTypeName;
 
+    /**
+     * Constructs a new instance of the DomainCommandModel.
+     *
+     * @param typeName the name of the type being modeled. Must not be null.
+     * @param isAbstract indicates whether the type being modeled is abstract.
+     * @param allFields a list of all fields in the type being modeled. Must not be null.
+     * @param methods a list of methods in the type being modeled. Must not be null.
+     * @param aggregateTargetIdentityTypeName an optional name of the type used as the aggregate target identity.
+     *                                         Must not be null.
+     * @param domainServiceTargetTypeName an optional name of the type used as the domain service target.
+     *                                     Must not be null.
+     * @param inheritanceHierarchyTypeNames a list of type names representing the inheritance hierarchy
+     *                                       of the type being modeled. Must not be null.
+     * @param allInterfaceTypeNames a list of all interface type names implemented by the type being modeled.
+     *                              Must not be null.
+     */
     @JsonCreator
     public DomainCommandModel(@JsonProperty("typeName") String typeName,
                               @JsonProperty("abstract") boolean isAbstract,
@@ -133,17 +154,16 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     @Override
     public Optional<AggregateRootMirror> getAggregateTarget() {
         var identity = aggregateTargetIdentityTypeName
-            .map(n -> domainModel.getDomainTypeMirror(n).orElseThrow(
+            .map(n -> domainMirror.getDomainTypeMirror(n).orElseThrow(
                 () -> MirrorException.fail("AggregateRootMirror not found for '%s'", n)))
             .map(m -> (IdentityMirror) m);
-        return identity.flatMap(identityMirror -> domainModel
-            .allTypeMirrors()
-            .values()
+        return identity.flatMap(identityMirror -> domainMirror
+            .getAllDomainTypeMirrors()
             .stream()
             .filter(tm -> tm instanceof AggregateRootMirror)
             .map(tm -> (AggregateRootMirror) tm)
             .filter(am -> am.getIdentityField().isPresent())
-            .filter(am -> am.getIdentityField().get().getType().equals(identityMirror.getTypeName()))
+            .filter(am -> am.getIdentityField().get().getType().getTypeName().equals(identityMirror.getTypeName()))
             .findFirst());
     }
 
@@ -154,9 +174,81 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     @Override
     public Optional<DomainServiceMirror> getDomainServiceTarget() {
         return domainServiceTargetTypeName
-            .map(n -> domainModel.getDomainTypeMirror(n).orElseThrow(
+            .map(n -> domainMirror.getDomainTypeMirror(n).orElseThrow(
                 () -> MirrorException.fail("DomainServiceMirror not found for '%s'", n)))
             .map(m -> (DomainServiceMirror) m);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @JsonIgnore
+    @Override
+    public List<ServiceKindMirror> getProcessingServiceKinds() {
+        return domainMirror.getAllServiceKindMirrors()
+            .stream()
+            .filter(s -> s.processes(this))
+            .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @JsonIgnore
+    @Override
+    public List<ApplicationServiceMirror> getProcessingApplicationServices() {
+        return domainMirror.getAllApplicationServiceMirrors()
+            .stream()
+            .filter(s -> s.processes(this))
+            .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @JsonIgnore
+    @Override
+    public List<DomainServiceMirror> getProcessingDomainServices() {
+        return domainMirror.getAllDomainServiceMirrors()
+            .stream()
+            .filter(s -> s.processes(this))
+            .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @JsonIgnore
+    @Override
+    public List<RepositoryMirror> getProcessingRepositories() {
+        return domainMirror.getAllRepositoryMirrors()
+            .stream()
+            .filter(s -> s.processes(this))
+            .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @JsonIgnore
+    @Override
+    public List<OutboundServiceMirror> getProcessingOutboundServices() {
+        return domainMirror.getAllOutboundServiceMirrors()
+            .stream()
+            .filter(s -> s.processes(this))
+            .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @JsonIgnore
+    @Override
+    public List<QueryHandlerMirror> getProcessingQueryHandlers() {
+        return domainMirror.getAllQueryHandlerMirrors()
+            .stream()
+            .filter(s -> s.processes(this))
+            .toList();
     }
 
     /**

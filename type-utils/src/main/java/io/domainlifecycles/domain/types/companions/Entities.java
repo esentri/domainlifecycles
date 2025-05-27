@@ -243,9 +243,28 @@ public class Entities {
                                  Object valueBefore, Object valueAfter,
                                  Entities.DetectedChange.ChangeType changeType,
                                  Set<DetectedChange> innerChanges) {
-
+        /**
+         * Represents the type of change detected in an entity.
+         */
         public enum ChangeType {
-            CHANGED, ADDED, REMOVED
+            /**
+             * Indicates that an existing entity or value was modified.
+             * This constant is part of the {@code ChangeType} enumeration,
+             * which is used to represent the type of change detected in an entity.
+             */
+            CHANGED,
+            /**
+             * Represents the addition of a new entity or value.
+             * This constant is part of the {@code ChangeType} enumeration,
+             * which is used to represent the type of change detected in an entity.
+             */
+            ADDED,
+            /**
+             * Represents the removal of an existing entity or value.
+             * This constant is part of the {@code ChangeType} enumeration,
+             * which is used to represent the type of change detected in an entity.
+             */
+            REMOVED
         }
     }
 

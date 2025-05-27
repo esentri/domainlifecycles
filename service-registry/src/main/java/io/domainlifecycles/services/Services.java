@@ -48,9 +48,21 @@ public class Services implements ServiceRegistrator, ServiceProvider {
 
     private final Map<String, ServiceKind> serviceKinds = new HashMap<>();
 
+    /**
+     * Constructs a new instance of the Services class.
+     *
+     * This default constructor initializes an empty Services instance
+     * without any pre-registered service kinds. New service kinds can
+     * be registered after instantiation through the appropriate methods.
+     */
     public Services() {
     }
 
+    /**
+     * Constructs a new Services instance and registers the provided service kinds.
+     *
+     * @param serviceKinds a collection of service kinds to be registered within this Services instance
+     */
     public Services(Collection<ServiceKind> serviceKinds) {
         registerServiceKindInstances(serviceKinds);
     }

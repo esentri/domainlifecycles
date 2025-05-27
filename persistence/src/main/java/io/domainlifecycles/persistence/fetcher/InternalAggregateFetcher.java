@@ -210,6 +210,17 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
         return fetchDeep(record);
     }
 
+    /**
+     * Builds a domain object for a property based on the property record.
+     * This method handles the construction of a domain object for an entity's property, taking into account
+     * back references, fetched states, and entity relationships.
+     *
+     * @param parentRecord the record representing the parent entity
+     * @param propertyRecord the record representing the property entity
+     * @param entityReference the field mirror representing the entity reference
+     * @param fetcherContext the context containing fetch state and related operations
+     * @return the constructed domain object for the property, or null if skipped due to fetch state
+     */
     protected DomainObject buildPropertyDomainObjectByPropertyRecord(BASE_RECORD_TYPE parentRecord,
                                                                      BASE_RECORD_TYPE propertyRecord,
                                                                      FieldMirror entityReference,
@@ -468,15 +479,55 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
         }
     }
 
+    /**
+     * Retrieves an entity record by its unique identifier.
+     *
+     * @param id the identifier of the entity record to retrieve
+     * @return the entity record corresponding to the given identifier
+     */
     protected abstract BASE_RECORD_TYPE getEntityRecordById(I id);
 
+    /**
+     * Retrieves a single entity reference record associated with a given parent record.
+     * This method resolves relationships and retrieves a record based on the referenced entity class name.
+     *
+     * @param parentRecord             the record representing the parent entity
+     * @param referencedEntityClassName the name of the class representing the referenced entity
+     * @return a record representing the referenced entity
+     */
     protected abstract BASE_RECORD_TYPE getEntityReferenceRecordByParentRecord(BASE_RECORD_TYPE parentRecord,
                                                                                String referencedEntityClassName);
 
+    /**
+     * Retrieves a collection of child value object records associated with a given parent record.
+     * This method resolves relationships and retrieves records based on the provided ValueObjectRecordMirror.
+     *
+     * @param parentRecord the record representing the parent entity
+     * @param vorm         the value object record mirror providing metadata and path information
+     * @return a collection of records representing the child value objects
+     */
     protected abstract Collection<BASE_RECORD_TYPE> getChildValueObjectRecordCollectionByParentRecord(BASE_RECORD_TYPE parentRecord, ValueObjectRecordMirror<BASE_RECORD_TYPE> vorm);
 
+    /**
+     * Retrieves a collection of entity reference records associated with a given parent record.
+     * This method resolves relationships and retrieves records based on the referenced entity class name.
+     *
+     * @param parentRecord             the record representing the parent entity
+     * @param referencedEntityClassName the name of the class representing the referenced entity
+     * @return a collection of records representing the referenced entities
+     */
     protected abstract Collection<BASE_RECORD_TYPE> getEntityReferenceRecordCollectionByParentRecord(BASE_RECORD_TYPE parentRecord, String referencedEntityClassName);
 
+    /**
+     * Fetches a domain object corresponding to a reference field of an entity.
+     * This method resolves an entity relationship reference from a parent record
+     * and constructs a corresponding domain object.
+     *
+     * @param parentRecord          the record representing the parent entity
+     * @param entityReferenceMirror the field mirror representing the entity reference
+     * @param fetcherContext        the context containing fetch state and related operations
+     * @return the constructed domain object for the reference, or null if no record is found
+     */
     protected DomainObject fetchEntityForReference(BASE_RECORD_TYPE parentRecord,
                                                    FieldMirror entityReferenceMirror,
                                                    InternalFetcherContext<BASE_RECORD_TYPE> fetcherContext

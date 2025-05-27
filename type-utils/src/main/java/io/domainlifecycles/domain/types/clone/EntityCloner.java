@@ -54,6 +54,11 @@ public class EntityCloner {
 
     private final DomainObjectBuilderProvider domainObjectBuilderProvider;
 
+    /**
+     * Constructs an EntityCloner instance.
+     *
+     * @param domainObjectBuilderProvider the provider to obtain DomainObjectBuilders for creating deep clones of domain objects.
+     */
     public EntityCloner(DomainObjectBuilderProvider domainObjectBuilderProvider) {
         this.domainObjectBuilderProvider = domainObjectBuilderProvider;
     }

@@ -108,6 +108,14 @@ public class ValidationDomainClassExtender {
      * to the always-valid strategy.
      */
     public static class ValidationAdvice {
+
+        /**
+         * Performs validation on method exit by invoking the validate mechanism
+         * of the object implementing {@link Validatable} and applying bean validation.
+         *
+         * @param thisObject the object on which the method exit is being intercepted;
+         *                   must implement {@link Validatable} to trigger the validation process
+         */
         @Advice.OnMethodExit
         public static void after(@Advice.This Object thisObject) {
             ((Validatable) thisObject).validate();

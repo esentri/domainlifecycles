@@ -63,6 +63,15 @@ public abstract class PersistenceActionPublishingRepository<ID extends Identity<
 
     private final PersistenceEventPublisher persistenceEventPublisher;
 
+    /**
+     * Constructs a new instance of PersistenceActionPublishingRepository.
+     *
+     * @param persister                  the persister responsible for managing persistence actions
+     *                                   such as insert, update, and delete for the record type.
+     * @param domainPersistenceProvider  the domain persistence provider responsible for mapping
+     *                                   the domain objects to their database representation.
+     * @param persistenceEventPublisher  the persistence event publisher used to publish persistence-related actions.
+     */
     protected PersistenceActionPublishingRepository(Persister<RECORD> persister,
                                                     DomainPersistenceProvider<RECORD> domainPersistenceProvider,
                                                     PersistenceEventPublisher persistenceEventPublisher) {

@@ -91,9 +91,8 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
             }
         }
 
-        var allEntityMirrors = Domain.getDomainModel()
-            .allTypeMirrors()
-            .values()
+        var allEntityMirrors = Domain.getDomainMirror()
+            .getAllDomainTypeMirrors()
             .stream()
             .filter(dtm -> DomainType.ENTITY.equals(dtm.getDomainType()) || DomainType.AGGREGATE_ROOT.equals(
                 dtm.getDomainType()))
@@ -134,7 +133,7 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
         );
 
 
-        EntityRecordMirror<?>[] entityRecordMirrors = allEntityMirrors
+        EntityRecordMirror<UpdatableRecord<?>>[] entityRecordMirrors = allEntityMirrors
             .stream()
             .map(em -> {
                 List<ValueObjectRecordMirror<UpdatableRecord<?>>> valueObjectRecordMirrors = new ArrayList<>();
@@ -219,16 +218,12 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
             })
             .toArray(EntityRecordMirror[]::new);
 
-        return new PersistenceModel(entityRecordMirrors);
+        return new PersistenceModel<UpdatableRecord<?>>(entityRecordMirrors);
     }
 
     private void addRecordToDomainObjectTypeEntry(String recordName, String domainObjectTypeName, Map<String,
         List<String>> recordToDomainObjectTypeMap) {
-        var list = recordToDomainObjectTypeMap.get(recordName);
-        if (list == null) {
-            list = new ArrayList<>();
-            recordToDomainObjectTypeMap.put(recordName, list);
-        }
+        var list = recordToDomainObjectTypeMap.computeIfAbsent(recordName, k -> new ArrayList<>());
         list.add(domainObjectTypeName);
     }
 

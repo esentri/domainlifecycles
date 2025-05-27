@@ -44,6 +44,12 @@ import io.domainlifecycles.mirror.api.Domain;
  */
 public class DlcSerializerModifier extends BeanSerializerModifier {
 
+    /**
+     * A container that holds registered customizers used for domain-specific
+     * Jackson serialization and deserialization. The customizers within this
+     * container provide specialized logic for customizing the mapping of
+     * specific domain object types during the serialization process.
+     */
     private final DlcJacksonModule.CustomizerContainer customizersContainer;
 
     /**

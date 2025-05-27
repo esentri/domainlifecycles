@@ -56,35 +56,37 @@ public class DomainMapperUtils {
      */
     public static String domainTypeName(DomainTypeMirror domainTypeMirror, DomainDiagramConfig domainDiagramConfig) {
         var name = DomainMapperUtils.mapTypeName(domainTypeMirror.getTypeName(), domainDiagramConfig);
-        if (domainTypeMirror.getDomainType().equals(DomainType.REPOSITORY)) {
-            var repositoryMirror = (RepositoryMirror) domainTypeMirror;
-            if (!repositoryMirror.getRepositoryInterfaceTypeNames().isEmpty() && !repositoryMirror.isAbstract()) {
-                name = DomainMapperUtils.mapTypeName(repositoryMirror.getRepositoryInterfaceTypeNames().get(0),
-                    domainDiagramConfig);
-            }
-        } else if (domainTypeMirror.getDomainType().equals(DomainType.DOMAIN_SERVICE)) {
-            var domainServiceMirror = (DomainServiceMirror) domainTypeMirror;
-            if (!domainServiceMirror.getDomainServiceInterfaceTypeNames().isEmpty() && !domainServiceMirror.isAbstract()) {
-                name = DomainMapperUtils.mapTypeName(domainServiceMirror.getDomainServiceInterfaceTypeNames().get(0),
-                    domainDiagramConfig);
-            }
-        } else if (domainTypeMirror.getDomainType().equals(DomainType.APPLICATION_SERVICE)) {
-            var applicationServiceMirror = (ApplicationServiceMirror) domainTypeMirror;
-            if (!applicationServiceMirror.getApplicationServiceInterfaceTypeNames().isEmpty() && !applicationServiceMirror.isAbstract()) {
-                name = DomainMapperUtils.mapTypeName(
-                    applicationServiceMirror.getApplicationServiceInterfaceTypeNames().get(0), domainDiagramConfig);
-            }
-        } else if (domainTypeMirror.getDomainType().equals(DomainType.OUTBOUND_SERVICE)) {
-            var outboundServiceMirror = (OutboundServiceMirror) domainTypeMirror;
-            if (!outboundServiceMirror.getOutboundServiceInterfaceTypeNames().isEmpty() && !outboundServiceMirror.isAbstract()) {
-                name = DomainMapperUtils.mapTypeName(
-                    outboundServiceMirror.getOutboundServiceInterfaceTypeNames().get(0), domainDiagramConfig);
-            }
-        } else if (domainTypeMirror.getDomainType().equals(DomainType.QUERY_HANDLER)) {
-            var queryHandlerMirror = (QueryHandlerMirror) domainTypeMirror;
-            if (!queryHandlerMirror.getQueryHandlerInterfaceTypeNames().isEmpty() && !queryHandlerMirror.isAbstract()) {
-                name = DomainMapperUtils.mapTypeName(queryHandlerMirror.getQueryHandlerInterfaceTypeNames().get(0),
-                    domainDiagramConfig);
+        if(domainDiagramConfig.getGeneralVisualSettings().isUseAbstractTypeNameForConcreteServiceKinds()) {
+            if (domainTypeMirror.getDomainType().equals(DomainType.REPOSITORY)) {
+                var repositoryMirror = (RepositoryMirror) domainTypeMirror;
+                if (!repositoryMirror.getRepositoryInterfaceTypeNames().isEmpty() && !repositoryMirror.isAbstract()) {
+                    name = DomainMapperUtils.mapTypeName(repositoryMirror.getRepositoryInterfaceTypeNames().get(0),
+                        domainDiagramConfig);
+                }
+            } else if (domainTypeMirror.getDomainType().equals(DomainType.DOMAIN_SERVICE)) {
+                var domainServiceMirror = (DomainServiceMirror) domainTypeMirror;
+                if (!domainServiceMirror.getDomainServiceInterfaceTypeNames().isEmpty() && !domainServiceMirror.isAbstract()) {
+                    name = DomainMapperUtils.mapTypeName(domainServiceMirror.getDomainServiceInterfaceTypeNames().get(0),
+                        domainDiagramConfig);
+                }
+            } else if (domainTypeMirror.getDomainType().equals(DomainType.APPLICATION_SERVICE)) {
+                var applicationServiceMirror = (ApplicationServiceMirror) domainTypeMirror;
+                if (!applicationServiceMirror.getApplicationServiceInterfaceTypeNames().isEmpty() && !applicationServiceMirror.isAbstract()) {
+                    name = DomainMapperUtils.mapTypeName(
+                        applicationServiceMirror.getApplicationServiceInterfaceTypeNames().get(0), domainDiagramConfig);
+                }
+            } else if (domainTypeMirror.getDomainType().equals(DomainType.OUTBOUND_SERVICE)) {
+                var outboundServiceMirror = (OutboundServiceMirror) domainTypeMirror;
+                if (!outboundServiceMirror.getOutboundServiceInterfaceTypeNames().isEmpty() && !outboundServiceMirror.isAbstract()) {
+                    name = DomainMapperUtils.mapTypeName(
+                        outboundServiceMirror.getOutboundServiceInterfaceTypeNames().get(0), domainDiagramConfig);
+                }
+            } else if (domainTypeMirror.getDomainType().equals(DomainType.QUERY_HANDLER)) {
+                var queryHandlerMirror = (QueryHandlerMirror) domainTypeMirror;
+                if (!queryHandlerMirror.getQueryHandlerInterfaceTypeNames().isEmpty() && !queryHandlerMirror.isAbstract()) {
+                    name = DomainMapperUtils.mapTypeName(queryHandlerMirror.getQueryHandlerInterfaceTypeNames().get(0),
+                        domainDiagramConfig);
+                }
             }
         }
         return name;
@@ -97,17 +99,19 @@ public class DomainMapperUtils {
      * used {@link DomainDiagramConfig}.
      */
     public static String mapTypeName(String fullQualifiedName, DomainDiagramConfig domainDiagramConfig) {
-        return (domainDiagramConfig.isShowFullQualifiedClassNames()) ?
+        return (domainDiagramConfig.getGeneralVisualSettings().isShowFullQualifiedClassNames()) ?
             fullQualifiedName : simpleTypeName(fullQualifiedName);
     }
 
     /**
-     * @param propertyMirror   mirrored property
-     * @param domainTypeMirror mirrored domain type
-     * @return whether a property should be included "inline" in a class or
-     * if it should be represented as a relationship.
+     * Determines whether a given property should be shown inline based on its type, domain type, and diagram configuration.
+     *
+     * @param propertyMirror the mirrored field representing the property to check
+     * @param domainTypeMirror the mirrored type of the domain to which the property belongs
+     * @param domainDiagramConfig the configuration of the domain diagram specifying certain rules and filters
+     * @return true if the property should be shown inline; false otherwise
      */
-    public static boolean showPropertyInline(FieldMirror propertyMirror, DomainTypeMirror domainTypeMirror) {
+    public static boolean showPropertyInline(FieldMirror propertyMirror, DomainTypeMirror domainTypeMirror, DomainDiagramConfig domainDiagramConfig) {
         if (
             DomainType.NON_DOMAIN.equals(domainTypeMirror.getDomainType())
                 || DomainType.DOMAIN_EVENT.equals(domainTypeMirror.getDomainType())
@@ -125,13 +129,14 @@ public class DomainMapperUtils {
             || DomainType.VALUE_OBJECT.equals(domainTypeMirror.getDomainType())) {
             //for aggregate roots, entities or value objects we filter
             if (propertyMirror instanceof EntityReferenceMirror) {
-                return false;
+                var erm = (EntityReferenceMirror) propertyMirror;
+                return domainDiagramConfig.getDiagramTrimSettings().getClassesBlacklist().contains(erm.getType().getTypeName());
             } else if (propertyMirror instanceof ValueReferenceMirror valueRef) {
                 if (valueRef.getValue().isEnum() || valueRef.getValue().isIdentity()) {
                     return true;
                 } else {
                     var valueObjectMirror = (ValueObjectMirror) valueRef.getValue();
-                    return valueObjectMirror.isSingledValued();
+                    return valueObjectMirror.isSingledValued() || domainDiagramConfig.getDiagramTrimSettings().getClassesBlacklist().contains(valueObjectMirror.getTypeName());
                 }
             }
             return true;
@@ -188,7 +193,7 @@ public class DomainMapperUtils {
             case ENUM -> "Enum";
             case DOMAIN_SERVICE -> "DomainService";
             case APPLICATION_SERVICE ->
-                (domainDiagramConfig.isCallApplicationServiceDriver() ? "Driver" : "ApplicationService");
+                (domainDiagramConfig.getGeneralVisualSettings().isCallApplicationServiceDriver() ? "Driver" : "ApplicationService");
             case REPOSITORY -> "Repository";
             case DOMAIN_COMMAND -> "DomainCommand";
             case DOMAIN_EVENT -> "DomainEvent";

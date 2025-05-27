@@ -37,6 +37,10 @@ import java.time.MonthDay;
  */
 public class DefaultShortToMonthDayConverter extends TypeConverter<Short, MonthDay> {
 
+    /**
+     * Constructs a new instance of the DefaultShortToMonthDayConverter.
+     * This converter is responsible for converting values of type Short to MonthDay.
+     */
     public DefaultShortToMonthDayConverter() {
         super(Short.class, MonthDay.class);
     }

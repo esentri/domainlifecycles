@@ -41,7 +41,7 @@ import java.util.Map;
  * @author Mario Herb
  */
 public class ReflectiveDomainObjectAccessor implements DynamicDomainObjectAccessor {
-    private static Map<String, Field> fieldMap = new HashMap<>();
+    private static final Map<String, Field> fieldMap = new HashMap<>();
     private DomainObject domainObject;
     private Class<? extends DomainObject> domainObjectClass;
 

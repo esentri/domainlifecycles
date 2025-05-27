@@ -37,6 +37,11 @@ import java.math.BigDecimal;
  */
 public class DefaultFloatToBigDecimalConverter extends TypeConverter<Float, BigDecimal> {
 
+    /**
+     * Constructs a DefaultFloatToBigDecimalConverter, which is a TypeConverter that
+     * defines conversion behavior from a Float to a BigDecimal. This ensures type-safe
+     * conversions between the specified types.
+     */
     public DefaultFloatToBigDecimalConverter() {
         super(Float.class, BigDecimal.class);
     }

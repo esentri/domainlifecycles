@@ -38,6 +38,11 @@ import java.util.Calendar;
  */
 public class DefaultCalendarToOffsetDateTimeConverter extends TypeConverter<Calendar, OffsetDateTime> {
 
+    /**
+     * Constructs a DefaultCalendarToOffsetDateTimeConverter, which is a TypeConverter
+     * that defines conversion behavior from a Calendar to an OffsetDateTime.
+     * This ensures type-safe conversions between the specified types.
+     */
     public DefaultCalendarToOffsetDateTimeConverter() {
         super(Calendar.class, OffsetDateTime.class);
     }

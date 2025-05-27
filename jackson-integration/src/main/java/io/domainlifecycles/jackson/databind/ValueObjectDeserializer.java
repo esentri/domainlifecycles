@@ -35,6 +35,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import io.domainlifecycles.access.DlcAccess;
 import io.domainlifecycles.assertion.DomainAssertionException;
+import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.ValueObject;
@@ -58,7 +59,22 @@ import java.util.Optional;
  */
 public class ValueObjectDeserializer extends StdDeserializer<ValueObject> {
 
+    /**
+     * A JacksonMappingCustomizer instance used for customizing the mapping process
+     * during the deserialization or serialization of DomainObjects. This variable
+     * plays a key role in altering default behavior by providing hooks for various
+     * stages of the JSON-to-object and object-to-JSON transformation processes.
+     *
+     * Defined as a final variable, it guarantees immutability within this
+     * class's context once assigned during instantiation.
+     */
     private final JacksonMappingCustomizer<?> customizer;
+
+    /**
+     * A provider used to obtain {@link DomainObjectBuilder} instances for constructing domain objects.
+     * This field holds an implementation of {@link DomainObjectBuilderProvider} that facilitates the
+     * creation of domain objects during the deserialization process.
+     */
     private final DomainObjectBuilderProvider domainObjectBuilderProvider;
 
 

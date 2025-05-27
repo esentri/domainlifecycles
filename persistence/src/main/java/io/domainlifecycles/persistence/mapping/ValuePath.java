@@ -44,14 +44,32 @@ public class ValuePath {
 
     private final Deque<FieldMirror> pathElements;
 
+    /**
+     * Constructs a new ValuePath object with the specified collection of path elements.
+     *
+     * @param pathElements the collection of {@link FieldMirror} instances that represents
+     *                     the path to a final value field in a linear sequence
+     */
     public ValuePath(Collection<FieldMirror> pathElements) {
         this.pathElements = new LinkedList<>(pathElements);
     }
 
+    /**
+     * Retrieves the collection of {@link FieldMirror} instances that represent the path
+     * to a final value field in a linear sequence.
+     *
+     * @return a deque of {@link FieldMirror} instances representing the path
+     */
     protected Deque<FieldMirror> pathElements() {
         return pathElements;
     }
 
+    /**
+     * Constructs the path as a dot-separated string representation. Each element in the path
+     * corresponds to the name of a {@link FieldMirror} in the order defined by {@code pathElements}.
+     *
+     * @return a string representation of the path, with each field name joined by a dot
+     */
     protected String path() {
         return pathElements.stream().map(FieldMirror::getName).collect(Collectors.joining("."));
     }

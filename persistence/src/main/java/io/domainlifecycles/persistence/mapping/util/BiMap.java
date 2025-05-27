@@ -31,10 +31,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Simple implementation of a bidirectional map.
+ * A bidirectional map which allows mapping of keys to values and values to keys.
+ * This class maintains two internal mappings: one for key-to-value mapping and
+ * another for value-to-key mapping. It ensures that each key maps to a unique value
+ * and each value maps to a unique key.
  *
- * @param <K>
- * @param <V>
+ * @param <K> the type of keys maintained by this bidirectional map
+ * @param <V> the type of values maintained by this bidirectional map
+ *
  * @author Mario Herb
  */
 public class BiMap<K, V> {
@@ -42,23 +46,55 @@ public class BiMap<K, V> {
     private final Map<K, V> keyToValue = new HashMap<>();
     private final Map<V, K> valueToKey = new HashMap<>();
 
+    /**
+     * Puts a key-value pair into the bidirectional map. Updates both the key-to-value and value-to-key mappings.
+     *
+     * @param key   the key to be added to the map
+     * @param value the value to be associated with the given key
+     */
     public void put(K key, V value) {
         keyToValue.put(key, value);
         valueToKey.put(value, key);
     }
 
+    /**
+     * Retrieves the key corresponding to the specified value in the bidirectional map.
+     * If the value is not present in the map, returns {@code null}.
+     *
+     * @param value the value whose associated key is to be returned
+     * @return the key associated with the specified value, or {@code null} if the value is not present
+     */
     public K getInverse(V value) {
         return valueToKey.get(value);
     }
 
+    /**
+     * Retrieves the value associated with the given key in the bidirectional map.
+     * If the key is not present, returns {@code null}.
+     *
+     * @param key the key whose associated value is to be returned
+     * @return the value associated with the specified key, or {@code null} if the key is not present
+     */
     public V get(K key) {
         return keyToValue.get(key);
     }
 
+    /**
+     * Returns a set view of the keys contained in this map. The set is backed by the map,
+     * so changes to the map are reflected in the set, and vice versa.
+     *
+     * @return a set of keys contained in this map
+     */
     public Set<K> keySet() {
         return keyToValue.keySet();
     }
 
+    /**
+     * Returns a set view of the values contained in this bidirectional map.
+     * The set is backed by the map, so changes to the map are reflected in the set, and vice versa.
+     *
+     * @return a set of values contained in this map
+     */
     public Set<V> valueSet() {
         return valueToKey.keySet();
     }

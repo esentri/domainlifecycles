@@ -33,11 +33,39 @@ package io.domainlifecycles.mirror.model;
  * @author Mario Herb
  */
 public enum AssertionTypeGroup {
+    /**
+     * Represents the group of assertions applicable to String types.
+     */
     STRING,
+    /**
+     * Represents the group of assertions applicable to temporal types such as dates and times.
+     */
     TEMPORAL,
+    /**
+     * Represents the group of assertions applicable to numeric types.
+     */
     NUMERIC,
+    /**
+     * Represents the group of assertions specifically applicable to fractional numeric types.
+     * This includes assertions relevant for numbers with decimal places or fractional representations.
+     */
     NUMERIC_FRACTIONAL,
+    /**
+     * Represents the group of assertions applicable to boolean types.
+     * This type group is for assertions specifically intended
+     * for evaluating boolean values.
+     */
     BOOLEAN,
+    /**
+     * Represents the group of assertions applicable to general object types.
+     * This type group is used for assertions specifically intended
+     * to evaluate object-related properties and behaviors.
+     */
     OBJECT,
+    /**
+     * Represents the group of assertions applicable to iterable types.
+     * This type group is used for assertions specifically intended
+     * to evaluate the properties and behaviors of iterable collections.
+     */
     ITERABLE
 }

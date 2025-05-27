@@ -9,7 +9,7 @@ import io.domainlifecycles.jooq.configuration.JooqDomainPersistenceConfiguration
 import io.domainlifecycles.jooq.imp.JooqEntityIdentityProvider;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.persistence.records.EntityValueObjectRecordTypeConfiguration;
@@ -51,7 +51,7 @@ import java.util.UUID;
 public class TestApplication {
 
     static {
-        Domain.initialize(new ReflectiveDomainModelFactory(
+        Domain.initialize(new ReflectiveDomainMirrorFactory(
             TestId.class.getPackageName(),
             TypeTestValueObject.class.getPackageName(),
             "io.domainlifecycles.springboot2",

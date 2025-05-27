@@ -43,7 +43,7 @@ import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.DomainEvents;
 import io.domainlifecycles.events.jta.api.JtaInMemoryChannelFactory;
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.services.Services;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -71,7 +71,7 @@ public class DirectJtaTransactionalEventHandlingBeforeCommitTests {
 
         userTransactionManager = new UserTransactionManager();
 
-        Domain.initialize(new ReflectiveDomainModelFactory("io.domainlifecycles.events"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory("io.domainlifecycles.events"));
 
         domainService = new ADomainService();
         repository = new ARepository();
