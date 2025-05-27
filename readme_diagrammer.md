@@ -43,7 +43,7 @@ class NomnomlDomainDiagramGeneratorTest {
     
     @Test
     void generateSampleApp() throws Exception {
-        Domain.initialize(new ReflectiveDomainModelFactory( new TypeMetaResolver(), "yourdomain"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory( new TypeMetaResolver(), "yourdomain"));
         var trim = DiagramTrimSettings.builder()
                 .withExplicitlyIncludedPackageNames(List.of("yourdomain.specific"))
                 .build();

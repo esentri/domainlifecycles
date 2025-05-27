@@ -26,8 +26,11 @@
 
 package io.domainlifecycles.diagram.domain.config;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A configuration class that defines settings for trimming or filtering elements in a diagram.
@@ -259,6 +262,15 @@ public class DiagramTrimSettings {
          * @return A new DiagramTrimSettings instance with the configured settings
          */
         public DiagramTrimSettings build() {
+            checkNoOverlap(
+                includeConnectedTo$value,
+                includeConnectedToIngoing$value,
+                includeConnectedToOutgoing$value,
+                excludeConnectedToIngoing$value,
+                excludeConnectedToOutgoing$value
+            );
+
+
             return new DiagramTrimSettings(
                 classesBlacklist$value == null ? Collections.emptyList() : classesBlacklist$value,
                 explicitlyIncludedPackageNames$value == null ? Collections.emptyList() : explicitlyIncludedPackageNames$value,
@@ -267,6 +279,19 @@ public class DiagramTrimSettings {
                 includeConnectedToOutgoing$value == null ? Collections.emptyList() : includeConnectedToOutgoing$value,
                 excludeConnectedToIngoing$value == null ? Collections.emptyList() : excludeConnectedToIngoing$value,
                 excludeConnectedToOutgoing$value == null ? Collections.emptyList() : excludeConnectedToOutgoing$value);
+        }
+    }
+
+    public static void checkNoOverlap(Collection<String>... collections) {
+        Set<String> seen = new HashSet<>();
+        for (Collection<String> collection : collections) {
+            if (collection != null) {
+                for (String element : collection) {
+                    if (!seen.add(element)) {
+                        throw new IllegalArgumentException("The same class found was found across different include / exclude trim settings: " + element);
+                    }
+                }
+            }
         }
     }
 

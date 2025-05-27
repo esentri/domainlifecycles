@@ -70,7 +70,7 @@ auch aktiviert wurde, beispielsweise in der Spring Boot Application Klasse mit `
 public class ShopApplication {
 
     static {
-        Domain.initialize(new ReflectiveDomainModelFactory("sampleshop"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleshop"));
     }
     
     public static void main(String[] args) {

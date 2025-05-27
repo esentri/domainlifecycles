@@ -71,7 +71,7 @@ Spring Boot Application class with `@PostConstruct` call:
 public class ShopApplication {
 
     static {
-        Domain.initialize(new ReflectiveDomainModelFactory("sampleshop"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleshop"));
     }
     
     public static void main(String[] args) {

@@ -5,14 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.3.0] - 2025-05-02
-- Added [Maven plugin](./dlc-maven-plugin) with the ability to export DomainModels and to draw Domain diagrams unsing Docker/Kroki
-- Added [Gradle plugin](./dlc-gradle-plugin) with the ability to export DomainModels and to draw Domain diagrams unsing Docker/Kroki
+## [2.3.0] - 2025-05-27
+- Refactored and extended Domain diagrammer with new diagram settings (e.g. ,ore options for connection based filtering)
+- Added [Maven plugin](./dlc-maven-plugin) providing DLC plugin functions via Maven
+- Added [Gradle plugin](./dlc-gradle-plugin) providing DLC plugin functions via Gradle
 - Added [DLC plugins](./dlc-plugins) containing the general plugin logic
+  (exporting DomainModels, draw Domain diagrams, sending updated DomainModel to DLC Diagram Viewer application, 
+  that enables rendering and documenting DomainModels)
 - Changed Mirror added DomainMirror interface as the primary mirror containing the complete domain model
 - Added completeness check for Domain Mirror ensuring all references to model elements within the domain model can be resolved, 
-  when a DomainMirror instance is created either by reflection or by deserialization form a JSON export
-- Extended domain diagrammer for filtering options (abstract types and packages) and fixed several exisiting filtering options (especially transitive filtering)
+  when a DomainMirror instance is created either by reflection or by deserialization from a JSON export
+- Extended domain diagrammer for filtering options (abstract types and packages) and fixed several exisiting filtering options 
 
 ## [2.2.1] - 2025-02-28
 - Replaced some critical stream operations in "io.domainlifecycles.persistence.repositoryDomainStructureAwareRepository"

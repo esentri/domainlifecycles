@@ -13,7 +13,7 @@ des Projekts zu erstellen. Das Ergebnis ist hierbei Text-basiert im [Nomnoml](ht
 ```Java
 class Diagrammer {
     public void generateDiagram() {
-        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "sampleshop"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory(new TypeMetaResolver(), "sampleshop"));
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withContextPackageName("sampleshop").build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(diagramConfig, Domain.getDomainModel());
 
