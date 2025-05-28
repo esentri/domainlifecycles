@@ -42,6 +42,25 @@ and even different packages which should be used to read the model with `domainM
 The specified DomainModel must be complete an self-contained. All classes that the model consists of must be defined within the `domainModelPackages`.
 To render only a specific part of the model, use the `explicitlyIncludedPackages`configuration option.
 
+Currently the DLC Gradle plugin is only published to Maven Central without a gradle plugin marker artifact. 
+To use it, you must specify a special resolution strategy:
+```groovy
+pluginManagement {
+
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "io.domainlifecycles.dlc-gradle-plugin") {
+                useModule("io.domainlifecycles:dlc-gradle-plugin:2.3.0")
+            }
+        }
+    }
+}
+```
+
 \
 You can rename `diagramNomnoml` and `diagramSvg` of course according to your needs, however it's important
 to specify some name, otherwise Gradle is not able to read the configuration properly.
