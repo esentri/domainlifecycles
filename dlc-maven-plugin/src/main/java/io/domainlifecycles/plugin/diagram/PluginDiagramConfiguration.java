@@ -70,15 +70,6 @@ public class PluginDiagramConfiguration {
      @Parameter(property = "explicitlyIncludedPackages", required = true)
      private List<String> explicitlyIncludedPackages;
 
-     @Parameter(property = "showAllAbstractTypes", required = false)
-     private Boolean showAllAbstractTypes;
-
-    @Parameter(property = "showAbstractTypesInAggregates", required = false)
-    private Boolean showAbstractTypesInAggregates;
-
-    @Parameter(property = "useAbstractTypeNameForConcreteServiceKinds", required = false)
-     private Boolean useAbstractTypeNameForConcreteServiceKinds;
-
      @Parameter(property = "aggregateRootStyle", required = false)
      private String aggregateRootStyle;
 
@@ -282,6 +273,25 @@ public class PluginDiagramConfiguration {
     
     @Parameter(property = "excludeConnectedToOutgoing", required = false)
     private List<String> excludeConnectedToOutgoing;
+    
+    @Parameter(property = "showAllInheritanceStructures", required = false)
+    private Boolean showAllInheritanceStructures;
+
+    @Parameter(property = "showInheritanceStructuresInAggregates", required = false)
+    private Boolean showInheritanceStructuresInAggregates;
+
+    @Parameter(property = "showInheritanceStructuresForServiceKinds", required = false)
+    private Boolean showInheritanceStructuresForServiceKinds;
+
+    @Parameter(property = "showInheritanceStructuresForReadModels", required = false)
+    private Boolean showInheritanceStructuresForReadModels;
+
+    @Parameter(property = "showInheritanceStructuresForDomainEvents", required = false)
+    private Boolean showInheritanceStructuresForDomainEvents;
+
+    @Parameter(property = "showInheritanceStructuresForDomainCommands", required = false)
+    private Boolean showInheritanceStructuresForDomainCommands;
+    
 
     /**
      * Gets the output format of the diagram.
@@ -317,35 +327,6 @@ public class PluginDiagramConfiguration {
      */
     public List<String> getExplicitlyIncludedPackages() {
         return explicitlyIncludedPackages;
-    }
-
-    /**
-     * Retrieves the value indicating whether all abstract types are displayed.
-     *
-     * @return a Boolean value where true indicates all abstract types are shown, and false otherwise
-     */
-    public Boolean getShowAllAbstractTypes() {
-        return showAllAbstractTypes;
-    }
-
-    /**
-     * Retrieves the current state of the showAbstractTypesInAggregates flag.
-     *
-     * @return a Boolean indicating whether abstract types are shown in aggregates.
-     */
-    public Boolean getShowAbstractTypesInAggregates() {
-        return showAbstractTypesInAggregates;
-    }
-
-    /**
-     * Determines whether the system should use an abstract type name
-     * for concrete service kinds.
-     *
-     * @return a Boolean indicating if abstract type names are used for
-     *         concrete service kinds.
-     */
-    public Boolean getUseAbstractTypeNameForConcreteServiceKinds() {
-        return useAbstractTypeNameForConcreteServiceKinds;
     }
 
     /**
@@ -965,5 +946,65 @@ public class PluginDiagramConfiguration {
      */
     public List<String> getExcludeConnectedToOutgoing() {
         return excludeConnectedToOutgoing;
+    }
+
+    /**
+     * Gets whether all inheritance structures should be shown in the diagram.
+     * This setting controls the display of all inheritance relationships regardless of type.
+     *
+     * @return true if all inheritance structures should be shown, false otherwise
+     */
+    public Boolean getShowAllInheritanceStructures() {
+        return showAllInheritanceStructures;
+    }
+
+    /**
+     * Gets whether inheritance structures within aggregates should be shown in the diagram.
+     * Controls visibility of inheritance relationships between aggregate components.
+     *
+     * @return true if inheritance structures in aggregates should be shown, false otherwise
+     */
+    public Boolean getShowInheritanceStructuresInAggregates() {
+        return showInheritanceStructuresInAggregates;
+    }
+
+    /**
+     * Gets whether inheritance structures for service kinds should be shown in the diagram.
+     * Controls visibility of inheritance relationships between different service types.
+     *
+     * @return true if inheritance structures for service kinds should be shown, false otherwise
+     */
+    public Boolean getShowInheritanceStructuresForServiceKinds() {
+        return showInheritanceStructuresForServiceKinds;
+    }
+
+    /**
+     * Gets whether inheritance structures for read models should be shown in the diagram.
+     * Controls visibility of inheritance relationships between read model classes.
+     *
+     * @return true if inheritance structures for read models should be shown, false otherwise
+     */
+    public Boolean getShowInheritanceStructuresForReadModels() {
+        return showInheritanceStructuresForReadModels;
+    }
+
+    /**
+     * Gets whether inheritance structures for domain events should be shown in the diagram.
+     * Controls visibility of inheritance relationships between domain event classes.
+     *
+     * @return true if inheritance structures for domain events should be shown, false otherwise
+     */
+    public Boolean getShowInheritanceStructuresForDomainEvents() {
+        return showInheritanceStructuresForDomainEvents;
+    }
+
+    /**
+     * Gets whether inheritance structures for domain commands should be shown in the diagram.
+     * Controls visibility of inheritance relationships between domain command classes.
+     *
+     * @return true if inheritance structures for domain commands should be shown, false otherwise
+     */
+    public Boolean getShowInheritanceStructuresForDomainCommands() {
+        return showInheritanceStructuresForDomainCommands;
     }
 }

@@ -58,9 +58,6 @@ public class DiagramConfigMapper {
         diagramConfig.setFileType(FileType.byName(extension.getFormat().getOrNull()));
         diagramConfig.setFileName(extension.getFileName().getOrElse(DEFAULT_DIAGRAM_FILE_NAME));
         diagramConfig.setExplicitlyIncludedPackageNames(extension.getExplicitlyIncludedPackages().getOrNull());
-        diagramConfig.setShowAllAbstractTypes(extension.getShowAllAbstractTypes().getOrNull());
-        diagramConfig.setShowAbstractTypesInAggregates(extension.getShowAbstractTypesInAggregates().getOrNull());
-        diagramConfig.setUseAbstractTypeNameForConcreteServiceKinds(extension.getUseAbstractTypeNameForConcreteServiceKinds().getOrNull());
         diagramConfig.setAggregateRootStyle(extension.getAggregateRootStyle().getOrNull());
         diagramConfig.setAggregateFrameStyle(extension.getAggregateFrameStyle().getOrNull());
         diagramConfig.setEntityStyle(extension.getEntityStyle().getOrNull());
@@ -129,6 +126,13 @@ public class DiagramConfigMapper {
         diagramConfig.setIncludeConnectedTo(extension.getIncludeConnectedTo().getOrNull());
         diagramConfig.setExcludeConnectedToIngoing(extension.getExcludeConnectedToIngoing().getOrNull());
         diagramConfig.setExcludeConnectedToOutgoing(extension.getExcludeConnectedToOutgoing().getOrNull());
+        diagramConfig.setShowAllInheritanceStructures(extension.getShowAllInheritanceStructures().getOrNull());
+        diagramConfig.setShowInheritanceStructuresInAggregates(extension.getShowInheritanceStructuresInAggregates().getOrNull());
+        diagramConfig.setShowInheritanceStructuresForReadModels(extension.getShowInheritanceStructuresForReadModels().getOrNull());
+        diagramConfig.setShowInheritanceStructuresForServiceKinds(extension.getShowInheritanceStructuresForServiceKinds().getOrNull());
+        diagramConfig.setShowInheritanceStructuresForDomainCommands(extension.getShowInheritanceStructuresForDomainCommands().getOrNull());
+        diagramConfig.setShowInheritanceStructuresForDomainEvents(extension.getShowInheritanceStructuresForDomainEvents().getOrNull());
+
         return diagramConfig;
     }
 }

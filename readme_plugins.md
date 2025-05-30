@@ -42,6 +42,25 @@ and even different packages which should be used to read the model with `domainM
 The specified DomainModel must be complete an self-contained. All classes that the model consists of must be defined within the `domainModelPackages`.
 To render only a specific part of the model, use the `explicitlyIncludedPackages`configuration option.
 
+Currently the DLC Gradle plugin is only published to Maven Central without a gradle plugin marker artifact. 
+To use it, you must specify a special resolution strategy:
+```groovy
+pluginManagement {
+
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "io.domainlifecycles.dlc-gradle-plugin") {
+                useModule("io.domainlifecycles:dlc-gradle-plugin:2.3.0")
+            }
+        }
+    }
+}
+```
+
 \
 You can rename `diagramNomnoml` and `diagramSvg` of course according to your needs, however it's important
 to specify some name, otherwise Gradle is not able to read the configuration properly.
@@ -116,10 +135,13 @@ Supported Diagram configuration options are
 - includeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are included)
 - excludeConnectedToIngoing: : list of full qualified classnames (classes and ingoing connected classes are excluded)
 - excludeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are excluded)
-- explicitlyIncludedPackages: packages explicitly included in the diagram   
-- showAllAbstractTypes: boolean, default false
-- showAbstractTypesInAggregates: boolean, default true
-- useAbstractTypeNameForConcreteServiceKinds: boolean, default true
+- explicitlyIncludedPackages: packages explicitly included in the diagram
+- showAllInheritanceStructures: boolean, default false
+- showInheritanceStructuresInAggregates: boolean, default true
+- showInheritanceStructuresForServiceKinds: boolean, default false
+- showInheritanceStructuresForReadModels: boolean, default false
+- showInheritanceStructuresForDomainEvents: boolean, default false
+- showInheritanceStructuresForDomainCommands: boolean, default false
 
 #### Run
 ```bash
@@ -316,9 +338,12 @@ Supported Diagram configuration options are
 - excludeConnectedToIngoing: : list of full qualified classnames (classes and ingoing connected classes are excluded)
 - excludeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are excluded)
 - explicitlyIncludedPackages: list of packages explicitly included in the diagram
-- showAllAbstractTypes: boolean, default false
-- showAbstractTypesInAggregates: boolean, default true
-- useAbstractTypeNameForConcreteServiceKinds: boolean, default true
+- showAllInheritanceStructures: boolean, default false
+- showInheritanceStructuresInAggregates: boolean, default true
+- showInheritanceStructuresForServiceKinds: boolean, default false
+- showInheritanceStructuresForReadModels: boolean, default false
+- showInheritanceStructuresForDomainEvents: boolean, default false
+- showInheritanceStructuresForDomainCommands: boolean, default false
 
 #### Run
 Depending on the Maven phase you specified:

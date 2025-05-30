@@ -64,7 +64,7 @@ public class DiagramSettingsFilter {
 
     private final DiagramTrimSettings trimSettings;
     private final GeneralVisualSettings generalVisualSettings;
-    private final Set<DomainTypeMirror> includedDomainTypes;
+    private final Set<DomainTypeMirror> includedDomainTypesByConnctions;
     private final DomainMirror domainMirror;
 
     /**
@@ -83,18 +83,18 @@ public class DiagramSettingsFilter {
         this.domainMirror = Objects.requireNonNull(domainMirror, "A DomainMirror must be provided!");
         this.generalVisualSettings = Objects.requireNonNull(generalVisualSettings, "GeneralVisualSettings must be provided!");
 
-        this.includedDomainTypes = new HashSet<>();
-        this.includedDomainTypes.addAll(calculateConnectedIngoing(diagramTrimSettings.getIncludeConnectedToIngoing()));
-        this.includedDomainTypes.addAll(calculateConnectedOutgoing(diagramTrimSettings.getIncludeConnectedToOutgoing()));
-        this.includedDomainTypes.addAll(calculateConnected(diagramTrimSettings.getIncludeConnectedTo()));
+        this.includedDomainTypesByConnctions = new HashSet<>();
+        this.includedDomainTypesByConnctions.addAll(calculateConnectedIngoing(diagramTrimSettings.getIncludeConnectedToIngoing()));
+        this.includedDomainTypesByConnctions.addAll(calculateConnectedOutgoing(diagramTrimSettings.getIncludeConnectedToOutgoing()));
+        this.includedDomainTypesByConnctions.addAll(calculateConnected(diagramTrimSettings.getIncludeConnectedTo()));
         if( this.trimSettings.getIncludeConnectedTo().isEmpty() &&
             this.trimSettings.getIncludeConnectedToIngoing().isEmpty() &&
             this.trimSettings.getIncludeConnectedToOutgoing().isEmpty()
         ){
-            this.includedDomainTypes.addAll(domainMirror.getAllDomainTypeMirrors());
+            this.includedDomainTypesByConnctions.addAll(domainMirror.getAllDomainTypeMirrors());
         }
-        this.includedDomainTypes.removeAll(calculateConnectedIngoing(diagramTrimSettings.getExcludeConnectedToIngoing()));
-        this.includedDomainTypes.removeAll(calculateConnectedOutgoing(diagramTrimSettings.getExcludeConnectedToOutgoing()));
+        this.includedDomainTypesByConnctions.removeAll(calculateConnectedIngoing(diagramTrimSettings.getExcludeConnectedToIngoing()));
+        this.includedDomainTypesByConnctions.removeAll(calculateConnectedOutgoing(diagramTrimSettings.getExcludeConnectedToOutgoing()));
     }
 
     private Set<DomainTypeMirror> calculateConnected(List<String> typeNames){
@@ -263,7 +263,13 @@ public class DiagramSettingsFilter {
         var includedServiceKinds = new ArrayList<ServiceKindMirror>(ref);
         ref.forEach(sk -> {
                 domainMirror.getAllServiceKindMirrors().stream()
-                    .filter( concrete -> concrete.implementsInterface(sk.getTypeName()))
+                    .filter( concrete ->
+                        concrete.implementsInterface(sk.getTypeName())
+                        || sk.implementsInterface(concrete.getTypeName())
+                        || concrete.isSubClassOf(sk.getTypeName())
+                        || sk.isSubClassOf(concrete.getTypeName())
+
+                    )
                     .forEach(includedServiceKinds::add);
             });
         return includedServiceKinds;
@@ -284,7 +290,7 @@ public class DiagramSettingsFilter {
             return false;
         }
         if(trimSettings.hasIncludedConnectedTypeSettings() || trimSettings.hasExcludedConnectedTypeSettings()){
-            contained = this.includedDomainTypes.contains(dtm);
+            contained = this.includedDomainTypesByConnctions.contains(dtm);
         }
         if(!this.trimSettings.getExplicitlyIncludedPackageNames().isEmpty()) {
             contained = contained && this.trimSettings.getExplicitlyIncludedPackageNames().stream().anyMatch(
@@ -299,27 +305,69 @@ public class DiagramSettingsFilter {
     }
 
     private boolean isIncludedByGeneralVisualSettings(DomainTypeMirror dtm) {
-        boolean included = (!dtm.isAbstract() || generalVisualSettings.isShowAllAbstractTypes());
-        if(dtm.isAbstract()
-            && dtm.getDomainType().equals(DomainType.AGGREGATE_ROOT)) {
-            included = included
-                || generalVisualSettings.isShowAllAbstractTypes()
-                || generalVisualSettings.isShowAbstractTypesInAggregates();
+        boolean included = (!dtm.isAbstract() || generalVisualSettings.isShowAllInheritanceStructures());
+        if (dtm.isAbstract()) {
+
+            switch (dtm.getDomainType()) {
+                case SERVICE_KIND, QUERY_HANDLER, OUTBOUND_SERVICE, DOMAIN_SERVICE, REPOSITORY, APPLICATION_SERVICE -> {
+                    included = included
+                        || generalVisualSettings.isShowAllInheritanceStructures()
+                        || generalVisualSettings.isShowInheritanceStructuresForServiceKinds()
+                        || noConcreteTypeExists(dtm);
+                }
+                case AGGREGATE_ROOT, ENTITY, VALUE_OBJECT -> {
+                    included = included
+                        || generalVisualSettings.isShowAllInheritanceStructures()
+                        || generalVisualSettings.isShowInheritanceStructuresInAggregates()
+                        || noConcreteTypeExists(dtm);
+                }
+                case READ_MODEL -> {
+                    included = included
+                        || generalVisualSettings.isShowAllInheritanceStructures()
+                        || generalVisualSettings.isShowInheritanceStructuresForReadModels()
+                        || noConcreteTypeExists(dtm);
+                }
+                case DOMAIN_COMMAND -> {
+                    included = included
+                        || generalVisualSettings.isShowAllInheritanceStructures()
+                        || generalVisualSettings.isShowInheritanceStructuresForDomainCommands()
+                        || noConcreteTypeExists(dtm);
+                }
+                case DOMAIN_EVENT -> {
+                    included = included
+                        || generalVisualSettings.isShowAllInheritanceStructures()
+                        || generalVisualSettings.isShowInheritanceStructuresForDomainEvents()
+                        || noConcreteTypeExists(dtm);
+                }
+            }
         }
-        switch(dtm.getDomainType()) {
+        switch (dtm.getDomainType()) {
             case DOMAIN_EVENT -> included = included && generalVisualSettings.isShowDomainEvents();
             case DOMAIN_SERVICE -> included = included && generalVisualSettings.isShowDomainServices();
             case AGGREGATE_ROOT, ENTITY -> included = included && generalVisualSettings.isShowAggregates();
-            case READ_MODEL ->  included = included && generalVisualSettings.isShowReadModels();
+            case READ_MODEL -> included = included && generalVisualSettings.isShowReadModels();
             case QUERY_HANDLER -> included = included && generalVisualSettings.isShowQueryHandlers();
-            case REPOSITORY ->  included = included && generalVisualSettings.isShowRepositories()
+            case REPOSITORY -> included = included && generalVisualSettings.isShowRepositories()
                 && !dtm.getTypeName().equals("io.domainlifecycles.jooq.imp.JooqAggregateRepository");
             case APPLICATION_SERVICE -> included = included && generalVisualSettings.isShowApplicationServices();
-            case OUTBOUND_SERVICE ->  included = included && generalVisualSettings.isShowOutboundServices();
-            case DOMAIN_COMMAND ->  included = included && generalVisualSettings.isShowDomainCommands();
+            case OUTBOUND_SERVICE -> included = included && generalVisualSettings.isShowOutboundServices();
+            case DOMAIN_COMMAND -> included = included && generalVisualSettings.isShowDomainCommands();
             case SERVICE_KIND -> included = included && generalVisualSettings.isShowUnspecifiedServiceKinds();
         }
         return included;
     }
+
+    private boolean noConcreteTypeExists(DomainTypeMirror dtm) {
+        if(!dtm.isAbstract()){
+            return false;
+        }
+        return this.includedDomainTypesByConnctions
+            .stream()
+            .noneMatch(incl ->
+                incl.implementsInterface(dtm.getTypeName())
+                    || incl.isSubClassOf(dtm.getTypeName())
+            );
+    }
+
 
 }

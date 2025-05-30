@@ -90,9 +90,12 @@ public class GeneralVisualSettings {
     private static final boolean DEFAULT_SHOW_OBJECT_MEMBERS_IN_CLASSES = true;
     private static final boolean DEFAULT_MULTIPLICITY_IN_LABEL = true;
     private static final boolean DEFAULT_FIELD_STEREOTYPES = true;
-    private static final boolean DEFAULT_SHOW_ALL_ABSTRACT_TYPES = false;
-    private static final boolean DEFAULT_SHOW_ABSTRACT_TYPES_IN_AGGREGATES = true;
-    private static final boolean DEFAULT_USE_ABSTRACT_TYPE_NAME_FOR_CONCRETE_SERVICE_KINDS = true;
+    private static final boolean DEFAULT_SHOW_ALL_INHERITANCE_STRUCTURES = false;
+    private static final boolean DEFAULT_SHOW_INHERITANCE_STRUCTURES_IN_AGGREGATES = true;
+    private static final boolean DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_SERVICE_KINDS = false;
+    private static final boolean DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_READ_MODELS = false;
+    private static final boolean DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_DOMAIN_EVENTS = false;
+    private static final boolean DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_DOMAIN_COMMANDS = false;
 
     private final boolean showFields;
     private final boolean showFullQualifiedClassNames;
@@ -137,9 +140,12 @@ public class GeneralVisualSettings {
     private final boolean showObjectMembersInClasses;
     private final boolean multiplicityInLabel;
     private final boolean fieldStereotypes;
-    private final boolean showAllAbstractTypes;
-    private final boolean showAbstractTypesInAggregates;
-    private final boolean useAbstractTypeNameForConcreteServiceKinds;
+    private final boolean showAllInheritanceStructures;
+    private final boolean showInheritanceStructuresInAggregates;
+    private final boolean showInheritanceStructuresForServiceKinds;
+    private final boolean showInheritanceStructuresForReadModels;
+    private final boolean showInheritanceStructuresForDomainEvents;
+    private final boolean showInheritanceStructuresForDomainCommands;
 
     private GeneralVisualSettings(
         boolean showFields, 
@@ -185,9 +191,12 @@ public class GeneralVisualSettings {
         boolean showObjectMembersInClasses, 
         boolean multiplicityInLabel, 
         boolean fieldStereotypes, 
-        boolean showAllAbstractTypes,
-        boolean showAbstractTypesInAggregates,
-        boolean useAbstractTypeNameForConcreteServiceKinds
+        boolean showAllInheritanceStructures,
+        boolean showInheritanceStructuresInAggregates,
+        boolean showInheritanceStructuresForServiceKinds,
+        boolean showInheritanceStructuresForReadModels,
+        boolean showInheritanceStructuresForDomainEvents,
+        boolean showInheritanceStructuresForDomainCommands
     ) {
         this.showFields = showFields;
         this.showFullQualifiedClassNames = showFullQualifiedClassNames;
@@ -232,9 +241,12 @@ public class GeneralVisualSettings {
         this.showObjectMembersInClasses = showObjectMembersInClasses;
         this.multiplicityInLabel = multiplicityInLabel;
         this.fieldStereotypes = fieldStereotypes;
-        this.showAllAbstractTypes = showAllAbstractTypes;
-        this.showAbstractTypesInAggregates = showAbstractTypesInAggregates;
-        this.useAbstractTypeNameForConcreteServiceKinds = useAbstractTypeNameForConcreteServiceKinds;
+        this.showAllInheritanceStructures = showAllInheritanceStructures;
+        this.showInheritanceStructuresInAggregates = showInheritanceStructuresInAggregates;
+        this.showInheritanceStructuresForServiceKinds = showInheritanceStructuresForServiceKinds;
+        this.showInheritanceStructuresForReadModels = showInheritanceStructuresForReadModels;
+        this.showInheritanceStructuresForDomainEvents = showInheritanceStructuresForDomainEvents;
+        this.showInheritanceStructuresForDomainCommands = showInheritanceStructuresForDomainCommands;
     }
 
     /**
@@ -625,30 +637,57 @@ public class GeneralVisualSettings {
     }
 
     /**
-     * Determines whether all abstract types are being shown.
+     * Determines whether all inheritance structures are being shown.
      *
-     * @return true if all abstract types should be displayed, false otherwise
+     * @return true if all inheritance structures should be displayed, false otherwise
      */
-    public boolean isShowAllAbstractTypes() {
-        return showAllAbstractTypes;
+    public boolean isShowAllInheritanceStructures() {
+        return showAllInheritanceStructures;
     }
 
     /**
-     * Indicates whether abstract types in aggregates should be displayed.
+     * Indicates whether inheritance structures in aggregates should be displayed.
      *
-     * @return true if abstract types in aggregates are to be shown, false otherwise
+     * @return true if inheritance structures in aggregates are to be shown, false otherwise
      */
-    public boolean isShowAbstractTypesInAggregates() {
-        return showAbstractTypesInAggregates;
+    public boolean isShowInheritanceStructuresInAggregates() {
+        return showInheritanceStructuresInAggregates;
     }
 
     /**
-     * Returns whether abstract type names should be used for concrete service kinds in the diagram.
+     * Returns whether inheritance structures should be shown for service kinds in the diagram.
      *
-     * @return true if abstract type names should be used for concrete service kinds, false otherwise
+     * @return true if inheritance structures should be shown for service kinds, false otherwise
      */
-    public boolean isUseAbstractTypeNameForConcreteServiceKinds() {
-        return useAbstractTypeNameForConcreteServiceKinds;
+    public boolean isShowInheritanceStructuresForServiceKinds() {
+        return showInheritanceStructuresForServiceKinds;
+    }
+
+    /**
+     * Returns whether inheritance structures should be shown for read models in the diagram.
+     *
+     * @return true if inheritance structures should be shown for read models, false otherwise
+     */
+    public boolean isShowInheritanceStructuresForReadModels() {
+        return showInheritanceStructuresForReadModels;
+    }
+
+    /**
+     * Returns whether inheritance structures should be shown for domain events in the diagram.
+     *
+     * @return true if inheritance structures should be shown for domain events, false otherwise
+     */
+    public boolean isShowInheritanceStructuresForDomainEvents() {
+        return showInheritanceStructuresForDomainEvents;
+    }
+
+    /**
+     * Returns whether inheritance structures should be shown for domain commands in the diagram.
+     *
+     * @return true if inheritance structures should be shown for domain commands, false otherwise
+     */
+    public boolean isShowInheritanceStructuresForDomainCommands() {
+        return showInheritanceStructuresForDomainCommands;
     }
 
     /**
@@ -722,9 +761,12 @@ public class GeneralVisualSettings {
         private boolean showObjectMembersInClasses$value = DEFAULT_SHOW_OBJECT_MEMBERS_IN_CLASSES;
         private boolean multiplicityInLabel$value = DEFAULT_MULTIPLICITY_IN_LABEL;
         private boolean fieldStereotypes$value = DEFAULT_FIELD_STEREOTYPES;
-        private boolean showAllAbstractTypes$value = DEFAULT_SHOW_ALL_ABSTRACT_TYPES;
-        private boolean showAbstractTypesInAggregates$value = DEFAULT_SHOW_ABSTRACT_TYPES_IN_AGGREGATES;
-        private boolean useAbstractTypeNameForConcreteServiceKinds$value = DEFAULT_USE_ABSTRACT_TYPE_NAME_FOR_CONCRETE_SERVICE_KINDS;
+        private boolean showAllInheritanceStructures$value = DEFAULT_SHOW_ALL_INHERITANCE_STRUCTURES;
+        private boolean showInheritanceStructuresInAggregates$value = DEFAULT_SHOW_INHERITANCE_STRUCTURES_IN_AGGREGATES;
+        private boolean showInheritanceStructuresForServiceKinds$value = DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_SERVICE_KINDS;
+        private boolean showInheritanceStructuresForReadModels$value = DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_READ_MODELS;
+        private boolean showInheritanceStructuresForDomainEvents$value = DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_DOMAIN_EVENTS;
+        private boolean showInheritanceStructuresForDomainCommands$value = DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_DOMAIN_COMMANDS;
 
         /**
          * Constructs a new GeneralVisualSettingsBuilder with default values.
@@ -1206,36 +1248,69 @@ public class GeneralVisualSettings {
         }
 
         /**
-         * Sets whether to show abstract types in the diagram.
+         * Sets whether to show inheritance structures in the diagram.
          *
-         * @param showAllAbstractTypes true to show all abstract types, false to hide
+         * @param showAllInheritanceStructures true to show all inheritance structures, false to hide
          * @return this builder instance
          */
-        public GeneralVisualSettingsBuilder withShowAllAbstractTypes(boolean showAllAbstractTypes) {
-            this.showAllAbstractTypes$value = showAllAbstractTypes;
+        public GeneralVisualSettingsBuilder withShowAllInheritanceStructures(boolean showAllInheritanceStructures) {
+            this.showAllInheritanceStructures$value = showAllInheritanceStructures;
             return this;
         }
 
         /**
-         * Sets whether abstract types should be displayed in aggregates.
+         * Sets whether inheritance structures should be displayed in aggregates.
          *
-         * @param showAbstractTypesInAggregates a boolean flag indicating whether abstract types
+         * @param showInheritanceStructuresInAggregates a boolean flag indicating whether inheritance structures
          *                                      should be included in the display of aggregates
          * @return the current instance of {@code GeneralVisualSettingsBuilder} for method chaining
          */
-        public GeneralVisualSettingsBuilder withShowAbstractTypesInAggregates(boolean showAbstractTypesInAggregates) {
-            this.showAbstractTypesInAggregates$value = showAbstractTypesInAggregates;
+        public GeneralVisualSettingsBuilder withShowInheritanceStructuresInAggregates(boolean showInheritanceStructuresInAggregates) {
+            this.showInheritanceStructuresInAggregates$value = showInheritanceStructuresInAggregates;
             return this;
         }
 
         /**
-         * Sets whether to use abstract type names for concrete service kinds in the diagram.
+         * Sets whether to show inheritance structures for service kinds in the diagram.
          *
-         * @param useAbstractTypeNameForConcreteServiceKinds true to use abstract names, false to use concrete names
+         * @param showInheritanceStructuresForServiceKinds true to show inheritance structures for service kinds, false to hide
          * @return this builder instance
          */
-        public GeneralVisualSettingsBuilder withUseAbstractTypeNameForConcreteServiceKinds(boolean useAbstractTypeNameForConcreteServiceKinds) {
-            this.useAbstractTypeNameForConcreteServiceKinds$value = useAbstractTypeNameForConcreteServiceKinds;
+        public GeneralVisualSettingsBuilder withShowInheritanceStructuresForServiceKinds(boolean showInheritanceStructuresForServiceKinds) {
+            this.showInheritanceStructuresForServiceKinds$value = showInheritanceStructuresForServiceKinds;
+            return this;
+        }
+
+        /**
+         * Sets whether to show inheritance structures for read models in the diagram.
+         *
+         * @param showInheritanceStructuresForReadModels true to show inheritance structures for read models, false to hide
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowInheritanceStructuresForReadModels(boolean showInheritanceStructuresForReadModels) {
+            this.showInheritanceStructuresForReadModels$value = showInheritanceStructuresForReadModels;
+            return this;
+        }
+
+        /**
+         * Sets whether to show inheritance structures for domain events in the diagram.
+         *
+         * @param showInheritanceStructuresForDomainEvents true to show inheritance structures for domain events, false to hide
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowInheritanceStructuresForDomainEvents(boolean showInheritanceStructuresForDomainEvents) {
+            this.showInheritanceStructuresForDomainEvents$value = showInheritanceStructuresForDomainEvents;
+            return this;
+        }
+
+        /**
+         * Sets whether to show inheritance structures for domain commands in the diagram.
+         *
+         * @param showInheritanceStructuresForDomainCommands true to show inheritance structures for domain commands, false to hide
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowInheritanceStructuresForDomainCommands(boolean showInheritanceStructuresForDomainCommands) {
+            this.showInheritanceStructuresForDomainCommands$value = showInheritanceStructuresForDomainCommands;
             return this;
         }
 
@@ -1291,9 +1366,12 @@ public class GeneralVisualSettings {
                 showObjectMembersInClasses$value,
                 multiplicityInLabel$value,
                 fieldStereotypes$value,
-                showAllAbstractTypes$value,
-                showAbstractTypesInAggregates$value,
-                useAbstractTypeNameForConcreteServiceKinds$value
+                showAllInheritanceStructures$value,
+                showInheritanceStructuresInAggregates$value,
+                showInheritanceStructuresForServiceKinds$value,
+                showInheritanceStructuresForReadModels$value,
+                showInheritanceStructuresForDomainEvents$value,
+                showInheritanceStructuresForDomainCommands$value
             );
         }
     }
