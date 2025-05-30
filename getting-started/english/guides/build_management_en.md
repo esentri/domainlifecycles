@@ -91,7 +91,7 @@ functions:
 
 ```groovy
 dependencies {
-    implementation 'io.domainlifecycles:spring-boot-3-jooq-complete:2.3.0'
+    implementation 'io.domainlifecycles:spring-boot-3-jooq-complete:2.4.0'
 }
 ```
 </details>
@@ -100,7 +100,7 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation 'io.domainlifecycles:spring-boot-2-jooq-complete:2.3.0'
+    implementation 'io.domainlifecycles:spring-boot-2-jooq-complete:2.4.0'
 }
 ```
 </details>
@@ -113,7 +113,7 @@ dependencies {
     <dependency>
         <groupId>io.domainlifecycles</groupId>
         <artifactId>spring-boot-3-jooq-complete</artifactId>
-        <version>2.3.0</version>
+        <version>2.4.0</version>
     </dependency>
 </dependencies>
 ```
@@ -127,7 +127,7 @@ dependencies {
     <dependency>
         <groupId>io.domainlifecycles</groupId>
         <artifactId>spring-boot-2-jooq-complete</artifactId>
-        <version>2.3.0</version>
+        <version>2.4.0</version>
     </dependency>
 </dependencies>
 ```
