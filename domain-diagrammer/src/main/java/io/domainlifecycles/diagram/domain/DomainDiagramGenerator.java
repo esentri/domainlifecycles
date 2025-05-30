@@ -229,7 +229,8 @@ public class DomainDiagramGenerator implements Diagram {
             .forEach(f -> builder.append(f.getDiagramText()));
         domainMapper.getDomainRelationshipMapper().mapAllQueryHandlerReadModelRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
-
+        domainMapper.getDomainRelationshipMapper().mapAllReadModelRelationships()
+            .forEach(f -> builder.append(f.getDiagramText()));
         return builder.toString();
     }
 

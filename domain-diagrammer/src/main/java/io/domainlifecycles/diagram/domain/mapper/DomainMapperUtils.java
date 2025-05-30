@@ -56,7 +56,8 @@ public class DomainMapperUtils {
      */
     public static String domainTypeName(DomainTypeMirror domainTypeMirror, DomainDiagramConfig domainDiagramConfig) {
         var name = DomainMapperUtils.mapTypeName(domainTypeMirror.getTypeName(), domainDiagramConfig);
-        if(domainDiagramConfig.getGeneralVisualSettings().isUseAbstractTypeNameForConcreteServiceKinds()) {
+        if(!domainDiagramConfig.getGeneralVisualSettings().isShowAllInheritanceStructures()
+            && !domainDiagramConfig.getGeneralVisualSettings().isShowInheritanceStructuresForServiceKinds()) {
             if (domainTypeMirror.getDomainType().equals(DomainType.REPOSITORY)) {
                 var repositoryMirror = (RepositoryMirror) domainTypeMirror;
                 if (!repositoryMirror.getRepositoryInterfaceTypeNames().isEmpty() && !repositoryMirror.isAbstract()) {

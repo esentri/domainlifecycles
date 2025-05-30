@@ -49,6 +49,8 @@
 
 // !!! tests.shared.complete.onlinehandel.zustellung.StarteAuslieferung !!!
 [<DC> StarteAuslieferung <<DomainCommand>> ]
+// !!! tests.shared.inheritance.ConcreteDomainCommand !!!
+[<DC> ConcreteDomainCommand <<DomainCommand>> ]
 // !!! tests.shared.complete.onlinehandel.benachrichtigung.BenachrichtigungService !!!
 [<DS> BenachrichtigungService <<DomainService>> |
 + void benachrichtige(\# AuslieferungGestartet)
@@ -61,6 +63,8 @@
 [<DE> NeueBestellung <<DomainEvent>> ]
 // !!! tests.shared.complete.onlinehandel.zustellung.AuslieferungGestartet !!!
 [<DE> AuslieferungGestartet <<DomainEvent>> ]
+// !!! tests.shared.inheritance.ConcreteDomainEvent !!!
+[<DE> ConcreteDomainEvent <<DomainEvent>> ]
 // !!! {Frame} tests.shared.complete.onlinehandel.bestellung.BestellungBv3 !!!
 [<AF> BestellungBv3 <<Aggregate>>|
 // !!! tests.shared.complete.onlinehandel.bestellung.BestellungBv3 !!!
@@ -890,6 +894,10 @@ o +- optionalText:Optional<String\[0,10\]>
 + Stream<BestellungBv3> findByStatus(\# BestellStatusCodeEnum)
 + BestellungBv3 insert(BestellungBv3)
 + BestellungBv3 update(BestellungBv3)
+]
+// !!! tests.shared.inheritance.ConcreteReadModel !!!
+[<RM> ConcreteReadModel <<ReadModel>> |
+o +- msg:String
 ]
 [<DC>StarteAuslieferung <<DomainCommand>>]  --> [<DS>ZustellungsService <<DomainService>>]
 [<R>BestellungRepository <<Repository>>]  --> [<DE>NeueBestellung <<DomainEvent>>]

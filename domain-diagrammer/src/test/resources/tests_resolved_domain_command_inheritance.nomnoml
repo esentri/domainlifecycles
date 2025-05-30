@@ -49,6 +49,10 @@
 
 // !!! tests.shared.complete.onlinehandel.zustellung.StarteAuslieferung !!!
 [<DC> StarteAuslieferung <<DomainCommand>> ]
+// !!! tests.shared.inheritance.AbstractDomainCommand !!!
+[<DC> AbstractDomainCommand <<DomainCommand>> ]
+// !!! tests.shared.inheritance.BasicDomainCommandType !!!
+[<DC> BasicDomainCommandType <<DomainCommand>> ]
 // !!! tests.shared.inheritance.ConcreteDomainCommand !!!
 [<DC> ConcreteDomainCommand <<DomainCommand>> ]
 // !!! tests.shared.complete.onlinehandel.benachrichtigung.BenachrichtigungService !!!
@@ -899,6 +903,8 @@ o +- optionalText:Optional<String\[0,10\]>
 [<RM> ConcreteReadModel <<ReadModel>> |
 o +- msg:String
 ]
+[<DC>BasicDomainCommandType <<DomainCommand>>]  <:- [<DC>AbstractDomainCommand <<DomainCommand>>]
+[<DC>AbstractDomainCommand <<DomainCommand>>]  <:- [<DC>ConcreteDomainCommand <<DomainCommand>>]
 [<DC>StarteAuslieferung <<DomainCommand>>]  --> [<DS>ZustellungsService <<DomainService>>]
 [<R>BestellungRepository <<Repository>>]  --> [<DE>NeueBestellung <<DomainEvent>>]
 [<DE>AuslieferungGestartet <<DomainEvent>>]  --> [<DS>BenachrichtigungService <<DomainService>>]

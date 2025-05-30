@@ -49,9 +49,6 @@ public class DiagramConfigMapper {
         diagramConfig.setFileType(FileType.byName(mavenDiagramConfig.getFormat()));
         diagramConfig.setFileName(mavenDiagramConfig.getFileName());
         diagramConfig.setExplicitlyIncludedPackageNames(mavenDiagramConfig.getExplicitlyIncludedPackages());
-        diagramConfig.setUseAbstractTypeNameForConcreteServiceKinds(mavenDiagramConfig.getUseAbstractTypeNameForConcreteServiceKinds());
-        diagramConfig.setShowAllAbstractTypes(mavenDiagramConfig.getShowAllAbstractTypes());
-        diagramConfig.setShowAbstractTypesInAggregates(mavenDiagramConfig.getShowAbstractTypesInAggregates());
         diagramConfig.setAggregateRootStyle(mavenDiagramConfig.getAggregateRootStyle());
         diagramConfig.setAggregateFrameStyle(mavenDiagramConfig.getAggregateFrameStyle());
         diagramConfig.setEntityStyle(mavenDiagramConfig.getEntityStyle());
@@ -120,6 +117,13 @@ public class DiagramConfigMapper {
         diagramConfig.setIncludeConnectedToOutgoing(mavenDiagramConfig.getIncludeConnectedToOutgoing());
         diagramConfig.setExcludeConnectedToIngoing(mavenDiagramConfig.getExcludeConnectedToIngoing());
         diagramConfig.setExcludeConnectedToOutgoing(mavenDiagramConfig.getExcludeConnectedToOutgoing());
+        diagramConfig.setShowAllInheritanceStructures(mavenDiagramConfig.getShowAllInheritanceStructures());
+        diagramConfig.setShowInheritanceStructuresInAggregates(mavenDiagramConfig.getShowInheritanceStructuresInAggregates());
+        diagramConfig.setShowInheritanceStructuresForDomainEvents(mavenDiagramConfig.getShowInheritanceStructuresForDomainEvents());
+        diagramConfig.setShowInheritanceStructuresForDomainCommands(mavenDiagramConfig.getShowInheritanceStructuresForDomainCommands());
+        diagramConfig.setShowInheritanceStructuresForServiceKinds(mavenDiagramConfig.getShowInheritanceStructuresForServiceKinds());
+        diagramConfig.setShowInheritanceStructuresForReadModels(mavenDiagramConfig.getShowInheritanceStructuresForReadModels());
+
         return diagramConfig;
     }
 }

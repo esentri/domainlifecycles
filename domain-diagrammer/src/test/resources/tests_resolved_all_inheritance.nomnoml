@@ -49,6 +49,10 @@
 
 // !!! tests.shared.complete.onlinehandel.zustellung.StarteAuslieferung !!!
 [<DC> StarteAuslieferung <<DomainCommand>> ]
+// !!! tests.shared.inheritance.AbstractDomainCommand !!!
+[<DC> AbstractDomainCommand <<DomainCommand>> ]
+// !!! tests.shared.inheritance.BasicDomainCommandType !!!
+[<DC> BasicDomainCommandType <<DomainCommand>> ]
 // !!! tests.shared.inheritance.ConcreteDomainCommand !!!
 [<DC> ConcreteDomainCommand <<DomainCommand>> ]
 // !!! tests.shared.complete.onlinehandel.benachrichtigung.BenachrichtigungService !!!
@@ -63,6 +67,8 @@
 [<DE> NeueBestellung <<DomainEvent>> ]
 // !!! tests.shared.complete.onlinehandel.zustellung.AuslieferungGestartet !!!
 [<DE> AuslieferungGestartet <<DomainEvent>> ]
+// !!! tests.shared.inheritance.BasicDomainEventType !!!
+[<DE> BasicDomainEventType <<DomainEvent>> ]
 // !!! tests.shared.inheritance.ConcreteDomainEvent !!!
 [<DE> ConcreteDomainEvent <<DomainEvent>> ]
 // !!! {Frame} tests.shared.complete.onlinehandel.bestellung.BestellungBv3 !!!
@@ -899,9 +905,16 @@ o +- optionalText:Optional<String\[0,10\]>
 [<RM> ConcreteReadModel <<ReadModel>> |
 o +- msg:String
 ]
+// !!! tests.shared.inheritance.ReadModelType !!!
+[<RM> ReadModelType <<ReadModel>> |
+]
+[<DC>BasicDomainCommandType <<DomainCommand>>]  <:- [<DC>AbstractDomainCommand <<DomainCommand>>]
+[<DC>AbstractDomainCommand <<DomainCommand>>]  <:- [<DC>ConcreteDomainCommand <<DomainCommand>>]
 [<DC>StarteAuslieferung <<DomainCommand>>]  --> [<DS>ZustellungsService <<DomainService>>]
+[<DE>BasicDomainEventType <<DomainEvent>>]  <:- [<DE>ConcreteDomainEvent <<DomainEvent>>]
 [<R>BestellungRepository <<Repository>>]  --> [<DE>NeueBestellung <<DomainEvent>>]
 [<DE>AuslieferungGestartet <<DomainEvent>>]  --> [<DS>BenachrichtigungService <<DomainService>>]
 [<AF> BestellungBv3 <<Aggregate>>]  --> [<DE>AuslieferungGestartet <<DomainEvent>>]
 [<DS>ZustellungsService <<DomainService>>]  -- [<R>BestellungRepository <<Repository>>]
 [<R>BestellungRepository <<Repository>>]  -- [<AF> BestellungBv3 <<Aggregate>>]
+[<RM>ReadModelType <<ReadModel>>]  <:- [<RM>ConcreteReadModel <<ReadModel>>]

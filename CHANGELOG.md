@@ -5,8 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2025-05-30
+- Refactored and extended Domain diagrammer options for showing inheritance structures
+- Adjusted plugin diagram options for showing inheritance structures
+
 ## [2.3.0] - 2025-05-27
-- Refactored and extended Domain diagrammer with new diagram settings (e.g. ,ore options for connection based filtering)
+- Refactored and extended Domain diagrammer with new diagram settings (e.g. options for connection based filtering)
 - Added [Maven plugin](./dlc-maven-plugin) providing DLC plugin functions via Maven
 - Added [Gradle plugin](./dlc-gradle-plugin) providing DLC plugin functions via Gradle
 - Added [DLC plugins](./dlc-plugins) containing the general plugin logic

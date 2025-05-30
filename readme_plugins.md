@@ -135,10 +135,13 @@ Supported Diagram configuration options are
 - includeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are included)
 - excludeConnectedToIngoing: : list of full qualified classnames (classes and ingoing connected classes are excluded)
 - excludeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are excluded)
-- explicitlyIncludedPackages: packages explicitly included in the diagram   
-- showAllAbstractTypes: boolean, default false
-- showAbstractTypesInAggregates: boolean, default true
-- useAbstractTypeNameForConcreteServiceKinds: boolean, default true
+- explicitlyIncludedPackages: packages explicitly included in the diagram
+- showAllInheritanceStructures: boolean, default false
+- showInheritanceStructuresInAggregates: boolean, default true
+- showInheritanceStructuresForServiceKinds: boolean, default false
+- showInheritanceStructuresForReadModels: boolean, default false
+- showInheritanceStructuresForDomainEvents: boolean, default false
+- showInheritanceStructuresForDomainCommands: boolean, default false
 
 #### Run
 ```bash
@@ -335,9 +338,12 @@ Supported Diagram configuration options are
 - excludeConnectedToIngoing: : list of full qualified classnames (classes and ingoing connected classes are excluded)
 - excludeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are excluded)
 - explicitlyIncludedPackages: list of packages explicitly included in the diagram
-- showAllAbstractTypes: boolean, default false
-- showAbstractTypesInAggregates: boolean, default true
-- useAbstractTypeNameForConcreteServiceKinds: boolean, default true
+- showAllInheritanceStructures: boolean, default false
+- showInheritanceStructuresInAggregates: boolean, default true
+- showInheritanceStructuresForServiceKinds: boolean, default false
+- showInheritanceStructuresForReadModels: boolean, default false
+- showInheritanceStructuresForDomainEvents: boolean, default false
+- showInheritanceStructuresForDomainCommands: boolean, default false
 
 #### Run
 Depending on the Maven phase you specified:

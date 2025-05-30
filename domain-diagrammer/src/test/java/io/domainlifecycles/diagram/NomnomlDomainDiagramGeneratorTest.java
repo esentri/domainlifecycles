@@ -76,6 +76,8 @@ class NomnomlDomainDiagramGeneratorTest {
         assertThat(actualDiagramText).isEqualTo(content);
     }
 
+
+
     @Test
     void generateSampleAppWithResolvedGenerics() {
         var factory = new ReflectiveDomainMirrorFactory("sampleshop");
@@ -222,8 +224,7 @@ class NomnomlDomainDiagramGeneratorTest {
         Domain.initialize(factory);
         var trim = DiagramTrimSettings.builder().withExplicitlyIncludedPackageNames(List.of("sampleshop")).build();
         var gen = GeneralVisualSettings.builder()
-            .withShowAllAbstractTypes(true)
-            .withUseAbstractTypeNameForConcreteServiceKinds(false)
+            .withShowAllInheritanceStructures(true)
             .build();
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
             .withDiagramTrimSettings(trim)
@@ -256,8 +257,7 @@ class NomnomlDomainDiagramGeneratorTest {
             .withExcludeConnectedToOutgoing(List.of(OrdersByCustomerQueryHandler.class.getName()))
             .build();
         var gen = GeneralVisualSettings.builder()
-            .withShowAllAbstractTypes(true)
-            .withUseAbstractTypeNameForConcreteServiceKinds(false)
+            .withShowAllInheritanceStructures(true)
             .build();
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
             .withDiagramTrimSettings(trim)
@@ -557,6 +557,134 @@ class NomnomlDomainDiagramGeneratorTest {
         String actualDiagramText = generator.generateDiagramText();
 
         Path filePath = Path.of("src/test/resources/tests_resolved.nomnoml");
+        String content;
+        try {
+            content = Files.readString(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        //then
+        assertThat(actualDiagramText).isEqualTo(content);
+    }
+
+    @Test
+    void generateAllTestsWithResolvedGenericsAllInheritance() {
+        var factory = new ReflectiveDomainMirrorFactory("tests.shared");
+        factory.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(factory);
+        var trim = DiagramTrimSettings.builder().withExplicitlyIncludedPackageNames(List.of("tests.shared")).build();
+        var general = GeneralVisualSettings.builder()
+            .withShowAllInheritanceStructures(true)
+            .build();
+
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
+            .withDiagramTrimSettings(trim)
+            .withGeneralVisualSettings(general)
+            .build();
+
+        DomainDiagramGenerator generator = new DomainDiagramGenerator(
+            diagramConfig, Domain.getDomainMirror());
+
+        // when
+        String actualDiagramText = generator.generateDiagramText();
+
+        Path filePath = Path.of("src/test/resources/tests_resolved_all_inheritance.nomnoml");
+        String content;
+        try {
+            content = Files.readString(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        //then
+        assertThat(actualDiagramText).isEqualTo(content);
+    }
+
+    @Test
+    void generateAllTestsWithResolvedGenericsReadModelInheritance() {
+        var factory = new ReflectiveDomainMirrorFactory("tests.shared");
+        factory.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(factory);
+        var trim = DiagramTrimSettings.builder().withExplicitlyIncludedPackageNames(List.of("tests.shared")).build();
+        var general = GeneralVisualSettings.builder()
+            .withShowInheritanceStructuresForReadModels(true)
+            .build();
+
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
+            .withDiagramTrimSettings(trim)
+            .withGeneralVisualSettings(general)
+            .build();
+
+        DomainDiagramGenerator generator = new DomainDiagramGenerator(
+            diagramConfig, Domain.getDomainMirror());
+
+        // when
+        String actualDiagramText = generator.generateDiagramText();
+
+        Path filePath = Path.of("src/test/resources/tests_resolved_read_model_inheritance.nomnoml");
+        String content;
+        try {
+            content = Files.readString(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        //then
+        assertThat(actualDiagramText).isEqualTo(content);
+    }
+
+    @Test
+    void generateAllTestsWithResolvedGenericsDomainCommandInheritance() {
+        var factory = new ReflectiveDomainMirrorFactory("tests.shared");
+        factory.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(factory);
+        var trim = DiagramTrimSettings.builder().withExplicitlyIncludedPackageNames(List.of("tests.shared")).build();
+        var general = GeneralVisualSettings.builder()
+            .withShowInheritanceStructuresForDomainCommands(true)
+            .build();
+
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
+            .withDiagramTrimSettings(trim)
+            .withGeneralVisualSettings(general)
+            .build();
+
+        DomainDiagramGenerator generator = new DomainDiagramGenerator(
+            diagramConfig, Domain.getDomainMirror());
+
+        // when
+        String actualDiagramText = generator.generateDiagramText();
+
+        Path filePath = Path.of("src/test/resources/tests_resolved_domain_command_inheritance.nomnoml");
+        String content;
+        try {
+            content = Files.readString(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        //then
+        assertThat(actualDiagramText).isEqualTo(content);
+    }
+
+    @Test
+    void generateAllTestsWithResolvedGenericsDomainEventInheritance() {
+        var factory = new ReflectiveDomainMirrorFactory("tests.shared");
+        factory.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(factory);
+        var trim = DiagramTrimSettings.builder().withExplicitlyIncludedPackageNames(List.of("tests.shared")).build();
+        var general = GeneralVisualSettings.builder()
+            .withShowInheritanceStructuresForDomainEvents(true)
+            .build();
+
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
+            .withDiagramTrimSettings(trim)
+            .withGeneralVisualSettings(general)
+            .build();
+
+        DomainDiagramGenerator generator = new DomainDiagramGenerator(
+            diagramConfig, Domain.getDomainMirror());
+
+        // when
+        String actualDiagramText = generator.generateDiagramText();
+
+        Path filePath = Path.of("src/test/resources/tests_resolved_domain_event_inheritance.nomnoml");
         String content;
         try {
             content = Files.readString(filePath);

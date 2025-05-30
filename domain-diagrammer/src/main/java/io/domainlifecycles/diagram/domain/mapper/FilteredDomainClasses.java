@@ -69,7 +69,7 @@ public class FilteredDomainClasses {
      * @param domainMirror the representation of the domain used to extract and filter domain elements
      */
     public FilteredDomainClasses(
-        DiagramTrimSettings diagramTrimSettings, 
+        DiagramTrimSettings diagramTrimSettings,
         GeneralVisualSettings generalVisualSettings,
         DomainMirror domainMirror) {
 
@@ -95,15 +95,60 @@ public class FilteredDomainClasses {
      * @return true if the specified domain type is contained in the filtered domain types, false otherwise
      */
     public boolean contains(DomainTypeMirror domainTypeMirror){
-        if(generalVisualSettings.isShowAllAbstractTypes()){
-            return this.includedDomainTypes.contains(domainTypeMirror);
-        }else{
-            return this.includedDomainTypes.stream().anyMatch(
-                s -> s.getTypeName().equals(domainTypeMirror.getTypeName())
-                    || s.getAllInterfaceTypeNames().contains(domainTypeMirror.getTypeName())
-                    || s.getInheritanceHierarchyTypeNames().contains(domainTypeMirror.getTypeName())
-            );
+        if( !generalVisualSettings.isShowAllInheritanceStructures()){
+            if(!generalVisualSettings.isShowInheritanceStructuresForServiceKinds()
+                && (
+                    DomainType.DOMAIN_SERVICE.equals(domainTypeMirror.getDomainType())
+                    || DomainType.REPOSITORY.equals(domainTypeMirror.getDomainType())
+                    || DomainType.OUTBOUND_SERVICE.equals(domainTypeMirror.getDomainType())
+                    || DomainType.APPLICATION_SERVICE.equals(domainTypeMirror.getDomainType())
+                    || DomainType.QUERY_HANDLER.equals(domainTypeMirror.getDomainType())
+                )
+            ){
+                return this.includedDomainTypes.stream().anyMatch(
+                    s -> s.getTypeName().equals(domainTypeMirror.getTypeName())
+                        || s.getAllInterfaceTypeNames().contains(domainTypeMirror.getTypeName())
+                        || s.getInheritanceHierarchyTypeNames().contains(domainTypeMirror.getTypeName())
+                );
+            }else if(!generalVisualSettings.isShowInheritanceStructuresInAggregates()
+                && (
+                DomainType.AGGREGATE_ROOT.equals(domainTypeMirror.getDomainType())
+                    || DomainType.ENTITY.equals(domainTypeMirror.getDomainType())
+                    || DomainType.VALUE_OBJECT.equals(domainTypeMirror.getDomainType())
+            )
+            ){
+                return this.includedDomainTypes.stream().anyMatch(
+                    s -> s.getTypeName().equals(domainTypeMirror.getTypeName())
+                        || s.getAllInterfaceTypeNames().contains(domainTypeMirror.getTypeName())
+                        || s.getInheritanceHierarchyTypeNames().contains(domainTypeMirror.getTypeName())
+                );
+            }else if(!generalVisualSettings.isShowInheritanceStructuresForDomainCommands()
+                && DomainType.DOMAIN_COMMAND.equals(domainTypeMirror.getDomainType())
+            ){
+                return this.includedDomainTypes.stream().anyMatch(
+                    s -> s.getTypeName().equals(domainTypeMirror.getTypeName())
+                        || s.getAllInterfaceTypeNames().contains(domainTypeMirror.getTypeName())
+                        || s.getInheritanceHierarchyTypeNames().contains(domainTypeMirror.getTypeName())
+                );
+            }else if(!generalVisualSettings.isShowInheritanceStructuresForDomainEvents()
+                && DomainType.DOMAIN_EVENT.equals(domainTypeMirror.getDomainType())
+            ){
+                return this.includedDomainTypes.stream().anyMatch(
+                    s -> s.getTypeName().equals(domainTypeMirror.getTypeName())
+                        || s.getAllInterfaceTypeNames().contains(domainTypeMirror.getTypeName())
+                        || s.getInheritanceHierarchyTypeNames().contains(domainTypeMirror.getTypeName())
+                );
+            }else if(!generalVisualSettings.isShowInheritanceStructuresForReadModels()
+                && DomainType.READ_MODEL.equals(domainTypeMirror.getDomainType())
+            ){
+                return this.includedDomainTypes.stream().anyMatch(
+                    s -> s.getTypeName().equals(domainTypeMirror.getTypeName())
+                        || s.getAllInterfaceTypeNames().contains(domainTypeMirror.getTypeName())
+                        || s.getInheritanceHierarchyTypeNames().contains(domainTypeMirror.getTypeName())
+                );
+            }
         }
+        return this.includedDomainTypes.contains(domainTypeMirror);
     }
 
     /**

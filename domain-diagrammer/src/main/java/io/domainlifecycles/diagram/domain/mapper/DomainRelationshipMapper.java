@@ -97,7 +97,8 @@ public class DomainRelationshipMapper {
                 .filter(filteredDomainClasses::contains)
                 .forEach(t -> relationShips.add(mapServiceKindRelationship(s, t)))
             );
-        if(diagramConfig.getGeneralVisualSettings().isShowAllAbstractTypes()) {
+        if(diagramConfig.getGeneralVisualSettings().isShowAllInheritanceStructures()
+            || diagramConfig.getGeneralVisualSettings().isShowInheritanceStructuresForServiceKinds()) {
             filteredDomainClasses
                 .getServiceKinds().forEach(s -> {
                     relationShips.addAll(mapImplementsInterface(s));
@@ -189,7 +190,8 @@ public class DomainRelationshipMapper {
     public List<NomnomlRelationship> mapAllDomainCommandRelationships() {
         var relationShips = new ArrayList<NomnomlRelationship>();
         if (diagramConfig.getGeneralVisualSettings().isShowDomainCommands()) {
-            if(diagramConfig.getGeneralVisualSettings().isShowAllAbstractTypes()) {
+            if(diagramConfig.getGeneralVisualSettings().isShowAllInheritanceStructures()
+                || diagramConfig.getGeneralVisualSettings().isShowInheritanceStructuresForDomainCommands()) {
                 filteredDomainClasses
                     .getDomainCommands().forEach(s -> {
                         relationShips.addAll(mapImplementsInterface(s));
@@ -222,6 +224,27 @@ public class DomainRelationshipMapper {
                             }
                         );
                 });
+        }
+        return relationShips;
+    }
+
+    /**
+     * Derives a {@link NomnomlRelationship} for all Aggregates
+     * or services processing Domain Commands.
+     *
+     * @return mapped domain command relationships
+     */
+    public List<NomnomlRelationship> mapAllReadModelRelationships() {
+        var relationShips = new ArrayList<NomnomlRelationship>();
+        if (diagramConfig.getGeneralVisualSettings().isShowReadModels()) {
+            if(diagramConfig.getGeneralVisualSettings().isShowAllInheritanceStructures()
+                || diagramConfig.getGeneralVisualSettings().isShowInheritanceStructuresForReadModels()) {
+                filteredDomainClasses
+                    .getReadModels().forEach(s -> {
+                        relationShips.addAll(mapImplementsInterface(s));
+                        mapInheritance(s).ifPresent(relationShips::add);
+                    });
+            }
         }
         return relationShips;
     }
@@ -292,7 +315,8 @@ public class DomainRelationshipMapper {
      */
     public List<NomnomlRelationship> mapAllDomainEventRelationships() {
         var relationShips = new ArrayList<NomnomlRelationship>();
-        if(diagramConfig.getGeneralVisualSettings().isShowAllAbstractTypes()) {
+        if(diagramConfig.getGeneralVisualSettings().isShowAllInheritanceStructures()
+            || diagramConfig.getGeneralVisualSettings().isShowInheritanceStructuresForDomainEvents()) {
             filteredDomainClasses
                 .getDomainEvents().forEach(s -> {
                     relationShips.addAll(mapImplementsInterface(s));
@@ -502,8 +526,8 @@ public class DomainRelationshipMapper {
              */
             @Override
             public void visitEnterAnyDomainType(DomainTypeMirror domainTypeMirror) {
-                if(diagramConfig.getGeneralVisualSettings().isShowAbstractTypesInAggregates()
-                    || diagramConfig.getGeneralVisualSettings().isShowAllAbstractTypes()) {
+                if(diagramConfig.getGeneralVisualSettings().isShowInheritanceStructuresInAggregates()
+                    || diagramConfig.getGeneralVisualSettings().isShowAllInheritanceStructures()) {
                     mapInheritance(domainTypeMirror).ifPresent(relationShips::add);
                     relationShips.addAll(mapImplementsInterface(domainTypeMirror));
                 }
