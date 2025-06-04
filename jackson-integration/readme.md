@@ -6,8 +6,7 @@ via a [Jackson](https://github.com/FasterXML/jackson) extension.
 The support of concepts of Domain Driven Design (DDD) and Java class structures that correspond to DDD concepts
 is not necessarily provided by Jackson. Especially with objects that are immutable, Jackson requires either
 default constructors or one have to specify the mapping for deserialization by annotation or in another way.
-In addition, certain properties in DomainObjects are mapped
-unfavorably in the default behavior of Jackson, as shown below.
+In addition, certain properties in DomainObjects are mapped unfavorably in the default behavior of Jackson, as shown below.
 
 ### Mapping of Identities and single-valued ValueObjects
 

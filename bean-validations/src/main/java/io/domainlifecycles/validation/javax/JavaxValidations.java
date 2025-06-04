@@ -42,6 +42,7 @@ import java.util.Set;
  *
  * @author Mario Herb
  */
+@Deprecated
 public class JavaxValidations {
 
     private static final Logger log = LoggerFactory.getLogger(JavaxValidations.class);

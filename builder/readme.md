@@ -1,4 +1,4 @@
-# Builder Pattern Necessity and Support
+# DLC Builder Pattern Necessity and Support
 
 DLC internally heavily relies on the Builder Pattern for the creation of DomainObjects. This is due to the fact
 that we emphasize an always valid strategy on the one hand and on the other hand ValueObjects are by definition
@@ -8,9 +8,7 @@ For developers, the usage of Builder Pattern is encouraged, since Domain Classes
 which bloats constructor calls unnecessarily.
 
 DLC supports the Builder Pattern as suggested by Joshua Bloch in his book "Effective Java" (3rd Edition, 2018).
-
 The specific implementation of the Builder Pattern as suggested by Joshua Bloch is described in the following.
-
 The simplest way to work with DLC regarding the builder necessity is to use [Lombok Builders](#lombok-builder-support).
 
 ```java
@@ -99,7 +97,6 @@ The Pattern and configuration provided above is also supported by Lombok.
 
 With usage of Lombok, the class `SampleClass` would look like the following.
 
-Attention: By default a setterPrefix `set` is required!
 
 ```java
 public class SampleClass {
@@ -108,7 +105,7 @@ public class SampleClass {
     private final int anotherRequiredProperty;
     private int optionalProperty;
 
-    @Builder(setterPrefix = "set")
+    @Builder
     public SampleClass(Builder builder) {
         this.requiredProperty = builder.requiredProperty;
         this.anotherRequiredProperty = builder.anotherRequiredProperty;

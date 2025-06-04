@@ -38,6 +38,7 @@ import java.util.Set;
  *
  * @author Mario Herb
  */
+@Deprecated
 public class JavaxBeanValidationDomainAssertionException extends DomainAssertionException {
 
     /**

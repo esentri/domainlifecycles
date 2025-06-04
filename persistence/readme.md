@@ -16,7 +16,7 @@ of an in‐memory collection of all objects of that Aggregate’s root type. DLC
 exactly that behaviour with less effort.
 It helps to overcome the natural impedance mismatches that exist between the Aggregates technical representations.
 
-![Impedance mismatch](documentation/resources/images/impedance.png "Impedance mismatch")
+![Impedance mismatch](../documentation/resources/images/impedance.png "Impedance mismatch")
 
 An Aggregate typically is composed of several different Entities and ValueObjects in form of a hierarchical object tree.
 These objects have to mapped into jOOQ records which then are mapped into their table representations via jOOQ.
@@ -33,7 +33,7 @@ In most cases it is sufficient just to extend `io.domainlifecycles.jooq.imp.Jooq
 style
 repository implementation, without needing to implement additional mapper classes or the need to declare object
 relational mapping behaviour in detail.
-Have a look at the repositories within our [sample project](./dlc-sample), to see how DLC persistence works.
+Have a look at the repositories within our [sample project](../sample-project), to see how DLC persistence works.
 
 Here is an overview of more details about DLC Persistence and some additional features:
 
@@ -177,7 +177,7 @@ To use the optimistic locking feature in an appropriate way, define:
 
 ##### Gradle
 
-A similar example for Gradle can be found in our [sample project](./dlc-sample).
+A similar example for Gradle can be found in our [sample project](../sample-project).
 
 <a name="flyway-setup"></a>
 
@@ -707,7 +707,7 @@ regarding data types:
   If `ActionCode` had another property 'vals' containing a list of `CodeValue`ValueObjects, the corresponding table name
   would be `ORDER_ACTION_CODES_VALS`. And so on...
 
-In the [Sample App](./dlc-sample) you can view a fully AutoMapping capable complex example.
+In the [Sample App](../sample-project) you can view a fully AutoMapping capable complex example.
 
 If the conventions for property-level auto-mapping are not followed, DLC will issue an error message when the
 application is started and terminates.
@@ -980,7 +980,7 @@ AutoMapping can be applied without any problems.
 
 Class diagram for the "dedicated tables inheritance" case:
 
-![What a pity you cannot see it](documentation/resources/images/dedicated_table_inheritance.png "Dedicated Tables Inheritance")
+![What a pity you cannot see it](../documentation/resources/images/dedicated_table_inheritance.png "Dedicated Tables Inheritance")
 
 <a name="single-table-inheritance"></a>
 
@@ -1067,7 +1067,7 @@ public class VehicleRecordMapper extends AbstractRecordMapper<VehicleRecord, Veh
 
 Class diagram for the "single table inheritance" case:
 
-![What a pity you cannot see it](documentation/resources/images/single_table_inheritance.png "Single Table Inheritance")
+![What a pity you cannot see it](../documentation/resources/images/single_table_inheritance.png "Single Table Inheritance")
 
 <a name="inheritance-of-valueobjects"></a>
 

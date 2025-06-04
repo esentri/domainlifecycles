@@ -39,6 +39,7 @@ import org.springframework.core.convert.converter.ConverterFactory;
  * @author Mario Herb
  * @author Dominik Galler
  */
+@Deprecated
 public class StringToDomainValueObjectConverterFactory
     implements ConverterFactory<String, ValueObject> {
 

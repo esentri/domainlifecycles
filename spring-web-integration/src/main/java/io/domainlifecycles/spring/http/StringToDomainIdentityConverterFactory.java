@@ -38,6 +38,7 @@ import org.springframework.core.convert.converter.ConverterFactory;
  * @author Mario Herb
  * @author Dominik Galler
  */
+@Deprecated
 public class StringToDomainIdentityConverterFactory implements ConverterFactory<String, Identity<?>> {
 
     private final ObjectMapper objectMapper;

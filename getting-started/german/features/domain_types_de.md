@@ -31,7 +31,7 @@ oder als innere Klasse des Aggregates definiert sein:
 public record CustomerId(@NotNull Long value) implements Identity<Long> {}
 ```
 Eine Identity gehört hierbei genauso zu den Domain Types, wie ein Aggregate auch. Eine ausführlichere Auflistung 
-und Erläuterung aller Domain Types findet sich [hier](../../../readme_building_blocks.md).
+und Erläuterung aller Domain Types findet sich [hier](../../../concepts/readme.md).
 
 ---
 

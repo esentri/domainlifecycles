@@ -32,7 +32,7 @@ aggregate as follows:
 public record CustomerId(@NotNull Long value) implements Identity<Long> {}
 ```
 An identity belongs to the domain types in the same way as an aggregate. A more detailed list
-and explanation of all domain types can be found [here](../../../readme_building_blocks.md).
+and explanation of all domain types can be found [here](../../../concepts/readme.md).
 ---
 
 |        **Domain Mirror**        |

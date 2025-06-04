@@ -37,6 +37,7 @@ import java.util.Objects;
  * @author Tobias Herb
  * @author Dominik Galler
  */
+@Deprecated
 public class ResponseObject<T> {
 
     private T data;
