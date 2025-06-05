@@ -1,0 +1,41 @@
+plugins {
+	id 'java'
+	id 'checkstyle'
+	alias libs.plugins.spring.boot.plugin
+	alias libs.plugins.flyway.plugin
+	alias libs.plugins.jooq.codegen.gradle
+	alias libs.plugins.yumi.gradle.licenser.plugin
+	alias libs.plugins.jaredsburrows.license.plugin
+}
+
+java {
+	withJavadocJar()
+	withSourcesJar()
+}
+
+dependencies {
+	implementation platform(libs.spring.boot3.dependencies)
+	implementation project(":spring-boot-3-jooq-complete")
+
+	implementation libs.h2
+	implementation libs.jakarta.validation.api
+	implementation 'org.springframework:spring-web'
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-jooq'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation libs.jakarta.transaction.api
+
+	implementation libs.spring.doc.openapi.starter.webmvc.ui
+	implementation libs.lombok
+	annotationProcessor libs.lombok
+
+	runtimeOnly libs.jooq.codegen
+	jooqCodegen libs.jooq.meta
+
+
+	testImplementation libs.assertj
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testCompileOnly libs.lombok
+	testAnnotationProcessor libs.lombok
+}

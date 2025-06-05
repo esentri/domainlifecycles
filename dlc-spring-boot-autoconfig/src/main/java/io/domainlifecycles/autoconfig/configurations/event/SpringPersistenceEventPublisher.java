@@ -24,7 +24,7 @@
  *  limitations under the License.
  */
 
-package sampleshop.outbound.event;
+package io.domainlifecycles.autoconfig.configurations.event;
 
 import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
 import io.domainlifecycles.persistence.repository.actions.PersistenceAction;

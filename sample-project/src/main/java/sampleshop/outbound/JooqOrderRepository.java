@@ -26,6 +26,7 @@
 
 package sampleshop.outbound;
 
+import io.domainlifecycles.autoconfig.configurations.event.SpringPersistenceEventPublisher;
 import io.domainlifecycles.jooq.imp.JooqAggregateRepository;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import org.jooq.Condition;
@@ -36,7 +37,6 @@ import sampleshop.core.domain.order.Order;
 import sampleshop.core.domain.order.OrderItem;
 import sampleshop.core.domain.order.OrderStatus;
 import sampleshop.core.outport.OrderRepository;
-import sampleshop.outbound.event.SpringPersistenceEventPublisher;
 
 import java.util.Arrays;
 import java.util.stream.Stream;

@@ -40,6 +40,8 @@ tasks.register('runApp', JavaExec) {
 // ----------------------------------------------------------
 
 dependencies {
+    implementation project(":dlc-spring-boot-autoconfig")
+
     implementation platform(libs.spring.boot3.dependencies)
     implementation project(":spring-boot-3-jooq-complete")
 

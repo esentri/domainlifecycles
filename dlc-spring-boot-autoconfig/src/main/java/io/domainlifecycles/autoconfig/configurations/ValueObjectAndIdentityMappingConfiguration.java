@@ -24,7 +24,7 @@
  *  limitations under the License.
  */
 
-package sampleshop.configuration.system;
+package io.domainlifecycles.autoconfig.configurations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.spring.http.DefaultResponseEntityBuilder;
@@ -45,14 +45,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @author Tobias Herb
  */
 @Configuration
-public class WebConfiguration implements WebMvcConfigurer {
+public class ValueObjectAndIdentityMappingConfiguration implements WebMvcConfigurer {
 
     private final ObjectMapper objectMapper;
 
     /**
      * Create a new simple web configuration for Spring working with DLC.
      */
-    public WebConfiguration(ObjectMapper objectMapper) {
+    public ValueObjectAndIdentityMappingConfiguration(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 

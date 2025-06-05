@@ -24,8 +24,10 @@
  *  limitations under the License.
  */
 
-package sampleshop.configuration.system;
+package io.domainlifecycles.autoconfig.configurations;
 
+import io.domainlifecycles.autoconfig.configurations.event.SpringPersistenceEventPublisher;
+import io.domainlifecycles.autoconfig.configurations.properties.PersistenceProperties;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.ServiceKind;
@@ -42,29 +44,51 @@ import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.services.Services;
 import io.domainlifecycles.services.api.ServiceProvider;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
+import java.util.List;
+import java.util.Set;
+import javax.sql.DataSource;
 import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
+import org.jooq.impl.DataSourceConnectionProvider;
+import org.jooq.impl.DefaultConfiguration;
+import org.jooq.impl.DefaultDSLContext;
 import org.springdoc.core.properties.SpringDocConfigProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.transaction.PlatformTransactionManager;
-import sampleshop.outbound.event.SpringPersistenceEventPublisher;
 
-import java.util.List;
-import java.util.Set;
-
-/**
- * Spring configuration for DLC.
- *
- * @author Tobias Herb
- * @author Mario Herb
- */
 @Configuration
-public class DLCConfiguration {
+@EnableConfigurationProperties(PersistenceProperties.class)
+public class PersistenceConfiguration {
 
-    private static final String DOMAIN_PKG = "sampleshop";
+    @Bean
+    public DataSourceConnectionProvider connectionProvider(DataSource dataSource) {
+        return new DataSourceConnectionProvider(new TransactionAwareDataSourceProxy(dataSource));
+    }
 
-    private static final String JOOQ_RECORD_PKG = DOMAIN_PKG + ".tables.records";
+    /**
+     * DLC requires optimistic locking in JOOQ Config
+     */
+    @Bean
+    public DefaultConfiguration configuration(DataSource dataSource, PersistenceProperties persistenceProperties) {
+        final var jooqConfig = new DefaultConfiguration();
+        jooqConfig.settings().setExecuteWithOptimisticLocking(true);
+        jooqConfig.setConnectionProvider(connectionProvider(dataSource));
+        jooqConfig.set(persistenceProperties.getSqlDialect());
+        return jooqConfig;
+    }
+
+    /**
+     * All DLC repository implementations need a {@link org.jooq.DSLContext} instance.
+     */
+    @Bean
+    public DefaultDSLContext dslContext(DataSource dataSource, PersistenceProperties persistenceProperties) {
+        return new DefaultDSLContext(configuration(dataSource, persistenceProperties));
+    }
 
     /**
      * IMPORTANT: A record package where all JOOQ record classes are generated must be defined.
@@ -76,14 +100,15 @@ public class DLCConfiguration {
      */
     @Bean
     public JooqDomainPersistenceProvider domainPersistenceProvider(DomainObjectBuilderProvider domainObjectBuilderProvider,
-                                                                   Set<RecordMapper<?, ?, ?>> customRecordMappers
+                                                                   Set<RecordMapper<?, ?, ?>> customRecordMappers,
+                                                                   PersistenceProperties persistenceProperties
     ) {
         return new JooqDomainPersistenceProvider(
             JooqDomainPersistenceConfiguration.JooqPersistenceConfigurationBuilder
                 .newConfig()
                 .withDomainObjectBuilderProvider(domainObjectBuilderProvider)
                 .withCustomRecordMappers(customRecordMappers)
-                .withRecordPackage(JOOQ_RECORD_PKG)
+                .withRecordPackage(persistenceProperties.getJooqRecordPackage())
                 .make());
     }
 
