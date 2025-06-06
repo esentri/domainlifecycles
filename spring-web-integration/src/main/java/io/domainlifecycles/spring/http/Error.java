@@ -34,6 +34,7 @@ import java.util.Objects;
  * @author Mario Herb
  * @author Tobias Herb
  */
+@Deprecated
 public class Error {
 
     private String code;

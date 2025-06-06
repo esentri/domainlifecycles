@@ -9,7 +9,7 @@ The goal here is, that all DomainObjects follow the business rules associated wi
 times.
 That means those rules should be checked as soon as the corresponding objects are ready to act in the Domain Core,
 i.e. as soon as they are created (via Constructor). In the Domain Core it should never come to situations,
-where DomainObjects are processed in an "invalid" state.
+where DomainObjects are processed in an "invalid" state (see [DLC Byte Code Extension for Validation](#always-valid)).
 
 ### Invariants
 

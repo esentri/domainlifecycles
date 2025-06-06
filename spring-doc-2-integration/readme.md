@@ -8,11 +8,11 @@ DLC extends the Open API exposed via Swagger UI.
 documentation of REST/HTTP endpoints
 and in particular of DomainObject types used directly in the API in such a way, that
 they are compatible with the mapping behavior
-of [DLC JSON Mapping](./readme_json_mapping.md).
+of [DLC JSON Mapping](../jackson-integration/readme.md).
 
 ### Swagger UI example
 
-![What a pity you cannot see it](documentation/resources/images/open-api-doc.png "Open API")
+![What a pity you cannot see it](../documentation/resources/images/open-api-doc.png "Open API")
 
 In the previous image you can see a snippet of the Swagger UI, which provides an API endpoint for creating `Orders` in a
 sample application.
@@ -62,7 +62,7 @@ documentation behavior of SpringDoc Open API in further points.
 
 #### Complemented Bean Validation information
 
-Provided that the Bean Validation Standard is used (see [DLC Validation](./readme_validation.md)), information about
+Provided that the Bean Validation Standard is used (see [DLC Validation](../validation-extender/readme.md)), information about
 validations is also
 added to the schema descriptions of API parameters, return values. Spring Doc Open API already takes some information
 from Bean Validation annotations and uses them in the API documentation. This extension now ensures
@@ -89,7 +89,7 @@ not yet considered temporal types are described with a corresponding schema:
 
 Primitive Java types (`byte`, `short`, `int`, `long`, `char`, `boolean`, `float`, `double`)
 are used in JSON mapping (via [Jackson](https://github.com/FasterXML/jackson)
-via [DLC JSON Mapping](./readme_json_mapping.md)), if they are not represented in JSON with their 'natural' default,
+via [DLC JSON Mapping](../jackson-integration/readme.md)), if they are not represented in JSON with their 'natural' default,
 e.g. a property of the type `int` with the default `0`. In Java, a primitive property can never be `null`.
 
 This can lead to problems for API consumers who are concerned about the

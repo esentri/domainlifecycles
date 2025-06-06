@@ -131,7 +131,7 @@ allprojects {
 
                         pom {
                             name = 'Domain Lifecycles'
-                            description = 'Simplify developing Java applications using Domain-Driven Design.'
+                            description = 'Simplify Domain-Driven Design in Java'
                             url = 'https://www.domainlifecycles.io'
 
                             licenses {

@@ -108,7 +108,7 @@ public class DlcGradlePlugin implements Plugin<Project> {
                 task.getProjectName().set(domainModelUploadTaskConfigurationExtension.getProjectName());
                 task.getApiKey().set(domainModelUploadTaskConfigurationExtension.getApiKey());
                 task.getDiagramViewerBaseUrl().set(domainModelUploadTaskConfigurationExtension.getDiagramViewerBaseUrl());
-                task.getDomainModelPackages().set(domainModelUploadTaskConfigurationExtension.getContextPackages());
+                task.getDomainModelPackages().set(domainModelUploadTaskConfigurationExtension.getDomainModelPackages());
             });
         });
     }

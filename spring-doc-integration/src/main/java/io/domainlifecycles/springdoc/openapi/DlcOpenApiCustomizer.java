@@ -67,6 +67,7 @@ import org.springdoc.core.customizers.OpenApiCustomiser;
  *
  * @author Mario Herb
  */
+@Deprecated
 public class DlcOpenApiCustomizer implements OpenApiCustomiser {
 
     private static final Logger log = LoggerFactory.getLogger(DlcOpenApiCustomizer.class);

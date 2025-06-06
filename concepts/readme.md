@@ -1,4 +1,178 @@
-# DDD Building Blocks
+## DLC Architecture Considerations
+The following diagram provides an overview of all the concepts supported by DomainLifecycles (DLC). 
+If you're familiar with tactical Domain-Driven Design (DDD), you'll recognize many of the standard building blocks. 
+However, the diagram also includes additional concepts that may be less familiar. 
+In the following sections, we’ll walk through each concept step by step.
+
+![What a pity you cannot see it](../documentation/resources/images/concept_overview.png "Concept Overiew")
+
+### Basics: Domain Isolation
+
+![What a pity you cannot see it](../documentation/resources/images/domain_isolation.png "Domain Isolation")
+
+This diagram illustrates the architectural separation of concerns in a system designed
+recommended when using tactical Domain-Driven Design (DDD). It is explicitly supported by the Domain Lifecycles (DLC) framework.
+
+- Outer Rectangle (Dashed Border):
+  Represents the application boundary — the complete system context. 
+  It includes all layers, from user interaction and domain logic to infrastructure components 
+  such as databases and external services.
+- Inner Ellipse (Dashed Border):
+  Denotes the core domain layer, which encapsulates the essential business logic. 
+  This is where Aggregates, Entities, Value Objects, Domain Events, and Domain Services reside 
+  — the building blocks of your domain model.
+
+### Basics: Ports & Adapters
+
+![What a pity you cannot see it](../documentation/resources/images/ports_and_adapters.png "Ports And Adapters")
+
+Introducing ports and adapters help to enforce a clean boundary between the core domain logic and the infrastructure or application logic.
+By introducing these components:
+- Ports define what the domain needs or offers, without knowing how it's used or implemented.
+- Adapters handle the actual communication with the outside world (like web APIs or databases).
+
+This clear separation keeps the core logic clean, independent, and easy to test or change. Later on, you will see specific kinds of ports that are recommended for using the Ports and Adapters pattern in combination with DDD.
+
+### Typical DDD Building Blocks
+
+![What a pity you cannot see it](../documentation/resources/images/classic_ddd_building_blocks.png "Classic tactical DDD Building Blocks")
+
+DLC operates at the class level to bring clarity and structure to your domain model.
+The basic idea is to make it explicit and transparent which tactical DDD concept (like Aggregate Root, Entity, Value Object, etc.) a particular class represents.
+To achieve this, DLC uses marker interfaces — simple interfaces with no methods — that are applied directly to domain classes.
+Example:
+```java
+public class Order implements AggregateRoot { ... }
+```
+```java
+public class Product implements Entity { ... }
+```
+```java
+public class Address implements ValueObject { ... }
+```
+By tagging each class with a relevant marker interface, DLC helps make the intent of each class clear, such as indicating that a class represents an Aggregate Root. It also supports consistent modeling across the domain and enables tooling or validation to recognize and work with these roles effectively.This approach keeps the domain model expressive and structured, while staying lightweight and non-intrusive.
+DLC supports:
+- AggregateRoot (green): Entry point to the aggregate; enforces consistency rules.
+- Entity (blue): Has a distinct identity and lifecycle.
+- ValueObject (yellow): Immutable and defined by its attributes.
+- Identity: Used by entities and aggregate roots for unique identification.
+- DomainService (gray): Encapsulates domain logic that doesn't naturally fit within entities or value objects.
+- Repository (gray): Abstracts data access to aggregates.
+
+In terms of Ports and Adapters the repository interface is a port. 
+The domain logic only depends on the Repository port (interface). 
+There is an implementation residing outside the domain logic, talking to the actual database.
+
+![What a pity you cannot see it](../documentation/resources/images/domainservice_call_repository.png "DomainService calling Repository")
+
+It is common for a DomainService to call Repositories in order to access Aggregates.
+
+### ApplicationServices
+
+An ApplicationService (beige) coordinates use cases by delegating tasks to Aggregates, Repositories and other components. 
+In Hexagonal Architecture (aka Ports and Adapters), Application Services are considered an inbound port (or driver) that 
+receives requests from external clients and directs them into the domain. 
+The terms Application Service and Driver essentially represent the same concept.
+
+![What a pity you cannot see it](../documentation/resources/images/application_services.png "ApplicationServices (sometimes called Drivers)")
+
+In terms of DDD, it is perfectly acceptable for an Application Service to call a Repository directly or to invoke a DomainService, 
+as it orchestrates the application’s workflow.
+
+![What a pity you cannot see it](../documentation/resources/images/applicationservice_call_domainservice_repository.png "ApplicationServices callouts")
+
+### DomainEvents
+
+A DomainEvent (light blue) represents a significant occurrence within the domain.
+
+![What a pity you cannot see it](../documentation/resources/images/domain_events.png "DomainEvents")
+
+Aggregates can emit DomainEvents as part of their business logic to notify other parts of the system when something important happens. 
+DLC also supports Aggregates that listen directly to DomainEvents.
+
+DomainServices can listen for DomainEvents to respond to changes that occur within Aggregates 
+or elsewhere in the domain. They may also raise DomainEvents themselves if their business logic causes significant domain changes.
+
+As mentioned, ApplicationServices orchestrate use cases and coordinate interactions between domain objects and infrastructure. 
+They typically listen for DomainEvents to trigger side effects, such as sending notifications, updating read models, or integrating with external systems. 
+
+### DomainCommands
+
+Domain Commands represent intentions or requests to perform specific actions within the domain. 
+
+![What a pity you cannot see it](../documentation/resources/images/domain_commands.png "DomainCommands")
+
+They typically carry the information necessary to trigger a change or behavior in the domain model. 
+Commands are usually named using imperative verbs, such as ```CreateOrder```, ```ApprovePayment```, or ```CancelReservation```.
+
+ApplicationServices often serve as the entry point for handling DomainCommands. They receive commands from external clients (e.g., UI, APIs) 
+and coordinate the execution of the requested actions. ApplicationServices load the relevant aggregates, and delegate the execution of business logic to the Aggregates or DomainServices.
+
+Aggregates are the primary handlers of DomainCommands. 
+Upon receiving a DomainCommand, an Aggregate applies domain logic to determine whether and how its state should change. 
+The Aggregate enforces invariants and business rules in response to DommainCommands. 
+If the DomainCommand is valid, the Aggregate updates its state and may produce DomainEvents to signal what has occurred.
+
+DomainServices may also handle DomainCommands, particularly when the logic involves multiple Aggregates or does not naturally belong within a single Aggregate. 
+They act on DomainCommands by coordinating complex domain logic and interactions. Like Aggregates, DomainServices enforce business rules and can raise DomainEvents 
+as a result of processing DomainCommands.
+
+It is perfectly acceptable to implement commands as method calls. DLC recommends wrapping command parameters within a DomainCommand class, 
+so that the class represents the command’s intention (but not its logic) and can be passed through the system. 
+DLC also recognizes methods that accept only a DomainCommand object as command handlers.
+
+### ReadModels and QueryHandlers
+
+QueryHandler (gray) handle read or query use cases, typically by accessing the ReadModel.
+A ReadModel (pink) is an optimized, read-only data model designed specifically for querying purposes.
+
+![What a pity you cannot see it](../documentation/resources/images/read_models_query_handlers.png "ReadModels and QueryHandlers")
+
+Although ReadModels and QueryHandlers are not traditional concepts within Domain-Driven Design (DDD), 
+some read-only use cases are better served by using ReadModels rather than Aggregates. 
+This approach aligns with the CQRS (Command Query Responsibility Segregation) pattern, 
+which separates the write model (handling commands and business logic) from the read model (optimized for queries).
+
+However, it is important to emphasize that ReadModels are strictly read-only. Also ReadModels should not be used for every read use case. 
+Aggregates remain the authoritative source for domain state, especially when consistency and business rules need to be enforced.
+
+In this architecture, a QueryHandler acts as an outbound port to access a ReadModel, similar to how a Repository provides 
+access to Aggregates for write operations. The QueryHandler abstracts the details of querying the ReadModel, allowing the application to retrieve data efficiently.
+In DLC, the ReadModel is considered part of the domain logic, as it represents domain-specific read concerns.
+
+![What a pity you cannot see it](../documentation/resources/images/read_models_query_handlers.png "QueryHandler access")
+
+Additionally, ApplicationServices can call QueryHandlers directly in cases where special or complex read use cases require optimized data access. 
+There are also scenarios where a DomainService may need to read information that is more easily provided by a dedicated ReadModel. 
+In such cases, the DomainService can invoke a QueryHandler to retrieve the necessary data.
+
+### OutboundServices
+
+OutboundServices (gray) represent interfaces responsible for communicating with external systems outside the application’s domain boundary. 
+Examples include sending messages to external APIs, calling third-party services, or integrating with external databases.
+
+![What a pity you cannot see it](../documentation/resources/images/outbound_services.png "OutboundServices")
+
+From the Ports and Adapters (Hexagonal) perspective, an OutboundService functions as an outbound port — 
+that is, an interface defined by the domain or application layer to express interactions with external systems. 
+The implementation (OutboundServiceImpl) acts as the adapter that performs the actual communication.
+
+Outbound services are typically used when domain logic triggers interactions with external systems in a synchronous manner,
+meaning the domain expects a direct response or outcome from the external call before proceeding.
+
+![What a pity you cannot see it](../documentation/resources/images/outboundservice_domainservice_applicationservice.png "OutboundService access")
+
+There are use cases where either an ApplicationService or a Domain Service calls an OutboundService.
+When an ApplicationService calls an OutboundService, it typically orchestrates a use case that involves interacting with 
+external systems—such as sending notifications, calling third-party APIs, or integrating with external resources—after coordinating domain operations.
+
+In some cases, a DomainService may also call an OutboundService directly, especially when the domain logic itself requires 
+synchronous interaction with an external system as part of enforcing business rules or performing domain-specific tasks.
+
+In both scenarios, the OutboundService acts as an outbound port in the Ports and Adapters architecture, 
+abstracting the external communication so that the domain and application layers remain decoupled from infrastructure details.
+
+## DDD Building Blocks
 
 DLC provides marker interfaces and abstract base classes for several DDD Building Blocks. Not each
 of the Building Block patterns presented here, has its origin in Evans' Blue Book. We've added some
@@ -39,7 +213,7 @@ applied:
 
 We encourage the implementation of "always-valid" domain objects, so all non-service building blocks
 are [Validatable](#Validatable).
-More information on always-valid can be found [here](./readme_validation.md)
+More information on always-valid can be found [here](validation-extender/readme_validation.md)
 
 Also take a look at our [general considerations](#general-considerations) on using `java.lang.Optional` on fields.
 
@@ -81,7 +255,7 @@ information: [Design Reference - Value Objects](https://www.domainlanguage.com/w
 ### Example
 
 ```Java
-@Builder(setterPrefix = "set")
+@Builder
 public record Price(
     @NotNull @PositiveOrZero @Digits(integer = 10, fraction = 2) BigDecimal amount
     ) implements ValueObject
@@ -142,7 +316,7 @@ public final class OrderItem extends EntityBase<OrderItem.OrderItemId> {
     @PositiveOrZero
     private int quantity;
     
-    @Builder(setterPrefix = "set")
+    @Builder
     private OrderItem(final long concurrencyVersion,
                       final OrderItem.OrderItemId id,
                       final Product.ProductId productId,
@@ -222,7 +396,7 @@ public final class Order extends AggregateRootBase<Order.OrderId> {
     @NotNull
     private OrderStatus status;
     
-    @Builder(setterPrefix = "set")
+    @Builder
     private Order(final long concurrencyVersion,
                   final Order.OrderId id,
                   final Customer.CustomerId customerId,
@@ -332,7 +506,7 @@ Information: [Design Reference - Repositories](https://www.domainlanguage.com/wp
 + Make sure Repository operations do not break the Aggregate`s consistency rules,
   e.g. load only parts of an Aggregate or update parts of an Aggregate without concurrency control.
 + In many cases, DLC does not require explicitly defined mappers to map domain objects to the datastore's structure
-  (for further information refer to [DLC Persistence](./readme_persistence.md)).
+  (for further information refer to [DLC Persistence](persistence/readme_persistence.md)).
 
 ### Example
 
@@ -510,7 +684,7 @@ Information:
 + DomainEvents should be named in a meaningful way (noun + verb in past tense).
 + DomainEvents require implementing `io.domainlifecycles.domain.types.DomainEvent`.
 + DomainEvents should be implemented immutable (like ValueObjects). We suggest using Java records.
-+ Consider using [`DLC Domain Events`](./readme_domain_events.md) for appropriate transactional DomainEvent handling.
++ Consider using [`DLC Domain Events`](domain-events-core/readme_domain_events.md) for appropriate transactional DomainEvent handling.
 
 ### Example
 
@@ -758,11 +932,11 @@ every mutating operation.
 + Implement all invariants or validated domain rules that belong to that building block in `validate()`, if you
   use `io.domainlifecycles.assertion.DomainAssertions`.
 + The corresponding building blocks can use Bean Validation Annotations on their properties, method parameters or return
-  values (see [DLC Validation](./readme_validation.md))
+  values (see [DLC Validation](validation-extender/readme_validation.md))
 + Remember, that Bean Validation Annotations or DomainAssertions are completely optional, you can also use any other
   mechanism for validating your building blocks.
 + To simplify the "always-valid" approach make use of the DLC Validation Extender (
-  see [DLC Validation](./readme_validation.md)).
+  see [DLC Validation](validation-extender/readme_validation.md)).
 
 <a name="general-considerations"></a>
 

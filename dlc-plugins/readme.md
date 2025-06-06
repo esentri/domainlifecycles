@@ -3,6 +3,7 @@
 The DLC plugins provide several functions to integrate DLC in the build phase:
 - creating domain diagrams of the build domain classes within the bounded contexts
 - exporting a JSON domain model
+- uploading the domain model based on the current implementation to a DLC Domain Viewer instance
 
 ## General prerequisites
 To create class diagrams the plugins use a Kroki Docker container, so Docker should be available on the machine running the plugin.
@@ -15,6 +16,10 @@ The plugin is able to create class diagrams in various formats of your implement
 #### Configuration
 An example configuration in your project could look like the following:
 ```groovy
+plugins {
+    id 'io.domainlifecycles.dlc-gradle-plugin' version '2.4.0'
+}
+
 dlcGradlePlugin {
     diagram {
         fileOutputDir = layout.buildDirectory
@@ -43,7 +48,7 @@ The specified DomainModel must be complete an self-contained. All classes that t
 To render only a specific part of the model, use the `explicitlyIncludedPackages`configuration option.
 
 Currently the DLC Gradle plugin is only published to Maven Central without a gradle plugin marker artifact. 
-To use it, you must specify a special resolution strategy:
+To use it, you have to specify a special resolution strategy:
 ```groovy
 pluginManagement {
 

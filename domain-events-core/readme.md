@@ -1,4 +1,4 @@
-## Domain Lifecycles DomainEvents
+## DLC DomainEvents
 
 DLC Domain Events provides functionality to simplify some of the technical aspects regarding DomainEvents:
 - In order to keep the core implementation of a bounded context free of technical concerns DLC Domain Events provides two simple
@@ -58,7 +58,7 @@ DLC DomainEvents also provides options to customize or enhance to technical even
 
 Additionally, DLC provides the option to add metadata annotations on methods that publish DomainEvents (``@Publishes``, see io.domainlifecycles.domain.types.Publishes). 
 Those annotations have no functional impact, but they currently make it more transparent to developers, where DomainEvents are published. The ``@Publishes`` metadata 
-information is also rendered in DLC domain diagrams (see [DLC Domain Diagrammer](./readme_diagrammer.md))  
+information is also rendered in DLC domain diagrams (see [DLC Domain Diagrammer](../readme_diagrammer.md))  
 
 <a name="listening"></a>
 #### Listening to DomainEvents

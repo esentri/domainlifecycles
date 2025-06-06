@@ -5,7 +5,7 @@ Nomnoml is tool for drawing UML diagrams based on a simple syntax.
 
 The generated diagram text currently describes UML class diagram, which sets the focus on the used DDD patterns.
 Most of the meta-information needed is derived from the used DLC marker interfaces for the
-DDD [Building Blocks](./readme_building_blocks.md).
+DDD [Building Blocks](../readme_building_blocks.md).
 
 Have a look at our [sample project](./dlc-sample), and diagram text
 generated [here](./dlc-domain-diagrammer/src/test/java/nomnoml/generator/NomnomlDomainDiagramGeneratorTest.java)
@@ -64,7 +64,7 @@ class NomnomlDomainDiagramGeneratorTest {
     - On Nomnoml projects page, you can find information on how to generate images directly or to host your own Nomnoml
       drawer instance via Docker.
 
-![What a pity you cannot see it](documentation/resources/images/sample_diagram.png "Nomnoml based DDD class diagram")
+![What a pity you cannot see it](../documentation/resources/images/sample_diagram.png "Nomnoml based DDD class diagram")
 
 ## Rendering from commandline to image
 
@@ -81,8 +81,8 @@ More on the usage of `nomnoml-cli`: https://github.com/prantlf/nomnoml-cli
 ## Requirements
 
 To render something useful, your domain implementation must implement/use the marker interfaces and annotations
-from [DLC Domain types](./dlc-types).  
-Also we at least need the [domain mirror](./dlc-mirror), to be able to provide all the needed domain metadata within the
+from [DLC Domain types](../concepts/readme.md).  
+Also we at least need the [domain mirror](../mirror/readme.md), to be able to provide all the needed domain metadata within the
 rendering process.
 
 Those dependencies are provided like:

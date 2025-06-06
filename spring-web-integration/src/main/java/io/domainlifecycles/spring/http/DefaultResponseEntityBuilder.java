@@ -35,6 +35,7 @@ import org.springframework.http.ResponseEntity;
  * @author Mario Herb
  * @author Dominik Galler
  */
+@Deprecated
 public class DefaultResponseEntityBuilder implements ResponseEntityBuilder {
 
     /**
