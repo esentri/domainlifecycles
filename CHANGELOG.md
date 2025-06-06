@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.4.1] - 2025-06-06
 - Added deprecated markers at some classes
 - Refactored and extended documentation
-- Fixed config setting in Maven plugin for DomainModel Upload
+- Fixed config setting in Gradle plugin for DomainModel Upload
 
 ## [2.4.0] - 2025-05-30
 - Refactored and extended Domain diagrammer options for showing inheritance structures
