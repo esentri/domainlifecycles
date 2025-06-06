@@ -73,13 +73,13 @@ public abstract class DomainModelUploadTaskConfigurationExtension {
     public abstract Property<String> getProjectName();
 
     /**
-     * Retrieves the list of context package names relevant to the domain model.
+     * Retrieves the list of package names relevant to the domain model.
      *
-     * This method provides access to the context packages, which specify the
+     * This method provides access to the packages, which specify the
      * scoped Java packages associated with the domain model in the upload task configuration.
      * These packages are typically used to identify and isolate specific parts of the domain model.
      *
-     * @return a {@code ListProperty<String>} representing the list of context package names.
+     * @return a {@code ListProperty<String>} representing the list of package names.
      */
-    public abstract ListProperty<String> getContextPackages();
+    public abstract ListProperty<String> getDomainModelPackages();
 }
