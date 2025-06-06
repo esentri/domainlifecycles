@@ -26,7 +26,7 @@
 
 package sampleshop.outbound;
 
-import io.domainlifecycles.autoconfig.configurations.event.SpringPersistenceEventPublisher;
+import sampleshop.outbound.event.SpringPersistenceEventPublisher;
 import io.domainlifecycles.jooq.imp.JooqAggregateRepository;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import org.jooq.Condition;

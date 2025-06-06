@@ -26,33 +26,17 @@
 
 package io.domainlifecycles.autoconfig.configurations.properties;
 
-import io.domainlifecycles.autoconfig.exception.DLCAutoConfigException;
-import java.sql.Connection;
 import org.jooq.SQLDialect;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "dlc.persistence")
-public class PersistenceProperties {
+public class DlcJooqPersistenceProperties {
 
-    private String domainPackage;
+
     private String jooqRecordPackage;
     private SQLDialect sqlDialect;
 
-    public String getDomainPackage() {
-        if(domainPackage == null) {
-            throw DLCAutoConfigException.fail("Property 'domainPackage' is missing. Make sure you specified a property called 'dlc.persistence.domainPackage'.");
-        }
-        return domainPackage;
-    }
-
-    public void setDomainPackage(String domainPackage) {
-        this.domainPackage = domainPackage;
-    }
-
     public String getJooqRecordPackage() {
-        if(jooqRecordPackage == null) {
-            throw DLCAutoConfigException.fail("Property 'jooqRecordPackage' is missing. Make sure you specified a property called 'dlc.persistence.jooqRecordPackage'.");
-        }
         return jooqRecordPackage;
     }
 
@@ -61,9 +45,6 @@ public class PersistenceProperties {
     }
 
     public SQLDialect getSqlDialect() {
-        if(sqlDialect == null) {
-            throw DLCAutoConfigException.fail("Property 'sqlDialect' is missing. Make sure you specified a property called 'dlc.persistence.sqlDialect'.");
-        }
         return sqlDialect;
     }
 

@@ -26,18 +26,27 @@
 
 package io.domainlifecycles.autoconfig.annotation;
 
-import io.domainlifecycles.autoconfig.configurations.ValueObjectAndIdentityMappingConfiguration;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import io.domainlifecycles.autoconfig.configurations.properties.JooqPersistenceConfigImportSelector;
+import org.jooq.SQLDialect;
 import org.springframework.context.annotation.Import;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import({ConfigurationImportSelector.class, ValueObjectAndIdentityMappingConfiguration.class})
+@Import({JooqPersistenceConfigImportSelector.class, ConfigurationImportSelector.class})
 public @interface EnableDlc {
 
-    boolean enablePersistence() default true;
-    boolean enableDLCMapping() default true;
+    boolean enableSpringWebAutoConfig() default true;
+    boolean enableBuilderAutoConfig() default true;
+    boolean enableJooqPersistenceAutoConfig() default true;
+    String  jooqRecordPackage() default "";
+    SQLDialect jooqSqlDialect() default SQLDialect.DEFAULT;
+    boolean enableDomainEventsAutoConfig() default true;
+    boolean enableJacksonAutoConfig() default true;
+    boolean enableSpringOpenApiAutoConfig() default true;
+
 }

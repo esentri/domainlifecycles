@@ -29,6 +29,13 @@ package io.domainlifecycles.autoconfig.annotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import io.domainlifecycles.autoconfig.configurations.DlcBuilderAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcDomainEventsAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcJacksonAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.type.AnnotationMetadata;
 
@@ -39,17 +46,37 @@ public class ConfigurationImportSelector implements ImportSelector {
         Map<String, Object> attributes = importingClassMetadata
             .getAnnotationAttributes(EnableDlc.class.getName());
 
-        boolean enablePersistence = (boolean) attributes.get("enablePersistence");
-        boolean enableMapping = (boolean) attributes.get("enableDLCMapping");
+        boolean enableBuilderAutoConfig = (boolean) attributes.get("enableBuilderAutoConfig");
+        boolean enableJooqPersistenceAutoConfig = (boolean) attributes.get("enableJooqPersistenceAutoConfig");
+        boolean enableDomainEventsAutoConfig = (boolean) attributes.get("enableDomainEventsAutoConfig");
+        boolean enableSpringWebAutoConfig = (boolean) attributes.get("enableSpringWebAutoConfig");
+        boolean enableJacksonAutoConfig = (boolean) attributes.get("enableJacksonAutoConfig");
+        boolean enableSpringOpenApiAutoConfig = (boolean) attributes.get("enableSpringOpenApiAutoConfig");
 
         List<String> configs = new ArrayList<>();
 
-        if (enablePersistence) {
-            configs.add("io.domainlifecycles.autoconfig.configurations.PersistenceConfiguration");
+        if (enableBuilderAutoConfig) {
+            configs.add(DlcBuilderAutoConfiguration.class.getName());
         }
 
-        if (enableMapping) {
-            configs.add("io.domainlifecycles.autoconfig.configurations.ValueObjectAndIdentityMappingConfiguration");
+        if (enableJooqPersistenceAutoConfig) {
+            configs.add(DlcJooqPersistenceAutoConfiguration.class.getName());
+        }
+
+        if (enableDomainEventsAutoConfig) {
+            configs.add(DlcDomainEventsAutoConfiguration.class.getName());
+        }
+
+        if (enableSpringWebAutoConfig) {
+            configs.add(DlcSpringWebAutoConfiguration.class.getName());
+        }
+
+        if (enableJacksonAutoConfig) {
+            configs.add(DlcJacksonAutoConfiguration.class.getName());
+        }
+
+        if (enableSpringOpenApiAutoConfig) {
+            configs.add(DlcSpringOpenApiAutoConfiguration.class.getName());
         }
 
         return configs.toArray(new String[0]);
