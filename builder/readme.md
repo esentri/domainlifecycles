@@ -3,7 +3,7 @@
 DLC internally heavily relies on the Builder Pattern for the creation of DomainObjects. This is due to the fact
 that we emphasize an always valid strategy on the one hand and on the other hand ValueObjects are by definition
 immutable.
-Thus, DomainObjects created from JSON Input or by querying a database must be created by a builder.
+Thus, Domain Objects created from JSON Input or by querying a database must be created by a builder.
 For developers, the usage of Builder Pattern is encouraged, since Domain Classes do often have many arguments
 which bloats constructor calls unnecessarily.
 

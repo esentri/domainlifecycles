@@ -1,4 +1,4 @@
-## Domain Lifecycles Open API support
+## DomainLifeCycles Open API support
 
 DLC supports the [Open API](https://www.openapis.org/) "code-first"
 approach. This extension works on the basis of

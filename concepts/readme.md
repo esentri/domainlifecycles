@@ -1,5 +1,5 @@
 ## DLC Architecture Considerations
-The following diagram provides an overview of all the concepts supported by DomainLifecycles (DLC). 
+The following diagram provides an overview of all the concepts supported by DomainLifeCycles (DLC). 
 If you're familiar with tactical Domain-Driven Design (DDD), you'll recognize many of the standard building blocks. 
 However, the diagram also includes additional concepts that may be less familiar. 
 In the following sections, we’ll walk through each concept step by step.
@@ -11,7 +11,7 @@ In the following sections, we’ll walk through each concept step by step.
 ![What a pity you cannot see it](../documentation/resources/images/domain_isolation.png "Domain Isolation")
 
 This diagram illustrates the architectural separation of concerns in a system designed
-recommended when using tactical Domain-Driven Design (DDD). It is explicitly supported by the Domain Lifecycles (DLC) framework.
+recommended when using tactical Domain-Driven Design (DDD). It is explicitly supported by DomainLifeCycles (DLC).
 
 - Outer Rectangle (Dashed Border):
   Represents the application boundary — the complete system context. 
@@ -33,7 +33,7 @@ By introducing these components:
 
 This clear separation keeps the core logic clean, independent, and easy to test or change. Later on, you will see specific kinds of ports that are recommended for using the Ports and Adapters pattern in combination with DDD.
 
-### Typical DDD Building Blocks
+### Essential DDD Building Blocks
 
 ![What a pity you cannot see it](../documentation/resources/images/classic_ddd_building_blocks.png "Classic tactical DDD Building Blocks")
 
@@ -77,7 +77,7 @@ The terms Application Service and Driver essentially represent the same concept.
 ![What a pity you cannot see it](../documentation/resources/images/application_services.png "ApplicationServices (sometimes called Drivers)")
 
 In terms of DDD, it is perfectly acceptable for an Application Service to call a Repository directly or to invoke a DomainService, 
-as it orchestrates the application’s workflow.
+as it orchestrates the application’s workflow. Refer to the explanations below to distinguish between [ApplicationServices](#ApplicationService) and [DomainServices](#DomainService). 
 
 ![What a pity you cannot see it](../documentation/resources/images/applicationservice_call_domainservice_repository.png "ApplicationServices callouts")
 
@@ -172,7 +172,7 @@ synchronous interaction with an external system as part of enforcing business ru
 In both scenarios, the OutboundService acts as an outbound port in the Ports and Adapters architecture, 
 abstracting the external communication so that the domain and application layers remain decoupled from infrastructure details.
 
-## DDD Building Blocks
+## Detailed DDD Building Blocks Overview
 
 DLC provides marker interfaces and abstract base classes for several DDD Building Blocks. Not each
 of the Building Block patterns presented here, has its origin in Evans' Blue Book. We've added some
@@ -582,8 +582,7 @@ Some concepts from the domain aren’t natural to model as objects. Especially, 
 properly expressed as the responsibility of exactly one Aggregate.
 
 In contrast to ApplicationServices (which are not directly part of the domain) DomainServices do handle domain logic
-that
-is often dependent on the state of multiple Aggregates.
+that is often dependent on the state of multiple Aggregates.
 
 Further
 Information:
@@ -734,7 +733,7 @@ public record ShipOrder(
 ) implements DomainCommand {}
 ```
 
-## <a name="ApplicationService"></a>ApplicationService
+## ApplicationService
 
 ### Pattern description
 

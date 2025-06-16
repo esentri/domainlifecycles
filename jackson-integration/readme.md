@@ -1,4 +1,4 @@
-## Domain Lifecycles JSON Mapping
+## DomainLifeCycles JSON Mapping
 
 DLC supports serialization and deserialization of JSON to/from Java based DomainObjects
 via a [Jackson](https://github.com/FasterXML/jackson) extension.

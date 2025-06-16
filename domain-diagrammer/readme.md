@@ -1,4 +1,4 @@
-# Domain Lifecycles Diagrammer
+# DomainLifeCycles Diagrammer
 
 The DLC Diagrammer currently generates [Nomnoml](https://nomnoml.com/) diagram texts.
 Nomnoml is tool for drawing UML diagrams based on a simple syntax.

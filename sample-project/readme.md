@@ -3,7 +3,7 @@
 ## Introduction
 
 A simple Spring Boot based online store application implemented with the Domain
-Driven Design approach using Domainlifecycles technology.
+Driven Design approach using DomainLifeCycles technology.
 
 This is for demo purposes to show the DDD concepts and technical implementation
 in a practical way and to provide a basic understanding of the structure,
@@ -57,7 +57,7 @@ Flyway is a database migration tool that
   versions or systems.
 + Flyway is compatible with DLC, but not mandatory
 
-### Domain Lifecycles (DLC)
+### DomainLifeCycles (DLC)
 
 DLC constructs the mechanics for the
 control of a proper domain model implementation in Java together with its relational persistence.

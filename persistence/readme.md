@@ -1,4 +1,4 @@
-## Domain Lifecycles Persistence
+## DomainLifeCycles Persistence
 
 DLC Persistence is all about object relational mapping and Aggregate persistence via Repositories.
 The DDD recommendation is to implement the persistence related access on Aggregates within a Repository.
