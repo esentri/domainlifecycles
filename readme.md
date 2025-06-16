@@ -66,7 +66,7 @@ express business logic clearly, model rich domain lifecycles, and maintain conce
 
 DLC provides following core features:
 
-- [`Domain Types`](concepts/readme.md)): Implementation of DDD building blocks using DLC interfaces or base
+- [`Domain Types`](concepts/readme.md): Implementation of DDD building blocks using DLC interfaces or base
   classes
     * Mark DDD building blocks in the Java code: Make your tactical design more transparent
     * Base for Java typesystem backed meta-data (see below Domain Mirror)
@@ -75,7 +75,7 @@ DLC provides following core features:
     * Provides structural queries and navigation through a bounded contexts structural metamodel as well as simplified
       reflective access on values of instances of a domain's `Aggregates`, `Entities` and `ValueObjects`
 
-- [`DomainObject Builders`](builder/readme.md): Builder pattern support
+- [`Domain Object Builders`](builder/readme.md): Builder pattern support
     * Complements the DDD Factory pattern
     * Optional: Lombok Builder compatibility
 
