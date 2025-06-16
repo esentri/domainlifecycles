@@ -64,10 +64,10 @@ information is also rendered in DLC domain diagrams (see [DLC Domain Diagrammer]
 #### Listening to DomainEvents
 Domain Events are typically listened to by ApplicationServices, DomainServices, Repositories, OutboundServices, QueryHandlers or directly by Aggregate instances. 
 DLC reduces the technical boilerplate normally needed to route consumed DomainEvents to the addressed handler methods.
-Therefor the annotation ``@ListensTo`` (see io.domainlifecycles.domain.types.ListensTo) is used.
+Therefor the annotation ``@ListensTo`` (see ``io.domainlifecycles.domain.types.ListensTo`) is used.
 
 Every method (inside an ApplicationService, a DomainService, an OutboundService, a QueryHandler or a Repository) that has only one parameter (the consumed DomainEvent) and which is annotated with
-```@ListensTo``` is automatically called, when a new DomainEvent is consumed by the central DLC event consumer (see ``io.domainlifecycles.events.consume.DomainEventConsumer``).
+```@ListensTo``` is automatically called, when a new DomainEvent is consumed by the central DLC event consumer (see ``io.`domainl`ifecycles.events.consume.DomainEventConsumer``).
 
 Depending on the transaction configuration of DLC DomainEvents, every handler call might also be automatically wrapped in an independent transaction.
 
@@ -92,7 +92,7 @@ public class CustomerNotificationDriver implements Driver {
 }
 ```
 
-To route DomainEvents directly to an Aggregate instance, the DomainEvent must implement a special interface ```io.domainlifecycles.domain.types.AggregateDomainEvent```.
+To route DomainEvents directly to an Aggregate instance, the DomainEvent must implement a special interface ``io.domainlifecycles.domain.types.AggregateDomainEvent``.
 The interface requires the implementor to provide the ``targetId`` of the target AggregateRoot. In this case fetching the AggregateRoot instance by the specified targetId 
 from it's corresponding Repository and calling the event handler method directly on the AggregateRoot instance is done directly by the DLC framework in the background.
 The complete described operation is done in a separate transaction and the Aggregate instance is finally updated using its repository. 

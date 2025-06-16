@@ -1,5 +1,5 @@
 ## DLC Architecture Considerations
-The following diagram provides an overview of all the concepts supported by DomainLifecycles (DLC). 
+The following diagram provides an overview of all the concepts supported by DomainLifeCycles (DLC). 
 If you're familiar with tactical Domain-Driven Design (DDD), you'll recognize many of the standard building blocks. 
 However, the diagram also includes additional concepts that may be less familiar. 
 In the following sections, we’ll walk through each concept step by step.
@@ -11,7 +11,7 @@ In the following sections, we’ll walk through each concept step by step.
 ![What a pity you cannot see it](../documentation/resources/images/domain_isolation.png "Domain Isolation")
 
 This diagram illustrates the architectural separation of concerns in a system designed
-recommended when using tactical Domain-Driven Design (DDD). It is explicitly supported by the Domain Lifecycles (DLC) framework.
+recommended when using tactical Domain-Driven Design (DDD). It is explicitly supported by DomainLifeCycles (DLC).
 
 - Outer Rectangle (Dashed Border):
   Represents the application boundary — the complete system context. 

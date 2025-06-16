@@ -1,13 +1,13 @@
-# Domain Lifecycles (DLC)
+# DomainLifeCycles (DLC)
 
-Domain Lifecycles is a Java based set of libraries for developing business applications following the principles of
+DomainLifeCycles is a Java based set of libraries for developing business applications following the principles of
 `Domain Driven Design` (DDD). The goal is to simplify and accelerate the design and implementation with Java
 based tactical design ([DDD and DLC tactical design concepts](concepts/readme.md)),
 so that developers can focus on modelling the domain in an appropriate way without being restricted, constrained
 or accidentally being influenced by other pure technical frameworks.
 
-## The Opinions Behind Domain Lifecycles (DLC)
-Domain Lifecycles (DLC) is an opinionated set of Java libraries for Domain-Driven Design (DDD), focused on helping developers 
+## The Opinions Behind DomainLifeCycles (DLC)
+DomainLifeCycles (DLC) is an opinionated set of Java libraries for Domain-Driven Design (DDD), focused on helping developers 
 express business logic clearly, model rich domain lifecycles, and maintain conceptual clarity 
 — all while integrating smoothly with the Java ecosystem. These are the guiding principles behind DLC:
 
