@@ -48,5 +48,8 @@ public @interface EnableDlc {
     boolean enableDomainEventsAutoConfig() default true;
     boolean enableJacksonAutoConfig() default true;
     boolean enableSpringOpenApiAutoConfig() default true;
-
+    boolean enableJmsEvents() default false;
+    boolean enableGruelboxEvents() default false;
+    boolean enableJakartaJmsGruelboxEvents() default false;
+    boolean enableJakartaJmsGruelboxIdempotentEvents() default false;
 }
