@@ -3,6 +3,7 @@ package io.domainlifecycles.autoconfig.configurations;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.access.classes.DefaultClassProvider;
 import io.domainlifecycles.domain.types.ServiceKind;
+import io.domainlifecycles.events.api.Channel;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
@@ -23,51 +24,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 @AutoConfiguration
 public class DlcDomainEventsAutoConfiguration {
 
-    /**
-     * This method creates and configures a ServiceProvider instance, which is responsible for providing instances of
-     * various types of services.
-     * It takes three parameters: repositories, applicationServices, and domainServices, which are lists of
-     * Repository, ApplicationService, and DomainService instances respectively
-     */
-    @ConditionalOnMissingBean(ServiceProvider.class)
     @Bean
+    @ConditionalOnMissingBean(ServiceProvider.class)
     public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds){
         return  new Services(serviceKinds);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(PublishingRouter.class)
-    public DomainEventTypeBasedRouter router(List<PublishingChannel> publishingChannels){
-        var router = new DomainEventTypeBasedRouter(publishingChannels);
-        router.defineDefaultChannel("default");
-        return router;
-    }
-    @Bean
-    @ConditionalOnMissingBean(ChannelRoutingConfiguration.class)
-    @ConditionalOnBean(PublishingRouter.class)
-    public ChannelRoutingConfiguration channelConfiguration(PublishingRouter publishingRouter){
-        return new ChannelRoutingConfiguration(publishingRouter);
-    }
-
-    @Bean
-    @ConditionalOnBean(PlatformTransactionManager.class)
-    @ConditionalOnMissingBean(ChannelRoutingConfiguration.class)
-    public ChannelRoutingConfiguration channelConfiguration(
-        PlatformTransactionManager platformTransactionManager,
-        ServiceProvider serviceProvider,
-        PublishingRouter router
-    ){
-        var channel = new SpringTxInMemoryChannelFactory(platformTransactionManager, serviceProvider, true).processingChannel("default");
-        return new ChannelRoutingConfiguration(router);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean({PlatformTransactionManager.class, ChannelRoutingConfiguration.class})
-    public ChannelRoutingConfiguration channelConfiguration(ServiceProvider serviceProvider){
-        var channel = new InMemoryChannelFactory(serviceProvider).processingChannel("default");
-        var router = new DomainEventTypeBasedRouter(List.of(channel));
-        router.defineDefaultChannel("default");
-        return new ChannelRoutingConfiguration(router);
     }
 
     @Bean
@@ -78,7 +38,42 @@ public class DlcDomainEventsAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(ClassProvider.class)
     public ClassProvider classProvider(){
         return new DefaultClassProvider();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(PublishingRouter.class)
+    public DomainEventTypeBasedRouter router(List<PublishingChannel> publishingChannels){
+        var router = new DomainEventTypeBasedRouter(publishingChannels);
+        router.defineDefaultChannel("default");
+        return router;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(ChannelRoutingConfiguration.class)
+    @ConditionalOnBean(PublishingRouter.class)
+    public ChannelRoutingConfiguration channelConfiguration(PublishingRouter publishingRouter){
+        return new ChannelRoutingConfiguration(publishingRouter);
+    }
+
+    @Bean
+    @ConditionalOnBean(PlatformTransactionManager.class)
+    @ConditionalOnMissingBean(Channel.class)
+    public Channel channelConfiguration(
+        PlatformTransactionManager platformTransactionManager,
+        ServiceProvider serviceProvider
+    ){
+        var channel = new SpringTxInMemoryChannelFactory(platformTransactionManager, serviceProvider, true).processingChannel("default");
+        return channel;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean({PlatformTransactionManager.class, Channel.class})
+    public Channel channelConfiguration(
+        ServiceProvider serviceProvider){
+        var channel = new InMemoryChannelFactory(serviceProvider).processingChannel("default");
+        return channel;
     }
 }

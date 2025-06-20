@@ -45,11 +45,8 @@ public @interface EnableDlc {
     boolean enableJooqPersistenceAutoConfig() default true;
     String  jooqRecordPackage() default "";
     SQLDialect jooqSqlDialect() default SQLDialect.DEFAULT;
-    boolean enableDomainEventsAutoConfig() default true;
+    boolean enableDomainEventsAutoConfig() default false;
     boolean enableJacksonAutoConfig() default true;
     boolean enableSpringOpenApiAutoConfig() default true;
-    boolean enableJmsEvents() default false;
-    boolean enableGruelboxEvents() default false;
-    boolean enableJakartaJmsGruelboxEvents() default false;
-    boolean enableJakartaJmsGruelboxIdempotentEvents() default false;
+
 }
