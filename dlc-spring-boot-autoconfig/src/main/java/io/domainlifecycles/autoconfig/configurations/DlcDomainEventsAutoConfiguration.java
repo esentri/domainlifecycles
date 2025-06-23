@@ -16,12 +16,14 @@ import io.domainlifecycles.services.Services;
 import io.domainlifecycles.services.api.ServiceProvider;
 import java.util.List;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @AutoConfiguration
+@AutoConfigureAfter(DlcDomainAutoConfiguration.class)
 public class DlcDomainEventsAutoConfiguration {
 
     @Bean
@@ -65,15 +67,13 @@ public class DlcDomainEventsAutoConfiguration {
         PlatformTransactionManager platformTransactionManager,
         ServiceProvider serviceProvider
     ){
-        var channel = new SpringTxInMemoryChannelFactory(platformTransactionManager, serviceProvider, true).processingChannel("default");
-        return channel;
+        return new SpringTxInMemoryChannelFactory(platformTransactionManager, serviceProvider, true).processingChannel("default");
     }
 
     @Bean
     @ConditionalOnMissingBean({PlatformTransactionManager.class, Channel.class})
     public Channel channelConfiguration(
         ServiceProvider serviceProvider){
-        var channel = new InMemoryChannelFactory(serviceProvider).processingChannel("default");
-        return channel;
+        return new InMemoryChannelFactory(serviceProvider).processingChannel("default");
     }
 }

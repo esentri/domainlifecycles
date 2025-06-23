@@ -21,6 +21,7 @@ dependencies {
     testImplementation project(":builder")
     testImplementation project(":domain-events-jakarta-jms")
     testImplementation project(":domain-events-mq")
+    testImplementation project(":dlc-spring-boot-autoconfig")
     testImplementation libs.slf4j.api
     testImplementation libs.lombok
     testAnnotationProcessor libs.lombok

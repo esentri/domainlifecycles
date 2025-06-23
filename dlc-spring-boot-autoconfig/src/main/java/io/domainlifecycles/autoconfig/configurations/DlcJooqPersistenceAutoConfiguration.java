@@ -30,6 +30,7 @@ import io.domainlifecycles.autoconfig.configurations.properties.DlcJooqPersisten
 import io.domainlifecycles.autoconfig.exception.DLCAutoConfigException;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.jooq.configuration.JooqDomainPersistenceConfiguration;
+import io.domainlifecycles.jooq.configuration.def.JooqRecordClassProvider;
 import io.domainlifecycles.jooq.imp.JooqEntityIdentityProvider;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
@@ -57,7 +58,7 @@ import java.util.Set;
 
 @AutoConfiguration
 @EnableConfigurationProperties(DlcJooqPersistenceProperties.class)
-@AutoConfigureAfter({DlcBuilderAutoConfiguration.class, DataSourceAutoConfiguration.class})
+@AutoConfigureAfter({DlcBuilderAutoConfiguration.class, DataSourceAutoConfiguration.class, DlcDomainAutoConfiguration.class})
 @AutoConfigureBefore({JooqAutoConfiguration.class})
 public class DlcJooqPersistenceAutoConfiguration {
 
@@ -120,11 +121,16 @@ public class DlcJooqPersistenceAutoConfiguration {
         DlcJooqPersistenceProperties persistenceProperties
     ) {
         var recordPackage = "";
-        if (persistenceProperties != null){
+        if (persistenceProperties != null
+            && persistenceProperties.getJooqRecordPackage() != null
+            && !persistenceProperties.getJooqRecordPackage().isBlank()) {
+
             recordPackage = persistenceProperties.getJooqRecordPackage();
-        } else if(jooqRecordPackage != null) {
+        }
+        else if(jooqRecordPackage != null && !jooqRecordPackage.isBlank()) {
             recordPackage = jooqRecordPackage;
-        }else {
+        }
+        else {
             throw DLCAutoConfigException.fail("Property 'jooqRecordPackage' is missing. Make sure you specified a property called 'dlc.persistence.jooqRecordPackage'.");
         }
 
@@ -133,7 +139,7 @@ public class DlcJooqPersistenceAutoConfiguration {
                 .newConfig()
                 .withDomainObjectBuilderProvider(domainObjectBuilderProvider)
                 .withCustomRecordMappers(customRecordMappers)
-                .withRecordPackage(recordPackage)
+                .withRecordClassProvider(new JooqRecordClassProvider(recordPackage))
                 .make());
     }
 

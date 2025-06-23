@@ -20,7 +20,7 @@ import java.util.Objects;
 @AutoConfiguration
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @ConditionalOnBean(ObjectMapper.class)
-@AutoConfigureAfter({DlcJacksonAutoConfiguration.class, JacksonAutoConfiguration.class})
+@AutoConfigureAfter({DlcJacksonAutoConfiguration.class, JacksonAutoConfiguration.class, DlcDomainAutoConfiguration.class})
 public class DlcSpringWebAutoConfiguration implements WebMvcConfigurer {
 
     private final ObjectMapper objectMapper;

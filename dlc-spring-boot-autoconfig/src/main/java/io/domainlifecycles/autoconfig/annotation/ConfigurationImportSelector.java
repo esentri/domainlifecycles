@@ -26,6 +26,7 @@
 
 package io.domainlifecycles.autoconfig.annotation;
 
+import io.domainlifecycles.autoconfig.configurations.DlcDomainAutoConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,7 @@ public class ConfigurationImportSelector implements ImportSelector {
         boolean enableSpringOpenApiAutoConfig = (boolean) attributes.get("enableSpringOpenApiAutoConfig");
 
         List<String> configs = new ArrayList<>();
+        configs.add(DlcDomainAutoConfiguration.class.getName());
 
         if (enableBuilderAutoConfig) {
             configs.add(DlcBuilderAutoConfiguration.class.getName());

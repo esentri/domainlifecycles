@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
-@AutoConfigureAfter(DlcJacksonAutoConfiguration.class)
+@AutoConfigureAfter({DlcJacksonAutoConfiguration.class, DlcDomainAutoConfiguration.class})
 public class DlcSpringOpenApiAutoConfiguration {
 
     /**

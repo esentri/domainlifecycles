@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Bean;
 import java.util.List;
 
 @AutoConfiguration
-@AutoConfigureAfter({DlcJooqPersistenceAutoConfiguration.class, DlcBuilderAutoConfiguration.class})
+@AutoConfigureAfter({DlcJooqPersistenceAutoConfiguration.class, DlcBuilderAutoConfiguration.class, DlcDomainAutoConfiguration.class})
 @AutoConfigureBefore(JacksonAutoConfiguration.class)
 public class DlcJacksonAutoConfiguration {
 
