@@ -46,7 +46,6 @@ public class DlcDomainEventsAutoConfiguration {
     }
 
     @Bean
-    //@ConditionalOnBean(PublishingChannel.class)
     public DomainEventTypeBasedRouter router(List<PublishingChannel> publishingChannels){
         var router = new DomainEventTypeBasedRouter(publishingChannels);
         router.defineDefaultChannel("default");
@@ -61,8 +60,8 @@ public class DlcDomainEventsAutoConfiguration {
     }
 
     @Bean
-    //@ConditionalOnBean(PlatformTransactionManager.class)
-    //@ConditionalOnMissingBean
+    @ConditionalOnBean(PlatformTransactionManager.class)
+    @ConditionalOnMissingBean
     public PublishingChannel channelConfigurationWithPlatformTransactionManager(
         PlatformTransactionManager platformTransactionManager,
         ServiceProvider serviceProvider
@@ -71,7 +70,7 @@ public class DlcDomainEventsAutoConfiguration {
     }
 
     @Bean
-    //@ConditionalOnMissingBean({PlatformTransactionManager.class, Channel.class})
+    @ConditionalOnMissingBean({PlatformTransactionManager.class, Channel.class})
     public PublishingChannel channelConfigurationWithoutPlatformTransactionManager(
         ServiceProvider serviceProvider){
         return new InMemoryChannelFactory(serviceProvider).processingChannel("default");
