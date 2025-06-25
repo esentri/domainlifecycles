@@ -24,12 +24,23 @@ public class DlcJacksonAutoConfiguration {
      */
     @ConditionalOnMissingBean(DlcJacksonModule.class)
     @Bean
-    @ConditionalOnBean(DomainObjectBuilderProvider.class)
-    DlcJacksonModule dlcModuleConfiguration(List<? extends JacksonMappingCustomizer<?>> customizers,
-                                            DomainObjectBuilderProvider domainObjectBuilderProvider,
-                                            EntityIdentityProvider entityIdentityProvider
+    @ConditionalOnBean({DomainObjectBuilderProvider.class, EntityIdentityProvider.class})
+    DlcJacksonModule dlcModuleConfigurationWithEntityIdentityProvider(List<? extends JacksonMappingCustomizer<?>> customizers,
+                                                                      DomainObjectBuilderProvider domainObjectBuilderProvider,
+                                                                      EntityIdentityProvider entityIdentityProvider
     ) {
         DlcJacksonModule module = new DlcJacksonModule(domainObjectBuilderProvider, entityIdentityProvider);
+        customizers.forEach(c -> module.registerCustomizer(c, c.instanceType));
+        return module;
+    }
+
+    @ConditionalOnMissingBean({DlcJacksonModule.class, EntityIdentityProvider.class})
+    @Bean
+    @ConditionalOnBean(DomainObjectBuilderProvider.class)
+    DlcJacksonModule dlcModuleConfigurationWithoutEntityIdentityProvider(List<? extends JacksonMappingCustomizer<?>> customizers,
+                                                                         DomainObjectBuilderProvider domainObjectBuilderProvider
+    ) {
+        DlcJacksonModule module = new DlcJacksonModule(domainObjectBuilderProvider);
         customizers.forEach(c -> module.registerCustomizer(c, c.instanceType));
         return module;
     }

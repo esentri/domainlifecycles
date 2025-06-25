@@ -27,26 +27,26 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class DlcDomainEventsAutoConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(ServiceProvider.class)
+    @ConditionalOnMissingBean
     public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds){
-        return  new Services(serviceKinds);
+        return new Services(serviceKinds);
     }
 
     @Bean
     @ConditionalOnBean(PlatformTransactionManager.class)
-    @ConditionalOnMissingBean(TransactionalHandlerExecutor.class)
+    @ConditionalOnMissingBean
     public TransactionalHandlerExecutor transactionalHandlerExecutor(PlatformTransactionManager platformTransactionManager){
         return new SpringTransactionalHandlerExecutor(platformTransactionManager);
     }
 
     @Bean
-    @ConditionalOnMissingBean(ClassProvider.class)
+    @ConditionalOnMissingBean
     public ClassProvider classProvider(){
         return new DefaultClassProvider();
     }
 
     @Bean
-    @ConditionalOnMissingBean(PublishingRouter.class)
+    //@ConditionalOnBean(PublishingChannel.class)
     public DomainEventTypeBasedRouter router(List<PublishingChannel> publishingChannels){
         var router = new DomainEventTypeBasedRouter(publishingChannels);
         router.defineDefaultChannel("default");
@@ -54,16 +54,16 @@ public class DlcDomainEventsAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(ChannelRoutingConfiguration.class)
+    @ConditionalOnMissingBean
     @ConditionalOnBean(PublishingRouter.class)
     public ChannelRoutingConfiguration channelConfiguration(PublishingRouter publishingRouter){
         return new ChannelRoutingConfiguration(publishingRouter);
     }
 
     @Bean
-    @ConditionalOnBean(PlatformTransactionManager.class)
-    @ConditionalOnMissingBean(Channel.class)
-    public Channel channelConfiguration(
+    //@ConditionalOnBean(PlatformTransactionManager.class)
+    //@ConditionalOnMissingBean
+    public PublishingChannel channelConfigurationWithPlatformTransactionManager(
         PlatformTransactionManager platformTransactionManager,
         ServiceProvider serviceProvider
     ){
@@ -71,8 +71,8 @@ public class DlcDomainEventsAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean({PlatformTransactionManager.class, Channel.class})
-    public Channel channelConfiguration(
+    //@ConditionalOnMissingBean({PlatformTransactionManager.class, Channel.class})
+    public PublishingChannel channelConfigurationWithoutPlatformTransactionManager(
         ServiceProvider serviceProvider){
         return new InMemoryChannelFactory(serviceProvider).processingChannel("default");
     }

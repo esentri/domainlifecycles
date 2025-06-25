@@ -1,6 +1,8 @@
+
 plugins {
-    id 'java'
+    id 'java-library'
     id 'checkstyle'
+    alias libs.plugins.spring.boot.plugin
     alias libs.plugins.yumi.gradle.licenser.plugin
     alias libs.plugins.jaredsburrows.license.plugin
 }
@@ -38,10 +40,14 @@ dependencies {
     testImplementation libs.bundles.gruelbox.transactionoutbox
 
     testImplementation libs.awaitility
-
 }
 
 // Although test classes are not scanned by checkstyle, as configured in the root-level build.gradle file,
 // checkstyle will throw errors and hints as soon as you add a JavaDoc in test file methods, which is the case in some
 // of the more complex test files in this module. That's why the checkstyleTest task is explicitly disabled.
 checkstyleTest.enabled = false
+
+
+bootJar {
+    enabled = false
+}

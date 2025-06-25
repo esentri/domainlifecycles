@@ -46,7 +46,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
-@EnableDlc
+@EnableDlc(enableJooqPersistenceAutoConfig = false, enableDomainEventsAutoConfig = true)
 public class TestApplicationAutoConfig {
 
     /**
@@ -80,12 +80,5 @@ public class TestApplicationAutoConfig {
     @Bean
     public AnOutboundService anOutboundService(){
         return new AnOutboundService();
-    }
-
-    @Bean
-    public ServiceProvider serviceProvider(
-        List<ServiceKind> serviceInstances
-    ){
-        return new Services(serviceInstances);
     }
 }
