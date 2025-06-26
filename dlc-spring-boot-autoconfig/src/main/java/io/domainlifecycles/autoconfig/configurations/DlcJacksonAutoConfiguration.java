@@ -22,7 +22,7 @@ public class DlcJacksonAutoConfiguration {
     /**
      * DLC Jackson integration
      */
-    @ConditionalOnMissingBean(DlcJacksonModule.class)
+    @ConditionalOnMissingBean
     @Bean
     @ConditionalOnBean({DomainObjectBuilderProvider.class, EntityIdentityProvider.class})
     DlcJacksonModule dlcModuleConfigurationWithEntityIdentityProvider(List<? extends JacksonMappingCustomizer<?>> customizers,

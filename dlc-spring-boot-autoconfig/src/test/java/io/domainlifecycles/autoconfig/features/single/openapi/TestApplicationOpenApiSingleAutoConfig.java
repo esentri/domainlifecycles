@@ -24,28 +24,29 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.autoconfig.annotation;
+package io.domainlifecycles.autoconfig.features.single.openapi;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import io.domainlifecycles.autoconfig.annotation.EnableDlc;
+import java.util.Locale;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 
-import io.domainlifecycles.autoconfig.configurations.properties.JooqPersistenceConfigImportSelector;
-import org.jooq.SQLDialect;
-import org.springframework.context.annotation.Import;
+@SpringBootApplication
+@EnableDlc(
+    enableSpringWebAutoConfig = false,
+    enableBuilderAutoConfig = false,
+    enableJooqPersistenceAutoConfig = false,
+    enableDomainEventsAutoConfig = false,
+    enableJacksonAutoConfig = false,
+    enableSpringOpenApiAutoConfig = true
+)
+public class TestApplicationOpenApiSingleAutoConfig {
 
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Import({JooqPersistenceConfigImportSelector.class, ConfigurationImportSelector.class})
-public @interface EnableDlc {
-
-    boolean enableSpringWebAutoConfig() default true;
-    boolean enableBuilderAutoConfig() default true;
-    boolean enableJooqPersistenceAutoConfig() default true;
-    boolean enableDomainEventsAutoConfig() default false;
-    boolean enableJacksonAutoConfig() default true;
-    boolean enableSpringOpenApiAutoConfig() default true;
-    String jooqRecordPackage() default "";
-    SQLDialect jooqSqlDialect() default SQLDialect.DEFAULT;
+    /**
+     * Setting the Locale to explicitly force the language in default validation error messages.
+     */
+    public static void main(String[] args) {
+        Locale.setDefault(Locale.ENGLISH);
+        new SpringApplicationBuilder(TestApplicationOpenApiSingleAutoConfig.class).run(args);
+    }
 }

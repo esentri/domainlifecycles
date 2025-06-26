@@ -35,6 +35,8 @@ import io.domainlifecycles.jooq.imp.JooqEntityIdentityProvider;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
+import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
+import io.domainlifecycles.persistence.repository.actions.PersistenceAction;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -50,6 +52,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
@@ -67,7 +70,7 @@ public class DlcJooqPersistenceAutoConfiguration {
 
     @Bean
     @ConditionalOnBean(DataSource.class)
-    @ConditionalOnMissingBean(DataSourceConnectionProvider.class)
+    @ConditionalOnMissingBean
     public DataSourceConnectionProvider connectionProvider(DataSource dataSource) {
         return new DataSourceConnectionProvider(new TransactionAwareDataSourceProxy(dataSource));
     }
@@ -114,7 +117,7 @@ public class DlcJooqPersistenceAutoConfiguration {
      */
     @Bean
     @ConditionalOnBean({DomainObjectBuilderProvider.class})
-    @ConditionalOnMissingBean(JooqDomainPersistenceProvider.class)
+    @ConditionalOnMissingBean
     public JooqDomainPersistenceProvider domainPersistenceProvider(
         DomainObjectBuilderProvider domainObjectBuilderProvider,
         Set<RecordMapper<?, ?, ?>> customRecordMappers,
@@ -154,9 +157,8 @@ public class DlcJooqPersistenceAutoConfiguration {
      */
     @Bean
     @ConditionalOnBean(DSLContext.class)
-    @ConditionalOnMissingBean(EntityIdentityProvider.class)
+    @ConditionalOnMissingBean
     EntityIdentityProvider identityProvider(DSLContext dslContext) {
         return new JooqEntityIdentityProvider(dslContext);
     }
-
 }

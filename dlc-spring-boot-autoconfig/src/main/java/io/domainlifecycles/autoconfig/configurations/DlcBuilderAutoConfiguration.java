@@ -15,7 +15,7 @@ public class DlcBuilderAutoConfiguration {
      * Default configuration to make DLC work with inner builders or Lombok builders.
      */
     @Bean
-    @ConditionalOnMissingBean(DomainObjectBuilderProvider.class)
+    @ConditionalOnMissingBean
     DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
         return new InnerClassDomainObjectBuilderProvider();
     }

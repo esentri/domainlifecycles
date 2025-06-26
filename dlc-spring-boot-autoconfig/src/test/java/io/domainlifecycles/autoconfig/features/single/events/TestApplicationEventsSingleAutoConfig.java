@@ -24,37 +24,36 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.events.autoconfig;
+package io.domainlifecycles.autoconfig.features.single.events;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
-import io.domainlifecycles.domain.types.ServiceKind;
-import io.domainlifecycles.events.ADomainService;
-import io.domainlifecycles.events.AQueryHandler;
-import io.domainlifecycles.events.ARepository;
-import io.domainlifecycles.events.AnApplicationService;
-import io.domainlifecycles.events.AnOutboundService;
-import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.api.DomainMirror;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
-import io.domainlifecycles.services.Services;
-import io.domainlifecycles.services.api.ServiceProvider;
-import java.util.List;
+import io.domainlifecycles.autoconfig.features.single.events.services.ADomainService;
+import io.domainlifecycles.autoconfig.features.single.events.services.AQueryHandler;
+import io.domainlifecycles.autoconfig.features.single.events.services.ARepository;
+import io.domainlifecycles.autoconfig.features.single.events.services.AnApplicationService;
+import io.domainlifecycles.autoconfig.features.single.events.services.AnOutboundService;
 import java.util.Locale;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
-@EnableDlc(enableJooqPersistenceAutoConfig = false, enableDomainEventsAutoConfig = true)
-public class TestApplicationAutoConfig {
+@EnableDlc(
+    enableSpringWebAutoConfig = false,
+    enableBuilderAutoConfig = false,
+    enableJooqPersistenceAutoConfig = false,
+    enableDomainEventsAutoConfig = true,
+    enableJacksonAutoConfig = false,
+    enableSpringOpenApiAutoConfig = false
+)
+public class TestApplicationEventsSingleAutoConfig {
 
     /**
      * Setting the Locale to explicitly force the language in default validation error messages.
      */
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH);
-        new SpringApplicationBuilder(TestApplicationAutoConfig.class).run(args);
+        new SpringApplicationBuilder(TestApplicationEventsSingleAutoConfig.class).run(args);
     }
 
     @Bean

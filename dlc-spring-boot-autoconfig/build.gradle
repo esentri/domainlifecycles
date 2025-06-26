@@ -49,7 +49,7 @@ dependencies {
 	runtimeOnly libs.jooq.codegen
 	jooqCodegen libs.jooq.meta
 
-
+	testImplementation project(":test-shared-impl")
 	testImplementation libs.assertj
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testCompileOnly libs.lombok

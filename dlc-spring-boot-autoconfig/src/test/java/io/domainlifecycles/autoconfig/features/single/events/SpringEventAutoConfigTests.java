@@ -1,11 +1,12 @@
-package io.domainlifecycles.events.autoconfig;
+package io.domainlifecycles.autoconfig.features.single.events;
 
-import io.domainlifecycles.events.ADomainEvent;
-import io.domainlifecycles.events.ADomainService;
-import io.domainlifecycles.events.AQueryHandler;
-import io.domainlifecycles.events.ARepository;
-import io.domainlifecycles.events.AnApplicationService;
-import io.domainlifecycles.events.AnOutboundService;
+
+import io.domainlifecycles.autoconfig.features.single.events.services.ADomainEvent;
+import io.domainlifecycles.autoconfig.features.single.events.services.ADomainService;
+import io.domainlifecycles.autoconfig.features.single.events.services.AQueryHandler;
+import io.domainlifecycles.autoconfig.features.single.events.services.ARepository;
+import io.domainlifecycles.autoconfig.features.single.events.services.AnApplicationService;
+import io.domainlifecycles.autoconfig.features.single.events.services.AnOutboundService;
 import io.domainlifecycles.events.api.DomainEvents;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
@@ -42,12 +42,15 @@ public class SpringEventAutoConfigTests {
     @Test
     @DirtiesContext
     public void testIntegrationCommit() {
+        // given
         var status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
+
         //when
         var evt = new ADomainEvent("TestCommit");
         DomainEvents.publish(evt);
 
         platformTransactionManager.commit(status);
+
         //then
         await()
             .atMost(10, SECONDS)

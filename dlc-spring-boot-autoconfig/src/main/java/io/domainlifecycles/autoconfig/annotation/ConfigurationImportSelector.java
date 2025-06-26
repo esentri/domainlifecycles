@@ -62,6 +62,7 @@ public class ConfigurationImportSelector implements ImportSelector {
         }
 
         if (enableJooqPersistenceAutoConfig) {
+            configs.add(DlcBuilderAutoConfiguration.class.getName());
             configs.add(DlcJooqPersistenceAutoConfiguration.class.getName());
         }
 

@@ -17,7 +17,7 @@ public class DlcSpringOpenApiAutoConfiguration {
      * Spring Doc Open API integration of DLC
      */
     @Bean
-    @ConditionalOnMissingBean(DlcOpenApiCustomizer.class)
+    @ConditionalOnMissingBean
     @ConditionalOnBean({SpringDocConfigProperties.class, DlcJacksonModule.class})
     public DlcOpenApiCustomizer openApiCustomizer(SpringDocConfigProperties springDocConfigProperties) {
         return new DlcOpenApiCustomizer(springDocConfigProperties);
