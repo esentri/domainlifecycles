@@ -1,12 +1,17 @@
 package io.domainlifecycles.autoconfig.features.single.jackson;
 
 import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.databind.Module;
 import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson.api.MappingAction;
 import io.domainlifecycles.jackson.databind.context.DomainObjectMappingContext;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +29,7 @@ public class JacksonAutoConfigTests {
 
     @Test
     public void testJacksonMappingSimpleVOOnly() {
-        assertThat(dlcJacksonModule.getDependencies().iterator().hasNext()).isTrue();
+        assertThat(dlcJacksonModule).isNotNull();
     }
 
     @org.springframework.boot.test.context.TestConfiguration

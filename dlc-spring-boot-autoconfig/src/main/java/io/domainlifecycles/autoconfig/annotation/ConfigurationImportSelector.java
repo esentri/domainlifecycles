@@ -37,10 +37,14 @@ import io.domainlifecycles.autoconfig.configurations.DlcJacksonAutoConfiguration
 import io.domainlifecycles.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.type.AnnotationMetadata;
 
 public class ConfigurationImportSelector implements ImportSelector {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(ConfigurationImportSelector.class);
 
     @Override
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
@@ -62,8 +66,12 @@ public class ConfigurationImportSelector implements ImportSelector {
         }
 
         if (enableJooqPersistenceAutoConfig) {
-            configs.add(DlcBuilderAutoConfiguration.class.getName());
             configs.add(DlcJooqPersistenceAutoConfiguration.class.getName());
+
+            if(!enableBuilderAutoConfig) {
+                LOGGER.warn("DLC persistence auto-configuration is enabled without using the builder auto-configuration. " +
+                    "Make sure you provide all necessary beans yourself, or enable the builder auto configuration.");
+            }
         }
 
         if (enableDomainEventsAutoConfig) {
@@ -76,6 +84,11 @@ public class ConfigurationImportSelector implements ImportSelector {
 
         if (enableJacksonAutoConfig) {
             configs.add(DlcJacksonAutoConfiguration.class.getName());
+
+            if(!enableBuilderAutoConfig) {
+                LOGGER.warn("DLC Jackson auto-configuration is enabled without using the builder auto-configuration. " +
+                    "Make sure you provide all necessary beans yourself, or enable the builder auto configuration.");
+            }
         }
 
         if (enableSpringOpenApiAutoConfig) {

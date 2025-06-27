@@ -1,12 +1,12 @@
 package io.domainlifecycles.autoconfig.features.single.events;
 
 
-import io.domainlifecycles.autoconfig.features.single.events.services.ADomainEvent;
-import io.domainlifecycles.autoconfig.features.single.events.services.ADomainService;
-import io.domainlifecycles.autoconfig.features.single.events.services.AQueryHandler;
-import io.domainlifecycles.autoconfig.features.single.events.services.ARepository;
-import io.domainlifecycles.autoconfig.features.single.events.services.AnApplicationService;
-import io.domainlifecycles.autoconfig.features.single.events.services.AnOutboundService;
+import io.domainlifecycles.autoconfig.features.single.events.model.ADomainEvent;
+import io.domainlifecycles.autoconfig.features.single.events.model.ADomainService;
+import io.domainlifecycles.autoconfig.features.single.events.model.AQueryHandler;
+import io.domainlifecycles.autoconfig.features.single.events.model.ARepository;
+import io.domainlifecycles.autoconfig.features.single.events.model.AnApplicationService;
+import io.domainlifecycles.autoconfig.features.single.events.model.AnOutboundService;
 import io.domainlifecycles.events.api.DomainEvents;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;

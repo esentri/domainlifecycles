@@ -27,11 +27,11 @@
 package io.domainlifecycles.autoconfig.features.single.events;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
-import io.domainlifecycles.autoconfig.features.single.events.services.ADomainService;
-import io.domainlifecycles.autoconfig.features.single.events.services.AQueryHandler;
-import io.domainlifecycles.autoconfig.features.single.events.services.ARepository;
-import io.domainlifecycles.autoconfig.features.single.events.services.AnApplicationService;
-import io.domainlifecycles.autoconfig.features.single.events.services.AnOutboundService;
+import io.domainlifecycles.autoconfig.features.single.events.model.ADomainService;
+import io.domainlifecycles.autoconfig.features.single.events.model.AQueryHandler;
+import io.domainlifecycles.autoconfig.features.single.events.model.ARepository;
+import io.domainlifecycles.autoconfig.features.single.events.model.AnApplicationService;
+import io.domainlifecycles.autoconfig.features.single.events.model.AnOutboundService;
 import java.util.Locale;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;

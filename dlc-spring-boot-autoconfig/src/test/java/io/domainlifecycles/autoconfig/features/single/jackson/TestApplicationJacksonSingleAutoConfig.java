@@ -34,7 +34,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 @SpringBootApplication
 @EnableDlc(
     enableSpringWebAutoConfig = false,
-    enableBuilderAutoConfig = false,
+    enableBuilderAutoConfig = true,
     enableJooqPersistenceAutoConfig = false,
     enableDomainEventsAutoConfig = false,
     enableJacksonAutoConfig = true,

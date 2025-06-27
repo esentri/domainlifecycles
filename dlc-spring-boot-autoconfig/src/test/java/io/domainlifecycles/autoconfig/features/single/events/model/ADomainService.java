@@ -1,4 +1,4 @@
-package io.domainlifecycles.autoconfig.features.single.events.services;
+package io.domainlifecycles.autoconfig.features.single.events.model;
 
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.domain.types.DomainService;

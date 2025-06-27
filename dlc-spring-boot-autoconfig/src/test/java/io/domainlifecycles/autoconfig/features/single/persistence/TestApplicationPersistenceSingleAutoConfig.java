@@ -34,11 +34,12 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 @SpringBootApplication
 @EnableDlc(
     enableSpringWebAutoConfig = false,
-    enableBuilderAutoConfig = false,
+    enableBuilderAutoConfig = true,
     enableJooqPersistenceAutoConfig = true,
     enableDomainEventsAutoConfig = false,
     enableJacksonAutoConfig = false,
-    enableSpringOpenApiAutoConfig = false
+    enableSpringOpenApiAutoConfig = false,
+    jooqRecordPackage = "io.domainlifecycles.test.autoconfig"
 )
 public class TestApplicationPersistenceSingleAutoConfig {
 
