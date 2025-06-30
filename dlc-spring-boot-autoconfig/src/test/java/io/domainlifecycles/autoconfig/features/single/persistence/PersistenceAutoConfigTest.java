@@ -15,13 +15,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import tests.shared.events.PersistenceEvent;
 import tests.shared.persistence.PersistenceEventTestHelper;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 @ActiveProfiles({"test"})
-@Import(PersistenceAutoConfigTest.TestConfiguration.class)
 public class PersistenceAutoConfigTest {
 
     private PersistenceEventTestHelper persistenceEventTestHelper;
@@ -42,6 +42,7 @@ public class PersistenceAutoConfigTest {
     }
 
     @Test
+    @Transactional
     public void testInsertSimpleEntity() {
 
         //given
@@ -60,13 +61,5 @@ public class PersistenceAutoConfigTest {
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
         persistenceEventTestHelper.assertEvents();
-    }
-
-    @org.springframework.boot.test.context.TestConfiguration
-    static class TestConfiguration {
-        @Bean
-        DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
-            return new InnerClassDomainObjectBuilderProvider();
-        }
     }
 }

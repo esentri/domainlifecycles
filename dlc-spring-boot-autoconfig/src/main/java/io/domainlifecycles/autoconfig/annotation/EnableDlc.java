@@ -26,6 +26,7 @@
 
 package io.domainlifecycles.autoconfig.annotation;
 
+import io.domainlifecycles.autoconfig.configurations.properties.DomainConfigImportSelector;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -37,7 +38,7 @@ import org.springframework.context.annotation.Import;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import({JooqPersistenceConfigImportSelector.class, ConfigurationImportSelector.class})
+@Import({JooqPersistenceConfigImportSelector.class, DomainConfigImportSelector.class, ConfigurationImportSelector.class})
 public @interface EnableDlc {
 
     boolean enableSpringWebAutoConfig() default true;
@@ -48,4 +49,5 @@ public @interface EnableDlc {
     boolean enableSpringOpenApiAutoConfig() default true;
     String jooqRecordPackage() default "";
     SQLDialect jooqSqlDialect() default SQLDialect.DEFAULT;
+    String dlcDomainBasePackages() default "";
 }

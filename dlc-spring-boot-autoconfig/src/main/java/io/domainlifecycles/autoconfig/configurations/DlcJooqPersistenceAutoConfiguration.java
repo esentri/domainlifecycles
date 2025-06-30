@@ -90,6 +90,7 @@ public class DlcJooqPersistenceAutoConfiguration {
         } else {
             throw DLCAutoConfigException.fail("Property 'sqlDialect' is missing. Make sure you specified a property called 'dlc.persistence.sqlDialect'.");
         }
+
         jooqConfig.set(sqlDialect);
         return jooqConfig;
     }

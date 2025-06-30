@@ -26,7 +26,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"test"})
-@Import(JacksonAutoConfigTests.TestConfiguration.class)
 public class JacksonAutoConfigTests {
 
     @Autowired
@@ -35,24 +34,6 @@ public class JacksonAutoConfigTests {
     @Test
     public void testJacksonMappingSimpleVOOnly() {
         assertThat(dlcJacksonModule).isNotNull();
-    }
-
-    @org.springframework.boot.test.context.TestConfiguration
-    public static class TestConfiguration {
-        @Bean
-        JacksonMappingCustomizer<AutoMappedSimpleVo> simpleVoMapping() {
-            return new JacksonMappingCustomizer<>(AutoMappedSimpleVo.class) {
-                @Override
-                public MappingAction beforeObjectRead(DomainObjectMappingContext mappingContext, ObjectCodec codec) {
-                    return super.beforeObjectRead(mappingContext, codec);
-                }
-            };
-        }
-
-        @Bean
-        DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
-            return new InnerClassDomainObjectBuilderProvider();
-        }
     }
 }
 

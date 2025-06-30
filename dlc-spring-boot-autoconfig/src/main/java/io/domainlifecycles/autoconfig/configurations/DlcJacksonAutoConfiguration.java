@@ -41,6 +41,7 @@ import org.springframework.context.annotation.Bean;
 import java.util.List;
 
 @AutoConfiguration
+@ConditionalOnBean(DomainObjectBuilderProvider.class)
 @AutoConfigureAfter({DlcJooqPersistenceAutoConfiguration.class, DlcBuilderAutoConfiguration.class, DlcDomainAutoConfiguration.class})
 @AutoConfigureBefore(JacksonAutoConfiguration.class)
 public class DlcJacksonAutoConfiguration {
@@ -50,7 +51,7 @@ public class DlcJacksonAutoConfiguration {
      */
     @ConditionalOnMissingBean
     @Bean
-    @ConditionalOnBean({DomainObjectBuilderProvider.class, EntityIdentityProvider.class})
+    @ConditionalOnBean(EntityIdentityProvider.class)
     DlcJacksonModule dlcModuleConfigurationWithEntityIdentityProvider(List<? extends JacksonMappingCustomizer<?>> customizers,
                                                                       DomainObjectBuilderProvider domainObjectBuilderProvider,
                                                                       EntityIdentityProvider entityIdentityProvider
@@ -60,9 +61,8 @@ public class DlcJacksonAutoConfiguration {
         return module;
     }
 
-    @ConditionalOnMissingBean({DlcJacksonModule.class, EntityIdentityProvider.class})
+    @ConditionalOnMissingBean
     @Bean
-    @ConditionalOnBean(DomainObjectBuilderProvider.class)
     DlcJacksonModule dlcModuleConfigurationWithoutEntityIdentityProvider(List<? extends JacksonMappingCustomizer<?>> customizers,
                                                                          DomainObjectBuilderProvider domainObjectBuilderProvider
     ) {

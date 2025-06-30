@@ -26,7 +26,9 @@
 
 package io.domainlifecycles.autoconfig.configurations;
 
+import io.domainlifecycles.autoconfig.configurations.properties.DlcDomainProperties;
 import io.domainlifecycles.autoconfig.configurations.properties.DlcJooqPersistenceProperties;
+import io.domainlifecycles.autoconfig.exception.DLCAutoConfigException;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
@@ -39,18 +41,29 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
-@EnableConfigurationProperties(DlcJooqPersistenceProperties.class)
+@EnableConfigurationProperties(DlcDomainProperties.class)
 @AutoConfigureBefore({JooqAutoConfiguration.class})
 public class DlcDomainAutoConfiguration {
 
-    private @Value("${jooqRecordPackage}") String jooqRecordPackage;
+    private @Value("${dlcDomainBasePackages}") String dlcDomainBasePackages;
 
     @Bean
     @ConditionalOnMissingBean(Domain.class)
-    public DomainMirror initializedDomain() {
-        if(!Domain.isInitialized()) {
-            Domain.initialize(new ReflectiveDomainMirrorFactory(jooqRecordPackage));
+    public DomainMirror initializedDomain(DlcDomainProperties dlcDomainProperties) {
+        if (!Domain.isInitialized()) {
+            String basePackages;
+            if (dlcDomainProperties != null) {
+                basePackages = dlcDomainProperties.getBasePackages();
+            } else if (dlcDomainBasePackages != null) {
+                basePackages = dlcDomainBasePackages;
+            } else {
+                throw DLCAutoConfigException.fail(
+                    "Property 'basePackages' is missing. Make sure you specified a property called 'dlc.domain.basePackages'.");
+            }
+            String[] domainBasePackages = basePackages.split(",");
+            Domain.initialize(new ReflectiveDomainMirrorFactory(domainBasePackages));
         }
+
         return Domain.getDomainMirror();
     }
 }

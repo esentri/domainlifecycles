@@ -31,8 +31,10 @@ import java.util.Locale;
 import org.jooq.SQLDialect;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
+@Import(PersistenceAutoConfigTestConfiguration.class)
 @SpringBootApplication
 @EnableDlc(
     enableSpringWebAutoConfig = false,
