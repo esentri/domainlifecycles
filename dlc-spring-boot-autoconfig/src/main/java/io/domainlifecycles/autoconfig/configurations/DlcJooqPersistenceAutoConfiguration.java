@@ -35,8 +35,6 @@ import io.domainlifecycles.jooq.imp.JooqEntityIdentityProvider;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
-import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
-import io.domainlifecycles.persistence.repository.actions.PersistenceAction;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -52,7 +50,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
@@ -101,9 +98,9 @@ public class DlcJooqPersistenceAutoConfiguration {
      * All DLC repository implementations need a {@link org.jooq.DSLContext} instance.
      */
     @Bean
-    @ConditionalOnBean({DataSource.class})
+    @ConditionalOnBean(DataSource.class)
     @ConditionalOnMissingBean(DSLContext.class)
-    public DefaultDSLContext dslContext(DataSource dataSource, DlcJooqPersistenceProperties persistenceProperties) {
+    public DSLContext dslContext(DataSource dataSource, DlcJooqPersistenceProperties persistenceProperties) {
         return new DefaultDSLContext(configuration(dataSource, persistenceProperties));
     }
 
@@ -116,7 +113,7 @@ public class DlcJooqPersistenceAutoConfiguration {
      * @return {@link JooqDomainPersistenceProvider} instance configured
      */
     @Bean
-    @ConditionalOnBean({DomainObjectBuilderProvider.class})
+    //@ConditionalOnBean({DomainObjectBuilderProvider.class})
     @ConditionalOnMissingBean
     public JooqDomainPersistenceProvider domainPersistenceProvider(
         DomainObjectBuilderProvider domainObjectBuilderProvider,

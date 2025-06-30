@@ -1,11 +1,11 @@
 package io.domainlifecycles.autoconfig.features.single.persistence;
 
+import io.domainlifecycles.autoconfig.features.single.persistence.model.simple.TestRootSimple;
+import io.domainlifecycles.autoconfig.features.single.persistence.model.simple.TestRootSimpleId;
 import io.domainlifecycles.jooq.imp.JooqAggregateRepository;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
 import org.jooq.DSLContext;
-import tests.shared.persistence.domain.simple.TestRootSimple;
-import tests.shared.persistence.domain.simple.TestRootSimpleId;
 
 
 public class SimpleAggregateRootRepository extends JooqAggregateRepository<TestRootSimple, TestRootSimpleId> {

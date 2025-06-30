@@ -28,18 +28,21 @@ package io.domainlifecycles.autoconfig.features.single.persistence;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
 import java.util.Locale;
+import org.jooq.SQLDialect;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootApplication
 @EnableDlc(
     enableSpringWebAutoConfig = false,
-    enableBuilderAutoConfig = true,
+    enableBuilderAutoConfig = false,
     enableJooqPersistenceAutoConfig = true,
     enableDomainEventsAutoConfig = false,
     enableJacksonAutoConfig = false,
     enableSpringOpenApiAutoConfig = false,
-    jooqRecordPackage = "io.domainlifecycles.test.autoconfig"
+    jooqRecordPackage = "io.domainlifecycles.test.autoconfig",
+    jooqSqlDialect = SQLDialect.H2
 )
 public class TestApplicationPersistenceSingleAutoConfig {
 

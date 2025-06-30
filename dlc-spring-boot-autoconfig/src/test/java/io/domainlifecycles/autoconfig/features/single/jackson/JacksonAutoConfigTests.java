@@ -2,6 +2,8 @@ package io.domainlifecycles.autoconfig.features.single.jackson;
 
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.Module;
+import io.domainlifecycles.builder.DomainObjectBuilderProvider;
+import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson.api.MappingAction;
 import io.domainlifecycles.jackson.databind.context.DomainObjectMappingContext;
@@ -14,7 +16,9 @@ import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedSimpleVo;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"test"})
+@Import(JacksonAutoConfigTests.TestConfiguration.class)
 public class JacksonAutoConfigTests {
 
     @Autowired
@@ -42,6 +47,11 @@ public class JacksonAutoConfigTests {
                     return super.beforeObjectRead(mappingContext, codec);
                 }
             };
+        }
+
+        @Bean
+        DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
+            return new InnerClassDomainObjectBuilderProvider();
         }
     }
 }

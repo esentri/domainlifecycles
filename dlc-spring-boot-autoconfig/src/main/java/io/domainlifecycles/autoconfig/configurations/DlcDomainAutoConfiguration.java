@@ -26,21 +26,30 @@
 
 package io.domainlifecycles.autoconfig.configurations;
 
+import io.domainlifecycles.autoconfig.configurations.properties.DlcJooqPersistenceProperties;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
+@EnableConfigurationProperties(DlcJooqPersistenceProperties.class)
+@AutoConfigureBefore({JooqAutoConfiguration.class})
 public class DlcDomainAutoConfiguration {
+
+    private @Value("${jooqRecordPackage}") String jooqRecordPackage;
 
     @Bean
     @ConditionalOnMissingBean(Domain.class)
     public DomainMirror initializedDomain() {
         if(!Domain.isInitialized()) {
-            Domain.initialize(new ReflectiveDomainMirrorFactory("io.domainlifecycles.events"));
+            Domain.initialize(new ReflectiveDomainMirrorFactory(jooqRecordPackage));
         }
         return Domain.getDomainMirror();
     }

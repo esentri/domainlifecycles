@@ -24,29 +24,33 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.autoconfig.features.single.jackson;
+package io.domainlifecycles.autoconfig.features.single.persistence.model.simple;
 
-import io.domainlifecycles.autoconfig.annotation.EnableDlc;
-import java.util.Locale;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
+import io.domainlifecycles.assertion.DomainAssertions;
+import io.domainlifecycles.domain.types.base.AggregateRootBase;
+import lombok.Builder;
+import lombok.Getter;
 
-@SpringBootApplication
-@EnableDlc(
-    enableSpringWebAutoConfig = false,
-    enableBuilderAutoConfig = false,
-    enableJooqPersistenceAutoConfig = false,
-    enableDomainEventsAutoConfig = false,
-    enableJacksonAutoConfig = true,
-    enableSpringOpenApiAutoConfig = false
-)
-public class TestApplicationJacksonSingleAutoConfig {
+@Getter
+public class TestRootSimple extends AggregateRootBase<TestRootSimpleId> {
 
-    /**
-     * Setting the Locale to explicitly force the language in default validation error messages.
-     */
-    public static void main(String[] args) {
-        Locale.setDefault(Locale.ENGLISH);
-        new SpringApplicationBuilder(TestApplicationJacksonSingleAutoConfig.class).run(args);
+    private TestRootSimpleId id;
+    private String name;
+
+    @Builder(setterPrefix = "set")
+    public TestRootSimple(TestRootSimpleId id,
+                          long concurrencyVersion,
+                          String name
+
+    ) {
+        super(concurrencyVersion);
+        this.id = id;
+        DomainAssertions.isNotNull(id, "Eine Root ID muss angegeben sein!");
+        setName(name);
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
 }
