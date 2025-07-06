@@ -38,6 +38,7 @@ import io.domainlifecycles.events.consume.execution.handler.TransactionalHandler
 import io.domainlifecycles.events.inmemory.InMemoryChannelFactory;
 import io.domainlifecycles.events.spring.api.SpringTxInMemoryChannelFactory;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
+import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.services.Services;
 import io.domainlifecycles.services.api.ServiceProvider;
 import java.util.List;
@@ -46,6 +47,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @AutoConfiguration
@@ -54,6 +56,7 @@ public class DlcDomainEventsAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
+    @DependsOn("initializedDomain")
     public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds){
         return new Services(serviceKinds);
     }

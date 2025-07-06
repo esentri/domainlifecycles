@@ -82,13 +82,16 @@ public class DlcJooqPersistenceAutoConfiguration {
         final var jooqConfig = new DefaultConfiguration();
         jooqConfig.settings().setExecuteWithOptimisticLocking(true);
         jooqConfig.setConnectionProvider(connectionProvider(dataSource));
+
         SQLDialect sqlDialect;
-        if(persistenceProperties != null) {
+
+        if(persistenceProperties != null && persistenceProperties.getSqlDialect() != null) {
             sqlDialect = persistenceProperties.getSqlDialect();
         } else if (jooqSqlDialect != null) {
             sqlDialect = jooqSqlDialect;
         } else {
-            throw DLCAutoConfigException.fail("Property 'sqlDialect' is missing. Make sure you specified a property called 'dlc.persistence.sqlDialect'.");
+            throw DLCAutoConfigException.fail("Property 'sqlDialect' is missing. Make sure you specified a property " +
+                "called 'dlc.persistence.sqlDialect' or add a 'jooqSqlDialect' value on the @EnableDLC annotation.");
         }
 
         jooqConfig.set(sqlDialect);
@@ -121,18 +124,18 @@ public class DlcJooqPersistenceAutoConfiguration {
         Set<RecordMapper<?, ?, ?>> customRecordMappers,
         DlcJooqPersistenceProperties persistenceProperties
     ) {
-        var recordPackage = "";
+        String recordPackage;
         if (persistenceProperties != null
             && persistenceProperties.getJooqRecordPackage() != null
             && !persistenceProperties.getJooqRecordPackage().isBlank()) {
 
             recordPackage = persistenceProperties.getJooqRecordPackage();
-        }
-        else if(jooqRecordPackage != null && !jooqRecordPackage.isBlank()) {
+        } else if(jooqRecordPackage != null && !jooqRecordPackage.isBlank()) {
             recordPackage = jooqRecordPackage;
-        }
-        else {
-            throw DLCAutoConfigException.fail("Property 'jooqRecordPackage' is missing. Make sure you specified a property called 'dlc.persistence.jooqRecordPackage'.");
+        } else {
+            throw DLCAutoConfigException.fail("Property 'jooqRecordPackage' is missing. Make sure you specified a " +
+                "property called 'dlc.persistence.jooqRecordPackage' or add a 'jooqRecordPackage' value on the " +
+                "@EnableDLC annotation.");
         }
 
         return new JooqDomainPersistenceProvider(

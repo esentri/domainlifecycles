@@ -24,60 +24,36 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.autoconfig.features.single.events;
+package io.domainlifecycles.autoconfig.features.single.persistence.config.annotation;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
-import io.domainlifecycles.autoconfig.features.single.events.model.ADomainService;
-import io.domainlifecycles.autoconfig.features.single.events.model.AQueryHandler;
-import io.domainlifecycles.autoconfig.features.single.events.model.ARepository;
-import io.domainlifecycles.autoconfig.features.single.events.model.AnApplicationService;
-import io.domainlifecycles.autoconfig.features.single.events.model.AnOutboundService;
+import io.domainlifecycles.autoconfig.features.single.persistence.PersistenceAutoConfigTestConfiguration;
 import java.util.Locale;
+import org.jooq.SQLDialect;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 
+@Import(PersistenceAutoConfigTestConfiguration.class)
 @SpringBootApplication
 @EnableDlc(
     enableSpringWebAutoConfig = false,
     enableBuilderAutoConfig = false,
-    enableJooqPersistenceAutoConfig = false,
-    enableDomainEventsAutoConfig = true,
+    enableJooqPersistenceAutoConfig = true,
+    enableDomainEventsAutoConfig = false,
     enableJacksonAutoConfig = false,
-    enableSpringOpenApiAutoConfig = false
+    enableSpringOpenApiAutoConfig = false,
+    dlcDomainBasePackages = "io.domainlifecycles.autoconfig",
+    jooqRecordPackage = "io.domainlifecycles.test.autoconfig",
+    jooqSqlDialect = SQLDialect.H2
 )
-public class TestApplicationEventsSingleAutoConfig {
+public class TestApplicationPersistenceAnnotationValuesAutoConfig {
 
     /**
      * Setting the Locale to explicitly force the language in default validation error messages.
      */
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH);
-        new SpringApplicationBuilder(TestApplicationEventsSingleAutoConfig.class).run(args);
-    }
-
-    @Bean
-    public AnApplicationService anApplicationService(){
-        return new AnApplicationService();
-    }
-
-    @Bean
-    public ADomainService aDomainService(){
-        return new ADomainService();
-    }
-
-    @Bean
-    public ARepository aRepository(){
-        return new ARepository();
-    }
-
-    @Bean
-    public AQueryHandler aQueryHandler(){
-        return new AQueryHandler();
-    }
-
-    @Bean
-    public AnOutboundService anOutboundService(){
-        return new AnOutboundService();
+        new SpringApplicationBuilder(TestApplicationPersistenceAnnotationValuesAutoConfig.class).run(args);
     }
 }

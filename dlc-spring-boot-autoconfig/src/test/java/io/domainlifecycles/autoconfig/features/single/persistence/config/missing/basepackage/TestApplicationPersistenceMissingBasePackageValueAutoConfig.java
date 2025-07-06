@@ -24,15 +24,15 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.autoconfig.features.single.persistence;
+package io.domainlifecycles.autoconfig.features.single.persistence.config.missing.basepackage;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
+import io.domainlifecycles.autoconfig.features.single.persistence.PersistenceAutoConfigTestConfiguration;
 import java.util.Locale;
 import org.jooq.SQLDialect;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
 @Import(PersistenceAutoConfigTestConfiguration.class)
 @SpringBootApplication
@@ -46,13 +46,13 @@ import org.springframework.test.context.ActiveProfiles;
     jooqRecordPackage = "io.domainlifecycles.test.autoconfig",
     jooqSqlDialect = SQLDialect.H2
 )
-public class TestApplicationPersistenceSingleAutoConfig {
+public class TestApplicationPersistenceMissingBasePackageValueAutoConfig {
 
     /**
      * Setting the Locale to explicitly force the language in default validation error messages.
      */
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH);
-        new SpringApplicationBuilder(TestApplicationPersistenceSingleAutoConfig.class).run(args);
+        new SpringApplicationBuilder(TestApplicationPersistenceMissingBasePackageValueAutoConfig.class).run(args);
     }
 }

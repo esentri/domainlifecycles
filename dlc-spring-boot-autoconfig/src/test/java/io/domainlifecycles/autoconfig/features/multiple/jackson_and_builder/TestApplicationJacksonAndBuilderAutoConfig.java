@@ -24,14 +24,29 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.autoconfig.features.single.persistence.model.simple;
+package io.domainlifecycles.autoconfig.features.multiple.jackson_and_builder;
 
-import io.domainlifecycles.domain.types.base.IdentityBase;
+import io.domainlifecycles.autoconfig.annotation.EnableDlc;
+import java.util.Locale;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 
-public class TestRootSimpleId extends IdentityBase<Long> {
+@SpringBootApplication
+@EnableDlc(
+    enableSpringWebAutoConfig = false,
+    enableBuilderAutoConfig = true,
+    enableJooqPersistenceAutoConfig = false,
+    enableDomainEventsAutoConfig = false,
+    enableJacksonAutoConfig = true,
+    enableSpringOpenApiAutoConfig = false
+)
+public class TestApplicationJacksonAndBuilderAutoConfig {
 
-    public TestRootSimpleId(Long anId) {
-        super(anId);
+    /**
+     * Setting the Locale to explicitly force the language in default validation error messages.
+     */
+    public static void main(String[] args) {
+        Locale.setDefault(Locale.ENGLISH);
+        new SpringApplicationBuilder(TestApplicationJacksonAndBuilderAutoConfig.class).run(args);
     }
-
 }

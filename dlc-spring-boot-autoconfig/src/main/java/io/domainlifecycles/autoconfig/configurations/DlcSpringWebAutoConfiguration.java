@@ -68,7 +68,7 @@ public class DlcSpringWebAutoConfiguration implements WebMvcConfigurer {
     /**
      * Optional DLC response format.
      */
-    @ConditionalOnMissingBean()
+    @ConditionalOnMissingBean
     @Bean
     public ResponseEntityBuilder defaultResponseEntityBuilder() {
         return new DefaultResponseEntityBuilder();

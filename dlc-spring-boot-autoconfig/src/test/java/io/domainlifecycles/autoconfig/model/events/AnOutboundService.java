@@ -1,20 +1,20 @@
-package io.domainlifecycles.autoconfig.features.single.events.model;
+package io.domainlifecycles.autoconfig.model.events;
 
-import io.domainlifecycles.domain.types.ApplicationService;
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.domain.types.ListensTo;
+import io.domainlifecycles.domain.types.OutboundService;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class AnApplicationService implements ApplicationService {
+public class AnOutboundService implements OutboundService {
 
     public Queue<DomainEvent> received = new ConcurrentLinkedQueue<>();
 
     @ListensTo(domainEventType = ADomainEvent.class)
     public void onADomainEvent(ADomainEvent domainEvent){
-        log.debug("ADomainEvent received in AnApplicationService! Message = " + domainEvent.message());
+        log.debug("ADomainEvent received in AnOutboundService! Message = " + domainEvent.message());
         received.add(domainEvent);
     }
 

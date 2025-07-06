@@ -1,4 +1,4 @@
-package io.domainlifecycles.autoconfig.features.single.events.model;
+package io.domainlifecycles.autoconfig.model.events;
 
 import io.domainlifecycles.domain.types.AggregateDomainEvent;
 

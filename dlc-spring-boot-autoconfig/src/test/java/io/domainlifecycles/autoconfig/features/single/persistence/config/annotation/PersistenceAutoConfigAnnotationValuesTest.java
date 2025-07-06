@@ -1,40 +1,44 @@
-package io.domainlifecycles.autoconfig.features.single.openapi;
+package io.domainlifecycles.autoconfig.features.single.persistence.config.annotation;
 
 import io.domainlifecycles.access.classes.ClassProvider;
-import io.domainlifecycles.builder.DomainObjectBuilderProvider;
+import io.domainlifecycles.autoconfig.features.single.persistence.SimpleAggregateRootRepository;
+import io.domainlifecycles.autoconfig.model.persistence.TestRootSimple;
+import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
-import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.services.api.ServiceProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
-import java.util.Locale;
+import java.util.Optional;
+import org.jooq.DSLContext;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Transactional;
+import tests.shared.events.PersistenceEvent;
+import tests.shared.persistence.PersistenceEventTestHelper;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@SpringBootTest
 @ActiveProfiles({"test"})
-@AutoConfigureMockMvc
-public class OpenApiAutoConfigTests {
+public class PersistenceAutoConfigAnnotationValuesTest {
 
-    private static final String API_DOCS_PATH = "/v3/api-docs";
+    private PersistenceEventTestHelper persistenceEventTestHelper;
+    private SimpleAggregateRootRepository simpleAggregateRootRepository;
 
     @Autowired
-    private MockMvc mockMvc;
+    DSLContext dslContext;
 
-    @Autowired(required = false)
-    DomainObjectBuilderProvider domainObjectBuilderProvider;
+    @Autowired
+    JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
 
     @Autowired(required = false)
     ServiceProvider serviceProvider;
@@ -58,30 +62,43 @@ public class OpenApiAutoConfigTests {
     DlcJacksonModule dlcJacksonModule;
 
     @Autowired(required = false)
-    JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
-
-    @Autowired(required = false)
-    EntityIdentityProvider entityIdentityProvider;
-
-    @Autowired(required = false)
     DlcOpenApiCustomizer dlcOpenApiCustomizer;
 
     @Autowired(required = false)
     ResponseEntityBuilder responseEntityBuilder;
 
-    @Test
-    public void testOpenApiSimple() throws Exception {
-        Locale.setDefault(Locale.ENGLISH);
+    @BeforeAll
+    public void init() {
+        persistenceEventTestHelper = new PersistenceEventTestHelper();
+        simpleAggregateRootRepository = new SimpleAggregateRootRepository(
+            dslContext, persistenceEventTestHelper.testEventPublisher, jooqDomainPersistenceProvider
+        );
+    }
 
-        mockMvc
-            .perform(MockMvcRequestBuilders.get(API_DOCS_PATH).locale(Locale.ENGLISH))
-            .andExpect(status().isOk())
-            .andReturn();
+    @Test
+    @Transactional
+    public void testInsertSimpleEntity() {
+
+        //given
+        TestRootSimple trs = TestRootSimple.builder()
+            .setId(new TestRootSimpleId(1L))
+            .setName("TestRoot")
+            .build();
+        persistenceEventTestHelper.resetEventsCaught();
+
+        //when
+        TestRootSimple inserted = simpleAggregateRootRepository.insert(trs);
+
+        //then
+        Optional<TestRootSimple> found = simpleAggregateRootRepository
+            .findResultById(new TestRootSimpleId(1L)).resultValue();
+        persistenceEventTestHelper.assertFoundWithResult(found, inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
+        persistenceEventTestHelper.assertEvents();
     }
 
     @Test
     void testNoOtherBeansPresent() {
-        assertThat(domainObjectBuilderProvider).isNull();
         assertThat(serviceProvider).isNull();
         assertThat(transactionalHandlerExecutor).isNull();
         assertThat(classProvider).isNull();
@@ -89,11 +106,7 @@ public class OpenApiAutoConfigTests {
         assertThat(routingConfiguration).isNull();
         assertThat(publishingChannel).isNull();
         assertThat(dlcJacksonModule).isNull();
-        assertThat(jooqDomainPersistenceProvider).isNull();
-        assertThat(entityIdentityProvider).isNull();
         assertThat(dlcOpenApiCustomizer).isNull();
         assertThat(responseEntityBuilder).isNull();
     }
 }
-
-

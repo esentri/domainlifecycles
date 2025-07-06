@@ -48,17 +48,20 @@ public class DlcDomainAutoConfiguration {
     private @Value("${dlcDomainBasePackages}") String dlcDomainBasePackages;
 
     @Bean
-    @ConditionalOnMissingBean(Domain.class)
     public DomainMirror initializedDomain(DlcDomainProperties dlcDomainProperties) {
         if (!Domain.isInitialized()) {
             String basePackages;
-            if (dlcDomainProperties != null) {
+            if (dlcDomainProperties != null
+                && dlcDomainProperties.getBasePackages() != null
+                && !dlcDomainProperties.getBasePackages().isBlank()) {
+
                 basePackages = dlcDomainProperties.getBasePackages();
-            } else if (dlcDomainBasePackages != null) {
+            } else if (dlcDomainBasePackages != null && !dlcDomainBasePackages.isBlank()) {
                 basePackages = dlcDomainBasePackages;
             } else {
                 throw DLCAutoConfigException.fail(
-                    "Property 'basePackages' is missing. Make sure you specified a property called 'dlc.domain.basePackages'.");
+                    "Property 'basePackages' is missing. Make sure you specified a property called " +
+                        "'dlc.domain.basePackages' or add a 'dlcDomainBasePackages' value on the @EnableDLC annotation.");
             }
             String[] domainBasePackages = basePackages.split(",");
             Domain.initialize(new ReflectiveDomainMirrorFactory(domainBasePackages));

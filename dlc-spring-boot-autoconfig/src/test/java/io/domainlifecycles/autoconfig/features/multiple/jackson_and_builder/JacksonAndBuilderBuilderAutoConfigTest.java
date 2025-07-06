@@ -1,6 +1,10 @@
-package io.domainlifecycles.autoconfig.features.single.openapi;
+package io.domainlifecycles.autoconfig.features.multiple.jackson_and_builder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.access.classes.ClassProvider;
+import io.domainlifecycles.autoconfig.model.persistence.TestRootSimple;
+import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
@@ -12,29 +16,22 @@ import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.services.api.ServiceProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
-import java.util.Locale;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles({"test"})
-@AutoConfigureMockMvc
-public class OpenApiAutoConfigTests {
-
-    private static final String API_DOCS_PATH = "/v3/api-docs";
+@SpringBootTest
+@ActiveProfiles({"test", "test-dlc-domain"})
+public class JacksonAndBuilderBuilderAutoConfigTest {
 
     @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired(required = false)
     DomainObjectBuilderProvider domainObjectBuilderProvider;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Autowired(required = false)
     ServiceProvider serviceProvider;
@@ -70,30 +67,35 @@ public class OpenApiAutoConfigTests {
     ResponseEntityBuilder responseEntityBuilder;
 
     @Test
-    public void testOpenApiSimple() throws Exception {
-        Locale.setDefault(Locale.ENGLISH);
+    public void testDlcJacksonModuleIsPresent() {
+        assertThat(dlcJacksonModule).isNotNull();
+    }
 
-        mockMvc
-            .perform(MockMvcRequestBuilders.get(API_DOCS_PATH).locale(Locale.ENGLISH))
-            .andExpect(status().isOk())
-            .andReturn();
+    @Test
+    public void testTestRootSimpleJacksonMapping() throws JsonProcessingException {
+        TestRootSimple testRootSimple = TestRootSimple.builder().setId(new TestRootSimpleId(1L)).setName("TEST").build();
+        String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(testRootSimple);
+
+        TestRootSimple mappedTestRootSimple = objectMapper.readValue(json, TestRootSimple.class);
+        Assertions.assertThat(mappedTestRootSimple).isEqualTo(testRootSimple);
+    }
+
+    @Test
+    void testBuilderProviderIsPresent() {
+        assertThat(domainObjectBuilderProvider).isNotNull();
     }
 
     @Test
     void testNoOtherBeansPresent() {
-        assertThat(domainObjectBuilderProvider).isNull();
         assertThat(serviceProvider).isNull();
         assertThat(transactionalHandlerExecutor).isNull();
         assertThat(classProvider).isNull();
         assertThat(router).isNull();
         assertThat(routingConfiguration).isNull();
         assertThat(publishingChannel).isNull();
-        assertThat(dlcJacksonModule).isNull();
         assertThat(jooqDomainPersistenceProvider).isNull();
         assertThat(entityIdentityProvider).isNull();
         assertThat(dlcOpenApiCustomizer).isNull();
         assertThat(responseEntityBuilder).isNull();
     }
 }
-
-
