@@ -36,7 +36,6 @@ import java.util.Locale;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
 @EnableDlc(
@@ -47,7 +46,6 @@ import org.springframework.context.annotation.Import;
     enableJacksonAutoConfig = false,
     enableSpringOpenApiAutoConfig = false
 )
-@Import(GruelboxEventAutoConfigTestConfiguration.class)
 public class TestApplicationGruelboxEventAutoConfiguration {
 
     /**

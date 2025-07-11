@@ -1,4 +1,4 @@
-package io.domainlifecycles.autoconfig.features.single.openapi;
+package io.domainlifecycles.autoconfig.features.single.web;
 
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
@@ -12,29 +12,18 @@ import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.services.api.ServiceProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
-import java.util.Locale;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 @ActiveProfiles({"test", "test-dlc-domain"})
-@AutoConfigureMockMvc
-public class OpenApiAutoConfigTests {
-
-    private static final String API_DOCS_PATH = "/v3/api-docs";
+public class WebAutoConfigTest {
 
     @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    DlcOpenApiCustomizer dlcOpenApiCustomizer;
+    ResponseEntityBuilder responseEntityBuilder;
 
     @Autowired(required = false)
     DomainObjectBuilderProvider domainObjectBuilderProvider;
@@ -67,16 +56,11 @@ public class OpenApiAutoConfigTests {
     EntityIdentityProvider entityIdentityProvider;
 
     @Autowired(required = false)
-    ResponseEntityBuilder responseEntityBuilder;
+    DlcOpenApiCustomizer dlcOpenApiCustomizer;
 
     @Test
-    public void testOpenApiSimple() throws Exception {
-        Locale.setDefault(Locale.ENGLISH);
-
-        mockMvc
-            .perform(MockMvcRequestBuilders.get(API_DOCS_PATH).locale(Locale.ENGLISH))
-            .andExpect(status().isOk())
-            .andReturn();
+    void testResponseEntityBuilderIsPresent() {
+        assertThat(responseEntityBuilder).isNotNull();
     }
 
     @Test
@@ -91,8 +75,6 @@ public class OpenApiAutoConfigTests {
         assertThat(dlcJacksonModule).isNull();
         assertThat(jooqDomainPersistenceProvider).isNull();
         assertThat(entityIdentityProvider).isNull();
-        assertThat(responseEntityBuilder).isNull();
+        assertThat(dlcOpenApiCustomizer).isNull();
     }
 }
-
-

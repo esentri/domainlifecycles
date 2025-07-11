@@ -30,10 +30,8 @@ import io.domainlifecycles.autoconfig.annotation.EnableDlc;
 import java.util.Locale;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
-@Import(JacksonAutoConfigTestConfiguration.class)
 @EnableDlc(
     enableSpringWebAutoConfig = false,
     enableBuilderAutoConfig = false,

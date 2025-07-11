@@ -1,6 +1,7 @@
 package io.domainlifecycles.autoconfig.features.single.persistence.config.property;
 
 import io.domainlifecycles.access.classes.ClassProvider;
+import io.domainlifecycles.autoconfig.features.single.persistence.PersistenceAutoConfigTestConfiguration;
 import io.domainlifecycles.autoconfig.features.single.persistence.SimpleAggregateRootRepository;
 import io.domainlifecycles.autoconfig.model.persistence.TestRootSimple;
 import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
@@ -10,6 +11,7 @@ import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
+import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.services.api.ServiceProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
@@ -20,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import tests.shared.events.PersistenceEvent;
@@ -28,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
+@Import(PersistenceAutoConfigTestConfiguration.class)
 @ActiveProfiles({"test", "test-dlc-domain", "test-dlc-persistence"})
 public class PersistenceAutoConfigPropertyValuesTest {
 
@@ -39,6 +43,9 @@ public class PersistenceAutoConfigPropertyValuesTest {
 
     @Autowired
     JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
+
+    @Autowired
+    EntityIdentityProvider entityIdentityProvider;
 
     @Autowired(required = false)
     ServiceProvider serviceProvider;

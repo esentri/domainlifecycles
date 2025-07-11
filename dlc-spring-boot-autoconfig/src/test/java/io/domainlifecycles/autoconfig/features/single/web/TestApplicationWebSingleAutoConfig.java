@@ -24,33 +24,29 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.autoconfig.features.single.persistence.config.annotation;
+package io.domainlifecycles.autoconfig.features.single.web;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
 import java.util.Locale;
-import org.jooq.SQLDialect;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 @SpringBootApplication
 @EnableDlc(
-    enableSpringWebAutoConfig = false,
+    enableSpringWebAutoConfig = true,
     enableBuilderAutoConfig = false,
-    enableJooqPersistenceAutoConfig = true,
+    enableJooqPersistenceAutoConfig = false,
     enableDomainEventsAutoConfig = false,
     enableJacksonAutoConfig = false,
-    enableSpringOpenApiAutoConfig = false,
-    dlcDomainBasePackages = "io.domainlifecycles.autoconfig",
-    jooqRecordPackage = "io.domainlifecycles.test.autoconfig",
-    jooqSqlDialect = SQLDialect.H2
+    enableSpringOpenApiAutoConfig = false
 )
-public class TestApplicationPersistenceAnnotationValuesAutoConfig {
+public class TestApplicationWebSingleAutoConfig {
 
     /**
      * Setting the Locale to explicitly force the language in default validation error messages.
      */
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH);
-        new SpringApplicationBuilder(TestApplicationPersistenceAnnotationValuesAutoConfig.class).run(args);
+        new SpringApplicationBuilder(TestApplicationWebSingleAutoConfig.class).run(args);
     }
 }

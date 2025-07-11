@@ -36,10 +36,8 @@ import java.util.Locale;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
-@Import(SpringJmsAutoConfigTestConfiguration.class)
 @EnableDlc(
     enableSpringWebAutoConfig = false,
     enableBuilderAutoConfig = false,

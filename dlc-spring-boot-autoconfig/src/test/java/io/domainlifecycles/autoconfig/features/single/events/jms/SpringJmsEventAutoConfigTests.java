@@ -6,8 +6,14 @@ import io.domainlifecycles.autoconfig.model.events.AQueryHandler;
 import io.domainlifecycles.autoconfig.model.events.ARepository;
 import io.domainlifecycles.autoconfig.model.events.AnApplicationService;
 import io.domainlifecycles.autoconfig.model.events.AnOutboundService;
+import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.events.api.DomainEvents;
 import io.domainlifecycles.events.exception.DLCEventsException;
+import io.domainlifecycles.jackson.module.DlcJacksonModule;
+import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
+import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
+import io.domainlifecycles.spring.http.ResponseEntityBuilder;
+import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
 import jakarta.jms.Connection;
 import jakarta.jms.DeliveryMode;
 import jakarta.jms.JMSException;
@@ -21,6 +27,7 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -28,6 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 @SpringBootTest
+@Import(SpringJmsAutoConfigTestConfiguration.class)
 @ActiveProfiles({"test", "test-dlc-domain"})
 public class SpringJmsEventAutoConfigTests {
 
@@ -48,6 +56,24 @@ public class SpringJmsEventAutoConfigTests {
 
     @Autowired
     private ActiveMQConnectionFactory activeMQConnectionFactory;
+
+    @Autowired
+    DomainObjectBuilderProvider domainObjectBuilderProvider;
+
+    @Autowired(required = false)
+    DlcJacksonModule dlcJacksonModule;
+
+    @Autowired(required = false)
+    JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
+
+    @Autowired(required = false)
+    EntityIdentityProvider entityIdentityProvider;
+
+    @Autowired(required = false)
+    DlcOpenApiCustomizer dlcOpenApiCustomizer;
+
+    @Autowired(required = false)
+    ResponseEntityBuilder responseEntityBuilder;
 
     @Test
     @DirtiesContext
@@ -130,5 +156,14 @@ public class SpringJmsEventAutoConfigTests {
                     softly.assertAll();
                 }
             );
+    }
+
+    @Test
+    void testNoOtherBeansPresent() {
+        assertThat(dlcJacksonModule).isNull();
+        assertThat(jooqDomainPersistenceProvider).isNull();
+        assertThat(entityIdentityProvider).isNull();
+        assertThat(dlcOpenApiCustomizer).isNull();
+        assertThat(responseEntityBuilder).isNull();
     }
 }

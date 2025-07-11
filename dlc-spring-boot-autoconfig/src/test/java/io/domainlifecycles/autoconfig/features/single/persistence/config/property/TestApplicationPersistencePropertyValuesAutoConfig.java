@@ -27,13 +27,10 @@
 package io.domainlifecycles.autoconfig.features.single.persistence.config.property;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
-import io.domainlifecycles.autoconfig.features.single.persistence.PersistenceAutoConfigTestConfiguration;
 import java.util.Locale;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.annotation.Import;
 
-@Import(PersistenceAutoConfigTestConfiguration.class)
 @SpringBootApplication
 @EnableDlc(
     enableSpringWebAutoConfig = false,

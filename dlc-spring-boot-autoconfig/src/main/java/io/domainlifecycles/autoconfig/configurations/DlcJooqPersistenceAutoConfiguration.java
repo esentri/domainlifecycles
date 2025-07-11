@@ -51,6 +51,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 import javax.sql.DataSource;
@@ -58,8 +59,7 @@ import java.util.Set;
 
 @AutoConfiguration
 @EnableConfigurationProperties(DlcJooqPersistenceProperties.class)
-@AutoConfigureAfter({DlcBuilderAutoConfiguration.class, DataSourceAutoConfiguration.class, DlcDomainAutoConfiguration.class})
-@AutoConfigureBefore({JooqAutoConfiguration.class})
+@AutoConfigureAfter({DlcBuilderAutoConfiguration.class, DataSourceAutoConfiguration.class, DlcDomainAutoConfiguration.class, JooqAutoConfiguration.class})
 public class DlcJooqPersistenceAutoConfiguration {
 
     private @Value("${jooqRecordPackage}") String jooqRecordPackage;
@@ -111,13 +111,12 @@ public class DlcJooqPersistenceAutoConfiguration {
     /**
      * IMPORTANT: A record package where all JOOQ record classes are generated must be defined.
      *
-     * @param domainObjectBuilderProvider
+     * @param domainObjectBuilderProvider {@link DomainObjectBuilderProvider}
      * @param customRecordMappers         {@link RecordMapper} all record mappers (should be defined as spring beans
      *                                                        to work like that)
      * @return {@link JooqDomainPersistenceProvider} instance configured
      */
     @Bean
-    //@ConditionalOnBean({DomainObjectBuilderProvider.class})
     @ConditionalOnMissingBean
     public JooqDomainPersistenceProvider domainPersistenceProvider(
         DomainObjectBuilderProvider domainObjectBuilderProvider,
@@ -157,7 +156,7 @@ public class DlcJooqPersistenceAutoConfiguration {
      * Only used together with DLC Jackson integration, see below...
      */
     @Bean
-    @ConditionalOnBean(DSLContext.class)
+    @DependsOn("dslContext")
     @ConditionalOnMissingBean
     EntityIdentityProvider identityProvider(DSLContext dslContext) {
         return new JooqEntityIdentityProvider(dslContext);

@@ -28,14 +28,17 @@ package io.domainlifecycles.autoconfig.features.single.persistence.config.missin
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
 import io.domainlifecycles.autoconfig.features.single.persistence.PersistenceAutoConfigTestConfiguration;
+import io.domainlifecycles.builder.DomainObjectBuilderProvider;
+import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import java.util.Locale;
 import org.jooq.SQLDialect;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
-@Import(PersistenceAutoConfigTestConfiguration.class)
 @SpringBootApplication
+@Import(PersistenceAutoConfigTestConfiguration.class)
 @EnableDlc(
     enableSpringWebAutoConfig = false,
     enableBuilderAutoConfig = false,
