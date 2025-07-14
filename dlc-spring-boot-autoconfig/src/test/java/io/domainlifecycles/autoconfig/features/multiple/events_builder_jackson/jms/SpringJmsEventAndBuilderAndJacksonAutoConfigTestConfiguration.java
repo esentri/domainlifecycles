@@ -24,13 +24,11 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.autoconfig.features.single.events.jms;
+package io.domainlifecycles.autoconfig.features.multiple.events_builder_jackson.jms;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.access.classes.DefaultClassProvider;
-import io.domainlifecycles.builder.DomainObjectBuilderProvider;
-import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
@@ -38,22 +36,19 @@ import io.domainlifecycles.events.consume.execution.handler.TransactionalHandler
 import io.domainlifecycles.events.jakarta.jms.api.JakartaJmsChannelFactory;
 import io.domainlifecycles.events.mq.api.MqProcessingChannel;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
-import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
-import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.services.api.ServiceProvider;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @Slf4j
 @EnableJms
-public class SpringJmsAutoConfigTestConfiguration {
+public class SpringJmsEventAndBuilderAndJacksonAutoConfigTestConfiguration {
 
     @Bean
     public JakartaJmsChannelFactory jakartaJmsChannelFactory(
@@ -92,24 +87,5 @@ public class SpringJmsAutoConfigTestConfiguration {
     @Bean
     public ClassProvider classProvider(){
         return new DefaultClassProvider();
-    }
-
-    @Bean
-    @DependsOn("initializedDomain")
-    DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
-        return new InnerClassDomainObjectBuilderProvider();
-    }
-
-    @Bean
-    @DependsOn("initializedDomain")
-    DlcJacksonModule dlcModuleConfiguration(
-        List<? extends JacksonMappingCustomizer<?>> customizers,
-        DomainObjectBuilderProvider domainObjectBuilderProvider
-    ) {
-        DlcJacksonModule module = new DlcJacksonModule(
-            domainObjectBuilderProvider
-        );
-        customizers.forEach(c -> module.registerCustomizer(c, c.instanceType));
-        return module;
     }
 }

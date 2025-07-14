@@ -24,7 +24,7 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.autoconfig.features.single.domain.missing.basepackage;
+package io.domainlifecycles.autoconfig.features.multiple.jackson_builder;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
 import java.util.Locale;
@@ -34,19 +34,19 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 @SpringBootApplication
 @EnableDlc(
     enableSpringWebAutoConfig = false,
-    enableBuilderAutoConfig = false,
+    enableBuilderAutoConfig = true,
     enableJooqPersistenceAutoConfig = false,
     enableDomainEventsAutoConfig = false,
-    enableJacksonAutoConfig = false,
+    enableJacksonAutoConfig = true,
     enableSpringOpenApiAutoConfig = false
 )
-public class TestApplicationDomainMissingBasePackageValueAutoConfig {
+public class TestApplicationJacksonAndBuilderAutoConfig {
 
     /**
      * Setting the Locale to explicitly force the language in default validation error messages.
      */
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH);
-        new SpringApplicationBuilder(TestApplicationDomainMissingBasePackageValueAutoConfig.class).run(args);
+        new SpringApplicationBuilder(TestApplicationJacksonAndBuilderAutoConfig.class).run(args);
     }
 }

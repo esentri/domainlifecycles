@@ -24,29 +24,32 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.autoconfig.features.single.domain.missing.basepackage;
+package io.domainlifecycles.autoconfig.features.multiple.events_builder_jackson.gruelbox;
 
-import io.domainlifecycles.autoconfig.annotation.EnableDlc;
-import java.util.Locale;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
+import com.gruelbox.transactionoutbox.TransactionOutbox;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
-@SpringBootApplication
-@EnableDlc(
-    enableSpringWebAutoConfig = false,
-    enableBuilderAutoConfig = false,
-    enableJooqPersistenceAutoConfig = false,
-    enableDomainEventsAutoConfig = false,
-    enableJacksonAutoConfig = false,
-    enableSpringOpenApiAutoConfig = false
-)
-public class TestApplicationDomainMissingBasePackageValueAutoConfig {
+@Component
+@Slf4j
+class GruelboxBackgroundProcessor {
 
-    /**
-     * Setting the Locale to explicitly force the language in default validation error messages.
-     */
-    public static void main(String[] args) {
-        Locale.setDefault(Locale.ENGLISH);
-        new SpringApplicationBuilder(TestApplicationDomainMissingBasePackageValueAutoConfig.class).run(args);
+    private final TransactionOutbox outbox;
+
+    GruelboxBackgroundProcessor(TransactionOutbox outbox) {
+        this.outbox = outbox;
     }
+
+    @Scheduled(initialDelayString = "PT3S", fixedRateString = "PT1S")
+    void poll() {
+        try {
+            do {
+                log.info("Flushing");
+            } while (outbox.flush());
+        } catch (Throwable t) {
+            log.error("Error flushing transaction outbox. Pausing", t);
+        }
+    }
+
 }

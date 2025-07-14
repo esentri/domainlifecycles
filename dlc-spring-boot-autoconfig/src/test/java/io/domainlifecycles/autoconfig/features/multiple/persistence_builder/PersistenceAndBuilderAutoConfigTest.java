@@ -1,4 +1,4 @@
-package io.domainlifecycles.autoconfig.features.multiple.persistence_and_builder;
+package io.domainlifecycles.autoconfig.features.multiple.persistence_builder;
 
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.autoconfig.features.single.persistence.SimpleAggregateRootRepository;
@@ -27,63 +27,56 @@ import tests.shared.events.PersistenceEvent;
 import tests.shared.persistence.PersistenceEventTestHelper;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 @ActiveProfiles({"test", "test-dlc-domain", "test-dlc-persistence"})
 public class PersistenceAndBuilderAutoConfigTest {
 
-    private PersistenceEventTestHelper persistenceEventTestHelper;
-    private SimpleAggregateRootRepository simpleAggregateRootRepository;
+    @Autowired
+    private DSLContext dslContext;
 
     @Autowired
-    DSLContext dslContext;
+    private DomainObjectBuilderProvider domainObjectBuilderProvider;
 
     @Autowired
-    DomainObjectBuilderProvider domainObjectBuilderProvider;
-
-    @Autowired
-    JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
+    private JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
 
     @Autowired(required = false)
-    ServiceProvider serviceProvider;
+    private ServiceProvider serviceProvider;
 
     @Autowired(required = false)
-    TransactionalHandlerExecutor transactionalHandlerExecutor;
+    private TransactionalHandlerExecutor transactionalHandlerExecutor;
 
     @Autowired(required = false)
-    ClassProvider classProvider;
+    private ClassProvider classProvider;
 
     @Autowired(required = false)
-    DomainEventTypeBasedRouter router;
+    private DomainEventTypeBasedRouter router;
 
     @Autowired(required = false)
-    ChannelRoutingConfiguration routingConfiguration;
+    private ChannelRoutingConfiguration routingConfiguration;
 
     @Autowired(required = false)
-    PublishingChannel publishingChannel;
+    private PublishingChannel publishingChannel;
 
     @Autowired(required = false)
-    DlcJacksonModule dlcJacksonModule;
+    private DlcJacksonModule dlcJacksonModule;
 
     @Autowired(required = false)
-    DlcOpenApiCustomizer dlcOpenApiCustomizer;
+    private DlcOpenApiCustomizer dlcOpenApiCustomizer;
 
     @Autowired(required = false)
-    ResponseEntityBuilder responseEntityBuilder;
-
-    @BeforeAll
-    public void init() {
-        persistenceEventTestHelper = new PersistenceEventTestHelper();
-        simpleAggregateRootRepository = new SimpleAggregateRootRepository(
-            dslContext, persistenceEventTestHelper.testEventPublisher, jooqDomainPersistenceProvider
-        );
-    }
+    private ResponseEntityBuilder responseEntityBuilder;
 
     @Test
     @Transactional
     public void testInsertSimpleEntity() {
 
         //given
+        PersistenceEventTestHelper persistenceEventTestHelper = new PersistenceEventTestHelper();
+        SimpleAggregateRootRepository simpleAggregateRootRepository = new SimpleAggregateRootRepository(
+            dslContext, persistenceEventTestHelper.testEventPublisher, jooqDomainPersistenceProvider
+        );
+
         TestRootSimple trs = TestRootSimple.builder()
             .setId(new TestRootSimpleId(1L))
             .setName("TestRoot")

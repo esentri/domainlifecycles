@@ -1,5 +1,6 @@
-package io.domainlifecycles.autoconfig.features.single.events.jms;
+package io.domainlifecycles.autoconfig.features.multiple.events_builder.jms;
 
+import io.domainlifecycles.autoconfig.features.multiple.events_builder.gruelbox.GruelboxEventAndBuilderAutoConfigTestConfiguration;
 import io.domainlifecycles.autoconfig.model.events.ADomainEvent;
 import io.domainlifecycles.autoconfig.model.events.ADomainService;
 import io.domainlifecycles.autoconfig.model.events.AQueryHandler;
@@ -25,6 +26,7 @@ import java.util.UUID;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -35,9 +37,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 @SpringBootTest
-@Import(SpringJmsEventAutoConfigTestConfiguration.class)
+@Import(SpringJmsEventAndBuilderAutoConfigTestConfiguration.class)
 @ActiveProfiles({"test", "test-dlc-domain"})
-public class SpringJmsEventAutoConfigTests {
+public class SpringJmsEventAndBuilderAutoConfigTests {
 
     @Autowired
     private ADomainService aDomainService;
@@ -58,22 +60,22 @@ public class SpringJmsEventAutoConfigTests {
     private ActiveMQConnectionFactory activeMQConnectionFactory;
 
     @Autowired
-    DomainObjectBuilderProvider domainObjectBuilderProvider;
+    private DomainObjectBuilderProvider domainObjectBuilderProvider;
 
     @Autowired(required = false)
-    DlcJacksonModule dlcJacksonModule;
+    private DlcJacksonModule dlcJacksonModule;
 
     @Autowired(required = false)
-    JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
+    private JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
 
     @Autowired(required = false)
-    EntityIdentityProvider entityIdentityProvider;
+    private EntityIdentityProvider entityIdentityProvider;
 
     @Autowired(required = false)
-    DlcOpenApiCustomizer dlcOpenApiCustomizer;
+    private DlcOpenApiCustomizer dlcOpenApiCustomizer;
 
     @Autowired(required = false)
-    ResponseEntityBuilder responseEntityBuilder;
+    private ResponseEntityBuilder responseEntityBuilder;
 
     @Test
     @DirtiesContext
@@ -137,6 +139,7 @@ public class SpringJmsEventAutoConfigTests {
     }
 
     @Test
+    @DirtiesContext
     public void testIntegrationReceived() {
         //when
         var evt = new ADomainEvent("Test"+ UUID.randomUUID());
@@ -155,6 +158,11 @@ public class SpringJmsEventAutoConfigTests {
                     softly.assertAll();
                 }
             );
+    }
+
+    @Test
+    void testBuilderProviderIsPresent() {
+        assertThat(domainObjectBuilderProvider).isNotNull();
     }
 
     @Test

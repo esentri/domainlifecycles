@@ -29,14 +29,10 @@ import tests.shared.events.PersistenceEvent;
 import tests.shared.persistence.PersistenceEventTestHelper;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 @Import(PersistenceAutoConfigTestConfiguration.class)
 @ActiveProfiles({"test"})
 public class PersistenceAutoConfigAnnotationValuesTest {
-
-    private PersistenceEventTestHelper persistenceEventTestHelper;
-    private SimpleAggregateRootRepository simpleAggregateRootRepository;
 
     @Autowired
     DSLContext dslContext;
@@ -74,19 +70,16 @@ public class PersistenceAutoConfigAnnotationValuesTest {
     @Autowired(required = false)
     ResponseEntityBuilder responseEntityBuilder;
 
-    @BeforeAll
-    public void init() {
-        persistenceEventTestHelper = new PersistenceEventTestHelper();
-        simpleAggregateRootRepository = new SimpleAggregateRootRepository(
-            dslContext, persistenceEventTestHelper.testEventPublisher, jooqDomainPersistenceProvider
-        );
-    }
-
     @Test
     @Transactional
     public void testInsertSimpleEntity() {
 
         //given
+        PersistenceEventTestHelper persistenceEventTestHelper = new PersistenceEventTestHelper();
+        SimpleAggregateRootRepository simpleAggregateRootRepository = new SimpleAggregateRootRepository(
+            dslContext, persistenceEventTestHelper.testEventPublisher, jooqDomainPersistenceProvider
+        );
+
         TestRootSimple trs = TestRootSimple.builder()
             .setId(new TestRootSimpleId(1L))
             .setName("TestRoot")

@@ -1,11 +1,15 @@
-package io.domainlifecycles.autoconfig.features.single.events.jms;
+package io.domainlifecycles.autoconfig.features.multiple.events_builder_jackson.jms;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.autoconfig.model.events.ADomainEvent;
 import io.domainlifecycles.autoconfig.model.events.ADomainService;
 import io.domainlifecycles.autoconfig.model.events.AQueryHandler;
 import io.domainlifecycles.autoconfig.model.events.ARepository;
 import io.domainlifecycles.autoconfig.model.events.AnApplicationService;
 import io.domainlifecycles.autoconfig.model.events.AnOutboundService;
+import io.domainlifecycles.autoconfig.model.persistence.TestRootSimple;
+import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.events.api.DomainEvents;
 import io.domainlifecycles.events.exception.DLCEventsException;
@@ -23,8 +27,10 @@ import jakarta.jms.Session;
 import jakarta.jms.TextMessage;
 import java.util.UUID;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -35,9 +41,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 @SpringBootTest
-@Import(SpringJmsEventAutoConfigTestConfiguration.class)
+@Import(SpringJmsEventAndBuilderAndJacksonAutoConfigTestConfiguration.class)
 @ActiveProfiles({"test", "test-dlc-domain"})
-public class SpringJmsEventAutoConfigTests {
+public class SpringJmsEventAndBuilderAndJacksonAutoConfigTests {
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     private ADomainService aDomainService;
@@ -58,22 +67,22 @@ public class SpringJmsEventAutoConfigTests {
     private ActiveMQConnectionFactory activeMQConnectionFactory;
 
     @Autowired
-    DomainObjectBuilderProvider domainObjectBuilderProvider;
+    private DomainObjectBuilderProvider domainObjectBuilderProvider;
 
     @Autowired(required = false)
-    DlcJacksonModule dlcJacksonModule;
+    private DlcJacksonModule dlcJacksonModule;
 
     @Autowired(required = false)
-    JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
+    private JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
 
     @Autowired(required = false)
-    EntityIdentityProvider entityIdentityProvider;
+    private EntityIdentityProvider entityIdentityProvider;
 
     @Autowired(required = false)
-    DlcOpenApiCustomizer dlcOpenApiCustomizer;
+    private DlcOpenApiCustomizer dlcOpenApiCustomizer;
 
     @Autowired(required = false)
-    ResponseEntityBuilder responseEntityBuilder;
+    private ResponseEntityBuilder responseEntityBuilder;
 
     @Test
     @DirtiesContext
@@ -155,6 +164,27 @@ public class SpringJmsEventAutoConfigTests {
                     softly.assertAll();
                 }
             );
+    }
+
+
+
+    @Test
+    void testBuilderProviderIsPresent() {
+        assertThat(domainObjectBuilderProvider).isNotNull();
+    }
+
+    @Test
+    public void testDlcJacksonModuleIsPresent() {
+        assertThat(dlcJacksonModule).isNotNull();
+    }
+
+    @Test
+    public void testTestRootSimpleJacksonMapping() throws JsonProcessingException {
+        TestRootSimple testRootSimple = TestRootSimple.builder().setId(new TestRootSimpleId(1L)).setName("TEST").build();
+        String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(testRootSimple);
+
+        TestRootSimple mappedTestRootSimple = objectMapper.readValue(json, TestRootSimple.class);
+        Assertions.assertThat(mappedTestRootSimple).isEqualTo(testRootSimple);
     }
 
     @Test

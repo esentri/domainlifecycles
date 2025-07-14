@@ -1,16 +1,16 @@
-package io.domainlifecycles.autoconfig.features.single.events.gruelbox;
+package io.domainlifecycles.autoconfig.features.multiple.events_builder.gruelbox;
 
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import io.domainlifecycles.autoconfig.model.events.ADomainEvent;
 import io.domainlifecycles.autoconfig.model.events.AnApplicationService;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
-import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
 import java.time.Duration;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -22,9 +22,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 @SpringBootTest
-@Import(GruelboxEventAutoConfigTestConfiguration.class)
+@Import(GruelboxEventAndBuilderAutoConfigTestConfiguration.class)
 @ActiveProfiles({"test", "test-dlc-domain"})
-public class GruelboxEventAutoConfigTests {
+public class GruelboxEventAndBuilderAutoConfigTests {
 
     @Autowired
     private TransactionOutbox outbox;
@@ -37,9 +37,6 @@ public class GruelboxEventAutoConfigTests {
 
     @Autowired
     private DomainObjectBuilderProvider domainObjectBuilderProvider;
-
-    @Autowired(required = false)
-    private DlcJacksonModule dlcJacksonModule;
 
     @Autowired(required = false)
     private JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
@@ -71,6 +68,11 @@ public class GruelboxEventAutoConfigTests {
                 assertThat(anApplicationService.received)
                     .contains(val)
             );
+    }
+
+    @Test
+    void testBuilderProviderIsPresent() {
+        assertThat(domainObjectBuilderProvider).isNotNull();
     }
 
     @Test

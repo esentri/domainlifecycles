@@ -1,76 +1,86 @@
-package io.domainlifecycles.autoconfig.features.multiple.jackson_and_builder;
+package io.domainlifecycles.autoconfig.features.multiple.events_builder_jackson.gruelbox;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.domainlifecycles.access.classes.ClassProvider;
+import com.gruelbox.transactionoutbox.TransactionOutbox;
+import io.domainlifecycles.autoconfig.model.events.ADomainEvent;
+import io.domainlifecycles.autoconfig.model.events.AnApplicationService;
 import io.domainlifecycles.autoconfig.model.persistence.TestRootSimple;
 import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
-import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
-import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
-import io.domainlifecycles.events.api.PublishingChannel;
-import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
-import io.domainlifecycles.services.api.ServiceProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
+import java.time.Duration;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.support.TransactionTemplate;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 @SpringBootTest
+@Import(GruelboxEventAndBuilderAndJacksonAutoConfigTestConfiguration.class)
 @ActiveProfiles({"test", "test-dlc-domain"})
-public class JacksonAndBuilderBuilderAutoConfigTest {
+public class GruelboxEventAndBuilderAndJacksonAutoConfigTests {
 
     @Autowired
-    DomainObjectBuilderProvider domainObjectBuilderProvider;
+    private ObjectMapper objectMapper;
 
     @Autowired
-    ObjectMapper objectMapper;
+    private TransactionOutbox outbox;
+
+    @Autowired
+    private TransactionTemplate transactionTemplate;
+
+    @Autowired
+    private AnApplicationService anApplicationService;
+
+    @Autowired
+    private DomainObjectBuilderProvider domainObjectBuilderProvider;
+
+    @Autowired
+    private DlcJacksonModule dlcJacksonModule;
 
     @Autowired(required = false)
-    ServiceProvider serviceProvider;
+    private JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
 
     @Autowired(required = false)
-    TransactionalHandlerExecutor transactionalHandlerExecutor;
+    private EntityIdentityProvider entityIdentityProvider;
 
     @Autowired(required = false)
-    ClassProvider classProvider;
+    private DlcOpenApiCustomizer dlcOpenApiCustomizer;
 
     @Autowired(required = false)
-    DomainEventTypeBasedRouter router;
-
-    @Autowired(required = false)
-    ChannelRoutingConfiguration routingConfiguration;
-
-    @Autowired(required = false)
-    PublishingChannel publishingChannel;
-
-    @Autowired(required = false)
-    DlcJacksonModule dlcJacksonModule;
-
-    @Autowired(required = false)
-    JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
-
-    @Autowired(required = false)
-    EntityIdentityProvider entityIdentityProvider;
-
-    @Autowired(required = false)
-    DlcOpenApiCustomizer dlcOpenApiCustomizer;
-
-    @Autowired(required = false)
-    ResponseEntityBuilder responseEntityBuilder;
+    private ResponseEntityBuilder responseEntityBuilder;
 
     @Test
-    public void testDlcJacksonModuleIsPresent() {
-        assertThat(dlcJacksonModule).isNotNull();
-    }
+    @DirtiesContext
+    public void testTransactionOutbox(){
+        var val = new ADomainEvent("GruelboxEvent");
+        transactionTemplate.executeWithoutResult((status) ->
+            outbox.with()
+                .ordered("topic1")
+                .delayForAtLeast(Duration.ZERO)
+                .schedule(AnApplicationService.class)
+                .onADomainEvent(val)
+        );
 
+        await()
+            .atMost(10, SECONDS)
+            .untilAsserted(()->
+                assertThat(anApplicationService.received)
+                    .contains(val)
+            );
+    }
     @Test
     public void testTestRootSimpleJacksonMapping() throws JsonProcessingException {
         TestRootSimple testRootSimple = TestRootSimple.builder().setId(new TestRootSimpleId(1L)).setName("TEST").build();
@@ -86,13 +96,12 @@ public class JacksonAndBuilderBuilderAutoConfigTest {
     }
 
     @Test
+    public void testDlcJacksonModuleIsPresent() {
+        assertThat(dlcJacksonModule).isNotNull();
+    }
+
+    @Test
     void testNoOtherBeansPresent() {
-        assertThat(serviceProvider).isNull();
-        assertThat(transactionalHandlerExecutor).isNull();
-        assertThat(classProvider).isNull();
-        assertThat(router).isNull();
-        assertThat(routingConfiguration).isNull();
-        assertThat(publishingChannel).isNull();
         assertThat(jooqDomainPersistenceProvider).isNull();
         assertThat(entityIdentityProvider).isNull();
         assertThat(dlcOpenApiCustomizer).isNull();
