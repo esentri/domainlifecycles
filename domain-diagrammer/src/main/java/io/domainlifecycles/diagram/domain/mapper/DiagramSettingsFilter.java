@@ -64,7 +64,7 @@ public class DiagramSettingsFilter {
 
     private final DiagramTrimSettings trimSettings;
     private final GeneralVisualSettings generalVisualSettings;
-    private final Set<DomainTypeMirror> includedDomainTypesByConnctions;
+    private final Set<DomainTypeMirror> includedDomainTypesByConnections;
     private final DomainMirror domainMirror;
 
     /**
@@ -83,18 +83,18 @@ public class DiagramSettingsFilter {
         this.domainMirror = Objects.requireNonNull(domainMirror, "A DomainMirror must be provided!");
         this.generalVisualSettings = Objects.requireNonNull(generalVisualSettings, "GeneralVisualSettings must be provided!");
 
-        this.includedDomainTypesByConnctions = new HashSet<>();
-        this.includedDomainTypesByConnctions.addAll(calculateConnectedIngoing(diagramTrimSettings.getIncludeConnectedToIngoing()));
-        this.includedDomainTypesByConnctions.addAll(calculateConnectedOutgoing(diagramTrimSettings.getIncludeConnectedToOutgoing()));
-        this.includedDomainTypesByConnctions.addAll(calculateConnected(diagramTrimSettings.getIncludeConnectedTo()));
+        this.includedDomainTypesByConnections = new HashSet<>();
+        this.includedDomainTypesByConnections.addAll(calculateConnectedIngoing(diagramTrimSettings.getIncludeConnectedToIngoing()));
+        this.includedDomainTypesByConnections.addAll(calculateConnectedOutgoing(diagramTrimSettings.getIncludeConnectedToOutgoing()));
+        this.includedDomainTypesByConnections.addAll(calculateConnected(diagramTrimSettings.getIncludeConnectedTo()));
         if( this.trimSettings.getIncludeConnectedTo().isEmpty() &&
             this.trimSettings.getIncludeConnectedToIngoing().isEmpty() &&
             this.trimSettings.getIncludeConnectedToOutgoing().isEmpty()
         ){
-            this.includedDomainTypesByConnctions.addAll(domainMirror.getAllDomainTypeMirrors());
+            this.includedDomainTypesByConnections.addAll(domainMirror.getAllDomainTypeMirrors());
         }
-        this.includedDomainTypesByConnctions.removeAll(calculateConnectedIngoing(diagramTrimSettings.getExcludeConnectedToIngoing()));
-        this.includedDomainTypesByConnctions.removeAll(calculateConnectedOutgoing(diagramTrimSettings.getExcludeConnectedToOutgoing()));
+        this.includedDomainTypesByConnections.removeAll(calculateConnectedIngoing(diagramTrimSettings.getExcludeConnectedToIngoing()));
+        this.includedDomainTypesByConnections.removeAll(calculateConnectedOutgoing(diagramTrimSettings.getExcludeConnectedToOutgoing()));
     }
 
     private Set<DomainTypeMirror> calculateConnected(List<String> typeNames){
@@ -290,7 +290,7 @@ public class DiagramSettingsFilter {
             return false;
         }
         if(trimSettings.hasIncludedConnectedTypeSettings() || trimSettings.hasExcludedConnectedTypeSettings()){
-            contained = this.includedDomainTypesByConnctions.contains(dtm);
+            contained = this.includedDomainTypesByConnections.contains(dtm);
         }
         if(!this.trimSettings.getExplicitlyIncludedPackageNames().isEmpty()) {
             contained = contained && this.trimSettings.getExplicitlyIncludedPackageNames().stream().anyMatch(
@@ -361,12 +361,14 @@ public class DiagramSettingsFilter {
         if(!dtm.isAbstract()){
             return false;
         }
-        return this.includedDomainTypesByConnctions
+        var ret = this.includedDomainTypesByConnections
             .stream()
+            .filter(incl -> !incl.getTypeName().equals(dtm.getTypeName()))
             .noneMatch(incl ->
-                incl.implementsInterface(dtm.getTypeName())
-                    || incl.isSubClassOf(dtm.getTypeName())
+                (incl.implementsInterface(dtm.getTypeName())
+                    || incl.isSubClassOf(dtm.getTypeName())) && !incl.isAbstract()
             );
+        return ret;
     }
 
 
