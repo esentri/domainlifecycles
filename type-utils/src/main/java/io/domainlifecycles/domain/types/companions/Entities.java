@@ -35,6 +35,7 @@ import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
+import io.domainlifecycles.mirror.reflect.ReflectionEntityTypeUtils;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -44,6 +45,7 @@ import java.util.Set;
 /**
  * Companion class which gives us static access to several typical Entity related utility functions
  * implemented in a general way based on meta information kept in the domain mirror.
+ * A pure reflective way is used in cases where the mirror is not initialized, mostly to simplify unit testing.
  *
  * @author Mario Herb
  */
@@ -90,14 +92,22 @@ public class Entities {
      */
     public static Identity<?> id(Entity<?> thisEntity) {
         Objects.requireNonNull(thisEntity, "thisEntity is required to be not null, when calling 'id'!");
-        var em = Domain.entityMirrorFor(thisEntity);
         var accessor = DlcAccess.accessorFor(thisEntity);
-        var idField = em.getIdentityField()
-            .orElseThrow(
-                () -> DLCTypesException.fail("Identity field not defined for '%s'", thisEntity.getClass().getName()));
-        return accessor.peek(idField.getName());
+        return accessor.peek(idFieldName(thisEntity));
     }
 
+    private static String idFieldName(Entity<?> thisEntity) {
+        if(Domain.isInitialized()) {
+            var em = Domain.entityMirrorFor(thisEntity);
+            var idField = em.getIdentityField()
+                .orElseThrow(
+                    () -> DLCTypesException.fail("Identity field not defined for '%s'", thisEntity.getClass().getName()));
+            return idField.getName();
+        }else{
+            var idField = ReflectionEntityTypeUtils.identityField((Class<? extends Entity<? extends Identity<?>>>) thisEntity.getClass());
+            return idField.orElseThrow(() -> DLCTypesException.fail("Identity field not defined for '%s'", thisEntity.getClass().getName())).getName();
+        }
+    }
 
     /**
      * Generic toString implementation for Entities depending on domain mirror.
@@ -107,11 +117,12 @@ public class Entities {
      */
     public static String toString(Entity<?> thisEntity) {
         Objects.requireNonNull(thisEntity, "thisEntity is required to be not null, when calling 'toString'!");
-        var em = Domain.entityMirrorFor(thisEntity);
+        var idFieldName = idFieldName(thisEntity);
+        var accessor = DlcAccess.accessorFor(thisEntity);
         return thisEntity.getClass().getName()
             + "@" + System.identityHashCode(thisEntity)
-            + "(" + em.getIdentityField().map(FieldMirror::getName).orElse("id")
-            + "=" + thisEntity.id() + ")";
+            + "(" + idFieldName
+            + "=" + accessor.peek(idFieldName) + ")";
     }
 
     /**
