@@ -1,13 +1,15 @@
 package io.domainlifecycles.autoconfig.features.multiple.events_builder.jms;
 
-import io.domainlifecycles.autoconfig.features.multiple.events_builder.gruelbox.GruelboxEventAndBuilderAutoConfigTestConfiguration;
 import io.domainlifecycles.autoconfig.model.events.ADomainEvent;
 import io.domainlifecycles.autoconfig.model.events.ADomainService;
 import io.domainlifecycles.autoconfig.model.events.AQueryHandler;
 import io.domainlifecycles.autoconfig.model.events.ARepository;
 import io.domainlifecycles.autoconfig.model.events.AnApplicationService;
 import io.domainlifecycles.autoconfig.model.events.AnOutboundService;
+import io.domainlifecycles.autoconfig.model.persistence.TestRootSimple;
+import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
+import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.events.api.DomainEvents;
 import io.domainlifecycles.events.exception.DLCEventsException;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
@@ -26,7 +28,6 @@ import java.util.UUID;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -158,6 +159,14 @@ public class SpringJmsEventAndBuilderAutoConfigTests {
                     softly.assertAll();
                 }
             );
+    }
+
+    @Test
+    public void testBuild() {
+        var aggregateRootTestBuilder = TestRootSimple.builder().setId(new TestRootSimpleId(5L)).setName("Test-Name");
+        var innerBuilder = new InnerClassDomainObjectBuilder<>(aggregateRootTestBuilder);
+        var built = innerBuilder.build();
+        assertThat(built).isNotNull();
     }
 
     @Test

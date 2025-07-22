@@ -28,9 +28,9 @@ package io.domainlifecycles.autoconfig.configurations.properties;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
 import io.domainlifecycles.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
+import java.util.HashMap;
+import java.util.Map;
 import org.jooq.SQLDialect;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -39,13 +39,49 @@ import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.type.AnnotationMetadata;
 
-import java.util.HashMap;
-import java.util.Map;
-
+/**
+ * Import selector for JOOQ persistence-related configuration properties.
+ * This selector dynamically imports configuration classes based on the JOOQ persistence
+ * configuration specified in the {@link EnableDlc} annotation.
+ * <p>
+ * The selector analyzes JOOQ-specific attributes from the {@link EnableDlc} annotation
+ * such as {@code jooqRecordPackage} and {@code jooqSqlDialect}, and creates the
+ * necessary configuration properties to make them available to the Spring application context.
+ * </p>
+ * <p>
+ * This class works in conjunction with {@link DlcJooqPersistenceProperties} to provide
+ * a flexible configuration mechanism that supports both annotation-based
+ * and properties-file-based configuration for JOOQ persistence.
+ * </p>
+ *
+ * @author leonvoellinger
+ * @see EnableDlc
+ * @see DlcJooqPersistenceProperties
+ * @see DlcJooqPersistenceAutoConfiguration
+ * @see ImportSelector
+ */
 public class JooqPersistenceConfigImportSelector  implements ImportSelector, EnvironmentAware {
 
     private Environment environment;
 
+    /**
+     * Selects configuration classes to import based on JOOQ persistence configuration.
+     * This method examines the {@link EnableDlc} annotation attributes and
+     * determines which JOOQ persistence-related configuration classes should be imported
+     * into the Spring application context.
+     * <p>
+     * The method specifically looks for JOOQ-related attributes such as:
+     * <ul>
+     *   <li>{@code jooqRecordPackage} - package containing generated JOOQ records</li>
+     *   <li>{@code jooqSqlDialect} - SQL dialect for database operations</li>
+     * </ul>
+     * and ensures that the appropriate configuration properties are available
+     * for JOOQ persistence initialization.
+     * </p>
+     *
+     * @param importingClassMetadata metadata about the class that is importing this selector
+     * @return array of fully qualified class names to import for JOOQ persistence configuration
+     */
     @Override
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
         Map<String, Object> attrs = importingClassMetadata
@@ -63,7 +99,7 @@ public class JooqPersistenceConfigImportSelector  implements ImportSelector, Env
             }
         }
 
-        // Optionally import additional configuration manually
+        // Optionally, import additional configuration manually
         return new String[0];
     }
 

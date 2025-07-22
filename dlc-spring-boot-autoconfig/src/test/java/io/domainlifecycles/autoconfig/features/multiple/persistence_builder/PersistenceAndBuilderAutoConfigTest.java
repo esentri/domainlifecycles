@@ -5,6 +5,7 @@ import io.domainlifecycles.autoconfig.features.single.persistence.SimpleAggregat
 import io.domainlifecycles.autoconfig.model.persistence.TestRootSimple;
 import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
+import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
@@ -16,9 +17,7 @@ import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
 import java.util.Optional;
 import org.jooq.DSLContext;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -97,6 +96,14 @@ public class PersistenceAndBuilderAutoConfigTest {
     @Test
     void testBuilderProviderIsPresent() {
         assertThat(domainObjectBuilderProvider).isNotNull();
+    }
+
+    @Test
+    public void testBuild() {
+        var aggregateRootTestBuilder = TestRootSimple.builder().setId(new TestRootSimpleId(5L)).setName("Test-Name");
+        var innerBuilder = new InnerClassDomainObjectBuilder<>(aggregateRootTestBuilder);
+        var built = innerBuilder.build();
+        assertThat(built).isNotNull();
     }
 
     @Test

@@ -33,13 +33,44 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 
+/**
+ * Autoconfiguration for domain object builder functionality in the DLC framework.
+ * This configuration enables DLC compatibility with various builder patterns including
+ * inner class builders (commonly used with Lombok's @Builder annotation) and other
+ * builder implementations.
+ * <p>
+ * The configuration provides a default {@link DomainObjectBuilderProvider} that can handle
+ * the creation of domain objects during deserialization and other framework operations
+ * where object instantiation is required.
+ * </p>
+ * <p>
+ * This autoconfiguration is a fundamental dependency for other DLC features like
+ * Jackson integration and JOOQ persistence, as these components require the ability
+ * to construct domain objects dynamically.
+ * </p>
+ *
+ * @author leonvoellinger
+ * @see DomainObjectBuilderProvider
+ * @see InnerClassDomainObjectBuilderProvider
+ */
+
 @AutoConfiguration
 @AutoConfigureAfter(DlcDomainAutoConfiguration.class)
 public class DlcBuilderAutoConfiguration {
 
     /**
-     * Default configuration to make DLC work with inner builders or Lombok builders.
+     * Configures a domain object builder provider for inner class builders.
+     * This provider is compatible with Lombok's @Builder annotation and other
+     * inner class builder patterns commonly used in domain-driven design.
+     * <p>
+     * The provider enables the framework to instantiate domain objects during
+     * operations like JSON deserialization, database record mapping, and other
+     * scenarios where dynamic object creation is required.
+     * </p>
+     *
+     * @return a {@link DomainObjectBuilderProvider} compatible with inner class builders
      */
+
     @Bean
     @ConditionalOnMissingBean
     DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {

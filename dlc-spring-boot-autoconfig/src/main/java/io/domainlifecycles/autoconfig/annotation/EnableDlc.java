@@ -27,15 +27,45 @@
 package io.domainlifecycles.autoconfig.annotation;
 
 import io.domainlifecycles.autoconfig.configurations.properties.DomainConfigImportSelector;
+import io.domainlifecycles.autoconfig.configurations.properties.JooqPersistenceConfigImportSelector;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import io.domainlifecycles.autoconfig.configurations.properties.JooqPersistenceConfigImportSelector;
 import org.jooq.SQLDialect;
 import org.springframework.context.annotation.Import;
 
+/**
+ * Enable DLC (Domain Lifecycle) framework autoconfiguration.
+ * <p>
+ * This annotation activates the automatic configuration of various DLC components
+ * including domain mirroring, persistence, event handling, JSON processing, and web integration.
+ * The annotation allows fine-grained control over which components should be
+ * automatically configured through its boolean attributes.
+ * </p>
+ * <p>
+ * Usage example:
+ * <pre>
+ * {@code
+ * @EnableDlc(
+ *     dlcDomainBasePackages = "com.example.domain",
+ *     enableJooqPersistenceAutoConfig = true,
+ *     enableDomainEventsAutoConfig = true,
+ *     jooqRecordPackage = "com.example.jooq.tables.records",
+ *     jooqSqlDialect = SQLDialect.POSTGRES
+ * )
+ * @SpringBootApplication
+ * public class Application {
+ *     public static void main(String[] args) {
+ *         SpringApplication.run(Application.class, args);
+ *     }
+ * }
+ * }
+ * </pre>
+ *
+ * @author leonvoellinger
+ * @see ConfigurationImportSelector
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Import({JooqPersistenceConfigImportSelector.class, DomainConfigImportSelector.class, ConfigurationImportSelector.class})

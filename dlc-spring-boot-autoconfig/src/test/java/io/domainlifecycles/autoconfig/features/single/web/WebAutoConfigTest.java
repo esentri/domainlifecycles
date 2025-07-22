@@ -14,13 +14,22 @@ import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@ActiveProfiles({"test", "test-dlc-domain"})
+@AutoConfigureMockMvc
+@ActiveProfiles({"test", "test-dlc-rest", "test-dlc-domain"})
 public class WebAutoConfigTest {
+
+    @Autowired
+    private MockMvc mockMvc;
 
     @Autowired
     ResponseEntityBuilder responseEntityBuilder;
@@ -61,6 +70,15 @@ public class WebAutoConfigTest {
     @Test
     void testResponseEntityBuilderIsPresent() {
         assertThat(responseEntityBuilder).isNotNull();
+    }
+
+    @Test
+    public void testHelloEndpoint() throws Exception {
+        String someId = "193834101";
+
+        mockMvc.perform(get("/api/test/" + someId))
+            .andExpect(status().isOk())
+            .andExpect(content().string(someId));
     }
 
     @Test

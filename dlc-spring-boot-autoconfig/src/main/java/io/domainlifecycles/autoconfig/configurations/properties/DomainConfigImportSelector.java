@@ -29,7 +29,6 @@ package io.domainlifecycles.autoconfig.configurations.properties;
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
 import java.util.HashMap;
 import java.util.Map;
-import org.jooq.SQLDialect;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -38,10 +37,44 @@ import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.type.AnnotationMetadata;
 
+/**
+ * Import selector for domain-related configuration properties.
+ * This selector dynamically imports configuration classes based on the domain
+ * configuration specified in the {@link EnableDlc} annotation.
+ * <p>
+ * The selector analyzes the {@code dlcDomainBasePackages} attribute from the
+ * {@link EnableDlc} annotation and creates the necessary configuration properties
+ * to make them available to the Spring application context.
+ * </p>
+ * <p>
+ * This class works in conjunction with {@link DlcDomainProperties} to provide
+ * a flexible configuration mechanism that supports both annotation-based
+ * and properties-file-based configuration.
+ * </p>
+ *
+ * @author leonvoellinger
+ * @see EnableDlc
+ * @see DlcDomainProperties
+ * @see ImportSelector
+ */
 public class DomainConfigImportSelector implements ImportSelector, EnvironmentAware {
 
     private Environment environment;
 
+    /**
+     * Selects configuration classes to import based on domain configuration.
+     * This method examines the {@link EnableDlc} annotation attributes and
+     * determines which domain-related configuration classes should be imported
+     * into the Spring application context.
+     * <p>
+     * The method specifically looks for the {@code dlcDomainBasePackages} attribute
+     * and ensures that the appropriate configuration is available for domain
+     * initialization.
+     * </p>
+     *
+     * @param importingClassMetadata metadata about the class that is importing this selector
+     * @return array of fully qualified class names to import for domain configuration
+     */
     @Override
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
         Map<String, Object> attrs = importingClassMetadata
@@ -58,7 +91,7 @@ public class DomainConfigImportSelector implements ImportSelector, EnvironmentAw
             }
         }
 
-        // Optionally import additional configuration manually
+        // Optionally, import additional configuration manually
         return new String[0];
     }
 

@@ -24,32 +24,22 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.autoconfig.features.multiple.events_builder_jackson_persistence.gruelbox;
+package io.domainlifecycles.autoconfig.features.single.web;
 
-import com.gruelbox.transactionoutbox.TransactionOutbox;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Profile;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Component
-@Slf4j
-class GruelboxBackgroundProcessor {
+@RestController
+@RequestMapping("/api")
+@Profile("test-dlc-rest")
+public class TestRestController {
 
-    private final TransactionOutbox outbox;
-
-    GruelboxBackgroundProcessor(TransactionOutbox outbox) {
-        this.outbox = outbox;
+    @GetMapping("/test/{id}")
+    public ResponseEntity<String> getId(@PathVariable("id") String id) {
+        return ResponseEntity.ok(id);
     }
-
-    @Scheduled(initialDelayString = "PT3S", fixedRateString = "PT1S")
-    void poll() {
-        try {
-            do {
-                log.info("Flushing");
-            } while (outbox.flush());
-        } catch (Throwable t) {
-            log.error("Error flushing transaction outbox. Pausing", t);
-        }
-    }
-
 }

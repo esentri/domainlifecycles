@@ -3,14 +3,16 @@ package io.domainlifecycles.autoconfig.features.multiple.events_builder.gruelbox
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import io.domainlifecycles.autoconfig.model.events.ADomainEvent;
 import io.domainlifecycles.autoconfig.model.events.AnApplicationService;
+import io.domainlifecycles.autoconfig.model.persistence.TestRootSimple;
+import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
+import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
 import java.time.Duration;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -68,6 +70,14 @@ public class GruelboxEventAndBuilderAutoConfigTests {
                 assertThat(anApplicationService.received)
                     .contains(val)
             );
+    }
+
+    @Test
+    public void testBuild() {
+        var aggregateRootTestBuilder = TestRootSimple.builder().setId(new TestRootSimpleId(5L)).setName("Test-Name");
+        var innerBuilder = new InnerClassDomainObjectBuilder<>(aggregateRootTestBuilder);
+        var built = innerBuilder.build();
+        assertThat(built).isNotNull();
     }
 
     @Test

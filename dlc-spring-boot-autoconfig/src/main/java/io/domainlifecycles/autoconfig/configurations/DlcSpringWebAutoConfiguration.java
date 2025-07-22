@@ -31,19 +31,22 @@ import io.domainlifecycles.spring.http.DefaultResponseEntityBuilder;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.spring.http.StringToDomainIdentityConverterFactory;
 import io.domainlifecycles.spring.http.StringToDomainValueObjectConverterFactory;
+import java.util.Objects;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.Objects;
 import static org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type.SERVLET;
 
+/**
+ * Autoconfiguration for web/REST-related functionality.
+ *
+ * @author leonvoellinger
+ */
 @AutoConfiguration
 @ConditionalOnWebApplication(type = SERVLET)
 @AutoConfigureAfter({DlcJacksonAutoConfiguration.class, JacksonAutoConfiguration.class, DlcDomainAutoConfiguration.class})
@@ -51,13 +54,26 @@ public class DlcSpringWebAutoConfiguration implements WebMvcConfigurer {
 
     private final ObjectMapper objectMapper;
 
+    /**
+     * Constructs the web configuration.
+     *
+     * @param objectMapper the Jackson object mapper used for serialization and deserialization
+     */
+
     public DlcSpringWebAutoConfiguration(ObjectMapper objectMapper) {
         this.objectMapper = Objects.requireNonNull(objectMapper, "An ObjectMapper instance is required");
     }
 
     /**
-     * Spring integration to enable mapping of single valued ValueObjects or Ids,
-     * which are represented as basic properties in RestController endpoints.
+     * Registers converters for handling domain objects in Spring MVC.
+     * This method enables automatic conversion of string parameters to DLC domain types
+     * (ValueObjects and Identities) in REST controller methods.
+     * <p>
+     * The converters use the configured ObjectMapper to deserialize string representations
+     * into proper domain object instances.
+     * </p>
+     *
+     * @param registry the formatter registry to add converters to
      */
     @Override
     public void addFormatters(FormatterRegistry registry) {
@@ -66,7 +82,11 @@ public class DlcSpringWebAutoConfiguration implements WebMvcConfigurer {
     }
 
     /**
-     * Optional DLC response format.
+     * Creates a default response entity builder for standardized API responses.
+     * This builder provides a consistent format for REST API responses across
+     * the application when using DLC domain objects.
+     *
+     * @return a new ResponseEntityBuilder instance for creating standardized responses
      */
     @ConditionalOnMissingBean
     @Bean

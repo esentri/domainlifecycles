@@ -26,8 +26,10 @@
 
 package io.domainlifecycles.autoconfig.configurations;
 
+import com.gruelbox.transactionoutbox.TransactionOutbox;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.access.classes.DefaultClassProvider;
+import io.domainlifecycles.autoconfig.configurations.events.GruelboxBackgroundProcessor;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.api.Channel;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
@@ -35,10 +37,10 @@ import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.api.PublishingRouter;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
+import io.domainlifecycles.events.gruelbox.api.GruelboxChannelFactory;
 import io.domainlifecycles.events.inmemory.InMemoryChannelFactory;
 import io.domainlifecycles.events.spring.api.SpringTxInMemoryChannelFactory;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
-import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.services.Services;
 import io.domainlifecycles.services.api.ServiceProvider;
 import java.util.List;
@@ -46,15 +48,25 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.transaction.PlatformTransactionManager;
 
+/**
+ * Autoconfiguration class for Domain Events functionality in the DLC framework.
+ * This configuration sets up the necessary beans for event handling, routing, and processing.
+ * It provides both transactional and non-transactional event processing capabilities.
+ */
 @AutoConfiguration
 @AutoConfigureAfter(DlcDomainAutoConfiguration.class)
 public class DlcDomainEventsAutoConfiguration {
 
+    /**
+     * Creates a ServiceProvider bean for managing service kinds.
+     *
+     * @param serviceKinds List of service kinds to be managed
+     * @return A new ServiceProvider instance
+     */
     @Bean
     @ConditionalOnMissingBean
     @DependsOn("initializedDomain")
@@ -62,6 +74,12 @@ public class DlcDomainEventsAutoConfiguration {
         return new Services(serviceKinds);
     }
 
+    /**
+     * Creates a TransactionalHandlerExecutor for managing transactional event handling.
+     *
+     * @param platformTransactionManager The Spring transaction manager to use
+     * @return A new TransactionalHandlerExecutor instance
+     */
     @Bean
     @DependsOn("transactionManager")
     @ConditionalOnMissingBean
@@ -69,12 +87,23 @@ public class DlcDomainEventsAutoConfiguration {
         return new SpringTransactionalHandlerExecutor(platformTransactionManager);
     }
 
+    /**
+     * Provides a ClassProvider bean for class resolution and loading.
+     *
+     * @return A new ClassProvider instance
+     */
     @Bean
     @ConditionalOnMissingBean
     public ClassProvider classProvider(){
         return new DefaultClassProvider();
     }
 
+    /**
+     * Creates a router for domain events based on their types.
+     *
+     * @param publishingChannels List of available publishing channels
+     * @return A configured DomainEventTypeBasedRouter
+     */
     @Bean
     public DomainEventTypeBasedRouter router(List<PublishingChannel> publishingChannels){
         var router = new DomainEventTypeBasedRouter(publishingChannels);
@@ -82,6 +111,12 @@ public class DlcDomainEventsAutoConfiguration {
         return router;
     }
 
+    /**
+     * Configures channel routing when a PublishingRouter is available.
+     *
+     * @param publishingRouter The router to use for channel configuration
+     * @return A new ChannelRoutingConfiguration instance
+     */
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnBean(PublishingRouter.class)
@@ -89,6 +124,13 @@ public class DlcDomainEventsAutoConfiguration {
         return new ChannelRoutingConfiguration(publishingRouter);
     }
 
+    /**
+     * Creates a transactional publishing channel when a PlatformTransactionManager is available.
+     *
+     * @param platformTransactionManager The transaction manager to use
+     * @param serviceProvider The service provider for channel configuration
+     * @return A new transactional PublishingChannel
+     */
     @Bean
     @ConditionalOnBean(PlatformTransactionManager.class)
     @ConditionalOnMissingBean
@@ -99,10 +141,29 @@ public class DlcDomainEventsAutoConfiguration {
         return new SpringTxInMemoryChannelFactory(platformTransactionManager, serviceProvider, true).processingChannel("default");
     }
 
+    /**
+     * Creates a non-transactional publishing channel when no PlatformTransactionManager is available.
+     *
+     * @param serviceProvider The service provider for channel configuration
+     * @return A new non-transactional PublishingChannel
+     */
     @Bean
     @ConditionalOnMissingBean({PlatformTransactionManager.class, Channel.class})
     public PublishingChannel channelConfigurationWithoutPlatformTransactionManager(
         ServiceProvider serviceProvider){
         return new InMemoryChannelFactory(serviceProvider).processingChannel("default");
+    }
+
+    /**
+     * Creates a GruelboxBackgroundProcessor for handling transaction outbox operations
+     * when both TransactionOutbox and GruelboxChannelFactory beans are available.
+     *
+     * @param transactionOutbox The transaction outbox to be processed
+     * @return A configured GruelboxBackgroundProcessor instance
+     */
+    @Bean
+    @ConditionalOnBean({TransactionOutbox.class, GruelboxChannelFactory.class})
+    public GruelboxBackgroundProcessor gruelboxBackgroundProcessor(TransactionOutbox transactionOutbox) {
+        return new GruelboxBackgroundProcessor(transactionOutbox);
     }
 }

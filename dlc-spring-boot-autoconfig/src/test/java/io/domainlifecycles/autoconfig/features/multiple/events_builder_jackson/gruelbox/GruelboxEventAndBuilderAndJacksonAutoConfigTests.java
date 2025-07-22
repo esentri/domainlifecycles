@@ -8,6 +8,7 @@ import io.domainlifecycles.autoconfig.model.events.AnApplicationService;
 import io.domainlifecycles.autoconfig.model.persistence.TestRootSimple;
 import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
+import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
@@ -16,7 +17,6 @@ import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
 import java.time.Duration;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -88,6 +88,14 @@ public class GruelboxEventAndBuilderAndJacksonAutoConfigTests {
 
         TestRootSimple mappedTestRootSimple = objectMapper.readValue(json, TestRootSimple.class);
         Assertions.assertThat(mappedTestRootSimple).isEqualTo(testRootSimple);
+    }
+
+    @Test
+    public void testBuild() {
+        var aggregateRootTestBuilder = TestRootSimple.builder().setId(new TestRootSimpleId(5L)).setName("Test-Name");
+        var innerBuilder = new InnerClassDomainObjectBuilder<>(aggregateRootTestBuilder);
+        var built = innerBuilder.build();
+        assertThat(built).isNotNull();
     }
 
     @Test

@@ -26,24 +26,37 @@
 
 package io.domainlifecycles.autoconfig.configurations;
 
-import io.domainlifecycles.autoconfig.configurations.properties.DlcJooqPersistenceProperties;
-import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
-import org.springdoc.core.configuration.SpringDocConfiguration;
 import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
+/**
+ * Autoconfiguration for OpenAPI/Swagger integration with Spring Boot applications using the DLC framework.
+ *  This configuration provides automatic OpenAPI documentation generation for REST endpoints
+ *  that use DLC domain objects, ensuring proper serialization and schema generation.
+ *  <p>
+ *  The configuration sets up customizers that understand DLC domain types,
+ *  including ValueObjects, Identities, and Entities, to generate accurate API documentation
+ *  with proper schema representations.
+ *  </p>
+ *
+ * @author leonvoellinger
+ */
 @AutoConfiguration
 @AutoConfigureAfter(DlcDomainAutoConfiguration.class)
 public class DlcSpringOpenApiAutoConfiguration {
 
     /**
-     * Spring Doc Open API integration of DLC
+     * Creates a customizer for OpenAPI documentation that understands DLC domain objects.
+     * This customizer ensures that DLC domain types are properly represented in the
+     * generated OpenAPI schema, including correct handling of ValueObjects, Identities,
+     * and other DLC-specific types.
+     *
+     * @param springDocConfigProperties properties for configuring SpringDoc OpenAPI generation
+     * @return a {@link DlcOpenApiCustomizer} for enhancing API documentation with DLC support
      */
     @Bean
     @ConditionalOnMissingBean

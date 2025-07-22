@@ -1,7 +1,10 @@
 package io.domainlifecycles.autoconfig.features.single.builder;
 
 import io.domainlifecycles.access.classes.ClassProvider;
+import io.domainlifecycles.autoconfig.model.persistence.TestRootSimple;
+import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
+import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
@@ -19,7 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@ActiveProfiles({"test"})
+@ActiveProfiles({"test", "test-dlc-domain"})
 public class BuilderAutoConfigTest {
 
     @Autowired
@@ -61,6 +64,14 @@ public class BuilderAutoConfigTest {
     @Test
     void testBuilderProviderIsPresent() {
         assertThat(domainObjectBuilderProvider).isNotNull();
+    }
+
+    @Test
+    public void testBuild() {
+        var aggregateRootTestBuilder = TestRootSimple.builder().setId(new TestRootSimpleId(5L)).setName("Test-Name");
+        var innerBuilder = new InnerClassDomainObjectBuilder<>(aggregateRootTestBuilder);
+        var built = innerBuilder.build();
+        assertThat(built).isNotNull();
     }
 
     @Test

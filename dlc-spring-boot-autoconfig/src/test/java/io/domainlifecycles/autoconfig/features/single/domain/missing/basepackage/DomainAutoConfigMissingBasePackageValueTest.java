@@ -1,8 +1,6 @@
 package io.domainlifecycles.autoconfig.features.single.domain.missing.basepackage;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.test.annotation.DirtiesContext;

@@ -27,7 +27,6 @@
 package io.domainlifecycles.autoconfig.configurations;
 
 import io.domainlifecycles.autoconfig.configurations.properties.DlcDomainProperties;
-import io.domainlifecycles.autoconfig.configurations.properties.DlcJooqPersistenceProperties;
 import io.domainlifecycles.autoconfig.exception.DLCAutoConfigException;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainMirror;
@@ -35,11 +34,16 @@ import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
+/**
+ * Core domain configuration for enabling standard domain-related features in the DLC framework.
+ * This serves as the foundation for all subsequent dependencies in DLC.
+ *
+ * @author leonvoellinger
+ */
 @AutoConfiguration
 @EnableConfigurationProperties(DlcDomainProperties.class)
 @AutoConfigureBefore({JooqAutoConfiguration.class})
@@ -47,6 +51,19 @@ public class DlcDomainAutoConfiguration {
 
     private @Value("${dlcDomainBasePackages}") String dlcDomainBasePackages;
 
+    /**
+     * Creates and initializes the domain mirror for the DLC framework.
+     * The domain mirror is built by scanning the specified base packages for domain objects
+     * and creating reflective metadata about the domain structure.
+     * <p>
+     * This method ensures that the domain is only initialized once and uses either
+     * the configuration properties or the annotation value to determine which packages to scan.
+     * </p>
+     *
+     * @param dlcDomainProperties the configuration properties containing domain settings
+     * @return the initialized DomainMirror instance
+     * @throws DLCAutoConfigException if the base packages property is missing or invalid
+     */
     @Bean
     public DomainMirror initializedDomain(DlcDomainProperties dlcDomainProperties) {
         if (!Domain.isInitialized()) {
