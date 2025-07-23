@@ -31,7 +31,7 @@ import io.domainlifecycles.access.object.DynamicDomainObjectAccessor;
 import io.domainlifecycles.domain.types.ValueObject;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.FieldMirror;
-import io.domainlifecycles.mirror.reflect.ReflectionValueObjectTypeUtils;
+import io.domainlifecycles.mirror.reflect.utils.ReflectionValueObjectTypeUtils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

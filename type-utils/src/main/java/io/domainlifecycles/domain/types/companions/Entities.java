@@ -35,7 +35,7 @@ import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
-import io.domainlifecycles.mirror.reflect.ReflectionEntityTypeUtils;
+import io.domainlifecycles.mirror.reflect.utils.ReflectionEntityTypeUtils;
 
 import java.util.Collection;
 import java.util.HashSet;

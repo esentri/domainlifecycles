@@ -32,6 +32,7 @@ import io.domainlifecycles.domain.types.internal.ConcurrencySafe;
 import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.model.EntityModel;
+import io.domainlifecycles.mirror.reflect.utils.ReflectionEntityTypeUtils;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import io.domainlifecycles.reflect.JavaReflect;
 import io.domainlifecycles.reflect.MemberSelect;
