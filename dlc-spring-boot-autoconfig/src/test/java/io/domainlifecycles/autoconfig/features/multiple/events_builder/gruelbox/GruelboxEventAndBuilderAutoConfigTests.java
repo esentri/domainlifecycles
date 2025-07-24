@@ -13,6 +13,7 @@ import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
 import java.time.Duration;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -22,10 +23,15 @@ import org.springframework.transaction.support.TransactionTemplate;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
+import static org.springframework.test.annotation.DirtiesContext.MethodMode.AFTER_METHOD;
 
 @SpringBootTest
 @Import(GruelboxEventAndBuilderAutoConfigTestConfiguration.class)
 @ActiveProfiles({"test", "test-dlc-domain"})
+@DirtiesContext(classMode = AFTER_CLASS)
+@Execution(SAME_THREAD)
 public class GruelboxEventAndBuilderAutoConfigTests {
 
     @Autowired
@@ -53,7 +59,7 @@ public class GruelboxEventAndBuilderAutoConfigTests {
     private ResponseEntityBuilder responseEntityBuilder;
 
     @Test
-    @DirtiesContext
+    @DirtiesContext(methodMode = AFTER_METHOD)
     public void testTransactionOutbox(){
         var val = new ADomainEvent("GruelboxEvent");
         transactionTemplate.executeWithoutResult((status) ->

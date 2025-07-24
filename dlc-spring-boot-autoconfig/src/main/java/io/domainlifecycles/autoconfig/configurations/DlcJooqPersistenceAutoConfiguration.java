@@ -201,7 +201,6 @@ public class DlcJooqPersistenceAutoConfiguration {
      * @return a configured {@link EntityIdentityProvider}
      */
     @Bean
-    @DependsOn("dslContext")
     @ConditionalOnMissingBean
     EntityIdentityProvider identityProvider(DSLContext dslContext) {
         return new JooqEntityIdentityProvider(dslContext);

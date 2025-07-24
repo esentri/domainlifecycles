@@ -47,6 +47,7 @@ import java.util.List;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
@@ -69,7 +70,6 @@ public class DlcDomainEventsAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    @DependsOn("initializedDomain")
     public ServiceProvider serviceProvider(List<ServiceKind> serviceKinds){
         return new Services(serviceKinds);
     }
@@ -81,7 +81,7 @@ public class DlcDomainEventsAutoConfiguration {
      * @return A new TransactionalHandlerExecutor instance
      */
     @Bean
-    @DependsOn("transactionManager")
+    @ConditionalOnClass(PlatformTransactionManager.class)
     @ConditionalOnMissingBean
     public TransactionalHandlerExecutor transactionalHandlerExecutor(PlatformTransactionManager platformTransactionManager){
         return new SpringTransactionalHandlerExecutor(platformTransactionManager);
@@ -135,9 +135,7 @@ public class DlcDomainEventsAutoConfiguration {
     @ConditionalOnBean(PlatformTransactionManager.class)
     @ConditionalOnMissingBean
     public PublishingChannel channelConfigurationWithPlatformTransactionManager(
-        PlatformTransactionManager platformTransactionManager,
-        ServiceProvider serviceProvider
-    ){
+        PlatformTransactionManager platformTransactionManager, ServiceProvider serviceProvider) {
         return new SpringTxInMemoryChannelFactory(platformTransactionManager, serviceProvider, true).processingChannel("default");
     }
 
@@ -162,7 +160,8 @@ public class DlcDomainEventsAutoConfiguration {
      * @return A configured GruelboxBackgroundProcessor instance
      */
     @Bean
-    @ConditionalOnBean({TransactionOutbox.class, GruelboxChannelFactory.class})
+    @ConditionalOnBean({TransactionOutbox.class})
+    @ConditionalOnClass(GruelboxChannelFactory.class)
     public GruelboxBackgroundProcessor gruelboxBackgroundProcessor(TransactionOutbox transactionOutbox) {
         return new GruelboxBackgroundProcessor(transactionOutbox);
     }
