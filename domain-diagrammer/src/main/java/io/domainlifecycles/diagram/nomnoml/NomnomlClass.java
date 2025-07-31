@@ -416,7 +416,16 @@ public class NomnomlClass implements DiagramElement {
          * @return a new NomnomlClass instance initialized with the values provided to the builder
          */
         public NomnomlClass build() {
-            return new NomnomlClass(this.name, this.comment, this.styleClassifier, this.fields, this.methods, this.stereotypes, this.showFields, this.showMethods);
+            return new NomnomlClass(
+                this.name,
+                this.comment,
+                this.styleClassifier,
+                this.fields,
+                this.methods,
+                this.stereotypes,
+                this.showFields,
+                this.showMethods
+            );
         }
 
         /**
