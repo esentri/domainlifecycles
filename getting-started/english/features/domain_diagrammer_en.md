@@ -34,9 +34,9 @@ Here's an example of a generated diagram for the [DLC Sample App](./../../../sam
 
 ---
 
-|          **Spring-Web-Integration**           |
-|:---------------------------------------------:|
-|  [<< Previous](spring_web_integration_en.md)  |
+|         **Spring-Web-Integration**          |        **Autoconfiguration** |
+|:-------------------------------------------:|-----------------------------:|
+| [<< Previous](spring_web_integration_en.md) | [Next  >>](autoconfig_en.md) |
 
 ---
 

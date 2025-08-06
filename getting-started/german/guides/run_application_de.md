@@ -27,6 +27,20 @@ public class SampleApplication {
 ```
 </details>
 
+<b>HINWEIS:</b> Dieser Schritt ist nur notwendig, wenn DLC's Autoconfig-Feature nicht benutzt wird. 
+Andernfalls genügt eine ganz simple Spring-Boot-App-Klasse:
+
+```java
+@SpringBootApplication
+@EnableDlc
+public class SampleApplication {
+
+    public static void main(String[] args) {
+        new SpringApplicationBuilder(ShopApplication.class).run(args);
+    }
+}
+```
+
 ---
 
 |             **Konfiguration**             |            **Features**            |

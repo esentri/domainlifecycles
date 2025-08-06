@@ -6,7 +6,7 @@
 
 ---
 
-## Grundlagen
+## Introduction
 Maven or Gradle can be used as a build management tool, both of which are considered below.
 The starting point in this guide is a build setup for a minimal Spring Boot project.
 
@@ -82,51 +82,30 @@ dependencies {
 
 ---
 
-## DLC einbinden
-To use the DLC functionality, it is enough to include the following artifact, which bundles the most important DLC 
+## DLC Usage
+To use the DLC functionality, it is enough to include either of the following artifacts, which bundle the most important DLC 
 functions:
 
+
+
 <details>
-<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle for Spring Boot 3</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle for Spring Boot</b></summary>
 
 ```groovy
 dependencies {
-    implementation 'io.domainlifecycles:spring-boot-3-jooq-complete:2.4.0'
-}
-```
-</details>
-<details>
-<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle for Spring Boot 2</b></summary>
-
-```groovy
-dependencies {
-    implementation 'io.domainlifecycles:spring-boot-2-jooq-complete:2.4.0'
+    implementation 'io.domainlifecycles:spring-boot-starter:2.4.0'
 }
 ```
 </details>
 
 <details>
-<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"><b>pom.xml for Spring Boot 3</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"><b>pom.xml for Spring Boot</b></summary>
 
 ```xml
 <dependencies>
     <dependency>
         <groupId>io.domainlifecycles</groupId>
-        <artifactId>spring-boot-3-jooq-complete</artifactId>
-        <version>2.4.0</version>
-    </dependency>
-</dependencies>
-```
-</details>
-
-<details>
-<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"><b>pom.xml for Spring Boot 2</b></summary>
-
-```xml
-<dependencies>
-    <dependency>
-        <groupId>io.domainlifecycles</groupId>
-        <artifactId>spring-boot-2-jooq-complete</artifactId>
+        <artifactId>spring-boot-starter</artifactId>
         <version>2.4.0</version>
     </dependency>
 </dependencies>

@@ -33,6 +33,7 @@ import io.domainlifecycles.jooq.configuration.JooqDomainPersistenceConfiguration
 import io.domainlifecycles.jooq.configuration.def.JooqRecordClassProvider;
 import io.domainlifecycles.jooq.imp.JooqEntityIdentityProvider;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
+import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import java.util.Set;
@@ -156,10 +157,12 @@ public class DlcJooqPersistenceAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnBean(DomainMirror.class)
     public JooqDomainPersistenceProvider domainPersistenceProvider(
         DomainObjectBuilderProvider domainObjectBuilderProvider,
         Set<RecordMapper<?, ?, ?>> customRecordMappers,
-        DlcJooqPersistenceProperties persistenceProperties
+        DlcJooqPersistenceProperties persistenceProperties,
+        DomainMirror domainMirror
     ) {
         String recordPackage;
         if (persistenceProperties != null

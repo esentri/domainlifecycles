@@ -33,9 +33,9 @@ Nachfolgend ist ein Beispiel-Diagramm der [DLC Sample App](./../../../sample-pro
 
 ---
 
-|             **Spring-Web-Integration**             |
-|:--------------------------------------------------:|
-| [<< Vorherige Seite](spring_web_integration_de.md) |
+|             **Spring-Web-Integration**             | **Autoconfiguration**                |
+|:--------------------------------------------------:|--------------------------------------|
+| [<< Vorherige Seite](spring_web_integration_de.md) | [Nächste Seite >>](autoconfig_de.md) |
 
 ---
 

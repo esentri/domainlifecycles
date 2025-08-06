@@ -51,12 +51,8 @@ import java.util.Locale;
  * @author Mario Herb
  */
 @SpringBootApplication
-@EnableDlc
+@EnableDlc(enableDomainEventsAutoConfig = true)
 public class ShopApplication {
-
-    static {
-        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleshop"));
-    }
 
     /**
      * Setting the Locale to explicitly force the language in default validation error messages.

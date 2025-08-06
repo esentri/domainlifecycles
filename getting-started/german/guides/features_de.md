@@ -35,9 +35,9 @@ Optionales DLC Modul, nicht Runtime relevant für DLC Applikationen
 
 ---
 
-|               **DLC starten**                |
-|:--------------------------------------------:|
-| [<< Vorherige Seite](run_application_de.md)  |
+|               **DLC starten**               |
+|:-------------------------------------------:|
+| [<< Vorherige Seite](run_application_de.md) |
 
 ---
 

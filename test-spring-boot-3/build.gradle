@@ -25,7 +25,7 @@ def dbMigration = 'src/test/resources/db/migration'
 dependencies {
     api libs.jooq
     testImplementation platform(libs.spring.boot3.dependencies)
-    testImplementation project(":spring-boot-3-jooq-complete")
+    testImplementation project(":spring-boot-starter")
     testImplementation project(":test-shared-impl")
     testImplementation libs.assertj
     testImplementation libs.jakarta.validation.api

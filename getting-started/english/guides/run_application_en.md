@@ -6,7 +6,7 @@
 
 ---
 
-Once everything necessary has been configured properly , the DLC Mirror must be initialized when the application is 
+Once everything necessary has been configured properly, the DLC Mirror must be initialized when the application is 
 started:
 
 <details>
@@ -26,6 +26,20 @@ public class SampleApplication {
 }
 ```
 </details>
+
+<b>NOTE:</b> This step in only necessary when you don't use DLC's Autoconfiguration feature.
+Otherwise, your application class simply looks like this:
+
+```java
+@SpringBootApplication
+@EnableDlc
+public class SampleApplication {
+
+    public static void main(String[] args) {
+        new SpringApplicationBuilder(ShopApplication.class).run(args);
+    }
+}
+```
 
 ---
 

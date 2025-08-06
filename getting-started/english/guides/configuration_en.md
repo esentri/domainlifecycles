@@ -10,7 +10,14 @@ Below you can see all configurations (or Spring beans) that are required for the
 All beans are sorted according to the respective DLC feature to which they belong.
 The guide to the [Features](features_en.md) goes into more detail in many places and refers back to some of them.
 
+Alternatively, instead of configuring all required beans yourself, you can simple use DLC's autoconfig feature, 
+described [here](../features/autoconfig_en.md).
+
 ---
+
+## Auto-Configuration
+Instead of configuring all the following required beans yourself, you can simple use DLC's autoconfig feature,
+described [here](../features/autoconfig_en.md).
 
 ## Persistence
 The Persistence module cares about all interactions between DLC and a relational database

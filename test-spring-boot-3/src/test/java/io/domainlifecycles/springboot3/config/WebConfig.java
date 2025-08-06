@@ -22,10 +22,5 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addConverterFactory(new StringToDomainIdentityConverterFactory(objectMapper));
         registry.addConverterFactory(new StringToDomainValueObjectConverterFactory(objectMapper));
     }
-
-    @Bean
-    public ResponseEntityBuilder responseEntityBuilder() {
-        return new DefaultResponseEntityBuilder();
-    }
 }
 

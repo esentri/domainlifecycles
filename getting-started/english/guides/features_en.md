@@ -31,6 +31,8 @@ Optional DLC module
 Optional DLC module
 ### [Domain Diagrammer](../features/domain_diagrammer_en.md)
 Optional Non-runtime DLC module
+### [Autoconfiguration](../features/autoconfig_en.md)
+Autoconfiguration for DLC
 
 ---
 
