@@ -66,9 +66,9 @@ public class NomnomlNote implements DiagramElement {
             classStyleClassifier +
             " " +
             className +
-            " " +
             addStereotypes() +
-            "]";
+            "]"
+            + System.lineSeparator();
     }
 
     private String addStereotypes() {

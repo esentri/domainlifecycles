@@ -61,7 +61,7 @@ package io.domainlifecycles.diagram.domain.config;
  */
 public class StyleSettings {
 
-    private static final String DEFAULT_NOTE_STYLE = "fill=#8f8f";
+    private static final String DEFAULT_NOTE_STYLE = "fill=#ffffff italic";
     private static final String DEFAULT_AGGREGATE_ROOT_STYLE = "fill=#8f8f bold";
     private static final String DEFAULT_AGGREGATE_FRAME_STYLE = "visual=frame align=left";
     private static final String DEFAULT_ENTITY_STYLE = "fill=#88AAFF bold";

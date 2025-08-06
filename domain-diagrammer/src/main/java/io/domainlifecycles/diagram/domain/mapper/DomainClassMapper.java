@@ -202,13 +202,12 @@ public class DomainClassMapper {
     }
 
     /**
-     * Maps Aggregate structure to a list of {@link NomnomlClass} representations.
-     *
-     * @param aggregateRootMirror mirrored AggregateRoot
-     * @return mapped aggregate classes
+     * Get all mirrors contained in an aggregate root
+     * @param aggregateRootMirror
+     * @return all domaintype mirrors that should be rendered as contained classes in an aggregate frame
      */
-    public List<NomnomlClass> mapAllAggregateClasses(AggregateRootMirror aggregateRootMirror) {
-        var aggregateClasses = new ArrayList<NomnomlClass>();
+    public List<DomainTypeMirror> getAllAggregateMirrors(AggregateRootMirror aggregateRootMirror) {
+        var aggregateMirrors = new ArrayList<DomainTypeMirror>();
 
         var visitor = new ContextDomainObjectVisitor(aggregateRootMirror) {
             @Override
@@ -222,27 +221,24 @@ public class DomainClassMapper {
                         if (DomainType.VALUE_OBJECT.equals(domainTypeMirror.getDomainType())) {
                             var voMirror = (ValueObjectMirror) domainTypeMirror;
                             if (!voMirror.isSingledValued()) {
-                                aggregateClasses.add(mapToNomnomlClass(domainTypeMirror,
-                                    domainDiagramConfig.getGeneralVisualSettings().isShowAggregateFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
-                                    domainDiagramConfig.getGeneralVisualSettings().isShowAggregateMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()));
+                                aggregateMirrors.add(domainTypeMirror);
                             }
                         } else {
-                            aggregateClasses.add(mapToNomnomlClass(domainTypeMirror,
-                                domainDiagramConfig.getGeneralVisualSettings().isShowAggregateFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
-                                domainDiagramConfig.getGeneralVisualSettings().isShowAggregateMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()));
+                            aggregateMirrors.add(domainTypeMirror);
                         }
                     }
                 }
             }
         };
         visitor.start();
-        return aggregateClasses;
+        return aggregateMirrors;
     }
+
 
     /**
      * Maps a generic domain type to a {@link NomnomlClass} representation.
      */
-    private NomnomlClass mapToNomnomlClass(DomainTypeMirror domainTypeMirror, boolean showFields, boolean showMethods) {
+    public NomnomlClass mapToNomnomlClass(DomainTypeMirror domainTypeMirror, boolean showFields, boolean showMethods) {
         var className = DomainMapperUtils.domainTypeName(domainTypeMirror, domainDiagramConfig);
         var nomnomlClassBuilder = NomnomlClass
             .builder()

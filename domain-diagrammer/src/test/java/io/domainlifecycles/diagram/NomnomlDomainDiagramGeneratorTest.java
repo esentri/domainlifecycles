@@ -4,6 +4,7 @@ import io.domainlifecycles.diagram.domain.DomainDiagramGenerator;
 import io.domainlifecycles.diagram.domain.config.DiagramTrimSettings;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.diagram.domain.config.GeneralVisualSettings;
+import io.domainlifecycles.diagram.domain.notes.DomainClassNote;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.mirror.resolver.TypeMetaResolver;
@@ -25,6 +26,7 @@ import sampleshop.core.outport.OrdersByCustomerQueryHandler;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -86,12 +88,65 @@ class NomnomlDomainDiagramGeneratorTest {
         var trim = DiagramTrimSettings.builder().withExplicitlyIncludedPackageNames(List.of("sampleshop")).build();
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withDiagramTrimSettings(trim).build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-            diagramConfig, Domain.getDomainMirror());
+            diagramConfig, Domain.getDomainMirror(), null);
 
         // when
         String actualDiagramText = generator.generateDiagramText();
 
         Path filePath = Path.of("src/test/resources/sampleshop_resolved.nomnoml");
+        String content;
+        try {
+            content = Files.readString(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        //then
+        assertThat(actualDiagramText).isEqualTo(content);
+    }
+
+    @Test
+    void generateSampleAppWithResolvedGenericsAndNotes() {
+        var factory = new ReflectiveDomainMirrorFactory("sampleshop");
+        factory.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(factory);
+        var trim = DiagramTrimSettings.builder().withExplicitlyIncludedPackageNames(List.of("sampleshop")).build();
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig
+            .builder()
+            .withDiagramTrimSettings(trim)
+            .withGeneralVisualSettings(
+                GeneralVisualSettings
+                    .builder()
+                    .withShowNotes(true)
+                    .build()
+            )
+            .build();
+        List<DomainClassNote> notes = new ArrayList<>();
+        notes.add(
+            new DomainClassNote(
+            "sampleshop.core.domain.order.PlaceOrder",
+            "Command Note"
+            )
+        );
+        notes.add(
+            new DomainClassNote(
+                "sampleshop.core.domain.order.Order",
+                "Aggregate Note"
+            )
+        );
+        notes.add(
+            new DomainClassNote(
+                "sampleshop.core.domain.customer.Address",
+                "ValueObject Note"
+            )
+        );
+
+        DomainDiagramGenerator generator = new DomainDiagramGenerator(
+            diagramConfig, Domain.getDomainMirror(), notes);
+
+        // when
+        String actualDiagramText = generator.generateDiagramText();
+
+        Path filePath = Path.of("src/test/resources/sampleshop_resolved_notes.nomnoml");
         String content;
         try {
             content = Files.readString(filePath);
@@ -118,7 +173,7 @@ class NomnomlDomainDiagramGeneratorTest {
             .build();
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withDiagramTrimSettings(trim).build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-            diagramConfig, Domain.getDomainMirror());
+            diagramConfig, Domain.getDomainMirror(), null);
 
         // when
         String actualDiagramText = generator.generateDiagramText();
