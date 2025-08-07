@@ -34,7 +34,7 @@ import org.gradle.api.provider.Property;
  * This class serves as the main entry point for defining configuration properties for
  * the diagram and JSON model output generation during the build process.
  * It provides access to the {@link DiagramTaskConfigurationExtension} and
- * {@link JsonTaskConfigurationExtension} for detailed configuration of these tasks.
+ * {@link MirrorSerializerTaskConfigurationExtension} for detailed configuration of these tasks.
  *
  * @author Leon Völlinger
  */
@@ -62,7 +62,7 @@ public abstract class DlcGradlePluginExtension {
      * @return a {@code Property} encapsulating the {@code JsonTaskConfigurationExtension},
      *         which contains the settings related to JSON model generation tasks.
      */
-    public abstract Property<JsonTaskConfigurationExtension> getJsonModel();
+    public abstract Property<MirrorSerializerTaskConfigurationExtension> getJsonModel();
 
     /**
      * Retrieves the configuration for Domain model upload tasks.

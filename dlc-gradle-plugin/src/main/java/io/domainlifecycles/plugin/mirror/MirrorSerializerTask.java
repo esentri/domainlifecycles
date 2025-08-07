@@ -24,7 +24,7 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.plugin.json;
+package io.domainlifecycles.plugin.mirror;
 
 import io.domainlifecycles.plugin.extensions.SerializationConfigurationExtension;
 import io.domainlifecycles.plugins.json.JsonSerializer;
@@ -53,11 +53,13 @@ import org.slf4j.LoggerFactory;
  *
  * @author Leon Völlinger
  */
-public abstract class JsonRenderTask extends DefaultTask {
+public abstract class MirrorSerializerTask extends DefaultTask {
 
-    private final static Logger log = LoggerFactory.getLogger(JsonRenderTask.class);
+    private final static Logger log = LoggerFactory.getLogger(MirrorSerializerTask.class);
 
-    private static final String DEFAULT_JSON_RENDER_FILE_NAME = "model";
+    private static final String DEFAULT_JSON_RENDER_FILE_NAME = "mirror.json";
+    private static final String META_INF_DLC_MIRROR_FILE_PATH = "META-INF/dlc/" + DEFAULT_JSON_RENDER_FILE_NAME;
+
 
     /**
      * Retrieves the output directory for generated files.
@@ -104,10 +106,20 @@ public abstract class JsonRenderTask extends DefaultTask {
     }
 
     private void renderAndSaveModelAsJson(final SerializationConfigurationExtension serializationConfigurationExtension) {
-        final String jsonContent = jsonSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(getProject()), serializationConfigurationExtension.getDomainModelPackages().getOrNull());
-        final Path filePath = Path.of(String.valueOf(getFileOutputDir().getOrNull()), serializationConfigurationExtension.getFileName().getOrElse(DEFAULT_JSON_RENDER_FILE_NAME) + ".json");
+        String jsonContent = jsonSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(getProject()), serializationConfigurationExtension.getDomainModelPackages().getOrNull());
+        Path filePath;
 
-        log.info(String.format("Saving JSON model to %s", filePath));
+        if(noFilePathSpecified()) {
+            filePath = Path.of(META_INF_DLC_MIRROR_FILE_PATH);
+        } else {
+            filePath = Path.of(String.valueOf(getFileOutputDir().getOrNull()), serializationConfigurationExtension.getFileName().getOrElse(DEFAULT_JSON_RENDER_FILE_NAME));
+        }
+
+        log.info("Saving JSON model to {}", filePath);
         FileIOUtils.writeFileTo(filePath, jsonContent);
+    }
+
+    private boolean noFilePathSpecified() {
+        return getFileOutputDir().getOrNull() == null;
     }
 }

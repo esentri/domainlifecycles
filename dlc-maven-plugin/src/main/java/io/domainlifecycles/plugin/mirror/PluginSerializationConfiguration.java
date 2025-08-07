@@ -24,7 +24,7 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.plugin.json;
+package io.domainlifecycles.plugin.mirror;
 
 import java.util.List;
 import org.apache.maven.plugins.annotations.Parameter;

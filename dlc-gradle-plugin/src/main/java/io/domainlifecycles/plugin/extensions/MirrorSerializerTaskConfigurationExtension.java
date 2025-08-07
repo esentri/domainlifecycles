@@ -39,7 +39,7 @@ import org.gradle.api.file.DirectoryProperty;
  *
  * @author Leon Völlinger
  */
-public abstract class JsonTaskConfigurationExtension {
+public abstract class MirrorSerializerTaskConfigurationExtension {
 
     /**
      * Retrieves the directory property specifying the output location for generated JSON files.

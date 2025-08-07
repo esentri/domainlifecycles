@@ -24,7 +24,7 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.plugin.json;
+package io.domainlifecycles.plugin.mirror;
 
 import io.domainlifecycles.plugin.diagram.CreateDiagramGoal;
 import io.domainlifecycles.plugins.json.JsonSerializer;
@@ -77,10 +77,13 @@ import org.slf4j.LoggerFactory;
  * @author Mario Herb
  * @author Leon Völlinger
  */
-@Mojo(name = "renderJson", requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.INITIALIZE)
-public class JsonRenderGoal extends AbstractMojo {
+@Mojo(name = "serializeMirror", requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.INITIALIZE)
+public class MirrorSerializerGoal extends AbstractMojo {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(CreateDiagramGoal.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(MirrorSerializerGoal.class);
+
+    private static final String DEFAULT_JSON_RENDER_FILE_NAME = "mirror.json";
+    private static final String META_INF_DLC_MIRROR_FILE_PATH = "META-INF/dlc/" + DEFAULT_JSON_RENDER_FILE_NAME;
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
@@ -111,17 +114,27 @@ public class JsonRenderGoal extends AbstractMojo {
      */
     @Override
     public void execute() {
-        LOGGER.info("Running Json Render Goal...");
+        LOGGER.info("Running Serialize Mirror Goal...");
         jsonSerializer = new JsonSerializerImpl(true);
         serializations.forEach(this::renderAndSaveModelAsJson);
     }
 
     private void renderAndSaveModelAsJson(final PluginSerializationConfiguration pluginSerializationConfiguration) {
-        final String jsonContent = jsonSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(project), pluginSerializationConfiguration.getDomainModelPackages());
+        String jsonContent = jsonSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(project), pluginSerializationConfiguration.getDomainModelPackages());
+        Path filePath;
 
-        final Path filePath = Path.of(fileOutputDir, pluginSerializationConfiguration.getFileName() + ".json");
+        if(noFilePathSpecified()) {
+            filePath = Path.of(META_INF_DLC_MIRROR_FILE_PATH);
+        } else {
+            filePath = Path.of(fileOutputDir, !pluginSerializationConfiguration.getFileName().isBlank() ? pluginSerializationConfiguration.getFileName() + ".json" : DEFAULT_JSON_RENDER_FILE_NAME);
+        }
 
-        LOGGER.info(String.format("Saving JSON model to %s/%s.json", fileOutputDir, pluginSerializationConfiguration.getFileName()));
+        LOGGER.info("Saving JSON model to {}", filePath);
         FileIOUtils.writeFileTo(filePath, jsonContent);
     }
+
+    private boolean noFilePathSpecified() {
+        return fileOutputDir == null || fileOutputDir.isBlank();
+    }
+
 }
