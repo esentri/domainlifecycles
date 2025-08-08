@@ -75,6 +75,7 @@ public class FileIOUtils {
      */
     public static void writeFileTo(final Path path, final byte[] fileContent) {
         try {
+            Files.createDirectories(path.getParent());
             Files.write(path, fileContent);
         } catch (IOException e) {
             throw DLCMavenPluginException.fail(String.format("Error occurred while trying to save file to %s.", path), e);

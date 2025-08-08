@@ -82,15 +82,15 @@ public class MirrorSerializerGoal extends AbstractMojo {
     private final static Logger LOGGER = LoggerFactory.getLogger(MirrorSerializerGoal.class);
 
     private static final String DEFAULT_JSON_RENDER_FILE_NAME = "mirror.json";
-    private static final String META_INF_DLC_MIRROR_FILE_PATH = "META-INF/dlc/" + DEFAULT_JSON_RENDER_FILE_NAME;
+    private static final String META_INF_DLC_MIRROR_FILE_PATH = "src/main/resources/META-INF/dlc/" + DEFAULT_JSON_RENDER_FILE_NAME;
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
-    @Parameter(property = "fileOutputDir", required = true)
+    @Parameter(property = "fileOutputDir")
     private String fileOutputDir;
 
-    @Parameter(property = "serializations", required = true)
+    @Parameter(property = "serializations")
     private List<PluginSerializationConfiguration> serializations;
 
     private MirrorSerializer mirrorSerializer;

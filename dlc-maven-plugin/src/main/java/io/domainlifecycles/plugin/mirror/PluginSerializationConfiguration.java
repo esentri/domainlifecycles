@@ -53,7 +53,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  */
 public class PluginSerializationConfiguration {
 
-    @Parameter(property = "fileName", required = true)
+    @Parameter(property = "fileName")
     private String fileName;
 
     @Parameter(property = "domainModelPackages", required = true)
