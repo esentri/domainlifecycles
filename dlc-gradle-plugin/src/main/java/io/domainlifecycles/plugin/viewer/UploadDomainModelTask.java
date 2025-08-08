@@ -27,8 +27,8 @@
 package io.domainlifecycles.plugin.viewer;
 
 
-import io.domainlifecycles.plugins.json.JsonSerializer;
-import io.domainlifecycles.plugins.json.JsonSerializerImpl;
+import io.domainlifecycles.plugins.mirror.MirrorSerializer;
+import io.domainlifecycles.plugins.mirror.MirrorSerializerImpl;
 import io.domainlifecycles.plugins.viewer.DomainModelUploader;
 import io.domainlifecycles.plugins.viewer.DomainModelUploaderImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
@@ -128,8 +128,8 @@ public abstract class UploadDomainModelTask extends DefaultTask {
     }
 
     private void uploadDomainModel() {
-        JsonSerializer jsonSerializer = new JsonSerializerImpl(true);
-        final String domainModelJson = jsonSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(getProject()),
+        MirrorSerializer mirrorSerializer = new MirrorSerializerImpl(true);
+        final String domainModelJson = mirrorSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(getProject()),
             getDomainModelPackages().get());
 
         domainModelUploader.uploadDomainModel(

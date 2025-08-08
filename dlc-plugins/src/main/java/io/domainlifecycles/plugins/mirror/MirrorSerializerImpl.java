@@ -24,7 +24,7 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.plugins.json;
+package io.domainlifecycles.plugins.mirror;
 
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.serialize.api.DomainSerializer;
@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation of the {@link JsonSerializer} interface that serializes
+ * Implementation of the {@link MirrorSerializer} interface that serializes
  * domain models into JSON strings using a domain serializer.
  *
  * This class processes information from provided classpath files and
@@ -48,9 +48,9 @@ import org.slf4j.LoggerFactory;
  * @author Mario Herb
  * @author Leon Völlinger
  */
-public class JsonSerializerImpl implements JsonSerializer {
+public class MirrorSerializerImpl implements MirrorSerializer {
 
-    private final static Logger log = LoggerFactory.getLogger(JsonSerializerImpl.class);
+    private final static Logger log = LoggerFactory.getLogger(MirrorSerializerImpl.class);
 
     private final DomainSerializer domainSerializer;
 
@@ -63,7 +63,7 @@ public class JsonSerializerImpl implements JsonSerializer {
      * @param prettyPrint a boolean flag indicating whether the JSON output should be formatted
      *                    in a human-readable way with indentation (true) or minified (false).
      */
-    public JsonSerializerImpl(boolean prettyPrint) {
+    public MirrorSerializerImpl(boolean prettyPrint) {
         this.domainSerializer = new JacksonDomainSerializer(prettyPrint);
     }
 

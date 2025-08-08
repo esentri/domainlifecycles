@@ -26,8 +26,8 @@
 
 package io.domainlifecycles.plugin.viewer;
 
-import io.domainlifecycles.plugins.json.JsonSerializer;
-import io.domainlifecycles.plugins.json.JsonSerializerImpl;
+import io.domainlifecycles.plugins.mirror.MirrorSerializer;
+import io.domainlifecycles.plugins.mirror.MirrorSerializerImpl;
 import io.domainlifecycles.plugins.viewer.DomainModelUploader;
 import io.domainlifecycles.plugins.viewer.DomainModelUploaderImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
@@ -48,12 +48,12 @@ import org.slf4j.LoggerFactory;
  *
  * The goal leverages a {@link DomainModelUploader} implementation to send the serialized
  * domain model JSON along with other metadata to a specified Diagram Viewer endpoint.
- * It uses a {@link JsonSerializer} implementation to convert the domain model into
+ * It uses a {@link MirrorSerializer} implementation to convert the domain model into
  * a JSON string before uploading.
  *
  * Key Responsibilities:
  * - Collect classpath files and context packages from the Maven project.
- * - Serialize the domain model into a JSON format using {@link JsonSerializer}.
+ * - Serialize the domain model into a JSON format using {@link MirrorSerializer}.
  * - Upload the serialized domain model to the Diagram Viewer using {@link DomainModelUploader}.
  *
  * Configuration Parameters:
@@ -107,8 +107,8 @@ public class UploadDomainModelGoal extends AbstractMojo {
     }
 
     private void uploadDomainModel() {
-        JsonSerializer jsonSerializer = new JsonSerializerImpl(true);
-        final String domainModelJson = jsonSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(project), domainModelPackages);
+        MirrorSerializer mirrorSerializer = new MirrorSerializerImpl(true);
+        final String domainModelJson = mirrorSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(project), domainModelPackages);
         domainModelUploader.uploadDomainModel(domainModelJson, domainModelPackages, apiKey, projectName, diagramViewerBaseUrl);
     }
 }

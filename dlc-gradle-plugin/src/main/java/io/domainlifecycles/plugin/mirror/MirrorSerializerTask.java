@@ -27,8 +27,8 @@
 package io.domainlifecycles.plugin.mirror;
 
 import io.domainlifecycles.plugin.extensions.SerializationConfigurationExtension;
-import io.domainlifecycles.plugins.json.JsonSerializer;
-import io.domainlifecycles.plugins.json.JsonSerializerImpl;
+import io.domainlifecycles.plugins.mirror.MirrorSerializer;
+import io.domainlifecycles.plugins.mirror.MirrorSerializerImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
 import io.domainlifecycles.utils.FileIOUtils;
 import java.nio.file.Path;
@@ -85,7 +85,7 @@ public abstract class MirrorSerializerTask extends DefaultTask {
     @Input
     public abstract NamedDomainObjectContainer<SerializationConfigurationExtension> getSerializations();
 
-    private JsonSerializer jsonSerializer;
+    private MirrorSerializer mirrorSerializer;
 
     /**
      * Executes the task action for rendering domain models as JSON files.
@@ -101,12 +101,12 @@ public abstract class MirrorSerializerTask extends DefaultTask {
      */
     @TaskAction
     public void action() {
-        jsonSerializer = new JsonSerializerImpl(true);
+        mirrorSerializer = new MirrorSerializerImpl(true);
         getSerializations().forEach(this::renderAndSaveModelAsJson);
     }
 
     private void renderAndSaveModelAsJson(final SerializationConfigurationExtension serializationConfigurationExtension) {
-        String jsonContent = jsonSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(getProject()), serializationConfigurationExtension.getDomainModelPackages().getOrNull());
+        String jsonContent = mirrorSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(getProject()), serializationConfigurationExtension.getDomainModelPackages().getOrNull());
         Path filePath;
 
         if(noFilePathSpecified()) {

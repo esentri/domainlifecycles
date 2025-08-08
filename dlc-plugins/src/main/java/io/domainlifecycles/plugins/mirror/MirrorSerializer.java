@@ -24,7 +24,7 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.plugins.json;
+package io.domainlifecycles.plugins.mirror;
 
 import java.net.URL;
 import java.util.List;
@@ -36,7 +36,7 @@ import java.util.List;
  * @author Mario Herb
  * @author Leon Völlinger
  */
-public interface JsonSerializer {
+public interface MirrorSerializer {
 
     /**
      * Serializes domain models into a JSON string representation.

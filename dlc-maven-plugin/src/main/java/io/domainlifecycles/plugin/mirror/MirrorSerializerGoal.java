@@ -26,9 +26,8 @@
 
 package io.domainlifecycles.plugin.mirror;
 
-import io.domainlifecycles.plugin.diagram.CreateDiagramGoal;
-import io.domainlifecycles.plugins.json.JsonSerializer;
-import io.domainlifecycles.plugins.json.JsonSerializerImpl;
+import io.domainlifecycles.plugins.mirror.MirrorSerializer;
+import io.domainlifecycles.plugins.mirror.MirrorSerializerImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
 import io.domainlifecycles.utils.FileIOUtils;
 import java.nio.file.Path;
@@ -94,17 +93,17 @@ public class MirrorSerializerGoal extends AbstractMojo {
     @Parameter(property = "serializations", required = true)
     private List<PluginSerializationConfiguration> serializations;
 
-    private JsonSerializer jsonSerializer;
+    private MirrorSerializer mirrorSerializer;
 
     /**
      * Executes the goal logic to render models and save them as JSON files.
      *
-     * This method initializes a {@link JsonSerializerImpl} instance configured for pretty print JSON output.
+     * This method initializes a {@link MirrorSerializerImpl} instance configured for pretty print JSON output.
      * It iterates through the collection of serialization configurations and processes each one by invoking
      * the {@code renderAndSaveModelAsJson} method for rendering the model and saving it to the output directory.
      *
      * The execution leverages the following:
-     * - Instantiation of the {@link JsonSerializerImpl} for JSON serialization.
+     * - Instantiation of the {@link MirrorSerializerImpl} for JSON serialization.
      * - Handling of each {@link PluginSerializationConfiguration} to produce corresponding JSON outputs.
      *
      * The JSON files are saved in the directory specified by the `fileOutputDir` field, with filenames
@@ -115,12 +114,12 @@ public class MirrorSerializerGoal extends AbstractMojo {
     @Override
     public void execute() {
         LOGGER.info("Running Serialize Mirror Goal...");
-        jsonSerializer = new JsonSerializerImpl(true);
+        mirrorSerializer = new MirrorSerializerImpl(true);
         serializations.forEach(this::renderAndSaveModelAsJson);
     }
 
     private void renderAndSaveModelAsJson(final PluginSerializationConfiguration pluginSerializationConfiguration) {
-        String jsonContent = jsonSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(project), pluginSerializationConfiguration.getDomainModelPackages());
+        String jsonContent = mirrorSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(project), pluginSerializationConfiguration.getDomainModelPackages());
         Path filePath;
 
         if(noFilePathSpecified()) {
