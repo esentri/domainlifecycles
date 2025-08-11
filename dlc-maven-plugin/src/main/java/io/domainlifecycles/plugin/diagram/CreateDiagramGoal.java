@@ -31,7 +31,7 @@ import io.domainlifecycles.plugins.diagram.DiagramConfig;
 import io.domainlifecycles.plugins.diagram.DiagramGenerator;
 import io.domainlifecycles.plugins.diagram.DiagramGeneratorImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
-import io.domainlifecycles.utils.FileIOUtils;
+import io.domainlifecycles.plugins.util.FileIOUtils;
 import java.nio.file.Path;
 import java.util.List;
 import org.apache.maven.plugin.AbstractMojo;
@@ -124,8 +124,8 @@ public class CreateDiagramGoal extends AbstractMojo {
         final Path filePath = Path.of(fileOutputDir,
             diagramConfig.getFileName() + diagramConfig.getFileType().getFileSuffix());
 
-        LOGGER.info(String.format("Saving diagram to %s/%s.%s",
-            fileOutputDir, mavenDiagramConfiguration.getFileName(), mavenDiagramConfiguration.getFormat()));
+        LOGGER.info("Saving diagram to {}/{}.{}", fileOutputDir, mavenDiagramConfiguration.getFileName(),
+            mavenDiagramConfiguration.getFormat());
         FileIOUtils.writeFileTo(filePath, diagramFileContent);
     }
 }

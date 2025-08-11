@@ -153,14 +153,14 @@ Supported Diagram configuration options are
 gradle createDiagram
 ```
 
-### JSON Render
+### Serialize Mirror
 Besides creating class diagrams, the plugin is also able to generate a JSON-File containing your domain model.
 
 #### Configuration
 An example configuration in your project could look like the following:
 ```groovy
 dlcGradlePlugin {
-    jsonModel {
+    serializeMirror {
         fileOutputDir = layout.buildDirectory
         serializations{
             [
@@ -174,15 +174,17 @@ dlcGradlePlugin {
     }
 }
 ```
-Similar to the diagram configuration above you need to specify where your JSON file should be saved to and its name,
-and finally the packages where the model should be read from.
+Similar to the diagram configuration above, you need to specify where your JSON file should be saved to and its name,
+and finally, the packages where the model should be read from.
+However, you can leave the `fileOutputDir` and/or the `fileName` empty. The file will then be saved to the default path
+`src/main/resources/META-INF/dlc/mirror.json`.
 
-The specified DomainModel must be complete an self-contained. 
+The specified DomainModel must be complete and self-contained. 
 All classes that the model consists of must be defined within the `domainModelPackages`.
 
 #### Run
 ```bash
-gradle renderJson
+gradle serializeMirror
 ```
 
 ### Diagram-Viewer Integration
@@ -356,7 +358,7 @@ Depending on the Maven phase you specified:
 mvn clean compile
 ```
 
-### JSON Render
+### Serialize Mirror
 Besides creating class diagrams, the plugin is also able to generate a JSON-File containing your domain-model.
 
 #### Configuration
@@ -370,10 +372,10 @@ An example configuration in your project could look like the following:
             <version>2.4.0</version>
             <executions>
                 <execution>
-                    <id>renderJson</id>
+                    <id>serializeMirror</id>
                     <phase>compile</phase>
                     <goals>
-                        <goal>renderJson</goal>
+                        <goal>serializeMirror</goal>
                     </goals>
                     <configuration>
                         <fileOutputDir>target</fileOutputDir>
@@ -392,8 +394,10 @@ An example configuration in your project could look like the following:
     </plugins>
 </build>
 ```
-Similar to the diagram configuration above you need to specify where your JSON file should be saved to and its name,
-and finally the packages where the model should be read from.
+Similar to the diagram configuration above, you need to specify where your JSON file should be saved to and its name,
+and finally, the packages where the model should be read from.
+However, you can leave the `fileOutputDir` and/or the `fileName` empty. The file will then be saved to the default path
+`src/main/resources/META-INF/dlc/mirror.json`.
 
 #### Run
 Depending on the Maven phase you specified:

@@ -27,6 +27,7 @@
 package io.domainlifecycles.plugin.extensions;
 
 import org.gradle.api.Named;
+import org.gradle.api.Project;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 
@@ -40,6 +41,12 @@ import org.gradle.api.provider.Property;
  * @author Leon Völlinger
  */
 public abstract class SerializationConfigurationExtension implements Named {
+
+    private static final String DEFAULT_MIRROR_JSON_FILE_NAME = "mirror.json";
+
+    public SerializationConfigurationExtension(Project project) {
+        getFileName().convention(DEFAULT_MIRROR_JSON_FILE_NAME);
+    }
 
     /**
      * Retrieves the list of domain model packages for serialization configuration.
@@ -57,6 +64,7 @@ public abstract class SerializationConfigurationExtension implements Named {
      * This method provides access to a property where the output file name for
      * a specific serialization configuration can be defined. The file name is
      * used in tasks related to serialization or output generation.
+     * When nothing is specified here, the default filename will be: {@code mirror.json}
      *
      * @return a {@code Property<String>} representing the file name for the output.
      */

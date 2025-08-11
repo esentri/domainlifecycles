@@ -27,6 +27,7 @@
 package io.domainlifecycles.plugin.extensions;
 
 import org.gradle.api.NamedDomainObjectContainer;
+import org.gradle.api.Project;
 import org.gradle.api.file.DirectoryProperty;
 
 /**
@@ -40,6 +41,12 @@ import org.gradle.api.file.DirectoryProperty;
  * @author Leon Völlinger
  */
 public abstract class MirrorSerializerTaskConfigurationExtension {
+
+    private static final String DEFAULT_META_INF_DLC_MIRROR_FILE_PATH = "src/main/resources/META-INF/dlc";
+
+    public MirrorSerializerTaskConfigurationExtension(Project project) {
+        getFileOutputDir().convention(project.getLayout().getProjectDirectory().dir(DEFAULT_META_INF_DLC_MIRROR_FILE_PATH));
+    }
 
     /**
      * Retrieves the directory property specifying the output location for generated JSON files.

@@ -53,7 +53,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  */
 public class PluginSerializationConfiguration {
 
-    @Parameter(property = "fileName")
+    @Parameter(property = "fileName", defaultValue = "mirror.json")
     private String fileName;
 
     @Parameter(property = "domainModelPackages", required = true)

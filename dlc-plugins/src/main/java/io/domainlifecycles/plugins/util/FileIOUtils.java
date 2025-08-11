@@ -24,9 +24,9 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.utils;
+package io.domainlifecycles.plugins.util;
 
-import io.domainlifecycles.exception.DLCMavenPluginException;
+import io.domainlifecycles.plugins.exception.DLCPluginsException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,7 +42,7 @@ import java.nio.file.Path;
  * - Write content to a file at a given path in byte array format.
  *
  * Error Handling:
- * - If an I/O operation fails, a custom runtime exception, {@code DLCMavenPluginException}, is thrown with a detailed message.
+ * - If an I/O operation fails, a custom runtime exception, {@code DLCPluginsException}, is thrown with a detailed message.
  *
  * @author Leon Völlinger
  */
@@ -71,14 +71,14 @@ public class FileIOUtils {
      *
      * @param path the {@code Path} object representing the file location where the content should be written
      * @param fileContent the byte array content to be written to the file
-     * @throws DLCMavenPluginException if an I/O error occurs while writing to the file
+     * @throws DLCPluginsException if an I/O error occurs while writing to the file
      */
     public static void writeFileTo(final Path path, final byte[] fileContent) {
         try {
             Files.createDirectories(path.getParent());
             Files.write(path, fileContent);
         } catch (IOException e) {
-            throw DLCMavenPluginException.fail(String.format("Error occurred while trying to save file to %s.", path), e);
+            throw DLCPluginsException.fail(String.format("Error occurred while trying to save file to %s.", path), e);
         }
     }
 }

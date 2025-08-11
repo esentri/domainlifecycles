@@ -29,7 +29,7 @@ package io.domainlifecycles.plugin.mirror;
 import io.domainlifecycles.plugins.mirror.MirrorSerializer;
 import io.domainlifecycles.plugins.mirror.MirrorSerializerImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
-import io.domainlifecycles.utils.FileIOUtils;
+import io.domainlifecycles.plugins.util.FileIOUtils;
 import java.nio.file.Path;
 import java.util.List;
 import org.apache.maven.plugin.AbstractMojo;
@@ -81,13 +81,10 @@ public class MirrorSerializerGoal extends AbstractMojo {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(MirrorSerializerGoal.class);
 
-    private static final String DEFAULT_JSON_RENDER_FILE_NAME = "mirror.json";
-    private static final String META_INF_DLC_MIRROR_FILE_PATH = "src/main/resources/META-INF/dlc/" + DEFAULT_JSON_RENDER_FILE_NAME;
-
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
-    @Parameter(property = "fileOutputDir")
+    @Parameter(property = "fileOutputDir", defaultValue = "src/main/resources/META-INF/dlc/")
     private String fileOutputDir;
 
     @Parameter(property = "serializations")
@@ -120,20 +117,10 @@ public class MirrorSerializerGoal extends AbstractMojo {
 
     private void renderAndSaveModelAsJson(final PluginSerializationConfiguration pluginSerializationConfiguration) {
         String jsonContent = mirrorSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(project), pluginSerializationConfiguration.getDomainModelPackages());
-        Path filePath;
-
-        if(noFilePathSpecified()) {
-            filePath = Path.of(META_INF_DLC_MIRROR_FILE_PATH);
-        } else {
-            filePath = Path.of(fileOutputDir, !pluginSerializationConfiguration.getFileName().isBlank() ? pluginSerializationConfiguration.getFileName() + ".json" : DEFAULT_JSON_RENDER_FILE_NAME);
-        }
+        Path filePath = Path.of(fileOutputDir, pluginSerializationConfiguration.getFileName());
 
         LOGGER.info("Saving JSON model to {}", filePath);
         FileIOUtils.writeFileTo(filePath, jsonContent);
-    }
-
-    private boolean noFilePathSpecified() {
-        return fileOutputDir == null || fileOutputDir.isBlank();
     }
 
 }

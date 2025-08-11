@@ -31,8 +31,8 @@ import io.domainlifecycles.plugin.extensions.PluginDiagramConfigurationExtension
 import io.domainlifecycles.plugins.diagram.DiagramConfig;
 import io.domainlifecycles.plugins.diagram.DiagramGenerator;
 import io.domainlifecycles.plugins.diagram.DiagramGeneratorImpl;
+import io.domainlifecycles.plugins.util.FileIOUtils;
 import io.domainlifecycles.utils.ClassLoaderUtils;
-import io.domainlifecycles.utils.FileIOUtils;
 import java.nio.file.Path;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.NamedDomainObjectContainer;
@@ -135,7 +135,7 @@ public abstract class CreateDiagramTask extends DefaultTask {
         final Path filePath = Path.of(getFileOutputDir().get().toString(),
             diagramConfig.getFileName() + diagramConfig.getFileType().getFileSuffix());
 
-        log.info(String.format("Saving diagram to %s", filePath));
+        log.info("Saving diagram to {}", filePath);
         FileIOUtils.writeFileTo(filePath, diagramFileContent);
     }
 }
