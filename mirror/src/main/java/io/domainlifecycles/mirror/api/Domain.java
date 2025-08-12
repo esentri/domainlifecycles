@@ -371,4 +371,12 @@ public class Domain {
         return initialized;
     }
 
+    /**
+     * Mostly for testing purposes
+     */
+    public static void unInitialize(){
+        domainMirror = null;
+        initialized = false;
+    }
+
 }
