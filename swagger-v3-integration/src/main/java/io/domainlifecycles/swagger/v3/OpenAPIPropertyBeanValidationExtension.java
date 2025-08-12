@@ -30,13 +30,12 @@ import io.domainlifecycles.reflect.JavaReflect;
 import io.domainlifecycles.reflect.MemberSelect;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
+import jakarta.validation.Validation;
+import jakarta.validation.metadata.ContainerElementTypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.metadata.ConstraintDescriptor;
-import javax.validation.metadata.ContainerElementTypeDescriptor;
+import jakarta.validation.Validator;
+import jakarta.validation.metadata.ConstraintDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
@@ -55,7 +54,7 @@ import java.util.Set;
  * <p>
  * In contrast to SpringDoc default behaviour this extension adds additional detailed Open API doc information for
  * every single default
- * annotation of the Java Bean Validation standard 2.0 or 3.0. Additionally, this extension corrects the (in our
+ * annotation of the Java Bean Validation standard 3.0. Additionally, this extension corrects the (in our
  * point of view wrong) default behaviour of spring doc
  * if properties (fields) of API classes wrap their types in {@link Optional}.
  * </p>
@@ -68,91 +67,60 @@ public class OpenAPIPropertyBeanValidationExtension {
 
     private static final Logger log = LoggerFactory.getLogger(OpenAPIPropertyBeanValidationExtension.class);
 
-    private static Validator validatorJavax;
-    private static jakarta.validation.Validator validatorJakarta;
 
-    private static final String BV_2_0_NOT_EMPTY = "javax.validation.constraints.NotEmpty";
+    private static Validator validatorJakarta;
+
     private static final String BV_3_0_NOT_EMPTY = "jakarta.validation.constraints.NotEmpty";
-
-    private static final String BV_2_0_NOT_BLANK = "javax.validation.constraints.NotBlank";
-
     private static final String BV_3_0_NOT_BLANK = "jakarta.validation.constraints.NotBlank";
-
-    private static final String BV_2_0_EMAIL = "javax.validation.constraints.Email";
     private static final String BV_3_0_EMAIL = "jakarta.validation.constraints.Email";
-
-    private static final String BV_2_0_PATTERN = "javax.validation.constraints.Pattern";
     private static final String BV_3_0_PATTERN = "jakarta.validation.constraints.Pattern";
 
     private static final String BV_PATTERN_ATTRIBUTE_REGEXP = "regexp";
 
-    private static final String BV_2_0_SIZE = "javax.validation.constraints.Size";
     private static final String BV_3_0_SIZE = "jakarta.validation.constraints.Size";
 
     private static final String BV_SIZE_ATTRIBUTE_MAX = "max";
     private static final String BV_SIZE_ATTRIBUTE_MIN = "min";
 
-    private static final String BV_2_0_MIN = "javax.validation.constraints.Min";
     private static final String BV_3_0_MIN = "jakarta.validation.constraints.Min";
 
     private static final String BV_MIN_ATTRIBUTE_VALUE = "value";
 
-    private static final String BV_2_0_MAX = "javax.validation.constraints.Max";
     private static final String BV_3_0_MAX = "jakarta.validation.constraints.Max";
 
     private static final String BV_MAX_ATTRIBUTE_VALUE = "value";
 
-    private static final String BV_2_0_DECIMAL_MIN = "javax.validation.constraints.DecimalMin";
     private static final String BV_3_0_DECIMAL_MIN = "jakarta.validation.constraints.DecimalMin";
 
     private static final String BV_DECIMAL_MIN_ATTRIBUTE_VALUE = "value";
     private static final String BV_DECIMAL_MIN_ATTRIBUTE_INCLUSIVE = "inclusive";
 
-    private static final String BV_2_0_DECIMAL_MAX = "javax.validation.constraints.DecimalMax";
     private static final String BV_3_0_DECIMAL_MAX = "jakarta.validation.constraints.DecimalMax";
 
     private static final String BV_DECIMAL_MAX_ATTRIBUTE_VALUE = "value";
     private static final String BV_DECIMAL_MAX_ATTRIBUTE_INCLUSIVE = "inclusive";
 
-    private static final String BV_2_0_NEGATIVE = "javax.validation.constraints.Negative";
     private static final String BV_3_0_NEGATIVE = "jakarta.validation.constraints.Negative";
 
-    private static final String BV_2_0_POSITIVE = "javax.validation.constraints.Positive";
     private static final String BV_3_0_POSITIVE = "jakarta.validation.constraints.Positive";
 
-    private static final String BV_2_0_NEGATIVE_OR_ZERO = "javax.validation.constraints.NegativeOrZero";
     private static final String BV_3_0_NEGATIVE_OR_ZERO = "jakarta.validation.constraints.NegativeOrZero";
 
-    private static final String BV_2_0_POSITIVE_OR_ZERO = "javax.validation.constraints.PositiveOrZero";
     private static final String BV_3_0_POSITIVE_OR_ZERO = "jakarta.validation.constraints.PositiveOrZero";
 
-    private static final String BV_2_0_DIGITS = "javax.validation.constraints.Digits";
     private static final String BV_3_0_DIGITS = "jakarta.validation.constraints.Digits";
 
     private static final String BV_DIGITS_ATTRIBUTE_INTEGER = "integer";
     private static final String BV_DIGITS_ATTRIBUTE_FRACTION = "fraction";
 
-    private static final String BV_2_0_PAST = "javax.validation.constraints.Past";
     private static final String BV_3_0_PAST = "jakarta.validation.constraints.Past";
-    private static final String BV_2_0_FUTURE = "javax.validation.constraints.Future";
     private static final String BV_3_0_FUTURE = "jakarta.validation.constraints.Future";
-    private static final String BV_2_0_PAST_OR_PRESENT = "javax.validation.constraints.PastOrPresent";
     private static final String BV_3_0_PAST_OR_PRESENT = "jakarta.validation.constraints.PastOrPresent";
-
-    private static final String BV_2_0_FUTURE_OR_PRESENT = "javax.validation.constraints.FutureOrPresent";
     private static final String BV_3_0_FUTURE_OR_PRESENT = "jakarta.validation.constraints.FutureOrPresent";
 
     static {
         try {
-            validatorJavax = Validation.buildDefaultValidatorFactory().getValidator();
-            log.info("Bean validation 2.0 supported!");
-        } catch (Throwable t) {
-            validatorJavax = null;
-            log.info("No bean validation 2.0 provider found or validation factory could not be built. " +
-                "Bean validation 2.0 extensions are disabled!");
-        }
-        try {
-            validatorJakarta = jakarta.validation.Validation.buildDefaultValidatorFactory().getValidator();
+            validatorJakarta = Validation.buildDefaultValidatorFactory().getValidator();
             log.info("Bean validation 3.0 supported!");
         } catch (Throwable t) {
             validatorJakarta = null;
@@ -167,7 +135,7 @@ public class OpenAPIPropertyBeanValidationExtension {
      * @param openAPI {@link OpenAPI} instance to be extended
      */
     public static void extendWithBeanValidationInformation(OpenAPI openAPI) {
-        if ((validatorJavax != null || validatorJakarta != null) && openAPI.getComponents() != null && openAPI.getComponents().getSchemas() != null) {
+        if (validatorJakarta != null && openAPI.getComponents() != null && openAPI.getComponents().getSchemas() != null) {
             openAPI.getComponents().getSchemas()
                 .entrySet()
                 .stream()
@@ -201,8 +169,10 @@ public class OpenAPIPropertyBeanValidationExtension {
         return Optional.class.isAssignableFrom(field.getType());
     }
 
-    private static Set<ConstraintDescriptor<?>> getConstraintDescriptorsJavax(Field field) {
-        var desc = validatorJavax.getConstraintsForClass(field.getDeclaringClass());
+
+
+    private static Set<ConstraintDescriptor<?>> getConstraintDescriptorsJakarta(Field field) {
+        var desc = validatorJakarta.getConstraintsForClass(field.getDeclaringClass());
         var prop = desc.getConstraintsForProperty(field.getName());
         if (prop != null) {
             if (isOptional(field)) {
@@ -216,31 +186,11 @@ public class OpenAPIPropertyBeanValidationExtension {
         return null;
     }
 
-    private static Set<jakarta.validation.metadata.ConstraintDescriptor<?>> getConstraintDescriptorsJakarta(Field field) {
-        var desc = validatorJakarta.getConstraintsForClass(field.getDeclaringClass());
-        var prop = desc.getConstraintsForProperty(field.getName());
-        if (prop != null) {
-            if (isOptional(field)) {
-                var container =
-                    (jakarta.validation.metadata.ContainerElementTypeDescriptor) prop.getConstrainedContainerElementTypes().toArray()[0];
-                return container.getConstraintDescriptors();
-            } else {
-                return prop.getConstraintDescriptors();
-            }
-        }
-        return null;
-    }
-
     private static void extendSchemaForField(Field field, Schema<?> propertySchema) {
         Objects.requireNonNull(field, "A field must be given to extend its Open API schema!");
         Objects.requireNonNull(propertySchema, "A property schema must be given to be extended!");
-        if (validatorJavax != null) {
-            Set<ConstraintDescriptor<?>> constraintDescriptors = getConstraintDescriptorsJavax(field);
-            if (constraintDescriptors != null) {
-                constraintDescriptors.forEach(cd -> extendSchemaForConstraintJavax(cd, propertySchema));
-            }
-        } else if (validatorJakarta != null) {
-            Set<jakarta.validation.metadata.ConstraintDescriptor<?>> constraintDescriptors =
+        if (validatorJakarta != null) {
+            Set<ConstraintDescriptor<?>> constraintDescriptors =
                 getConstraintDescriptorsJakarta(
                 field);
             if (constraintDescriptors != null) {
@@ -249,57 +199,7 @@ public class OpenAPIPropertyBeanValidationExtension {
         }
     }
 
-    private static void extendSchemaForConstraintJavax(ConstraintDescriptor<?> cd, Schema<?> schema) {
-        switch (cd.getAnnotation().annotationType().getName()) {
-            case BV_2_0_NOT_EMPTY -> extendNotEmpty(schema);
-            case BV_2_0_NOT_BLANK -> extendNotBlank(schema);
-            case BV_2_0_EMAIL -> extendEmail(schema);
-            case BV_2_0_PATTERN -> {
-                String regEx = (String) cd.getAttributes().get(BV_PATTERN_ATTRIBUTE_REGEXP);
-                extendPattern(schema, regEx);
-            }
-            case BV_2_0_SIZE -> {
-                Integer minLengthAnnotated = (Integer) cd.getAttributes().get(BV_SIZE_ATTRIBUTE_MIN);
-                Integer maxLengthAnnotated = (Integer) cd.getAttributes().get(BV_SIZE_ATTRIBUTE_MAX);
-                extendSize(schema, minLengthAnnotated, maxLengthAnnotated);
-            }
-            case BV_2_0_MIN -> {
-                Long minAnnotated = (Long) cd.getAttributes().get(BV_MIN_ATTRIBUTE_VALUE);
-                extendMin(schema, minAnnotated);
-            }
-            case BV_2_0_MAX -> {
-                Long maxAnnotated = (Long) cd.getAttributes().get(BV_MAX_ATTRIBUTE_VALUE);
-                extendMax(schema, maxAnnotated);
-            }
-            case BV_2_0_DECIMAL_MIN -> {
-                String minAnnotated = (String) cd.getAttributes().get(BV_DECIMAL_MIN_ATTRIBUTE_VALUE);
-                BigDecimal bigDecimalMinAnnotated = new BigDecimal(minAnnotated);
-                Boolean inclusiveAnnotated = (Boolean) cd.getAttributes().get(BV_DECIMAL_MIN_ATTRIBUTE_INCLUSIVE);
-                extendDecimalMin(schema, bigDecimalMinAnnotated, inclusiveAnnotated);
-            }
-            case BV_2_0_DECIMAL_MAX -> {
-                String maxAnnotated = (String) cd.getAttributes().get(BV_DECIMAL_MAX_ATTRIBUTE_VALUE);
-                BigDecimal bigDecimalMaxAnnotated = new BigDecimal(maxAnnotated);
-                Boolean inclusiveAnnotated = (Boolean) cd.getAttributes().get(BV_DECIMAL_MAX_ATTRIBUTE_INCLUSIVE);
-                extendDecimalMax(schema, bigDecimalMaxAnnotated, inclusiveAnnotated);
-            }
-            case BV_2_0_NEGATIVE -> extendNegative(schema);
-            case BV_2_0_POSITIVE -> extendPositive(schema);
-            case BV_2_0_NEGATIVE_OR_ZERO -> extendNegativeOrZero(schema);
-            case BV_2_0_POSITIVE_OR_ZERO -> extendPositiveOrZero(schema);
-            case BV_2_0_DIGITS -> {
-                Integer integerAnnotated = (Integer) cd.getAttributes().get(BV_DIGITS_ATTRIBUTE_INTEGER);
-                Integer fractionAnnotated = (Integer) cd.getAttributes().get(BV_DIGITS_ATTRIBUTE_FRACTION);
-                extendDigits(schema, integerAnnotated, fractionAnnotated);
-            }
-            case BV_2_0_PAST -> extendPast(schema);
-            case BV_2_0_FUTURE -> extendFuture(schema);
-            case BV_2_0_PAST_OR_PRESENT -> extendPastOrPresent(schema);
-            case BV_2_0_FUTURE_OR_PRESENT -> extendFutureOrPresent(schema);
-        }
-    }
-
-    private static void extendSchemaForConstraintJakarta(jakarta.validation.metadata.ConstraintDescriptor<?> cd,
+    private static void extendSchemaForConstraintJakarta(ConstraintDescriptor<?> cd,
                                                          Schema<?> schema) {
         switch (cd.getAnnotation().annotationType().getName()) {
             case BV_3_0_NOT_EMPTY -> extendNotEmpty(schema);
@@ -648,9 +548,7 @@ public class OpenAPIPropertyBeanValidationExtension {
             if (!schema.getDescription().contains(newDesc)) {
                 schema.setDescription(schema.getDescription() + " " + newDesc);
             }
-
         }
     }
-
 
 }

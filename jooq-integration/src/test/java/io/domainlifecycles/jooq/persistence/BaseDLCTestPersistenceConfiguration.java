@@ -41,7 +41,6 @@ import io.domainlifecycles.persistence.mapping.RecordMapper;
 import io.domainlifecycles.persistence.records.EntityValueObjectRecordClassProvider;
 import io.domainlifecycles.persistence.records.EntityValueObjectRecordTypeConfiguration;
 import io.domainlifecycles.test.tables.records.AktionsCodeBv3Record;
-import io.domainlifecycles.test.tables.records.AktionsCodeRecord;
 import io.domainlifecycles.test.tables.records.SimpleVoOneToManyRecord;
 import io.domainlifecycles.test.tables.records.SimpleVoOneToMany_2Record;
 import io.domainlifecycles.test.tables.records.SimpleVoOneToMany_3Record;
@@ -60,8 +59,6 @@ import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.DefaultDSLContext;
 import tests.shared.complete.onlinehandel.bestellung.AktionsCodeBv3;
 import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
-import tests.shared.persistence.domain.bestellung.bv2.AktionsCode;
-import tests.shared.persistence.domain.bestellung.bv2.Bestellung;
 import tests.shared.persistence.domain.oneToOneVoDedicatedTable.TestRootOneToOneVoDedicated;
 import tests.shared.persistence.domain.oneToOneVoDedicatedTable.VoDedicated;
 import tests.shared.persistence.domain.valueobjects.SimpleVoOneToMany;
@@ -222,12 +219,6 @@ public class BaseDLCTestPersistenceConfiguration {
                                 VoOneToManyEntity2.class,
                                 VoOneToManyEntity_2Record.class,
                                 "valueObjectsOneToMany", "oneToManySet"
-                            ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
-                                Bestellung.class,
-                                AktionsCode.class,
-                                AktionsCodeRecord.class,
-                                "aktionsCodes"
                             ),
                             new EntityValueObjectRecordTypeConfiguration<>(
                                 BestellungBv3.class,

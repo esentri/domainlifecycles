@@ -45,11 +45,11 @@ public class NomnomlNote implements DiagramElement {
     private final List<NomnomlStereotype> classStereotypes;
 
     /**
-     *
-     * @param text
-     * @param className
-     * @param classStyleClassifier
-     * @param classStereotypes
+     * Constructor for Nomnoml note.
+     * @param text the note text
+     * @param className the class name of the class the not is attached to
+     * @param classStyleClassifier the style classifier of the class
+     * @param classStereotypes the stereotypes of the class
      */
     public NomnomlNote(String text, String className, String classStyleClassifier, List<NomnomlStereotype> classStereotypes) {
         this.text = text;

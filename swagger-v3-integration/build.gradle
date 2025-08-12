@@ -12,7 +12,6 @@ java {
 }
 
 dependencies {
-    api libs.javax.validation.api
     api libs.jakarta.validation.api
     compileOnly libs.slf4j.api
     api libs.swagger

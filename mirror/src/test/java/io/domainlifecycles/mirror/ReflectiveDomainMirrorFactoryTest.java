@@ -59,9 +59,6 @@ import tests.shared.openapi.TestIdExtended;
 import tests.shared.openapi.TestIdInterface;
 import tests.shared.openapi.TestIdInterfaceExtended;
 import tests.shared.openapi.jakarta.TestVo2;
-import tests.shared.persistence.domain.bestellung.bv2.BestellStatusCodeEnum;
-import tests.shared.persistence.domain.bestellung.bv2.BestellungId;
-import tests.shared.persistence.domain.bestellung.bv2.WaehrungEnum;
 import tests.shared.persistence.domain.inheritanceExtended.CarWithEngine;
 import tests.shared.persistence.domain.inheritanceExtended.VehicleExtended;
 import tests.shared.persistence.domain.inheritanceGenericId.AbstractRoot;
@@ -109,7 +106,7 @@ public class ReflectiveDomainMirrorFactoryTest {
             arguments(TestIdInterface.class, UUID.class),
             arguments(TestIdExtended.class, UUID.class),
             arguments(TestIdInterfaceExtended.class, UUID.class),
-            arguments(BestellungId.class, Long.class)
+            arguments(BestellungIdBv3.class, Long.class)
         );
     }
 
@@ -131,8 +128,8 @@ public class ReflectiveDomainMirrorFactoryTest {
 
     private static Stream<Arguments> enumTypes() {
         return Stream.of(
-            arguments(BestellStatusCodeEnum.class),
-            arguments(WaehrungEnum.class)
+            arguments(BestellStatusCodeEnumBv3.class),
+            arguments(WaehrungEnumBv3.class)
         );
     }
 
@@ -954,7 +951,7 @@ public class ReflectiveDomainMirrorFactoryTest {
                     List.of(
                         new ExpectedParameter(
                             "arg0",
-                            BestellStatusCodeEnum.class,
+                            BestellStatusCodeEnumBv3.class,
                             null,
                             false,
                             false,

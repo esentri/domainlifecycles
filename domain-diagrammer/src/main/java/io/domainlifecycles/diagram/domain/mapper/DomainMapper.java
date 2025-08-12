@@ -68,6 +68,7 @@ public class DomainMapper {
      *
      * @param domainDiagramConfig diagram configuration
      * @param domainMirror mapped domain
+     * @param notes a collection of externally provided notes to be attached to the shown classes
      */
     public DomainMapper(
         DomainDiagramConfig domainDiagramConfig,
@@ -198,6 +199,11 @@ public class DomainMapper {
         );
     }
 
+    /**
+     * Returns all notes needed for a specific aggregate
+     * @param aggregateClassNames all classes contained in the correspondig aggregate
+     * @return aggregate specific notes
+     */
     public List<NomnomlNote> getAggregateNotes(List<String> aggregateClassNames) {
         if(!domainDiagramConfig.getGeneralVisualSettings().isShowNotes()){
             return Collections.emptyList();
@@ -208,6 +214,10 @@ public class DomainMapper {
             .toList();
     }
 
+    /**
+     * Returns all non aggregate specific notes
+     * @return all notes not contained in an aggregates boundary
+     */
     public List<NomnomlNote> getNonAggregateNotes() {
         if(!domainDiagramConfig.getGeneralVisualSettings().isShowNotes()){
             return Collections.emptyList();

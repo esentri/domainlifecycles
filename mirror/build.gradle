@@ -15,7 +15,6 @@ dependencies {
     compileOnly libs.slf4j.api
 
     implementation libs.classgraph
-    compileOnly libs.javax.validation.api
     compileOnly libs.jakarta.validation.api
     implementation libs.jackson.core
     implementation libs.jackson.databind

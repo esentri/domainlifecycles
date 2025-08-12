@@ -174,7 +174,7 @@ Gradle setup for a Spring Boot 3 app:
 
 ```Groovy
 dependencies{
-    implementation 'io.domainlifecycles:spring-boot-3-jooq-complete:2.5.0'
+    implementation 'io.domainlifecycles:spring-boot-3-jooq-complete:2.5.0.rc.rc.rc.rc.rc.rc.rc.rc.rc.rc.rc.rc.rc.rc.rc.rc.rc'
 }
 ```
 
@@ -184,7 +184,7 @@ Maven setup for a Spring Boot 3 app:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>spring-boot-3-jooq-complete</artifactId>
-    <version>2.5.0</version>
+    <version>2.5.0.rc</version>
 </dependency>
 ```
 

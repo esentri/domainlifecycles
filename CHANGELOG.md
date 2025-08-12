@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the mirror initialized.
 - Added feature for external comments being rendered in Domain Diagramms.
 - Fixed bugs in Domain Diagrams due to missing classes not being rendered in certain inheritance cases.
+- Removed deprecated Spring Boot 2 support
+- Removed deprecated javax BeanValidation support
 
 ## [2.4.1] - 2025-06-06
 - Added deprecated markers at some classes

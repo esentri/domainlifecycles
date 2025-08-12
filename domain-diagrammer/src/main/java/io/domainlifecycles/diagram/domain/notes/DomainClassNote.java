@@ -32,8 +32,8 @@ import java.util.Objects;
  * This record is used to pass notes to the diagram generator, that should be rendered
  * in the diagram.
  *
- * @param className
- * @param text
+ * @param className full qualified name of the class the note is attached to
+ * @param text the note text
  *
  * @author Mario Herb
  */

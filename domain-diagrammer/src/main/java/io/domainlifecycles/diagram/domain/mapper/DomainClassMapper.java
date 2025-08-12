@@ -203,7 +203,7 @@ public class DomainClassMapper {
 
     /**
      * Get all mirrors contained in an aggregate root
-     * @param aggregateRootMirror
+     * @param aggregateRootMirror the root for which to get all contained elements
      * @return all domaintype mirrors that should be rendered as contained classes in an aggregate frame
      */
     public List<DomainTypeMirror> getAllAggregateMirrors(AggregateRootMirror aggregateRootMirror) {
@@ -237,8 +237,14 @@ public class DomainClassMapper {
 
     /**
      * Maps a generic domain type to a {@link NomnomlClass} representation.
+     * @param domainTypeMirror used to derive style classifier and stereotypes
+     * @param showFields if true render fields
+     * @param showMethods if true render methods
+     * @return the mapped Nomnoml class object
      */
-    public NomnomlClass mapToNomnomlClass(DomainTypeMirror domainTypeMirror, boolean showFields, boolean showMethods) {
+    public NomnomlClass mapToNomnomlClass(DomainTypeMirror domainTypeMirror,
+                                          boolean showFields,
+                                          boolean showMethods) {
         var className = DomainMapperUtils.domainTypeName(domainTypeMirror, domainDiagramConfig);
         var nomnomlClassBuilder = NomnomlClass
             .builder()

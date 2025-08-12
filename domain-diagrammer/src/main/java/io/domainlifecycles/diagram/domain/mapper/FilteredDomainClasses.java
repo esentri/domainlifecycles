@@ -154,7 +154,7 @@ public class FilteredDomainClasses {
 
     /**
      * Query contained domain type mirror
-     * @param fullQualifiedTypeName
+     * @param fullQualifiedTypeName of a domaintype
      * @return Optional of the contained DomainType Mirror, empty Optional if not contained
      */
     public Optional<DomainTypeMirror> getContained(String fullQualifiedTypeName){

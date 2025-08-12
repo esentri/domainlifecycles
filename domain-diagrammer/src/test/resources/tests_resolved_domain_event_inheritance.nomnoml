@@ -126,63 +126,6 @@ o +- stueckzahl:int{>0}
 [<AR>BestellungBv3 <<AggregateRoot>>]  o-[<label> gesamtPreis 1] - [<VO>PreisBv3 <<ValueObject>>]
 [<AR>BestellungBv3 <<AggregateRoot>>]  +-[<label> bestellKommentare 0..*] - [<E>BestellKommentarBv3 <<Entity>>]
 ]
-// !!! {Frame} tests.shared.persistence.domain.bestellung.bv2.Bestellung !!!
-[<AF> Bestellung <<Aggregate>>|
-// !!! tests.shared.persistence.domain.bestellung.bv2.Bestellung !!!
-[<AR> Bestellung <<AggregateRoot>> |
-\# +- id:<ID> BestellungId
-o +- aktionsCodes:<VO> List<AktionsCode>
-\# +- kundennummer:<IDREF> Kundennummer
-\# +- prioritaet:Byte{>=1.0}{<=3.0}
-|
-+ void addBestellKommentar(BestellKommentar)
-+ void addBestellPosition(BestellPosition)
-+ void removeBestellKommentar(BestellKommentar)
-+ void removeBestellPosition(BestellPosition)
-]
-// !!! tests.shared.persistence.domain.bestellung.bv2.Lieferadresse !!!
-[<E> Lieferadresse <<Entity>> |
-\# +- id:<ID> LieferadresseId
-\# +- name:String\[0,200\]
-\# +- ort:String\[0,200\]
-\# +- postleitzahl:String\[0,200\]
-\# +- strasse:String\[0,200\]
-|
-]
-// !!! tests.shared.persistence.domain.bestellung.bv2.BestellPosition !!!
-[<E> BestellPosition <<Entity>> |
-\# +- id:<ID> BestellPositionId
-\# +- artikelId:<IDREF> ArtikelId
-o +- stueckzahl:int{>0}
-|
-]
-// !!! tests.shared.persistence.domain.bestellung.bv2.Preis !!!
-[<VO> Preis <<ValueObject>> |
-\# +- betrag:BigDecimal{>0}
-\# +- waehrung:<ENUM> WaehrungEnum
-|
-]
-// !!! tests.shared.persistence.domain.bestellung.bv2.BestellStatus !!!
-[<E> BestellStatus <<Entity>> |
-\# +- id:<ID> BestellStatusId
-\# +- statusAenderungAm:LocalDateTime
-\# +- statusCode:<ENUM> BestellStatusCodeEnum
-|
-]
-// !!! tests.shared.persistence.domain.bestellung.bv2.BestellKommentar !!!
-[<E> BestellKommentar <<Entity>> |
-\# +- id:<ID> BestellKommentarId
-\# +- kommentarAm:LocalDateTime{past}
-\# +- kommentarText:String\[0,1000\]{notEmpty}
-|
-]
-[<AR>Bestellung <<AggregateRoot>>]  +-[<label> lieferadresse 1] - [<E>Lieferadresse <<Entity>>]
-[<AR>Bestellung <<AggregateRoot>>]  +-[<label> bestellPositionen 2147483647..*] - [<E>BestellPosition <<Entity>>]
-[<E>BestellPosition <<Entity>>]  o-[<label> stueckPreis 1] - [<VO>Preis <<ValueObject>>]
-[<AR>Bestellung <<AggregateRoot>>]  +-[<label> bestellStatus 1] - [<E>BestellStatus <<Entity>>]
-[<AR>Bestellung <<AggregateRoot>>]  o-[<label> gesamtPreis 1] - [<VO>Preis <<ValueObject>>]
-[<AR>Bestellung <<AggregateRoot>>]  +-[<label> bestellKommentare 0..*] - [<E>BestellKommentar <<Entity>>]
-]
 // !!! {Frame} tests.shared.persistence.domain.complex.TestRoot !!!
 [<AF> TestRoot <<Aggregate>>|
 // !!! tests.shared.persistence.domain.complex.TestRoot !!!
@@ -872,21 +815,6 @@ o +- optionalText:Optional<String\[0,10\]>
 + String{notBlank} textSetzenReturnVal(String)
 ]
 ]
-// !!! {Frame} tests.shared.validation.javax.ValidatedAggregateRoot !!!
-[<AF> ValidatedAggregateRoot <<Aggregate>>|
-// !!! tests.shared.validation.javax.ValidatedAggregateRoot !!!
-[<AR> ValidatedAggregateRoot <<AggregateRoot>> |
-\# +- id:<ID> ValidatedAggregateRootId
-o +- optionalText:Optional<String\[0,10\]>
-\# +- text:String\[0,100\]{notEmpty}
-|
-+ void komischeBerechnungMitValidationError()
-+ ValidatedAggregateRoot optionalTextSetzenMitReturn(Optional<String{notBlank}>)
-+ ValidatedAggregateRoot textSetzenMitReturn(String)
-+ void textSetzenPrecondition(String{notBlank})
-+ String{notBlank} textSetzenReturnVal(String)
-]
-]
 [<AF> OptionalAggregate <<Aggregate>>]  -[<label> OptionalAggregate.optionalRefId] -> [<AF> RefAgg <<Aggregate>>]
 [<AF> OptionalAggregate <<Aggregate>>]  -[<label> RefValueObject.optionalRef] -> [<AF> RefAgg <<Aggregate>>]
 // !!! tests.shared.complete.onlinehandel.bestellung.BestellungRepository !!!
@@ -894,7 +822,7 @@ o +- optionalText:Optional<String\[0,10\]>
 + BestellungIdBv3 create(\# BestellungBv3)
 + Optional<BestellungBv3> deleteById(BestellungIdBv3)
 + Optional<BestellungBv3> findById(\# BestellungIdBv3)
-+ Stream<BestellungBv3> findByStatus(\# BestellStatusCodeEnum)
++ Stream<BestellungBv3> findByStatus(\# BestellStatusCodeEnumBv3)
 + BestellungBv3 insert(BestellungBv3)
 + BestellungBv3 update(BestellungBv3)
 ]

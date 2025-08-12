@@ -16,20 +16,20 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import tests.shared.TestDataGenerator;
+import tests.shared.complete.onlinehandel.bestellung.ArtikelIdBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellKommentarBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellKommentarIdBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellPositionBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellPositionIdBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellStatusBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellStatusIdBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellungIdBv3;
+import tests.shared.complete.onlinehandel.bestellung.LieferadresseBv3;
+import tests.shared.complete.onlinehandel.bestellung.LieferadresseIdBv3;
+import tests.shared.complete.onlinehandel.bestellung.PreisBv3;
+import tests.shared.complete.onlinehandel.bestellung.WaehrungEnumBv3;
 import tests.shared.jackson.TypeTestValueObject;
-import tests.shared.persistence.domain.bestellung.bv2.ArtikelId;
-import tests.shared.persistence.domain.bestellung.bv2.BestellKommentar;
-import tests.shared.persistence.domain.bestellung.bv2.BestellKommentarId;
-import tests.shared.persistence.domain.bestellung.bv2.BestellPosition;
-import tests.shared.persistence.domain.bestellung.bv2.BestellPositionId;
-import tests.shared.persistence.domain.bestellung.bv2.BestellStatus;
-import tests.shared.persistence.domain.bestellung.bv2.BestellStatusId;
-import tests.shared.persistence.domain.bestellung.bv2.Bestellung;
-import tests.shared.persistence.domain.bestellung.bv2.BestellungId;
-import tests.shared.persistence.domain.bestellung.bv2.Lieferadresse;
-import tests.shared.persistence.domain.bestellung.bv2.LieferadresseId;
-import tests.shared.persistence.domain.bestellung.bv2.Preis;
-import tests.shared.persistence.domain.bestellung.bv2.WaehrungEnum;
 import tests.shared.persistence.domain.complex.TestRoot;
 import tests.shared.persistence.domain.complex.TestRootId;
 import tests.shared.persistence.domain.optional.OptionalAggregate;
@@ -91,16 +91,16 @@ public class JacksonTest {
                     return new TestRootSimpleUuidId(UUID.randomUUID());
                 } else if (entityTypeName.equals(TestRootSimple.class.getName())) {
                     return new TestRootSimpleId(1L);
-                } else if (entityTypeName.equals(Bestellung.class.getName())) {
-                    return new BestellungId(1L);
-                } else if (entityTypeName.equals(BestellPosition.class.getName())) {
-                    return new BestellPositionId(1L);
-                } else if (entityTypeName.equals(Lieferadresse.class.getName())) {
-                    return new LieferadresseId(1L);
-                } else if (entityTypeName.equals(BestellKommentar.class.getName())) {
-                    return new BestellKommentarId(1L);
-                } else if (entityTypeName.equals(BestellStatus.class.getName())) {
-                    return new BestellStatusId(1L);
+                } else if (entityTypeName.equals(BestellungBv3.class.getName())) {
+                    return new BestellungIdBv3(1L);
+                } else if (entityTypeName.equals(BestellPositionBv3.class.getName())) {
+                    return new BestellPositionIdBv3(1L);
+                } else if (entityTypeName.equals(LieferadresseBv3.class.getName())) {
+                    return new LieferadresseIdBv3(1L);
+                } else if (entityTypeName.equals(BestellKommentarBv3.class.getName())) {
+                    return new BestellKommentarIdBv3(1L);
+                } else if (entityTypeName.equals(BestellStatusBv3.class.getName())) {
+                    return new BestellStatusIdBv3(1L);
                 }
                 return null;
             }
@@ -474,11 +474,11 @@ public class JacksonTest {
 
     @Test
     public void testBestellung() throws Throwable {
-        Bestellung b = TestDataGenerator.buildBestellung();
+        BestellungBv3 b = TestDataGenerator.buildBestellungBv3();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(b);
         log.info("JSON = " + json);
 
-        Bestellung b2 = objectMapper.readValue(json, Bestellung.class);
+        BestellungBv3 b2 = objectMapper.readValue(json, BestellungBv3.class);
         log.info("Read = " + b2);
         Assertions.assertThat(b2)
             .usingRecursiveComparison()
@@ -537,16 +537,16 @@ public class JacksonTest {
             }""";
         log.info("JSON = " + json);
 
-        Bestellung b2 = objectMapper.readValue(json, Bestellung.class);
+        BestellungBv3 b2 = objectMapper.readValue(json, BestellungBv3.class);
         log.info("Read = " + b2);
     }
 
     @Test
     public void testManyBestellungen() throws Throwable {
-        var many = TestDataGenerator.buildManyBestellungen();
+        var many = TestDataGenerator.buildManyBestellungenBv3();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(many);
         log.info("JSON = " + json);
-        var b2 = objectMapper.readValue(json, new TypeReference<List<Bestellung>>() {
+        var b2 = objectMapper.readValue(json, new TypeReference<List<BestellungBv3>>() {
         });
 
         log.info("Read = " + b2);
@@ -625,13 +625,13 @@ public class JacksonTest {
     @Test
     public void testIdProvisioningDtoRegularWithId() throws Throwable {
         IdProvisioningDto dto = new IdProvisioningDto();
-        dto.bestellPosition = BestellPosition.builder()
-            .setId(new BestellPositionId(1L))
-            .setArtikelId(new ArtikelId(1L))
+        dto.bestellPosition = BestellPositionBv3.builder()
+            .setId(new BestellPositionIdBv3(1L))
+            .setArtikelId(new ArtikelIdBv3(1L))
             .setStueckzahl(100)
-            .setStueckPreis(Preis.builder()
+            .setStueckPreis(PreisBv3.builder()
                 .setBetrag(BigDecimal.ONE)
-                .setWaehrung(WaehrungEnum.EUR)
+                .setWaehrung(WaehrungEnumBv3.EUR)
                 .build())
             .build();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(dto);
@@ -675,13 +675,13 @@ public class JacksonTest {
             }""";
 
         IdProvisioningDto dtoToAssert = new IdProvisioningDto();
-        dtoToAssert.bestellPosition = BestellPosition.builder()
-            .setId(new BestellPositionId(1L))
-            .setArtikelId(new ArtikelId(1L))
+        dtoToAssert.bestellPosition = BestellPositionBv3.builder()
+            .setId(new BestellPositionIdBv3(1L))
+            .setArtikelId(new ArtikelIdBv3(1L))
             .setStueckzahl(100)
-            .setStueckPreis(Preis.builder()
+            .setStueckPreis(PreisBv3.builder()
                 .setBetrag(BigDecimal.ONE)
-                .setWaehrung(WaehrungEnum.EUR)
+                .setWaehrung(WaehrungEnumBv3.EUR)
                 .build())
             .build();
 
@@ -699,11 +699,11 @@ public class JacksonTest {
 
     public static class IdProvisioningDto {
 
-        public BestellPosition getBestellPosition() {
+        public BestellPositionBv3 getBestellPosition() {
             return bestellPosition;
         }
 
-        private BestellPosition bestellPosition;
+        private BestellPositionBv3 bestellPosition;
 
         @Override
         public boolean equals(Object o) {
