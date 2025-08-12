@@ -38,17 +38,17 @@ commons-validator-version = '1.7'
 gruelbox-version = '6.0.553'
 jakarta-jms-api-version = '3.1.0'
 jakarta-transaction-api-version = '2.0.1'
-jackson-version = '2.17.2'
+jackson-version = '2.19.0'
 jakarta-validation-api-version = '3.0.2'
 javax-validation-api-version = '2.0.1.Final'
 jooq-version = '3.19.10'
-slf4j-version = '2.0.16'
+slf4j-version = '2.0.17'
 spring-doc-open-api-version = '1.8.0'
 spring-doc-open-api-2-version = '2.6.0'
-spring-jdbc-version = '6.1.13'
-spring-tx-version = '6.1.13'
+spring-jdbc-version = '6.2.7'
+spring-tx-version = '6.2.7'
 spring-web-version = '5.3.33'
-spring-web6-version = '6.1.13'
+spring-web6-version = '6.2.7'
 swagger-version = '2.2.25'
 type-resolver-version = '1.0.3'
 docker-java-version = '3.4.0'
@@ -59,10 +59,10 @@ maven-plugin-api-version = '3.9.9'
 maven-plugin-tools-annotations-version = '3.15.1'
 
 # test-versions
-active-mq-artemis-version = '2.37.0'
-assertj-version = '3.24.2'
+active-mq-artemis-version = '2.41.0'
+assertj-version = '3.27.3'
 atomikos-jta-version = '6.0.0'
-awaitility-version = '4.2.0'
+awaitility-version = '4.3.0'
 commons-io-version = '2.14.0'
 glassfish-jakarta-version = '4.0.2'
 h2-version = '2.2.224'
@@ -70,18 +70,19 @@ hibernate-validator-jakarta-version = '8.0.1.Final'
 jakarta-el-version = '5.0.1'
 javax-jms-api-version = '2.0.1'
 jaxb-api-version = '2.3.0'
-jaxb-core-version = '4.0.4'
-jaxb-impl-version = '4.0.4'
-junit-jupiter-params-version = '5.10.0'
-junit-jupiter-version = '5.10.0'
+jaxb-core-version = '4.0.5'
+jaxb-impl-version = '4.0.5'
+junit-jupiter-params-version = '5.12.2'
+junit-jupiter-version = '5.12.2'
+junit-platform-version = '1.12.2'
 kryo-version = '5.3.0'
-logback-classic-version = '1.5.3'
-lombok-version = '1.18.30'
-mockito-core-version = '5.5.0'
+logback-classic-version = '1.5.18'
+lombok-version = '1.18.38'
+mockito-core-version = '5.17.0'
 spring-boot2-platform-version = '2.7.18'
-spring-boot3-platform-version = '3.3.4'
-spring-boot3-starter-artemis-version = '3.3.3'
-spring-boot3-starter-version = '3.2.3'
+spring-boot3-platform-version = '3.5.0'
+spring-boot3-starter-artemis-version = '3.5.0'
+spring-boot3-starter-version = '3.5.0'
 
 # plugin versions
 flyway-version = '10.17.0'
@@ -98,7 +99,7 @@ active-mq-client = { module = "org.apache.activemq:activemq-client", version.ref
 active-mq-client-jakarta = { module = "org.apache.activemq:activemq-client-jakarta", version.ref = "active-mq-classic-version" }
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertj-version" }
 awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility-version"}
-apache-active-mq-artemis-jakarter-server = { module = "org.apache.activemq:artemis-jakarta-server", version.ref = "active-mq-artemis-version"}
+apache-active-mq-artemis-jms-server = { module = "org.apache.activemq:artemis-jms-server", version.ref = "active-mq-artemis-version"}
 atomikos-transactions-jta = { module = "com.atomikos:transactions-jta", version.ref = "atomikos-jta-version" }
 classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraph-version" }
 commons-collections = { module = "commons-collections:commons-collections", version.ref = "commons-collections-version" }
@@ -128,8 +129,9 @@ jaxb-impl = { module = "com.sun.xml.bind:jaxb-impl", version.ref = "jaxb-impl-ve
 jooq = { module = "org.jooq:jooq", version.ref = "jooq-version" }
 jooq-codegen = { module = "org.jooq:jooq-codegen", version.ref = "jooq-version"}
 jooq-meta = { module = "org.jooq:jooq-meta", version.ref = "jooq-version"}
-junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter-version" }
-junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit-jupiter-version" }
+junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter-version" }
+junit-platform-engine = { module = "org.junit.platform:junit-platform-engine", version.ref = "junit-platform-version" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform-version" }
 junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit-jupiter-params-version" }
 kryo = { module = "com.esotericsoftware:kryo", version.ref = "kryo-version" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback-classic-version" }

@@ -174,7 +174,7 @@ Gradle setup for a Spring Boot 3 app:
 
 ```Groovy
 dependencies{
-    implementation 'io.domainlifecycles:spring-boot-3-jooq-complete:2.4.1'
+    implementation 'io.domainlifecycles:spring-boot-3-jooq-complete:2.5.0'
 }
 ```
 
@@ -184,7 +184,7 @@ Maven setup for a Spring Boot 3 app:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>spring-boot-3-jooq-complete</artifactId>
-    <version>2.4.1</version>
+    <version>2.5.0</version>
 </dependency>
 ```
 
@@ -202,20 +202,20 @@ Here's an overview of the most important external dependencies:
 
 | Feature                                                               | External dependency                                                                            | Supported versions      |
 |-----------------------------------------------------------------------|------------------------------------------------------------------------------------------------|-------------------------|
-| Optional Object Builders Lombok Support                               | org.projectlombok:lombok                                                                       | tested with 1.18.30     |     
+| Optional Object Builders Lombok Support                               | org.projectlombok:lombok                                                                       | tested with 1.18.38     |     
 | Optional fine grained type resolving in the DLC mirror                | com.github.vladislavsevruk:type-resolver                                                       | tested with 1.0.3       |
 | Runtime class loading in the DLC mirror and DLC persistence           | io.github.classgraph:classgraph                                                                | tested with 4.8.163     |
 | Validation - Javax Bean Validation 2.0 Support                        | (Bean Validation Provider implementation) e.g.: org.hibernate.validator:hibernate-validator    | tested with 6.2.3.Final |
 | Validation - Jakarta Bean Validation 3.0 Support                      | (Bean Validation Provider implementation) e.g.: org.hibernate.validator:hibernate-validator    | tested with 8.0.1.Final |
 | Validation extension vi Byte Buddy                                    | net.bytebuddy:byte-buddy                                                                       | tested with 1.15.10     |
 | Persistence                                                           | org.jooq:jooq                                                                                  | tested with 3.19.6      |
-| JSON Mapping                                                          | com.fasterxml.jackson.core:jackson-core <b>and</b> com.fasterxml.jackson.core:jackson-databind | tested with 2.17.2      |
+| JSON Mapping                                                          | com.fasterxml.jackson.core:jackson-core <b>and</b> com.fasterxml.jackson.core:jackson-databind | tested with 2.19.0      |
 | Open API Support (Spring Doc 1)                                       | org.springdoc:springdoc-openapi-data-rest <b>and</b> org.springdoc:springdoc-openapi-ui        | tested with 1.8.0       |
 | Open API Support (Spring Doc 2)                                       | org.springdoc:springdoc-openapi-starter-webmvc-ui                                              | tested with 2.6.0       |
 | Spring Converter Support (needed for Spring-Web, Spring Boot 2)       | org.springframework:spring-core                                                                | tested with 5.3.33      |
-| Spring Converter Support (needed for Spring-Web, Spring Boot 3)       | org.springframework:spring-core                                                                | tested with 6.1.13      |
-| Domain Events, Spring based Transactional Outbox (Spring Boot 3 only) | org.springframework:spring-jdbc                                                                | tested with 6.1.13      |
-| Domain Events, Spring based Transaction Support (Spring Boot 3 only)  | org.springframework:spring-tx                                                                  | tested with 6.1.13      |
+| Spring Converter Support (needed for Spring-Web, Spring Boot 3)       | org.springframework:spring-core                                                                | tested with 6.2.7       |
+| Domain Events, Spring based Transactional Outbox (Spring Boot 3 only) | org.springframework:spring-jdbc                                                                | tested with 6.2.7       |
+| Domain Events, Spring based Transaction Support (Spring Boot 3 only)  | org.springframework:spring-tx                                                                  | tested with 6.2.7       |
 | Domain Events, Jakarta JTA Support                                    | (JTA Provider implementation) e.g.: Atomikos com.atomikos:transactions-jta                     | tested with 6.0.0       |
 | Domain Events Gruelbox Transactional Outbox                           | com.gruelbox:transactionoutbox-core                                                            | tested with 6.0.553     |
 | Domain Events ActiveMq Classic                                        | org.apache.activemq:activemq-client                                                            | tested with 5.18.4      |

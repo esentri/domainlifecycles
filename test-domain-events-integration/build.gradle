@@ -33,7 +33,7 @@ dependencies {
     testImplementation libs.spring.boot3.starter.jooq
     testImplementation libs.spring.boot3.starter.test
     testImplementation libs.spring.boot3.starter.artemis
-    testImplementation libs.apache.active.mq.artemis.jakarter.server
+    testImplementation libs.apache.active.mq.artemis.jms.server
     testImplementation libs.bundles.gruelbox.transactionoutbox
 
     testImplementation libs.awaitility
