@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   pure reflective fallbacks for 'equals()', 'hashCode()', 'toString()'. That also enables 
   the corresponding base classes to use 'equals()', 'hashCode()', 'toString()' without having 
   the mirror initialized.
+- Added feature for external comments being rendered in Domain Diagramms.
+- Fixed bugs in Domain Diagrams due to missing classes not being rendered in certain inheritance cases.
 
 ## [2.4.1] - 2025-06-06
 - Added deprecated markers at some classes
