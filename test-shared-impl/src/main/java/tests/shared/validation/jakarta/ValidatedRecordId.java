@@ -26,10 +26,8 @@
 
 package tests.shared.validation.jakarta;
 
-import io.domainlifecycles.domain.types.ValueObject;
+import io.domainlifecycles.domain.types.Identity;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 
-@Builder
-public record ValidatedReordVo2(@NotNull String name) implements ValueObject {
+public record ValidatedRecordId(@NotNull Long value) implements Identity<Long> {
 }

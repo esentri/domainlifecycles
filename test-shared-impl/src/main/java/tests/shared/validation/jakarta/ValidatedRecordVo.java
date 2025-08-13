@@ -26,15 +26,10 @@
 
 package tests.shared.validation.jakarta;
 
-import io.domainlifecycles.domain.types.base.IdentityBase;
+import io.domainlifecycles.domain.types.ValueObject;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
-public class ValidatedAggregateRoot2Id extends IdentityBase<Long> {
-    /**
-     * Constructs an typed id.
-     *
-     * @param value associated with identity.
-     */
-    public ValidatedAggregateRoot2Id(Long value) {
-        super(value);
-    }
+@Builder
+public record ValidatedRecordVo(@NotNull String name) implements ValueObject {
 }

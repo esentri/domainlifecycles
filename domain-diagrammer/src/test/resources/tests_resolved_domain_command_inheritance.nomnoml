@@ -802,9 +802,9 @@ o +- simple:<VO> SimpleVoPrimitive
 [<AR>VoAggregatePrimitive <<AggregateRoot>>]  o-[<label> recordMappedComplex 0..1] - [<VO>ComplexVoPrimitive <<ValueObject>>]
 [<AR>VoAggregatePrimitive <<AggregateRoot>>]  o-[<label> recordMappedNested 0..1] - [<VO>NestedVoPrimitive <<ValueObject>>]
 ]
-// !!! {Frame} tests.shared.validation.jakarta.ValidatedAggregateRoot2 !!!
+// !!! {Frame} tests.shared.validation.jakarta.ValidatedAggregateRoot !!!
 [<AF> ValidatedAggregateRoot2 <<Aggregate>>|
-// !!! tests.shared.validation.jakarta.ValidatedAggregateRoot2 !!!
+// !!! tests.shared.validation.jakarta.ValidatedAggregateRoot !!!
 [<AR> ValidatedAggregateRoot2 <<AggregateRoot>> |
 \# +- id:<ID> ValidatedAggregateRoot2Id
 o +- optionalText:Optional<String\[0,10\]>

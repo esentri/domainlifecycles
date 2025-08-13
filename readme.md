@@ -154,10 +154,8 @@ DLC provides several JARs which enable the DLC features independently
 | jOOQ based implementation for persistence management                | application developers | io.domainlifecycles:jooq-integration         |
 | Bean Validation support (javax or jakarta)                          | application developers | io.domainlifecycles:bean-validations         |
 | Byte Buddy based auto validation extension                          | application developers | io.domainlifecycles:validation-extender      |
-| Spring Doc open API support (Spring Boot 2 compatible)              | application developers | io.domainlifecycles:spring-doc-integration   | 
 | Spring Doc 2 open API support (Spring Boot 3 compatible)            | application developers | io.domainlifecycles:spring-doc-2-integration | 
-| General Swagger / Open API v3 support                               | only internally used   | io.domainlifecycles:swagger-v3-integration   | 
-| Spring Web support (Spring Boot 2 compatible)                       | application developers | io.domainlifecycles:spring-web-integration   | 
+| General Swagger / Open API v3 support                               | only internally used   | io.domainlifecycles:swagger-v3-integration   |  
 | Spring Web support (Spring Boot 3 compatible)                       | application developers | io.domainlifecycles:spring-web-6-integration |
 | Nomnoml based domain diagrams                                       | application developers | io.domainlifecycles:domain-diagrammer        | 
 
@@ -174,7 +172,7 @@ Gradle setup for a Spring Boot 3 app:
 
 ```Groovy
 dependencies{
-    implementation 'io.domainlifecycles:spring-boot-3-jooq-complete:2.5.0.rc.rc.rc.rc.rc.rc.rc.rc.rc.rc.rc.rc.rc.rc.rc.rc.rc'
+    implementation 'io.domainlifecycles:spring-boot-3-jooq-complete:2.5'
 }
 ```
 
@@ -184,7 +182,7 @@ Maven setup for a Spring Boot 3 app:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>spring-boot-3-jooq-complete</artifactId>
-    <version>2.5.0.rc</version>
+    <version>2.5.0</version>
 </dependency>
 ```
 
@@ -200,26 +198,23 @@ Depending on the features used, additionally to the DLC dependencies other runti
 target applications classpath.
 Here's an overview of the most important external dependencies:
 
-| Feature                                                               | External dependency                                                                            | Supported versions      |
-|-----------------------------------------------------------------------|------------------------------------------------------------------------------------------------|-------------------------|
-| Optional Object Builders Lombok Support                               | org.projectlombok:lombok                                                                       | tested with 1.18.38     |     
-| Optional fine grained type resolving in the DLC mirror                | com.github.vladislavsevruk:type-resolver                                                       | tested with 1.0.3       |
-| Runtime class loading in the DLC mirror and DLC persistence           | io.github.classgraph:classgraph                                                                | tested with 4.8.163     |
-| Validation - Javax Bean Validation 2.0 Support                        | (Bean Validation Provider implementation) e.g.: org.hibernate.validator:hibernate-validator    | tested with 6.2.3.Final |
-| Validation - Jakarta Bean Validation 3.0 Support                      | (Bean Validation Provider implementation) e.g.: org.hibernate.validator:hibernate-validator    | tested with 8.0.1.Final |
-| Validation extension vi Byte Buddy                                    | net.bytebuddy:byte-buddy                                                                       | tested with 1.15.10     |
-| Persistence                                                           | org.jooq:jooq                                                                                  | tested with 3.19.6      |
-| JSON Mapping                                                          | com.fasterxml.jackson.core:jackson-core <b>and</b> com.fasterxml.jackson.core:jackson-databind | tested with 2.19.0      |
-| Open API Support (Spring Doc 1)                                       | org.springdoc:springdoc-openapi-data-rest <b>and</b> org.springdoc:springdoc-openapi-ui        | tested with 1.8.0       |
-| Open API Support (Spring Doc 2)                                       | org.springdoc:springdoc-openapi-starter-webmvc-ui                                              | tested with 2.6.0       |
-| Spring Converter Support (needed for Spring-Web, Spring Boot 2)       | org.springframework:spring-core                                                                | tested with 5.3.33      |
-| Spring Converter Support (needed for Spring-Web, Spring Boot 3)       | org.springframework:spring-core                                                                | tested with 6.2.7       |
-| Domain Events, Spring based Transactional Outbox (Spring Boot 3 only) | org.springframework:spring-jdbc                                                                | tested with 6.2.7       |
-| Domain Events, Spring based Transaction Support (Spring Boot 3 only)  | org.springframework:spring-tx                                                                  | tested with 6.2.7       |
-| Domain Events, Jakarta JTA Support                                    | (JTA Provider implementation) e.g.: Atomikos com.atomikos:transactions-jta                     | tested with 6.0.0       |
-| Domain Events Gruelbox Transactional Outbox                           | com.gruelbox:transactionoutbox-core                                                            | tested with 6.0.553     |
-| Domain Events ActiveMq Classic                                        | org.apache.activemq:activemq-client                                                            | tested with 5.18.4      |
-| Logging                                                               | (SLF4J Provider) e.g.: ch.qos.logback:logback-classic                                          | tested with 1.5.3       |           
+| Feature                                                          | External dependency                                                                            | Supported versions      |
+|------------------------------------------------------------------|------------------------------------------------------------------------------------------------|-------------------------|
+| Optional Object Builders Lombok Support                          | org.projectlombok:lombok                                                                       | tested with 1.18.38     |     
+| Optional fine grained type resolving in the DLC mirror           | com.github.vladislavsevruk:type-resolver                                                       | tested with 1.0.3       |
+| Runtime class loading in the DLC mirror and DLC persistence      | io.github.classgraph:classgraph                                                                | tested with 4.8.163     |
+| Validation - Jakarta Bean Validation 3.0 Support                 | (Bean Validation Provider implementation) e.g.: org.hibernate.validator:hibernate-validator    | tested with 8.0.1.Final |
+| Validation extension vi Byte Buddy                               | net.bytebuddy:byte-buddy                                                                       | tested with 1.15.10     |
+| Persistence                                                      | org.jooq:jooq                                                                                  | tested with 3.19.6      |
+| JSON Mapping                                                     | com.fasterxml.jackson.core:jackson-core <b>and</b> com.fasterxml.jackson.core:jackson-databind | tested with 2.19.0      |
+| Open API Support (Spring Doc 2)                                  | org.springdoc:springdoc-openapi-starter-webmvc-ui                                              | tested with 2.6.0       |
+| Spring Converter Support (needed for Spring-Web, Spring Boot 3)  | org.springframework:spring-core                                                                | tested with 6.2.7       |
+| Domain Events, Spring based Transactional Outbox (Spring Boot 3) | org.springframework:spring-jdbc                                                                | tested with 6.2.7       |
+| Domain Events, Spring based Transaction Support (Spring Boot 3)  | org.springframework:spring-tx                                                                  | tested with 6.2.7       |
+| Domain Events, Jakarta JTA Support                               | (JTA Provider implementation) e.g.: Atomikos com.atomikos:transactions-jta                     | tested with 6.0.0       |
+| Domain Events Gruelbox Transactional Outbox                      | com.gruelbox:transactionoutbox-core                                                            | tested with 6.0.553     |
+| Domain Events ActiveMq Classic                                   | org.apache.activemq:activemq-client                                                            | tested with 5.18.4      |
+| Logging                                                          | (SLF4J Provider) e.g.: ch.qos.logback:logback-classic                                          | tested with 1.5.3       |           
 
 Run `./gradle dependencies` on the main project or any of the submodules to get a complete overview of the dependencies
 that must be provided on the target applications runtime classpath.

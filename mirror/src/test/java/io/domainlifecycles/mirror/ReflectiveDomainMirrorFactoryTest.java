@@ -67,7 +67,7 @@ import tests.shared.persistence.domain.valueobjects.ComplexVo;
 import tests.shared.persistence.domain.valueobjects.SimpleVo;
 import tests.shared.persistence.domain.valueobjects.SimpleVoOneToMany2;
 import tests.shared.persistence.domain.valueobjects.SimpleVoOneToMany3;
-import tests.shared.validation.jakarta.ValidatedAggregateRoot2;
+import tests.shared.validation.jakarta.ValidatedAggregateRoot;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -481,14 +481,14 @@ public class ReflectiveDomainMirrorFactoryTest {
     @Test
     public void testValidatedAggregateRoot2() {
         assertDomainObject(
-            ValidatedAggregateRoot2.class.getName(),
+            ValidatedAggregateRoot.class.getName(),
             AggregateRootBase.class.getName(),
             "id",
             List.of(
                 new ExpectedProperty(
                     String.class,
                     "text",
-                    ValidatedAggregateRoot2.class.getName(),
+                    ValidatedAggregateRoot.class.getName(),
                     true,
                     false,
                     true,
@@ -505,7 +505,7 @@ public class ReflectiveDomainMirrorFactoryTest {
                 new ExpectedProperty(
                     String.class,
                     "optionalText",
-                    ValidatedAggregateRoot2.class.getName(),
+                    ValidatedAggregateRoot.class.getName(),
                     true,
                     true,
                     true,

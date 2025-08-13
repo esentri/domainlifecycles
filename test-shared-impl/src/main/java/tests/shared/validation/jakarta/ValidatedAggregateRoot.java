@@ -37,9 +37,9 @@ import lombok.Getter;
 import java.util.Optional;
 
 @Getter
-public class ValidatedAggregateRoot2 extends AggregateRootBase<ValidatedAggregateRoot2Id> {
+public class ValidatedAggregateRoot extends AggregateRootBase<ValidatedAggregateRootId> {
 
-    private final ValidatedAggregateRoot2Id id;
+    private final ValidatedAggregateRootId id;
     @NotEmpty
     @Size(max = 100)
     private String text;
@@ -48,8 +48,8 @@ public class ValidatedAggregateRoot2 extends AggregateRootBase<ValidatedAggregat
 
 
     @Builder(setterPrefix = "set")
-    public ValidatedAggregateRoot2(ValidatedAggregateRoot2Id id, String text, String optionalText,
-                                   long concurrencyVersion) {
+    public ValidatedAggregateRoot(ValidatedAggregateRootId id, String text, String optionalText,
+                                  long concurrencyVersion) {
         super(concurrencyVersion);
         this.id = id;
         this.text = text;
@@ -60,12 +60,12 @@ public class ValidatedAggregateRoot2 extends AggregateRootBase<ValidatedAggregat
         text = "WRONG";
     }
 
-    public ValidatedAggregateRoot2 textSetzenMitReturn(String neuerText) {
+    public ValidatedAggregateRoot textSetzenMitReturn(String neuerText) {
         this.text = neuerText;
         return this;
     }
 
-    public ValidatedAggregateRoot2 optionalTextSetzenMitReturn(Optional<@NotBlank String> neuerTextOptional) {
+    public ValidatedAggregateRoot optionalTextSetzenMitReturn(Optional<@NotBlank String> neuerTextOptional) {
         this.optionalText = neuerTextOptional;
         return this;
     }
@@ -85,7 +85,7 @@ public class ValidatedAggregateRoot2 extends AggregateRootBase<ValidatedAggregat
         DomainAssertions.isTrue(!"WRONG".equals(text), "text darf niemals 'WRONG' sein!");
     }
 
-    public ValidatedAggregateRoot2Id getId() {
+    public ValidatedAggregateRootId getId() {
         return this.id;
     }
 

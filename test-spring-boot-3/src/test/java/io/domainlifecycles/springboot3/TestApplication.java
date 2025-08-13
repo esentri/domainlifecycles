@@ -38,7 +38,7 @@ import tests.shared.persistence.domain.simple.TestRootSimple;
 import tests.shared.persistence.domain.simpleUuid.TestRootSimpleUuid;
 import tests.shared.persistence.domain.simpleUuid.TestRootSimpleUuidId;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedVoAggregateRoot;
-import tests.shared.validation.javax.ValidatedAggregateRoot;
+import tests.shared.validation.jakarta.ValidatedAggregateRoot;
 
 import javax.sql.DataSource;
 import java.util.List;

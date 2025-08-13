@@ -26,8 +26,30 @@
 
 package tests.shared.validation.jakarta;
 
-import io.domainlifecycles.domain.types.Identity;
-import jakarta.validation.constraints.NotNull;
+import io.domainlifecycles.assertion.DomainAssertions;
+import io.domainlifecycles.domain.types.base.ValueObjectBase;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.Builder;
+import lombok.Getter;
 
-public record ValidatedRecordId2(@NotNull Long value) implements Identity<Long> {
+@Getter
+public class ValidatedValueObject extends ValueObjectBase {
+
+    @NotEmpty
+    private final String text;
+
+    @Builder(setterPrefix = "set")
+    public ValidatedValueObject(String text) {
+        this.text = text;
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        DomainAssertions.isTrue(!"WRONG".equals(text), "text darf niemals 'WRONG' sein!");
+    }
+
+    public @NotEmpty String getText() {
+        return this.text;
+    }
 }

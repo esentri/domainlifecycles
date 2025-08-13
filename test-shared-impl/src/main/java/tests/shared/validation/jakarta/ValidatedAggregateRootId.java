@@ -26,30 +26,15 @@
 
 package tests.shared.validation.jakarta;
 
-import io.domainlifecycles.assertion.DomainAssertions;
-import io.domainlifecycles.domain.types.base.ValueObjectBase;
-import jakarta.validation.constraints.NotEmpty;
-import lombok.Builder;
-import lombok.Getter;
+import io.domainlifecycles.domain.types.base.IdentityBase;
 
-@Getter
-public class ValidatedValueObject2 extends ValueObjectBase {
-
-    @NotEmpty
-    private final String text;
-
-    @Builder(setterPrefix = "set")
-    public ValidatedValueObject2(String text) {
-        this.text = text;
-    }
-
-    @Override
-    public void validate() {
-        super.validate();
-        DomainAssertions.isTrue(!"WRONG".equals(text), "text darf niemals 'WRONG' sein!");
-    }
-
-    public @NotEmpty String getText() {
-        return this.text;
+public class ValidatedAggregateRootId extends IdentityBase<Long> {
+    /**
+     * Constructs an typed id.
+     *
+     * @param value associated with identity.
+     */
+    public ValidatedAggregateRootId(Long value) {
+        super(value);
     }
 }
