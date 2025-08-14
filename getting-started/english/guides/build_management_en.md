@@ -83,13 +83,11 @@ dependencies {
 ---
 
 ## DLC Usage
-To use the DLC functionality, it is enough to include either of the following artifacts, which bundle the most important DLC 
+To use the DLC functionality, it is enough to include the following artifact, which bundles the most important DLC 
 functions:
 
-
-
 <details>
-<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle for Spring Boot</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle</b></summary>
 
 ```groovy
 dependencies {
@@ -99,7 +97,7 @@ dependencies {
 </details>
 
 <details>
-<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"><b>pom.xml for Spring Boot</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"><b>pom.xml</b></summary>
 
 ```xml
 <dependencies>
