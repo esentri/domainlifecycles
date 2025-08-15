@@ -6,8 +6,10 @@
 
 ---
 
-Nachdem alles Nötige konfiguriert wurde, muss der DLC Mirror beim Starten der Applikation
-initialisiert werden:
+Solange das Autoconfiguration-Feature genutzt wird, wird eine DLC Applikation gestartet wie eine übliche
+Spring-Boot App.
+<br/>
+Sollte dies jedoch nicht der Fall sein, muss der Domain-Mirror vor dem Start initialisiert werden.
 
 <details>
 <summary><img style="height: 12px" src="../../icons/java.svg" alt="java"> <b>Application.java</b></summary>
@@ -17,35 +19,21 @@ initialisiert werden:
 public class SampleApplication {
 
     static {
-        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleapp"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory("com.example.domain"));
     }
 
     public static void main(String[] args) {
-        new SpringApplicationBuilder(ShopApplication.class).run(args);
+        new SpringApplicationBuilder(SampleApplication.class).run(args);
     }
 }
 ```
 </details>
 
-<b>HINWEIS:</b> Dieser Schritt ist nur notwendig, wenn DLC's Autoconfig-Feature nicht benutzt wird. 
-Andernfalls genügt eine ganz simple Spring-Boot-App-Klasse:
-
-```java
-@SpringBootApplication
-@EnableDlc
-public class SampleApplication {
-
-    public static void main(String[] args) {
-        new SpringApplicationBuilder(ShopApplication.class).run(args);
-    }
-}
-```
-
 ---
 
-|             **Konfiguration**             |            **Features**            |
-|:-----------------------------------------:|:----------------------------------:|
-| [<< Vorherige Seite](configuration_de.md) | [Nächste Seite >>](features_de.md) |
+|              **Konfiguration**               |            **Features**            |
+|:--------------------------------------------:|:----------------------------------:|
+|  [<< Vorherige Seite](configuration_de.md)   | [Nächste Seite >>](features_de.md) |
 
 ---
 

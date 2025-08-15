@@ -106,7 +106,7 @@ dependencies {
 ```
 </details>
 
-**Note:** The specified target packageName has to correspond to your `jooqRecordPackage` in the `@EnableDlc` annotation:
+**Note:** The specified `target packageName` has to correspond to your `jooqRecordPackage` in the `@EnableDlc` annotation:
 ```java
 @SpringBootApplication
 @EnableDlc(dlcDomainBasePackages = "com.example.domain", jooqRecordPackage = "com.example.records")
@@ -204,9 +204,9 @@ public class CustomerRepository extends JooqAggregateRepository<Customer, Custom
 
 ---
 
-|          **OpenAPI-Extension**          |       **Domain-Events**        |
-|:---------------------------------------:|:------------------------------:|
-| [<< Previous](open_api_extension_en.md) | [Next >>](domain_events_en.md) |
+|        **Domain-Events**        |
+|:-------------------------------:|
+| [Next >>](domain_events_en.md)  |
 
 ---
 
