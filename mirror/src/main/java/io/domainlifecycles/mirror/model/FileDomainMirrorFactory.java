@@ -40,19 +40,35 @@ public class FileDomainMirrorFactory implements DomainMirrorFactory {
     public static final String META_INF_DLC_MIRROR_FILE_PATH = "META-INF/dlc/mirror.json";
 
     /**
-     * Initializes the domain with the mirrors defined in a file under the {@code META-INF/dlc} directory.
+     * Initializes the domain with the mirrors defined in {@code mirror.json} file under the {@code META-INF/dlc} directory.
      *
      * @return DomainMirror - a container for all mirrors that were read in the file.
      */
     @Override
     public DomainMirror initializeDomainMirror() {
-        DomainSerializer domainSerializer = new JacksonDomainSerializer(false);
         String mirrorJson = readMirrorJsonFile();
+        return initializeDomainMirror(mirrorJson);
+    }
 
+    /**
+     * Initializes a DomainMirror instance by deserializing the provided JSON mirror string representation.
+     *
+     * @param mirrorJson the JSON string containing the serialized DomainMirror configuration
+     * @return the deserialized DomainMirror instance
+     */
+    public DomainMirror initializeDomainMirror(String mirrorJson) {
+        DomainSerializer domainSerializer = new JacksonDomainSerializer(false);
         return domainSerializer.deserialize(mirrorJson);
     }
 
-    public String readMirrorJsonFile() {
+    /**
+     * Reads the mirror JSON file located at the predefined path and returns its content as a String.
+     * If the file is not found or cannot be read, a MirrorException is thrown.
+     *
+     * @return the content of the mirror JSON file as a String
+     * @throws MirrorException if the file cannot be found or read
+     */
+    private String readMirrorJsonFile() {
         try (InputStream inputStream = getClass().getClassLoader()
             .getResourceAsStream(META_INF_DLC_MIRROR_FILE_PATH)) {
 
