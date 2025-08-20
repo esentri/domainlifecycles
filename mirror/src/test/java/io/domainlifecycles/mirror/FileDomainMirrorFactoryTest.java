@@ -1,7 +1,7 @@
 package io.domainlifecycles.mirror;
 
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.FileDomainMirrorFactory;
+import io.domainlifecycles.mirror.model.FileDomainMirrorFactory;
 import org.junit.jupiter.api.Test;
 
 public class FileDomainMirrorFactoryTest {

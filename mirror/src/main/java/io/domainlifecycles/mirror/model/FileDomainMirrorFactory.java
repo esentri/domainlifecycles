@@ -24,7 +24,7 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.mirror.reflect;
+package io.domainlifecycles.mirror.model;
 
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainMirrorFactory;
@@ -35,13 +35,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-public class FileDomainMirrorFactory extends DomainMirrorFactoryUtils implements DomainMirrorFactory {
+public class FileDomainMirrorFactory implements DomainMirrorFactory {
 
     public static final String META_INF_DLC_MIRROR_FILE_PATH = "META-INF/dlc/mirror.json";
-
-    public FileDomainMirrorFactory(String... domainModelPackages) {
-        super(domainModelPackages);
-    }
 
     /**
      * Initializes the domain with the mirrors defined in {@code mirror.json} file under the {@code META-INF/dlc} directory.

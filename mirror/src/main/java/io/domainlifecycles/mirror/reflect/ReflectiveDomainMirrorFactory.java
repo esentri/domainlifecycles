@@ -48,9 +48,16 @@ import java.util.stream.Collectors;
  *
  * @author Mario Herb
  */
-public class ReflectiveDomainMirrorFactory extends DomainMirrorFactoryUtils implements DomainMirrorFactory {
-
+public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
     private static final Logger log = LoggerFactory.getLogger(ReflectiveDomainMirrorFactory.class);
+
+    private final String[] domainModelPackages;
+    private ClassGraphDomainTypesScanner classGraphDomainTypesScanner;
+    private String[] boundedContextPackages;
+    private GenericTypeResolver genericTypeResolver;
+    private ClassLoader externalClassLoader;
+
+    private static final Pattern packagePattern = Pattern.compile("^[a-z]+(\\.[a-zA-Z_][a-zA-Z0-9_]*)*$");
 
     /**
      * Initialize the factory with the domainModelPackages to be scanned.
@@ -58,7 +65,11 @@ public class ReflectiveDomainMirrorFactory extends DomainMirrorFactoryUtils impl
      * @param domainModelPackages the packages containing the domain model classes
      */
     public ReflectiveDomainMirrorFactory(String... domainModelPackages) {
-        super(domainModelPackages);
+        this.domainModelPackages = domainModelPackages;
+        if (domainModelPackages == null || domainModelPackages.length == 0){
+            throw MirrorException.fail("No domain model package defined!");
+        }
+        validatePackages(domainModelPackages);
     }
 
     /**
@@ -85,12 +96,73 @@ public class ReflectiveDomainMirrorFactory extends DomainMirrorFactoryUtils impl
 
         builtTypeMirrors
             .values()
-            .forEach(m -> log.debug("Created Mirror: {}", m));
+            .forEach(m -> {
+                log.debug("Created Mirror:" + m);
+
+            });
 
         var dm = new DomainModel(builtTypeMirrors, boundedContextPackages);
         var c = new CompletenessChecker(dm);
         c.checkForCompleteness();
 
         return dm;
+    }
+
+    private void initializeForScanning(){
+        if(this.genericTypeResolver == null){
+            this.genericTypeResolver = new DefaultEmptyGenericTypeResolver();
+        }
+        if(this.externalClassLoader == null){
+            this.classGraphDomainTypesScanner = new ClassGraphDomainTypesScanner(genericTypeResolver);
+        }else{
+            this.classGraphDomainTypesScanner = new ClassGraphDomainTypesScanner(externalClassLoader, genericTypeResolver);
+        }
+        if(boundedContextPackages == null){
+            this.boundedContextPackages = domainModelPackages;
+        }
+        validatePackages(boundedContextPackages);
+    }
+
+
+
+    private static void validatePackages(final String... packageNames) {
+        for (String packageName : packageNames) {
+            if(!packagePattern.matcher(packageName).matches()){
+                throw MirrorException.fail("Invalid package name: " + packageName);
+            }
+        }
+    }
+
+    /**
+     * Sets the bounded context packages.
+     *
+     * @param boundedContextPackages an array of package names representing the bounded context boundaries int he domain model
+     */
+    public void setBoundedContextPackages(String[] boundedContextPackages) {
+        this.boundedContextPackages = boundedContextPackages;
+    }
+
+    /**
+     * Sets the GenericTypeResolver to be used for resolving generic types
+     * within the context of this factory.
+     *
+     * @param genericTypeResolver an implementation of the GenericTypeResolver interface,
+     *                            responsible for resolving generic type information
+     *                            for fields, methods, and constructors.
+     */
+    public void setGenericTypeResolver(GenericTypeResolver genericTypeResolver) {
+        this.genericTypeResolver = genericTypeResolver;
+    }
+
+    /**
+     * Sets the external class loader to be used by this factory. This allows
+     * the factory to utilize a custom class loader for loading and scanning
+     * classes, typically useful for dynamically loaded classes or isolated
+     * class loading environments.
+     *
+     * @param externalClassLoader the custom class loader to be used by the factory
+     */
+    public void setExternalClassLoader(ClassLoader externalClassLoader) {
+        this.externalClassLoader = externalClassLoader;
     }
 }
