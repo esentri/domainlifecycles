@@ -24,7 +24,7 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.mirror.model;
+package io.domainlifecycles.mirror.reflect;
 
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainMirrorFactory;
