@@ -56,7 +56,7 @@ public class FileDomainMirrorFactory implements DomainMirrorFactory {
      * @param mirrorJson the JSON string containing the serialized DomainMirror configuration
      * @return the deserialized DomainMirror instance
      */
-    public DomainMirror initializeDomainMirror(String mirrorJson) {
+    private DomainMirror initializeDomainMirror(String mirrorJson) {
         DomainSerializer domainSerializer = new JacksonDomainSerializer(false);
         return domainSerializer.deserialize(mirrorJson);
     }
