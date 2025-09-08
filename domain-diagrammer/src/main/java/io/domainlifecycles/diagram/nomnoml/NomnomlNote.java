@@ -58,6 +58,10 @@ public class NomnomlNote implements DiagramElement {
         this.classStereotypes = classStereotypes;
     }
 
+    /**
+     * The corresponding Nomnoml diagram text for a note
+     * @return diagram text
+     */
     @Override
     public String getDiagramText() {
         return "[<note> " +
@@ -77,18 +81,32 @@ public class NomnomlNote implements DiagramElement {
             .collect(Collectors.joining());
     }
 
+    /**
+     * The note text
+     * @return note text
+     */
     public String getText() {
         return text;
     }
 
+    /**
+     * The full qualified classname of the class for which the note is added
+     * @return full qualified class name of class that the not is added to
+     */
     public String getClassName() {
         return className;
     }
 
+    /**
+     * @return the style classifier of the class that the note is added to
+     */
     public String getClassStyleClassifier() {
         return classStyleClassifier;
     }
 
+    /**
+     * @return the stereotypes of the class the note is added to
+     */
     public List<NomnomlStereotype> getClassStereotypes() {
         return classStereotypes;
     }

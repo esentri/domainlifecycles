@@ -6,10 +6,10 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tests.shared.TestDataGenerator;
-import tests.shared.persistence.domain.bestellung.bv2.AktionsCode;
-import tests.shared.persistence.domain.bestellung.bv2.BestellStatusId;
-import tests.shared.persistence.domain.bestellung.bv2.Bestellung;
-import tests.shared.persistence.domain.bestellung.bv2.BestellungId;
+import tests.shared.complete.onlinehandel.bestellung.AktionsCodeBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellStatusIdBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellungIdBv3;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedComplexVo;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedVoAggregateRoot;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedVoOneToManyEntity;
@@ -57,32 +57,32 @@ public class BaseClassCompanionTest {
 
     @Test
     public void testEqualsDifferentIdentities() {
-        Assertions.assertThat(new BestellStatusId(1L)).isNotEqualTo(new BestellungId(1L));
-        Assertions.assertThat(new BestellungId(1L)).isNotEqualTo(new BestellungId(2L));
-        Assertions.assertThat(new BestellungId(1L)).isEqualTo(new BestellungId(1L));
+        Assertions.assertThat(new BestellStatusIdBv3(1L)).isNotEqualTo(new BestellungIdBv3(1L));
+        Assertions.assertThat(new BestellungIdBv3(1L)).isNotEqualTo(new BestellungIdBv3(2L));
+        Assertions.assertThat(new BestellungIdBv3(1L)).isEqualTo(new BestellungIdBv3(1L));
     }
 
     @Test
     public void testToStringIdentities() {
-        BestellStatusId id = new BestellStatusId(1L);
+        BestellStatusIdBv3 id = new BestellStatusIdBv3(1L);
         Assertions.assertThat(id.toString()).isEqualTo(
-            BestellStatusId.class.getName() + "@" + System.identityHashCode(id)
+            BestellStatusIdBv3.class.getName() + "@" + System.identityHashCode(id)
                 + "(value=1)");
 
     }
 
     @Test
     public void testToStringBestellung() {
-        Bestellung b = TestDataGenerator.buildBestellung();
-        Assertions.assertThat(b.toString()).isEqualTo(Bestellung.class.getName() + "@" + System.identityHashCode(b)
-            + "(id=" + BestellungId.class.getName() + "@" + System.identityHashCode(b.getId()) + "(value=1))");
+        BestellungBv3 b = TestDataGenerator.buildBestellungBv3();
+        Assertions.assertThat(b.toString()).isEqualTo(BestellungBv3.class.getName() + "@" + System.identityHashCode(b)
+            + "(id=" + BestellungIdBv3.class.getName() + "@" + System.identityHashCode(b.getId()) + "(value=1))");
     }
 
     @Test
     public void testStringAktionsCode() {
-        AktionsCode a = AktionsCode.builder().setValue("blubb").build();
+        AktionsCodeBv3 a = AktionsCodeBv3.builder().setValue("blubb").build();
         Assertions.assertThat(a.toString()).isEqualTo(
-            AktionsCode.class.getName() + "@" + System.identityHashCode(a) + "(value=blubb)");
+            AktionsCodeBv3.class.getName() + "@" + System.identityHashCode(a) + "(value=blubb)");
     }
 
     @Test
@@ -105,32 +105,32 @@ public class BaseClassCompanionTest {
 
     @Test
     public void testEqualsAktionsCode() {
-        AktionsCode a = AktionsCode.builder().setValue("blubb").build();
-        AktionsCode a2 = AktionsCode.builder().setValue("blubb").build();
+        AktionsCodeBv3 a = AktionsCodeBv3.builder().setValue("blubb").build();
+        AktionsCodeBv3 a2 = AktionsCodeBv3.builder().setValue("blubb").build();
         Assertions.assertThat(a != a2).isTrue();
         Assertions.assertThat(a).isEqualTo(a2);
     }
 
     @Test
     public void testNotEqualsAktionsCode() {
-        AktionsCode a = AktionsCode.builder().setValue("blubb").build();
-        AktionsCode a2 = AktionsCode.builder().setValue("blubb2").build();
+        AktionsCodeBv3 a = AktionsCodeBv3.builder().setValue("blubb").build();
+        AktionsCodeBv3 a2 = AktionsCodeBv3.builder().setValue("blubb2").build();
         Assertions.assertThat(a != a2).isTrue();
         Assertions.assertThat(a).isNotEqualTo(a2);
     }
 
     @Test
     public void testHashcodeAktionsCode() {
-        AktionsCode a = AktionsCode.builder().setValue("blubb").build();
-        AktionsCode a2 = AktionsCode.builder().setValue("blubb").build();
+        AktionsCodeBv3 a = AktionsCodeBv3.builder().setValue("blubb").build();
+        AktionsCodeBv3 a2 = AktionsCodeBv3.builder().setValue("blubb").build();
         Assertions.assertThat(a != a2).isTrue();
         Assertions.assertThat(a.hashCode()).isEqualTo(a2.hashCode());
     }
 
     @Test
     public void testNotEqualsHashCodeAktionsCode() {
-        AktionsCode a = AktionsCode.builder().setValue("blubb").build();
-        AktionsCode a2 = AktionsCode.builder().setValue("blubb2").build();
+        AktionsCodeBv3 a = AktionsCodeBv3.builder().setValue("blubb").build();
+        AktionsCodeBv3 a2 = AktionsCodeBv3.builder().setValue("blubb2").build();
         Assertions.assertThat(a != a2).isTrue();
         Assertions.assertThat(a.hashCode()).isNotEqualTo(a2.hashCode());
     }

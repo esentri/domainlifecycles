@@ -799,16 +799,16 @@ o +- simple:<VO> SimpleVoPrimitive
 [<AR>VoAggregatePrimitive <<AggregateRoot>>]  o-[<label> recordMappedNested 0..1] - [<VO>NestedVoPrimitive <<ValueObject>>]
 ]
 // !!! {Frame} tests.shared.validation.jakarta.ValidatedAggregateRoot !!!
-[<AF> ValidatedAggregateRoot2 <<Aggregate>>|
+[<AF> ValidatedAggregateRoot <<Aggregate>>|
 // !!! tests.shared.validation.jakarta.ValidatedAggregateRoot !!!
-[<AR> ValidatedAggregateRoot2 <<AggregateRoot>> |
-\# +- id:<ID> ValidatedAggregateRoot2Id
+[<AR> ValidatedAggregateRoot <<AggregateRoot>> |
+\# +- id:<ID> ValidatedAggregateRootId
 o +- optionalText:Optional<String\[0,10\]>
 \# +- text:String\[0,100\]{notEmpty}
 |
 + void komischeBerechnungMitValidationError()
-+ ValidatedAggregateRoot2 optionalTextSetzenMitReturn(Optional<String{notBlank}>)
-+ ValidatedAggregateRoot2 textSetzenMitReturn(String)
++ ValidatedAggregateRoot optionalTextSetzenMitReturn(Optional<String{notBlank}>)
++ ValidatedAggregateRoot textSetzenMitReturn(String)
 + void textSetzenPrecondition(String{notBlank})
 + String{notBlank} textSetzenReturnVal(String)
 ]

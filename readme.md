@@ -182,7 +182,7 @@ Maven setup for a Spring Boot 3 app:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>spring-boot-3-jooq-complete</artifactId>
-    <version>2.5.0</version>
+    <version>2.5.0.rc</version>
 </dependency>
 ```
 

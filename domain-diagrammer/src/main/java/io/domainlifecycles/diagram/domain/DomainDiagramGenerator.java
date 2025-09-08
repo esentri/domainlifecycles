@@ -175,6 +175,7 @@ public class DomainDiagramGenerator implements Diagram {
      *
      * @param diagramConfig diagram configuration
      * @param domainMirror domain
+     * @param notes A collection of notes to be added to depicted diagram elements
      */
     public DomainDiagramGenerator(
         final DomainDiagramConfig diagramConfig,
