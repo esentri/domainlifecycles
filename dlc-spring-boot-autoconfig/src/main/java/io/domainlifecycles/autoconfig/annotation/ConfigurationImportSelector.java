@@ -63,7 +63,9 @@ import org.springframework.core.type.AnnotationMetadata;
  * without their required dependencies.
  * </p>
  *
- * @author leonvoellinger
+ * @author Mario Herb
+ * @author Leon Völlinger
+ *
  * @see EnableDlc
  * @see ImportSelector
  */

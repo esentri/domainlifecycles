@@ -43,7 +43,8 @@ import org.springframework.context.annotation.Bean;
  *  with proper schema representations.
  *  </p>
  *
- * @author leonvoellinger
+ * @author Leon Völlinger
+ * @author Mario Herb
  */
 @AutoConfiguration
 @AutoConfigureAfter(DlcDomainAutoConfiguration.class)

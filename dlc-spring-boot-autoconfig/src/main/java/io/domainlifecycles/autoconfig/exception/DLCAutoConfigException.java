@@ -33,7 +33,7 @@ import static java.util.Objects.requireNonNull;
  * cases where the code is bad, e.g. because a case is not covered that is
  * necessary for the framework to work correctly.
  *
- * @author Tobias Herb
+ * @author Leon Völlinger
  * @author Mario Herb
  */
 public class DLCAutoConfigException extends RuntimeException {

@@ -1,8 +1,7 @@
 ## DLC Autoconfiguration
 
 ---
-
-The DLC framework provides comprehensive autoconfiguration functionality through the `@EnableDlc` annotation.
+DLC provides comprehensive Spring Boot auto configuration functionality through the `@EnableDlc` annotation.
 This significantly simplifies setting up a DLC application by automatically configuring all important features.
 
 ### Minimal Configuration
@@ -21,7 +20,7 @@ public class Application {
 
 ### Advanced Configuration
 
-For more fine granular control, you can also enable/disable single individual features:
+For more fine granular control, you can also enable/disable single features:
 
 ```java
 @SpringBootApplication
@@ -47,17 +46,17 @@ public class Application {
 
 The `@EnableDlc` annotation offers the following configuration options:
 
-| Parameter                         | Default   | Description                                   |
-|-----------------------------------|-----------|-----------------------------------------------|
-| `dlcDomainBasePackages`           | `""`      | **Required**: Base package for domain classes |
-| `enableSpringWebAutoConfig`       | `true`    | Enables Spring Web integration                |
-| `enableBuilderAutoConfig`         | `true`    | Enables Builder pattern support               |
-| `enableJooqPersistenceAutoConfig` | `true`    | Enables JOOQ persistence layer                |
-| `enableDomainEventsAutoConfig`    | `false`   | Enables domain events handling                |
-| `enableJacksonAutoConfig`         | `true`    | Enables Jackson JSON serialization            |
-| `enableSpringOpenApiAutoConfig`   | `true`    | Enables OpenAPI/Swagger integration           |
-| `jooqRecordPackage`               | `""`      | Package of generated JOOQ records             |
-| `jooqSqlDialect`                  | `DEFAULT` | SQL dialect for JOOQ                          |
+| Parameter                         | Default   | Description                         |
+|-----------------------------------|-----------|-------------------------------------|
+| `dlcDomainBasePackages`           | `""`      | Base package for domain classes     |
+| `enableSpringWebAutoConfig`       | `true`    | Enables Spring Web integration      |
+| `enableBuilderAutoConfig`         | `true`    | Enables Builder pattern support     |
+| `enableJooqPersistenceAutoConfig` | `true`    | Enables JOOQ persistence layer      |
+| `enableDomainEventsAutoConfig`    | `false`   | Enables domain events handling      |
+| `enableJacksonAutoConfig`         | `true`    | Enables Jackson JSON serialization  |
+| `enableSpringOpenApiAutoConfig`   | `true`    | Enables OpenAPI/Swagger integration |
+| `jooqRecordPackage`               | `""`      | Package of generated JOOQ records   |
+| `jooqSqlDialect`                  | `DEFAULT` | SQL dialect for JOOQ                |
 
 ### Selective Feature Activation
 
@@ -85,7 +84,8 @@ public class MinimalApplication {
 
 ### Important Note
 
-With the `@EnableDlc` annotation, manual initialization of the Domain Mirror is **no longer required**. The autoconfiguration handles this automatically based on the configured `dlcDomainBasePackages`.
+With the `@EnableDlc` annotation, manual initialization of the Domain Mirror is **no longer required**. 
+The autoconfiguration handles this automatically based on the configured `dlcDomainBasePackages`.
 
 ### Custom Beans
 You can still override any of the provided beans by the DLC autoconfig. Make sure you put your bean definitions

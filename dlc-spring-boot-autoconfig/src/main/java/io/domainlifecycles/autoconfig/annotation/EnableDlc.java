@@ -36,7 +36,7 @@ import org.jooq.SQLDialect;
 import org.springframework.context.annotation.Import;
 
 /**
- * Enable DLC (Domain Lifecycle) framework autoconfiguration.
+ * Enable DLC (Domain Lifecycles) framework autoconfiguration.
  * <p>
  * This annotation activates the automatic configuration of various DLC components
  * including domain mirroring, persistence, event handling, JSON processing, and web integration.
@@ -63,7 +63,9 @@ import org.springframework.context.annotation.Import;
  * }
  * </pre>
  *
- * @author leonvoellinger
+ * @author Mario Herb
+ * @author Leon Völlinger
+ *
  * @see ConfigurationImportSelector
  */
 @Target(ElementType.TYPE)

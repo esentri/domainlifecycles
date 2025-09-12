@@ -57,6 +57,9 @@ import org.springframework.transaction.PlatformTransactionManager;
  * Autoconfiguration class for Domain Events functionality in the DLC framework.
  * This configuration sets up the necessary beans for event handling, routing, and processing.
  * It provides both transactional and non-transactional event processing capabilities.
+ *
+ *  @author Mario Herb
+ *  @author Leon Völlinger
  */
 @AutoConfiguration
 @AutoConfigureAfter(DlcDomainAutoConfiguration.class)

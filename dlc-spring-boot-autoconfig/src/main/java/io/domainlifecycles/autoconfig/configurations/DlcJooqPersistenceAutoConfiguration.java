@@ -66,7 +66,8 @@ import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
  * All beans can be overridden by providing custom implementations.
  * </p>
  *
- * @author leonvoellinger
+ * @author Mario Herb
+ * @author Leon Völlinger
  */
 @AutoConfiguration
 @EnableConfigurationProperties(DlcJooqPersistenceProperties.class)

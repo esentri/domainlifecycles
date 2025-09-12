@@ -58,7 +58,9 @@ import org.springframework.context.annotation.Bean;
  * new entity creation during deserialization, and one without for simpler use cases.
  * </p>
  *
- * @author leonvoellinger
+ * @author Mario Herb
+ * @author Leon Völlinger
+ *
  * @see DlcJacksonModule
  * @see EntityIdentityProvider
  * @see DomainObjectBuilderProvider

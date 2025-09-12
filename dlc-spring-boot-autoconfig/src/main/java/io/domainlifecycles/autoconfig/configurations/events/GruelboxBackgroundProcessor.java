@@ -37,9 +37,11 @@ import org.springframework.scheduling.annotation.Scheduled;
  * This class manages the scheduled processing of outbox transactions,
  * ensuring reliable processing of asynchronous operations.
  *
- * @author leonvoellinger
- *  @see TransactionOutbox
- *  @see DlcDomainEventsAutoConfiguration
+ * @author Mario Herb
+ * @author Leon Völlinger
+ *
+ * @see TransactionOutbox
+ * @see DlcDomainEventsAutoConfiguration
  */
 @Slf4j
 public class GruelboxBackgroundProcessor {

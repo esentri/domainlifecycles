@@ -45,7 +45,8 @@ import static org.springframework.boot.autoconfigure.condition.ConditionalOnWebA
 /**
  * Autoconfiguration for web/REST-related functionality.
  *
- * @author leonvoellinger
+ * @author Leon Völlinger
+ * @author Mario Herb
  */
 @AutoConfiguration
 @ConditionalOnWebApplication(type = SERVLET)

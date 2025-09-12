@@ -42,7 +42,8 @@ import org.springframework.context.annotation.Bean;
  * Core domain configuration for enabling standard domain-related features in the DLC framework.
  * This serves as the foundation for all subsequent dependencies in DLC.
  *
- * @author leonvoellinger
+ * @author Mario Herb
+ * @author Leon Völlinger
  */
 @AutoConfiguration
 @EnableConfigurationProperties(DlcDomainProperties.class)

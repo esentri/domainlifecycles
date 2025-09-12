@@ -49,7 +49,9 @@ import org.springframework.context.annotation.Bean;
  * to construct domain objects dynamically.
  * </p>
  *
- * @author leonvoellinger
+ * @author Mario Herb
+ * @author Leon Völlinger
+ *
  * @see DomainObjectBuilderProvider
  * @see InnerClassDomainObjectBuilderProvider
  */
@@ -70,7 +72,6 @@ public class DlcBuilderAutoConfiguration {
      *
      * @return a {@link DomainObjectBuilderProvider} compatible with inner class builders
      */
-
     @Bean
     @ConditionalOnMissingBean
     DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
