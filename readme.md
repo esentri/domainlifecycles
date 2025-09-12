@@ -101,13 +101,17 @@ DLC provides following core features:
     * Full ValueObject support regarding persistence
     * Supports `final` Keywords and Java-Optionals within persisted structures
 
-- [`Domain Events`](domain-events-core/readme.md): Simplifies some technical concerns about publishing and listening to
+- [`Domain Events`](domain-events-core/readme.md): Simplifies some technical concerns about publishing and listening to 
   DomainEvents
     * Reduce publisher boilerplate code using the static `DomainEvents.publish()` API
     * Reduce listener and event routing boilerplate code by using the `@ListensTo` annotation
     * Optional: Specific support for Spring or JTA based transaction handling
     * Optional: Support of the "transactional outbox" pattern for more reliable publishing of DomainEvents
 
+- [`Autoconfig`](./readme_autoconfig.md): Autoconfiguration for DLC
+    * `@EnableDLC` annotation
+    * Autoconfigure required beans for DLC usage
+  
 - [`Validation`](validation-extender/readme.md): Simplifies the implementation of business rules and domain specific invariants
     * DomainAssertion API
     * Optional: Extended Support for Java Bean Validation Annotations within DomainObjects to define
@@ -151,6 +155,7 @@ DLC provides several JARs which enable the DLC features independently
 | Jackson based JSON mapping                                          | application developers | io.domainlifecycles:jackson-integration      |                         
 | Service registry                                                    | only internally used   | io.domainlifecycles:service-registry         |
 | Persistence interfaces and general persistence management           | only internally used   | io.domainlifecycles:persistence              | 
+| Autoconfig                                                          | application developers | io.domainlifecycles:autoconfig               |
 | jOOQ based implementation for persistence management                | application developers | io.domainlifecycles:jooq-integration         |
 | Bean Validation support (javax or jakarta)                          | application developers | io.domainlifecycles:bean-validations         |
 | Byte Buddy based auto validation extension                          | application developers | io.domainlifecycles:validation-extender      |

@@ -117,9 +117,9 @@ class CustomerTest {
 ```
 ---
 
-|             **Domain-Events**             |            **Spring-Web-Integration**            |
-|:-----------------------------------------:|:------------------------------------------------:|
-| [<< Vorherige Seite](domain_events_de.md) | [Nächste Seite >>](spring_web_integration_de.md) |
+|             **Domain-Events**             |
+|:-----------------------------------------:|
+| [<< Vorherige Seite](domain_events_de.md) |
 
 ---
 

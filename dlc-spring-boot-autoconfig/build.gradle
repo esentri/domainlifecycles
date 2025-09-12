@@ -1,0 +1,130 @@
+buildscript {
+	dependencies {
+		classpath libs.h2
+		classpath libs.flyway.core
+	}
+}
+
+plugins {
+	id 'java-library'
+	id 'checkstyle'
+	alias libs.plugins.spring.boot.plugin
+	alias libs.plugins.flyway.plugin
+	alias libs.plugins.jooq.codegen.gradle
+	alias libs.plugins.yumi.gradle.licenser.plugin
+	alias libs.plugins.jaredsburrows.license.plugin
+}
+
+def dbVersion = libs.versions.h2.version.get()
+def dbDriver = 'org.h2.Driver'
+def dbUrl = "jdbc:h2:file:${project.projectDir}/build/h2-db/test;NON_KEYWORDS=VALUE;AUTO_SERVER=TRUE"
+def dbUsername = 'sa'
+def dbPassword = ''
+def dbMigration = 'src/test/resources/db/migration'
+
+dependencies {
+	api libs.jooq
+	implementation platform(libs.spring.boot3.dependencies)
+	implementation project(":spring-boot-3-jooq-complete")
+	implementation project(":domain-events-core")
+	implementation project(":domain-events-jakarta-jta")
+	implementation project(":domain-events-spring-tx")
+	implementation project(":domain-events-spring-tx-outbox")
+	implementation project(":domain-events-gruelbox")
+	implementation project(":jackson-integration")
+	implementation project(":builder")
+	implementation project(":domain-events-jakarta-jms")
+	implementation project(":domain-events-mq")
+
+	implementation libs.spring.boot3.starter
+	implementation libs.spring.boot3.starter.artemis
+	implementation libs.apache.active.mq.artemis.jakarter.server
+	implementation libs.bundles.gruelbox.transactionoutbox
+	implementation libs.awaitility
+	implementation variantOf(libs.atomikos.transactions.jta) { classifier("jakarta") }
+
+	implementation libs.h2
+	implementation libs.jakarta.validation.api
+	implementation 'org.springframework:spring-web'
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-jooq'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation libs.jakarta.transaction.api
+
+	implementation libs.spring.doc.openapi.starter.webmvc.ui
+	implementation libs.lombok
+	annotationProcessor libs.lombok
+
+	runtimeOnly libs.jooq.codegen
+	jooqCodegen libs.jooq.meta
+
+	testImplementation project(":test-shared-impl")
+	testImplementation libs.assertj
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testCompileOnly libs.lombok
+	testAnnotationProcessor libs.lombok
+}
+
+bootJar {
+	enabled = false
+}
+
+// ----------------------------------------------------------
+
+flyway {
+	url = dbUrl
+	user = dbUsername
+	password = dbPassword
+	driver = dbDriver
+	defaultSchema = 'TEST_DOMAIN_FLYWAY'
+	createSchemas = true
+	encoding = 'UTF-8'
+	locations = ["filesystem:./${dbMigration}"]
+}
+
+// ----------------------------------------------------------
+
+jooq {
+	configuration {
+
+		jdbc {
+			driver = dbDriver
+			url = dbUrl
+			user = dbUsername
+			password = dbPassword
+		}
+
+		generator {
+			database {
+				name = "org.jooq.meta.h2.H2Database"
+				includes = ".*"
+				inputSchema = 'TEST_DOMAIN'
+				recordVersionFields = 'CONCURRENCY_VERSION'
+				forceIntegerTypesOnZeroScaleDecimals = true
+			}
+
+			generate {
+				generatedAnnotation = false
+				generatedAnnotationType = 'DETECT_FROM_JDK'
+				javaTimeTypes = true
+			}
+			target {
+				packageName = "io.domainlifecycles.test.autoconfig"
+			}
+		}
+	}
+}
+
+tasks.named("compileJava") {
+	dependsOn(tasks.named("jooqCodegen"))
+}
+
+tasks.named("jooqCodegen") {
+	dependsOn(tasks.named("flywayMigrate"))
+	inputs.files(fileTree("src/main/resources/db/migration"))
+}
+
+tasks.withType(Checkstyle) {
+	enabled = false
+}

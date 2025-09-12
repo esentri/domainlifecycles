@@ -15,12 +15,114 @@ Some of the functions it offers are:
 -  Full ValueObject support regarding persistence
 -  Supports Java `final` keywords and Java optionals within persisted structures
 
+## Configuration
+Before making use of DLC's JOOQ integration, JOOQ needs to be configured properly.
+Specifically, you need to use JOOQ's code generator so that the required tables and records are generated.
+[More information](https://www.jooq.org/doc/latest/manual/code-generation/codegen-execution/).
+
+<details>
+<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle</b></summary>
+
+```groovy
+plugins {
+    id 'org.jooq.jooq-codegen-gradle' version '3.20.6'
+}
+
+jooq {
+    configuration {
+        jdbc {
+            driver = 'org.h2.Driver'
+            url = 'jdbc:h2:~/my-db'
+            user = 'sa'
+            password = ''
+        }
+        generator {
+            database {
+                name = 'org.jooq.meta.h2.H2Database'
+                inputSchema = 'PUBLIC'
+            }
+            generate {
+                daos = true
+                pojos = true
+            }
+            target {
+                packageName = 'com.example.records'
+                directory = 'build/generated-sources/jooq'
+            }
+        }
+    }
+}
+
+dependencies {
+    jooqCodegen 'com.h2database:h2:2.2.224'
+}
+```
+</details>
+
+<details>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"><b>pom.xml</b></summary>
+
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-codegen-maven</artifactId>
+            <version>${jooq.version}</version>
+            <executions>
+                <execution>
+                    <id>generate-jooq</id>
+                    <phase>generate-sources</phase>
+                    <goals>
+                        <goal>generate</goal>
+                    </goals>
+                    <configuration>
+                        <jdbc>
+                            <driver>org.h2.Driver</driver>
+                            <url>jdbc:h2:~/my-db</url>
+                            <user>sa</user>
+                            <password></password>
+                        </jdbc>
+                        <generator>
+                            <database>
+                                <name>org.jooq.meta.h2.H2Database</name>
+                                <inputSchema>PUBLIC</inputSchema>
+                            </database>
+                            <generate>
+                                <daos>true</daos>
+                                <pojos>true</pojos>
+                            </generate>
+                            <target>
+                                <packageName>com.example.records</packageName>
+                                <directory>${project.build.directory}/generated-sources/jooq</directory>
+                            </target>
+                        </generator>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+```
+</details>
+
+**Note:** The specified `target packageName` has to correspond to your `jooqRecordPackage` in the `@EnableDlc` annotation:
+```java
+@SpringBootApplication
+@EnableDlc(dlcDomainBasePackages = "com.example.domain", jooqRecordPackage = "com.example.records")
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+```
+
 ## Implementation
 **Note:** In order for the repository to be implemented smoothly, the project must first be compiled so that the 
 corresponding JOOQ records/tables are created.
 
 ### Create repository
-As with the other domain types, a repository can be defined,
+As with the other domain types, a repository can be defined 
 by extending the corresponding class. An exemplary repository with the basic operations for the
 operations for the customer class used at the beginning could look like this:
 ```Java
@@ -102,9 +204,9 @@ public class CustomerRepository extends JooqAggregateRepository<Customer, Custom
 
 ---
 
-|          **OpenAPI-Extension**          |       **Domain-Events**        |
-|:---------------------------------------:|:------------------------------:|
-| [<< Previous](open_api_extension_en.md) | [Next >>](domain_events_en.md) |
+|        **Domain-Events**        |
+|:-------------------------------:|
+| [Next >>](domain_events_en.md)  |
 
 ---
 

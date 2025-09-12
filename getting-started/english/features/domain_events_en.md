@@ -51,9 +51,9 @@ class EventListener {
 
 ---
 
-|           **Persistence**           |            **Validation**             |
-|:-----------------------------------:|:-------------------------------------:|
-|  [<< Previous](persistence_en.md)   |  [Next >>](validation_support_en.md)  |
+|          **Persistence**          |           **Validation**            |
+|:---------------------------------:|:-----------------------------------:|
+| [<< Previous](persistence_en.md)  | [Next >>](validation_support_en.md) |
 
 ---
 

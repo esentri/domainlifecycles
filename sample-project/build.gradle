@@ -41,7 +41,7 @@ tasks.register('runApp', JavaExec) {
 
 dependencies {
     implementation platform(libs.spring.boot3.dependencies)
-    implementation project(":spring-boot-3-jooq-complete")
+    implementation project(":spring-boot-starter")
 
     implementation libs.h2
     implementation libs.jakarta.validation.api

@@ -11,10 +11,13 @@ The ByteCode extension, for example, adds corresponding validation calls to all 
 
 ---
 
+**Note:** The validation features are **not** included in DLC's autoconfiguration and need to be activated 
+explicitly as described below.
+
 ## Implementation
 Validation and implementation of business logic can be implemented in each of the domain types.
 
-For example like this:
+For example, like this:
 
 ```Java
 public class Customer extends AggregateRootBase<CustomerId> {
@@ -118,9 +121,9 @@ class CustomerTest {
 ```
 ---
 
-|          **Domain-Events**           |        **Spring-Web-Integration**         |
-|:------------------------------------:|:-----------------------------------------:|
-|  [<< Previous](domain_events_en.md)  |  [Next >>](spring_web_integration_en.md)  |
+|         **Domain-Events**          |
+|:----------------------------------:|
+| [<< Previous](domain_events_en.md) |
 
 ---
 
