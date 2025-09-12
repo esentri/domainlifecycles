@@ -11,7 +11,6 @@ import tests.shared.validation.jakarta.ValidatedAggregateRoot;
 import tests.shared.validation.jakarta.ValidatedAggregateRootId;
 import tests.shared.validation.jakarta.ValidatedValueObject;
 
-
 import java.util.Locale;
 import java.util.Optional;
 

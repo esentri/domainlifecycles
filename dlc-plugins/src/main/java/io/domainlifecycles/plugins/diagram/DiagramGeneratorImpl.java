@@ -31,11 +31,12 @@ import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.plugins.diagram.kroki.KrokiClient;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
 import io.domainlifecycles.plugins.util.DLCUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Implementation class for generating visual domain diagrams based on class path inputs and configuration details.

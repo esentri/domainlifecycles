@@ -5,7 +5,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tests.shared.TestDataGenerator;
-import tests.shared.complete.onlinehandel.bestellung.BestellStatusIdBv3;
 import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
 import tests.shared.complete.onlinehandel.bestellung.BestellungIdBv3;
 import tests.shared.converter.ConverterBigDecimalVo;

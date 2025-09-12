@@ -27,6 +27,7 @@
 package io.domainlifecycles.diagram.nomnoml;
 
 import io.domainlifecycles.diagram.DiagramElement;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;

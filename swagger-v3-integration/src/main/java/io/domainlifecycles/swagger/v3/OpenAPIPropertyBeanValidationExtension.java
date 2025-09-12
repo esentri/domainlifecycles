@@ -31,11 +31,12 @@ import io.domainlifecycles.reflect.MemberSelect;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
 import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.metadata.ConstraintDescriptor;
 import jakarta.validation.metadata.ContainerElementTypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jakarta.validation.Validator;
-import jakarta.validation.metadata.ConstraintDescriptor;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;

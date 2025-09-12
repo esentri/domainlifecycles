@@ -31,8 +31,6 @@ import io.domainlifecycles.plugins.json.JsonSerializer;
 import io.domainlifecycles.plugins.json.JsonSerializerImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
 import io.domainlifecycles.utils.FileIOUtils;
-import java.nio.file.Path;
-import java.util.List;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -41,6 +39,9 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.file.Path;
+import java.util.List;
 
 /**
  * Mojo implementation for rendering and saving domain models as JSON files based on Maven project configurations.

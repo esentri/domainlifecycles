@@ -21,7 +21,6 @@ import tests.shared.complete.onlinehandel.bestellung.BestellungIdBv3;
 import tests.shared.complete.onlinehandel.bestellung.PreisBv3;
 import tests.shared.complete.onlinehandel.bestellung.WaehrungEnumBv3;
 
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Comparator;
