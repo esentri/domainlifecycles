@@ -6,17 +6,21 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tests.shared.TestDataGenerator;
-import tests.shared.complete.onlinehandel.bestellung.AktionsCodeBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellStatusIdBv3;
 import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
 import tests.shared.complete.onlinehandel.bestellung.BestellungIdBv3;
+import tests.shared.converter.ConverterBigDecimalVo;
+import tests.shared.converter.LongId;
+import tests.shared.converter.StringId;
+import tests.shared.converter.UuidId;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedComplexVo;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedVoAggregateRoot;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedVoOneToManyEntity;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedVoOneToManyEntity2;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 
 public class BaseClassCompanionTest {
@@ -57,17 +61,18 @@ public class BaseClassCompanionTest {
 
     @Test
     public void testEqualsDifferentIdentities() {
-        Assertions.assertThat(new BestellStatusIdBv3(1L)).isNotEqualTo(new BestellungIdBv3(1L));
-        Assertions.assertThat(new BestellungIdBv3(1L)).isNotEqualTo(new BestellungIdBv3(2L));
-        Assertions.assertThat(new BestellungIdBv3(1L)).isEqualTo(new BestellungIdBv3(1L));
+        Assertions.assertThat(new LongId(1L)).isNotEqualTo(new StringId("1"));
+        Assertions.assertThat(new LongId(1L)).isNotEqualTo(new LongId(2L));
+        Assertions.assertThat(new LongId(1L)).isEqualTo(new LongId(1L));
     }
 
     @Test
     public void testToStringIdentities() {
-        BestellStatusIdBv3 id = new BestellStatusIdBv3(1L);
+        var val = UUID.randomUUID();
+        UuidId id = new UuidId(val);
         Assertions.assertThat(id.toString()).isEqualTo(
-            BestellStatusIdBv3.class.getName() + "@" + System.identityHashCode(id)
-                + "(value=1)");
+            UuidId.class.getName() + "@" + System.identityHashCode(id)
+                + "(value="+val.toString()+")");
 
     }
 
@@ -75,14 +80,14 @@ public class BaseClassCompanionTest {
     public void testToStringBestellung() {
         BestellungBv3 b = TestDataGenerator.buildBestellungBv3();
         Assertions.assertThat(b.toString()).isEqualTo(BestellungBv3.class.getName() + "@" + System.identityHashCode(b)
-            + "(id=" + BestellungIdBv3.class.getName() + "@" + System.identityHashCode(b.getId()) + "(value=1))");
+            + "(id=" + BestellungIdBv3.class.getSimpleName()  + "[value=1])");
     }
 
     @Test
-    public void testStringAktionsCode() {
-        AktionsCodeBv3 a = AktionsCodeBv3.builder().setValue("blubb").build();
+    public void testStringValueObject() {
+        ConverterBigDecimalVo a = ConverterBigDecimalVo.builder().setValue(BigDecimal.TEN).build();
         Assertions.assertThat(a.toString()).isEqualTo(
-            AktionsCodeBv3.class.getName() + "@" + System.identityHashCode(a) + "(value=blubb)");
+            ConverterBigDecimalVo.class.getName() + "@" + System.identityHashCode(a) + "(value=10)");
     }
 
     @Test
@@ -104,39 +109,39 @@ public class BaseClassCompanionTest {
     }
 
     @Test
-    public void testEqualsAktionsCode() {
-        AktionsCodeBv3 a = AktionsCodeBv3.builder().setValue("blubb").build();
-        AktionsCodeBv3 a2 = AktionsCodeBv3.builder().setValue("blubb").build();
+    public void testEqualsValueObject() {
+        ConverterBigDecimalVo a = ConverterBigDecimalVo.builder().setValue(BigDecimal.ONE).build();
+        ConverterBigDecimalVo a2 = ConverterBigDecimalVo.builder().setValue(BigDecimal.ONE).build();
         Assertions.assertThat(a != a2).isTrue();
         Assertions.assertThat(a).isEqualTo(a2);
     }
 
     @Test
-    public void testNotEqualsAktionsCode() {
-        AktionsCodeBv3 a = AktionsCodeBv3.builder().setValue("blubb").build();
-        AktionsCodeBv3 a2 = AktionsCodeBv3.builder().setValue("blubb2").build();
+    public void testNotEqualsValueObject() {
+        ConverterBigDecimalVo a = ConverterBigDecimalVo.builder().setValue(BigDecimal.ONE).build();
+        ConverterBigDecimalVo a2 = ConverterBigDecimalVo.builder().setValue(BigDecimal.TEN).build();
         Assertions.assertThat(a != a2).isTrue();
         Assertions.assertThat(a).isNotEqualTo(a2);
     }
 
     @Test
-    public void testHashcodeAktionsCode() {
-        AktionsCodeBv3 a = AktionsCodeBv3.builder().setValue("blubb").build();
-        AktionsCodeBv3 a2 = AktionsCodeBv3.builder().setValue("blubb").build();
+    public void testHashcodeValueObject() {
+        ConverterBigDecimalVo a = ConverterBigDecimalVo.builder().setValue(BigDecimal.TEN).build();
+        ConverterBigDecimalVo a2 = ConverterBigDecimalVo.builder().setValue(BigDecimal.TEN).build();
         Assertions.assertThat(a != a2).isTrue();
         Assertions.assertThat(a.hashCode()).isEqualTo(a2.hashCode());
     }
 
     @Test
-    public void testNotEqualsHashCodeAktionsCode() {
-        AktionsCodeBv3 a = AktionsCodeBv3.builder().setValue("blubb").build();
-        AktionsCodeBv3 a2 = AktionsCodeBv3.builder().setValue("blubb2").build();
+    public void testNotEqualsHashCodeValueObject() {
+        ConverterBigDecimalVo a = ConverterBigDecimalVo.builder().setValue(BigDecimal.TEN).build();
+        ConverterBigDecimalVo a2 = ConverterBigDecimalVo.builder().setValue(BigDecimal.ONE).build();
         Assertions.assertThat(a != a2).isTrue();
         Assertions.assertThat(a.hashCode()).isNotEqualTo(a2.hashCode());
     }
 
     @Test
-    public void testEqualsHashCodeAutoMappedVoAggregateRoot() {
+    public void testEqualsHashCodeAggregateRoot() {
         AutoMappedVoAggregateRoot a = TestDataGenerator.buildAutoMappedVoAggregateMax();
         AutoMappedVoAggregateRoot a2 = TestDataGenerator.buildAutoMappedVoAggregateMax();
         Assertions.assertThat(a != a2).isTrue();
@@ -144,7 +149,7 @@ public class BaseClassCompanionTest {
     }
 
     @Test
-    public void testEqualsAutoMappedVoAggregateRoot() {
+    public void testEqualsAggregateRoot() {
         AutoMappedVoAggregateRoot a = TestDataGenerator.buildAutoMappedVoAggregateMax();
         AutoMappedVoAggregateRoot a2 = TestDataGenerator.buildAutoMappedVoAggregateMax();
         Assertions.assertThat(a != a2).isTrue();
@@ -152,7 +157,7 @@ public class BaseClassCompanionTest {
     }
 
     @Test
-    public void testEqualsHashCodeAutoMappedVoAggregateRootLowerVODiff() {
+    public void testEqualsHashCodeAggregateRootLowerVODiff() {
         AutoMappedVoAggregateRoot a = TestDataGenerator.buildAutoMappedVoAggregateMax();
         AutoMappedVoAggregateRoot a2 = TestDataGenerator.buildAutoMappedVoAggregateMax();
         a2.getValueObjectsOneToMany().clear();
@@ -161,7 +166,7 @@ public class BaseClassCompanionTest {
     }
 
     @Test
-    public void testEqualsAutoMappedVoAggregateRootLowerVODiff() {
+    public void testEqualsAggregateRootLowerVODiff() {
         AutoMappedVoAggregateRoot a = TestDataGenerator.buildAutoMappedVoAggregateMax();
         AutoMappedVoAggregateRoot a2 = TestDataGenerator.buildAutoMappedVoAggregateMax();
         a2.getValueObjectsOneToMany().clear();

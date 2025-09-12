@@ -7,9 +7,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import tests.shared.validation.javax.ValidatedAggregateRoot;
-import tests.shared.validation.javax.ValidatedAggregateRootId;
-import tests.shared.validation.javax.ValidatedValueObject;
+import tests.shared.validation.jakarta.ValidatedAggregateRoot;
+import tests.shared.validation.jakarta.ValidatedAggregateRootId;
+import tests.shared.validation.jakarta.ValidatedValueObject;
+
 
 import java.util.Locale;
 import java.util.Optional;
