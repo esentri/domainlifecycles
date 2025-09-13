@@ -71,14 +71,15 @@ import java.util.Set;
  * @author Mario Herb
  * @author Leon Völlinger
  */
-@AutoConfiguration
-@EnableConfigurationProperties(DlcJooqPersistenceProperties.class)
-@AutoConfigureAfter({
-    DlcBuilderAutoConfiguration.class,
-    DataSourceAutoConfiguration.class,
-    DlcDomainAutoConfiguration.class,
-    JooqAutoConfiguration.class}
+@AutoConfiguration(
+    after = {
+        DlcBuilderAutoConfiguration.class,
+        DataSourceAutoConfiguration.class,
+        DlcDomainAutoConfiguration.class
+    },
+    before = JooqAutoConfiguration.class
 )
+@EnableConfigurationProperties(DlcJooqPersistenceProperties.class)
 @ConditionalOnClass(DSLContext.class)
 public class DlcJooqPersistenceAutoConfiguration {
 

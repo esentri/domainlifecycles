@@ -96,6 +96,7 @@ public class Entities {
         return accessor.peek(idFieldName(thisEntity));
     }
 
+    @SuppressWarnings("unchecked")
     private static String idFieldName(Entity<?> thisEntity) {
         if(Domain.isInitialized()) {
             var em = Domain.entityMirrorFor(thisEntity);
@@ -186,7 +187,7 @@ public class Entities {
                         .orElse(DomainType.NON_DOMAIN);
                 if (DomainType.ENTITY.equals(type)) {
                     Set<DetectedChange> innerChanges = detectChanges((Entity<?>) oldValue, (Entity<?>) newValue, deep);
-                    if (innerChanges.size() > 0) {
+                    if (!innerChanges.isEmpty()) {
                         changes.add(new DetectedChange(fm, (Entity<?>) accessorBefore.getAssigned(),
                             (Entity<?>) accessorAfter.getAssigned(), oldValue, newValue,
                             DetectedChange.ChangeType.CHANGED, innerChanges));
@@ -211,11 +212,11 @@ public class Entities {
                             e -> e.equals(nv)).findFirst().get();
                         var type =
                             Domain.typeMirror(newValue.getClass().getName())
-                                .map(dtm -> dtm.getDomainType())
+                                .map(DomainTypeMirror::getDomainType)
                                 .orElse(DomainType.NON_DOMAIN);
                         if (DomainType.ENTITY.equals(type)) {
                             Set<DetectedChange> innerChanges = detectChanges((Entity<?>) ov, (Entity<?>) nv, deep);
-                            if (innerChanges.size() > 0) {
+                            if (!innerChanges.isEmpty()) {
                                 changes.add(new DetectedChange(fm, (Entity<?>) accessorBefore.getAssigned(),
                                     (Entity<?>) accessorAfter.getAssigned(), ov, nv, DetectedChange.ChangeType.CHANGED,
                                     innerChanges));

@@ -55,7 +55,6 @@ import org.springframework.context.annotation.Bean;
  * @see DomainObjectBuilderProvider
  * @see InnerClassDomainObjectBuilderProvider
  */
-
 @AutoConfiguration
 @AutoConfigureAfter(DlcDomainAutoConfiguration.class)
 public class DlcBuilderAutoConfiguration {
