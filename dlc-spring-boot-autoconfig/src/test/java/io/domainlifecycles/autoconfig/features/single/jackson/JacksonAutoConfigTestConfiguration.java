@@ -27,4 +27,6 @@ public class JacksonAutoConfigTestConfiguration {
     DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
         return new InnerClassDomainObjectBuilderProvider();
     }
+
+
 }

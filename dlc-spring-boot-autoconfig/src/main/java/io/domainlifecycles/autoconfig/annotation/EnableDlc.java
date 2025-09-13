@@ -26,14 +26,23 @@
 
 package io.domainlifecycles.autoconfig.annotation;
 
+import io.domainlifecycles.autoconfig.configurations.DlcBuilderAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcDomainAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcDomainEventsAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcGruelboxDomainEventsAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcJacksonAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.properties.DomainConfigImportSelector;
 import io.domainlifecycles.autoconfig.configurations.properties.JooqPersistenceConfigImportSelector;
+import org.jooq.SQLDialect;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.context.annotation.Import;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.jooq.SQLDialect;
-import org.springframework.context.annotation.Import;
 
 /**
  * Enable DLC (Domain Lifecycles) framework autoconfiguration.
@@ -49,8 +58,6 @@ import org.springframework.context.annotation.Import;
  * {@code
  * @EnableDlc(
  *     dlcDomainBasePackages = "com.example.domain",
- *     enableJooqPersistenceAutoConfig = true,
- *     enableDomainEventsAutoConfig = true,
  *     jooqRecordPackage = "com.example.jooq.tables.records",
  *     jooqSqlDialect = SQLDialect.POSTGRES
  * )
@@ -66,20 +73,31 @@ import org.springframework.context.annotation.Import;
  * @author Mario Herb
  * @author Leon Völlinger
  *
- * @see ConfigurationImportSelector
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import({JooqPersistenceConfigImportSelector.class, DomainConfigImportSelector.class, ConfigurationImportSelector.class})
+@Import({JooqPersistenceConfigImportSelector.class, DomainConfigImportSelector.class})
+@ImportAutoConfiguration
 public @interface EnableDlc {
-
-    boolean enableSpringWebAutoConfig() default true;
-    boolean enableBuilderAutoConfig() default true;
-    boolean enableJooqPersistenceAutoConfig() default true;
-    boolean enableDomainEventsAutoConfig() default false;
-    boolean enableJacksonAutoConfig() default true;
-    boolean enableSpringOpenApiAutoConfig() default true;
     String jooqRecordPackage() default "";
     SQLDialect jooqSqlDialect() default SQLDialect.DEFAULT;
     String dlcDomainBasePackages() default "";
+
+    // include: optionally override the set to import
+    @org.springframework.core.annotation.AliasFor(
+        annotation = ImportAutoConfiguration.class, attribute = "classes")
+    Class<?>[] value() default {
+        DlcDomainAutoConfiguration.class,
+        DlcBuilderAutoConfiguration.class,
+        DlcJacksonAutoConfiguration.class,
+        DlcDomainEventsAutoConfiguration.class,
+        DlcGruelboxDomainEventsAutoConfiguration.class,
+        DlcSpringWebAutoConfiguration.class,
+        DlcSpringOpenApiAutoConfiguration.class,
+    };
+
+    // exclude: disable specific auto-configs
+    @org.springframework.core.annotation.AliasFor(
+        annotation = ImportAutoConfiguration.class, attribute = "exclude")
+    Class<?>[] exclude() default {};
 }

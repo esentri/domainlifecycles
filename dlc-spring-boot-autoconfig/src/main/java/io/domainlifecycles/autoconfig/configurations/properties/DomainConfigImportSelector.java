@@ -27,8 +27,6 @@
 package io.domainlifecycles.autoconfig.configurations.properties;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -36,6 +34,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.type.AnnotationMetadata;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Import selector for domain-related configuration properties.

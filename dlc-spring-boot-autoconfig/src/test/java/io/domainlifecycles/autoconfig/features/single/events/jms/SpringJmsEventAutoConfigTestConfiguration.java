@@ -99,4 +99,6 @@ public class SpringJmsEventAutoConfigTestConfiguration {
         customizers.forEach(c -> module.registerCustomizer(c, c.instanceType));
         return module;
     }
+
+
 }

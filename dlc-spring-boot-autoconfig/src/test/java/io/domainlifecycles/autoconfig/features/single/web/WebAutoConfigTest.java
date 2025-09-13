@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(classes = TestApplicationWebSingleAutoConfig.class)
 @AutoConfigureMockMvc
 @ActiveProfiles({"test", "test-dlc-rest", "test-dlc-domain"})
 public class WebAutoConfigTest {

@@ -26,7 +26,7 @@ import tests.shared.events.PersistenceEvent;
 import tests.shared.persistence.PersistenceEventTestHelper;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest(classes = TestApplicationPersistenceAndBuilderAutoConfig.class)
 @ActiveProfiles({"test", "test-dlc-domain", "test-dlc-persistence"})
 public class PersistenceAndBuilderAutoConfigTest {
 

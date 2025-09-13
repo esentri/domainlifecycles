@@ -32,14 +32,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 @SpringBootApplication
-@EnableDlc(
-    enableSpringWebAutoConfig = true,
-    enableBuilderAutoConfig = true,
-    enableJooqPersistenceAutoConfig = true,
-    enableDomainEventsAutoConfig = true,
-    enableJacksonAutoConfig = true,
-    enableSpringOpenApiAutoConfig = true
-)
+@EnableDlc
 public class TestApplicationAllFeaturesAutoConfig {
 
     /**

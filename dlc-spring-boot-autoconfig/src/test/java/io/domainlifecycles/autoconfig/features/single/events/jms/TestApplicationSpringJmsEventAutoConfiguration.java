@@ -27,6 +27,12 @@
 package io.domainlifecycles.autoconfig.features.single.events.jms;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
+import io.domainlifecycles.autoconfig.configurations.DlcBuilderAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcDomainEventsAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcGruelboxDomainEventsAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration;
 import io.domainlifecycles.autoconfig.model.events.ADomainService;
 import io.domainlifecycles.autoconfig.model.events.AQueryHandler;
 import io.domainlifecycles.autoconfig.model.events.ARepository;
@@ -39,12 +45,13 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableDlc(
-    enableSpringWebAutoConfig = false,
-    enableBuilderAutoConfig = false,
-    enableJooqPersistenceAutoConfig = false,
-    enableDomainEventsAutoConfig = true,
-    enableJacksonAutoConfig = false,
-    enableSpringOpenApiAutoConfig = false
+    exclude = {
+        DlcBuilderAutoConfiguration.class,
+        DlcSpringWebAutoConfiguration.class,
+        DlcSpringOpenApiAutoConfiguration.class,
+        DlcGruelboxDomainEventsAutoConfiguration.class,
+        DlcJooqPersistenceAutoConfiguration.class
+    }
 )
 public class TestApplicationSpringJmsEventAutoConfiguration {
 

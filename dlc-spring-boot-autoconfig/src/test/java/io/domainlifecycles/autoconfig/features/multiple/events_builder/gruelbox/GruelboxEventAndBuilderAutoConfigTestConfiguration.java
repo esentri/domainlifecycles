@@ -36,21 +36,24 @@ import com.gruelbox.transactionoutbox.jackson.JacksonInvocationSerializer;
 import com.gruelbox.transactionoutbox.spring.SpringInstantiator;
 import com.gruelbox.transactionoutbox.spring.SpringTransactionManager;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
+import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
+import io.domainlifecycles.events.gruelbox.api.DomainEventsInstantiator;
+import io.domainlifecycles.events.gruelbox.api.GruelboxChannelFactory;
+import io.domainlifecycles.events.gruelbox.api.GruelboxProcessingChannel;
 import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import java.util.List;
+
+import io.domainlifecycles.services.api.ServiceProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Configuration
-@Import({SpringInstantiator.class, SpringTransactionManager.class})
-@EnableScheduling
 @Slf4j
+@DependsOn("initializedDomain")
 public class GruelboxEventAndBuilderAutoConfigTestConfiguration {
 
     @Bean
@@ -86,6 +89,21 @@ public class GruelboxEventAndBuilderAutoConfigTestConfiguration {
                     }
                 })
             .build();
+    }
+
+    @Bean(destroyMethod = "close")
+    GruelboxProcessingChannel gruelboxChanne(
+        ServiceProvider serviceProvider,
+        TransactionOutbox transactionOutbox,
+        TransactionalHandlerExecutor transactionalHandlerExecutor,
+        DomainEventsInstantiator domainEventsInstantiator
+    ) {
+        return new GruelboxChannelFactory(
+            serviceProvider,
+            transactionOutbox,
+            transactionalHandlerExecutor,
+            domainEventsInstantiator
+        ).processingChannel("c1");
     }
 
     @Bean

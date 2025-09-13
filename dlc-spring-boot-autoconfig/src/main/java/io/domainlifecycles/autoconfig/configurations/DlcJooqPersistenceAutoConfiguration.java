@@ -35,9 +35,8 @@ import io.domainlifecycles.jooq.imp.JooqEntityIdentityProvider;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
+import io.domainlifecycles.persistence.provider.DomainPersistenceProvider;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
-import java.util.Set;
-import javax.sql.DataSource;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -48,13 +47,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
+
+import javax.sql.DataSource;
+import java.util.Set;
 
 /**
  * Autoconfiguration for JOOQ persistence functionality in the DLC framework.
@@ -71,7 +73,13 @@ import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
  */
 @AutoConfiguration
 @EnableConfigurationProperties(DlcJooqPersistenceProperties.class)
-@AutoConfigureAfter({DlcBuilderAutoConfiguration.class, DataSourceAutoConfiguration.class, DlcDomainAutoConfiguration.class, JooqAutoConfiguration.class})
+@AutoConfigureAfter({
+    DlcBuilderAutoConfiguration.class,
+    DataSourceAutoConfiguration.class,
+    DlcDomainAutoConfiguration.class,
+    JooqAutoConfiguration.class}
+)
+@ConditionalOnClass(DSLContext.class)
 public class DlcJooqPersistenceAutoConfiguration {
 
     private @Value("${jooqRecordPackage}") String jooqRecordPackage;
@@ -86,7 +94,7 @@ public class DlcJooqPersistenceAutoConfiguration {
      */
     @Bean
     @ConditionalOnBean(DataSource.class)
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(DataSourceConnectionProvider.class)
     public DataSourceConnectionProvider connectionProvider(DataSource dataSource) {
         return new DataSourceConnectionProvider(new TransactionAwareDataSourceProxy(dataSource));
     }
@@ -157,7 +165,7 @@ public class DlcJooqPersistenceAutoConfiguration {
      */
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(DomainPersistenceProvider.class)
     @ConditionalOnBean(DomainMirror.class)
     public JooqDomainPersistenceProvider domainPersistenceProvider(
         DomainObjectBuilderProvider domainObjectBuilderProvider,
@@ -205,7 +213,7 @@ public class DlcJooqPersistenceAutoConfiguration {
      * @return a configured {@link EntityIdentityProvider}
      */
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(EntityIdentityProvider.class)
     EntityIdentityProvider identityProvider(DSLContext dslContext) {
         return new JooqEntityIdentityProvider(dslContext);
     }

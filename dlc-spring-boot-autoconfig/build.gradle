@@ -23,45 +23,59 @@ def dbPassword = ''
 def dbMigration = 'src/test/resources/db/migration'
 
 dependencies {
-	api libs.jooq
-	implementation platform(libs.spring.boot3.dependencies)
-	implementation project(":spring-boot-3-jooq-complete")
-	implementation project(":domain-events-core")
-	implementation project(":domain-events-jakarta-jta")
-	implementation project(":domain-events-spring-tx")
-	implementation project(":domain-events-spring-tx-outbox")
-	implementation project(":domain-events-gruelbox")
-	implementation project(":jackson-integration")
-	implementation project(":builder")
-	implementation project(":domain-events-jakarta-jms")
-	implementation project(":domain-events-mq")
-
-	implementation libs.spring.boot3.starter
-	implementation libs.spring.boot3.starter.artemis
-	implementation libs.apache.active.mq.artemis.jakarter.server
-	implementation libs.bundles.gruelbox.transactionoutbox
-	implementation libs.awaitility
-	implementation variantOf(libs.atomikos.transactions.jta) { classifier("jakarta") }
-
-	implementation libs.h2
-	implementation libs.jakarta.validation.api
-	implementation 'org.springframework:spring-web'
-	implementation 'org.springframework.boot:spring-boot-starter'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-jooq'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation libs.jakarta.transaction.api
-
-	implementation libs.spring.doc.openapi.starter.webmvc.ui
-	implementation libs.lombok
-	annotationProcessor libs.lombok
+	compileOnly libs.jooq
+    compileOnly libs.spring.jdbc
+    compileOnly project(":domain-events-core")
+    compileOnly project(":domain-events-jakarta-jta")
+    compileOnly project(":domain-events-spring-tx")
+    compileOnly project(":domain-events-spring-tx-outbox")
+    compileOnly project(":domain-events-gruelbox")
+    compileOnly project(":jackson-integration")
+    compileOnly project(":builder")
+    compileOnly project(":jooq-integration")
+    compileOnly project(":spring-doc-2-integration")
+    compileOnly project(":spring-web-6-integration")
+    compileOnly project(":swagger-v3-integration")
+    compileOnly project(":domain-events-jakarta-jms")
+    compileOnly project(":domain-events-activemq-classic-5")
+    compileOnly project(":domain-events-mq")
+    compileOnly libs.gruelbox.transactionoutbox.spring
+    api libs.spring.boot3.starter
+    compileOnly libs.jakarta.transaction.api
 
 	runtimeOnly libs.jooq.codegen
 	jooqCodegen libs.jooq.meta
 
+    testImplementation platform(libs.spring.boot3.dependencies)
+    testImplementation libs.h2
 	testImplementation project(":test-shared-impl")
+    testImplementation project(":types")
+    testImplementation project(":builder")
+    testImplementation project(":types")
+    testImplementation project(":assertions")
+    testImplementation project(":domain-events-core")
+    testImplementation project(":domain-events-jakarta-jta")
+    testImplementation project(":domain-events-spring-tx")
+    testImplementation project(":domain-events-spring-tx-outbox")
+    testImplementation project(":domain-events-gruelbox")
+    testImplementation project(":jackson-integration")
+    testImplementation project(":jooq-integration")
+    testImplementation project(":spring-doc-2-integration")
+    testImplementation project(":spring-web-6-integration")
+    testImplementation project(":swagger-v3-integration")
+    testImplementation project(":bean-validations")
+    testImplementation project(":domain-events-jakarta-jms")
+    testImplementation project(":domain-events-mq")
+    testImplementation project(":type-utils")
 	testImplementation libs.assertj
+    testImplementation libs.gruelbox.transactionoutbox.core
+    testImplementation libs.gruelbox.transactionoutbox.jackson
+    testImplementation libs.gruelbox.transactionoutbox.spring
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-jooq'
+    testImplementation libs.spring.boot3.starter.artemis
+    testImplementation libs.apache.active.mq.artemis.jms.server
 	testCompileOnly libs.lombok
 	testAnnotationProcessor libs.lombok
 }

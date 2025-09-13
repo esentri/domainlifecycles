@@ -30,6 +30,7 @@ import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
 import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 
@@ -46,8 +47,8 @@ import org.springframework.context.annotation.Bean;
  * @author Leon Völlinger
  * @author Mario Herb
  */
-@AutoConfiguration
-@AutoConfigureAfter(DlcDomainAutoConfiguration.class)
+@AutoConfiguration(after = DlcDomainAutoConfiguration.class)
+@ConditionalOnClass(name="org.springdoc.core.properties.SpringDocConfigProperties")
 public class DlcSpringOpenApiAutoConfiguration {
 
     /**
@@ -60,7 +61,7 @@ public class DlcSpringOpenApiAutoConfiguration {
      * @return a {@link DlcOpenApiCustomizer} for enhancing API documentation with DLC support
      */
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(DlcOpenApiCustomizer.class)
     public DlcOpenApiCustomizer openApiCustomizer(SpringDocConfigProperties springDocConfigProperties) {
         return new DlcOpenApiCustomizer(springDocConfigProperties);
     }

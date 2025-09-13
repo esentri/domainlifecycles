@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 import static org.springframework.test.annotation.DirtiesContext.MethodMode.AFTER_METHOD;
 
-@SpringBootTest
+@SpringBootTest(classes = TestApplicationGruelboxEventAutoConfiguration.class)
 @Import(GruelboxEventAutoConfigTestConfiguration.class)
 @ActiveProfiles({"test", "test-dlc-domain"})
 @DirtiesContext(classMode = AFTER_CLASS)

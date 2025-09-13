@@ -24,13 +24,15 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.autoconfig.configurations.events;
+package io.domainlifecycles.autoconfig.configurations.gruelbox;
 
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import io.domainlifecycles.autoconfig.configurations.DlcDomainEventsAutoConfiguration;
-import java.util.Objects;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
+
+import java.util.Objects;
 
 /**
  * Background processor for Gruelbox Transaction Outbox.
@@ -43,8 +45,9 @@ import org.springframework.scheduling.annotation.Scheduled;
  * @see TransactionOutbox
  * @see DlcDomainEventsAutoConfiguration
  */
-@Slf4j
 public class GruelboxBackgroundProcessor {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(GruelboxBackgroundProcessor.class);
 
     /**
      * The transaction outbox to be processed in the background.
@@ -70,10 +73,10 @@ public class GruelboxBackgroundProcessor {
     void poll() {
         try {
             do {
-                log.info("Flushing");
+                LOGGER.info("Flushing");
             } while (transactionOutbox.flush());
         } catch (Throwable t) {
-            log.error("Error flushing transaction outbox. Pausing", t);
+            LOGGER.error("Error flushing transaction outbox. Pausing", t);
         }
     }
 

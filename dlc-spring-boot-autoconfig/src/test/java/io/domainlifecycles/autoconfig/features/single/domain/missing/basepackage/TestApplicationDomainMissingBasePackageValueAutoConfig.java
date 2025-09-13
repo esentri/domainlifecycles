@@ -32,14 +32,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 @SpringBootApplication
-@EnableDlc(
-    enableSpringWebAutoConfig = false,
-    enableBuilderAutoConfig = false,
-    enableJooqPersistenceAutoConfig = false,
-    enableDomainEventsAutoConfig = false,
-    enableJacksonAutoConfig = false,
-    enableSpringOpenApiAutoConfig = false
-)
+@EnableDlc
 public class TestApplicationDomainMissingBasePackageValueAutoConfig {
 
     /**

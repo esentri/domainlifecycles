@@ -31,15 +31,19 @@ import io.domainlifecycles.spring.http.DefaultResponseEntityBuilder;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.spring.http.StringToDomainIdentityConverterFactory;
 import io.domainlifecycles.spring.http.StringToDomainValueObjectConverterFactory;
-import java.util.Objects;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Objects;
+
 import static org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type.SERVLET;
 
 /**
@@ -48,9 +52,9 @@ import static org.springframework.boot.autoconfigure.condition.ConditionalOnWebA
  * @author Leon Völlinger
  * @author Mario Herb
  */
-@AutoConfiguration
+@AutoConfiguration(after = {DlcJacksonAutoConfiguration.class, JacksonAutoConfiguration.class, DlcDomainAutoConfiguration.class})
 @ConditionalOnWebApplication(type = SERVLET)
-@AutoConfigureAfter({DlcJacksonAutoConfiguration.class, JacksonAutoConfiguration.class, DlcDomainAutoConfiguration.class})
+@ConditionalOnClass(name="com.fasterxml.jackson.databind.ObjectMapper")
 public class DlcSpringWebAutoConfiguration implements WebMvcConfigurer {
 
     private final ObjectMapper objectMapper;
@@ -60,7 +64,6 @@ public class DlcSpringWebAutoConfiguration implements WebMvcConfigurer {
      *
      * @param objectMapper the Jackson object mapper used for serialization and deserialization
      */
-
     public DlcSpringWebAutoConfiguration(ObjectMapper objectMapper) {
         this.objectMapper = Objects.requireNonNull(objectMapper, "An ObjectMapper instance is required");
     }
@@ -89,7 +92,7 @@ public class DlcSpringWebAutoConfiguration implements WebMvcConfigurer {
      *
      * @return a new ResponseEntityBuilder instance for creating standardized responses
      */
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(ResponseEntityBuilder.class)
     @Bean
     public ResponseEntityBuilder defaultResponseEntityBuilder() {
         return new DefaultResponseEntityBuilder();

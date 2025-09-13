@@ -30,7 +30,6 @@ import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
-import java.util.List;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -38,6 +37,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+
+import java.util.List;
 
 /**
  * Autoconfiguration for Jackson JSON processing integration with the DLC framework.
@@ -104,7 +105,7 @@ public class DlcJacksonAutoConfiguration {
      */
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean({EntityIdentityProvider.class, DlcJacksonModule.class})
     public DlcJacksonModule dlcModuleConfigurationWithoutEntityIdentityProvider(List<? extends JacksonMappingCustomizer<?>> customizers,
                                                                          DomainObjectBuilderProvider domainObjectBuilderProvider
     ) {

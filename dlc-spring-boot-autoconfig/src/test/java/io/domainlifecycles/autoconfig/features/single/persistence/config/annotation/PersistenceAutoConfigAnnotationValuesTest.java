@@ -27,7 +27,7 @@ import tests.shared.events.PersistenceEvent;
 import tests.shared.persistence.PersistenceEventTestHelper;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest(classes = TestApplicationPersistenceAnnotationValuesAutoConfig.class)
 @Import(PersistenceAutoConfigTestConfiguration.class)
 @ActiveProfiles({"test"})
 public class PersistenceAutoConfigAnnotationValuesTest {

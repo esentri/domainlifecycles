@@ -23,7 +23,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    classes = TestApplicationOpenApiSingleAutoConfig.class
+)
 @ActiveProfiles({"test", "test-dlc-domain"})
 @AutoConfigureMockMvc
 public class OpenApiAutoConfigTests {

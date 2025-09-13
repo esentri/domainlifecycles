@@ -37,7 +37,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-@SpringBootTest
+@SpringBootTest(classes = TestApplicationSpringJmsEventAndBuilderAutoConfiguration.class)
 @Import(SpringJmsEventAndBuilderAutoConfigTestConfiguration.class)
 @ActiveProfiles({"test", "test-dlc-domain"})
 public class SpringJmsEventAndBuilderAutoConfigTests {

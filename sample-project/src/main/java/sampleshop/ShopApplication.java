@@ -51,7 +51,7 @@ import java.util.Locale;
  * @author Mario Herb
  */
 @SpringBootApplication
-@EnableDlc(enableDomainEventsAutoConfig = true)
+@EnableDlc()
 public class ShopApplication {
 
     /**

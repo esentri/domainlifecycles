@@ -1,5 +1,7 @@
 package io.domainlifecycles.autoconfig.features.single.domain.missing.basepackage;
 
+import io.domainlifecycles.mirror.api.Domain;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.springframework.beans.factory.BeanCreationException;
@@ -16,6 +18,10 @@ import static org.springframework.test.annotation.DirtiesContext.MethodMode.BEFO
 @Execution(SAME_THREAD)
 public class DomainAutoConfigMissingBasePackageValueTest {
 
+    @BeforeAll
+    public static void beforeAll() {
+        Domain.unInitialize();
+    }
     @Test
     @DirtiesContext(methodMode = BEFORE_METHOD)
     public void testThrowExceptionOnMissingBasePackageConfiguration() {

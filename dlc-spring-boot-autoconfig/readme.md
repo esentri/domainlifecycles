@@ -29,7 +29,8 @@ dependencies {
 </dependency>
 ```
 
-Or for an even simpler setup, you can use `dlc-spring-boot-starter`, which is fully compatible with Autoconfig:
+Or for an even simpler setup, you can use `dlc-spring-boot-starter`, which is fully compatible with Autoconfig and 
+includes all needed dependencies:
 
 **Gradle:**
 ```groovy
@@ -243,7 +244,15 @@ public class CustomRecordMapper implements RecordMapper<MyEntity, MyEntityRecord
     }
 }
 ```
+### Important Note
 
+With the `@EnableDlc` annotation, manual initialization of the Domain Mirror is **no longer required**.
+The autoconfiguration handles this automatically based on the configured `dlcDomainBasePackages`.
+
+### Custom Beans
+You can still override any of the provided beans by the DLC autoconfig. Make sure you put your bean definitions
+into a separate Spring-Boot configuration class and not in the Spring-Boot application class,
+since this could lead to conflicts in the bean creation process at startup.
 
 ## Troubleshooting
 

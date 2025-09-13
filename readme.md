@@ -85,12 +85,6 @@ DLC provides following core features:
     * MappingCustomizer API to customize mapping logic
     * Optional: DB Sequence based ID provisioning within a JSON Mapper
 
-- [`Open API Extension`](spring-doc-2-integration/readme.md): API documentation DDD
-  building blocks based on [Spring Doc Open API](https://springdoc.org/)
-    * API documentation consistently to DLCs Jackson AutoMapping features (out-of-the-box)
-    * Spring compatible
-    * Adds Bean Validation information in API documentation (together with DLC Bean Validation Support)
-
 - [`Persistence`](persistence/readme.md): Simplify object relational mapping for persisted DomainObjects
     * Type-safe queries based on jOOQ
     * Supporting and abstracting many common relational database dialects (via jOOQ)
@@ -107,10 +101,6 @@ DLC provides following core features:
     * Reduce listener and event routing boilerplate code by using the `@ListensTo` annotation
     * Optional: Specific support for Spring or JTA based transaction handling
     * Optional: Support of the "transactional outbox" pattern for more reliable publishing of DomainEvents
-
-- [`Autoconfig`](./readme_autoconfig.md): Autoconfiguration for DLC
-    * `@EnableDLC` annotation
-    * Autoconfigure required beans for DLC usage
   
 - [`Validation`](validation-extender/readme.md): Simplifies the implementation of business rules and domain specific invariants
     * DomainAssertion API
@@ -119,11 +109,15 @@ DLC provides following core features:
     * Optional: ByteCode extension to simplify the implementation of an
       “Always-Valid-Strategy”
 
-- `Spring Web Integration`:
+- `Spring Integration`:
+    * Autoconfiguration for DLC via `@EnableDLC` annotation. See [`Autoconfig`](./dlc-spring-boot-autoconfig/readme.md)
     * Spring Web Integration to enable
       Identities and “single-valued” ValueObjects being directly used as path or query
       parameters
-
+    * SpringDoc 2 OpenAPI Extension. See [`Open API Extension`](spring-doc-2-integration/readme.md): API documentation DDD
+        building blocks based on [Spring Doc Open API](https://springdoc.org/)
+    * API documentation consistently to DLCs Jackson AutoMapping features (out-of-the-box)
+   
 - [`Domain Diagrammer`](domain-diagrammer/readme.md): Generate text based class diagram for DDD building blocks
     * based on [Nomnoml](https://nomnoml.com/)
 
@@ -165,19 +159,18 @@ DLC provides several JARs which enable the DLC features independently
 | Nomnoml based domain diagrams                                       | application developers | io.domainlifecycles:domain-diagrammer        | 
 
 To simplify the dependency management using all features in a Spring Boot app using jOOQ for the relational
-database persistence management, we provide JARs for a Spring Boot 2 or Spring Boot 3 setup by adding just a single
+database persistence management, we provide JARs fo Spring Boot 3 setup by adding just a single
 dependency:
 
-| Application setup                                 | Dependency                                      | 
-|---------------------------------------------------|-------------------------------------------------|
-| Spring Boot 2 app with all DLC features available | io.domainlifecycles:spring-boot-2-jooq-complete |
-| Spring Boot 3 app with all DLC features available | io.domainlifecycles:spring-boot-3-jooq-complete |
+| Application setup                                | Dependency                                | 
+|--------------------------------------------------|-------------------------------------------|
+| Spring Boot 3 app with all DLC features available | io.domainlifecycles:spring-boot-starter   |
 
 Gradle setup for a Spring Boot 3 app:
 
 ```Groovy
 dependencies{
-    implementation 'io.domainlifecycles:spring-boot-3-jooq-complete:2.5'
+    implementation 'io.domainlifecycles:spring-boot-starter:2.5.0'
 }
 ```
 
@@ -186,8 +179,8 @@ Maven setup for a Spring Boot 3 app:
 ```XML
 <dependency>
     <groupId>io.domainlifecycles</groupId>
-    <artifactId>spring-boot-3-jooq-complete</artifactId>
-    <version>2.5.0.rc</version>
+    <artifactId>spring-boot-starter</artifactId>
+    <version>2.5.0</version>
 </dependency>
 ```
 
@@ -219,7 +212,8 @@ Here's an overview of the most important external dependencies:
 | Domain Events, Jakarta JTA Support                               | (JTA Provider implementation) e.g.: Atomikos com.atomikos:transactions-jta                     | tested with 6.0.0       |
 | Domain Events Gruelbox Transactional Outbox                      | com.gruelbox:transactionoutbox-core                                                            | tested with 6.0.553     |
 | Domain Events ActiveMq Classic                                   | org.apache.activemq:activemq-client                                                            | tested with 5.18.4      |
-| Logging                                                          | (SLF4J Provider) e.g.: ch.qos.logback:logback-classic                                          | tested with 1.5.3       |           
+| Logging                                                          | (SLF4J Provider) e.g.: ch.qos.logback:logback-classic                                          | tested with 1.5.3       |      
+| Spring Boot Starter                                              | Spring Boot                                                                                    | tested with 3.5.0       |      
 
 Run `./gradle dependencies` on the main project or any of the submodules to get a complete overview of the dependencies
 that must be provided on the target applications runtime classpath.

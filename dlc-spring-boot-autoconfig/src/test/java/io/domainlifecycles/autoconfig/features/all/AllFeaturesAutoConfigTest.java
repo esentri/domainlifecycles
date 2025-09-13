@@ -8,6 +8,7 @@ import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
+import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.services.api.ServiceProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
@@ -60,6 +61,7 @@ public class AllFeaturesAutoConfigTest {
 
     @Test
     void testAllBeansPresent() {
+        assertThat(Domain.isInitialized()).isTrue();
         assertThat(domainObjectBuilderProvider).isNotNull();
         assertThat(serviceProvider).isNotNull();
         assertThat(transactionalHandlerExecutor).isNotNull();

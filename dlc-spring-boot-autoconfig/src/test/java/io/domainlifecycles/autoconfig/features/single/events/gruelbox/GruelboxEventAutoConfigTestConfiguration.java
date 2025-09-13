@@ -49,8 +49,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Configuration
-@Import({SpringInstantiator.class, SpringTransactionManager.class})
-@EnableScheduling
 @Slf4j
 public class GruelboxEventAutoConfigTestConfiguration {
 
@@ -107,4 +105,6 @@ public class GruelboxEventAutoConfigTestConfiguration {
         customizers.forEach(c -> module.registerCustomizer(c, c.instanceType));
         return module;
     }
+
+
 }

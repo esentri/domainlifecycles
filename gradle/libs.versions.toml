@@ -76,7 +76,6 @@ kryo-version = '5.3.0'
 logback-classic-version = '1.5.18'
 lombok-version = '1.18.38'
 mockito-core-version = '5.17.0'
-spring-boot2-platform-version = '2.7.18'
 spring-boot3-platform-version = '3.5.0'
 spring-boot3-starter-artemis-version = '3.5.0'
 spring-boot3-starter-version = '3.5.0'
@@ -136,6 +135,7 @@ mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito-cor
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j-version" }
 spring-boot3-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot3-platform-version" }
 spring-boot3-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "spring-boot3-starter-version"}
+spring-boot3-autoconfigure = { module = "org.springframework.boot:spring-boot-autoconfigure", version.ref = "spring-boot3-platform-version"}
 spring-boot3-starter-activemq = { module = "org.springframework.boot:spring-boot-starter-activemq", version.ref = "spring-boot3-platform-version"}
 spring-boot3-starter-artemis = { module = "org.springframework.boot:spring-boot-starter-artemis", version.ref = "spring-boot3-starter-artemis-version"}
 spring-boot3-starter-jooq = { module = "org.springframework.boot:spring-boot-starter-jooq", version.ref = "spring-boot3-starter-version"}
