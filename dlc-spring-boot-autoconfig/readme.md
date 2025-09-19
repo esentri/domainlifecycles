@@ -15,17 +15,16 @@ Add the DLC Spring Boot Autoconfig dependency to your `build.gradle` or `pom.xml
 **Gradle:**
 ```groovy
 dependencies {
-    implementation 'io.domainlifecycles:dlc-spring-boot-autoconfig:2.4.0'
+    implementation 'io.domainlifecycles:dlc-spring-boot-autoconfig:2.5.0'
 }
 ```
-
 
 **Maven:**
 ```xml
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>dlc-spring-boot-autoconfig</artifactId>
-    <version>2.4.0</version>
+    <version>2.5.0</version>
 </dependency>
 ```
 
@@ -35,7 +34,7 @@ includes all needed dependencies:
 **Gradle:**
 ```groovy
 dependencies {
-  implementation 'io.domainlifecycles:dlc-spring-boot-starter:2.4.0'
+  implementation 'io.domainlifecycles:dlc-spring-boot-starter:2.5.0'
   // Autoconfig is already included
 }
 ```
@@ -45,7 +44,7 @@ dependencies {
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>dlc-spring-boot-starter</artifactId>
-    <version>2.4.0</version>
+    <version>2.5.0</version>
 </dependency>
 ```
 
@@ -65,14 +64,17 @@ public class Application {
 }
 ```
 
-
 ## Available Autoconfig Modules
 
 ### 1. Domain Autoconfig (`DlcDomainAutoConfiguration`)
 
 **Purpose:** Basic domain configuration with automatic package discovery
 
-**Activation:** Automatically active (cannot be disabled)
+**Activation:** Automatically active when annotation is set.
+Could be deactivated by:
+```java
+@EnableDlc(exclude = DlcDomainAutoConfiguration.class)
+```
 
 **Configuration:**
 ```java
@@ -81,53 +83,51 @@ public class Application {
 )
 ```
 
-
 **Properties:**
 ```properties
 dlc.domain.basePackages=com.example.domain,com.example.shared
 ```
+Providing the 'dlcDomainBasePackages' attribute or defining it as a property is mandatory.
 
+**Provided Beans:**
+- `DomainMirror` with the bean name `initializedDomain`
 
 ### 2. Builder Autoconfig (`DlcBuilderAutoConfiguration`)
 
 **Purpose:** Automatic configuration of DLC Builder Pattern support
 
-**Activation:** `enableBuilderAutoConfig = true` (default)
-
-**Provided Beans:**
-- `DomainObjectBuilderProvider`
-- `InnerClassDomainObjectBuilder`
-
+**Activation:** Automatically active when `@EnableDlc` annotation is set.
+Could be deactivated by:
 ```java
-@EnableDlc(
-    enableBuilderAutoConfig = true
-)
+@EnableDlc(exclude = DlcBuilderAutoConfiguration.class)
 ```
-
 
 ### 3. Jackson Autoconfig (`DlcJacksonAutoConfiguration`)
 
 **Purpose:** JSON serialization for DLC Domain Objects
 
-**Activation:** `enableJacksonAutoConfig = true` (default)
+**Activation:** Automatically active when `@EnableDlc` annotation is set 
+and Jackson is provided on the classpath.
+Could be deactivated by:
+```java
+@EnableDlc(exclude = DlcJacksonAutoConfiguration.class)
+```
 
 **Features:**
 - Automatic serialization of ValueObjects and Identities
 - Custom deserializers for Domain Types
 - Integration with Spring Boot's ObjectMapper
 
-```java
-@EnableDlc(
-    enableJacksonAutoConfig = true
-)
-```
-
-
 ### 4. jOOQ Persistence Autoconfig (`DlcJooqPersistenceAutoConfiguration`)
 
 **Purpose:** Automatic configuration of jOOQ-based persistence
 
-**Activation:** `enableJooqPersistenceAutoConfig = true` (default)
+**Activation:** Automatically active when `@EnableDlc` annotation is set 
+and jOOQ is provided on the classpath.
+Could be deactivated by:
+```java
+@EnableDlc(exclude = DlcJooqPersistenceAutoConfiguration.class)
+```
 
 **Configuration:**
 ```java
@@ -138,64 +138,76 @@ dlc.domain.basePackages=com.example.domain,com.example.shared
 )
 ```
 
-
 **Properties:**
 ```properties
 dlc.jooq.recordPackage=com.example.jooq.tables.records
 dlc.jooq.sqlDialect=POSTGRES
 ```
 
-
-**Provided Beans:**
-- `JooqDomainPersistenceProvider`
-- `EntityIdentityProvider`
+Providing the 'dlcJooqRecordPackage' is mandatory for DLC persistence, 
+'dlcJooqSqlDialect' is recommended.
 
 ### 5. Domain Events Autoconfig (`DlcDomainEventsAutoConfiguration`)
 
 **Purpose:** Automatic configuration of event handling
 
-**Activation:** `enableDomainEventsAutoConfig = false` (default: disabled)
-
-**Supported Event Systems:**
-- Spring Events
-- JMS (Jakarta Messaging)
-- Gruelbox Transaction Outbox
-
+**Activation:** Automatically active when `@EnableDlc` annotation is set.
+Could be deactivated by:
 ```java
-@EnableDlc(
-    enableDomainEventsAutoConfig = true
-)
+@EnableDlc(exclude = DlcDomainEventsAutoConfiguration.class)
 ```
 
+**Supported Event Systems:**
+- In memory Domain Events
+- JMS (Jakarta Messaging) with additional configuration 
 
-**Conditional Beans based on Classpath:**
-- With Spring TX: `SpringDomainEventPublisher`
-- With JMS: `JmsDomainEventPublisher`
-- With Gruelbox: `GruelboxDomainEventPublisher`
+### 6. Gruelbox Domain Events Autoconfig (`DlcGruelboxDomainEventsAutoConfiguration`)
 
-### 6. Spring Web Autoconfig (`DlcSpringWebAutoConfiguration`)
+**Purpose:** Automatic configuration of event handling
+
+**Activation:** Automatically active when `@EnableDlc` annotation is set
+and Gruelbox is provided on the classpath.
+
+Could be deactivated by:
+```java
+@EnableDlc(exclude = DlcGruelboxDomainEventsAutoConfiguration.class)
+```
+
+**Supported Event Systems:**
+- In memory Domain Events
+- JMS (Jakarta Messaging) with additional configuration
+
+Enabling 'DlcDomainEventsAutoConfiguration' is recommended for Gruelbox Domain Events.
+
+
+### 7. Spring Web Autoconfig (`DlcSpringWebAutoConfiguration`)
 
 **Purpose:** REST/Web integration for DLC Domain Objects
 
-**Activation:** `enableSpringWebAutoConfig = true` (default)
+**Activation:** Automatically active when `@EnableDlc` annotation is set
+and if Spring Web is used.
+
+Could be deactivated by:
+```java
+@EnableDlc(exclude = DlcGruelboxDomainEventsAutoConfiguration.class)
+```
 
 **Features:**
 - Automatic conversion of string parameters to Domain Objects
 - Parameter converters for ValueObjects and Identities
 - `ResponseEntityBuilder` for consistent API responses
 
-```java
-@EnableDlc(
-    enableSpringWebAutoConfig = true
-)
-```
-
-
-### 7. OpenAPI Autoconfig (`DlcSpringOpenApiAutoConfiguration`)
+### 8. OpenAPI Autoconfig (`DlcSpringOpenApiAutoConfiguration`)
 
 **Purpose:** Automatic OpenAPI/Swagger documentation for DLC Types
 
-**Activation:** `enableSpringOpenApiAutoConfig = true` (default)
+**Activation:** Automatically active when `@EnableDlc` annotation is set
+and if SpringDoc OpenAPI is provided on the classpath.
+
+Could be deactivated by:
+```java
+@EnableDlc(exclude = DlcSpringOpenApiAutoConfiguration.class)
+```
 
 **Features:**
 - Correct schema generation for ValueObjects and Identities
@@ -207,7 +219,6 @@ dlc.jooq.sqlDialect=POSTGRES
     enableSpringOpenApiAutoConfig = true
 )
 ```
-
 
 ## Advanced Configuration
 

@@ -14,7 +14,10 @@ Zu den Funktionen gehören unter anderem:
 -   Unterstützt Java  `final`  Keywords und Java-Optionals innerhalb persistierter Strukturen
 
 ## Configuration
-Bevor die DLC/JOOQ Integration genutzt werden kann, muss JOOQ konfiguriert werden. Im Speziellen 
+Sobald jOOQ als Depencency eingebunden ist, wird DLC jOOQ Persistence automatisch konfiguriert.
+Mehr dazu unter [DLC Spring Boot AutoConfig](./../../../dlc-spring-boot-autoconfig/readme.md).
+
+Bevor die DLC/JOOQ Integration genutzt werden kann, muss JOOQ auf Build Management Ebene konfiguriert werden. Im Speziellen 
 wird hierfür der JOOQ Code-Generator benötigt, sodass die von DLC benötigten JOOQ-Tables/-Records generiert werden.
 [Weitere Informationen](https://www.jooq.org/doc/latest/manual/code-generation/codegen-execution/).
 
@@ -52,7 +55,7 @@ jooq {
 }
 
 dependencies {
-    jooqCodegen 'com.h2database:h2:2.2.224'
+    jooqCodegen 'com.h2database:h2:2.3.232'
 }
 ```
 </details>
@@ -107,7 +110,11 @@ dependencies {
 **Hinweis:** Der angegebene `target packageName` muss mit dem `jooqRecordPackage` der `@EnableDlc` Annotation übereinstimmen:
 ```java
 @SpringBootApplication
-@EnableDlc(dlcDomainBasePackages = "com.example.domain", jooqRecordPackage = "com.example.records")
+@EnableDlc(
+        dlcDomainBasePackages = "com.example.domain", 
+        jooqRecordPackage = "com.example.records",
+        jooqSqlDialect = SQLDialect.H2
+)
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -202,10 +209,9 @@ public class CustomerRepository extends JooqAggregateRepository<Customer, Custom
 ```
 
 ---
-
-|            **Domain-Events**            |
-|:---------------------------------------:|
-| [Nächste Seite >>](domain_events_de.md) |
+|             **Domain Types**              |            **Domain Events**            |
+|:-----------------------------------------:|:---------------------------------------:|
+| [<< Vorherige Seite](domain_types_de.md)  | [Nächste Seite >>](domain_events_de.md) |
 
 ---
 

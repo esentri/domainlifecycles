@@ -10,13 +10,15 @@ DLC offers many different features and extensions, some of which are explained f
 As with the previous explanations and instructions, a sample webshop is always assumed in the examples.
 
 ---
-
+### [Domain Types](../features/domain_types_en.md)
+Support tactical DDD concepts via marker interfaces and base classes
 ### [Persistence](../features/persistence_en.md)
-Optional DLC module, requires DLC Domain Object Builders
+DLC module to simplify Repository Implementations based on jOOQ
 ### [Domain Events](../features/domain_events_en.md)
-Optional DLC module
+DLC module to support automatic routing of Domain Events
 ### [Validation](../features/validation_support_en.md)
-Optional DLC module
+Optional DLC module for the DDD specific implementation of invariants via BeanValidation annotations
+
 
 ---
 

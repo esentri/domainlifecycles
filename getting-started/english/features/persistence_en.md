@@ -16,7 +16,9 @@ Some of the functions it offers are:
 -  Supports Java `final` keywords and Java optionals within persisted structures
 
 ## Configuration
-Before making use of DLC's JOOQ integration, JOOQ needs to be configured properly.
+As soon as jOOQ is provided as dependency, DLC jOOQ Persistence will be enabled automatically.
+See [DLC Spring Boot AutoConfig](./../../../dlc-spring-boot-autoconfig/readme.md).
+
 Specifically, you need to use JOOQ's code generator so that the required tables and records are generated.
 [More information](https://www.jooq.org/doc/latest/manual/code-generation/codegen-execution/).
 
@@ -54,7 +56,7 @@ jooq {
 }
 
 dependencies {
-    jooqCodegen 'com.h2database:h2:2.2.224'
+    jooqCodegen 'com.h2database:h2:2.3.232'
 }
 ```
 </details>
@@ -109,7 +111,10 @@ dependencies {
 **Note:** The specified `target packageName` has to correspond to your `jooqRecordPackage` in the `@EnableDlc` annotation:
 ```java
 @SpringBootApplication
-@EnableDlc(dlcDomainBasePackages = "com.example.domain", jooqRecordPackage = "com.example.records")
+@EnableDlc(
+        dlcDomainBasePackages = "com.example.domain", 
+        jooqRecordPackage = "com.example.records",
+        jooqSqlDialect = SQLDialect.H2)
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -204,9 +209,10 @@ public class CustomerRepository extends JooqAggregateRepository<Customer, Custom
 
 ---
 
-|        **Domain-Events**        |
-|:-------------------------------:|
-| [Next >>](domain_events_en.md)  |
+|         **Domain Types**          |       **Domain Events**        |
+|:---------------------------------:|:------------------------------:|
+| [<< Previous](domain_types_en.md) | [Next >>](domain_events_en.md) |
+
 
 ---
 

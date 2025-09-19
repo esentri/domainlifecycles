@@ -38,32 +38,19 @@ import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.properties.SpringDocConfigProperties;
 
 /**
- * Open API customizations and extensions for DLC.
- * <p>
- * Provides additional temporal type support, which reflects the Jackson default behaviour.
- * The extension adds Open API schemata for several additional temporal types {@link OpenAPITemporalTypeExtension}.
- * The temporal type extension works as well as for domain object types as for all other classes.
- * <p>
- * By this extension primitive typed properties of Open API schemata are marked as required
- * {@link OpenAPIPrimitivePropertyExtension}.
- * <p>
- * If a bean validation implementation is provided in the classpath of the target application, then
- * this customization extends all classes which have bean validation annotations on their properties (also non dlc
- * domain object classes, like DTOs)
- * with a corresponding additional open api description, if they are used in controller interfaces which additionally
- * provide Open API documentation {@link OpenAPIPropertyBeanValidationExtension}.
- * <p>
- * Additionally, for all special DLC domain object types (entities, valueObject, identities) some Open API extensions
- * are performed, to make the
- * Open API description of controller interfaces match the default mapping behaviour of the DLC Jackson extension
- * {@link MirrorBasedOpenApiExtension}.
- * <p>
- * A note for the error management of this extension: Any exception or error which happens when trying to
- * modify or extend the Open API behaviour of any class, results in an error log message without stopping the
- * extension or
- * modification of other classes. Also all errors are caught and only reported to the log.
- * So any problem, that arises in an unpredicted way, should never affect the regular application execution, as Open API
- * is primarily used only for additional API documentation purposes.
+ * The DlcOpenApiCustomizer class customizes OpenAPI specifications by applying various extensions
+ * for DLC-specific features. It implements the OpenApiCustomizer interface to modify the OpenAPI
+ * definition based on specific configuration properties and optional extensions.
+ *
+ * The customizer includes several optional extensions that can be enabled or disabled:
+ * - Temporal types extension: Adds support for handling temporal types in OpenAPI schemas.
+ * - Primitive property extension: Enhances OpenAPI schema representation for primitive properties.
+ * - Bean validation extension: Incorporates bean validation metadata into OpenAPI schema definitions.
+ * - Mirror-based OpenAPI extension: Provides schema extensions using mirror-based reflection analysis and DLC/DDD specific extensions.
+ * - Optional nullability extension: Extends schema definitions to reflect the nullability of optional properties.
+ *
+ * This class leverages SpringDoc configuration properties to control its behavior and requires the
+ * 'springdoc.use-fqn' configuration to be set to 'true'.
  *
  * @author Mario Herb
  */
@@ -127,46 +114,106 @@ public class DlcOpenApiCustomizer implements OpenApiCustomizer {
         }
     }
 
+    /**
+     * Indicates whether the temporal types extension feature is enabled.
+     *
+     * @return true if the temporal types extension is enabled; false otherwise
+     */
     public boolean isEnableTemporalTypesExtension() {
         return enableTemporalTypesExtension;
     }
 
+    /**
+     * Sets whether the temporal types extension feature is enabled.
+     *
+     * @param enableTemporalTypesExtension a boolean value indicating whether the temporal types extension
+     *                                     should be enabled (true) or disabled (false)
+     */
     public void setEnableTemporalTypesExtension(boolean enableTemporalTypesExtension) {
         this.enableTemporalTypesExtension = enableTemporalTypesExtension;
     }
 
+    /**
+     * Indicates whether the primitive property extension feature is enabled.
+     *
+     * @return true if the primitive property extension is enabled; false otherwise
+     */
     public boolean isEnablePrimitivePropertyExtension() {
         return enablePrimitivePropertyExtension;
     }
 
+    /**
+     * Sets whether the primitive property extension feature is enabled.
+     *
+     * @param enablePrimitivePropertyExtension a boolean value indicating whether the primitive property extension
+     *                                         should be enabled (true) or disabled (false)
+     */
     public void setEnablePrimitivePropertyExtension(boolean enablePrimitivePropertyExtension) {
         this.enablePrimitivePropertyExtension = enablePrimitivePropertyExtension;
     }
 
+    /**
+     * Indicates whether the bean validation extension feature is enabled.
+     *
+     * @return true if the bean validation extension is enabled; false otherwise
+     */
     public boolean isEnableBeanValidationExtension() {
         return enableBeanValidationExtension;
     }
 
+    /**
+     * Sets whether the bean validation extension feature is enabled or disabled.
+     *
+     * @param enableBeanValidationExtension a boolean value indicating whether the bean validation
+     *                                      extension should be enabled (true) or disabled (false)
+     */
     public void setEnableBeanValidationExtension(boolean enableBeanValidationExtension) {
         this.enableBeanValidationExtension = enableBeanValidationExtension;
     }
 
+    /**
+     * Indicates whether the mirror-based OpenAPI extension feature is enabled.
+     *
+     * @return true if the mirror-based OpenAPI extension is enabled; false otherwise
+     */
     public boolean isEnableMirrorBasedOpenApiExtension() {
         return enableMirrorBasedOpenApiExtension;
     }
 
+    /**
+     * Sets whether the mirror-based OpenAPI extension feature is enabled or disabled.
+     *
+     * @param enableMirrorBasedOpenApiExtension a boolean value indicating whether the mirror-based OpenAPI
+     *                                          extension should be enabled (true) or disabled (false)
+     */
     public void setEnableMirrorBasedOpenApiExtension(boolean enableMirrorBasedOpenApiExtension) {
         this.enableMirrorBasedOpenApiExtension = enableMirrorBasedOpenApiExtension;
     }
 
+    /**
+     * Indicates whether the optional nullability extension feature is enabled.
+     *
+     * @return true if the optional nullability extension is enabled; false otherwise
+     */
     public boolean isEnableOptionalNullabilityExtension() {
         return enableOptionalNullabilityExtension;
     }
 
+    /**
+     * Sets whether the optional nullability extension feature is enabled or disabled.
+     *
+     * @param enableOptionalNullabilityExtension a boolean value indicating whether the optional nullability extension
+     *                                           should be enabled (true) or disabled (false)
+     */
     public void setEnableOptionalNullabilityExtension(boolean enableOptionalNullabilityExtension) {
         this.enableOptionalNullabilityExtension = enableOptionalNullabilityExtension;
     }
 
+    /**
+     * Retrieves the SpringDoc configuration properties associated with this customizer.
+     *
+     * @return an instance of {@code SpringDocConfigProperties} containing the configuration settings.
+     */
     public SpringDocConfigProperties getSpringDocConfigProperties() {
         return springDocConfigProperties;
     }

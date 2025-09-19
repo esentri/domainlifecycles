@@ -35,9 +35,9 @@ und Erläuterung aller Domain Types findet sich [hier](../../../concepts/readme.
 
 ---
 
-|            **Domain Mirror**            |
-|:---------------------------------------:|
-| [Nächste Seite >>](domain_mirror_de.md) |
+|            **Persistence**            |
+|:-------------------------------------:|
+| [Nächste Seite >>](persistence_de.md) |
 
 ---
 

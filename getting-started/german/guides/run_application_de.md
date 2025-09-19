@@ -7,20 +7,15 @@
 ---
 
 Solange das Autoconfiguration-Feature genutzt wird, wird eine DLC Applikation gestartet wie eine übliche
-Spring-Boot App.
-<br/>
-Sollte dies jedoch nicht der Fall sein, muss der Domain-Mirror vor dem Start initialisiert werden.
+Spring Boot App.
 
 <details>
 <summary><img style="height: 12px" src="../../icons/java.svg" alt="java"> <b>Application.java</b></summary>
 
 ```java
 @SpringBootApplication
+@EnableDlc(dlcDomainBasePackages = "com.example.domain")
 public class SampleApplication {
-
-    static {
-        Domain.initialize(new ReflectiveDomainMirrorFactory("com.example.domain"));
-    }
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(SampleApplication.class).run(args);

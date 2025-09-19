@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bugs in Domain Diagrams due to missing classes not being rendered in certain inheritance cases.
 - Removed deprecated Spring Boot 2 support
 - Removed deprecated javax BeanValidation support
+- OpenAPI integration now provides OpenAPI 3.1 support
+- Bugfix in ValidationDomainClassExtender (was conflicting with other byte code extensions - Jacoco)
+- Tested support for Spring Boot 3.5.5
+- Added DLC SpringBoot starter and AutoConfiguration for Spring Boot 3.5.5
+- Extended Open API configuration Options
+- OpenAPI Nullabillity support for Open API 3.0 and 3.1
 
 ## [2.4.1] - 2025-06-06
 - Added deprecated markers at some classes

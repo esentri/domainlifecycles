@@ -34,6 +34,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -70,6 +71,7 @@ import java.util.List;
 @ConditionalOnBean(DomainObjectBuilderProvider.class)
 @AutoConfigureAfter({DlcJooqPersistenceAutoConfiguration.class, DlcBuilderAutoConfiguration.class, DlcDomainAutoConfiguration.class})
 @AutoConfigureBefore(JacksonAutoConfiguration.class)
+@ConditionalOnClass(name="com.fasterxml.jackson.databind.ObjectMapper")
 public class DlcJacksonAutoConfiguration {
 
     /**

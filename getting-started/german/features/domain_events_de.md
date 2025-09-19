@@ -9,6 +9,10 @@ Event-Routing Boilerplate Code durch  `@ListensTo`  Annotation und optional Supp
 Transaktions-Handling oder Support für "transactional outbox" Pattern für besseres Publishen von DomainEvents
 
 ---
+## Configuration
+In Memory Domain Events werden automatisch konfiguriert.
+Um Domain Events Routing abzuschalten oder andere Event Bus Integrationen zu verwenden: 
+[DLC Spring Boot AutoConfig](./../../../dlc-spring-boot-autoconfig/readme.md).
 
 ## Implementierung 
 
