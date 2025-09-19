@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import org.slf4j.Logger;
@@ -233,14 +234,13 @@ public class MirrorBasedOpenApiExtension {
 
         Schema<?> identitySchema = openAPI.getComponents().getSchemas().get(propertyIdentityTypeName);
         if (identitySchema != null && identitySchema.getProperties() != null) {
-            @SuppressWarnings("rawtypes") var idValueSchema =
-                (Optional<Schema>) identitySchema.getProperties().values().stream().findFirst();
+            var idValueSchema = identitySchema.getProperties().values().stream().findFirst();
             if (idValueSchema.isPresent()) {
-                Schema<?> newIdentityPropertySchema = copyValueSchema(idValueSchema.get(),
+                Schema<?> newIdentityPropertySchema = Utils.copySchema(idValueSchema.get(),
                     targetSchema.getName() + "." + propertyName);
                 if (targetSchema.getProperties() != null) {
                     Schema<?> currentValueSchema = targetSchema.getProperties().get(propertyName);
-                    if (Constants.TYPE_ARRAY.equals(currentValueSchema.getType())) {
+                    if(checkSchemaType(currentValueSchema, Constants.TYPE_ARRAY)){
                         currentValueSchema.setItems(newIdentityPropertySchema);
                     } else {
                         targetSchema.getProperties().put(propertyName, newIdentityPropertySchema);
@@ -257,15 +257,14 @@ public class MirrorBasedOpenApiExtension {
                                                               String voTypeName, Schema<?> targetSchema) {
         Schema<?> valueObjectSchema = openAPI.getComponents().getSchemas().get(voTypeName);
         if (valueObjectSchema != null && valueObjectSchema.getProperties() != null) {
-            @SuppressWarnings("rawtypes") var valueSchema =
-                (Optional<Schema>) valueObjectSchema.getProperties().values().stream().findFirst();
+            var valueSchema = valueObjectSchema.getProperties().values().stream().findFirst();
             if (valueSchema.isPresent()) {
-                Schema<?> newValueSchema = copyValueSchema(valueSchema.get(),
+                Schema<?> newValueSchema = Utils.copySchema(valueSchema.get(),
                     targetSchema.getName() + "." + voReferencePropertyName);
                 if (targetSchema.getProperties() != null) {
                     Schema<?> currentValueSchema = targetSchema.getProperties().get(voReferencePropertyName);
                     if (currentValueSchema != null) {
-                        if (Constants.TYPE_ARRAY.equals(currentValueSchema.getType())) {
+                        if(checkSchemaType(currentValueSchema, Constants.TYPE_ARRAY)) {
                             currentValueSchema.setItems(newValueSchema);
                         } else {
                             targetSchema.getProperties().put(voReferencePropertyName, newValueSchema);
@@ -277,27 +276,6 @@ public class MirrorBasedOpenApiExtension {
         }
         log.warn(
             "Wasn't able to set correct value type for property '" + voReferencePropertyName + "' on '" + voTypeName + "'!");
-    }
-
-    private Schema<?> copyValueSchema(Schema<?> source, String newName) {
-        Schema<?> newSchema = new Schema<>();
-        newSchema.setName(newName);
-        newSchema.setType(source.getType());
-        newSchema.setPattern(source.getPattern());
-        newSchema.setDescription(source.getDescription());
-        newSchema.setFormat(source.getFormat());
-        if (source.getExample() != null) {
-            newSchema.setExample(source.getExample());
-        }
-        newSchema.setExclusiveMinimum(source.getExclusiveMinimum());
-        newSchema.setExclusiveMaximum(source.getExclusiveMaximum());
-        newSchema.setMinimum(source.getMinimum());
-        newSchema.setMaximum(source.getMaximum());
-        newSchema.setDefault(source.getDefault());
-        newSchema.setMaxLength(source.getMaxLength());
-        newSchema.setMinLength(source.getMinLength());
-        newSchema.setJsonSchema(source.getJsonSchema());
-        return newSchema;
     }
 
     private void modifyParameters(OpenAPI openAPI) {
@@ -316,9 +294,11 @@ public class MirrorBasedOpenApiExtension {
             });
     }
 
+
+
     private void modifyParam(Parameter param, OpenAPI openAPI) {
         String ref = param.getSchema().get$ref();
-        if (Constants.TYPE_ARRAY.equals(param.getSchema().getType())) {
+        if (checkSchemaType(param.getSchema(), Constants.TYPE_ARRAY)) {
             ref = param.getSchema().getItems().get$ref();
         }
         if (ref != null) {
@@ -341,12 +321,13 @@ public class MirrorBasedOpenApiExtension {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void modifySingleValuedTypeSchema(Parameter param, Schema<?> refTypeSchema, String referencedTypeFqn) {
         if (refTypeSchema.getProperties() != null) {
              var propSchema = refTypeSchema.getProperties().values().stream().findFirst();
             if (propSchema.isPresent()) {
-                var newSchema = copyValueSchema(propSchema.get(), param.getName() + "." + refTypeSchema.getName());
-                if (Constants.TYPE_ARRAY.equals(param.getSchema().getType())) {
+                var newSchema = Utils.copySchema(propSchema.get(), param.getName() + "." + refTypeSchema.getName());
+                if (checkSchemaType(param.getSchema(), Constants.TYPE_ARRAY)) {
                     param.getSchema().setItems(newSchema);
                 } else {
                     param.schema(newSchema);
@@ -357,6 +338,7 @@ public class MirrorBasedOpenApiExtension {
         log.warn("Wasn't able to modify param schema for '{}'!", referencedTypeFqn);
     }
 
+    @SuppressWarnings("unchecked")
     private void modifyExternalDomainObjectReferences(OpenAPI openAPI) {
         openAPI.getComponents().getSchemas()
             .forEach(
@@ -378,7 +360,7 @@ public class MirrorBasedOpenApiExtension {
     private void modifyExternalDomainReferenceSchema(OpenAPI openAPI, String propertyName, Schema<?> propertySchema,
                                                      Schema<?> containerSchema) {
         var pSchema = propertySchema;
-        if (Constants.TYPE_ARRAY.equals(pSchema.getType())) {
+        if (checkSchemaType(propertySchema, Constants.TYPE_ARRAY)) {
             pSchema = propertySchema.getItems();
         }
         if (pSchema.get$ref() != null) {
@@ -397,6 +379,16 @@ public class MirrorBasedOpenApiExtension {
                 }
             }
         }
+    }
+
+    private boolean checkSchemaType(Schema<?> schema, String type) {
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            return schema.getType() != null && schema.getType().equals(type);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            return schema.getTypes() != null && schema.getTypes().contains(type);
+        }
+        return false;
     }
 
 }

@@ -1,109 +1,109 @@
-CREATE SCHEMA test_domain;
+CREATE SCHEMA TEST_DOMAIN;
 
-CREATE SEQUENCE test_domain.test_root_simple_id_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1111 CACHE 20;
+CREATE SEQUENCE TEST_DOMAIN.TEST_ROOT_SIMPLE_ID_SEQ MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1111 CACHE 20;
 
-CREATE TABLE test_domain.test_root_simple
+CREATE TABLE TEST_DOMAIN.TEST_ROOT_SIMPLE
 (
-    id                  NUMBER(18) PRIMARY KEY,
-    concurrency_version NUMBER(18) NOT NULL,
-    name                VARCHAR2(200)
+    ID                  NUMBER(18) PRIMARY KEY,
+    CONCURRENCY_VERSION NUMBER(18) NOT NULL,
+    NAME                VARCHAR2(200)
 );
 
-CREATE TABLE test_domain.test_root_simple_uuid
+CREATE TABLE TEST_DOMAIN.TEST_ROOT_SIMPLE_UUID
 (
-    id                  VARCHAR2(36) PRIMARY KEY,
-    concurrency_version NUMBER(18) NOT NULL,
-    name                VARCHAR2(200)
+    ID                  VARCHAR2(36) PRIMARY KEY,
+    CONCURRENCY_VERSION NUMBER(18) NOT NULL,
+    NAME                VARCHAR2(200)
 );
 
 /*
-   1 Bestellung hat 1-n Bestellpositionen
-   1 Bestellung hat genau 1 Bestellstatus
-   1 Bestellung hat 0-n Kommentare
-   1 Bestellung muss genau 1 Lieferadresse besitzen
-   1 Bestellung kann mehrere AktionsCodes (Value Object) zugeordnet haben
-   Es wird pro Bestellung nur maximal 1 Position pro Artikel erlaubt, d.h.
-   es darf keine 2 Positionen in einer Bestellung geben, bei welcher der gleiche Artikel gewählt wurde
+   1 BESTELLUNG hat 1-n BESTELLPOSITIONEN
+   1 BESTELLUNG hat genau 1 BESTELLSTATUS
+   1 BESTELLUNG hat 0-n KOMMENTARE
+   1 BESTELLUNG muss genau 1 LIEFERADRESSE besitzen
+   1 BESTELLUNG kann mehrere AKTIONSCODES (Value Object) zugeordnet haben
+   Es wird pro BESTELLUNG nur maximal 1 POSITION pro ARTIKEL erlaubt, d.h.
+   es darf keine 2 POSITIONEN in einer BESTELLUNG geben, bei welcher der gleiche ARTIKEL gewählt wurde
 
-   Der Artikel aus einer Bestellposition verweist auf ein anderes AggregateRoot
+   Der ARTIKEL aus einer BESTELLPOSITION verweist auf ein anderes AGGREGATEROOT
 
-   Der Kunde mit Kundennummer ist Teil eines anderen Bounded Context
+   Der KUNDE mit KUNDENNUMMER ist Teil eines anderen BOUNDED CONTEXT
  */
 
-CREATE SEQUENCE test_domain.lieferadresse_id_bv3_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
+CREATE SEQUENCE TEST_DOMAIN.LIEFERADRESSE_ID_BV3_SEQ MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
 
-CREATE TABLE test_domain.lieferadresse_bv3
+CREATE TABLE TEST_DOMAIN.LIEFERADRESSE_BV3
 (
-    id                  NUMBER(18) PRIMARY KEY,
-    concurrency_version NUMBER(18) NOT NULL,
-    name                VARCHAR2(200) NOT NULL,
-    strasse             VARCHAR2(200) NOT NULL,
-    postleitzahl        VARCHAR2(10) NOT NULL,
-    ort                 VARCHAR2(200) NOT NULL
+    ID                  NUMBER(18) PRIMARY KEY,
+    CONCURRENCY_VERSION NUMBER(18) NOT NULL,
+    NAME                VARCHAR2(200) NOT NULL,
+    STRASSE             VARCHAR2(200) NOT NULL,
+    POSTLEITZAHL        VARCHAR2(10) NOT NULL,
+    ORT                 VARCHAR2(200) NOT NULL
 );
 
-CREATE SEQUENCE test_domain.bestellung_id_bv3_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
+CREATE SEQUENCE TEST_DOMAIN.BESTELLUNG_ID_BV3_SEQ MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
 
-CREATE TABLE test_domain.bestellung_bv3
+CREATE TABLE TEST_DOMAIN.BESTELLUNG_BV3
 (
-    id                    NUMBER(18) PRIMARY KEY,
-    concurrency_version   NUMBER(18) NOT NULL,
-    prioritaet            NUMBER(1) NOT NULL,
-    kunden_nummer         VARCHAR2(20) NOT NULL,
-    gesamt_preis_betrag   NUMBER(10,2) NOT NULL,
-    gesamt_preis_waehrung VARCHAR2(3) NOT NULL,
-    lieferadresse_id      NUMBER(18) NOT NULL,
-    FOREIGN KEY (lieferadresse_id) REFERENCES test_domain.lieferadresse_bv3 (id)
+    ID                    NUMBER(18) PRIMARY KEY,
+    CONCURRENCY_VERSION   NUMBER(18) NOT NULL,
+    PRIORITAET            NUMBER(1) NOT NULL,
+    KUNDEN_NUMMER         VARCHAR2(20) NOT NULL,
+    GESAMT_PREIS_BETRAG   NUMBER(10,2) NOT NULL,
+    GESAMT_PREIS_WAEHRUNG VARCHAR2(3) NOT NULL,
+    LIEFERADRESSE_ID      NUMBER(18) NOT NULL,
+    FOREIGN KEY (LIEFERADRESSE_ID) REFERENCES TEST_DOMAIN.LIEFERADRESSE_BV3 (ID)
 );
 
-CREATE TABLE test_domain.aktions_code_bv3
+CREATE TABLE TEST_DOMAIN.AKTIONS_CODE_BV3
 (
-    id           NUMBER(18) PRIMARY KEY,
-    container_id NUMBER(18) NOT NULL,
-    value        VARCHAR2(10) NOT NULL,
-    FOREIGN KEY (container_id) REFERENCES test_domain.bestellung_bv3 (id)
+    ID           NUMBER(18) PRIMARY KEY,
+    CONTAINER_ID NUMBER(18) NOT NULL,
+    VALUE        VARCHAR2(10) NOT NULL,
+    FOREIGN KEY (CONTAINER_ID) REFERENCES TEST_DOMAIN.BESTELLUNG_BV3 (ID)
 );
 
-CREATE SEQUENCE test_domain.aktions_code_bv3_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
+CREATE SEQUENCE TEST_DOMAIN.AKTIONS_CODE_BV3_SEQ MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
 
-CREATE SEQUENCE test_domain.bestell_position_id_bv3_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
+CREATE SEQUENCE TEST_DOMAIN.BESTELL_POSITION_ID_BV3_SEQ MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
 
-CREATE TABLE test_domain.bestell_position_bv3
+CREATE TABLE TEST_DOMAIN.BESTELL_POSITION_BV3
 (
-    id                   NUMBER(18) PRIMARY KEY,
-    concurrency_version  NUMBER(18) NOT NULL,
-    bestellung_id        NUMBER(18) NOT NULL,
-    artikel_id           NUMBER(18) NOT NULL,
-    stueckzahl           NUMBER(10) NOT NULL,
-    stueckpreis_betrag   NUMBER(10,2) NOT NULL,
-    stueckpreis_waehrung VARCHAR2(3) NOT NULL,
-    FOREIGN KEY (bestellung_id) REFERENCES test_domain.bestellung_bv3 (id)
+    ID                   NUMBER(18) PRIMARY KEY,
+    CONCURRENCY_VERSION  NUMBER(18) NOT NULL,
+    BESTELLUNG_ID        NUMBER(18) NOT NULL,
+    ARTIKEL_ID           NUMBER(18) NOT NULL,
+    STUECKZAHL           NUMBER(10) NOT NULL,
+    STUECKPREIS_BETRAG   NUMBER(10,2) NOT NULL,
+    STUECKPREIS_WAEHRUNG VARCHAR2(3) NOT NULL,
+    FOREIGN KEY (BESTELLUNG_ID) REFERENCES TEST_DOMAIN.BESTELLUNG_BV3 (ID)
 );
 
-CREATE UNIQUE INDEX test_domain.bestellung_artikel_bv3_unique ON test_domain.bestell_position_bv3 (bestellung_id, artikel_id);
+CREATE UNIQUE INDEX TEST_DOMAIN.BESTELLUNG_ARTIKEL_BV3_UNIQUE ON TEST_DOMAIN.BESTELL_POSITION_BV3 (BESTELLUNG_ID, ARTIKEL_ID);
 
-CREATE SEQUENCE test_domain.bestell_status_id_bv3_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
+CREATE SEQUENCE TEST_DOMAIN.BESTELL_STATUS_ID_BV3_SEQ MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
 
-CREATE TABLE test_domain.bestell_status_bv3
+CREATE TABLE TEST_DOMAIN.BESTELL_STATUS_BV3
 (
-    id                  NUMBER(18) PRIMARY KEY,
-    concurrency_version NUMBER(18) NOT NULL,
-    bestellung_id       NUMBER(18) NOT NULL,
-    status_code         VARCHAR2(20),
-    status_aenderung_am TIMESTAMP(6) WITH TIME ZONE NOT NULL,
-    FOREIGN KEY (bestellung_id) REFERENCES test_domain.bestellung_bv3 (id)
+    ID                  NUMBER(18) PRIMARY KEY,
+    CONCURRENCY_VERSION NUMBER(18) NOT NULL,
+    BESTELLUNG_ID       NUMBER(18) NOT NULL,
+    STATUS_CODE         VARCHAR2(20),
+    STATUS_AENDERUNG_AM TIMESTAMP(6) WITH TIME ZONE NOT NULL,
+    FOREIGN KEY (BESTELLUNG_ID) REFERENCES TEST_DOMAIN.BESTELLUNG_BV3 (ID)
 );
 
-CREATE SEQUENCE test_domain.bestell_kommentar_id_bv3_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
+CREATE SEQUENCE TEST_DOMAIN.BESTELL_KOMMENTAR_ID_BV3_SEQ MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
 
-CREATE TABLE test_domain.bestell_kommentar_bv3
+CREATE TABLE TEST_DOMAIN.BESTELL_KOMMENTAR_BV3
 (
-    id                  NUMBER(18) PRIMARY KEY,
-    concurrency_version NUMBER(18) NOT NULL,
-    bestellung_id       NUMBER(18) NOT NULL,
-    kommentar_am        TIMESTAMP(6) WITH TIME ZONE NOT NULL,
-    kommentar_text      VARCHAR2(1000),
-    FOREIGN KEY (bestellung_id) REFERENCES test_domain.bestellung_bv3 (id)
+    ID                  NUMBER(18) PRIMARY KEY,
+    CONCURRENCY_VERSION NUMBER(18) NOT NULL,
+    BESTELLUNG_ID       NUMBER(18) NOT NULL,
+    KOMMENTAR_AM        TIMESTAMP(6) WITH TIME ZONE NOT NULL,
+    KOMMENTAR_TEXT      VARCHAR2(1000),
+    FOREIGN KEY (BESTELLUNG_ID) REFERENCES TEST_DOMAIN.BESTELLUNG_BV3 (ID)
 );
 
 
@@ -111,175 +111,172 @@ CREATE TABLE test_domain.bestell_kommentar_bv3
 Auto Mapping Value Objects case
 */
 
-CREATE TABLE test_domain.auto_mapped_vo_aggregate_root
+CREATE TABLE TEST_DOMAIN.AUTO_MAPPED_VO_AGGREGATE_ROOT
 (
-    id                          NUMBER(18) PRIMARY KEY,
-    concurrency_version         NUMBER(18) NOT NULL,
-    text                        VARCHAR2(20) NULL,
-    my_simple_vo_value          VARCHAR2(20) NOT NULL,
-    my_complex_vo_value_a       VARCHAR2(20) NULL,
-    my_complex_vo_value_b_value VARCHAR2(20) NULL,
-    vo_identity_ref_value       VARCHAR2(20) NULL,
-    vo_identity_ref_id_ref      NUMBER(18) NULL
+    ID                          NUMBER(18) PRIMARY KEY,
+    CONCURRENCY_VERSION         NUMBER(18) NOT NULL,
+    TEXT                        VARCHAR2(20) NULL,
+    MY_SIMPLE_VO_VALUE          VARCHAR2(20) NOT NULL,
+    MY_COMPLEX_VO_VALUE_A       VARCHAR2(20) NULL,
+    MY_COMPLEX_VO_VALUE_B_VALUE VARCHAR2(20) NULL,
+    VO_IDENTITY_REF_VALUE       VARCHAR2(20) NULL,
+    VO_IDENTITY_REF_ID_REF      NUMBER(18) NULL
 );
 
-CREATE TABLE test_domain.auto_mapped_vo_entity
+CREATE TABLE TEST_DOMAIN.AUTO_MAPPED_VO_ENTITY
 (
-    id                          NUMBER(18) PRIMARY KEY,
-    root_id                     NUMBER(18) NOT NULL,
-    concurrency_version         NUMBER(18) NOT NULL,
-    text                        VARCHAR2(20) NULL,
-    my_complex_vo_value_a       VARCHAR2(20) NULL,
-    my_complex_vo_value_b_value VARCHAR2(20) NULL,
-    FOREIGN KEY (root_id) REFERENCES test_domain.auto_mapped_vo_aggregate_root (id)
+    ID                          NUMBER(18) PRIMARY KEY,
+    ROOT_ID                     NUMBER(18) NOT NULL,
+    CONCURRENCY_VERSION         NUMBER(18) NOT NULL,
+    TEXT                        VARCHAR2(20) NULL,
+    MY_COMPLEX_VO_VALUE_A       VARCHAR2(20) NULL,
+    MY_COMPLEX_VO_VALUE_B_VALUE VARCHAR2(20) NULL,
+    FOREIGN KEY (ROOT_ID) REFERENCES TEST_DOMAIN.AUTO_MAPPED_VO_AGGREGATE_ROOT (ID)
 );
 
-CREATE SEQUENCE test_domain.auto_mapped_vo_aggregate_root_value_objects_one_to_many_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
+CREATE SEQUENCE TEST_DOMAIN.AUTO_MAPPED_VO_AGGREGATE_ROOT_VALUE_OBJECTS_ONE_TO_MANY_SEQ MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
 
-CREATE TABLE test_domain.auto_mapped_vo_aggregate_root_value_objects_one_to_many
+CREATE TABLE TEST_DOMAIN.AUTO_MAPPED_VO_AGGREGATE_ROOT_VALUE_OBJECTS_ONE_TO_MANY
 (
-    id           NUMBER(18) PRIMARY KEY,
-    container_id NUMBER(18) NOT NULL,
-    value        VARCHAR2(20) NOT NULL,
-    FOREIGN KEY (container_id) REFERENCES test_domain.auto_mapped_vo_aggregate_root (id)
+    ID           NUMBER(18) PRIMARY KEY,
+    CONTAINER_ID NUMBER(18) NOT NULL,
+    VALUE        VARCHAR2(20) NOT NULL,
+    FOREIGN KEY (CONTAINER_ID) REFERENCES TEST_DOMAIN.AUTO_MAPPED_VO_AGGREGATE_ROOT (ID)
 );
 
-CREATE SEQUENCE test_domain.auto_mapped_vo_aggregate_root_value_objects_one_to_many2_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
+CREATE SEQUENCE TEST_DOMAIN.AUTO_MAPPED_VO_AGGREGATE_ROOT_VALUE_OBJECTS_ONE_TO_MANY2_SEQ MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
 
-CREATE TABLE test_domain.auto_mapped_vo_aggregate_root_value_objects_one_to_many2
+CREATE TABLE TEST_DOMAIN.AUTO_MAPPED_VO_AGGREGATE_ROOT_VALUE_OBJECTS_ONE_TO_MANY2
 (
-    id           NUMBER(18) PRIMARY KEY,
-    container_id NUMBER(18) NOT NULL,
-    value        VARCHAR2(20) NOT NULL,
-    FOREIGN KEY (container_id) REFERENCES test_domain.auto_mapped_vo_aggregate_root (id)
+    ID           NUMBER(18) PRIMARY KEY,
+    CONTAINER_ID NUMBER(18) NOT NULL,
+    VALUE        VARCHAR2(20) NOT NULL,
+    FOREIGN KEY (CONTAINER_ID) REFERENCES TEST_DOMAIN.AUTO_MAPPED_VO_AGGREGATE_ROOT (ID)
 );
 
-CREATE SEQUENCE test_domain.auto_mapped_vo_aggregate_root_value_objects_one_to_many2_one_to_many3_set_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
+CREATE SEQUENCE TEST_DOMAIN.AUTO_MAPPED_VO_AGGREGATE_ROOT_VALUE_OBJECTS_ONE_TO_MANY2_ONE_TO_MANY3_SET_SEQ MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
 
-CREATE TABLE test_domain.auto_mapped_vo_aggregate_root_value_objects_one_to_many2_one_to_many3_set
+CREATE TABLE TEST_DOMAIN.AUTO_MAPPED_VO_AGGREGATE_ROOT_VALUE_OBJECTS_ONE_TO_MANY2_ONE_TO_MANY3_SET
 (
-    id           NUMBER(18) PRIMARY KEY,
-    container_id NUMBER(18) NOT NULL,
-    value        VARCHAR2(20) NOT NULL,
-    FOREIGN KEY (container_id) REFERENCES test_domain.auto_mapped_vo_aggregate_root_value_objects_one_to_many2 (id)
+    ID           NUMBER(18) PRIMARY KEY,
+    CONTAINER_ID NUMBER(18) NOT NULL,
+    VALUE        VARCHAR2(20) NOT NULL,
+    FOREIGN KEY (CONTAINER_ID) REFERENCES TEST_DOMAIN.AUTO_MAPPED_VO_AGGREGATE_ROOT_VALUE_OBJECTS_ONE_TO_MANY2 (ID)
 );
 
-CREATE SEQUENCE test_domain.auto_mapped_vo_entity_value_objects_one_to_many_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
+CREATE SEQUENCE TEST_DOMAIN.AUTO_MAPPED_VO_ENTITY_VALUE_OBJECTS_ONE_TO_MANY_SEQ MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
 
-CREATE TABLE test_domain.auto_mapped_vo_entity_value_objects_one_to_many
+CREATE TABLE TEST_DOMAIN.AUTO_MAPPED_VO_ENTITY_VALUE_OBJECTS_ONE_TO_MANY
 (
-    id           NUMBER(18) PRIMARY KEY,
-    container_id NUMBER(18) NOT NULL,
-    value        VARCHAR2(20) NOT NULL,
-    FOREIGN KEY (container_id) REFERENCES test_domain.auto_mapped_vo_entity (id)
+    ID           NUMBER(18) PRIMARY KEY,
+    CONTAINER_ID NUMBER(18) NOT NULL,
+    VALUE        VARCHAR2(20) NOT NULL,
+    FOREIGN KEY (CONTAINER_ID) REFERENCES TEST_DOMAIN.AUTO_MAPPED_VO_ENTITY (ID)
 );
 
-CREATE SEQUENCE test_domain.auto_mapped_vo_entity_value_objects_one_to_many_one_to_many_set_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
+CREATE SEQUENCE TEST_DOMAIN.AUTO_MAPPED_VO_ENTITY_VALUE_OBJECTS_ONE_TO_MANY_ONE_TO_MANY_SET_SEQ MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
 
-CREATE TABLE test_domain.auto_mapped_vo_entity_value_objects_one_to_many_one_to_many_set
+CREATE TABLE TEST_DOMAIN.AUTO_MAPPED_VO_ENTITY_VALUE_OBJECTS_ONE_TO_MANY_ONE_TO_MANY_SET
 (
-    id           NUMBER(18) PRIMARY KEY,
-    container_id NUMBER(18) NOT NULL,
-    value        VARCHAR2(20) NOT NULL,
-    FOREIGN KEY (container_id) REFERENCES test_domain.auto_mapped_vo_entity_value_objects_one_to_many (id)
+    ID           NUMBER(18) PRIMARY KEY,
+    CONTAINER_ID NUMBER(18) NOT NULL,
+    VALUE        VARCHAR2(20) NOT NULL,
+    FOREIGN KEY (CONTAINER_ID) REFERENCES TEST_DOMAIN.AUTO_MAPPED_VO_ENTITY_VALUE_OBJECTS_ONE_TO_MANY (ID)
 );
 
 /*
  Optional Case
  */
-CREATE TABLE test_domain.ref_agg
+CREATE TABLE TEST_DOMAIN.REF_AGG
 (
-    id                  NUMBER(18) PRIMARY KEY,
-    concurrency_version NUMBER(18) NOT NULL,
-    mandatory_text      VARCHAR2(20) NOT NULL,
-    optional_text       VARCHAR2(20) NULL
+    ID                  NUMBER(18) PRIMARY KEY,
+    CONCURRENCY_VERSION NUMBER(18) NOT NULL,
+    MANDATORY_TEXT      VARCHAR2(20) NOT NULL,
+    OPTIONAL_TEXT       VARCHAR2(20) NULL
 );
 
-CREATE SEQUENCE test_domain.optional_entity_id_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
+CREATE SEQUENCE TEST_DOMAIN.OPTIONAL_ENTITY_ID_SEQ MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
 
-CREATE TABLE test_domain.optional_entity
+CREATE TABLE TEST_DOMAIN.OPTIONAL_ENTITY
 (
-    id                                                                 NUMBER(18) PRIMARY KEY,
-    concurrency_version                                                NUMBER(18) NOT NULL,
-    mandatory_text                                                     VARCHAR2(20) NOT NULL,
-    optional_text                                                      VARCHAR2(20) NULL,
-    mandatory_simple_value_object_value                                VARCHAR2(20) NOT NULL,
-    optional_simple_value_object_value                                 VARCHAR2(20) NULL,
-    mandatory_complex_value_object_mandatory_text                      VARCHAR2(20) NOT NULL,
-    mandatory_complex_value_object_optional_text                       VARCHAR2(20) NULL,
-    mandatory_complex_value_object_mandatory_simple_value_object_value VARCHAR2(20) NOT NULL,
-    mandatory_complex_value_object_optional_simple_value_object_value  VARCHAR2(20) NULL,
-    mandatory_complex_value_object_optional_long                       NUMBER(18) NULL,
-    optional_complex_value_object_mandatory_text                       VARCHAR2(20) NULL,
-    optional_complex_value_object_optional_text                        VARCHAR2(20) NULL,
-    optional_complex_value_object_mandatory_simple_value_object_value  VARCHAR2(20) NULL,
-    optional_complex_value_object_optional_simple_value_object_value   VARCHAR2(20) NULL,
-    optional_complex_value_object_optional_long                        NUMBER(18) NULL
+    ID                                                                 NUMBER(18) PRIMARY KEY,
+    CONCURRENCY_VERSION                                                NUMBER(18) NOT NULL,
+    MANDATORY_TEXT                                                     VARCHAR2(20) NOT NULL,
+    OPTIONAL_TEXT                                                      VARCHAR2(20) NULL,
+    MANDATORY_SIMPLE_VALUE_OBJECT_VALUE                                VARCHAR2(20) NOT NULL,
+    OPTIONAL_SIMPLE_VALUE_OBJECT_VALUE                                 VARCHAR2(20) NULL,
+    MANDATORY_COMPLEX_VALUE_OBJECT_MANDATORY_TEXT                      VARCHAR2(20) NOT NULL,
+    MANDATORY_COMPLEX_VALUE_OBJECT_OPTIONAL_TEXT                       VARCHAR2(20) NULL,
+    MANDATORY_COMPLEX_VALUE_OBJECT_MANDATORY_SIMPLE_VALUE_OBJECT_VALUE VARCHAR2(20) NOT NULL,
+    MANDATORY_COMPLEX_VALUE_OBJECT_OPTIONAL_SIMPLE_VALUE_OBJECT_VALUE  VARCHAR2(20) NULL,
+    MANDATORY_COMPLEX_VALUE_OBJECT_OPTIONAL_LONG                       NUMBER(18) NULL,
+    OPTIONAL_COMPLEX_VALUE_OBJECT_MANDATORY_TEXT                       VARCHAR2(20) NULL,
+    OPTIONAL_COMPLEX_VALUE_OBJECT_OPTIONAL_TEXT                        VARCHAR2(20) NULL,
+    OPTIONAL_COMPLEX_VALUE_OBJECT_MANDATORY_SIMPLE_VALUE_OBJECT_VALUE  VARCHAR2(20) NULL,
+    OPTIONAL_COMPLEX_VALUE_OBJECT_OPTIONAL_SIMPLE_VALUE_OBJECT_VALUE   VARCHAR2(20) NULL,
+    OPTIONAL_COMPLEX_VALUE_OBJECT_OPTIONAL_LONG                        NUMBER(18) NULL
 );
 
-CREATE SEQUENCE test_domain.optional_aggregate_id_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
+CREATE SEQUENCE TEST_DOMAIN.OPTIONAL_AGGREGATE_ID_SEQ MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
 
-CREATE TABLE test_domain.optional_aggregate
+CREATE TABLE TEST_DOMAIN.OPTIONAL_AGGREGATE
 (
-    id                                                                 NUMBER(18) PRIMARY KEY,
-    concurrency_version                                                NUMBER(18) NOT NULL,
-    mandatory_text                                                     VARCHAR2(20) NOT NULL,
-    optional_text                                                      VARCHAR2(20) NULL,
-    optional_long                                                      NUMBER(18) NULL,
-    mandatory_simple_value_object_value                                VARCHAR2(20) NOT NULL,
-    optional_simple_value_object_value                                 VARCHAR2(20) NULL,
-    mandatory_complex_value_object_mandatory_text                      VARCHAR2(20) NOT NULL,
-    mandatory_complex_value_object_optional_text                       VARCHAR2(20) NULL,
-    mandatory_complex_value_object_mandatory_simple_value_object_value VARCHAR2(20) NOT NULL,
-    mandatory_complex_value_object_optional_simple_value_object_value  VARCHAR2(20) NULL,
-    mandatory_complex_value_object_optional_long                       NUMBER(18) NULL,
-    optional_entity_id                                                 NUMBER(18) NULL,
-    optional_ref_id                                                    NUMBER(18) NULL,
-    ref_value_object_mandatory_text                                    VARCHAR2(20) NOT NULL,
-    ref_value_object_optional_ref                                      NUMBER(18) NULL,
-    optional_complex_value_object_mandatory_text                       VARCHAR2(20) NULL,
-    optional_complex_value_object_optional_text                        VARCHAR2(20) NULL,
-    optional_complex_value_object_mandatory_simple_value_object_value  VARCHAR2(20) NULL,
-    optional_complex_value_object_optional_simple_value_object_value   VARCHAR2(20) NULL,
-    optional_complex_value_object_optional_long                        NUMBER(18) NULL,
-    FOREIGN KEY (optional_entity_id) REFERENCES test_domain.optional_entity (id),
-    FOREIGN KEY (optional_ref_id) REFERENCES test_domain.ref_agg (id),
-    FOREIGN KEY (ref_value_object_optional_ref) REFERENCES test_domain.ref_agg (id)
+    ID                                                                 NUMBER(18) PRIMARY KEY,
+    CONCURRENCY_VERSION                                                NUMBER(18) NOT NULL,
+    MANDATORY_TEXT                                                     VARCHAR2(20) NOT NULL,
+    OPTIONAL_TEXT                                                      VARCHAR2(20) NULL,
+    OPTIONAL_LONG                                                      NUMBER(18) NULL,
+    MANDATORY_SIMPLE_VALUE_OBJECT_VALUE                                VARCHAR2(20) NOT NULL,
+    OPTIONAL_SIMPLE_VALUE_OBJECT_VALUE                                 VARCHAR2(20) NULL,
+    MANDATORY_COMPLEX_VALUE_OBJECT_MANDATORY_TEXT                      VARCHAR2(20) NOT NULL,
+    MANDATORY_COMPLEX_VALUE_OBJECT_OPTIONAL_TEXT                       VARCHAR2(20) NULL,
+    MANDATORY_COMPLEX_VALUE_OBJECT_MANDATORY_SIMPLE_VALUE_OBJECT_VALUE VARCHAR2(20) NOT NULL,
+    MANDATORY_COMPLEX_VALUE_OBJECT_OPTIONAL_SIMPLE_VALUE_OBJECT_VALUE  VARCHAR2(20) NULL,
+    MANDATORY_COMPLEX_VALUE_OBJECT_OPTIONAL_LONG                       NUMBER(18) NULL,
+    OPTIONAL_ENTITY_ID                                                 NUMBER(18) NULL,
+    OPTIONAL_REF_ID                                                    NUMBER(18) NULL,
+    REF_VALUE_OBJECT_MANDATORY_TEXT                                    VARCHAR2(20) NOT NULL,
+    REF_VALUE_OBJECT_OPTIONAL_REF                                      NUMBER(18) NULL,
+    OPTIONAL_COMPLEX_VALUE_OBJECT_MANDATORY_TEXT                       VARCHAR2(20) NULL,
+    OPTIONAL_COMPLEX_VALUE_OBJECT_OPTIONAL_TEXT                        VARCHAR2(20) NULL,
+    OPTIONAL_COMPLEX_VALUE_OBJECT_MANDATORY_SIMPLE_VALUE_OBJECT_VALUE  VARCHAR2(20) NULL,
+    OPTIONAL_COMPLEX_VALUE_OBJECT_OPTIONAL_SIMPLE_VALUE_OBJECT_VALUE   VARCHAR2(20) NULL,
+    OPTIONAL_COMPLEX_VALUE_OBJECT_OPTIONAL_LONG                        NUMBER(18) NULL,
+    FOREIGN KEY (OPTIONAL_ENTITY_ID) REFERENCES TEST_DOMAIN.OPTIONAL_ENTITY (ID),
+    FOREIGN KEY (OPTIONAL_REF_ID) REFERENCES TEST_DOMAIN.REF_AGG (ID),
+    FOREIGN KEY (REF_VALUE_OBJECT_OPTIONAL_REF) REFERENCES TEST_DOMAIN.REF_AGG (ID)
 );
 
-CREATE TABLE test_domain.optional_entity_complex_value_object_list
+CREATE TABLE TEST_DOMAIN.OPTIONAL_ENTITY_COMPLEX_VALUE_OBJECT_LIST
 (
-    id                                  NUMBER(18) PRIMARY KEY,
-    container_id                        NUMBER(18) NOT NULL,
-    mandatory_text                      VARCHAR2(20) NOT NULL,
-    optional_text                       VARCHAR2(20) NULL,
-    mandatory_simple_value_object_value VARCHAR2(20) NOT NULL,
-    optional_simple_value_object_value  VARCHAR2(20) NULL,
-    optional_long                       NUMBER(18) NULL,
-    FOREIGN KEY (container_id) REFERENCES test_domain.optional_entity (id)
+    ID                                  NUMBER(18) PRIMARY KEY,
+    CONTAINER_ID                        NUMBER(18) NOT NULL,
+    MANDATORY_TEXT                      VARCHAR2(20) NOT NULL,
+    OPTIONAL_TEXT                       VARCHAR2(20) NULL,
+    MANDATORY_SIMPLE_VALUE_OBJECT_VALUE VARCHAR2(20) NOT NULL,
+    OPTIONAL_SIMPLE_VALUE_OBJECT_VALUE  VARCHAR2(20) NULL,
+    OPTIONAL_LONG                       NUMBER(18) NULL,
+    FOREIGN KEY (CONTAINER_ID) REFERENCES TEST_DOMAIN.OPTIONAL_ENTITY (ID)
 );
 
-CREATE SEQUENCE test_domain.optional_entity_complex_value_object_list_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
+CREATE SEQUENCE TEST_DOMAIN.OPTIONAL_ENTITY_COMPLEX_VALUE_OBJECT_LIST_SEQ MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
 
-CREATE TABLE test_domain.optional_aggregate_ref_value_object_list
+CREATE TABLE TEST_DOMAIN.OPTIONAL_AGGREGATE_REF_VALUE_OBJECT_LIST
 (
-    id             NUMBER(18) PRIMARY KEY,
-    container_id   NUMBER(18) NOT NULL,
-    mandatory_text VARCHAR2(20) NOT NULL,
-    optional_ref   NUMBER(18) NULL,
-    FOREIGN KEY (container_id) REFERENCES test_domain.optional_aggregate (id),
-    FOREIGN KEY (optional_ref) REFERENCES test_domain.ref_agg (id)
+    ID             NUMBER(18) PRIMARY KEY,
+    CONTAINER_ID   NUMBER(18) NOT NULL,
+    MANDATORY_TEXT VARCHAR2(20) NOT NULL,
+    OPTIONAL_REF   NUMBER(18) NULL,
+    FOREIGN KEY (CONTAINER_ID) REFERENCES TEST_DOMAIN.OPTIONAL_AGGREGATE (ID),
+    FOREIGN KEY (OPTIONAL_REF) REFERENCES TEST_DOMAIN.REF_AGG (ID)
 );
 
-CREATE SEQUENCE test_domain.optional_aggregate_ref_value_object_list_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
+CREATE SEQUENCE TEST_DOMAIN.OPTIONAL_AGGREGATE_REF_VALUE_OBJECT_LIST_SEQ MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
 
-
-CREATE TABLE test_domain.validated_aggregate_root
+CREATE TABLE TEST_DOMAIN.VALIDATED_AGGREGATE_ROOT
 (
-    id                  NUMBER(18) PRIMARY KEY,
-    text                VARCHAR2(100) NOT NULL,
-    optional_text       VARCHAR2(10),
-    concurrency_version NUMBER(18) NOT NULL
+    ID                  NUMBER(18) PRIMARY KEY,
+    TEXT                VARCHAR2(100) NOT NULL,
+    OPTIONAL_TEXT       VARCHAR2(10),
+    CONCURRENCY_VERSION NUMBER(18) NOT NULL
 );
-
-

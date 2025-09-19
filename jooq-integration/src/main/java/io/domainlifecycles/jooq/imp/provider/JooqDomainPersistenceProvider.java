@@ -81,9 +81,9 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
         Map<String, List<String>> recordCanonicalNameToDomainObjectTypeMap = new HashMap<>();
         Map<String, String> entityToRecordTypeMap = new HashMap<>();
 
-        List<EntityValueObjectRecordTypeConfiguration<?>> recordMappedValueObjectConfigurations = new ArrayList<>();
+        List<EntityValueObjectRecordTypeConfiguration> recordMappedValueObjectConfigurations = new ArrayList<>();
         if (jooqPersistenceConfiguration.entityValueObjectRecordClassProvider != null) {
-            List<EntityValueObjectRecordTypeConfiguration<?>> providedConfigurations =
+            List<EntityValueObjectRecordTypeConfiguration> providedConfigurations =
                 jooqPersistenceConfiguration.entityValueObjectRecordClassProvider
                 .provideContainedValueObjectRecordClassConfigurations();
             if (providedConfigurations != null) {
@@ -406,7 +406,7 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
         String... pathFromEntityToValueObject
     ) {
 
-        static InternalValueObjectRecordDefinition of(EntityValueObjectRecordTypeConfiguration<?> entityValueObjectRecordTypeConfiguration) {
+        static InternalValueObjectRecordDefinition of(EntityValueObjectRecordTypeConfiguration entityValueObjectRecordTypeConfiguration) {
             return new InternalValueObjectRecordDefinition(
                 entityValueObjectRecordTypeConfiguration.containingEntityType().getName(),
                 entityValueObjectRecordTypeConfiguration.containedValueObjectType().getName(),

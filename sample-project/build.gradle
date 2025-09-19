@@ -8,6 +8,7 @@ buildscript {
 plugins {
     id 'java'
     id 'checkstyle'
+    id 'jacoco'
     alias libs.plugins.spring.boot.plugin
     alias libs.plugins.flyway.plugin
     alias libs.plugins.jooq.codegen.gradle
@@ -122,3 +123,12 @@ tasks.named("jooqCodegen") {
 tasks.withType(Checkstyle).configureEach {
     enabled = false
 }
+
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport

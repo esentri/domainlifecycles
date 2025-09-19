@@ -27,6 +27,7 @@
 package io.domainlifecycles.springdoc2.openapi;
 
 import io.domainlifecycles.swagger.v3.MirrorBasedOpenApiExtension;
+import io.domainlifecycles.swagger.v3.OpenAPIOptionalNullabilityExtension;
 import io.domainlifecycles.swagger.v3.OpenAPIPrimitivePropertyExtension;
 import io.domainlifecycles.swagger.v3.OpenAPIPropertyBeanValidationExtension;
 import io.domainlifecycles.swagger.v3.OpenAPITemporalTypeExtension;
@@ -43,7 +44,7 @@ import org.springdoc.core.properties.SpringDocConfigProperties;
  * The extension adds Open API schemata for several additional temporal types {@link OpenAPITemporalTypeExtension}.
  * The temporal type extension works as well as for domain object types as for all other classes.
  * <p>
- * By this extension primitive typed properties of Open API schemata are marekd as required
+ * By this extension primitive typed properties of Open API schemata are marked as required
  * {@link OpenAPIPrimitivePropertyExtension}.
  * <p>
  * If a bean validation implementation is provided in the classpath of the target application, then
@@ -69,6 +70,12 @@ import org.springdoc.core.properties.SpringDocConfigProperties;
 public class DlcOpenApiCustomizer implements OpenApiCustomizer {
 
     private static final Logger log = LoggerFactory.getLogger(DlcOpenApiCustomizer.class);
+
+    private boolean enableTemporalTypesExtension = true;
+    private boolean enablePrimitivePropertyExtension = true;
+    private boolean enableBeanValidationExtension = true;
+    private boolean enableMirrorBasedOpenApiExtension = true;
+    private boolean enableOptionalNullabilityExtension = true;
 
     private final SpringDocConfigProperties springDocConfigProperties;
 
@@ -103,11 +110,65 @@ public class DlcOpenApiCustomizer implements OpenApiCustomizer {
     @Override
     public void customise(OpenAPI openApi) {
         log.debug("Customizing Open API informations with DLC specifica!");
-        OpenAPITemporalTypeExtension.extendOpenAPISchemaForTemporalTypes(openApi);
-        OpenAPIPrimitivePropertyExtension.extendPrimitiveProperties(openApi);
-        OpenAPIPropertyBeanValidationExtension.extendWithBeanValidationInformation(openApi);
-        mirrorBasedOpenApiExtension.extendOpenAPISchemaForDLCTypes(openApi, entitiesWithExternallyProvidedIds);
+        if(enableTemporalTypesExtension){
+            OpenAPITemporalTypeExtension.extendOpenAPISchemaForTemporalTypes(openApi);
+        }
+        if(enablePrimitivePropertyExtension){
+            OpenAPIPrimitivePropertyExtension.extendPrimitiveProperties(openApi);
+        }
+        if(enableMirrorBasedOpenApiExtension){
+            mirrorBasedOpenApiExtension.extendOpenAPISchemaForDLCTypes(openApi, entitiesWithExternallyProvidedIds);
+        }
+        if(enableBeanValidationExtension){
+            OpenAPIPropertyBeanValidationExtension.extendWithBeanValidationInformation(openApi);
+        }
+        if(enableOptionalNullabilityExtension){
+            OpenAPIOptionalNullabilityExtension.extendNullabilityForOptionals(openApi);
+        }
+    }
 
+    public boolean isEnableTemporalTypesExtension() {
+        return enableTemporalTypesExtension;
+    }
+
+    public void setEnableTemporalTypesExtension(boolean enableTemporalTypesExtension) {
+        this.enableTemporalTypesExtension = enableTemporalTypesExtension;
+    }
+
+    public boolean isEnablePrimitivePropertyExtension() {
+        return enablePrimitivePropertyExtension;
+    }
+
+    public void setEnablePrimitivePropertyExtension(boolean enablePrimitivePropertyExtension) {
+        this.enablePrimitivePropertyExtension = enablePrimitivePropertyExtension;
+    }
+
+    public boolean isEnableBeanValidationExtension() {
+        return enableBeanValidationExtension;
+    }
+
+    public void setEnableBeanValidationExtension(boolean enableBeanValidationExtension) {
+        this.enableBeanValidationExtension = enableBeanValidationExtension;
+    }
+
+    public boolean isEnableMirrorBasedOpenApiExtension() {
+        return enableMirrorBasedOpenApiExtension;
+    }
+
+    public void setEnableMirrorBasedOpenApiExtension(boolean enableMirrorBasedOpenApiExtension) {
+        this.enableMirrorBasedOpenApiExtension = enableMirrorBasedOpenApiExtension;
+    }
+
+    public boolean isEnableOptionalNullabilityExtension() {
+        return enableOptionalNullabilityExtension;
+    }
+
+    public void setEnableOptionalNullabilityExtension(boolean enableOptionalNullabilityExtension) {
+        this.enableOptionalNullabilityExtension = enableOptionalNullabilityExtension;
+    }
+
+    public SpringDocConfigProperties getSpringDocConfigProperties() {
+        return springDocConfigProperties;
     }
 
 }

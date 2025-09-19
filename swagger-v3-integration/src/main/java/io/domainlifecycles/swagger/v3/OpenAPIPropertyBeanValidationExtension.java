@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,9 +26,8 @@
 
 package io.domainlifecycles.swagger.v3;
 
-import io.domainlifecycles.reflect.JavaReflect;
-import io.domainlifecycles.reflect.MemberSelect;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.media.Schema;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -38,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.Objects;
@@ -61,6 +59,8 @@ import java.util.Set;
  * </p>
  * If no bean validation implementation is provided, only an info level log entry occurs. The behaviour of the
  * application is not affected in any negative way.
+ *
+ * Supports OpenAPI 3.0 and 3.1.
  *
  * @author Mario Herb
  */
@@ -157,7 +157,7 @@ public class OpenAPIPropertyBeanValidationExtension {
             final Class<?> finalType = type;
             if (typeSchema.getProperties() != null) {
                 typeSchema.getProperties().forEach((pName, pSchema) -> {
-                    Field f = getFieldForTypeByPropertyName(finalType, pName);
+                    Field f = Utils.getFieldForTypeByPropertyName(finalType, pName);
                     if (f != null) {
                         extendSchemaForField(f, pSchema);
                     }
@@ -166,17 +166,11 @@ public class OpenAPIPropertyBeanValidationExtension {
         }
     }
 
-    private static boolean isOptional(Field field) {
-        return Optional.class.isAssignableFrom(field.getType());
-    }
-
-
-
     private static Set<ConstraintDescriptor<?>> getConstraintDescriptorsJakarta(Field field) {
         var desc = validatorJakarta.getConstraintsForClass(field.getDeclaringClass());
         var prop = desc.getConstraintsForProperty(field.getName());
         if (prop != null) {
-            if (isOptional(field)) {
+            if (Utils.isOptional(field)) {
                 var container =
                     (ContainerElementTypeDescriptor) prop.getConstrainedContainerElementTypes().toArray()[0];
                 return container.getConstraintDescriptors();
@@ -252,14 +246,15 @@ public class OpenAPIPropertyBeanValidationExtension {
     }
 
     private static void extendNotEmpty(Schema<?> schema) {
-        if (Constants.TYPE_STRING.equals(schema.getType())) {
-            //spring doc open api 1.6.7 and lower doesn't do that
+        var schemaType = getSingleSchemaType(schema);
+        if (Constants.TYPE_STRING.equals(schemaType)) {
+            //spring doc open api 2.8.13 and lower doesn't do that
             if (schema.getMinLength() == null || schema.getMinLength() < 1) {
                 schema.setMinLength(1);
             }
             addSchemaDescription("beanValidationNotEmpty", schema);
-        } else if (Constants.TYPE_ARRAY.equals(schema.getType())) {
-            //spring doc open api 1.6.7 and lower doesn't do that
+        } else if (Constants.TYPE_ARRAY.equals(schemaType)) {
+            //spring doc open api 2.8.13 and lower doesn't do that
             if (schema.getMinItems() == null || schema.getMinItems() < 1) {
                 schema.setMinItems(1);
             }
@@ -268,18 +263,21 @@ public class OpenAPIPropertyBeanValidationExtension {
     }
 
     private static void extendNotBlank(Schema<?> schema) {
-        if (Constants.TYPE_STRING.equals(schema.getType())) {
-            //spring doc open api 1.6.7 and lower doesn't do that
-            if (schema.getMinLength() == null || schema.getMinLength() < 1) {
+        var schemaType = getSingleSchemaType(schema);
+        if (Constants.TYPE_STRING.equals(schemaType)) {
+            //spring doc open api 2.8.13 and lower doesn't do that
+            if (schema.getMinLength() == null || schema.getMinLength() < 1 || schema.getPattern()==null) {
                 schema.setMinLength(1);
+                schema.setPattern(".*\\S.*");
             }
             addSchemaDescription("beanValidationNotBlank", schema);
         }
     }
 
     private static void extendEmail(Schema<?> schema) {
-        if (Constants.TYPE_STRING.equals(schema.getType())) {
-            //spring doc open api 1.6.7 and lower doesn't do that
+        var schemaType = getSingleSchemaType(schema);
+        if (Constants.TYPE_STRING.equals(schemaType)) {
+            //spring doc open api 2.8.13 and lower doesn't do that
             if (schema.getFormat() == null) {
                 schema.setFormat(Constants.FORMAT_TYPE_EMAIL);
             }
@@ -288,8 +286,9 @@ public class OpenAPIPropertyBeanValidationExtension {
     }
 
     private static void extendPattern(Schema<?> schema, String regEx) {
-        if (Constants.TYPE_STRING.equals(schema.getType())) {
-            //spring doc open api 1.6.7 and lower doesn't do that for optional Strings
+        var schemaType = getSingleSchemaType(schema);
+        if (Constants.TYPE_STRING.equals(schemaType)) {
+            //spring doc open api 2.8.13 and lower doesn't do that for optional Strings
             if (schema.getPattern() == null) {
                 schema.setPattern(regEx);
             }
@@ -298,8 +297,9 @@ public class OpenAPIPropertyBeanValidationExtension {
     }
 
     private static void extendSize(Schema<?> schema, Integer minLengthAnnotated, Integer maxLengthAnnotated) {
-        if (Constants.TYPE_STRING.equals(schema.getType())) {
-            //spring doc open api 1.6.7 and lower doesn't do that for optional Strings
+        var schemaType = getSingleSchemaType(schema);
+        if (Constants.TYPE_STRING.equals(schemaType)) {
+            //spring doc open api 2.8.13 and lower doesn't do that for optional Strings
             if (schema.getMinLength() == null || schema.getMinLength() < minLengthAnnotated) {
                 schema.setMinLength(minLengthAnnotated);
             }
@@ -309,7 +309,7 @@ public class OpenAPIPropertyBeanValidationExtension {
             }
             addSchemaDescription("beanValidationSizeMax", schema, maxLengthAnnotated.toString());
 
-        }else if(Constants.TYPE_ARRAY.equals(schema.getType())){
+        }else if(Constants.TYPE_ARRAY.equals(schemaType)){
             if (schema.getMinItems() == null || schema.getMinItems() < minLengthAnnotated) {
                 schema.setMinItems(minLengthAnnotated);
             }
@@ -320,10 +320,11 @@ public class OpenAPIPropertyBeanValidationExtension {
     }
 
     private static void extendMin(Schema<?> schema, Long minAnnotated) {
-        if (Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
-            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+        var schemaType = getSingleSchemaType(schema);
+        if (Constants.TYPE_NUMBER.equals(schemaType) || Constants.TYPE_INTEGER.equals(schemaType)
+            || (Constants.TYPE_STRING.equals(schemaType) && Constants.FORMAT_TYPE_BYTE.equals(
             schema.getFormat()))) {
-            //spring doc open api 1.6.7 and lower doesn't do that for optional numeric types
+            //spring doc open api2.8.13 and lower doesn't do that for optional numeric types
             if (schema.getMinimum() == null || schema.getMinimum().intValue() < minAnnotated) {
                 schema.setMinimum(BigDecimal.valueOf(minAnnotated));
             }
@@ -332,10 +333,11 @@ public class OpenAPIPropertyBeanValidationExtension {
     }
 
     private static void extendMax(Schema<?> schema, Long maxAnnotated) {
-        if (Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
-            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+        var schemaType = getSingleSchemaType(schema);
+        if (Constants.TYPE_NUMBER.equals(schemaType) || Constants.TYPE_INTEGER.equals(schemaType)
+            || (Constants.TYPE_STRING.equals(schemaType) && Constants.FORMAT_TYPE_BYTE.equals(
             schema.getFormat()))) {
-            //spring doc open api 1.6.7 and lower doesn't do that for optional numeric types
+            //spring doc open api 2.8.13 and lower doesn't do that for optional numeric types
             if (schema.getMaximum() == null || schema.getMaximum().intValue() > maxAnnotated) {
                 schema.setMaximum(BigDecimal.valueOf(maxAnnotated));
             }
@@ -345,101 +347,147 @@ public class OpenAPIPropertyBeanValidationExtension {
 
     private static void extendDecimalMin(Schema<?> schema, BigDecimal bigDecimalMinAnnotated,
                                          Boolean inclusiveAnnotated) {
-        if (Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
-            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+        var schemaType = getSingleSchemaType(schema);
+        if (Constants.TYPE_NUMBER.equals(schemaType) || Constants.TYPE_INTEGER.equals(schemaType)
+            || (Constants.TYPE_STRING.equals(schemaType) && Constants.FORMAT_TYPE_BYTE.equals(
             schema.getFormat()))) {
-            //spring doc open api 1.6.7 and lower doesn't do that for optional numeric types
-            if (schema.getMinimum() == null || schema.getMinimum().compareTo(bigDecimalMinAnnotated) < 0) {
+            //spring doc open api 2.8.13 and lower doesn't do that for optional numeric types
+            if(schema.getSpecVersion().equals(SpecVersion.V30)) {
                 schema.setMinimum(bigDecimalMinAnnotated);
-
+                if (!inclusiveAnnotated) {
+                    schema.setExclusiveMinimum(true);
+                    addSchemaDescription("beanValidationDecimalMin", schema, bigDecimalMinAnnotated.toPlainString());
+                } else {
+                    addSchemaDescription("beanValidationDecimalMinInclusive", schema,
+                        bigDecimalMinAnnotated.toPlainString());
+                }
             }
-            if (!inclusiveAnnotated) {
-                schema.setExclusiveMinimum(true);
-                addSchemaDescription("beanValidationDecimalMin", schema, bigDecimalMinAnnotated.toPlainString());
-            } else {
-                addSchemaDescription("beanValidationDecimalMinInclusive", schema,
-                    bigDecimalMinAnnotated.toPlainString());
+            if(schema.getSpecVersion().equals(SpecVersion.V31)) {
+                if (!inclusiveAnnotated) {
+                    schema.setExclusiveMinimumValue(bigDecimalMinAnnotated);
+                    addSchemaDescription("beanValidationDecimalMin", schema, bigDecimalMinAnnotated.toPlainString());
+                }else{
+                    schema.setMinimum(bigDecimalMinAnnotated);
+                    addSchemaDescription("beanValidationDecimalMinInclusive", schema,
+                        bigDecimalMinAnnotated.toPlainString());
+                }
             }
         }
     }
 
     private static void extendDecimalMax(Schema<?> schema, BigDecimal bigDecimalMaxAnnotated,
                                          Boolean inclusiveAnnotated) {
-        if (Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
-            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+        var schemaType = getSingleSchemaType(schema);
+        if (Constants.TYPE_NUMBER.equals(schemaType) || Constants.TYPE_INTEGER.equals(schemaType)
+            || (Constants.TYPE_STRING.equals(schemaType) && Constants.FORMAT_TYPE_BYTE.equals(
             schema.getFormat()))) {
-            //spring doc open api 1.6.7 and lower doesn't do that for optional numeric types
-            if (schema.getMaximum() == null || schema.getMaximum().compareTo(bigDecimalMaxAnnotated) > 0) {
+            //spring doc open api 2.8.13 and lower doesn't do that for optional numeric types
+            if(schema.getSpecVersion().equals(SpecVersion.V30)) {
                 schema.setMaximum(bigDecimalMaxAnnotated);
+                if (!inclusiveAnnotated) {
+                    schema.setExclusiveMaximum(true);
+                    addSchemaDescription("beanValidationDecimalMax", schema, bigDecimalMaxAnnotated.toPlainString());
+                } else {
+                    addSchemaDescription("beanValidationDecimalMaxInclusive", schema,
+                        bigDecimalMaxAnnotated.toPlainString());
+                }
             }
-            if (!inclusiveAnnotated) {
-                schema.setExclusiveMaximum(true);
-                addSchemaDescription("beanValidationDecimalMax", schema, bigDecimalMaxAnnotated.toPlainString());
-            } else {
-                addSchemaDescription("beanValidationDecimalMaxInclusive", schema,
-                    bigDecimalMaxAnnotated.toPlainString());
+            if(schema.getSpecVersion().equals(SpecVersion.V31)) {
+                if (!inclusiveAnnotated) {
+                    schema.setExclusiveMaximumValue(bigDecimalMaxAnnotated);
+                    addSchemaDescription("beanValidationDecimalMax", schema, bigDecimalMaxAnnotated.toPlainString());
+                }else{
+                    schema.setMaximum(bigDecimalMaxAnnotated);
+                    addSchemaDescription("beanValidationDecimalMaxInclusive", schema,
+                        bigDecimalMaxAnnotated.toPlainString());
+                }
             }
 
         }
     }
 
     private static void extendNegative(Schema<?> schema) {
-        if (Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
-            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+        var schemaType = getSingleSchemaType(schema);
+        if (Constants.TYPE_NUMBER.equals(schemaType) || Constants.TYPE_INTEGER.equals(schemaType)
+            || (Constants.TYPE_STRING.equals(schemaType) && Constants.FORMAT_TYPE_BYTE.equals(
             schema.getFormat()))) {
-            //spring doc open api 1.6.7 and lower doesn't do that
-            if (schema.getMaximum() == null || schema.getMaximum().intValue() > 0) {
+            //spring doc open api 2.8.13 and lower doesn't do that
+            if(schema.getSpecVersion().equals(SpecVersion.V30)) {
                 schema.setMaximum(BigDecimal.valueOf(0));
                 schema.setExclusiveMaximum(true);
+            }
+            if(schema.getSpecVersion().equals(SpecVersion.V31)) {
+                schema.setExclusiveMaximumValue(BigDecimal.valueOf(0));
             }
             addSchemaDescription("beanValidationNegative", schema);
         }
     }
 
     private static void extendPositive(Schema<?> schema) {
-        if (Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
-            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+        var schemaType = getSingleSchemaType(schema);
+        if (Constants.TYPE_NUMBER.equals(schemaType) || Constants.TYPE_INTEGER.equals(schemaType)
+            || (Constants.TYPE_STRING.equals(schemaType) && Constants.FORMAT_TYPE_BYTE.equals(
             schema.getFormat()))) {
-            //spring doc open api 1.6.7 and lower doesn't do that
-            if (schema.getMinimum() == null || schema.getMinimum().intValue() < 0) {
+            //spring doc open api 2.8.13 and lower doesn't do that
+            if(schema.getSpecVersion().equals(SpecVersion.V30)) {
                 schema.setMinimum(BigDecimal.valueOf(0));
                 schema.setExclusiveMinimum(true);
+            }
+            if(schema.getSpecVersion().equals(SpecVersion.V31)) {
+                schema.setExclusiveMinimumValue(BigDecimal.valueOf(0));
             }
             addSchemaDescription("beanValidationPositive", schema);
         }
     }
 
     private static void extendNegativeOrZero(Schema<?> schema) {
-        if (Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
-            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+        var schemaType = getSingleSchemaType(schema);
+        if (Constants.TYPE_NUMBER.equals(schemaType) || Constants.TYPE_INTEGER.equals(schemaType)
+            || (Constants.TYPE_STRING.equals(schemaType) && Constants.FORMAT_TYPE_BYTE.equals(
             schema.getFormat()))) {
-            //spring doc open api 1.6.7 and lower doesn't do that
-            if (schema.getMaximum() == null || schema.getMaximum().intValue() > 0) {
+            //spring doc open api 2.8.13 and lower doesn't do that
+            if(schema.getSpecVersion().equals(SpecVersion.V30)) {
                 schema.setMaximum(BigDecimal.valueOf(0));
                 schema.setExclusiveMaximum(false);
+            }
+            if(schema.getSpecVersion().equals(SpecVersion.V31)) {
+                schema.setMaximum(BigDecimal.valueOf(0));
             }
             addSchemaDescription("beanValidationNegativeOrZero", schema);
         }
     }
 
     private static void extendPositiveOrZero(Schema<?> schema) {
-        if (Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
-            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+        var schemaType = getSingleSchemaType(schema);
+        if (Constants.TYPE_NUMBER.equals(schemaType) || Constants.TYPE_INTEGER.equals(schemaType)
+            || (Constants.TYPE_STRING.equals(schemaType) && Constants.FORMAT_TYPE_BYTE.equals(
             schema.getFormat()))) {
-            //spring doc open api 1.6.7 and lower doesn't do that
-            if (schema.getMinimum() == null || schema.getMinimum().intValue() < 0) {
+            //spring doc open api 2.8.13 and lower doesn't do that
+            if(schema.getSpecVersion().equals(SpecVersion.V30)) {
                 schema.setMinimum(BigDecimal.valueOf(0));
                 schema.setExclusiveMinimum(false);
+            }
+            if(schema.getSpecVersion().equals(SpecVersion.V31)) {
+                schema.setMinimum(BigDecimal.valueOf(0));
             }
             addSchemaDescription("beanValidationPositiveOrZero", schema);
         }
     }
 
+    private static String getSingleSchemaType(Schema<?> schema) {
+        var schemaType = schema.getType();
+        if(schemaType == null && schema.getTypes() != null && schema.getTypes().size() == 1){
+            schemaType = schema.getTypes().stream().findFirst().get();
+        }
+        return schemaType;
+    }
+
     private static void extendDigits(Schema<?> schema, Integer integerAnnotated, Integer fractionAnnotated) {
-        if (Constants.TYPE_NUMBER.equals(schema.getType()) || Constants.TYPE_INTEGER.equals(schema.getType())
-            || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+       var schemaType = getSingleSchemaType(schema);
+        if (Constants.TYPE_NUMBER.equals(schemaType) || Constants.TYPE_INTEGER.equals(schemaType)
+            || (Constants.TYPE_STRING.equals(schemaType) && Constants.FORMAT_TYPE_BYTE.equals(
             schema.getFormat()))) {
-            //spring doc open api 1.6.7 and lower doesn't do that
+            //spring doc open api 2.8.13 and lower doesn't do that
             if (integerAnnotated < 1) {
                 log.warn("Annotating the integer part of '" + schema.getName() + "' with a value < 1 makes no sense!");
             }
@@ -449,8 +497,8 @@ public class OpenAPIPropertyBeanValidationExtension {
                 String patternFraction = "[0-9]{1," + (fractionAnnotated) + "}";
                 String patternSeparator = "\\.";
                 String pattern;
-                if (Constants.TYPE_INTEGER.equals(schema.getType())
-                    || (Constants.TYPE_STRING.equals(schema.getType()) && Constants.FORMAT_TYPE_BYTE.equals(
+                if (Constants.TYPE_INTEGER.equals(schemaType)
+                    || (Constants.TYPE_STRING.equals(schemaType) && Constants.FORMAT_TYPE_BYTE.equals(
                     schema.getFormat()))) {
                     pattern = "^" + patternInteger + "$";
                 } else {
@@ -471,35 +519,36 @@ public class OpenAPIPropertyBeanValidationExtension {
 
     private static void extendPast(Schema<?> schema) {
         if (isTemporalType(schema)) {
-            //spring doc open api 1.6.7 and lower doesn't do that
+            //spring doc open api 2.8.13 and lower doesn't do that
             addSchemaDescription("beanValidationPast", schema);
         }
     }
 
     private static void extendPastOrPresent(Schema<?> schema) {
         if (isTemporalType(schema)) {
-            //spring doc open api 1.6.7 and lower doesn't do that
+            //spring doc open api 2.8.13 and lower doesn't do that
             addSchemaDescription("beanValidationPastOrPresent", schema);
         }
     }
 
     private static void extendFuture(Schema<?> schema) {
         if (isTemporalType(schema)) {
-            //spring doc open api 1.6.7 and lower doesn't do that
+            //spring doc open api 2.8.13 and lower doesn't do that
             addSchemaDescription("beanValidationFuture", schema);
         }
     }
 
     private static void extendFutureOrPresent(Schema<?> schema) {
         if (isTemporalType(schema)) {
-            //spring doc open api 1.6.7 and lower doesn't do that
+            //spring doc open api 2.8.13 and lower doesn't do that
             addSchemaDescription("beanValidationFutureOrPresent", schema);
         }
     }
 
     private static boolean isTemporalType(Schema<?> schema) {
+        var schemaType = getSingleSchemaType(schema);
         return (
-            Constants.TYPE_STRING.equals(schema.getType()) &&
+            Constants.TYPE_STRING.equals(schemaType) &&
                 (Constants.FORMAT_TYPE_DATE.equals(schema.getFormat())
                     || Constants.FORMAT_TYPE_DATE_TIME.equals(schema.getFormat()))
         )
@@ -510,34 +559,7 @@ public class OpenAPIPropertyBeanValidationExtension {
             || Constants.$REF_YEAR.equals(schema.get$ref());
     }
 
-    private static Field getFieldForTypeByPropertyName(Class<?> type, String propertyName) {
-        Field[] fieldCandidates = JavaReflect.fields(type, MemberSelect.HIERARCHY)
-            .stream()
-            .filter(
-                f -> !Modifier.isStatic(f.getModifiers()) && f.getName().equals(propertyName)
-            ).toArray(Field[]::new);
-        if (fieldCandidates.length == 0) {
-            //property names in spring doc schema description sometimes have wrong case, try to find with ignored case
-            //weird bug in spring doc !!!!
-            fieldCandidates = JavaReflect.fields(type, MemberSelect.HIERARCHY)
-                .stream()
-                .filter(
-                    f -> !Modifier.isStatic(f.getModifiers()) && f.getName().equalsIgnoreCase(propertyName)
-                ).toArray(Field[]::new);
-            if (fieldCandidates.length == 0) {
-                log.warn("Failed to modify Open API schema for property '" + propertyName + "' within '"
-                    + type.getName() + "'! Field not found!");
-                return null;
-            } else if (fieldCandidates.length > 1) {
-                log.warn("When modifying Open API schema for property '" + propertyName + "' within '"
-                    + type.getName() + "'! Multiple filed candidates found (ignoring case), returning first hit!");
-            }
-        } else if (fieldCandidates.length > 1) {
-            log.warn("When modifying Open API schema for property '" + propertyName + "' within '"
-                + type.getName() + "'! Multiple filed candidates found, returning first hit!");
-        }
-        return fieldCandidates[0];
-    }
+
 
     private static void addSchemaDescription(String bundleKey, Schema<?> schema, String... replacement) {
         var bundle = ResourceBundle.getBundle(io.domainlifecycles.swagger.v3.resource.ResourceBundle.class.getName(),

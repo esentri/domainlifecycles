@@ -119,7 +119,7 @@ public final class MirrorBasedExecutionContextDetector implements ExecutionConte
         }
     }
 
-
+    @SuppressWarnings("unchecked")
     private List<AggregateExecutionContext<Identity<?>, AggregateRoot<Identity<?>>>> detectAggregateRootExecutionContexts(AggregateRootMirror arm, DomainEventMirror dem, DomainEvent de) {
         log.debug("Detecting ExecutionContext for DomainEvent {} on AggregateRoot {}", de, arm.getTypeName());
         var rm = Domain.repositoryMirrorFor(arm);

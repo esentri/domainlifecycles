@@ -3,14 +3,13 @@ package io.domainlifecycles.springboot3.persistence.bestellung;
 import io.domainlifecycles.springboot3.config.PersistenceConfig;
 import io.domainlifecycles.springboot3.persistence.base.SpringTestEventListener;
 import org.assertj.core.api.Assertions;
-import org.jooq.exception.DataAccessException;
+import org.jooq.exception.IntegrityConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import tests.shared.TestDataGenerator;
@@ -223,7 +222,7 @@ public class BestellungRepository_SpringBoot3_ITest {
         //ATTENTION: Do not write the assertion with a lambda expression, that will create a class loading conflict
         // with our
         // byte buddy extension
-        DuplicateKeyException ex = assertThrows(DuplicateKeyException.class, new Executable() {
+        assertThrows(IntegrityConstraintViolationException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
                 BestellungBv3 updated = bestellungRepository.update(inserted);

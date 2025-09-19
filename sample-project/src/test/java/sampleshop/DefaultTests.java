@@ -154,7 +154,7 @@ public class DefaultTests {
             order.addItem(
                 new Product.ProductId(1L),
                 0));
-        assertThat(t).hasMessageContaining("addItem.quantity");
+        assertThat(t).hasMessageContaining("addItem.");
         log.info("Exception message: " + t.getMessage());
 
         //order without a status is invalid

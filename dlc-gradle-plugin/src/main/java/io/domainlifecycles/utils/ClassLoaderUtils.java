@@ -58,7 +58,7 @@ public class ClassLoaderUtils {
     public static List<URL> getParentClasspathFiles(Project project) {
         List<URL> parentClasspath = new ArrayList<>();
         try {
-            File parentProjectBuildDir = new File(project.getBuildDir(), "classes/java/main");
+            File parentProjectBuildDir = new File(project.getLayout().getBuildDirectory().getAsFile().get(), "classes/java/main");
             parentClasspath.add(parentProjectBuildDir.toURI().toURL());
 
             project.getConfigurations()

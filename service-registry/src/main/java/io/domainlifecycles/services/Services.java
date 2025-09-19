@@ -71,6 +71,7 @@ public class Services implements ServiceRegistrator, ServiceProvider {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <S extends ServiceKind> S getServiceKindInstance(String typeName) {
         var s = (S)serviceKinds.get(typeName);
         if (s == null){

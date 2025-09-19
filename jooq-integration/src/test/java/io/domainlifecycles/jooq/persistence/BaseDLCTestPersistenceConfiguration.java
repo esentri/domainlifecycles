@@ -189,62 +189,62 @@ public class BaseDLCTestPersistenceConfiguration {
             .withEntityValueObjectRecordClassProvider(
                 new EntityValueObjectRecordClassProvider() {
                     @Override
-                    public List<EntityValueObjectRecordTypeConfiguration<?>> provideContainedValueObjectRecordClassConfigurations() {
-                        return Arrays.asList(new EntityValueObjectRecordTypeConfiguration<>(
+                    public List<EntityValueObjectRecordTypeConfiguration> provideContainedValueObjectRecordClassConfigurations() {
+                        return Arrays.asList(new EntityValueObjectRecordTypeConfiguration(
                                 VoAggregateRoot.class,
                                 SimpleVoOneToMany.class,
                                 SimpleVoOneToManyRecord.class,
                                 "valueObjectsOneToMany"
                             ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
+                            new EntityValueObjectRecordTypeConfiguration(
                                 VoAggregateRoot.class,
                                 SimpleVoOneToMany2.class,
                                 SimpleVoOneToMany_2Record.class,
                                 "valueObjectsOneToMany2"
                             ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
+                            new EntityValueObjectRecordTypeConfiguration(
                                 VoAggregateRoot.class,
                                 SimpleVoOneToMany3.class,
                                 SimpleVoOneToMany_3Record.class,
                                 "valueObjectsOneToMany2", "oneToMany3Set"
                             ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
+                            new EntityValueObjectRecordTypeConfiguration(
                                 VoEntity.class,
                                 VoOneToManyEntity.class,
                                 VoOneToManyEntityRecord.class,
                                 "valueObjectsOneToMany"
                             ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
+                            new EntityValueObjectRecordTypeConfiguration(
                                 VoEntity.class,
                                 VoOneToManyEntity2.class,
                                 VoOneToManyEntity_2Record.class,
                                 "valueObjectsOneToMany", "oneToManySet"
                             ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
+                            new EntityValueObjectRecordTypeConfiguration(
                                 BestellungBv3.class,
                                 AktionsCodeBv3.class,
                                 AktionsCodeBv3Record.class,
                                 "aktionsCodes"
                             ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
+                            new EntityValueObjectRecordTypeConfiguration(
                                 TestRootOneToOneVoDedicated.class,
                                 VoDedicated.class,
                                 TestRootOneToOneVoDedicatedVoRecord.class,
                                 "vo"
                             ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
+                            new EntityValueObjectRecordTypeConfiguration(
                                 VoAggregatePrimitive.class,
                                 SimpleVoPrimitive.class,
                                 VoAggregatePrimitiveRecordMappedSimpleRecord.class,
                                 "recordMappedSimple"
                             ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
+                            new EntityValueObjectRecordTypeConfiguration(
                                 VoAggregatePrimitive.class,
                                 ComplexVoPrimitive.class,
                                 VoAggregatePrimitiveRecordMappedComplexRecord.class,
                                 "recordMappedComplex"
                             ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
+                            new EntityValueObjectRecordTypeConfiguration(
                                 VoAggregatePrimitive.class,
                                 NestedVoPrimitive.class,
                                 VoAggregatePrimitiveRecordMappedNestedRecord.class,

@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2025 the original author or authors.
+ *  Copyright 2019-2024 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,9 +24,8 @@
  *  limitations under the License.
  */
 
-package tests.shared.inheritance;
+package tests.shared.openapi.jakarta;
 
-import io.domainlifecycles.domain.types.DomainCommand;
-
-public interface BasicDomainCommandType extends DomainCommand {
+public enum TestEnum {
+    TEST1, TEST2, TEST3
 }

@@ -18,6 +18,7 @@ import io.domainlifecycles.validation.extend.ValidationDomainClassExtender;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -53,7 +54,8 @@ import java.util.UUID;
             "tests.shared.persistence.domain.simpleUuid," +
             "tests.shared.persistence.domain.simple," +
             "tests.shared.persistence.domain.valueobjectAutoMapping",
-    jooqRecordPackage = "io.domainlifecycles.test.springboot3.tables.records"
+    jooqRecordPackage = "io.domainlifecycles.test.springboot3.tables.records",
+    jooqSqlDialect = SQLDialect.H2
 )
 @Slf4j
 public class TestApplication {

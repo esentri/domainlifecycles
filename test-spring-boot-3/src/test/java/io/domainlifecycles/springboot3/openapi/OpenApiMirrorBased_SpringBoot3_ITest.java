@@ -1,6 +1,7 @@
 package io.domainlifecycles.springboot3.openapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import jakarta.validation.Validation;
@@ -68,7 +69,7 @@ public class OpenApiMirrorBased_SpringBoot3_ITest {
                 MockMvcRequestBuilders.get(API_CALL_PREFIX + "/1/abc?bestellPositionId=5&kundennummern=2,3,4"))
             .andExpect(status().isOk())
             .andReturn();
-        var res = (AutoMappedComplexVo) objectMapper.readValue(response.getResponse().getContentAsString(),
+        var res = objectMapper.readValue(response.getResponse().getContentAsString(),
             AutoMappedComplexVo.class);
         assertThat(res).isNotNull();
         assertThat(res.getValueA()).isEqualTo("1 5 2 3 4");
@@ -91,7 +92,7 @@ public class OpenApiMirrorBased_SpringBoot3_ITest {
             null);
         Schema itemSchema = schema.getItems();
         assertThat(itemSchema).isNotNull();
-        assertThat(itemSchema.getType()).isEqualTo(SCHEMA_TYPE_STRING);
+        assertThat(itemSchema.getTypes().contains(SCHEMA_TYPE_STRING)).isTrue();
         assertThat(itemSchema.getMaxLength()).isEqualTo(15);
     }
 
@@ -119,21 +120,20 @@ public class OpenApiMirrorBased_SpringBoot3_ITest {
         assertThat(pathItemOptional.get().getGet().getParameters()).isNotNull();
         for (Parameter p : pathItemOptional.get().getGet().getParameters()) {
             if (p.getName().equals("kundennummern")) {
-                assertThat(p.getSchema().getType()).isEqualTo(SCHEMA_TYPE_ARRAY);
-                assertThat(p.getSchema().getItems().getType()).isEqualTo(SCHEMA_TYPE_STRING);
+                assertThat(p.getSchema().getTypes().contains(SCHEMA_TYPE_ARRAY)).isTrue();
+                assertThat(p.getSchema().getItems().getTypes().contains(SCHEMA_TYPE_STRING)).isTrue();
             }
             if (p.getName().equals("bestellungId")) {
-                assertThat(p.getSchema().getType()).isEqualTo(SCHEMA_TYPE_INTEGER);
+                assertThat(p.getSchema().getTypes().contains(SCHEMA_TYPE_INTEGER)).isTrue();
             }
             if (p.getName().equals("bestellPositionId")) {
-                assertThat(p.getSchema().getType()).isEqualTo(SCHEMA_TYPE_INTEGER);
+                assertThat(p.getSchema().getTypes().contains(SCHEMA_TYPE_INTEGER)).isTrue();
             }
             if (p.getName().equals("simpleVo")) {
-                assertThat(p.getSchema().getType()).isEqualTo(SCHEMA_TYPE_STRING);
+                assertThat(p.getSchema().getTypes().contains(SCHEMA_TYPE_STRING)).isTrue();
             }
         }
     }
-
 
     private Schema assertPropertyTypeAndGetSchema(Class containingClass, String propertyName,
                                                   String expectedPropertyType, String expectedFormat,
@@ -141,7 +141,12 @@ public class OpenApiMirrorBased_SpringBoot3_ITest {
         var openAPI = openAPIService.getCachedOpenAPI(Locale.getDefault());
         var testSchema = openAPI.getComponents().getSchemas().get(containingClass.getName());
         var propertySchema = (Schema) testSchema.getProperties().get(propertyName);
-        assertThat(propertySchema.getType()).isEqualTo(expectedPropertyType);
+        if(propertySchema.getSpecVersion().equals(SpecVersion.V30)) {
+            assertThat(propertySchema.getType()).isEqualTo(expectedPropertyType);
+        }
+        if(propertySchema.getSpecVersion().equals(SpecVersion.V31)) {
+            assertThat(propertySchema.getTypes()).contains(expectedPropertyType);
+        }
         assertThat(propertySchema.getFormat()).isEqualTo(expectedFormat);
         assertThat(propertySchema.getPattern()).isEqualTo(expectedPattern);
         return propertySchema;

@@ -2,6 +2,7 @@
 plugins {
     id 'java-library'
     id 'checkstyle'
+    id 'jacoco'
     alias libs.plugins.spring.boot.plugin
     alias libs.plugins.yumi.gradle.licenser.plugin
     alias libs.plugins.jaredsburrows.license.plugin
@@ -51,3 +52,12 @@ checkstyleTest.enabled = false
 bootJar {
     enabled = false
 }
+
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport

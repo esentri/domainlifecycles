@@ -8,6 +8,7 @@ buildscript {
 plugins {
 	id 'java-library'
 	id 'checkstyle'
+    id 'jacoco'
 	alias libs.plugins.spring.boot.plugin
 	alias libs.plugins.flyway.plugin
 	alias libs.plugins.jooq.codegen.gradle
@@ -71,9 +72,9 @@ dependencies {
     testImplementation libs.gruelbox.transactionoutbox.core
     testImplementation libs.gruelbox.transactionoutbox.jackson
     testImplementation libs.gruelbox.transactionoutbox.spring
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-web'
-    testImplementation 'org.springframework.boot:spring-boot-starter-jooq'
+	testImplementation libs.spring.boot3.starter.test
+    testImplementation libs.spring.boot3.starter.web
+    testImplementation libs.spring.boot3.starter.jooq
     testImplementation libs.spring.boot3.starter.artemis
     testImplementation libs.apache.active.mq.artemis.jms.server
 	testCompileOnly libs.lombok
@@ -142,3 +143,12 @@ tasks.named("jooqCodegen") {
 tasks.withType(Checkstyle) {
 	enabled = false
 }
+
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport

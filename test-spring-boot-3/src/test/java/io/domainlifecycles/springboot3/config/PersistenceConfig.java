@@ -11,11 +11,11 @@ import io.domainlifecycles.persistence.records.EntityValueObjectRecordTypeConfig
 import io.domainlifecycles.test.springboot3.tables.records.AktionsCodeBv3Record;
 import java.util.Set;
 import java.util.UUID;
+
 import org.jooq.DSLContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Primary;
 import tests.shared.complete.onlinehandel.bestellung.AktionsCodeBv3;
 import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
 import tests.shared.persistence.domain.simpleUuid.TestRootSimpleUuid;
@@ -25,9 +25,9 @@ import tests.shared.persistence.domain.simpleUuid.TestRootSimpleUuidId;
 public class PersistenceConfig {
 
     @Bean
-    @Primary
+    @DependsOn("initializedDomain")
     public JooqDomainPersistenceProvider domainPersistenceProvider(DomainObjectBuilderProvider domainObjectBuilderProvider,
-                                                                   Set<RecordMapper<?, ?, ?>> customRecordMappers) {
+                                                                   Set<RecordMapper<?,?,?>> customRecordMappers) {
 
         JooqDomainPersistenceConfiguration jooqDomainPersistenceConfiguration = JooqDomainPersistenceConfiguration
             .JooqPersistenceConfigurationBuilder
@@ -36,7 +36,7 @@ public class PersistenceConfig {
             .withRecordPackage("io.domainlifecycles.test.springboot3.tables.records")
             .withCustomRecordMappers(customRecordMappers)
             .withEntityValueObjectRecordTypeConfiguration(
-                new EntityValueObjectRecordTypeConfiguration<>(
+                new EntityValueObjectRecordTypeConfiguration(
                     BestellungBv3.class,
                     AktionsCodeBv3.class,
                     AktionsCodeBv3Record.class,
@@ -50,7 +50,6 @@ public class PersistenceConfig {
     }
 
     @Bean
-    @Primary
     @DependsOn("initializedDomain")
     EntityIdentityProvider customIdentityProvider(DSLContext dslContext) {
         return new EntityIdentityProvider() {
