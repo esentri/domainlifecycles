@@ -28,7 +28,6 @@ package io.domainlifecycles.autoconfig.configurations.properties;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
 import io.domainlifecycles.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
-import org.jooq.SQLDialect;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -70,7 +69,6 @@ public class JooqPersistenceConfigImportSelector  implements ImportSelector, Env
      * This method examines the {@link EnableDlc} annotation attributes and
      * determines which JOOQ persistence-related configuration classes should be imported
      * into the Spring application context.
-     * <p>
      * The method specifically looks for JOOQ-related attributes such as:
      * <ul>
      *   <li>{@code jooqRecordPackage} - package containing generated JOOQ records</li>
@@ -78,7 +76,6 @@ public class JooqPersistenceConfigImportSelector  implements ImportSelector, Env
      * </ul>
      * and ensures that the appropriate configuration properties are available
      * for JOOQ persistence initialization.
-     * </p>
      *
      * @param importingClassMetadata metadata about the class that is importing this selector
      * @return array of fully qualified class names to import for JOOQ persistence configuration
@@ -89,7 +86,7 @@ public class JooqPersistenceConfigImportSelector  implements ImportSelector, Env
             .getAnnotationAttributes(EnableDlc.class.getName());
         if (attrs != null) {
             String jooqRecordPackage = (String) attrs.get("jooqRecordPackage");
-            SQLDialect sqlDialect = (SQLDialect) attrs.get("jooqSqlDialect");
+            String sqlDialect = (String) attrs.get("jooqSqlDialect");
             // Register it in the environment for later use (e.g. by auto-config)
             if (environment instanceof ConfigurableEnvironment) {
                 MutablePropertySources propertySources = ((ConfigurableEnvironment) environment).getPropertySources();

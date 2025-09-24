@@ -110,7 +110,7 @@ DLC provides following core features:
       “Always-Valid-Strategy”
 
 - `Spring Integration`:
-    * Autoconfiguration for DLC via `@EnableDLC` annotation. See [`Autoconfig`](./dlc-spring-boot-autoconfig/readme.md)
+    * Spring Boot Starter and Autoconfiguration for DLC via `@EnableDLC` annotation. See [`Autoconfig`](./dlc-spring-boot-autoconfig/readme.md)
     * Spring Web Integration to enable
       Identities and “single-valued” ValueObjects being directly used as path or query
       parameters

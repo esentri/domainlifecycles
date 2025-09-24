@@ -52,7 +52,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
     },
     dlcDomainBasePackages = "io.domainlifecycles.autoconfig",
     jooqRecordPackage = "io.domainlifecycles.test.autoconfig",
-    jooqSqlDialect = SQLDialect.H2
+    jooqSqlDialect = "H2"
 )
 public class TestApplicationPersistenceAnnotationValuesAutoConfig {
 

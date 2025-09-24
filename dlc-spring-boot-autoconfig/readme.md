@@ -48,6 +48,23 @@ dependencies {
 </dependency>
 ```
 
+The DLC Spring Boot Starter includes all necessary DLC dependencies for the following features.
+Be aware that features requiring external libraries will only be enabled if these libraries are explicitly defined as a dependency:
+
+- DLC jOOQ persistence requires additionally a compatible version of jOOQ 
+- DLC Spring Web integration requires additionally Spring Web
+- DLC Spring Doc integration requires additionally a compatible version of SpringDoc2
+- DLC Domain Events 
+    - Domain Events with SpringTransaction support requires additionally a compatible version of spring-tx
+    - Domain Events with Jakarta JTA support require additionally  a JTA compatible transaction manager (e.g. Atomikos)
+    - Domain Events with Jakarta JMS support require additionally a JMS compatible client (e.g. Active MQ Artemis)
+    - Domain Events with Gruelbox support requires additionally a compatible version of Gruelbox
+    - Domain Events with ActiveMQ 5 Classic support require additionally the Active MQ Jakarta client library
+    - Domain Events Jakarta JTA, Jakarta JMS or Active MQ 5 Classic are not fully supported by AutoConfiguration. Additional configuration beans are required (see test configurations within this [sub project](./../test-domain-events-integration)).
+- DLC Jackson integration is enabled by default, but could be disabled, see below
+
+Generally, it is possible to add one of the optional dependencies mentioned above and disable the corresponding DLC autocofiguration (see below).
+
 ### Basic Configuration
 
 Enable DLC in your Spring Boot application using the `@EnableDlc` annotation:
@@ -134,7 +151,7 @@ Could be deactivated by:
 @EnableDlc(
     enableJooqPersistenceAutoConfig = true,
     jooqRecordPackage = "com.example.jooq.tables.records",
-    jooqSqlDialect = SQLDialect.POSTGRES
+    jooqSqlDialect = "POSTGRES"
 )
 ```
 
@@ -185,7 +202,7 @@ Enabling 'DlcDomainEventsAutoConfiguration' is recommended for Gruelbox Domain E
 **Purpose:** REST/Web integration for DLC Domain Objects
 
 **Activation:** Automatically active when `@EnableDlc` annotation is set
-and if Spring Web is used.
+and if Spring Web is used (on the classpath).
 
 Could be deactivated by:
 ```java

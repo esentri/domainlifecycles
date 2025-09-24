@@ -35,7 +35,7 @@ def dbMigration = 'src/test/resources/db/migration'
 
 dependencies {
     compileOnly libs.slf4j.api
-    api libs.jooq
+    compileOnly libs.jooq
     implementation libs.classgraph
 
     api project(":types")
@@ -58,13 +58,14 @@ dependencies {
     testImplementation libs.kryo
     testImplementation libs.mockito.core
     testImplementation libs.h2
+    testImplementation libs.jooq
 
     //jakarta config
     testImplementation libs.hibernate.validator
     testImplementation libs.glassfish.jakarta.el
     testImplementation libs.jakarta.el.api
 
-    runtimeOnly libs.jooq.codegen
+    compileOnly libs.jooq.codegen
     jooqCodegen libs.jooq.meta
 
     testImplementation libs.lombok

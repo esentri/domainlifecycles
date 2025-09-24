@@ -46,7 +46,7 @@ import java.util.List;
  * This configuration ensures that DLC domain objects can be seamlessly serialized to
  * and deserialized from JSON, maintaining domain integrity and supporting complex
  * domain object hierarchies.
- * <p>
+ *
  * The configuration provides specialized Jackson modules that understand DLC domain types:
  * <ul>
  *   <li>ValueObjects with their encapsulated values</li>
@@ -54,11 +54,9 @@ import java.util.List;
  *   <li>Entities and AggregateRoots with identity management</li>
  *   <li>Custom domain object builders for proper instantiation</li>
  * </ul>
- * </p>
- * <p>
+ *
  * Two variants are provided: one with EntityIdentityProvider support for handling
  * new entity creation during deserialization, and one without for simpler use cases.
- * </p>
  *
  * @author Mario Herb
  * @author Leon Völlinger

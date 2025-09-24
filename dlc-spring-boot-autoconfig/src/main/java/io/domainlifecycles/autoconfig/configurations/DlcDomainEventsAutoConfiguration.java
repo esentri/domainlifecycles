@@ -50,7 +50,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionManager;
 
 import java.util.List;
 
@@ -74,6 +73,7 @@ public class DlcDomainEventsAutoConfiguration {
      * Creates a ServiceProvider bean for managing service kinds.
      *
      * @param serviceKinds List of service kinds to be managed
+     * @param domainMirror the current Domain Mirror bean
      * @return A new ServiceProvider instance
      */
     @Bean
@@ -90,7 +90,7 @@ public class DlcDomainEventsAutoConfiguration {
      * @return A new TransactionalHandlerExecutor instance
      */
     @Bean
-    @ConditionalOnClass(TransactionManager.class)
+    @ConditionalOnClass(name="org.springframework.transaction.TransactionManager")
     @ConditionalOnBean(PlatformTransactionManager.class)
     @ConditionalOnMissingBean(TransactionalHandlerExecutor.class)
     public TransactionalHandlerExecutor transactionalHandlerExecutor(PlatformTransactionManager platformTransactionManager){
@@ -143,7 +143,7 @@ public class DlcDomainEventsAutoConfiguration {
      * @return A new transactional PublishingChannel
      */
     @Bean
-    @ConditionalOnClass(PlatformTransactionManager.class)
+    @ConditionalOnClass(name="org.springframework.transaction.PlatformTransactionManager")
     @ConditionalOnBean(PlatformTransactionManager.class)
     public PublishingChannel channelConfigurationWithPlatformTransactionManager(
         PlatformTransactionManager platformTransactionManager, ServiceProvider serviceProvider) {

@@ -40,7 +40,7 @@ import org.springframework.context.annotation.Import;
 @EnableDlc(
     value = DlcJooqPersistenceAutoConfiguration.class,
     dlcDomainBasePackages = "io.domainlifecycles.autoconfig",
-    jooqSqlDialect = SQLDialect.H2
+    jooqSqlDialect = "H2"
 )
 public class TestApplicationPersistenceMissingRecordPackageValueAutoConfig {
 

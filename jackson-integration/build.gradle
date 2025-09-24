@@ -14,7 +14,7 @@ java {
 
 dependencies {
     compileOnly libs.jackson.core
-    api libs.jackson.databind
+    compileOnly libs.jackson.databind
     api project(":types")
     implementation project(":mirror")
     implementation project(":access")

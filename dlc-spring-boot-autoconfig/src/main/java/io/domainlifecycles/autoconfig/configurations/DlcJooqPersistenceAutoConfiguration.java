@@ -45,7 +45,6 @@ import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.DefaultDSLContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -80,7 +79,7 @@ import java.util.Set;
     before = JooqAutoConfiguration.class
 )
 @EnableConfigurationProperties(DlcJooqPersistenceProperties.class)
-@ConditionalOnClass(DSLContext.class)
+@ConditionalOnClass(name="org.jooq.DSLContext")
 public class DlcJooqPersistenceAutoConfiguration {
 
     private @Value("${jooqRecordPackage}") String jooqRecordPackage;
@@ -161,6 +160,7 @@ public class DlcJooqPersistenceAutoConfiguration {
      * @param domainObjectBuilderProvider provider for building domain objects during deserialization
      * @param customRecordMappers all custom record mappers defined as Spring beans
      * @param persistenceProperties configuration properties containing the JOOQ record package
+     * @param domainMirror the current Domain Mirror bean
      * @return a configured {@link JooqDomainPersistenceProvider} instance
      * @throws DLCAutoConfigException if the jooqRecordPackage property is missing
      */

@@ -32,7 +32,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 @SpringBootApplication
-@EnableDlc
+@EnableDlc(jooqSqlDialect = "H2")
 public class TestApplicationDomainMissingBasePackageValueAutoConfig {
 
     /**

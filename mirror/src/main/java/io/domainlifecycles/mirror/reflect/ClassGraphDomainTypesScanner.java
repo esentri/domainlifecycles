@@ -121,6 +121,7 @@ public class ClassGraphDomainTypesScanner {
         }
 
         try (ScanResult scanResult = classGraph.scan()) {  // Start the scan
+            var jooqDSLContextNotAvailable = scanResult.getInterfaces("org.jooq.DSLContext").isEmpty();
 
             scanResult.getAllEnums()
                 .stream()
@@ -198,6 +199,12 @@ public class ClassGraphDomainTypesScanner {
             scanResult.getClassesImplementing(Repository.class)
                 .stream()
                 .filter(c -> !Repository.class.getName().equals(c.getName()))
+                .filter(c -> {
+                    if (jooqDSLContextNotAvailable){
+                        return !"io.domainlifecycles.jooq.imp.JooqAggregateRepository".equals(c.getName());
+                    }
+                    return true;
+                })
                 .map(r -> (Class<? extends Repository<?, ?>>) loadClass(r))
                 .filter(Objects::nonNull)
                 .map(dt -> build(new RepositoryMirrorBuilder(dt, genericTypeResolver)))

@@ -7,6 +7,7 @@ buildscript {
 
 plugins {
 	id 'java-library'
+    id 'maven-publish'
 	id 'checkstyle'
     id 'jacoco'
 	alias libs.plugins.spring.boot.plugin
@@ -41,10 +42,12 @@ dependencies {
     compileOnly project(":domain-events-activemq-classic-5")
     compileOnly project(":domain-events-mq")
     compileOnly libs.gruelbox.transactionoutbox.spring
+    compileOnly libs.spring.doc.openapi.starter.webmvc.ui
+    compileOnly libs.spring.web6
     api libs.spring.boot3.starter
     compileOnly libs.jakarta.transaction.api
 
-	runtimeOnly libs.jooq.codegen
+    compileOnly libs.jooq.codegen
 	jooqCodegen libs.jooq.meta
 
     testImplementation platform(libs.spring.boot3.dependencies)
@@ -77,12 +80,27 @@ dependencies {
     testImplementation libs.spring.boot3.starter.jooq
     testImplementation libs.spring.boot3.starter.artemis
     testImplementation libs.apache.active.mq.artemis.jms.server
+    testImplementation libs.spring.doc.openapi.starter.webmvc.ui
 	testCompileOnly libs.lombok
 	testAnnotationProcessor libs.lombok
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+tasks.named('sourcesJar', Jar) {
+    exclude '**/build/generated/**', '**/generated/**', '**/source/kapt/**', '**/sources/annotationProcessor/**'
+}
+
 bootJar {
 	enabled = false
+}
+
+jar {
+    enabled = true
+    archiveClassifier = ''   // <— remove the "plain" classifier
 }
 
 // ----------------------------------------------------------
@@ -138,6 +156,10 @@ tasks.named("compileJava") {
 tasks.named("jooqCodegen") {
 	dependsOn(tasks.named("flywayMigrate"))
 	inputs.files(fileTree("src/main/resources/db/migration"))
+}
+
+tasks.named("sourcesJar") {
+    dependsOn(tasks.named("jooqCodegen"))
 }
 
 tasks.withType(Checkstyle) {
