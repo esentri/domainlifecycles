@@ -143,7 +143,7 @@ By making our repository implementation extend the `JooqAggregateRepository`, we
 But now you might wonder, how can we make our `JooqCustomerRepository` implement the interface we defined before? 
 What's still left to do for us?
 
-Before we continue, please have a look at the following guide and follow through. This is necessary to setup DLC's persistence
+Before we continue, please have a look at the [following guide](additional/jooq-setup.md) and follow through. This is necessary to setup DLC's persistence
 and JOOQ, the driving force behind it, accordingly. As soon as you are finished, please return to this guide and continue with
 the next step.
 
