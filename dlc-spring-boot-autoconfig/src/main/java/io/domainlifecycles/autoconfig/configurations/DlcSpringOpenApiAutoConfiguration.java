@@ -31,6 +31,7 @@ import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 
 /**
@@ -46,8 +47,13 @@ import org.springframework.context.annotation.Bean;
  * @author Leon Völlinger
  * @author Mario Herb
  */
-@AutoConfiguration(after = DlcDomainAutoConfiguration.class)
-@ConditionalOnClass(name="org.springdoc.core.properties.SpringDocConfigProperties")
+@AutoConfiguration(
+    after = DlcDomainAutoConfiguration.class,
+    afterName = {
+        "org.springdoc.core.configuration.SpringDocConfiguration"
+    })
+@ConditionalOnClass(name ="org.springdoc.core.properties.SpringDocConfigProperties")
+@ConditionalOnProperty(prefix="springdoc.api-docs", name="enabled", havingValue="true", matchIfMissing=true)
 public class DlcSpringOpenApiAutoConfiguration {
 
     /**

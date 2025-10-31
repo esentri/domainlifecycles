@@ -1,7 +1,6 @@
 rootProject.name = 'domainlifecycles'
 
 include 'jackson-integration'
-include 'spring-web-integration'
 include 'bean-validations'
 include 'validation-extender'
 include 'assertions'
