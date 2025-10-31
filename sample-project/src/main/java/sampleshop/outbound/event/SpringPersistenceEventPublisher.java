@@ -29,6 +29,7 @@ package sampleshop.outbound.event;
 import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
 import io.domainlifecycles.persistence.repository.actions.PersistenceAction;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Component;
 
 
 /**
@@ -37,6 +38,7 @@ import org.springframework.context.ApplicationEventPublisher;
  *
  * @author Mario Herb
  */
+@Component
 public final class SpringPersistenceEventPublisher implements PersistenceEventPublisher {
 
     private final ApplicationEventPublisher applicationEventPublisher;

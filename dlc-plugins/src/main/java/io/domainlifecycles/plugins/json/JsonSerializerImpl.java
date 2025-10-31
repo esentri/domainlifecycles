@@ -31,10 +31,11 @@ import io.domainlifecycles.mirror.serialize.api.DomainSerializer;
 import io.domainlifecycles.mirror.serialize.api.JacksonDomainSerializer;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
 import io.domainlifecycles.plugins.util.DLCUtils;
-import java.net.URL;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URL;
+import java.util.List;
 
 /**
  * Implementation of the {@link JsonSerializer} interface that serializes

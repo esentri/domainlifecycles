@@ -46,6 +46,7 @@
 #acycler: greedy
 #ranker: longest-path
 #background: transparent
+#.note: fill=#ffffff italic
 
 // !!! sampleshop.core.domain.order.PlaceOrder !!!
 [<DC> PlaceOrder <<DomainCommand>> ]

@@ -28,7 +28,10 @@ package io.domainlifecycles.diagram;
 
 import io.domainlifecycles.diagram.domain.DomainDiagramGenerator;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
+import io.domainlifecycles.diagram.domain.notes.DomainClassNote;
 import io.domainlifecycles.mirror.api.DomainMirror;
+
+import java.util.Collection;
 
 /**
  * Factory to create new {@link Diagram}a by a given {@link DiagramConfig}.
@@ -42,11 +45,15 @@ public class DiagramGeneratorFactory {
      *
      * @param diagramConfig diagram generator configuration
      * @param domainMirror the Domain Model operated on
+     * @param notes the notes to be rendered
      * @return new instance of DomainDiagramGenerator
      */
-    public static Diagram getDomainDiagramGenerator(DiagramConfig diagramConfig, DomainMirror domainMirror) {
+    public static Diagram getDomainDiagramGenerator(
+        DiagramConfig diagramConfig,
+        DomainMirror domainMirror,
+        Collection<DomainClassNote> notes) {
         if (diagramConfig instanceof DomainDiagramConfig) {
-            return new DomainDiagramGenerator((DomainDiagramConfig) diagramConfig, domainMirror);
+            return new DomainDiagramGenerator((DomainDiagramConfig) diagramConfig, domainMirror, notes);
         }
         return null;
     }

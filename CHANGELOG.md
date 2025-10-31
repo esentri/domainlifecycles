@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - 2025-10-31
+- Upgraded all Spring Boot and Spring dependencies to SpringBoot version 3.5 and compatible versions
+- Extended default implementation of Entities and ValueObjects companion classes with 
+  pure reflective fallbacks for 'equals()', 'hashCode()', 'toString()'. That also enables 
+  the corresponding base classes to use 'equals()', 'hashCode()', 'toString()' without having 
+  the mirror initialized.
+- Added feature for external comments being rendered in Domain Diagramms.
+- Fixed bugs in Domain Diagrams due to missing classes not being rendered in certain inheritance cases.
+- Removed deprecated Spring Boot 2 support
+- Removed deprecated javax BeanValidation support
+- OpenAPI integration now provides OpenAPI 3.1 support
+- Bugfix in ValidationDomainClassExtender (was conflicting with other byte code extensions - Jacoco)
+- Tested support for Spring Boot 3.5.5
+- Added DLC SpringBoot starter and AutoConfiguration for Spring Boot 3.5.5
+- Extended Open API configuration Options
+- OpenAPI Nullabillity support for Open API 3.0 and 3.1
+
 ## [2.4.1] - 2025-06-06
 - Added deprecated markers at some classes
 - Refactored and extended documentation

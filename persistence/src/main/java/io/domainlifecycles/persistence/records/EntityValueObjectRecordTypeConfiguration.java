@@ -33,16 +33,15 @@ import io.domainlifecycles.domain.types.ValueObject;
 /**
  * Represents a entity value object record type configuration.
  *
- * @param <BASE_RECORD_TYPE>          the base record type
  * @param containingEntityType        the containing entity type
  * @param containedValueObjectType    the contained value object type
  * @param valueObjectRecordType       the value object record type
  * @param pathFromEntityToValueObject the path from the entity to the value object
  * @author Mario Herb
  */
-public record EntityValueObjectRecordTypeConfiguration<BASE_RECORD_TYPE>(
+public record EntityValueObjectRecordTypeConfiguration(
     Class<? extends Entity<?>> containingEntityType,
     Class<? extends ValueObject> containedValueObjectType,
-    Class<? extends BASE_RECORD_TYPE> valueObjectRecordType,
+    Class valueObjectRecordType,
     String... pathFromEntityToValueObject) {
 }

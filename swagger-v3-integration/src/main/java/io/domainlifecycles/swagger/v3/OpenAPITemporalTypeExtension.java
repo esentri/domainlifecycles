@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ package io.domainlifecycles.swagger.v3;
 import io.domainlifecycles.reflect.JavaReflect;
 import io.domainlifecycles.reflect.MemberSelect;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,10 +56,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * - {@link YearMonth}
  * - {@link MonthDay}
  * <p>
- * the default Springdoc behaviour currently (v.1.6.9) doesn't support those types.
+ * the default Springdoc behaviour currently (2.8.13) doesn't support those types.
  * <p>
  * The temporal type extension works as well as for domain object types as for all other classes which require Open
  * API support by SpringDoc.
+ *
+ * Supports OpenAPI 3.0 and 3.1.
  *
  * @author Mario Herb
  */
@@ -74,23 +77,13 @@ public class OpenAPITemporalTypeExtension {
      */
     public static void extendOpenAPISchemaForTemporalTypes(OpenAPI openAPI) {
         if (openAPI.getComponents() != null && openAPI.getComponents().getSchemas() != null) {
-            replaceLocalTimeSchema(openAPI);
             modifyTemporalSchemaReferences(openAPI);
         }
     }
 
-    private static void replaceLocalTimeSchema(OpenAPI openAPI) {
-        Schema<?> localTimeSchema = openAPI.getComponents().getSchemas().get(LocalTime.class.getName());
-        if (localTimeSchema != null) {
-            Schema<?> newLocalTimeSchema = new Schema<LocalTime>();
-            newLocalTimeSchema.setName(localTimeSchema.getName());
-            newLocalTimeSchema.setType(Constants.TYPE_STRING);
-            newLocalTimeSchema.setPattern(Constants.PATTERN_LOCAL_TIME);
-            openAPI.getComponents().getSchemas().put(LocalTime.class.getName(), newLocalTimeSchema);
-        }
-    }
-
     private static void modifyTemporalSchemaReferences(OpenAPI openAPI) {
+        final AtomicBoolean needToAddLocalTimeSchema = new AtomicBoolean();
+        needToAddLocalTimeSchema.set(false);
 
         final AtomicBoolean needToAddOffsetTimeSchema = new AtomicBoolean();
         needToAddOffsetTimeSchema.set(false);
@@ -120,22 +113,26 @@ public class OpenAPITemporalTypeExtension {
                                     || containsType(f, YearMonth.class)
                                     || containsType(f, MonthDay.class)
                                     || containsType(f, Year.class)
+                                    || containsType(f, LocalTime.class)
                             )
                         )
                         .forEach(f -> {
                             if (containsType(f, OffsetTime.class)) {
                                 needToAddOffsetTimeSchema.set(true);
                                 modifyPropertySchemaReference(entry.getValue(), f.getName(),
-                                    OffsetTime.class.getName());
+                                    OffsetTime.class.getName(), Optional.class.isAssignableFrom(f.getType()));
                             } else if (containsType(f, YearMonth.class)) {
                                 needToAddYearMonthSchema.set(true);
-                                modifyPropertySchemaReference(entry.getValue(), f.getName(), YearMonth.class.getName());
+                                modifyPropertySchemaReference(entry.getValue(), f.getName(), YearMonth.class.getName(), Optional.class.isAssignableFrom(f.getType()));
                             } else if (containsType(f, MonthDay.class)) {
                                 needToAddMonthDaySchema.set(true);
-                                modifyPropertySchemaReference(entry.getValue(), f.getName(), MonthDay.class.getName());
+                                modifyPropertySchemaReference(entry.getValue(), f.getName(), MonthDay.class.getName(), Optional.class.isAssignableFrom(f.getType()));
                             } else if (containsType(f, Year.class)) {
                                 needToAddYearSchema.set(true);
-                                modifyPropertySchemaReference(entry.getValue(), f.getName(), Year.class.getName());
+                                modifyPropertySchemaReference(entry.getValue(), f.getName(), Year.class.getName(), Optional.class.isAssignableFrom(f.getType()));
+                            } else if (containsType(f, LocalTime.class)) {
+                                needToAddLocalTimeSchema.set(true);
+                                modifyPropertySchemaReference(entry.getValue(), f.getName(), LocalTime.class.getName(), Optional.class.isAssignableFrom(f.getType()));
                             }
                         });
                 } catch (ClassNotFoundException e) {
@@ -156,6 +153,9 @@ public class OpenAPITemporalTypeExtension {
         if (needToAddYearSchema.get()) {
             addYearSchema(openAPI);
         }
+        if (needToAddLocalTimeSchema.get()) {
+            addLocalTimeSchema(openAPI);
+        }
     }
 
     private static boolean containsType(Field f, Class<?> type) {
@@ -166,10 +166,31 @@ public class OpenAPITemporalTypeExtension {
         }
     }
 
+    private static void addLocalTimeSchema(OpenAPI openAPI) {
+        if (openAPI.getComponents().getSchemas().get(LocalTime.class.getName()) == null) {
+            Schema<?> newLocalTimeSchema = new Schema<LocalTime>();
+            newLocalTimeSchema.setSpecVersion(openAPI.getSpecVersion());
+            if(openAPI.getSpecVersion().equals(SpecVersion.V30)) {
+                newLocalTimeSchema.setType(Constants.TYPE_STRING);
+            }
+            if(openAPI.getSpecVersion().equals(SpecVersion.V31)) {
+                newLocalTimeSchema.addType(Constants.TYPE_STRING);
+            }
+            newLocalTimeSchema.setPattern(Constants.PATTERN_LOCAL_TIME);
+            openAPI.getComponents().getSchemas().put(LocalTime.class.getName(), newLocalTimeSchema);
+        }
+    }
+
     private static void addOffsetTimeSchema(OpenAPI openAPI) {
         if (openAPI.getComponents().getSchemas().get(OffsetTime.class.getName()) == null) {
             Schema<?> offsetTimeSchema = new Schema<>();
-            offsetTimeSchema.setType(Constants.TYPE_STRING);
+            offsetTimeSchema.setSpecVersion(openAPI.getSpecVersion());
+            if(openAPI.getSpecVersion().equals(SpecVersion.V30)) {
+                offsetTimeSchema.setType(Constants.TYPE_STRING);
+            }
+            if(openAPI.getSpecVersion().equals(SpecVersion.V31)) {
+                offsetTimeSchema.addType(Constants.TYPE_STRING);
+            }
             offsetTimeSchema.setPattern(Constants.PATTERN_OFFSET_TIME);
             openAPI.getComponents().addSchemas(OffsetTime.class.getName(), offsetTimeSchema);
         }
@@ -178,7 +199,13 @@ public class OpenAPITemporalTypeExtension {
     private static void addYearMonthSchema(OpenAPI openAPI) {
         if (openAPI.getComponents().getSchemas().get(YearMonth.class.getName()) == null) {
             Schema<?> yearMonthSchema = new Schema<>();
-            yearMonthSchema.setType(Constants.TYPE_STRING);
+            yearMonthSchema.setSpecVersion(openAPI.getSpecVersion());
+            if(openAPI.getSpecVersion().equals(SpecVersion.V30)) {
+                yearMonthSchema.setType(Constants.TYPE_STRING);
+            }
+            if(openAPI.getSpecVersion().equals(SpecVersion.V31)) {
+                yearMonthSchema.addType(Constants.TYPE_STRING);
+            }
             yearMonthSchema.setPattern(Constants.PATTERN_YEAR_MONTH);
             openAPI.getComponents().addSchemas(YearMonth.class.getName(), yearMonthSchema);
         }
@@ -187,7 +214,13 @@ public class OpenAPITemporalTypeExtension {
     private static void addMonthDaySchema(OpenAPI openAPI) {
         if (openAPI.getComponents().getSchemas().get(MonthDay.class.getName()) == null) {
             Schema<?> monthDaySchema = new Schema<>();
-            monthDaySchema.setType(Constants.TYPE_STRING);
+            monthDaySchema.setSpecVersion(openAPI.getSpecVersion());
+            if(openAPI.getSpecVersion().equals(SpecVersion.V30)) {
+                monthDaySchema.setType(Constants.TYPE_STRING);
+            }
+            if(openAPI.getSpecVersion().equals(SpecVersion.V31)) {
+                monthDaySchema.addType(Constants.TYPE_STRING);
+            }
             monthDaySchema.setPattern(Constants.PATTERN_MONTH_DAY);
             openAPI.getComponents().addSchemas(MonthDay.class.getName(), monthDaySchema);
         }
@@ -196,20 +229,24 @@ public class OpenAPITemporalTypeExtension {
     private static void addYearSchema(OpenAPI openAPI) {
         if (openAPI.getComponents().getSchemas().get(Year.class.getName()) == null) {
             Schema<?> yearSchema = new Schema<>();
-            yearSchema.setType(Constants.TYPE_STRING);
+            yearSchema.setSpecVersion(openAPI.getSpecVersion());
+            if(openAPI.getSpecVersion().equals(SpecVersion.V30)) {
+                yearSchema.setType(Constants.TYPE_STRING);
+            }
+            if(openAPI.getSpecVersion().equals(SpecVersion.V31)) {
+                yearSchema.addType(Constants.TYPE_STRING);
+            }
             yearSchema.setPattern(Constants.PATTERN_YEAR);
             openAPI.getComponents().addSchemas(Year.class.getName(), yearSchema);
         }
     }
 
     private static void modifyPropertySchemaReference(Schema<?> typeSchema, String propertyName,
-                                                      String propertyTypeFullQualifiedName) {
+                                                      String propertyTypeFullQualifiedName, boolean optional) {
         if (typeSchema.getProperties() != null) {
             Schema<?> propertySchema = typeSchema.getProperties().get(propertyName);
             if (propertySchema != null) {
-                propertySchema.setType(null);
-                propertySchema.setJsonSchema(null);
-                propertySchema.setProperties(null);
+                Utils.eraseSchemaSettings(propertySchema, false);
                 propertySchema.set$ref(REF_PREFIX + propertyTypeFullQualifiedName);
             }
         }

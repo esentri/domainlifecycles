@@ -26,6 +26,7 @@
 
 package sampleshop.outbound;
 
+import sampleshop.outbound.event.SpringPersistenceEventPublisher;
 import io.domainlifecycles.jooq.imp.JooqAggregateRepository;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import org.jooq.DSLContext;
@@ -33,7 +34,6 @@ import org.springframework.stereotype.Repository;
 import sampleshop.Sequences;
 import sampleshop.core.domain.product.Product;
 import sampleshop.core.outport.ProductRepository;
-import sampleshop.outbound.event.SpringPersistenceEventPublisher;
 
 import static sampleshop.Tables.PRODUCT;
 

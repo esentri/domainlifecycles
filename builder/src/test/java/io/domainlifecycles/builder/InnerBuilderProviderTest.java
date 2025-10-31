@@ -1,9 +1,9 @@
 package io.domainlifecycles.builder;
 
 
-import io.domainlifecycles.builder.exception.DLCBuilderException;
 import helper.TestValueObject;
 import helper.TestValueObjectNoBuilder;
+import io.domainlifecycles.builder.exception.DLCBuilderException;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;

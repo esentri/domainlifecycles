@@ -34,6 +34,7 @@
 
 package sampleshop;
 
+import io.domainlifecycles.autoconfig.annotation.EnableDlc;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.validation.extend.ValidationDomainClassExtender;
@@ -50,11 +51,8 @@ import java.util.Locale;
  * @author Mario Herb
  */
 @SpringBootApplication
+@EnableDlc()
 public class ShopApplication {
-
-    static {
-        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleshop"));
-    }
 
     /**
      * Setting the Locale to explicitly force the language in default validation error messages.

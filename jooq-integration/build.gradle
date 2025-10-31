@@ -9,6 +9,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
+    id 'jacoco'
     alias libs.plugins.flyway.plugin
     alias libs.plugins.jooq.codegen.gradle
     alias libs.plugins.yumi.gradle.licenser.plugin
@@ -34,7 +35,7 @@ def dbMigration = 'src/test/resources/db/migration'
 
 dependencies {
     compileOnly libs.slf4j.api
-    api libs.jooq
+    compileOnly libs.jooq
     implementation libs.classgraph
 
     api project(":types")
@@ -57,13 +58,14 @@ dependencies {
     testImplementation libs.kryo
     testImplementation libs.mockito.core
     testImplementation libs.h2
+    testImplementation libs.jooq
 
     //jakarta config
     testImplementation libs.hibernate.validator
     testImplementation libs.glassfish.jakarta.el
     testImplementation libs.jakarta.el.api
 
-    runtimeOnly libs.jooq.codegen
+    compileOnly libs.jooq.codegen
     jooqCodegen libs.jooq.meta
 
     testImplementation libs.lombok
@@ -136,3 +138,13 @@ jar {
 // checkstyle will throw errors and hints as soon as you add a JavaDoc in test file methods, which is the case in some
 // of the more complex test files in this module. That's why the checkstyleTest task is explicitly disabled.
 checkstyleTest.enabled = false
+
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport
+

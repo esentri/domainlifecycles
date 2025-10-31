@@ -27,10 +27,9 @@
 package tests.shared.persistence.domain.inheritanceExtended;
 
 import io.domainlifecycles.domain.types.base.AggregateRootBase;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotNull;
 
 
 @Getter

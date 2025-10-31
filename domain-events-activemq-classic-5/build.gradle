@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
+    id 'jacoco'
     alias libs.plugins.yumi.gradle.licenser.plugin
     alias libs.plugins.jaredsburrows.license.plugin
 }
@@ -18,11 +19,15 @@ dependencies {
     api project(":types")
     api project(":service-registry")
     api project(":domain-events-mq")
+    compileOnly project(":domain-events-spring-tx")
+    compileOnly project(":domain-events-gruelbox")
+    compileOnly project(":domain-events-mq")
 
     api libs.jakarta.jms.api
-    runtimeOnly libs.active.mq.client
-    runtimeOnly libs.active.mq.client.jakarta
+    compileOnly libs.active.mq.client
+    compileOnly libs.active.mq.client.jakarta
     compileOnly libs.jackson.core
+    compileOnly libs.gruelbox.transactionoutbox.core
     api libs.jackson.databind
     compileOnly libs.slf4j.api
 
@@ -33,9 +38,10 @@ dependencies {
     testImplementation project(":service-registry")
     testImplementation project(":domain-events-core")
     testImplementation project(":domain-events-spring-tx")
+    testImplementation project(":domain-events-gruelbox")
+    testImplementation project(":domain-events-mq")
     testImplementation project(":jackson-integration")
     testImplementation project(":builder")
-    testImplementation project(":domain-events-activemq-classic-5")
 
     testImplementation libs.slf4j.api
     testImplementation libs.lombok
@@ -50,15 +56,26 @@ dependencies {
     testImplementation libs.spring.boot3.starter.test
 
     testImplementation libs.spring.boot3.starter.activemq
+    testImplementation libs.gruelbox.transactionoutbox.core
+    testImplementation libs.gruelbox.transactionoutbox.spring
+    testImplementation libs.gruelbox.transactionoutbox.jackson
 
     testImplementation libs.h2
     testImplementation libs.awaitility
 
-    testImplementation (libs.active.mq.broker) {
-        exclude (group: 'org.apache.activemq', module: 'activemq-client-jakarta')
+    testImplementation(libs.active.mq.broker) {
+        exclude(group: 'org.apache.activemq', module: 'activemq-client-jakarta')
     }
 
     testImplementation libs.active.mq.client.jakarta
     testImplementation libs.javax.jms.api
-    testImplementation libs.bundles.gruelbox.transactionoutbox
 }
+
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport

@@ -6,22 +6,18 @@
 
 ---
 
-Once everything necessary has been configured properly , the DLC Mirror must be initialized when the application is 
-started:
+As long as you use the autoconfiguration feature, you can start the app like your usual Spring Boot application.
 
 <details>
 <summary><img style="height: 12px" src="../../icons/java.svg" alt="java"> <b>Application.java</b></summary>
 
 ```java
 @SpringBootApplication
+@EnableDlc(dlcDomainBasePackages = "com.example.domain")
 public class SampleApplication {
 
-    static {
-        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleapp"));
-    }
-
     public static void main(String[] args) {
-        new SpringApplicationBuilder(ShopApplication.class).run(args);
+        new SpringApplicationBuilder(SampleApplication.class).run(args);
     }
 }
 ```

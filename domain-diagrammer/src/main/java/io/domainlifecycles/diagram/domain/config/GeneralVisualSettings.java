@@ -96,6 +96,7 @@ public class GeneralVisualSettings {
     private static final boolean DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_READ_MODELS = false;
     private static final boolean DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_DOMAIN_EVENTS = false;
     private static final boolean DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_DOMAIN_COMMANDS = false;
+    private static final boolean DEFAULT_SHOW_NOTES = false;
 
     private final boolean showFields;
     private final boolean showFullQualifiedClassNames;
@@ -146,6 +147,7 @@ public class GeneralVisualSettings {
     private final boolean showInheritanceStructuresForReadModels;
     private final boolean showInheritanceStructuresForDomainEvents;
     private final boolean showInheritanceStructuresForDomainCommands;
+    private final boolean showNotes;
 
     private GeneralVisualSettings(
         boolean showFields, 
@@ -196,7 +198,8 @@ public class GeneralVisualSettings {
         boolean showInheritanceStructuresForServiceKinds,
         boolean showInheritanceStructuresForReadModels,
         boolean showInheritanceStructuresForDomainEvents,
-        boolean showInheritanceStructuresForDomainCommands
+        boolean showInheritanceStructuresForDomainCommands,
+        boolean showNotes
     ) {
         this.showFields = showFields;
         this.showFullQualifiedClassNames = showFullQualifiedClassNames;
@@ -247,6 +250,7 @@ public class GeneralVisualSettings {
         this.showInheritanceStructuresForReadModels = showInheritanceStructuresForReadModels;
         this.showInheritanceStructuresForDomainEvents = showInheritanceStructuresForDomainEvents;
         this.showInheritanceStructuresForDomainCommands = showInheritanceStructuresForDomainCommands;
+        this.showNotes = showNotes;
     }
 
     /**
@@ -691,6 +695,15 @@ public class GeneralVisualSettings {
     }
 
     /**
+     * Returns whether notes should be shown in the diagram.
+     *
+     * @return true if notes should be shown, false otherwise
+     */
+    public boolean isShowNotes() {
+        return showNotes;
+    }
+
+    /**
      * Creates and returns a new instance of GeneralVisualSettingsBuilder.
      *
      * @return a new instance of GeneralVisualSettingsBuilder to configure and build a GeneralVisualSettings object.
@@ -767,6 +780,7 @@ public class GeneralVisualSettings {
         private boolean showInheritanceStructuresForReadModels$value = DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_READ_MODELS;
         private boolean showInheritanceStructuresForDomainEvents$value = DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_DOMAIN_EVENTS;
         private boolean showInheritanceStructuresForDomainCommands$value = DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_DOMAIN_COMMANDS;
+        private boolean showNotes$value = DEFAULT_SHOW_NOTES;
 
         /**
          * Constructs a new GeneralVisualSettingsBuilder with default values.
@@ -1315,6 +1329,17 @@ public class GeneralVisualSettings {
         }
 
         /**
+         * Sets whether to show notes in the diagram.
+         *
+         * @param showNotes true to show notes, false to hide
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowNotes(boolean showNotes) {
+            this.showNotes$value = showNotes;
+            return this;
+        }
+
+        /**
          * Constructs a new instance of the {@code GeneralVisualSettings} class initialized with
          * the current state of the builder. The method uses the configured attributes in this builder
          * to create a fully constructed {@code GeneralVisualSettings} object.
@@ -1371,7 +1396,8 @@ public class GeneralVisualSettings {
                 showInheritanceStructuresForServiceKinds$value,
                 showInheritanceStructuresForReadModels$value,
                 showInheritanceStructuresForDomainEvents$value,
-                showInheritanceStructuresForDomainCommands$value
+                showInheritanceStructuresForDomainCommands$value,
+                showNotes$value
             );
         }
     }

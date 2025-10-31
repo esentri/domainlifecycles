@@ -187,7 +187,7 @@ public class JooqDomainPersistenceConfiguration extends DomainPersistenceConfigu
             return this;
         }
 
-        public JooqPersistenceConfigurationBuilder withEntityValueObjectRecordTypeConfiguration(EntityValueObjectRecordTypeConfiguration<UpdatableRecord<?>>... entityValueObjectRecordTypeConfigurations) {
+        public JooqPersistenceConfigurationBuilder withEntityValueObjectRecordTypeConfiguration(EntityValueObjectRecordTypeConfiguration... entityValueObjectRecordTypeConfigurations) {
             return withEntityValueObjectRecordClassProvider(
                 () -> Arrays.asList(entityValueObjectRecordTypeConfigurations));
         }

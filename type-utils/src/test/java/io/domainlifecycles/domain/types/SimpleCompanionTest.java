@@ -9,7 +9,7 @@ import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tests.shared.TestDataGenerator;
-import tests.shared.persistence.domain.bestellung.bv2.AktionsCode;
+import tests.shared.complete.onlinehandel.bestellung.AktionsCodeBv3;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedVoAggregateRoot;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedVoEntity;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedVoEntityId;
@@ -66,31 +66,31 @@ public class SimpleCompanionTest {
 
     @Test
     public void testNotEqualsValueObject() {
-        AktionsCode a = AktionsCode.builder().setValue("blubb").build();
-        AktionsCode a2 = AktionsCode.builder().setValue("blubb2").build();
+        AktionsCodeBv3 a = AktionsCodeBv3.builder().setValue("blubb").build();
+        AktionsCodeBv3 a2 = AktionsCodeBv3.builder().setValue("blubb2").build();
         Assertions.assertThat(a != a2).isTrue();
         Assertions.assertThat(ValueObjects.equals(a, a2)).isFalse();
     }
 
     @Test
     public void testEqualsValueObject() {
-        AktionsCode a = AktionsCode.builder().setValue("blubb").build();
-        AktionsCode a2 = AktionsCode.builder().setValue("blubb").build();
+        AktionsCodeBv3 a = AktionsCodeBv3.builder().setValue("blubb").build();
+        AktionsCodeBv3 a2 = AktionsCodeBv3.builder().setValue("blubb").build();
         Assertions.assertThat(a != a2).isTrue();
         Assertions.assertThat(ValueObjects.equals(a, a2)).isTrue();
     }
 
     @Test
     public void testToStringValueObject() {
-        AktionsCode a = AktionsCode.builder().setValue("blubb").build();
+        AktionsCodeBv3 a = AktionsCodeBv3.builder().setValue("blubb").build();
         Assertions.assertThat(ValueObjects.toString(a)).isEqualTo(
-            AktionsCode.class.getName() + "@" + System.identityHashCode(a) + "(value=blubb)");
+            AktionsCodeBv3.class.getName() + "@" + System.identityHashCode(a) + "(value=blubb)");
     }
 
     @Test
     public void testHashCodeEqualsValueObject() {
-        AktionsCode a = AktionsCode.builder().setValue("blubb").build();
-        AktionsCode a2 = AktionsCode.builder().setValue("blubb").build();
+        AktionsCodeBv3 a = AktionsCodeBv3.builder().setValue("blubb").build();
+        AktionsCodeBv3 a2 = AktionsCodeBv3.builder().setValue("blubb").build();
         Assertions.assertThat(a != a2).isTrue();
         Assertions.assertThat(ValueObjects.hashCode(a)).isEqualTo(ValueObjects.hashCode(a2));
     }

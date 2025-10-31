@@ -10,6 +10,10 @@ routing boilerplate code through `@ListensTo` annotation and optionally support 
 handling and support for “transactional outbox” pattern for better publishing of DomainEvents.
 
 ---
+## Configuration
+In Memory Domain Events will automatically be configured. 
+To disable automatic routing of Domain Events or use different event bus integrations  
+see [DLC Spring Boot AutoConfig](./../../../dlc-spring-boot-autoconfig/readme.md).
 
 ## Implementation 
 
@@ -51,9 +55,9 @@ class EventListener {
 
 ---
 
-|           **Persistence**           |            **Validation**             |
-|:-----------------------------------:|:-------------------------------------:|
-|  [<< Previous](persistence_en.md)   |  [Next >>](validation_support_en.md)  |
+|          **Persistence**          |           **Validation**            |
+|:---------------------------------:|:-----------------------------------:|
+| [<< Previous](persistence_en.md)  | [Next >>](validation_support_en.md) |
 
 ---
 

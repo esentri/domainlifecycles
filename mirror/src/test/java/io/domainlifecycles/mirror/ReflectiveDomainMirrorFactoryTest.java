@@ -59,9 +59,6 @@ import tests.shared.openapi.TestIdExtended;
 import tests.shared.openapi.TestIdInterface;
 import tests.shared.openapi.TestIdInterfaceExtended;
 import tests.shared.openapi.jakarta.TestVo2;
-import tests.shared.persistence.domain.bestellung.bv2.BestellStatusCodeEnum;
-import tests.shared.persistence.domain.bestellung.bv2.BestellungId;
-import tests.shared.persistence.domain.bestellung.bv2.WaehrungEnum;
 import tests.shared.persistence.domain.inheritanceExtended.CarWithEngine;
 import tests.shared.persistence.domain.inheritanceExtended.VehicleExtended;
 import tests.shared.persistence.domain.inheritanceGenericId.AbstractRoot;
@@ -70,7 +67,7 @@ import tests.shared.persistence.domain.valueobjects.ComplexVo;
 import tests.shared.persistence.domain.valueobjects.SimpleVo;
 import tests.shared.persistence.domain.valueobjects.SimpleVoOneToMany2;
 import tests.shared.persistence.domain.valueobjects.SimpleVoOneToMany3;
-import tests.shared.validation.jakarta.ValidatedAggregateRoot2;
+import tests.shared.validation.jakarta.ValidatedAggregateRoot;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -109,7 +106,7 @@ public class ReflectiveDomainMirrorFactoryTest {
             arguments(TestIdInterface.class, UUID.class),
             arguments(TestIdExtended.class, UUID.class),
             arguments(TestIdInterfaceExtended.class, UUID.class),
-            arguments(BestellungId.class, Long.class)
+            arguments(BestellungIdBv3.class, Long.class)
         );
     }
 
@@ -131,8 +128,8 @@ public class ReflectiveDomainMirrorFactoryTest {
 
     private static Stream<Arguments> enumTypes() {
         return Stream.of(
-            arguments(BestellStatusCodeEnum.class),
-            arguments(WaehrungEnum.class)
+            arguments(BestellStatusCodeEnumBv3.class),
+            arguments(WaehrungEnumBv3.class)
         );
     }
 
@@ -484,14 +481,14 @@ public class ReflectiveDomainMirrorFactoryTest {
     @Test
     public void testValidatedAggregateRoot2() {
         assertDomainObject(
-            ValidatedAggregateRoot2.class.getName(),
+            ValidatedAggregateRoot.class.getName(),
             AggregateRootBase.class.getName(),
             "id",
             List.of(
                 new ExpectedProperty(
                     String.class,
                     "text",
-                    ValidatedAggregateRoot2.class.getName(),
+                    ValidatedAggregateRoot.class.getName(),
                     true,
                     false,
                     true,
@@ -508,7 +505,7 @@ public class ReflectiveDomainMirrorFactoryTest {
                 new ExpectedProperty(
                     String.class,
                     "optionalText",
-                    ValidatedAggregateRoot2.class.getName(),
+                    ValidatedAggregateRoot.class.getName(),
                     true,
                     true,
                     true,
@@ -954,7 +951,7 @@ public class ReflectiveDomainMirrorFactoryTest {
                     List.of(
                         new ExpectedParameter(
                             "arg0",
-                            BestellStatusCodeEnum.class,
+                            BestellStatusCodeEnumBv3.class,
                             null,
                             false,
                             false,

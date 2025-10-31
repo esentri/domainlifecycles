@@ -17,9 +17,12 @@ dependencies {
     api project(":types")
     api project(":service-registry")
     api project (":domain-events-mq")
+    compileOnly project (":domain-events-spring-tx")
+    compileOnly project (":domain-events-gruelbox")
     api libs.jakarta.jms.api
     compileOnly libs.jackson.core
-    api libs.jackson.databind
+    compileOnly libs.gruelbox.transactionoutbox.core
+    compileOnly libs.jackson.databind
     compileOnly libs.slf4j.api
 
 }

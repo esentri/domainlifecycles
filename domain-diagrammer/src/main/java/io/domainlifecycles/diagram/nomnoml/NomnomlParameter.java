@@ -99,14 +99,12 @@ public class NomnomlParameter implements DiagramElement {
      */
     public boolean equals(final Object o) {
         if (o == this) return true;
-        if (!(o instanceof NomnomlParameter)) return false;
-        final NomnomlParameter other = (NomnomlParameter) o;
-        if (!other.canEqual((Object) this)) return false;
+        if (!(o instanceof NomnomlParameter other)) return false;
+        if (!other.canEqual(this)) return false;
         final Object this$type = this.getType();
         final Object other$type = other.getType();
         if (!Objects.equals(this$type, other$type)) return false;
-        if (this.isRequired() != other.isRequired()) return false;
-        return true;
+        return this.isRequired() == other.isRequired();
     }
 
     /**

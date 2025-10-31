@@ -28,6 +28,9 @@ package io.domainlifecycles.plugins.diagram.kroki;
 
 import io.domainlifecycles.plugins.diagram.FileType;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -36,8 +39,7 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import static java.lang.Thread.sleep;
 
 /**

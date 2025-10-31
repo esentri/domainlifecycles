@@ -28,6 +28,7 @@ package io.domainlifecycles.plugins.viewer.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.domainlifecycles.plugins.viewer.model.jackson.DomainMirrorJsonSerializer;
+
 import java.util.List;
 
 /**

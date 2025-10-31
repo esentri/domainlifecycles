@@ -31,7 +31,6 @@ import io.domainlifecycles.plugins.json.JsonSerializerImpl;
 import io.domainlifecycles.plugins.viewer.DomainModelUploader;
 import io.domainlifecycles.plugins.viewer.DomainModelUploaderImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
-import java.util.List;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -40,6 +39,8 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * Maven goal for uploading the domain model JSON to a remote Diagram Viewer application.

@@ -61,6 +61,7 @@ package io.domainlifecycles.diagram.domain.config;
  */
 public class StyleSettings {
 
+    private static final String DEFAULT_NOTE_STYLE = "fill=#ffffff italic";
     private static final String DEFAULT_AGGREGATE_ROOT_STYLE = "fill=#8f8f bold";
     private static final String DEFAULT_AGGREGATE_FRAME_STYLE = "visual=frame align=left";
     private static final String DEFAULT_ENTITY_STYLE = "fill=#88AAFF bold";
@@ -79,6 +80,7 @@ public class StyleSettings {
     private static final String DEFAULT_FONT = "Helvetica";
     private static final String DEFAULT_BACKGROUND_COLOR = "transparent";
 
+    private final String noteStyle;
     private final String aggregateRootStyle;
     private final String aggregateFrameStyle;
     private final String entityStyle;
@@ -97,12 +99,27 @@ public class StyleSettings {
     private final String font;
     private final String backgroundColor;
 
-    private StyleSettings(String aggregateRootStyle, String aggregateFrameStyle, String entityStyle,
-                          String valueObjectStyle, String enumStyle, String identityStyle, String domainEventStyle,
-                          String domainCommandStyle, String applicationServiceStyle, String domainServiceStyle,
-                          String repositoryStyle, String readModelStyle, String queryHandlerStyle,
-                          String outboundServiceStyle, String unspecifiedServiceKindStyle, String font,
-                          String backgroundColor) {
+    private StyleSettings(
+        String noteStyle,
+        String aggregateRootStyle,
+        String aggregateFrameStyle,
+        String entityStyle,
+        String valueObjectStyle,
+        String enumStyle,
+        String identityStyle,
+        String domainEventStyle,
+        String domainCommandStyle,
+        String applicationServiceStyle,
+        String domainServiceStyle,
+        String repositoryStyle,
+        String readModelStyle,
+        String queryHandlerStyle,
+        String outboundServiceStyle,
+        String unspecifiedServiceKindStyle,
+        String font,
+        String backgroundColor
+    ) {
+        this.noteStyle = noteStyle;
         this.aggregateRootStyle = aggregateRootStyle;
         this.aggregateFrameStyle = aggregateFrameStyle;
         this.entityStyle = entityStyle;
@@ -120,6 +137,15 @@ public class StyleSettings {
         this.unspecifiedServiceKindStyle = unspecifiedServiceKindStyle;
         this.font = font;
         this.backgroundColor = backgroundColor;
+    }
+
+    /**
+     * Gets the style configuration for note elements.
+     *
+     * @return the style string for notes
+     */
+    public String getNoteStyle() {
+        return noteStyle;
     }
 
     /**
@@ -294,6 +320,7 @@ public class StyleSettings {
      * instance.
      */
     public static class StyleSettingsBuilder {
+        private String noteStyle$value;
         private String aggregateRootStyle$value;
         private String aggregateFrameStyle$value;
         private String entityStyle$value;
@@ -311,6 +338,17 @@ public class StyleSettings {
         private String unspecifiedServiceKindStyle$value;
         private String font$value;
         private String backgroundColor$value;
+
+        /**
+         * Sets the style configuration for a note element in the domain diagram.
+         *
+         * @param value the style to be applied to the note
+         * @return the current instance of {@code StyleSettingsBuilder} for method chaining
+         */
+        public StyleSettingsBuilder withNoteStyle(String value) {
+            this.noteStyle$value = value;
+            return this;
+        }
 
         /**
          * Sets the style configuration for an aggregate root element in the domain diagram.
@@ -507,6 +545,7 @@ public class StyleSettings {
          */
         public StyleSettings build() {
             return new StyleSettings(
+                noteStyle$value == null ? DEFAULT_NOTE_STYLE : noteStyle$value,
                 aggregateRootStyle$value == null ? DEFAULT_AGGREGATE_ROOT_STYLE : aggregateRootStyle$value,
                 aggregateFrameStyle$value == null ? DEFAULT_AGGREGATE_FRAME_STYLE : aggregateFrameStyle$value,
                 entityStyle$value == null ? DEFAULT_ENTITY_STYLE : entityStyle$value,

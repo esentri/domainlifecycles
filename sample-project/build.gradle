@@ -8,6 +8,7 @@ buildscript {
 plugins {
     id 'java'
     id 'checkstyle'
+    id 'jacoco'
     alias libs.plugins.spring.boot.plugin
     alias libs.plugins.flyway.plugin
     alias libs.plugins.jooq.codegen.gradle
@@ -41,7 +42,7 @@ tasks.register('runApp', JavaExec) {
 
 dependencies {
     implementation platform(libs.spring.boot3.dependencies)
-    implementation project(":spring-boot-3-jooq-complete")
+    implementation project(":spring-boot-starter")
 
     implementation libs.h2
     implementation libs.jakarta.validation.api
@@ -122,3 +123,12 @@ tasks.named("jooqCodegen") {
 tasks.withType(Checkstyle).configureEach {
     enabled = false
 }
+
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport

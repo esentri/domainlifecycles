@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,6 +51,12 @@ public class Constants {
      * This constant is used in API schemas to define fields that accept string values.
      */
     public static final String TYPE_STRING = "string";
+
+    /**
+     * Represents the OpenAPI 3.1 type "null".
+     * This constant is used in API schemas to define fields that accept null values.
+     */
+    public static final String TYPE_NULL = "null";
 
     /**
      * Represents the OpenAPI type "array".

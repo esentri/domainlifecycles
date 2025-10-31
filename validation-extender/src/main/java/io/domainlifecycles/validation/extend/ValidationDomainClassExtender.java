@@ -34,6 +34,7 @@ import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.type.TypeDescription;
+import net.bytebuddy.dynamic.ClassFileLocator;
 import net.bytebuddy.matcher.ElementMatchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,7 +170,7 @@ public class ValidationDomainClassExtender {
                                 DomainBuilderConfiguration domainBuilderConfiguration) {
         var agentBuilder = new AgentBuilder.Default()
             .disableClassFormatChanges()
-            .with(AgentBuilder.RedefinitionStrategy.REDEFINITION)
+            .with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION)
             .with(new AgentBuilder.RedefinitionStrategy.Listener.Adapter() {
                 @Override
                 public Iterable<? extends List<Class<?>>> onError(int index, List<Class<?>> batch,

@@ -15,7 +15,7 @@ dependencies {
     api project(":domain-events-core")
     api project(":types")
     api project(":service-registry")
-    api libs.gruelbox.transactionoutbox.core
+    compileOnly libs.gruelbox.transactionoutbox.core
     api project(":mirror")
     compileOnly libs.slf4j.api
 }

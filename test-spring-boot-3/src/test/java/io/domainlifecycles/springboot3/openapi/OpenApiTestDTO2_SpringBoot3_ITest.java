@@ -2,6 +2,7 @@ package io.domainlifecycles.springboot3.openapi;
 
 import io.domainlifecycles.assertion.DomainAssertionException;
 import io.domainlifecycles.validation.BeanValidations;
+import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.media.Schema;
 import jakarta.validation.Validation;
 import jakarta.validation.metadata.ConstraintDescriptor;
@@ -235,17 +236,19 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
         for (Field f : TestDTO2.class.getDeclaredFields()) {
             if (!f.getName().equals("testId")
                 && !f.getName().equals("optionalTestId")
+                && !f.getName().equals("optionalTestVo2")
+                && !f.getName().equals("optionalTestEnum")
                 && !f.getName().equals("testIdInterface")) {
                 assertThat(ex.getMessage()).contains(f.getName());
             }
         }
         assertThat(ex.getMessage().chars().filter(ch -> ch == '\n').count()).isEqualTo(
-            TestDTO2.class.getDeclaredFields().length - 3);
+            TestDTO2.class.getDeclaredFields().length - 5);
     }
 
     @Test
     public void testSchemaStringNotEmpty() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "stringNotEmpty", SCHEMA_TYPE_STRING, null,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "stringNotEmpty", SCHEMA_TYPE_STRING, null,
             null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "stringNotEmpty", false);
         assertThat(schema.getMinLength()).isEqualTo(1);
@@ -253,31 +256,33 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaStringEmail() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "stringEmail", SCHEMA_TYPE_STRING,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "stringEmail", SCHEMA_TYPE_STRING,
             FORMAT_TYPE_EMAIL, null);
     }
 
     @Test
     public void testSchemaOptionalStringEmail() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalStringEmail", SCHEMA_TYPE_STRING,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalStringEmail", SCHEMA_TYPE_STRING,
             FORMAT_TYPE_EMAIL, null);
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaStringPattern() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "stringPattern", SCHEMA_TYPE_STRING, null,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "stringPattern", SCHEMA_TYPE_STRING, null,
             "[0-9]");
     }
 
     @Test
     public void testSchemaOptionalStringPattern() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalStringPattern", SCHEMA_TYPE_STRING,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalStringPattern", SCHEMA_TYPE_STRING,
             null, "[0-9]");
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaStringSized() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "stringSized", SCHEMA_TYPE_STRING, null, null);
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "stringSized", SCHEMA_TYPE_STRING, null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "stringSized", false);
         assertThat(schema.getMaxLength()).isEqualTo(desc.getAttributes().get("max"));
         assertThat(schema.getMinLength()).isEqualTo(desc.getAttributes().get("min"));
@@ -285,16 +290,17 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalStringSized() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalStringSized", SCHEMA_TYPE_STRING, null,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalStringSized", SCHEMA_TYPE_STRING, null,
             null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalStringSized", true);
         assertThat(schema.getMaxLength()).isEqualTo(desc.getAttributes().get("max"));
         assertThat(schema.getMinLength()).isEqualTo(desc.getAttributes().get("min"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaStringListSized() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "stringListSized", SCHEMA_TYPE_ARRAY, null,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "stringListSized", SCHEMA_TYPE_ARRAY, null,
             null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "stringListSized", false);
         assertThat(schema.getMinItems()).isEqualTo(desc.getAttributes().get("min"));
@@ -303,7 +309,7 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaStringArraySized() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "stringArraySized", SCHEMA_TYPE_ARRAY, null,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "stringArraySized", SCHEMA_TYPE_ARRAY, null,
             null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "stringArraySized", false);
         assertThat(schema.getMinItems()).isEqualTo(desc.getAttributes().get("min"));
@@ -312,7 +318,7 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaStringListNotEmpty() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "stringListNotEmpty", SCHEMA_TYPE_ARRAY, null,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "stringListNotEmpty", SCHEMA_TYPE_ARRAY, null,
             null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "stringListNotEmpty", false);
         assertThat(schema.getMinItems()).isEqualTo(1);
@@ -320,7 +326,7 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaStringArrayNotEmpty() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "stringArrayNotEmpty", SCHEMA_TYPE_ARRAY, null,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "stringArrayNotEmpty", SCHEMA_TYPE_ARRAY, null,
             null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "stringArrayNotEmpty", false);
         assertThat(schema.getMinItems()).isEqualTo(1);
@@ -328,7 +334,7 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaAnIntMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "anIntMin", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "anIntMin", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "anIntMin", false);
         assertThat(schema.getMinimum().longValue()).isEqualTo(desc.getAttributes().get("value"));
@@ -337,15 +343,16 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalIntegerMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalIntegerMin", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalIntegerMin", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalIntegerMin", true);
         assertThat(schema.getMinimum().longValue()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAShortMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "ashortMin", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "ashortMin", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aShortMin", false);
         assertThat(schema.getMinimum().longValue()).isEqualTo(desc.getAttributes().get("value"));
@@ -354,15 +361,16 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalShortMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalShortMin", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalShortMin", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalShortMin", true);
         assertThat(schema.getMinimum().longValue()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAByteMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "abyteMin", SCHEMA_TYPE_STRING, FORMAT_TYPE_BYTE,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "abyteMin", SCHEMA_TYPE_STRING, FORMAT_TYPE_BYTE,
             null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aByteMin", false);
         assertThat(schema.getMinimum().longValue()).isEqualTo(desc.getAttributes().get("value"));
@@ -371,15 +379,16 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalByteMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalByteMin", SCHEMA_TYPE_STRING,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalByteMin", SCHEMA_TYPE_STRING,
             FORMAT_TYPE_BYTE, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalByteMin", true);
         assertThat(schema.getMinimum().longValue()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaALongMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "alongMin", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "alongMin", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT64, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aLongMin", false);
         assertThat(schema.getMinimum().longValue()).isEqualTo(desc.getAttributes().get("value"));
@@ -387,30 +396,32 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalLongMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalLongMin", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalLongMin", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT64, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalLongMin", true);
         assertThat(schema.getMinimum().longValue()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaBigDecimalMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigDecimalMin", SCHEMA_TYPE_NUMBER, null, null);
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigDecimalMin", SCHEMA_TYPE_NUMBER, null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "bigDecimalMin", false);
         assertThat(schema.getMinimum().longValue()).isEqualTo(desc.getAttributes().get("value"));
     }
 
     @Test
     public void testSchemaOptionalBigDecimalMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigDecimalMin", SCHEMA_TYPE_NUMBER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigDecimalMin", SCHEMA_TYPE_NUMBER,
             null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalBigDecimalMin", true);
         assertThat(schema.getMinimum().longValue()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaBigIntegerMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigIntegerMin", SCHEMA_TYPE_INTEGER, null,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigIntegerMin", SCHEMA_TYPE_INTEGER, null,
             null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "bigIntegerMin", false);
         assertThat(schema.getMinimum().longValue()).isEqualTo(desc.getAttributes().get("value"));
@@ -418,15 +429,16 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalBigIntegerMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigIntegerMin", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigIntegerMin", SCHEMA_TYPE_INTEGER,
             null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalBigIntegerMin", true);
         assertThat(schema.getMinimum().longValue()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAnIntMax() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "anIntMax", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "anIntMax", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "anIntMax", false);
         assertThat(schema.getMaximum().longValue()).isEqualTo(desc.getAttributes().get("value"));
@@ -435,15 +447,16 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalIntegerMax() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalIntegerMax", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalIntegerMax", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalIntegerMax", true);
         assertThat(schema.getMaximum().longValue()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAShortMax() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "ashortMax", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "ashortMax", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aShortMax", false);
         assertThat(schema.getMaximum().longValue()).isEqualTo(desc.getAttributes().get("value"));
@@ -452,15 +465,16 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalShortMax() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalShortMax", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalShortMax", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalShortMax", true);
         assertThat(schema.getMaximum().longValue()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAByteMax() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "abyteMax", SCHEMA_TYPE_STRING, FORMAT_TYPE_BYTE,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "abyteMax", SCHEMA_TYPE_STRING, FORMAT_TYPE_BYTE,
             null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aByteMax", false);
         assertThat(schema.getMaximum().longValue()).isEqualTo(desc.getAttributes().get("value"));
@@ -469,15 +483,16 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalByteMax() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalByteMax", SCHEMA_TYPE_STRING,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalByteMax", SCHEMA_TYPE_STRING,
             FORMAT_TYPE_BYTE, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalByteMax", true);
         assertThat(schema.getMaximum().longValue()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaALongMax() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "alongMax", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "alongMax", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT64, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aLongMax", false);
         assertThat(schema.getMaximum().longValue()).isEqualTo(desc.getAttributes().get("value"));
@@ -486,30 +501,32 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalLongMax() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalLongMax", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalLongMax", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT64, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalLongMax", true);
         assertThat(schema.getMaximum().longValue()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaBigDecimalMax() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigDecimalMax", SCHEMA_TYPE_NUMBER, null, null);
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigDecimalMax", SCHEMA_TYPE_NUMBER, null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "bigDecimalMax", false);
         assertThat(schema.getMaximum().longValue()).isEqualTo(desc.getAttributes().get("value"));
     }
 
     @Test
     public void testSchemaOptionalBigDecimalMax() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigDecimalMax", SCHEMA_TYPE_NUMBER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigDecimalMax", SCHEMA_TYPE_NUMBER,
             null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalBigDecimalMax", true);
         assertThat(schema.getMaximum().longValue()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaBigIntegerMax() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigIntegerMax", SCHEMA_TYPE_INTEGER, null,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigIntegerMax", SCHEMA_TYPE_INTEGER, null,
             null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "bigIntegerMax", false);
         assertThat(schema.getMaximum().longValue()).isEqualTo(desc.getAttributes().get("value"));
@@ -517,15 +534,16 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalBigIntegerMax() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigIntegerMax", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigIntegerMax", SCHEMA_TYPE_INTEGER,
             null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalBigIntegerMax", true);
         assertThat(schema.getMaximum().longValue()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAnIntDecimalMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "anIntDecimalMin", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "anIntDecimalMin", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "anIntDecimalMin", false);
         assertThat(schema.getMinimum().toString()).isEqualTo(desc.getAttributes().get("value"));
@@ -534,15 +552,16 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalIntegerDecimalMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalIntegerDecimalMin", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalIntegerDecimalMin", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalIntegerDecimalMin", true);
         assertThat(schema.getMinimum().toString()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAShortDecimalMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "ashortDecimalMin", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "ashortDecimalMin", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aShortDecimalMin", false);
         assertThat(schema.getMinimum().toString()).isEqualTo(desc.getAttributes().get("value"));
@@ -551,15 +570,16 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalShortDecimalMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalShortDecimalMin", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalShortDecimalMin", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalShortDecimalMin", true);
         assertThat(schema.getMinimum().toString()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAByteDecimalMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "abyteDecimalMin", SCHEMA_TYPE_STRING,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "abyteDecimalMin", SCHEMA_TYPE_STRING,
             FORMAT_TYPE_BYTE, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aByteDecimalMin", false);
         assertThat(schema.getMinimum().toString()).isEqualTo(desc.getAttributes().get("value"));
@@ -568,15 +588,16 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalByteDecimalMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalByteDecimalMin", SCHEMA_TYPE_STRING,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalByteDecimalMin", SCHEMA_TYPE_STRING,
             FORMAT_TYPE_BYTE, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalByteDecimalMin", true);
         assertThat(schema.getMinimum().toString()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaALongDecimalMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "alongDecimalMin", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "alongDecimalMin", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT64, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aLongDecimalMin", false);
         assertThat(schema.getMinimum().toString()).isEqualTo(desc.getAttributes().get("value"));
@@ -585,15 +606,16 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalLongDecimalMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalLongDecimalMin", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalLongDecimalMin", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT64, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalLongDecimalMin", true);
         assertThat(schema.getMinimum().toString()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaBigDecimalDecimalMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigDecimalDecimalMin", SCHEMA_TYPE_NUMBER, null,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigDecimalDecimalMin", SCHEMA_TYPE_NUMBER, null,
             null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "bigDecimalDecimalMin", false);
         assertThat(schema.getMinimum().toString()).isEqualTo(desc.getAttributes().get("value"));
@@ -601,15 +623,16 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalBigDecimalDecimalMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigDecimalDecimalMin",
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigDecimalDecimalMin",
             SCHEMA_TYPE_NUMBER, null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalBigDecimalDecimalMin", true);
         assertThat(schema.getMinimum().toString()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaBigIntegerDecimalMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigIntegerDecimalMin", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigIntegerDecimalMin", SCHEMA_TYPE_INTEGER,
             null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "bigIntegerDecimalMin", false);
         assertThat(schema.getMinimum().toString()).isEqualTo(desc.getAttributes().get("value"));
@@ -617,15 +640,16 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalBigIntegerDecimalMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigIntegerDecimalMin",
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigIntegerDecimalMin",
             SCHEMA_TYPE_INTEGER, null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalBigIntegerDecimalMin", true);
         assertThat(schema.getMinimum().toString()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAFloatDecimalMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "afloatDecimalMin", SCHEMA_TYPE_NUMBER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "afloatDecimalMin", SCHEMA_TYPE_NUMBER,
             FORMAT_TYPE_FLOAT, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aFloatDecimalMin", false);
         assertThat(schema.getMinimum().toString()).isEqualTo(desc.getAttributes().get("value"));
@@ -634,15 +658,16 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalFloatDecimalMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalFloatDecimalMin", SCHEMA_TYPE_NUMBER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalFloatDecimalMin", SCHEMA_TYPE_NUMBER,
             FORMAT_TYPE_FLOAT, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalFloatDecimalMin", true);
         assertThat(schema.getMinimum().toString()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaADoubleDecimalMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "adoubleDecimalMin", SCHEMA_TYPE_NUMBER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "adoubleDecimalMin", SCHEMA_TYPE_NUMBER,
             FORMAT_TYPE_DOUBLE, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aDoubleDecimalMin", false);
         assertThat(schema.getMinimum().toString()).isEqualTo(desc.getAttributes().get("value"));
@@ -651,15 +676,16 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalDoubleDecimalMin() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalDoubleDecimalMin", SCHEMA_TYPE_NUMBER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalDoubleDecimalMin", SCHEMA_TYPE_NUMBER,
             FORMAT_TYPE_DOUBLE, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalDoubleDecimalMin", true);
         assertThat(schema.getMinimum().toString()).isEqualTo(desc.getAttributes().get("value"));
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAnIntDecimalMaxExclusive() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "anIntDecimalMaxExclusive", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "anIntDecimalMaxExclusive", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "anIntDecimalMaxExclusive", false);
         assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
@@ -669,75 +695,99 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalIntegerDecimalMaxExclusive() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalIntegerDecimalMaxExclusive",
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalIntegerDecimalMaxExclusive",
             SCHEMA_TYPE_INTEGER, FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalIntegerDecimalMaxExclusive",
             true);
         assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
         assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAShortDecimalMaxExclusive() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "ashortDecimalMaxExclusive", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "ashortDecimalMaxExclusive", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aShortDecimalMaxExclusive", false);
-        assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue().toString()).isEqualTo(desc.getAttributes().get("value"));
+        }
         assertPropertyRequired(TestDTO2.class, "ashortDecimalMaxExclusive");
     }
 
     @Test
     public void testSchemaOptionalShortDecimalMaxExclusive() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalShortDecimalMaxExclusive",
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalShortDecimalMaxExclusive",
             SCHEMA_TYPE_INTEGER, FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalShortDecimalMaxExclusive",
             true);
         assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
         assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAByteDecimalMaxExclusive() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "abyteDecimalMaxExclusive", SCHEMA_TYPE_STRING,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "abyteDecimalMaxExclusive", SCHEMA_TYPE_STRING,
             FORMAT_TYPE_BYTE, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aByteDecimalMaxExclusive", false);
-        assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue().toString()).isEqualTo(desc.getAttributes().get("value"));
+        }
         assertPropertyRequired(TestDTO2.class, "abyteDecimalMaxExclusive");
     }
 
     @Test
     public void testSchemaOptionalByteDecimalMaxExclusive() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalByteDecimalMaxExclusive",
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalByteDecimalMaxExclusive",
             SCHEMA_TYPE_STRING, FORMAT_TYPE_BYTE, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalByteDecimalMaxExclusive", true);
-        assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)) {
+            assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue().toString()).isEqualTo(desc.getAttributes().get("value"));
+        }
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaALongDecimalMaxExclusive() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "alongDecimalMaxExclusive", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "alongDecimalMaxExclusive", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT64, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aLongDecimalMaxExclusive", false);
-        assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue().toString()).isEqualTo(desc.getAttributes().get("value"));
+        }
         assertPropertyRequired(TestDTO2.class, "alongDecimalMaxExclusive");
     }
 
     @Test
     public void testSchemaOptionalLongDecimalMaxExclusive() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalLongDecimalMaxExclusive",
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalLongDecimalMaxExclusive",
             SCHEMA_TYPE_INTEGER, FORMAT_TYPE_INT64, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalLongDecimalMaxExclusive", true);
         assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
         assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaBigDecimalDecimalMaxExclusive() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigDecimalDecimalMaxExclusive",
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigDecimalDecimalMaxExclusive",
             SCHEMA_TYPE_NUMBER, null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "bigDecimalDecimalMaxExclusive", false);
         assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
@@ -746,17 +796,18 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalBigDecimalDecimalMaxExclusive() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigDecimalDecimalMaxExclusive",
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigDecimalDecimalMaxExclusive",
             SCHEMA_TYPE_NUMBER, null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalBigDecimalDecimalMaxExclusive",
             true);
         assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
         assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaBigIntegerDecimalMaxExclusive() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigIntegerDecimalMaxExclusive",
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigIntegerDecimalMaxExclusive",
             SCHEMA_TYPE_INTEGER, null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "bigIntegerDecimalMaxExclusive", false);
         assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
@@ -765,311 +816,423 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalBigIntegerDecimalMaxExclusive() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigIntegerDecimalMaxExclusive",
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigIntegerDecimalMaxExclusive",
             SCHEMA_TYPE_INTEGER, null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalBigIntegerDecimalMaxExclusive",
             true);
         assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
         assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAFloatDecimalMaxExclusive() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "afloatDecimalMaxExclusive", SCHEMA_TYPE_NUMBER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "afloatDecimalMaxExclusive", SCHEMA_TYPE_NUMBER,
             FORMAT_TYPE_FLOAT, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aFloatDecimalMaxExclusive", false);
-        assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue().toString()).isEqualTo(desc.getAttributes().get("value"));
+        }
         assertPropertyRequired(TestDTO2.class, "afloatDecimalMaxExclusive");
     }
 
     @Test
     public void testSchemaOptionalFloatDecimalMaxExclusive() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalFloatDecimalMaxExclusive",
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalFloatDecimalMaxExclusive",
             SCHEMA_TYPE_NUMBER, FORMAT_TYPE_FLOAT, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalFloatDecimalMaxExclusive",
             true);
         assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
         assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaADoubleDecimalMaxExclusive() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "adoubleDecimalMaxExclusive", SCHEMA_TYPE_NUMBER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "adoubleDecimalMaxExclusive", SCHEMA_TYPE_NUMBER,
             FORMAT_TYPE_DOUBLE, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aDoubleDecimalMaxExclusive", false);
-        assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue().toString()).isEqualTo(desc.getAttributes().get("value"));
+        }
         assertPropertyRequired(TestDTO2.class, "adoubleDecimalMaxExclusive");
     }
 
     @Test
     public void testSchemaOptionalDoubleDecimalMaxExclusive() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalDoubleDecimalMaxExclusive",
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalDoubleDecimalMaxExclusive",
             SCHEMA_TYPE_NUMBER, FORMAT_TYPE_DOUBLE, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalDoubleDecimalMaxExclusive",
             true);
         assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
         assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAnIntNegative() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "anIntNegative", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "anIntNegative", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "anIntNegative", false);
-        assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue()).isEqualTo(BigDecimal.ZERO);
+        }
         assertPropertyRequired(TestDTO2.class, "anIntNegative");
     }
 
     @Test
     public void testSchemaOptionalIntegerNegative() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalIntegerNegative", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalIntegerNegative", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalIntegerNegative", true);
-        assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue()).isEqualTo(BigDecimal.ZERO);
+        }
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAShortNegative() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "ashortNegative", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "ashortNegative", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aShortNegative", false);
-        assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue()).isEqualTo(BigDecimal.ZERO);
+        }
         assertPropertyRequired(TestDTO2.class, "ashortNegative");
     }
 
     @Test
     public void testSchemaOptionalShortNegative() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalShortNegative", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalShortNegative", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalShortNegative", true);
-        assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue()).isEqualTo(BigDecimal.ZERO);
+        }
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAByteNegative() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "abyteNegative", SCHEMA_TYPE_STRING,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "abyteNegative", SCHEMA_TYPE_STRING,
             FORMAT_TYPE_BYTE, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aByteNegative", false);
-        assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue()).isEqualTo(BigDecimal.ZERO);
+        }
         assertPropertyRequired(TestDTO2.class, "abyteNegative");
     }
 
     @Test
     public void testSchemaOptionalByteNegative() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalByteNegative", SCHEMA_TYPE_STRING,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalByteNegative", SCHEMA_TYPE_STRING,
             FORMAT_TYPE_BYTE, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalByteNegative", true);
-        assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue()).isEqualTo(BigDecimal.ZERO);
+        }
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaALongNegative() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "alongNegative", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "alongNegative", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT64, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aLongNegative", false);
-        assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue()).isEqualTo(BigDecimal.ZERO);
+        }
         assertPropertyRequired(TestDTO2.class, "alongNegative");
     }
 
     @Test
     public void testSchemaOptionalLongNegative() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalLongNegative", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalLongNegative", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT64, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalLongNegative", true);
-        assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue()).isEqualTo(BigDecimal.ZERO);
+        }
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaBigDecimalNegative() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigDecimalNegative", SCHEMA_TYPE_NUMBER, null,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigDecimalNegative", SCHEMA_TYPE_NUMBER, null,
             null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "bigDecimalNegative", false);
-        assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue()).isEqualTo(BigDecimal.ZERO);
+        }
+
     }
 
     @Test
     public void testSchemaOptionalBigDecimalNegative() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigDecimalNegative", SCHEMA_TYPE_NUMBER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigDecimalNegative", SCHEMA_TYPE_NUMBER,
             null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalBigDecimalNegative", true);
-        assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue()).isEqualTo(BigDecimal.ZERO);
+        }
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaBigIntegerNegative() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigIntegerNegative", SCHEMA_TYPE_INTEGER, null,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigIntegerNegative", SCHEMA_TYPE_INTEGER, null,
             null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "bigIntegerNegative", false);
-        assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue()).isEqualTo(BigDecimal.ZERO);
+        }
     }
 
     @Test
     public void testSchemaOptionalBigIntegerNegative() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigIntegerNegative",
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigIntegerNegative",
             SCHEMA_TYPE_INTEGER, null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalBigIntegerNegative", true);
-        assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue()).isEqualTo(BigDecimal.ZERO);
+        }
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAFloatNegative() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "afloatNegative", SCHEMA_TYPE_NUMBER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "afloatNegative", SCHEMA_TYPE_NUMBER,
             FORMAT_TYPE_FLOAT, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aFloatNegative", false);
-        assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue()).isEqualTo(BigDecimal.ZERO);
+        }
         assertPropertyRequired(TestDTO2.class, "afloatNegative");
     }
 
     @Test
     public void testSchemaOptionalFloatNegative() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalFloatNegative", SCHEMA_TYPE_NUMBER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalFloatNegative", SCHEMA_TYPE_NUMBER,
             FORMAT_TYPE_FLOAT, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalFloatNegative", true);
-        assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue()).isEqualTo(BigDecimal.ZERO);
+        }
+        assertOptional(schema);
+
     }
 
     @Test
     public void testSchemaADoubleNegative() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "adoubleNegative", SCHEMA_TYPE_NUMBER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "adoubleNegative", SCHEMA_TYPE_NUMBER,
             FORMAT_TYPE_DOUBLE, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "aDoubleNegative", false);
-        assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue()).isEqualTo(BigDecimal.ZERO);
+        }
         assertPropertyRequired(TestDTO2.class, "adoubleNegative");
     }
 
     @Test
     public void testSchemaOptionalDoubleNegative() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalDoubleNegative", SCHEMA_TYPE_NUMBER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalDoubleNegative", SCHEMA_TYPE_NUMBER,
             FORMAT_TYPE_DOUBLE, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalDoubleNegative", true);
-        assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum()).isEqualTo(BigDecimal.ZERO);
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue()).isEqualTo(BigDecimal.ZERO);
+        }
+        assertOptional(schema);
     }
 
 
     @Test
     public void testSchemaAnIntDigits() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "anIntDigits", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "anIntDigits", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, "^[-]?[1-9]{1,1}[0-9]{0,2}|[0]$");
         assertPropertyRequired(TestDTO2.class, "anIntDigits");
     }
 
     @Test
     public void testSchemaOptionalIntegerDigits() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalIntegerDigits", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalIntegerDigits", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, "^[-]?[1-9]{1,1}[0-9]{0,2}|[0]$");
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAShortDigits() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "ashortDigits", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "ashortDigits", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, "^[-]?[1-9]{1,1}[0-9]{0,2}|[0]$");
         assertPropertyRequired(TestDTO2.class, "ashortDigits");
     }
 
     @Test
     public void testSchemaOptionalShortDigits() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalShortDigits", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalShortDigits", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, "^[-]?[1-9]{1,1}[0-9]{0,2}|[0]$");
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAByteDigits() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "abyteDigits", SCHEMA_TYPE_STRING,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "abyteDigits", SCHEMA_TYPE_STRING,
             FORMAT_TYPE_BYTE, "^[-]?[1-9]{1,1}[0-9]{0,0}|[0]$");
         assertPropertyRequired(TestDTO2.class, "abyteDigits");
     }
 
     @Test
     public void testSchemaOptionalByteDigits() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalByteDigits", SCHEMA_TYPE_STRING,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalByteDigits", SCHEMA_TYPE_STRING,
             FORMAT_TYPE_BYTE, "^[-]?[1-9]{1,1}[0-9]{0,0}|[0]$");
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaALongDigits() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "alongDigits", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "alongDigits", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT64, "^[-]?[1-9]{1,1}[0-9]{0,2}|[0]$");
         assertPropertyRequired(TestDTO2.class, "alongDigits");
     }
 
     @Test
     public void testSchemaOptionalLongDigits() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalLongDigits", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalLongDigits", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT64, "^[-]?[1-9]{1,1}[0-9]{0,2}|[0]$");
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaBigDecimalDigits() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigDecimalDigits", SCHEMA_TYPE_NUMBER, null,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigDecimalDigits", SCHEMA_TYPE_NUMBER, null,
             "^([-]?[1-9]{1,1}[0-9]{0,2}|[0]|[-][0]){1,1}(\\.[0-9]{1,2})?$");
 
     }
 
     @Test
     public void testSchemaOptionalBigDecimalDigits() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigDecimalDigits", SCHEMA_TYPE_NUMBER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigDecimalDigits", SCHEMA_TYPE_NUMBER,
             null, "^([-]?[1-9]{1,1}[0-9]{0,2}|[0]|[-][0]){1,1}(\\.[0-9]{1,2})?$");
+        assertThat(schema.getTypes().contains("null")).isTrue();
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaBigIntegerDigits() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigIntegerDigits", SCHEMA_TYPE_INTEGER, null,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigIntegerDigits", SCHEMA_TYPE_INTEGER, null,
             "^[-]?[1-9]{1,1}[0-9]{0,2}|[0]$");
     }
 
     @Test
     public void testSchemaOptionalBigIntegerDigits() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigIntegerDigits", SCHEMA_TYPE_INTEGER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalBigIntegerDigits", SCHEMA_TYPE_INTEGER,
             null, "^[-]?[1-9]{1,1}[0-9]{0,2}|[0]$");
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaAFloatDigits() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "afloatDigits", SCHEMA_TYPE_NUMBER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "afloatDigits", SCHEMA_TYPE_NUMBER,
             FORMAT_TYPE_FLOAT, "^([-]?[1-9]{1,1}[0-9]{0,2}|[0]|[-][0]){1,1}(\\.[0-9]{1,2})?$");
         assertPropertyRequired(TestDTO2.class, "afloatDigits");
     }
 
     @Test
     public void testSchemaOptionalFloatDigits() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalFloatDigits", SCHEMA_TYPE_NUMBER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalFloatDigits", SCHEMA_TYPE_NUMBER,
             FORMAT_TYPE_FLOAT, "^([-]?[1-9]{1,1}[0-9]{0,2}|[0]|[-][0]){1,1}(\\.[0-9]{1,2})?$");
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaADoubleDigits() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "adoubleDigits", SCHEMA_TYPE_NUMBER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "adoubleDigits", SCHEMA_TYPE_NUMBER,
             FORMAT_TYPE_DOUBLE, "^([-]?[1-9]{1,1}[0-9]{0,2}|[0]|[-][0]){1,1}(\\.[0-9]{1,2})?$");
         assertPropertyRequired(TestDTO2.class, "adoubleDigits");
     }
 
     @Test
     public void testSchemaOptionalDoubleDigits() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalDoubleDigits", SCHEMA_TYPE_NUMBER,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalDoubleDigits", SCHEMA_TYPE_NUMBER,
             FORMAT_TYPE_DOUBLE, "^([-]?[1-9]{1,1}[0-9]{0,2}|[0]|[-][0]){1,1}(\\.[0-9]{1,2})?$");
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaInstantPast() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "instantPast", SCHEMA_TYPE_STRING,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "instantPast", SCHEMA_TYPE_STRING,
             FORMAT_TYPE_DATE_TIME, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "instantPast", false);
         assertThat(schema.getDescription()).isEqualTo("The value must be in the past!");
@@ -1077,7 +1240,7 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalInstantPast() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalInstantPast", SCHEMA_TYPE_STRING,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalInstantPast", SCHEMA_TYPE_STRING,
             FORMAT_TYPE_DATE_TIME, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalInstantPast", true);
         assertThat(schema.getDescription()).isEqualTo("The value must be in the past!");
@@ -1085,7 +1248,7 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaLocalDateFuture() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "localDateFuture", SCHEMA_TYPE_STRING,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "localDateFuture", SCHEMA_TYPE_STRING,
             FORMAT_TYPE_DATE, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "localDateFuture", false);
         assertThat(schema.getDescription()).isEqualTo("The value must be in the future!");
@@ -1093,7 +1256,7 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalLocalDateFuture() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalLocalDateFuture", SCHEMA_TYPE_STRING,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalLocalDateFuture", SCHEMA_TYPE_STRING,
             FORMAT_TYPE_DATE, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalLocalDateFuture", true);
         assertThat(schema.getDescription()).isEqualTo("The value must be in the future!");
@@ -1101,7 +1264,7 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaLocalDateTimePastOrPresent() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "localDateTimePastOrPresent", SCHEMA_TYPE_STRING,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "localDateTimePastOrPresent", SCHEMA_TYPE_STRING,
             FORMAT_TYPE_DATE_TIME, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "localDateTimePastOrPresent", false);
         assertThat(schema.getDescription()).isEqualTo(
@@ -1110,7 +1273,7 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalLocalDateTimePastOrPresent() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalLocalDateTimePastOrPresent",
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalLocalDateTimePastOrPresent",
             SCHEMA_TYPE_STRING, FORMAT_TYPE_DATE_TIME, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalLocalDateTimePastOrPresent",
             true);
@@ -1120,7 +1283,7 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaLocalTimeNotNull() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "localTimeNotNull", null, null, null);
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "localTimeNotNull", null, null, null);
         assertThat(schema.get$ref()).isEqualTo("#/components/schemas/java.time.LocalTime");
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "localTimeNotNull", false);
         assertPropertyRequired(TestDTO2.class, "localTimeNotNull");
@@ -1131,22 +1294,31 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
         var openAPI = openAPIService.getCachedOpenAPI(Locale.getDefault());
         var localTimeSchema = openAPI.getComponents().getSchemas().get("java.time.LocalTime");
         assertThat(localTimeSchema).isNotNull();
-        assertThat(localTimeSchema.getType()).isEqualTo(SCHEMA_TYPE_STRING);
+        if(localTimeSchema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(localTimeSchema.getType()).isEqualTo(SCHEMA_TYPE_STRING);
+        }
+        if(localTimeSchema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(localTimeSchema.getTypes().contains(SCHEMA_TYPE_STRING)).isTrue();
+        }
+
         assertThat(localTimeSchema.getPattern()).isEqualTo(
             "^([0-1][0-9]|[2][0-4])[:]([0-5][0-9])[:]([0-5][0-9])(\\.[0-9]{1,6})?$");
     }
 
     @Test
     public void testSchemaOptionalLocalTimePast() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalLocalTimePast", null, null, null);
-        assertThat(schema.get$ref()).isEqualTo("#/components/schemas/java.time.LocalTime");
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalLocalTimePast", null, null, null);
+        var oneOfRefSchema = schema.getOneOf().stream().filter(s -> s.get$ref() != null).findFirst().orElse(null);
+        assertThat(oneOfRefSchema).isNotNull();
+        assertThat(oneOfRefSchema.get$ref()).isEqualTo("#/components/schemas/java.time.LocalTime");
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalLocalTimePast", true);
-        assertThat(schema.getDescription()).isEqualTo("The value must be in the past!");
+        assertThat(oneOfRefSchema.getDescription()).isEqualTo("The value must be in the past!");
+        assertOptional(schema);
     }
 
     @Test
     public void testSchemaZonedDateTimeFutureOrPresent() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "zonedDateTimeFutureOrPresent",
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "zonedDateTimeFutureOrPresent",
             SCHEMA_TYPE_STRING, FORMAT_TYPE_DATE_TIME, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "zonedDateTimeFutureOrPresent", false);
         assertThat(schema.getDescription()).isEqualTo(
@@ -1155,7 +1327,7 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalZonedDateTimeFutureOrPresent() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalZonedDateTimeFutureOrPresent",
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalZonedDateTimeFutureOrPresent",
             SCHEMA_TYPE_STRING, FORMAT_TYPE_DATE_TIME, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalZonedDateTimeFutureOrPresent",
             true);
@@ -1164,8 +1336,36 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
     }
 
     @Test
+    public void testSchemaOptionalTestId() {
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalTestId",
+            SCHEMA_TYPE_STRING, "uuid", null);
+        assertOptional(schema);
+    }
+
+    @Test
+    public void testSchemaOptionalVo() {
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalTestVo2",
+            null, null, null);
+        assertOptional(schema);
+    }
+
+    @Test
+    public void testSchemaOptionalEnum() {
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalTestEnum",
+            SCHEMA_TYPE_STRING, null, null);
+        assertOptional(schema);
+    }
+
+    @Test
+    public void testSchemaOptionalTestVo2() {
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalTestVo2",
+            null, null, null);
+        assertOptional(schema);
+    }
+
+    @Test
     public void testSchemaOffsetDateTimeNotNull() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "offsetDateTimeNotNull", SCHEMA_TYPE_STRING,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "offsetDateTimeNotNull", SCHEMA_TYPE_STRING,
             FORMAT_TYPE_DATE_TIME, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "offsetDateTimeNotNull", false);
         assertPropertyRequired(TestDTO2.class, "offsetDateTimeNotNull");
@@ -1173,7 +1373,7 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalOffsetDateTimePast() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalOffsetDateTimePast", SCHEMA_TYPE_STRING,
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalOffsetDateTimePast", SCHEMA_TYPE_STRING,
             FORMAT_TYPE_DATE_TIME, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalOffsetDateTimePast", true);
         assertThat(schema.getDescription()).isEqualTo("The value must be in the past!");
@@ -1183,15 +1383,21 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
     public void testSchemaOffsetTime() {
         var openAPI = openAPIService.getCachedOpenAPI(Locale.getDefault());
         var localTimeSchema = openAPI.getComponents().getSchemas().get("java.time.OffsetTime");
+
         assertThat(localTimeSchema).isNotNull();
-        assertThat(localTimeSchema.getType()).isEqualTo(SCHEMA_TYPE_STRING);
+        if(localTimeSchema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(localTimeSchema.getType()).isEqualTo(SCHEMA_TYPE_STRING);
+        }
+        if(localTimeSchema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(localTimeSchema.getTypes().contains(SCHEMA_TYPE_STRING)).isTrue();
+        }
         assertThat(localTimeSchema.getPattern()).isEqualTo(
             "^([0-1][0-9]|[2][0-4])[:]([0-5][0-9])[:]([0-5][0-9])(\\.[0-9]{1,6})?([+]|[-])[0-9]{2,2}[:][0-9]{2,2}$");
     }
 
     @Test
     public void testSchemaOffsetTimePast() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "offsetTimePast", null, null, null);
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "offsetTimePast", null, null, null);
         assertThat(schema.get$ref()).isEqualTo("#/components/schemas/java.time.OffsetTime");
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "offsetTimePast", false);
         assertThat(schema.getDescription()).isEqualTo("The value must be in the past!");
@@ -1199,10 +1405,13 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalOffsetTimePast() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalOffsetTimePast", null, null, null);
-        assertThat(schema.get$ref()).isEqualTo("#/components/schemas/java.time.OffsetTime");
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalOffsetTimePast", null, null, null);
+        var oneOfRefSchema = schema.getOneOf().stream().filter(s -> s.get$ref() != null).findFirst().orElse(null);
+        assertThat(oneOfRefSchema).isNotNull();
+        assertThat(oneOfRefSchema.get$ref()).isEqualTo("#/components/schemas/java.time.OffsetTime");
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalOffsetTimePast", true);
-        assertThat(schema.getDescription()).isEqualTo("The value must be in the past!");
+        assertThat(oneOfRefSchema.getDescription()).isEqualTo("The value must be in the past!");
+        assertOptional(schema);
     }
 
     @Test
@@ -1210,13 +1419,18 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
         var openAPI = openAPIService.getCachedOpenAPI(Locale.getDefault());
         var schema = openAPI.getComponents().getSchemas().get("java.time.YearMonth");
         assertThat(schema).isNotNull();
-        assertThat(schema.getType()).isEqualTo(SCHEMA_TYPE_STRING);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getType()).isEqualTo(SCHEMA_TYPE_STRING);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getTypes().contains(SCHEMA_TYPE_STRING)).isTrue();
+        }
         assertThat(schema.getPattern()).isEqualTo("^[0-9]{4,4}[-][0-1][0-9]$");
     }
 
     @Test
     public void testSchemaYearMonthPast() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "yearMonthPast", null, null, null);
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "yearMonthPast", null, null, null);
         assertThat(schema.get$ref()).isEqualTo("#/components/schemas/java.time.YearMonth");
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "yearMonthPast", false);
         assertThat(schema.getDescription()).isEqualTo("The value must be in the past!");
@@ -1224,10 +1438,13 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalYearMonthPast() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalYearMonthPast", null, null, null);
-        assertThat(schema.get$ref()).isEqualTo("#/components/schemas/java.time.YearMonth");
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalYearMonthPast", null, null, null);
+        var oneOfRefSchema = schema.getOneOf().stream().filter(s -> s.get$ref() != null).findFirst().orElse(null);
+        assertThat(oneOfRefSchema).isNotNull();
+        assertThat(oneOfRefSchema.get$ref()).isEqualTo("#/components/schemas/java.time.YearMonth");
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalYearMonthPast", true);
-        assertThat(schema.getDescription()).isEqualTo("The value must be in the past!");
+        assertThat(oneOfRefSchema.getDescription()).isEqualTo("The value must be in the past!");
+        assertOptional(schema);
     }
 
     @Test
@@ -1235,13 +1452,19 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
         var openAPI = openAPIService.getCachedOpenAPI(Locale.getDefault());
         var schema = openAPI.getComponents().getSchemas().get("java.time.MonthDay");
         assertThat(schema).isNotNull();
-        assertThat(schema.getType()).isEqualTo(SCHEMA_TYPE_STRING);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getType()).isEqualTo(SCHEMA_TYPE_STRING);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getTypes().contains(SCHEMA_TYPE_STRING)).isTrue();
+        }
+
         assertThat(schema.getPattern()).isEqualTo("^--[0-1][0-9]-[0-3][0-9]$");
     }
 
     @Test
     public void testSchemaMonthDayPast() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "monthDayPast", null, null, null);
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "monthDayPast", null, null, null);
         assertThat(schema.get$ref()).isEqualTo("#/components/schemas/java.time.MonthDay");
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "monthDayPast", false);
         assertThat(schema.getDescription()).isEqualTo("The value must be in the past!");
@@ -1249,10 +1472,13 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalMonthDayPast() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalMonthDayPast", null, null, null);
-        assertThat(schema.get$ref()).isEqualTo("#/components/schemas/java.time.MonthDay");
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalMonthDayPast", null, null, null);
+        var oneOfRefSchema = schema.getOneOf().stream().filter(s -> s.get$ref() != null).findFirst().orElse(null);
+        assertThat(oneOfRefSchema).isNotNull();
+        assertThat(oneOfRefSchema.get$ref()).isEqualTo("#/components/schemas/java.time.MonthDay");
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalMonthDayPast", true);
-        assertThat(schema.getDescription()).isEqualTo("The value must be in the past!");
+        assertThat(oneOfRefSchema.getDescription()).isEqualTo("The value must be in the past!");
+        assertOptional(schema);
     }
 
     @Test
@@ -1260,13 +1486,19 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
         var openAPI = openAPIService.getCachedOpenAPI(Locale.getDefault());
         var schema = openAPI.getComponents().getSchemas().get("java.time.Year");
         assertThat(schema).isNotNull();
-        assertThat(schema.getType()).isEqualTo(SCHEMA_TYPE_STRING);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getType()).isEqualTo(SCHEMA_TYPE_STRING);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getTypes().contains(SCHEMA_TYPE_STRING)).isTrue();
+        }
+
         assertThat(schema.getPattern()).isEqualTo("^([+]|[-])?[0-9]{4,4}$");
     }
 
     @Test
     public void testSchemaYearPast() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "yearPast", null, null, null);
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "yearPast", null, null, null);
         assertThat(schema.get$ref()).isEqualTo("#/components/schemas/java.time.Year");
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "yearPast", false);
         assertThat(schema.getDescription()).isEqualTo("The value must be in the past!");
@@ -1274,10 +1506,13 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
 
     @Test
     public void testSchemaOptionalYearPast() {
-        Schema schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalYearPast", null, null, null);
-        assertThat(schema.get$ref()).isEqualTo("#/components/schemas/java.time.Year");
+        Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalYearPast", null, null, null);
+        var oneOfRefSchema = schema.getOneOf().stream().filter(s -> s.get$ref() != null).findFirst().orElse(null);
+        assertThat(oneOfRefSchema).isNotNull();
+        assertThat(oneOfRefSchema.get$ref()).isEqualTo("#/components/schemas/java.time.Year");
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalYearPast", true);
-        assertThat(schema.getDescription()).isEqualTo("The value must be in the past!");
+        assertThat(oneOfRefSchema.getDescription()).isEqualTo("The value must be in the past!");
+        assertOptional(schema);
     }
 
     @Test
@@ -1292,24 +1527,35 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
         var openAPI = openAPIService.getCachedOpenAPI(Locale.getDefault());
         var testSchema = openAPI.getComponents().getSchemas().get(identityClass.getName());
         assertThat(testSchema).isNotNull();
-        assertThat(testSchema.getRequired()).contains("value");
+        assertThat(testSchema.getRequired().contains("value")).isTrue();
         assertThat(testSchema.getProperties()).isNotNull();
         assertThat(testSchema.getProperties().get("value")).isNotNull();
     }
 
-    private Schema assertPropertyTypeAndGetSchema(Class containingClass, String propertyName,
+    private Schema<?> assertPropertyTypeAndGetSchema(Class<?> containingClass, String propertyName,
                                                   String expectedPropertyType, String expectedFormat,
                                                   String expectedPattern) {
         var openAPI = openAPIService.getCachedOpenAPI(Locale.getDefault());
         var testSchema = openAPI.getComponents().getSchemas().get(containingClass.getName());
-        var propertySchema = (Schema) testSchema.getProperties().get(propertyName);
-        assertThat(propertySchema.getType()).isEqualTo(expectedPropertyType);
+        var propertySchema = (Schema<?>) testSchema.getProperties().get(propertyName);
+        var propertyType = "";
+        if(propertySchema.getSpecVersion().equals(SpecVersion.V30)){
+            propertyType = propertySchema.getType();
+        }
+        if(propertySchema.getSpecVersion().equals(SpecVersion.V31)) {
+            if (propertySchema.getTypes() == null || propertySchema.getTypes().isEmpty()) {
+                propertyType = null;
+            } else {
+                propertyType = (String) propertySchema.getTypes().stream().filter(t -> !t.equals("null")).findFirst().orElse(null);
+            }
+        }
+        assertThat(propertyType).isEqualTo(expectedPropertyType);
         assertThat(propertySchema.getFormat()).isEqualTo(expectedFormat);
         assertThat(propertySchema.getPattern()).isEqualTo(expectedPattern);
         return propertySchema;
     }
 
-    private ConstraintDescriptor<?> getAnnotationDescriptor(Class containingClass, String propertyName,
+    private ConstraintDescriptor<?> getAnnotationDescriptor(Class<?> containingClass, String propertyName,
                                                             boolean optional) {
         var desc = Validation.buildDefaultValidatorFactory().getValidator().getConstraintsForClass(containingClass);
         var prop = desc.getConstraintsForProperty(propertyName);
@@ -1325,10 +1571,31 @@ public class OpenApiTestDTO2_SpringBoot3_ITest {
         }
     }
 
-    private void assertPropertyRequired(Class containingClass, String propertyName) {
+    private void assertPropertyRequired(Class<?> containingClass, String propertyName) {
         var openAPI = openAPIService.getCachedOpenAPI(Locale.getDefault());
         var testSchema = openAPI.getComponents().getSchemas().get(containingClass.getName());
         assertThat(testSchema.getRequired()).contains(propertyName);
+    }
+
+    private static void assertOptional(Schema<?> schema) {
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getNullable()).isTrue();
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            if(schema.getTypes() != null && !schema.getTypes().isEmpty()){
+                assertThat(schema.getTypes().contains("null")).isTrue();
+            }else{
+                assertThat(schema.getOneOf()).isNotEmpty();
+                assertThat(
+                    schema.getOneOf()
+                        .stream()
+                        .filter(s -> s.getTypes() != null && s.getTypes().contains("null"))
+                        .findFirst()
+                ).isPresent();
+            }
+
+
+        }
     }
 
 }

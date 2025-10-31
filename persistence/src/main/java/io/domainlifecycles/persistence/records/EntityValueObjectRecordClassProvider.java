@@ -41,6 +41,6 @@ public interface EntityValueObjectRecordClassProvider {
      *
      * @return the value object record class configurations that are contained in an entity
      */
-    List<EntityValueObjectRecordTypeConfiguration<?>> provideContainedValueObjectRecordClassConfigurations();
+    List<EntityValueObjectRecordTypeConfiguration> provideContainedValueObjectRecordClassConfigurations();
 
 }

@@ -16,6 +16,6 @@ dependencies {
     api project(":types")
     api project(":service-registry")
     compileOnly libs.slf4j.api
-    api libs.spring.tx
+    compileOnly libs.spring.tx
 
 }
