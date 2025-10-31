@@ -2,7 +2,7 @@
 
 --- 
 
-Covered topics: Aggregate persistence, Repositories, JooqAggregateRepository, Database fetching
+**Covered topics:** Aggregate persistence, Repositories, JooqAggregateRepository, Database fetching
 
 --- 
 
@@ -12,6 +12,8 @@ Up until now, we’ve stayed inside the domain layer. But to make the webshop re
 That’s where repositories come in.
 
 In this chapter, we’ll build the Customer aggregate and connect it to a persistence layer using DLC’s repository support.
+
+---
 
 ## Step 1: Creating the Customer Aggregate
 
@@ -64,6 +66,8 @@ public final class Customer extends AggregateRootBase<Customer.CustomerId> {
 
 We’ll skip complex event handling here for now. The goal is to understand how a Customer is stored and retrieved from the database.
 
+---
+
 ## Step 2: Defining the Customer Repository Interface
 
 DDD teaches us that aggregates should only be loaded and stored via repositories.
@@ -107,6 +111,8 @@ This interface defines everything we need:
 - Methods to insert, update, find, and delete customers,
 - A paginated finder (find(offset, limit)).
 
+---
+
 ## Step 3: Creating the JOOQ repository
 
 Usually, you'd need to implement all the methods needed to allow for persisting/fetching data from a database.
@@ -146,6 +152,8 @@ What's still left to do for us?
 Before we continue, please have a look at the [following guide](additional/jooq-setup.md) and follow through. This is necessary to setup DLC's persistence
 and JOOQ, the driving force behind it, accordingly. As soon as you are finished, please return to this guide and continue with
 the next step.
+
+---
 
 ## Step 4: Implementing the CustomerRepository and gain full functionality
 
@@ -222,6 +230,7 @@ It also performs the mapping to the desired aggregate structure at Java level.
 With a combination of these options, you are able to write the most complex queries you can think of - All while
 being integrated in DLC and using the standard JOOQ pattern.
 
+---
 
 ## Conclusion
 
@@ -234,9 +243,8 @@ However: The data is nowhere retrieved yet! In the next chapter, we will integra
 creating service classes and making our webshop finally functional. At the same time, you will learn about how to 
 make use of the command-pattern in DLC.
 
-
 ---
 
-|    **Chapter 4 - Order**     | **Chapter 6 - Services**  |
-|:----------------------------:|:-------------------------:|
-| [<< Previous](c3_product.md) | [Next >>](c5_customer.md) |
+|   **Chapter 4 - Order**    | **Chapter 6 - Services**  |
+|:--------------------------:|:-------------------------:|
+| [<< Previous](c4_order.md) | [Next >>](c6_services.md) |

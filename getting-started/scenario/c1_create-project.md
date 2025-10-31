@@ -2,13 +2,15 @@
 
 ---
 
-Covered topics: Project setup
+**Covered topics:** Project setup
 
 ---
 
 Before Emma’s webshop can sell its first product, we need a project to host the code.
 
 We’ll use Spring Boot as our foundation and then add DLC on top.
+
+---
 
 ## Step 1: Start a Minimal Spring Boot Project
 
@@ -58,6 +60,7 @@ Or with Maven:
 ```
 </details>
 
+---
 
 ## Step 2: Add DLC
 
@@ -90,6 +93,8 @@ DLC provides everything we need for:
 - Event handling
 - Autoconfiguration for Spring Boot
 
+---
+
 ## Step 3: First Run
 
 Let’s make sure everything works by creating a simple application entry point.
@@ -106,7 +111,10 @@ public class ShopApplication {
 
 When you run this class, Spring Boot should start successfully — DLC is now enabled!
 
-✅ Checkpoint
+---
+
+## Conclusion
+
 You now have:
 - A running Spring Boot application,
 - DLC integrated and ready to scan your domain packages.

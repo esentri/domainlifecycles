@@ -2,7 +2,7 @@
 
 ---
 
-Covered topics: Aggregate Roots, Domain Events, Entities, Domain State Transitions
+**Covered topics:** Aggregate Roots, Domain Events, Entities, Domain State Transitions
 
 ---
 
@@ -13,6 +13,8 @@ This brings us to our second Aggregate Root — the `Order`.
 While the `Product` focused on static data (name, price, image), an order represents business activity, something that happens in the system.
 That’s where Domain Events come into play. 
 They can be placed, shipped, or canceled - and these changes need to be clearly represented in the domain model.
+
+---
 
 ## Step 1: Defining the Order Aggregate
 
@@ -146,6 +148,8 @@ At this point, we’ve captured the core concept:
 
 This structure alone already expresses much of Emma’s domain language.
 
+---
+
 ## Step 2: Adding Domain Behavior
 
 Now, let’s make the Order do something.
@@ -167,6 +171,8 @@ public Order addItem(@NotNull final Product.ProductId id, int quantity) {
 ```
 
 Now Emma’s customers can fill their virtual shopping carts — and the model clearly represents that process.
+
+---
 
 ## Step 3: Introducing Domain Events
 
@@ -202,6 +208,8 @@ public record OrderShipped(@NotNull Order order) implements DomainEvent { }
 
 These events don’t do anything by themselves — they simply tell the system that something happened.
 
+---
+
 ## Step 4: Publishing Events in the Aggregate
 
 Now we’ll enrich the Order with two lifecycle transitions.
@@ -236,6 +244,8 @@ With these few lines:
 - It emits Domain Events to inform the outside world.
 - Validation remains inside the domain model.
 
+---
+
 ## Conclusion
 Now the webshop is starting to take on some shape. 
 Emma's webshop can now take on orders. But what happens next? Our orders are telling the system: "I'm cancelled" or "I'm shipped",
@@ -244,6 +254,6 @@ That's what we're going to cover in the next chapter: Event-Listeners, Domain-Co
 
 ---
 
-|   **Chapter 3 - Product**    | **Chapter 5 - Customer**  |
-|:----------------------------:|:-------------------------:|
-| [<< Previous](c3_product.md) | [Next >>](c5_customer.md) |
+|    **Chapter 3 - Product**     | **Chapter 5 - Customer**  |
+|:------------------------------:|:-------------------------:|
+|  [<< Previous](c3_product.md)  | [Next >>](c5_customer.md) |

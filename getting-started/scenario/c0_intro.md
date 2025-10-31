@@ -1,5 +1,7 @@
 # Getting Started with DLC
 
+---
+
 Learn the essential DDD concepts — and how DLC helps you apply them effortlessly.
 
 ## Introduction

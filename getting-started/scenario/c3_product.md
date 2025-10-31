@@ -2,7 +2,7 @@
 
 ---
 
-Covered topics: Aggregate-Roots, Identities, Value-Objects, Validation-Support
+**Covered topics:** Aggregate-Roots, Identities, Value-Objects, Validation-Support
 
 ---
 
@@ -12,6 +12,8 @@ For you as a developer, that means it’s time to design the core domain model: 
 
 In DDD terms, a Product is an Aggregate Root — the main entry point for a group of related objects that represent a consistent unit in the domain.
 
+---
+
 ## Step 1: Define the Domain Package
 
 Inside your project, create a new package for the domain layer and inside for the product domain:
@@ -19,6 +21,8 @@ Inside your project, create a new package for the domain layer and inside for th
 `src/main/java/com/shop/core/domain/product`
 
 This is where all product-related classes will live: entities, value objects, and the aggregate itself.
+
+---
 
 ## Step 2: Create the Aggregate Root
 
@@ -60,6 +64,8 @@ Notice how the `AggregateRootBase` is a generic class? It expects you to provide
 the `Identity` interface. For sake of simplicity, you can just define it as a local record in your `Product` class.
 Last but not least, for every entity you define with the DLC framework, you need it to accept a `concurrencyVersion` for 
 initializing. More on `concurrencyVersion` can be found [here](../../types/src/main/java/io/domainlifecycles/domain/types/internal/ConcurrencySafe.java)
+
+---
 
 ## Step 3: Make your product alive
 "What makes a product?", Emma asks herself. 
@@ -153,7 +159,9 @@ public final class Product extends AggregateRootBase<Product.ProductId> {
 
 Now we enhanced our product with all the values we need to list it on our webshop!
 
-# Step 4: Validation & Business rules
+---
+
+## Step 4: Validation & Business rules
 Emma is thinking to herself: "Well the shop owner can now list products on his site. But what if he makes a mistake, 
 and leaves the price empty? Customers will be confused. And what if he forgets to name his product? How can I tackle this?"
 
@@ -269,6 +277,8 @@ public class ShopApplication {
 
 Now we are safe and the webshop will guide the webshop owner to only listing valid products!
 
+---
+
 ## Step 5: Your first Aggregate in action!
 
 You can test your `Product` and especially its constraints like the following:
@@ -307,6 +317,8 @@ class ProductTest {
 }
 ```
 </details>
+
+---
 
 ## Conclusion
 So far, we’ve kept things simple — but this small model already shows the DDD mindset:

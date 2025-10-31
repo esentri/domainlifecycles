@@ -2,11 +2,11 @@
 
 ---
 
-Covered topics: Auto-Configuration
+**Covered topics:** Auto-Configuration
 
 ---
 
-Before we dive into domain modeling, let’s take a quick look at how DLC integrates into our project.
+Before we dive deep into domain modeling, let’s take a quick look at how DLC integrates into our project.
 
 ## Auto-Configuration
 
@@ -23,6 +23,8 @@ The annotation you’ve already used, `@EnableDlc`, tells DLC:
 
 **That’s all you need for a clean start.**
 
+---
+
 ## What Happens Behind the Scenes
 
 When your application starts, DLC automatically:
@@ -32,6 +34,8 @@ When your application starts, DLC automatically:
 - Sets up the domain event bus for internal and external events.
 
 You can later customize these behaviors, but for now the defaults are perfect for getting started.
+
+---
 
 ## Why This Matters for DDD
 
