@@ -102,9 +102,6 @@ public class OrderService implements OrderDriver {
      */
     @Override
     public List<Order> find(int offset, int limit, OrderStatus... orderStatus) {
-        return orderRepository.find(offset, limit, orderStatus)
-            .collect(Collectors.toList());
+        return orderRepository.find(offset, limit, orderStatus);
     }
-
-
 }

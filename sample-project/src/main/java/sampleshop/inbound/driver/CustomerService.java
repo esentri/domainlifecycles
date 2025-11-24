@@ -109,7 +109,7 @@ public class CustomerService implements CustomerDriver {
      */
     @Override
     public List<Customer> find(int offset, int limit) {
-        return repository.find(offset, limit).toList();
+        return repository.find(offset, limit);
     }
 
     /**

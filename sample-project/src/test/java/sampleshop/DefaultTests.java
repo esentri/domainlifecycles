@@ -130,7 +130,7 @@ public class DefaultTests {
             .andExpect(status().isCreated())
             .andReturn();
 
-        var orders = orderRepository.find(0, 10, OrderStatus.PENDING).collect(Collectors.toList());
+        var orders = orderRepository.find(0, 10, OrderStatus.PENDING);
         assertThat(orders).hasSize(1);
 
         var order = orderRepository.deleteById(orders.get(0).getId());
