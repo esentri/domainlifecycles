@@ -43,7 +43,7 @@ public final class Customer extends AggregateRootBase<Customer.CustomerId> {
     private String userName;
     @NotNull
     private Address address;
-    private Optional<CreditCard> creditCard;
+    private CreditCard creditCard;
     private boolean blocked;
 
     @Builder
@@ -57,7 +57,7 @@ public final class Customer extends AggregateRootBase<Customer.CustomerId> {
         this.id = id;
         this.userName = userName;
         this.address = address;
-        this.creditCard = Optional.ofNullable(creditCard);
+        this.creditCard = creditCard;
         this.blocked = blocked;
     }
 }
@@ -155,6 +155,31 @@ the next step.
 
 ---
 
+Before we can now finally begin implementing the repository, there is one tiny amendment we have to make so DLC/JOOQ
+work together seamlessly.
+Remember the `@EnableDLC` annotation from the beginning of the tutorial?
+There are two attributes we need to add right now:
+
+```java
+@SpringBootApplication
+@EnableDlc(
+    dlcDomainBasePackages = "com.shop.domain",
+    jooqRecordPackage = "com.example.records",
+    jooqSqlDialect = SQLDialect.H2)
+public class ShopApplication {
+    static void main(String[] args) {
+        SpringApplication.run(ShopApplication.class, args);
+    }
+}
+```
+
+If you've followed through the [jooq guide](additional/jooq-setup.md), you can see that we have defined a record package
+inside the code generator configuration. This has to correspond to the `jooqRecordPackage` in the annotation.
+The `jooqSqlDialect` derives from the database engine you're using. In our case, we're using H2. However, there are 
+basically no limitations. Just change the dialect to your needs.
+
+---
+
 ## Step 4: Implementing the CustomerRepository and gain full functionality
 
 Great!
@@ -201,7 +226,7 @@ class JooqCustomerRepository extends JooqAggregateRepository<Customer, Customer.
     }
     
     @Override
-    public Stream<Customer> find(int offset, int limit) {
+    public List<Customer> find(int offset, int limit) {
         return dslContext
             .selectFrom(CUSTOMER)
             .orderBy(CUSTOMER.ID.desc())
@@ -209,7 +234,8 @@ class JooqCustomerRepository extends JooqAggregateRepository<Customer, Customer.
             .limit(limit)
             .fetch()
             .stream()
-            .map(r -> getFetcher().fetchDeep(r).resultValue().orElseThrow());
+            .map(r -> getFetcher().fetchDeep(r).resultValue().orElseThrow())
+            .toList();
     }
 }
 ```

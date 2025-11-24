@@ -2,7 +2,7 @@
 
 ---
 
-**Covered topics:** Application services, DomainCommands, Repository usage, DomainEvents
+**Covered topics:** Application services, DomainCommands, Repository usage, DomainEvents, Event listeners
 
 ---
 
@@ -45,7 +45,8 @@ It carries all the data needed to fulfill Emma’s request: who the customer is 
 
 ## Step 2 – Creating the Customer Service
 
-We’ll now implement a service that handles this command.
+We’ll now implement a service that handles this command. The service we will build in fact is an application-service, 
+since it's only there for orchestration and connecting our web and persistence layer.
 This service belongs to the **application layer** and acts as the *driver* for customer-related use-cases.
 
 Create a new class in `src/main/java/com/shop/inbound/driver`:
@@ -81,7 +82,7 @@ public class CustomerService {
             .id(repository.newCustomerId())
             .userName(addNewCustomer.userName())
             .address(addNewCustomer.address())
-            .creditCard(addNewCustomer.creditCard().orElse(null))
+            .creditCard(addNewCustomer.creditCard())
             .blocked(false)
             .build());
 
@@ -104,7 +105,45 @@ The `CustomerRepository` handles all the persistence details, so the service rem
 
 ---
 
-## Step 3 – Connecting It All Together
+## Step 3 - Event listeners
+See the event we are publishing in the `add()` function above? Also, do you remember the [events we published in chapter four](./c4_order.md#step-3-introducing-domain-events)?
+Nobody's listening to them yet!
+Let's take a look at how DLC handles event listeners.
+
+```java
+@Log
+@Service
+public class CustomerNotificationService implements DomainService {
+    
+    private final CustomerRepository customerRepository;
+
+    public CustomerNotificationService(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
+
+    /**
+     * Notifies Customers about a new order placed event.
+     *
+     * @param newOrderPlaced the DomainEvent representing the fact that a new order was successfully placed
+     */
+    @ListensTo(domainEventType = NewOrderPlaced.class)
+    public void notifyNewOrderPlaced(NewOrderPlaced newOrderPlaced) {
+        var customer = customerRepository.findById(newOrderPlaced.order().getCustomerId())
+            .orElseThrow();
+        log.info(customer.getUserName(),
+            String.format("We received your new Order with the ID '%s'!", newOrderPlaced.order().getId().value()));
+    }
+}
+```
+
+Note the annotation `@ListensTo(domainEventType = NewOrderPlaced.class)`. That's how you create event-listeners with DLC.
+Simple as that. 
+It may be beneficial to write your event-listeners in a separate service, as we did with this example, to ensure loose coupling
+and a clear architecture.
+
+--- 
+
+## Step 4 – Connecting It All Together
 
 Now that Emma can officially “add a new customer,” let’s simulate this workflow inside a test or controller.
 
@@ -141,14 +180,15 @@ Each of these can be modeled as small, composable commands, handled by the same 
 
 ---
 
-✅ **Checkpoint**
+## Conclusion
 
-You now know how to:
-
-* Create and use **DomainCommands** to express business intent.
-* Build **application services** that coordinate repositories and domain events.
-* Keep your domain model clean while DLC handles persistence and event wiring.
+You now know how Domain-Commands are created and handled with DLC in an application service.
+For our next and last chapter, we will look at how DLC simplifies OpenAPI documentation and how 
+to finally make Emma's webshop accessible to the internet via REST-Controllers, so that her customers
+can interact with it.
 
 ---
 
-In the next chapter, we’ll expose these use-cases to the outside world through **REST controllers**, letting Emma and her customers interact with the webshop.
+|   **Chapter 5 - Customer**    | **Chapter 7 - REST**  |
+|:-----------------------------:|:---------------------:|
+| [<< Previous](c5_customer.md) | [Next >>](c7_rest.md) |

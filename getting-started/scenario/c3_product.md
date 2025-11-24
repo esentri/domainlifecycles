@@ -63,7 +63,8 @@ public final class Product extends AggregateRootBase<Product.ProductId> {
 Notice how the `AggregateRootBase` is a generic class? It expects you to provide the ID of your class, which has to implement
 the `Identity` interface. For sake of simplicity, you can just define it as a local record in your `Product` class.
 Last but not least, for every entity you define with the DLC framework, you need it to accept a `concurrencyVersion` for 
-initializing. More on `concurrencyVersion` can be found [here](../../types/src/main/java/io/domainlifecycles/domain/types/internal/ConcurrencySafe.java)
+initializing. The `concurrencyVersion` builds the foundation for optimistic locking and is necessary for DLC to work. 
+More on `concurrencyVersion` can be found [here](../../types/src/main/java/io/domainlifecycles/domain/types/internal/ConcurrencySafe.java)
 
 ---
 
@@ -94,6 +95,7 @@ import java.math.BigDecimal;
 public record Price(
     @NotNull @PositiveOrZero @Digits(integer = 10, fraction = 2) BigDecimal amount
 ) implements ValueObject {
+    
     public Price add(Price another) {
         return new Price(amount.add(another.amount));
     }
@@ -130,11 +132,11 @@ public final class Product extends AggregateRootBase<Product.ProductId> {
 
     private final ProductId id;
 
-    private Optional<String> description;
+    private String description;
     
     private String name;
     
-    private Optional<URI> image;
+    private URI image;
     
     private Price price;
 
@@ -147,9 +149,9 @@ public final class Product extends AggregateRootBase<Product.ProductId> {
                     final Price price) {
         super(concurrencyVersion);
         this.id = id;
-        this.description = Optional.ofNullable(description);
+        this.description = description;
         this.name = name;
-        this.image = Optional.ofNullable(image);
+        this.image = image;
         this.price = price;
     }
 }
@@ -161,7 +163,7 @@ Now we enhanced our product with all the values we need to list it on our websho
 
 ---
 
-## Step 4: Validation & Business rules
+## Step 4: Validation & Business rules / Invariants
 Emma is thinking to herself: "Well the shop owner can now list products on his site. But what if he makes a mistake, 
 and leaves the price empty? Customers will be confused. And what if he forgets to name his product? How can I tackle this?"
 
@@ -169,10 +171,97 @@ This may sound familiar to you. If you have ever implemented some form of busine
 Things can get messy fast, you lose track of all the rules you need and end up with long, nested if/else statements in your
 services. 
 
-Not with DLC. 
+### First option: Bean validations
+DLC offers extended support of
+Java Bean Validation Annotations within a DomainObject to implement invariants or pre/post/conditions on methods.
+You can use them as always by just annotating your fields with the wanted annotation. 
+An example for the products in Emma's webshop could look like this:
 
-DLC provides a handy solution for exactly this use case. By making use of the `DomainAssertions`-API, Emma can easily
-implement the rules she wants for the product.
+<details> <summary><img style="height: 12px" src="../icons/java.svg" alt="java"><b>Product.java</b></summary>
+
+```java
+package com.shop.domain.product;
+
+import io.domainlifecycles.assertion.DomainAssertions;
+import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.domain.types.base.AggregateRootBase;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Builder;
+import lombok.Getter;
+import sampleshop.core.domain.Price;
+
+import java.net.URI;
+import java.util.Optional;
+
+@Getter
+public final class Product extends AggregateRootBase<Product.ProductId> {
+
+    public record ProductId(@NotNull Long value) implements Identity<Long> { }
+
+    private final ProductId id;
+
+    private @Size(max = 1000) String description;
+    
+    @NotEmpty
+    @Size(max = 200)
+    private String name;
+    
+    private URI image;
+    
+    @NotNull
+    private Price price;
+
+    @Builder
+    private Product(final long concurrencyVersion,
+                    final Product.ProductId id,
+                    final String description,
+                    final String name,
+                    final URI image,
+                    final Price price) {
+        super(concurrencyVersion);
+        this.id = id;
+        this.description = description;
+        this.name = name;
+        this.image = image;
+        this.price = price;
+    }
+}
+```
+</details>
+
+In order to make them work however, you need to activate the byte-code extension.
+
+### Byte-Code extension
+To simplify the implementation of an "Always-Valid-Strategy", DLC offers a ByteCode extension.
+"Always-Valid" means that all domain objects can only be created with their validations adhered to at all times.
+The ByteCode extension, for example, adds corresponding validation calls to all relevant constructors.
+
+The extension however is not activated per default when using DLC's autoconfig feature.
+You have to activate it explicitly like this in your `Application` class:
+
+```Java
+@SpringBootApplication
+@EnableDlc(dlcDomainBasePackages = "com.shop.domain")
+public class ShopApplication {
+    
+    static void main(String[] args) {
+        SpringApplication.run(ShopApplication.class, args);
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        ValidationDomainClassExtender.extend("sampleshop");
+    }
+}
+```
+
+But bean validation annotations can often be quite limiting to your use cases. What if you want to write more specific
+and unique invariants? That's where DLC's DomainAssertions come into play.
+
+### Second option: DomainAssertions-API
+By making use of DLC's `DomainAssertions`-API, Emma can easily implement any rule she can think of for her product.
 
 Let's take a look on how she does that.
 
@@ -201,13 +290,13 @@ public final class Product extends AggregateRootBase<Product.ProductId> {
 
     private final ProductId id;
 
-    private Optional<@Size(max = 1000) String> description;
+    private @Size(max = 1000) String description;
     
     @NotEmpty
     @Size(max = 200)
     private String name;
     
-    private Optional<URI> image;
+    private URI image;
     
     @NotNull
     private Price price;
@@ -221,9 +310,9 @@ public final class Product extends AggregateRootBase<Product.ProductId> {
                     final Price price) {
         super(concurrencyVersion);
         this.id = id;
-        this.description = Optional.ofNullable(description);
+        this.description = description;
         this.name = name;
-        this.image = Optional.ofNullable(image);
+        this.image = image;
         this.price = price;
     }
     
@@ -242,38 +331,13 @@ public final class Product extends AggregateRootBase<Product.ProductId> {
 ```
 </details>
 
-Emma used a lot of Validation-Constraints from the `Jakarta` module here. DLC offers extended support of 
-Java Bean Validation Annotations within a DomainObject to implement invariants or pre/post/conditions on methods.
-Furthermore, we make use of `DomainAssertions` by overriding the `validate()` method of our AggregateRootBase.
+With `DomainAssertions`, you can write custom assertions that are not supported out of the box by using plain 
+bean validations. In our case, we make use of `DomainAssertions` by overriding the `validate()` method of our AggregateRootBase.
 `DomainAssertions` enable you to execute any type of assertion you can think of. In this case, we want the URI to have
-a maximum number of characters, which we cannot implement out of the box with the `Jakarta` validations. 
+a maximum number of characters.
 You can use `DomainAssertions` anywhere you want in your code. Most often, you will probably use them in your constructor
 or, like in this case, in the `validate()` method in classes which implement the 
-`io.domainlifecycles.domain.types.Validatable` interface.
-
-### Byte-Code extension
-To simplify the implementation of an "Always-Valid-Strategy", DLC offers a ByteCode extension.
-"Always-Valid" means that all domain objects can only be created with validations adhered to at all times.
-The ByteCode extension, for example, adds corresponding validation calls to all relevant constructors.
-
-The extension however is not activated per default when using DLC's autoconfig feature.
-You have to activate it explicitly like this in your `Application` class:
-
-```Java
-@SpringBootApplication
-@EnableDlc(dlcDomainBasePackages = "com.shop.domain")
-public class ShopApplication {
-    
-    static void main(String[] args) {
-        SpringApplication.run(ShopApplication.class, args);
-    }
-
-    @PostConstruct
-    public void postConstruct() {
-        ValidationDomainClassExtender.extend("sampleshop");
-    }
-}
-```
+`io.domainlifecycles.domain.types.Validatable` interface (as most of the marker interfaces do).
 
 Now we are safe and the webshop will guide the webshop owner to only listing valid products!
 
@@ -298,7 +362,7 @@ class ProductTest {
         assertThatNoException().isThrownBy(() ->
             Product.builder()
                 .id(ProductId.builder().id(1L).build())
-                .description(Optional.of("A red handbag."))
+                .description("A red handbag.")
                 .name("Red handbag")
                 .price(Price.builder().amount(BigDecimal.TEN).build())
                 .build());
@@ -309,7 +373,7 @@ class ProductTest {
         assertThatThrownBy(() ->
             Product.builder()
                 .id(ProductId.builder().id(1L).build())
-                .description(Optional.of("A red handbag."))
+                .description("A red handbag.")
                 .price(Price.builder().amount(BigDecimal.TEN).build())
                 .build())
             .isInstanceOf(DomainAssertionException.class);

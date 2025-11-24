@@ -29,6 +29,10 @@ package sampleshop.core.domain.order;
 import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.Publishes;
 import io.domainlifecycles.events.api.DomainEvents;
+import jakarta.validation.constraints.NotNull;
+import java.util.List;
+import sampleshop.core.domain.Price;
+import sampleshop.core.domain.order.PlaceOrder.PlaceOrderItem;
 import sampleshop.core.domain.product.Product;
 import sampleshop.core.outport.OrderRepository;
 import sampleshop.core.outport.ProductRepository;
@@ -58,36 +62,44 @@ public final class OrderPlacementService implements DomainService {
      */
     @Publishes(domainEventTypes = {NewOrderPlaced.class})
     public Order placeOrder(final PlaceOrder placeOrder) {
-        var placed = orderRepository.insert(
-            Order.builder()
-                .id(orderRepository.newOrderId())
-                .customerId(placeOrder.customerId())
-                .status(OrderStatus.PENDING)
-                .creation(Instant.now())
-                .items(
-                    placeOrder.items()
-                        .stream()
-                        .map(item ->
-                            OrderItem
-                                .builder()
-                                .id(orderRepository.newOrderItemId())
-                                .productId(item.productId())
-                                .quantity(item.quantity())
-                                .productPrice(
-                                    productRepository
-                                        .findById(item.productId())
-                                        .map(Product::getPrice)
-                                        .orElseThrow(() -> new IllegalArgumentException(
-                                            String.format("ProductId '%s' is not present in database!",
-                                                item.productId()))
-                                        )
-                                )
-                                .build()
-                        ).collect(Collectors.toList()))
-                .build()
-        );
-        DomainEvents.publish(new NewOrderPlaced(placed));
-        return placed;
+
+        Order order = Order.builder()
+            .id(orderRepository.newOrderId())
+            .customerId(placeOrder.customerId())
+            .status(OrderStatus.PENDING)
+            .creation(Instant.now())
+            .items(buildOrderItems(placeOrder.items()))
+            .build();
+
+        var placedOrder = orderRepository.insert(order);
+
+        DomainEvents.publish(new NewOrderPlaced(placedOrder));
+        return placedOrder;
+    }
+
+    private List<OrderItem> buildOrderItems(@NotNull List<PlaceOrderItem> placeOrderItems) {
+        return placeOrderItems
+            .stream()
+            .map(this::mapOrderItem)
+            .collect(Collectors.toList());
+    }
+
+    private OrderItem mapOrderItem(PlaceOrderItem item) {
+        Price productPrice = productRepository
+            .findById(item.productId())
+            .map(Product::getPrice)
+            .orElseThrow(() -> new IllegalArgumentException(
+                String.format("ProductId '%s' is not present in database!",
+                    item.productId()))
+            );
+
+        return OrderItem
+            .builder()
+            .id(orderRepository.newOrderItemId())
+            .productId(item.productId())
+            .quantity(item.quantity())
+            .productPrice(productPrice)
+            .build();
     }
 
 }

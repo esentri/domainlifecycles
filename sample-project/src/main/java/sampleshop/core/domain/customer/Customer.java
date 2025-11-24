@@ -60,7 +60,7 @@ public final class Customer extends AggregateRootBase<Customer.CustomerId> {
     private String userName;
     @NotNull
     private Address address;
-    private Optional<CreditCard> creditCard;
+    private CreditCard creditCard;
     private boolean blocked;
 
     @Builder
@@ -74,7 +74,7 @@ public final class Customer extends AggregateRootBase<Customer.CustomerId> {
         this.id = id;
         this.userName = userName;
         this.address = address;
-        this.creditCard = Optional.ofNullable(creditCard);
+        this.creditCard = creditCard;
         this.blocked = blocked;
     }
 
@@ -90,7 +90,7 @@ public final class Customer extends AggregateRootBase<Customer.CustomerId> {
 
     @Publishes(domainEventTypes = CustomerCreditCardChanged.class)
     public Customer setCreditCard(CreditCard creditCard) {
-        this.creditCard = Optional.ofNullable(creditCard);
+        this.creditCard = creditCard;
         DomainEvents.publish(new CustomerCreditCardChanged(
             id,
             this.creditCard

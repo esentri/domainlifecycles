@@ -38,6 +38,6 @@ import java.util.Optional;
 public record AddNewCustomer(
     String userName,
     Address address,
-    Optional<CreditCard> creditCard)
+    CreditCard creditCard)
     implements DomainCommand {
 }

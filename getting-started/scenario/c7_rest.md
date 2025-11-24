@@ -123,7 +123,7 @@ You should receive a `201 Created` response with a JSON body like:
 ```json
 {
   "data": {
-    "id": { "value": 42 },
+    "id": 42,
     "userName": "emma_shop_fan",
     "address": {
       "street": "Main Street 1",
@@ -155,7 +155,17 @@ At this point, your webshop:
 
 ## Conclusion
 
+The webshop now accepts **DomainCommands** (`AddNewCustomer`) over REST, automatically serializes/deserializes complex domain objects, 
+publishes domain events when a new customer is added and generates a full **OpenAPI definition** with no extra configuration.
+
+With this last missing piece implemented, Emma's online-shop is now ready to be served to customers.
 Congratulations!
-Emma's workshop is now fully functional and ready to serve customers. 
+
 For now, we've only covered the absolute basics to make it work. If you want to make the shop more enhanced,
 have a look at the [sample-project](../../sample-project), where you will find the webshop fully implemented.
+
+---
+
+|   **Chapter 6 - Services**    |
+|:-----------------------------:|
+| [<< Previous](c6_services.md) |

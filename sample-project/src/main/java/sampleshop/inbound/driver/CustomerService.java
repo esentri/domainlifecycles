@@ -74,7 +74,7 @@ public class CustomerService implements CustomerDriver {
             .id(repository.newCustomerId())
             .userName(addNewCustomer.userName())
             .address(addNewCustomer.address())
-            .creditCard(addNewCustomer.creditCard().orElse(null))
+            .creditCard(addNewCustomer.creditCard())
             .blocked(false)
             .build()
         );
@@ -98,11 +98,10 @@ public class CustomerService implements CustomerDriver {
      */
     @Override
     public Optional<Customer> changeCreditCard(ChangeCreditCard changeCreditCard) {
-        var changedCustomer = repository
+        return repository
             .findById(changeCreditCard.customerId())
             .map(customer -> repository.update(customer.setCreditCard(changeCreditCard.creditCard()))
             );
-        return changedCustomer;
     }
 
     /**
@@ -120,5 +119,4 @@ public class CustomerService implements CustomerDriver {
     public List<OrdersByCustomer> reportOrders(String customerFilter, int offset, int limit) {
         return ordersByCustomerQueries.listAll(customerFilter, offset, limit);
     }
-
 }

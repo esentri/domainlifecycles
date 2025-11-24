@@ -62,7 +62,8 @@ public final class Product extends AggregateRootBase<Product.ProductId> {
     /**
      * The product description.
      */
-    private Optional<@Size(max = 1000) String> description;
+    @Size(max = 1000)
+    private String description;
 
     /**
      * The name of this product.
@@ -74,7 +75,7 @@ public final class Product extends AggregateRootBase<Product.ProductId> {
     /**
      * The image resource of this product.
      */
-    private Optional<URI> image;
+    private URI image;
 
     /**
      * The price of this product.
@@ -91,9 +92,9 @@ public final class Product extends AggregateRootBase<Product.ProductId> {
                     final Price price) {
         super(concurrencyVersion);
         this.id = id;
-        this.description = Optional.ofNullable(description);
+        this.description = description;
         this.name = name;
-        this.image = Optional.ofNullable(image);
+        this.image = image;
         this.price = price;
     }
 
@@ -102,13 +103,13 @@ public final class Product extends AggregateRootBase<Product.ProductId> {
      */
     @Override
     public void validate() {
-        image.ifPresent(uri ->
+        if (image != null) {
             DomainAssertions.hasLength(
-                uri.toString(),
+                image.toString(),
                 0,
                 1000,
                 "The product image URI must have less than 1000 characters."
-            )
-        );
+            );
+        }
     }
 }

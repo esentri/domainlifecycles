@@ -96,17 +96,3 @@ dependencies {
 </build>
 ```
 </details>
-
-**Note:** The specified `target packageName` has to correspond to your `jooqRecordPackage` in the `@EnableDlc` annotation:
-```java
-@SpringBootApplication
-@EnableDlc(
-        dlcDomainBasePackages = "com.example.domain", 
-        jooqRecordPackage = "com.example.records",
-        jooqSqlDialect = SQLDialect.H2)
-public class Application {
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
-}
-```

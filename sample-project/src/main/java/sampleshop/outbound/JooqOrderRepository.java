@@ -26,6 +26,7 @@
 
 package sampleshop.outbound;
 
+import java.util.List;
 import sampleshop.outbound.event.SpringPersistenceEventPublisher;
 import io.domainlifecycles.jooq.imp.JooqAggregateRepository;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
@@ -79,7 +80,7 @@ class JooqOrderRepository extends JooqAggregateRepository<Order, Order.OrderId> 
      * {@inheritDoc}
      */
     @Override
-    public Stream<Order> find(int offset, int limit, OrderStatus... orderStatuses) {
+    public List<Order> find(int offset, int limit, OrderStatus... orderStatuses) {
         Condition condition = trueCondition();
         if (orderStatuses != null && orderStatuses.length > 0) {
             condition = ORDER.STATUS.in(Arrays.stream(orderStatuses).map(s -> s.name()).toList());
@@ -92,7 +93,7 @@ class JooqOrderRepository extends JooqAggregateRepository<Order, Order.OrderId> 
             .limit(limit)
             .fetch()
             .stream()
-            .map(or -> getFetcher().fetchDeep(or).resultValue().orElseThrow());
+            .map(or -> getFetcher().fetchDeep(or).resultValue().orElseThrow())
+            .toList();
     }
-
 }

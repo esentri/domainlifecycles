@@ -26,6 +26,7 @@
 
 package sampleshop.outbound;
 
+import java.util.List;
 import sampleshop.outbound.event.SpringPersistenceEventPublisher;
 import io.domainlifecycles.jooq.imp.JooqAggregateRepository;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
@@ -67,7 +68,7 @@ class JooqCustomerRepository extends JooqAggregateRepository<Customer, Customer.
      * {@inheritDoc}
      */
     @Override
-    public Stream<Customer> find(int offset, int limit) {
+    public List<Customer> find(int offset, int limit) {
         return dslContext
             .selectFrom(CUSTOMER)
             .orderBy(CUSTOMER.ID.desc())
@@ -75,6 +76,7 @@ class JooqCustomerRepository extends JooqAggregateRepository<Customer, Customer.
             .limit(limit)
             .fetch()
             .stream()
-            .map(r -> getFetcher().fetchDeep(r).resultValue().orElseThrow());
+            .map(r -> getFetcher().fetchDeep(r).resultValue().orElseThrow())
+            .toList();
     }
 }

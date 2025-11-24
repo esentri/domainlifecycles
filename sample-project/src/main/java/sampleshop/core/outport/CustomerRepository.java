@@ -27,6 +27,7 @@
 package sampleshop.core.outport;
 
 import io.domainlifecycles.domain.types.Repository;
+import java.util.List;
 import sampleshop.core.domain.customer.Customer;
 
 import java.util.Optional;
@@ -70,7 +71,7 @@ public interface CustomerRepository extends Repository<Customer.CustomerId, Cust
      * @param limit  pagination limit
      * @return Stream of {@link Customer} instances
      */
-    Stream<Customer> find(int offset, int limit);
+    List<Customer> find(int offset, int limit);
 
 
     /**

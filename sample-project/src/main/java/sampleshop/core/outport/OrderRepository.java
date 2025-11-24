@@ -27,6 +27,7 @@
 package sampleshop.core.outport;
 
 import io.domainlifecycles.domain.types.Repository;
+import java.util.List;
 import sampleshop.core.domain.order.Order;
 import sampleshop.core.domain.order.OrderItem;
 import sampleshop.core.domain.order.OrderStatus;
@@ -58,7 +59,7 @@ public interface OrderRepository extends Repository<Order.OrderId, Order> {
      * @param orderStatus
      * @return @return stream of {@code Order}s
      */
-    Stream<Order> find(int offset, int limit, OrderStatus... orderStatus);
+    List<Order> find(int offset, int limit, OrderStatus... orderStatus);
 
     /**
      * Stores an new {@code Order} into this repository.

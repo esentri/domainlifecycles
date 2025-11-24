@@ -248,9 +248,9 @@ With these few lines:
 
 ## Conclusion
 Now the webshop is starting to take on some shape. 
-Emma's webshop can now take on orders. But what happens next? Our orders are telling the system: "I'm cancelled" or "I'm shipped",
-but nobody's listening.
-That's what we're going to cover in the next chapter: Event-Listeners, Domain-Commands and Service classes in general.
+Emma's webshop can now take on orders. However, there are still no customers in the system yet.
+In the next chapter, we will implement the customer aggregate and create the persistence layer, which allows us to 
+save/retrieve webshop data to/from the database. 
 
 ---
 
