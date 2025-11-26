@@ -17,11 +17,11 @@ dependencies {
     api project(":types")
     api project(":service-registry")
     api project(":domain-events-spring-tx")
-    api libs.jackson.databind
+    api libs.jackson2.databind
 
     compileOnly libs.slf4j.api
     compileOnly libs.spring.jdbc
-    compileOnly libs.jackson.core
+    compileOnly libs.jackson2.core
 
 
 }

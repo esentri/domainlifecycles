@@ -26,9 +26,9 @@ dependencies {
     api libs.jakarta.jms.api
     compileOnly libs.active.mq.client
     compileOnly libs.active.mq.client.jakarta
-    compileOnly libs.jackson.core
+    compileOnly libs.jackson2.core
     compileOnly libs.gruelbox.transactionoutbox.core
-    api libs.jackson.databind
+    api libs.jackson2.databind
     compileOnly libs.slf4j.api
 
     testImplementation project(":access")

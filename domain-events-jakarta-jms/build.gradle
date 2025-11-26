@@ -20,9 +20,9 @@ dependencies {
     compileOnly project (":domain-events-spring-tx")
     compileOnly project (":domain-events-gruelbox")
     api libs.jakarta.jms.api
-    compileOnly libs.jackson.core
+    compileOnly libs.jackson2.core
     compileOnly libs.gruelbox.transactionoutbox.core
-    compileOnly libs.jackson.databind
+    compileOnly libs.jackson2.databind
     compileOnly libs.slf4j.api
 
 }

@@ -15,7 +15,7 @@ java {
 dependencies {
     api project(":types")
     implementation project(":mirror")
-    compileOnly libs.jackson.core
-    compileOnly libs.jackson.databind
+    compileOnly libs.jackson2.core
+    compileOnly libs.jackson2.databind
     compileOnly libs.spring.web6
 }

@@ -38,7 +38,8 @@ commons-validator-version = '1.10.0'
 gruelbox-version = '6.0.609'
 jakarta-jms-api-version = '3.1.0'
 jakarta-transaction-api-version = '2.0.1'
-jackson-version = '2.20.0'
+jackson-2-version = '2.20.0'
+jackson-3-version = '3.0.2'
 jakarta-validation-api-version = '3.1.1'
 jooq-version = '3.19.26'
 slf4j-version = '2.0.17'
@@ -105,11 +106,13 @@ gruelbox-transactionoutbox-spring = { module = "com.gruelbox:transactionoutbox-s
 gruelbox-transactionoutbox-jackson = { module = "com.gruelbox:transactionoutbox-jackson", version.ref = "gruelbox-version"}
 h2 = { module = "com.h2database:h2", version.ref = "h2-version"}
 hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", version.ref = "hibernate-validator-jakarta-version" }
-jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson-version" }
-jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson-version" }
-jackson-datatype-jdk8 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8", version.ref = "jackson-version" }
-jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson-version" }
-jackson-module-parameter-names = { module = "com.fasterxml.jackson.module:jackson-module-parameter-names", version.ref = "jackson-version" }
+jackson2-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson-2-version" }
+jackson2-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson-2-version" }
+jackson2-datatype-jdk8 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8", version.ref = "jackson-2-version" }
+jackson2-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson-2-version" }
+jackson2-module-parameter-names = { module = "com.fasterxml.jackson.module:jackson-module-parameter-names", version.ref = "jackson-2-version" }
+jackson3-core = { module = "tools.jackson.core:jackson-core", version.ref = "jackson-3-version" }
+jackson3-databind = { module = "tools.jackson.core:jackson-databind", version.ref = "jackson-3-version" }
 jakarta-el-api = { module = "jakarta.el:jakarta.el-api", version.ref = "jakarta-el-version" }
 jakarta-jms-api = { module = "jakarta.jms:jakarta.jms-api", version.ref = "jakarta-jms-api-version" }
 jakarta-transaction-api = { module = "jakarta.transaction:jakarta.transaction-api", version.ref = "jakarta-transaction-api-version"}

@@ -13,8 +13,8 @@ java {
 }
 
 dependencies {
-    compileOnly libs.jackson.core
-    compileOnly libs.jackson.databind
+    compileOnly libs.jackson2.core
+    compileOnly libs.jackson2.databind
     api project(":types")
     implementation project(":mirror")
     implementation project(":access")
@@ -31,9 +31,9 @@ dependencies {
     testAnnotationProcessor libs.lombok
     testImplementation libs.assertj
     testImplementation libs.logback.classic
-    testImplementation libs.jackson.datatype.jdk8
-    testImplementation libs.jackson.datatype.jsr310
-    testImplementation libs.jackson.module.parameter.names
+    testImplementation libs.jackson2.datatype.jdk8
+    testImplementation libs.jackson2.datatype.jsr310
+    testImplementation libs.jackson2.module.parameter.names
 
 }
 test {
