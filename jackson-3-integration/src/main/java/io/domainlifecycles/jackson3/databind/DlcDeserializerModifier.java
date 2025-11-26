@@ -26,10 +26,9 @@
 
 package io.domainlifecycles.jackson3.databind;
 
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.DeserializationConfig;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
+import tools.jackson.databind.BeanDescription;
+import tools.jackson.databind.BeanDescription.Supplier;
+import tools.jackson.databind.DeserializationConfig;
 import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.Entity;
@@ -39,13 +38,15 @@ import io.domainlifecycles.jackson3.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson3.module.DlcJacksonModule;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.deser.ValueDeserializerModifier;
 
 /**
  * {@see BeanDeserializerModifier}
  *
  * @author Mario Herb
  */
-public class DlcDeserializerModifier extends BeanDeserializerModifier {
+public class DlcDeserializerModifier extends ValueDeserializerModifier {
 
     /**
      * A container for managing Jackson mapping customizers associated with specific domain object types.
@@ -99,28 +100,28 @@ public class DlcDeserializerModifier extends BeanDeserializerModifier {
      * Plug in {@link Domain} based deserializer modifications
      */
     @Override
-    public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config, BeanDescription beanDesc,
-                                                  JsonDeserializer<?> deserializer) {
-        if (Entity.class.isAssignableFrom(beanDesc.getBeanClass())) {
-            return new EntityDeserializer(beanDesc.getType(),
+    public ValueDeserializer<?> modifyDeserializer(DeserializationConfig config, Supplier beanDescRef,
+                                                  ValueDeserializer<?> deserializer) {
+        if (Entity.class.isAssignableFrom(beanDescRef.getBeanClass())) {
+            return new EntityDeserializer(beanDescRef.getType(),
                 customizersContainer,
                 domainObjectBuilderProvider,
                 entityIdentityProvider
             );
         }
-        if (Identity.class.isAssignableFrom(beanDesc.getBeanClass())) {
+        if (Identity.class.isAssignableFrom(beanDescRef.getBeanClass())) {
             return new IdentityDeserializer(
-                beanDesc.getType()
+                beanDescRef.getType()
             );
         }
-        if (ValueObject.class.isAssignableFrom(beanDesc.getBeanClass())) {
+        if (ValueObject.class.isAssignableFrom(beanDescRef.getBeanClass())) {
             return new ValueObjectDeserializer(
-                beanDesc.getType(),
-                customizersContainer.findCustomizer(beanDesc.getBeanClass()),
+                beanDescRef.getType(),
+                customizersContainer.findCustomizer(beanDescRef.getBeanClass()),
                 domainObjectBuilderProvider
             );
         }
-        return super.modifyDeserializer(config, beanDesc, deserializer);
+        return super.modifyDeserializer(config, beanDescRef, deserializer);
     }
 
 

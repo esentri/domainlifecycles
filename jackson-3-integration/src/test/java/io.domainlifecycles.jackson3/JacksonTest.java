@@ -1,13 +1,11 @@
-package io.domainlifecycles.jackson;
+package io.domainlifecycles.jackson3;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.Identity;
-import io.domainlifecycles.jackson.module.DlcJacksonModule;
+import io.domainlifecycles.jackson3.module.DlcJacksonModule;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
@@ -69,6 +67,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -80,8 +80,6 @@ public class JacksonTest {
     public JacksonTest() {
         Locale.setDefault(Locale.GERMAN);
         Domain.initialize(new ReflectiveDomainMirrorFactory("tests"));
-        this.objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
 
         var entityIdentityProvider = new EntityIdentityProvider() {
 
@@ -106,14 +104,12 @@ public class JacksonTest {
             }
         };
 
-        objectMapper.registerModule(
-            new DlcJacksonModule(
+        this.objectMapper = JsonMapper.builder()
+            .addModule(new DlcJacksonModule(
                 new InnerClassDomainObjectBuilderProvider(),
-                entityIdentityProvider
-            )
-        );
-        objectMapper.registerModule(new Jdk8Module());
-        objectMapper.registerModule(new ParameterNamesModule());
+                entityIdentityProvider))
+            .disable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
+            .build();
     }
 
     @Test

@@ -26,13 +26,14 @@
 
 package io.domainlifecycles.jackson3.databind;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.ObjectReadContext;
+import tools.jackson.core.TreeNode;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.deser.std.StdDeserializer;
 import io.domainlifecycles.access.DlcAccess;
 import io.domainlifecycles.assertion.DomainAssertionException;
 import io.domainlifecycles.builder.DomainObjectBuilder;
@@ -99,48 +100,48 @@ public class ValueObjectDeserializer extends StdDeserializer<ValueObject> {
      * @param jsonParser             Parsed used for reading JSON content
      * @param deserializationContext Context that can be used to access information about
      *                               this deserialization activity.
-     * @throws IOException if deserialization failed
+     * @throws JacksonException if deserialization failed
      */
     @Override
-    public ValueObject deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+    public ValueObject deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws JacksonException {
         JsonNode node = jsonParser.readValueAsTree();
         DomainObjectMappingContext mappingContext = DomainObjectMappingContextHolder.getContext(node,
             this._valueType.getRawClass().getName(), deserializationContext, domainObjectBuilderProvider);
         if (customizer != null) {
-            MappingAction mappingAction = customizer.beforeObjectRead(mappingContext, jsonParser.getCodec());
+            MappingAction mappingAction = customizer.beforeObjectRead(mappingContext, jsonParser.objectReadContext());
             if (MappingAction.SKIP_DEFAULT_ACTION.equals(mappingAction)) {
                 return buildWithExceptionHandling(mappingContext);
             }
         }
         return readValueObject(
             mappingContext,
-            jsonParser.getCodec(),
+            jsonParser.objectReadContext(),
             deserializationContext);
 
     }
 
     private void readAndSetValueObjectField(DomainObjectMappingContext mappingContext,
-                                            TreeNode fieldNode,
+                                            JsonNode jsonNode,
                                             String fieldName,
                                             String fieldTypeName,
-                                            ObjectCodec codec,
+                                            ObjectReadContext readContext,
                                             DeserializationContext deserializationContext
 
     ) {
-        if (fieldNode != null) {
+        if (jsonNode != null) {
             Class<?> fieldType = DlcAccess.getClassForName(fieldTypeName);
             try {
                 MappingAction mappingAction = MappingAction.CONTINUE_WITH_DEFAULT_ACTION;
                 if (customizer != null) {
-                    mappingAction = customizer.beforeFieldRead(mappingContext, fieldNode, fieldName, fieldType, codec);
+                    mappingAction = customizer.beforeFieldRead(mappingContext, jsonNode, fieldName, fieldType, readContext);
                 }
                 if (MappingAction.CONTINUE_WITH_DEFAULT_ACTION.equals(mappingAction)) {
                     Object value;
                     if (ValueObject.class.isAssignableFrom(fieldType) || Entity.class.isAssignableFrom(fieldType)) {
-                        var p = fieldNode.traverse(codec);
+                        var p = jsonNode.traverse(readContext);
                         value = deserializationContext.readValue(p, fieldType);
                     } else {
-                        value = fieldNode.traverse(codec).readValueAs(fieldType);
+                        value = jsonNode.traverse(readContext).readValueAs(fieldType);
                     }
                     if (mappingContext.domainObjectBuilder.canInstantiateField(fieldName)) {
                         if (customizer != null) {
@@ -153,7 +154,7 @@ public class ValueObjectDeserializer extends StdDeserializer<ValueObject> {
                                 if (opt.isPresent()) {
                                     value = opt.get();
                                     if (!fm.getType().getTypeName().equals(value.getClass().getName())) {
-                                        value = codec.treeToValue(fieldNode, fieldType);
+                                        value = deserializationContext.readTreeAsValue(jsonNode, fieldType);
                                     }
                                 } else {
                                     value = null;
@@ -167,7 +168,7 @@ public class ValueObjectDeserializer extends StdDeserializer<ValueObject> {
                         }
                     }
                 }
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw DLCJacksonException.fail("Not able to read and set field '%s' for '%s'!", e, fieldName,
                     this._valueType.getRawClass().getName());
             }
@@ -175,14 +176,14 @@ public class ValueObjectDeserializer extends StdDeserializer<ValueObject> {
     }
 
     private ValueObject readValueObject(DomainObjectMappingContext mappingContext,
-                                        ObjectCodec codec,
+                                        ObjectReadContext readContext,
                                         DeserializationContext deserializationContext
     ) {
         if (mappingContext.contextNode != null) {
             ValueObjectMirror valueObjectMirror = Domain.valueObjectMirrorFor(this._valueType.getRawClass().getName());
             var singleValueFieldMirror = valueObjectMirror.singledValuedField();
             if (singleValueFieldMirror.isPresent()) {
-                TreeNode myNode = mappingContext.contextNode;
+                JsonNode myNode = mappingContext.contextNode;
                 var fieldMirror = singleValueFieldMirror.get();
                 if (myNode.get(fieldMirror.getName()) != null) {
                     myNode = myNode.get(fieldMirror.getName());
@@ -193,7 +194,7 @@ public class ValueObjectDeserializer extends StdDeserializer<ValueObject> {
                         myNode,
                         fieldMirror.getName(),
                         fieldMirror.getType().getTypeName(),
-                        codec,
+                        readContext,
                         deserializationContext
                     );
                     if (mappingContext.domainObjectBuilder.getFieldValue(fieldMirror.getName()) == null) {
@@ -207,13 +208,13 @@ public class ValueObjectDeserializer extends StdDeserializer<ValueObject> {
                 .stream()
                 .filter(fm -> !fm.isStatic())
                 .forEach(fm -> {
-                        TreeNode fieldNode = mappingContext.contextNode.get(fm.getName());
+                        JsonNode fieldNode = mappingContext.contextNode.get(fm.getName());
                         readAndSetValueObjectField(
                             mappingContext,
                             fieldNode,
                             fm.getName(),
                             fm.getType().getTypeName(),
-                            codec,
+                            readContext,
                             deserializationContext
                         );
                     }
@@ -223,19 +224,19 @@ public class ValueObjectDeserializer extends StdDeserializer<ValueObject> {
                 .stream()
                 .filter(vrm -> !vrm.isStatic())
                 .forEach(vrm -> {
-                        TreeNode valueObjectCompositionNode = mappingContext.contextNode.get(vrm.getName());
+                        JsonNode valueObjectCompositionNode = mappingContext.contextNode.get(vrm.getName());
                         if (vrm.getType().hasCollectionContainer()) {
                             if (valueObjectCompositionNode != null && valueObjectCompositionNode.isArray()) {
                                 mappingContext.domainObjectBuilder.setFieldValue(mappingContext.domainObjectBuilder
                                     .newCollectionInstanceForField(vrm.getName()), vrm.getName());
                                 for (int i = 0; i < valueObjectCompositionNode.size(); i++) {
-                                    TreeNode valueObjectNode = valueObjectCompositionNode.get(i);
+                                    JsonNode valueObjectNode = valueObjectCompositionNode.get(i);
                                     readAndSetValueObjectField(
                                         mappingContext,
                                         valueObjectNode,
                                         vrm.getName(),
                                         vrm.getType().getTypeName(),
-                                        codec,
+                                        readContext,
                                         deserializationContext
                                     );
                                 }
@@ -246,7 +247,7 @@ public class ValueObjectDeserializer extends StdDeserializer<ValueObject> {
                                 valueObjectCompositionNode,
                                 vrm.getName(),
                                 vrm.getType().getTypeName(),
-                                codec,
+                                readContext,
                                 deserializationContext
                             );
                         }

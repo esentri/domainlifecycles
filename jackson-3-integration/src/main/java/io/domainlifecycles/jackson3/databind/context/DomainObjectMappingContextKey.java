@@ -26,7 +26,7 @@
 
 package io.domainlifecycles.jackson3.databind.context;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 import java.util.Objects;
 

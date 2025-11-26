@@ -26,9 +26,9 @@
 
 package io.domainlifecycles.jackson3.api;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.core.TreeNode;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.ObjectReadContext;
+import tools.jackson.core.TreeNode;
 import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.jackson3.databind.context.DomainObjectMappingContext;
 
@@ -63,11 +63,11 @@ public abstract class JacksonMappingCustomizer<T extends DomainObject> {
      * @param fieldNode      Jackson TreeNode
      * @param fieldName      name of the field to be read
      * @param expectedType   expected type of read value
-     * @param codec          Jackson codec
+     * @param readContext          Jackson readContext
      * @return specifies if, the default mapping action for the specified field should be skipped or continued
      */
     public MappingAction beforeFieldRead(final DomainObjectMappingContext mappingContext, TreeNode fieldNode,
-                                         String fieldName, Class<?> expectedType, ObjectCodec codec) {
+                                         String fieldName, Class<?> expectedType, ObjectReadContext readContext) {
         return MappingAction.CONTINUE_WITH_DEFAULT_ACTION;
     }
 
@@ -105,10 +105,10 @@ public abstract class JacksonMappingCustomizer<T extends DomainObject> {
      * Reading means JSON -> Object transformation.
      *
      * @param mappingContext mapping information for DomainObject
-     * @param codec          Jackson codec
+     * @param readContext          Jackson readContext
      * @return specifies if, the default mapping action for the specified object should be skipped or continued
      */
-    public MappingAction beforeObjectRead(final DomainObjectMappingContext mappingContext, ObjectCodec codec) {
+    public MappingAction beforeObjectRead(final DomainObjectMappingContext mappingContext, ObjectReadContext readContext) {
         return MappingAction.CONTINUE_WITH_DEFAULT_ACTION;
     }
 
@@ -131,8 +131,8 @@ public abstract class JacksonMappingCustomizer<T extends DomainObject> {
      * Reading means JSON -> Object transformation.
      *
      * @param mappingContext mapping information for DomainObject
-     * @param codec          Jackson codec
+     * @param readContext          Jackson readContext
      */
-    public void afterObjectRead(final DomainObjectMappingContext mappingContext, ObjectCodec codec) {
+    public void afterObjectRead(final DomainObjectMappingContext mappingContext, ObjectReadContext readContext) {
     }
 }

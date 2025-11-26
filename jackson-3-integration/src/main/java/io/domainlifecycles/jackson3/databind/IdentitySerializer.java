@@ -26,11 +26,12 @@
 
 package io.domainlifecycles.jackson3.databind;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.ser.std.StdSerializer;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.mirror.api.Domain;
+import tools.jackson.databind.SerializationContext;
 
 import java.io.IOException;
 
@@ -57,18 +58,18 @@ public class IdentitySerializer extends StdSerializer<Identity> {
      * @param jsonGenerator      Generator used to output resulting Json content
      * @param serializerProvider Provider that can be used to get serializers for
      *                           serializing Objects value contains, if any.
-     * @throws IOException if serialization fails
+     * @throws JacksonException if serialization fails
      */
     @Override
-    public void serialize(Identity identity, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-        if (!jsonGenerator.getOutputContext().inRoot()) {
+    public void serialize(Identity identity, JsonGenerator jsonGenerator, SerializationContext serializerProvider) throws JacksonException {
+        if (!jsonGenerator.streamWriteContext().inRoot()) {
             Object value = identity.value();
-            jsonGenerator.writeObject(value);
+            jsonGenerator.writePOJO(value);
         } else {
             jsonGenerator.writeStartObject();
             Object value = identity.value();
-            jsonGenerator.writeFieldName("id");
-            jsonGenerator.writeObject(value);
+            jsonGenerator.writeName("id");
+            jsonGenerator.writePOJO(value);
             jsonGenerator.writeEndObject();
         }
     }

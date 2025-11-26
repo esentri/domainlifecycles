@@ -26,10 +26,11 @@
 
 package io.domainlifecycles.jackson3.databind;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.deser.std.StdDeserializer;
 import io.domainlifecycles.access.DlcAccess;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.jackson3.exception.DLCJacksonException;
@@ -65,7 +66,7 @@ public class IdentityDeserializer extends StdDeserializer<Identity<?>> {
      * @throws IOException if deserialization fails
      */
     @Override
-    public Identity<?> deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+    public Identity<?> deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws JacksonException {
 
         var idTypeName = this._valueType.getRawClass().getName();
         while (jsonParser.hasCurrentToken()) {

@@ -1,12 +1,9 @@
-package io.domainlifecycles.jackson;
+package io.domainlifecycles.jackson3;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import tools.jackson.databind.ObjectMapper;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.Identity;
-import io.domainlifecycles.jackson.module.DlcJacksonModule;
+import io.domainlifecycles.jackson3.module.DlcJacksonModule;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
@@ -18,6 +15,8 @@ import tests.shared.persistence.domain.valueobjectsNested.NestedEnumSingleValued
 import tests.shared.persistence.domain.valueobjectsNested.NestedId;
 import tests.shared.persistence.domain.valueobjectsNested.NestedSimpleVo;
 import tests.shared.persistence.domain.valueobjectsNested.VoAggregateNested;
+import tools.jackson.databind.cfg.MapperBuilder;
+import tools.jackson.databind.json.JsonMapper;
 
 public class VoNestedJacksonTest {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(VoNestedJacksonTest.class);
@@ -26,8 +25,6 @@ public class VoNestedJacksonTest {
     private final ObjectMapper objectMapper;
 
     public VoNestedJacksonTest() {
-        this.objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
         Domain.initialize(new ReflectiveDomainMirrorFactory("tests"));
         var entityIdentityProvider = new EntityIdentityProvider() {
 
@@ -36,13 +33,11 @@ public class VoNestedJacksonTest {
                 return null;
             }
         };
-        objectMapper.registerModule(new DlcJacksonModule(
+        this.objectMapper = JsonMapper.builder()
+            .addModule(new DlcJacksonModule(
                 new InnerClassDomainObjectBuilderProvider(),
-                entityIdentityProvider
-            )
-        );
-        objectMapper.registerModule(new Jdk8Module());
-        objectMapper.registerModule(new ParameterNamesModule());
+                entityIdentityProvider))
+            .build();
     }
 
     @Test

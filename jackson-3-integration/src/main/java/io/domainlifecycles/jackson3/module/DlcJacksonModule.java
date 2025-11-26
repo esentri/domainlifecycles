@@ -26,8 +26,8 @@
 
 package io.domainlifecycles.jackson3.module;
 
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import tools.jackson.core.Version;
+import tools.jackson.databind.module.SimpleModule;
 import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.internal.DomainObject;
@@ -106,9 +106,9 @@ public class DlcJacksonModule extends SimpleModule {
     @Override
     public void setupModule(SetupContext context) {
         super.setupModule(context);
-        context.addBeanDeserializerModifier(
+        context.addDeserializerModifier(
             new DlcDeserializerModifier(customizerContainer, domainObjectBuilderProvider, entityIdentityProvider));
-        context.addBeanSerializerModifier(new DlcSerializerModifier(customizerContainer));
+        context.addSerializerModifier(new DlcSerializerModifier(customizerContainer));
     }
 
     /**
