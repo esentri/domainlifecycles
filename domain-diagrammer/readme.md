@@ -108,3 +108,6 @@ Maven setup:
     <version>2.5.0</version>
 </dependency>
 ```
+## Rendering domain diagrams via Maven or Gradle
+
+See [here](./../dlc-plugins/readme.md)

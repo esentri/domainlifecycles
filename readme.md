@@ -117,11 +117,8 @@ DLC provides following core features:
     * SpringDoc 2 OpenAPI Extension. See [`Open API Extension`](spring-doc-2-integration/readme.md): API documentation DDD
         building blocks based on [Spring Doc Open API](https://springdoc.org/)
     * API documentation consistently to DLCs Jackson AutoMapping features (out-of-the-box)
-   
-- [`Domain Diagrammer`](domain-diagrammer/readme.md): Generate text based class diagram for DDD building blocks
-    * based on [Nomnoml](https://nomnoml.com/)
 
-- [`Plugins`](dlc-plugins/readme.md): Build management support for Maven and Gradle
+- [`Plugins`](dlc-plugins/readme.md): Generate domain model diagrams in the build process.
 
 ## Getting started
 You can find our "Getting Started Guide" [here](./getting-started/english/index_en.md)
@@ -226,4 +223,12 @@ Remember to provide a SLF4J-Provider in your classpath.
 ### Sample project
 
 A Gradle based sample project that demonstrates all DLC features can be found [here](./sample-project)
+
+Just clone the repository, then `cd sample-project`
+and run `./gradlew bootRun` to start the application.
+
+The DLC plugin is configured to generate domain model diagrams. 
+Within the sample projects directory, run `./gradlew createDiagram` to generate the diagrams.
+You should find the diagrams as `build/aggregates.svg` and `build/complete.svg`
+
 

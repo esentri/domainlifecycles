@@ -25,7 +25,6 @@ dependencies {
     testImplementation project(":access")
     testImplementation project(":type-utils")
     testImplementation project(":test-shared-impl")
-    testImplementation project(":sample-project")
     testAnnotationProcessor libs.lombok
 }
 

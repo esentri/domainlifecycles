@@ -55,12 +55,17 @@
 // !!! sampleshop.core.domain.order.ShipOrder !!!
 [<DC> ShipOrder <<DomainCommand>> ]
 // !!! sampleshop.inbound.driver.OrderService !!!
-[<AS> OrderDriver <<Driver>> |
+[<AS> OrderDriver <<ApplicationService>> |
 + Optional<Order> cancel(CancelOrder)
 + List<Order> find(int,int,OrderStatus\[\])
 + Order place(PlaceOrder)
 + Optional<Order> ship(ShipOrder)
 ]
-[<DC>CancelOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<Driver>>]
-[<DC>PlaceOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<Driver>>]
-[<DC>ShipOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<Driver>>]
+// !!! sampleshop.core.domain.order.OrderPlacementService !!!
+[<DS> OrderPlacementService <<DomainService>> |
++ Order placeOrder(PlaceOrder)
+]
+[<DC>CancelOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<ApplicationService>>]
+[<DC>PlaceOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<ApplicationService>>]
+[<DC>ShipOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<ApplicationService>>]
+[<AS>OrderDriver <<ApplicationService>>]  -- [<DS>OrderPlacementService <<DomainService>>]

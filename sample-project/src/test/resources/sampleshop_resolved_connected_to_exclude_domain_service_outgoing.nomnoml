@@ -48,64 +48,43 @@
 #background: transparent
 #.note: fill=#ffffff italic
 
+// !!! sampleshop.core.domain.customer.AddNewCustomer !!!
+[<DC> AddNewCustomer <<DomainCommand>> ]
+// !!! sampleshop.core.domain.customer.ChangeCreditCard !!!
+[<DC> ChangeCreditCard <<DomainCommand>> ]
 // !!! sampleshop.core.domain.customer.ChangeCustomerAddress !!!
 [<DC> ChangeCustomerAddress <<DomainCommand>> ]
+// !!! sampleshop.core.domain.order.CancelOrder !!!
+[<DC> CancelOrder <<DomainCommand>> ]
+// !!! sampleshop.core.domain.order.PlaceOrder !!!
+[<DC> PlaceOrder <<DomainCommand>> ]
+// !!! sampleshop.core.domain.order.ShipOrder !!!
+[<DC> ShipOrder <<DomainCommand>> ]
 // !!! sampleshop.inbound.driver.CustomerService !!!
-[<AS> CustomerDriver <<Driver>> |
+[<AS> CustomerDriver <<ApplicationService>> |
 + Customer add(AddNewCustomer)
 + Optional<Customer> changeAddress(ChangeCustomerAddress)
 + Optional<Customer> changeCreditCard(ChangeCreditCard)
 + List<Customer> find(int,int)
 + List<OrdersByCustomer> reportOrders(String,int,int)
 ]
-// !!! sampleshop.core.domain.customer.CustomerAdressChanged !!!
-[<DE> CustomerAdressChanged <<DomainEvent>> ]
-// !!! sampleshop.core.domain.customer.CustomerCreditCardChanged !!!
-[<DE> CustomerCreditCardChanged <<DomainEvent>> ]
+// !!! sampleshop.inbound.driver.OrderService !!!
+[<AS> OrderDriver <<ApplicationService>> |
++ Optional<Order> cancel(CancelOrder)
++ List<Order> find(int,int,OrderStatus\[\])
++ Order place(PlaceOrder)
++ Optional<Order> ship(ShipOrder)
+]
+// !!! sampleshop.inbound.driver.ProductService !!!
+[<AS> ProductDriver <<ApplicationService>> |
++ Product create(Product)
++ Optional<Product> find(Product$ProductId)
++ void removeAll()
+]
+// !!! sampleshop.core.domain.customer.FraudDetected !!!
+[<DE> FraudDetected <<DomainEvent>> ]
 // !!! sampleshop.core.domain.customer.NewCustomerAdded !!!
 [<DE> NewCustomerAdded <<DomainEvent>> ]
-// !!! {Frame} sampleshop.core.domain.customer.Customer !!!
-[<AF> Customer <<Aggregate>>|
-// !!! sampleshop.core.domain.customer.Customer !!!
-[<AR> Customer <<AggregateRoot>> |
-\# +- id:<ID> Customer$CustomerId
-o +- blocked:boolean
-\# +- userName:String\[0,100\]{notEmpty}
-|
-+ Customer block()
-+ void onFraudDetected(FraudDetected)
-+ Customer setUsername(String)
-]
-// !!! sampleshop.core.domain.customer.Address !!!
-[<VO> Address <<ValueObject>> |
-\# +- city:String\[0,50\]{notEmpty}
-\# +- country:String\[0,50\]{notEmpty}
-\# +- state:String\[0,50\]{notEmpty}
-\# +- street:String\[0,50\]{notEmpty}
-\# +- zipcode:String\[0,10\]{notEmpty}
-|
-]
-// !!! sampleshop.core.domain.customer.CreditCard !!!
-[<VO> CreditCard <<ValueObject>> |
-\# +- cardNumber:String\[0,19\]{notEmpty}
-\# +- ccvNumber:String\[0,4\]{notEmpty}
-\# +- expiration:LocalDate
-\# +- ownerName:String\[0,100\]{notEmpty}
-\# +- type:<ENUM> CreditCardType
-|
-]
-[<AR>Customer <<AggregateRoot>>]  o-[<label> address 1] - [<VO>Address <<ValueObject>>]
-[<AR>Customer <<AggregateRoot>>]  o-[<label> creditCard 0..1] - [<VO>CreditCard <<ValueObject>>]
-]
-// !!! sampleshop.outbound.JooqCustomerRepository !!!
-[<R> CustomerRepository <<Repository>> |
-+ Optional<Customer> deleteById(Customer$CustomerId)
-+ Stream<Customer> find(int,int)
-+ Optional<Customer> findById(Customer$CustomerId)
-+ Customer insert(Customer)
-+ Customer$CustomerId newCustomerId()
-+ Customer update(Customer)
-]
 // !!! sampleshop.core.outport.OrdersByCustomer !!!
 [<RM> OrdersByCustomer <<ReadModel>> |
 o +- canceledOrders:int
@@ -115,11 +94,12 @@ o +- shippedOrders:int
 ]
 // !!! sampleshop.outbound.JooqOrdersByCustomerQueryHandler !!!
 [<QH> OrdersByCustomerQueryHandler <<QueryHandler>> ]
-[<DC>ChangeCustomerAddress <<DomainCommand>>]  --> [<AS>CustomerDriver <<Driver>>]
-[<AF> Customer <<Aggregate>>]  --> [<DE>CustomerAdressChanged <<DomainEvent>>]
-[<AF> Customer <<Aggregate>>]  --> [<DE>CustomerCreditCardChanged <<DomainEvent>>]
-[<AS>CustomerDriver <<Driver>>]  --> [<DE>NewCustomerAdded <<DomainEvent>>]
-[<AS>CustomerDriver <<Driver>>]  -- [<R>CustomerRepository <<Repository>>]
-[<AS>CustomerDriver <<Driver>>]  -- [<QH>OrdersByCustomerQueryHandler <<QueryHandler>>]
-[<R>CustomerRepository <<Repository>>]  -- [<AF> Customer <<Aggregate>>]
+[<DC>AddNewCustomer <<DomainCommand>>]  --> [<AS>CustomerDriver <<ApplicationService>>]
+[<DC>ChangeCreditCard <<DomainCommand>>]  --> [<AS>CustomerDriver <<ApplicationService>>]
+[<DC>ChangeCustomerAddress <<DomainCommand>>]  --> [<AS>CustomerDriver <<ApplicationService>>]
+[<DC>CancelOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<ApplicationService>>]
+[<DC>PlaceOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<ApplicationService>>]
+[<DC>ShipOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<ApplicationService>>]
+[<AS>CustomerDriver <<ApplicationService>>]  --> [<DE>NewCustomerAdded <<DomainEvent>>]
+[<AS>CustomerDriver <<ApplicationService>>]  -- [<QH>OrdersByCustomerQueryHandler <<QueryHandler>>]
 [<QH>OrdersByCustomerQueryHandler <<QueryHandler>>]  -- [<RM>OrdersByCustomer <<ReadModel>>]
