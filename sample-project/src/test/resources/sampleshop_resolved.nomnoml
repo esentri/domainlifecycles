@@ -60,29 +60,8 @@
 [<DC> PlaceOrder <<DomainCommand>> ]
 // !!! sampleshop.core.domain.order.ShipOrder !!!
 [<DC> ShipOrder <<DomainCommand>> ]
-// !!! sampleshop.core.inport.CustomerDriver !!!
-[<AS> CustomerDriver <<Driver>> |
-+ Customer add(AddNewCustomer)
-+ Optional<Customer> changeAddress(ChangeCustomerAddress)
-+ Optional<Customer> changeCreditCard(ChangeCreditCard)
-+ List<Customer> find(int,int)
-+ List<OrdersByCustomer> reportOrders(String,int,int)
-]
-// !!! sampleshop.core.inport.OrderDriver !!!
-[<AS> OrderDriver <<Driver>> |
-+ Optional<Order> cancel(CancelOrder)
-+ List<Order> find(int,int,OrderStatus\[\])
-+ Order place(PlaceOrder)
-+ Optional<Order> ship(ShipOrder)
-]
-// !!! sampleshop.core.inport.ProductDriver !!!
-[<AS> ProductDriver <<Driver>> |
-+ Product create(Product)
-+ Optional<Product> find(Product$ProductId)
-+ void removeAll()
-]
 // !!! sampleshop.inbound.driver.CustomerService !!!
-[<AS> CustomerService <<Driver>> |
+[<AS> CustomerDriver <<ApplicationService>> |
 + Customer add(AddNewCustomer)
 + Optional<Customer> changeAddress(ChangeCustomerAddress)
 + Optional<Customer> changeCreditCard(ChangeCreditCard)
@@ -90,14 +69,14 @@
 + List<OrdersByCustomer> reportOrders(String,int,int)
 ]
 // !!! sampleshop.inbound.driver.OrderService !!!
-[<AS> OrderService <<Driver>> |
+[<AS> OrderDriver <<ApplicationService>> |
 + Optional<Order> cancel(CancelOrder)
 + List<Order> find(int,int,OrderStatus\[\])
 + Order place(PlaceOrder)
 + Optional<Order> ship(ShipOrder)
 ]
 // !!! sampleshop.inbound.driver.ProductService !!!
-[<AS> ProductService <<Driver>> |
+[<AS> ProductDriver <<ApplicationService>> |
 + Product create(Product)
 + Optional<Product> find(Product$ProductId)
 + void removeAll()
@@ -201,7 +180,7 @@ o +- image:Optional<URI>
 ]
 [<AF> Order <<Aggregate>>]  -[<label> Order.customerId] -> [<AF> Customer <<Aggregate>>]
 [<AF> Order <<Aggregate>>]  -[<label> OrderItem.productId] -> [<AF> Product <<Aggregate>>]
-// !!! sampleshop.core.outport.CustomerRepository !!!
+// !!! sampleshop.outbound.JooqCustomerRepository !!!
 [<R> CustomerRepository <<Repository>> |
 + Optional<Customer> deleteById(Customer$CustomerId)
 + Stream<Customer> find(int,int)
@@ -210,7 +189,7 @@ o +- image:Optional<URI>
 + Customer$CustomerId newCustomerId()
 + Customer update(Customer)
 ]
-// !!! sampleshop.core.outport.OrderRepository !!!
+// !!! sampleshop.outbound.JooqOrderRepository !!!
 [<R> OrderRepository <<Repository>> |
 + Optional<Order> deleteById(Order$OrderId)
 + Stream<Order> find(int,int,OrderStatus\[\])
@@ -220,36 +199,8 @@ o +- image:Optional<URI>
 + OrderItem$OrderItemId newOrderItemId()
 + Order update(Order)
 ]
-// !!! sampleshop.core.outport.ProductRepository !!!
-[<R> ProductRepository <<Repository>> |
-+ Optional<Product> deleteById(Product$ProductId)
-+ Optional<Product> findById(Product$ProductId)
-+ Product insert(Product)
-+ Product$ProductId newProductId()
-+ void removeAll()
-+ Product update(Product)
-]
-// !!! sampleshop.outbound.JooqCustomerRepository !!!
-[<R> JooqCustomerRepository <<Repository>> |
-+ Optional<Customer> deleteById(Customer$CustomerId)
-+ Stream<Customer> find(int,int)
-+ Optional<Customer> findById(Customer$CustomerId)
-+ Customer insert(Customer)
-+ Customer$CustomerId newCustomerId()
-+ Customer update(Customer)
-]
-// !!! sampleshop.outbound.JooqOrderRepository !!!
-[<R> JooqOrderRepository <<Repository>> |
-+ Optional<Order> deleteById(Order$OrderId)
-+ Stream<Order> find(int,int,OrderStatus\[\])
-+ Optional<Order> findById(Order$OrderId)
-+ Order insert(Order)
-+ Order$OrderId newOrderId()
-+ OrderItem$OrderItemId newOrderItemId()
-+ Order update(Order)
-]
 // !!! sampleshop.outbound.JooqProductRepository !!!
-[<R> JooqProductRepository <<Repository>> |
+[<R> ProductRepository <<Repository>> |
 + Optional<Product> deleteById(Product$ProductId)
 + Optional<Product> findById(Product$ProductId)
 + Product insert(Product)
@@ -264,30 +215,20 @@ o +- customerName:String
 o +- pendingOrders:int
 o +- shippedOrders:int
 ]
-// !!! sampleshop.core.outport.OrdersByCustomerQueryHandler !!!
-[<QH> OrdersByCustomerQueryHandler <<QueryHandler>> ]
 // !!! sampleshop.outbound.JooqOrdersByCustomerQueryHandler !!!
-[<QH> JooqOrdersByCustomerQueryHandler <<QueryHandler>> ]
-// !!! sampleshop.core.outport.EmailNotifierService !!!
-[<OS> EmailNotifierService <<OutboundService>> ]
+[<QH> OrdersByCustomerQueryHandler <<QueryHandler>> ]
 // !!! sampleshop.outbound.EmailNotifierImpl !!!
-[<OS> EmailNotifierImpl <<OutboundService>> ]
-[<DC>AddNewCustomer <<DomainCommand>>]  --> [<AS>CustomerDriver <<Driver>>]
-[<DC>AddNewCustomer <<DomainCommand>>]  --> [<AS>CustomerService <<Driver>>]
-[<DC>ChangeCreditCard <<DomainCommand>>]  --> [<AS>CustomerDriver <<Driver>>]
-[<DC>ChangeCreditCard <<DomainCommand>>]  --> [<AS>CustomerService <<Driver>>]
-[<DC>ChangeCustomerAddress <<DomainCommand>>]  --> [<AS>CustomerDriver <<Driver>>]
-[<DC>ChangeCustomerAddress <<DomainCommand>>]  --> [<AS>CustomerService <<Driver>>]
-[<DC>CancelOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<Driver>>]
-[<DC>CancelOrder <<DomainCommand>>]  --> [<AS>OrderService <<Driver>>]
-[<DC>PlaceOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<Driver>>]
-[<DC>PlaceOrder <<DomainCommand>>]  --> [<AS>OrderService <<Driver>>]
-[<DC>ShipOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<Driver>>]
-[<DC>ShipOrder <<DomainCommand>>]  --> [<AS>OrderService <<Driver>>]
+[<OS> EmailNotifierService <<OutboundService>> ]
+[<DC>AddNewCustomer <<DomainCommand>>]  --> [<AS>CustomerDriver <<ApplicationService>>]
+[<DC>ChangeCreditCard <<DomainCommand>>]  --> [<AS>CustomerDriver <<ApplicationService>>]
+[<DC>ChangeCustomerAddress <<DomainCommand>>]  --> [<AS>CustomerDriver <<ApplicationService>>]
+[<DC>CancelOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<ApplicationService>>]
+[<DC>PlaceOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<ApplicationService>>]
+[<DC>ShipOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<ApplicationService>>]
 [<AF> Customer <<Aggregate>>]  --> [<DE>CustomerAdressChanged <<DomainEvent>>]
 [<AF> Customer <<Aggregate>>]  --> [<DE>CustomerCreditCardChanged <<DomainEvent>>]
 [<DE>FraudDetected <<DomainEvent>>]  --> [Customer <<Aggregate>>]
-[<AS>CustomerService <<Driver>>]  --> [<DE>NewCustomerAdded <<DomainEvent>>]
+[<AS>CustomerDriver <<ApplicationService>>]  --> [<DE>NewCustomerAdded <<DomainEvent>>]
 [<DE>NewOrderPlaced <<DomainEvent>>]  --> [<DS>CustomerNotificationService <<DomainService>>]
 [<DS>OrderPlacementService <<DomainService>>]  --> [<DE>NewOrderPlaced <<DomainEvent>>]
 [<DE>OrderCanceled <<DomainEvent>>]  --> [<DS>CustomerNotificationService <<DomainService>>]
@@ -298,24 +239,12 @@ o +- shippedOrders:int
 [<DS>CustomerNotificationService <<DomainService>>]  -- [<R>CustomerRepository <<Repository>>]
 [<DS>OrderPlacementService <<DomainService>>]  -- [<R>OrderRepository <<Repository>>]
 [<DS>OrderPlacementService <<DomainService>>]  -- [<R>ProductRepository <<Repository>>]
-[<AS>CustomerService <<Driver>>]  -- [<R>CustomerRepository <<Repository>>]
-[<AS>CustomerService <<Driver>>]  -- [<QH>OrdersByCustomerQueryHandler <<QueryHandler>>]
-[<AS>OrderService <<Driver>>]  -- [<DS>OrderPlacementService <<DomainService>>]
-[<AS>OrderService <<Driver>>]  -- [<R>OrderRepository <<Repository>>]
-[<AS>ProductService <<Driver>>]  -- [<R>ProductRepository <<Repository>>]
-[<AS>CustomerDriver <<Driver>>]  <:- [<AS>CustomerService <<Driver>>]
-[<AS>OrderDriver <<Driver>>]  <:- [<AS>OrderService <<Driver>>]
-[<AS>ProductDriver <<Driver>>]  <:- [<AS>ProductService <<Driver>>]
-[<OS>EmailNotifierService <<OutboundService>>]  <:- [<OS>EmailNotifierImpl <<OutboundService>>]
-[<R>CustomerRepository <<Repository>>]  <:- [<R>JooqCustomerRepository <<Repository>>]
-[<R>OrderRepository <<Repository>>]  <:- [<R>JooqOrderRepository <<Repository>>]
-[<QH>OrdersByCustomerQueryHandler <<QueryHandler>>]  <:- [<QH>JooqOrdersByCustomerQueryHandler <<QueryHandler>>]
-[<R>ProductRepository <<Repository>>]  <:- [<R>JooqProductRepository <<Repository>>]
+[<AS>CustomerDriver <<ApplicationService>>]  -- [<R>CustomerRepository <<Repository>>]
+[<AS>CustomerDriver <<ApplicationService>>]  -- [<QH>OrdersByCustomerQueryHandler <<QueryHandler>>]
+[<AS>OrderDriver <<ApplicationService>>]  -- [<DS>OrderPlacementService <<DomainService>>]
+[<AS>OrderDriver <<ApplicationService>>]  -- [<R>OrderRepository <<Repository>>]
+[<AS>ProductDriver <<ApplicationService>>]  -- [<R>ProductRepository <<Repository>>]
 [<R>CustomerRepository <<Repository>>]  -- [<AF> Customer <<Aggregate>>]
 [<R>OrderRepository <<Repository>>]  -- [<AF> Order <<Aggregate>>]
 [<R>ProductRepository <<Repository>>]  -- [<AF> Product <<Aggregate>>]
-[<R>JooqCustomerRepository <<Repository>>]  -- [<AF> Customer <<Aggregate>>]
-[<R>JooqOrderRepository <<Repository>>]  -- [<AF> Order <<Aggregate>>]
-[<R>JooqProductRepository <<Repository>>]  -- [<AF> Product <<Aggregate>>]
 [<QH>OrdersByCustomerQueryHandler <<QueryHandler>>]  -- [<RM>OrdersByCustomer <<ReadModel>>]
-[<QH>JooqOrdersByCustomerQueryHandler <<QueryHandler>>]  -- [<RM>OrdersByCustomer <<ReadModel>>]

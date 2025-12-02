@@ -54,7 +54,7 @@ public class KrokiClient {
 
     private static final Logger log = LoggerFactory.getLogger(KrokiDockerAdapter.class);
 
-    private static final String KROKI_CONTAINER_URL = "http://localhost:8000";
+    private static final String KROKI_CONTAINER_URL = "http://localhost:" + KrokiDockerAdapter.KROKI_PORT_EXTERNAL;
     private static final String KROKI_NOMNOML_SVG_PATH = "/nomnoml/svg";
 
     private static final Integer MAX_RETRIES = 5;

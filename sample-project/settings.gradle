@@ -1,0 +1,15 @@
+pluginManagement {
+    includeBuild '..'
+}
+
+rootProject.name = 'sample-project'
+
+includeBuild('..')
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
+}
+
+
