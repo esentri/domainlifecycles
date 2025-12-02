@@ -167,7 +167,7 @@ Gradle setup for a Spring Boot 3 app:
 
 ```Groovy
 dependencies{
-    implementation 'io.domainlifecycles:spring-boot-starter:2.5.0'
+    implementation 'io.domainlifecycles:spring-boot-starter:2.6.0'
 }
 ```
 
@@ -177,7 +177,7 @@ Maven setup for a Spring Boot 3 app:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>spring-boot-starter</artifactId>
-    <version>2.5.0</version>
+    <version>2.6.0</version>
 </dependency>
 ```
 

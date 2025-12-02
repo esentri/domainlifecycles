@@ -15,7 +15,7 @@ Add the DLC Spring Boot Autoconfig dependency to your `build.gradle` or `pom.xml
 **Gradle:**
 ```groovy
 dependencies {
-    implementation 'io.domainlifecycles:dlc-spring-boot-autoconfig:2.5.0'
+    implementation 'io.domainlifecycles:dlc-spring-boot-autoconfig:2.6.0'
 }
 ```
 
@@ -34,7 +34,7 @@ includes all needed dependencies:
 **Gradle:**
 ```groovy
 dependencies {
-  implementation 'io.domainlifecycles:dlc-spring-boot-starter:2.5.0'
+  implementation 'io.domainlifecycles:dlc-spring-boot-starter:2.6.0'
   // Autoconfig is already included
 }
 ```

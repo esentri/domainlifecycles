@@ -21,7 +21,7 @@ at `io.domainlifecycles.diagram.domain.config.DomainDiagramConfig`.
 
 ```Groovy
 dependencies{
-    testImplementation 'io.domainlifecycles:domain-diagrammer:2.5.0'
+    testImplementation 'io.domainlifecycles:domain-diagrammer:2.6.0'
 }
 ```
 
@@ -31,7 +31,7 @@ Maven setup:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>domain-diagrammer</artifactId>
-    <version>2.2.3</version>
+    <version>2.6.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -89,8 +89,8 @@ Those dependencies are provided like:
 
 ```Groovy
 dependencies{
-    implementation 'io.domainlifecycles:mirror:2.5.0'
-    implementation 'io.domainlifecycles:types:2.5.0'
+    implementation 'io.domainlifecycles:mirror:2.6.0'
+    implementation 'io.domainlifecycles:types:2.6.0'
 }
 ```
 
@@ -100,12 +100,12 @@ Maven setup:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>mirror</artifactId>
-    <version>2.5.0</version>
+    <version>2.6.0</version>
 </dependency>
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>types</artifactId>
-    <version>2.5.0</version>
+    <version>2.6.0</version>
 </dependency>
 ```
 ## Rendering domain diagrams via Maven or Gradle
