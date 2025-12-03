@@ -24,15 +24,8 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.mirror.serialize.api;
+package io.domainlifecycles.mirrordeserialization.serialize.jackson3;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
 import io.domainlifecycles.mirror.api.AssertionMirror;
 import io.domainlifecycles.mirror.api.BoundedContextMirror;
@@ -45,9 +38,16 @@ import io.domainlifecycles.mirror.api.ParamMirror;
 import io.domainlifecycles.mirror.api.ResolvedGenericTypeMirror;
 import io.domainlifecycles.mirror.exception.MirrorException;
 import io.domainlifecycles.mirror.model.DomainModel;
+import io.domainlifecycles.mirrordeserialization.serialize.DomainSerializer;
+import io.domainlifecycles.mirrordeserialization.serialize.jackson2.ResolvedGenericTypeMirrorMixinJackson2;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.json.JsonMapper.Builder;
 
 /**
- * Jackson specific implementation a {@link DomainSerializer}.
+ * Jackson 3 specific implementation of a {@link DomainSerializer}.
  * <p>
  * It can serialize all mirrors of given domain {@link DomainModel} into a String.
  * And it also can deserialize it back to the original state of an {@link DomainModel} (without having to use
@@ -55,7 +55,7 @@ import io.domainlifecycles.mirror.model.DomainModel;
  *
  * @author Mario Herb
  */
-public class JacksonDomainSerializer implements DomainSerializer {
+public class Jackson3DomainSerializer implements DomainSerializer {
 
     private final ObjectMapper objectMapper;
 
@@ -64,26 +64,16 @@ public class JacksonDomainSerializer implements DomainSerializer {
      *
      * @param prettyPrint when serializing to a String
      */
-    public JacksonDomainSerializer(boolean prettyPrint) {
-        this.objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.registerModule(new Jdk8Module());
-        objectMapper.registerModule(new ParameterNamesModule());
-        objectMapper.addMixIn(ResolvedGenericTypeMirror.class, ResolvedGenericTypeMirrorMixin.class);
-        objectMapper.addMixIn(DomainTypeMirror.class, DomainTypeMirrorMixin.class);
-        objectMapper.addMixIn(FieldMirror.class, FieldMirrorMixin.class);
-        objectMapper.addMixIn(AssertedContainableTypeMirror.class, AssertedContainableTypeMirrorMixin.class);
-        objectMapper.addMixIn(MethodMirror.class, MethodMirrorMixin.class);
-        objectMapper.addMixIn(ParamMirror.class, ParamMirrorMixin.class);
-        objectMapper.addMixIn(EnumOptionMirror.class, EnumOptionMirrorMixin.class);
-        objectMapper.addMixIn(AssertionMirror.class, AssertionMirrorMixin.class);
-        objectMapper.addMixIn(BoundedContextMirror.class, BoundedContextMirrorMixin.class);
-        objectMapper.addMixIn(DomainMirror.class, DomainMirrorMixin.class);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    public Jackson3DomainSerializer(boolean prettyPrint) {
+
+        Builder objectMapperBuilder = JsonMapper.builder()
+            .addMixIn(ResolvedGenericTypeMirror.class, ResolvedGenericTypeMirrorMixinJackson2.class);
 
         if (prettyPrint) {
-            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+            objectMapperBuilder.enable(SerializationFeature.INDENT_OUTPUT);
         }
+
+        this.objectMapper = objectMapperBuilder.build();
     }
 
     /**
@@ -95,7 +85,7 @@ public class JacksonDomainSerializer implements DomainSerializer {
     public String serialize(DomainMirror domainMirror) {
         try {
             return objectMapper.writeValueAsString(domainMirror);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw MirrorException.fail("Jackson serialization failed!", e);
         }
     }
@@ -108,7 +98,7 @@ public class JacksonDomainSerializer implements DomainSerializer {
         try {
             var dm =  objectMapper.readValue(serializedDomain, DomainMirror.class);
             return dm;
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw MirrorException.fail("Jackson deserialization failed!", e);
         }
     }
@@ -125,7 +115,7 @@ public class JacksonDomainSerializer implements DomainSerializer {
         try {
             var dm =  (T) objectMapper.readValue(serializedTypeMirror, DomainTypeMirror.class);
             return dm;
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw MirrorException.fail("Jackson deserialization failed!", e);
         }
     }

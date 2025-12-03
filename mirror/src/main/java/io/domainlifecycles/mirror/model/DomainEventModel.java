@@ -26,9 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.AggregateRootReferenceMirror;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
@@ -65,13 +62,12 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
      *                                       of the type being modeled. Must not be null.
      * @param allInterfaceTypeNames a list of all interface type names implemented by the type being modeled. Must not be null.
      */
-    @JsonCreator
-    public DomainEventModel(@JsonProperty("typeName") String typeName,
-                            @JsonProperty("abstract") boolean isAbstract,
-                            @JsonProperty("allFields") List<FieldMirror> allFields,
-                            @JsonProperty("methods") List<MethodMirror> methods,
-                            @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
-                            @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
+    public DomainEventModel(String typeName,
+                            boolean isAbstract,
+                            List<FieldMirror> allFields,
+                            List<MethodMirror> methods,
+                            List<String> inheritanceHierarchyTypeNames,
+                            List<String> allInterfaceTypeNames
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
@@ -79,7 +75,6 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<FieldMirror> getBasicFields() {
         return allFields.stream().filter(p ->
@@ -91,7 +86,6 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<ValueReferenceMirror> getValueReferences() {
         return allFields.stream().filter(p ->
@@ -106,7 +100,6 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<EntityReferenceMirror> getEntityReferences() {
         return allFields.stream().filter(p ->
@@ -119,7 +112,6 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<AggregateRootReferenceMirror> getAggregateRootReferences() {
         return allFields.stream().filter(p ->
@@ -132,7 +124,6 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<AggregateRootMirror> getPublishingAggregates() {
         return domainMirror.getAllAggregateRootMirrors()
@@ -149,7 +140,6 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<DomainServiceMirror> getPublishingDomainServices() {
         return domainMirror
@@ -162,7 +152,6 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<RepositoryMirror> getPublishingRepositories() {
         return domainMirror
@@ -175,7 +164,6 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<AggregateRootMirror> getListeningAggregates() {
         return domainMirror.getAllAggregateRootMirrors()
@@ -192,7 +180,6 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<DomainServiceMirror> getListeningDomainServices() {
         return domainMirror
@@ -205,7 +192,6 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<RepositoryMirror> getListeningRepositories() {
         return domainMirror
@@ -218,7 +204,6 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<ApplicationServiceMirror> getListeningApplicationServices() {
         return domainMirror
@@ -231,7 +216,6 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<OutboundServiceMirror> getListeningOutboundServices() {
         return domainMirror
@@ -244,7 +228,6 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<QueryHandlerMirror> getListeningQueryHandlers() {
         return domainMirror
@@ -257,7 +240,6 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<ServiceKindMirror> getListeningServiceKinds() {
         return domainMirror
@@ -270,7 +252,6 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<ApplicationServiceMirror> getPublishingApplicationServices() {
         return domainMirror.getAllApplicationServiceMirrors()
@@ -282,7 +263,6 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<OutboundServiceMirror> getPublishingOutboundServices() {
         return domainMirror.getAllOutboundServiceMirrors()
@@ -294,7 +274,6 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<QueryHandlerMirror> getPublishingQueryHandlers() {
         return domainMirror.getAllQueryHandlerMirrors()
@@ -306,7 +285,6 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<ServiceKindMirror> getPublishingServiceKinds() {
         return domainMirror.getAllServiceKindMirrors()
@@ -318,7 +296,6 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public DomainType getDomainType() {
         return DomainType.DOMAIN_EVENT;
@@ -331,5 +308,4 @@ public class DomainEventModel extends DomainTypeModel implements DomainEventMirr
     public String toString() {
         return "DomainEventModel{} " + super.toString();
     }
-
 }

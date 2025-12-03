@@ -26,9 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AccessLevel;
 import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
@@ -61,10 +58,7 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
     DomainMirror domainMirror;
     private boolean domainMirrorSet = false;
 
-    @JsonProperty
     private final List<String> publishedEventTypeNames;
-
-    @JsonProperty
     private final Optional<String> listenedEventTypeName;
 
     private final boolean overridden;
@@ -83,15 +77,14 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
      * @param publishedEventTypeNames the list of names of events published by this method; must not be null
      * @param listenedEventTypeName an {@link Optional} containing the name of the event type this method listens to; must not be null
      */
-    @JsonCreator
-    public MethodModel(@JsonProperty("name") String name,
-                       @JsonProperty("declaredByTypeName") String declaredByTypeName,
-                       @JsonProperty("accessLevel") AccessLevel accessLevel,
-                       @JsonProperty("parameters") List<ParamMirror> parameters,
-                       @JsonProperty("returnType") AssertedContainableTypeMirror returnType,
-                       @JsonProperty("overridden") boolean overridden,
-                       @JsonProperty("publishedEventTypeNames") List<String> publishedEventTypeNames,
-                       @JsonProperty("listenedEventTypeName") Optional<String> listenedEventTypeName
+    public MethodModel(String name,
+                       String declaredByTypeName,
+                       AccessLevel accessLevel,
+                       List<ParamMirror> parameters,
+                       AssertedContainableTypeMirror returnType,
+                       boolean overridden,
+                       List<String> publishedEventTypeNames,
+                       Optional<String> listenedEventTypeName
     ) {
         this.name = Objects.requireNonNull(name);
         this.declaredByTypeName = Objects.requireNonNull(declaredByTypeName);
@@ -148,7 +141,6 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<DomainEventMirror> getPublishedEvents() {
         return this.publishedEventTypeNames
@@ -162,7 +154,6 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public Optional<DomainEventMirror> getListenedEvent() {
         return listenedEventTypeName
@@ -173,7 +164,6 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<DomainCommandMirror> getProcessedCommands() {
         return parameters.stream()

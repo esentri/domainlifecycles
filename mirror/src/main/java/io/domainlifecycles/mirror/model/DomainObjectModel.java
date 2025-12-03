@@ -26,7 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.domainlifecycles.mirror.api.DomainObjectMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.FieldMirror;
@@ -68,7 +67,6 @@ public abstract class DomainObjectModel extends DomainTypeModel implements Domai
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<FieldMirror> getBasicFields() {
         return allFields.stream().filter(p ->
@@ -80,7 +78,6 @@ public abstract class DomainObjectModel extends DomainTypeModel implements Domai
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<ValueReferenceMirror> getValueReferences() {
         return allFields.stream().filter(p ->
@@ -118,6 +115,5 @@ public abstract class DomainObjectModel extends DomainTypeModel implements Domai
     public String toString() {
         return "DomainObjectModel{} " + super.toString();
     }
-
 
 }

@@ -24,11 +24,14 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.mirror.serialize.api;
+package io.domainlifecycles.mirrordeserialization.serialize.jackson2;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.domainlifecycles.mirror.model.EnumOptionModel;
+
 
 /**
  * Jackson mixin interface for proper serialization of {@link EnumOptionModel}.
@@ -39,5 +42,8 @@ import io.domainlifecycles.mirror.model.EnumOptionModel;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = EnumOptionModel.class),
 })
-public interface EnumOptionMirrorMixin {
+public interface EnumOptionMirrorMixinJackson2 {
+
+    @JsonCreator
+    EnumOptionMirrorMixinJackson2 init(@JsonProperty("value") String value);
 }

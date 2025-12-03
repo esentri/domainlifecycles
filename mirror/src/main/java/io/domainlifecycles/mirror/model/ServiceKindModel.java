@@ -26,8 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
@@ -67,12 +65,12 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
      * @param allInterfaceTypeNames a list of fully qualified type names representing all interfaces implemented
      *                               by the represented type.
      */
-    public ServiceKindModel(@JsonProperty("typeName") String typeName,
-                            @JsonProperty("abstract") boolean isAbstract,
-                            @JsonProperty("allFields") List<FieldMirror> allFields,
-                            @JsonProperty("methods") List<MethodMirror> methods,
-                            @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
-                            @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames) {
+    public ServiceKindModel(String typeName,
+                            boolean isAbstract,
+                            List<FieldMirror> allFields,
+                            List<MethodMirror> methods,
+                            List<String> inheritanceHierarchyTypeNames,
+                            List<String> allInterfaceTypeNames) {
 
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
@@ -108,7 +106,6 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public DomainType getDomainType() {
         return DomainType.SERVICE_KIND;
     }
@@ -117,7 +114,6 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<ServiceKindMirror> getReferencedServiceKinds() {
         return allFields.stream()
             .filter(fieldMirror -> DomainType.SERVICE_KIND.equals(fieldMirror.getType().getDomainType())
@@ -133,7 +129,6 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<RepositoryMirror> getReferencedRepositories() {
         return allFields.stream()
             .filter(fieldMirror -> DomainType.REPOSITORY.equals(fieldMirror.getType().getDomainType()))
@@ -144,7 +139,6 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<DomainServiceMirror> getReferencedDomainServices() {
         return allFields.stream()
             .filter(fieldMirror -> DomainType.DOMAIN_SERVICE.equals(fieldMirror.getType().getDomainType()))
@@ -155,7 +149,6 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<OutboundServiceMirror> getReferencedOutboundServices() {
         return allFields.stream()
             .filter(fieldMirror -> DomainType.OUTBOUND_SERVICE.equals(fieldMirror.getType().getDomainType()))
@@ -166,7 +159,6 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<QueryHandlerMirror> getReferencedQueryHandlers() {
         return allFields.stream()
             .filter(fieldMirror -> DomainType.QUERY_HANDLER.equals(fieldMirror.getType().getDomainType()))
@@ -177,7 +169,6 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<ApplicationServiceMirror> getReferencedApplicationServices() {
         return allFields.stream()
             .filter(fieldMirror -> DomainType.APPLICATION_SERVICE.equals(fieldMirror.getType().getDomainType()))
@@ -187,7 +178,6 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<DomainCommandMirror> processedDomainCommands() {
         return methods
@@ -200,7 +190,6 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<DomainEventMirror> publishedDomainEvents() {
         return methods
@@ -213,7 +202,6 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<DomainEventMirror> listenedDomainEvents() {
         return methods
@@ -241,7 +229,6 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
     private OutboundServiceMirror mapToOutboundServiceMirror(FieldMirror fieldMirror) {
         return (OutboundServiceMirror) domainMirror.getDomainTypeMirror(fieldMirror.getType().getTypeName())
             .orElseThrow(() -> MirrorException.fail(String.format("No OutboundServiceMirror found for FieldMirror with type name '%s'.", fieldMirror.getType().getTypeName())));
-
     }
 
     private QueryHandlerMirror mapToQueryHandlerMirror(FieldMirror fieldMirror) {
@@ -253,6 +240,4 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
         return (ApplicationServiceMirror) domainMirror.getDomainTypeMirror(fieldMirror.getType().getTypeName())
             .orElseThrow(() -> MirrorException.fail(String.format("No ApplicationServiceMirror found for FieldMirror with type name '%s'.", fieldMirror.getType().getTypeName())));
     }
-
-
 }

@@ -12,7 +12,7 @@
  *  Copyright 2019-2024 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ *  You may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
  *       https://www.apache.org/licenses/LICENSE-2.0
@@ -26,9 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AggregateRootReferenceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.EntityReferenceMirror;
@@ -57,13 +54,12 @@ public class ReadModelModel extends DomainTypeModel implements ReadModelMirror {
      * @param inheritanceHierarchyTypeNames a list of type names representing the inheritance hierarchy of the type.
      * @param allInterfaceTypeNames       a list of type names representing all interface types implemented by the type.
      */
-    @JsonCreator
-    public ReadModelModel(@JsonProperty("typeName") String typeName,
-                          @JsonProperty("abstract") boolean isAbstract,
-                          @JsonProperty("allFields") List<FieldMirror> allFields,
-                          @JsonProperty("methods") List<MethodMirror> methods,
-                          @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
-                          @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
+    public ReadModelModel(String typeName,
+                          boolean isAbstract,
+                          List<FieldMirror> allFields,
+                          List<MethodMirror> methods,
+                          List<String> inheritanceHierarchyTypeNames,
+                          List<String> allInterfaceTypeNames
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
@@ -71,7 +67,6 @@ public class ReadModelModel extends DomainTypeModel implements ReadModelMirror {
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<FieldMirror> getBasicFields() {
         return allFields.stream().filter(p ->
@@ -83,7 +78,6 @@ public class ReadModelModel extends DomainTypeModel implements ReadModelMirror {
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<ValueReferenceMirror> getValueReferences() {
         return allFields.stream().filter(p ->
@@ -98,7 +92,6 @@ public class ReadModelModel extends DomainTypeModel implements ReadModelMirror {
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<EntityReferenceMirror> getEntityReferences() {
         return allFields.stream().filter(p ->
@@ -111,7 +104,6 @@ public class ReadModelModel extends DomainTypeModel implements ReadModelMirror {
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<AggregateRootReferenceMirror> getAggregateRootReferences() {
         return allFields.stream().filter(p ->
@@ -124,7 +116,6 @@ public class ReadModelModel extends DomainTypeModel implements ReadModelMirror {
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public DomainType getDomainType() {
         return DomainType.READ_MODEL;

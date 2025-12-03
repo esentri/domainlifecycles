@@ -26,9 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.DomainObjectMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.FieldMirror;
@@ -55,15 +52,13 @@ public class ValueObjectModel extends DomainObjectModel implements ValueObjectMi
      * @param inheritanceHierarchyTypeNames a list of type names representing the inheritance hierarchy of the type
      * @param allInterfaceTypeNames a list of interface type names implemented by the type
      */
-    @JsonCreator
     public ValueObjectModel(
-        @JsonProperty("typeName") String typeName,
-
-        @JsonProperty("abstract") boolean isAbstract,
-        @JsonProperty("allFields") List<FieldMirror> allFields,
-        @JsonProperty("methods") List<MethodMirror> methods,
-        @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
-        @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
+        String typeName,
+        boolean isAbstract,
+        List<FieldMirror> allFields,
+        List<MethodMirror> methods,
+        List<String> inheritanceHierarchyTypeNames,
+        List<String> allInterfaceTypeNames
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
@@ -71,7 +66,6 @@ public class ValueObjectModel extends DomainObjectModel implements ValueObjectMi
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public boolean isSingledValued() {
         var valueReferences = getValueReferences()
@@ -97,7 +91,6 @@ public class ValueObjectModel extends DomainObjectModel implements ValueObjectMi
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public Optional<FieldMirror> singledValuedField() {
         var valueReferences = getValueReferences()
@@ -126,7 +119,6 @@ public class ValueObjectModel extends DomainObjectModel implements ValueObjectMi
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public DomainType getDomainType() {
         return DomainType.VALUE_OBJECT;

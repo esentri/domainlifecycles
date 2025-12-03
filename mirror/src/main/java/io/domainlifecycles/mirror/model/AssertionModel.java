@@ -26,17 +26,9 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AssertionMirror;
-
 import java.util.Objects;
 
-/**
- * Model implementation of an {@link AssertionMirror}.
- *
- * @author Mario Herb
- */
 public class AssertionModel implements AssertionMirror {
 
     private final AssertionType assertionType;
@@ -53,11 +45,10 @@ public class AssertionModel implements AssertionMirror {
      * @param param2 the second parameter associated with the assertion
      * @param message the message or description related to the assertion
      */
-    @JsonCreator
-    public AssertionModel(@JsonProperty("assertionType") AssertionType assertionType,
-                          @JsonProperty("param1") String param1,
-                          @JsonProperty("param2") String param2,
-                          @JsonProperty("message") String message) {
+    public AssertionModel(AssertionType assertionType,
+                          String param1,
+                          String param2,
+                          String message) {
         this.assertionType = Objects.requireNonNull(assertionType);
         this.param1 = param1;
         this.param2 = param2;

@@ -26,8 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
 import io.domainlifecycles.mirror.api.AssertionMirror;
 import io.domainlifecycles.mirror.api.DomainType;
@@ -47,17 +45,11 @@ public class AssertedContainableTypeModel implements AssertedContainableTypeMirr
     private final String typeName;
     private final DomainType domainType;
     private final List<AssertionMirror> assertions;
-    @JsonProperty
     private final boolean hasOptionalContainer;
-    @JsonProperty
     private final boolean hasCollectionContainer;
-    @JsonProperty
     private final boolean hasSetContainer;
-    @JsonProperty
     private final boolean hasListContainer;
-    @JsonProperty
     private final boolean isArray;
-    @JsonProperty
     private final boolean hasStreamContainer;
     private final String containerTypeName;
     private final List<AssertionMirror> containerAssertions;
@@ -80,19 +72,18 @@ public class AssertedContainableTypeModel implements AssertedContainableTypeMirr
      * @param containerAssertions   a list of assertion mirrors for the container type, must not be null
      * @param resolvedGenericType   the resolved generic type mirror associated with this model, can be null
      */
-    @JsonCreator
-    public AssertedContainableTypeModel(@JsonProperty("typeName") String typeName,
-                                        @JsonProperty("domainType") DomainType domainType,
-                                        @JsonProperty("assertions") List<AssertionMirror> assertions,
-                                        @JsonProperty("hasOptionalContainer") boolean hasOptionalContainer,
-                                        @JsonProperty("hasCollectionContainer") boolean hasCollectionContainer,
-                                        @JsonProperty("hasListContainer") boolean hasListContainer,
-                                        @JsonProperty("hasSetContainer") boolean hasSetContainer,
-                                        @JsonProperty("hasStreamContainer") boolean hasStreamContainer,
-                                        @JsonProperty("isArray") boolean isArray,
-                                        @JsonProperty("containerTypeName") String containerTypeName,
-                                        @JsonProperty("containerAssertions") List<AssertionMirror> containerAssertions,
-                                        @JsonProperty("resolvedGenericType") ResolvedGenericTypeMirror resolvedGenericType) {
+    public AssertedContainableTypeModel(String typeName,
+                                        DomainType domainType,
+                                        List<AssertionMirror> assertions,
+                                        boolean hasOptionalContainer,
+                                        boolean hasCollectionContainer,
+                                        boolean hasListContainer,
+                                        boolean hasSetContainer,
+                                        boolean hasStreamContainer,
+                                        boolean isArray,
+                                        String containerTypeName,
+                                        List<AssertionMirror> containerAssertions,
+                                        ResolvedGenericTypeMirror resolvedGenericType) {
         this.typeName = Objects.requireNonNull(typeName);
         this.domainType = Objects.requireNonNull(domainType);
         Objects.requireNonNull(assertions);

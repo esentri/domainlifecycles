@@ -24,20 +24,20 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.mirror.serialize.api;
+package io.domainlifecycles.mirrordeserialization.serialize.jackson2;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.domainlifecycles.mirror.model.AssertionModel;
+import io.domainlifecycles.mirror.model.ResolvedGenericTypeModel;
 
 /**
- * Jackson mixin interface for proper serialization of {@link AssertionModel}.
+ * Jackson mixin interface for proper serialization of {@link ResolvedGenericTypeModel}.
  *
  * @author Mario Herb
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = AssertionModel.class),
+    @JsonSubTypes.Type(value = ResolvedGenericTypeModel.class),
 })
-public interface AssertionMirrorMixin {
+public interface ResolvedGenericTypeMirrorMixinJackson2 {
 }

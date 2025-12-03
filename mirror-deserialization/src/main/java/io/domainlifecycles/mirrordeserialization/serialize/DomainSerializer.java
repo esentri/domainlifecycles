@@ -24,20 +24,30 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.mirror.serialize.api;
+package io.domainlifecycles.mirrordeserialization.serialize;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.domainlifecycles.mirror.model.BoundedContextModel;
+import io.domainlifecycles.mirror.api.DomainMirror;
 
 /**
- * Jackson mixin interface for proper serialization of {@link BoundedContextModel}.
+ * Generic interface to de-/serialize the DomainModel.
  *
  * @author Mario Herb
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
-@JsonSubTypes({
-    @JsonSubTypes.Type(value = BoundedContextModel.class),
-})
-public interface BoundedContextMirrorMixin {
+public interface DomainSerializer {
+
+    /**
+     * Serializes a given DomainMirror instance into its string representation.
+     *
+     * @param domainMirror the DomainMirror instance to be serialized
+     * @return a string representation of the serialized DomainMirror
+     */
+    String serialize(DomainMirror domainMirror);
+
+    /**
+     * Deserializes the given string representation of a domain into a DomainMirror object.
+     *
+     * @param serializedDomain the string representation of a serialized domain
+     * @return the deserialized DomainMirror object
+     */
+    DomainMirror deserialize(String serializedDomain);
 }

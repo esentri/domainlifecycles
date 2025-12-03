@@ -17,11 +17,6 @@ dependencies {
 
     implementation libs.classgraph
     compileOnly libs.jakarta.validation.api
-    implementation libs.jackson2.core
-    implementation libs.jackson2.databind
-    implementation libs.jackson2.datatype.jdk8
-    implementation libs.jackson2.datatype.jsr310
-    implementation libs.jackson2.module.parameter.names
 
     implementation (libs.type.resolver) {
         exclude (group: 'org.apache.logging.log4j', module: 'log4j-core')
