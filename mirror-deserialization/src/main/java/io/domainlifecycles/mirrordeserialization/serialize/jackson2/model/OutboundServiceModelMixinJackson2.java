@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author leonvoellinger
  */
-public abstract class OutboundServiceModelMixinJackson2 {
+public abstract class OutboundServiceModelMixinJackson2 extends ServiceKindModelMixinJackson2{
 
     @JsonCreator
     public OutboundServiceModelMixinJackson2(
@@ -23,7 +23,9 @@ public abstract class OutboundServiceModelMixinJackson2 {
         @JsonProperty("outboundServiceInterfaceTypeNames") List<String> outboundServiceInterfaceTypeNames,
         @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
         @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
-    ) {}
+    ) {
+        super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
+    }
 
     @JsonProperty
     public abstract List<String> getOutboundServiceInterfaceTypeNames();

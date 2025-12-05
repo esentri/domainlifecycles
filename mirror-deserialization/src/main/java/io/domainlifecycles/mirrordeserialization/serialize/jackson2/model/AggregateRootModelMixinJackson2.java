@@ -15,7 +15,7 @@ import java.util.Optional;
  *
  * @author leonvoellinger
  */
-public abstract class AggregateRootModelMixinJackson2 {
+public abstract class AggregateRootModelMixinJackson2 extends EntityModelMixinJackson2 {
 
     @JsonCreator
     public AggregateRootModelMixinJackson2(
@@ -27,8 +27,9 @@ public abstract class AggregateRootModelMixinJackson2 {
         @JsonProperty("concurrencyVersionField") Optional<FieldMirror> concurrencyVersionField,
         @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
         @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
-    ) {}
-
+    ) {
+        super(typeName, isAbstract, allFields, methods, identityField, concurrencyVersionField, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
+    }
     @JsonIgnore
     public abstract DomainType getDomainType();
 }

@@ -15,7 +15,7 @@ import java.util.Optional;
  *
  * @author leonvoellinger
  */
-public abstract class ValueObjectModelMixinJackson2 {
+public abstract class ValueObjectModelMixinJackson2 extends DomainObjectModelMixinJackson2{
 
     @JsonCreator
     public ValueObjectModelMixinJackson2(
@@ -25,7 +25,9 @@ public abstract class ValueObjectModelMixinJackson2 {
         @JsonProperty("methods") List<MethodMirror> methods,
         @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
         @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
-    ) {}
+    ) {
+        super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
+    }
 
     @JsonIgnore
     public abstract boolean isSingledValued();

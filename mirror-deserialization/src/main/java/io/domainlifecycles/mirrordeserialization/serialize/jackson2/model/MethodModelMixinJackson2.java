@@ -46,10 +46,10 @@ import java.util.Optional;
 public abstract class MethodModelMixinJackson2 {
 
     @JsonProperty
-    public abstract List<String> getPublishedEventTypeNames();
+    private List<String> publishedEventTypeNames;
 
     @JsonProperty
-    public abstract Optional<String> getListenedEventTypeName();
+    private Optional<String> listenedEventTypeName;
 
     @JsonCreator
     public MethodModelMixinJackson2(

@@ -13,7 +13,7 @@ import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
  *
  * @author leonvoellinger
  */
-public abstract class AggregateRootReferenceModelMixinJackson2 {
+public abstract class AggregateRootReferenceModelMixinJackson2 extends FieldModelMixinJackson2{
 
     @JsonCreator
     public AggregateRootReferenceModelMixinJackson2(
@@ -26,7 +26,9 @@ public abstract class AggregateRootReferenceModelMixinJackson2 {
         @JsonProperty("publicWriteable") boolean publicWriteable,
         @JsonProperty("static") boolean isStatic,
         @JsonProperty("hidden") boolean hidden
-    ) {}
+    ) {
+        super(name, type, accessLevel, declaredByTypeName, modifiable, publicReadable, publicWriteable, isStatic, hidden);
+    }
 
     @JsonIgnore
     public abstract AggregateRootMirror getAggregateRoot();

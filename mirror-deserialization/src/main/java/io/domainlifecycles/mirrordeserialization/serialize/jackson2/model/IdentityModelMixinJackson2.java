@@ -41,7 +41,7 @@ import java.util.Optional;
  *
  * @author leonvoellinger
  */
-public abstract class IdentityModelMixinJackson2 {
+public abstract class IdentityModelMixinJackson2 extends DomainTypeModelMixinJackson2{
 
     @JsonCreator
     public IdentityModelMixinJackson2(
@@ -52,7 +52,9 @@ public abstract class IdentityModelMixinJackson2 {
         @JsonProperty("valueTypeName") Optional<String> valueTypeName,
         @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
         @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
-    ) {}
+    ) {
+        super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
+    }
 
     @JsonIgnore
     public abstract DomainType getDomainType();

@@ -22,7 +22,7 @@ import java.util.List;
  *
  * @author leonvoellinger
  */
-public abstract class ServiceKindModelMixinJackson2 {
+public abstract class ServiceKindModelMixinJackson2 extends DomainTypeModelMixinJackson2{
 
     @JsonCreator
     public ServiceKindModelMixinJackson2(
@@ -32,7 +32,9 @@ public abstract class ServiceKindModelMixinJackson2 {
         @JsonProperty("methods") List<MethodMirror> methods,
         @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
         @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
-    ) {}
+    ) {
+        super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
+    }
 
     @JsonIgnore
     public abstract DomainType getDomainType();

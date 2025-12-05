@@ -16,7 +16,7 @@ import java.util.Optional;
  *
  * @author leonvoellinger
  */
-public abstract class RepositoryModelMixinJackson2 {
+public abstract class RepositoryModelMixinJackson2 extends ServiceKindModelMixinJackson2{
 
     @JsonProperty
     public abstract String getManagedAggregateTypeName();
@@ -34,7 +34,9 @@ public abstract class RepositoryModelMixinJackson2 {
         @JsonProperty("repositoryInterfaceTypeNames") List<String> repositoryInterfaceTypeNames,
         @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
         @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
-    ) {}
+    ) {
+        super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
+    }
 
     @JsonIgnore
     public abstract Optional<AggregateRootMirror> getManagedAggregate();

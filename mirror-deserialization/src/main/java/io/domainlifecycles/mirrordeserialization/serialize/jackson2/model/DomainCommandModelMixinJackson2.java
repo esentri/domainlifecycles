@@ -25,13 +25,13 @@ import java.util.Optional;
  *
  * @author leonvoellinger
  */
-public abstract class DomainCommandModelMixinJackson2 {
+public abstract class DomainCommandModelMixinJackson2 extends DomainTypeModelMixinJackson2{
 
     @JsonProperty
-    public abstract Optional<String> getAggregateTargetIdentityTypeName();
+    public Optional<String> aggregateTargetIdentityTypeName;
 
     @JsonProperty
-    public abstract Optional<String> getDomainServiceTargetTypeName();
+    public Optional<String> domainServiceTargetTypeName;
 
     @JsonCreator
     public DomainCommandModelMixinJackson2(
@@ -43,7 +43,9 @@ public abstract class DomainCommandModelMixinJackson2 {
         @JsonProperty("domainServiceTargetTypeName") Optional<String> domainServiceTargetTypeName,
         @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
         @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
-    ) {}
+    ) {
+        super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
+    }
 
     @JsonIgnore
     public abstract List<FieldMirror> getBasicFields();

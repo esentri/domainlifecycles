@@ -1,5 +1,6 @@
 package io.domainlifecycles.mirrordeserialization.serialize.jackson2.model;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,15 +32,20 @@ import java.util.Map;
  */
 public abstract class DomainModelMixinJackson2 {
 
+    @JsonProperty
+    private Map<String, ? extends DomainTypeMirror> allTypeMirrors;
+    @JsonProperty
+    private List<BoundedContextMirror> boundedContextMirrors;
+
     @JsonCreator
     public DomainModelMixinJackson2(
-        @JsonProperty("allDomainTypeMirrors") Map<String, ? extends DomainTypeMirror> allTypeMirrors,
+        @JsonProperty("allTypeMirrors") Map<String, ? extends DomainTypeMirror> allTypeMirrors,
         @JsonProperty("boundedContextMirrors") List<BoundedContextMirror> boundedContextMirrors) {}
 
-    //@JsonIgnore
+    @JsonIgnore
     public abstract List<DomainTypeMirror> getAllDomainTypeMirrors();
 
-    //@JsonIgnore
+    @JsonIgnore
     public abstract List<BoundedContextMirror> getAllBoundedContextMirrors();
 
     @JsonIgnore

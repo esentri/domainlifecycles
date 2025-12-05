@@ -50,6 +50,7 @@ public class JsonizerTest {
         var serializer = useJackson3 ? new Jackson3DomainSerializer(true) : new Jackson2DomainSerializer(true);
         var dm = factory.initializeDomainMirror();
         var result = serializer.serialize(dm);
+        log.info("Result:"+result);
         var init = serializer.deserialize(result);
         Assertions.assertThat(init.getAllBoundedContextMirrors()).isEqualTo(dm.getAllBoundedContextMirrors());
         Assertions.assertThat(init.getAllDomainTypeMirrors().size()).isEqualTo(dm.getAllDomainTypeMirrors().size());

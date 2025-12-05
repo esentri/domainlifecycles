@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author leonvoellinger
  */
-public abstract class EnumModelMixinJackson2 {
+public abstract class EnumModelMixinJackson2 extends DomainTypeModelMixinJackson2{
 
     @JsonCreator
     public EnumModelMixinJackson2(
@@ -26,8 +26,11 @@ public abstract class EnumModelMixinJackson2 {
         @JsonProperty("enumOptions") List<EnumOptionMirror> enumOptions,
         @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
         @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
-    ) {}
+    ) {
+        super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
+    }
 
     @JsonIgnore
     public abstract DomainType getDomainType();
+
 }

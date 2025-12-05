@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author leonvoellinger
  */
-public abstract class ReadModelModelMixinJackson2 {
+public abstract class ReadModelModelMixinJackson2 extends DomainTypeModelMixinJackson2{
 
     @JsonCreator
     public ReadModelModelMixinJackson2(
@@ -27,7 +27,9 @@ public abstract class ReadModelModelMixinJackson2 {
         @JsonProperty("methods") List<MethodMirror> methods,
         @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
         @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
-    ) {}
+    ) {
+        super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
+    }
 
     @JsonIgnore
     public abstract List<FieldMirror> getBasicFields();

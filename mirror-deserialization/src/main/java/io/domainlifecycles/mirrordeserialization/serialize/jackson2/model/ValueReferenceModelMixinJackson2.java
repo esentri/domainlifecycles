@@ -13,7 +13,7 @@ import io.domainlifecycles.mirror.api.ValueMirror;
  *
  * @author leonvoellinger
  */
-public abstract class ValueReferenceModelMixinJackson2 {
+public abstract class ValueReferenceModelMixinJackson2 extends FieldModelMixinJackson2{
 
     @JsonCreator
     public ValueReferenceModelMixinJackson2(
@@ -26,7 +26,9 @@ public abstract class ValueReferenceModelMixinJackson2 {
         @JsonProperty("publicWriteable") boolean publicWriteable,
         @JsonProperty("static") boolean isStatic,
         @JsonProperty("hidden") boolean hidden
-    ) {}
+    ){
+        super(name, type, accessLevel, declaredByTypeName, modifiable, publicReadable, publicWriteable, isStatic, hidden);
+    }
 
     @JsonIgnore
     public abstract ValueMirror getValue();

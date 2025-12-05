@@ -16,22 +16,22 @@ import java.util.List;
 public abstract class AssertedContainableTypeModelMixinJackson2 {
 
     @JsonProperty
-    public abstract boolean hasOptionalContainer();
+    public boolean hasOptionalContainer;
 
     @JsonProperty
-    public abstract boolean hasCollectionContainer();
+    public boolean hasCollectionContainer;
 
     @JsonProperty
-    public abstract boolean hasSetContainer();
+    public boolean hasSetContainer;
 
     @JsonProperty
-    public abstract boolean hasListContainer();
+    public boolean hasListContainer;
 
     @JsonProperty
-    public abstract boolean isArray();
+    public boolean isArray;
 
     @JsonProperty
-    public abstract boolean hasStreamContainer();
+    public boolean hasStreamContainer;
 
     @JsonCreator
     public AssertedContainableTypeModelMixinJackson2(

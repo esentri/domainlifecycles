@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author leonvoellinger
  */
-public abstract class DomainEventModelMixinJackson2 {
+public abstract class DomainEventModelMixinJackson2 extends DomainTypeModelMixinJackson2{
 
     @JsonCreator
     public DomainEventModelMixinJackson2(
@@ -34,7 +34,9 @@ public abstract class DomainEventModelMixinJackson2 {
         @JsonProperty("methods") List<MethodMirror> methods,
         @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
         @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
-    ) {}
+    ) {
+        super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
+    }
 
     @JsonIgnore
     public abstract List<FieldMirror> getBasicFields();

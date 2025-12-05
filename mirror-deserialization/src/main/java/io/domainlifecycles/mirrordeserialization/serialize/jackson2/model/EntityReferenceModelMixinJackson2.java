@@ -13,7 +13,7 @@ import io.domainlifecycles.mirror.api.EntityMirror;
  *
  * @author leonvoellinger
  */
-public abstract class EntityReferenceModelMixinJackson2 {
+public abstract class EntityReferenceModelMixinJackson2 extends FieldModelMixinJackson2{
 
     @JsonCreator
     public EntityReferenceModelMixinJackson2(
@@ -26,7 +26,9 @@ public abstract class EntityReferenceModelMixinJackson2 {
         @JsonProperty("publicWriteable") boolean publicWriteable,
         @JsonProperty("static") boolean isStatic,
         @JsonProperty("hidden") boolean hidden
-    ) {}
+    ) {
+        super(name, type, accessLevel, declaredByTypeName, modifiable, publicReadable, publicWriteable, isStatic, hidden);
+    }
 
     @JsonIgnore
     public abstract EntityMirror getEntity();

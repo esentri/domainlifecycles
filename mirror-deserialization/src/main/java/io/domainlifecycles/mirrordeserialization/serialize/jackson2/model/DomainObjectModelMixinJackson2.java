@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author leonvoellinger
  */
-public abstract class DomainObjectModelMixinJackson2 {
+public abstract class DomainObjectModelMixinJackson2 extends DomainTypeModelMixinJackson2{
 
     @JsonCreator
     public DomainObjectModelMixinJackson2(
@@ -24,7 +24,9 @@ public abstract class DomainObjectModelMixinJackson2 {
         @JsonProperty("methods") List<MethodMirror> methods,
         @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
         @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
-    ) {}
+    ) {
+        super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
+    }
 
     @JsonIgnore
     public abstract List<FieldMirror> getBasicFields();

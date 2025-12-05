@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author leonvoellinger
  */
-public abstract class QueryHandlerModelMixinJackson2 {
+public abstract class QueryHandlerModelMixinJackson2 extends ServiceKindModelMixinJackson2{
 
     @JsonProperty
     public abstract String getProvidedReadModelTypeName();
@@ -30,5 +30,7 @@ public abstract class QueryHandlerModelMixinJackson2 {
         @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
         @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames,
         @JsonProperty("providedReadModelTypeName") String providedReadModelTypeName
-    ) {}
+    ) {
+        super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
+    }
 }
