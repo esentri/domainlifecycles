@@ -28,7 +28,7 @@ public class JsonizerTest {
 
     @Test
     public void testJsonizeWithTypeMetaJackson2() {
-        ReflectiveDomainMirrorFactory factory = new ReflectiveDomainMirrorFactory( "tests");
+        ReflectiveDomainMirrorFactory factory = new ReflectiveDomainMirrorFactory("tests");
         factory.setGenericTypeResolver(new TypeMetaResolver());
         testJsonize(factory, false);
     }
@@ -54,7 +54,6 @@ public class JsonizerTest {
         Assertions.assertThat(init.getAllBoundedContextMirrors()).isEqualTo(dm.getAllBoundedContextMirrors());
         Assertions.assertThat(init.getAllDomainTypeMirrors().size()).isEqualTo(dm.getAllDomainTypeMirrors().size());
         Assertions.assertThat(init.getAllDomainTypeMirrors()).isEqualTo(dm.getAllDomainTypeMirrors());
-
 
         Assertions.assertThat(init).isEqualTo(dm);
         Assertions.assertThat(init.getAllDomainTypeMirrors()

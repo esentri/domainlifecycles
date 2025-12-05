@@ -33,36 +33,14 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import io.domainlifecycles.mirror.api.AggregateRootMirror;
-import io.domainlifecycles.mirror.api.AggregateRootReferenceMirror;
-import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
-import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
-import io.domainlifecycles.mirror.api.AssertionMirror;
-import io.domainlifecycles.mirror.api.BoundedContextMirror;
-import io.domainlifecycles.mirror.api.DomainCommandMirror;
-import io.domainlifecycles.mirror.api.DomainEventMirror;
-import io.domainlifecycles.mirror.api.DomainMirror;
-import io.domainlifecycles.mirror.api.DomainObjectMirror;
-import io.domainlifecycles.mirror.api.DomainServiceMirror;
-import io.domainlifecycles.mirror.api.DomainTypeMirror;
-import io.domainlifecycles.mirror.api.EntityMirror;
-import io.domainlifecycles.mirror.api.EntityReferenceMirror;
-import io.domainlifecycles.mirror.api.EnumMirror;
-import io.domainlifecycles.mirror.api.EnumOptionMirror;
-import io.domainlifecycles.mirror.api.FieldMirror;
-import io.domainlifecycles.mirror.api.IdentityMirror;
-import io.domainlifecycles.mirror.api.MethodMirror;
-import io.domainlifecycles.mirror.api.OutboundServiceMirror;
-import io.domainlifecycles.mirror.api.ParamMirror;
-import io.domainlifecycles.mirror.api.QueryHandlerMirror;
-import io.domainlifecycles.mirror.api.ReadModelMirror;
-import io.domainlifecycles.mirror.api.ResolvedGenericTypeMirror;
-import io.domainlifecycles.mirror.api.ServiceKindMirror;
-import io.domainlifecycles.mirror.api.ValueObjectMirror;
-import io.domainlifecycles.mirror.api.ValueReferenceMirror;
+import io.domainlifecycles.mirror.api.*;
+import io.domainlifecycles.mirror.model.*;
 import io.domainlifecycles.mirror.exception.MirrorException;
+import io.domainlifecycles.mirror.model.AggregateRootModel;
 import io.domainlifecycles.mirror.model.DomainModel;
 import io.domainlifecycles.mirrordeserialization.serialize.DomainSerializer;
+import io.domainlifecycles.mirrordeserialization.serialize.jackson2.mirror.*;
+import io.domainlifecycles.mirrordeserialization.serialize.jackson2.model.*;
 
 /**
  * Jackson 2 specific implementation of a {@link DomainSerializer}.
@@ -89,32 +67,87 @@ public class Jackson2DomainSerializer implements DomainSerializer {
         objectMapper.registerModule(new ParameterNamesModule());
 
         objectMapper.addMixIn(AggregateRootMirror.class, AggregateRootMirrorMixinJackson2.class);
+        objectMapper.addMixIn(AggregateRootModel.class, AggregateRootModelMixinJackson2.class);
+
+        objectMapper.addMixIn(AggregateRootMirror.class, AggregateRootMirrorMixinJackson2.class);
+        objectMapper.addMixIn(AggregateRootModel.class, AggregateRootModelMixinJackson2.class);
+
         objectMapper.addMixIn(AggregateRootReferenceMirror.class, AggregateRootReferenceMirrorMixinJackson2.class);
+        objectMapper.addMixIn(AggregateRootReferenceModel.class, AggregateRootReferenceModelMixinJackson2.class);
+
         objectMapper.addMixIn(ApplicationServiceMirror.class, ApplicationServiceMirrorMixinJackson2.class);
+        objectMapper.addMixIn(ApplicationServiceModel.class, ApplicationServiceModelMixinJackson2.class);
+
         objectMapper.addMixIn(AssertedContainableTypeMirror.class, AssertedContainableTypeMirrorMixinJackson2.class);
+        objectMapper.addMixIn(AssertedContainableTypeModel.class, AssertedContainableTypeModelMixinJackson2.class);
+
         objectMapper.addMixIn(AssertionMirror.class, AssertionMirrorMixinJackson2.class);
+        objectMapper.addMixIn(AssertionModel.class, AssertionModelMixinJackson2.class);
+
         objectMapper.addMixIn(BoundedContextMirror.class, BoundedContextMirrorMixinJackson2.class);
+        objectMapper.addMixIn(BoundedContextModel.class, BoundedContextModelMixinJackson2.class);
+
         objectMapper.addMixIn(DomainCommandMirror.class, DomainCommandMirrorMixinJackson2.class);
+        objectMapper.addMixIn(DomainCommandModel.class, DomainCommandModelMixinJackson2.class);
+
         objectMapper.addMixIn(DomainEventMirror.class, DomainEventMirrorMixinJackson2.class);
+        objectMapper.addMixIn(DomainEventModel.class, DomainEventModelMixinJackson2.class);
+
         objectMapper.addMixIn(DomainMirror.class, DomainMirrorMixinJackson2.class);
+        objectMapper.addMixIn(DomainModel.class, DomainModelMixinJackson2.class);
+
         objectMapper.addMixIn(DomainObjectMirror.class, DomainObjectMirrorMixinJackson2.class);
+        objectMapper.addMixIn(DomainObjectModel.class, DomainObjectModelMixinJackson2.class);
+
         objectMapper.addMixIn(DomainServiceMirror.class, DomainServiceMirrorMixinJackson2.class);
+        objectMapper.addMixIn(DomainServiceModel.class, DomainServiceModelMixinJackson2.class);
+
         objectMapper.addMixIn(DomainTypeMirror.class, DomainTypeMirrorMixinJackson2.class);
+        objectMapper.addMixIn(DomainTypeModel.class, DomainTypeModelMixinJackson2.class);
+
         objectMapper.addMixIn(EntityMirror.class, EntityMirrorMixinJackson2.class);
+        objectMapper.addMixIn(EntityModel.class, EntityModelMixinJackson2.class);
+
         objectMapper.addMixIn(EntityReferenceMirror.class, EntityReferenceMirrorMixinJackson2.class);
+        objectMapper.addMixIn(EntityReferenceModel.class, EntityReferenceModelMixinJackson2.class);
+
         objectMapper.addMixIn(EnumMirror.class, EnumMirrorMixinJackson2.class);
+        objectMapper.addMixIn(EnumModel.class, EnumModelMixinJackson2.class);
+
         objectMapper.addMixIn(EnumOptionMirror.class, EnumOptionMirrorMixinJackson2.class);
+        objectMapper.addMixIn(EnumOptionModel.class, EnumOptionModelMixinJackson2.class);
+
         objectMapper.addMixIn(FieldMirror.class, FieldMirrorMixinJackson2.class);
+        objectMapper.addMixIn(FieldModel.class, FieldModelMixinJackson2.class);
+
         objectMapper.addMixIn(IdentityMirror.class, IdentityMirrorMixinJackson2.class);
+        objectMapper.addMixIn(IdentityModel.class, IdentityModelMixinJackson2.class);
+
         objectMapper.addMixIn(MethodMirror.class, MethodMirrorMixinJackson2.class);
+        objectMapper.addMixIn(MethodModel.class, MethodModelMixinJackson2.class);
+
         objectMapper.addMixIn(OutboundServiceMirror.class, OutboundServiceMirrorMixinJackson2.class);
+        objectMapper.addMixIn(OutboundServiceModel.class, OutboundServiceModelMixinJackson2.class);
+
         objectMapper.addMixIn(ParamMirror.class, ParamMirrorMixinJackson2.class);
+        objectMapper.addMixIn(ParamModel.class, ParamModelMixinJackson2.class);
+
         objectMapper.addMixIn(QueryHandlerMirror.class, QueryHandlerMirrorMixinJackson2.class);
+        objectMapper.addMixIn(QueryHandlerModel.class, QueryHandlerModelMixinJackson2.class);
+
         objectMapper.addMixIn(ReadModelMirror.class, ReadModelMirrorMixinJackson2.class);
+        objectMapper.addMixIn(ReadModelModel.class, ReadModelModelMixinJackson2.class);
+
         objectMapper.addMixIn(ResolvedGenericTypeMirror.class, ResolvedGenericTypeMirrorMixinJackson2.class);
+
         objectMapper.addMixIn(ServiceKindMirror.class, ServiceKindMirrorMixinJackson2.class);
+        objectMapper.addMixIn(ServiceKindModel.class, ServiceKindModelMixinJackson2.class);
+
         objectMapper.addMixIn(ValueObjectMirror.class, ValueObjectMirrorMixinJackson2.class);
+        objectMapper.addMixIn(ValueObjectModel.class, ValueObjectModelMixinJackson2.class);
+
         objectMapper.addMixIn(ValueReferenceMirror.class, ValueReferenceMirrorMixinJackson2.class);
+        objectMapper.addMixIn(ValueReferenceModel.class, ValueReferenceModelMixinJackson2.class);
 
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 

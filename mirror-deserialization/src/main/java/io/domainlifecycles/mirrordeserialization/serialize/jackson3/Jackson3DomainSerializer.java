@@ -26,20 +26,13 @@
 
 package io.domainlifecycles.mirrordeserialization.serialize.jackson3;
 
-import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
-import io.domainlifecycles.mirror.api.AssertionMirror;
-import io.domainlifecycles.mirror.api.BoundedContextMirror;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
-import io.domainlifecycles.mirror.api.EnumOptionMirror;
-import io.domainlifecycles.mirror.api.FieldMirror;
-import io.domainlifecycles.mirror.api.MethodMirror;
-import io.domainlifecycles.mirror.api.ParamMirror;
 import io.domainlifecycles.mirror.api.ResolvedGenericTypeMirror;
 import io.domainlifecycles.mirror.exception.MirrorException;
 import io.domainlifecycles.mirror.model.DomainModel;
 import io.domainlifecycles.mirrordeserialization.serialize.DomainSerializer;
-import io.domainlifecycles.mirrordeserialization.serialize.jackson2.ResolvedGenericTypeMirrorMixinJackson2;
+import io.domainlifecycles.mirrordeserialization.serialize.jackson2.mirror.ResolvedGenericTypeMirrorMixinJackson2;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
