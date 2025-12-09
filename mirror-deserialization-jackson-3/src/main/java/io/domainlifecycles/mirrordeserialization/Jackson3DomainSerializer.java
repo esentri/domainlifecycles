@@ -81,59 +81,59 @@ import io.domainlifecycles.mirror.model.ServiceKindModel;
 import io.domainlifecycles.mirror.model.ValueObjectModel;
 import io.domainlifecycles.mirror.model.ValueReferenceModel;
 import io.domainlifecycles.mirror.serialize.DomainSerializer;
-import io.domainlifecycles.mirrordeserialization.mirror.AggregateRootMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.AggregateRootReferenceMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.ApplicationServiceMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.AssertedContainableTypeMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.AssertionMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.BoundedContextMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.DomainCommandMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.DomainEventMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.DomainMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.DomainObjectMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.DomainServiceMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.DomainTypeMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.EntityMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.EntityReferenceMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.EnumMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.EnumOptionMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.FieldMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.IdentityMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.MethodMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.OutboundServiceMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.ParamMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.QueryHandlerMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.ReadModelMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.ResolvedGenericTypeMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.ServiceKindMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.ValueObjectMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.mirror.ValueReferenceMirrorMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.AggregateRootModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.AggregateRootReferenceModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.ApplicationServiceModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.AssertedContainableTypeModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.AssertionModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.BoundedContextModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.DomainCommandModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.DomainEventModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.DomainModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.DomainObjectModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.DomainServiceModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.DomainTypeModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.EntityModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.EntityReferenceModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.EnumModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.EnumOptionModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.FieldModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.IdentityModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.MethodModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.OutboundServiceModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.ParamModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.QueryHandlerModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.ReadModelModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.ServiceKindModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.ValueObjectModelMixinJackson2;
-import io.domainlifecycles.mirrordeserialization.model.ValueReferenceModelMixinJackson2;
+import io.domainlifecycles.mirrordeserialization.mirror.AggregateRootMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.AggregateRootReferenceMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.ApplicationServiceMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.AssertedContainableTypeMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.AssertionMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.BoundedContextMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.DomainCommandMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.DomainEventMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.DomainMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.DomainObjectMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.DomainServiceMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.DomainTypeMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.EntityMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.EntityReferenceMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.EnumMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.EnumOptionMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.FieldMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.IdentityMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.MethodMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.OutboundServiceMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.ParamMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.QueryHandlerMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.ReadModelMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.ResolvedGenericTypeMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.ServiceKindMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.ValueObjectMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.mirror.ValueReferenceMirrorMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.AggregateRootModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.AggregateRootReferenceModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.ApplicationServiceModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.AssertedContainableTypeModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.AssertionModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.BoundedContextModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.DomainCommandModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.DomainEventModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.DomainModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.DomainObjectModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.DomainServiceModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.DomainTypeModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.EntityModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.EntityReferenceModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.EnumModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.EnumOptionModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.FieldModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.IdentityModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.MethodModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.OutboundServiceModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.ParamModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.QueryHandlerModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.ReadModelModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.ServiceKindModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.ValueObjectModelMixinJackson3;
+import io.domainlifecycles.mirrordeserialization.model.ValueReferenceModelMixinJackson3;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
@@ -161,88 +161,88 @@ public class Jackson3DomainSerializer implements DomainSerializer {
     public Jackson3DomainSerializer(boolean prettyPrint) {
         JsonMapper.Builder jsonMapperBuilder = JsonMapper.builder()
 
-            .addMixIn(AggregateRootMirror.class, AggregateRootMirrorMixinJackson2.class)
-            .addMixIn(AggregateRootModel.class, AggregateRootModelMixinJackson2.class)
+            .addMixIn(AggregateRootMirror.class, AggregateRootMirrorMixinJackson3.class)
+            .addMixIn(AggregateRootModel.class, AggregateRootModelMixinJackson3.class)
 
-            .addMixIn(AggregateRootMirror.class, AggregateRootMirrorMixinJackson2.class)
-            .addMixIn(AggregateRootModel.class, AggregateRootModelMixinJackson2.class)
+            .addMixIn(AggregateRootMirror.class, AggregateRootMirrorMixinJackson3.class)
+            .addMixIn(AggregateRootModel.class, AggregateRootModelMixinJackson3.class)
 
-            .addMixIn(AggregateRootReferenceMirror.class, AggregateRootReferenceMirrorMixinJackson2.class)
-            .addMixIn(AggregateRootReferenceModel.class, AggregateRootReferenceModelMixinJackson2.class)
+            .addMixIn(AggregateRootReferenceMirror.class, AggregateRootReferenceMirrorMixinJackson3.class)
+            .addMixIn(AggregateRootReferenceModel.class, AggregateRootReferenceModelMixinJackson3.class)
 
-            .addMixIn(ApplicationServiceMirror.class, ApplicationServiceMirrorMixinJackson2.class)
-            .addMixIn(ApplicationServiceModel.class, ApplicationServiceModelMixinJackson2.class)
+            .addMixIn(ApplicationServiceMirror.class, ApplicationServiceMirrorMixinJackson3.class)
+            .addMixIn(ApplicationServiceModel.class, ApplicationServiceModelMixinJackson3.class)
 
-            .addMixIn(AssertedContainableTypeMirror.class, AssertedContainableTypeMirrorMixinJackson2.class)
-            .addMixIn(AssertedContainableTypeModel.class, AssertedContainableTypeModelMixinJackson2.class)
+            .addMixIn(AssertedContainableTypeMirror.class, AssertedContainableTypeMirrorMixinJackson3.class)
+            .addMixIn(AssertedContainableTypeModel.class, AssertedContainableTypeModelMixinJackson3.class)
 
-            .addMixIn(AssertionMirror.class, AssertionMirrorMixinJackson2.class)
-            .addMixIn(AssertionModel.class, AssertionModelMixinJackson2.class)
+            .addMixIn(AssertionMirror.class, AssertionMirrorMixinJackson3.class)
+            .addMixIn(AssertionModel.class, AssertionModelMixinJackson3.class)
 
-            .addMixIn(BoundedContextMirror.class, BoundedContextMirrorMixinJackson2.class)
-            .addMixIn(BoundedContextModel.class, BoundedContextModelMixinJackson2.class)
+            .addMixIn(BoundedContextMirror.class, BoundedContextMirrorMixinJackson3.class)
+            .addMixIn(BoundedContextModel.class, BoundedContextModelMixinJackson3.class)
 
-            .addMixIn(DomainCommandMirror.class, DomainCommandMirrorMixinJackson2.class)
-            .addMixIn(DomainCommandModel.class, DomainCommandModelMixinJackson2.class)
+            .addMixIn(DomainCommandMirror.class, DomainCommandMirrorMixinJackson3.class)
+            .addMixIn(DomainCommandModel.class, DomainCommandModelMixinJackson3.class)
 
-            .addMixIn(DomainEventMirror.class, DomainEventMirrorMixinJackson2.class)
-            .addMixIn(DomainEventModel.class, DomainEventModelMixinJackson2.class)
+            .addMixIn(DomainEventMirror.class, DomainEventMirrorMixinJackson3.class)
+            .addMixIn(DomainEventModel.class, DomainEventModelMixinJackson3.class)
 
-            .addMixIn(DomainMirror.class, DomainMirrorMixinJackson2.class)
-            .addMixIn(DomainModel.class, DomainModelMixinJackson2.class)
+            .addMixIn(DomainMirror.class, DomainMirrorMixinJackson3.class)
+            .addMixIn(DomainModel.class, DomainModelMixinJackson3.class)
 
-            .addMixIn(DomainObjectMirror.class, DomainObjectMirrorMixinJackson2.class)
-            .addMixIn(DomainObjectModel.class, DomainObjectModelMixinJackson2.class)
+            .addMixIn(DomainObjectMirror.class, DomainObjectMirrorMixinJackson3.class)
+            .addMixIn(DomainObjectModel.class, DomainObjectModelMixinJackson3.class)
 
-            .addMixIn(DomainServiceMirror.class, DomainServiceMirrorMixinJackson2.class)
-            .addMixIn(DomainServiceModel.class, DomainServiceModelMixinJackson2.class)
+            .addMixIn(DomainServiceMirror.class, DomainServiceMirrorMixinJackson3.class)
+            .addMixIn(DomainServiceModel.class, DomainServiceModelMixinJackson3.class)
 
-            .addMixIn(DomainTypeMirror.class, DomainTypeMirrorMixinJackson2.class)
-            .addMixIn(DomainTypeModel.class, DomainTypeModelMixinJackson2.class)
+            .addMixIn(DomainTypeMirror.class, DomainTypeMirrorMixinJackson3.class)
+            .addMixIn(DomainTypeModel.class, DomainTypeModelMixinJackson3.class)
 
-            .addMixIn(EntityMirror.class, EntityMirrorMixinJackson2.class)
-            .addMixIn(EntityModel.class, EntityModelMixinJackson2.class)
+            .addMixIn(EntityMirror.class, EntityMirrorMixinJackson3.class)
+            .addMixIn(EntityModel.class, EntityModelMixinJackson3.class)
 
-            .addMixIn(EntityReferenceMirror.class, EntityReferenceMirrorMixinJackson2.class)
-            .addMixIn(EntityReferenceModel.class, EntityReferenceModelMixinJackson2.class)
+            .addMixIn(EntityReferenceMirror.class, EntityReferenceMirrorMixinJackson3.class)
+            .addMixIn(EntityReferenceModel.class, EntityReferenceModelMixinJackson3.class)
 
-            .addMixIn(EnumMirror.class, EnumMirrorMixinJackson2.class)
-            .addMixIn(EnumModel.class, EnumModelMixinJackson2.class)
+            .addMixIn(EnumMirror.class, EnumMirrorMixinJackson3.class)
+            .addMixIn(EnumModel.class, EnumModelMixinJackson3.class)
 
-            .addMixIn(EnumOptionMirror.class, EnumOptionMirrorMixinJackson2.class)
-            .addMixIn(EnumOptionModel.class, EnumOptionModelMixinJackson2.class)
+            .addMixIn(EnumOptionMirror.class, EnumOptionMirrorMixinJackson3.class)
+            .addMixIn(EnumOptionModel.class, EnumOptionModelMixinJackson3.class)
 
-            .addMixIn(FieldMirror.class, FieldMirrorMixinJackson2.class)
-            .addMixIn(FieldModel.class, FieldModelMixinJackson2.class)
+            .addMixIn(FieldMirror.class, FieldMirrorMixinJackson3.class)
+            .addMixIn(FieldModel.class, FieldModelMixinJackson3.class)
 
-            .addMixIn(IdentityMirror.class, IdentityMirrorMixinJackson2.class)
-            .addMixIn(IdentityModel.class, IdentityModelMixinJackson2.class)
+            .addMixIn(IdentityMirror.class, IdentityMirrorMixinJackson3.class)
+            .addMixIn(IdentityModel.class, IdentityModelMixinJackson3.class)
 
-            .addMixIn(MethodMirror.class, MethodMirrorMixinJackson2.class)
-            .addMixIn(MethodModel.class, MethodModelMixinJackson2.class)
+            .addMixIn(MethodMirror.class, MethodMirrorMixinJackson3.class)
+            .addMixIn(MethodModel.class, MethodModelMixinJackson3.class)
 
-            .addMixIn(OutboundServiceMirror.class, OutboundServiceMirrorMixinJackson2.class)
-            .addMixIn(OutboundServiceModel.class, OutboundServiceModelMixinJackson2.class)
+            .addMixIn(OutboundServiceMirror.class, OutboundServiceMirrorMixinJackson3.class)
+            .addMixIn(OutboundServiceModel.class, OutboundServiceModelMixinJackson3.class)
 
-            .addMixIn(ParamMirror.class, ParamMirrorMixinJackson2.class)
-            .addMixIn(ParamModel.class, ParamModelMixinJackson2.class)
+            .addMixIn(ParamMirror.class, ParamMirrorMixinJackson3.class)
+            .addMixIn(ParamModel.class, ParamModelMixinJackson3.class)
 
-            .addMixIn(QueryHandlerMirror.class, QueryHandlerMirrorMixinJackson2.class)
-            .addMixIn(QueryHandlerModel.class, QueryHandlerModelMixinJackson2.class)
+            .addMixIn(QueryHandlerMirror.class, QueryHandlerMirrorMixinJackson3.class)
+            .addMixIn(QueryHandlerModel.class, QueryHandlerModelMixinJackson3.class)
 
-            .addMixIn(ReadModelMirror.class, ReadModelMirrorMixinJackson2.class)
-            .addMixIn(ReadModelModel.class, ReadModelModelMixinJackson2.class)
+            .addMixIn(ReadModelMirror.class, ReadModelMirrorMixinJackson3.class)
+            .addMixIn(ReadModelModel.class, ReadModelModelMixinJackson3.class)
 
-            .addMixIn(ResolvedGenericTypeMirror.class, ResolvedGenericTypeMirrorMixinJackson2.class)
+            .addMixIn(ResolvedGenericTypeMirror.class, ResolvedGenericTypeMirrorMixinJackson3.class)
 
-            .addMixIn(ServiceKindMirror.class, ServiceKindMirrorMixinJackson2.class)
-            .addMixIn(ServiceKindModel.class, ServiceKindModelMixinJackson2.class)
+            .addMixIn(ServiceKindMirror.class, ServiceKindMirrorMixinJackson3.class)
+            .addMixIn(ServiceKindModel.class, ServiceKindModelMixinJackson3.class)
 
-            .addMixIn(ValueObjectMirror.class, ValueObjectMirrorMixinJackson2.class)
-            .addMixIn(ValueObjectModel.class, ValueObjectModelMixinJackson2.class)
+            .addMixIn(ValueObjectMirror.class, ValueObjectMirrorMixinJackson3.class)
+            .addMixIn(ValueObjectModel.class, ValueObjectModelMixinJackson3.class)
 
-            .addMixIn(ValueReferenceMirror.class, ValueReferenceMirrorMixinJackson2.class)
-            .addMixIn(ValueReferenceModel.class, ValueReferenceModelMixinJackson2.class)
+            .addMixIn(ValueReferenceMirror.class, ValueReferenceMirrorMixinJackson3.class)
+            .addMixIn(ValueReferenceModel.class, ValueReferenceModelMixinJackson3.class)
 
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
