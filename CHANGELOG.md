@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.6.0] - 2025-12-02
+- sample-project is not part of the main project anymore, but is now a separate project
+- Domain Diagramming documentation extended
+- Diagrammer default configuration: 'ApplicationService' is default stereotype, instead of 'Driver'
+- KrokiContainer default port changed to 8501 to avoid conflicts with other Kroki containers running on the same machine 
+- integrated gradle plugin into sample-project to demonstrate usage of DLC plugin diagram generation 
+
 ## [2.5.0] - 2025-10-31
 - Upgraded all Spring Boot and Spring dependencies to SpringBoot version 3.5 and compatible versions
 - Extended default implementation of Entities and ValueObjects companion classes with 

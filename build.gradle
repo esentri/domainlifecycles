@@ -173,6 +173,11 @@ allprojects {
             }
         }
     }
+
+    allprojects {
+        group = "io.domainlifecycles"
+        version = versionProps.getProperty("version")
+    }
 }
 
 // ----------------------------------------------------------

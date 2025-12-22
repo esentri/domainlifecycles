@@ -48,46 +48,22 @@
 #background: transparent
 #.note: fill=#ffffff italic
 
-// !!! sampleshop.core.domain.customer.AddNewCustomer !!!
-[<DC> AddNewCustomer <<DomainCommand>> ]
-// !!! sampleshop.core.domain.customer.ChangeCreditCard !!!
-[<DC> ChangeCreditCard <<DomainCommand>> ]
 // !!! sampleshop.core.domain.customer.ChangeCustomerAddress !!!
 [<DC> ChangeCustomerAddress <<DomainCommand>> ]
 // !!! sampleshop.inbound.driver.CustomerService !!!
-[<AS> CustomerDriver <<Driver>> |
+[<AS> CustomerDriver <<ApplicationService>> |
 + Customer add(AddNewCustomer)
 + Optional<Customer> changeAddress(ChangeCustomerAddress)
 + Optional<Customer> changeCreditCard(ChangeCreditCard)
 + List<Customer> find(int,int)
 + List<OrdersByCustomer> reportOrders(String,int,int)
 ]
-// !!! sampleshop.inbound.driver.ProductService !!!
-[<AS> ProductDriver <<Driver>> |
-+ Product create(Product)
-+ Optional<Product> find(Product$ProductId)
-+ void removeAll()
-]
-// !!! sampleshop.core.domain.customer.CustomerNotificationService !!!
-[<DS> CustomerNotificationService <<DomainService>> |
-+ void notifyNewOrderPlaced(NewOrderPlaced)
-+ void notifyOrderCanceled(OrderCanceled)
-+ void notifyOrderShipped(OrderShipped)
-]
 // !!! sampleshop.core.domain.customer.CustomerAdressChanged !!!
 [<DE> CustomerAdressChanged <<DomainEvent>> ]
 // !!! sampleshop.core.domain.customer.CustomerCreditCardChanged !!!
 [<DE> CustomerCreditCardChanged <<DomainEvent>> ]
-// !!! sampleshop.core.domain.customer.FraudDetected !!!
-[<DE> FraudDetected <<DomainEvent>> ]
 // !!! sampleshop.core.domain.customer.NewCustomerAdded !!!
 [<DE> NewCustomerAdded <<DomainEvent>> ]
-// !!! sampleshop.core.domain.order.NewOrderPlaced !!!
-[<DE> NewOrderPlaced <<DomainEvent>> ]
-// !!! sampleshop.core.domain.order.OrderCanceled !!!
-[<DE> OrderCanceled <<DomainEvent>> ]
-// !!! sampleshop.core.domain.order.OrderShipped !!!
-[<DE> OrderShipped <<DomainEvent>> ]
 // !!! {Frame} sampleshop.core.domain.customer.Customer !!!
 [<AF> Customer <<Aggregate>>|
 // !!! sampleshop.core.domain.customer.Customer !!!
@@ -121,18 +97,6 @@ o +- blocked:boolean
 [<AR>Customer <<AggregateRoot>>]  o-[<label> address 1] - [<VO>Address <<ValueObject>>]
 [<AR>Customer <<AggregateRoot>>]  o-[<label> creditCard 0..1] - [<VO>CreditCard <<ValueObject>>]
 ]
-// !!! {Frame} sampleshop.core.domain.product.Product !!!
-[<AF> Product <<Aggregate>>|
-// !!! sampleshop.core.domain.product.Product !!!
-[<AR> Product <<AggregateRoot>> |
-\# +- id:<ID> Product$ProductId
-o +- description:Optional<String\[0,1000\]>
-o +- image:Optional<URI>
-\# +- name:String\[0,200\]{notEmpty}
-\# +- price:<VO> Price
-|
-]
-]
 // !!! sampleshop.outbound.JooqCustomerRepository !!!
 [<R> CustomerRepository <<Repository>> |
 + Optional<Customer> deleteById(Customer$CustomerId)
@@ -141,15 +105,6 @@ o +- image:Optional<URI>
 + Customer insert(Customer)
 + Customer$CustomerId newCustomerId()
 + Customer update(Customer)
-]
-// !!! sampleshop.outbound.JooqProductRepository !!!
-[<R> ProductRepository <<Repository>> |
-+ Optional<Product> deleteById(Product$ProductId)
-+ Optional<Product> findById(Product$ProductId)
-+ Product insert(Product)
-+ Product$ProductId newProductId()
-+ void removeAll()
-+ Product update(Product)
 ]
 // !!! sampleshop.core.outport.OrdersByCustomer !!!
 [<RM> OrdersByCustomer <<ReadModel>> |
@@ -160,23 +115,11 @@ o +- shippedOrders:int
 ]
 // !!! sampleshop.outbound.JooqOrdersByCustomerQueryHandler !!!
 [<QH> OrdersByCustomerQueryHandler <<QueryHandler>> ]
-// !!! sampleshop.outbound.EmailNotifierImpl !!!
-[<OS> EmailNotifierService <<OutboundService>> ]
-[<DC>AddNewCustomer <<DomainCommand>>]  --> [<AS>CustomerDriver <<Driver>>]
-[<DC>ChangeCreditCard <<DomainCommand>>]  --> [<AS>CustomerDriver <<Driver>>]
-[<DC>ChangeCustomerAddress <<DomainCommand>>]  --> [<AS>CustomerDriver <<Driver>>]
+[<DC>ChangeCustomerAddress <<DomainCommand>>]  --> [<AS>CustomerDriver <<ApplicationService>>]
 [<AF> Customer <<Aggregate>>]  --> [<DE>CustomerAdressChanged <<DomainEvent>>]
 [<AF> Customer <<Aggregate>>]  --> [<DE>CustomerCreditCardChanged <<DomainEvent>>]
-[<DE>FraudDetected <<DomainEvent>>]  --> [Customer <<Aggregate>>]
-[<AS>CustomerDriver <<Driver>>]  --> [<DE>NewCustomerAdded <<DomainEvent>>]
-[<DE>NewOrderPlaced <<DomainEvent>>]  --> [<DS>CustomerNotificationService <<DomainService>>]
-[<DE>OrderCanceled <<DomainEvent>>]  --> [<DS>CustomerNotificationService <<DomainService>>]
-[<DE>OrderShipped <<DomainEvent>>]  --> [<DS>CustomerNotificationService <<DomainService>>]
-[<DS>CustomerNotificationService <<DomainService>>]  -- [<OS>EmailNotifierService <<OutboundService>>]
-[<DS>CustomerNotificationService <<DomainService>>]  -- [<R>CustomerRepository <<Repository>>]
-[<AS>CustomerDriver <<Driver>>]  -- [<R>CustomerRepository <<Repository>>]
-[<AS>CustomerDriver <<Driver>>]  -- [<QH>OrdersByCustomerQueryHandler <<QueryHandler>>]
-[<AS>ProductDriver <<Driver>>]  -- [<R>ProductRepository <<Repository>>]
+[<AS>CustomerDriver <<ApplicationService>>]  --> [<DE>NewCustomerAdded <<DomainEvent>>]
+[<AS>CustomerDriver <<ApplicationService>>]  -- [<R>CustomerRepository <<Repository>>]
+[<AS>CustomerDriver <<ApplicationService>>]  -- [<QH>OrdersByCustomerQueryHandler <<QueryHandler>>]
 [<R>CustomerRepository <<Repository>>]  -- [<AF> Customer <<Aggregate>>]
-[<R>ProductRepository <<Repository>>]  -- [<AF> Product <<Aggregate>>]
 [<QH>OrdersByCustomerQueryHandler <<QueryHandler>>]  -- [<RM>OrdersByCustomer <<ReadModel>>]

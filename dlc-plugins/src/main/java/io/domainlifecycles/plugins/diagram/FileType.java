@@ -40,7 +40,7 @@ public enum FileType {
      */
     PDF(".pdf"),
     /**
-     * SVG fieltype
+     * SVG filetype
      */
     SVG(".svg"),
     /**
