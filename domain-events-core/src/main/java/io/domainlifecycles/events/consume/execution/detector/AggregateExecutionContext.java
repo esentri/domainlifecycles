@@ -37,11 +37,12 @@ import io.domainlifecycles.domain.types.Repository;
  * the handler method name of the method executed on the AggregateRoot instance, and the aggregate domain event being
  * dispatched.
  *
- * @param <I>                        type of AggregateRoot's Identity
- * @param <A>                        type of AggregateRoot
- * @param aggregateRepository        repository for aggregate
- * @param aggregateHandlerMethodName name of method for aggregate handler
- * @param domainEvent                domain event
+ * @param <I>                           type of AggregateRoot's Identity
+ * @param <A>                           type of AggregateRoot
+ * @param aggregateRepository           repository for aggregate
+ * @param aggregateHandlerMethodName    name of method for aggregate handler
+ * @param aggregateRepositoryTypeName   type name of AggregateRoot Repository
+ * @param domainEvent                   domain event
  * @author Mario Herb
  */
 public record AggregateExecutionContext<I extends Identity<?>, A extends AggregateRoot<I>>(

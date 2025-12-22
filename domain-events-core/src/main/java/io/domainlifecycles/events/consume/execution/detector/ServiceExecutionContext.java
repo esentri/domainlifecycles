@@ -43,6 +43,7 @@ import java.util.Objects;
  * It holds the handler object (the service instance), handler method name, and the domain event being dispatched.
  *
  * @param handler           handler instance
+ * @param handlerTypeName   handler type name
  * @param handlerMethodName handler method name
  * @param domainEvent       domain event
  *

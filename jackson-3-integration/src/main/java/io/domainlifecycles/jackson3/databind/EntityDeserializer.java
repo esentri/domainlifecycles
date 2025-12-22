@@ -146,7 +146,7 @@ public class EntityDeserializer extends StdDeserializer<Entity<?>> {
      * @param jsonParser             Parsed used for reading JSON content
      * @param deserializationContext Context that can be used to access information about
      *                               this deserialization activity.
-     * @throws IOException if parsing fails
+     * @throws JacksonException if parsing fails
      */
     @Override
     public Entity<?> deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws JacksonException {

@@ -63,7 +63,7 @@ public class IdentityDeserializer extends StdDeserializer<Identity<?>> {
      * @param jsonParser             Parsed used for reading JSON content
      * @param deserializationContext Context that can be used to access information about
      *                               this deserialization activity.
-     * @throws IOException if deserialization fails
+     * @throws JacksonException if deserialization fails
      */
     @Override
     public Identity<?> deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws JacksonException {
