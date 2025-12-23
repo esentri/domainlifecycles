@@ -26,12 +26,12 @@
 
 package io.domainlifecycles.events.jakarta.jms.consume;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.events.consume.execution.detector.ExecutionContextDetector;
 import io.domainlifecycles.events.consume.execution.processor.ExecutionContextProcessor;
 import io.domainlifecycles.events.exception.DLCEventsException;
 import io.domainlifecycles.events.mq.consume.AbstractMqDomainEventConsumer;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.JMSException;
@@ -65,19 +65,19 @@ public class JakartaJmsDomainEventConsumer extends AbstractMqDomainEventConsumer
      * Constructs a JakartaJmsDomainEventConsumer with the provided parameters.
      *
      * @param connectionFactory The ConnectionFactory used for creating connections to the message broker
-     * @param objectMapper The ObjectMapper instance to serialize/deserialize messages
+     * @param domainEventSerializer The DomainEventSerializer instance to serialize/deserialize messages
      * @param executionContextDetector The ExecutionContextDetector for detecting execution contexts
      * @param executionContextProcessor The ExecutionContextProcessor for processing execution contexts
      * @param classProvider The ClassProvider for providing Class instances
      * @param receiveTimeoutMs The timeout value for receiving messages in milliseconds
      */
     public JakartaJmsDomainEventConsumer(ConnectionFactory connectionFactory,
-                                         ObjectMapper objectMapper,
+                                         DomainEventSerializer domainEventSerializer,
                                          ExecutionContextDetector executionContextDetector,
                                          ExecutionContextProcessor executionContextProcessor,
                                          ClassProvider classProvider,
                                          long receiveTimeoutMs) {
-        super(objectMapper, executionContextDetector, executionContextProcessor, classProvider);
+        super(domainEventSerializer, executionContextDetector, executionContextProcessor, classProvider);
         this.connectionFactory = Objects.requireNonNull(connectionFactory, "ConnectionFactory is required!");
         this.receiveTimeoutMs = receiveTimeoutMs;
         initialize();

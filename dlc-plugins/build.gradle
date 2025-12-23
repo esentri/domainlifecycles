@@ -16,6 +16,7 @@ dependencies {
     implementation libs.docker.java.core
     implementation libs.docker.java.transport.httpclient5
     implementation project(":mirror")
+    implementation project(":mirror-serialization-jackson-3")
     implementation project(":types")
     implementation project(":domain-diagrammer")
     implementation libs.jakarta.validation.api

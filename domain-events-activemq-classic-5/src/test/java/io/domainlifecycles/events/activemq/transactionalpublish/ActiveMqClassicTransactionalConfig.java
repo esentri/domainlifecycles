@@ -26,9 +26,10 @@
 
 package io.domainlifecycles.events.activemq.transactionalpublish;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.access.classes.DefaultClassProvider;
+import io.domainlifecycles.builder.DomainObjectBuilderProvider;
+import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.events.activemq.api.ActiveMqChannelFactory;
 import io.domainlifecycles.events.activemq.api.SpringTransactionalActiveMqChannelFactory;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
@@ -36,6 +37,8 @@ import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.events.mq.api.MqProcessingChannel;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
+import io.domainlifecycles.events.serialize.jackson3.Jackson3DomainEventSerializer;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
 import jakarta.jms.ConnectionFactory;
@@ -54,6 +57,16 @@ import java.util.List;
 @Slf4j
 @EnableJms
 public class ActiveMqClassicTransactionalConfig {
+
+    @Bean
+    public DomainObjectBuilderProvider domainObjectBuilderProvider(){
+        return new InnerClassDomainObjectBuilderProvider();
+    }
+
+    @Bean
+    public DomainEventSerializer domainEventSerializer(DomainObjectBuilderProvider domainObjectBuilderProvider){
+        return new Jackson3DomainEventSerializer(domainObjectBuilderProvider);
+    }
 
     @Bean
     public BrokerService broker() throws Exception {
@@ -78,14 +91,14 @@ public class ActiveMqClassicTransactionalConfig {
         ClassProvider classProvider,
         TransactionalHandlerExecutor transactionalHandlerExecutor,
         ActiveMQConnectionFactory jmsConnectionFactory,
-        ObjectMapper objectMapper
+        DomainEventSerializer domainEventSerializer
     ){
         var factory = new SpringTransactionalActiveMqChannelFactory(
             jmsConnectionFactory,
             serviceProvider,
             classProvider,
             transactionalHandlerExecutor,
-            objectMapper
+            domainEventSerializer
         );
         return factory;
     }

@@ -26,7 +26,6 @@
 
 package io.domainlifecycles.events.activemq.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.events.activemq.consume.ActiveMqDomainEventConsumer;
 import io.domainlifecycles.events.activemq.publish.ActiveMqDomainEventPublisher;
@@ -35,6 +34,7 @@ import io.domainlifecycles.events.consume.execution.handler.HandlerExecutor;
 import io.domainlifecycles.events.consume.execution.processor.ExecutionContextProcessor;
 import io.domainlifecycles.events.mq.api.AbstractMqChannelFactory;
 import io.domainlifecycles.events.mq.publish.MqDomainEventPublisher;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
 import io.domainlifecycles.services.api.ServiceProvider;
 import jakarta.jms.ConnectionFactory;
 
@@ -64,11 +64,11 @@ public class ActiveMqChannelFactory extends AbstractMqChannelFactory {
      * This constructor should only be used for publish only use cases.
      *
      * @param connectionFactory The ConnectionFactory to be used for creating connections to ActiveMQ.
-     * @param objectMapper The ObjectMapper responsible for serialization and deserialization of objects.
+     * @param domainEventSerializer serialization and deserialization of domain events.
      */
     public ActiveMqChannelFactory(ConnectionFactory connectionFactory,
-                                  ObjectMapper objectMapper){
-        super(null, null, null, objectMapper);
+                                  DomainEventSerializer domainEventSerializer){
+        super(null, null, null, domainEventSerializer);
         this.connectionFactory = Objects.requireNonNull(connectionFactory, "A ConnectionFactory is required!");
     }
 
@@ -79,32 +79,32 @@ public class ActiveMqChannelFactory extends AbstractMqChannelFactory {
      * @param serviceProvider The ServiceProvider responsible for providing instances of various services.
      * @param classProvider The ClassProvider for providing Class instances based on class names.
      * @param handlerExecutor The HandlerExecutor for executing domain event listeners.
-     * @param objectMapper The ObjectMapper responsible for serialization and deserialization of objects.
+     * @param domainEventSerializer for serialization and deserialization of domain events.
      */
     public ActiveMqChannelFactory(ConnectionFactory connectionFactory,
                                   ServiceProvider serviceProvider,
                                   ClassProvider classProvider,
                                   HandlerExecutor handlerExecutor,
-                                  ObjectMapper objectMapper){
-        super(serviceProvider, classProvider, handlerExecutor, objectMapper);
+                                  DomainEventSerializer domainEventSerializer){
+        super(serviceProvider, classProvider, handlerExecutor, domainEventSerializer);
         this.connectionFactory = Objects.requireNonNull(connectionFactory, "A ConnectionFactory is required!");
     }
 
     /**
      * Provides a new MqDomainEventPublisher instance for ActiveMQ implementation.
      *
-     * @param objectMapper The ObjectMapper responsible for serialization and deserialization of objects.
+     * @param domainEventSerializer for serialization and deserialization of objects.
      * @return A new ActiveMqDomainEventPublisher instance created with the provided ConnectionFactory, ObjectMapper, and virtualTopicPrefix.
      */
     @Override
-    protected MqDomainEventPublisher provideMqDomainEventPublisher(ObjectMapper objectMapper) {
-        return new ActiveMqDomainEventPublisher(connectionFactory, objectMapper, virtualTopicPrefix);
+    protected MqDomainEventPublisher provideMqDomainEventPublisher(DomainEventSerializer domainEventSerializer) {
+        return new ActiveMqDomainEventPublisher(connectionFactory, domainEventSerializer, virtualTopicPrefix);
     }
 
     /**
      * Provides an ActiveMqDomainEventConsumer instance with the given parameters.
      *
-     * @param objectMapper The ObjectMapper responsible for serialization and deserialization of objects.
+     * @param domainEventSerializer serialization and deserialization of domain events.
      * @param executionContextDetector The ExecutionContextDetector for detecting execution contexts.
      * @param executionContextProcessor The ExecutionContextProcessor for processing execution contexts.
      * @param classProvider The ClassProvider for providing Class instances.
@@ -112,14 +112,14 @@ public class ActiveMqChannelFactory extends AbstractMqChannelFactory {
      */
     @Override
     protected ActiveMqDomainEventConsumer provideMqDomainEventConsumer(
-        ObjectMapper objectMapper,
+        DomainEventSerializer domainEventSerializer,
         ExecutionContextDetector executionContextDetector,
         ExecutionContextProcessor executionContextProcessor,
         ClassProvider classProvider
     ) {
         return new ActiveMqDomainEventConsumer(
             connectionFactory,
-            objectMapper,
+            domainEventSerializer,
             executionContextDetector,
             executionContextProcessor,
             classProvider,

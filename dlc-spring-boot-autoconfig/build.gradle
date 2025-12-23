@@ -41,6 +41,7 @@ dependencies {
     compileOnly project(":domain-events-jakarta-jms")
     compileOnly project(":domain-events-activemq-classic-5")
     compileOnly project(":domain-events-mq")
+    compileOnly project(":domain-events-serialization-jackson-3")
     compileOnly libs.gruelbox.transactionoutbox.spring
     compileOnly libs.spring.doc.openapi.starter.webmvc.ui
     compileOnly libs.spring.web6
@@ -71,6 +72,7 @@ dependencies {
     testImplementation project(":domain-events-jakarta-jms")
     testImplementation project(":domain-events-mq")
     testImplementation project(":type-utils")
+    testImplementation project(":domain-events-serialization-jackson-3")
 	testImplementation libs.assertj
     testImplementation libs.gruelbox.transactionoutbox.core
     testImplementation libs.gruelbox.transactionoutbox.jackson
@@ -81,6 +83,8 @@ dependencies {
     testImplementation libs.spring.boot3.starter.artemis
     testImplementation libs.apache.active.mq.artemis.jms.server
     testImplementation libs.spring.doc.openapi.starter.webmvc.ui
+    testImplementation libs.jackson3.core
+    testImplementation libs.jackson3.databind
 	testCompileOnly libs.lombok
 	testAnnotationProcessor libs.lombok
 }

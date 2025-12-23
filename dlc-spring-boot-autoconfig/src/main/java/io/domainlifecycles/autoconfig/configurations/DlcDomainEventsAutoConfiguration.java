@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ package io.domainlifecycles.autoconfig.configurations;
 
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.access.classes.DefaultClassProvider;
+import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
@@ -36,6 +37,8 @@ import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.api.PublishingRouter;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.events.inmemory.InMemoryChannelFactory;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
+import io.domainlifecycles.events.serialize.jackson3.Jackson3DomainEventSerializer;
 import io.domainlifecycles.events.spring.api.SpringTxInMemoryChannelFactory;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.mirror.api.DomainMirror;
@@ -63,11 +66,25 @@ import java.util.List;
  */
 @AutoConfiguration(after = {
     DlcDomainAutoConfiguration.class,
+    DlcBuilderAutoConfiguration.class,
     DataSourceAutoConfiguration.class,
     DataSourceTransactionManagerAutoConfiguration.class,
     TransactionAutoConfiguration.class
 })
 public class DlcDomainEventsAutoConfiguration {
+
+    /**
+     * Creates a {@link DomainEventSerializer} bean for serializing and deserializing domain events.
+     *
+     * @param domainObjectBuilderProvider The provider for domain object builders, used to configure Jackson serialization.
+     * @return A new instance of {@link Jackson3DomainEventSerializer} configured with the provided domain object builder provider.
+     */
+    @Bean
+    @ConditionalOnBean(DomainObjectBuilderProvider.class)
+    @ConditionalOnClass(name="tools.jackson.databind.ObjectMapper")
+    public DomainEventSerializer domainEventSerializer(DomainObjectBuilderProvider domainObjectBuilderProvider){
+        return new Jackson3DomainEventSerializer(domainObjectBuilderProvider);
+    }
 
     /**
      * Creates a ServiceProvider bean for managing service kinds.

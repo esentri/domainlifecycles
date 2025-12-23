@@ -75,6 +75,7 @@ logback-classic-version = '1.5.18'
 lombok-version = '1.18.40'
 mockito-core-version = '5.19.0'
 spring-boot3-platform-version = '3.5.5'
+spring-boot4-platform-version = '4.0.0'
 spring-boot3-starter-artemis-version = '3.5.5'
 spring-boot3-starter-version = '3.5.5'
 
@@ -131,6 +132,7 @@ lombok = { module = "org.projectlombok:lombok", version.ref = "lombok-version" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito-core-version" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j-version" }
 spring-boot3-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot3-platform-version" }
+spring-boot4-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot4-platform-version" }
 spring-boot3-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "spring-boot3-starter-version"}
 spring-boot3-autoconfigure = { module = "org.springframework.boot:spring-boot-autoconfigure", version.ref = "spring-boot3-platform-version"}
 spring-boot3-starter-activemq = { module = "org.springframework.boot:spring-boot-starter-activemq", version.ref = "spring-boot3-platform-version"}

@@ -26,9 +26,9 @@
 
 package io.domainlifecycles.events.activemq.publish;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.events.exception.DLCEventsException;
 import io.domainlifecycles.events.mq.publish.AbstractMqDomainEventPublisher;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.DeliveryMode;
@@ -60,15 +60,15 @@ public class ActiveMqDomainEventPublisher extends AbstractMqDomainEventPublisher
      * Constructor for ActiveMqDomainEventPublisher.
      *
      * @param connectionFactory The ConnectionFactory to be used for creating connections to ActiveMQ.
-     * @param objectMapper The ObjectMapper responsible for serialization and deserialization of objects.
+     * @param domainEventSerializer serialization and deserialization of events.
      * @param virtualTopicPrefix Prefix for virtual topics.
      */
     public ActiveMqDomainEventPublisher(
         ConnectionFactory connectionFactory,
-        ObjectMapper objectMapper,
+        DomainEventSerializer domainEventSerializer,
         String virtualTopicPrefix
     ) {
-        super(objectMapper);
+        super(domainEventSerializer);
         this.connectionFactory = Objects.requireNonNull(connectionFactory, "ConnectionFactory is required!");
         connect();
         this.virtualTopicPrefix = Objects.requireNonNull(virtualTopicPrefix, "virtualTopicPrefix is required!");

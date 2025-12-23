@@ -26,7 +26,6 @@
 
 package io.domainlifecycles.events.mq.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.events.consume.execution.detector.MirrorBasedExecutionContextDetector;
@@ -40,6 +39,7 @@ import io.domainlifecycles.events.gruelbox.api.PublishingSchedulerConfiguration;
 import io.domainlifecycles.events.gruelbox.idempotent.IdempotentExecutor;
 import io.domainlifecycles.events.gruelbox.poll.GruelboxPoller;
 import io.domainlifecycles.events.mq.consume.TransactionalIdempotencyAwareHandlerExecutorProxy;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
 import io.domainlifecycles.services.api.ServiceProvider;
 
 import java.util.Objects;
@@ -66,7 +66,7 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
      * @param serviceProvider The service provider for retrieving instances of various services.
      * @param classProvider The provider of Class instances based on full qualified class names.
      * @param handlerExecutor The executor for handling domain event listeners.
-     * @param objectMapper The object mapper for serialization and deserialization.
+     * @param domainEventSerializer for serialization and deserialization.
      * @param transactionOutbox The transaction outbox for managing message transactions when sending Domain Events.
      * @param domainEventsInstantiator The instantiator used in the outbox sending process .
      */
@@ -74,11 +74,11 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
         ServiceProvider serviceProvider,
         ClassProvider classProvider,
         HandlerExecutor handlerExecutor,
-        ObjectMapper objectMapper,
+        DomainEventSerializer domainEventSerializer,
         TransactionOutbox transactionOutbox,
         DomainEventsInstantiator domainEventsInstantiator
     ) {
-        super(serviceProvider, classProvider, handlerExecutor, objectMapper);
+        super(serviceProvider, classProvider, handlerExecutor, domainEventSerializer);
         this.transactionOutbox = transactionOutbox;
         this.domainEventsInstantiator = domainEventsInstantiator;
         this.pollerConfiguration = new PollerConfiguration();
@@ -93,7 +93,7 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
      * @param serviceProvider The service provider for retrieving instances of various services.
      * @param classProvider The provider of Class instances based on full qualified class names.
      * @param handlerExecutor The executor for handling domain event listeners.
-     * @param objectMapper The object mapper for serialization and deserialization.
+     * @param domainEventSerializer for serialization and deserialization.
      * @param transactionOutbox The transaction outbox for managing message transactions when sending Domain Events.
      * @param domainEventsInstantiator The instantiator used in the outbox sending process.
      * @param idempotencyAwareHandlerExecutorProxy The handler executor proxy needed for idempotency handling
@@ -102,12 +102,12 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
         ServiceProvider serviceProvider,
         ClassProvider classProvider,
         HandlerExecutor handlerExecutor,
-        ObjectMapper objectMapper,
+        DomainEventSerializer domainEventSerializer,
         TransactionOutbox transactionOutbox,
         DomainEventsInstantiator domainEventsInstantiator,
         TransactionalIdempotencyAwareHandlerExecutorProxy idempotencyAwareHandlerExecutorProxy
     ) {
-        super(serviceProvider, classProvider, handlerExecutor, objectMapper);
+        super(serviceProvider, classProvider, handlerExecutor, domainEventSerializer);
         this.transactionOutbox = transactionOutbox;
         this.domainEventsInstantiator = domainEventsInstantiator;
         this.pollerConfiguration = new PollerConfiguration();
@@ -122,7 +122,7 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
      * @param serviceProvider The service provider for retrieving instances of various services.
      * @param classProvider The provider of Class instances based on full qualified class names.
      * @param handlerExecutor The executor for handling domain event listeners.
-     * @param objectMapper The object mapper for serialization and deserialization.
+     * @param domainEventSerializer for serialization and deserialization.
      * @param transactionOutbox The transaction outbox for managing message transactions when sending Domain Events.
      * @param domainEventsInstantiator The instantiator used in the outbox sending process.
      * @param pollerConfiguration The configuration for a polling mechanism on the outbox.
@@ -132,12 +132,12 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
         ServiceProvider serviceProvider,
         ClassProvider classProvider,
         HandlerExecutor handlerExecutor,
-        ObjectMapper objectMapper,
+        DomainEventSerializer domainEventSerializer,
         TransactionOutbox transactionOutbox,
         DomainEventsInstantiator domainEventsInstantiator,
         PollerConfiguration pollerConfiguration,
         PublishingSchedulerConfiguration publishingSchedulerConfiguration) {
-        super(serviceProvider, classProvider, handlerExecutor, objectMapper);
+        super(serviceProvider, classProvider, handlerExecutor, domainEventSerializer);
         this.transactionOutbox = transactionOutbox;
         this.domainEventsInstantiator = domainEventsInstantiator;
         this.pollerConfiguration = pollerConfiguration;
@@ -152,7 +152,7 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
      * @param serviceProvider The service provider for retrieving instances of various services.
      * @param classProvider The provider of Class instances based on full qualified class names.
      * @param handlerExecutor The executor for handling domain event listeners.
-     * @param objectMapper The object mapper for serialization and deserialization.
+     * @param domainEventSerializer for serialization and deserialization.
      * @param transactionOutbox The transaction outbox for managing message transactions when sending Domain Events.
      * @param domainEventsInstantiator The instantiator used in the outbox sending process.
      * @param pollerConfiguration The configuration for a polling mechanism on the outbox.
@@ -163,13 +163,13 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
         ServiceProvider serviceProvider,
         ClassProvider classProvider,
         HandlerExecutor handlerExecutor,
-        ObjectMapper objectMapper,
+        DomainEventSerializer domainEventSerializer,
         TransactionOutbox transactionOutbox,
         DomainEventsInstantiator domainEventsInstantiator,
         PollerConfiguration pollerConfiguration,
         PublishingSchedulerConfiguration publishingSchedulerConfiguration,
         TransactionalIdempotencyAwareHandlerExecutorProxy idempotencyAwareHandlerExecutorProxy) {
-        super(serviceProvider, classProvider, handlerExecutor, objectMapper);
+        super(serviceProvider, classProvider, handlerExecutor, domainEventSerializer);
         this.transactionOutbox = transactionOutbox;
         this.domainEventsInstantiator = domainEventsInstantiator;
         this.pollerConfiguration = pollerConfiguration;
@@ -185,14 +185,14 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
      * @param serviceProvider The service provider for retrieving instances of various services.
      * @param classProvider The provider of Class instances based on full qualified class names.
      * @param handlerExecutor The executor for handling domain event listeners.
-     * @param objectMapper The object mapper for serialization and deserialization.
+     * @param domainEventSerializer for serialization and deserialization.
      */
     public AbstractGruelboxProxyMqChannelFactory(
         ServiceProvider serviceProvider,
         ClassProvider classProvider,
         HandlerExecutor handlerExecutor,
-        ObjectMapper objectMapper) {
-        super(serviceProvider, classProvider, handlerExecutor, objectMapper);
+        DomainEventSerializer domainEventSerializer) {
+        super(serviceProvider, classProvider, handlerExecutor, domainEventSerializer);
         this.transactionOutbox = null;
         this.domainEventsInstantiator = null;
         this.pollerConfiguration = null;
@@ -204,16 +204,16 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
     /**
      * Initializes a new instance of AbstractGruelboxProxyMqChannelFactory with the provided parameters.
      *
-     * @param objectMapper The object mapper for serialization and deserialization.
+     * @param domainEventSerializer for serialization and deserialization.
      * @param transactionOutbox The transaction outbox for managing message transactions when sending Domain Events.
      * @param domainEventsInstantiator The instantiator used in the outbox sending process.
      */
     public AbstractGruelboxProxyMqChannelFactory(
-        ObjectMapper objectMapper,
+        DomainEventSerializer domainEventSerializer,
         TransactionOutbox transactionOutbox,
         DomainEventsInstantiator domainEventsInstantiator
     ) {
-        super(objectMapper);
+        super(domainEventSerializer);
         this.transactionOutbox = transactionOutbox;
         this.domainEventsInstantiator = domainEventsInstantiator;
         this.pollerConfiguration = new PollerConfiguration();
@@ -225,18 +225,18 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
     /**
      * Initializes a new instance of AbstractGruelboxProxyMqChannelFactory with the provided parameters.
      *
-     * @param objectMapper The object mapper for serialization and deserialization.
+     * @param domainEventSerializer for serialization and deserialization.
      * @param transactionOutbox The transaction outbox for managing message transactions when sending Domain Events.
      * @param domainEventsInstantiator The instantiator used in the outbox sending process.
      * @param pollerConfiguration The configuration for a polling mechanism on the outbox.
      * @param publishingSchedulerConfiguration The configuration for a publishing scheduler regarding the outbox send process.
      */
-    public AbstractGruelboxProxyMqChannelFactory(ObjectMapper objectMapper,
+    public AbstractGruelboxProxyMqChannelFactory(DomainEventSerializer domainEventSerializer,
                                                  TransactionOutbox transactionOutbox,
                                                  DomainEventsInstantiator domainEventsInstantiator,
                                                  PollerConfiguration pollerConfiguration,
                                                  PublishingSchedulerConfiguration publishingSchedulerConfiguration) {
-        super(objectMapper);
+        super(domainEventSerializer);
         this.transactionOutbox = transactionOutbox;
         this.domainEventsInstantiator = domainEventsInstantiator;
         this.pollerConfiguration = pollerConfiguration;
@@ -269,7 +269,7 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
     @Override
     protected GruelboxProxyMqPublishingConfiguration publishingConfiguration(){
         return new GruelboxProxyMqPublishingConfiguration(
-            provideMqDomainEventPublisher(super.objectMapper),
+            provideMqDomainEventPublisher(super.domainEventSerializer),
             this.transactionOutbox,
             this.poller,
             this.publishingSchedulerConfiguration,
@@ -300,7 +300,7 @@ public abstract class AbstractGruelboxProxyMqChannelFactory extends AbstractMqCh
         var executionContextProcessor = new SimpleExecutionContextProcessor(Objects.requireNonNull(handlerExecutor,"A HandlerExecutor is required!"));
         return new GruelboxProxyMqConsumingConfiguration(
             provideMqDomainEventConsumer(
-                this.objectMapper,
+                this.domainEventSerializer,
                 executionContextDetector,
                 executionContextProcessor,
                 Objects.requireNonNull(this.classProvider, "A ClassProvider is required!")

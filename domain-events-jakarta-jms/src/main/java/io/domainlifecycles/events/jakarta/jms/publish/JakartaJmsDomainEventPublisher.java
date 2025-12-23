@@ -26,10 +26,10 @@
 
 package io.domainlifecycles.events.jakarta.jms.publish;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.events.exception.DLCEventsException;
 import io.domainlifecycles.events.mq.publish.AbstractMqDomainEventPublisher;
 import io.domainlifecycles.events.mq.publish.MqDomainEventPublisher;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.DeliveryMode;
@@ -68,10 +68,10 @@ public class JakartaJmsDomainEventPublisher extends AbstractMqDomainEventPublish
      * Constructor for JakartaJmsDomainEventPublisher.
      *
      * @param connectionFactory The ConnectionFactory to be used for creating connections.
-     * @param objectMapper The ObjectMapper instance for serialization/deserialization.
+     * @param domainEventSerializer for serialization/deserialization.
      */
-    public JakartaJmsDomainEventPublisher(ConnectionFactory connectionFactory, ObjectMapper objectMapper) {
-        super(objectMapper);
+    public JakartaJmsDomainEventPublisher(ConnectionFactory connectionFactory, DomainEventSerializer domainEventSerializer) {
+        super(domainEventSerializer);
         this.connectionFactory = Objects.requireNonNull(connectionFactory, "ConnectionFactory is required!");
         connect();
     }

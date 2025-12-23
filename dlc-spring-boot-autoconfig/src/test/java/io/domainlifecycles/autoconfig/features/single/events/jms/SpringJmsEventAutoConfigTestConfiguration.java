@@ -26,7 +26,6 @@
 
 package io.domainlifecycles.autoconfig.features.single.events.jms;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
@@ -36,6 +35,7 @@ import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.events.jakarta.jms.api.JakartaJmsChannelFactory;
 import io.domainlifecycles.events.mq.api.MqProcessingChannel;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
 import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.services.api.ServiceProvider;
@@ -58,14 +58,14 @@ public class SpringJmsEventAutoConfigTestConfiguration {
         ClassProvider classProvider,
         TransactionalHandlerExecutor transactionalHandlerExecutor,
         ActiveMQConnectionFactory jmsConnectionFactory,
-        ObjectMapper objectMapper
+        DomainEventSerializer domainEventSerializer
     ){
         return new JakartaJmsChannelFactory(
             jmsConnectionFactory,
             serviceProvider,
             classProvider,
             transactionalHandlerExecutor,
-            objectMapper
+            domainEventSerializer
             );
     }
 

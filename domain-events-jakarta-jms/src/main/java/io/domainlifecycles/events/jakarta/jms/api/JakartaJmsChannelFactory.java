@@ -26,7 +26,6 @@
 
 package io.domainlifecycles.events.jakarta.jms.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.events.consume.execution.detector.ExecutionContextDetector;
 import io.domainlifecycles.events.consume.execution.handler.HandlerExecutor;
@@ -36,6 +35,7 @@ import io.domainlifecycles.events.jakarta.jms.publish.JakartaJmsDomainEventPubli
 import io.domainlifecycles.events.mq.api.AbstractMqChannelFactory;
 import io.domainlifecycles.events.mq.consume.MqDomainEventConsumer;
 import io.domainlifecycles.events.mq.publish.MqDomainEventPublisher;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
 import io.domainlifecycles.services.api.ServiceProvider;
 import jakarta.jms.ConnectionFactory;
 
@@ -56,11 +56,11 @@ public class JakartaJmsChannelFactory extends AbstractMqChannelFactory {
      * Constructs a JakartaJmsChannelFactory with the provided ConnectionFactory and ObjectMapper.
      *
      * @param connectionFactory The ConnectionFactory to be used for creating connections to the message broker
-     * @param objectMapper The ObjectMapper instance to serialize/deserialize messages
+     * @param domainEventSerializer to serialize/deserialize messages
      */
     public JakartaJmsChannelFactory(ConnectionFactory connectionFactory,
-                                    ObjectMapper objectMapper){
-        super(null, null, null, objectMapper);
+                                    DomainEventSerializer domainEventSerializer){
+        super(null, null, null, domainEventSerializer);
         this.connectionFactory = Objects.requireNonNull(connectionFactory, "A ConnectionFactory is required!");
     }
 
@@ -71,14 +71,14 @@ public class JakartaJmsChannelFactory extends AbstractMqChannelFactory {
      * @param serviceProvider The ServiceProvider instance to provide various types of services
      * @param classProvider The ClassProvider instance to provide Class instances for full qualified class names
      * @param handlerExecutor The HandlerExecutor instance to execute domain event listeners
-     * @param objectMapper The ObjectMapper instance
+     * @param domainEventSerializer The DomainEventSerializer instance
      */
     public JakartaJmsChannelFactory(ConnectionFactory connectionFactory,
                                     ServiceProvider serviceProvider,
                                     ClassProvider classProvider,
                                     HandlerExecutor handlerExecutor,
-                                    ObjectMapper objectMapper){
-        super(serviceProvider, classProvider, handlerExecutor, objectMapper);
+                                    DomainEventSerializer domainEventSerializer){
+        super(serviceProvider, classProvider, handlerExecutor, domainEventSerializer);
         this.connectionFactory = Objects.requireNonNull(connectionFactory, "A ConnectionFactory is required!");
     }
 
@@ -86,18 +86,18 @@ public class JakartaJmsChannelFactory extends AbstractMqChannelFactory {
      * {@inheritDoc}
      */
     @Override
-    protected MqDomainEventPublisher provideMqDomainEventPublisher(ObjectMapper objectMapper) {
-         return new JakartaJmsDomainEventPublisher(connectionFactory, objectMapper);
+    protected MqDomainEventPublisher provideMqDomainEventPublisher(DomainEventSerializer domainEventSerializer) {
+         return new JakartaJmsDomainEventPublisher(connectionFactory, domainEventSerializer);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected MqDomainEventConsumer provideMqDomainEventConsumer(ObjectMapper objectMapper, ExecutionContextDetector executionContextDetector, ExecutionContextProcessor executionContextProcessor, ClassProvider classProvider) {
+    protected MqDomainEventConsumer provideMqDomainEventConsumer(DomainEventSerializer domainEventSerializer, ExecutionContextDetector executionContextDetector, ExecutionContextProcessor executionContextProcessor, ClassProvider classProvider) {
         return new JakartaJmsDomainEventConsumer(
             connectionFactory,
-            objectMapper,
+            domainEventSerializer,
             executionContextDetector,
             executionContextProcessor,
             classProvider,

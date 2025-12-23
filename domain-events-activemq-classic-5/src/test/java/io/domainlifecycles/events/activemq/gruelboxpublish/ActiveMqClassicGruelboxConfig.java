@@ -35,6 +35,8 @@ import com.gruelbox.transactionoutbox.jackson.JacksonInvocationSerializer;
 import com.gruelbox.transactionoutbox.spring.SpringTransactionManager;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.access.classes.DefaultClassProvider;
+import io.domainlifecycles.builder.DomainObjectBuilderProvider;
+import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.events.activemq.api.GruelboxProxyActiveMqChannelFactory;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
@@ -42,6 +44,8 @@ import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.events.gruelbox.api.DomainEventsInstantiator;
 import io.domainlifecycles.events.mq.api.MqProcessingChannel;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
+import io.domainlifecycles.events.serialize.jackson3.Jackson3DomainEventSerializer;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
 import jakarta.jms.ConnectionFactory;
@@ -63,6 +67,16 @@ import java.util.List;
 @EnableJms
 @Import({SpringTransactionManager.class})
 public class ActiveMqClassicGruelboxConfig {
+
+    @Bean
+    public DomainObjectBuilderProvider domainObjectBuilderProvider(){
+        return new InnerClassDomainObjectBuilderProvider();
+    }
+
+    @Bean
+    public DomainEventSerializer domainEventSerializer(DomainObjectBuilderProvider domainObjectBuilderProvider){
+        return new Jackson3DomainEventSerializer(domainObjectBuilderProvider);
+    }
 
     @Bean
     public BrokerService broker() throws Exception {
@@ -111,7 +125,7 @@ public class ActiveMqClassicGruelboxConfig {
         ClassProvider classProvider,
         TransactionalHandlerExecutor transactionalHandlerExecutor,
         ActiveMQConnectionFactory jmsConnectionFactory,
-        ObjectMapper objectMapper,
+        DomainEventSerializer domainEventSerializer,
         TransactionOutbox transactionOutbox,
         DomainEventsInstantiator domainEventsInstantiator
     ){
@@ -119,7 +133,7 @@ public class ActiveMqClassicGruelboxConfig {
             serviceProvider,
             classProvider,
             transactionalHandlerExecutor,
-            objectMapper,
+            domainEventSerializer,
             transactionOutbox,
             domainEventsInstantiator,
             jmsConnectionFactory

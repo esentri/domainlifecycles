@@ -26,12 +26,12 @@
 
 package io.domainlifecycles.events.activemq.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.events.activemq.publish.ActiveMqDomainEventPublisher;
 import io.domainlifecycles.events.activemq.publish.SpringTransactionalActiveMqDomainEventPublisher;
 import io.domainlifecycles.events.consume.execution.handler.HandlerExecutor;
 import io.domainlifecycles.events.mq.publish.MqDomainEventPublisher;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
 import io.domainlifecycles.services.api.ServiceProvider;
 import jakarta.jms.ConnectionFactory;
 
@@ -54,18 +54,18 @@ public class SpringTransactionalActiveMqChannelFactory extends ActiveMqChannelFa
      * Initializes the factory with the provided ConnectionFactory and ObjectMapper.
      *
      * @param connectionFactory The ConnectionFactory to be used for creating connections to ActiveMQ.
-     * @param objectMapper The ObjectMapper responsible for serialization and deserialization of objects.
+     * @param domainEventSerializer serialization and deserialization of domain events.
      */
     public SpringTransactionalActiveMqChannelFactory(
         ConnectionFactory connectionFactory,
-        ObjectMapper objectMapper
+        DomainEventSerializer domainEventSerializer
     ) {
         super(
             connectionFactory,
             null,
             null,
             null,
-            objectMapper
+            domainEventSerializer
         );
     }
 
@@ -77,33 +77,33 @@ public class SpringTransactionalActiveMqChannelFactory extends ActiveMqChannelFa
      * @param serviceProvider The ServiceProvider responsible for providing instances of various services.
      * @param classProvider The ClassProvider for providing Class instances based on class names.
      * @param handlerExecutor The HandlerExecutor for executing domain event listeners.
-     * @param objectMapper The ObjectMapper responsible for serialization and deserialization of objects.
+     * @param domainEventSerializer for serialization and deserialization of domain events.
      */
     public SpringTransactionalActiveMqChannelFactory(
         ConnectionFactory connectionFactory,
         ServiceProvider serviceProvider,
         ClassProvider classProvider,
         HandlerExecutor handlerExecutor,
-        ObjectMapper objectMapper
+        DomainEventSerializer domainEventSerializer
     ) {
         super(
             connectionFactory,
             serviceProvider,
             classProvider,
             handlerExecutor,
-            objectMapper
+            domainEventSerializer
         );
     }
 
     /**
      * Provides a new MqDomainEventPublisher instance with transactional support for ActiveMQ implementation.
      *
-     * @param objectMapper The ObjectMapper responsible for serialization and deserialization of objects.
+     * @param domainEventSerializer for serialization and deserialization of domain events.
      * @return A new SpringTransactionalActiveMqDomainEventPublisher instance created by wrapping the provided ActiveMqDomainEventPublisher.
      */
     @Override
-    protected MqDomainEventPublisher provideMqDomainEventPublisher(ObjectMapper objectMapper) {
-        var activeMqDomainEventPublisher = (ActiveMqDomainEventPublisher) super.provideMqDomainEventPublisher(objectMapper);
+    protected MqDomainEventPublisher provideMqDomainEventPublisher(DomainEventSerializer domainEventSerializer) {
+        var activeMqDomainEventPublisher = (ActiveMqDomainEventPublisher) super.provideMqDomainEventPublisher(domainEventSerializer);
         return new SpringTransactionalActiveMqDomainEventPublisher(true, activeMqDomainEventPublisher);
     }
 }

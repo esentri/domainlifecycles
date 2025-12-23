@@ -26,12 +26,12 @@
 
 package io.domainlifecycles.events.activemq.consume;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.events.consume.execution.detector.ExecutionContextDetector;
 import io.domainlifecycles.events.consume.execution.processor.ExecutionContextProcessor;
 import io.domainlifecycles.events.exception.DLCEventsException;
 import io.domainlifecycles.events.mq.consume.AbstractMqDomainEventConsumer;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.JMSException;
@@ -72,7 +72,7 @@ public class ActiveMqDomainEventConsumer extends AbstractMqDomainEventConsumer<M
      * Constructor for creating an ActiveMqDomainEventConsumer.
      *
      * @param connectionFactory The ConnectionFactory to establish the connection.
-     * @param objectMapper The ObjectMapper for serialization and deserialization.
+     * @param domainEventSerializer for serialization and deserialization.
      * @param executionContextDetector The ExecutionContextDetector for detecting execution contexts.
      * @param executionContextProcessor The ExecutionContextProcessor for processing execution contexts.
      * @param classProvider The ClassProvider for providing Class instances.
@@ -81,14 +81,14 @@ public class ActiveMqDomainEventConsumer extends AbstractMqDomainEventConsumer<M
      * @param receiveTimeoutMs The timeout in milliseconds for receiving messages.
      */
     public ActiveMqDomainEventConsumer(ConnectionFactory connectionFactory,
-                                       ObjectMapper objectMapper,
+                                       DomainEventSerializer domainEventSerializer,
                                        ExecutionContextDetector executionContextDetector,
                                        ExecutionContextProcessor executionContextProcessor,
                                        ClassProvider classProvider,
                                        String virtualTopicConsumerPrefix,
                                        String virtualTopicPrefix,
                                        long receiveTimeoutMs) {
-        super(objectMapper, executionContextDetector, executionContextProcessor, classProvider);
+        super(domainEventSerializer, executionContextDetector, executionContextProcessor, classProvider);
         this.connectionFactory = Objects.requireNonNull(connectionFactory, "ConnectionFactory is required!");
         this.virtualTopicConsumerPrefix = Objects.requireNonNull(virtualTopicConsumerPrefix, "virtualTopicConsumerPrefix is required!");
         this.virtualTopicPrefix = Objects.requireNonNull(virtualTopicPrefix, "virtualTopicPrefix is required!");

@@ -22,7 +22,5 @@ dependencies {
     implementation project(":mirror")
     api project(":service-registry")
     compileOnly libs.slf4j.api
-    compileOnly libs.jackson2.core
-    api libs.jackson2.databind
     compileOnly libs.gruelbox.transactionoutbox.core
 }

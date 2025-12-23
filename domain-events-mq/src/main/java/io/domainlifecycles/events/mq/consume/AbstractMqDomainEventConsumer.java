@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,13 +26,12 @@
 
 package io.domainlifecycles.events.mq.consume;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.events.consume.execution.detector.ExecutionContextDetector;
 import io.domainlifecycles.events.consume.execution.processor.ExecutionContextProcessor;
 import io.domainlifecycles.events.exception.DLCEventsException;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
 import io.domainlifecycles.mirror.api.DomainType;
@@ -64,7 +63,7 @@ public abstract class AbstractMqDomainEventConsumer<CONSUMER, MESSAGE> implement
     /**
      * ObjectMapper for serialization and deserialization.
      */
-    protected final ObjectMapper objectMapper;
+    protected final DomainEventSerializer domainEventSerializer;
     /**
      * Represents a detector for execution contexts for a given domain event.
      */
@@ -110,16 +109,16 @@ public abstract class AbstractMqDomainEventConsumer<CONSUMER, MESSAGE> implement
     /**
      * Constructs an AbstractMqDomainEventConsumer with the provided dependencies.
      *
-     * @param objectMapper The ObjectMapper for serialization and deserialization.
+     * @param domainEventSerializer for serialization and deserialization.
      * @param executionContextDetector The ExecutionContextDetector for detecting execution contexts.
      * @param executionContextProcessor The ExecutionContextProcessor for processing execution contexts.
      * @param classProvider The ClassProvider for providing Class instances.
      */
-    public AbstractMqDomainEventConsumer(ObjectMapper objectMapper,
+    public AbstractMqDomainEventConsumer(DomainEventSerializer domainEventSerializer,
                                          ExecutionContextDetector executionContextDetector,
                                          ExecutionContextProcessor executionContextProcessor,
                                          ClassProvider classProvider) {
-        this.objectMapper = Objects.requireNonNull(objectMapper, "ObjectMapper is required!");
+        this.domainEventSerializer = Objects.requireNonNull(domainEventSerializer, "DomainEventSerializer is required!");
         this.executionContextDetector = Objects.requireNonNull(executionContextDetector, "An ExecutionContextDetector is required!");
         this.executionContextProcessor = Objects.requireNonNull(executionContextProcessor, "An ExecutionContextProcessor is required!");
         this.classProvider = Objects.requireNonNull(classProvider, "A ClassProvider is required!");
@@ -222,11 +221,11 @@ public abstract class AbstractMqDomainEventConsumer<CONSUMER, MESSAGE> implement
     protected DomainEvent parseMessage(MESSAGE message, Class<? extends DomainEvent> domainEventType){
         var body = messageBody(message);
         try {
-            return objectMapper.readValue(body, domainEventType);
-        } catch (JsonProcessingException e) {
+            return domainEventSerializer.deserialize(body, domainEventType);
+        } catch (Throwable t) {
             var msg = String.format("DomainEvent '%s' deserialialization failed!", body);
-            log.error(msg, e);
-            throw DLCEventsException.fail(msg,  e);
+            log.error(msg, t);
+            throw DLCEventsException.fail(msg,  t);
         }
     }
 

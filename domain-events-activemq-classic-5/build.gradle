@@ -26,9 +26,7 @@ dependencies {
     api libs.jakarta.jms.api
     compileOnly libs.active.mq.client
     compileOnly libs.active.mq.client.jakarta
-    compileOnly libs.jackson2.core
     compileOnly libs.gruelbox.transactionoutbox.core
-    api libs.jackson2.databind
     compileOnly libs.slf4j.api
 
     testImplementation project(":access")
@@ -37,6 +35,7 @@ dependencies {
     testImplementation project(":mirror")
     testImplementation project(":service-registry")
     testImplementation project(":domain-events-core")
+    testImplementation project(":domain-events-serialization-jackson-3")
     testImplementation project(":domain-events-spring-tx")
     testImplementation project(":domain-events-gruelbox")
     testImplementation project(":domain-events-mq")
@@ -44,6 +43,8 @@ dependencies {
     testImplementation project(":builder")
 
     testImplementation libs.slf4j.api
+    testImplementation libs.jackson3.core
+    testImplementation libs.jackson3.databind
     testImplementation libs.lombok
     testAnnotationProcessor libs.lombok
 

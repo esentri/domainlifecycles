@@ -26,11 +26,11 @@
 
 package io.domainlifecycles.events.jakarta.jms.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.events.consume.execution.handler.HandlerExecutor;
 import io.domainlifecycles.events.jakarta.jms.publish.JakartaJmsDomainEventPublisher;
 import io.domainlifecycles.events.jakarta.jms.publish.SpringTransactionalJakartaJmsDomainEventPublisher;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
 import io.domainlifecycles.services.api.ServiceProvider;
 import jakarta.jms.ConnectionFactory;
 
@@ -47,18 +47,18 @@ public class SpringTransactionJakartaJmsChannelFactory extends JakartaJmsChannel
      * Creates a new SpringTransactionJakartaJmsChannelFactory
      *
      * @param connectionFactory The ConnectionFactory to be used for creating connections to the message broker
-     * @param objectMapper The ObjectMapper instance
+     * @param domainEventSerializer The DomainEventSerializer instance
      */
     public SpringTransactionJakartaJmsChannelFactory(
-            ConnectionFactory connectionFactory,
-            ObjectMapper objectMapper
+        ConnectionFactory connectionFactory,
+        DomainEventSerializer domainEventSerializer
     ) {
         super(
                 connectionFactory,
                 null,
                 null,
                 null,
-                objectMapper
+                domainEventSerializer
         );
     }
 
@@ -69,20 +69,20 @@ public class SpringTransactionJakartaJmsChannelFactory extends JakartaJmsChannel
      * @param serviceProvider The ServiceProvider instance for providing various types of services
      * @param classProvider The ClassProvider instance for providing Class instances for full qualified class names
      * @param handlerExecutor The HandlerExecutor instance for executing domain event listeners
-     * @param objectMapper The ObjectMapper instance for serialization and deserialization
+     * @param domainEventSerializer The DomainEventSerializer instance for serialization and deserialization
      */
     public SpringTransactionJakartaJmsChannelFactory(
         ConnectionFactory connectionFactory,
         ServiceProvider serviceProvider,
         ClassProvider classProvider,
         HandlerExecutor handlerExecutor,
-        ObjectMapper objectMapper) {
+        DomainEventSerializer domainEventSerializer) {
         super(
             connectionFactory,
             serviceProvider,
             classProvider,
             handlerExecutor,
-            objectMapper
+            domainEventSerializer
         );
     }
 
@@ -90,12 +90,12 @@ public class SpringTransactionJakartaJmsChannelFactory extends JakartaJmsChannel
      * Creates a new SpringTransactionalJakartaJmsDomainEventPublisher which adds the transaction bound behaviour for
      * publishing Domain Events.
      *
-     * @param objectMapper The ObjectMapper instance to be used for serialization and deserialization
-     * @return a new instance of SpringTransactionalJakartaJmsDomainEventPublisher with the provided ObjectMapper
+     * @param domainEventSerializer The DomainEventSerializer instance to be used for serialization and deserialization
+     * @return a new instance of SpringTransactionalJakartaJmsDomainEventPublisher with the provided DomainEventSerializer
      */
     @Override
-    protected SpringTransactionalJakartaJmsDomainEventPublisher provideMqDomainEventPublisher(ObjectMapper objectMapper) {
-        var jakartaJmsDomainEventPublisher = (JakartaJmsDomainEventPublisher) super.provideMqDomainEventPublisher(objectMapper);
+    protected SpringTransactionalJakartaJmsDomainEventPublisher provideMqDomainEventPublisher(DomainEventSerializer domainEventSerializer) {
+        var jakartaJmsDomainEventPublisher = (JakartaJmsDomainEventPublisher) super.provideMqDomainEventPublisher(domainEventSerializer);
         return new SpringTransactionalJakartaJmsDomainEventPublisher(true, jakartaJmsDomainEventPublisher);
     }
 }

@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import java.io.IOException;
 /**
  * {@link Domain} based deserialization of {@link Identity} instances.
  *
+ * @author Leon Völlinger
  * @author Mario Herb
  * @see StdDeserializer
  */
@@ -63,7 +64,6 @@ public class IdentityDeserializer extends StdDeserializer<Identity<?>> {
      * @param jsonParser             Parsed used for reading JSON content
      * @param deserializationContext Context that can be used to access information about
      *                               this deserialization activity.
-     * @throws IOException if deserialization fails
      */
     @Override
     public Identity<?> deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws JacksonException {

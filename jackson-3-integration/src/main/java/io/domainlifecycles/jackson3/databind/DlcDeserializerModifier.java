@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@
 
 package io.domainlifecycles.jackson3.databind;
 
-import tools.jackson.databind.BeanDescription;
 import tools.jackson.databind.BeanDescription.Supplier;
 import tools.jackson.databind.DeserializationConfig;
 import io.domainlifecycles.builder.DomainObjectBuilder;
@@ -44,6 +43,7 @@ import tools.jackson.databind.deser.ValueDeserializerModifier;
 /**
  * {@see BeanDeserializerModifier}
  *
+ * @author Leon Völlinger
  * @author Mario Herb
  */
 public class DlcDeserializerModifier extends ValueDeserializerModifier {

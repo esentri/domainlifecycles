@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,10 +26,9 @@
 
 package io.domainlifecycles.events.mq.publish;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.events.exception.DLCEventsException;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,16 +47,16 @@ public abstract class AbstractMqDomainEventPublisher<TOPIC> implements MqDomainE
 
     private static final Logger log = LoggerFactory.getLogger(AbstractMqDomainEventPublisher.class);
 
-    private final ObjectMapper objectMapper;
+    private final DomainEventSerializer domainEventSerializer;
     private final Map<String, TOPIC> topics = new HashMap<>();
 
     /**
      * Constructs an AbstractMqDomainEventPublisher with the specified ObjectMapper.
      *
-     * @param objectMapper the ObjectMapper instance for serialization/deserialization (must not be null)
+     * @param domainEventSerializer for serialization/deserialization (must not be null)
      */
-    public AbstractMqDomainEventPublisher(ObjectMapper objectMapper) {
-        this.objectMapper = Objects.requireNonNull(objectMapper, "ObjectMapper required!");
+    public AbstractMqDomainEventPublisher(DomainEventSerializer domainEventSerializer) {
+        this.domainEventSerializer = Objects.requireNonNull(domainEventSerializer, "DomainEventSerializer required!");
     }
 
     /**
@@ -76,11 +75,11 @@ public abstract class AbstractMqDomainEventPublisher<TOPIC> implements MqDomainE
         var topic = getTopicForEvent(domainEvent.getClass().getName());
         String body;
         try {
-            body = objectMapper.writeValueAsString(domainEvent);
-        }catch (JsonProcessingException ex){
+            body = domainEventSerializer.serialize(domainEvent);
+        }catch (Throwable t){
             var msg = String.format("Serialization of DomainEvent '%s' failed!", domainEvent);
-            log.error(msg, ex);
-            throw DLCEventsException.fail(msg,  ex);
+            log.error(msg, t);
+            throw DLCEventsException.fail(msg,  t);
         }
         sendMessageToTopic(body, topic);
     }
