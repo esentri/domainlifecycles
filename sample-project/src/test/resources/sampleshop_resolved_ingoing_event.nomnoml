@@ -55,7 +55,7 @@
 // !!! sampleshop.core.domain.order.ShipOrder !!!
 [<DC> ShipOrder <<DomainCommand>> ]
 // !!! sampleshop.inbound.driver.OrderService !!!
-[<AS> OrderDriver <<Driver>> |
+[<AS> OrderDriver <<ApplicationService>> |
 + Optional<Order> cancel(CancelOrder)
 + List<Order> find(int,int,OrderStatus\[\])
 + Order place(PlaceOrder)
@@ -105,11 +105,11 @@ o +- quantity:int{>0}
 + OrderItem$OrderItemId newOrderItemId()
 + Order update(Order)
 ]
-[<DC>CancelOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<Driver>>]
-[<DC>PlaceOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<Driver>>]
-[<DC>ShipOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<Driver>>]
+[<DC>CancelOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<ApplicationService>>]
+[<DC>PlaceOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<ApplicationService>>]
+[<DC>ShipOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<ApplicationService>>]
 [<AF> Order <<Aggregate>>]  --> [<DE>OrderCanceled <<DomainEvent>>]
 [<DS>OrderPlacementService <<DomainService>>]  -- [<R>OrderRepository <<Repository>>]
-[<AS>OrderDriver <<Driver>>]  -- [<DS>OrderPlacementService <<DomainService>>]
-[<AS>OrderDriver <<Driver>>]  -- [<R>OrderRepository <<Repository>>]
+[<AS>OrderDriver <<ApplicationService>>]  -- [<DS>OrderPlacementService <<DomainService>>]
+[<AS>OrderDriver <<ApplicationService>>]  -- [<R>OrderRepository <<Repository>>]
 [<R>OrderRepository <<Repository>>]  -- [<AF> Order <<Aggregate>>]

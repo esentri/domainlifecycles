@@ -52,6 +52,9 @@ import static com.github.dockerjava.api.model.HostConfig.newHostConfig;
  */
 class KrokiDockerAdapter {
 
+    public static final int KROKI_PORT_EXTERNAL = 8501;
+    private static final int KROKI_PORT_INTERNAL = 8000;
+
     private final static String KROKI_CONTAINER_NAME = "kroki-dlc";
     private final static String KROKI_CONTAINER_HOST_NAME = "kroki-dlc-host";
     private final static String KROKI_CONTAINER_IMAGE_NAME = "yuzutech/kroki";
@@ -129,15 +132,15 @@ class KrokiDockerAdapter {
     }
 
     private String createKrokiDockerContainer() {
-        final ExposedPort tcp4444 = ExposedPort.tcp(8000);
+        final ExposedPort tcpExp = ExposedPort.tcp(KROKI_PORT_INTERNAL);
         final Ports portBindings = new Ports();
-        portBindings.bind(tcp4444, Ports.Binding.bindPort(8000));
+        portBindings.bind(tcpExp, Ports.Binding.bindPort(KROKI_PORT_EXTERNAL));
 
         try {
             return dockerClient.createContainerCmd(KROKI_CONTAINER_IMAGE_NAME)
                 .withName(KROKI_CONTAINER_NAME)
                 .withHostName(KROKI_CONTAINER_HOST_NAME)
-                .withExposedPorts(tcp4444)
+                .withExposedPorts(tcpExp)
                 .withHostConfig(newHostConfig().withPortBindings(portBindings))
                 .exec()
                 .getId();

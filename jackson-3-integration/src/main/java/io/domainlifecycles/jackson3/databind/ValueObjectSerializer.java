@@ -77,6 +77,7 @@ public class ValueObjectSerializer extends StdSerializer<ValueObject> {
      * @param jsonGenerator      Generator used to output resulting Json content
      * @param serializerProvider Provider that can be used to get serializers for
      *                           serializing Objects value contains, if any.
+     * @throws JacksonException  if serialization failed
      */
     @Override
     public void serialize(ValueObject valueObject, JsonGenerator jsonGenerator,

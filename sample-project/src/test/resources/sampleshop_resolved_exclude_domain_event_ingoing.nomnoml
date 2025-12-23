@@ -48,12 +48,24 @@
 #background: transparent
 #.note: fill=#ffffff italic
 
+// !!! sampleshop.core.domain.order.CancelOrder !!!
+[<DC> CancelOrder <<DomainCommand>> ]
+// !!! sampleshop.core.domain.order.PlaceOrder !!!
+[<DC> PlaceOrder <<DomainCommand>> ]
+// !!! sampleshop.core.domain.order.ShipOrder !!!
+[<DC> ShipOrder <<DomainCommand>> ]
 // !!! sampleshop.inbound.driver.OrderService !!!
-[<AS> OrderDriver <<Driver>> |
+[<AS> OrderDriver <<ApplicationService>> |
 + Optional<Order> cancel(CancelOrder)
 + List<Order> find(int,int,OrderStatus\[\])
 + Order place(PlaceOrder)
 + Optional<Order> ship(ShipOrder)
+]
+// !!! sampleshop.inbound.driver.ProductService !!!
+[<AS> ProductDriver <<ApplicationService>> |
++ Product create(Product)
++ Optional<Product> find(Product$ProductId)
++ void removeAll()
 ]
 // !!! sampleshop.core.domain.customer.CustomerNotificationService !!!
 [<DS> CustomerNotificationService <<DomainService>> |
@@ -69,6 +81,8 @@
 [<DE> CustomerAdressChanged <<DomainEvent>> ]
 // !!! sampleshop.core.domain.customer.CustomerCreditCardChanged !!!
 [<DE> CustomerCreditCardChanged <<DomainEvent>> ]
+// !!! sampleshop.core.domain.customer.FraudDetected !!!
+[<DE> FraudDetected <<DomainEvent>> ]
 // !!! sampleshop.core.domain.order.NewOrderPlaced !!!
 [<DE> NewOrderPlaced <<DomainEvent>> ]
 // !!! sampleshop.core.domain.order.OrderCanceled !!!
@@ -178,10 +192,23 @@ o +- image:Optional<URI>
 + void removeAll()
 + Product update(Product)
 ]
+// !!! sampleshop.core.outport.OrdersByCustomer !!!
+[<RM> OrdersByCustomer <<ReadModel>> |
+o +- canceledOrders:int
+o +- customerName:String
+o +- pendingOrders:int
+o +- shippedOrders:int
+]
+// !!! sampleshop.outbound.JooqOrdersByCustomerQueryHandler !!!
+[<QH> OrdersByCustomerQueryHandler <<QueryHandler>> ]
 // !!! sampleshop.outbound.EmailNotifierImpl !!!
 [<OS> EmailNotifierService <<OutboundService>> ]
+[<DC>CancelOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<ApplicationService>>]
+[<DC>PlaceOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<ApplicationService>>]
+[<DC>ShipOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<ApplicationService>>]
 [<AF> Customer <<Aggregate>>]  --> [<DE>CustomerAdressChanged <<DomainEvent>>]
 [<AF> Customer <<Aggregate>>]  --> [<DE>CustomerCreditCardChanged <<DomainEvent>>]
+[<DE>FraudDetected <<DomainEvent>>]  --> [Customer <<Aggregate>>]
 [<DE>NewOrderPlaced <<DomainEvent>>]  --> [<DS>CustomerNotificationService <<DomainService>>]
 [<DS>OrderPlacementService <<DomainService>>]  --> [<DE>NewOrderPlaced <<DomainEvent>>]
 [<DE>OrderCanceled <<DomainEvent>>]  --> [<DS>CustomerNotificationService <<DomainService>>]
@@ -192,8 +219,10 @@ o +- image:Optional<URI>
 [<DS>CustomerNotificationService <<DomainService>>]  -- [<R>CustomerRepository <<Repository>>]
 [<DS>OrderPlacementService <<DomainService>>]  -- [<R>OrderRepository <<Repository>>]
 [<DS>OrderPlacementService <<DomainService>>]  -- [<R>ProductRepository <<Repository>>]
-[<AS>OrderDriver <<Driver>>]  -- [<DS>OrderPlacementService <<DomainService>>]
-[<AS>OrderDriver <<Driver>>]  -- [<R>OrderRepository <<Repository>>]
+[<AS>OrderDriver <<ApplicationService>>]  -- [<DS>OrderPlacementService <<DomainService>>]
+[<AS>OrderDriver <<ApplicationService>>]  -- [<R>OrderRepository <<Repository>>]
+[<AS>ProductDriver <<ApplicationService>>]  -- [<R>ProductRepository <<Repository>>]
 [<R>CustomerRepository <<Repository>>]  -- [<AF> Customer <<Aggregate>>]
 [<R>OrderRepository <<Repository>>]  -- [<AF> Order <<Aggregate>>]
 [<R>ProductRepository <<Repository>>]  -- [<AF> Product <<Aggregate>>]
+[<QH>OrdersByCustomerQueryHandler <<QueryHandler>>]  -- [<RM>OrdersByCustomer <<ReadModel>>]

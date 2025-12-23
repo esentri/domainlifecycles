@@ -32,6 +32,9 @@ import java.util.Objects;
  * The TargetExecutionContext is needed in cases where the consumer service should be known before
  * domain events are processed (Gruelbox).
  *
+ * @param handlerTypeName   handler type name
+ * @param handlerMethodName handler method name
+ *
  * @author Mario Herb
  */
 public record TargetExecutionContext(String handlerTypeName, String handlerMethodName) {

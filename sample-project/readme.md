@@ -305,9 +305,19 @@ More details and even more features can be found in our [`documentation`](./../r
 ## Run the demo app
 
 - Run the `sampleshop.ShopApplication` with your IDE like any other Spring Boot app
+- Or `cd sample-project` and run `./gradlew bootRun` to start the application.
 - The Swagger endpoints are available under `http://localhost:8080/swagger-ui.html`
 - You can access the database via H2 Web console via `http://localhost:8080/h2-console/`
     - Make sure to use `jdbc:h2:./dlc-sample/build/h2-db/test` as JDBC URL (application should be started, with the
       general DLC repository as root path)
     - Some default test data is already available
 - You might also have a look at (or run) the tests to study the demonstrated features
+
+## Diagrams
+
+The DLC plugin is configured to generate domain model diagrams.
+Within the sample projects directory, run `./gradlew createDiagram` to generate the diagrams.
+You should find generated diagrams as `build/aggregates.svg` and `build/complete.svg`
+
+Docker must be available to generate SVGs. Otherwise you can generate Nomnoml sources and render them 
+with [nomnoml.com](https://www.nomnoml.com/) or use [Kroki](https://kroki.io/) 
