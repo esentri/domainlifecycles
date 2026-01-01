@@ -318,6 +318,7 @@ public abstract class AbstractMqDomainEventConsumer<CONSUMER, MESSAGE> implement
      * @param domainEventName The name of the domain event
      * @return A new MqDomainEventHandler instance
      */
+    @SuppressWarnings("unchecked")
     protected MqDomainEventHandler newHandler(String handlerClassName, String handlerMethodName, String domainEventName){
         return new MqDomainEventHandler(
             handlerClassName,

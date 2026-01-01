@@ -66,6 +66,7 @@ public class DlcSerializerModifier extends ValueSerializerModifier {
      * Plug in {@link Domain} based serializer modifications
      */
     @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public ValueSerializer<?> modifySerializer(SerializationConfig config, BeanDescription.Supplier beanDesc,
                                               ValueSerializer<?> serializer) {
         if (Entity.class.isAssignableFrom(beanDesc.getBeanClass())) {

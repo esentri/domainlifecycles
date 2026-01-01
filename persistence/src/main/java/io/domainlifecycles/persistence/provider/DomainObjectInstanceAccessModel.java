@@ -31,7 +31,7 @@ import io.domainlifecycles.domain.types.ValueObject;
 import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.mirror.api.RecordMirror;
-import org.apache.commons.collections.list.UnmodifiableList;
+import org.apache.commons.collections4.list.UnmodifiableList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -219,7 +219,7 @@ public class DomainObjectInstanceAccessModel<RECORD> {
             return new DomainObjectInstanceAccessModel<RECORD>(
                 this.structuralPosition,
                 this.recordMirror,
-                UnmodifiableList.decorate(this.children)
+                UnmodifiableList.unmodifiableList(this.children)
             );
         }
 

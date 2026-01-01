@@ -15,12 +15,12 @@ dependencies {
     api project(":domain-events-core")
     api project(":types")
     api project(":service-registry")
-    compileOnly libs.gruelbox.transactionoutbox.core
+    api libs.gruelbox.transactionoutbox.core
     api project(":mirror")
-    compileOnly libs.slf4j.api
+    api libs.slf4j.api
     implementation libs.commons.lang3
-    api libs.jackson3.core
-    api libs.jackson3.databind
+    implementation libs.jackson3.core
+    implementation libs.jackson3.databind
 
     testImplementation libs.gruelbox.transactionoutbox.core
 }

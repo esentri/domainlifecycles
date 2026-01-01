@@ -13,6 +13,6 @@ java {
 
 dependencies {
     api libs.jakarta.validation.api
-    compileOnly libs.slf4j.api
+    api libs.slf4j.api
     api project(":assertions")
 }

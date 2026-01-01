@@ -18,7 +18,7 @@ dependencies {
     api project(":service-registry")
     implementation project(":reflect")
     implementation project(":mirror")
-    compileOnly libs.slf4j.api
+    api libs.slf4j.api
 
     testImplementation libs.slf4j.api
     testImplementation libs.assertj

@@ -1,7 +1,6 @@
 package io.domainlifecycles.jackson3;
 
 import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.Identity;
@@ -112,7 +111,8 @@ public class JacksonTest {
     }
 
     @Test
-    public void testJacksonMappingTypeTest() throws Throwable {
+    @SuppressWarnings("unchecked")
+    public void testJacksonMappingTypeTest() throws Exception{
         TypeTestValueObject vo = new TypeTestValueObject();
         vo.setABoolean(true);
         vo.setAByte((byte) 5);
@@ -243,7 +243,7 @@ public class JacksonTest {
 
 
     @Test
-    public void testJacksonMappingSimpleVOOnly() throws Throwable {
+    public void testJacksonMappingSimpleVOOnly() {
         SimpleVo simpleVo = SimpleVo.builder().setValue("TEST").build();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(simpleVo);
         log.info("JSON = " + json);
@@ -254,7 +254,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testJacksonMappingSimpleVOOnlyCallback() throws Throwable {
+    public void testJacksonMappingSimpleVOOnlyCallback() {
         SimpleVo simpleVo = SimpleVo.builder().setValue("TEST").build();
 
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(simpleVo);
@@ -266,7 +266,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testJacksonMappingInnerSimpleVO() throws Throwable {
+    public void testJacksonMappingInnerSimpleVO() {
 
         TestClass tc = new TestClass();
         tc.setSimpleVo(SimpleVo.builder().setValue("INNER").build());
@@ -279,7 +279,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testJacksonMappingReadInnerSimpleVONull() throws Throwable {
+    public void testJacksonMappingReadInnerSimpleVONull() {
         TestClass tc = new TestClass();
         String json = """
             {
@@ -293,7 +293,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testJacksonMappingComplexVO() throws Throwable {
+    public void testJacksonMappingComplexVO() {
 
         ComplexVo cvo = ComplexVo.builder()
             .setValueA("ValueA")
@@ -308,7 +308,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testJacksonMappingReadComplexVONullA() throws Throwable {
+    public void testJacksonMappingReadComplexVONullA() {
         ComplexVo cvo = ComplexVo.builder()
             .setValueB(SimpleVo.builder().setValue("ValueB").build())
             .build();
@@ -325,7 +325,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testJacksonMappingReadComplexVONullB() throws Throwable {
+    public void testJacksonMappingReadComplexVONullB() {
         ComplexVo cvo = ComplexVo.builder()
             .setValueA("ValueA")
             .build();
@@ -342,7 +342,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testJacksonMappingComplexVOOnlyA() throws Throwable {
+    public void testJacksonMappingComplexVOOnlyA() {
 
         ComplexVo cvo = ComplexVo.builder()
             .setValueA("ValueA")
@@ -356,7 +356,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testJacksonMappingComplexVOOnlyB() throws Throwable {
+    public void testJacksonMappingComplexVOOnlyB() {
 
         ComplexVo cvo = ComplexVo.builder()
             .setValueB(SimpleVo.builder().setValue("ValueB").build())
@@ -370,7 +370,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testJacksonMappingSimpleVOOneTOMany2OnlyFull() throws Throwable {
+    public void testJacksonMappingSimpleVOOneTOMany2OnlyFull() {
         Set<SimpleVoOneToMany3> set = new HashSet<>();
         set.add(SimpleVoOneToMany3.builder().setValue("A").build());
         set.add(SimpleVoOneToMany3.builder().setValue("B").build());
@@ -386,7 +386,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testJacksonMappingSimpleVOOneTOMany2OnlyEmptySet() throws Throwable {
+    public void testJacksonMappingSimpleVOOneTOMany2OnlyEmptySet() {
         Set<SimpleVoOneToMany3> set = new HashSet<>();
 
         SimpleVoOneToMany2 vo = SimpleVoOneToMany2.builder().setValue("TEST").setOneToMany3Set(set).build();
@@ -399,7 +399,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testJacksonMappingSimpleVOOneTOMany2OnlyNullSet() throws Throwable {
+    public void testJacksonMappingSimpleVOOneTOMany2OnlyNullSet() {
         SimpleVoOneToMany2 vo = SimpleVoOneToMany2.builder().setValue("TEST").setOneToMany3Set(null).build();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(vo);
         log.info("JSON = " + json);
@@ -410,7 +410,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testJacksonMappingSimpleVOOneTOMany2ReadOnlyNullSet() throws Throwable {
+    public void testJacksonMappingSimpleVOOneTOMany2ReadOnlyNullSet() {
         SimpleVoOneToMany2 vo = SimpleVoOneToMany2.builder().setValue("TEST").build();
         String json = """
             {
@@ -424,7 +424,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testIdentity() throws Throwable {
+    public void testIdentity() {
         TestRootId id = new TestRootId(1L);
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(id);
         log.info("JSON = " + json);
@@ -434,7 +434,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testInnerIdentity() throws Throwable {
+    public void testInnerIdentity() {
         TestClassId id = new TestClassId();
         id.setTestRootId(new TestRootId(5L));
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(id);
@@ -446,7 +446,35 @@ public class JacksonTest {
     }
 
     @Test
-    public void testInnerIdentityNull() throws Throwable {
+    public void testInnerIdentityFullObject() {
+        TestClassId id = new TestClassId();
+        id.setTestRootId(new TestRootId(5L));
+        String json = "{\n" +
+            "  \"testRootId\" : { \"value\": 5 }\n" +
+            "}";
+        log.info("JSON = " + json);
+
+        TestClassId id2 = objectMapper.readValue(json, TestClassId.class);
+        log.info("Read = " + id2);
+        Assertions.assertThat(id2).isEqualTo(id);
+    }
+
+    @Test
+    public void testInnerIdentityFullObjectDifferentValueName() {
+        TestClassId id = new TestClassId();
+        id.setTestRootId(new TestRootId(5L));
+        String json = "{\n" +
+            "  \"testRootId\" : { \"id\": 5 }\n" +
+            "}";
+        log.info("JSON = " + json);
+
+        TestClassId id2 = objectMapper.readValue(json, TestClassId.class);
+        log.info("Read = " + id2);
+        Assertions.assertThat(id2).isEqualTo(id);
+    }
+
+    @Test
+    public void testInnerIdentityNull() {
         TestClassId id = new TestClassId();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(id);
         log.info("JSON = " + json);
@@ -457,7 +485,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testUUIDIdentity() throws Throwable {
+    public void testUUIDIdentity() {
         TestRootSimpleUuidId id = new TestRootSimpleUuidId(UUID.randomUUID());
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(id);
         log.info("JSON = " + json);
@@ -468,7 +496,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testSingleValueVo() throws Throwable {
+    public void testSingleValueVo() {
         SimpleVo vo = new SimpleVo("Test");
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(vo);
         log.info("JSON = " + json);
@@ -479,7 +507,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testBestellung() throws Throwable {
+    public void testBestellung() {
         BestellungBv3 b = TestDataGenerator.buildBestellungBv3();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(b);
         log.info("JSON = " + json);
@@ -498,7 +526,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testBestellungIdProvisioningAndCallbacks() throws Throwable {
+    public void testBestellungIdProvisioningAndCallbacks() {
 
         String json = """
             {
@@ -548,7 +576,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testManyBestellungen() throws Throwable {
+    public void testManyBestellungen() {
         var many = TestDataGenerator.buildManyBestellungenBv3();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(many);
         log.info("JSON = " + json);
@@ -568,7 +596,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testComplex() throws Throwable {
+    public void testComplex() {
         TestRoot b = TestDataGenerator.buildTestRootComplex();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(b);
         log.info("JSON = " + json);
@@ -580,7 +608,7 @@ public class JacksonTest {
 
 
     @Test
-    public void testOptionalMax() throws Throwable {
+    public void testOptionalMax() {
         OptionalAggregate b = TestDataGenerator.buildOptionalAggregateMax();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(b);
         log.info("JSON = " + json);
@@ -591,7 +619,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testOptionalMin() throws Throwable {
+    public void testOptionalMin() {
         OptionalAggregate b = TestDataGenerator.buildOptionalAggregateMin();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(b);
         log.info("JSON = " + json);
@@ -602,7 +630,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testTestRootSimpleWithIdFromIdProvider() throws Throwable {
+    public void testTestRootSimpleWithIdFromIdProvider() {
         String json = """
             {
               "name" : "Test",
@@ -616,7 +644,7 @@ public class JacksonTest {
 
 
     @Test
-    public void testTestRootSimpleUUIDWithIdFromIdProviderByUUID() throws Throwable {
+    public void testTestRootSimpleUUIDWithIdFromIdProviderByUUID() {
         String json = """
             {
               "name" : "Test",
@@ -629,7 +657,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testIdProvisioningDtoRegularWithId() throws Throwable {
+    public void testIdProvisioningDtoRegularWithId() {
         IdProvisioningDto dto = new IdProvisioningDto();
         dto.bestellPosition = BestellPositionBv3.builder()
             .setId(new BestellPositionIdBv3(1L))
@@ -650,7 +678,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testJacksonMappingReadAutoMappedComplexVoNullA() throws Throwable {
+    public void testJacksonMappingReadAutoMappedComplexVoNullA() {
         AutoMappedComplexVo cvo = AutoMappedComplexVo.builder()
             .setValueB(AutoMappedSimpleVo.builder().setValue("ValueB").build())
             .build();
@@ -666,7 +694,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testReadIdProvisioningDtoWithoutId() throws Throwable {
+    public void testReadIdProvisioningDtoWithoutId() {
         String json = """
             {
               "bestellPosition" : {

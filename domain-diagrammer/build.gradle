@@ -13,7 +13,7 @@ java {
 }
 
 dependencies {
-    compileOnly libs.slf4j.api
+    api libs.slf4j.api
     implementation project(":types")
     api project(":mirror")
 

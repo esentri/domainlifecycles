@@ -16,13 +16,11 @@ dependencies {
     implementation project(":mirror")
     api project(":types")
     implementation project(":access")
+    api libs.slf4j.api
 
-    compileOnly libs.slf4j.api
     testImplementation libs.assertj
-
     testImplementation project(":test-shared-impl")
     testImplementation project(":type-utils")
-
     testImplementation libs.lombok
     testAnnotationProcessor libs.lombok
 }

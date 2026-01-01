@@ -25,28 +25,28 @@ def dbPassword = ''
 def dbMigration = 'src/test/resources/db/migration'
 
 dependencies {
-	compileOnly libs.jooq
-    compileOnly libs.spring.jdbc
-    compileOnly project(":domain-events-core")
-    compileOnly project(":domain-events-jakarta-jta")
-    compileOnly project(":domain-events-spring-tx")
-    compileOnly project(":domain-events-gruelbox")
-    compileOnly project(":jackson-integration")
-    compileOnly project(":builder")
-    compileOnly project(":jooq-integration")
-    compileOnly project(":spring-doc-2-integration")
-    compileOnly project(":spring-web-integration")
-    compileOnly project(":swagger-v3-integration")
-    compileOnly project(":domain-events-jakarta-jms")
-    compileOnly project(":domain-events-activemq-classic-5")
-    compileOnly project(":domain-events-mq")
-    compileOnly project(":domain-events-serialization-jackson")
-    compileOnly libs.gruelbox.transactionoutbox.spring
-    compileOnly libs.spring.doc.openapi.starter.webmvc.ui
-    compileOnly libs.spring.web
-    compileOnly libs.jakarta.transaction.api
-    compileOnly libs.jackson3.core
-    compileOnly libs.jackson3.databind
+	api libs.jooq
+    api libs.spring.jdbc
+    api project(":domain-events-core")
+    api project(":domain-events-jakarta-jta")
+    api project(":domain-events-spring-tx")
+    api project(":domain-events-gruelbox")
+    api project(":jackson-integration")
+    api project(":builder")
+    api project(":jooq-integration")
+    api project(":spring-doc-2-integration")
+    api project(":spring-web-integration")
+    api project(":swagger-v3-integration")
+    api project(":domain-events-jakarta-jms")
+    api project(":domain-events-activemq-classic-5")
+    api project(":domain-events-mq")
+    api project(":domain-events-serialization-jackson")
+    api libs.gruelbox.transactionoutbox.spring
+    api libs.spring.doc.openapi.starter.webmvc.ui
+    api libs.spring.web
+    api libs.jakarta.transaction.api
+    api libs.jackson3.core
+    api libs.jackson3.databind
 
     compileOnly libs.jooq.codegen
 	jooqCodegen libs.jooq.meta

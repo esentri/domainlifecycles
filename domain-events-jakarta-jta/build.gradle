@@ -15,7 +15,7 @@ dependencies {
     api project(":domain-events-core")
     api project(":types")
     api project(":service-registry")
-    compileOnly libs.slf4j.api
+    api libs.slf4j.api
     api libs.jakarta.transaction.api
 
 }

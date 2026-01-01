@@ -17,14 +17,11 @@ repositories {
 }
 
 dependencies {
-    compileOnly libs.slf4j.api
-
+    api libs.slf4j.api
     implementation libs.classgraph
-    compileOnly libs.jakarta.validation.api
-
+    api libs.jakarta.validation.api
     implementation libs.jackson3.core
     implementation libs.jackson3.databind
-
     implementation project(":mirror")
 
     testImplementation libs.logback.classic

@@ -13,8 +13,8 @@ java {
 
 dependencies {
     api libs.jakarta.validation.api
-    compileOnly libs.slf4j.api
-    compileOnly libs.swagger
+    api libs.slf4j.api
+    api libs.swagger
     api project(":types")
     implementation project(":reflect")
     implementation project(":access")

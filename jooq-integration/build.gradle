@@ -34,8 +34,8 @@ def dbMigration = 'src/test/resources/db/migration'
 // ----------------------------------------------------------
 
 dependencies {
-    compileOnly libs.slf4j.api
-    compileOnly libs.jooq
+    api libs.slf4j.api
+    api libs.jooq
     implementation libs.classgraph
 
     api project(":types")

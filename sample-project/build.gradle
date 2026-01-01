@@ -9,16 +9,16 @@ plugins {
     id 'java'
     id 'checkstyle'
     id 'jacoco'
-    id 'org.springframework.boot' version '3.5.5'
+    id 'org.springframework.boot' version '4.0.1'
     id 'org.flywaydb.flyway' version '11.12.0'
     id 'org.jooq.jooq-codegen-gradle' version '3.19.26'
-    id 'io.domainlifecycles.dlc-gradle-plugin'
+    id 'io.domainlifecycles.dlc-gradle-plugin' version '3.0.0'
 }
 
 
 // ----------------------------------------------------------
 
-def dbVersion = '2.3.232'
+def dbVersion = '2.4.240'
 def dbDriver = 'org.h2.Driver'
 def dbUrl = "jdbc:h2:file:${project.projectDir}/build/h2-db/test;NON_KEYWORDS=VALUE;AUTO_SERVER=TRUE"
 def dbUsername = 'sa'
@@ -41,10 +41,10 @@ tasks.register('runApp', JavaExec) {
 // ----------------------------------------------------------
 
 dependencies {
-    implementation platform('org.springframework.boot:spring-boot-dependencies:4.0.0')
+    implementation platform('org.springframework.boot:spring-boot-dependencies:4.0.1')
 
 
-    implementation 'com.h2database:h2:2.3.232'
+    implementation 'com.h2database:h2:2.4.240'
     implementation 'jakarta.validation:jakarta.validation-api:3.1.1'
     implementation 'org.springframework:spring-web'
     implementation 'org.springframework.boot:spring-boot-starter'
@@ -52,20 +52,21 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jooq'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'jakarta.transaction:jakarta.transaction-api:2.0.1'
-
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13'
-    implementation 'org.projectlombok:lombok:1.18.40'
-    annotationProcessor 'org.projectlombok:lombok:1.18.40'
+    implementation 'io.domainlifecycles:spring-boot-starter:3.0.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1'
+    implementation 'org.projectlombok:lombok:1.18.42'
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
 
     runtimeOnly 'org.jooq:jooq-codegen:3.19.26'
     jooqCodegen 'org.jooq:jooq-meta:3.19.26'
 
-    testImplementation 'io.domainlifecycles:domain-diagrammer:2.6.0'
+    testImplementation 'io.domainlifecycles:domain-diagrammer:3.0.0'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
-    testImplementation 'org.assertj:assertj-core:3.27.4'
+    testImplementation 'org.assertj:assertj-core:3.27.6'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testCompileOnly 'org.projectlombok:lombok:1.18.40'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.40'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testCompileOnly 'org.projectlombok:lombok:1.18.42'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.42'
 }
 
 // ----------------------------------------------------------

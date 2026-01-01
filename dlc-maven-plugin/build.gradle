@@ -20,6 +20,6 @@ dependencies {
     implementation libs.maven.core
     implementation libs.maven.artifact
     implementation libs.maven.plugin.api
-    compileOnly libs.maven.plugin.tools.annotations
+    implementation libs.maven.plugin.tools.annotations
     implementation project(":dlc-plugins")
 }

@@ -14,13 +14,13 @@ java {
 dependencies {
     api project(":access")
     api project(":domain-events-core")
-    compileOnly project(":domain-events-gruelbox")
-    compileOnly project(":domain-events-jakarta-jta")
-    compileOnly project(":domain-events-spring-tx")
-    compileOnly libs.spring.tx
+    api project(":domain-events-gruelbox")
+    api project(":domain-events-jakarta-jta")
+    api project(":domain-events-spring-tx")
+    api libs.spring.tx
     api project(":types")
     implementation project(":mirror")
     api project(":service-registry")
-    compileOnly libs.slf4j.api
-    compileOnly libs.gruelbox.transactionoutbox.core
+    api libs.slf4j.api
+    api libs.gruelbox.transactionoutbox.core
 }

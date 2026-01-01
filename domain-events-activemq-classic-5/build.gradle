@@ -19,15 +19,15 @@ dependencies {
     api project(":types")
     api project(":service-registry")
     api project(":domain-events-mq")
-    compileOnly project(":domain-events-spring-tx")
-    compileOnly project(":domain-events-gruelbox")
-    compileOnly project(":domain-events-mq")
+    api project(":domain-events-spring-tx")
+    api project(":domain-events-gruelbox")
+    api project(":domain-events-mq")
 
     api libs.jakarta.jms.api
-    compileOnly libs.active.mq.client
-    compileOnly libs.active.mq.client.jakarta
-    compileOnly libs.gruelbox.transactionoutbox.core
-    compileOnly libs.slf4j.api
+    api libs.active.mq.client
+    api libs.active.mq.client.jakarta
+    api libs.gruelbox.transactionoutbox.core
+    api libs.slf4j.api
 
     testImplementation project(":access")
     testImplementation project(":types")
