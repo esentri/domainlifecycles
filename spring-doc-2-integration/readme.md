@@ -117,6 +117,3 @@ configure a `io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer` Spring
 
     }
 ```
-
-We currently support both Spring Doc and Spring Doc 2, despite breaking API changes in Version 2.  
-For Spring Doc (< Version 2) please use `io.domainlifecycles.springdoc.openapi.DlcOpenApiCustomizer` instead.

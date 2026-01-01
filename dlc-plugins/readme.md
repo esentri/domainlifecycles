@@ -19,7 +19,7 @@ The plugin is able to create class diagrams in various formats of your implement
 An example configuration in your project could look like the following:
 ```groovy
 plugins {
-    id 'io.domainlifecycles.dlc-gradle-plugin' version '2.6.0'
+    id 'io.domainlifecycles.dlc-gradle-plugin' version '3.0.0'
 }
 
 dlcGradlePlugin {
@@ -61,7 +61,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "io.domainlifecycles.dlc-gradle-plugin") {
-                useModule("io.domainlifecycles:dlc-gradle-plugin:2.6.0")
+                useModule("io.domainlifecycles:dlc-gradle-plugin:3.0.0")
             }
         }
     }
@@ -166,7 +166,7 @@ An example configuration in your project's build plugins could look like the fol
         <plugin>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>dlc-maven-plugin</artifactId>
-            <version>2.6.0</version>
+            <version>3.0.0</version>
             <executions>
                 <execution>
                     <id>createDiagramNomnoml</id>
@@ -231,7 +231,7 @@ An example configuration in your project could look like the following:
         <plugin>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>dlc-maven-plugin</artifactId>
-            <version>2.6.0</version>
+            <version>3.0.0</version>
             <executions>
                 <execution>
                     <id>renderJson</id>
@@ -280,7 +280,7 @@ An example configuration in your project could look like the following:
         <plugin>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>dlc-maven-plugin</artifactId>
-            <version>2.6.0</version>
+            <version>3.0.0</version>
             <executions>
                 <execution>
                     <id>upload</id>

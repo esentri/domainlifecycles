@@ -366,70 +366,6 @@ For more information on the "transactional outbox pattern" have a look at [Trans
 
 DLC works fine with [Gruelbox](https://github.com/gruelbox/transaction-outbox), a very flexible and reliable transactional outbox implementation.
 
-###### DLC Outbox (Deprecated, use gruelbox instead)
-This implementation relies heavily on Spring transactions, Spring JDBC and Jackson, see ``io.domainlifecycles.events.publish.outbox.impl.SpringJdbcOutbox``.
-
-Example setup with the DLC provided Spring based outbox implementation is shown below. This setup routes polled DomainEvents from the outbox directly to consuming handlers 
-within the pollers process, the consuming handlers are executed asynchronously in separate transactions. If DomainEvents were processed successfully by the handlers,
-this is acknowledged to the outbox directly. So monitoring the state of event delivery is possible on the outbox. No automatic retry is in place.
-Processing failures in the handlers are also reported via log (SLF4J).
-```Java
-    @SpringBootApplication
-    public class OutboxTestApplication {
-       ...
-        @Bean
-        public ServiceProvider serviceProvider(
-           ...
-        ){
-            ...
-            return services;
-        }
-    
-        @Bean
-        public SpringTransactionalOutboxChannelFactory springOutbox(DataSource dataSource,
-                                                                    ObjectMapper objectMapper,
-                                                                    PlatformTransactionManager platformTransactionManager,
-                                                                    ServiceProvider serviceProvider) {
-            return  new SpringTransactionalOutboxChannelFactory(
-                platformTransactionManager,
-                objectMapper,
-                dataSource,
-                serviceProvider
-            );
-        }
-    
-        @Bean
-        public ProcessingChannel channel(SpringTransactionalOutboxChannelFactory factory){
-            return factory.processingChannel("channel");
-        }
-    
-        @Bean
-        public ChannelRoutingConfiguration channelConfiguration(List<PublishingChannel> publishingChannels){
-            var router = new DomainEventTypeBasedRouter(publishingChannels);
-            router.defineDefaultChannel("channel");
-            return new ChannelRoutingConfiguration(router);
-        }
-    
-    }
-```
-Using this implementation a outbox table must be provided in the database like that (example is for H2 database, a corresponding schema must be provided by the developers for other database technologies):
-```SQL
-CREATE TABLE IF NOT EXISTS outbox ( 
-    id                  VARCHAR(36) PRIMARY KEY,
-    domain_event        VARCHAR(8000) NOT NULL,
-    inserted            TIMESTAMP NOT NULL,
-    batch_id            VARCHAR(36) NULL,
-    processing_result   VARCHAR(30) NULL,
-    delivery_started    TIMESTAMP NULL
-);
-```
-
-The outbox table name might be customized via ``setOutboxTableName(String tableName)`` of ``io.domainlifecycles.events.publish.outbox.impl.SpringJdbcOutbox``. 
-Have a look at the implementation and Javadoc of this class to gain more insights in other configuration options (timeout settings, batch sizes, etc).
-Performance improvements might be gained by:
-- ``outbox.setStrictBatchOrder(false);`` 
-- or adjusting the polling configuration ``outboxPoller.setPeriod(x);`` or ``outboxPoller.setMaxBatchSize(y);``
-
 ###### Gruelbox Transaction Outbox
 
 The [Gruelbox Transaction Outbox](https://github.com/gruelbox/transaction-outbox) is integrated with DLC and support a broad spectrum of
@@ -525,7 +461,7 @@ public class GruelboxIntegrationIdempotencyConfig {
             .transactionManager(springTransactionManager)
             .blockAfterAttempts(3)
             .persistor(DefaultPersistor.builder()
-                           .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
+                           .serializer(new DlcJacksonInvocationSerializer())
                            .dialect(Dialect.H2)
                            .build())
             .build();
@@ -753,7 +689,7 @@ Here's an example configuration for a Gruelbox based outbox proxy with a JMS bro
                 .transactionManager(springTransactionManager)
                 .blockAfterAttempts(3)
                 .persistor(DefaultPersistor.builder()
-                        .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
+                        .serializer(new DlcJacksonInvocationSerializer())
                         .dialect(Dialect.H2)
                         .build())
                 .listener(transactionOutboxListener)
@@ -854,7 +790,7 @@ public class JakartaJmsGruelboxIdempotencyConfig {
                 .transactionManager(springTransactionManager)
                 .blockAfterAttempts(3)
                 .persistor(DefaultPersistor.builder()
-                        .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
+                        .serializer(new DlcJacksonInvocationSerializer())
                         .dialect(Dialect.H2)
                         .build())
                 .build();

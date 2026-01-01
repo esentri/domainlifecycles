@@ -114,7 +114,7 @@ DLC provides following core features:
     * Spring Web Integration to enable
       Identities and “single-valued” ValueObjects being directly used as path or query
       parameters
-    * SpringDoc 2 OpenAPI Extension. See [`Open API Extension`](spring-doc-2-integration/readme.md): API documentation DDD
+    * SpringDoc OpenAPI Extension. See [`Open API Extension`](spring-doc-2-integration/readme.md): API documentation DDD
         building blocks based on [Spring Doc Open API](https://springdoc.org/)
     * API documentation consistently to DLCs Jackson AutoMapping features (out-of-the-box)
 
@@ -133,51 +133,53 @@ For more information about the underlying concepts and ideas, especially regardi
 DLC provides several JARs which enable the DLC features independently
 (they correspond to according sub modules):
 
-| Feature                                                             | Relevant for           | Dependency (groupid:artifactid)              |
-|---------------------------------------------------------------------|------------------------|----------------------------------------------|
-| Basic domain type interfaces                                        | application developers | io.domainlifecycles:types                    |
-| Domain assertions, to express domain specific rules and invariants  | application developers | io.domainlifecycles:assertions               |                         
-| Abstract base domain types and utilities                            | application developers | io.domainlifecycles:type-utils               |                       
-| Domain type builders                                                | only internally used   | io.domainlifecycles:builder                  |
-| General reflection utilities                                        | only internally used   | io.domainlifecycles:reflect                  |
-| Interfaces and implementation to access object and class structures | only internally used   | io.domainlifecycles:access                   |
-| Domain mirror                                                       | only internally used   | io.domainlifecycles:mirror                   |
-| Domain event support                                                | application developers | io.domainlifecycles:domain-events            |  
-| Jackson based JSON mapping                                          | application developers | io.domainlifecycles:jackson-integration      |                         
-| Service registry                                                    | only internally used   | io.domainlifecycles:service-registry         |
-| Persistence interfaces and general persistence management           | only internally used   | io.domainlifecycles:persistence              | 
-| Autoconfig                                                          | application developers | io.domainlifecycles:autoconfig               |
-| jOOQ based implementation for persistence management                | application developers | io.domainlifecycles:jooq-integration         |
-| Bean Validation support (javax or jakarta)                          | application developers | io.domainlifecycles:bean-validations         |
-| Byte Buddy based auto validation extension                          | application developers | io.domainlifecycles:validation-extender      |
-| Spring Doc 2 open API support (Spring Boot 3 compatible)            | application developers | io.domainlifecycles:spring-doc-2-integration | 
-| General Swagger / Open API v3 support                               | only internally used   | io.domainlifecycles:swagger-v3-integration   |  
-| Spring Web support (Spring Boot 3 compatible)                       | application developers | io.domainlifecycles:spring-web-6-integration |
-| Nomnoml based domain diagrams                                       | application developers | io.domainlifecycles:domain-diagrammer        | 
+| Feature                                                             | Relevant for           | Dependency (groupid:artifactid)                                                                                                       |
+|---------------------------------------------------------------------|------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
+| Basic domain type interfaces                                        | application developers | io.domainlifecycles:types                                                                                                             |
+| Domain assertions, to express domain specific rules and invariants  | application developers | io.domainlifecycles:assertions                                                                                                        |                         
+| Abstract base domain types and utilities                            | application developers | io.domainlifecycles:type-utils                                                                                                        |                       
+| Domain type builders                                                | only internally used   | io.domainlifecycles:builder                                                                                                           |
+| General reflection utilities                                        | only internally used   | io.domainlifecycles:reflect                                                                                                           |
+| Interfaces and implementation to access object and class structures | only internally used   | io.domainlifecycles:access                                                                                                            |
+| Domain mirror                                                       | only internally used   | io.domainlifecycles:mirror                                                                                                            |
+| Domain mirror serialization (Jackson)                               | only internally used   | io.domainlifecycles:mirror-serialization-jackson                                                                                      |
+| Domain event support                                                | application developers | io.domainlifecycles:domain-events-{active-mq-classic, core, gruelbox, jakarta-jms, jakarta-jta, mq, serialization-jackson, spring-tx} |  
+| Jackson based JSON mapping                                          | application developers | io.domainlifecycles:jackson-integration                                                                                               |                         
+| Service registry                                                    | only internally used   | io.domainlifecycles:service-registry                                                                                                  |
+| Persistence interfaces and general persistence management           | only internally used   | io.domainlifecycles:persistence                                                                                                       | 
+| Autoconfig                                                          | application developers | io.domainlifecycles:autoconfig                                                                                                        |
+| jOOQ based implementation for persistence management                | application developers | io.domainlifecycles:jooq-integration                                                                                                  |
+| Bean Validation support (javax or jakarta)                          | application developers | io.domainlifecycles:bean-validations                                                                                                  |
+| Byte Buddy based auto validation extension                          | application developers | io.domainlifecycles:validation-extender                                                                                               |
+| Spring Doc Open API support                                         | application developers | io.domainlifecycles:spring-doc-2-integration                                                                                          | 
+| General Swagger / Open API v3 support                               | only internally used   | io.domainlifecycles:swagger-v3-integration                                                                                            |  
+| Spring Web support                                                  | application developers | io.domainlifecycles:spring-web-integration                                                                                            |
+| Domain Diagrams                                                     | application developers | io.domainlifecycles:domain-diagrammer                                                                                                 | 
 
 To simplify the dependency management using all features in a Spring Boot app using jOOQ for the relational
-database persistence management, we provide JARs fo Spring Boot 3 setup by adding just a single
-dependency:
+database persistence management, we provide a Spring Boot 4 starter:
 
-| Application setup                                | Dependency                                | 
-|--------------------------------------------------|-------------------------------------------|
-| Spring Boot 3 app with all DLC features available | io.domainlifecycles:spring-boot-starter   |
+| Application setup                                 | Dependency                                | 
+|---------------------------------------------------|-------------------------------------------|
+| Spring Boot 4 app with all DLC features available | io.domainlifecycles:spring-boot-starter   |
 
-Gradle setup for a Spring Boot 3 app:
+ATTENTION: Spring Boot 3 is supported with DLC 2.6.0!
+
+Gradle setup for a Spring Boot 4 app:
 
 ```Groovy
 dependencies{
-    implementation 'io.domainlifecycles:spring-boot-starter:2.6.0'
+    implementation 'io.domainlifecycles:spring-boot-starter:3.0.0'
 }
 ```
 
-Maven setup for a Spring Boot 3 app:
+Maven setup for a Spring Boot 4 app:
 
 ```XML
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>spring-boot-starter</artifactId>
-    <version>2.6.0</version>
+    <version>3.0.0</version>
 </dependency>
 ```
 
@@ -193,24 +195,22 @@ Depending on the features used, additionally to the DLC dependencies other runti
 target applications classpath.
 Here's an overview of the most important external dependencies:
 
-| Feature                                                          | External dependency                                                                            | Supported versions      |
-|------------------------------------------------------------------|------------------------------------------------------------------------------------------------|-------------------------|
-| Optional Object Builders Lombok Support                          | org.projectlombok:lombok                                                                       | tested with 1.18.40     |     
-| Optional fine grained type resolving in the DLC mirror           | com.github.vladislavsevruk:type-resolver                                                       | tested with 1.0.3       |
-| Runtime class loading in the DLC mirror and DLC persistence      | io.github.classgraph:classgraph                                                                | tested with 4.8.181     |
-| Validation - Jakarta Bean Validation 3.0 Support                 | (Bean Validation Provider implementation) e.g.: org.hibernate.validator:hibernate-validator    | tested with 8.0.1.Final |
-| Validation extension via Byte Buddy                              | net.bytebuddy:byte-buddy                                                                       | tested with 1.17.7      |
-| Persistence                                                      | org.jooq:jooq                                                                                  | tested with 3.19.26     |
-| JSON Mapping                                                     | com.fasterxml.jackson.core:jackson-core <b>and</b> com.fasterxml.jackson.core:jackson-databind | tested with 2.20.0      |
-| Open API Support (Spring Doc 2)                                  | org.springdoc:springdoc-openapi-starter-webmvc-ui                                              | tested with 2.8.13      |
-| Spring Converter Support (needed for Spring-Web, Spring Boot 3)  | org.springframework:spring-core                                                                | tested with 6.2.10      |
-| Domain Events, Spring based Transactional Outbox (Spring Boot 3) | org.springframework:spring-jdbc                                                                | tested with 6.2.10      |
-| Domain Events, Spring based Transaction Support (Spring Boot 3)  | org.springframework:spring-tx                                                                  | tested with 6.2.10      |
-| Domain Events, Jakarta JTA Support                               | (JTA Provider implementation) e.g.: Atomikos com.atomikos:transactions-jta                     | tested with 6.0.0       |
-| Domain Events Gruelbox Transactional Outbox                      | com.gruelbox:transactionoutbox-core                                                            | tested with 6.0.609     |
-| Domain Events ActiveMq Classic                                   | org.apache.activemq:activemq-client                                                            | tested with 5.18.4      |
-| Logging                                                          | (SLF4J Provider) e.g.: ch.qos.logback:logback-classic                                          | tested with 1.5.18      |      
-| Spring Boot Starter                                              | Spring Boot                                                                                    | tested with 3.5.5       |      
+| Feature                                                         | External dependency                                                                         | Supported versions      |
+|-----------------------------------------------------------------|---------------------------------------------------------------------------------------------|-------------------------|
+| Optional Object Builders Lombok Support                         | org.projectlombok:lombok                                                                    | tested with 1.18.42     |     
+| Optional fine grained type resolving in the DLC mirror          | com.github.vladislavsevruk:type-resolver                                                    | tested with 1.0.3       |
+| Runtime class loading in the DLC mirror and DLC persistence     | io.github.classgraph:classgraph                                                             | tested with 4.8.184     |
+| Validation - Jakarta Bean Validation Support                    | (Bean Validation Provider implementation) e.g.: org.hibernate.validator:hibernate-validator | tested with 9.1.0.Final |
+| Validation extension via Byte Buddy                             | net.bytebuddy:byte-buddy                                                                    | tested with 1.18.3      |
+| Persistence                                                     | org.jooq:jooq                                                                               | tested with 3.19.26     |
+| JSON Mapping                                                    | tools.jackson.core:jackson-core <b>and</b> tools.jackson.core:jackson-databind              | tested with 3.0.3       |
+| Open API Support (Spring Doc)                                   | org.springdoc:springdoc-openapi-starter-webmvc-ui                                           | tested with 3.0.1       |
+| Domain Events, Spring based Transaction Support (Spring Boot 4) | org.springframework:spring-tx                                                               | tested with 7.0.1       |
+| Domain Events, Jakarta JTA Support                              | (JTA Provider implementation) e.g.: Atomikos com.atomikos:transactions-jta                  | tested with 6.0.0       |
+| Domain Events Gruelbox Transactional Outbox                     | com.gruelbox:transactionoutbox-core                                                         | tested with 6.1.653     |
+| Domain Events ActiveMq Classic                                  | org.apache.activemq:activemq-client                                                         | tested with 5.18.4      |
+| Logging                                                         | (SLF4J Provider) e.g.: ch.qos.logback:logback-classic                                       | tested with 1.5.23      |      
+| Spring Boot Starter                                             | Spring Boot                                                                                 | tested with 4.0.1       |      
 
 Run `./gradle dependencies` on the main project or any of the submodules to get a complete overview of the dependencies
 that must be provided on the target applications runtime classpath.

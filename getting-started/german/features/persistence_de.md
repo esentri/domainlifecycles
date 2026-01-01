@@ -55,7 +55,7 @@ jooq {
 }
 
 dependencies {
-    jooqCodegen 'com.h2database:h2:2.3.232'
+    jooqCodegen 'com.h2database:h2:2.4.240'
 }
 ```
 </details>
