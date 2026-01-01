@@ -26,12 +26,10 @@
 
 package io.domainlifecycles.events.activemq.gruelboxpublish;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gruelbox.transactionoutbox.DefaultPersistor;
 import com.gruelbox.transactionoutbox.Dialect;
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import com.gruelbox.transactionoutbox.TransactionOutboxListener;
-import com.gruelbox.transactionoutbox.jackson.JacksonInvocationSerializer;
 import com.gruelbox.transactionoutbox.spring.SpringTransactionManager;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.access.classes.DefaultClassProvider;
@@ -43,6 +41,7 @@ import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.events.gruelbox.api.DomainEventsInstantiator;
+import io.domainlifecycles.events.gruelbox.serialize.DlcJacksonInvocationSerializer;
 import io.domainlifecycles.events.mq.api.MqProcessingChannel;
 import io.domainlifecycles.events.serialize.DomainEventSerializer;
 import io.domainlifecycles.events.serialize.jackson3.Jackson3DomainEventSerializer;
@@ -78,9 +77,8 @@ public class ActiveMqClassicGruelboxConfig {
         return new Jackson3DomainEventSerializer(domainObjectBuilderProvider);
     }
 
-    @Bean
+    @Bean(initMethod = "start", destroyMethod = "stop")
     public BrokerService broker() throws Exception {
-
         BrokerService broker = new BrokerService();
         broker.setPersistent(false);
         broker.setUseJmx(true);
@@ -101,7 +99,6 @@ public class ActiveMqClassicGruelboxConfig {
     @Bean
     public TransactionOutbox transactionOutbox(
         SpringTransactionManager springTransactionManager,
-        ObjectMapper objectMapper,
         DomainEventsInstantiator domainEventsInstantiator,
         TransactionOutboxListener transactionOutboxListener
     ) {
@@ -111,7 +108,7 @@ public class ActiveMqClassicGruelboxConfig {
             .blockAfterAttempts(3)
             .attemptFrequency(Duration.ofSeconds(1))
             .persistor(DefaultPersistor.builder()
-                .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
+                .serializer(new DlcJacksonInvocationSerializer())
                 .dialect(Dialect.H2)
                 .build())
             .listener(transactionOutboxListener)

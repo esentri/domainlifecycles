@@ -26,12 +26,11 @@
 
 package io.domainlifecycles.events.gruelboxproxyjakartajms;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.gruelbox.transactionoutbox.DefaultPersistor;
 import com.gruelbox.transactionoutbox.Dialect;
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import com.gruelbox.transactionoutbox.TransactionOutboxListener;
-import com.gruelbox.transactionoutbox.jackson.JacksonInvocationSerializer;
 import com.gruelbox.transactionoutbox.spring.SpringTransactionManager;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.access.classes.DefaultClassProvider;
@@ -42,6 +41,7 @@ import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.events.gruelbox.api.DomainEventsInstantiator;
+import io.domainlifecycles.events.gruelbox.serialize.DlcJacksonInvocationSerializer;
 import io.domainlifecycles.events.jakarta.jms.api.GruelboxProxyJakartaJmsChannelFactory;
 import io.domainlifecycles.events.mq.api.MqProcessingChannel;
 import io.domainlifecycles.events.serialize.DomainEventSerializer;
@@ -55,6 +55,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.transaction.PlatformTransactionManager;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
@@ -91,7 +92,7 @@ public class JakartaJmsGruelboxConfig {
             .transactionManager(springTransactionManager)
             .blockAfterAttempts(3)
             .persistor(DefaultPersistor.builder()
-                .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
+                .serializer(new DlcJacksonInvocationSerializer())
                 .dialect(Dialect.H2)
                 .build())
             .listener(transactionOutboxListener)

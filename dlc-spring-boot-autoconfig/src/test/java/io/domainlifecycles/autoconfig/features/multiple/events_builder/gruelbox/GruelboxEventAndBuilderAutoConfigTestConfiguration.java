@@ -26,13 +26,12 @@
 
 package io.domainlifecycles.autoconfig.features.multiple.events_builder.gruelbox;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.gruelbox.transactionoutbox.DefaultPersistor;
 import com.gruelbox.transactionoutbox.Dialect;
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import com.gruelbox.transactionoutbox.TransactionOutboxEntry;
 import com.gruelbox.transactionoutbox.TransactionOutboxListener;
-import com.gruelbox.transactionoutbox.jackson.JacksonInvocationSerializer;
 import com.gruelbox.transactionoutbox.spring.SpringInstantiator;
 import com.gruelbox.transactionoutbox.spring.SpringTransactionManager;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
@@ -40,6 +39,7 @@ import io.domainlifecycles.events.consume.execution.handler.TransactionalHandler
 import io.domainlifecycles.events.gruelbox.api.DomainEventsInstantiator;
 import io.domainlifecycles.events.gruelbox.api.GruelboxChannelFactory;
 import io.domainlifecycles.events.gruelbox.api.GruelboxProcessingChannel;
+import io.domainlifecycles.events.gruelbox.serialize.DlcJacksonInvocationSerializer;
 import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import java.util.List;
@@ -60,15 +60,14 @@ public class GruelboxEventAndBuilderAutoConfigTestConfiguration {
     @Lazy
     public TransactionOutbox transactionOutbox(
         SpringTransactionManager springTransactionManager,
-        SpringInstantiator springInstantiator,
-        ObjectMapper objectMapper
+        SpringInstantiator springInstantiator
     ) {
         return TransactionOutbox.builder()
             .instantiator(springInstantiator)
             .transactionManager(springTransactionManager)
             .blockAfterAttempts(3)
             .persistor(DefaultPersistor.builder()
-                           .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
+                           .serializer(new DlcJacksonInvocationSerializer())
                            .dialect(Dialect.H2)
                            .build())
             .listener(new TransactionOutboxListener() {

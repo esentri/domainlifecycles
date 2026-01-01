@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import io.domainlifecycles.jackson.exception.DLCJacksonException;
  * from a {@link JacksonMappingCustomizer} instance. Just implement this interface in a JacksonMappingCustomizer, to
  * use it.
  *
+ * @author Leon Völlinger
  * @author Mario Herb
  */
 public interface BuilderConverter {
@@ -44,6 +45,7 @@ public interface BuilderConverter {
      * @param domainObjectMappingContext the mapping context for the DomainObject
      * @return the current DomainObjectBuilder instance from the current mapping context.
      */
+    @SuppressWarnings("unchecked")
     default <B> B getDomainObjectBuilder(DomainObjectMappingContext domainObjectMappingContext) {
         if (domainObjectMappingContext.domainObjectBuilder != null) {
             return (B) domainObjectMappingContext.domainObjectBuilder.getBuilderInstance();

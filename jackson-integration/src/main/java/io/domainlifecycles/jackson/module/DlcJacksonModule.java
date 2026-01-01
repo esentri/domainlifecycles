@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,8 +26,6 @@
 
 package io.domainlifecycles.jackson.module;
 
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.internal.DomainObject;
@@ -35,6 +33,8 @@ import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson.databind.DlcDeserializerModifier;
 import io.domainlifecycles.jackson.databind.DlcSerializerModifier;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
+import tools.jackson.core.Version;
+import tools.jackson.databind.module.SimpleModule;
 
 import java.io.Serial;
 import java.util.HashMap;
@@ -43,6 +43,7 @@ import java.util.Map;
 /**
  * DLC Jackson extension
  *
+ * @author Leon Völlinger
  * @author Mario Herb
  * @see SimpleModule
  */
@@ -106,9 +107,9 @@ public class DlcJacksonModule extends SimpleModule {
     @Override
     public void setupModule(SetupContext context) {
         super.setupModule(context);
-        context.addBeanDeserializerModifier(
+        context.addDeserializerModifier(
             new DlcDeserializerModifier(customizerContainer, domainObjectBuilderProvider, entityIdentityProvider));
-        context.addBeanSerializerModifier(new DlcSerializerModifier(customizerContainer));
+        context.addSerializerModifier(new DlcSerializerModifier(customizerContainer));
     }
 
     /**

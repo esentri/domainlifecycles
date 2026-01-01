@@ -64,7 +64,7 @@ public class ActiveMqClassicJmsConfig {
         return new Jackson3DomainEventSerializer(domainObjectBuilderProvider);
     }
 
-    @Bean
+    @Bean(initMethod = "start", destroyMethod = "stop")
     public BrokerService broker() throws Exception {
         BrokerService broker = new BrokerService();
         broker.setPersistent(false);

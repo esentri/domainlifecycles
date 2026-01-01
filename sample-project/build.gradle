@@ -41,14 +41,14 @@ tasks.register('runApp', JavaExec) {
 // ----------------------------------------------------------
 
 dependencies {
-    implementation platform('org.springframework.boot:spring-boot-dependencies:3.5.5')
-    implementation 'io.domainlifecycles:spring-boot-starter:2.6.0'
+    implementation platform('org.springframework.boot:spring-boot-dependencies:4.0.0')
+
 
     implementation 'com.h2database:h2:2.3.232'
     implementation 'jakarta.validation:jakarta.validation-api:3.1.1'
     implementation 'org.springframework:spring-web'
     implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springframework.boot:spring-boot-starter-jooq'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'jakarta.transaction:jakarta.transaction-api:2.0.1'

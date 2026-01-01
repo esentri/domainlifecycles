@@ -35,7 +35,7 @@ dependencies {
     testImplementation project(":mirror")
     testImplementation project(":service-registry")
     testImplementation project(":domain-events-core")
-    testImplementation project(":domain-events-serialization-jackson-3")
+    testImplementation project(":domain-events-serialization-jackson")
     testImplementation project(":domain-events-spring-tx")
     testImplementation project(":domain-events-gruelbox")
     testImplementation project(":domain-events-mq")
@@ -51,22 +51,19 @@ dependencies {
     testImplementation libs.assertj
     testImplementation libs.logback.classic
 
-    testImplementation libs.spring.boot3.starter
-    testImplementation libs.spring.boot3.starter.json
-    testImplementation libs.spring.boot3.starter.jooq
-    testImplementation libs.spring.boot3.starter.test
 
-    testImplementation libs.spring.boot3.starter.activemq
+    testImplementation libs.spring.boot.starter.jackson
+    testImplementation libs.spring.boot.starter.jooq
+    testImplementation libs.spring.boot.starter.test
+    testImplementation libs.spring.boot.starter.webmvc.test
+    testImplementation libs.spring.boot.starter.activemq
     testImplementation libs.gruelbox.transactionoutbox.core
     testImplementation libs.gruelbox.transactionoutbox.spring
-    testImplementation libs.gruelbox.transactionoutbox.jackson
 
     testImplementation libs.h2
     testImplementation libs.awaitility
 
-    testImplementation(libs.active.mq.broker) {
-        exclude(group: 'org.apache.activemq', module: 'activemq-client-jakarta')
-    }
+    testImplementation libs.active.mq.broker
 
     testImplementation libs.active.mq.client.jakarta
     testImplementation libs.javax.jms.api

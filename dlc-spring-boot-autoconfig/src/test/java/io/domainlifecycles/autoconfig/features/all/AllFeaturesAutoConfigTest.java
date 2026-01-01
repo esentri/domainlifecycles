@@ -17,46 +17,47 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles({"test", "test-dlc-domain", "test-dlc-persistence"})
 public class AllFeaturesAutoConfigTest {
 
-    @Autowired
+    @Autowired(required = false)
     DomainObjectBuilderProvider domainObjectBuilderProvider;
 
-    @Autowired
+    @Autowired(required = false)
     ServiceProvider serviceProvider;
 
-    @Autowired
+    @Autowired(required = false)
     TransactionalHandlerExecutor transactionalHandlerExecutor;
 
-    @Autowired
+    @Autowired(required = false)
     ClassProvider classProvider;
 
-    @Autowired
+    @Autowired(required = false)
     DomainEventTypeBasedRouter router;
 
-    @Autowired
+    @Autowired(required = false)
     ChannelRoutingConfiguration routingConfiguration;
 
-    @Autowired
+    @Autowired(required = false)
     PublishingChannel publishingChannel;
 
-    @Autowired
+    @Autowired(required = false)
     DlcJacksonModule dlcJacksonModule;
 
-    @Autowired
+    @Autowired(required = false)
     JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
 
-    @Autowired
+    @Autowired(required = false)
     EntityIdentityProvider entityIdentityProvider;
 
-    @Autowired
+    @Autowired(required = false)
     DlcOpenApiCustomizer dlcOpenApiCustomizer;
 
-    @Autowired
+    @Autowired(required = false)
     ResponseEntityBuilder responseEntityBuilder;
 
     @Test
@@ -64,13 +65,14 @@ public class AllFeaturesAutoConfigTest {
         assertThat(Domain.isInitialized()).isTrue();
         assertThat(domainObjectBuilderProvider).isNotNull();
         assertThat(serviceProvider).isNotNull();
+        assertThat(jooqDomainPersistenceProvider).isNotNull();
         assertThat(transactionalHandlerExecutor).isNotNull();
         assertThat(classProvider).isNotNull();
         assertThat(router).isNotNull();
         assertThat(routingConfiguration).isNotNull();
         assertThat(publishingChannel).isNotNull();
         assertThat(dlcJacksonModule).isNotNull();
-        assertThat(jooqDomainPersistenceProvider).isNotNull();
+
         assertThat(entityIdentityProvider).isNotNull();
         assertThat(dlcOpenApiCustomizer).isNotNull();
         assertThat(responseEntityBuilder).isNotNull();

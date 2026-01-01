@@ -1,7 +1,5 @@
 package io.domainlifecycles.autoconfig.features.multiple.events_builder_jackson_persistence.jms;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.autoconfig.features.single.persistence.SimpleAggregateRootRepository;
 import io.domainlifecycles.autoconfig.model.events.ADomainEvent;
 import io.domainlifecycles.autoconfig.model.events.ADomainService;
@@ -42,6 +40,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import tests.shared.events.PersistenceEvent;
 import tests.shared.persistence.PersistenceEventTestHelper;
+import tools.jackson.databind.ObjectMapper;
+
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -177,7 +177,7 @@ public class SpringJmsEventAndBuilderAndJacksonAndPersistenceAutoConfigTests {
     }
 
     @Test
-    public void testTestRootSimpleJacksonMapping() throws JsonProcessingException {
+    public void testTestRootSimpleJacksonMapping() {
         TestRootSimple testRootSimple = TestRootSimple.builder().setId(new TestRootSimpleId(1L)).setName("TEST").build();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(testRootSimple);
 

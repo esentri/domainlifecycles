@@ -26,12 +26,11 @@
 
 package io.domainlifecycles.events.gruelboxproxyjakartajmsidempotency;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.gruelbox.transactionoutbox.DefaultPersistor;
 import com.gruelbox.transactionoutbox.Dialect;
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import com.gruelbox.transactionoutbox.TransactionOutboxListener;
-import com.gruelbox.transactionoutbox.jackson.JacksonInvocationSerializer;
 import com.gruelbox.transactionoutbox.spring.SpringTransactionManager;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.access.classes.DefaultClassProvider;
@@ -52,6 +51,7 @@ import io.domainlifecycles.events.consume.execution.handler.TransactionalHandler
 import io.domainlifecycles.events.gruelbox.api.DomainEventsInstantiator;
 import io.domainlifecycles.events.gruelbox.idempotent.IdempotencyConfiguration;
 import io.domainlifecycles.events.gruelbox.idempotent.IdempotencyConfigurationEntry;
+import io.domainlifecycles.events.gruelbox.serialize.DlcJacksonInvocationSerializer;
 import io.domainlifecycles.events.jakarta.jms.api.GruelboxProxyJakartaJmsChannelFactory;
 import io.domainlifecycles.events.mq.api.MqProcessingChannel;
 import io.domainlifecycles.events.mq.consume.SpringTransactionalIdempotencyAwareHandlerExecutorProxy;
@@ -145,7 +145,6 @@ public class JakartaJmsGruelboxIdempotencyConfig {
     @Bean
     public TransactionOutbox transactionOutbox(
         SpringTransactionManager springTransactionManager,
-        ObjectMapper objectMapper,
         DomainEventsInstantiator domainEventsInstantiator,
         TransactionOutboxListener transactionOutboxListener
     ) {
@@ -154,7 +153,7 @@ public class JakartaJmsGruelboxIdempotencyConfig {
             .transactionManager(springTransactionManager)
             .blockAfterAttempts(3)
             .persistor(DefaultPersistor.builder()
-                .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
+                .serializer(new DlcJacksonInvocationSerializer())
                 .dialect(Dialect.H2)
                 .build())
             .listener(transactionOutboxListener)

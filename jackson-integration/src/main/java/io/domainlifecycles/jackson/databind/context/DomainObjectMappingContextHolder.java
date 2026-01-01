@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,9 +26,6 @@
 
 package io.domainlifecycles.jackson.databind.context;
 
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.jackson.exception.DLCJacksonException;
@@ -36,6 +33,9 @@ import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.ValueObjectMirror;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ArrayNode;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,6 +46,7 @@ import java.util.Map;
  * the deserialition process kept
  * in {@link DomainObjectMappingContext} instances.
  *
+ * @author Leon Völlinger
  * @author Mario Herb
  */
 public class DomainObjectMappingContextHolder {

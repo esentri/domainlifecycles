@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,20 +26,23 @@
 
 package io.domainlifecycles.jackson.databind;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import io.domainlifecycles.access.DlcAccess;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.jackson.exception.DLCJacksonException;
 import io.domainlifecycles.mirror.api.Domain;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.deser.std.StdDeserializer;
 
-import java.io.IOException;
+import java.util.Map;
 
 /**
  * {@link Domain} based deserialization of {@link Identity} instances.
  *
+ * @author Leon Völlinger
  * @author Mario Herb
  * @see StdDeserializer
  */
@@ -62,32 +65,40 @@ public class IdentityDeserializer extends StdDeserializer<Identity<?>> {
      * @param jsonParser             Parsed used for reading JSON content
      * @param deserializationContext Context that can be used to access information about
      *                               this deserialization activity.
-     * @throws IOException if deserialization fails
+     * @throws JacksonException if deserialization fails
      */
     @Override
-    public Identity<?> deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+    public Identity<?> deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws JacksonException {
 
         var idTypeName = this._valueType.getRawClass().getName();
-        while (jsonParser.hasCurrentToken()) {
-            if (jsonParser.currentToken().isScalarValue()) {
-                var idMirror = Domain.identityMirrorFor(idTypeName);
+        JsonNode valueNode = jsonParser.readValueAsTree();
 
-                Class<?> idValueType = DlcAccess.getClassForName(
-                    idMirror.getValueTypeName()
-                        .orElseThrow(() -> DLCJacksonException.fail(
-                            "Identity Deserialization failed for '%s'. ValueType not defined",
-                            this._valueType.getTypeName()))
+        if(valueNode.isObject()){
+            valueNode = valueNode.properties()
+                .stream()
+                .findFirst()
+                .map(Map.Entry::getValue)
+                .orElseThrow(() ->
+                    DLCJacksonException.fail(
+                "Identity Deserialization failed for '%s'. Value field not defined",
+                    this._valueType.getTypeName())
                 );
-                Object val = jsonParser.readValueAs(idValueType);
-                if (val != null) {
-                    return DlcAccess.newIdentityInstance(val, idTypeName);
-                } else {
-                    return null;
-                }
-            }
-            jsonParser.nextToken();
         }
-        throw DLCJacksonException.fail("Identity Deserialization failed for '%s'.", this._valueType.getTypeName());
+       var idMirror = Domain.identityMirrorFor(idTypeName);
+        Class<?> idValueType = DlcAccess.getClassForName(idMirror.getValueTypeName()
+            .orElseThrow(() ->
+                DLCJacksonException.fail(
+                    "Identity Deserialization failed for '%s'. ValueType not defined",
+                    this._valueType.getTypeName())
+                )
+        );
+        Object value = valueNode.traverse(deserializationContext).readValueAs(idValueType);
+        if (value != null) {
+            return DlcAccess.newIdentityInstance(value, idTypeName);
+        } else {
+            return null;
+        }
+
     }
 
 }

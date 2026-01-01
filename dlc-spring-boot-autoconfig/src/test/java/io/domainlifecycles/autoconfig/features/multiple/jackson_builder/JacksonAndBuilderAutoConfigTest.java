@@ -1,7 +1,5 @@
 package io.domainlifecycles.autoconfig.features.multiple.jackson_builder;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.autoconfig.model.persistence.TestRootSimple;
 import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
@@ -22,6 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import tools.jackson.databind.ObjectMapper;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = TestApplicationJacksonAndBuilderAutoConfig.class)
@@ -73,7 +73,7 @@ public class JacksonAndBuilderAutoConfigTest {
     }
 
     @Test
-    public void testTestRootSimpleJacksonMapping() throws JsonProcessingException {
+    public void testTestRootSimpleJacksonMapping() {
         TestRootSimple testRootSimple = TestRootSimple.builder().setId(new TestRootSimpleId(1L)).setName("TEST").build();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(testRootSimple);
 

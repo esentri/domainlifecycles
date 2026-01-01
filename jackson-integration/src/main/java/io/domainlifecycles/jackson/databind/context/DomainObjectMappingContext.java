@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@
 
 package io.domainlifecycles.jackson.databind.context;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import io.domainlifecycles.builder.DomainObjectBuilder;
+import tools.jackson.databind.JsonNode;
 
 import java.util.Objects;
 
@@ -38,6 +38,7 @@ import java.util.Objects;
  * It provides access to associated {@link DomainObjectBuilder} instances, that are filled with vaules throughout the
  * deserialization process.
  *
+ * @author Leon Völlinger
  * @author Mario Herb
  */
 public class DomainObjectMappingContext {

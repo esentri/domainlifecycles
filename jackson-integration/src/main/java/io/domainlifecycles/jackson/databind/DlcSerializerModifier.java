@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,23 +26,24 @@
 
 package io.domainlifecycles.jackson.databind;
 
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializationConfig;
-import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.domain.types.ValueObject;
 import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.mirror.api.Domain;
+import tools.jackson.databind.BeanDescription;
+import tools.jackson.databind.SerializationConfig;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.ser.ValueSerializerModifier;
 
 /**
  * {@see BeanSerializerModifier}
  *
+ * @author Leon Völlinger
  * @author Mario Herb
  */
-public class DlcSerializerModifier extends BeanSerializerModifier {
+public class DlcSerializerModifier extends ValueSerializerModifier {
 
     /**
      * A container that holds registered customizers used for domain-specific
@@ -65,8 +66,8 @@ public class DlcSerializerModifier extends BeanSerializerModifier {
      * Plug in {@link Domain} based serializer modifications
      */
     @Override
-    public JsonSerializer<?> modifySerializer(SerializationConfig config, BeanDescription beanDesc,
-                                              JsonSerializer<?> serializer) {
+    public ValueSerializer<?> modifySerializer(SerializationConfig config, BeanDescription.Supplier beanDesc,
+                                              ValueSerializer<?> serializer) {
         if (Entity.class.isAssignableFrom(beanDesc.getBeanClass())) {
             return new EntitySerializer(
                 (JacksonMappingCustomizer<Entity>) customizersContainer.findCustomizer(beanDesc.getBeanClass()));

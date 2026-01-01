@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,9 +26,6 @@
 
 package io.domainlifecycles.jackson.databind;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import io.domainlifecycles.access.DlcAccess;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
@@ -38,12 +35,15 @@ import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.EntityReferenceMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.ValueReferenceMirror;
-
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.std.StdSerializer;
 
 /**
  * {@link Domain} based serialization of {@link Entity} instances.
  *
+ * @author Leon Völlinger
  * @author Mario Herb
  * @see StdSerializer
  */
@@ -80,10 +80,10 @@ public class EntitySerializer extends StdSerializer<Entity> {
      * @param jsonGenerator      Generator used to output resulting Json content
      * @param serializerProvider Provider that can be used to get serializers for
      *                           serializing Objects value contains, if any.
-     * @throws IOException if serialization fails
+     * @throws JacksonException if serialization fails
      */
     @Override
-    public void serialize(Entity entity, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+    public void serialize(Entity entity, JsonGenerator jsonGenerator, SerializationContext serializerProvider) throws JacksonException {
         MappingAction mappingAction = MappingAction.CONTINUE_WITH_DEFAULT_ACTION;
         if (customizer != null) {
             mappingAction = customizer.beforeObjectWrite(jsonGenerator, entity);
@@ -101,7 +101,7 @@ public class EntitySerializer extends StdSerializer<Entity> {
 
     }
 
-    private void writeIdentity(JsonGenerator jsonGenerator, EntityMirror entityMirror, Entity<?> entity) throws IOException {
+    private void writeIdentity(JsonGenerator jsonGenerator, EntityMirror entityMirror, Entity<?> entity) throws JacksonException {
         if (entityMirror.getIdentityField().isPresent()) {
             var idField = entityMirror.getIdentityField().get();
             String fieldName = idField.getName();
@@ -110,7 +110,7 @@ public class EntitySerializer extends StdSerializer<Entity> {
         }
     }
 
-    private void writeBasicFields(JsonGenerator jsonGenerator, EntityMirror entityMirror, Entity<?> entity) throws IOException {
+    private void writeBasicFields(JsonGenerator jsonGenerator, EntityMirror entityMirror, Entity<?> entity) throws JacksonException {
         for (FieldMirror field : entityMirror.getBasicFields()) {
             if (!field.isStatic() && field.isPublicReadable()) {
                 String fieldName = field.getName();
@@ -121,7 +121,7 @@ public class EntitySerializer extends StdSerializer<Entity> {
     }
 
 
-    private void writeValues(JsonGenerator jsonGenerator, EntityMirror entityMirror, Entity<?> entity) throws IOException {
+    private void writeValues(JsonGenerator jsonGenerator, EntityMirror entityMirror, Entity<?> entity) throws JacksonException {
         for (ValueReferenceMirror ref : entityMirror.getValueReferences()) {
             if (ref.isPublicReadable() && !ref.isStatic()) {
                 Object toWrite = DlcAccess.accessorFor(entity).peek(ref.getName());
@@ -130,7 +130,7 @@ public class EntitySerializer extends StdSerializer<Entity> {
         }
     }
 
-    private void writeEntityReferences(JsonGenerator jsonGenerator, EntityMirror entityMirror, Entity<?> entity) throws IOException {
+    private void writeEntityReferences(JsonGenerator jsonGenerator, EntityMirror entityMirror, Entity<?> entity) throws JacksonException {
         for (EntityReferenceMirror ref : entityMirror.getEntityReferences()) {
             if (ref.isPublicReadable() && !ref.isStatic()) {
                 Object toWrite = DlcAccess.accessorFor(entity).peek(ref.getName());
@@ -139,14 +139,14 @@ public class EntitySerializer extends StdSerializer<Entity> {
         }
     }
 
-    private void writeCustomized(JsonGenerator jsonGenerator, String fieldName, Object fieldValue) throws IOException {
+    private void writeCustomized(JsonGenerator jsonGenerator, String fieldName, Object fieldValue) throws JacksonException {
         MappingAction mappingAction = MappingAction.CONTINUE_WITH_DEFAULT_ACTION;
         if (customizer != null) {
             mappingAction = customizer.beforeFieldWrite(jsonGenerator, fieldName, fieldValue);
         }
         if (MappingAction.CONTINUE_WITH_DEFAULT_ACTION.equals(mappingAction)) {
-            jsonGenerator.writeFieldName(fieldName);
-            jsonGenerator.writeObject(fieldValue);
+            jsonGenerator.writeName(fieldName);
+            jsonGenerator.writePOJO(fieldValue);
         }
     }
 

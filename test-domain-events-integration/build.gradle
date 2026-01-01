@@ -16,10 +16,9 @@ dependencies {
     testImplementation project(":mirror")
     testImplementation project(":service-registry")
     testImplementation project(":domain-events-core")
-    testImplementation project(":domain-events-serialization-jackson-3")
+    testImplementation project(":domain-events-serialization-jackson")
     testImplementation project(":domain-events-jakarta-jta")
     testImplementation project(":domain-events-spring-tx")
-    testImplementation project(":domain-events-spring-tx-outbox")
     testImplementation project(":domain-events-gruelbox")
     testImplementation project(":jackson-integration")
     testImplementation project(":builder")
@@ -33,11 +32,11 @@ dependencies {
     testImplementation variantOf(libs.atomikos.transactions.jta) { classifier("jakarta") }
     testImplementation libs.jakarta.transaction.api
     testImplementation libs.logback.classic
-    testImplementation libs.spring.boot3.starter
-    testImplementation libs.spring.boot3.starter.json
-    testImplementation libs.spring.boot3.starter.jooq
-    testImplementation libs.spring.boot3.starter.test
-    testImplementation libs.spring.boot3.starter.artemis
+    testImplementation libs.spring.boot.starter.jackson
+    testImplementation libs.spring.boot.starter.test
+    testImplementation libs.spring.boot.starter.jooq
+    testImplementation libs.spring.boot.starter.artemis
+    testImplementation libs.spring.boot.starter.artemis.test
     testImplementation libs.apache.active.mq.artemis.jms.server
     testImplementation libs.bundles.gruelbox.transactionoutbox
     testImplementation libs.jackson3.core

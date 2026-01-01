@@ -1,7 +1,6 @@
 package io.domainlifecycles.autoconfig.features.multiple.events_builder_jackson.jms;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.domainlifecycles.autoconfig.model.events.ADomainEvent;
 import io.domainlifecycles.autoconfig.model.events.ADomainService;
 import io.domainlifecycles.autoconfig.model.events.AQueryHandler;
@@ -36,6 +35,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import tools.jackson.databind.ObjectMapper;
+
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -185,7 +186,7 @@ public class SpringJmsEventAndBuilderAndJacksonAutoConfigTests {
     }
 
     @Test
-    public void testTestRootSimpleJacksonMapping() throws JsonProcessingException {
+    public void testTestRootSimpleJacksonMapping() {
         TestRootSimple testRootSimple = TestRootSimple.builder().setId(new TestRootSimpleId(1L)).setName("TEST").build();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(testRootSimple);
 

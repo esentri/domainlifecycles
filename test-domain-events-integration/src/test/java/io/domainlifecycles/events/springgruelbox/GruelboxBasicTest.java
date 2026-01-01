@@ -26,7 +26,6 @@
 
 package io.domainlifecycles.events.springgruelbox;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import io.domainlifecycles.events.AComplexDomainEvent;
 import io.domainlifecycles.events.ADomainEvent;
@@ -41,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.support.TransactionTemplate;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.Duration;
 import java.util.List;

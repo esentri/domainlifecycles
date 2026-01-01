@@ -48,9 +48,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -64,13 +62,15 @@ import java.util.List;
  *  @author Mario Herb
  *  @author Leon Völlinger
  */
-@AutoConfiguration(after = {
-    DlcDomainAutoConfiguration.class,
-    DlcBuilderAutoConfiguration.class,
-    DataSourceAutoConfiguration.class,
-    DataSourceTransactionManagerAutoConfiguration.class,
-    TransactionAutoConfiguration.class
-})
+@AutoConfiguration(
+    afterName = {
+        "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration",
+        "org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration",
+    }, after = {
+        DlcDomainAutoConfiguration.class,
+        DlcBuilderAutoConfiguration.class
+    }
+)
 public class DlcDomainEventsAutoConfiguration {
 
     /**
@@ -108,7 +108,6 @@ public class DlcDomainEventsAutoConfiguration {
      */
     @Bean
     @ConditionalOnClass(name="org.springframework.transaction.TransactionManager")
-    @ConditionalOnBean(PlatformTransactionManager.class)
     @ConditionalOnMissingBean(TransactionalHandlerExecutor.class)
     public TransactionalHandlerExecutor transactionalHandlerExecutor(PlatformTransactionManager platformTransactionManager){
         return new SpringTransactionalHandlerExecutor(platformTransactionManager);
@@ -161,7 +160,7 @@ public class DlcDomainEventsAutoConfiguration {
      */
     @Bean
     @ConditionalOnClass(name="org.springframework.transaction.PlatformTransactionManager")
-    @ConditionalOnBean(PlatformTransactionManager.class)
+    @ConditionalOnSingleCandidate(PlatformTransactionManager.class)
     public PublishingChannel channelConfigurationWithPlatformTransactionManager(
         PlatformTransactionManager platformTransactionManager, ServiceProvider serviceProvider) {
         return new SpringTxInMemoryChannelFactory(platformTransactionManager, serviceProvider, true).processingChannel("default");
@@ -173,6 +172,7 @@ public class DlcDomainEventsAutoConfiguration {
      * @param serviceProvider The service provider for channel configuration
      * @return A new non-transactional PublishingChannel
      */
+
     @Bean
     @ConditionalOnMissingBean({PublishingChannel.class, PlatformTransactionManager.class})
     public PublishingChannel channelConfigurationWithoutPlatformTransactionManager(

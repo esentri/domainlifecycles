@@ -26,6 +26,7 @@
 
 package io.domainlifecycles.autoconfig.configurations;
 
+
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
@@ -36,7 +37,6 @@ import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
 import java.util.List;
@@ -68,8 +68,8 @@ import java.util.List;
 @AutoConfiguration
 @ConditionalOnBean(DomainObjectBuilderProvider.class)
 @AutoConfigureAfter({DlcJooqPersistenceAutoConfiguration.class, DlcBuilderAutoConfiguration.class, DlcDomainAutoConfiguration.class})
-@AutoConfigureBefore(JacksonAutoConfiguration.class)
-@ConditionalOnClass(name="com.fasterxml.jackson.databind.ObjectMapper")
+@AutoConfigureBefore(name="org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration")
+@ConditionalOnClass(name="tools.jackson.databind.ObjectMapper")
 public class DlcJacksonAutoConfiguration {
 
     /**

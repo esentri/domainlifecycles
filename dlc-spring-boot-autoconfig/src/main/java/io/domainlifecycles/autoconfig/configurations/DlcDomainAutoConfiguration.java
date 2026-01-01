@@ -34,7 +34,6 @@ import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
@@ -47,7 +46,7 @@ import org.springframework.context.annotation.Bean;
  */
 @AutoConfiguration
 @EnableConfigurationProperties(DlcDomainProperties.class)
-@AutoConfigureBefore({JooqAutoConfiguration.class})
+@AutoConfigureBefore(name = "org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration")
 public class DlcDomainAutoConfiguration {
 
     private @Value("${dlcDomainBasePackages}") String dlcDomainBasePackages;

@@ -26,23 +26,20 @@
 
 package io.domainlifecycles.autoconfig.configurations;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.spring.http.DefaultResponseEntityBuilder;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.spring.http.StringToDomainIdentityConverterFactory;
 import io.domainlifecycles.spring.http.StringToDomainValueObjectConverterFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.format.support.FormattingConversionService;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.Objects;
-
-import static org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type.SERVLET;
 
 /**
  * Autoconfiguration for web/REST-related functionality.
@@ -50,37 +47,35 @@ import static org.springframework.boot.autoconfigure.condition.ConditionalOnWebA
  * @author Leon Völlinger
  * @author Mario Herb
  */
-@AutoConfiguration(after = {DlcJacksonAutoConfiguration.class, JacksonAutoConfiguration.class, DlcDomainAutoConfiguration.class})
-@ConditionalOnWebApplication(type = SERVLET)
-@ConditionalOnClass(name="com.fasterxml.jackson.databind.ObjectMapper")
-public class DlcSpringWebAutoConfiguration implements WebMvcConfigurer {
+@AutoConfiguration(after = {DlcDomainAutoConfiguration.class})
+public class DlcSpringWebAutoConfiguration {
 
-    private final ObjectMapper objectMapper;
-
-    /**
-     * Constructs the web configuration.
-     *
-     * @param objectMapper the Jackson object mapper used for serialization and deserialization
-     */
-    public DlcSpringWebAutoConfiguration(ObjectMapper objectMapper) {
-        this.objectMapper = Objects.requireNonNull(objectMapper, "An ObjectMapper instance is required");
+    @Bean
+    StringToDomainIdentityConverterFactory stringToDomainIdentityConverterFactory(
+        ObjectProvider<FormattingConversionService> formattingConversionServiceObjectProvider,
+        ObjectProvider<ConversionService> conversionServiceProvider
+    ) {
+        return new StringToDomainIdentityConverterFactory(formattingConversionServiceObjectProvider, conversionServiceProvider);
     }
 
-    /**
-     * Registers converters for handling domain objects in Spring MVC.
-     * This method enables automatic conversion of string parameters to DLC domain types
-     * (ValueObjects and Identities) in REST controller methods.
-     * <p>
-     * The converters use the configured ObjectMapper to deserialize string representations
-     * into proper domain object instances.
-     * </p>
-     *
-     * @param registry the formatter registry to add converters to
-     */
-    @Override
-    public void addFormatters(FormatterRegistry registry) {
-        registry.addConverterFactory(new StringToDomainIdentityConverterFactory(objectMapper));
-        registry.addConverterFactory(new StringToDomainValueObjectConverterFactory(objectMapper));
+    @Bean
+    StringToDomainValueObjectConverterFactory stringToDomainValueObjectConverterFactory(
+        ObjectProvider<FormattingConversionService> formattingConversionServiceObjectProvider,
+        ObjectProvider<ConversionService> conversionServiceProvider
+    ) {
+        return new StringToDomainValueObjectConverterFactory(formattingConversionServiceObjectProvider, conversionServiceProvider);
+    }
+
+    @Bean
+    WebMvcConfigurer dlcWebMvcConfigurer(StringToDomainIdentityConverterFactory identityConverterFactoryfactory,
+                                         StringToDomainValueObjectConverterFactory valueObjectConverterFactory) {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addFormatters(FormatterRegistry registry) {
+                registry.addConverterFactory(identityConverterFactoryfactory);
+                registry.addConverterFactory(valueObjectConverterFactory);
+            }
+        };
     }
 
     /**

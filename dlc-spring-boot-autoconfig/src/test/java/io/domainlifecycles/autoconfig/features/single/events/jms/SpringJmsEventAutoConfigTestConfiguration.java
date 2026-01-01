@@ -32,6 +32,7 @@ import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvi
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
+import io.domainlifecycles.events.consume.execution.handler.ReflectiveHandlerExecutor;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.events.jakarta.jms.api.JakartaJmsChannelFactory;
 import io.domainlifecycles.events.mq.api.MqProcessingChannel;
@@ -56,7 +57,6 @@ public class SpringJmsEventAutoConfigTestConfiguration {
     public JakartaJmsChannelFactory jakartaJmsChannelFactory(
         ServiceProvider serviceProvider,
         ClassProvider classProvider,
-        TransactionalHandlerExecutor transactionalHandlerExecutor,
         ActiveMQConnectionFactory jmsConnectionFactory,
         DomainEventSerializer domainEventSerializer
     ){
@@ -64,7 +64,7 @@ public class SpringJmsEventAutoConfigTestConfiguration {
             jmsConnectionFactory,
             serviceProvider,
             classProvider,
-            transactionalHandlerExecutor,
+            new ReflectiveHandlerExecutor(),
             domainEventSerializer
             );
     }
