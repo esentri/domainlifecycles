@@ -29,7 +29,6 @@ package io.domainlifecycles.plugins.json;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.serialize.DomainSerializer;
 import io.domainlifecycles.mirror.serialize.Jackson3DomainSerializer;
-
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
 import io.domainlifecycles.plugins.util.DLCUtils;
 import org.slf4j.Logger;

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;

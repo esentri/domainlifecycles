@@ -29,7 +29,6 @@ package io.domainlifecycles.events.activemq.nontransactionalpublish;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.access.classes.DefaultClassProvider;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
-import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.events.activemq.api.ActiveMqChannelFactory;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;

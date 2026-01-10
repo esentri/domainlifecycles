@@ -27,10 +27,7 @@
 package io.domainlifecycles.autoconfig.features.single.domain;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
-import java.util.Locale;
-
 import io.domainlifecycles.autoconfig.configurations.DlcBuilderAutoConfiguration;
-import io.domainlifecycles.autoconfig.configurations.DlcDomainAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcGruelboxDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJacksonAutoConfiguration;
@@ -39,6 +36,8 @@ import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfigu
 import io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+
+import java.util.Locale;
 
 @SpringBootApplication
 @EnableDlc(exclude = {

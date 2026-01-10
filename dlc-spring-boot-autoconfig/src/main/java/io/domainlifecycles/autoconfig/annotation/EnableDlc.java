@@ -78,9 +78,9 @@ import java.lang.annotation.Target;
 @Import({JooqPersistenceConfigImportSelector.class, DomainConfigImportSelector.class})
 @ImportAutoConfiguration
 public @interface EnableDlc {
-    /** if jOOQ is used a package containing all generated jooq record classes must be provided**/
+    /** if jOOQ is used, a package containing all generated jooq record classes must be provided**/
     String jooqRecordPackage() default "";
-    /** if jOOQ is used specifying a possible SQL dialect is mandatory (@see org.jooq.SQLDialect) **/
+    /** if jOOQ is used, specifying a possible SQL dialect is mandatory (@see org.jooq.SQLDialect) **/
     String jooqSqlDialect() default "";
     /** DLC always requires all packages which contains all Domain classes used within the application**/
     String dlcDomainBasePackages() default "";

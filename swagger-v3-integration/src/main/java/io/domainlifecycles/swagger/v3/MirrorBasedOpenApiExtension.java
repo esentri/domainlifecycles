@@ -45,7 +45,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * For all special DLC domain object types (entities, valueObject, identities) some Open API extensions are

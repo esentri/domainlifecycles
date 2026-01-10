@@ -31,6 +31,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AssertionMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.ResolvedGenericTypeMirror;
+
 import java.util.List;
 
 /**

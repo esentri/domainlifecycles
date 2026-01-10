@@ -27,6 +27,7 @@
 package io.domainlifecycles.mirror.model;
 
 import io.domainlifecycles.mirror.api.AssertionMirror;
+
 import java.util.Objects;
 
 public class AssertionModel implements AssertionMirror {

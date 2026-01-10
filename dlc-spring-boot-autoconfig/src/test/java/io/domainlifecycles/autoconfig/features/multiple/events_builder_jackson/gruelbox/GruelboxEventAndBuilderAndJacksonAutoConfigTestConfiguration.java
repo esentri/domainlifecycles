@@ -26,13 +26,11 @@
 
 package io.domainlifecycles.autoconfig.features.multiple.events_builder_jackson.gruelbox;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gruelbox.transactionoutbox.DefaultPersistor;
 import com.gruelbox.transactionoutbox.Dialect;
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import com.gruelbox.transactionoutbox.TransactionOutboxEntry;
 import com.gruelbox.transactionoutbox.TransactionOutboxListener;
-import com.gruelbox.transactionoutbox.jackson.JacksonInvocationSerializer;
 import com.gruelbox.transactionoutbox.spring.SpringInstantiator;
 import com.gruelbox.transactionoutbox.spring.SpringTransactionManager;
 import io.domainlifecycles.events.gruelbox.serialize.DlcJacksonInvocationSerializer;

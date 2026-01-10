@@ -26,7 +26,6 @@
 
 package io.domainlifecycles.events.jakartajmsspringtx;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.access.classes.DefaultClassProvider;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;

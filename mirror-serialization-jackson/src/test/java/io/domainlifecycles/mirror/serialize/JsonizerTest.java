@@ -8,10 +8,11 @@ import io.domainlifecycles.mirror.model.MethodModel;
 import io.domainlifecycles.mirror.model.ProvidedDomain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.mirror.resolver.TypeMetaResolver;
-import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.Objects;
 
 
 @Slf4j

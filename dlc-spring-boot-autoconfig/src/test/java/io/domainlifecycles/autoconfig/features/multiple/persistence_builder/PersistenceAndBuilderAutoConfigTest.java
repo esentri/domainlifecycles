@@ -15,7 +15,6 @@ import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.services.api.ServiceProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
-import java.util.Optional;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +23,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import tests.shared.events.PersistenceEvent;
 import tests.shared.persistence.PersistenceEventTestHelper;
+
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = TestApplicationPersistenceAndBuilderAutoConfig.class)

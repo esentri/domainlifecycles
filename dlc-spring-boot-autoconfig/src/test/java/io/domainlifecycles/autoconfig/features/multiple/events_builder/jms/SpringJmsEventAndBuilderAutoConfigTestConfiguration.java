@@ -39,13 +39,14 @@ import io.domainlifecycles.events.serialize.DomainEventSerializer;
 import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.services.api.ServiceProvider;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.jms.annotation.EnableJms;
+
+import java.util.List;
 
 @Configuration
 @Slf4j

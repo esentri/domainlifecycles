@@ -28,8 +28,6 @@ package io.domainlifecycles.autoconfig.features.single.events.gruelbox;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
 import io.domainlifecycles.autoconfig.configurations.DlcBuilderAutoConfiguration;
-import io.domainlifecycles.autoconfig.configurations.DlcDomainEventsAutoConfiguration;
-import io.domainlifecycles.autoconfig.configurations.DlcGruelboxDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration;
@@ -38,10 +36,11 @@ import io.domainlifecycles.autoconfig.model.events.AQueryHandler;
 import io.domainlifecycles.autoconfig.model.events.ARepository;
 import io.domainlifecycles.autoconfig.model.events.AnApplicationService;
 import io.domainlifecycles.autoconfig.model.events.AnOutboundService;
-import java.util.Locale;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
+
+import java.util.Locale;
 
 @SpringBootApplication
 @EnableDlc(

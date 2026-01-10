@@ -1,6 +1,5 @@
 package io.domainlifecycles.jackson3;
 
-import tools.jackson.databind.ObjectMapper;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
@@ -13,9 +12,10 @@ import org.slf4j.Logger;
 import tests.shared.TestDataGenerator;
 import tests.shared.persistence.domain.multilevelvo.VoAggregateThreeLevel;
 import tests.shared.persistence.domain.multilevelvo.VoAggregateThreeLevelId;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.UUID;
-import tools.jackson.databind.json.JsonMapper;
 
 
 /**

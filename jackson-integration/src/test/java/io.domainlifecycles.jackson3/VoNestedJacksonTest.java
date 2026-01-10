@@ -1,6 +1,5 @@
 package io.domainlifecycles.jackson3;
 
-import tools.jackson.databind.ObjectMapper;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
@@ -15,6 +14,7 @@ import tests.shared.persistence.domain.valueobjectsNested.NestedEnumSingleValued
 import tests.shared.persistence.domain.valueobjectsNested.NestedId;
 import tests.shared.persistence.domain.valueobjectsNested.NestedSimpleVo;
 import tests.shared.persistence.domain.valueobjectsNested.VoAggregateNested;
+import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
 public class VoNestedJacksonTest {

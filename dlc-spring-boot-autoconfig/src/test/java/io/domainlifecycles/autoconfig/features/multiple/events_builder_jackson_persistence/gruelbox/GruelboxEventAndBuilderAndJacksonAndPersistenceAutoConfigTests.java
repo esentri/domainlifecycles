@@ -13,8 +13,6 @@ import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
-import java.time.Duration;
-import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
@@ -29,6 +27,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 import tests.shared.events.PersistenceEvent;
 import tests.shared.persistence.PersistenceEventTestHelper;
 import tools.jackson.databind.ObjectMapper;
+
+import java.time.Duration;
+import java.util.Optional;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;

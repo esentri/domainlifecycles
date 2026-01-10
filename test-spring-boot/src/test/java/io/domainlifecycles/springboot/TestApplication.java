@@ -12,7 +12,7 @@ import java.util.Locale;
 @SpringBootApplication
 @EnableDlc(
     dlcDomainBasePackages =
-        "io.domainlifecycles.springboot3," +
+        "io.domainlifecycles.springboot," +
             "tests.shared.openapi," +
             "tests.shared.jackson," +
             "tests.shared.converter," +

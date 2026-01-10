@@ -1,7 +1,5 @@
 package io.domainlifecycles.jackson3;
 
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.ObjectMapper;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
@@ -40,6 +38,9 @@ import tests.shared.persistence.domain.valueobjects.ComplexVo;
 import tests.shared.persistence.domain.valueobjects.SimpleVo;
 import tests.shared.persistence.domain.valueobjects.SimpleVoOneToMany2;
 import tests.shared.persistence.domain.valueobjects.SimpleVoOneToMany3;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -66,8 +67,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-
-import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

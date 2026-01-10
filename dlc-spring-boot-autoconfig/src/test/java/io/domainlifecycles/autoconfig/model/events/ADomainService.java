@@ -3,9 +3,10 @@ package io.domainlifecycles.autoconfig.model.events;
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.ListensTo;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ADomainService implements DomainService {

@@ -29,7 +29,6 @@ package io.domainlifecycles.events.gruelbox.serialize;
 import com.gruelbox.transactionoutbox.Invocation;
 import com.gruelbox.transactionoutbox.InvocationSerializer;
 import tools.jackson.core.JacksonException;
-
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;

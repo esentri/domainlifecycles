@@ -3,6 +3,7 @@ package io.domainlifecycles.autoconfig.model.events;
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.domain.types.ListensTo;
 import io.domainlifecycles.domain.types.QueryHandler;
+
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 

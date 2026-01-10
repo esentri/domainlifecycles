@@ -34,7 +34,6 @@ import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedSimpleVo
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedSimpleVoOneToMany3;
 import tools.jackson.core.ObjectReadContext;
 import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 
 import java.lang.reflect.Field;

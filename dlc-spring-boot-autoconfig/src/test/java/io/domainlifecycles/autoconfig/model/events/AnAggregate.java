@@ -4,6 +4,7 @@ import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.domain.types.ListensTo;
 import io.domainlifecycles.domain.types.base.AggregateRootBase;
+
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 

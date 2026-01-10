@@ -1,19 +1,18 @@
 package io.dommainlifecycles.events.gruelbox;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-
 import com.gruelbox.transactionoutbox.Invocation;
 import com.gruelbox.transactionoutbox.TransactionOutboxEntry;
+import io.domainlifecycles.events.gruelbox.serialize.TransactionOutboxJacksonModule;
+import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
-import io.domainlifecycles.events.gruelbox.serialize.TransactionOutboxJacksonModule;
-import org.junit.jupiter.api.Test;
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.json.JsonMapper;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestTransactionOutboxEntrySerialization {
 

@@ -27,9 +27,10 @@
 package io.domainlifecycles.autoconfig.features.single.domain.missing.basepackage;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
-import java.util.Locale;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+
+import java.util.Locale;
 
 @SpringBootApplication
 @EnableDlc(jooqSqlDialect = "H2")

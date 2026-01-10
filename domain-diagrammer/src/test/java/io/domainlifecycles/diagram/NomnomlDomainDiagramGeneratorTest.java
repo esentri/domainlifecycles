@@ -5,7 +5,6 @@ import io.domainlifecycles.diagram.domain.DomainDiagramGenerator;
 import io.domainlifecycles.diagram.domain.config.DiagramTrimSettings;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.diagram.domain.config.GeneralVisualSettings;
-import io.domainlifecycles.diagram.domain.notes.DomainClassNote;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.mirror.resolver.TypeMetaResolver;
