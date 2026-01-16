@@ -42,9 +42,8 @@ import io.domainlifecycles.events.gruelbox.api.GruelboxProcessingChannel;
 import io.domainlifecycles.events.gruelbox.serialize.DlcJacksonInvocationSerializer;
 import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
-import java.util.List;
-
 import io.domainlifecycles.services.api.ServiceProvider;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

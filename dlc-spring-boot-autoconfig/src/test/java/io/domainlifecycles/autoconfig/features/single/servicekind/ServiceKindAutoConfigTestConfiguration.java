@@ -27,20 +27,10 @@
 package io.domainlifecycles.autoconfig.features.single.servicekind;
 
 import io.domainlifecycles.autoconfig.configurations.properties.DlcJooqPersistenceProperties;
-import io.domainlifecycles.autoconfig.exception.DLCAutoConfigException;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
-import io.domainlifecycles.jooq.configuration.JooqDomainPersistenceConfiguration;
-import io.domainlifecycles.jooq.configuration.def.JooqRecordClassProvider;
-import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
-import io.domainlifecycles.mirror.api.DomainMirror;
-import io.domainlifecycles.persistence.mapping.RecordMapper;
-import io.domainlifecycles.persistence.provider.DomainPersistenceProvider;
 import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
-import java.util.Set;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

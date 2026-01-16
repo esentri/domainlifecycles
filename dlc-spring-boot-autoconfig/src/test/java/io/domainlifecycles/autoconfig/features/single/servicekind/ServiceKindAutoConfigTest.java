@@ -1,18 +1,12 @@
 package io.domainlifecycles.autoconfig.features.single.servicekind;
 
 import io.domainlifecycles.access.classes.ClassProvider;
-import io.domainlifecycles.autoconfig.model.persistence.TestRootSimple;
-import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
-import io.domainlifecycles.builder.DomainObjectBuilderProvider;
-import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.jackson.module.DlcJacksonModule;
-import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
-import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.services.api.ServiceProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;

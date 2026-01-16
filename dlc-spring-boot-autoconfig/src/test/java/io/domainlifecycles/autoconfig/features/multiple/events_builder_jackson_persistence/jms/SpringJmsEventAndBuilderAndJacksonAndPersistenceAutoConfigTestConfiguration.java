@@ -34,7 +34,6 @@ import io.domainlifecycles.events.consume.execution.handler.TransactionalHandler
 import io.domainlifecycles.events.jakarta.jms.api.JakartaJmsChannelFactory;
 import io.domainlifecycles.events.mq.api.MqProcessingChannel;
 import io.domainlifecycles.events.serialize.DomainEventSerializer;
-import io.domainlifecycles.events.serialize.jackson3.Jackson3DomainEventSerializer;
 import io.domainlifecycles.services.api.ServiceProvider;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;

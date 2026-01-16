@@ -41,7 +41,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tests.shared.events.PersistenceEvent;
 import tests.shared.persistence.PersistenceEventTestHelper;
 import tools.jackson.databind.ObjectMapper;
-
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
