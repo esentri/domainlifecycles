@@ -27,6 +27,7 @@
 package io.domainlifecycles.autoconfig.features.single.persistence.config.property;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
+import io.domainlifecycles.autoconfig.configurations.DlcServiceKindAutoConfiguration;
 import java.util.Locale;
 
 import io.domainlifecycles.autoconfig.configurations.DlcBuilderAutoConfiguration;
@@ -46,7 +47,8 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
     DlcGruelboxDomainEventsAutoConfiguration.class,
     DlcDomainEventsAutoConfiguration.class,
     DlcSpringOpenApiAutoConfiguration.class,
-    DlcSpringWebAutoConfiguration.class
+    DlcSpringWebAutoConfiguration.class,
+    DlcServiceKindAutoConfiguration.class
 })
 public class TestApplicationPersistencePropertyValuesAutoConfig {
 

@@ -24,19 +24,18 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.autoconfig.features.single.openapi;
+package io.domainlifecycles.autoconfig.features.single.servicekind;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
-import io.domainlifecycles.autoconfig.configurations.DlcServiceKindAutoConfiguration;
-import java.util.Locale;
-
 import io.domainlifecycles.autoconfig.configurations.DlcBuilderAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcGruelboxDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJacksonAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcServiceKindAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration;
+import java.util.Locale;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
@@ -44,19 +43,18 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 @EnableDlc(exclude = {
     DlcBuilderAutoConfiguration.class,
     DlcSpringWebAutoConfiguration.class,
+    DlcSpringOpenApiAutoConfiguration.class,
     DlcJacksonAutoConfiguration.class,
     DlcDomainEventsAutoConfiguration.class,
     DlcGruelboxDomainEventsAutoConfiguration.class,
-    DlcJooqPersistenceAutoConfiguration.class,
-    DlcServiceKindAutoConfiguration.class
 })
-public class TestApplicationOpenApiSingleAutoConfig {
+public class TestApplicationServiceKindSingleAutoConfig {
 
     /**
      * Setting the Locale to explicitly force the language in default validation error messages.
      */
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH);
-        new SpringApplicationBuilder(TestApplicationOpenApiSingleAutoConfig.class).run(args);
+        new SpringApplicationBuilder(TestApplicationServiceKindSingleAutoConfig.class).run(args);
     }
 }

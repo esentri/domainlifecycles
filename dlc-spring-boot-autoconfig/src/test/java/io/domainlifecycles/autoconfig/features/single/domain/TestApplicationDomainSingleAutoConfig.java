@@ -27,6 +27,7 @@
 package io.domainlifecycles.autoconfig.features.single.domain;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
+import io.domainlifecycles.autoconfig.configurations.DlcServiceKindAutoConfiguration;
 import java.util.Locale;
 
 import io.domainlifecycles.autoconfig.configurations.DlcBuilderAutoConfiguration;
@@ -48,8 +49,9 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
     DlcJacksonAutoConfiguration.class,
     DlcDomainEventsAutoConfiguration.class,
     DlcGruelboxDomainEventsAutoConfiguration.class,
-    DlcJooqPersistenceAutoConfiguration.class
-},dlcDomainBasePackages = "io.domainlifcycles.autoconfig.model"
+    DlcJooqPersistenceAutoConfiguration.class,
+    DlcServiceKindAutoConfiguration.class
+} ,dlcDomainBasePackages = "io.domainlifcycles.autoconfig.model"
 )
 public class TestApplicationDomainSingleAutoConfig {
 

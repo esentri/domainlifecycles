@@ -5,6 +5,7 @@ import io.domainlifecycles.autoconfig.features.single.persistence.PersistenceAut
 import io.domainlifecycles.autoconfig.features.single.persistence.SimpleAggregateRootRepository;
 import io.domainlifecycles.autoconfig.model.persistence.TestRootSimple;
 import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
@@ -15,6 +16,7 @@ import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.services.api.ServiceProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
+import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
@@ -68,6 +70,9 @@ public class PersistenceAutoConfigPropertyValuesTest {
     @Autowired(required = false)
     ResponseEntityBuilder responseEntityBuilder;
 
+    @Autowired(required = false)
+    List<ServiceKind> allServiceKinds;
+
     @Test
     @Transactional
     public void testInsertSimpleEntity() {
@@ -106,5 +111,6 @@ public class PersistenceAutoConfigPropertyValuesTest {
         assertThat(dlcJacksonModule).isNull();
         assertThat(dlcOpenApiCustomizer).isNull();
         assertThat(responseEntityBuilder).isNull();
+        assertThat(allServiceKinds).isNull();
     }
 }

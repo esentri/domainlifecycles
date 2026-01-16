@@ -1,0 +1,86 @@
+/*
+ *     ___
+ *     │   ╲                 _
+ *     │    ╲ ___ _ __  __ _(_)_ _
+ *     |     ╲ _ ╲ '  ╲╱ _` │ │ ' ╲
+ *     |_____╱___╱_│_│_╲__,_│_│_||_|
+ *     │ │  (_)╱ _│___ __ _  _ __│ |___ ___
+ *     │ │__│ │  _╱ -_) _│ ││ ╱ _│ ╱ -_|_-<
+ *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
+ *                      |__╱
+ *
+ *  Copyright 2019-2024 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+package io.domainlifecycles.autoconfig.features.multiple.events_builder_jackson_persistence_servicekind.jms;
+
+import io.domainlifecycles.access.classes.ClassProvider;
+import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
+import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
+import io.domainlifecycles.events.api.PublishingChannel;
+import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
+import io.domainlifecycles.events.jakarta.jms.api.JakartaJmsChannelFactory;
+import io.domainlifecycles.events.mq.api.MqProcessingChannel;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
+import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
+import io.domainlifecycles.services.api.ServiceProvider;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jms.annotation.EnableJms;
+import tests.shared.persistence.PersistenceEventTestHelper;
+
+@Configuration
+@Slf4j
+@EnableJms
+public class SpringJmsEventAndBuilderAndJacksonAndPersistenceAndServiceKindAutoConfigTestConfiguration {
+
+    @Bean
+    public JakartaJmsChannelFactory jakartaJmsChannelFactory(
+        ServiceProvider serviceProvider,
+        ClassProvider classProvider,
+        TransactionalHandlerExecutor transactionalHandlerExecutor,
+        ActiveMQConnectionFactory jmsConnectionFactory,
+        DomainEventSerializer domainEventSerializer
+    ){
+        return new JakartaJmsChannelFactory(
+            jmsConnectionFactory,
+            serviceProvider,
+            classProvider,
+            transactionalHandlerExecutor,
+            domainEventSerializer
+            );
+    }
+
+    @Bean(destroyMethod = "close")
+    public MqProcessingChannel channel(JakartaJmsChannelFactory factory){
+        return factory.processingChannel("jms1");
+    }
+
+    @Bean
+    public ChannelRoutingConfiguration channelConfiguration(List<PublishingChannel> publishingChannels){
+        var router = new DomainEventTypeBasedRouter(publishingChannels);
+        router.defineDefaultChannel("jms1");
+        return new ChannelRoutingConfiguration(router);
+    }
+
+    @Bean
+    PersistenceEventPublisher persistenceEventPublisher() {
+        PersistenceEventTestHelper testHelper = new PersistenceEventTestHelper();
+        return testHelper.testEventPublisher;
+    }
+}

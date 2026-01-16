@@ -32,6 +32,7 @@ import io.domainlifecycles.autoconfig.configurations.DlcDomainEventsAutoConfigur
 import io.domainlifecycles.autoconfig.configurations.DlcGruelboxDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJacksonAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcServiceKindAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration;
 import io.domainlifecycles.autoconfig.model.events.ADomainService;
@@ -50,6 +51,7 @@ import org.springframework.context.annotation.Bean;
     DlcJooqPersistenceAutoConfiguration.class,
     DlcSpringOpenApiAutoConfiguration.class,
     DlcGruelboxDomainEventsAutoConfiguration.class,
+    DlcServiceKindAutoConfiguration.class
 })
 public class TestApplicationSpringEventAndBuilderAndJacksonAutoConfig {
 

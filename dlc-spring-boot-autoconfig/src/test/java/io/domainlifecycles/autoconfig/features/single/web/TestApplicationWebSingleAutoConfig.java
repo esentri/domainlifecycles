@@ -27,6 +27,7 @@
 package io.domainlifecycles.autoconfig.features.single.web;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
+import io.domainlifecycles.autoconfig.configurations.DlcServiceKindAutoConfiguration;
 import java.util.Locale;
 
 import io.domainlifecycles.autoconfig.configurations.DlcBuilderAutoConfiguration;
@@ -46,7 +47,8 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
     DlcJacksonAutoConfiguration.class,
     DlcDomainEventsAutoConfiguration.class,
     DlcGruelboxDomainEventsAutoConfiguration.class,
-    DlcJooqPersistenceAutoConfiguration.class
+    DlcJooqPersistenceAutoConfiguration.class,
+    DlcServiceKindAutoConfiguration.class
 })
 public class TestApplicationWebSingleAutoConfig {
 

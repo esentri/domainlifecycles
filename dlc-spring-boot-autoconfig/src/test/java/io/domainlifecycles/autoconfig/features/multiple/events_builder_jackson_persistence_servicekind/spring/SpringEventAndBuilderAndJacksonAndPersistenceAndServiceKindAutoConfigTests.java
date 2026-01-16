@@ -1,6 +1,7 @@
-package io.domainlifecycles.autoconfig.features.multiple.events_builder.spring;
+package io.domainlifecycles.autoconfig.features.multiple.events_builder_jackson_persistence_servicekind.spring;
 
 
+import io.domainlifecycles.autoconfig.features.single.persistence.SimpleAggregateRootRepository;
 import io.domainlifecycles.autoconfig.model.events.ADomainEvent;
 import io.domainlifecycles.autoconfig.model.events.ADomainService;
 import io.domainlifecycles.autoconfig.model.events.AQueryHandler;
@@ -11,28 +12,40 @@ import io.domainlifecycles.autoconfig.model.persistence.TestRootSimple;
 import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
-import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.api.DomainEvents;
+import io.domainlifecycles.jackson.module.DlcJacksonModule;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
-import java.util.List;
+import java.util.Optional;
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
+import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import tests.shared.events.PersistenceEvent;
+import tests.shared.persistence.PersistenceEventTestHelper;
+import tools.jackson.databind.ObjectMapper;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-@SpringBootTest(classes = TestApplicationSpringEventAndBuilderAutoConfiguration.class)
-@ActiveProfiles({"test", "test-dlc-domain"})
-public class SpringEventAndBuilderAndJacksonAutoConfigTests {
+@SpringBootTest(classes = TestApplicationSpringEventAndBuilderAndJacksonAndPersistenceAndServiceKindAutoConfig.class)
+@ActiveProfiles({"test", "test-dlc-domain", "test-dlc-persistence"})
+public class SpringEventAndBuilderAndJacksonAndPersistenceAndServiceKindAutoConfigTests {
+
+    @Autowired
+    private DSLContext dslContext;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     private PlatformTransactionManager platformTransactionManager;
@@ -55,10 +68,13 @@ public class SpringEventAndBuilderAndJacksonAutoConfigTests {
     @Autowired
     private DomainObjectBuilderProvider domainObjectBuilderProvider;
 
-    @Autowired(required = false)
+    @Autowired
+    private DlcJacksonModule dlcJacksonModule;
+
+    @Autowired
     private JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
 
-    @Autowired(required = false)
+    @Autowired
     private EntityIdentityProvider entityIdentityProvider;
 
     @Autowired(required = false)
@@ -94,6 +110,42 @@ public class SpringEventAndBuilderAndJacksonAutoConfigTests {
     }
 
     @Test
+    public void testTestRootSimpleJacksonMapping() {
+        TestRootSimple testRootSimple = TestRootSimple.builder().setId(new TestRootSimpleId(1L)).setName("TEST").build();
+        String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(testRootSimple);
+
+        TestRootSimple mappedTestRootSimple = objectMapper.readValue(json, TestRootSimple.class);
+        Assertions.assertThat(mappedTestRootSimple).isEqualTo(testRootSimple);
+    }
+
+    @Test
+    @Transactional
+    public void testInsertSimpleEntity() {
+
+        //given
+        PersistenceEventTestHelper persistenceEventTestHelper = new PersistenceEventTestHelper();
+        SimpleAggregateRootRepository simpleAggregateRootRepository = new SimpleAggregateRootRepository(
+            dslContext, persistenceEventTestHelper.testEventPublisher, jooqDomainPersistenceProvider
+        );
+
+        TestRootSimple trs = TestRootSimple.builder()
+            .setId(new TestRootSimpleId(1L))
+            .setName("TestRoot")
+            .build();
+        persistenceEventTestHelper.resetEventsCaught();
+
+        //when
+        TestRootSimple inserted = simpleAggregateRootRepository.insert(trs);
+
+        //then
+        Optional<TestRootSimple> found = simpleAggregateRootRepository
+            .findResultById(new TestRootSimpleId(1L)).resultValue();
+        persistenceEventTestHelper.assertFoundWithResult(found, inserted);
+        persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.INSERTED, inserted);
+        persistenceEventTestHelper.assertEvents();
+    }
+
+    @Test
     public void testBuild() {
         var aggregateRootTestBuilder = TestRootSimple.builder().setId(new TestRootSimpleId(5L)).setName("Test-Name");
         var innerBuilder = new InnerClassDomainObjectBuilder<>(aggregateRootTestBuilder);
@@ -107,9 +159,12 @@ public class SpringEventAndBuilderAndJacksonAutoConfigTests {
     }
 
     @Test
+    public void testDlcJacksonModuleIsPresent() {
+        assertThat(dlcJacksonModule).isNotNull();
+    }
+
+    @Test
     void testNoOtherBeansPresent() {
-        assertThat(jooqDomainPersistenceProvider).isNull();
-        assertThat(entityIdentityProvider).isNull();
         assertThat(dlcOpenApiCustomizer).isNull();
         assertThat(responseEntityBuilder).isNull();
     }

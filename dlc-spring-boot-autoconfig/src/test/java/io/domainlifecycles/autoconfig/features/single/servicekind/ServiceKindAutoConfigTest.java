@@ -1,7 +1,10 @@
-package io.domainlifecycles.autoconfig.features.single.openapi;
+package io.domainlifecycles.autoconfig.features.single.servicekind;
 
 import io.domainlifecycles.access.classes.ClassProvider;
+import io.domainlifecycles.autoconfig.model.persistence.TestRootSimple;
+import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
+import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
@@ -14,35 +17,20 @@ import io.domainlifecycles.services.api.ServiceProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
 import java.util.List;
-import java.util.Locale;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = TestApplicationOpenApiSingleAutoConfig.class
-)
-@ActiveProfiles({"test", "test-dlc-domain"})
-@AutoConfigureMockMvc
-public class OpenApiAutoConfigTests {
-
-    private static final String API_DOCS_PATH = "/v3/api-docs";
+@SpringBootTest(classes= TestApplicationServiceKindSingleAutoConfig.class)
+@ActiveProfiles({"test", "test-dlc-domain", "test-dlc-persistence"})
+@Import(ServiceKindAutoConfigTestConfiguration.class)
+public class ServiceKindAutoConfigTest {
 
     @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    DlcOpenApiCustomizer dlcOpenApiCustomizer;
-
-    @Autowired(required = false)
-    DomainObjectBuilderProvider domainObjectBuilderProvider;
+    List<ServiceKind> allServiceKinds;
 
     @Autowired(required = false)
     ServiceProvider serviceProvider;
@@ -66,30 +54,18 @@ public class OpenApiAutoConfigTests {
     DlcJacksonModule dlcJacksonModule;
 
     @Autowired(required = false)
-    JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
-
-    @Autowired(required = false)
-    EntityIdentityProvider entityIdentityProvider;
+    DlcOpenApiCustomizer dlcOpenApiCustomizer;
 
     @Autowired(required = false)
     ResponseEntityBuilder responseEntityBuilder;
 
-    @Autowired(required = false)
-    List<ServiceKind> allServiceKinds;
-
     @Test
-    public void testOpenApiSimple() throws Exception {
-        Locale.setDefault(Locale.ENGLISH);
-
-        mockMvc
-            .perform(MockMvcRequestBuilders.get(API_DOCS_PATH).locale(Locale.ENGLISH))
-            .andExpect(status().isOk())
-            .andReturn();
+    public void testServiceKindsPresent() {
+        assertThat(allServiceKinds).hasSize(6);
     }
 
     @Test
     void testNoOtherBeansPresent() {
-        assertThat(domainObjectBuilderProvider).isNull();
         assertThat(serviceProvider).isNull();
         assertThat(transactionalHandlerExecutor).isNull();
         assertThat(classProvider).isNull();
@@ -97,11 +73,7 @@ public class OpenApiAutoConfigTests {
         assertThat(routingConfiguration).isNull();
         assertThat(publishingChannel).isNull();
         assertThat(dlcJacksonModule).isNull();
-        assertThat(jooqDomainPersistenceProvider).isNull();
-        assertThat(entityIdentityProvider).isNull();
+        assertThat(dlcOpenApiCustomizer).isNull();
         assertThat(responseEntityBuilder).isNull();
-        assertThat(allServiceKinds).isNull();
     }
 }
-
-

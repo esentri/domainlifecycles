@@ -24,39 +24,36 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.autoconfig.features.single.openapi;
+package io.domainlifecycles.autoconfig.features.multiple.events_builder_jackson_persistence_servicekind.jms;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
-import io.domainlifecycles.autoconfig.configurations.DlcServiceKindAutoConfiguration;
-import java.util.Locale;
-
-import io.domainlifecycles.autoconfig.configurations.DlcBuilderAutoConfiguration;
-import io.domainlifecycles.autoconfig.configurations.DlcDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcGruelboxDomainEventsAutoConfiguration;
-import io.domainlifecycles.autoconfig.configurations.DlcJacksonAutoConfiguration;
-import io.domainlifecycles.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcServiceKindAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration;
+import io.domainlifecycles.autoconfig.model.events.ADomainService;
+import io.domainlifecycles.autoconfig.model.events.AQueryHandler;
+import io.domainlifecycles.autoconfig.model.events.ARepository;
+import io.domainlifecycles.autoconfig.model.events.AnApplicationService;
+import io.domainlifecycles.autoconfig.model.events.AnOutboundService;
+import java.util.Locale;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableDlc(exclude = {
-    DlcBuilderAutoConfiguration.class,
     DlcSpringWebAutoConfiguration.class,
-    DlcJacksonAutoConfiguration.class,
-    DlcDomainEventsAutoConfiguration.class,
-    DlcGruelboxDomainEventsAutoConfiguration.class,
-    DlcJooqPersistenceAutoConfiguration.class,
-    DlcServiceKindAutoConfiguration.class
+    DlcSpringOpenApiAutoConfiguration.class,
+    DlcGruelboxDomainEventsAutoConfiguration.class
 })
-public class TestApplicationOpenApiSingleAutoConfig {
+public class TestApplicationSpringJmsEventAndBuilderAndJacksonAndPersistenceAutoConfiguration {
 
     /**
      * Setting the Locale to explicitly force the language in default validation error messages.
      */
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH);
-        new SpringApplicationBuilder(TestApplicationOpenApiSingleAutoConfig.class).run(args);
+        new SpringApplicationBuilder(TestApplicationSpringJmsEventAndBuilderAndJacksonAndPersistenceAutoConfiguration.class).run(args);
     }
 }

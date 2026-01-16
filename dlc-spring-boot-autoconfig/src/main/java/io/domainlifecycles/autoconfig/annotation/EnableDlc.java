@@ -31,6 +31,7 @@ import io.domainlifecycles.autoconfig.configurations.DlcDomainAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcGruelboxDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJacksonAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcServiceKindAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.properties.DomainConfigImportSelector;
@@ -100,6 +101,7 @@ public @interface EnableDlc {
         DlcGruelboxDomainEventsAutoConfiguration.class,
         DlcSpringWebAutoConfiguration.class,
         DlcSpringOpenApiAutoConfiguration.class,
+        DlcServiceKindAutoConfiguration.class
     };
 
     // exclude: disable specific auto-configs

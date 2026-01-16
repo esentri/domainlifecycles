@@ -49,11 +49,14 @@ dependencies {
     api libs.jackson3.databind
 
     compileOnly libs.jooq.codegen
-	jooqCodegen libs.jooq.meta
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
+    jooqCodegen libs.jooq.meta
 
     testImplementation platform(libs.spring.boot.dependencies)
     testImplementation libs.h2
 	testImplementation project(":test-shared-impl")
+    testImplementation project(":test-spring-boot")
     testImplementation project(":types")
     testImplementation project(":builder")
     testImplementation project(":types")
