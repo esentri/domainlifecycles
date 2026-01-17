@@ -1,0 +1,47 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'checkstyle'
+    id 'jacoco'
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+dependencies {
+    api libs.jackson2.core
+    api libs.jackson2.databind
+    api project(":types")
+    implementation project(":mirror")
+    implementation project(":access")
+    api project(":builder")
+    api project(":persistence")
+    api project(":assertions")
+
+
+    testImplementation project(":reflect")
+    testImplementation project(":type-utils")
+    testImplementation project(":test-shared-impl")
+    testImplementation libs.slf4j.api
+    testImplementation libs.lombok
+    testAnnotationProcessor libs.lombok
+    testImplementation libs.assertj
+    testImplementation libs.logback.classic
+    testImplementation libs.jackson2.datatype.jdk8
+    testImplementation libs.jackson2.datatype.jsr310
+    testImplementation libs.jackson2.module.parameter.names
+
+}
+
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport

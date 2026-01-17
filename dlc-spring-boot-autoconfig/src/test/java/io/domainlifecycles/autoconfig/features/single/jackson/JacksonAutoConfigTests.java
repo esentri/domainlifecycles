@@ -8,7 +8,7 @@ import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
-import io.domainlifecycles.jackson.module.DlcJacksonModule;
+import io.domainlifecycles.jackson3.module.DlcJacksonModule;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.services.api.ServiceProvider;

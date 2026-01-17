@@ -28,7 +28,7 @@ package io.domainlifecycles.plugins.json;
 
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.serialize.DomainSerializer;
-import io.domainlifecycles.mirror.serialize.Jackson3DomainSerializer;
+import io.domainlifecycles.mirror.serialize.jackson3.JacksonDomainSerializer;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
 import io.domainlifecycles.plugins.util.DLCUtils;
 import org.slf4j.Logger;
@@ -65,7 +65,7 @@ public class JsonSerializerImpl implements JsonSerializer {
      *                    in a human-readable way with indentation (true) or minified (false).
      */
     public JsonSerializerImpl(boolean prettyPrint) {
-        this.domainSerializer = new Jackson3DomainSerializer(prettyPrint);
+        this.domainSerializer = new JacksonDomainSerializer(prettyPrint);
     }
 
     /**

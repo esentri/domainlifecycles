@@ -13,7 +13,7 @@ import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.events.api.DomainEvents;
-import io.domainlifecycles.jackson.module.DlcJacksonModule;
+import io.domainlifecycles.jackson3.module.DlcJacksonModule;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;

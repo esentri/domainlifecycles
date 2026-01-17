@@ -166,7 +166,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### jackson-integration
 
 - Integrated new mirror from dlc-mirror (removed old mirror interface from DlcJacksonModule)
-- io.domainlifecycles.jackson.api.JacksonMappingCustomizer interface changed due to new mirror integration
+- io.domainlifecycles.jackson3.api.JacksonMappingCustomizer interface changed due to new mirror integration
 - Integrated access module
 
 #### jooq-integration

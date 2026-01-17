@@ -36,8 +36,8 @@ import io.domainlifecycles.events.consume.execution.handler.ReflectiveHandlerExe
 import io.domainlifecycles.events.jakarta.jms.api.JakartaJmsChannelFactory;
 import io.domainlifecycles.events.mq.api.MqProcessingChannel;
 import io.domainlifecycles.events.serialize.DomainEventSerializer;
-import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
-import io.domainlifecycles.jackson.module.DlcJacksonModule;
+import io.domainlifecycles.jackson3.api.JacksonMappingCustomizer;
+import io.domainlifecycles.jackson3.module.DlcJacksonModule;
 import io.domainlifecycles.services.api.ServiceProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;

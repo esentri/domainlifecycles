@@ -40,6 +40,7 @@ gruelbox-version = '6.1.653'
 jakarta-jms-api-version = '3.1.0'
 jakarta-transaction-api-version = '2.0.1'
 jackson-3-version = '3.0.3'
+jackson-2-version = '2.20.1'
 jakarta-validation-api-version = '3.1.1'
 jooq-version = '3.19.29'
 slf4j-version = '2.0.17'
@@ -108,6 +109,11 @@ h2 = { module = "com.h2database:h2", version.ref = "h2-version"}
 hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", version.ref = "hibernate-validator-jakarta-version" }
 jackson3-core = { module = "tools.jackson.core:jackson-core", version.ref = "jackson-3-version" }
 jackson3-databind = { module = "tools.jackson.core:jackson-databind", version.ref = "jackson-3-version" }
+jackson2-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson-2-version" }
+jackson2-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson-2-version" }
+jackson2-datatype-jdk8 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8", version.ref = "jackson-2-version" }
+jackson2-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson-2-version" }
+jackson2-module-parameter-names = { module = "com.fasterxml.jackson.module:jackson-module-parameter-names", version.ref = "jackson-2-version" }
 jakarta-el-api = { module = "jakarta.el:jakarta.el-api", version.ref = "jakarta-el-version" }
 jakarta-jms-api = { module = "jakarta.jms:jakarta.jms-api", version.ref = "jakarta-jms-api-version" }
 jakarta-transaction-api = { module = "jakarta.transaction:jakarta.transaction-api", version.ref = "jakarta-transaction-api-version"}

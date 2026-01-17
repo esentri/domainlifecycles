@@ -28,8 +28,8 @@ package io.domainlifecycles.autoconfig.configurations;
 
 
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
-import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
-import io.domainlifecycles.jackson.module.DlcJacksonModule;
+import io.domainlifecycles.jackson3.api.JacksonMappingCustomizer;
+import io.domainlifecycles.jackson3.module.DlcJacksonModule;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;

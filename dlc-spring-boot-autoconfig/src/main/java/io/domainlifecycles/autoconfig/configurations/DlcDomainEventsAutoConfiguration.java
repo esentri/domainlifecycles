@@ -38,7 +38,7 @@ import io.domainlifecycles.events.api.PublishingRouter;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.events.inmemory.InMemoryChannelFactory;
 import io.domainlifecycles.events.serialize.DomainEventSerializer;
-import io.domainlifecycles.events.serialize.jackson3.Jackson3DomainEventSerializer;
+import io.domainlifecycles.events.serialize.jackson3.JacksonDomainEventSerializer;
 import io.domainlifecycles.events.spring.api.SpringTxInMemoryChannelFactory;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.mirror.api.DomainMirror;
@@ -77,13 +77,13 @@ public class DlcDomainEventsAutoConfiguration {
      * Creates a {@link DomainEventSerializer} bean for serializing and deserializing domain events.
      *
      * @param domainObjectBuilderProvider The provider for domain object builders, used to configure Jackson serialization.
-     * @return A new instance of {@link Jackson3DomainEventSerializer} configured with the provided domain object builder provider.
+     * @return A new instance of {@link JacksonDomainEventSerializer} configured with the provided domain object builder provider.
      */
     @Bean
     @ConditionalOnBean(DomainObjectBuilderProvider.class)
     @ConditionalOnClass(name="tools.jackson.databind.ObjectMapper")
     public DomainEventSerializer domainEventSerializer(DomainObjectBuilderProvider domainObjectBuilderProvider){
-        return new Jackson3DomainEventSerializer(domainObjectBuilderProvider);
+        return new JacksonDomainEventSerializer(domainObjectBuilderProvider);
     }
 
     /**

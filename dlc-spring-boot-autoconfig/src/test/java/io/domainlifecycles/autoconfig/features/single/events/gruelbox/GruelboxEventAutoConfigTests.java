@@ -4,7 +4,7 @@ import com.gruelbox.transactionoutbox.TransactionOutbox;
 import io.domainlifecycles.autoconfig.model.events.ADomainEvent;
 import io.domainlifecycles.autoconfig.model.events.AnApplicationService;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
-import io.domainlifecycles.jackson.module.DlcJacksonModule;
+import io.domainlifecycles.jackson3.module.DlcJacksonModule;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;

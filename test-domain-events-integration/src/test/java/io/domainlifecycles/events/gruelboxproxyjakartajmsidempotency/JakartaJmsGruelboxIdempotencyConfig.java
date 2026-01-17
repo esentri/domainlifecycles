@@ -56,7 +56,7 @@ import io.domainlifecycles.events.jakarta.jms.api.GruelboxProxyJakartaJmsChannel
 import io.domainlifecycles.events.mq.api.MqProcessingChannel;
 import io.domainlifecycles.events.mq.consume.SpringTransactionalIdempotencyAwareHandlerExecutorProxy;
 import io.domainlifecycles.events.serialize.DomainEventSerializer;
-import io.domainlifecycles.events.serialize.jackson3.Jackson3DomainEventSerializer;
+import io.domainlifecycles.events.serialize.jackson3.JacksonDomainEventSerializer;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
 import jakarta.jms.ConnectionFactory;
@@ -185,7 +185,7 @@ public class JakartaJmsGruelboxIdempotencyConfig {
 
     @Bean
     public DomainEventSerializer domainEventSerializer(DomainObjectBuilderProvider domainObjectBuilderProvider){
-        return new Jackson3DomainEventSerializer(domainObjectBuilderProvider);
+        return new JacksonDomainEventSerializer(domainObjectBuilderProvider);
     }
 
     @Bean

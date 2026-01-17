@@ -206,7 +206,7 @@ An example above described event processing is configured like that:
             .transactionManager(springTransactionManager)
             .blockAfterAttempts(3)
             .persistor(DefaultPersistor.builder()
-                           .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
+                           .serializer(new DlcJacksonInvocationSerializer(objectMapper))
                            .dialect(Dialect.H2)
                            .build())
             .build();
@@ -238,19 +238,24 @@ An example above described event processing is configured like that:
         return gruelboxChannelFactory.processingChannel("internal");
     }
 
+    @Bean
+    public DomainEventSerializer domainEventSerializer(ObjectMapper objectMapper) {
+        return new JacksonDomainEventSerializer(objectMapper);
+    }
+
     //This channel factory is used to create the external channel, routing event via JMS 
     // (using the Active MQ implementation of a Jakarta JMS compliant message broker )
     @Bean
     @DependsOn("domainModel") 
     //@DependsOn: Depending on the rest of the application config it's sometimes necessary to make sure the 
     //Domain mirror is initialized before
-    public SpringtransactionJakartaJmsChannelFactory springtransactionJakartaJmsChannelFactory(
+    public SpringTransactionJakartaJmsChannelFactory springTransactionJakartaJmsChannelFactory(
             ActiveMQConnectionFactory jmsConnectionFactory,
-            ObjectMapper objectMapper
+            DomainEventSerializer domainEventSerializer
     ){
-        return new SpringtransactionJakartaJmsChannelFactory(
+        return new SpringTransactionJakartaJmsChannelFactory(
                 jmsConnectionFactory,
-                objectMapper
+                domainEventSerializer
         );
     }
 
@@ -403,7 +408,7 @@ A Spring based example using Gruelbox as messaging infrastructure:
             .transactionManager(springTransactionManager)
             .blockAfterAttempts(3)
             .persistor(DefaultPersistor.builder()
-                           .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
+                           .serializer(new DlcJacksonInvocationSerializer(objectMapper))
                            .dialect(Dialect.H2)
                            .build())
             .build();
@@ -461,7 +466,7 @@ public class GruelboxIntegrationIdempotencyConfig {
             .transactionManager(springTransactionManager)
             .blockAfterAttempts(3)
             .persistor(DefaultPersistor.builder()
-                           .serializer(new DlcJacksonInvocationSerializer())
+                           .serializer(new DlcJacksonInvocationSerializer(objectMapper))
                            .dialect(Dialect.H2)
                            .build())
             .build();
@@ -553,6 +558,11 @@ Example setup of Active Mq 5 classic in a transactional setup:
         return new DefaultClassProvider();
     }
 
+    @Bean
+    public DomainEventSerializer domainEventSerializer(ObjectMapper objectMapper) {
+        return new JacksonDomainEventSerializer(objectMapper);
+    }
+
     // A TransactionalHandlerExecutor is used to wrap all listener executions in independent 
     // transactions
     @Bean
@@ -567,14 +577,14 @@ Example setup of Active Mq 5 classic in a transactional setup:
         ClassProvider classProvider,
         TransactionalHandlerExecutor transactionalHandlerExecutor,
         ActiveMQConnectionFactory jmsConnectionFactory,
-        ObjectMapper objectMapper
+        DomainEventSerializer domainEventSerializer
     ){
         return new SpringTransactionalActiveMqChannelFactory(
             jmsConnectionFactory,
             serviceProvider,
             classProvider,
-            transactionalHandlerExecutor,
-            objectMapper
+            transactionalHandlerExecutor, 
+            domainEventSerializer
         );
     }
 
@@ -609,6 +619,11 @@ Example setup of a Jakarta JMS broker in a transactional setup:
     public TransactionalHandlerExecutor transactionalHandlerExecutor(PlatformTransactionManager platformTransactionManager){
         return new SpringTransactionalHandlerExecutor(platformTransactionManager);
     }
+
+    @Bean
+    public DomainEventSerializer domainEventSerializer(ObjectMapper objectMapper) {
+        return new JacksonDomainEventSerializer(objectMapper);
+    }
     
     // The channel factory providing Jakarta JMS based channels
     @Bean
@@ -617,14 +632,14 @@ Example setup of a Jakarta JMS broker in a transactional setup:
         ClassProvider classProvider,
         TransactionalHandlerExecutor transactionalHandlerExecutor,
         ConnectionFactory jmsConnectionFactory,
-        ObjectMapper objectMapper
+        DomainEventSerializer domainEventSerializer
     ){
         return new SpringTransactionJakartaJmsChannelFactory(
             jmsConnectionFactory,
             serviceProvider,
             classProvider,
-            transactionalHandlerExecutor,
-            objectMapper
+            transactionalHandlerExecutor, 
+            domainEventSerializer
         );
     }
 
@@ -675,6 +690,11 @@ Here's an example configuration for a Gruelbox based outbox proxy with a JMS bro
     public DomainEventsInstantiator domainEventsInstantiator(){
         return new DomainEventsInstantiator();
     }
+    
+    @Bean
+    public DomainEventSerializer domainEventSerializer(ObjectMapper objectMapper) {
+        return new JacksonDomainEventSerializer(objectMapper);
+    }
 
     // the outbox 
     @Bean
@@ -689,7 +709,7 @@ Here's an example configuration for a Gruelbox based outbox proxy with a JMS bro
                 .transactionManager(springTransactionManager)
                 .blockAfterAttempts(3)
                 .persistor(DefaultPersistor.builder()
-                        .serializer(new DlcJacksonInvocationSerializer())
+                        .serializer(new DlcJacksonInvocationSerializer(objectMapper))
                         .dialect(Dialect.H2)
                         .build())
                 .listener(transactionOutboxListener)
@@ -703,8 +723,8 @@ Here's an example configuration for a Gruelbox based outbox proxy with a JMS bro
             ServiceProvider serviceProvider,
             ClassProvider classProvider,
             TransactionalHandlerExecutor transactionalHandlerExecutor,
-            ConnectionFactory jmsConnectionFactory,
-            ObjectMapper objectMapper,
+            ConnectionFactory jmsConnectionFactory, 
+            DomainEventSerializer domainEventSerializer,
             TransactionOutbox transactionOutbox,
             DomainEventsInstantiator domainEventsInstantiator
     ){
@@ -712,7 +732,7 @@ Here's an example configuration for a Gruelbox based outbox proxy with a JMS bro
                 serviceProvider,
                 classProvider,
                 transactionalHandlerExecutor,
-                objectMapper,
+                domainEventSerializer,
                 transactionOutbox,
                 domainEventsInstantiator,
                 jmsConnectionFactory
@@ -790,7 +810,7 @@ public class JakartaJmsGruelboxIdempotencyConfig {
                 .transactionManager(springTransactionManager)
                 .blockAfterAttempts(3)
                 .persistor(DefaultPersistor.builder()
-                        .serializer(new DlcJacksonInvocationSerializer())
+                        .serializer(new DlcJacksonInvocationSerializer(objectMapper))
                         .dialect(Dialect.H2)
                         .build())
                 .build();
@@ -824,7 +844,7 @@ public class JakartaJmsGruelboxIdempotencyConfig {
             ClassProvider classProvider,
             TransactionalHandlerExecutor transactionalHandlerExecutor,
             ConnectionFactory jmsConnectionFactory,
-            ObjectMapper objectMapper,
+            DomainEventSerializer domainEventSerializer,
             TransactionOutbox transactionOutbox,
             DomainEventsInstantiator domainEventsInstantiator,
             SpringTransactionalIdempotencyAwareHandlerExecutorProxy springTransactionalIdempotencyAwareHandlerExecutorProxy
@@ -833,7 +853,7 @@ public class JakartaJmsGruelboxIdempotencyConfig {
                 serviceProvider,
                 classProvider,
                 transactionalHandlerExecutor,
-                objectMapper,
+                domainEventSerializer,
                 transactionOutbox,
                 domainEventsInstantiator,
                 jmsConnectionFactory,
@@ -866,6 +886,11 @@ public class JakartaJmsGruelboxIdempotencyConfig {
     @Bean
     public ClassProvider classProvider() {
         return new DefaultClassProvider();
+    }
+
+    @Bean
+    public DomainEventSerializer domainEventSerializer(ObjectMapper objectMapper) {
+        return new JacksonDomainEventSerializer(objectMapper);
     }
 }
 ```

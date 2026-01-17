@@ -9,7 +9,7 @@ import io.domainlifecycles.autoconfig.model.events.AnApplicationService;
 import io.domainlifecycles.autoconfig.model.events.AnOutboundService;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.events.api.DomainEvents;
-import io.domainlifecycles.jackson.module.DlcJacksonModule;
+import io.domainlifecycles.jackson3.module.DlcJacksonModule;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
