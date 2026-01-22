@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,41 +24,34 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.mirror.reflect;
+package io.domainlifecycles.mirrorjmolecules.reflect;
 
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainMirrorFactory;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
-import io.domainlifecycles.mirror.exception.MirrorException;
 import io.domainlifecycles.mirror.model.DomainModel;
+import io.domainlifecycles.mirror.reflect.AbstractDomainMirrorFactory;
 import io.domainlifecycles.mirror.resolver.DefaultEmptyGenericTypeResolver;
-import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import io.domainlifecycles.mirror.validate.CompletenessChecker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * Uses Java reflection to initialize a mirror of the domain by analyzing the given bounded context packages.
- *
- * @author Mario Herb
- */
-public class ReflectiveDomainMirrorFactory extends AbstractDomainMirrorFactory implements DomainMirrorFactory {
-    private static final Logger log = LoggerFactory.getLogger(ReflectiveDomainMirrorFactory.class);
+public class JMoleculesDomainMirrorFactory extends AbstractDomainMirrorFactory implements DomainMirrorFactory {
 
-    private ClassGraphDomainTypesScanner classGraphDomainTypesScanner;
+    private static final Logger log = LoggerFactory.getLogger(JMoleculesDomainMirrorFactory.class);
+
+    private JMoleculesDomainTypesScanner jMoleculesDomainTypesScanner;
 
     /**
      * Initialize the factory with the domainModelPackages to be scanned.
      *
      * @param domainModelPackages the packages containing the domain model classes
      */
-    public ReflectiveDomainMirrorFactory(String... domainModelPackages) {
+    public JMoleculesDomainMirrorFactory(String... domainModelPackages) {
         super(domainModelPackages);
     }
 
@@ -74,7 +67,7 @@ public class ReflectiveDomainMirrorFactory extends AbstractDomainMirrorFactory i
         domainModelPackagesExtended[domainModelPackages.length] = "io.domainlifecycles";
 
         Map<String, ? extends DomainTypeMirror> builtTypeMirrors =
-            classGraphDomainTypesScanner
+            jMoleculesDomainTypesScanner
                 .scan(domainModelPackagesExtended)
                 .stream()
                 .collect(
@@ -100,9 +93,9 @@ public class ReflectiveDomainMirrorFactory extends AbstractDomainMirrorFactory i
             this.genericTypeResolver = new DefaultEmptyGenericTypeResolver();
         }
         if(this.externalClassLoader == null){
-            this.classGraphDomainTypesScanner = new ClassGraphDomainTypesScanner(genericTypeResolver);
+            this.jMoleculesDomainTypesScanner = new JMoleculesDomainTypesScanner(genericTypeResolver);
         }else{
-            this.classGraphDomainTypesScanner = new ClassGraphDomainTypesScanner(externalClassLoader, genericTypeResolver);
+            this.jMoleculesDomainTypesScanner = new JMoleculesDomainTypesScanner(externalClassLoader, genericTypeResolver);
         }
         if(boundedContextPackages == null){
             this.boundedContextPackages = domainModelPackages;

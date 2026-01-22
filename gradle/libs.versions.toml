@@ -68,6 +68,7 @@ h2-version = '2.4.240'
 hibernate-validator-jakarta-version = '9.1.0.Final'
 jakarta-el-version = '6.0.1'
 javax-jms-api-version = '2.0.1'
+jmolecules-ddd-version = '1.7.0'
 junit-jupiter-params-version = '5.12.2'
 junit-jupiter-version = '5.12.2'
 junit-platform-version = '1.12.2'
@@ -113,6 +114,7 @@ jakarta-jms-api = { module = "jakarta.jms:jakarta.jms-api", version.ref = "jakar
 jakarta-transaction-api = { module = "jakarta.transaction:jakarta.transaction-api", version.ref = "jakarta-transaction-api-version"}
 jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api", version.ref = "jakarta-validation-api-version" }
 javax-jms-api = { module = "javax.jms:javax.jms-api", version.ref = "javax-jms-api-version" }
+jmolecules-ddd = { module = "org.jmolecules:jmolecules-ddd", version.ref = "jmolecules-ddd-version"}
 jooq = { module = "org.jooq:jooq", version.ref = "jooq-version" }
 jooq-codegen = { module = "org.jooq:jooq-codegen", version.ref = "jooq-version"}
 jooq-meta = { module = "org.jooq:jooq-meta", version.ref = "jooq-version"}
