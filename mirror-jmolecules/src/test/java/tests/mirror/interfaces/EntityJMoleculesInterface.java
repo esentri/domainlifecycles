@@ -24,30 +24,31 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.mirrorjmolecules;
+package tests.mirror.interfaces;
 
-import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.api.DomainMirror;
-import io.domainlifecycles.mirrorjmolecules.reflect.JMoleculesDomainMirrorFactory;
-import org.junit.jupiter.api.Test;
+import java.util.UUID;
+import org.jmolecules.ddd.types.Entity;
+import org.jmolecules.ddd.types.Identifier;
+import tests.mirror.interfaces.EntityJMoleculesInterface.EntityId;
 
-import static org.assertj.core.api.Assertions.assertThat;
+public class EntityJMoleculesInterface implements Entity<AggregateRootJMoleculesInterface, EntityId> {
 
-public class TestDomain {
+    private final EntityId id;
 
-    @Test
-    void testDomainInitJMoleculesAnnotation() {
-        Domain.initialize(new JMoleculesDomainMirrorFactory("tests.mirror.annotation"));
-
-        DomainMirror dm = Domain.getDomainMirror();
-        assertThat(dm.getAllDomainTypeMirrors()).hasSize(5);
+    public EntityJMoleculesInterface(EntityId id) {
+        this.id = id;
     }
 
-    @Test
-    void testDomainInitJMoleculesInterface() {
-        Domain.initialize(new JMoleculesDomainMirrorFactory("tests.mirror.interfaces"));
+    @Override
+    public EntityId getId() {
+        return id;
+    }
 
-        DomainMirror dm = Domain.getDomainMirror();
-        assertThat(dm.getAllDomainTypeMirrors()).hasSize(5);
+    public static final class EntityId implements Identifier {
+        private final UUID id;
+
+        EntityId(UUID id) {
+            this.id = id;
+        }
     }
 }

@@ -24,13 +24,31 @@
  *  limitations under the License.
  */
 
-package tests.mirror;
+package tests.mirror.interfaces;
 
-import org.jmolecules.ddd.annotation.Identity;
+import java.util.UUID;
+import org.jmolecules.ddd.types.AggregateRoot;
+import org.jmolecules.ddd.types.Identifier;
+import tests.mirror.interfaces.AggregateRootJMoleculesInterface.AggregateRootId;
 
-@org.jmolecules.ddd.annotation.AggregateRoot
-public class AggregateRootJMolecules {
+public class AggregateRootJMoleculesInterface implements AggregateRoot<AggregateRootJMoleculesInterface, AggregateRootId> {
 
-    @Identity
-    private Long id;
+    private final AggregateRootId id;
+
+    public AggregateRootJMoleculesInterface(AggregateRootId id) {
+        this.id = id;
+    }
+
+    @Override
+    public AggregateRootId getId() {
+        return id;
+    }
+
+    public static final class AggregateRootId implements Identifier {
+        private final UUID id;
+
+        AggregateRootId(UUID id) {
+            this.id = id;
+        }
+    }
 }

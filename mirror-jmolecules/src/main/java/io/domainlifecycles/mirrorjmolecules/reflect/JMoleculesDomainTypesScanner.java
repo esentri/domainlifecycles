@@ -39,8 +39,8 @@ import org.jmolecules.ddd.annotation.AggregateRoot;
 import org.jmolecules.ddd.annotation.Entity;
 import org.jmolecules.ddd.annotation.Identity;
 import org.jmolecules.ddd.annotation.Repository;
-import org.jmolecules.ddd.annotation.Service;
 import org.jmolecules.ddd.annotation.ValueObject;
+import org.jmolecules.ddd.types.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,83 +110,135 @@ public class JMoleculesDomainTypesScanner {
         }
 
         try (ScanResult scanResult = classGraph.scan()) {  // Start the scan
-
-            scanResult.getClassesWithAnnotation(Identity.class.getName())
-                .stream()
-                .map(this::loadClass)
-                .filter(Objects::nonNull)
-                .map(dt -> build(new IdentityMirrorBuilder(dt, genericTypeResolver)))
-                .filter(Objects::nonNull)
-                .forEach(domainTypes::add);
-
-            scanResult.getClassesWithAnnotation(AggregateRoot.class.getName())
-                .stream()
-                .map(this::loadClass)
-                .filter(Objects::nonNull)
-                .filter(dt -> dt.isAnnotationPresent(AggregateRoot.class))
-                .map(dt -> build(new AggregateRootMirrorBuilder(dt, genericTypeResolver)))
-                .filter(Objects::nonNull)
-                .forEach(domainTypes::add);
-
-            scanResult.getClassesWithAnnotation(Service.class.getName())
-                .stream()
-                .map(this::loadClass)
-                .filter(Objects::nonNull)
-                .map(dt -> build(new ServiceMirrorBuilder(dt, genericTypeResolver)))
-                .filter(Objects::nonNull)
-                .forEach(domainTypes::add);
-
-            scanResult.getClassesWithAnnotation(Repository.class.getName())
-                .stream()
-                .map(this::loadClass)
-                .filter(Objects::nonNull)
-                .map(dt -> build(new RepositoryMirrorBuilder(dt, genericTypeResolver)))
-                .filter(Objects::nonNull)
-                .forEach(domainTypes::add);
-
-            scanResult.getClassesWithAnnotation(Entity.class.getName())
-                .stream()
-                .filter(classInfo -> !classInfo.isAnnotation())
-                .map(this::loadClass)
-                .filter(Objects::nonNull)
-                .filter(dt -> dt.isAnnotationPresent(Entity.class))
-                .filter(dt -> !dt.isAnnotationPresent(AggregateRoot.class))
-                .map(dt -> (EntityMirror) build(new EntityMirrorBuilder<>(dt, genericTypeResolver)))
-                .filter(Objects::nonNull)
-                .forEach(domainTypes::add);
-
-            scanResult.getClassesWithAnnotation(ValueObject.class.getName())
-                .stream()
-                .map(this::loadClass)
-                .filter(Objects::nonNull)
-                .map(dt -> build(new ValueObjectMirrorBuilder(dt, genericTypeResolver)))
-                .filter(Objects::nonNull)
-                .forEach(domainTypes::add);
-
-
+            buildDomainMirrorsWithJMoleculesAnnotations(scanResult, domainTypes);
+            buildDomainMirrorsWithJMoleculesInterfaces(scanResult, domainTypes);
         } catch (Throwable t) {
             log.error("Scanning packages '{}' failed!", packages, t);
         }
         return domainTypes;
     }
 
-    private Class<?> loadClass(ClassInfo classInfo) {
-        try {
-            return classInfo.loadClass();
-        }catch (Throwable t) {
-            log.error("Loading class '{}' failed!", classInfo.getName(), t);
-        }
+    private void buildDomainMirrorsWithJMoleculesAnnotations(ScanResult scanResult, List<DomainTypeMirror> domainTypes) {
+        scanResult.getClassesWithAnnotation(Identity.class.getName())
+            .stream()
+            .map(this::loadClass)
+            .filter(Objects::nonNull)
+            .map(dt -> build(new IdentityMirrorBuilder(dt, genericTypeResolver)))
+            .filter(Objects::nonNull)
+            .forEach(domainTypes::add);
+
+        scanResult.getClassesWithAnnotation(AggregateRoot.class.getName())
+            .stream()
+            .map(this::loadClass)
+            .filter(Objects::nonNull)
+            .filter(dt -> dt.isAnnotationPresent(AggregateRoot.class))
+            .map(dt -> build(new AggregateRootMirrorBuilder(dt, genericTypeResolver)))
+            .filter(Objects::nonNull)
+            .forEach(domainTypes::add);
+
+        scanResult.getClassesWithAnnotation(Repository.class.getName())
+            .stream()
+            .map(this::loadClass)
+            .filter(Objects::nonNull)
+            .map(dt -> build(new RepositoryMirrorBuilder(dt, genericTypeResolver)))
+            .filter(Objects::nonNull)
+            .forEach(domainTypes::add);
+
+        scanResult.getClassesWithAnnotation(Entity.class.getName())
+            .stream()
+            .filter(classInfo -> !classInfo.isAnnotation())
+            .map(this::loadClass)
+            .filter(Objects::nonNull)
+            .filter(dt -> dt.isAnnotationPresent(Entity.class))
+            .filter(dt -> !dt.isAnnotationPresent(AggregateRoot.class))
+            .map(dt -> (EntityMirror) build(new EntityMirrorBuilder<>(dt, genericTypeResolver)))
+            .filter(Objects::nonNull)
+            .forEach(domainTypes::add);
+
+        scanResult.getClassesWithAnnotation(ValueObject.class.getName())
+            .stream()
+            .map(this::loadClass)
+            .filter(Objects::nonNull)
+            .map(dt -> build(new ValueObjectMirrorBuilder(dt, genericTypeResolver)))
+            .filter(Objects::nonNull)
+            .forEach(domainTypes::add);
+
+        scanResult.getClassesWithAnnotation(org.jmolecules.event.annotation.DomainEvent.class.getName())
+            .stream()
+            .map(this::loadClass)
+            .filter(Objects::nonNull)
+            .map(dt -> build(new DomainEventMirrorBuilder(dt, genericTypeResolver)))
+            .filter(Objects::nonNull)
+            .forEach(domainTypes::add);
+    }
+
+    private void buildDomainMirrorsWithJMoleculesInterfaces(ScanResult scanResult, List<DomainTypeMirror> domainTypes) {
+        scanResult.getClassesImplementing(Identifier.class)
+            .stream()
+            .map(this::loadClass)
+            .filter(Objects::nonNull)
+            .map(dt -> build(new IdentityMirrorBuilder(dt, genericTypeResolver)))
+            .filter(Objects::nonNull)
+            .forEach(domainTypes::add);
+
+        scanResult.getClassesImplementing(org.jmolecules.ddd.types.AggregateRoot.class)
+            .stream()
+            .map(this::loadClass)
+            .filter(Objects::nonNull)
+            .map(dt -> build(new AggregateRootMirrorBuilder(dt, genericTypeResolver)))
+            .filter(Objects::nonNull)
+            .forEach(domainTypes::add);
+
+        scanResult.getClassesImplementing(org.jmolecules.ddd.types.Repository.class)
+            .stream()
+            .map(this::loadClass)
+            .filter(Objects::nonNull)
+            .map(dt -> build(new RepositoryMirrorBuilder(dt, genericTypeResolver)))
+            .filter(Objects::nonNull)
+            .forEach(domainTypes::add);
+
+        scanResult.getClassesImplementing(org.jmolecules.ddd.types.Entity.class)
+            .stream()
+            .filter(classInfo -> !org.jmolecules.ddd.types.AggregateRoot.class.getName().equals(classInfo.getName()))
+            .filter(classInfo -> !classInfo.implementsInterface(org.jmolecules.ddd.types.AggregateRoot.class.getName()))
+            .map(this::loadClass)
+            .filter(Objects::nonNull)
+            .map(dt -> (EntityMirror) build(new EntityMirrorBuilder<>(dt, genericTypeResolver)))
+            .filter(Objects::nonNull)
+            .forEach(domainTypes::add);
+
+        scanResult.getClassesImplementing(org.jmolecules.ddd.types.ValueObject.class)
+            .stream()
+            .map(this::loadClass)
+            .filter(Objects::nonNull)
+            .map(dt -> build(new ValueObjectMirrorBuilder(dt, genericTypeResolver)))
+            .filter(Objects::nonNull)
+            .forEach(domainTypes::add);
+
+        scanResult.getClassesImplementing(org.jmolecules.event.types.DomainEvent.class)
+            .stream()
+            .map(this::loadClass)
+            .filter(Objects::nonNull)
+            .map(dt -> build(new DomainEventMirrorBuilder(dt, genericTypeResolver)))
+            .filter(Objects::nonNull)
+            .forEach(domainTypes::add);
+    }
+
+        private Class<?> loadClass(ClassInfo classInfo) {
+            try {
+                return classInfo.loadClass();
+            } catch (Throwable t) {
+                log.error("Loading class '{}' failed!", classInfo.getName(), t);
+            }
         return null;
     }
 
-
     private <T extends DomainTypeMirror> T build(DomainTypeMirrorBuilder<T> builder) {
-        try{
+        try {
             return builder.build();
         } catch (Throwable t) {
             log.error("Building mirror failed! {}",  builder.domainClass.getName(), t);
         }
         return null;
     }
-
 }

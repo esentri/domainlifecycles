@@ -19,6 +19,7 @@ repositories {
 dependencies {
     api libs.slf4j.api
     implementation libs.jmolecules.ddd
+    implementation libs.jmolecules.events
     implementation libs.classgraph
     implementation project(":mirror")
     implementation project(":reflect")

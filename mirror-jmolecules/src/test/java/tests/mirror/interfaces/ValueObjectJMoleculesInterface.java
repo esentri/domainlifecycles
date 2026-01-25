@@ -24,30 +24,10 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.mirrorjmolecules;
+package tests.mirror.interfaces;
 
-import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.api.DomainMirror;
-import io.domainlifecycles.mirrorjmolecules.reflect.JMoleculesDomainMirrorFactory;
-import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.jmolecules.ddd.types.ValueObject;
 
-public class TestDomain {
-
-    @Test
-    void testDomainInitJMoleculesAnnotation() {
-        Domain.initialize(new JMoleculesDomainMirrorFactory("tests.mirror.annotation"));
-
-        DomainMirror dm = Domain.getDomainMirror();
-        assertThat(dm.getAllDomainTypeMirrors()).hasSize(5);
-    }
-
-    @Test
-    void testDomainInitJMoleculesInterface() {
-        Domain.initialize(new JMoleculesDomainMirrorFactory("tests.mirror.interfaces"));
-
-        DomainMirror dm = Domain.getDomainMirror();
-        assertThat(dm.getAllDomainTypeMirrors()).hasSize(5);
-    }
+public class ValueObjectJMoleculesInterface implements ValueObject {
 }

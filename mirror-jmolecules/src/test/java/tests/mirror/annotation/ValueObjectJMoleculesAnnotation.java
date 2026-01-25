@@ -24,14 +24,10 @@
  *  limitations under the License.
  */
 
-package tests.mirror;
+package tests.mirror.annotation;
 
-import org.jmolecules.ddd.annotation.Entity;
-import org.jmolecules.ddd.annotation.Identity;
+import org.jmolecules.ddd.annotation.ValueObject;
 
-@Entity
-public class EntityJMolecules {
-
-    @Identity
-    private Long id;
+@ValueObject
+public class ValueObjectJMoleculesAnnotation {
 }

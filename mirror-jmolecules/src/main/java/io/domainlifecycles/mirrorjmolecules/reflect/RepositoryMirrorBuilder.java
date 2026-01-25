@@ -26,21 +26,23 @@
 
 package io.domainlifecycles.mirrorjmolecules.reflect;
 
-import io.domainlifecycles.domain.types.Repository;
+import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.model.RepositoryModel;
-import io.domainlifecycles.mirror.reflect.GenericInterfaceTypeResolver;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import org.jmolecules.ddd.types.Repository;
 
 /**
  * Builder to create {@link RepositoryMirror}. Uses Java reflection.
  *
  * @author Mario Herb
  */
-public class RepositoryMirrorBuilder extends ServiceMirrorBuilder {
+public class RepositoryMirrorBuilder extends DomainTypeMirrorBuilder<RepositoryMirror> {
     private final Class<?> repositoryClass;
 
     /**
@@ -78,8 +80,7 @@ public class RepositoryMirrorBuilder extends ServiceMirrorBuilder {
 
     private static Optional<Class<?>> getManagedAggregateType(Class<?> c) {
         var resolver = new GenericInterfaceTypeResolver(c);
-        var resolved = resolver.resolveFor(Repository.class, 1);
-        return Optional.ofNullable(resolved);
+        return Optional.ofNullable(resolver.resolveFor(Repository.class, 0));
     }
 
     private List<String> repositoryInterfaceTypeNames() {

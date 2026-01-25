@@ -37,6 +37,7 @@ import io.domainlifecycles.reflect.JavaReflect;
 import io.domainlifecycles.reflect.MemberSelect;
 import java.lang.reflect.Field;
 import java.util.Optional;
+import org.jmolecules.ddd.types.Identifier;
 
 /**
  * Builder to create {@link EntityMirror}. Uses Java reflection.
@@ -93,7 +94,9 @@ public class EntityMirrorBuilder<T extends EntityMirror> extends DomainTypeMirro
     protected Optional<FieldMirror> identityField() {
         Optional<Field> idProperty = JavaReflect.fields(entityClass, MemberSelect.HIERARCHY)
             .stream()
-            .filter(field -> field.isAnnotationPresent(org.jmolecules.ddd.annotation.Identity.class))
+            .filter(field ->
+                field.isAnnotationPresent(org.jmolecules.ddd.annotation.Identity.class) ||
+                    Identifier.class.isAssignableFrom(field.getType()))
             .findFirst();
 
         return idProperty.map(field -> new FieldMirrorBuilder(field, entityClass, isHidden(field), genericTypeResolver).build());
