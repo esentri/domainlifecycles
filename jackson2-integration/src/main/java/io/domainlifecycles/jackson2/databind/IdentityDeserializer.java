@@ -47,6 +47,7 @@ import java.util.Map;
  * @author Mario Herb
  * @see StdDeserializer
  */
+@Deprecated
 public class IdentityDeserializer extends StdDeserializer<Identity<?>> {
 
     /**

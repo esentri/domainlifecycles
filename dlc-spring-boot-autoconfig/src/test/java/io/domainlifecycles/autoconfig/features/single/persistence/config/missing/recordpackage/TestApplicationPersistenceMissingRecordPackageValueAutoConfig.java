@@ -35,10 +35,9 @@ import org.springframework.context.annotation.Import;
 
 import java.util.Locale;
 
-@SpringBootApplication
+@SpringBootApplication()
 @Import(PersistenceAutoConfigTestConfiguration.class)
 @EnableDlc(
-    value = DlcJooqPersistenceAutoConfiguration.class,
     dlcDomainBasePackages = "io.domainlifecycles.autoconfig",
     jooqSqlDialect = "H2"
 )

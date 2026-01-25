@@ -19,7 +19,6 @@ dependencies {
     implementation project(":mirror-serialization-jackson3")
     implementation project(":types")
     implementation project(":domain-diagrammer")
-    implementation libs.jakarta.validation.api
     api libs.slf4j.api
 
 }

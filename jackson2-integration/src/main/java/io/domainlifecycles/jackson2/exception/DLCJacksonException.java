@@ -37,6 +37,7 @@ import static java.util.Objects.requireNonNull;
  * @author Tobias Herb
  * @author Mario Herb
  */
+@Deprecated
 public class DLCJacksonException extends RuntimeException {
 
 

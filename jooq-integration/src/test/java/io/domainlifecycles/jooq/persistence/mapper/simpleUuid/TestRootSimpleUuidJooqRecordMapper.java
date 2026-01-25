@@ -3,8 +3,8 @@ package io.domainlifecycles.jooq.persistence.mapper.simpleUuid;
 import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.persistence.mapping.AbstractRecordMapper;
-import io.domainlifecycles.test.Tables;
-import io.domainlifecycles.test.tables.records.TestRootSimpleUuidRecord;
+import io.domainlifecycles.test.jooq.Tables;
+import io.domainlifecycles.test.jooq.tables.records.TestRootSimpleUuidRecord;
 import tests.shared.persistence.domain.simpleUuid.TestRootSimpleUuid;
 import tests.shared.persistence.domain.simpleUuid.TestRootSimpleUuidId;
 

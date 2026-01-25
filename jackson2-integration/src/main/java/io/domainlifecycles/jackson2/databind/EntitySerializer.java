@@ -49,6 +49,7 @@ import java.io.IOException;
  * @see StdSerializer
  */
 @SuppressWarnings("rawtypes")
+@Deprecated
 public class EntitySerializer extends StdSerializer<Entity> {
 
     /**

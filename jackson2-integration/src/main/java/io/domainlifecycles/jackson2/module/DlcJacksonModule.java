@@ -47,6 +47,7 @@ import java.util.Map;
  * @author Mario Herb
  * @see SimpleModule
  */
+@Deprecated
 public class DlcJacksonModule extends SimpleModule {
 
     @Serial

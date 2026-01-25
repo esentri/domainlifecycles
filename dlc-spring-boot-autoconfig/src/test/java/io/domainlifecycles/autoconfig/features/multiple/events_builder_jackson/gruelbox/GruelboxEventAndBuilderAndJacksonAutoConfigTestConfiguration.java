@@ -31,30 +31,28 @@ import com.gruelbox.transactionoutbox.Dialect;
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import com.gruelbox.transactionoutbox.TransactionOutboxEntry;
 import com.gruelbox.transactionoutbox.TransactionOutboxListener;
-import com.gruelbox.transactionoutbox.spring.SpringInstantiator;
 import com.gruelbox.transactionoutbox.spring.SpringTransactionManager;
+import io.domainlifecycles.events.gruelbox.api.DomainEventsInstantiator;
 import io.domainlifecycles.events.gruelbox.serialize.DlcJacksonInvocationSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Configuration
-@Import({SpringInstantiator.class, SpringTransactionManager.class})
 @EnableScheduling
 @Slf4j
+@Import(SpringTransactionManager.class)
 public class GruelboxEventAndBuilderAndJacksonAutoConfigTestConfiguration {
 
     @Bean
-    @Lazy
     public TransactionOutbox transactionOutbox(
         SpringTransactionManager springTransactionManager,
-        SpringInstantiator springInstantiator
-    ) {
+        DomainEventsInstantiator domainEventsInstantiator
+        ) {
         return TransactionOutbox.builder()
-            .instantiator(springInstantiator)
+            .instantiator(domainEventsInstantiator)
             .transactionManager(springTransactionManager)
             .blockAfterAttempts(3)
             .persistor(DefaultPersistor.builder()

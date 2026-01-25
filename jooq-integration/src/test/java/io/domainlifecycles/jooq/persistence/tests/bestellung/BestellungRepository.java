@@ -5,14 +5,14 @@ import io.domainlifecycles.jooq.imp.JooqAggregateRepository;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.fetcher.RecordProvider;
 import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
-import io.domainlifecycles.test.Sequences;
-import io.domainlifecycles.test.Tables;
-import io.domainlifecycles.test.tables.records.AktionsCodeBv3Record;
-import io.domainlifecycles.test.tables.records.BestellKommentarBv3Record;
-import io.domainlifecycles.test.tables.records.BestellPositionBv3Record;
-import io.domainlifecycles.test.tables.records.BestellStatusBv3Record;
-import io.domainlifecycles.test.tables.records.BestellungBv3Record;
-import io.domainlifecycles.test.tables.records.LieferadresseBv3Record;
+import io.domainlifecycles.test.jooq.Sequences;
+import io.domainlifecycles.test.jooq.Tables;
+import io.domainlifecycles.test.jooq.tables.records.AktionsCodeBv3Record;
+import io.domainlifecycles.test.jooq.tables.records.BestellKommentarBv3Record;
+import io.domainlifecycles.test.jooq.tables.records.BestellPositionBv3Record;
+import io.domainlifecycles.test.jooq.tables.records.BestellStatusBv3Record;
+import io.domainlifecycles.test.jooq.tables.records.BestellungBv3Record;
+import io.domainlifecycles.test.jooq.tables.records.LieferadresseBv3Record;
 import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import tests.shared.complete.onlinehandel.bestellung.AktionsCodeBv3;
@@ -127,7 +127,7 @@ public class BestellungRepository extends JooqAggregateRepository<BestellungBv3,
         var fetcher = new JooqAggregateFetcher<BestellungBv3, BestellungIdBv3>(BestellungBv3.class, dslContext,
             jooqDomainPersistenceProvider);
 
-        io.domainlifecycles.test.tables.BestellungBv3 b = Tables.BESTELLUNG_BV3.as("b");
+        io.domainlifecycles.test.jooq.tables.BestellungBv3 b = Tables.BESTELLUNG_BV3.as("b");
 
         var joinedRecords = dslContext.select()
             .from(

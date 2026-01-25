@@ -38,6 +38,7 @@ import io.domainlifecycles.jackson2.exception.DLCJacksonException;
  * @author Leon Völlinger
  * @author Mario Herb
  */
+@Deprecated
 public interface BuilderConverter {
 
     /**

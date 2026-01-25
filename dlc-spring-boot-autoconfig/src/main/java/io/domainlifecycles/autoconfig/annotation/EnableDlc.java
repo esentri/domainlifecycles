@@ -26,17 +26,11 @@
 
 package io.domainlifecycles.autoconfig.annotation;
 
-import io.domainlifecycles.autoconfig.configurations.DlcBuilderAutoConfiguration;
-import io.domainlifecycles.autoconfig.configurations.DlcDomainAutoConfiguration;
-import io.domainlifecycles.autoconfig.configurations.DlcDomainEventsAutoConfiguration;
-import io.domainlifecycles.autoconfig.configurations.DlcGruelboxDomainEventsAutoConfiguration;
-import io.domainlifecycles.autoconfig.configurations.DlcJacksonAutoConfiguration;
-import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
-import io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.properties.DomainConfigImportSelector;
 import io.domainlifecycles.autoconfig.configurations.properties.JooqPersistenceConfigImportSelector;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -85,28 +79,11 @@ public @interface EnableDlc {
     /** DLC always requires all packages which contains all Domain classes used within the application**/
     String dlcDomainBasePackages() default "";
 
-    // include: optionally override the set to import
-
-    /**
-     * Optionally override the set of AutoConfigurations used
-     */
-    @org.springframework.core.annotation.AliasFor(
-        annotation = ImportAutoConfiguration.class, attribute = "classes")
-    Class<?>[] value() default {
-        DlcDomainAutoConfiguration.class,
-        DlcBuilderAutoConfiguration.class,
-        DlcJacksonAutoConfiguration.class,
-        DlcDomainEventsAutoConfiguration.class,
-        DlcGruelboxDomainEventsAutoConfiguration.class,
-        DlcSpringWebAutoConfiguration.class,
-        DlcSpringOpenApiAutoConfiguration.class,
-    };
-
     // exclude: disable specific auto-configs
     /**
      * Optionally specify AutoConfigurations to be excluded
      */
-    @org.springframework.core.annotation.AliasFor(
+    @AliasFor(
         annotation = ImportAutoConfiguration.class, attribute = "exclude")
     Class<?>[] exclude() default {};
 }

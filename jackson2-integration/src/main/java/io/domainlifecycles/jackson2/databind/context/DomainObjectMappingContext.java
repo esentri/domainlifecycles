@@ -41,6 +41,7 @@ import java.util.Objects;
  * @author Leon Völlinger
  * @author Mario Herb
  */
+@Deprecated
 public class DomainObjectMappingContext {
 
     /**

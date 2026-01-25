@@ -43,6 +43,7 @@ import com.fasterxml.jackson.databind.SerializationConfig;
  * @author Leon Völlinger
  * @author Mario Herb
  */
+@Deprecated
 public class DlcSerializerModifier extends BeanSerializerModifier {
 
     /**

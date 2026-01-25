@@ -7,6 +7,7 @@ import io.domainlifecycles.autoconfig.model.persistence.TestRootSimple;
 import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
+import io.domainlifecycles.events.api.DomainEvents;
 import io.domainlifecycles.jackson3.module.DlcJacksonModule;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
@@ -32,8 +33,7 @@ import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 import static org.springframework.test.annotation.DirtiesContext.MethodMode.AFTER_METHOD;
 
-@SpringBootTest
-@Import(GruelboxEventAndBuilderAndJacksonAutoConfigTestConfiguration.class)
+@SpringBootTest(properties = {"dlc.events.gruelbox.enabled=true", "dlc.events.springbus.enabled=false"})
 @ActiveProfiles({"test", "test-dlc-domain"})
 @DirtiesContext(classMode = AFTER_CLASS)
 @Execution(SAME_THREAD)
@@ -74,11 +74,7 @@ public class GruelboxEventAndBuilderAndJacksonAutoConfigTests {
     public void testTransactionOutbox(){
         var val = new ADomainEvent("GruelboxEvent");
         transactionTemplate.executeWithoutResult((status) ->
-            outbox.with()
-                .ordered("topic1")
-                .delayForAtLeast(Duration.ZERO)
-                .schedule(AnApplicationService.class)
-                .onADomainEvent(val)
+            DomainEvents.publish(val)
         );
 
         await()

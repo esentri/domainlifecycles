@@ -41,6 +41,7 @@ import com.fasterxml.jackson.core.TreeNode;
  * @author Leon Völlinger
  * @author Mario Herb
  */
+@Deprecated
 public abstract class JacksonMappingCustomizer<T extends DomainObject> {
 
     /**

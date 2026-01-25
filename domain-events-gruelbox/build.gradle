@@ -19,8 +19,8 @@ dependencies {
     api project(":mirror")
     api libs.slf4j.api
     implementation libs.commons.lang3
-    implementation libs.jackson3.core
-    implementation libs.jackson3.databind
+    compileOnly libs.jackson3.core
+    compileOnly libs.jackson3.databind
 
     testImplementation libs.gruelbox.transactionoutbox.core
 }

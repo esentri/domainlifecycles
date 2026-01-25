@@ -27,24 +27,24 @@
 package io.domainlifecycles.autoconfig.configurations;
 
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
-import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * Autoconfiguration for OpenAPI/Swagger integration with Spring Boot applications using the DLC framework.
- *  This configuration provides automatic OpenAPI documentation generation for REST endpoints
- *  that use DLC domain objects, ensuring proper serialization and schema generation.
- *  <p>
- *  The configuration sets up customizers that understand DLC domain types,
- *  including ValueObjects, Identities, and Entities, to generate accurate API documentation
- *  with proper schema representations.
- *  </p>
+ * Auto-configuration class for integrating SpringDoc API documentation features
+ * into the DLC application framework. This class ensures that the necessary
+ * SpringDoc configurations and customizations are properly registered and only
+ * active when the relevant conditions are met.
  *
- * @author Leon Völlinger
+ * This configuration is only loaded if the SpringDoc library is present on the
+ * classpath and the `springdoc.api-docs.enabled` property is set to `true` or is
+ * absent (defaulting to `true`). It also ensures it is processed after the core
+ * DLC domain configuration (`DlcDomainAutoConfiguration`).
+ *
  * @author Mario Herb
  */
 @AutoConfiguration(
@@ -52,22 +52,33 @@ import org.springframework.context.annotation.Bean;
     afterName = {
         "org.springdoc.core.configuration.SpringDocConfiguration"
     })
-@ConditionalOnClass(name ="org.springdoc.core.properties.SpringDocConfigProperties")
-@ConditionalOnProperty(prefix="springdoc.api-docs", name="enabled", havingValue="true", matchIfMissing=true)
+@ConditionalOnClass(name = "org.springdoc.core.properties.SpringDocConfigProperties")
+@ConditionalOnProperty(prefix = "springdoc.api-docs", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class DlcSpringOpenApiAutoConfiguration {
 
     /**
-     * Creates a customizer for OpenAPI documentation that understands DLC domain objects.
-     * This customizer ensures that DLC domain types are properly represented in the
-     * generated OpenAPI schema, including correct handling of ValueObjects, Identities,
-     * and other DLC-specific types.
+     * Configuration class for defining SpringDoc-specific beans for the DLC framework.
      *
-     * @param springDocConfigProperties properties for configuring SpringDoc OpenAPI generation
-     * @return a {@link DlcOpenApiCustomizer} for enhancing API documentation with DLC support
+     * This class is conditionally loaded when the `org.springdoc.core.properties.SpringDocConfigProperties`
+     * class is present on the classpath, enabling customization of the SpringDoc OpenAPI integration.
+     * It ensures that SpringDoc configuration is encapsulated within a nested static configuration class,
+     * following modular design principles.
      */
-    @Bean
-    @ConditionalOnMissingBean(DlcOpenApiCustomizer.class)
-    public DlcOpenApiCustomizer openApiCustomizer(SpringDocConfigProperties springDocConfigProperties) {
-        return new DlcOpenApiCustomizer(springDocConfigProperties);
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnClass(name = "org.springdoc.core.properties.SpringDocConfigProperties")
+    static class DlcSpringdocConfiguration {
+
+        /**
+         * Creates a new instance of the {@link DlcOpenApiCustomizer} bean if one is not already defined in the application context.
+         * This method is responsible for customizing the SpringDoc OpenAPI configuration using the provided SpringDoc configuration properties.
+         *
+         * @param springDocConfigProperties the configuration properties for SpringDoc, used to customize OpenAPI settings
+         * @return an instance of {@link DlcOpenApiCustomizer} initialized with the given SpringDoc configuration properties
+         */
+        @Bean
+        @ConditionalOnMissingBean(DlcOpenApiCustomizer.class)
+        public DlcOpenApiCustomizer openApiCustomizer(org.springdoc.core.properties.SpringDocConfigProperties springDocConfigProperties) {
+            return new DlcOpenApiCustomizer(springDocConfigProperties);
+        }
     }
 }

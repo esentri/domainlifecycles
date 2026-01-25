@@ -27,7 +27,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-@SpringBootTest(classes = TestApplicationSpringEventAutoConfig.class)
+@SpringBootTest(classes = TestApplicationSpringEventAutoConfig.class, properties = "dlc.events.springtx.enabled=true")
 @ActiveProfiles({"test", "test-dlc-domain"})
 public class SpringEventAutoConfigTests {
 

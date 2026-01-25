@@ -51,6 +51,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
  *
  * @author Mario Herb
  */
+@Deprecated
 public class JacksonDomainEventSerializer implements DomainEventSerializer {
 
     private final ObjectMapper objectMapper;

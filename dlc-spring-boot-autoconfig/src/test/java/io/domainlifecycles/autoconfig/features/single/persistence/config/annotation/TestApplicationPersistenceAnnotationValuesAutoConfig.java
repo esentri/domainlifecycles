@@ -28,7 +28,6 @@ package io.domainlifecycles.autoconfig.features.single.persistence.config.annota
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
 import io.domainlifecycles.autoconfig.configurations.DlcBuilderAutoConfiguration;
-import io.domainlifecycles.autoconfig.configurations.DlcDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcGruelboxDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJacksonAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
@@ -43,8 +42,6 @@ import java.util.Locale;
     exclude = {
         DlcBuilderAutoConfiguration.class,
         DlcJacksonAutoConfiguration.class,
-        DlcGruelboxDomainEventsAutoConfiguration.class,
-        DlcDomainEventsAutoConfiguration.class,
         DlcSpringOpenApiAutoConfiguration.class,
         DlcSpringWebAutoConfiguration.class
     },

@@ -179,12 +179,16 @@ implementation provided by [Gruelbox](https://github.com/gruelbox/transaction-ou
 To publish externally handled Domain Events, one might define a dedicated channel processing those events 
 using a JMS compliant message broker.
 
+In order to use multiple channels, a channel routing configuration is needed to decide which channel should be used in which case.
+DLC provides a ```DomainEventTypeBasedRouter```, that decides the channel, that domain event are published to by checking 
+the DomainEvent type (see example configuration below).
+
 As in case of Gruelbox or MQ based Domain Event processing, some channel rely on external resources 
 (database tables, a polling thread or message brokers). So these channels offer a ```shutdown()``` hook 
 for proper releasing of those resources. See the configuration example below using the Spring bean destroy method configured as 
 ```shutdown```.
 
-An example above described event processing is configured like that:
+An example for event processing with multiple channels:
 ```Java
 
     // We need a DomainEventsInstantiator for the outbox
@@ -286,12 +290,12 @@ An example above described event processing is configured like that:
     }
 ```
 
-##### Out-of-the-box configuration options
+##### Configuration options
 
-The out-of-the-box configurations of DLC DomainEvents are:
+The configurations of DLC DomainEvents are:
 
 - [Non-transactional handling](#non-transactional) 
-- [Transactional setup without a transactional outbox](#transactional-without-outbox)
+- [Simple transactional setup](#simple-transactional)
 - [Transactional setup using a transactional outbox](#transactional-with-outbox)
 - [Transactional setup using an external message broker](#transactional-message-broker)
 - [Transactional setup using a transactional outbox proxying an external message broker](#transactional-outbox-proxying-message-broker)
@@ -320,9 +324,10 @@ Example setup:
     // by instantiating this routing configuration, the channel is active
     new ChannelRoutingConfiguration(router);
 ```
+Using Spring there is an auto-configuration provided for the configuration above (see [below](#spring-auto-configuration)).
 
-<a name="transactional-without-outbox"></a>
-###### Transactional setup without a transactional outbox
+<a name="simple-transactional"></a>
+###### Simple transactional setup 
 In this case DomainEvents are published "after commit". So "ghost messages" are avoided. Ghost messages are DomainEvents, 
 that are published, but the transaction of the operation that issued the DomainEvent might still be rolled back. 
 The loss of DomainEvents using this implementation are rare cases but technically possible. This setup routes 
@@ -338,12 +343,13 @@ Example setup with Spring transactions:
         services,
         true
         )
-        .processingChannel("c1");
+        .processingChannel("default");
     
     var router = new DomainEventTypeBasedRouter(List.of(channel));
-    router.defineDefaultChannel("c1");
+    router.defineDefaultChannel("default");
     new ChannelRoutingConfiguration(router);
 ```
+Using Spring there is an auto-configuration provided for the configuration above (see [below](#spring-auto-configuration)).
 
 Example setup with JTA provided transactions:
 ```Java
@@ -354,10 +360,10 @@ Example setup with JTA provided transactions:
         services,
         true
         )
-        .processingChannel("c1");
+        .processingChannel("default");
     
     var router = new DomainEventTypeBasedRouter(List.of(channel));
-    router.defineDefaultChannel("c1");
+    router.defineDefaultChannel("default");
     new ChannelRoutingConfiguration(router);
 ```
 <a name="transactional-with-outbox"></a>
@@ -446,6 +452,8 @@ A Spring based example using Gruelbox as messaging infrastructure:
     }
 
 ```
+
+Using Spring there is an auto-configuration provided for the configuration above (see [below](#spring-auto-configuration)).
 
 Here's another Spring based example of using Gruelbox in combination with idempotency protection.
 ```Java
@@ -894,3 +902,20 @@ public class JakartaJmsGruelboxIdempotencyConfig {
     }
 }
 ```
+<a name="spring-auto-configuration"></a>
+##### Spring Auto-Configuration 
+
+For DLC Domain Events there 4 auto configurations available:
+- io.domainlifecycles.autoconfig.configurations.DlcNoTxInMemoryDomainEventsAutoConfiguration:
+  - Disabled by default, enable by using ``@Import(DlcNoTxInMemoryDomainEventsAutoConfiguration.class)``
+- io.domainlifecycles.autoconfig.configurations.DlcSpringTxInMemoryDomainEventsAutoConfiguration
+  - Disabled by default, enable by using ``@Import(DlcSpringTxInMemoryDomainEventsAutoConfiguration.class)``
+- io.domainlifecycles.autoconfig.configurations.DlcGruelboxDomainEventsAutoConfiguration
+  - Disabled by default, enable by using ``@Import(DlcGruelboxDomainEventsAutoConfiguration.class)``
+  - A ``TransactionOutbox`` must be provided by the application configuration
+- io.domainlifecycles.autoconfig.configurations.DlcSpringBusDomainEventsAutoConfiguration
+  - Enabled by default, disable by using ``@EnableDlc(exclude="DlcSpringBusDomainEventsAutoConfiguration.class")``
+  - Does not support ``AggregateDomainEvents``
+  - This is only a DLC facade for publishing, listener methods are declared the Spring way using ``@EventListener``, ``@TransactionalEventListener`` or ``@ApplicationModuleListener``, ...
+
+

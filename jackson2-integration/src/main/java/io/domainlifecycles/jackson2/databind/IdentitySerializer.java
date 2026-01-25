@@ -42,6 +42,7 @@ import java.io.IOException;
  * @see StdSerializer
  */
 @SuppressWarnings("rawtypes")
+@Deprecated
 public class IdentitySerializer extends StdSerializer<Identity> {
 
     /**

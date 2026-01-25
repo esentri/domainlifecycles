@@ -63,6 +63,7 @@ import java.util.Optional;
  * @author Mario Herb
  * @see StdDeserializer
  */
+@Deprecated
 public class EntityDeserializer extends StdDeserializer<Entity<?>> {
 
     /**

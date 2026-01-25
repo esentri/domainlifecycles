@@ -12,7 +12,6 @@ plugins {
     id 'jacoco'
 	alias libs.plugins.spring.boot.plugin
 	alias libs.plugins.flyway.plugin
-	alias libs.plugins.jooq.codegen.gradle
 	alias libs.plugins.yumi.gradle.licenser.plugin
 	alias libs.plugins.jaredsburrows.license.plugin
 }
@@ -41,6 +40,7 @@ dependencies {
     api project(":domain-events-jakarta-jms")
     api project(":domain-events-activemq-classic5")
     api project(":domain-events-mq")
+    api project(":domain-events-spring-bus")
     api project(":domain-events-serialization-jackson3")
     api project(":domain-events-serialization-jackson2")
     api libs.gruelbox.transactionoutbox.spring
@@ -51,7 +51,7 @@ dependencies {
     api libs.jackson3.databind
 
     compileOnly libs.jooq.codegen
-	jooqCodegen libs.jooq.meta
+	//jooqCodegen libs.jooq.meta
 
     testImplementation platform(libs.spring.boot.dependencies)
     testImplementation libs.h2
@@ -124,49 +124,62 @@ flyway {
 }
 
 // ----------------------------------------------------------
-
-jooq {
-	configuration {
-
-		jdbc {
-			driver = dbDriver
-			url = dbUrl
-			user = dbUsername
-			password = dbPassword
-		}
-
-		generator {
-			database {
-				name = "org.jooq.meta.h2.H2Database"
-				includes = ".*"
-				inputSchema = 'TEST_DOMAIN'
-				recordVersionFields = 'CONCURRENCY_VERSION'
-				forceIntegerTypesOnZeroScaleDecimals = true
-			}
-
-			generate {
-				generatedAnnotation = false
-				generatedAnnotationType = 'DETECT_FROM_JDK'
-				javaTimeTypes = true
-			}
-			target {
-				packageName = "io.domainlifecycles.test.autoconfig"
-			}
-		}
-	}
+configurations {
+    jooqCodegenTool
 }
 
-tasks.named("compileJava") {
-	dependsOn(tasks.named("jooqCodegen"))
+dependencies {
+    // jOOQ tool deps for code generation only
+    jooqCodegenTool libs.jooq.codegen
+    jooqCodegenTool libs.jooq.meta
+    jooqCodegenTool libs.h2      // or your JDBC driver
+    // if you use JAXB on newer JDKs, you may need:
+    // jooqCodegenTool "org.glassfish.jaxb:jaxb-runtime:4.0.5"
 }
 
-tasks.named("jooqCodegen") {
+def jooqTestOutputDir = layout.buildDirectory.dir("generated/sources/jooqTest/java").get().asFile
+
+tasks.register("jooqCodegenTest", JavaExec) {
+    group = "jooq"
+    description = "Generate jOOQ sources for tests only"
+
+    classpath = configurations.jooqCodegenTool
+    mainClass = "org.jooq.codegen.GenerationTool"
+
+    // Make Gradle 8+ happy: declare outputs/inputs
+    outputs.dir(jooqTestOutputDir)
+    inputs.file("src/test/resources/jooq-codegen-test.xml")
+
+    // If your schema depends on flyway:
+    dependsOn(tasks.named("flywayMigrate"))
+
+    args("src/test/resources/jooq-codegen-test.xml")
+
+    doFirst { jooqTestOutputDir.mkdirs() }
+}
+
+sourceSets {
+    test {
+        java.srcDir(jooqTestOutputDir)
+    }
+}
+
+tasks.named("compileTestJava") {
+    dependsOn("jooqCodegenTest")
+}
+
+tasks.named("jooqCodegenTest") {
 	dependsOn(tasks.named("flywayMigrate"))
 	inputs.files(fileTree("src/main/resources/db/migration"))
 }
 
-tasks.named("sourcesJar") {
-    dependsOn(tasks.named("jooqCodegen"))
+tasks.named("sourcesJar", Jar).configure {
+    from("src/main/java")
+    from("src/main/resources")
+}
+
+tasks.named("compileTestJava") {
+    dependsOn("jooqCodegenTest")
 }
 
 tasks.withType(Checkstyle) {

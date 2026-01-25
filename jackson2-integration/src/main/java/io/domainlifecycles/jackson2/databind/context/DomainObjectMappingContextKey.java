@@ -37,6 +37,7 @@ import java.util.Objects;
  * @author Leon Völlinger
  * @author Mario Herb
  */
+@Deprecated
 public class DomainObjectMappingContextKey {
     private final JsonNode node;
     private final String domainObjectTypeName;

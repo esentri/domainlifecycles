@@ -33,6 +33,7 @@ package io.domainlifecycles.jackson2.api;
  * @author Leon Völlinger
  * @author Mario Herb
  */
+@Deprecated
 public enum MappingAction {
     /**
      * Indicates that the default mapping action for a specified step in the JSON-object transformation process

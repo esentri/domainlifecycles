@@ -16,8 +16,8 @@ dependencies {
     api project(":types")
     api project(":jackson2-integration")
     api project(":builder")
-    api libs.jackson2.core
-    api libs.jackson2.databind
+    compileOnly libs.jackson2.core
+    compileOnly libs.jackson2.databind
 
     testImplementation libs.assertj
     testImplementation libs.jackson2.core

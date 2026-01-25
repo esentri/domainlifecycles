@@ -46,6 +46,7 @@ import java.io.IOException;
  * @author Mario Herb
  * @see StdSerializer
  */
+@Deprecated
 public class ValueObjectSerializer extends StdSerializer<ValueObject> {
 
     /**

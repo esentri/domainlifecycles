@@ -27,7 +27,6 @@
 package io.domainlifecycles.autoconfig.features.multiple.persistence_builder;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
-import io.domainlifecycles.autoconfig.configurations.DlcDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcGruelboxDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJacksonAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
@@ -42,7 +41,6 @@ import java.util.Locale;
     DlcSpringWebAutoConfiguration.class,
     DlcSpringOpenApiAutoConfiguration.class,
     DlcJacksonAutoConfiguration.class,
-    DlcDomainEventsAutoConfiguration.class,
     DlcGruelboxDomainEventsAutoConfiguration.class
 })
 public class TestApplicationPersistenceAndBuilderAutoConfig {

@@ -27,7 +27,6 @@
 package io.domainlifecycles.autoconfig.features.multiple.jackson_builder;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
-import io.domainlifecycles.autoconfig.configurations.DlcDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcGruelboxDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
@@ -41,9 +40,7 @@ import java.util.Locale;
 @EnableDlc(exclude = {
     DlcSpringWebAutoConfiguration.class,
     DlcSpringOpenApiAutoConfiguration.class,
-    DlcJooqPersistenceAutoConfiguration.class,
-    DlcDomainEventsAutoConfiguration.class,
-    DlcGruelboxDomainEventsAutoConfiguration.class
+    DlcJooqPersistenceAutoConfiguration.class
 })
 public class TestApplicationJacksonAndBuilderAutoConfig {
 

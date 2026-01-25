@@ -56,17 +56,27 @@ import javax.sql.DataSource;
 import java.util.Set;
 
 /**
- * Autoconfiguration for JOOQ persistence functionality in the DLC framework.
- * This configuration sets up the necessary beans for database access and persistence operations
- * using JOOQ as the underlying database access technology.
- * <p>
- * This configuration provides default implementations for JOOQ-specific components including
- * connection providers, DSL contexts, domain persistence providers, and entity identity providers.
- * All beans can be overridden by providing custom implementations.
- * </p>
+ * Auto-configuration class for integrating JOOQ persistence with the DLC framework.
+ * This class sets up beans and configuration necessary to enable JOOQ-based data access
+ * and integration with domain-driven designs supported by DLC.
+ *
+ * Auto-configuration for this class occurs after several critical configurations,
+ * such as the DataSource and other DLC-specific configurations, but before the
+ * default Spring Boot JOOQ auto-configuration.
+ *
+ * Features of this auto-configuration include:
+ * - Setting up a JOOQ {@link Configuration} object with custom SQL dialect and locking behavior.
+ * - Creating a {@link DSLContext} bean for streamlined access to JOOQ DSL APIs.
+ * - Providing a {@link JooqDomainPersistenceProvider} for domain persistence if a {@link DomainMirror} is available.
+ * - Setting up an {@link EntityIdentityProvider} for handling entity identities in JOOQ operations.
+ *
+ * This class is conditionally activated when the JOOQ library is present on the classpath,
+ * and certain dependent beans, like {@link DataSource}, are configured.
+ *
+ * Additional customization can be achieved through the {@link DlcJooqPersistenceProperties} configuration
+ * class, which allows specifying properties like the JOOQ record package and SQL dialect.
  *
  * @author Mario Herb
- * @author Leon Völlinger
  */
 @AutoConfiguration(
     after = {
@@ -77,143 +87,144 @@ import java.util.Set;
     beforeName = "org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration"
 )
 @EnableConfigurationProperties(DlcJooqPersistenceProperties.class)
-@ConditionalOnClass(name="org.jooq.DSLContext")
+@ConditionalOnClass(name = "org.jooq.DSLContext")
 public class DlcJooqPersistenceAutoConfiguration {
 
-    private @Value("${jooqRecordPackage}") String jooqRecordPackage;
-    private @Value("${jooqSqlDialect}") SQLDialect jooqSqlDialect;
-
     /**
-     * Creates a connection provider for managing database connections.
-     * Uses a transaction-aware proxy to ensure proper transaction handling.
+     * Configuration class for setting up JOOQ persistence in a Spring Boot application.
+     * This class provides the necessary beans and configurations to integrate JOOQ with
+     * the application’s data source and domain persistence layer.
      *
-     * @param dataSource the data source used for database connections
-     * @return a configured {@link DataSourceConnectionProvider}
-     */
-    @Bean
-    @ConditionalOnBean(DataSource.class)
-    @ConditionalOnMissingBean(DataSourceConnectionProvider.class)
-    public DataSourceConnectionProvider connectionProvider(DataSource dataSource) {
-        return new DataSourceConnectionProvider(new TransactionAwareDataSourceProxy(dataSource));
-    }
-
-    /**
-     * Creates a JOOQ configuration with optimistic locking enabled.
-     * DLC requires optimistic locking to be enabled in the JOOQ configuration
-     * for proper concurrency control in domain operations.
+     * The configuration is conditional on the presence of the JOOQ library in the classpath
+     * and sets up beans only if required dependencies are available.
      *
-     * @param dataSource the data source for database connections
-     * @param persistenceProperties configuration properties for persistence settings
-     * @return a configured {@link DefaultConfiguration} with optimistic locking enabled
-     * @throws DLCAutoConfigException if the SQL dialect property is missing
      */
-    @Bean
-    @ConditionalOnBean({DataSource.class})
-    @ConditionalOnMissingBean(Configuration.class)
-    public DefaultConfiguration configuration(DataSource dataSource, DlcJooqPersistenceProperties persistenceProperties) {
-        final var jooqConfig = new DefaultConfiguration();
-        jooqConfig.settings().setExecuteWithOptimisticLocking(true);
-        jooqConfig.setConnectionProvider(connectionProvider(dataSource));
+    @org.springframework.context.annotation.Configuration(proxyBeanMethods = false)
+    @ConditionalOnClass(name = "org.jooq.DSLContext")
+    static class JooqPersistenceConfiguration {
 
-        SQLDialect sqlDialect;
+        @Value("${jooqRecordPackage:#{null}}")
+        private String jooqRecordPackage;
 
-        if(persistenceProperties != null && persistenceProperties.getSqlDialect() != null) {
-            sqlDialect = persistenceProperties.getSqlDialect();
-        } else if (jooqSqlDialect != null) {
-            sqlDialect = jooqSqlDialect;
-        } else {
-            throw DLCAutoConfigException.fail("Property 'sqlDialect' is missing. Make sure you specified a property " +
-                "called 'dlc.persistence.sqlDialect' or add a 'jooqSqlDialect' value on the @EnableDLC annotation.");
+        @Value("${jooqSqlDialect:#{null}}")
+        private SQLDialect jooqSqlDialect;
+
+        /**
+         * Creates a {@link DataSourceConnectionProvider} bean for providing database connections.
+         * This method wraps the given {@link DataSource} with a {@link TransactionAwareDataSourceProxy}
+         * to ensure transaction-aware behavior.
+         *
+         * @param dataSource the data source to be wrapped by the connection provider
+         * @return a {@link DataSourceConnectionProvider} instance configured with the given data source
+         */
+        @Bean
+        @ConditionalOnBean(DataSource.class)
+        @ConditionalOnMissingBean(name = "org.jooq.impl.DataSourceConnectionProvider")
+        public DataSourceConnectionProvider connectionProvider(DataSource dataSource) {
+            return new DataSourceConnectionProvider(new TransactionAwareDataSourceProxy(dataSource));
         }
 
-        jooqConfig.set(sqlDialect);
-        return jooqConfig;
-    }
+        /**
+         * Creates a {@link DefaultConfiguration} bean for JOOQ configuration.
+         * Configures the JOOQ settings, connection provider, and SQL dialect for database operations.
+         * The SQL dialect is determined based on the provided persistence properties or a global dialect field.
+         *
+         * @param dataSource the {@link DataSource} used for database connections
+         * @param persistenceProperties the custom persistence configuration properties for JOOQ,
+         *                              providing details such as the SQL dialect to use
+         * @return a configured {@link DefaultConfiguration} instance for JOOQ operations
+         * @throws DLCAutoConfigException if the SQL dialect is not specified or cannot be determined
+         */
+        @Bean
+        @ConditionalOnBean(DataSource.class)
+        @ConditionalOnMissingBean(name = "org.jooq.Configuration")
+        public DefaultConfiguration configuration(DataSource dataSource, DlcJooqPersistenceProperties persistenceProperties) {
+            final var jooqConfig = new DefaultConfiguration();
+            jooqConfig.settings().setExecuteWithOptimisticLocking(true);
+            jooqConfig.setConnectionProvider(connectionProvider(dataSource));
 
-    /**
-     * Creates a DSL context for executing JOOQ queries and operations.
-     * All DLC repository implementations require a {@link DSLContext} instance
-     * for database interaction.
-     *
-     * @param dataSource the data source for database connections
-     * @param persistenceProperties configuration properties for persistence settings
-     * @return a configured {@link DSLContext} instance
-     */
+            SQLDialect sqlDialect;
+            if (persistenceProperties != null && persistenceProperties.getSqlDialect() != null) {
+                sqlDialect = persistenceProperties.getSqlDialect();
+            } else if (jooqSqlDialect != null) {
+                sqlDialect = jooqSqlDialect;
+            } else {
+                throw DLCAutoConfigException.fail("Property 'sqlDialect' is missing. Specify 'dlc.persistence.sqlDialect' or 'jooqSqlDialect'.");
+            }
 
-    @Bean
-    @ConditionalOnBean(DataSource.class)
-    @ConditionalOnMissingBean(DSLContext.class)
-    public DSLContext dslContext(DataSource dataSource, DlcJooqPersistenceProperties persistenceProperties) {
-        return new DefaultDSLContext(configuration(dataSource, persistenceProperties));
-    }
-
-    /**
-     * Creates the main domain persistence provider for JOOQ-based persistence operations.
-     * This provider handles the mapping between domain objects and JOOQ records.
-     * <p>
-     * <strong>IMPORTANT:</strong> A record package where all JOOQ record classes are generated must be defined
-     * either through properties or the @EnableDLC annotation.
-     * </p>
-     *
-     * @param domainObjectBuilderProvider provider for building domain objects during deserialization
-     * @param customRecordMappers all custom record mappers defined as Spring beans
-     * @param persistenceProperties configuration properties containing the JOOQ record package
-     * @param domainMirror the current Domain Mirror bean
-     * @return a configured {@link JooqDomainPersistenceProvider} instance
-     * @throws DLCAutoConfigException if the jooqRecordPackage property is missing
-     */
-
-    @Bean
-    @ConditionalOnMissingBean(DomainPersistenceProvider.class)
-    @ConditionalOnBean(DomainMirror.class)
-    public JooqDomainPersistenceProvider domainPersistenceProvider(
-        DomainObjectBuilderProvider domainObjectBuilderProvider,
-        Set<RecordMapper<?, ?, ?>> customRecordMappers,
-        DlcJooqPersistenceProperties persistenceProperties,
-        DomainMirror domainMirror
-    ) {
-        String recordPackage;
-        if (persistenceProperties != null
-            && persistenceProperties.getJooqRecordPackage() != null
-            && !persistenceProperties.getJooqRecordPackage().isBlank()) {
-
-            recordPackage = persistenceProperties.getJooqRecordPackage();
-        } else if(jooqRecordPackage != null && !jooqRecordPackage.isBlank()) {
-            recordPackage = jooqRecordPackage;
-        } else {
-            throw DLCAutoConfigException.fail("Property 'jooqRecordPackage' is missing. Make sure you specified a " +
-                "property called 'dlc.persistence.jooqRecordPackage' or add a 'jooqRecordPackage' value on the " +
-                "@EnableDLC annotation.");
+            jooqConfig.set(sqlDialect);
+            return jooqConfig;
         }
 
-        return new JooqDomainPersistenceProvider(
-            JooqDomainPersistenceConfiguration.JooqPersistenceConfigurationBuilder
-                .newConfig()
-                .withDomainObjectBuilderProvider(domainObjectBuilderProvider)
-                .withCustomRecordMappers(customRecordMappers)
-                .withRecordClassProvider(new JooqRecordClassProvider(recordPackage))
-                .make());
-    }
+        /**
+         * Creates a {@link DSLContext} bean for executing database queries using JOOQ.
+         * This method uses the provided {@link Configuration} to initialize a default DSL context.
+         *
+         * @param configuration the JOOQ {@link Configuration} object containing settings, connection
+         *                      provider, and SQL dialect for database operations
+         * @return a {@link DSLContext} instance configured with the given {@link Configuration}
+         */
+        @Bean
+        @ConditionalOnBean(DataSource.class)
+        @ConditionalOnMissingBean(name = "org.jooq.DSLContext")
+        public DSLContext dslContext(Configuration configuration) {
+            return new DefaultDSLContext(configuration);
+        }
 
-    /**
-     * Creates an entity identity provider for managing entity IDs in the persistence layer.
-     * This provider makes it possible for new Entities or AggregateRoots to be passed to the application
-     * from outside (e.g., via a REST controller) and ensures that new instances receive new IDs
-     * from the corresponding database sequences or other ID providers.
-     * <p>
-     * The identity provider assigns new ID values during the deserialization process.
-     * This is necessary because DLC requires valid instances with non-null IDs within the domain.
-     * </p>
-     * <p>
-     * This component is primarily used together with DLC Jackson integration for JSON processing.
-     * </p>
-     *
-     * @param dslContext the JOOQ DSL context for database operations
-     * @return a configured {@link EntityIdentityProvider}
-     */
-    @Bean
-    @ConditionalOnMissingBean(EntityIdentityProvider.class)
-    EntityIdentityProvider identityProvider(DSLContext dslContext) {
-        return new JooqEntityIdentityProvider(dslContext);
+        /**
+         * Creates a {@link JooqDomainPersistenceProvider} bean for handling domain-specific persistence tasks.
+         * The method configures the provider with necessary dependencies such as domain object builders,
+         * custom record mappers, persistence properties, and a domain mirror.
+         * It also determines the appropriate JOOQ record package to use during the setup.
+         *
+         * @param domainObjectBuilderProvider the provider for building domain objects from database records
+         * @param customRecordMappers a set of custom mappers for converting database records to domain objects
+         * @param persistenceProperties configuration properties for JOOQ persistence, including the record package
+         * @param domainMirror the domain mirror for reflection and metadata about domain types
+         * @return a configured {@link JooqDomainPersistenceProvider} instance
+         * @throws DLCAutoConfigException if the required JOOQ record package property is missing or invalid
+         */
+        @Bean
+        @ConditionalOnMissingBean(DomainPersistenceProvider.class)
+        @ConditionalOnBean(DomainMirror.class)
+        public JooqDomainPersistenceProvider domainPersistenceProvider(
+            DomainObjectBuilderProvider domainObjectBuilderProvider,
+            Set<RecordMapper<?, ?, ?>> customRecordMappers,
+            DlcJooqPersistenceProperties persistenceProperties,
+            DomainMirror domainMirror
+        ) {
+            String recordPackage;
+            if (persistenceProperties != null
+                && persistenceProperties.getJooqRecordPackage() != null
+                && !persistenceProperties.getJooqRecordPackage().isBlank()) {
+                recordPackage = persistenceProperties.getJooqRecordPackage();
+            } else if (jooqRecordPackage != null && !jooqRecordPackage.isBlank()) {
+                recordPackage = jooqRecordPackage;
+            } else {
+                throw DLCAutoConfigException.fail("Property 'jooqRecordPackage' is missing.");
+            }
+
+            return new JooqDomainPersistenceProvider(
+                JooqDomainPersistenceConfiguration.JooqPersistenceConfigurationBuilder
+                    .newConfig()
+                    .withDomainObjectBuilderProvider(domainObjectBuilderProvider)
+                    .withCustomRecordMappers(customRecordMappers)
+                    .withRecordClassProvider(new JooqRecordClassProvider(recordPackage))
+                    .make());
+        }
+
+        /**
+         * Creates an {@link EntityIdentityProvider} bean for providing identity information for entities.
+         * This implementation uses jOOQ's DSLContext to manage database sequences for generating identities.
+         *
+         * @param dslContext the {@link DSLContext} used for interacting with the database
+         *                   and retrieving sequence values for identity generation
+         * @return a {@link JooqEntityIdentityProvider} instance configured with the given DSLContext
+         */
+        @Bean
+        @ConditionalOnMissingBean(EntityIdentityProvider.class)
+        public EntityIdentityProvider identityProvider(DSLContext dslContext) {
+            return new JooqEntityIdentityProvider(dslContext);
+        }
     }
 }

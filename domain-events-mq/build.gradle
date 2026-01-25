@@ -17,10 +17,10 @@ dependencies {
     api project(":domain-events-gruelbox")
     api project(":domain-events-jakarta-jta")
     api project(":domain-events-spring-tx")
-    api libs.spring.tx
+    compileOnly libs.spring.tx
     api project(":types")
     implementation project(":mirror")
     api project(":service-registry")
     api libs.slf4j.api
-    api libs.gruelbox.transactionoutbox.core
+    compileOnly libs.gruelbox.transactionoutbox.core
 }

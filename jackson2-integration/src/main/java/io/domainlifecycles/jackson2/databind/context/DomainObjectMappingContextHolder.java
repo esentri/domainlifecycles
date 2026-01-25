@@ -49,6 +49,7 @@ import java.util.Map;
  * @author Leon Völlinger
  * @author Mario Herb
  */
+@Deprecated
 public class DomainObjectMappingContextHolder {
 
     /**

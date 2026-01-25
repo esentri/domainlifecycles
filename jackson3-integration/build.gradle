@@ -13,8 +13,8 @@ java {
 }
 
 dependencies {
-    api libs.jackson3.core
-    api libs.jackson3.databind
+    compileOnly libs.jackson3.core
+    compileOnly libs.jackson3.databind
     api project(":types")
     implementation project(":mirror")
     implementation project(":access")

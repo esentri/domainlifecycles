@@ -56,6 +56,7 @@ import java.util.Optional;
  * @author Mario Herb
  * @see StdDeserializer
  */
+@Deprecated
 public class ValueObjectDeserializer extends StdDeserializer<ValueObject> {
 
     /**

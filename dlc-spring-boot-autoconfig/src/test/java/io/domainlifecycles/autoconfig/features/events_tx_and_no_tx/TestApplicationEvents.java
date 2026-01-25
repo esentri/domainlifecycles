@@ -24,39 +24,39 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.autoconfig.features.multiple.events_builder_jackson.jms;
+package io.domainlifecycles.autoconfig.features.events_tx_and_no_tx;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
-import io.domainlifecycles.autoconfig.configurations.DlcGruelboxDomainEventsAutoConfiguration;
-import io.domainlifecycles.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
-import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
-import io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration;
 import io.domainlifecycles.autoconfig.model.events.ADomainService;
 import io.domainlifecycles.autoconfig.model.events.AQueryHandler;
 import io.domainlifecycles.autoconfig.model.events.ARepository;
+import io.domainlifecycles.autoconfig.model.events.AnAggregateDomainEvent;
 import io.domainlifecycles.autoconfig.model.events.AnApplicationService;
 import io.domainlifecycles.autoconfig.model.events.AnOutboundService;
+import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
+import io.domainlifecycles.events.api.ProcessingChannel;
+import io.domainlifecycles.events.api.PublishingChannel;
+import io.domainlifecycles.events.api.PublishingRouter;
+import io.domainlifecycles.events.inmemory.InMemoryChannelFactory;
+import io.domainlifecycles.events.spring.api.SpringTxInMemoryChannelFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 
+import java.util.List;
 import java.util.Locale;
 
-@SpringBootApplication
-@EnableDlc(exclude = {
-    DlcSpringWebAutoConfiguration.class,
-    DlcJooqPersistenceAutoConfiguration.class,
-    DlcSpringOpenApiAutoConfiguration.class,
-    DlcGruelboxDomainEventsAutoConfiguration.class,
-})
-public class TestApplicationSpringJmsEventAndBuilderAndJacksonAutoConfiguration {
+@SpringBootApplication()
+@EnableDlc()
+public class TestApplicationEvents {
 
     /**
      * Setting the Locale to explicitly force the language in default validation error messages.
      */
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH);
-        new SpringApplicationBuilder(TestApplicationSpringJmsEventAndBuilderAndJacksonAutoConfiguration.class).run(args);
+        new SpringApplicationBuilder(TestApplicationEvents.class).
+            run(args);
     }
 
     @Bean
@@ -82,5 +82,23 @@ public class TestApplicationSpringJmsEventAndBuilderAndJacksonAutoConfiguration 
     @Bean
     public AnOutboundService anOutboundService(){
         return new AnOutboundService();
+    }
+
+    @Bean
+    public ProcessingChannel inMemoryChannel(InMemoryChannelFactory factory){
+        return factory.processingChannel("inMemory");
+    }
+
+    @Bean
+    public ProcessingChannel springTxChannel(SpringTxInMemoryChannelFactory factory){
+        return factory.processingChannel("springTx");
+    }
+
+    @Bean
+    public PublishingRouter router(List<PublishingChannel> channels ){
+        var router = new DomainEventTypeBasedRouter(channels);
+        router.defineDefaultChannel("inMemory");
+        router.defineExplicitRoute(AnAggregateDomainEvent.class, "springTx");
+        return router;
     }
 }
