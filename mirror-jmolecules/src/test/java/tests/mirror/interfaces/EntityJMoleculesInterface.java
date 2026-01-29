@@ -35,8 +35,11 @@ public class EntityJMoleculesInterface implements Entity<AggregateRootJMolecules
 
     private final EntityId id;
 
-    public EntityJMoleculesInterface(EntityId id) {
+    private final String someField;
+
+    public EntityJMoleculesInterface(EntityId id, String someField) {
         this.id = id;
+        this.someField = someField;
     }
 
     @Override

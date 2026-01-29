@@ -30,4 +30,10 @@ import org.jmolecules.ddd.annotation.ValueObject;
 
 @ValueObject
 public class ValueObjectJMoleculesAnnotation {
+
+    private final Long someValue;
+
+    public ValueObjectJMoleculesAnnotation(Long someValue) {
+        this.someValue = someValue;
+    }
 }

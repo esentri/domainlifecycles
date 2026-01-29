@@ -34,4 +34,6 @@ public class EntityJMoleculesAnnotation {
 
     @Identity
     private Long id;
+
+    private String someField;
 }

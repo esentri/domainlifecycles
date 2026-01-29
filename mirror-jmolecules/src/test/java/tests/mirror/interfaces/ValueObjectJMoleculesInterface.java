@@ -30,4 +30,10 @@ package tests.mirror.interfaces;
 import org.jmolecules.ddd.types.ValueObject;
 
 public class ValueObjectJMoleculesInterface implements ValueObject {
+
+    private final Long someValue;
+
+    public ValueObjectJMoleculesInterface(Long someValue) {
+        this.someValue = someValue;
+    }
 }

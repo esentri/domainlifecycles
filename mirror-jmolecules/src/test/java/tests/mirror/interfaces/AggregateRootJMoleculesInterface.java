@@ -35,8 +35,11 @@ public class AggregateRootJMoleculesInterface implements AggregateRoot<Aggregate
 
     private final AggregateRootId id;
 
-    public AggregateRootJMoleculesInterface(AggregateRootId id) {
+    private final String someField;
+
+    public AggregateRootJMoleculesInterface(AggregateRootId id, String someField) {
         this.id = id;
+        this.someField = someField;
     }
 
     @Override

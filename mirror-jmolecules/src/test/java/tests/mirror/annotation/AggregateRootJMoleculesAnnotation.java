@@ -34,4 +34,6 @@ public class AggregateRootJMoleculesAnnotation {
 
     @Identity
     private Long id;
+
+    private String someField;
 }
