@@ -2,7 +2,7 @@ package io.domainlifecycles.autoconfig.model.events;
 
 import io.domainlifecycles.domain.types.ApplicationService;
 import io.domainlifecycles.domain.types.DomainEvent;
-import io.domainlifecycles.domain.types.ListensTo;
+import io.domainlifecycles.domain.types.DomainEventListener;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Queue;
@@ -13,7 +13,7 @@ public class AnApplicationService implements ApplicationService {
 
     public Queue<DomainEvent> received = new ConcurrentLinkedQueue<>();
 
-    @ListensTo(domainEventType = ADomainEvent.class)
+    @DomainEventListener
     public void onADomainEvent(ADomainEvent domainEvent){
         log.debug("ADomainEvent received in AnApplicationService! Message = " + domainEvent.message());
         received.add(domainEvent);

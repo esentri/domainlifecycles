@@ -73,7 +73,7 @@ public class GeneralVisualSettings {
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KINDS = true;
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_FIELDS = false;
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_METHODS = false;
-    private static final boolean DEFAULT_CALL_APPLICATION_SERVICE_DRIVER2 = false;
+    private static final boolean DEFAULT_CALL_APPLICATION_SERVICE_DRIVER = false;
     private static final List<String> DEFAULT_FIELD_BLACKLIST = List.of("concurrencyVersion");
     private static final List<String> DEFAULT_METHOD_BLACKLIST = List.of(
         "builder",
@@ -83,6 +83,7 @@ public class GeneralVisualSettings {
         "findResultById",
         "publish",
         "increaseVersion",
+        "getFetcher",
         "equals",
         "hashCode",
         "toString");
@@ -767,7 +768,7 @@ public class GeneralVisualSettings {
         private boolean showUnspecifiedServiceKinds$value = DEFAULT_SHOW_UNSPECIFIED_SERVICE_KINDS;
         private boolean showUnspecifiedServiceKindFields$value = DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_FIELDS;
         private boolean showUnspecifiedServiceKindMethods$value = DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_METHODS;
-        private boolean callApplicationServiceDriver$value = false;//DEFAULT_CALL_APPLICATION_SERVICE_DRIVER;
+        private boolean callApplicationServiceDriver$value = DEFAULT_CALL_APPLICATION_SERVICE_DRIVER;
         private List<String> fieldBlacklist$value;
         private List<String> methodBlacklist$value;
         private boolean showInheritedMembersInClasses$value = DEFAULT_SHOW_INHERITED_MEMBERS_IN_CLASSES;

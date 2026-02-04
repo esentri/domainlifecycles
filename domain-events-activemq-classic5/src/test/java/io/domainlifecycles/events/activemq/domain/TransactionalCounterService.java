@@ -27,7 +27,7 @@
 package io.domainlifecycles.events.activemq.domain;
 
 import io.domainlifecycles.domain.types.ApplicationService;
-import io.domainlifecycles.domain.types.ListensTo;
+import io.domainlifecycles.domain.types.DomainEventListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -61,12 +61,12 @@ public class TransactionalCounterService implements ApplicationService {
         return result;
     }
 
-    @ListensTo(domainEventType = CounterDomainEvent.class)
+    @DomainEventListener
     public void counterEventSuccess(CounterDomainEvent event){
         increaseCounterInTransaction();
     }
 
-    @ListensTo(domainEventType = CounterDomainEvent.class)
+    @DomainEventListener
     public void counterEventFail(CounterDomainEvent event){
         increaseCounterInTransaction();
         throw new IllegalStateException("Forced failure!");

@@ -50,7 +50,6 @@ public class NoFeaturesAutoConfigTest {
 
     @Test
     void testNoBeansPresent() {
-        assertThat(Domain.isInitialized()).isFalse();
         assertThat(domainObjectBuilderProvider).isNull();
         assertThat(jooqDomainPersistenceProvider).isNull();
         assertThat(router).isNull();

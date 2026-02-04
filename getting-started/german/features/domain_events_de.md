@@ -4,8 +4,8 @@
 
 # Domain Events
 Vereinfacht und kapselt einige Funktionen von Event-Publishing/-Listening von DomainEvents.
-Deutlich weniger Publisher Boilerplate-Code durch die statische  `DomainEvents.publish()` API, weniger Listener und 
-Event-Routing Boilerplate Code durch  `@ListensTo`  Annotation und optional Support für Spring oder JTA basiertes 
+Deutlich weniger Publisher Boilerplate-Code durch die statische `DomainEvents.publish()` API, weniger Listener und 
+Event-Routing Boilerplate Code durch `@DomainEventListener` Annotation und optional Support für Spring oder JTA basiertes 
 Transaktions-Handling oder Support für "transactional outbox" Pattern für besseres Publishen von DomainEvents
 
 ---
@@ -48,7 +48,7 @@ wie auch die zugehörige Transaktionssteuerung übernimmt das Framework:
 ```Java
 class EventListener {
     
-    @ListensTo(domainEventType = NewCustomerAdded.class)
+    @DomainEventListener
     public void listenToEvent(NewCustomerAdded newCustomerAdded) {}
 }
 ```

@@ -29,14 +29,14 @@ package io.domainlifecycles.events.springgruelboxintegration;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.domain.types.ServiceKind;
-import io.domainlifecycles.events.ADomainService;
-import io.domainlifecycles.events.AQueryHandler;
-import io.domainlifecycles.events.ARepository;
-import io.domainlifecycles.events.AnApplicationService;
-import io.domainlifecycles.events.AnOutboundService;
-import io.domainlifecycles.events.AnotherApplicationService;
-import io.domainlifecycles.events.AnotherService;
-import io.domainlifecycles.events.TransactionalCounterService;
+import testdomain.general.ADomainService;
+import testdomain.general.AQueryHandler;
+import testdomain.general.ARepository;
+import testdomain.general.AnApplicationService;
+import testdomain.general.AnOutboundService;
+import testdomain.general.AnotherApplicationService;
+import testdomain.general.AnotherService;
+import testdomain.general.TransactionalCounterService;
 import io.domainlifecycles.jackson3.api.JacksonMappingCustomizer;
 import io.domainlifecycles.jackson3.module.DlcJacksonModule;
 import io.domainlifecycles.mirror.api.Domain;
@@ -66,7 +66,8 @@ public class TestApplicationGruelboxIntegration {
 
     @Bean
     DomainMirror initializedDomain(){
-        Domain.initialize(new ReflectiveDomainMirrorFactory("io.domainlifecycles.events"));
+        Domain.unInitialize();
+        Domain.initialize(new ReflectiveDomainMirrorFactory("testdomain.general"));
         return Domain.getDomainMirror();
     }
 

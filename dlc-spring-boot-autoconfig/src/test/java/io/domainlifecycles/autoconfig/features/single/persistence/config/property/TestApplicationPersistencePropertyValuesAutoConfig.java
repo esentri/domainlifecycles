@@ -28,7 +28,6 @@ package io.domainlifecycles.autoconfig.features.single.persistence.config.proper
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
 import io.domainlifecycles.autoconfig.configurations.DlcBuilderAutoConfiguration;
-import io.domainlifecycles.autoconfig.configurations.DlcGruelboxDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJacksonAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringBusDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;

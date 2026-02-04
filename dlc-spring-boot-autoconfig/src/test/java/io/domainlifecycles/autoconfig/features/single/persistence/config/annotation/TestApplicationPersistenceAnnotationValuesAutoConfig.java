@@ -28,8 +28,9 @@ package io.domainlifecycles.autoconfig.features.single.persistence.config.annota
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
 import io.domainlifecycles.autoconfig.configurations.DlcBuilderAutoConfiguration;
-import io.domainlifecycles.autoconfig.configurations.DlcGruelboxDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJacksonAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcNoTxInMemoryDomainEventsAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcSpringBusDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -43,7 +44,9 @@ import java.util.Locale;
         DlcBuilderAutoConfiguration.class,
         DlcJacksonAutoConfiguration.class,
         DlcSpringOpenApiAutoConfiguration.class,
-        DlcSpringWebAutoConfiguration.class
+        DlcSpringWebAutoConfiguration.class,
+        DlcSpringBusDomainEventsAutoConfiguration.class,
+        DlcNoTxInMemoryDomainEventsAutoConfiguration.class,
     },
     dlcDomainBasePackages = "io.domainlifecycles.autoconfig",
     jooqRecordPackage = "io.domainlifecycles.test.autoconfig",

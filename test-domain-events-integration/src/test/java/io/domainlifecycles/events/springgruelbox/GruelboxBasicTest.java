@@ -27,13 +27,13 @@
 package io.domainlifecycles.events.springgruelbox;
 
 import com.gruelbox.transactionoutbox.TransactionOutbox;
-import io.domainlifecycles.events.AComplexDomainEvent;
-import io.domainlifecycles.events.ADomainEvent;
-import io.domainlifecycles.events.ADomainEventCarryingAnId;
-import io.domainlifecycles.events.AValueObject;
-import io.domainlifecycles.events.AnApplicationService;
-import io.domainlifecycles.events.AnIdentity;
-import io.domainlifecycles.events.AnotherApplicationService;
+import testdomain.general.AComplexDomainEvent;
+import testdomain.general.ADomainEvent;
+import testdomain.general.ADomainEventCarryingAnId;
+import testdomain.general.AValueObject;
+import testdomain.general.AnApplicationService;
+import testdomain.general.AnIdentity;
+import testdomain.general.AnotherApplicationService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

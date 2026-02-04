@@ -23,4 +23,6 @@ dependencies {
     compileOnly libs.jackson3.databind
 
     testImplementation libs.gruelbox.transactionoutbox.core
+    testImplementation libs.jackson3.core
+    testImplementation libs.jackson3.databind
 }

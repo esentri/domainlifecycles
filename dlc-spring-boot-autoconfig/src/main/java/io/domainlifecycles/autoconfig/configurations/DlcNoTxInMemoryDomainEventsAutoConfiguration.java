@@ -45,6 +45,13 @@ import org.springframework.context.annotation.Primary;
 
 import java.util.List;
 
+/**
+ * Autoconfiguration class for enabling in-memory domain event processing in the DLC framework
+ * without transactional support. This configuration is activated only when the property
+ * `dlc.events.inmemory.enabled` is set to `true`.
+ *
+ * @author Mario Herb
+ */
 @AutoConfiguration(
     after = {
         DlcDomainAutoConfiguration.class,
@@ -53,7 +60,7 @@ import java.util.List;
     }
 )
 @ConditionalOnProperty(
-    prefix = "dlc.events.notx",
+    prefix = "dlc.events.inmemory",
     name = "enabled",
     havingValue = "true",
     matchIfMissing = false

@@ -24,12 +24,9 @@ def dbPassword = ''
 def dbMigration = 'src/test/resources/db/migration'
 
 dependencies {
-	api libs.jooq
-    api libs.spring.jdbc
+    compileOnly libs.jooq
+    compileOnly libs.spring.jdbc
     api project(":domain-events-core")
-    api project(":domain-events-jakarta-jta")
-    api project(":domain-events-spring-tx")
-    api project(":domain-events-gruelbox")
     api project(":jackson2-integration")
     api project(":jackson3-integration")
     api project(":builder")
@@ -37,22 +34,12 @@ dependencies {
     api project(":spring-doc-integration")
     api project(":spring-web-integration")
     api project(":swagger-integration")
-    api project(":domain-events-jakarta-jms")
-    api project(":domain-events-activemq-classic5")
-    api project(":domain-events-mq")
     api project(":domain-events-spring-bus")
-    api project(":domain-events-serialization-jackson3")
-    api project(":domain-events-serialization-jackson2")
-    api libs.gruelbox.transactionoutbox.spring
-    api libs.spring.doc.openapi.starter.webmvc.ui
-    api libs.spring.web
-    api libs.jakarta.transaction.api
-    api libs.jackson3.core
-    api libs.jackson3.databind
-
+    compileOnly libs.spring.doc.openapi.starter.webmvc.ui
+    compileOnly libs.spring.web
+    compileOnly libs.jackson3.core
+    compileOnly libs.jackson3.databind
     compileOnly libs.jooq.codegen
-	//jooqCodegen libs.jooq.meta
-
     testImplementation platform(libs.spring.boot.dependencies)
     testImplementation libs.h2
 	testImplementation project(":test-shared-impl")
@@ -61,9 +48,6 @@ dependencies {
     testImplementation project(":types")
     testImplementation project(":assertions")
     testImplementation project(":domain-events-core")
-    testImplementation project(":domain-events-jakarta-jta")
-    testImplementation project(":domain-events-spring-tx")
-    testImplementation project(":domain-events-gruelbox")
     testImplementation project(":jackson2-integration")
     testImplementation project(":jackson3-integration")
     testImplementation project(":jooq-integration")
@@ -71,20 +55,13 @@ dependencies {
     testImplementation project(":spring-web-integration")
     testImplementation project(":swagger-integration")
     testImplementation project(":bean-validations")
-    testImplementation project(":domain-events-jakarta-jms")
     testImplementation project(":domain-events-mq")
     testImplementation project(":type-utils")
-    testImplementation project(":domain-events-serialization-jackson3")
 	testImplementation libs.assertj
-    testImplementation libs.gruelbox.transactionoutbox.core
-    testImplementation libs.gruelbox.transactionoutbox.jackson
-    testImplementation libs.gruelbox.transactionoutbox.spring
 	testImplementation libs.spring.boot.starter.webmvc.test
     testImplementation libs.spring.boot.starter.jooq
     testImplementation libs.spring.boot.starter.jdbc
     testImplementation libs.spring.boot.starter.test
-    testImplementation libs.spring.boot.starter.artemis
-    testImplementation libs.apache.active.mq.artemis.jms.server
     testImplementation libs.spring.doc.openapi.starter.webmvc.ui
     testImplementation libs.jackson3.core
     testImplementation libs.jackson3.databind
@@ -174,6 +151,7 @@ tasks.named("jooqCodegenTest") {
 }
 
 tasks.named("sourcesJar", Jar).configure {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from("src/main/java")
     from("src/main/resources")
 }

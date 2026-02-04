@@ -27,11 +27,11 @@
 package io.domainlifecycles.events.spring.after;
 
 import io.domainlifecycles.domain.types.ServiceKind;
-import io.domainlifecycles.events.ADomainService;
-import io.domainlifecycles.events.AQueryHandler;
-import io.domainlifecycles.events.ARepository;
-import io.domainlifecycles.events.AnApplicationService;
-import io.domainlifecycles.events.AnOutboundService;
+import testdomain.general.ADomainService;
+import testdomain.general.AQueryHandler;
+import testdomain.general.ARepository;
+import testdomain.general.AnApplicationService;
+import testdomain.general.AnOutboundService;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.spring.api.SpringTxInMemoryChannelFactory;
@@ -53,7 +53,8 @@ import java.util.Locale;
 public class TestApplicationAfterCommit {
 
     static {
-        Domain.initialize(new ReflectiveDomainMirrorFactory("io.domainlifecycles.events"));
+        Domain.unInitialize();
+        Domain.initialize(new ReflectiveDomainMirrorFactory("testdomain.general"));
     }
 
     /**

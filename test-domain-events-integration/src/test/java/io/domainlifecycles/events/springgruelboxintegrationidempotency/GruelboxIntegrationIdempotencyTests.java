@@ -28,9 +28,9 @@ package io.domainlifecycles.events.springgruelboxintegrationidempotency;
 
 import com.gruelbox.transactionoutbox.TransactionOutboxEntry;
 import io.domainlifecycles.domain.types.DomainEvent;
-import io.domainlifecycles.events.IdemProtectedDomainEvent;
-import io.domainlifecycles.events.IdemProtectedListener;
-import io.domainlifecycles.events.MyTransactionOutboxListener;
+import testdomain.general.IdemProtectedDomainEvent;
+import testdomain.general.IdemProtectedListener;
+import testdomain.general.MyTransactionOutboxListener;
 import io.domainlifecycles.events.api.DomainEvents;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

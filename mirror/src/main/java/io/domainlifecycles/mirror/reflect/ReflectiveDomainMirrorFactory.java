@@ -97,7 +97,7 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
         builtTypeMirrors
             .values()
             .forEach(m -> {
-                log.debug("Created Mirror:" + m);
+                log.debug("Created Mirror:" + m.getTypeName());
 
             });
 

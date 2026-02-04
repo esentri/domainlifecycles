@@ -28,7 +28,7 @@ package io.domainlifecycles.events.activemq.domain;
 
 import io.domainlifecycles.domain.types.ApplicationService;
 import io.domainlifecycles.domain.types.DomainEvent;
-import io.domainlifecycles.domain.types.ListensTo;
+import io.domainlifecycles.domain.types.DomainEventListener;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Queue;
@@ -45,7 +45,7 @@ public class AnotherApplicationService implements ApplicationService {
         this.anotherService = anotherService;
     }
 
-    @ListensTo(domainEventType = ADomainEventCarryingAnId.class)
+    @DomainEventListener
     public void onADomainEvent(ADomainEventCarryingAnId domainEvent){
         log.debug("ADomainEventCarryingAnId received in AnApplicationService! Value = " + domainEvent.identity().value());
         anotherService.getIdentity(6L);

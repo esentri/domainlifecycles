@@ -72,18 +72,28 @@ import java.lang.annotation.Target;
 @Import({JooqPersistenceConfigImportSelector.class, DomainConfigImportSelector.class})
 @ImportAutoConfiguration
 public @interface EnableDlc {
-    /** if jOOQ is used, a package containing all generated jooq record classes must be provided**/
+
+    /** if jOOQ is used, a package containing all generated jooq record classes must be provided
+     * @return jooq record package
+     * **/
     String jooqRecordPackage() default "";
-    /** if jOOQ is used, specifying a possible SQL dialect is mandatory (@see org.jooq.SQLDialect) **/
+
+    /** if jOOQ is used, specifying a possible SQL dialect is mandatory (@see org.jooq.SQLDialect)
+     * @return jooq SQL dialect
+     * **/
     String jooqSqlDialect() default "";
-    /** DLC always requires all packages which contains all Domain classes used within the application**/
+
+    /** DLC always requires all packages which contains all Domain classes used within the application
+     * @return domain base packages
+     * **/
     String dlcDomainBasePackages() default "";
 
-    // exclude: disable specific auto-configs
     /**
      * Optionally specify AutoConfigurations to be excluded
+     * @return excluded auto-configurations
      */
     @AliasFor(
         annotation = ImportAutoConfiguration.class, attribute = "exclude")
     Class<?>[] exclude() default {};
+
 }

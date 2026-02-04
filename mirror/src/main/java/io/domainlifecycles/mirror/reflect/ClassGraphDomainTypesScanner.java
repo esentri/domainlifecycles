@@ -103,6 +103,7 @@ public class ClassGraphDomainTypesScanner {
      * @param packages the array of package names to scan. If no packages are provided, the scan will include all available packages.
      * @return a list of discovered domain types represented as {@code DomainTypeMirror} instances.
      */
+    @SuppressWarnings("unchecked")
     public List<DomainTypeMirror> scan(String... packages) {
         List<DomainTypeMirror> domainTypes = new ArrayList<>();
         if(packages.length>0) {

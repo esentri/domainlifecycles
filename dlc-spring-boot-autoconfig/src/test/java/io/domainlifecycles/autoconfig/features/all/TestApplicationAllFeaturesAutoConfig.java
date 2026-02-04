@@ -27,8 +27,6 @@
 package io.domainlifecycles.autoconfig.features.all;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
-import io.domainlifecycles.autoconfig.configurations.DlcNoTxInMemoryDomainEventsAutoConfiguration;
-import io.domainlifecycles.autoconfig.configurations.DlcSpringTxInMemoryDomainEventsAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 

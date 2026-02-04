@@ -67,6 +67,7 @@ public class SpringEventAutoConfigTests {
     @Autowired(required = false)
     ResponseEntityBuilder responseEntityBuilder;
 
+
     @Test
     @DirtiesContext
     public void testIntegrationCommit() {

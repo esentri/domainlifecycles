@@ -2,7 +2,7 @@ package io.domainlifecycles.autoconfig.model.events;
 
 
 import io.domainlifecycles.domain.types.DomainEvent;
-import io.domainlifecycles.domain.types.ListensTo;
+import io.domainlifecycles.domain.types.DomainEventListener;
 import io.domainlifecycles.domain.types.Repository;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,7 +19,7 @@ public class ARepository implements Repository<AnAggregate.AggregateId, AnAggreg
 
     private Map<AnAggregate.AggregateId, AnAggregate> instanceMap = new HashMap<>();
 
-    @ListensTo(domainEventType = ADomainEvent.class)
+    @DomainEventListener
     public void onADomainEvent(ADomainEvent domainEvent){
         log.debug("ADomainEvent received in ARepository! Message = " + domainEvent.message());
         received.add(domainEvent);

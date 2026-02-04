@@ -27,9 +27,10 @@
 package io.domainlifecycles.autoconfig.features.single.builder;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
-import io.domainlifecycles.autoconfig.configurations.DlcGruelboxDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJacksonAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcNoTxInMemoryDomainEventsAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcSpringBusDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -42,7 +43,9 @@ import java.util.Locale;
     DlcSpringWebAutoConfiguration.class,
     DlcSpringOpenApiAutoConfiguration.class,
     DlcJacksonAutoConfiguration.class,
-    DlcJooqPersistenceAutoConfiguration.class
+    DlcJooqPersistenceAutoConfiguration.class,
+    DlcSpringBusDomainEventsAutoConfiguration.class,
+    DlcNoTxInMemoryDomainEventsAutoConfiguration.class,
 })
 public class TestApplicationBuilderSingleAutoConfig {
 

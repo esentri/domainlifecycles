@@ -53,14 +53,10 @@ Be aware that features requiring external libraries will only be enabled if thes
 
 - DLC jOOQ persistence requires additionally a compatible version of jOOQ 
 - DLC Spring Web integration requires additionally Spring Web
-- DLC Spring Doc integration requires additionally a compatible version of SpringDoc2
-- DLC Domain Events 
-    - Domain Events with SpringTransaction support requires additionally a compatible version of spring-tx
-    - Domain Events with Jakarta JTA support require additionally  a JTA compatible transaction manager (e.g. Atomikos)
-    - Domain Events with Jakarta JMS support require additionally a JMS compatible client (e.g. Active MQ Artemis)
-    - Domain Events with Gruelbox support requires additionally a compatible version of Gruelbox
-    - Domain Events with ActiveMQ 5 Classic support require additionally the Active MQ Jakarta client library
-    - Domain Events Jakarta JTA, Jakarta JMS or Active MQ 5 Classic are not fully supported by AutoConfiguration. Additional configuration beans are required (see test configurations within this [sub project](./../test-domain-events-integration)).
+- DLC Spring Doc integration requires additionally a compatible version of SpringDoc
+- DLC Domain Events
+  - Domain Events by default use the Spring internal event bus (``ApplicationEventPublisher``), transactional support is provided. 
+  - Domain Events with SpringTransaction support requires additionally a compatible version of spring-tx
 - DLC Jackson integration is enabled by default, but could be disabled, see below
 
 Generally, it is possible to add one of the optional dependencies mentioned above and disable the corresponding DLC autocofiguration (see below).
@@ -101,10 +97,11 @@ Could be deactivated by:
 ```
 
 **Properties:**
+Optionally use Spring application properties for configuration:
 ```properties
 dlc.domain.basePackages=com.example.domain,com.example.shared
 ```
-Providing the 'dlcDomainBasePackages' attribute or defining it as a property is mandatory.
+Providing either the 'dlcDomainBasePackages' attribute or defining it as a property is mandatory.
 
 **Provided Beans:**
 - `DomainMirror` with the bean name `initializedDomain`
@@ -129,11 +126,15 @@ Could be deactivated by:
 ```java
 @EnableDlc(exclude = DlcJacksonAutoConfiguration.class)
 ```
+or regarding Jackson 2
+```java
+@EnableDlc(exclude = DlcJackson2AutoConfiguration.class)
+```
 
 **Features:**
-- Automatic serialization of ValueObjects and Identities
+- Automatic de-/serialization of ValueObjects and Identities
 - Custom deserializers for Domain Types
-- Integration with Spring Boot's ObjectMapper
+- Integration with Jackson's ObjectMapper
 
 ### 4. jOOQ Persistence Autoconfig (`DlcJooqPersistenceAutoConfiguration`)
 
@@ -164,40 +165,63 @@ dlc.jooq.sqlDialect=POSTGRES
 Providing the 'dlcJooqRecordPackage' is mandatory for DLC persistence, 
 'dlcJooqSqlDialect' is recommended.
 
-### 5. Domain Events Autoconfig (`DlcDomainEventsAutoConfiguration`)
+### 5. Domain Events Autoconfig 
 
-**Purpose:** Automatic configuration of event handling
+**Purpose:** Automatic configuration of DomainEvent handling
+
+DLC provides autoconfiguration for the following event systems for DomainEvents:
+- In memory (```DlcNoTxInMemoryDomainEventsAutoConfiguration```)
+- Spring event bus (```DlcSpringBusDomainEventsAutoConfiguration```)
 
 **Activation:** Automatically active when `@EnableDlc` annotation is set.
-Could be deactivated by:
+By default ```DlcSpringBusDomainEventsAutoConfiguration``` is enabled. 
+Disabled by setting config property ```dlc.events.springbus.enabled=false```.
+
+The DLC inmemory event system can be enabled by setting the corresponding config property:
+- In memory: ```dlc.events.inmemory.enabled=true```
+
+#### AutoConfig supported Event Systems
+- Spring Bus supported Domain Events (DLC autoconfig default):
+  Using Spring's internal event bus (passing them to ```ApplicationEventPublisher```).
+  Enables transactional handling by Spring means, see [here](../domain-events-spring-bus/readme.md).
+  Optionally integrates with Spring Modulith event registry for reliable event handling (no event loss).
+- In memory Domain Events: Passing DomainEvents directly to listeners
+
+**Attention**
+DLC provides additional ways for handling Domain Events (supporting Jakarta JMS/JTA, ActiveMQ Classic 5, Gruelbox).
+Those are not covered by the autoconfig module. But they can be enabled by providing the corresponding beans (see [DLC DomainEvents](./../domain-events-core/readme.md)).
+
+#### Autoconfigured ChannelFactories and Channels
+DLC Domain Events supports configuring multiple event channels and routing DomainEvents to different channels.
+The primary way to create a channel is creating a ```ChannelFactory```first. 
+For each of the supported DomainEvent autoconfigurations a ```ChannelFactory``` is created automatically.
+The autoconfiguration also creates only one default ```Channel``` with a routing configuration that routes all Domain Events to the default channel.
+So, if on one event system should be used, no additional configuration is required.
+
+But it is possible to activate multiple ChannelFactories at the same time.
+In order to use distinct channels, it is required to create specific channels and a corresponding routing configuration: 
+
 ```java
-@EnableDlc(exclude = DlcDomainEventsAutoConfiguration.class)
+@Bean
+public ProcessingChannel inMemoryChannel(InMemoryChannelFactory factory){
+    return factory.processingChannel("inMemory");
+}
+
+@Bean
+public PublishingChannel springChannel(SpringApplicationEventsPublishingChannelFactory factory){
+    return factory.publishOnlyChannel("springTx");
+}
+
+@Bean
+public PublishingRouter router(List<PublishingChannel> channels ){
+    var router = new DomainEventTypeBasedRouter(channels);
+    router.defineDefaultChannel("springTx");
+    router.defineExplicitRoute(SpecificEvent.class, "inMemory");
+    return router;
+}
 ```
 
-**Supported Event Systems:**
-- In memory Domain Events
-- JMS (Jakarta Messaging) with additional configuration 
-
-### 6. Gruelbox Domain Events Autoconfig (`DlcGruelboxDomainEventsAutoConfiguration`)
-
-**Purpose:** Automatic configuration of event handling
-
-**Activation:** Automatically active when `@EnableDlc` annotation is set
-and Gruelbox is provided on the classpath.
-
-Could be deactivated by:
-```java
-@EnableDlc(exclude = DlcGruelboxDomainEventsAutoConfiguration.class)
-```
-
-**Supported Event Systems:**
-- In memory Domain Events
-- JMS (Jakarta Messaging) with additional configuration
-
-Enabling 'DlcDomainEventsAutoConfiguration' is recommended for Gruelbox Domain Events.
-
-
-### 7. Spring Web Autoconfig (`DlcSpringWebAutoConfiguration`)
+### 6. Spring Web Autoconfig (`DlcSpringWebAutoConfiguration`)
 
 **Purpose:** REST/Web integration for DLC Domain Objects
 
@@ -206,7 +230,7 @@ and if Spring Web is used (on the classpath).
 
 Could be deactivated by:
 ```java
-@EnableDlc(exclude = DlcGruelboxDomainEventsAutoConfiguration.class)
+@EnableDlc(exclude = DlcSpringWebAutoConfiguration.class)
 ```
 
 **Features:**
@@ -214,7 +238,7 @@ Could be deactivated by:
 - Parameter converters for ValueObjects and Identities
 - `ResponseEntityBuilder` for consistent API responses
 
-### 8. OpenAPI Autoconfig (`DlcSpringOpenApiAutoConfiguration`)
+### 7. OpenAPI Autoconfig (`DlcSpringOpenApiAutoConfiguration`)
 
 **Purpose:** Automatic OpenAPI/Swagger documentation for DLC Types
 
@@ -231,18 +255,10 @@ Could be deactivated by:
 - Integration with SpringDoc OpenAPI
 - Custom OpenAPI customizer for DLC Types
 
-```java
-@EnableDlc(
-    enableSpringOpenApiAutoConfig = true
-)
-```
-
 ## Advanced Configuration
 
 ### Properties-based Configuration
-
 Instead of using annotation attributes, you can define properties:
-
 ```properties
 # Domain Packages
 dlc.domain.basePackages=com.example.domain,com.example.shared
@@ -252,28 +268,7 @@ dlc.jooq.recordPackage=com.example.jooq.tables.records
 dlc.jooq.sqlDialect=POSTGRES
 ```
 
-
-### Custom RecordMappers
-
-For advanced jOOQ persistence, you can provide custom RecordMappers:
-
-```java
-@Component
-public class CustomRecordMapper implements RecordMapper<MyEntity, MyEntityRecord, MyEntityId> {
-    
-    @Override
-    public MyEntityRecord from(MyEntity domainObject, DSLContext dslContext) {
-        // Custom mapping logic
-    }
-    
-    @Override
-    public MyEntity to(MyEntityRecord record, DSLContext dslContext) {
-        // Custom mapping logic
-    }
-}
-```
 ### Important Note
-
 With the `@EnableDlc` annotation, manual initialization of the Domain Mirror is **no longer required**.
 The autoconfiguration handles this automatically based on the configured `dlcDomainBasePackages`.
 
@@ -295,11 +290,8 @@ since this could lead to conflicts in the bean creation process at startup.
 )
 ```
 
-
 ### Debug Information
-
 Enable debug logging for autoconfig:
-
 ```properties
 logging.level.io.domainlifecycles.autoconfig=DEBUG
 logging.level.org.springframework.boot.autoconfigure=DEBUG

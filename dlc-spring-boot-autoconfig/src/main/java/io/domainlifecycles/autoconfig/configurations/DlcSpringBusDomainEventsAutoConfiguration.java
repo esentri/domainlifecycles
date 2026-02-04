@@ -32,6 +32,10 @@ import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.api.PublishingRouter;
 import io.domainlifecycles.events.spring.SpringApplicationEventsPublishingChannelFactory;
+import io.domainlifecycles.events.spring.listeners.AggregateDomainEventAdapter;
+import io.domainlifecycles.events.spring.listeners.ServiceKindListenerPostProcessor;
+import io.domainlifecycles.mirror.api.DomainMirror;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -119,6 +123,35 @@ public class DlcSpringBusDomainEventsAutoConfiguration {
     @ConditionalOnMissingBean(Channel.class)
     public PublishingChannel channel(SpringApplicationEventsPublishingChannelFactory channelFactory){
         return channelFactory.publishOnlyChannel("default");
+    }
+
+    /**
+     * This component listens to aggregate domain events and invokes the appropriate
+     * aggregate-specific business logic.
+     *
+     * @param domainMirror An instance of {@link DomainMirror} responsible for reflecting domain-specific metadata
+     *                     and mappings.
+     * @return An instance of {@link AggregateDomainEventAdapter} configured with the provided {@link DomainMirror}.
+     */
+    @Bean
+    @ConditionalOnMissingBean(AggregateDomainEventAdapter.class)
+    public AggregateDomainEventAdapter aggregateDomainEventAdapter(DomainMirror domainMirror){
+        return new AggregateDomainEventAdapter(domainMirror);
+    }
+
+    /**
+     * Creates a {@link ServiceKindListenerPostProcessor} bean if none is already defined in the context.
+     * This component creates proxy listener beans for each {@link io.domainlifecycles.domain.types.ServiceKind} bean instance,
+     * that contains {@link io.domainlifecycles.domain.types.DomainEventListener} methods.
+     * Those proxy listener beans provide Transactional and Async support for event handling.
+     *
+     * @param beanFactory The {@link BeanFactory} instance to be used for configuring the post-processor.
+     * @return A newly created {@link ServiceKindListenerPostProcessor} instance.
+     */
+    @Bean
+    @ConditionalOnMissingBean(ServiceKindListenerPostProcessor.class)
+    public ServiceKindListenerPostProcessor serviceKindListenerPostProcessor(BeanFactory beanFactory){
+        return new ServiceKindListenerPostProcessor(beanFactory);
     }
 
 }
