@@ -41,6 +41,21 @@ import io.domainlifecycles.mirror.api.ValueMirror;
  */
 public abstract class ValueReferenceModelMixin extends FieldModelMixin {
 
+    /**
+     * Constructs a ValueReferenceModelMixin instance with the specified parameters.
+     * This Jackson Mixin class is used to control deserialization behavior of the
+     * ValueReferenceModel without modifying the actual model class.
+     *
+     * @param name the name of the value reference
+     * @param type the type of the value reference, represented as an AssertedContainableTypeMirror
+     * @param accessLevel the access level of the value reference, represented as an AccessLevel
+     * @param declaredByTypeName the name of the type declaring the value reference
+     * @param modifiable a boolean indicating whether the value reference is modifiable
+     * @param publicReadable a boolean indicating whether the value reference is publicly readable
+     * @param publicWriteable a boolean indicating whether the value reference is publicly writable
+     * @param isStatic a boolean indicating whether the value reference is static
+     * @param hidden a boolean indicating whether the value reference is hidden
+     */
     @JsonCreator
     public ValueReferenceModelMixin(
         @JsonProperty("name") String name,
@@ -56,6 +71,10 @@ public abstract class ValueReferenceModelMixin extends FieldModelMixin {
         super(name, type, accessLevel, declaredByTypeName, modifiable, publicReadable, publicWriteable, isStatic, hidden);
     }
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return ValueMirror instance representing the value referenced by this model.
+     */
     @JsonIgnore
     public abstract ValueMirror getValue();
 }

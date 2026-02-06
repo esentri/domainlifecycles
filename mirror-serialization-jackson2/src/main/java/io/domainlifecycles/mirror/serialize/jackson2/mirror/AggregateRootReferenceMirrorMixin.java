@@ -40,4 +40,5 @@ import io.domainlifecycles.mirror.model.AggregateRootReferenceModel;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = AggregateRootReferenceModel.class),
 })
+@Deprecated
 public interface AggregateRootReferenceMirrorMixin { }

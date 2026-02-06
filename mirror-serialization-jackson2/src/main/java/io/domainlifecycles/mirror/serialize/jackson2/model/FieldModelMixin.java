@@ -36,8 +36,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class FieldModelMixin {
 
+    /**
+     * Constructor for the FieldModelMixin, used to configure Jackson serialization
+     * and deserialization behavior for the FieldModel class.
+     *
+     * @param name the name of the field being modeled.
+     * @param type the type mirror representing the type of the field.
+     * @param accessLevel the access level of the field (e.g., public, private, etc.).
+     * @param declaredByTypeName the name of the type declaring this field.
+     * @param modifiable indicates whether the field is modifiable after initialization.
+     * @param publicReadable indicates whether the field is readable outside its defining class.
+     * @param publicWriteable indicates whether the field is writable outside its defining class.
+     * @param isStatic indicates whether the field is declared as static.
+     * @param hidden indicates whether the field should be hidden from serialization.
+     */
     @JsonCreator
     public FieldModelMixin(
         @JsonProperty("name") String name,
@@ -51,6 +66,11 @@ public abstract class FieldModelMixin {
         @JsonProperty("hidden") boolean hidden
     ) {}
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     *
+     * @return true if the field is an identity field, false otherwise
+     */
     @JsonIgnore
     public abstract boolean isIdentityField();
 }

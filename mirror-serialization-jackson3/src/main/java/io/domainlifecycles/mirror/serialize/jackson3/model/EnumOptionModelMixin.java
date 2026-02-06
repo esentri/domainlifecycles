@@ -38,6 +38,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public abstract class EnumOptionModelMixin {
 
+    /**
+     * Constructor for the EnumOptionModelMixin class, which is used to define a Jackson Mixin
+     * for controlling deserialization of the EnumOptionModel.
+     *
+     * @param value the string representation of the enum option's value
+     */
     @JsonCreator
     public EnumOptionModelMixin(@JsonProperty("value") String value) {}
 }

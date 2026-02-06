@@ -38,6 +38,13 @@ import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
  */
 public abstract class ParamModelMixin {
 
+    /**
+     * Constructs an instance of the {@code ParamModelMixin} class. Used to define
+     * the deserialization behavior for {@link io.domainlifecycles.mirror.model.ParamModel}.
+     *
+     * @param name the name of the parameter being modeled.
+     * @param type the asserted type information about the parameter, including any container type details.
+     */
     @JsonCreator
     public ParamModelMixin(
         @JsonProperty("name") String name,

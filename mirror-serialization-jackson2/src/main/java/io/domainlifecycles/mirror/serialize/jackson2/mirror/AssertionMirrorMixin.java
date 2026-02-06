@@ -40,4 +40,5 @@ import io.domainlifecycles.mirror.model.AssertionModel;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = AssertionModel.class),
 })
+@Deprecated
 public interface AssertionMirrorMixin { }

@@ -44,6 +44,16 @@ import java.util.Optional;
  */
 public abstract class ValueObjectModelMixin extends DomainObjectModelMixin {
 
+    /**
+     * Constructor for the {@code ValueObjectModelMixin}. Controls deserialization without modifying the actual model class.
+     *
+     * @param typeName the type name of the value object model.
+     * @param isAbstract indicates whether the value object model is abstract.
+     * @param allFields the list of all fields associated with the value object model.
+     * @param methods the list of methods associated with the value object model.
+     * @param inheritanceHierarchyTypeNames the list of type names in the inheritance hierarchy of the value object model.
+     * @param allInterfaceTypeNames the list of all interface type names implemented by the value object model.
+     */
     @JsonCreator
     public ValueObjectModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -56,12 +66,24 @@ public abstract class ValueObjectModelMixin extends DomainObjectModelMixin {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return true if the model has a single-valued field, false otherwise
+     */
     @JsonIgnore
     public abstract boolean isSingledValued();
 
+    /**
+     * Mixin method declaration. Ignored for serialization.
+     * @return fields
+     */
     @JsonIgnore
     public abstract Optional<FieldMirror> singledValuedField();
 
+    /**
+     * Mixin method declaration. Ignored for serialization.
+     * @return DomainType of the value object model
+     */
     @JsonIgnore
     public abstract DomainType getDomainType();
 }

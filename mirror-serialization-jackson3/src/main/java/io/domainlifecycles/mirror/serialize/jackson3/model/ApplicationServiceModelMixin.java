@@ -46,6 +46,21 @@ public abstract class ApplicationServiceModelMixin extends ServiceKindModelMixin
     @JsonProperty
     private List<String> applicationServiceInterfaceTypeNames;
 
+    /**
+     * Constructor for the ApplicationServiceModelMixin, used to control the serialization
+     * and deserialization of {@link io.domainlifecycles.mirror.model.ApplicationServiceModel}.
+     *
+     * @param typeName the name of the application service type.
+     * @param isAbstract a flag indicating whether the application service type is abstract.
+     * @param allFields the list of all fields present in the application service type, represented by {@link FieldMirror}.
+     * @param methods the list of all methods present in the application service type, represented by {@link MethodMirror}.
+     * @param applicationServiceInterfaceTypeNames the list of fully qualified type names representing
+     *        the application service interfaces implemented by the type.
+     * @param inheritanceHierarchyTypeNames the list of fully qualified type names representing
+     *        the inheritance hierarchy of the application service type.
+     * @param allInterfaceTypeNames the list of fully qualified type names representing
+     *        all interfaces implemented by the application service type.
+     */
     @JsonCreator
     public ApplicationServiceModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -59,9 +74,23 @@ public abstract class ApplicationServiceModelMixin extends ServiceKindModelMixin
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Retrieves the {@link DomainType} associated with the application service model.
+     * Ignored for serialization purposes.
+     *
+     * @return the domain type categorizing the application service model
+     */
     @JsonIgnore
     public abstract DomainType getDomainType();
 
+    /**
+     * Retrieves a list of fully qualified type names representing the application
+     * service interfaces implemented by the model. This method is ignored during
+     * serialization.
+     *
+     * @return a list of strings, where each string is the fully qualified name of
+     *         an application service interface implemented by the model
+     */
     @JsonIgnore
     public abstract List<String> getApplicationServiceInterfaceTypeNames();
 }

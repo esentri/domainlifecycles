@@ -1,4 +1,4 @@
-## DomainLifeCycles Open API support
+## DomainLifeCycles Open API support (Spring Doc 3.x compatible with Spring Boot 4.x)
 
 DLC supports the [Open API](https://www.openapis.org/) "code-first"
 approach. This extension works on the basis of

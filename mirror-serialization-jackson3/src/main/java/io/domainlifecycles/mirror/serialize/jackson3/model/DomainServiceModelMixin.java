@@ -43,6 +43,23 @@ import java.util.List;
  */
 public abstract class DomainServiceModelMixin extends ServiceKindModelMixin {
 
+    /**
+     * Constructor for the DomainServiceModelMixin, used to control the deserialization and deserialization
+     * of {@link io.domainlifecycles.mirror.model.DomainServiceModel}.
+     *
+     * @param typeName the name of the domain service model type.
+     * @param isAbstract a flag indicating whether the domain service model type is abstract.
+     * @param allFields the list of all fields present in the domain service model,
+     *                  represented by {@link FieldMirror}.
+     * @param methods the list of all methods present in the domain service model,
+     *                represented by {@link MethodMirror}.
+     * @param domainServiceInterfaceTypeNames the list of fully qualified type names representing
+     *                                         the domain service interfaces implemented by the domain service model.
+     * @param inheritanceHierarchyTypeNames the list of fully qualified type names representing the
+     *                                      inheritance hierarchy of the domain service model type.
+     * @param allInterfaceTypeNames the list of fully qualified type names representing
+     *                              all interfaces implemented by the domain service model type.
+     */
     @JsonCreator
     public DomainServiceModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -56,9 +73,22 @@ public abstract class DomainServiceModelMixin extends ServiceKindModelMixin {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Retrieves the domain type associated with the current model.
+     * Ignored for serialization purposes.
+     *
+     * @return the {@link DomainType} representation of the current model.
+     */
     @JsonIgnore
     public abstract DomainType getDomainType();
 
+    /**
+     * Retrieves a list of fully qualified type names representing the domain service
+     * interfaces implemented by the domain service model.Ignored for serialization purposes.
+     *
+     * @return a list of String objects, each representing the fully qualified name
+     *         of a domain service interface associated with the model.
+     */
     @JsonIgnore
     public abstract List<String> getDomainServiceInterfaceTypeNames();
 }

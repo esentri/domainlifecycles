@@ -43,14 +43,47 @@ import java.util.Optional;
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class RepositoryModelMixin extends ServiceKindModelMixin {
 
+    /**
+     * Represents the name of the managed aggregate type associated with the repository.
+     * Used for serialization and deserialization with Jackson.
+     *
+     * This field is intended to specify the domain entity type that defines the aggregate root
+     * managed by the repository.
+     */
     @JsonProperty
     public String managedAggregateTypeName;
 
+    /**
+     * Represents a list of repository interface type names associated with the
+     * repository model. Each entry in the list corresponds to a repository interface
+     * type that the repository model implements or relies on.
+     *
+     * This field is primarily used for serialization and deserialization purposes
+     * to capture or propagate type hierarchy information in a structured form.
+     */
     @JsonProperty
     public List<String> repositoryInterfaceTypeNames;
 
+    /**
+     * Constructor for the {@code RepositoryModelMixin} class.
+     * Allows the creation and configuration of a mixin for the {@code RepositoryModel},
+     * utilized for deserialization purposes using Jackson.
+     *
+     * @param typeName The name of the repository model type.
+     * @param isAbstract Defines whether the repository model is abstract.
+     * @param allFields A list of all fields that are part of the repository model.
+     *                  Each field is represented by a {@link FieldMirror}.
+     * @param methods A list of all methods that are part of the repository model.
+     *                Each method is represented by a {@link MethodMirror}.
+     * @param managedAggregateTypeName The name of the managed aggregate type associated with the repository.
+     * @param repositoryInterfaceTypeNames A list of repository interface type names implemented by the repository model.
+     * @param inheritanceHierarchyTypeNames A list of type names representing the inheritance hierarchy
+     *                                       of the repository model.
+     * @param allInterfaceTypeNames A list of all interface type names associated with the repository model.
+     */
     @JsonCreator
     public RepositoryModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -65,9 +98,24 @@ public abstract class RepositoryModelMixin extends ServiceKindModelMixin {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Retrieves an {@link Optional} containing the associated {@link AggregateRootMirror},
+     * which conceptually represents the managed aggregate root at the type level.
+     * If the managed aggregate is not present, an empty {@link Optional} is returned.
+     *
+     * @return an {@link Optional} containing the managed {@link AggregateRootMirror},
+     *         or an empty {@link Optional} if no managed aggregate is associated.
+     */
     @JsonIgnore
     public abstract Optional<AggregateRootMirror> getManagedAggregate();
 
+    /**
+     * Retrieves the {@link DomainType} of the current model instance, which defines
+     * the specific type classification within the domain-driven design (DDD) context.
+     * Ignored during serialization and deserialization.
+     *
+     * @return the {@link DomainType} representing the type of the current model instance.
+     */
     @JsonIgnore
     public abstract DomainType getDomainType();
 }

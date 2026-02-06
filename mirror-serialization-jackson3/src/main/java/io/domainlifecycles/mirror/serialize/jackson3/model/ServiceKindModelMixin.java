@@ -43,53 +43,106 @@ import io.domainlifecycles.mirror.api.ServiceKindMirror;
 
 import java.util.List;
 
-/**
- * Jackson Mixin for {@link io.domainlifecycles.mirror.model.ServiceKindModel}.
- * Controls serialization without modifying the actual model class.
- *
- * @author leonvoellinger
- */
-public abstract class ServiceKindModelMixin extends DomainTypeModelMixin {
+    /**
+     * Jackson Mixin for {@link io.domainlifecycles.mirror.model.ServiceKindModel}.
+     * Controls serialization without modifying the actual model class.
+     *
+     * @author leonvoellinger
+     */
+    public abstract class ServiceKindModelMixin extends DomainTypeModelMixin {
 
-    @JsonCreator
-    public ServiceKindModelMixin(
-        @JsonProperty("typeName") String typeName,
-        @JsonProperty("abstract") boolean isAbstract,
-        @JsonProperty("allFields") List<FieldMirror> allFields,
-        @JsonProperty("methods") List<MethodMirror> methods,
-        @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
-        @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
-    ) {
-        super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
+        /**
+         * Constructor for the ServiceKindModelMixin, used to control the deserialization and deserialization
+         * of {@link io.domainlifecycles.mirror.model.ServiceKindModel}.
+         *
+         * @param typeName the name of the service kind type.
+         * @param isAbstract a flag indicating whether the service kind type is abstract.
+         * @param allFields the list of all fields present in the service kind type, represented by {@link FieldMirror}.
+         * @param methods the list of all methods present in the service kind type, represented by {@link MethodMirror}.
+         * @param inheritanceHierarchyTypeNames the list of fully qualified type names representing the
+         *        inheritance hierarchy of the service kind type.
+         * @param allInterfaceTypeNames the list of fully qualified type names representing
+         *        all interfaces implemented by the service kind type.
+         */
+        @JsonCreator
+        public ServiceKindModelMixin(
+            @JsonProperty("typeName") String typeName,
+            @JsonProperty("abstract") boolean isAbstract,
+            @JsonProperty("allFields") List<FieldMirror> allFields,
+            @JsonProperty("methods") List<MethodMirror> methods,
+            @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
+            @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
+        ) {
+            super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
+        }
+
+        /**
+         * Mixin method declaration. Ignored for serialization.
+         * @return {@link DomainType} of this service kind
+         */
+        @JsonIgnore
+        public abstract DomainType getDomainType();
+
+        /**
+         * Mixin method declaration. Ignored for serialization.
+         * @return list of {@link ServiceKindMirror} instances representing referenced service kinds
+         */
+        @JsonIgnore
+        public abstract List<ServiceKindMirror> getReferencedServiceKinds();
+
+        /**
+         * Mixin method declaration. Ignored for serialization.
+         * @return list of {@link RepositoryMirror} instances representing referenced repositories
+         */
+        @JsonIgnore
+        public abstract List<RepositoryMirror> getReferencedRepositories();
+
+        /**
+         * Mixin method declaration. Ignored for serialization.
+         * @return list of {@link DomainServiceMirror} instances representing referenced domain services
+         */
+        @JsonIgnore
+        public abstract List<DomainServiceMirror> getReferencedDomainServices();
+
+        /**
+         * Mixin method declaration. Ignored for serialization.
+         * @return list of {@link OutboundServiceMirror} instances representing referenced outbound services
+         */
+        @JsonIgnore
+        public abstract List<OutboundServiceMirror> getReferencedOutboundServices();
+
+        /**
+         * Mixin method declaration. Ignored for serialization.
+         * @return list of {@link QueryHandlerMirror} instances representing referenced query handlers
+         */
+        @JsonIgnore
+        public abstract List<QueryHandlerMirror> getReferencedQueryHandlers();
+
+        /**
+         * Mixin method declaration. Ignored for serialization.
+         * @return list of {@link ApplicationServiceMirror} instances representing referenced application services
+         */
+        @JsonIgnore
+        public abstract List<ApplicationServiceMirror> getReferencedApplicationServices();
+
+        /**
+         * Mixin method declaration. Ignored for serialization.
+         * @return list of {@link DomainCommandMirror} instances representing processed domain commands
+         */
+        @JsonIgnore
+        public abstract List<DomainCommandMirror> processedDomainCommands();
+
+        /**
+         * Mixin method declaration. Ignored for serialization.
+         * @return list of {@link DomainEventMirror} instances representing published domain events
+         */
+        @JsonIgnore
+        public abstract List<DomainEventMirror> publishedDomainEvents();
+
+        /**
+         * Mixin method declaration. Ignored for serialization.
+         * @return list of {@link DomainEventMirror} instances representing listened domain events
+         */
+        @JsonIgnore
+        public abstract List<DomainEventMirror> listenedDomainEvents();
     }
-
-    @JsonIgnore
-    public abstract DomainType getDomainType();
-
-    @JsonIgnore
-    public abstract List<ServiceKindMirror> getReferencedServiceKinds();
-
-    @JsonIgnore
-    public abstract List<RepositoryMirror> getReferencedRepositories();
-
-    @JsonIgnore
-    public abstract List<DomainServiceMirror> getReferencedDomainServices();
-
-    @JsonIgnore
-    public abstract List<OutboundServiceMirror> getReferencedOutboundServices();
-
-    @JsonIgnore
-    public abstract List<QueryHandlerMirror> getReferencedQueryHandlers();
-
-    @JsonIgnore
-    public abstract List<ApplicationServiceMirror> getReferencedApplicationServices();
-
-    @JsonIgnore
-    public abstract List<DomainCommandMirror> processedDomainCommands();
-
-    @JsonIgnore
-    public abstract List<DomainEventMirror> publishedDomainEvents();
-
-    @JsonIgnore
-    public abstract List<DomainEventMirror> listenedDomainEvents();
-}

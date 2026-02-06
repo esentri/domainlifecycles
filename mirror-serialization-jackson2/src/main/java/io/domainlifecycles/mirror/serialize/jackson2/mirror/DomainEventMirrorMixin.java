@@ -40,4 +40,5 @@ import io.domainlifecycles.mirror.model.DomainEventModel;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = DomainEventModel.class),
 })
+@Deprecated
 public interface DomainEventMirrorMixin { }

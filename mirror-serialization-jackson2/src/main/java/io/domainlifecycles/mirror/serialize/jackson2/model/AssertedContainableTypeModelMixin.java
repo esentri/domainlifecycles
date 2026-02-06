@@ -40,26 +40,76 @@ import java.util.List;
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class AssertedContainableTypeModelMixin {
 
+    /**
+     * Indicates whether the type has an optional container associated with it.
+     * This property is primarily used to control serialization behavior in the
+     * mixin class without modifying the actual model class.
+     */
     @JsonProperty
     public boolean hasOptionalContainer;
 
+    /**
+     * Indicates whether the type has a collection container (e.g., List, Set, etc.)
+     * associated with it. This property is primarily used to control serialization
+     * behavior in conjunction with Jackson annotations.
+     */
     @JsonProperty
     public boolean hasCollectionContainer;
 
+    /**
+     * Indicates whether the type has a Set container (e.g., Set) associated with it.
+     * This property is primarily used to control serialization behavior in the
+     * associated Jackson mixin class without making changes to the actual model class.
+     */
     @JsonProperty
     public boolean hasSetContainer;
 
+    /**
+     * Indicates whether the type has a list container.
+     *
+     * This field is used in the context of serialization to signal the presence
+     * of list-based containment in the associated type. It serves as a metadata
+     * flag for deserialization and serialization logic.
+     */
     @JsonProperty
     public boolean hasListContainer;
 
+    /**
+     * Indicates whether the type is an array.
+     * This field is used to identify entities that are represented as arrays
+     * in their data structure, allowing for proper serialization and deserialization.
+     */
     @JsonProperty
     public boolean isArray;
 
+    /**
+     * Indicates whether the type is associated with a stream container.
+     * This field is primarily used to control serialization and deserialization
+     * when working with Jackson's JSON processing.
+     */
     @JsonProperty
     public boolean hasStreamContainer;
 
+    /**
+     * Constructor for the AssertedContainableTypeModelMixin.
+     * Controls deserialization without modifying the actual model class.
+     *
+     * @param typeName the name of the type
+     * @param domainType the domain type
+     * @param assertions the assertions
+     * @param hasOptionalContainer whether the type has optional container
+     * @param hasCollectionContainer whether the type has collection container
+     * @param hasListContainer whether the type has list container
+     * @param hasSetContainer whether the type has set container
+     * @param hasStreamContainer whether the type has stream container
+     * @param isArray whether the type is array
+     * @param containerTypeName the name of the container type
+     * @param containerAssertions the assertions of the container
+     * @param resolvedGenericType the resolved generic type
+     */
     @JsonCreator
     public AssertedContainableTypeModelMixin(
         @JsonProperty("typeName") String typeName,

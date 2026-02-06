@@ -39,5 +39,6 @@ import io.domainlifecycles.mirror.model.ResolvedGenericTypeModel;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = ResolvedGenericTypeModel.class),
 })
+@Deprecated
 public interface ResolvedGenericTypeMirrorMixin {
 }

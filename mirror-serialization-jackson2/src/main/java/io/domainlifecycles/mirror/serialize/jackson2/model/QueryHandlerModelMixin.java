@@ -39,14 +39,38 @@ import java.util.List;
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class QueryHandlerModelMixin extends ServiceKindModelMixin {
 
+    /**
+     * Represents the name of the type of the provided read model associated with this instance.
+     * This field is serialized and deserialized in JSON representation using Jackson.
+     * It is part of the {@code QueryHandlerModel} serialization and deserialization process.
+     */
     @JsonProperty
     public String providedReadModelTypeName;
 
+    /**
+     * Represents a list of fully qualified type names of interfaces implemented by a specific query handler.
+     * This field is part of the serialization and deserialization process using Jackson.
+     * It is used to capture or provide metadata about the implemented interfaces of the query handler within
+     * the context of the {@code QueryHandlerModel}.
+     */
     @JsonProperty
     public List<String> queryHandlerInterfaceTypeNames;
 
+    /**
+     * Constructs a new instance of the QueryHandlerModelMixin. Used for Jackson deserialization purposes.
+     *
+     * @param typeName the fully qualified name of the type this mixin models.
+     * @param isAbstract indicates if the underlying type is abstract.
+     * @param allFields a list of {@link FieldMirror} instances representing all fields in the type.
+     * @param methods a list of {@link MethodMirror} instances representing all methods in the type.
+     * @param queryHandlerInterfaceTypeNames a list of fully qualified names of the interfaces the query handler implements.
+     * @param inheritanceHierarchyTypeNames a list of fully qualified names representing the inheritance hierarchy of the type.
+     * @param allInterfaceTypeNames a list of fully qualified names of all interfaces implemented by the type.
+     * @param providedReadModelTypeName the fully qualified name of the type of the provided read model associated with this query handler.
+     */
     @JsonCreator
     public QueryHandlerModelMixin(
         @JsonProperty("typeName") String typeName,

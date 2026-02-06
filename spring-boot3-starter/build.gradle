@@ -1,0 +1,32 @@
+plugins {
+	id 'java-library'
+	id 'maven-publish'
+	alias libs.plugins.yumi.gradle.licenser.plugin
+	alias libs.plugins.jaredsburrows.license.plugin
+}
+
+java {
+	withJavadocJar()
+	withSourcesJar()
+}
+
+dependencies {
+	api project(":types")
+	api project(":mirror")
+	api project(":builder")
+	api project(":access")
+	api project(":service-registry")
+	api project(":domain-events-core")
+	api project(":domain-events-spring-tx")
+    api project(":domain-events-serialization-jackson2")
+	api project(":type-utils")
+	api project(":validation-extender")
+	api project(":assertions")
+	api project(":dlc-spring-boot3-autoconfig")
+	api project(":bean-validations")
+	api project(":persistence")
+	api project(":jooq-integration")
+	api project(":jackson2-integration")
+	api project(":spring-web6-integration")
+	api project(":spring-doc2-integration")
+}

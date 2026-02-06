@@ -39,8 +39,23 @@ import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class AggregateRootReferenceModelMixin extends FieldModelMixin {
 
+    /**
+     * Constructor for the AggregateRootReferenceModelMixin. Controls deserialization without
+     * modifying the actual model class.
+     *
+     * @param name name of the field
+     * @param type type of the field
+     * @param accessLevel access level of the field
+     * @param declaredByTypeName name of the class that declared this field
+     * @param modifiable whether the field can be modified
+     * @param publicReadable whether the field is readable from outside the class
+     * @param publicWriteable whether the field is writable from outside the class
+     * @param isStatic whether the field is static
+     * @param hidden whether the field should be hidden from serialization
+     */
     @JsonCreator
     public AggregateRootReferenceModelMixin(
         @JsonProperty("name") String name,
@@ -56,6 +71,11 @@ public abstract class AggregateRootReferenceModelMixin extends FieldModelMixin {
         super(name, type, accessLevel, declaredByTypeName, modifiable, publicReadable, publicWriteable, isStatic, hidden);
     }
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     *
+     * @return the {@link AggregateRootMirror}
+     */
     @JsonIgnore
     public abstract AggregateRootMirror getAggregateRoot();
 }

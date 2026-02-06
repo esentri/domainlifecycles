@@ -48,38 +48,86 @@ import java.util.List;
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class BoundedContextModelMixin {
 
+    /**
+     * Constructor for the BoundedContextModelMixin. Controls deserialization without
+     * modifying the actual model class.
+     *
+     *
+     * @param packageName the name of the package that contains the bounded context.
+     */
     @JsonCreator
     public BoundedContextModelMixin(@JsonProperty("packageName") String packageName) {}
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return list of aggregate roots in the bounded context
+     */
     @JsonIgnore
     public abstract List<AggregateRootMirror> getAggregateRoots();
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return list of domain services in the bounded context
+     */
     @JsonIgnore
     public abstract List<DomainServiceMirror> getDomainServices();
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return list of repositories in the bounded context
+     */
     @JsonIgnore
     public abstract List<RepositoryMirror> getRepositories();
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return list of read models in the bounded context
+     */
     @JsonIgnore
     public abstract List<ReadModelMirror> getReadModels();
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return list of domain commands in the bounded context
+     */
     @JsonIgnore
     public abstract List<DomainCommandMirror> getDomainCommands();
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return list of domain events in the bounded context
+     */
     @JsonIgnore
     public abstract List<DomainEventMirror> getDomainEvents();
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return list of application services in the bounded context
+     */
     @JsonIgnore
     public abstract List<ApplicationServiceMirror> getApplicationServices();
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return list of query handlers in the bounded context
+     */
     @JsonIgnore
     public abstract List<QueryHandlerMirror> getQueryHandlers();
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return list of outbound services in the bounded context
+     */
     @JsonIgnore
     public abstract List<OutboundServiceMirror> getOutboundServices();
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return list of service kinds in the bounded context
+     */
     @JsonIgnore
     public abstract List<ServiceKindMirror> getServiceKinds();
 }

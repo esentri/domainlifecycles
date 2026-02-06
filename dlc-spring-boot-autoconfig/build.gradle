@@ -35,7 +35,7 @@ dependencies {
     api project(":spring-web-integration")
     api project(":swagger-integration")
     api project(":domain-events-spring-bus")
-    compileOnly libs.spring.doc.openapi.starter.webmvc.ui
+    compileOnly libs.spring.doc.openapi3.starter.webmvc.ui
     compileOnly libs.spring.web
     compileOnly libs.jackson3.core
     compileOnly libs.jackson3.databind
@@ -55,14 +55,14 @@ dependencies {
     testImplementation project(":spring-web-integration")
     testImplementation project(":swagger-integration")
     testImplementation project(":bean-validations")
-    testImplementation project(":domain-events-mq")
+    testImplementation project(":access")
     testImplementation project(":type-utils")
 	testImplementation libs.assertj
 	testImplementation libs.spring.boot.starter.webmvc.test
     testImplementation libs.spring.boot.starter.jooq
     testImplementation libs.spring.boot.starter.jdbc
     testImplementation libs.spring.boot.starter.test
-    testImplementation libs.spring.doc.openapi.starter.webmvc.ui
+    testImplementation libs.spring.doc.openapi3.starter.webmvc.ui
     testImplementation libs.jackson3.core
     testImplementation libs.jackson3.databind
 	testCompileOnly libs.lombok

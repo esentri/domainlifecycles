@@ -41,6 +41,18 @@ import java.util.List;
  */
 public abstract class DomainTypeModelMixin {
 
+    /**
+     * Constructor for the DomainTypeModelMixin class.
+     * This mixin is used to customize deserialization of
+     * instances of {@link io.domainlifecycles.mirror.model.DomainTypeModel}.
+     *
+     * @param typeName the name of the domain type being represented.
+     * @param isAbstract indicates whether the domain type is abstract.
+     * @param allFields a list of field mirrors representing the fields of the domain type.
+     * @param methods a list of method mirrors representing the methods of the domain type.
+     * @param inheritanceHierarchyTypeNames a list of fully qualified names representing the inheritance hierarchy of the domain type.
+     * @param allInterfaceTypeNames a list of fully qualified names representing all the interfaces implemented by the domain type.
+     */
     @JsonCreator
     public DomainTypeModelMixin(
         @JsonProperty("typeName") String typeName,

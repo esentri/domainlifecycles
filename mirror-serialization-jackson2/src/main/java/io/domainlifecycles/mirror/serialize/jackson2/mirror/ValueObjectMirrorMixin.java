@@ -40,4 +40,5 @@ import io.domainlifecycles.mirror.model.ValueObjectModel;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = ValueObjectModel.class),
 })
+@Deprecated
 public interface ValueObjectMirrorMixin {}

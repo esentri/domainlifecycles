@@ -42,24 +42,77 @@ import java.util.List;
  */
 public abstract class AssertedContainableTypeModelMixin {
 
+    /**
+     * Indicates whether the associated model contains an optional container.
+     * This flag is used during the serialization and deserialization process
+     * to represent the presence of an {@code Optional}-like container in the model's structure.
+     */
     @JsonProperty
     public boolean hasOptionalContainer;
 
+    /**
+     * Indicates whether the associated model contains a collection-based container.
+     * This boolean flag is utilized during the serialization and deserialization
+     * process to represent the presence of a collection-like container, such as a
+     * {@code List} or {@code Set}, in the structure of the model.
+     */
     @JsonProperty
     public boolean hasCollectionContainer;
 
+    /**
+     * Indicates whether the associated model contains a set-based container.
+     * This boolean flag is utilized during the serialization and deserialization
+     * process to represent the presence of a {@code Set}-like container in the
+     * structure of the model.
+     */
     @JsonProperty
     public boolean hasSetContainer;
 
+    /**
+     * Indicates whether the associated model contains a list-based container.
+     * This flag is used during the serialization and deserialization process
+     * to represent the presence of a {@code List}-like container in the structure
+     * of the model.
+     */
     @JsonProperty
     public boolean hasListContainer;
 
+    /**
+     * Indicates whether the associated model contains an array-based container.
+     * This boolean flag is utilized in the serialization and deserialization
+     * process to represent the presence of an array-like container in the
+     * structure of the model.
+     */
     @JsonProperty
     public boolean isArray;
 
+    /**
+     * Indicates whether the associated model contains a stream-based container.
+     * This boolean flag is used during the serialization and deserialization
+     * process to represent the presence of a {@code Stream}-like container in
+     * the structure of the model.
+     */
     @JsonProperty
     public boolean hasStreamContainer;
 
+    /**
+     * Constructs an instance of AssertedContainableTypeModelMixin. Used to control
+     * the deserialization process of types that may be wrapped
+     * in various container types such as Optional, List, Set, and Stream.
+     *
+     * @param typeName             The name of the type being modeled.
+     * @param domainType           The domain type describing the type in a domain-driven design context.
+     * @param assertions           A list of assertions mirrored for the type.
+     * @param hasOptionalContainer Indicates if the type is wrapped in an Optional container.
+     * @param hasCollectionContainer Indicates if the type is wrapped in a collection container.
+     * @param hasListContainer      Indicates if the type is specifically wrapped in a List container.
+     * @param hasSetContainer       Indicates if the type is specifically wrapped in a Set container.
+     * @param hasStreamContainer    Indicates if the type is wrapped in a Stream container.
+     * @param isArray               Indicates if the type is represented as an array.
+     * @param containerTypeName     The name of the container type wrapping the type if present.
+     * @param containerAssertions   A list of assertions mirrored for the container type.
+     * @param resolvedGenericType   The resolved generic type information for the type.
+     */
     @JsonCreator
     public AssertedContainableTypeModelMixin(
         @JsonProperty("typeName") String typeName,

@@ -40,4 +40,5 @@ import io.domainlifecycles.mirror.model.OutboundServiceModel;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = OutboundServiceModel.class),
 })
+@Deprecated
 public interface OutboundServiceMirrorMixin { }

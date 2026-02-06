@@ -42,8 +42,22 @@ import java.util.Optional;
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class AggregateRootModelMixin extends EntityModelMixin {
 
+    /**
+     * Constructor for the {@code AggregateRootModelMixin} class used to manage JSON serialization
+     * and deserialization of aggregate root model objects without altering the original model class.
+     *
+     * @param typeName the name of the type represented by the aggregate root model
+     * @param isAbstract flag indicating whether the type is abstract
+     * @param allFields the list of all fields mirrored in the aggregate root model
+     * @param methods the list of all methods mirrored in the aggregate root model
+     * @param identityField the optional field representing the identity attribute of the aggregate root model
+     * @param concurrencyVersionField the optional field used for managing concurrency versioning in the aggregate root model
+     * @param inheritanceHierarchyTypeNames the list of type names representing the inheritance hierarchy of the aggregate root model
+     * @param allInterfaceTypeNames the list of interface type names implemented by the aggregate root model
+     */
     @JsonCreator
     public AggregateRootModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -58,6 +72,10 @@ public abstract class AggregateRootModelMixin extends EntityModelMixin {
         super(typeName, isAbstract, allFields, methods, identityField, concurrencyVersionField, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return the {@link DomainType}
+     */
     @JsonIgnore
     public abstract DomainType getDomainType();
 }

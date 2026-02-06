@@ -39,8 +39,23 @@ import java.util.List;
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class OutboundServiceModelMixin extends ServiceKindModelMixin {
 
+    /**
+     * Constructor for the OutboundServiceModelMixin class.
+     * This mixin is used to define custom deserialization
+     * behaviors for the OutboundServiceModel in Jackson, without modifying
+     * the original model class.
+     *
+     * @param typeName the name of the type being represented.
+     * @param isAbstract boolean indicating whether the type is abstract.
+     * @param allFields a list of all fields in the mirrored type, represented as {@link FieldMirror} instances.
+     * @param methods a list of methods in the mirrored type, represented as {@link MethodMirror} instances.
+     * @param outboundServiceInterfaceTypeNames a list of fully qualified type names representing the outbound service interfaces implemented by the mirrored type.
+     * @param inheritanceHierarchyTypeNames a list of fully qualified type names representing the inheritance hierarchy of the mirrored type.
+     * @param allInterfaceTypeNames a list of fully qualified type names representing all interfaces implemented by the mirrored type.
+     */
     @JsonCreator
     public OutboundServiceModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -54,6 +69,13 @@ public abstract class OutboundServiceModelMixin extends ServiceKindModelMixin {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Retrieves the fully qualified type names of the outbound service interfaces
+     * implemented by the mirrored type. Ignored for serialization purposes.
+     *
+     * @return a list of strings representing the fully qualified names of outbound
+     *         service interface types.
+     */
     @JsonProperty
     public abstract List<String> getOutboundServiceInterfaceTypeNames();
 }

@@ -40,4 +40,5 @@ import io.domainlifecycles.mirror.model.EntityModel;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = EntityModel.class),
 })
+@Deprecated
 public interface EntityMirrorMixin {}

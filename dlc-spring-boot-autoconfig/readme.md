@@ -1,6 +1,6 @@
 # DLC Spring Boot Autoconfig
 
-The DLC Spring Boot Autoconfig module provides comprehensive automatic configuration for Spring Boot applications using the Domain Lifecycles (DLC) framework. This module significantly simplifies the integration of various DLC components by providing sensible defaults and a unified configuration strategy.
+This DLC Spring Boot Autoconfig module provides comprehensive automatic configuration for Spring Boot 4 applications using the Domain Lifecycles (DLC) framework. This module significantly simplifies the integration of various DLC components by providing sensible defaults and a unified configuration strategy.
 
 ## Overview
 
@@ -116,6 +116,8 @@ Could be deactivated by:
 @EnableDlc(exclude = DlcBuilderAutoConfiguration.class)
 ```
 
+More information on [DLC Builders](./../builder/readme.md)
+
 ### 3. Jackson Autoconfig (`DlcJacksonAutoConfiguration`)
 
 **Purpose:** JSON serialization for DLC Domain Objects
@@ -135,6 +137,8 @@ or regarding Jackson 2
 - Automatic de-/serialization of ValueObjects and Identities
 - Custom deserializers for Domain Types
 - Integration with Jackson's ObjectMapper
+
+More information on [DLC Jackson](./../jackson3-integration/readme.md)
 
 ### 4. jOOQ Persistence Autoconfig (`DlcJooqPersistenceAutoConfiguration`)
 
@@ -164,6 +168,8 @@ dlc.jooq.sqlDialect=POSTGRES
 
 Providing the 'dlcJooqRecordPackage' is mandatory for DLC persistence, 
 'dlcJooqSqlDialect' is recommended.
+
+More information on [DLC Persistence](./../persistence/readme.md)
 
 ### 5. Domain Events Autoconfig 
 
@@ -221,6 +227,10 @@ public PublishingRouter router(List<PublishingChannel> channels ){
 }
 ```
 
+More information on [DLC DomainEvents](./../domain-events-core/readme.md)
+
+More information on [DLC DomainEvents Spring integration](./../domain-events-spring-bus/readme.md)
+
 ### 6. Spring Web Autoconfig (`DlcSpringWebAutoConfiguration`)
 
 **Purpose:** REST/Web integration for DLC Domain Objects
@@ -254,6 +264,8 @@ Could be deactivated by:
 - Correct schema generation for ValueObjects and Identities
 - Integration with SpringDoc OpenAPI
 - Custom OpenAPI customizer for DLC Types
+
+More information on [DLC Open API](./../spring-doc-integration/readme.md)
 
 ## Advanced Configuration
 

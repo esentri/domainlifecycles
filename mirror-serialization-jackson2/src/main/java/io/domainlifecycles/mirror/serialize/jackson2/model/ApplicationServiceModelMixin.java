@@ -41,11 +41,24 @@ import java.util.List;
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class ApplicationServiceModelMixin extends ServiceKindModelMixin {
 
     @JsonProperty
     private List<String> applicationServiceInterfaceTypeNames;
 
+    /**
+     * Constructor for the ApplicationServiceModelMixin.
+     * Controls deserialization without modifying the actual model class.
+     *
+     * @param typeName the name of the application service
+     * @param isAbstract whether the application service is abstract
+     * @param allFields list of fields declared in the application service
+     * @param methods list of methods declared in the application service
+     * @param applicationServiceInterfaceTypeNames list of interface types implemented by the application service
+     * @param inheritanceHierarchyTypeNames list of types in the inheritance hierarchy of the application service
+     * @param allInterfaceTypeNames list of all interface types implemented by the application service
+     */
     @JsonCreator
     public ApplicationServiceModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -59,9 +72,17 @@ public abstract class ApplicationServiceModelMixin extends ServiceKindModelMixin
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return the {@link DomainType}
+     */
     @JsonIgnore
     public abstract DomainType getDomainType();
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return list of interface types implemented by the application service
+     */
     @JsonIgnore
     public abstract List<String> getApplicationServiceInterfaceTypeNames();
 }

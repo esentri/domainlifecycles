@@ -41,12 +41,35 @@ import java.util.List;
  */
 public abstract class QueryHandlerModelMixin extends ServiceKindModelMixin {
 
+    /**
+     * Represents the type name of the read model that is explicitly provided.
+     * This field is used in the context of serialization for configuring
+     * or overriding the read model type associated with a query handler.
+     */
     @JsonProperty
     public String providedReadModelTypeName;
 
+    /**
+     * Defines a list of type names representing interfaces implemented by
+     * the query handler. This information is used during serialization to
+     * capture and retain details about the implemented interfaces.
+     */
     @JsonProperty
     public List<String> queryHandlerInterfaceTypeNames;
 
+    /**
+     * Constructor for the {@code QueryHandlerModelMixin}, used to control
+     * the deserialization process for the {@code QueryHandlerModel} class.
+     *
+     * @param typeName The type name of the query handler model.
+     * @param isAbstract Indicates whether the query handler model is abstract.
+     * @param allFields A list of {@link FieldMirror} instances representing all fields in the query handler.
+     * @param methods A list of {@link MethodMirror} instances representing all methods in the query handler.
+     * @param queryHandlerInterfaceTypeNames A list of type names for interfaces implemented by the query handler.
+     * @param inheritanceHierarchyTypeNames A list of type names representing the inheritance hierarchy of the query handler.
+     * @param allInterfaceTypeNames A list of all interface type names implemented by the query handler.
+     * @param providedReadModelTypeName The type name of the explicitly provided read model associated with the query handler.
+     */
     @JsonCreator
     public QueryHandlerModelMixin(
         @JsonProperty("typeName") String typeName,

@@ -40,4 +40,5 @@ import io.domainlifecycles.mirror.model.ReadModelModel;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = ReadModelModel.class),
 })
+@Deprecated
 public interface ReadModelMirrorMixin { }

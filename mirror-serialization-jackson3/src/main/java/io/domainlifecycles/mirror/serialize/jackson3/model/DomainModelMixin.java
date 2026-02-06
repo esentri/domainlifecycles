@@ -60,65 +60,211 @@ public abstract class DomainModelMixin {
 
     @JsonProperty
     private Map<String, ? extends DomainTypeMirror> allTypeMirrors;
+
     @JsonProperty
     private List<BoundedContextMirror> boundedContextMirrors;
 
+    /**
+     * Constructor for the DomainModelMixin class, primarily used to facilitate JSON deserialization
+     * of domain model data.
+     *
+     * @param allTypeMirrors a map where the keys are string representations of type names, and the values
+     *                       are objects extending the DomainTypeMirror class that represent information
+     *                       about those types in the domain model.
+     * @param boundedContextMirrors a list of BoundedContextMirror objects, where each object represents
+     *                               a bounded context in the domain model.
+     */
     @JsonCreator
     public DomainModelMixin(
         @JsonProperty("allTypeMirrors") Map<String, ? extends DomainTypeMirror> allTypeMirrors,
         @JsonProperty("boundedContextMirrors") List<BoundedContextMirror> boundedContextMirrors) {}
 
+    /**
+     * Retrieves all domain type mirrors for the associated domain model.
+     * This method returns a collection of {@link DomainTypeMirror} instances
+     * representing the mirrored domain types defined within the model.
+     * Ignored for serialization purposes.
+     *
+     * @return a list of {@link DomainTypeMirror} objects representing all
+     *         domain types in the associated domain model.
+     */
     @JsonIgnore
     public abstract List<DomainTypeMirror> getAllDomainTypeMirrors();
 
+    /**
+     * Retrieves all {@link BoundedContextMirror} instances associated with the domain model.
+     * This method provides a collection of mirrors, each representing a specific bounded context
+     * as defined within the domain model. Ignored for serialization purposes.
+     *
+     * @return a list of {@link BoundedContextMirror} objects representing all bounded contexts
+     *         in the associated domain model.
+     */
     @JsonIgnore
     public abstract List<BoundedContextMirror> getAllBoundedContextMirrors();
 
+    /**
+     * Retrieves all {@link AggregateRootMirror} instances associated with the domain model.
+     * This method provides a collection of mirrors, where each mirror represents the metadata
+     * of an aggregate root from the domain model. Ignored for serialization purposes.
+     *
+     * @return a list of {@link AggregateRootMirror} objects representing all aggregate roots
+     *         defined within the associated domain model.
+     */
     @JsonIgnore
     public abstract List<AggregateRootMirror> getAllAggregateRootMirrors();
 
+    /**
+     * Retrieves all {@link EntityMirror} instances associated with the domain model.
+     * This method provides a collection of mirrors, each representing a specific entity
+     * as defined within the domain model. Ignored for serialization purposes.
+     *
+     * @return a list of {@link EntityMirror} objects representing all entities
+     *         in the associated domain model.
+     */
     @JsonIgnore
     public abstract List<EntityMirror> getAllEntityMirrors();
 
+    /**
+     * Retrieves all {@link ValueObjectMirror} instances associated with the domain model.
+     * This method provides a collection of mirrors, where each mirror represents the metadata
+     * of a value object from the domain model. Ignored for serialization purposes.
+     *
+     * @return a list of {@link ValueObjectMirror} objects representing all value objects
+     *         defined within the associated domain model.
+     */
     @JsonIgnore
     public abstract List<ValueObjectMirror> getAllValueObjectMirrors();
 
+    /**
+     * Retrieves all {@link EnumMirror} instances associated with the domain model.
+     * This method provides a collection of mirrors, each representing a specific enum
+     * as defined within the domain model. Ignored for serialization purposes.
+     *
+     * @return a list of {@link EnumMirror} objects representing all enums
+     *         in the associated domain model.
+     */
     @JsonIgnore
     public abstract List<EnumMirror> getAllEnumMirrors();
 
+    /**
+     * Retrieves all {@link ValueMirror} instances associated with the domain model.
+     * This method provides a collection of mirrors, each representing a value type
+     * within the domain model, such as enums, value objects, or identities.
+     * Ignored for serialization purposes.
+     *
+     * @return a list of {@link ValueMirror} objects representing all value types
+     *         defined in the associated domain model.
+     */
     @JsonIgnore
     public abstract List<ValueMirror> getAllValueMirrors();
 
+    /**
+     * Retrieves all {@link DomainCommandMirror} instances associated with the domain model.
+     * This method provides a collection of mirrors, where each mirror represents the metadata
+     * of a domain command defined within the model. Ignored for serialization purposes.
+     *
+     * @return a list of {@link DomainCommandMirror} objects representing all domain commands
+     *         in the associated domain model.
+     */
     @JsonIgnore
     public abstract List<DomainCommandMirror> getAllDomainCommandMirrors();
 
+    /**
+     * Retrieves all {@link DomainEventMirror} instances associated with the domain model.
+     * This method provides a collection of mirrors, where each mirror represents the metadata
+     * of a domain event defined within the model. Ignored for serialization purposes.
+     *
+     * @return a list of {@link DomainEventMirror} objects representing all domain events
+     *         in the associated domain model.
+     */
     @JsonIgnore
     public abstract List<DomainEventMirror> getAllDomainEventMirrors();
 
+    /**
+     * Retrieves all {@link ApplicationServiceMirror} instances associated with the domain model.
+     * This method provides a collection of mirrors, where each mirror represents an application service
+     * or driver as defined within the associated domain model. Ignored for serialization purposes.
+     *
+     * @return a list of {@link ApplicationServiceMirror} objects representing all application services
+     *         or drivers in the associated domain model.
+     */
     @JsonIgnore
     public abstract List<ApplicationServiceMirror> getAllApplicationServiceMirrors();
 
+    /**
+     * Retrieves all {@link DomainServiceMirror} instances associated with the domain model.
+     * This method provides a collection of mirrors, where each mirror represents metadata
+     * for a domain service defined within the domain model. Ignored for serialization purposes.
+     *
+     * @return a list of {@link DomainServiceMirror} objects representing all domain services
+     *         in the associated domain model.
+     */
     @JsonIgnore
     public abstract List<DomainServiceMirror> getAllDomainServiceMirrors();
 
+    /**
+     * Retrieves all {@link RepositoryMirror} instances associated with the domain model.
+     * This method provides a collection of mirrors, each representing metadata
+     * for repositories defined within the domain model. Ignored for serialization purposes.
+     *
+     * @return a list of {@link RepositoryMirror} objects representing all repositories
+     *         in the associated domain model.
+     */
     @JsonIgnore
     public abstract List<RepositoryMirror> getAllRepositoryMirrors();
 
+    /**
+     * Retrieves all {@link ReadModelMirror} instances associated with the domain model.
+     * This method provides a collection of mirrors, each representing a read model
+     * as defined within the domain model. Ignored for serialization purposes.
+     *
+     * @return a list of {@link ReadModelMirror} objects representing all read models
+     *         in the associated domain model.
+     */
     @JsonIgnore
     public abstract List<ReadModelMirror> getAllReadModelMirrors();
 
+    /**
+     * Retrieves a list of all query handler mirrors associated with the implementing class.
+     * Ignored during serialization.
+     *
+     * @return a list of {@code QueryHandlerMirror} objects representing the query handler mirrors.
+     */
     @JsonIgnore
     public abstract List<QueryHandlerMirror> getAllQueryHandlerMirrors();
 
+    /**
+     * Retrieves a list of all outbound service mirrors. Ignored during serialization.
+     *
+     * @return a list of {@code OutboundServiceMirror} objects representing the outbound service mirrors.
+     */
     @JsonIgnore
     public abstract List<OutboundServiceMirror> getAllOutboundServiceMirrors();
 
+    /**
+     * Retrieves a list of all IdentityMirror objects associated with this instance.
+     * Ignored during serialization.
+     *
+     * @return a list containing all IdentityMirror objects. If there are no identity mirrors, the list may be empty.
+     */
     @JsonIgnore
     public abstract List<IdentityMirror> getAllIdentityMirrors();
 
+    /**
+     * Retrieves a list of all ServiceKindMirror objects that are classified as unspecified.
+     * Ignored during serialization.
+     *
+     * @return a list of ServiceKindMirror objects that do not have a specified service kind.
+     */
     @JsonIgnore
     public abstract List<ServiceKindMirror> getAllUnspecifiedServiceKindMirrors();
 
+    /**
+     * Retrieves a list of all ServiceKindMirror objects.
+     * Ignored during serialization.
+     *
+     * @return a list of ServiceKindMirror instances representing all available service kind mirrors.
+     */
     @JsonIgnore
     public abstract List<ServiceKindMirror> getAllServiceKindMirrors();
 }

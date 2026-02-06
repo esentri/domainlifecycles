@@ -41,8 +41,21 @@ import java.util.List;
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class DomainServiceModelMixin extends ServiceKindModelMixin {
 
+    /**
+     * Constructs a {@code DomainServiceModelMixin} instance, serving as a Jackson Mix-in
+     * to define custom deserialization for {@code DomainServiceModel}.
+     *
+     * @param typeName the name of the domain service type.
+     * @param isAbstract a boolean indicating whether the domain service model is abstract.
+     * @param allFields a list of {@code FieldMirror} objects representing all fields of the domain service.
+     * @param methods a list of {@code MethodMirror} objects representing all methods of the domain service.
+     * @param domainServiceInterfaceTypeNames a list of strings representing the names of all domain service interfaces implemented by the type.
+     * @param inheritanceHierarchyTypeNames a list of strings representing the inheritance hierarchy of the domain service type.
+     * @param allInterfaceTypeNames a list of strings representing all interface type names associated with the domain service type.
+     */
     @JsonCreator
     public DomainServiceModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -56,9 +69,17 @@ public abstract class DomainServiceModelMixin extends ServiceKindModelMixin {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return the {@link DomainType} associated with the domain service.
+     */
     @JsonIgnore
     public abstract DomainType getDomainType();
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return the list of domain service interface type names.
+     */
     @JsonIgnore
     public abstract List<String> getDomainServiceInterfaceTypeNames();
 }

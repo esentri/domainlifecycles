@@ -44,6 +44,18 @@ import java.util.Optional;
  */
 public abstract class IdentityModelMixin extends DomainTypeModelMixin {
 
+    /**
+     * Constructs an instance of IdentityModelMixin with the provided properties.
+     * Used to control deserialization without modifying the actual model class.
+     *
+     * @param typeName the name of the type being mirrored.
+     * @param isAbstract a boolean indicating if the type is abstract.
+     * @param allFields a list of {@link FieldMirror} instances representing all fields in the mirrored type.
+     * @param methods a list of {@link MethodMirror} instances representing all methods in the mirrored type.
+     * @param valueTypeName an {@link Optional} containing the value type name, if applicable.
+     * @param inheritanceHierarchyTypeNames a list of type names representing the inheritance hierarchy.
+     * @param allInterfaceTypeNames a list of type names representing all interfaces implemented by the mirrored type.
+     */
     @JsonCreator
     public IdentityModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -57,6 +69,12 @@ public abstract class IdentityModelMixin extends DomainTypeModelMixin {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Retrieves the domain type associated with the model. Ignored for serialization purposes.
+     *
+     * @return the {@link DomainType} representing the specific type of the domain model,
+     *         such as AGGREGATE_ROOT, ENTITY, VALUE_OBJECT, or NON_DOMAIN, among others.
+     */
     @JsonIgnore
     public abstract DomainType getDomainType();
 }

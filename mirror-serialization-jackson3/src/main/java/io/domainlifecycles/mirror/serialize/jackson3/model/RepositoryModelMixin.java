@@ -38,19 +38,38 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Jackson Mixin for {@link io.domainlifecycles.mirror.model.RepositoryModel}.
- * Controls serialization without modifying the actual model class.
+ * Jackson mixin for {@link io.domainlifecycles.mirror.model.RepositoryModel}.
+ * Controls JSON serialization/deserialization of repository metadata without touching the domain model class.
  *
  * @author leonvoellinger
  */
 public abstract class RepositoryModelMixin extends ServiceKindModelMixin {
 
+    /**
+     * Serialized type name of the managed aggregate; written as a plain string field in JSON.
+     */
     @JsonProperty
     public String managedAggregateTypeName;
 
+    /**
+     * Fully qualified type names of repository interfaces as they should appear in JSON.
+     */
     @JsonProperty
     public List<String> repositoryInterfaceTypeNames;
 
+    /**
+     * Constructor used by Jackson to rebuild repository metadata from JSON.
+     * Expects the provided property names to match the JSON payload.
+     *
+     * @param typeName name of the repository type from the {@code typeName} JSON field
+     * @param isAbstract flag from {@code abstract} indicating whether the repository is abstract
+     * @param allFields serialized field mirrors supplied via {@code allFields}
+     * @param methods serialized method mirrors supplied via {@code methods}
+     * @param managedAggregateTypeName JSON field {@code managedAggregateTypeName} with the aggregate type name
+     * @param repositoryInterfaceTypeNames JSON field {@code repositoryInterfaceTypeNames} with all interface type names
+     * @param inheritanceHierarchyTypeNames hierarchy type names from {@code inheritanceHierarchyTypeNames}
+     * @param allInterfaceTypeNames interface type names from {@code allInterfaceTypeNames}
+     */
     @JsonCreator
     public RepositoryModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -65,9 +84,23 @@ public abstract class RepositoryModelMixin extends ServiceKindModelMixin {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Retrieves the managed aggregate root mirror associated with this repository model.
+     * This method is ignored by Jackson during serialization/deserialization to ensure
+     * domain metadata is excluded from JSON representations.
+     *
+     * @return an {@code Optional} containing the {@link AggregateRootMirror} if one is managed,
+     *         or an empty {@code Optional} if no managed aggregate is associated.
+     */
     @JsonIgnore
     public abstract Optional<AggregateRootMirror> getManagedAggregate();
 
+    /**
+     * Retrieves the domain type of the mirrored class associated with this repository model.
+     * Ignored during serialization/deserialization.
+     *
+     * @return the {@link DomainType} of the mirrored class, representing its role in the domain.
+     */
     @JsonIgnore
     public abstract DomainType getDomainType();
 }

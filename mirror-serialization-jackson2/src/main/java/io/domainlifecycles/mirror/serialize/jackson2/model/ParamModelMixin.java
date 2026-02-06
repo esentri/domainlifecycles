@@ -32,12 +32,21 @@ import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
 
 /**
  * Jackson Mixin for {@link io.domainlifecycles.mirror.model.ParamModel}.
- * Controls serialization without modifying the actual model class.
+ * Controls deserialization without modifying the actual model class.
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class ParamModelMixin {
 
+    /**
+     * Constructor for the ParamModelMixin class to facilitate deserialization and
+     * serialization of ParamModel instances with Jackson.
+     *
+     * @param name the name of the parameter being mirrored.
+     * @param type the {@link AssertedContainableTypeMirror} that represents the type of the parameter,
+     *             including container type information and associated assertions.
+     */
     @JsonCreator
     public ParamModelMixin(
         @JsonProperty("name") String name,

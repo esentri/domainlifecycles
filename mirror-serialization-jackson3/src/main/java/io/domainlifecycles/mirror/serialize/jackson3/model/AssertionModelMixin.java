@@ -38,6 +38,19 @@ import io.domainlifecycles.mirror.model.AssertionType;
  */
 public abstract class AssertionModelMixin {
 
+    /**
+     * Constructor for the {@code AssertionModelMixin} class, used for configuring
+     * deserialization of assertion models via Jackson annotations.
+     *
+     * @param assertionType The type of assertion being represented. Determines the
+     *                       behavior or validation logic associated with the assertion.
+     * @param param1         The first parameter for the assertion. The specific
+     *                       usage of this parameter depends on the assertion type.
+     * @param param2         The second parameter for the assertion. The specific
+     *                       usage of this parameter depends on the assertion type.
+     * @param message        The message associated with the assertion. Typically
+     *                       used to convey information or error details.
+     */
     @JsonCreator
     public AssertionModelMixin(
         @JsonProperty("assertionType") AssertionType assertionType,

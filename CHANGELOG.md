@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.0.0] - 2026-02-08
 - Upgraded all Spring Boot and Spring dependencies to SpringBoot version 4.0.x and compatible versions
 - Refactored Spring Boot AutoConfiguration to use Spring Boot 4.0.x features
+- Added Spring Boot 3 AutoConfiguration for legacy support
 - Added integration for Spring Event Bus supported DomainEvents (and Spring Modulith events)
 - Added support for Jackson 3.x (mirror serialization, domain event serialization, general DLC Jackson 3 integration)
 - Provided fallback support for Jackson 2.x (mirror serialization, domain event serialization, general DLC Jackson 2 integration)

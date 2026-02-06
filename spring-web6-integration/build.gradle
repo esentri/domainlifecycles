@@ -1,0 +1,24 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'checkstyle'
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+
+dependencies {
+    api project(":types")
+    implementation project(":mirror")
+    implementation project(":access")
+    compileOnly libs.spring6.web
+    compileOnly libs.spring6.context
+    testImplementation libs.spring6.context
+    testImplementation libs.assertj
+    testImplementation libs.slf4j.api
+}

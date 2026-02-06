@@ -42,8 +42,20 @@ import java.util.List;
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class EnumModelMixin extends DomainTypeModelMixin {
 
+    /**
+     * Constructor for the EnumModelMixin class to facilitate deserialization of EnumModel instances with Jackson.
+     *
+     * @param typeName the name of the type being mirrored.
+     * @param isAbstract true if the type is abstract, false otherwise.
+     * @param allFields a list of {@link FieldMirror} objects representing all fields of the type.
+     * @param methods a list of {@link MethodMirror} objects representing all methods of the type.
+     * @param enumOptions a list of {@link EnumOptionMirror} objects representing the enum options for the type.
+     * @param inheritanceHierarchyTypeNames a list of strings representing the inheritance hierarchy of the type.
+     * @param allInterfaceTypeNames a list of strings representing the names of all interfaces implemented by the type.
+     */
     @JsonCreator
     public EnumModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -57,6 +69,11 @@ public abstract class EnumModelMixin extends DomainTypeModelMixin {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     *
+     * @return the {@link DomainType} representing the specific domain classification
+     */
     @JsonIgnore
     public abstract DomainType getDomainType();
 

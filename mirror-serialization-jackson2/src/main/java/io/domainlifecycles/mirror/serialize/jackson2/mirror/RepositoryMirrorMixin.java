@@ -40,4 +40,5 @@ import io.domainlifecycles.mirror.model.RepositoryModel;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = RepositoryModel.class),
 })
+@Deprecated
 public interface RepositoryMirrorMixin {}

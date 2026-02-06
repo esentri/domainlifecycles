@@ -44,6 +44,19 @@ import java.util.Optional;
  */
 public abstract class AggregateRootModelMixin extends EntityModelMixin {
 
+    /**
+     * Constructor of the {@code AggregateRootModelMixin}, used to customize JSON serialization and deserialization
+     * for instances of {@link io.domainlifecycles.mirror.model.AggregateRootModel}.
+     *
+     * @param typeName the fully qualified name of the aggregate root model type.
+     * @param isAbstract specifies whether the model type is abstract.
+     * @param allFields a list of {@link FieldMirror} instances representing all fields in the model type.
+     * @param methods a list of {@link MethodMirror} instances representing all methods in the model type.
+     * @param identityField an {@link Optional} containing the {@link FieldMirror} that represents the identity field of the model, if one exists.
+     * @param concurrencyVersionField an {@link Optional} containing the {@link FieldMirror} of the concurrency version field, if one exists.
+     * @param inheritanceHierarchyTypeNames a list of fully qualified names of types in the inheritance hierarchy for the model type.
+     * @param allInterfaceTypeNames a list of fully qualified names of all interfaces implemented by the model type.
+     */
     @JsonCreator
     public AggregateRootModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -58,6 +71,11 @@ public abstract class AggregateRootModelMixin extends EntityModelMixin {
         super(typeName, isAbstract, allFields, methods, identityField, concurrencyVersionField, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Retrieves the domain type of the implementing class. Ignored for serialization purposes.
+     *
+     * @return the {@link DomainType} representing the classification of the implementing class
+     */
     @JsonIgnore
     public abstract DomainType getDomainType();
 }

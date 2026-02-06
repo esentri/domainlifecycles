@@ -36,8 +36,18 @@ import io.domainlifecycles.mirror.model.AssertionType;
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class AssertionModelMixin {
 
+    /**
+     * Constructor for the AssertionModelMixin.
+     * Controls deserialization without modifying the actual model class.
+     *
+     * @param assertionType the type of assertion
+     * @param param1 the first parameter
+     * @param param2 the second parameter
+     * @param message the error message
+     */
     @JsonCreator
     public AssertionModelMixin(
         @JsonProperty("assertionType") AssertionType assertionType,

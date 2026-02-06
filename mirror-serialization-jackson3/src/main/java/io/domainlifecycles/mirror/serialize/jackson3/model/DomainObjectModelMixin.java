@@ -43,6 +43,20 @@ import java.util.List;
  */
 public abstract class DomainObjectModelMixin extends DomainTypeModelMixin {
 
+    /**
+     * Constructor for the DomainObjectModelMixin class.
+     * This mixin is used to customize deserialization of
+     * of instances of {@link io.domainlifecycles.mirror.model.DomainObjectModel}.
+     *
+     * @param typeName the name of the domain object type being represented.
+     * @param isAbstract indicates whether the domain object type is abstract.
+     * @param allFields a list of field mirrors representing all the fields of the domain object type.
+     * @param methods a list of method mirrors representing all the methods of the domain object type.
+     * @param inheritanceHierarchyTypeNames a list of fully qualified names representing
+     *        the inheritance hierarchy of the domain object type.
+     * @param allInterfaceTypeNames a list of fully qualified names representing
+     *        all the interfaces implemented by the domain object type.
+     */
     @JsonCreator
     public DomainObjectModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -55,9 +69,24 @@ public abstract class DomainObjectModelMixin extends DomainTypeModelMixin {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Retrieves a list of basic fields associated with the domain object model.
+     * This method is ignored during JSON serialization.
+     *
+     * @return a list of {@code FieldMirror} instances representing the basic fields of the domain object model.
+     */
     @JsonIgnore
     public abstract List<FieldMirror> getBasicFields();
 
+    /**
+     * Retrieves a list of value references associated with the domain object model.
+     * This method is used to access references to values that are represented
+     * by {@code ValueReferenceMirror} instances. The returned value is ignored
+     * during JSON serialization.
+     *
+     * @return a list of {@code ValueReferenceMirror} instances representing
+     *         the value references of the domain object model.
+     */
     @JsonIgnore
     public abstract List<ValueReferenceMirror> getValueReferences();
 }

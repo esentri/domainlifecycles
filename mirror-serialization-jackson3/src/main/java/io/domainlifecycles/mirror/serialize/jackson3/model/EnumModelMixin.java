@@ -44,6 +44,22 @@ import java.util.List;
  */
 public abstract class EnumModelMixin extends DomainTypeModelMixin {
 
+    /**
+     * Constructs an instance of the EnumModelMixin class. This constructor is used
+     * to define properties for deserialization of an enum model
+     * using Jackson annotations. Instances of this class represent metadata about
+     * enums, including their fields, methods, options, and hierarchy information.
+     *
+     * @param typeName the name of the type represented by this enum model.
+     * @param isAbstract a boolean flag indicating whether the type is abstract.
+     * @param allFields the list of fields associated with the enum model.
+     * @param methods the list of methods associated with the enum model.
+     * @param enumOptions the list of enum options associated with the enum model.
+     * @param inheritanceHierarchyTypeNames the list of type names representing the
+     *        inheritance hierarchy of this enum model.
+     * @param allInterfaceTypeNames the list of type names representing all
+     *        interfaces implemented by this enum model.
+     */
     @JsonCreator
     public EnumModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -57,6 +73,11 @@ public abstract class EnumModelMixin extends DomainTypeModelMixin {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Retrieves the domain type of the associated model. Ignored for serialization purposes.
+     *
+     * @return the {@code DomainType} representing the type of the domain object
+     */
     @JsonIgnore
     public abstract DomainType getDomainType();
 

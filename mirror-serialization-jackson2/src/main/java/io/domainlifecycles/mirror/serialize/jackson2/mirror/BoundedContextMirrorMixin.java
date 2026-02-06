@@ -40,4 +40,5 @@ import io.domainlifecycles.mirror.model.BoundedContextModel;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = BoundedContextModel.class),
 })
+@Deprecated
 public interface BoundedContextMirrorMixin { }

@@ -42,8 +42,22 @@ import java.util.Optional;
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class ValueObjectModelMixin extends DomainObjectModelMixin {
 
+    /**
+     * Constructor for the ValueObjectModelMixin, used to control the
+     * deserialization of {@link io.domainlifecycles.mirror.model.ValueObjectModel}.
+     *
+     * @param typeName the name of the value object type.
+     * @param isAbstract a flag indicating whether the value object type is abstract.
+     * @param allFields the list of all fields present in the value object type, represented by {@link FieldMirror}.
+     * @param methods the list of all methods present in the value object type, represented by {@link MethodMirror}.
+     * @param inheritanceHierarchyTypeNames the list of fully qualified type names representing the
+     *        inheritance hierarchy of the value object type.
+     * @param allInterfaceTypeNames the list of fully qualified type names representing
+     *        all interfaces implemented by the value object type.
+     */
     @JsonCreator
     public ValueObjectModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -56,12 +70,28 @@ public abstract class ValueObjectModelMixin extends DomainObjectModelMixin {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     *
+     * @return true if the object is single-valued; false otherwise.
+     */
     @JsonIgnore
     public abstract boolean isSingledValued();
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     *
+     * @return fieldMirror representing the singled valued field
+     */
     @JsonIgnore
     public abstract Optional<FieldMirror> singledValuedField();
 
+    /**
+     * Retrieves the domain type of the object within the domain-driven design (DDD) context.
+     * This method is ignored for serialization purposes.
+     *
+     * @return the {@link DomainType}
+     */
     @JsonIgnore
     public abstract DomainType getDomainType();
 }

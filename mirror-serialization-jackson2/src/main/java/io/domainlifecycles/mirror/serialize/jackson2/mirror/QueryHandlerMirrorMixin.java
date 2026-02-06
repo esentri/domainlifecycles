@@ -40,4 +40,5 @@ import io.domainlifecycles.mirror.model.QueryHandlerModel;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = QueryHandlerModel.class),
 })
+@Deprecated
 public interface QueryHandlerMirrorMixin { }

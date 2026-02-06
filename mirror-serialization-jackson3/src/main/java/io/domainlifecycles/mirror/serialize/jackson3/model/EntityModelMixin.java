@@ -50,6 +50,21 @@ import java.util.Optional;
  */
 public abstract class EntityModelMixin extends DomainObjectModelMixin {
 
+    /**
+     * Constructs an instance of EntityModelMixin which serves as a Jackson Mixin
+     * for {@link io.domainlifecycles.mirror.model.EntityModel}.
+     * It is used to control the deserialization of entity models
+     * without modifying the actual model class.
+     *
+     * @param typeName the name of the entity type being mirrored.
+     * @param isAbstract a boolean indicating whether the entity type is abstract.
+     * @param allFields a list of {@link FieldMirror} that mirrors all fields of the entity type.
+     * @param methods a list of {@link MethodMirror} that mirrors all methods of the entity type.
+     * @param identityField an {@link Optional} of {@link FieldMirror} representing the identity field of the entity, if present.
+     * @param concurrencyVersionField an {@link Optional} of {@link FieldMirror} representing the concurrency version field, if present.
+     * @param inheritanceHierarchyTypeNames a list of strings representing the names of the inheritance hierarchy for the entity type.
+     * @param allInterfaceTypeNames a list of strings representing all interface types implemented by the entity type.
+     */
     @JsonCreator
     public EntityModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -64,27 +79,92 @@ public abstract class EntityModelMixin extends DomainObjectModelMixin {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Retrieves a list of entity references associated with the model. This provides
+     * metadata about references to other entity types within the domain model. The method
+     * is marked with {@code @JsonIgnore} to exclude it from serialization.
+     *
+     * @return a list of {@code EntityReferenceMirror} representing the entity references.
+     */
     @JsonIgnore
     public abstract List<EntityReferenceMirror> getEntityReferences();
 
+    /**
+     * Retrieves a list of references to aggregate root entities associated with the model.
+     * This provides metadata about dependencies or relationships to aggregate roots within
+     * the domain model. The method is marked with {@code @JsonIgnore} to exclude it from
+     * serialization.
+     *
+     * @return a list of {@code AggregateRootReferenceMirror} representing the aggregate
+     *         root references within the entity model.
+     */
     @JsonIgnore
     public abstract List<AggregateRootReferenceMirror> getAggregateRootReferences();
 
+    /**
+     * Retrieves a list of value references associated with the model.
+     * This method provides metadata about references to values within
+     * the domain model. The method is marked with {@code @JsonIgnore}
+     * to exclude it from serialization.
+     *
+     * @return a list of {@code ValueReferenceMirror} representing the
+     *         value references within the entity model.
+     */
     @JsonIgnore
     public abstract List<ValueReferenceMirror> getValueReferences();
 
+    /**
+     * Retrieves a list of basic fields associated with the entity model.
+     * This method provides metadata about fundamental fields of the entity.
+     * The method is marked with {@code @JsonIgnore} to exclude it from serialization.
+     *
+     * @return a list of {@code FieldMirror} representing the basic fields of the entity model.
+     */
     @JsonIgnore
     public abstract List<FieldMirror> getBasicFields();
 
+    /**
+     * Retrieves a list of processed domain commands associated with the entity model.
+     * This method provides metadata about domain commands that have been processed
+     * within the lifecycle of the domain model. The method is marked with {@code @JsonIgnore}
+     * to exclude it from serialization.
+     *
+     * @return a list of {@code DomainCommandMirror} representing the processed
+     *         domain commands within the entity model.
+     */
     @JsonIgnore
     public abstract List<DomainCommandMirror> processedDomainCommands();
 
+    /**
+     * Retrieves a list of domain events that have been published by the entity model.
+     * This method provides metadata about events emitted as part of the domain model's lifecycle.
+     * The method is marked with {@code @JsonIgnore} to exclude it from serialization.
+     *
+     * @return a list of {@code DomainEventMirror} representing the domain events published by the entity model.
+     */
     @JsonIgnore
     public abstract List<DomainEventMirror> publishedDomainEvents();
 
+    /**
+     * Retrieves a list of domain events that the entity model listens to.
+     * This method provides metadata about the domain events that the entity
+     * is subscribed to as part of its lifecycle. The method is marked with
+     * {@code @JsonIgnore} to exclude it from serialization.
+     *
+     * @return a list of {@code DomainEventMirror} representing the domain
+     *         events that the entity model listens to.
+     */
     @JsonIgnore
     public abstract List<DomainEventMirror> listenedDomainEvents();
 
+    /**
+     * Retrieves the domain type of the entity model.
+     * This provides metadata about the type of the domain object
+     * being represented by the model. The method is marked
+     * with {@code @JsonIgnore} to exclude it from serialization.
+     *
+     * @return the {@code DomainType} representing the domain object type.
+     */
     @JsonIgnore
     public abstract DomainType getDomainType();
 }

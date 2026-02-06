@@ -5,13 +5,13 @@ import io.domainlifecycles.jooq.imp.JooqAggregateRepository;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.fetcher.RecordProvider;
 import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
-import io.domainlifecycles.test.springboot3.Sequences;
-import io.domainlifecycles.test.springboot3.tables.records.AktionsCodeBv3Record;
-import io.domainlifecycles.test.springboot3.tables.records.BestellKommentarBv3Record;
-import io.domainlifecycles.test.springboot3.tables.records.BestellPositionBv3Record;
-import io.domainlifecycles.test.springboot3.tables.records.BestellStatusBv3Record;
-import io.domainlifecycles.test.springboot3.tables.records.BestellungBv3Record;
-import io.domainlifecycles.test.springboot3.tables.records.LieferadresseBv3Record;
+import io.domainlifecycles.test.springboot.Sequences;
+import io.domainlifecycles.test.springboot.tables.records.AktionsCodeBv3Record;
+import io.domainlifecycles.test.springboot.tables.records.BestellKommentarBv3Record;
+import io.domainlifecycles.test.springboot.tables.records.BestellPositionBv3Record;
+import io.domainlifecycles.test.springboot.tables.records.BestellStatusBv3Record;
+import io.domainlifecycles.test.springboot.tables.records.BestellungBv3Record;
+import io.domainlifecycles.test.springboot.tables.records.LieferadresseBv3Record;
 import org.jooq.DSLContext;
 import tests.shared.complete.onlinehandel.bestellung.AktionsCodeBv3;
 import tests.shared.complete.onlinehandel.bestellung.BestellKommentarBv3;
@@ -32,12 +32,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.domainlifecycles.test.springboot3.Tables.AKTIONS_CODE_BV3;
-import static io.domainlifecycles.test.springboot3.Tables.BESTELLUNG_BV3;
-import static io.domainlifecycles.test.springboot3.Tables.BESTELL_KOMMENTAR_BV3;
-import static io.domainlifecycles.test.springboot3.Tables.BESTELL_POSITION_BV3;
-import static io.domainlifecycles.test.springboot3.Tables.LIEFERADRESSE_BV3;
-import static io.domainlifecycles.test.springboot3.tables.BestellStatusBv3.BESTELL_STATUS_BV3;
+import static io.domainlifecycles.test.springboot.Tables.AKTIONS_CODE_BV3;
+import static io.domainlifecycles.test.springboot.Tables.BESTELLUNG_BV3;
+import static io.domainlifecycles.test.springboot.Tables.BESTELL_KOMMENTAR_BV3;
+import static io.domainlifecycles.test.springboot.Tables.BESTELL_POSITION_BV3;
+import static io.domainlifecycles.test.springboot.Tables.LIEFERADRESSE_BV3;
+import static io.domainlifecycles.test.springboot.tables.BestellStatusBv3.BESTELL_STATUS_BV3;
 
 
 public class BestellungBv3Repository extends JooqAggregateRepository<BestellungBv3, BestellungIdBv3> {
@@ -129,7 +129,7 @@ public class BestellungBv3Repository extends JooqAggregateRepository<BestellungB
         var fetcher = new JooqAggregateFetcher<BestellungBv3, BestellungIdBv3>(BestellungBv3.class, dslContext,
             jooqDomainPersistenceProvider);
 
-        io.domainlifecycles.test.springboot3.tables.BestellungBv3 b = BESTELLUNG_BV3.as("b");
+        io.domainlifecycles.test.springboot.tables.BestellungBv3 b = BESTELLUNG_BV3.as("b");
 
         var joinedRecords = dslContext.select()
             .from(

@@ -40,4 +40,5 @@ import io.domainlifecycles.mirror.model.IdentityModel;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = IdentityModel.class),
 })
+@Deprecated
 public interface IdentityMirrorMixin { }

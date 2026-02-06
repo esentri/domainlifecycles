@@ -23,5 +23,5 @@ If the original listener method is annotated with ``@TransactionalEventListener`
 no proxy is created and the original listener method is executed directly with the Spring annotation defined behaviour.
 That way the behaviour of DLCs listener methods (``@DomainEventListener``) can be customized with Spring means.
 
-### Spring Modulith compatible
+### Spring Modulith Events compatible
 This integration is Spring Modulith compatible. Just add the starter to your project and you are good to go.

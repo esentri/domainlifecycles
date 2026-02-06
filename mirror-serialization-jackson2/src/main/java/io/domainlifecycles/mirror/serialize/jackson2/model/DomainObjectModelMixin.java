@@ -41,8 +41,22 @@ import java.util.List;
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class DomainObjectModelMixin extends DomainTypeModelMixin {
 
+    /**
+     * Constructor for the DomainObjectModelMixin, used to control the deserialization and deserialization
+     * of {@link io.domainlifecycles.mirror.model.DomainObjectModel}.
+     *
+     * @param typeName the name of the domain object type.
+     * @param isAbstract a flag indicating whether the domain object type is abstract.
+     * @param allFields the list of all fields present in the domain object type, represented by {@link FieldMirror}.
+     * @param methods the list of all methods present in the domain object type, represented by {@link MethodMirror}.
+     * @param inheritanceHierarchyTypeNames the list of fully qualified type names representing the
+     *        inheritance hierarchy of the domain object type.
+     * @param allInterfaceTypeNames the list of fully qualified type names representing
+     *        all interfaces implemented by the domain object type.
+     */
     @JsonCreator
     public DomainObjectModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -55,9 +69,19 @@ public abstract class DomainObjectModelMixin extends DomainTypeModelMixin {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return the list of basic fields of the domain object.
+     */
     @JsonIgnore
     public abstract List<FieldMirror> getBasicFields();
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     *
+     * @return a list of {@link ValueReferenceMirror} instances representing references to values
+     * that are mirrored by the domain object.
+     */
     @JsonIgnore
     public abstract List<ValueReferenceMirror> getValueReferences();
 }

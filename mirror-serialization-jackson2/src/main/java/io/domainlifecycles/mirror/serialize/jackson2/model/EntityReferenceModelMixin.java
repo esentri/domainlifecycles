@@ -39,8 +39,23 @@ import io.domainlifecycles.mirror.api.EntityMirror;
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class EntityReferenceModelMixin extends FieldModelMixin {
 
+    /**
+     * Constructor for the EntityReferenceModelMixin class.
+     * This is used by Jackson for deserialization of the model.
+     *
+     * @param name the name of the entity reference
+     * @param type the type of the entity reference, represented by an AssertedContainableTypeMirror
+     * @param accessLevel the access level of the entity reference, represented by an AccessLevel
+     * @param declaredByTypeName the name of the type declaring the entity reference
+     * @param modifiable whether the entity reference is modifiable
+     * @param publicReadable whether the entity reference is publicly readable
+     * @param publicWriteable whether the entity reference is publicly writable
+     * @param isStatic whether the entity reference is static
+     * @param hidden whether the entity reference is hidden
+     */
     @JsonCreator
     public EntityReferenceModelMixin(
         @JsonProperty("name") String name,
@@ -56,6 +71,13 @@ public abstract class EntityReferenceModelMixin extends FieldModelMixin {
         super(name, type, accessLevel, declaredByTypeName, modifiable, publicReadable, publicWriteable, isStatic, hidden);
     }
 
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     *
+     * @return the {@link EntityMirror} representing the mirrored Entity.
+     *         May provide insights into the Entity's identity, concurrency version,
+     *         references to other entities, and aggregate roots, among other details.
+     */
     @JsonIgnore
     public abstract EntityMirror getEntity();
 }

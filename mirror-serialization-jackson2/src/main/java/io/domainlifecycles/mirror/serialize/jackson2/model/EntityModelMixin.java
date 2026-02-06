@@ -48,8 +48,23 @@ import java.util.Optional;
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class EntityModelMixin extends DomainObjectModelMixin {
 
+    /**
+     * Constructor for the {@code EntityModelMixin} class.
+     * Enables the deserialization of {@code EntityModel} objects with specific fields
+     * and behavior using Jackson annotations.
+     *
+     * @param typeName the name of the type represented by this entity model
+     * @param isAbstract indicates whether this entity model represents an abstract type
+     * @param allFields the list of fields represented in the entity model
+     * @param methods the list of methods represented in the entity model
+     * @param identityField an optional field representing the identity field of the entity
+     * @param concurrencyVersionField an optional field representing the concurrency version field of the entity
+     * @param inheritanceHierarchyTypeNames the list of type names in the inheritance hierarchy of the entity
+     * @param allInterfaceTypeNames the list of all interface type names implemented by the entity
+     */
     @JsonCreator
     public EntityModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -64,27 +79,76 @@ public abstract class EntityModelMixin extends DomainObjectModelMixin {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Retrieves a list of entity references associated with this model. Ignored for serialization purposes.
+     *
+     * @return a list of {@code EntityReferenceMirror} instances representing the references to entities.
+     */
     @JsonIgnore
     public abstract List<EntityReferenceMirror> getEntityReferences();
 
+    /**
+     * Retrieves a list of aggregate root references associated with this model. Ignored for serialization purposes.
+     *
+     * @return a list of {@code AggregateRootReferenceMirror} instances representing
+     *         references to aggregate roots.
+     */
     @JsonIgnore
     public abstract List<AggregateRootReferenceMirror> getAggregateRootReferences();
 
+    /**
+     * Retrieves a list of value references associated with this model. Ignored for serialization purposes.
+     *
+     * @return a list of {@code ValueReferenceMirror} instances representing the references to values.
+     */
     @JsonIgnore
     public abstract List<ValueReferenceMirror> getValueReferences();
 
+    /**
+     * Retrieves a list of basic fields associated with this model. Ignored for serialization purposes.
+     *
+     * @return a list of {@code FieldMirror} instances representing the basic fields of the entity.
+     */
     @JsonIgnore
     public abstract List<FieldMirror> getBasicFields();
 
+    /**
+     * Retrieves a list of {@code DomainCommandMirror} instances that represent the domain commands
+     * processed within the context of this entity model. Each {@code DomainCommandMirror} provides
+     * details about the mirrored domain command, including its references, fields, and associated
+     * behaviors. Ignored for serialization purposes.
+     *
+     * @return a list of {@code DomainCommandMirror} instances representing the processed
+     *         domain commands in this entity model.
+     */
     @JsonIgnore
     public abstract List<DomainCommandMirror> processedDomainCommands();
 
+    /**
+     * Retrieves a list of {@code DomainEventMirror} instances representing the domain events
+     * that have been published within the context of this entity model. Ignored for serialization purposes.
+     *
+     * @return a list of {@code DomainEventMirror} instances representing the published domain events.
+     */
     @JsonIgnore
     public abstract List<DomainEventMirror> publishedDomainEvents();
 
+    /**
+     * Retrieves a list of {@code DomainEventMirror} instances that represent the domain events
+     * this entity is configured to listen to. Ignored for serialization purposes.
+     *
+     * @return a list of {@code DomainEventMirror} instances representing the domain events
+     *         that are listened to in the context of this entity model.
+     */
     @JsonIgnore
     public abstract List<DomainEventMirror> listenedDomainEvents();
 
+    /**
+     * Retrieves the type of the domain associated with this model.
+     * Ignored for serialization purposes.
+     *
+     * @return the {@code DomainType} instance representing the type of the domain.
+     */
     @JsonIgnore
     public abstract DomainType getDomainType();
 }

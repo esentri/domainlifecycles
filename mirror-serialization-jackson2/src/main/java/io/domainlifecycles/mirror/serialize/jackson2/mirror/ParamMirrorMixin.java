@@ -40,4 +40,5 @@ import io.domainlifecycles.mirror.model.ParamModel;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = ParamModel.class),
 })
+@Deprecated
 public interface ParamMirrorMixin { }

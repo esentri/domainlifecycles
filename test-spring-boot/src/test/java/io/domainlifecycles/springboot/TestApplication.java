@@ -22,7 +22,7 @@ import java.util.Locale;
             "tests.shared.persistence.domain.simpleUuid," +
             "tests.shared.persistence.domain.simple," +
             "tests.shared.persistence.domain.valueobjectAutoMapping",
-    jooqRecordPackage = "io.domainlifecycles.test.springboot3.tables.records",
+    jooqRecordPackage = "io.domainlifecycles.test.springboot.tables.records",
     jooqSqlDialect = "H2"
 )
 @Slf4j

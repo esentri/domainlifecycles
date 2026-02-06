@@ -39,7 +39,6 @@ import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.api.PublishingRouter;
 import io.domainlifecycles.events.inmemory.InMemoryChannelFactory;
 import io.domainlifecycles.events.spring.SpringApplicationEventsPublishingChannelFactory;
-import io.domainlifecycles.events.spring.api.SpringTxInMemoryChannelFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;

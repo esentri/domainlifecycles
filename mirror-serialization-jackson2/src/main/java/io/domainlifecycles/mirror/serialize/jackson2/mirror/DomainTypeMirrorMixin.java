@@ -66,5 +66,6 @@ import io.domainlifecycles.mirror.model.ValueObjectModel;
     @JsonSubTypes.Type(value = ServiceKindModel.class),
     @JsonSubTypes.Type(value = DomainTypeModel.class),
 })
+@Deprecated
 public interface DomainTypeMirrorMixin {
 }

@@ -40,4 +40,5 @@ import io.domainlifecycles.mirror.model.AssertedContainableTypeModel;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = AssertedContainableTypeModel.class),
 })
+@Deprecated
 public interface AssertedContainableTypeMirrorMixin { }

@@ -47,4 +47,5 @@ import io.domainlifecycles.mirror.model.ValueReferenceModel;
     @JsonSubTypes.Type(value = ValueReferenceModel.class),
     @JsonSubTypes.Type(value = EntityReferenceModel.class),
 })
+@Deprecated
 public interface FieldMirrorMixin { }

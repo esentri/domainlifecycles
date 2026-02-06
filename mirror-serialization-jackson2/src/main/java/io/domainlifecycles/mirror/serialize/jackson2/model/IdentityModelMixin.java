@@ -42,8 +42,23 @@ import java.util.Optional;
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class IdentityModelMixin extends DomainTypeModelMixin {
 
+    /**
+     * Constructor for IdentityModelMixin, utilized to manage
+     * deserialization of IdentityModel while preserving its intended behavior.
+     *
+     * @param typeName the name of the identity model type.
+     * @param isAbstract a boolean flag indicating if the identity model type is abstract.
+     * @param allFields the list of all fields contained in the identity model, represented by {@link FieldMirror}.
+     * @param methods the list of all methods defined in the identity model, represented by {@link MethodMirror}.
+     * @param valueTypeName an {@link Optional} containing the fully qualified name of the value type, if applicable.
+     * @param inheritanceHierarchyTypeNames the list of fully qualified type names representing the
+     *        inheritance hierarchy of the identity model.
+     * @param allInterfaceTypeNames the list of fully qualified type names representing all the interfaces
+     *        implemented by the identity model.
+     */
     @JsonCreator
     public IdentityModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -57,6 +72,13 @@ public abstract class IdentityModelMixin extends DomainTypeModelMixin {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Retrieves the domain type associated with the implementing model.
+     * Ignored for serialization purposes.
+     *
+     * @return the {@link DomainType} representing the classification of the model
+     *         within the DDD context
+     */
     @JsonIgnore
     public abstract DomainType getDomainType();
 }

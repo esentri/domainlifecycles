@@ -40,4 +40,5 @@ import io.domainlifecycles.mirror.model.EnumModel;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = EnumModel.class),
 })
+@Deprecated
 public interface EnumMirrorMixin {}

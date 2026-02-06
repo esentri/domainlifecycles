@@ -40,4 +40,5 @@ import io.domainlifecycles.mirror.model.MethodModel;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = MethodModel.class),
 })
+@Deprecated
 public interface MethodMirrorMixin {}

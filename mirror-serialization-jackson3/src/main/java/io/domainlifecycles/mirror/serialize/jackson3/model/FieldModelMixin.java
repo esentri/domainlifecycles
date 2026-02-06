@@ -38,6 +38,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public abstract class FieldModelMixin {
 
+    /**
+     * Constructor for the FieldModelMixin class, which is used to define a Jackson Mixin
+     * for controlling deserialization of the FieldModel.
+     *
+     * @param name the name of the field
+     * @param type the type of the field, represented as an AssertedContainableTypeMirror
+     * @param accessLevel the access level of the field, represented as an AccessLevel
+     * @param declaredByTypeName the type name of the class where the field is declared
+     * @param modifiable indicates whether the field is modifiable
+     * @param publicReadable indicates whether the field is readable by the public
+     * @param publicWriteable indicates whether the field is writable by the public
+     * @param isStatic indicates whether the field is static
+     * @param hidden indicates whether the field is hidden
+     */
     @JsonCreator
     public FieldModelMixin(
         @JsonProperty("name") String name,
@@ -51,6 +65,13 @@ public abstract class FieldModelMixin {
         @JsonProperty("hidden") boolean hidden
     ) {}
 
+    /**
+     * Determines if the field is an identity field. An identity field typically
+     * represents a unique identifier or primary key for the entity or record
+     * to which the field belongs. Ignored during serialization.
+     *
+     * @return {@code true} if the field is an identity field, {@code false} otherwise.
+     */
     @JsonIgnore
     public abstract boolean isIdentityField();
 }

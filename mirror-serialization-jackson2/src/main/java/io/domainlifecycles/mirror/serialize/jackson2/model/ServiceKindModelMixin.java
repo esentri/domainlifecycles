@@ -49,8 +49,21 @@ import java.util.List;
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class ServiceKindModelMixin extends DomainTypeModelMixin {
 
+    /**
+     * Constructor for the ServiceKindModelMixin class.
+     * This mixin is used to define custom deserialization behaviors
+     * for the ServiceKindModel in Jackson, without modifying the original model class.
+     *
+     * @param typeName the name of the type being represented.
+     * @param isAbstract boolean indicating whether the type is abstract.
+     * @param allFields a list of all fields in the mirrored type, represented as {@link FieldMirror} instances.
+     * @param methods a list of methods in the mirrored type, represented as {@link MethodMirror} instances.
+     * @param inheritanceHierarchyTypeNames a list of fully qualified type names representing the inheritance hierarchy of the mirrored type.
+     * @param allInterfaceTypeNames a list of fully qualified type names representing all interfaces implemented by the mirrored type.
+     */
     @JsonCreator
     public ServiceKindModelMixin(
         @JsonProperty("typeName") String typeName,
@@ -63,33 +76,106 @@ public abstract class ServiceKindModelMixin extends DomainTypeModelMixin {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
 
+    /**
+     * Retrieves the domain type associated with a specific mirrored class.
+     * Ignored for serialization purposes.
+     *
+     * @return the {@link DomainType} that corresponds to the mirrored class,
+     *         or {@code NON_DOMAIN} if the class does not represent a domain type.
+     */
     @JsonIgnore
     public abstract DomainType getDomainType();
 
+    /**
+     * Retrieves a list of {@link ServiceKindMirror} instances referenced by the current model.
+     * This method is ignored during JSON serialization or deserialization.
+     *
+     * @return a list of {@link ServiceKindMirror} objects that are referenced by the model.
+     */
     @JsonIgnore
     public abstract List<ServiceKindMirror> getReferencedServiceKinds();
 
+    /**
+     * Retrieves a list of {@link RepositoryMirror} instances referenced by the current model.
+     * This method is ignored during JSON serialization or deserialization.
+     *
+     * @return a list of {@link RepositoryMirror} objects representing the repositories
+     *         that are referenced by the model.
+     */
     @JsonIgnore
     public abstract List<RepositoryMirror> getReferencedRepositories();
 
+    /**
+     * Retrieves a list of {@link DomainServiceMirror} instances referenced by the current model.
+     * This method is ignored during JSON serialization or deserialization.
+     *
+     * @return a list of {@link DomainServiceMirror} objects representing the domain services
+     *         that are referenced by the model.
+     */
     @JsonIgnore
     public abstract List<DomainServiceMirror> getReferencedDomainServices();
 
+    /**
+     * Retrieves a list of {@link OutboundServiceMirror} instances that are referenced
+     * by the current model. This method is ignored during JSON serialization or deserialization.
+     *
+     * @return a list of {@link OutboundServiceMirror} objects representing the outbound services
+     *         that are referenced by the model.
+     */
     @JsonIgnore
     public abstract List<OutboundServiceMirror> getReferencedOutboundServices();
 
+    /**
+     * Retrieves a list of {@link QueryHandlerMirror} instances that are referenced
+     * by the current model. This method is ignored during JSON serialization or
+     * deserialization.
+     *
+     * @return a list of {@link QueryHandlerMirror} objects representing the query
+     *         handlers that are referenced by the model.
+     */
     @JsonIgnore
     public abstract List<QueryHandlerMirror> getReferencedQueryHandlers();
 
+    /**
+     * Retrieves a list of {@link ApplicationServiceMirror} instances referenced by the current model.
+     * This method is ignored during JSON serialization or deserialization.
+     *
+     * @return a list of {@link ApplicationServiceMirror} objects representing the application services
+     *         referenced by the model.
+     */
     @JsonIgnore
     public abstract List<ApplicationServiceMirror> getReferencedApplicationServices();
 
+    /**
+     * Retrieves a list of {@link DomainCommandMirror} instances that represent
+     * the processed domain commands in the current model.
+     * This method is ignored during JSON serialization or deserialization.
+     *
+     * @return a list of {@link DomainCommandMirror} objects representing the processed
+     *         domain commands associated with the model.
+     */
     @JsonIgnore
     public abstract List<DomainCommandMirror> processedDomainCommands();
 
+    /**
+     * Retrieves a list of {@link DomainEventMirror} instances that represent the domain events
+     * published by the current model. This method is ignored during JSON serialization or
+     * deserialization.
+     *
+     * @return a list of {@link DomainEventMirror} objects representing the published domain events
+     *         associated with the model.
+     */
     @JsonIgnore
     public abstract List<DomainEventMirror> publishedDomainEvents();
 
+    /**
+     * Retrieves a list of {@link DomainEventMirror} instances that represent the domain events
+     * listened to by the current model. This method is ignored during JSON serialization or
+     * deserialization.
+     *
+     * @return a list of {@link DomainEventMirror} objects representing the domain events
+     *         that are listened to by the model.
+     */
     @JsonIgnore
     public abstract List<DomainEventMirror> listenedDomainEvents();
 }

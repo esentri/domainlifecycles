@@ -41,6 +41,20 @@ import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
  */
 public abstract class AggregateRootReferenceModelMixin extends FieldModelMixin {
 
+    /**
+     * Constructor for the AggregateRootReferenceModelMixin class, which serves as a Jackson Mixin
+     * for controlling deserialization of the AggregateRootReferenceModel class.
+     *
+     * @param name the name of the aggregate root reference
+     * @param type the type of the aggregate root reference, represented as an AssertedContainableTypeMirror
+     * @param accessLevel the access level of the aggregate root reference, represented as an AccessLevel
+     * @param declaredByTypeName the name of the type declaring the aggregate root reference
+     * @param modifiable indicates whether the aggregate root reference is modifiable
+     * @param publicReadable indicates whether the aggregate root reference is readable by the public
+     * @param publicWriteable indicates whether the aggregate root reference is writable by the public
+     * @param isStatic indicates whether the aggregate root reference is static
+     * @param hidden indicates whether the aggregate root reference is hidden
+     */
     @JsonCreator
     public AggregateRootReferenceModelMixin(
         @JsonProperty("name") String name,
@@ -56,6 +70,12 @@ public abstract class AggregateRootReferenceModelMixin extends FieldModelMixin {
         super(name, type, accessLevel, declaredByTypeName, modifiable, publicReadable, publicWriteable, isStatic, hidden);
     }
 
+    /**
+     * Retrieves the aggregate root associated with this model.
+     * This method is ignored during JSON serialization.
+     *
+     * @return the {@code AggregateRootMirror} representing the aggregate root of the current model
+     */
     @JsonIgnore
     public abstract AggregateRootMirror getAggregateRoot();
 }

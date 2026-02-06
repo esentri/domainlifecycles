@@ -44,14 +44,41 @@ import java.util.Optional;
  *
  * @author leonvoellinger
  */
+@Deprecated
 public abstract class MethodModelMixin {
 
+    /**
+     * A list of names representing the types of events that are published by the model.
+     * This field is used for serialization and deserialization purposes in conjunction
+     * with Jackson.
+     */
     @JsonProperty
     private List<String> publishedEventTypeNames;
 
+    /**
+     * Represents the name of a single event type that this method listens for, wrapped
+     * in an {@code Optional}. This field is used to identify the specific event
+     * being handled by the method. It facilitates serialization and deserialization
+     * via Jackson.
+     */
     @JsonProperty
     private Optional<String> listenedEventTypeName;
 
+    /**
+     * Constructs an instance of MethodModelMixin for use with Jackson
+     * deserialization. This constructor initializes all fields required for representing
+     * a method model in serialized form.
+     *
+     * @param name The name of the method being modeled.
+     * @param declaredByTypeName The name of the type that declares this method.
+     * @param accessLevel The access level of the method (e.g., public, protected, private, package).
+     * @param parameters A list of parameters accepted by the method, represented as {@link ParamMirror}.
+     * @param returnType The return type of the method, represented as {@link AssertedContainableTypeMirror}.
+     * @param overridden Indicates whether the method is overridden from a superclass or interface.
+     * @param publishedEventTypeNames A list of names representing the types of events published by the method.
+     * @param listenedEventTypeName An {@code Optional} containing the name of a single event type that
+     *                              this method listens for, if applicable.
+     */
     @JsonCreator
     public MethodModelMixin(
         @JsonProperty("name") String name,
@@ -64,12 +91,37 @@ public abstract class MethodModelMixin {
         @JsonProperty("listenedEventTypeName") Optional<String> listenedEventTypeName
     ) {}
 
+    /**
+     * Retrieves a list of domain events that have been published by this method model.
+     * The events returned represent a detailed view of the types of actions or state
+     * changes that the method is responsible for triggering within the domain lifecycle.
+     * Ignored during serialization.
+     *
+     * @return a list of {@code DomainEventMirror} objects representing the published events.
+     */
     @JsonIgnore
     public abstract List<DomainEventMirror> getPublishedEvents();
 
+    /**
+     * Retrieves the domain event that this method listens for, if applicable.
+     * The event returned represents the specific type of action or state change
+     * within the domain lifecycle that this method is configured to react to.
+     * This method is ignored during JSON serialization.
+     *
+     * @return an {@code Optional} containing a {@code DomainEventMirror} object that represents
+     *         the listened event, or an empty {@code Optional} if no event is being listened to.
+     */
     @JsonIgnore
     public abstract Optional<DomainEventMirror> getListenedEvent();
 
+    /**
+     * Retrieves a list of domain commands that have been processed by this method model.
+     * The commands returned represent the various operations or state changes within
+     * the domain lifecycle that this method is designed to handle.
+     * This method is ignored during JSON serialization.
+     *
+     * @return a list of {@code DomainCommandMirror} objects representing the processed commands.
+     */
     @JsonIgnore
     public abstract List<DomainCommandMirror> getProcessedCommands();
 }
