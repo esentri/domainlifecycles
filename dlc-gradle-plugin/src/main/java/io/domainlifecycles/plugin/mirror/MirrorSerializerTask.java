@@ -31,7 +31,6 @@ import io.domainlifecycles.plugins.mirror.MirrorSerializer;
 import io.domainlifecycles.plugins.mirror.MirrorSerializerImpl;
 import io.domainlifecycles.plugins.util.FileIOUtils;
 import io.domainlifecycles.utils.ClassLoaderUtils;
-import java.nio.file.Path;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.file.DirectoryProperty;
@@ -41,6 +40,8 @@ import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.file.Path;
 
 /**
  * An abstract Gradle task for rendering domain models as JSON files.

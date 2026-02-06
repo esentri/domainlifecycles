@@ -26,9 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
 import io.domainlifecycles.mirror.api.BoundedContextMirror;
@@ -127,9 +124,8 @@ public class DomainModel implements DomainMirror {
      * @param boundedContextMirrors an array of {@code BoundedContextMirror} instances
      *                               representing bounded contexts within the domain.
      */
-    @JsonCreator
-    public DomainModel(@JsonProperty("allTypeMirrors") Map<String, ? extends DomainTypeMirror> allTypeMirrors,
-                       @JsonProperty("boundedContextMirrors") List<BoundedContextMirror> boundedContextMirrors) {
+    public DomainModel(Map<String, ? extends DomainTypeMirror> allTypeMirrors,
+                       List<BoundedContextMirror> boundedContextMirrors) {
         this.allTypeMirrors = new HashMap<>(allTypeMirrors);
         this.boundedContextMirrors = boundedContextMirrors;
         initDomainModelReferences();
@@ -147,7 +143,6 @@ public class DomainModel implements DomainMirror {
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<DomainTypeMirror> getAllDomainTypeMirrors() {
         return new ArrayList<>(allTypeMirrors.values());
     }
@@ -156,7 +151,6 @@ public class DomainModel implements DomainMirror {
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<BoundedContextMirror> getAllBoundedContextMirrors() {
         return this.boundedContextMirrors;
     }
@@ -176,7 +170,6 @@ public class DomainModel implements DomainMirror {
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<AggregateRootMirror> getAllAggregateRootMirrors() {
         return getAllDomainTypeMirrors()
             .stream()
@@ -189,7 +182,6 @@ public class DomainModel implements DomainMirror {
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<EntityMirror> getAllEntityMirrors() {
         return getAllDomainTypeMirrors()
             .stream()
@@ -202,7 +194,6 @@ public class DomainModel implements DomainMirror {
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<ValueObjectMirror> getAllValueObjectMirrors() {
         return getAllDomainTypeMirrors()
             .stream()
@@ -215,7 +206,6 @@ public class DomainModel implements DomainMirror {
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<EnumMirror> getAllEnumMirrors() {
         return getAllDomainTypeMirrors()
             .stream()
@@ -228,7 +218,6 @@ public class DomainModel implements DomainMirror {
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<ValueMirror> getAllValueMirrors() {
         return getAllDomainTypeMirrors()
             .stream()
@@ -245,7 +234,6 @@ public class DomainModel implements DomainMirror {
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<DomainCommandMirror> getAllDomainCommandMirrors() {
         return getAllDomainTypeMirrors()
             .stream()
@@ -258,7 +246,6 @@ public class DomainModel implements DomainMirror {
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<DomainEventMirror> getAllDomainEventMirrors() {
         return getAllDomainTypeMirrors()
             .stream()
@@ -271,7 +258,6 @@ public class DomainModel implements DomainMirror {
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<ApplicationServiceMirror> getAllApplicationServiceMirrors() {
         return getAllDomainTypeMirrors()
             .stream()
@@ -284,7 +270,6 @@ public class DomainModel implements DomainMirror {
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<DomainServiceMirror> getAllDomainServiceMirrors() {
         return getAllDomainTypeMirrors()
             .stream()
@@ -297,7 +282,6 @@ public class DomainModel implements DomainMirror {
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<RepositoryMirror> getAllRepositoryMirrors() {
         return getAllDomainTypeMirrors()
             .stream()
@@ -310,7 +294,6 @@ public class DomainModel implements DomainMirror {
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<ReadModelMirror> getAllReadModelMirrors() {
         return getAllDomainTypeMirrors()
             .stream()
@@ -323,7 +306,6 @@ public class DomainModel implements DomainMirror {
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<QueryHandlerMirror> getAllQueryHandlerMirrors() {
         return getAllDomainTypeMirrors()
             .stream()
@@ -336,7 +318,6 @@ public class DomainModel implements DomainMirror {
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<OutboundServiceMirror> getAllOutboundServiceMirrors() {
         return getAllDomainTypeMirrors()
             .stream()
@@ -349,7 +330,6 @@ public class DomainModel implements DomainMirror {
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<IdentityMirror> getAllIdentityMirrors() {
         return getAllDomainTypeMirrors()
             .stream()
@@ -362,7 +342,6 @@ public class DomainModel implements DomainMirror {
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<ServiceKindMirror> getAllUnspecifiedServiceKindMirrors() {
         return getAllDomainTypeMirrors()
             .stream()
@@ -375,7 +354,6 @@ public class DomainModel implements DomainMirror {
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
     public List<ServiceKindMirror> getAllServiceKindMirrors() {
         return getAllDomainTypeMirrors()
             .stream()
@@ -410,4 +388,3 @@ public class DomainModel implements DomainMirror {
         return Objects.hash(allTypeMirrors, boundedContextMirrors);
     }
 }
-

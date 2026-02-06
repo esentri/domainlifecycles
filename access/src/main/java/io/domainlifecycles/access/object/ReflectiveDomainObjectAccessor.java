@@ -59,10 +59,11 @@ public class ReflectiveDomainObjectAccessor implements DynamicDomainObjectAccess
      * {@inheritDoc}
      */
     @Override
-    public Object peek(String fieldName) {
+    @SuppressWarnings("unchecked")
+    public <T> T peek(String fieldName) {
         try {
             var field = getField(fieldName);
-            return field.get(domainObject);
+            return (T)field.get(domainObject);
         } catch (IllegalAccessException illegalAccessException) {
             throw DLCAccessException.fail(
                 String.format("Failed to read '%s' from '%s'!", fieldName, domainObjectClass.getName()),

@@ -31,11 +31,14 @@ import io.domainlifecycles.access.classes.DefaultClassProvider;
 import io.domainlifecycles.access.object.DefaultDomainObjectAccessFactory;
 import io.domainlifecycles.access.object.DefaultEnumFactory;
 import io.domainlifecycles.access.object.DefaultIdentityFactory;
+import io.domainlifecycles.access.object.DefaultSingleValuedValueObjectFactory;
 import io.domainlifecycles.access.object.DomainObjectAccessFactory;
 import io.domainlifecycles.access.object.DynamicDomainObjectAccessor;
 import io.domainlifecycles.access.object.EnumFactory;
 import io.domainlifecycles.access.object.IdentityFactory;
+import io.domainlifecycles.access.object.SingleValuedValueObjectFactory;
 import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.domain.types.ValueObject;
 import io.domainlifecycles.domain.types.internal.DomainObject;
 
 /**
@@ -56,12 +59,15 @@ public class DlcAccess {
 
     private static IdentityFactory identityFactory;
 
+    private static SingleValuedValueObjectFactory singleValuedValueObjectFactory;
+
     private static DomainObjectAccessFactory domainObjectAccessFactory;
 
     static {
         classProvider = new DefaultClassProvider();
         enumFactory = new DefaultEnumFactory(classProvider);
         identityFactory = new DefaultIdentityFactory(classProvider);
+        singleValuedValueObjectFactory = new DefaultSingleValuedValueObjectFactory(classProvider);
         domainObjectAccessFactory = new DefaultDomainObjectAccessFactory();
     }
 
@@ -112,6 +118,17 @@ public class DlcAccess {
      */
     public static <V, I extends Identity<V>> I newIdentityInstance(V value, String identityTypeName) {
         return identityFactory.newInstance(value, identityTypeName);
+    }
+
+    /**
+     * @param <VO>              type of single valued ValueObject
+     * @param <V>              type of value
+     * @param value            the value for the ValueObject instance
+     * @param valueObjectTypeName full qualified ValueObject type name
+     * @return a new {@link ValueObject} instance by its value and its full qualified type name.
+     */
+    public static <V, VO extends ValueObject> VO newSingleValuedValueObjectInstance(V value, String valueObjectTypeName) {
+        return singleValuedValueObjectFactory.newInstance(value, valueObjectTypeName);
     }
 
     /**

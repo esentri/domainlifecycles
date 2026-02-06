@@ -26,9 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
 import io.domainlifecycles.mirror.api.BoundedContextMirror;
@@ -61,10 +58,8 @@ public class BoundedContextModel implements BoundedContextMirror, ProvidedDomain
      *
      * @param packageName the package name of the bounded context, cannot be null.
      */
-    @JsonCreator
-    public BoundedContextModel(@JsonProperty("packageName") String packageName) {
+    public BoundedContextModel(String packageName) {
         this.packageName = Objects.requireNonNull(packageName);
-
     }
 
     //TODO alle queries von allen modellen durchgehen bzgl. vereinfachung mit domainmirror
@@ -72,7 +67,6 @@ public class BoundedContextModel implements BoundedContextMirror, ProvidedDomain
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<AggregateRootMirror> getAggregateRoots() {
         return domainMirror.getAllAggregateRootMirrors()
@@ -84,7 +78,6 @@ public class BoundedContextModel implements BoundedContextMirror, ProvidedDomain
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<DomainServiceMirror> getDomainServices() {
         return domainMirror.getAllDomainServiceMirrors()
@@ -96,7 +89,6 @@ public class BoundedContextModel implements BoundedContextMirror, ProvidedDomain
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<RepositoryMirror> getRepositories() {
         return domainMirror.getAllRepositoryMirrors()
@@ -108,7 +100,6 @@ public class BoundedContextModel implements BoundedContextMirror, ProvidedDomain
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<ReadModelMirror> getReadModels() {
         return domainMirror
@@ -121,7 +112,6 @@ public class BoundedContextModel implements BoundedContextMirror, ProvidedDomain
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<DomainCommandMirror> getDomainCommands() {
         return domainMirror
@@ -134,7 +124,6 @@ public class BoundedContextModel implements BoundedContextMirror, ProvidedDomain
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<DomainEventMirror> getDomainEvents() {
         return domainMirror
@@ -147,7 +136,6 @@ public class BoundedContextModel implements BoundedContextMirror, ProvidedDomain
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<ApplicationServiceMirror> getApplicationServices() {
         return domainMirror
@@ -160,7 +148,6 @@ public class BoundedContextModel implements BoundedContextMirror, ProvidedDomain
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<QueryHandlerMirror> getQueryHandlers() {
         return domainMirror
@@ -173,7 +160,6 @@ public class BoundedContextModel implements BoundedContextMirror, ProvidedDomain
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<OutboundServiceMirror> getOutboundServices() {
         return domainMirror
@@ -186,7 +172,6 @@ public class BoundedContextModel implements BoundedContextMirror, ProvidedDomain
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<ServiceKindMirror> getServiceKinds() {
         return domainMirror

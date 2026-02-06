@@ -26,9 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.FieldMirror;
@@ -45,7 +42,6 @@ import java.util.Objects;
  */
 public class ApplicationServiceModel extends ServiceKindModel implements ApplicationServiceMirror {
 
-    @JsonProperty
     private final List<String> applicationServiceInterfaceTypeNames;
 
     /**
@@ -66,24 +62,21 @@ public class ApplicationServiceModel extends ServiceKindModel implements Applica
      * @param allInterfaceTypeNames a list of fully qualified type names for all interfaces implemented
      *                               by the application service type or its ancestors.
      */
-    @JsonCreator
-    public ApplicationServiceModel(@JsonProperty("typeName") String typeName,
-                                   @JsonProperty("abstract") boolean isAbstract,
-                                   @JsonProperty("allFields") List<FieldMirror> allFields,
-                                   @JsonProperty("methods") List<MethodMirror> methods,
-                                   @JsonProperty("applicationServiceInterfaceTypeNames") List<String> applicationServiceInterfaceTypeNames,
-                                   @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
-                                   @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
+    public ApplicationServiceModel(String typeName,
+                                   boolean isAbstract,
+                                   List<FieldMirror> allFields,
+                                   List<MethodMirror> methods,
+                                   List<String> applicationServiceInterfaceTypeNames,
+                                   List<String> inheritanceHierarchyTypeNames,
+                                   List<String> allInterfaceTypeNames
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
         this.applicationServiceInterfaceTypeNames = Collections.unmodifiableList(applicationServiceInterfaceTypeNames);
     }
 
-
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public DomainType getDomainType() {
         return DomainType.APPLICATION_SERVICE;
@@ -92,7 +85,6 @@ public class ApplicationServiceModel extends ServiceKindModel implements Applica
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<String> getApplicationServiceInterfaceTypeNames() {
         return applicationServiceInterfaceTypeNames;
@@ -127,6 +119,7 @@ public class ApplicationServiceModel extends ServiceKindModel implements Applica
     public int hashCode() {
         return Objects.hash(
             super.hashCode(),
-            applicationServiceInterfaceTypeNames);
+            applicationServiceInterfaceTypeNames
+        );
     }
 }

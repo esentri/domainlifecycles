@@ -44,6 +44,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The DiagramSettingsFilter class is used to filter domain types based on a list of seed type names and a
@@ -64,7 +65,7 @@ public class DiagramSettingsFilter {
 
     private final DiagramTrimSettings trimSettings;
     private final GeneralVisualSettings generalVisualSettings;
-    private final Set<DomainTypeMirror> includedDomainTypesByConnctions;
+    private final Set<DomainTypeMirror> includedDomainTypesByConnections;
     private final DomainMirror domainMirror;
 
     /**
@@ -83,18 +84,18 @@ public class DiagramSettingsFilter {
         this.domainMirror = Objects.requireNonNull(domainMirror, "A DomainMirror must be provided!");
         this.generalVisualSettings = Objects.requireNonNull(generalVisualSettings, "GeneralVisualSettings must be provided!");
 
-        this.includedDomainTypesByConnctions = new HashSet<>();
-        this.includedDomainTypesByConnctions.addAll(calculateConnectedIngoing(diagramTrimSettings.getIncludeConnectedToIngoing()));
-        this.includedDomainTypesByConnctions.addAll(calculateConnectedOutgoing(diagramTrimSettings.getIncludeConnectedToOutgoing()));
-        this.includedDomainTypesByConnctions.addAll(calculateConnected(diagramTrimSettings.getIncludeConnectedTo()));
+        this.includedDomainTypesByConnections = new HashSet<>();
+        this.includedDomainTypesByConnections.addAll(calculateConnectedIngoing(diagramTrimSettings.getIncludeConnectedToIngoing()));
+        this.includedDomainTypesByConnections.addAll(calculateConnectedOutgoing(diagramTrimSettings.getIncludeConnectedToOutgoing()));
+        this.includedDomainTypesByConnections.addAll(calculateConnected(diagramTrimSettings.getIncludeConnectedTo()));
         if( this.trimSettings.getIncludeConnectedTo().isEmpty() &&
             this.trimSettings.getIncludeConnectedToIngoing().isEmpty() &&
             this.trimSettings.getIncludeConnectedToOutgoing().isEmpty()
         ){
-            this.includedDomainTypesByConnctions.addAll(domainMirror.getAllDomainTypeMirrors());
+            this.includedDomainTypesByConnections.addAll(domainMirror.getAllDomainTypeMirrors());
         }
-        this.includedDomainTypesByConnctions.removeAll(calculateConnectedIngoing(diagramTrimSettings.getExcludeConnectedToIngoing()));
-        this.includedDomainTypesByConnctions.removeAll(calculateConnectedOutgoing(diagramTrimSettings.getExcludeConnectedToOutgoing()));
+        this.includedDomainTypesByConnections.removeAll(calculateConnectedIngoing(diagramTrimSettings.getExcludeConnectedToIngoing()));
+        this.includedDomainTypesByConnections.removeAll(calculateConnectedOutgoing(diagramTrimSettings.getExcludeConnectedToOutgoing()));
     }
 
     private Set<DomainTypeMirror> calculateConnected(List<String> typeNames){
@@ -290,7 +291,7 @@ public class DiagramSettingsFilter {
             return false;
         }
         if(trimSettings.hasIncludedConnectedTypeSettings() || trimSettings.hasExcludedConnectedTypeSettings()){
-            contained = this.includedDomainTypesByConnctions.contains(dtm);
+            contained = this.includedDomainTypesByConnections.contains(dtm);
         }
         if(!this.trimSettings.getExplicitlyIncludedPackageNames().isEmpty()) {
             contained = contained && this.trimSettings.getExplicitlyIncludedPackageNames().stream().anyMatch(
@@ -351,7 +352,9 @@ public class DiagramSettingsFilter {
                 && !dtm.getTypeName().equals("io.domainlifecycles.jooq.imp.JooqAggregateRepository");
             case APPLICATION_SERVICE -> included = included && generalVisualSettings.isShowApplicationServices();
             case OUTBOUND_SERVICE -> included = included && generalVisualSettings.isShowOutboundServices();
-            case DOMAIN_COMMAND -> included = included && generalVisualSettings.isShowDomainCommands();
+            case DOMAIN_COMMAND -> {
+                included = included && generalVisualSettings.isShowDomainCommands();
+            }
             case SERVICE_KIND -> included = included && generalVisualSettings.isShowUnspecifiedServiceKinds();
         }
         return included;
@@ -361,12 +364,35 @@ public class DiagramSettingsFilter {
         if(!dtm.isAbstract()){
             return false;
         }
-        return this.includedDomainTypesByConnctions
+        var typesOfSameDomainType = this.includedDomainTypesByConnections.stream()
+            .filter(incl -> incl.getDomainType().equals(dtm.getDomainType()))
+            .filter(incl -> !incl.getTypeName().equals(dtm.getTypeName()))
+            .collect(Collectors.toSet());
+        var abstractTypesOfSameDomainType = typesOfSameDomainType
             .stream()
-            .noneMatch(incl ->
-                incl.implementsInterface(dtm.getTypeName())
-                    || incl.isSubClassOf(dtm.getTypeName())
-            );
+            .filter(incl -> incl.isAbstract())
+            .collect(Collectors.toSet());
+        var abstractSubTypes = new HashSet<DomainTypeMirror>();
+        abstractSubTypes.add(dtm);
+        var size = -1;
+        while (size != abstractSubTypes.size()){
+            size = abstractSubTypes.size();
+            for(DomainTypeMirror abstractSub : abstractTypesOfSameDomainType){
+                if(abstractSub.implementsInterface(dtm.getTypeName())
+                    || abstractSub.isSubClassOf(dtm.getTypeName())
+                            ){
+                    abstractSubTypes.add(abstractSub);
+                }
+
+            }
+        }
+        var ret = typesOfSameDomainType
+            .stream()
+            .filter(incl -> !incl.isAbstract())
+            .noneMatch(concrete ->
+                abstractSubTypes.stream().anyMatch(sub -> concrete.isSubClassOf(sub.getTypeName())
+                    || concrete.implementsInterface(sub.getTypeName())));
+        return ret;
     }
 
 

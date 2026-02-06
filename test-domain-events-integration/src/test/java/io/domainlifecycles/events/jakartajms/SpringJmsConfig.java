@@ -26,15 +26,17 @@
 
 package io.domainlifecycles.events.jakartajms;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.access.classes.DefaultClassProvider;
+import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.events.jakarta.jms.api.JakartaJmsChannelFactory;
 import io.domainlifecycles.events.mq.api.MqProcessingChannel;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
+import io.domainlifecycles.events.serialize.jackson3.JacksonDomainEventSerializer;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +53,10 @@ import java.util.List;
 @EnableJms
 public class SpringJmsConfig {
 
+    @Bean
+    public DomainEventSerializer domainEventSerializer(DomainObjectBuilderProvider domainObjectBuilderProvider){
+        return new JacksonDomainEventSerializer(domainObjectBuilderProvider);
+    }
 
     @Bean
     public JakartaJmsChannelFactory jakartaJmsChannelFactory(
@@ -58,14 +64,14 @@ public class SpringJmsConfig {
         ClassProvider classProvider,
         TransactionalHandlerExecutor transactionalHandlerExecutor,
         ActiveMQConnectionFactory jmsConnectionFactory,
-        ObjectMapper objectMapper
+        DomainEventSerializer domainEventSerializer
     ){
         return new JakartaJmsChannelFactory(
             jmsConnectionFactory,
             serviceProvider,
             classProvider,
             transactionalHandlerExecutor,
-            objectMapper
+            domainEventSerializer
             );
     }
 

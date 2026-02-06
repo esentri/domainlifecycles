@@ -26,8 +26,8 @@
 
 package sampleshop.core.domain.customer;
 
+import io.domainlifecycles.domain.types.DomainEventListener;
 import io.domainlifecycles.domain.types.DomainService;
-import io.domainlifecycles.domain.types.ListensTo;
 import org.springframework.stereotype.Service;
 import sampleshop.core.domain.order.NewOrderPlaced;
 import sampleshop.core.domain.order.OrderCanceled;
@@ -60,7 +60,7 @@ public class CustomerNotificationService implements DomainService {
      *
      * @param orderShipped the DomainEvent representing the fact that an order was shipped
      */
-    @ListensTo(domainEventType = OrderShipped.class)
+    @DomainEventListener
     public void notifyOrderShipped(OrderShipped orderShipped) {
         var customer = customerRepository.findById(orderShipped.order().getCustomerId())
             .orElseThrow();
@@ -73,7 +73,7 @@ public class CustomerNotificationService implements DomainService {
      *
      * @param orderCanceled the DomainEvent representing the fact that an order was canceled
      */
-    @ListensTo(domainEventType = OrderCanceled.class)
+    @DomainEventListener
     public void notifyOrderCanceled(OrderCanceled orderCanceled) {
         var customer = customerRepository.findById(orderCanceled.order().getCustomerId())
             .orElseThrow();
@@ -86,7 +86,7 @@ public class CustomerNotificationService implements DomainService {
      *
      * @param newOrderPlaced the DomainEvent representing the fact that a new order was successfully placed
      */
-    @ListensTo(domainEventType = NewOrderPlaced.class)
+    @DomainEventListener
     public void notifyNewOrderPlaced(NewOrderPlaced newOrderPlaced) {
         var customer = customerRepository.findById(newOrderPlaced.order().getCustomerId())
             .orElseThrow();

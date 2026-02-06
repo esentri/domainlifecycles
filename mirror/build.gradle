@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
+    id 'jacoco'
     alias libs.plugins.yumi.gradle.licenser.plugin
     alias libs.plugins.jaredsburrows.license.plugin
 }
@@ -12,21 +13,12 @@ java {
 }
 
 dependencies {
-    compileOnly libs.slf4j.api
-
+    api libs.slf4j.api
     implementation libs.classgraph
-    compileOnly libs.javax.validation.api
-    compileOnly libs.jakarta.validation.api
-    implementation libs.jackson.core
-    implementation libs.jackson.databind
-    implementation libs.jackson.datatype.jdk8
-    implementation libs.jackson.datatype.jsr310
-    implementation libs.jackson.module.parameter.names
-
+    api libs.jakarta.validation.api
     implementation (libs.type.resolver) {
         exclude (group: 'org.apache.logging.log4j', module: 'log4j-core')
     }
-
     api project(":types")
     implementation project(":reflect")
 
@@ -38,6 +30,13 @@ dependencies {
     testImplementation libs.lombok
     testImplementation libs.assertj
     testAnnotationProcessor libs.lombok
-
-
 }
+
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport

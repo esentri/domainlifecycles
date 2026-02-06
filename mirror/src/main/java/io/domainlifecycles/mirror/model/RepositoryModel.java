@@ -26,9 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.FieldMirror;
@@ -47,9 +44,7 @@ import java.util.Optional;
  */
 public class RepositoryModel extends ServiceKindModel implements RepositoryMirror {
 
-    @JsonProperty
     private final String managedAggregateTypeName;
-    @JsonProperty
     private final List<String> repositoryInterfaceTypeNames;
 
     /**
@@ -64,15 +59,14 @@ public class RepositoryModel extends ServiceKindModel implements RepositoryMirro
      * @param inheritanceHierarchyTypeNames a list of fully qualified type names representing the inheritance hierarchy of the represented type.
      * @param allInterfaceTypeNames a list of fully qualified type names representing all interfaces implemented by the represented type.
      */
-    @JsonCreator
-    public RepositoryModel(@JsonProperty("typeName") String typeName,
-                           @JsonProperty("abstract") boolean isAbstract,
-                           @JsonProperty("allFields") List<FieldMirror> allFields,
-                           @JsonProperty("methods") List<MethodMirror> methods,
-                           @JsonProperty("managedAggregateTypeName") String managedAggregateTypeName,
-                           @JsonProperty("repositoryInterfaceTypeNames") List<String> repositoryInterfaceTypeNames,
-                           @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
-                           @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
+    public RepositoryModel(String typeName,
+                           boolean isAbstract,
+                           List<FieldMirror> allFields,
+                           List<MethodMirror> methods,
+                           String managedAggregateTypeName,
+                           List<String> repositoryInterfaceTypeNames,
+                           List<String> inheritanceHierarchyTypeNames,
+                           List<String> allInterfaceTypeNames
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
         this.managedAggregateTypeName = Objects.requireNonNull(managedAggregateTypeName);
@@ -82,7 +76,6 @@ public class RepositoryModel extends ServiceKindModel implements RepositoryMirro
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public Optional<AggregateRootMirror> getManagedAggregate() {
         return Optional.ofNullable((AggregateRootMirror) domainMirror.getDomainTypeMirror(managedAggregateTypeName).orElse(null));
@@ -91,7 +84,6 @@ public class RepositoryModel extends ServiceKindModel implements RepositoryMirro
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public DomainType getDomainType() {
         return DomainType.REPOSITORY;
@@ -100,7 +92,6 @@ public class RepositoryModel extends ServiceKindModel implements RepositoryMirro
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<String> getRepositoryInterfaceTypeNames() {
         return repositoryInterfaceTypeNames;

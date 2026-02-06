@@ -26,8 +26,9 @@
 
 package io.domainlifecycles.plugin.mirror;
 
-import java.util.List;
 import org.apache.maven.plugins.annotations.Parameter;
+
+import java.util.List;
 
 /**
  * Represents the configuration required for serializing domain models into JSON files.

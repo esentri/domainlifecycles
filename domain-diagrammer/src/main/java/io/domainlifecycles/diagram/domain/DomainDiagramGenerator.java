@@ -29,8 +29,10 @@ package io.domainlifecycles.diagram.domain;
 import io.domainlifecycles.diagram.Diagram;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.diagram.domain.mapper.DomainMapper;
+import io.domainlifecycles.diagram.domain.notes.DomainClassNote;
 import io.domainlifecycles.mirror.api.DomainMirror;
 
+import java.util.Collection;
 /**
  * The DomainDiagramGenerator generates the Nomnoml diagram text
  * for a complete bounded contexts and the configuration specified by a given
@@ -40,8 +42,6 @@ import io.domainlifecycles.mirror.api.DomainMirror;
  */
 public class DomainDiagramGenerator implements Diagram {
     private final DomainDiagramConfig diagramConfig;
-
-    //TODO add options for external notes
 
     private final DomainMapper domainMapper;
 
@@ -153,15 +153,38 @@ public class DomainDiagramGenerator implements Diagram {
      */
     public static final String IDENTITY_STYLE_TAG = "I";
 
+
+    /**
+     * Initializes the DomainDiagramGenerator with a given {@link DomainDiagramConfig}
+     * without any notes
+     *
+     * @param diagramConfig diagram configuration
+     * @param domainMirror domain
+     */
+    public DomainDiagramGenerator(
+        final DomainDiagramConfig diagramConfig,
+        DomainMirror domainMirror
+
+    ) {
+        this.diagramConfig = diagramConfig;
+        this.domainMapper = new DomainMapper(diagramConfig, domainMirror, null);
+    }
+
     /**
      * Initializes the DomainDiagramGenerator with a given {@link DomainDiagramConfig}
      *
      * @param diagramConfig diagram configuration
      * @param domainMirror domain
+     * @param notes A collection of notes to be added to depicted diagram elements
      */
-    public DomainDiagramGenerator(final DomainDiagramConfig diagramConfig, DomainMirror domainMirror) {
+    public DomainDiagramGenerator(
+        final DomainDiagramConfig diagramConfig,
+        DomainMirror domainMirror,
+        Collection<DomainClassNote> notes
+
+    ) {
         this.diagramConfig = diagramConfig;
-        this.domainMapper = new DomainMapper(diagramConfig, domainMirror);
+        this.domainMapper = new DomainMapper(diagramConfig, domainMirror, notes);
     }
 
     /**
@@ -192,6 +215,7 @@ public class DomainDiagramGenerator implements Diagram {
         builder.append(acyclerStyleDeclaration());
         builder.append(rankerStyleDeclaration());
         builder.append(backgroundColorStyleDeclaration());
+        builder.append(noteColorStyleDeclaration());
 
         builder.append(System.lineSeparator());
 
@@ -231,6 +255,9 @@ public class DomainDiagramGenerator implements Diagram {
             .forEach(f -> builder.append(f.getDiagramText()));
         domainMapper.getDomainRelationshipMapper().mapAllReadModelRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
+
+        domainMapper.getNonAggregateNotes().forEach(f -> builder.append(f.getDiagramText()));
+
         return builder.toString();
     }
 
@@ -388,6 +415,13 @@ public class DomainDiagramGenerator implements Diagram {
     private String backgroundColorStyleDeclaration() {
         if (diagramConfig.getStyleSettings().getBackgroundColor() != null) {
             return "#background: " + diagramConfig.getStyleSettings().getBackgroundColor() + System.lineSeparator();
+        }
+        return "";
+    }
+
+    private String noteColorStyleDeclaration() {
+        if (diagramConfig.getStyleSettings().getNoteStyle() != null) {
+            return "#.note: " + diagramConfig.getStyleSettings().getNoteStyle() + System.lineSeparator();
         }
         return "";
     }

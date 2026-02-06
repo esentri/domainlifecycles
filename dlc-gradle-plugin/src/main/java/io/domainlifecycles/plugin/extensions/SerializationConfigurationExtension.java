@@ -44,6 +44,17 @@ public abstract class SerializationConfigurationExtension implements Named {
 
     private static final String DEFAULT_MIRROR_JSON_FILE_NAME = "mirror.json";
 
+    /**
+     * Constructs a new instance of the {@code SerializationConfigurationExtension}.
+     *
+     * This constructor initializes the default configuration for serialization,
+     * specifically setting a default file name for the output file used during
+     * serialization-related tasks. The default file name is {@code mirror.json}, which
+     * acts as the convention unless overridden. The {@code Project} parameter allows
+     * access to the Gradle project in which this extension is being used.
+     *
+     * @param project the Gradle {@code Project} instance associated with this serialization configuration.
+     */
     public SerializationConfigurationExtension(Project project) {
         getFileName().convention(DEFAULT_MIRROR_JSON_FILE_NAME);
     }

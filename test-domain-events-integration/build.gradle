@@ -1,6 +1,9 @@
+
 plugins {
-    id 'java'
+    id 'java-library'
     id 'checkstyle'
+    id 'jacoco'
+    alias libs.plugins.spring.boot.plugin
     alias libs.plugins.yumi.gradle.licenser.plugin
     alias libs.plugins.jaredsburrows.license.plugin
 }
@@ -13,14 +16,17 @@ dependencies {
     testImplementation project(":mirror")
     testImplementation project(":service-registry")
     testImplementation project(":domain-events-core")
+    testImplementation project(":domain-events-serialization-jackson3")
     testImplementation project(":domain-events-jakarta-jta")
     testImplementation project(":domain-events-spring-tx")
-    testImplementation project(":domain-events-spring-tx-outbox")
+    testImplementation project(":domain-events-spring-bus")
     testImplementation project(":domain-events-gruelbox")
-    testImplementation project(":jackson-integration")
+    testImplementation project(":jackson3-integration")
     testImplementation project(":builder")
     testImplementation project(":domain-events-jakarta-jms")
     testImplementation project(":domain-events-mq")
+    testImplementation project(":dlc-spring-boot-autoconfig")
+    testImplementation("org.springframework.modulith:spring-modulith-starter-jdbc:2.0.2")
     testImplementation libs.slf4j.api
     testImplementation libs.lombok
     testAnnotationProcessor libs.lombok
@@ -28,19 +34,33 @@ dependencies {
     testImplementation variantOf(libs.atomikos.transactions.jta) { classifier("jakarta") }
     testImplementation libs.jakarta.transaction.api
     testImplementation libs.logback.classic
-    testImplementation libs.spring.boot3.starter
-    testImplementation libs.spring.boot3.starter.json
-    testImplementation libs.spring.boot3.starter.jooq
-    testImplementation libs.spring.boot3.starter.test
-    testImplementation libs.spring.boot3.starter.artemis
-    testImplementation libs.apache.active.mq.artemis.jakarter.server
+    testImplementation libs.spring.boot.starter.jackson
+    testImplementation libs.spring.boot.starter.test
+    testImplementation libs.spring.boot.starter.jooq
+    testImplementation libs.spring.boot.starter.artemis
+    testImplementation libs.spring.boot.starter.artemis.test
+    testImplementation libs.apache.active.mq.artemis.jms.server
     testImplementation libs.bundles.gruelbox.transactionoutbox
-
+    testImplementation libs.jackson3.core
+    testImplementation libs.jackson3.databind
     testImplementation libs.awaitility
-
 }
 
 // Although test classes are not scanned by checkstyle, as configured in the root-level build.gradle file,
 // checkstyle will throw errors and hints as soon as you add a JavaDoc in test file methods, which is the case in some
 // of the more complex test files in this module. That's why the checkstyleTest task is explicitly disabled.
 checkstyleTest.enabled = false
+
+
+bootJar {
+    enabled = false
+}
+
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport

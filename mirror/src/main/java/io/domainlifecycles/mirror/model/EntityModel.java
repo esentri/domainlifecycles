@@ -26,9 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AggregateRootReferenceMirror;
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
@@ -71,15 +68,14 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
      * @param inheritanceHierarchyTypeNames a list of type names in the inheritance hierarchy of the mirrored type
      * @param allInterfaceTypeNames a list of all interface type names implemented by the mirrored type
      */
-    @JsonCreator
-    public EntityModel(@JsonProperty("typeName") String typeName,
-                       @JsonProperty("abstract") boolean isAbstract,
-                       @JsonProperty("allFields") List<FieldMirror> allFields,
-                       @JsonProperty("methods") List<MethodMirror> methods,
-                       @JsonProperty("identityField") Optional<FieldMirror> identityField,
-                       @JsonProperty("concurrencyVersionField") Optional<FieldMirror> concurrencyVersionField,
-                       @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
-                       @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
+    public EntityModel(String typeName,
+                       boolean isAbstract,
+                       List<FieldMirror> allFields,
+                       List<MethodMirror> methods,
+                       Optional<FieldMirror> identityField,
+                       Optional<FieldMirror> concurrencyVersionField,
+                       List<String> inheritanceHierarchyTypeNames,
+                       List<String> allInterfaceTypeNames
 
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
@@ -106,7 +102,6 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<EntityReferenceMirror> getEntityReferences() {
         return allFields.stream().filter(p ->
@@ -134,7 +129,6 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<AggregateRootReferenceMirror> getAggregateRootReferences() {
         return allFields.stream().filter(p ->
@@ -161,7 +155,6 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<ValueReferenceMirror> getValueReferences() {
         return allFields.stream().filter(p ->
@@ -177,7 +170,6 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<FieldMirror> getBasicFields() {
         return identityField.map(fieldMirror -> super.getBasicFields().stream().filter(p ->
@@ -252,7 +244,6 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<DomainCommandMirror> processedDomainCommands() {
         return methods
@@ -265,7 +256,6 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<DomainEventMirror> publishedDomainEvents() {
         return methods
@@ -278,7 +268,6 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<DomainEventMirror> listenedDomainEvents() {
         return methods
@@ -291,7 +280,6 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public DomainType getDomainType() {
         return DomainType.ENTITY;

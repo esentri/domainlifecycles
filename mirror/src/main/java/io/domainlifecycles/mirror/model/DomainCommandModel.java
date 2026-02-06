@@ -26,9 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.AggregateRootReferenceMirror;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
@@ -58,9 +55,7 @@ import java.util.stream.Collectors;
  */
 public class DomainCommandModel extends DomainTypeModel implements DomainCommandMirror {
 
-    @JsonProperty
     private final Optional<String> aggregateTargetIdentityTypeName;
-    @JsonProperty
     private final Optional<String> domainServiceTargetTypeName;
 
     /**
@@ -79,15 +74,14 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
      * @param allInterfaceTypeNames a list of all interface type names implemented by the type being modeled.
      *                              Must not be null.
      */
-    @JsonCreator
-    public DomainCommandModel(@JsonProperty("typeName") String typeName,
-                              @JsonProperty("abstract") boolean isAbstract,
-                              @JsonProperty("allFields") List<FieldMirror> allFields,
-                              @JsonProperty("methods") List<MethodMirror> methods,
-                              @JsonProperty("aggregateTargetIdentityTypeName") Optional<String> aggregateTargetIdentityTypeName,
-                              @JsonProperty("domainServiceTargetTypeName") Optional<String> domainServiceTargetTypeName,
-                              @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
-                              @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
+    public DomainCommandModel(String typeName,
+                              boolean isAbstract,
+                              List<FieldMirror> allFields,
+                              List<MethodMirror> methods,
+                              Optional<String> aggregateTargetIdentityTypeName,
+                              Optional<String> domainServiceTargetTypeName,
+                              List<String> inheritanceHierarchyTypeNames,
+                              List<String> allInterfaceTypeNames
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
         this.aggregateTargetIdentityTypeName = Objects.requireNonNull(aggregateTargetIdentityTypeName);
@@ -97,7 +91,6 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<FieldMirror> getBasicFields() {
         return allFields.stream().filter(p ->
@@ -109,7 +102,6 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<ValueReferenceMirror> getValueReferences() {
         return allFields.stream().filter(p ->
@@ -124,7 +116,6 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<EntityReferenceMirror> getEntityReferences() {
         return allFields.stream().filter(p ->
@@ -137,7 +128,6 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<AggregateRootReferenceMirror> getAggregateRootReferences() {
         return allFields.stream().filter(p ->
@@ -150,7 +140,6 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public Optional<AggregateRootMirror> getAggregateTarget() {
         var identity = aggregateTargetIdentityTypeName
@@ -170,7 +159,6 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public Optional<DomainServiceMirror> getDomainServiceTarget() {
         return domainServiceTargetTypeName
@@ -182,7 +170,6 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<ServiceKindMirror> getProcessingServiceKinds() {
         return domainMirror.getAllServiceKindMirrors()
@@ -194,7 +181,6 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<ApplicationServiceMirror> getProcessingApplicationServices() {
         return domainMirror.getAllApplicationServiceMirrors()
@@ -206,7 +192,6 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<DomainServiceMirror> getProcessingDomainServices() {
         return domainMirror.getAllDomainServiceMirrors()
@@ -218,7 +203,6 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<RepositoryMirror> getProcessingRepositories() {
         return domainMirror.getAllRepositoryMirrors()
@@ -230,7 +214,6 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<OutboundServiceMirror> getProcessingOutboundServices() {
         return domainMirror.getAllOutboundServiceMirrors()
@@ -242,7 +225,6 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<QueryHandlerMirror> getProcessingQueryHandlers() {
         return domainMirror.getAllQueryHandlerMirrors()
@@ -254,7 +236,6 @@ public class DomainCommandModel extends DomainTypeModel implements DomainCommand
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public DomainType getDomainType() {
         return DomainType.DOMAIN_COMMAND;

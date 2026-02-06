@@ -26,9 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AccessLevel;
 import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
 import io.domainlifecycles.mirror.api.ValueMirror;
@@ -56,16 +53,15 @@ public class ValueReferenceModel extends FieldModel implements ValueReferenceMir
      * @param isStatic a boolean indicating whether the value reference is static
      * @param hidden a boolean indicating whether the value reference is hidden
      */
-    @JsonCreator
-    public ValueReferenceModel(@JsonProperty("name") String name,
-                               @JsonProperty("type") AssertedContainableTypeMirror type,
-                               @JsonProperty("accessLevel") AccessLevel accessLevel,
-                               @JsonProperty("declaredByTypeName") String declaredByTypeName,
-                               @JsonProperty("modifiable") boolean modifiable,
-                               @JsonProperty("publicReadable") boolean publicReadable,
-                               @JsonProperty("publicWriteable") boolean publicWriteable,
-                               @JsonProperty("static") boolean isStatic,
-                               @JsonProperty("hidden") boolean hidden
+    public ValueReferenceModel(String name,
+                               AssertedContainableTypeMirror type,
+                               AccessLevel accessLevel,
+                               String declaredByTypeName,
+                               boolean modifiable,
+                               boolean publicReadable,
+                               boolean publicWriteable,
+                               boolean isStatic,
+                               boolean hidden
     ) {
         super(name, type, accessLevel, declaredByTypeName, modifiable, publicReadable, publicWriteable, isStatic,
             hidden);
@@ -74,7 +70,6 @@ public class ValueReferenceModel extends FieldModel implements ValueReferenceMir
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public ValueMirror getValue() {
         return domainMirror.getDomainTypeMirror(getType().getTypeName())

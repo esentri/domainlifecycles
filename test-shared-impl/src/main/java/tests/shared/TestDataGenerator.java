@@ -42,22 +42,6 @@ import tests.shared.complete.onlinehandel.bestellung.LieferadresseBv3;
 import tests.shared.complete.onlinehandel.bestellung.LieferadresseIdBv3;
 import tests.shared.complete.onlinehandel.bestellung.PreisBv3;
 import tests.shared.complete.onlinehandel.bestellung.WaehrungEnumBv3;
-import tests.shared.persistence.domain.bestellung.bv2.AktionsCode;
-import tests.shared.persistence.domain.bestellung.bv2.ArtikelId;
-import tests.shared.persistence.domain.bestellung.bv2.BestellKommentar;
-import tests.shared.persistence.domain.bestellung.bv2.BestellKommentarId;
-import tests.shared.persistence.domain.bestellung.bv2.BestellPosition;
-import tests.shared.persistence.domain.bestellung.bv2.BestellPositionId;
-import tests.shared.persistence.domain.bestellung.bv2.BestellStatus;
-import tests.shared.persistence.domain.bestellung.bv2.BestellStatusCodeEnum;
-import tests.shared.persistence.domain.bestellung.bv2.BestellStatusId;
-import tests.shared.persistence.domain.bestellung.bv2.Bestellung;
-import tests.shared.persistence.domain.bestellung.bv2.BestellungId;
-import tests.shared.persistence.domain.bestellung.bv2.Kundennummer;
-import tests.shared.persistence.domain.bestellung.bv2.Lieferadresse;
-import tests.shared.persistence.domain.bestellung.bv2.LieferadresseId;
-import tests.shared.persistence.domain.bestellung.bv2.Preis;
-import tests.shared.persistence.domain.bestellung.bv2.WaehrungEnum;
 import tests.shared.persistence.domain.complex.TestEntity1;
 import tests.shared.persistence.domain.complex.TestEntity1Id;
 import tests.shared.persistence.domain.complex.TestEntity2;
@@ -193,64 +177,6 @@ import java.util.stream.Stream;
 
 public class TestDataGenerator {
 
-    public static Bestellung buildBestellung() {
-
-        return Bestellung.builder()
-            .setId(new BestellungId(1L))
-            .setKundennummer(new Kundennummer("777777"))
-            .setPrioritaet(Byte.valueOf("1"))
-            .setLieferadresse(
-                Lieferadresse.builder()
-                    .setId(new LieferadresseId(1L))
-                    .setName("Thor")
-                    .setOrt("Donnerberg")
-                    .setPostleitzahl("77777")
-                    .setStrasse("Hammerallee 7")
-                    .build()
-            )
-            .setBestellKommentare(newArrayListOf(
-                BestellKommentar.builder()
-                    .setId(new BestellKommentarId(1L))
-                    .setKommentarAm(LocalDateTime.of(2021, 1, 1, 12, 0))
-                    .setKommentarText("Mach schnell sonst kommt der Hammer!")
-                    .build(),
-                BestellKommentar.builder()
-                    .setId(new BestellKommentarId(2L))
-                    .setKommentarAm(LocalDateTime.of(2021, 1, 2, 12, 0))
-                    .setKommentarText("Der Donnergott grüßt!")
-                    .build()
-            ))
-            .setBestellStatus(
-                BestellStatus.builder()
-                    .setStatusAenderungAm(LocalDateTime.of(2021, 1, 1, 12, 1))
-                    .setStatusCode(BestellStatusCodeEnum.INITIAL)
-                    .setId(new BestellStatusId(1L))
-                    .build()
-            ).setBestellPositionen(
-                newArrayListOf(
-                    BestellPosition.builder()
-                        .setId(new BestellPositionId(1L))
-                        .setArtikelId(new ArtikelId(1L))
-                        .setStueckzahl(100)
-                        .setStueckPreis(Preis.builder()
-                            .setBetrag(BigDecimal.ONE)
-                            .setWaehrung(WaehrungEnum.EUR)
-                            .build())
-                        .build(),
-                    BestellPosition.builder()
-                        .setId(new BestellPositionId(2L))
-                        .setArtikelId(new ArtikelId(2L))
-                        .setStueckzahl(10)
-                        .setStueckPreis(Preis.builder()
-                            .setBetrag(BigDecimal.TEN)
-                            .setWaehrung(WaehrungEnum.EUR)
-                            .build())
-                        .build()
-                )
-            )
-            .build();
-    }
-
     public static BestellungBv3 buildBestellungBv3() {
 
         return BestellungBv3.builder()
@@ -307,72 +233,6 @@ public class TestDataGenerator {
                 )
             )
             .build();
-    }
-
-    public static List<Bestellung> buildManyBestellungen() {
-        List<Bestellung> bestellungen = new ArrayList<>();
-        for (long i = 1; i < 11; i++) {
-            Bestellung b = Bestellung.builder()
-                .setId(new BestellungId(i))
-                .setKundennummer(new Kundennummer("" + 777777 + i))
-                .setPrioritaet(Byte.valueOf("1"))
-                .setLieferadresse(
-                    Lieferadresse.builder()
-                        .setId(new LieferadresseId(i))
-                        .setName("Thor" + i)
-                        .setOrt("Donnerberg")
-                        .setPostleitzahl("77777")
-                        .setStrasse("Hammerallee 7")
-                        .build()
-                )
-                .setBestellKommentare(newArrayListOf(
-                    BestellKommentar.builder()
-                        .setId(new BestellKommentarId(i))
-                        .setKommentarAm(LocalDateTime.of(2021, 1, 1, 12, 0))
-                        .setKommentarText("Mach schnell sonst kommt der Hammer!")
-                        .build(),
-                    BestellKommentar.builder()
-                        .setId(new BestellKommentarId(i + 10))
-                        .setKommentarAm(LocalDateTime.of(2021, 1, 2, 12, 0))
-                        .setKommentarText("Der Donnergott grüßt!")
-                        .build()
-                ))
-                .setBestellStatus(
-                    BestellStatus.builder()
-                        .setStatusAenderungAm(LocalDateTime.of(2021, 1, 1, 12, 1))
-                        .setStatusCode(BestellStatusCodeEnum.INITIAL)
-                        .setId(new BestellStatusId(i))
-                        .build()
-                ).setBestellPositionen(
-                    newArrayListOf(
-                        BestellPosition.builder()
-                            .setId(new BestellPositionId(i))
-                            .setArtikelId(new ArtikelId(1L))
-                            .setStueckzahl(100)
-                            .setStueckPreis(Preis.builder()
-                                .setBetrag(BigDecimal.ONE)
-                                .setWaehrung(WaehrungEnum.EUR)
-                                .build())
-                            .build(),
-                        BestellPosition.builder()
-                            .setId(new BestellPositionId(i + 10))
-                            .setArtikelId(new ArtikelId(2L))
-                            .setStueckzahl(10)
-                            .setStueckPreis(Preis.builder()
-                                .setBetrag(BigDecimal.TEN)
-                                .setWaehrung(WaehrungEnum.EUR)
-                                .build())
-                            .build()
-                    )
-                )
-                .setAktionsCodes(newArrayListOf(
-                    AktionsCode.builder().setValue("Code1").build(),
-                    AktionsCode.builder().setValue("Code2").build()
-                ))
-                .build();
-            bestellungen.add(b);
-        }
-        return bestellungen;
     }
 
     public static List<BestellungBv3> buildManyBestellungenBv3() {

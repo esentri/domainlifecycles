@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
+    id 'jacoco'
     alias libs.plugins.yumi.gradle.licenser.plugin
     alias libs.plugins.jaredsburrows.license.plugin
 }
@@ -12,7 +13,7 @@ java {
 }
 
 dependencies {
-    compileOnly libs.slf4j.api
+    api libs.slf4j.api
     implementation project(":types")
     api project(":mirror")
 
@@ -24,8 +25,14 @@ dependencies {
     testImplementation project(":access")
     testImplementation project(":type-utils")
     testImplementation project(":test-shared-impl")
-    testImplementation project(":sample-project")
     testAnnotationProcessor libs.lombok
-
-
 }
+
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport

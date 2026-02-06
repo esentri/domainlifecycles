@@ -40,17 +40,16 @@ import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
 import io.domainlifecycles.persistence.records.EntityValueObjectRecordClassProvider;
 import io.domainlifecycles.persistence.records.EntityValueObjectRecordTypeConfiguration;
-import io.domainlifecycles.test.tables.records.AktionsCodeBv3Record;
-import io.domainlifecycles.test.tables.records.AktionsCodeRecord;
-import io.domainlifecycles.test.tables.records.SimpleVoOneToManyRecord;
-import io.domainlifecycles.test.tables.records.SimpleVoOneToMany_2Record;
-import io.domainlifecycles.test.tables.records.SimpleVoOneToMany_3Record;
-import io.domainlifecycles.test.tables.records.TestRootOneToOneVoDedicatedVoRecord;
-import io.domainlifecycles.test.tables.records.VoAggregatePrimitiveRecordMappedComplexRecord;
-import io.domainlifecycles.test.tables.records.VoAggregatePrimitiveRecordMappedNestedRecord;
-import io.domainlifecycles.test.tables.records.VoAggregatePrimitiveRecordMappedSimpleRecord;
-import io.domainlifecycles.test.tables.records.VoOneToManyEntityRecord;
-import io.domainlifecycles.test.tables.records.VoOneToManyEntity_2Record;
+import io.domainlifecycles.test.jooq.tables.records.AktionsCodeBv3Record;
+import io.domainlifecycles.test.jooq.tables.records.SimpleVoOneToManyRecord;
+import io.domainlifecycles.test.jooq.tables.records.SimpleVoOneToMany_2Record;
+import io.domainlifecycles.test.jooq.tables.records.SimpleVoOneToMany_3Record;
+import io.domainlifecycles.test.jooq.tables.records.TestRootOneToOneVoDedicatedVoRecord;
+import io.domainlifecycles.test.jooq.tables.records.VoAggregatePrimitiveRecordMappedComplexRecord;
+import io.domainlifecycles.test.jooq.tables.records.VoAggregatePrimitiveRecordMappedNestedRecord;
+import io.domainlifecycles.test.jooq.tables.records.VoAggregatePrimitiveRecordMappedSimpleRecord;
+import io.domainlifecycles.test.jooq.tables.records.VoOneToManyEntityRecord;
+import io.domainlifecycles.test.jooq.tables.records.VoOneToManyEntity_2Record;
 import org.h2.jdbcx.JdbcDataSource;
 import org.jooq.ConnectionProvider;
 import org.jooq.DSLContext;
@@ -60,8 +59,6 @@ import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.DefaultDSLContext;
 import tests.shared.complete.onlinehandel.bestellung.AktionsCodeBv3;
 import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
-import tests.shared.persistence.domain.bestellung.bv2.AktionsCode;
-import tests.shared.persistence.domain.bestellung.bv2.Bestellung;
 import tests.shared.persistence.domain.oneToOneVoDedicatedTable.TestRootOneToOneVoDedicated;
 import tests.shared.persistence.domain.oneToOneVoDedicatedTable.VoDedicated;
 import tests.shared.persistence.domain.valueobjects.SimpleVoOneToMany;
@@ -179,7 +176,7 @@ public class BaseDLCTestPersistenceConfiguration {
             .newConfig()
             .withDomainObjectBuilderProvider(domainObjectBuilderProvider)
             .withCustomRecordMappers(customRecordMappers)
-            .withRecordPackage("io.domainlifecycles.test.tables.records")
+            .withRecordPackage("io.domainlifecycles.test.jooq.tables.records")
             .withIgnoredDomainObjectFields(f -> {
                 if (f.getName().equals("gesamtPreis")) return true;
                 if (f.getName().equals("ignoredField")) return true;
@@ -192,68 +189,62 @@ public class BaseDLCTestPersistenceConfiguration {
             .withEntityValueObjectRecordClassProvider(
                 new EntityValueObjectRecordClassProvider() {
                     @Override
-                    public List<EntityValueObjectRecordTypeConfiguration<?>> provideContainedValueObjectRecordClassConfigurations() {
-                        return Arrays.asList(new EntityValueObjectRecordTypeConfiguration<>(
+                    public List<EntityValueObjectRecordTypeConfiguration> provideContainedValueObjectRecordClassConfigurations() {
+                        return Arrays.asList(new EntityValueObjectRecordTypeConfiguration(
                                 VoAggregateRoot.class,
                                 SimpleVoOneToMany.class,
                                 SimpleVoOneToManyRecord.class,
                                 "valueObjectsOneToMany"
                             ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
+                            new EntityValueObjectRecordTypeConfiguration(
                                 VoAggregateRoot.class,
                                 SimpleVoOneToMany2.class,
                                 SimpleVoOneToMany_2Record.class,
                                 "valueObjectsOneToMany2"
                             ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
+                            new EntityValueObjectRecordTypeConfiguration(
                                 VoAggregateRoot.class,
                                 SimpleVoOneToMany3.class,
                                 SimpleVoOneToMany_3Record.class,
                                 "valueObjectsOneToMany2", "oneToMany3Set"
                             ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
+                            new EntityValueObjectRecordTypeConfiguration(
                                 VoEntity.class,
                                 VoOneToManyEntity.class,
                                 VoOneToManyEntityRecord.class,
                                 "valueObjectsOneToMany"
                             ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
+                            new EntityValueObjectRecordTypeConfiguration(
                                 VoEntity.class,
                                 VoOneToManyEntity2.class,
                                 VoOneToManyEntity_2Record.class,
                                 "valueObjectsOneToMany", "oneToManySet"
                             ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
-                                Bestellung.class,
-                                AktionsCode.class,
-                                AktionsCodeRecord.class,
-                                "aktionsCodes"
-                            ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
+                            new EntityValueObjectRecordTypeConfiguration(
                                 BestellungBv3.class,
                                 AktionsCodeBv3.class,
                                 AktionsCodeBv3Record.class,
                                 "aktionsCodes"
                             ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
+                            new EntityValueObjectRecordTypeConfiguration(
                                 TestRootOneToOneVoDedicated.class,
                                 VoDedicated.class,
                                 TestRootOneToOneVoDedicatedVoRecord.class,
                                 "vo"
                             ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
+                            new EntityValueObjectRecordTypeConfiguration(
                                 VoAggregatePrimitive.class,
                                 SimpleVoPrimitive.class,
                                 VoAggregatePrimitiveRecordMappedSimpleRecord.class,
                                 "recordMappedSimple"
                             ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
+                            new EntityValueObjectRecordTypeConfiguration(
                                 VoAggregatePrimitive.class,
                                 ComplexVoPrimitive.class,
                                 VoAggregatePrimitiveRecordMappedComplexRecord.class,
                                 "recordMappedComplex"
                             ),
-                            new EntityValueObjectRecordTypeConfiguration<>(
+                            new EntityValueObjectRecordTypeConfiguration(
                                 VoAggregatePrimitive.class,
                                 NestedVoPrimitive.class,
                                 VoAggregatePrimitiveRecordMappedNestedRecord.class,

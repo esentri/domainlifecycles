@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,52 +26,56 @@
 
 package io.domainlifecycles.spring.http;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.domainlifecycles.access.DlcAccess;
 import io.domainlifecycles.domain.types.Identity;
-import org.springframework.core.convert.converter.Converter;
-import org.springframework.core.convert.converter.ConverterFactory;
+import io.domainlifecycles.mirror.api.Domain;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.format.support.FormattingConversionService;
 
 /**
  * A converter factory that creates a converter from String to a given {@link Identity} type.
  *
  * @author Mario Herb
- * @author Dominik Galler
  */
-@Deprecated
-public class StringToDomainIdentityConverterFactory implements ConverterFactory<String, Identity<?>> {
-
-    private final ObjectMapper objectMapper;
+public class StringToDomainIdentityConverterFactory extends ConversionServiceConverterFactory<Identity<?>> {
 
     /**
-     * Constructor for StringToDomainIdentityConverterFactory
+     * Constructs a {@code StringToDomainIdentityConverterFactory} using the provided object providers
+     * for {@link FormattingConversionService} and {@link ConversionService}.
      *
-     * @param objectMapper the ObjectMapper used
+     * @param formattingCsProvider the provider for {@link FormattingConversionService}, used to handle type conversions with formatting capabilities.
+     * @param conversionCsProvider the provider for {@link ConversionService}, used as a fallback if a {@link FormattingConversionService} is not available.
      */
-    public StringToDomainIdentityConverterFactory(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+    public StringToDomainIdentityConverterFactory(
+        ObjectProvider<FormattingConversionService> formattingCsProvider,
+        ObjectProvider<ConversionService> conversionCsProvider
+        ) {
+        super(formattingCsProvider, conversionCsProvider);
     }
 
     /**
-     * {@inheritDoc}
+     * Retrieves the class type of the value that this converter factory works with (Identity value type).
+     *
+     * @param targetType the target {@link Identity} type for which the converter is created.
+     * @return the {@code Class} object representing the type of values handled by the converter factory,
+     * or {@code null} if the type cannot be determined.
      */
     @Override
-    public <T extends Identity<?>> Converter<String, T> getConverter(Class<T> targetClass) {
-        return new StringToDomainIdentityConverter<>(targetClass, objectMapper);
+    protected Class<?> getValueTypeClass(Class<?> targetType) {
+        var idMirror = Domain.identityMirrorFor(targetType.getName());
+        return DlcAccess.getClassForName(idMirror.getValueTypeName().orElseThrow());
     }
 
-    private record StringToDomainIdentityConverter<T extends Identity<?>>(
-        Class<T> targetClass,
-        ObjectMapper objectMapper)
-        implements Converter<String, T> {
-
-        @Override
-        public T convert(String source) {
-            try {
-                return objectMapper.readValue("{\"value\": \"" + source + "\"}", targetClass);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException("Not able to parse identity value", e);
-            }
-        }
+    /**
+     * Creates an instance of the target {@link Identity} type using the provided value and target type information.
+     *
+     * @param value the value to be used to instantiate the {@link Identity} object.
+     * @param targetType the class of the target {@link Identity} type to be instantiated.
+     * @return a new instance of the target {@link Identity} type.
+     */
+    @Override
+    protected Identity<?> createTargetInstance(Object value, Class<?> targetType) {
+        return DlcAccess.newIdentityInstance(value, targetType.getName());
     }
 }

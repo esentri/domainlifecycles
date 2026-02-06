@@ -26,9 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AccessLevel;
 import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
 import io.domainlifecycles.mirror.api.DomainMirror;
@@ -132,17 +129,15 @@ public class FieldModel implements FieldMirror, ProvidedDomain {
      * @param isStatic a boolean indicating whether the field is static.
      * @param hidden a boolean indicating whether the field is hidden.
      */
-    @JsonCreator
-    public FieldModel(@JsonProperty("name") String name,
-                      @JsonProperty("type") AssertedContainableTypeMirror type,
-                      @JsonProperty("accessLevel") AccessLevel accessLevel,
-                      @JsonProperty("declaredByTypeName") String declaredByTypeName,
-                      @JsonProperty("modifiable") boolean modifiable,
-                      @JsonProperty("publicReadable") boolean publicReadable,
-                      @JsonProperty("publicWriteable") boolean publicWriteable,
-                      @JsonProperty("static") boolean isStatic,
-                      @JsonProperty("hidden") boolean hidden
-    ) {
+    public FieldModel(String name,
+                      AssertedContainableTypeMirror type,
+                      AccessLevel accessLevel,
+                      String declaredByTypeName,
+                      boolean modifiable,
+                      boolean publicReadable,
+                      boolean publicWriteable,
+                      boolean isStatic,
+                      boolean hidden) {
         this.name = Objects.requireNonNull(name);
         this.type = Objects.requireNonNull(type);
         this.accessLevel = Objects.requireNonNull(accessLevel);
@@ -229,7 +224,6 @@ public class FieldModel implements FieldMirror, ProvidedDomain {
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public boolean isIdentityField() {
         var domainTypeMirrorOptional = domainMirror.getDomainTypeMirror(declaredByTypeName);
@@ -304,5 +298,4 @@ public class FieldModel implements FieldMirror, ProvidedDomain {
     public boolean domainMirrorSet() {
         return this.domainMirrorSet;
     }
-
 }

@@ -26,8 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
@@ -46,9 +44,7 @@ import java.util.Optional;
  */
 public class QueryHandlerModel extends ServiceKindModel implements QueryHandlerMirror {
 
-    @JsonProperty
     private final String providedReadModelTypeName;
-    @JsonProperty
     private final List<String> queryHandlerInterfaceTypeNames;
 
     /**
@@ -66,16 +62,15 @@ public class QueryHandlerModel extends ServiceKindModel implements QueryHandlerM
      *                               by the represented type.
      * @param providedReadModelTypeName the fully qualified type name of the read model provided by the query handler.
      */
-    @JsonCreator
     public QueryHandlerModel(
-        @JsonProperty("typeName") String typeName,
-        @JsonProperty("abstract") boolean isAbstract,
-        @JsonProperty("allFields") List<FieldMirror> allFields,
-        @JsonProperty("methods") List<MethodMirror> methods,
-        @JsonProperty("queryHandlerInterfaceTypeNames") List<String> queryHandlerInterfaceTypeNames,
-        @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
-        @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames,
-        @JsonProperty("providedReadModelTypeName") String providedReadModelTypeName
+        String typeName,
+        boolean isAbstract,
+        List<FieldMirror> allFields,
+        List<MethodMirror> methods,
+        List<String> queryHandlerInterfaceTypeNames,
+        List<String> inheritanceHierarchyTypeNames,
+        List<String> allInterfaceTypeNames,
+        String providedReadModelTypeName
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
         this.providedReadModelTypeName = Objects.requireNonNull(providedReadModelTypeName);

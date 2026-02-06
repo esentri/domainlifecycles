@@ -49,6 +49,12 @@ public class JooqEntityParentReferenceProvider implements EntityParentReferenceP
 
     private final JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
 
+    /**
+     * Constructs a new instance of JooqEntityParentReferenceProvider.
+     *
+     * @param jooqDomainPersistenceProvider the persistence provider used to access and manage
+     *                                      jOOQ domain-specific entities and records
+     */
     public JooqEntityParentReferenceProvider(JooqDomainPersistenceProvider jooqDomainPersistenceProvider) {
         this.jooqDomainPersistenceProvider = jooqDomainPersistenceProvider;
     }

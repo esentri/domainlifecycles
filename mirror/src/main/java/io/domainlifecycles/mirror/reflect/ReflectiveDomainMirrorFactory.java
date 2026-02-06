@@ -81,7 +81,7 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
     public DomainMirror initializeDomainMirror() {
         initializeForScanning();
         var domainModelPackagesExtended = Arrays.copyOf(domainModelPackages, domainModelPackages.length+1);
-        domainModelPackagesExtended[domainModelPackages.length] = "io.domainlifecycles";
+        domainModelPackagesExtended[domainModelPackages.length] = "io.domainlifecycles.domain.types";
 
         Map<String, ? extends DomainTypeMirror> builtTypeMirrors =
             classGraphDomainTypesScanner
@@ -97,7 +97,7 @@ public class ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
         builtTypeMirrors
             .values()
             .forEach(m -> {
-                log.debug("Created Mirror:" + m);
+                log.debug("Created Mirror:" + m.getTypeName());
 
             });
 

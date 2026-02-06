@@ -50,6 +50,7 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
+@Deprecated
 public final class DirectSpringTransactionalDomainEventPublisher extends AbstractSpringTransactionalDomainEventPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(DirectSpringTransactionalDomainEventPublisher.class);

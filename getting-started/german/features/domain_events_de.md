@@ -4,11 +4,15 @@
 
 # Domain Events
 Vereinfacht und kapselt einige Funktionen von Event-Publishing/-Listening von DomainEvents.
-Deutlich weniger Publisher Boilerplate-Code durch die statische  `DomainEvents.publish()` API, weniger Listener und 
-Event-Routing Boilerplate Code durch  `@ListensTo`  Annotation und optional Support für Spring oder JTA basiertes 
+Deutlich weniger Publisher Boilerplate-Code durch die statische `DomainEvents.publish()` API, weniger Listener und 
+Event-Routing Boilerplate Code durch `@DomainEventListener` Annotation und optional Support für Spring oder JTA basiertes 
 Transaktions-Handling oder Support für "transactional outbox" Pattern für besseres Publishen von DomainEvents
 
 ---
+## Configuration
+In Memory Domain Events werden automatisch konfiguriert.
+Um Domain Events Routing abzuschalten oder andere Event Bus Integrationen zu verwenden: 
+[DLC Spring Boot AutoConfig](./../../../dlc-spring-boot-autoconfig/readme.md).
 
 ## Implementierung 
 
@@ -44,17 +48,17 @@ wie auch die zugehörige Transaktionssteuerung übernimmt das Framework:
 ```Java
 class EventListener {
     
-    @ListensTo(domainEventType = NewCustomerAdded.class)
+    @DomainEventListener
     public void listenToEvent(NewCustomerAdded newCustomerAdded) {}
 }
 ```
 
 ---
 
-|             **Persistence**              |                **Validation**                |
-|:----------------------------------------:|:--------------------------------------------:|
-| [<< Vorherige Seite](persistence_de.md)  | [Nächste Seite >>](validation_support_de.md) |
-
+|             **Persistence**             |                **Validation**                |
+|:---------------------------------------:|:--------------------------------------------:|
+| [<< Vorherige Seite](persistence_de.md) | [Nächste Seite >>](validation_support_de.md) |
+ 
 ---
 
 **DE** / [EN](../../english/features/validation_support_en.md)

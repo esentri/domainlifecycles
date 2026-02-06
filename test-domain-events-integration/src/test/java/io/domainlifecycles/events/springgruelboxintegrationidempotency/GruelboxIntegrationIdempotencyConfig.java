@@ -26,16 +26,14 @@
 
 package io.domainlifecycles.events.springgruelboxintegrationidempotency;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gruelbox.transactionoutbox.DefaultPersistor;
 import com.gruelbox.transactionoutbox.Dialect;
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import com.gruelbox.transactionoutbox.TransactionOutboxListener;
-import com.gruelbox.transactionoutbox.jackson.JacksonInvocationSerializer;
 import com.gruelbox.transactionoutbox.spring.SpringTransactionManager;
-import io.domainlifecycles.events.IdemProtectedDomainEvent;
-import io.domainlifecycles.events.IdemProtectedListener;
-import io.domainlifecycles.events.MyTransactionOutboxListener;
+import testdomain.general.IdemProtectedDomainEvent;
+import testdomain.general.IdemProtectedListener;
+import testdomain.general.MyTransactionOutboxListener;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
@@ -47,6 +45,7 @@ import io.domainlifecycles.events.gruelbox.api.PollerConfiguration;
 import io.domainlifecycles.events.gruelbox.api.PublishingSchedulerConfiguration;
 import io.domainlifecycles.events.gruelbox.idempotent.IdempotencyConfiguration;
 import io.domainlifecycles.events.gruelbox.idempotent.IdempotencyConfigurationEntry;
+import io.domainlifecycles.events.gruelbox.serialize.DlcJacksonInvocationSerializer;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +65,6 @@ public class GruelboxIntegrationIdempotencyConfig {
     @Bean
     public TransactionOutbox transactionOutbox(
         SpringTransactionManager springTransactionManager,
-        ObjectMapper objectMapper,
         TransactionOutboxListener transactionOutboxListener,
         DomainEventsInstantiator domainEventsInstantiator
     ) {
@@ -76,7 +74,7 @@ public class GruelboxIntegrationIdempotencyConfig {
             .blockAfterAttempts(3)
             .attemptFrequency(Duration.ofSeconds(1))
             .persistor(DefaultPersistor.builder()
-                           .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
+                           .serializer(new DlcJacksonInvocationSerializer())
                            .dialect(Dialect.H2)
                            .build())
             .listener(transactionOutboxListener)

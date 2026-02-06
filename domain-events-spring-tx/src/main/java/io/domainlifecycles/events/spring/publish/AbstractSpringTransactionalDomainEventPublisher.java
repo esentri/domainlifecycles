@@ -39,6 +39,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  *
  * @author Mario Herb
  */
+@Deprecated
 public abstract class AbstractSpringTransactionalDomainEventPublisher extends AbstractTransactionalDomainEventPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractSpringTransactionalDomainEventPublisher.class);

@@ -26,8 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
@@ -44,7 +42,6 @@ import java.util.Objects;
  */
 public class OutboundServiceModel extends ServiceKindModel implements OutboundServiceMirror {
 
-    @JsonProperty
     private final List<String> outboundServiceInterfaceTypeNames;
 
     /**
@@ -59,15 +56,14 @@ public class OutboundServiceModel extends ServiceKindModel implements OutboundSe
      * @param inheritanceHierarchyTypeNames a list of fully qualified type names representing the inheritance hierarchy of the represented type.
      * @param allInterfaceTypeNames a list of fully qualified type names representing all interfaces implemented by the represented type.
      */
-    @JsonCreator
     public OutboundServiceModel(
-        @JsonProperty("typeName") String typeName,
-        @JsonProperty("abstract") boolean isAbstract,
-        @JsonProperty("allFields") List<FieldMirror> allFields,
-        @JsonProperty("methods") List<MethodMirror> methods,
-        @JsonProperty("outboundServiceInterfaceTypeNames") List<String> outboundServiceInterfaceTypeNames,
-        @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
-        @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
+        String typeName,
+        boolean isAbstract,
+        List<FieldMirror> allFields,
+        List<MethodMirror> methods,
+        List<String> outboundServiceInterfaceTypeNames,
+        List<String> inheritanceHierarchyTypeNames,
+        List<String> allInterfaceTypeNames
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
         this.outboundServiceInterfaceTypeNames = Collections.unmodifiableList(outboundServiceInterfaceTypeNames);

@@ -1,0 +1,41 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'checkstyle'
+    id 'jacoco'
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api libs.slf4j.api
+    implementation libs.classgraph
+    api libs.jakarta.validation.api
+    implementation libs.jackson3.core
+    implementation libs.jackson3.databind
+    implementation project(":mirror")
+
+    testImplementation libs.logback.classic
+    testImplementation libs.junit.jupiter.params
+    testImplementation libs.lombok
+    testImplementation libs.assertj
+    testAnnotationProcessor libs.lombok
+}
+
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport

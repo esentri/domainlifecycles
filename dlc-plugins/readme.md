@@ -3,10 +3,12 @@
 The DLC plugins provide several functions to integrate DLC in the build phase:
 - creating domain diagrams of the build domain classes within the bounded contexts
 - exporting a JSON domain model
-- uploading the domain model based on the current implementation to a DLC Domain Viewer instance
+- uploading the domain model based on the current implementation to a DLC Domain Viewer instance (not available for now)
 
 ## General prerequisites
-To create class diagrams the plugins use a Kroki Docker container, so Docker should be available on the machine running the plugin.
+To create class diagram images as SVG the plugins we use a Kroki Docker container, 
+so Docker should be available on the machine running the plugin. 
+The plugin spins up the container itself.
 
 ## DLC-Gradle-Plugin
 
@@ -17,7 +19,7 @@ The plugin is able to create class diagrams in various formats of your implement
 An example configuration in your project could look like the following:
 ```groovy
 plugins {
-    id 'io.domainlifecycles.dlc-gradle-plugin' version '2.4.0'
+    id 'io.domainlifecycles.dlc-gradle-plugin' version '3.0.0'
 }
 
 dlcGradlePlugin {
@@ -59,7 +61,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "io.domainlifecycles.dlc-gradle-plugin") {
-                useModule("io.domainlifecycles:dlc-gradle-plugin:2.4.0")
+                useModule("io.domainlifecycles:dlc-gradle-plugin:3.0.0")
             }
         }
     }
@@ -72,81 +74,12 @@ to specify some name, otherwise Gradle is not able to read the configuration pro
 
 Currently supported formats are:
 - `nomnoml`
-- `svg`
+- `svg` (you need Docker installed on the machine running the plugin)
 
-Supported Diagram configuration options are
-- aggregateRootStyle: e.g "fill=#333333 bold"
-- aggregateFrameStyle
-- entityStyle
-- valueObjectStyle
-- enumStyle
-- identityStyle
-- domainEventStyle
-- domainCommandStyle
-- applicationServiceStyle
-- domainServiceStyle
-- repositoryStyle
-- readModelStyle
-- queryHandlerStyle
-- outboundServiceStyle
-- font
-- direction: "right" or "down"
-- ranker: see Nomnoml
-- acycler: see Nomnoml
-- backgroundColor
-- classesBlacklist
-- showFields
-- showFullQualifiedClassNames
-- showAssertions
-- showMethods
-- showOnlyPublicMethods
-- showDomainEvents
-- showDomainEventFields
-- showDomainEventMethods
-- showDomainCommands
-- showOnlyTopLevelDomainCommandRelations
-- showDomainCommandFields
-- showDomainCommandMethods
-- showDomainServices
-- showDomainServiceFields
-- showDomainServiceMethods
-- showApplicationServices
-- showApplicationServiceFields
-- showApplicationServiceMethods
-- showRepositories
-- showRepositoryFields
-- showRepositoryMethods
-- showReadModels
-- showReadModelFields
-- showReadModelMethods
-- showQueryHandlers
-- showQueryHandlerFields
-- showQueryHandlerMethods
-- showOutboundServices
-- showOutboundServiceFields
-- showOutboundServiceMethods
-- showUnspecifiedServiceKinds
-- showUnspecifiedServiceKindFields
-- showUnspecifiedServiceKindMethods
-- callApplicationServiceDriver
-- fieldBlacklist
-- methodBlacklist
-- showInheritedMembersInClasses
-- showObjectMembersInClasses
-- multiplicityInLabel
-- fieldStereotypes
-- includeConnectedTo: list of full qualified classnames (all classes connected are included)
-- includeConnectedToIngoing: list of full qualified classnames (classes and ingoing connected classes are included)
-- includeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are included)
-- excludeConnectedToIngoing: : list of full qualified classnames (classes and ingoing connected classes are excluded)
-- excludeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are excluded)
-- explicitlyIncludedPackages: packages explicitly included in the diagram
-- showAllInheritanceStructures: boolean, default false
-- showInheritanceStructuresInAggregates: boolean, default true
-- showInheritanceStructuresForServiceKinds: boolean, default false
-- showInheritanceStructuresForReadModels: boolean, default false
-- showInheritanceStructuresForDomainEvents: boolean, default false
-- showInheritanceStructuresForDomainCommands: boolean, default false
+If you create a Nomnoml file, you can use https://www.nomnoml.com/ to create a diagram manually, 
+or you try the built in plugin function, that spins up a Docker container to convert nomnoml to SVG.
+
+For all options see [below](#general-dlc-plugin-configuration-options)
 
 #### Run
 ```bash
@@ -187,10 +120,12 @@ All classes that the model consists of must be defined within the `domainModelPa
 gradle serializeMirror
 ```
 
-### Diagram-Viewer Integration
+### Diagram-Viewer Integration 
 If you have an instance of the Diagram-Viewer app running, whether it be on your local machine or on a hosted platform,
 you are able to quickly create new or update existing projects, without the need to upload a packaged archive file of
 your project in the UI.
+
+ATTENTION: The diagram viewer is released soon! Not available for now!
 
 #### Configuration
 An example configuration in your project could look like the following:
@@ -233,7 +168,7 @@ An example configuration in your project's build plugins could look like the fol
         <plugin>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>dlc-maven-plugin</artifactId>
-            <version>2.4.0</version>
+            <version>3.0.0</version>
             <executions>
                 <execution>
                     <id>createDiagramNomnoml</id>
@@ -272,90 +207,19 @@ An example configuration in your project's build plugins could look like the fol
 ```
 You need to specify an output directory, where your file will be saved to with `fileOutputDir`.
 Below that you can specify as many diagram configurations as you want, with different formats and specifications
-and even different packages which should be used to read the model with `contextPackages`.
+and even different packages which should be used to read the model with `domainModelPackages`.
 
 Currently supported formats are:
 - `nomnoml`
-- `svg`
+- `svg` (you need Docker installed on the machine running the plugin)
 
-Supported Diagram configuration options are
-- aggregateRootStyle: e.g "fill=#333333 bold"
-- aggregateFrameStyle
-- entityStyle
-- valueObjectStyle
-- enumStyle
-- identityStyle
-- domainEventStyle
-- domainCommandStyle
-- applicationServiceStyle
-- domainServiceStyle
-- repositoryStyle
-- readModelStyle
-- queryHandlerStyle
-- outboundServiceStyle
-- font
-- direction: "right" or "down"
-- ranker: see Nomnoml
-- acycler: see Nomnoml
-- backgroundColor
-- classesBlacklist
-- showFields
-- showFullQualifiedClassNames
-- showAssertions
-- showMethods
-- showOnlyPublicMethods
-- showDomainEvents
-- showDomainEventFields
-- showDomainEventMethods
-- showDomainCommands
-- showOnlyTopLevelDomainCommandRelations
-- showDomainCommandFields
-- showDomainCommandMethods
-- showDomainServices
-- showDomainServiceFields
-- showDomainServiceMethods
-- showApplicationServices
-- showApplicationServiceFields
-- showApplicationServiceMethods
-- showRepositories
-- showRepositoryFields
-- showRepositoryMethods
-- showReadModels
-- showReadModelFields
-- showReadModelMethods
-- showQueryHandlers
-- showQueryHandlerFields
-- showQueryHandlerMethods
-- showOutboundServices
-- showOutboundServiceFields
-- showOutboundServiceMethods
-- showUnspecifiedServiceKinds
-- showUnspecifiedServiceKindFields
-- showUnspecifiedServiceKindMethods
-- callApplicationServiceDriver
-- fieldBlacklist
-- methodBlacklist
-- showInheritedMembersInClasses
-- showObjectMembersInClasses
-- multiplicityInLabel
-- fieldStereotypes
-- includeConnectedTo: list of full qualified classnames (all classes connected are included)
-- includeConnectedToIngoing: list of full qualified classnames (classes and ingoing connected classes are included)
-- includeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are included)
-- excludeConnectedToIngoing: : list of full qualified classnames (classes and ingoing connected classes are excluded)
-- excludeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are excluded)
-- explicitlyIncludedPackages: list of packages explicitly included in the diagram
-- showAllInheritanceStructures: boolean, default false
-- showInheritanceStructuresInAggregates: boolean, default true
-- showInheritanceStructuresForServiceKinds: boolean, default false
-- showInheritanceStructuresForReadModels: boolean, default false
-- showInheritanceStructuresForDomainEvents: boolean, default false
-- showInheritanceStructuresForDomainCommands: boolean, default false
+If you create a Nomnoml file, you can use https://www.nomnoml.com/ to create a diagram manually,
+or you try the built in plugin function, that spins up a Docker container to convert nomnoml to SVG.
 
 #### Run
 Depending on the Maven phase you specified:
 ```bash
-mvn clean compile
+mvn dlc:createDiagram@createDiagramNomnoml
 ```
 
 ### Serialize Mirror
@@ -369,7 +233,7 @@ An example configuration in your project could look like the following:
         <plugin>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>dlc-maven-plugin</artifactId>
-            <version>2.4.0</version>
+            <version>3.0.0</version>
             <executions>
                 <execution>
                     <id>serializeMirror</id>
@@ -381,7 +245,7 @@ An example configuration in your project could look like the following:
                         <fileOutputDir>target</fileOutputDir>
                         <serializations>
                             <serialization>
-                                <fileName>model_1</fileName>
+                                <fileName>model</fileName>
                                 <domainModelPackages>
                                     <contextPackage>io.domainlifecycles.test</contextPackage>
                                 </domainModelPackages>
@@ -400,15 +264,17 @@ However, you can leave the `fileOutputDir` and/or the `fileName` empty. The file
 `src/main/resources/META-INF/dlc/mirror.json`.
 
 #### Run
-Depending on the Maven phase you specified:
+Depending on the the plugin execution specified above:
 ```bash
-mvn clean compile
+mvn dlc:renderJson@renderJson
 ```
 
 ### Diagram-Viewer Integration
 If you have an instance of the Diagram-Viewer app running, whether it be on your local machine or on a hosted platform,
 you are able to quickly create new or update existing projects, without the need to upload a packaged archive file of
 your project in the UI.
+
+ATTENTION: The diagram viewer is released soon! Not available for now!
 
 #### Configuration
 An example configuration in your project could look like the following:
@@ -418,7 +284,7 @@ An example configuration in your project could look like the following:
         <plugin>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>dlc-maven-plugin</artifactId>
-            <version>2.4.0</version>
+            <version>3.0.0</version>
             <executions>
                 <execution>
                     <id>upload</id>
@@ -447,5 +313,161 @@ All classes that the model consists of must be defined within the `domainModelPa
 
 #### Run
 ```bash
-mvn clean compile
+mvn dlc:uploadDomainModel@upload
 ```
+
+## General DLC plugin configuration options
+
+Currently supported formats are:
+- `nomnoml`
+- `svg` (you need Docker installed on the machine running the plugin)
+
+Supported Diagram configuration options are
+- aggregateRootStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
+- aggregateFrameStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
+- entityStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
+- valueObjectStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
+- enumStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
+- identityStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
+- domainEventStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
+- domainCommandStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
+- applicationServiceStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
+- domainServiceStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
+- repositoryStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
+- readModelStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
+- queryHandlerStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
+- outboundServiceStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
+- font: e.g. "Calibri", "Arial"
+- direction: "right" or "down"
+- ranker: network-simplex | tight-tree | longest-path, see [Nomnoml](https://www.nomnoml.com/)
+- acycler: see [Nomnoml](https://www.nomnoml.com/)
+- backgroundColor: e.g. #eee8d5 (default is transparent)
+- classesBlacklist: list of full qualified classnames (classes are excluded)
+- showFields: boolean, default true
+- showFullQualifiedClassNames: boolean, default false
+- showAssertions: boolean, default true
+- showMethods: boolean, default true
+- showOnlyPublicMethods: boolean, default true
+- showDomainEvents: boolean, default true
+- showDomainEventFields: boolean, default false
+- showDomainEventMethods: boolean, default false
+- showDomainCommands: boolean, default true
+- showOnlyTopLevelDomainCommandRelations: boolean, default true
+- showDomainCommandFields: boolean, default false
+- showDomainCommandMethods: boolean, default false
+- showDomainServices: boolean, default true
+- showDomainServiceFields: boolean, default false
+- showDomainServiceMethods: boolean, default true
+- showApplicationServices: boolean, default true
+- showApplicationServiceFields: boolean, default false
+- showApplicationServiceMethods: boolean, default true
+- showRepositories: boolean, default true
+- showRepositoryFields: boolean, default false
+- showRepositoryMethods: boolean, default true
+- showReadModels: boolean, default true
+- showReadModelFields: boolean, default true
+- showReadModelMethods: boolean, default false
+- showQueryHandlers: boolean, default true
+- showQueryHandlerFields: boolean, default false
+- showQueryHandlerMethods: boolean, default false
+- showOutboundServices: boolean, default true
+- showOutboundServiceFields: boolean, default false
+- showOutboundServiceMethods: boolean, default false
+- showUnspecifiedServiceKinds: boolean, default true
+- showUnspecifiedServiceKindFields: boolean, default false
+- showUnspecifiedServiceKindMethods: boolean, default false
+- callApplicationServiceDriver: boolean, default false
+- fieldBlacklist: field names to be excluded in field list, default "concurrencyVersion"  
+- methodBlacklist: method names to be excluded in field list, default "builder", "validate", "concurrencyVersion", "id", "findResultById", "publish", "increaseVersion", "equals", "hashCode", "toString"
+- showInheritedMembersInClasses: boolean, default true
+- showObjectMembersInClasses: boolean, default true
+- multiplicityInLabel: boolean, default true
+- fieldStereotypes: boolean, default true
+- includeConnectedTo: list of full qualified classnames (all classes connected are included)
+- includeConnectedToIngoing: list of full qualified classnames (classes and ingoing connected classes are included)
+- includeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are included)
+- excludeConnectedToIngoing: : list of full qualified classnames (classes and ingoing connected classes are excluded)
+- excludeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are excluded)
+- explicitlyIncludedPackages: list of packages explicitly included in the diagram
+- showAllInheritanceStructures: boolean, default false
+- showInheritanceStructuresInAggregates: boolean, default true
+- showInheritanceStructuresForServiceKinds: boolean, default false
+- showInheritanceStructuresForReadModels: boolean, default false
+- showInheritanceStructuresForDomainEvents: boolean, default false
+- showInheritanceStructuresForDomainCommands: boolean, default false
+
+## How to read DLC Domain Diagrams?
+
+A DLC Domain Diagram is a UML-like diagram generated by analyzing DLC marker interfaces.
+These marker interfaces are rendered as stereotypes on the interfaces or classes that extend or implement them.
+Only classes and interfaces that implement or extend these marker interfaces are included in the diagram.
+Therefore, the diagrams do not represent the complete UML structure of the entire program—they show only the implemented DDD concepts.
+
+For more details, have a look at our [concept description](./../concepts/readme.md).
+
+### Rendered edges
+
+The following list explains how to interpret the rendered edges:
+- DomainCommand → ApplicationService:
+A DomainCommand is passed to an ApplicationService. The ApplicationService provides a method to receive the command.
+
+- ApplicationService → DomainService:
+An ApplicationService calls a DomainService.
+
+- ApplicationService → OutboundService:
+An ApplicationService calls an OutboundService.
+
+- ApplicationService → Repository:
+An ApplicationService calls a Repository.
+
+- ApplicationService → QueryHandler:
+An ApplicationService calls a QueryHandler.
+
+- ApplicationService → DomainEvent:
+An ApplicationService publishes a DomainEvent.
+
+- DomainService → DomainService:
+A DomainService calls another DomainService.
+
+- DomainService → Repository:
+A DomainService calls a Repository.
+
+- DomainService → OutboundService:
+A DomainService calls an OutboundService.
+
+- DomainService → QueryHandler:
+A DomainService calls a QueryHandler.
+
+- DomainService → DomainEvent:
+A DomainService publishes a DomainEvent.
+
+- Repository → Aggregate:
+A Repository provides access to an Aggregate.
+
+- Aggregate → DomainEvent:
+An Aggregate publishes a DomainEvent.
+
+- QueryHandler → ReadModel:
+A QueryHandler provides a ReadModel.
+
+- DomainEvent → Aggregate:
+An Aggregate listens for a DomainEvent.
+
+- DomainEvent → ApplicationService:
+An ApplicationService listens for a DomainEvent.
+
+- DomainEvent → DomainService:
+A DomainService listens for a DomainEvent.
+
+- DomainEvent → OutboundService:
+An OutboundService listens for a DomainEvent.
+
+- DomainEvent → QueryHandler:
+A QueryHandler listens for a DomainEvent.
+
+### Rendering intheritance
+By default, not all inheritance structures are rendered.
+The diagram always shows the most concrete implementations of the analyzed classes.
+
+If you want to render all inheritance structures, set `showAllInheritanceStructures` to `true`.
+Alternatively, you can enable specific inheritance structures individually by setting their corresponding options to `true.

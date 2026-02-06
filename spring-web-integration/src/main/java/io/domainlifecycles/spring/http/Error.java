@@ -34,14 +34,13 @@ import java.util.Objects;
  * @author Mario Herb
  * @author Tobias Herb
  */
-@Deprecated
 public class Error {
 
     private String code;
     private String message;
 
     /**
-     * Creates a new Error instance with the specified error code and message.
+     * Constructs an Error object with the given code and message.
      *
      * @param code the error code
      * @param message the error message
@@ -52,14 +51,12 @@ public class Error {
     }
 
     /**
-     * Default constructor for the error class.
+     * Default constructor for Error class.
      */
     public Error() {
     }
 
     /**
-     * Returns the error code
-     *
      * @return the error code
      */
     public String getCode() {
@@ -69,7 +66,7 @@ public class Error {
     /**
      * Sets the error code.
      *
-     * @param code the error code to be set
+     * @param code the code to be set
      */
     public void setCode(String code) {
         this.code = code;
@@ -108,8 +105,10 @@ public class Error {
     }
 
     /**
-     * @param other other Object to check
-     * @return true, if other is an Error.
+     * Checks if the specified object can be equaled with this Error instance.
+     *
+     * @param other The object to compare with this Error instance.
+     * @return true if the specified object is an instance of Error, false otherwise.
      */
     protected boolean canEqual(final Object other) {
         return other instanceof Error;

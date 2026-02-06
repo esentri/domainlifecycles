@@ -35,9 +35,9 @@ An identity belongs to the domain types in the same way as an aggregate. A more 
 and explanation of all domain types can be found [here](../../../concepts/readme.md).
 ---
 
-|        **Domain Mirror**        |
-|:-------------------------------:|
-| [Next >>](domain_mirror_en.md)  |
+|       **Persistence**        |
+|:----------------------------:|
+| [Next >>](persistence_en.md) |
 
 ---
 

@@ -29,13 +29,22 @@ package io.domainlifecycles.diagram.domain.mapper;
 import io.domainlifecycles.diagram.DiagramElement;
 import io.domainlifecycles.diagram.domain.DomainDiagramGenerator;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
+import io.domainlifecycles.diagram.domain.notes.DomainClassNote;
 import io.domainlifecycles.diagram.nomnoml.NomnomlClass;
 import io.domainlifecycles.diagram.nomnoml.NomnomlFrame;
+import io.domainlifecycles.diagram.nomnoml.NomnomlNote;
+import io.domainlifecycles.diagram.nomnoml.NomnomlStereotype;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.DomainMirror;
+import io.domainlifecycles.mirror.api.DomainType;
+import io.domainlifecycles.mirror.api.DomainTypeMirror;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Central mapping entry point providing all methods to map mirror structures of a bounded context to
@@ -47,6 +56,7 @@ public class DomainMapper {
 
     private final DomainDiagramConfig domainDiagramConfig;
     private final DomainClassMapper domainClassMapper;
+    private final Collection<DomainClassNote> notes;
 
     private final DomainRelationshipMapper domainRelationshipMapper;
     private final FilteredDomainClasses filteredDomainClasses;
@@ -57,9 +67,14 @@ public class DomainMapper {
      *
      * @param domainDiagramConfig diagram configuration
      * @param domainMirror mapped domain
+     * @param notes a collection of externally provided notes to be attached to the shown classes
      */
-    public DomainMapper(DomainDiagramConfig domainDiagramConfig, DomainMirror domainMirror) {
+    public DomainMapper(
+        DomainDiagramConfig domainDiagramConfig,
+        DomainMirror domainMirror,
+        Collection<DomainClassNote> notes) {
         this.domainDiagramConfig = domainDiagramConfig;
+        this.notes = notes;
         this.filteredDomainClasses = new FilteredDomainClasses(
             domainDiagramConfig.getDiagramTrimSettings(),
             domainDiagramConfig.getGeneralVisualSettings(),
@@ -71,7 +86,7 @@ public class DomainMapper {
     }
 
     /**
-     * @return all ApplicationsServices connected to the Bounded Context as {@link NomnomlClass}.
+     * @return all ApplicationsServices in the diagram as {@link NomnomlClass}.
      */
     public List<NomnomlClass> getApplicationServices() {
         return filteredDomainClasses.getApplicationServices().stream()
@@ -80,7 +95,7 @@ public class DomainMapper {
     }
 
     /**
-     * @return all DomainCommands of the Bounded Context as {@link NomnomlClass}.
+     * @return all DomainCommands in the diagram as {@link NomnomlClass}.
      */
     public List<NomnomlClass> getDomainCommands() {
         return filteredDomainClasses.getDomainCommands().stream()
@@ -89,7 +104,7 @@ public class DomainMapper {
     }
 
     /**
-     * @return all DomainEvents of the Bounded Context as {@link NomnomlClass}.
+     * @return all DomainEvents in the diagram as {@link NomnomlClass}.
      */
     public List<NomnomlClass> getDomainEvents() {
         return filteredDomainClasses.getDomainEvents().stream()
@@ -98,7 +113,7 @@ public class DomainMapper {
     }
 
     /**
-     * @return all DomainServices of the Bounded Context as {@link NomnomlClass}.
+     * @return all DomainServices in the diagram as {@link NomnomlClass}.
      */
     public List<NomnomlClass> getDomainServices() {
         return filteredDomainClasses.getDomainServices().stream()
@@ -107,7 +122,7 @@ public class DomainMapper {
     }
 
     /**
-     * @return all Repositories of the Bounded Context as {@link NomnomlClass}.
+     * @return all Repositories in the diagram as {@link NomnomlClass}.
      */
     public List<NomnomlClass> getRepositories() {
         return filteredDomainClasses.getRepositories().stream()
@@ -116,7 +131,7 @@ public class DomainMapper {
     }
 
     /**
-     * @return all ReadModels connected to the Bounded Context as {@link NomnomlClass}.
+     * @return all ReadModels in the diagram as {@link NomnomlClass}.
      */
     public List<NomnomlClass> getReadModels() {
         return filteredDomainClasses.getReadModels().stream()
@@ -125,7 +140,7 @@ public class DomainMapper {
     }
 
     /**
-     * @return all QueryHandlers connected to the Bounded Context as {@link NomnomlClass}.
+     * @return all QueryHandlers in the diagram as {@link NomnomlClass}.
      */
     public List<NomnomlClass> getQueryHandlers() {
         return filteredDomainClasses.getQueryHandlers().stream()
@@ -134,7 +149,7 @@ public class DomainMapper {
     }
 
     /**
-     * @return all OutboundServices connected to the Bounded Context as {@link NomnomlClass}.
+     * @return all OutboundServices in the diagram as {@link NomnomlClass}.
      */
     public List<NomnomlClass> getOutboundServices() {
         return filteredDomainClasses.getOutboundServices().stream()
@@ -143,7 +158,7 @@ public class DomainMapper {
     }
 
     /**
-     * @return all unspecified ServiceKinds connected to the Bounded Context as {@link NomnomlClass}.
+     * @return all unspecified ServiceKinds in the diagram as {@link NomnomlClass}.
      */
     public List<NomnomlClass> getUnspecifiedServiceKinds() {
         return filteredDomainClasses.getUnspecifiedServiceKinds().stream()
@@ -152,7 +167,7 @@ public class DomainMapper {
     }
 
     /**
-     * @return all Aggregates of the Bounded Context as {@link NomnomlFrame}.
+     * @return all Aggregates of in the diagram as {@link NomnomlFrame}.
      */
     public List<NomnomlFrame> getAggregateFrames() {
         return filteredDomainClasses.getAggregateRoots().stream()
@@ -160,11 +175,83 @@ public class DomainMapper {
             .toList();
     }
 
+    private record NotePair(DomainClassNote note, Optional<DomainTypeMirror> mirror) {};
+
+    /**
+     * @return all notes in the diagram as {@link NomnomlNote}.
+     */
+    private Stream<NotePair> getNotes() {
+        if(notes == null || notes.isEmpty()) {
+            return Stream.empty();
+        }
+        return notes.stream().map(
+            n -> new NotePair(n, filteredDomainClasses.getContained(n.className())))
+            .filter(p -> p.mirror.isPresent());
+    }
+
+    private NomnomlNote mapNotePair(NotePair notePair) {
+        return new NomnomlNote(
+            notePair.note.text(),
+            DomainMapperUtils.mapTypeName(notePair.note.className(), domainDiagramConfig),
+            DomainMapperUtils.styleClassifier(notePair.mirror.get()),
+            List.of(new NomnomlStereotype(DomainMapperUtils.stereotype(notePair.mirror.get(), domainDiagramConfig)))
+        );
+    }
+
+    /**
+     * Returns all notes needed for a specific aggregate
+     * @param aggregateClassNames all classes contained in the correspondig aggregate
+     * @return aggregate specific notes
+     */
+    public List<NomnomlNote> getAggregateNotes(List<String> aggregateClassNames) {
+        if(!domainDiagramConfig.getGeneralVisualSettings().isShowNotes()){
+            return Collections.emptyList();
+        }
+        return getNotes()
+            .filter(p -> aggregateClassNames.contains(p.note.className()))
+            .map(this::mapNotePair)
+            .toList();
+    }
+
+    /**
+     * Returns all non aggregate specific notes
+     * @return all notes not contained in an aggregates boundary
+     */
+    public List<NomnomlNote> getNonAggregateNotes() {
+        if(!domainDiagramConfig.getGeneralVisualSettings().isShowNotes()){
+            return Collections.emptyList();
+        }
+        return getNotes()
+            .filter(p ->
+                p.mirror.isPresent()
+                &&!DomainType.ENTITY.equals(p.mirror.get().getDomainType())
+                && !DomainType.VALUE_OBJECT.equals(p.mirror.get().getDomainType())
+                && !DomainType.AGGREGATE_ROOT.equals(p.mirror.get().getDomainType())
+            )
+            .map(this::mapNotePair)
+            .toList();
+    }
+
     private NomnomlFrame getAggregateFrame(AggregateRootMirror aggregateRootMirror) {
-        var aggregateClasses = domainClassMapper.mapAllAggregateClasses(aggregateRootMirror);
+        var mirrors = domainClassMapper.getAllAggregateMirrors(aggregateRootMirror);
         var aggregateRelationShips = domainRelationshipMapper.mapAllAggregateRelationships(aggregateRootMirror);
-        var allElements = new ArrayList<DiagramElement>(aggregateClasses);
+        var allElements = new ArrayList<DiagramElement>(
+            mirrors
+                .stream()
+                .map(domainTypeMirror ->
+                    domainClassMapper.mapToNomnomlClass(
+                        domainTypeMirror,
+                        domainDiagramConfig.getGeneralVisualSettings().isShowAggregateFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
+                        domainDiagramConfig.getGeneralVisualSettings().isShowAggregateMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()
+                    )
+                ).toList()
+        );
         allElements.addAll(aggregateRelationShips);
+        allElements.addAll(
+            getAggregateNotes(
+                mirrors.stream().map(DomainTypeMirror::getTypeName).toList()
+            )
+        );
         return NomnomlFrame
             .builder()
             .name(DomainMapperUtils.mapTypeName(aggregateRootMirror.getTypeName(), domainDiagramConfig))

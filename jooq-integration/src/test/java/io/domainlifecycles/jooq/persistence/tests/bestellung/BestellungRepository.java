@@ -5,28 +5,28 @@ import io.domainlifecycles.jooq.imp.JooqAggregateRepository;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.fetcher.RecordProvider;
 import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
-import io.domainlifecycles.test.Sequences;
-import io.domainlifecycles.test.Tables;
-import io.domainlifecycles.test.tables.records.AktionsCodeRecord;
-import io.domainlifecycles.test.tables.records.BestellKommentarRecord;
-import io.domainlifecycles.test.tables.records.BestellPositionRecord;
-import io.domainlifecycles.test.tables.records.BestellStatusRecord;
-import io.domainlifecycles.test.tables.records.BestellungRecord;
-import io.domainlifecycles.test.tables.records.LieferadresseRecord;
+import io.domainlifecycles.test.jooq.Sequences;
+import io.domainlifecycles.test.jooq.Tables;
+import io.domainlifecycles.test.jooq.tables.records.AktionsCodeBv3Record;
+import io.domainlifecycles.test.jooq.tables.records.BestellKommentarBv3Record;
+import io.domainlifecycles.test.jooq.tables.records.BestellPositionBv3Record;
+import io.domainlifecycles.test.jooq.tables.records.BestellStatusBv3Record;
+import io.domainlifecycles.test.jooq.tables.records.BestellungBv3Record;
+import io.domainlifecycles.test.jooq.tables.records.LieferadresseBv3Record;
 import org.jooq.DSLContext;
 import org.slf4j.Logger;
-import tests.shared.persistence.domain.bestellung.bv2.AktionsCode;
-import tests.shared.persistence.domain.bestellung.bv2.BestellKommentar;
-import tests.shared.persistence.domain.bestellung.bv2.BestellKommentarId;
-import tests.shared.persistence.domain.bestellung.bv2.BestellPosition;
-import tests.shared.persistence.domain.bestellung.bv2.BestellPositionId;
-import tests.shared.persistence.domain.bestellung.bv2.BestellStatus;
-import tests.shared.persistence.domain.bestellung.bv2.BestellStatusCodeEnum;
-import tests.shared.persistence.domain.bestellung.bv2.BestellStatusId;
-import tests.shared.persistence.domain.bestellung.bv2.Bestellung;
-import tests.shared.persistence.domain.bestellung.bv2.BestellungId;
-import tests.shared.persistence.domain.bestellung.bv2.Lieferadresse;
-import tests.shared.persistence.domain.bestellung.bv2.LieferadresseId;
+import tests.shared.complete.onlinehandel.bestellung.AktionsCodeBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellKommentarBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellKommentarIdBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellPositionBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellPositionIdBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellStatusBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellStatusCodeEnumBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellStatusIdBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellungIdBv3;
+import tests.shared.complete.onlinehandel.bestellung.LieferadresseBv3;
+import tests.shared.complete.onlinehandel.bestellung.LieferadresseIdBv3;
 
 import java.util.Collection;
 import java.util.List;
@@ -34,7 +34,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class BestellungRepository extends JooqAggregateRepository<Bestellung, BestellungId> {
+public class BestellungRepository extends JooqAggregateRepository<BestellungBv3, BestellungIdBv3> {
 
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(BestellungRepository.class);
@@ -45,7 +45,7 @@ public class BestellungRepository extends JooqAggregateRepository<Bestellung, Be
                                 PersistenceEventPublisher persistenceEventPublisher,
                                 JooqDomainPersistenceProvider jooqDomainPersistenceProvider) {
         super(
-            Bestellung.class,
+            BestellungBv3.class,
             dslContext,
             jooqDomainPersistenceProvider,
             persistenceEventPublisher
@@ -53,64 +53,64 @@ public class BestellungRepository extends JooqAggregateRepository<Bestellung, Be
         this.jooqDomainPersistenceProvider = jooqDomainPersistenceProvider;
     }
 
-    public Optional<Bestellung> findBestellungById(BestellungId id) {
+    public Optional<BestellungBv3> findBestellungById(BestellungIdBv3 id) {
         return getFetcher().fetchDeep(id).resultValue();
     }
 
-    public List<Bestellung> findAllBestellungen() {
-        List<Bestellung> result = dslContext.select()
-            .from(Tables.BESTELLUNG)
+    public List<BestellungBv3> findAllBestellungen() {
+        List<BestellungBv3> result = dslContext.select()
+            .from(Tables.BESTELLUNG_BV3)
             .fetch().stream()
-            .map(r -> getFetcher().fetchDeep(r.into(Tables.BESTELLUNG)).resultValue().get()).collect(
+            .map(r -> getFetcher().fetchDeep(r.into(Tables.BESTELLUNG_BV3)).resultValue().get()).collect(
                 Collectors.toList());
         return result;
     }
 
-    public List<Bestellung> findBestellungenPaged(int offset, int pageSize) {
-        List<Bestellung> result = dslContext.select()
-            .from(Tables.BESTELLUNG)
-            .orderBy(Tables.BESTELLUNG.ID)
+    public List<BestellungBv3> findBestellungenPaged(int offset, int pageSize) {
+        List<BestellungBv3> result = dslContext.select()
+            .from(Tables.BESTELLUNG_BV3)
+            .orderBy(Tables.BESTELLUNG_BV3.ID)
             .offset(offset)
             .limit(pageSize)
             .fetch().stream()
-            .map(r -> getFetcher().fetchDeep(r.into(Tables.BESTELLUNG)).resultValue().get()).collect(
+            .map(r -> getFetcher().fetchDeep(r.into(Tables.BESTELLUNG_BV3)).resultValue().get()).collect(
                 Collectors.toList());
         return result;
     }
 
-    public List<Bestellung> findByStatusCode(BestellStatusCodeEnum statusCode) {
-        List<Bestellung> result = dslContext.select()
-            .from(Tables.BESTELLUNG)
-            .join(Tables.BESTELL_STATUS)
-            .on(Tables.BESTELL_STATUS.STATUS_CODE.equal(statusCode.name()))
+    public List<BestellungBv3> findByStatusCode(BestellStatusCodeEnumBv3 statusCode) {
+        List<BestellungBv3> result = dslContext.select()
+            .from(Tables.BESTELLUNG_BV3)
+            .join(Tables.BESTELL_STATUS_BV3)
+            .on(Tables.BESTELL_STATUS_BV3.STATUS_CODE.equal(statusCode.name()))
             .fetch().stream()
-            .map(r -> getFetcher().fetchDeep(r.into(Tables.BESTELLUNG)).resultValue().get()).collect(
+            .map(r -> getFetcher().fetchDeep(r.into(Tables.BESTELLUNG_BV3)).resultValue().get()).collect(
                 Collectors.toList());
         return result;
     }
 
     //Achtung aus Sicht fachlich/inhaltlich korrekter Domänenlogik macht diese Methode keinen Sinn
     //Es geht lediglich um die Subquery Demonstration
-    public Optional<Bestellung> findWithSubquery(BestellungId id) {
-        var fetcher = new JooqAggregateFetcher<Bestellung, BestellungId>(Bestellung.class, dslContext,
+    public Optional<BestellungBv3> findWithSubquery(BestellungIdBv3 id) {
+        var fetcher = new JooqAggregateFetcher<BestellungBv3, BestellungIdBv3>(BestellungBv3.class, dslContext,
             jooqDomainPersistenceProvider);
 
         //Wir registrieren einen RecordProvider um nur noch Bestellpositionen mit ArtikelId 1 zu fetchen
         // Per FK Auto Fetch würden normalerweise alle Positionen zu einer Bestellung gefetcht
         fetcher.withRecordProvider(
-            new RecordProvider<BestellPositionRecord, BestellungRecord>() {
+            new RecordProvider<BestellPositionBv3Record, BestellungBv3Record>() {
                 @Override
-                public Collection<BestellPositionRecord> provideCollection(BestellungRecord parentRecord) {
+                public Collection<BestellPositionBv3Record> provideCollection(BestellungBv3Record parentRecord) {
                     return dslContext.select()
-                        .from(Tables.BESTELL_POSITION)
-                        .where(Tables.BESTELL_POSITION.BESTELLUNG_ID.equal(parentRecord.getId())
-                            .and(Tables.BESTELL_POSITION.ARTIKEL_ID.equal(1l)))
+                        .from(Tables.BESTELL_POSITION_BV3)
+                        .where(Tables.BESTELL_POSITION_BV3.BESTELLUNG_ID.equal(parentRecord.getId())
+                            .and(Tables.BESTELL_POSITION_BV3.ARTIKEL_ID.equal(1l)))
                         .fetch()
-                        .into(Tables.BESTELL_POSITION);
+                        .into(Tables.BESTELL_POSITION_BV3);
                 }
             },
-            Bestellung.class,
-            BestellPosition.class,
+            BestellungBv3.class,
+            BestellPositionBv3.class,
             List.of("bestellPositionen"));
         return fetcher.fetchDeep(id).resultValue();
     }
@@ -123,105 +123,105 @@ public class BestellungRepository extends JooqAggregateRepository<Bestellung, Be
      * @param offset
      * @param pageSize
      */
-    public Stream<Bestellung> findBestellungenOptimized(int offset, int pageSize) {
-        var fetcher = new JooqAggregateFetcher<Bestellung, BestellungId>(Bestellung.class, dslContext,
+    public Stream<BestellungBv3> findBestellungenOptimized(int offset, int pageSize) {
+        var fetcher = new JooqAggregateFetcher<BestellungBv3, BestellungIdBv3>(BestellungBv3.class, dslContext,
             jooqDomainPersistenceProvider);
 
-        io.domainlifecycles.test.tables.Bestellung b = Tables.BESTELLUNG.as("b");
+        io.domainlifecycles.test.jooq.tables.BestellungBv3 b = Tables.BESTELLUNG_BV3.as("b");
 
         var joinedRecords = dslContext.select()
             .from(
                 dslContext.select()
-                    .from(Tables.BESTELLUNG)
-                    .orderBy(Tables.BESTELLUNG.ID)
+                    .from(Tables.BESTELLUNG_BV3)
+                    .orderBy(Tables.BESTELLUNG_BV3.ID)
                     .offset(offset)
                     .limit(pageSize)
                     .asTable("b")
             )
-            .join(Tables.LIEFERADRESSE)
-            .on(b.LIEFERADRESSE_ID.eq(Tables.LIEFERADRESSE.ID))
-            .join(Tables.BESTELL_STATUS)
-            .on(b.ID.eq(Tables.BESTELL_STATUS.BESTELLUNG_ID))
-            .leftJoin(Tables.BESTELL_POSITION)
-            .on(b.ID.eq(Tables.BESTELL_POSITION.BESTELLUNG_ID))
-            .leftJoin(Tables.BESTELL_KOMMENTAR)
-            .on(b.ID.eq(Tables.BESTELL_KOMMENTAR.BESTELLUNG_ID))
-            .leftJoin(Tables.AKTIONS_CODE)
-            .on(Tables.AKTIONS_CODE.CONTAINER_ID.eq(b.ID));
+            .join(Tables.LIEFERADRESSE_BV3)
+            .on(b.LIEFERADRESSE_ID.eq(Tables.LIEFERADRESSE_BV3.ID))
+            .join(Tables.BESTELL_STATUS_BV3)
+            .on(b.ID.eq(Tables.BESTELL_STATUS_BV3.BESTELLUNG_ID))
+            .leftJoin(Tables.BESTELL_POSITION_BV3)
+            .on(b.ID.eq(Tables.BESTELL_POSITION_BV3.BESTELLUNG_ID))
+            .leftJoin(Tables.BESTELL_KOMMENTAR_BV3)
+            .on(b.ID.eq(Tables.BESTELL_KOMMENTAR_BV3.BESTELLUNG_ID))
+            .leftJoin(Tables.AKTIONS_CODE_BV3)
+            .on(Tables.AKTIONS_CODE_BV3.CONTAINER_ID.eq(b.ID));
 
         var records = dslContext.fetch(joinedRecords);
 
-        var lieferadresseRecords = records.into(Tables.LIEFERADRESSE).stream().filter(r -> r.getId() != null).collect(
+        var lieferadresseRecords = records.into(Tables.LIEFERADRESSE_BV3).stream().filter(r -> r.getId() != null).collect(
             Collectors.toSet());
         var bestellungenRecords = records.into(b).stream().filter(r -> r.getId() != null).collect(Collectors.toSet());
-        var bestellPositionenRecords = records.into(Tables.BESTELL_POSITION).stream().filter(
+        var bestellPositionenRecords = records.into(Tables.BESTELL_POSITION_BV3).stream().filter(
             r -> r.getId() != null).collect(Collectors.toSet());
-        var bestellKommentareRecords = records.into(Tables.BESTELL_KOMMENTAR).stream().filter(
+        var bestellKommentareRecords = records.into(Tables.BESTELL_KOMMENTAR_BV3).stream().filter(
             r -> r.getId() != null).collect(Collectors.toSet());
-        var aktionsCodesRecords = records.into(Tables.AKTIONS_CODE).stream().filter(r -> r.getId() != null).collect(
+        var aktionsCodesRecords = records.into(Tables.AKTIONS_CODE_BV3).stream().filter(r -> r.getId() != null).collect(
             Collectors.toSet());
-        var statusRecords = records.into(Tables.BESTELL_STATUS).stream().filter(r -> r.getId() != null).collect(
+        var statusRecords = records.into(Tables.BESTELL_STATUS_BV3).stream().filter(r -> r.getId() != null).collect(
             Collectors.toSet());
 
         fetcher.withRecordProvider(
-                new RecordProvider<BestellPositionRecord, BestellungRecord>() {
+                new RecordProvider<BestellPositionBv3Record, BestellungBv3Record>() {
                     @Override
-                    public Collection<BestellPositionRecord> provideCollection(BestellungRecord parentRecord) {
+                    public Collection<BestellPositionBv3Record> provideCollection(BestellungBv3Record parentRecord) {
                         return bestellPositionenRecords
                             .stream()
                             .filter(p -> p.getBestellungId().equals(parentRecord.getId()))
                             .collect(Collectors.toList());
                     }
                 },
-                Bestellung.class,
-                BestellPosition.class,
+                BestellungBv3.class,
+                BestellPositionBv3.class,
                 List.of("bestellPositionen"))
-            .withRecordProvider(new RecordProvider<LieferadresseRecord, BestellungRecord>() {
+            .withRecordProvider(new RecordProvider<LieferadresseBv3Record, BestellungBv3Record>() {
                                     @Override
-                                    public LieferadresseRecord provide(BestellungRecord parentRecord) {
+                                    public LieferadresseBv3Record provide(BestellungBv3Record parentRecord) {
                                         return lieferadresseRecords
                                             .stream()
                                             .filter(l -> l.getId().equals(parentRecord.getLieferadresseId()))
                                             .findFirst().orElse(null);
                                     }
                                 },
-                Bestellung.class,
-                Lieferadresse.class,
+                BestellungBv3.class,
+                LieferadresseBv3.class,
                 List.of("lieferadresse"))
-            .withRecordProvider(new RecordProvider<BestellKommentarRecord, BestellungRecord>() {
+            .withRecordProvider(new RecordProvider<BestellKommentarBv3Record, BestellungBv3Record>() {
                                     @Override
-                                    public Collection<BestellKommentarRecord> provideCollection(BestellungRecord parentRecord) {
+                                    public Collection<BestellKommentarBv3Record> provideCollection(BestellungBv3Record parentRecord) {
                                         return bestellKommentareRecords.stream()
                                             .filter(k -> k.getBestellungId().equals(parentRecord.getId()))
                                             .collect(Collectors.toList());
                                     }
                                 },
-                Bestellung.class,
-                BestellKommentar.class,
+                BestellungBv3.class,
+                BestellKommentarBv3.class,
                 List.of("bestellKommentare"))
-            .withRecordProvider(new RecordProvider<BestellStatusRecord, BestellungRecord>() {
+            .withRecordProvider(new RecordProvider<BestellStatusBv3Record, BestellungBv3Record>() {
                                     @Override
-                                    public BestellStatusRecord provide(BestellungRecord parentRecord) {
+                                    public BestellStatusBv3Record provide(BestellungBv3Record parentRecord) {
                                         return statusRecords
                                             .stream()
                                             .filter(s -> s.getBestellungId().equals(parentRecord.getId()))
                                             .findFirst().orElse(null);
                                     }
                                 },
-                Bestellung.class,
-                BestellStatus.class,
+                BestellungBv3.class,
+                BestellStatusBv3.class,
                 List.of("bestellStatus"))
-            .withRecordProvider(new RecordProvider<AktionsCodeRecord, BestellungRecord>() {
+            .withRecordProvider(new RecordProvider<AktionsCodeBv3Record, BestellungBv3Record>() {
                                     @Override
-                                    public List<AktionsCodeRecord> provideCollection(BestellungRecord parentRecord) {
+                                    public List<AktionsCodeBv3Record> provideCollection(BestellungBv3Record parentRecord) {
                                         return aktionsCodesRecords
                                             .stream()
                                             .filter(ac -> ac.getContainerId().equals(parentRecord.getId()))
                                             .collect(Collectors.toList());
                                     }
                                 },
-                Bestellung.class,
-                AktionsCode.class,
+                BestellungBv3.class,
+                AktionsCodeBv3.class,
                 List.of("aktionsCodes"))
         ;
         var bestellungen = bestellungenRecords.stream().map(br -> fetcher.fetchDeep(br).resultValue().get());
@@ -229,24 +229,24 @@ public class BestellungRepository extends JooqAggregateRepository<Bestellung, Be
         return bestellungen;
     }
 
-    public BestellungId newBestellungId() {
-        return new BestellungId(dslContext.nextval(Sequences.BESTELLUNG_ID_SEQ));
+    public BestellungIdBv3 newBestellungId() {
+        return new BestellungIdBv3(dslContext.nextval(Sequences.BESTELLUNG_ID_BV3_SEQ));
     }
 
-    public BestellPositionId newBestellPositionId() {
-        return new BestellPositionId(dslContext.nextval(Sequences.BESTELL_POSITION_ID_SEQ));
+    public BestellPositionIdBv3 newBestellPositionId() {
+        return new BestellPositionIdBv3(dslContext.nextval(Sequences.BESTELL_POSITION_ID_BV3_SEQ));
     }
 
-    public BestellKommentarId newBestellKommentarId() {
-        return new BestellKommentarId(dslContext.nextval(Sequences.BESTELL_KOMMENTAR_ID_SEQ));
+    public BestellKommentarIdBv3 newBestellKommentarId() {
+        return new BestellKommentarIdBv3(dslContext.nextval(Sequences.BESTELL_KOMMENTAR_ID_BV3_SEQ));
     }
 
-    public BestellStatusId newBestellStatusId() {
-        return new BestellStatusId(dslContext.nextval(Sequences.BESTELL_STATUS_ID_SEQ));
+    public BestellStatusIdBv3 newBestellStatusId() {
+        return new BestellStatusIdBv3(dslContext.nextval(Sequences.BESTELL_STATUS_ID_BV3_SEQ));
     }
 
-    public LieferadresseId newLieferadresseId() {
-        return new LieferadresseId(dslContext.nextval(Sequences.LIEFERADRESSE_ID_SEQ));
+    public LieferadresseIdBv3 newLieferadresseId() {
+        return new LieferadresseIdBv3(dslContext.nextval(Sequences.LIEFERADRESSE_ID_BV3_SEQ));
     }
 
 

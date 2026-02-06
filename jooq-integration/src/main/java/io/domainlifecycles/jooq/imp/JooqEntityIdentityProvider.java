@@ -52,6 +52,12 @@ public class JooqEntityIdentityProvider implements EntityIdentityProvider {
 
     private final Map<String, Sequence<?>> sequenceCache = new ConcurrentHashMap<>();
 
+    /**
+     * Constructs a JooqEntityIdentityProvider instance with the specified DSLContext.
+     *
+     * @param dslContext the DSLContext used for executing SQL queries and interacting with the database.
+     *                   Must not be null.
+     */
     public JooqEntityIdentityProvider(DSLContext dslContext) {
         this.dslContext = Objects.requireNonNull(dslContext);
     }

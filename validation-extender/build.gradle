@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
+    id 'jacoco'
     alias libs.plugins.yumi.gradle.licenser.plugin
     alias libs.plugins.jaredsburrows.license.plugin
 }
@@ -13,10 +14,9 @@ java {
 
 dependencies {
 
-    compileOnly libs.slf4j.api
+    api libs.slf4j.api
     implementation libs.byte.buddy
     implementation libs.byte.buddy.agent
-
     api project(":types")
     api project(":builder")
     implementation project(":bean-validations")
@@ -37,5 +37,14 @@ dependencies {
     testImplementation libs.glassfish.jakarta.el
     testImplementation libs.jakarta.el.api
 }
+
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport
 
 

@@ -194,6 +194,8 @@ public class TestDTO2 {
     private TestId testId;
 
     private Optional<TestId> optionalTestId;
+    private Optional<TestVo2> optionalTestVo2;
+    private Optional<TestEnum> optionalTestEnum;
 
     private TestIdInterface testIdInterface;
 
@@ -325,6 +327,8 @@ public class TestDTO2 {
                     Year optionalYearPast,
                     TestId testId,
                     TestId optionalTestId,
+                    TestVo2 optionalTestVo2,
+                    TestEnum optionalTestEnum,
                     TestIdInterface testIdInterface
     ) {
         this.stringSized = stringSized;
@@ -450,6 +454,8 @@ public class TestDTO2 {
         this.optionalYearPast = Optional.ofNullable(optionalYearPast);
         this.testId = testId;
         this.optionalTestId = Optional.ofNullable(optionalTestId);
+        this.optionalTestVo2 = Optional.ofNullable(optionalTestVo2);
+        this.optionalTestEnum = Optional.ofNullable(optionalTestEnum);
         this.testIdInterface = testIdInterface;
     }
 }

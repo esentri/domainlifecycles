@@ -12,8 +12,6 @@ java {
 }
 
 dependencies {
-    api libs.spring.doc.openapi.ui
-    compileOnly libs.spring.doc.openapi.data.rest
-    api project(":swagger-v3-integration")
-
+    api libs.spring.doc.openapi3.starter.webmvc.ui
+    api project(":swagger-integration")
 }

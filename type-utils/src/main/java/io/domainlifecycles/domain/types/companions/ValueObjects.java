@@ -27,11 +27,13 @@
 package io.domainlifecycles.domain.types.companions;
 
 import io.domainlifecycles.access.DlcAccess;
+import io.domainlifecycles.access.object.DynamicDomainObjectAccessor;
 import io.domainlifecycles.domain.types.ValueObject;
-import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.FieldMirror;
+import io.domainlifecycles.mirror.reflect.utils.ReflectionValueObjectTypeUtils;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -39,9 +41,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+
 /**
  * Companion class which gives us static access to several typical ValueObject related utility functions
  * implemented in a general way based on meta informations kept in the domain mirror.
+ * A pure reflective way is used in cases where the mirror is not initialized, mostly to simplify unit testing.
  *
  * @author Mario Herb
  */
@@ -64,31 +68,51 @@ public class ValueObjects {
             return false;
         }
         ValueObject thatValueObject = (ValueObject) thatObject;
-        var vm = Domain.valueObjectMirrorFor(thisValueObject);
-        boolean isEqual = nullSafeObjectEquals(vm.getBasicFields().stream().filter(f -> !f.isStatic()), thisValueObject,
-            thatValueObject);
-        if (!isEqual) {
-            return false;
-        } else {
-            return nullSafeObjectEquals(vm.getValueReferences().stream().filter(vrm -> !vrm.isStatic()),
-                thisValueObject, thatValueObject);
+        DynamicDomainObjectAccessor thisValueAccessor = DlcAccess.accessorFor(thisValueObject);
+        DynamicDomainObjectAccessor thatValueAccessor = DlcAccess.accessorFor(thatValueObject);
+        if(Domain.isInitialized()) {
+            var vm = Domain.valueObjectMirrorFor(thisValueObject);
+            boolean isEqual = nullSafeObjectEquals(vm.getBasicFields().stream()
+                    .filter(f -> !f.isStatic()).map(FieldMirror::getName),
+                thisValueAccessor,
+                thatValueAccessor);
+            if (!isEqual) {
+                return false;
+            } else {
+                return nullSafeObjectEquals(
+                    vm.getValueReferences().stream()
+                        .filter(vrm -> !vrm.isStatic())
+                        .map(FieldMirror::getName),
+                    thisValueAccessor,
+                    thatValueAccessor);
+            }
+        }else{
+            return nullSafeObjectEquals(
+                ReflectionValueObjectTypeUtils.valueObjectFields(
+                    thisValueObject.getClass()
+                )
+                .stream()
+                .map(Field::getName),
+                thisValueAccessor,
+                thatValueAccessor);
         }
     }
 
-    private static boolean nullSafeObjectEquals(Stream<? extends FieldMirror> fmStream, DomainObject thisObject,
-                                                DomainObject thatObject) {
-        var thisValueAccessor = DlcAccess.accessorFor(thisObject);
-        var thatValueAccessor = DlcAccess.accessorFor(thatObject);
-        boolean anyFalse = fmStream.map(fm -> {
-            var thisValue = thisValueAccessor.peek(fm.getName());
-            var thatValue = thatValueAccessor.peek(fm.getName());
+    private static boolean nullSafeObjectEquals(
+        Stream<String> fieldNamesStream,
+        DynamicDomainObjectAccessor thisValueAccessor,
+        DynamicDomainObjectAccessor thatValueAccessor) {
+        boolean anyFalse = fieldNamesStream.map(f -> {
+            var thisValue = thisValueAccessor.peek(f);
+            var thatValue = thatValueAccessor.peek(f);
+            boolean equals = false;
             if (thisValue == null && thatValue == null) {
-                return true;
+                equals = true;
             }
             if (thisValue != null) {
-                return thisValue.equals(thatValue);
+                equals = thisValue.equals(thatValue);
             }
-            return false;
+            return Boolean.valueOf(equals);
         }).anyMatch(b -> !b);
         return !anyFalse;
     }
@@ -101,26 +125,38 @@ public class ValueObjects {
      */
     public static int hashCode(ValueObject thisValueObject) {
         Objects.requireNonNull(thisValueObject, "thisValueObject is required to be not null, when calling 'hashCode'!");
-        var vm = Domain.valueObjectMirrorFor(thisValueObject);
         var accessor = DlcAccess.accessorFor(thisValueObject);
-        var propertyValues = vm.getBasicFields()
-            .stream()
-            .filter(fm -> !fm.isStatic())
-            .map(fm -> accessor.peek(fm.getName())).toList();
-        var valueObjectValues = vm.getValueReferences()
-            .stream()
-            .filter(fm -> !fm.isStatic())
-            .map(fm -> accessor.peek(fm.getName()))
-            .flatMap(val -> {
-                if (val instanceof Collection) {
-                    return ((Collection<?>) val).stream();
-                } else {
-                    return Stream.of(val);
-                }
-            }).toList();
         var allValues = new ArrayList<>();
-        allValues.addAll(propertyValues);
-        allValues.addAll(valueObjectValues);
+        if(Domain.isInitialized()){
+            var vm = Domain.valueObjectMirrorFor(thisValueObject);
+            var propertyValues = vm.getBasicFields()
+                .stream()
+                .filter(fm -> !fm.isStatic())
+                .map(fm -> accessor.peek(fm.getName())).toList();
+            var valueObjectValues = vm.getValueReferences()
+                .stream()
+                .filter(fm -> !fm.isStatic())
+                .map(fm -> accessor.peek(fm.getName()))
+                .flatMap(val -> {
+                    if (val instanceof Collection) {
+                        return ((Collection<?>) val).stream();
+                    } else {
+                        return Stream.of(val);
+                    }
+                }).toList();
+
+            allValues.addAll(propertyValues);
+            allValues.addAll(valueObjectValues);
+        }else{
+            allValues.addAll(
+                ReflectionValueObjectTypeUtils.valueObjectFields(
+                    thisValueObject.getClass()
+                )
+                .stream()
+                .map(f -> accessor.peek(f.getName()))
+                .toList()
+            );
+        }
         return Objects.hash(allValues.toArray());
     }
 
@@ -132,54 +168,93 @@ public class ValueObjects {
      */
     public static String toString(ValueObject thisValueObject) {
         Objects.requireNonNull(thisValueObject, "thisValueObject is required to be not null, when calling 'toString'!");
-
-        var vm = Domain.valueObjectMirrorFor(thisValueObject);
         StringBuilder returnVal = new StringBuilder(thisValueObject.getClass().getName());
         returnVal.append("@");
         returnVal.append(System.identityHashCode(thisValueObject));
         returnVal.append("(");
         var accessor = DlcAccess.accessorFor(thisValueObject);
-        String propVals = vm.getBasicFields()
-            .stream()
-            .filter(fm -> !fm.isStatic())
-            .map(fm -> fm.getName() + "=" + accessor.peek(fm.getName()))
-            .collect(Collectors.joining(", "));
-        returnVal.append(propVals);
-        String voVals = vm.getValueReferences()
-            .stream()
-            .filter(vrm -> !vrm.isStatic())
-            .map(vrm -> {
-                    String voVal = vrm.getName() + "=";
-                    if (vrm.getType().hasCollectionContainer()) {
-                        voVal += "[";
-                        Collection<?> col = accessor.peek(vrm.getName());
-                        if (col != null) {
-                            voVal += col.stream().map(ValueObjects::toString).collect(Collectors.joining(", "));
-                            voVal += "]";
-                        } else {
-                            voVal += "null";
-                        }
-                    } else {
-                        Object voObject = accessor.peek(vrm.getName());
-                        if (voObject == null) {
-                            voVal += "null";
-                        } else if (voObject instanceof Optional<?> voOptional) {
-                            if (voOptional.isPresent()) {
-                                voObject = voOptional.get();
-                                voVal += toString(voObject);
+        if(Domain.isInitialized()) {
+            var vm = Domain.valueObjectMirrorFor(thisValueObject);
+            String propVals = vm.getBasicFields()
+                .stream()
+                .filter(fm -> !fm.isStatic())
+                .map(fm -> fm.getName() + "=" + accessor.peek(fm.getName()))
+                .collect(Collectors.joining(", "));
+            returnVal.append(propVals);
+            String voVals = vm.getValueReferences()
+                .stream()
+                .filter(vrm -> !vrm.isStatic())
+                .map(vrm -> {
+                        String voVal = vrm.getName() + "=";
+                        if (vrm.getType().hasCollectionContainer()) {
+                            voVal += "[";
+                            Collection<?> col = accessor.peek(vrm.getName());
+                            if (col != null) {
+                                voVal += col.stream().map(ValueObjects::toString).collect(Collectors.joining(", "));
+                                voVal += "]";
                             } else {
                                 voVal += "null";
                             }
                         } else {
-                            voVal += toString(voObject);
+                            Object voObject = accessor.peek(vrm.getName());
+                            if (voObject == null) {
+                                voVal += "null";
+                            } else if (voObject instanceof Optional<?> voOptional) {
+                                if (voOptional.isPresent()) {
+                                    voObject = voOptional.get();
+                                    voVal += toString(voObject);
+                                } else {
+                                    voVal += "null";
+                                }
+                            } else {
+                                voVal += toString(voObject);
+                            }
                         }
+                        return voVal;
                     }
-                    return voVal;
-                }
-            ).collect(Collectors.joining(", "));
-        if (!voVals.isEmpty()) {
-            returnVal.append(", ");
-            returnVal.append(voVals);
+                ).collect(Collectors.joining(", "));
+            if (!voVals.isEmpty()) {
+                returnVal.append(", ");
+                returnVal.append(voVals);
+            }
+
+        } else {
+            returnVal.append(
+                ReflectionValueObjectTypeUtils.valueObjectFields(
+                        thisValueObject.getClass()
+                   )
+                .stream()
+                .map( f -> {
+                        String voVal = f.getName() + "=";
+                        if (Collection.class.isAssignableFrom(f.getType())) {
+                            voVal += "[";
+                            Collection<?> col = accessor.peek(f.getName());
+                            if (col != null) {
+                                voVal += col.stream().map(ValueObjects::toString).collect(Collectors.joining(", "));
+                                voVal += "]";
+                            } else {
+                                voVal += "null";
+                            }
+                        } else {
+                            Object voObject = accessor.peek(f.getName());
+                            if (voObject == null) {
+                                voVal += "null";
+                            } else if (voObject instanceof Optional<?> voOptional) {
+                                if (voOptional.isPresent()) {
+                                    voObject = voOptional.get();
+                                    voVal += toString(voObject);
+                                } else {
+                                    voVal += "null";
+                                }
+                            } else {
+                                voVal += toString(voObject);
+                            }
+                        }
+                        return voVal;
+                    }
+                )
+                .collect(Collectors.joining(", "))
+            );
         }
         returnVal.append(")");
         return returnVal.toString();
@@ -188,4 +263,8 @@ public class ValueObjects {
     private static String toString(Object value) {
         return value.toString();
     }
+
+
+
+
 }

@@ -6,9 +6,8 @@
 
 ---
 
-Dieser Guide stellt eine vollständige Anleitung bereit, wie man DLC (das Domainlifecycles Framework) einrichtet und 
-anschließend benutzen kann. Die im Guide genutzten Beispiele basieren immer
-auf Spring-Boot. Die Beispiel-Domäne entspricht dem vollständigen [sample-project](../../sample-project).
+Dieser Guide stellt eine vollständige Anleitung bereit, wie man DLC in Verbindung mit Spring Boot einrichtet und 
+anschließend benutzen kann. Die Beispiel-Domäne entspricht dem vollständigen [sample-project](../../sample-project).
 
 ---
 

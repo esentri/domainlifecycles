@@ -26,8 +26,8 @@
 
 package sampleshop.core.domain.customer;
 
+import io.domainlifecycles.domain.types.DomainEventListener;
 import io.domainlifecycles.domain.types.Identity;
-import io.domainlifecycles.domain.types.ListensTo;
 import io.domainlifecycles.domain.types.Publishes;
 import io.domainlifecycles.domain.types.base.AggregateRootBase;
 import io.domainlifecycles.events.api.DomainEvents;
@@ -78,7 +78,7 @@ public final class Customer extends AggregateRootBase<Customer.CustomerId> {
         this.blocked = blocked;
     }
 
-    @ListensTo(domainEventType = FraudDetected.class)
+    @DomainEventListener
     public void onFraudDetected(FraudDetected fraudDetected) {
         block();
     }

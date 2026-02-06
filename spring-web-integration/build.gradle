@@ -11,10 +11,14 @@ java {
     withSourcesJar()
 }
 
+
 dependencies {
     api project(":types")
     implementation project(":mirror")
-    compileOnly libs.jackson.core
-    api libs.jackson.databind
-    api libs.spring.web
+    implementation project(":access")
+    compileOnly libs.spring.web
+    compileOnly libs.spring.context
+    testImplementation libs.spring.context
+    testImplementation libs.assertj
+    testImplementation libs.slf4j.api
 }

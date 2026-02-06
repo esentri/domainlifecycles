@@ -3,8 +3,8 @@ package io.domainlifecycles.jooq.persistence.mapper.oneToMany;
 import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.persistence.mapping.AbstractRecordMapper;
-import io.domainlifecycles.test.Tables;
-import io.domainlifecycles.test.tables.records.TestRootOneToManyRecord;
+import io.domainlifecycles.test.jooq.Tables;
+import io.domainlifecycles.test.jooq.tables.records.TestRootOneToManyRecord;
 import tests.shared.persistence.domain.oneToMany.TestRootOneToMany;
 import tests.shared.persistence.domain.oneToMany.TestRootOneToManyId;
 

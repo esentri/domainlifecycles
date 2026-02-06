@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public class DefaultIdentityFactory implements IdentityFactory {
      * @param classProvider a ClassProvider to be used by the factory
      */
     public DefaultIdentityFactory(ClassProvider classProvider) {
-        this.classProvider = classProvider;
+        this.classProvider = Objects.requireNonNull(classProvider, "A ClassProvider is required");
     }
 
     /**
@@ -71,7 +71,6 @@ public class DefaultIdentityFactory implements IdentityFactory {
                         identityTypeName, value);
                 }
             })
-            ///
             .orElseThrow(() -> DLCAccessException.fail("Failed to instantiate Identity '%s'.", identityTypeName));
     }
 }

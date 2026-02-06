@@ -28,5 +28,5 @@ gradlePlugin {
 }
 
 dependencies {
-    implementation project(":dlc-plugins")
+    api project(":dlc-plugins")
 }

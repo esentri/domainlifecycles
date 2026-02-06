@@ -35,10 +35,26 @@ import io.domainlifecycles.plugins.exception.DLCPluginsException;
  * @author Leon Völlinger
  */
 public enum FileType {
+    /**
+     * PDF filetype
+     */
     PDF(".pdf"),
+    /**
+     * SVG filetype
+     */
     SVG(".svg"),
+    /**
+     *
+     * PNG filetype
+     */
     PNG(".png"),
+    /**
+     * JPG filetype
+     */
     JPG( ".jpg"),
+    /**
+     * raw Nomnoml filetype
+     */
     NOMNOML(".nomnoml");
 
     private final String fileSuffix;

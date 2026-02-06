@@ -16,8 +16,8 @@ Den Ausgangspunkt bildet in diesem Guide ein Build-Setup für ein minimales Spri
 ```groovy
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.0'
-    id 'io.spring.dependency-management' version '1.1.6'
+    id 'org.springframework.boot' version '4.0.1'
+
 }
 
 group = 'com.example'
@@ -50,7 +50,7 @@ dependencies {
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.0</version>
+        <version>4.0.1</version>
         <relativePath/>
     </parent>
     <groupId>com.example</groupId>
@@ -86,47 +86,24 @@ Um die DLC-Funktionalität zu nutzen, reicht es bereits folgendes Artefakt einzu
 welches die wichtigsten DLC-Funktionen bündelt:
 
 <details>
-<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle für Spring Boot 3</b></summary>
+<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle</b></summary>
 
 ```groovy
 dependencies {
-    implementation 'io.domainlifecycles:spring-boot-3-jooq-complete:2.4.0'
-}
-```
-</details>
-<details>
-<summary><img style="height: 12px" src="../../icons/gradle.svg" alt="gradle"> <b>build.gradle für Spring Boot 2</b></summary>
-
-```groovy
-dependencies {
-    implementation 'io.domainlifecycles:spring-boot-2-jooq-complete:2.4.0'
+    implementation 'io.domainlifecycles:spring-boot-starter:3.0.0'
 }
 ```
 </details>
 
 <details>
-<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"> <b>pom.xml für Spring Boot 3</b></summary>
+<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"><b>pom.xml</b></summary>
 
 ```xml
 <dependencies>
     <dependency>
         <groupId>io.domainlifecycles</groupId>
-        <artifactId>spring-boot-3-jooq-complete</artifactId>
-        <version>2.4.0</version>
-    </dependency>
-</dependencies>
-```
-</details>
-
-<details>
-<summary><img style="height: 12px" src="../../icons/file-type-maven.svg" alt="maven"> <b>pom.xml für Spring Boot 2</b></summary>
-
-```xml
-<dependencies>
-    <dependency>
-        <groupId>io.domainlifecycles</groupId>
-        <artifactId>spring-boot-2-jooq-complete</artifactId>
-        <version>2.4.0</version>
+        <artifactId>spring-boot-starter</artifactId>
+        <version>3.0.0</version>
     </dependency>
 </dependencies>
 ```

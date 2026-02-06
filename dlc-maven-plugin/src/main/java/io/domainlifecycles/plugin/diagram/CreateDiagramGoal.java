@@ -43,6 +43,7 @@ import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * Mojo implementation for generating diagrams based on Maven project configurations.
  * This goal is executed during the Maven build process and allows creating and saving

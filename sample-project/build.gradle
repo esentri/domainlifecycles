@@ -1,23 +1,24 @@
 buildscript {
     dependencies {
-        classpath libs.h2
-        classpath libs.flyway.core
+        classpath 'com.h2database:h2:2.3.232'
+        classpath 'org.flywaydb:flyway-core:11.12.0'
     }
 }
 
 plugins {
     id 'java'
     id 'checkstyle'
-    alias libs.plugins.spring.boot.plugin
-    alias libs.plugins.flyway.plugin
-    alias libs.plugins.jooq.codegen.gradle
-    alias libs.plugins.yumi.gradle.licenser.plugin
-    alias libs.plugins.jaredsburrows.license.plugin
+    id 'jacoco'
+    id 'org.springframework.boot' version '4.0.2'
+    id 'org.flywaydb.flyway' version '11.12.0'
+    id 'org.jooq.jooq-codegen-gradle' version '3.19.26'
+    id 'io.domainlifecycles.dlc-gradle-plugin' version '3.0.0'
 }
+
 
 // ----------------------------------------------------------
 
-def dbVersion = libs.versions.h2.version.get()
+def dbVersion = '2.4.240'
 def dbDriver = 'org.h2.Driver'
 def dbUrl = "jdbc:h2:file:${project.projectDir}/build/h2-db/test;NON_KEYWORDS=VALUE;AUTO_SERVER=TRUE"
 def dbUsername = 'sa'
@@ -40,31 +41,32 @@ tasks.register('runApp', JavaExec) {
 // ----------------------------------------------------------
 
 dependencies {
-    implementation platform(libs.spring.boot3.dependencies)
-    implementation project(":spring-boot-3-jooq-complete")
+    implementation platform('org.springframework.boot:spring-boot-dependencies:4.0.1')
 
-    implementation libs.h2
-    implementation libs.jakarta.validation.api
+
+    implementation 'com.h2database:h2:2.4.240'
+    implementation 'jakarta.validation:jakarta.validation-api:3.1.1'
     implementation 'org.springframework:spring-web'
     implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springframework.boot:spring-boot-starter-jooq'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation libs.jakarta.transaction.api
+    implementation 'jakarta.transaction:jakarta.transaction-api:2.0.1'
+    implementation 'io.domainlifecycles:spring-boot-starter:3.0.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1'
+    implementation 'org.projectlombok:lombok:1.18.42'
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
 
-    implementation libs.spring.doc.openapi.starter.webmvc.ui
-    implementation libs.lombok
-    annotationProcessor libs.lombok
+    runtimeOnly 'org.jooq:jooq-codegen:3.19.26'
+    jooqCodegen 'org.jooq:jooq-meta:3.19.26'
 
-    runtimeOnly libs.jooq.codegen
-    jooqCodegen libs.jooq.meta
-
-
-    testImplementation libs.assertj
+    testImplementation 'io.domainlifecycles:domain-diagrammer:3.0.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testImplementation 'org.assertj:assertj-core:3.27.6'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testCompileOnly libs.lombok
-    testAnnotationProcessor libs.lombok
-
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testCompileOnly 'org.projectlombok:lombok:1.18.42'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.42'
 }
 
 // ----------------------------------------------------------
@@ -119,6 +121,65 @@ tasks.named("jooqCodegen") {
 
 // ----------------------------------------------------------
 
+dlcGradlePlugin {
+    diagram {
+        fileOutputDir = layout.buildDirectory
+        diagrams {
+            diagramNomnoml {
+                domainModelPackages = ["sampleshop"]
+                format = "nomnoml"
+                fileName = "diagram"
+            }
+            diagramSvgComplete {
+                domainModelPackages = ["sampleshop"]
+                format = "svg"
+                fileName = "complete"
+                backgroundColor = "#ffffff"
+            }
+            diagramSvgAggregates {
+                domainModelPackages = ["sampleshop"]
+                format = "svg"
+                fileName = "aggregates"
+                backgroundColor = "#ffffff"
+                showDomainEvents = false
+                showDomainCommands = false
+                showDomainServices = false
+                showApplicationServices = false
+                showRepositories = false
+                showReadModels = false
+                showQueryHandlers = false
+                showOutboundServices = false
+
+            }
+        }
+    }
+    serializeMirror {
+        serializations{
+            [
+                serial {
+                    fileName = "model"
+                    domainModelPackages = ["sampleshop.core"]
+                }
+            ]
+        }
+
+    }
+}
+// ----------------------------------------------------------
+
 tasks.withType(Checkstyle).configureEach {
     enabled = false
 }
+
+test {
+    finalizedBy jacocoTestReport
+}
+
+test {
+    useJUnitPlatform()
+}
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport

@@ -44,6 +44,15 @@ public abstract class MirrorSerializerTaskConfigurationExtension {
 
     private static final String DEFAULT_META_INF_DLC_MIRROR_FILE_PATH = "src/main/resources/META-INF/dlc";
 
+    /**
+     * Creates a new instance of the `MirrorSerializerTaskConfigurationExtension` class.
+     *
+     * This constructor initializes the default output directory for generated JSON files.
+     * The default directory is set to `src/main/resources/META-INF/dlc` relative to the project's root directory.
+     *
+     * @param project The Gradle project to which this configuration is applied.
+     *                Used to determine the project directory and configure the default output directory.
+     */
     public MirrorSerializerTaskConfigurationExtension(Project project) {
         getFileOutputDir().convention(project.getLayout().getProjectDirectory().dir(DEFAULT_META_INF_DLC_MIRROR_FILE_PATH));
     }

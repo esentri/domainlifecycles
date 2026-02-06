@@ -37,18 +37,11 @@ import java.util.Objects;
  * @author Tobias Herb
  * @author Dominik Galler
  */
-@Deprecated
 public class ResponseObject<T> {
 
     private T data;
     private List<Error> errors;
 
-    /**
-     * Initializes a new ResponseObject with the specified data and errors.
-     *
-     * @param data The data to be encapsulated within the response.
-     * @param errors The list of errors associated with the response.
-     */
     ResponseObject(T data, List<Error> errors) {
         this.data = data;
         this.errors = errors;
@@ -113,13 +106,14 @@ public class ResponseObject<T> {
     }
 
     /**
-     * @param other other Object to check
-     * @return true, if other is a ResponseObject
+     * Check if the specified object can be equaled with this ResponseObject instance.
+     *
+     * @param other The object to compare with this ResponseObject instance.
+     * @return true if the specified object is an instance of ResponseObject and can be equaled with this instance, false otherwise.
      */
     protected boolean canEqual(final Object other) {
         return other instanceof ResponseObject;
     }
-
 
     /**
      * {@inheritDoc}
@@ -143,9 +137,9 @@ public class ResponseObject<T> {
     }
 
     /**
-     * Inner Builder for ResponseObject instances.
+     * {@link ResponseObject} builder static inner class.
      *
-     * @param <T> the type of data used in the ResponseObject
+     * @param <T> type of returned object (mostly entity)
      */
     public static class ResponseObjectBuilder<T> {
         private T data;
@@ -155,10 +149,10 @@ public class ResponseObject<T> {
         }
 
         /**
-         * Sets the data in the ResponseObjectBuilder and returns the builder instance.
+         * Sets the data for the {@link ResponseObjectBuilder}.
          *
-         * @param data the data to be set in the ResponseObjectBuilder
-         * @return the updated ResponseObjectBuilder instance
+         * @param data the data object to be set
+         * @return the current instance of {@link ResponseObjectBuilder} for method chaining
          */
         public ResponseObjectBuilder<T> data(T data) {
             this.data = data;
@@ -166,10 +160,10 @@ public class ResponseObject<T> {
         }
 
         /**
-         * Sets the list of errors in the ResponseObjectBuilder and returns the builder instance.
+         * Sets the list of errors for the {@link ResponseObjectBuilder}.
          *
-         * @param errors the list of Error objects to be set
-         * @return the updated ResponseObjectBuilder instance
+         * @param errors the list of {@link java.lang.Error} objects to be set
+         * @return the current instance of {@link ResponseObjectBuilder} for method chaining
          */
         public ResponseObjectBuilder<T> errors(List<Error> errors) {
             this.errors = errors;
@@ -177,18 +171,19 @@ public class ResponseObject<T> {
         }
 
         /**
-         * Builds a new instance of {@link ResponseObject} using the data and errors set in the builder.
+         * Builder method for {@link ResponseObject}.
          *
-         * @return a new {@link ResponseObject} instance containing the current state of the builder
+         * @return the built {@link ResponseObject}
          */
         public ResponseObject<T> build() {
             return new ResponseObject<>(data, errors);
         }
 
         /**
-         * Returns a string representation of the ResponseObjectBuilder, including its data and errors values.
+         * Generates a string representation of the {@code ResponseObjectBuilder} instance,
+         * including the {@code data} and {@code errors} properties.
          *
-         * @return a string detailing the current state of the ResponseObjectBuilder
+         * @return a string representation of the builder instance
          */
         public String toString() {
             return "ResponseObject.ResponseObjectBuilder(data=" + this.data + ", errors=" + this.errors + ")";

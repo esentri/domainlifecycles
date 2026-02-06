@@ -61,6 +61,17 @@ import java.util.stream.Collectors;
  */
 public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<UpdatableRecord<?>> {
 
+    /**
+     * Constructs an instance of {@code JooqDomainPersistenceProvider} using the provided
+     * configuration. Registers converters provided by the type converter provider within the
+     * configuration, if available.
+     *
+     * @param jooqPersistenceConfiguration the configuration object containing settings
+     *                                      and dependencies required for setting up
+     *                                      the Jooq domain persistence provider.
+     *                                      Contains optional type converter provider for
+     *                                      registering custom converters.
+     */
     public JooqDomainPersistenceProvider(JooqDomainPersistenceConfiguration jooqPersistenceConfiguration) {
         super(jooqPersistenceConfiguration);
         if (jooqPersistenceConfiguration.typeConverterProvider != null) {
@@ -81,9 +92,9 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
         Map<String, List<String>> recordCanonicalNameToDomainObjectTypeMap = new HashMap<>();
         Map<String, String> entityToRecordTypeMap = new HashMap<>();
 
-        List<EntityValueObjectRecordTypeConfiguration<?>> recordMappedValueObjectConfigurations = new ArrayList<>();
+        List<EntityValueObjectRecordTypeConfiguration> recordMappedValueObjectConfigurations = new ArrayList<>();
         if (jooqPersistenceConfiguration.entityValueObjectRecordClassProvider != null) {
-            List<EntityValueObjectRecordTypeConfiguration<?>> providedConfigurations =
+            List<EntityValueObjectRecordTypeConfiguration> providedConfigurations =
                 jooqPersistenceConfiguration.entityValueObjectRecordClassProvider
                 .provideContainedValueObjectRecordClassConfigurations();
             if (providedConfigurations != null) {
@@ -406,7 +417,7 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
         String... pathFromEntityToValueObject
     ) {
 
-        static InternalValueObjectRecordDefinition of(EntityValueObjectRecordTypeConfiguration<?> entityValueObjectRecordTypeConfiguration) {
+        static InternalValueObjectRecordDefinition of(EntityValueObjectRecordTypeConfiguration entityValueObjectRecordTypeConfiguration) {
             return new InternalValueObjectRecordDefinition(
                 entityValueObjectRecordTypeConfiguration.containingEntityType().getName(),
                 entityValueObjectRecordTypeConfiguration.containedValueObjectType().getName(),

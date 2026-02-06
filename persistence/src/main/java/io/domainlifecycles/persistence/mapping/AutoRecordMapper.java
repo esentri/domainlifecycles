@@ -110,7 +110,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
 
     private final MapperNestedValueObjectAccessor<R, DO> mapperNestedValueObjectAccessor;
 
-    private final List<EntityValueObjectRecordTypeConfiguration<?>> relevantValueObjectRecordConfigs;
+    private final List<EntityValueObjectRecordTypeConfiguration> relevantValueObjectRecordConfigs;
 
     private final RecordClassProvider<?> recordClassProvider;
 

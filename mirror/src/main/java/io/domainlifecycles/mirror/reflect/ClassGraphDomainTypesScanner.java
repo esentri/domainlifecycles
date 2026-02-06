@@ -103,6 +103,7 @@ public class ClassGraphDomainTypesScanner {
      * @param packages the array of package names to scan. If no packages are provided, the scan will include all available packages.
      * @return a list of discovered domain types represented as {@code DomainTypeMirror} instances.
      */
+    @SuppressWarnings("unchecked")
     public List<DomainTypeMirror> scan(String... packages) {
         List<DomainTypeMirror> domainTypes = new ArrayList<>();
         if(packages.length>0) {
@@ -121,6 +122,7 @@ public class ClassGraphDomainTypesScanner {
         }
 
         try (ScanResult scanResult = classGraph.scan()) {  // Start the scan
+            var jooqDSLContextNotAvailable = scanResult.getInterfaces("org.jooq.DSLContext").isEmpty();
 
             scanResult.getAllEnums()
                 .stream()
@@ -198,6 +200,12 @@ public class ClassGraphDomainTypesScanner {
             scanResult.getClassesImplementing(Repository.class)
                 .stream()
                 .filter(c -> !Repository.class.getName().equals(c.getName()))
+                .filter(c -> {
+                    if (jooqDSLContextNotAvailable){
+                        return !"io.domainlifecycles.jooq.imp.JooqAggregateRepository".equals(c.getName());
+                    }
+                    return true;
+                })
                 .map(r -> (Class<? extends Repository<?, ?>>) loadClass(r))
                 .filter(Objects::nonNull)
                 .map(dt -> build(new RepositoryMirrorBuilder(dt, genericTypeResolver)))

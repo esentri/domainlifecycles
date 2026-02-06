@@ -53,7 +53,6 @@ public class AssertionMirrorBuilder {
     private final Annotation annotation;
     private final boolean contained;
     private final boolean isCollection;
-    private final String VALID_PACKAGE_NAME_JAVAX = "javax.validation.constraints";
     private final String VALID_PACKAGE_NAME_JAKARTA = "jakarta.validation.constraints";
 
     /**
@@ -131,9 +130,6 @@ public class AssertionMirrorBuilder {
         if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAKARTA)) {
             var nullAnnotation = (jakarta.validation.constraints.Null) annotation;
             return Optional.of(new AssertionModel(AssertionType.isNull, null, null, nullAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var nullAnnotation = (javax.validation.constraints.Null) annotation;
-            return Optional.of(new AssertionModel(AssertionType.isNull, null, null, nullAnnotation.message()));
         }
         return Optional.empty();
     }
@@ -141,9 +137,6 @@ public class AssertionMirrorBuilder {
     private Optional<AssertionMirror> buildAssertionMirrorForNotNullAnnotation() {
         if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAKARTA)) {
             var notNullAnnotation = (jakarta.validation.constraints.NotNull) annotation;
-            return Optional.of(new AssertionModel(AssertionType.isNotNull, null, null, notNullAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var notNullAnnotation = (javax.validation.constraints.NotNull) annotation;
             return Optional.of(new AssertionModel(AssertionType.isNotNull, null, null, notNullAnnotation.message()));
         }
         return Optional.empty();
@@ -153,9 +146,6 @@ public class AssertionMirrorBuilder {
         if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAKARTA)) {
             var assertTrueAnnotation = (jakarta.validation.constraints.AssertTrue) annotation;
             return Optional.of(new AssertionModel(AssertionType.isTrue, null, null, assertTrueAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var assertTrueAnnotation = (javax.validation.constraints.AssertTrue) annotation;
-            return Optional.of(new AssertionModel(AssertionType.isTrue, null, null, assertTrueAnnotation.message()));
         }
         return Optional.empty();
     }
@@ -163,9 +153,6 @@ public class AssertionMirrorBuilder {
     private Optional<AssertionMirror> buildAssertionMirrorForAssertFalseAnnotation() {
         if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAKARTA)) {
             var assertFalseAnnotation = (jakarta.validation.constraints.AssertFalse) annotation;
-            return Optional.of(new AssertionModel(AssertionType.isFalse, null, null, assertFalseAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var assertFalseAnnotation = (javax.validation.constraints.AssertFalse) annotation;
             return Optional.of(new AssertionModel(AssertionType.isFalse, null, null, assertFalseAnnotation.message()));
         }
         return Optional.empty();
@@ -177,11 +164,6 @@ public class AssertionMirrorBuilder {
             return Optional.of(
                 new AssertionModel(AssertionType.isGreaterOrEqualNonDecimal, String.valueOf(minAnnotation.value()),
                     null, minAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var minAnnotation = (javax.validation.constraints.Min) annotation;
-            return Optional.of(
-                new AssertionModel(AssertionType.isGreaterOrEqualNonDecimal, String.valueOf(minAnnotation.value()),
-                    null, minAnnotation.message()));
         }
         return Optional.empty();
     }
@@ -189,11 +171,6 @@ public class AssertionMirrorBuilder {
     private Optional<AssertionMirror> buildAssertionMirrorForMaxAnnotation() {
         if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAKARTA)) {
             var maxAnnotation = (jakarta.validation.constraints.Max) annotation;
-            return Optional.of(
-                new AssertionModel(AssertionType.isLessOrEqualNonDecimal, null, String.valueOf(maxAnnotation.value()),
-                    maxAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var maxAnnotation = (javax.validation.constraints.Max) annotation;
             return Optional.of(
                 new AssertionModel(AssertionType.isLessOrEqualNonDecimal, null, String.valueOf(maxAnnotation.value()),
                     maxAnnotation.message()));
@@ -213,16 +190,6 @@ public class AssertionMirrorBuilder {
                     minDecimalAnnotation.message()));
             }
 
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var minDecimalAnnotation = (javax.validation.constraints.DecimalMin) annotation;
-            if (minDecimalAnnotation.inclusive()) {
-                return Optional.of(
-                    new AssertionModel(AssertionType.isGreaterOrEqual, minDecimalAnnotation.value(), null,
-                        minDecimalAnnotation.message()));
-            } else {
-                return Optional.of(new AssertionModel(AssertionType.isGreaterThan, minDecimalAnnotation.value(), null,
-                    minDecimalAnnotation.message()));
-            }
         }
         return Optional.empty();
     }
@@ -238,15 +205,6 @@ public class AssertionMirrorBuilder {
                     maxDecimalAnnotation.message()));
             }
 
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var maxDecimalAnnotation = (javax.validation.constraints.DecimalMax) annotation;
-            if (maxDecimalAnnotation.inclusive()) {
-                return Optional.of(new AssertionModel(AssertionType.isLessOrEqual, null, maxDecimalAnnotation.value(),
-                    maxDecimalAnnotation.message()));
-            } else {
-                return Optional.of(new AssertionModel(AssertionType.isLessThan, null, maxDecimalAnnotation.value(),
-                    maxDecimalAnnotation.message()));
-            }
         }
         return Optional.empty();
     }
@@ -254,9 +212,6 @@ public class AssertionMirrorBuilder {
     private Optional<AssertionMirror> buildAssertionMirrorForNegativeAnnotation() {
         if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAKARTA)) {
             var negativeAnnotation = (jakarta.validation.constraints.Negative) annotation;
-            return Optional.of(new AssertionModel(AssertionType.isNegative, null, null, negativeAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var negativeAnnotation = (javax.validation.constraints.Negative) annotation;
             return Optional.of(new AssertionModel(AssertionType.isNegative, null, null, negativeAnnotation.message()));
         }
         return Optional.empty();
@@ -267,10 +222,6 @@ public class AssertionMirrorBuilder {
             var negativeOrZeroAnnotation = (jakarta.validation.constraints.NegativeOrZero) annotation;
             return Optional.of(
                 new AssertionModel(AssertionType.isNegativeOrZero, null, null, negativeOrZeroAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var negativeOrZeroAnnotation = (javax.validation.constraints.NegativeOrZero) annotation;
-            return Optional.of(
-                new AssertionModel(AssertionType.isNegativeOrZero, null, null, negativeOrZeroAnnotation.message()));
         }
         return Optional.empty();
     }
@@ -279,9 +230,6 @@ public class AssertionMirrorBuilder {
         if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAKARTA)) {
             var positiveAnnotation = (jakarta.validation.constraints.Positive) annotation;
             return Optional.of(new AssertionModel(AssertionType.isPositive, null, null, positiveAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var positiveAnnotation = (javax.validation.constraints.Positive) annotation;
-            return Optional.of(new AssertionModel(AssertionType.isPositive, null, null, positiveAnnotation.message()));
         }
         return Optional.empty();
     }
@@ -289,10 +237,6 @@ public class AssertionMirrorBuilder {
     private Optional<AssertionMirror> buildAssertionMirrorForPositiveOrZeroAnnotation() {
         if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAKARTA)) {
             var positiveOrZeroAnnotation = (jakarta.validation.constraints.PositiveOrZero) annotation;
-            return Optional.of(
-                new AssertionModel(AssertionType.isPositiveOrZero, null, null, positiveOrZeroAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var positiveOrZeroAnnotation = (javax.validation.constraints.PositiveOrZero) annotation;
             return Optional.of(
                 new AssertionModel(AssertionType.isPositiveOrZero, null, null, positiveOrZeroAnnotation.message()));
         }
@@ -309,10 +253,6 @@ public class AssertionMirrorBuilder {
             var sizeAnnotation = (jakarta.validation.constraints.Size) annotation;
             return Optional.of(new AssertionModel(assertionType, String.valueOf(sizeAnnotation.min()),
                 String.valueOf(sizeAnnotation.max()), sizeAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var sizeAnnotation = (javax.validation.constraints.Size) annotation;
-            return Optional.of(new AssertionModel(assertionType, String.valueOf(sizeAnnotation.min()),
-                String.valueOf(sizeAnnotation.max()), sizeAnnotation.message()));
         }
         return Optional.empty();
     }
@@ -320,11 +260,6 @@ public class AssertionMirrorBuilder {
     private Optional<AssertionMirror> buildAssertionMirrorForDigitsAnnotation() {
         if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAKARTA)) {
             var digitsAnnotation = (jakarta.validation.constraints.Digits) annotation;
-            return Optional.of(
-                new AssertionModel(AssertionType.hasMaxDigits, String.valueOf(digitsAnnotation.integer()),
-                    String.valueOf(digitsAnnotation.fraction()), digitsAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var digitsAnnotation = (javax.validation.constraints.Digits) annotation;
             return Optional.of(
                 new AssertionModel(AssertionType.hasMaxDigits, String.valueOf(digitsAnnotation.integer()),
                     String.valueOf(digitsAnnotation.fraction()), digitsAnnotation.message()));
@@ -336,9 +271,6 @@ public class AssertionMirrorBuilder {
         if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAKARTA)) {
             var pastAnnotation = (jakarta.validation.constraints.Past) annotation;
             return Optional.of(new AssertionModel(AssertionType.isPast, null, null, pastAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var pastAnnotation = (javax.validation.constraints.Past) annotation;
-            return Optional.of(new AssertionModel(AssertionType.isPast, null, null, pastAnnotation.message()));
         }
         return Optional.empty();
     }
@@ -346,10 +278,6 @@ public class AssertionMirrorBuilder {
     private Optional<AssertionMirror> buildAssertionMirrorForPastOrPresentAnnotation() {
         if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAKARTA)) {
             var pastOrPresentAnnotation = (jakarta.validation.constraints.PastOrPresent) annotation;
-            return Optional.of(
-                new AssertionModel(AssertionType.isPastOrPresent, null, null, pastOrPresentAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var pastOrPresentAnnotation = (javax.validation.constraints.PastOrPresent) annotation;
             return Optional.of(
                 new AssertionModel(AssertionType.isPastOrPresent, null, null, pastOrPresentAnnotation.message()));
         }
@@ -360,9 +288,6 @@ public class AssertionMirrorBuilder {
         if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAKARTA)) {
             var futureAnnotation = (jakarta.validation.constraints.Future) annotation;
             return Optional.of(new AssertionModel(AssertionType.isFuture, null, null, futureAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var futureAnnotation = (javax.validation.constraints.Future) annotation;
-            return Optional.of(new AssertionModel(AssertionType.isFuture, null, null, futureAnnotation.message()));
         }
         return Optional.empty();
     }
@@ -372,10 +297,6 @@ public class AssertionMirrorBuilder {
             var futureOrPresentAnnotation = (jakarta.validation.constraints.FutureOrPresent) annotation;
             return Optional.of(
                 new AssertionModel(AssertionType.isFutureOrPresent, null, null, futureOrPresentAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var futureOrPresentAnnotation = (javax.validation.constraints.FutureOrPresent) annotation;
-            return Optional.of(
-                new AssertionModel(AssertionType.isFutureOrPresent, null, null, futureOrPresentAnnotation.message()));
         }
         return Optional.empty();
     }
@@ -383,10 +304,6 @@ public class AssertionMirrorBuilder {
     private Optional<AssertionMirror> buildAssertionMirrorForPatternAnnotation() {
         if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAKARTA)) {
             var patternAnnotation = (jakarta.validation.constraints.Pattern) annotation;
-            return Optional.of(
-                new AssertionModel(AssertionType.regEx, patternAnnotation.regexp(), null, patternAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var patternAnnotation = (javax.validation.constraints.Pattern) annotation;
             return Optional.of(
                 new AssertionModel(AssertionType.regEx, patternAnnotation.regexp(), null, patternAnnotation.message()));
         }
@@ -401,9 +318,6 @@ public class AssertionMirrorBuilder {
         if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAKARTA)) {
             var notEmptyAnnotation = (jakarta.validation.constraints.NotEmpty) annotation;
             return Optional.of(new AssertionModel(assertionType, null, null, notEmptyAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var notEmptyAnnotation = (javax.validation.constraints.NotEmpty) annotation;
-            return Optional.of(new AssertionModel(assertionType, null, null, notEmptyAnnotation.message()));
         }
         return Optional.empty();
     }
@@ -412,9 +326,6 @@ public class AssertionMirrorBuilder {
         if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAKARTA)) {
             var notBlankAnnotation = (jakarta.validation.constraints.NotBlank) annotation;
             return Optional.of(new AssertionModel(AssertionType.isNotBlank, null, null, notBlankAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var notBlankAnnotation = (javax.validation.constraints.NotBlank) annotation;
-            return Optional.of(new AssertionModel(AssertionType.isNotBlank, null, null, notBlankAnnotation.message()));
         }
         return Optional.empty();
     }
@@ -422,9 +333,6 @@ public class AssertionMirrorBuilder {
     private Optional<AssertionMirror> buildAssertionMirrorForEmailAnnotation() {
         if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAKARTA)) {
             var emailAnnotation = (jakarta.validation.constraints.Email) annotation;
-            return Optional.of(new AssertionModel(AssertionType.isValidEmail, null, null, emailAnnotation.message()));
-        } else if (annotation.annotationType().getName().startsWith(VALID_PACKAGE_NAME_JAVAX)) {
-            var emailAnnotation = (javax.validation.constraints.Email) annotation;
             return Optional.of(new AssertionModel(AssertionType.isValidEmail, null, null, emailAnnotation.message()));
         }
         return Optional.empty();
@@ -521,8 +429,7 @@ public class AssertionMirrorBuilder {
     }
 
     private String annotationIdentifier(Class<? extends Annotation> annotationType) {
-        if (VALID_PACKAGE_NAME_JAVAX.equals(annotationType.getPackageName()) || VALID_PACKAGE_NAME_JAKARTA.equals(
-            annotationType.getPackageName())) {
+        if ( VALID_PACKAGE_NAME_JAKARTA.equals(annotationType.getPackageName()) ) {
             return annotationType.getSimpleName();
         }
         return null;

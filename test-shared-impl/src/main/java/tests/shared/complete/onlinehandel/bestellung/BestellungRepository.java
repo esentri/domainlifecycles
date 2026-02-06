@@ -29,7 +29,6 @@ package tests.shared.complete.onlinehandel.bestellung;
 import io.domainlifecycles.domain.types.Publishes;
 import io.domainlifecycles.domain.types.Repository;
 import jakarta.validation.constraints.NotNull;
-import tests.shared.persistence.domain.bestellung.bv2.BestellStatusCodeEnum;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -63,7 +62,7 @@ public class BestellungRepository implements Repository<BestellungIdBv3, Bestell
         return bestellung.getId();
     }
 
-    public Stream<BestellungBv3> findByStatus(@NotNull BestellStatusCodeEnum status) {
+    public Stream<BestellungBv3> findByStatus(@NotNull BestellStatusCodeEnumBv3 status) {
         return Stream.empty();
     }
 

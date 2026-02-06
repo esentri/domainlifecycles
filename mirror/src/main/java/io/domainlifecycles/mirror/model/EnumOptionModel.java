@@ -26,8 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.EnumOptionMirror;
 
 import java.util.Objects;
@@ -46,8 +44,7 @@ public class EnumOptionModel implements EnumOptionMirror {
      * @param value the value of the enum option; must not be null
      * @throws NullPointerException if the value is null
      */
-    @JsonCreator
-    public EnumOptionModel(@JsonProperty("value") String value) {
+    public EnumOptionModel(String value) {
         this.value = Objects.requireNonNull(value);
     }
 

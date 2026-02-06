@@ -26,7 +26,6 @@
 
 package io.domainlifecycles.events.mq.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.events.api.ChannelFactory;
 import io.domainlifecycles.events.consume.execution.detector.ExecutionContextDetector;
@@ -36,6 +35,7 @@ import io.domainlifecycles.events.consume.execution.processor.ExecutionContextPr
 import io.domainlifecycles.events.consume.execution.processor.SimpleExecutionContextProcessor;
 import io.domainlifecycles.events.mq.consume.MqDomainEventConsumer;
 import io.domainlifecycles.events.mq.publish.MqDomainEventPublisher;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
 import io.domainlifecycles.services.api.ServiceProvider;
 
 import java.util.Objects;
@@ -61,10 +61,10 @@ public abstract class AbstractMqChannelFactory implements ChannelFactory {
      */
     protected final HandlerExecutor handlerExecutor;
     /**
-     * Represents an ObjectMapper instance used for serialization and deserialization.
-     * This ObjectMapper instance is used within the context of processing and handling domain events.
+     * Used for serialization and deserialization.
+     * This DomainEventSerializer instance is used within the context of processing and handling domain events.
      */
-    protected final ObjectMapper objectMapper;
+    protected final DomainEventSerializer domainEventSerializer;
 
     /**
      * Constructs a new AbstractMqChannelFactory with the given parameters.
@@ -73,26 +73,26 @@ public abstract class AbstractMqChannelFactory implements ChannelFactory {
      * @param serviceProvider The ServiceProvider instance to provide various types of services.
      * @param classProvider The ClassProvider instance to provide Class instances for full qualified class names.
      * @param handlerExecutor The HandlerExecutor instance to execute domain event listeners.
-     * @param objectMapper The ObjectMapper instance for serialization/deserialization.
+     * @param domainEventSerializer for serialization/deserialization.
      */
     public AbstractMqChannelFactory(ServiceProvider serviceProvider,
                                     ClassProvider classProvider,
                                     HandlerExecutor handlerExecutor,
-                                    ObjectMapper objectMapper) {
+                                    DomainEventSerializer domainEventSerializer) {
         this.serviceProvider = serviceProvider;
         this.classProvider = classProvider;
         this.handlerExecutor = handlerExecutor;
-        this.objectMapper = Objects.requireNonNull(objectMapper, "An ObjectMapper is required!");
+        this.domainEventSerializer = Objects.requireNonNull(domainEventSerializer, "A DomainEventSerializer is required!");
     }
 
     /**
-     * Constructs a new AbstractMqChannelFactory with the given ObjectMapper instance.
+     * Constructs a new AbstractMqChannelFactory with the given DomainEventSerializer instance.
      * Should be used for publishing use cases only.
      *
-     * @param objectMapper The ObjectMapper instance for serialization/deserialization
+     * @param domainEventSerializer for serialization/deserialization
      */
-    public AbstractMqChannelFactory(ObjectMapper objectMapper){
-        this(null, null, null, objectMapper);
+    public AbstractMqChannelFactory(DomainEventSerializer domainEventSerializer){
+        this(null, null, null, domainEventSerializer);
     }
 
     /**
@@ -131,7 +131,7 @@ public abstract class AbstractMqChannelFactory implements ChannelFactory {
         var executionContextProcessor = new SimpleExecutionContextProcessor(Objects.requireNonNull(handlerExecutor,"A HandlerExecutor is required!"));
 
         return new MqConsumingConfiguration(provideMqDomainEventConsumer(
-            this.objectMapper,
+            this.domainEventSerializer,
             executionContextDetector,
             executionContextProcessor,
             Objects.requireNonNull(this.classProvider, "A ClassProvider is required!")
@@ -144,31 +144,31 @@ public abstract class AbstractMqChannelFactory implements ChannelFactory {
      * @return An instance of MqPublishingConfiguration populated with the necessary configurations
      */
     protected MqPublishingConfiguration publishingConfiguration(){
-        return new MqPublishingConfiguration(provideMqDomainEventPublisher(this.objectMapper));
+        return new MqPublishingConfiguration(provideMqDomainEventPublisher(this.domainEventSerializer));
     }
 
     /**
      * Provides a method to obtain an implementation of MqDomainEventPublisher for publishing domain events.
      *
-     * @param objectMapper The ObjectMapper instance used for serialization/deserialization.
-     * @return An implementation of MqDomainEventPublisher with the provided ObjectMapper.
+     * @param domainEventSerializer used for serialization/deserialization.
+     * @return An implementation of MqDomainEventPublisher with the provided DomainEventSerializer.
      */
     abstract protected MqDomainEventPublisher provideMqDomainEventPublisher(
-        ObjectMapper objectMapper
+        DomainEventSerializer domainEventSerializer
     );
 
     /**
      * Provides an abstract method to create and return an instance of MqDomainEventConsumer,
      * which is responsible for consuming Message Queue (MQ) domain events.
      *
-     * @param objectMapper The ObjectMapper instance for serialization/deserialization
+     * @param domainEventSerializer for serialization/deserialization
      * @param executionContextDetector The ExecutionContextDetector instance for detecting execution contexts
      * @param executionContextProcessor The ExecutionContextProcessor instance for processing execution contexts
      * @param classProvider The ClassProvider instance for providing Class instances for full qualified class names
      * @return a MqDomainEventConsumer instance created with the provided parameters
      */
     abstract protected MqDomainEventConsumer provideMqDomainEventConsumer(
-        ObjectMapper objectMapper,
+        DomainEventSerializer domainEventSerializer,
         ExecutionContextDetector executionContextDetector,
         ExecutionContextProcessor executionContextProcessor,
         ClassProvider classProvider

@@ -9,17 +9,17 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.function.Executable;
 import org.slf4j.Logger;
 import tests.shared.TestDataGenerator;
-import tests.shared.persistence.domain.bestellung.bv2.AktionsCode;
-import tests.shared.persistence.domain.bestellung.bv2.ArtikelId;
-import tests.shared.persistence.domain.bestellung.bv2.BestellKommentar;
-import tests.shared.persistence.domain.bestellung.bv2.BestellKommentarId;
-import tests.shared.persistence.domain.bestellung.bv2.BestellPosition;
-import tests.shared.persistence.domain.bestellung.bv2.BestellPositionId;
-import tests.shared.persistence.domain.bestellung.bv2.BestellStatusCodeEnum;
-import tests.shared.persistence.domain.bestellung.bv2.Bestellung;
-import tests.shared.persistence.domain.bestellung.bv2.BestellungId;
-import tests.shared.persistence.domain.bestellung.bv2.Preis;
-import tests.shared.persistence.domain.bestellung.bv2.WaehrungEnum;
+import tests.shared.complete.onlinehandel.bestellung.AktionsCodeBv3;
+import tests.shared.complete.onlinehandel.bestellung.ArtikelIdBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellKommentarBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellKommentarIdBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellPositionBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellPositionIdBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellStatusCodeEnumBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
+import tests.shared.complete.onlinehandel.bestellung.BestellungIdBv3;
+import tests.shared.complete.onlinehandel.bestellung.PreisBv3;
+import tests.shared.complete.onlinehandel.bestellung.WaehrungEnumBv3;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -51,14 +51,14 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
     @Test
     public void testInsert() {
         //given
-        Bestellung b = TestDataGenerator.buildBestellung();
-        Bestellung copy = persistenceEventTestHelper.kryo.copy(b);
+        BestellungBv3 b = TestDataGenerator.buildBestellungBv3();
+        BestellungBv3 copy = persistenceEventTestHelper.kryo.copy(b);
 
         //when
-        Bestellung inserted = bestellungRepository.insert(copy);
+        BestellungBv3 inserted = bestellungRepository.insert(copy);
 
         //then
-        Optional<Bestellung> found = bestellungRepository.findResultById(new BestellungId(1l)).resultValue();
+        Optional<BestellungBv3> found = bestellungRepository.findResultById(new BestellungIdBv3(1l)).resultValue();
         Assertions.assertThat(found).isPresent();
         assertResultBestellung(inserted, found.get());
 
@@ -68,15 +68,15 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
     @Test
     public void testUpdateStatus() {
         //given
-        Bestellung inserted = bestellungRepository.insert(TestDataGenerator.buildBestellung());
-        Bestellung insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
+        BestellungBv3 inserted = bestellungRepository.insert(TestDataGenerator.buildBestellungBv3());
+        BestellungBv3 insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
 
         //when
-        insertedCopy.getBestellStatus().setStatusCode(BestellStatusCodeEnum.ZUSTELLUNG_LAEUFT);
-        Bestellung updated = bestellungRepository.update(insertedCopy);
+        insertedCopy.getBestellStatus().setStatusCode(BestellStatusCodeEnumBv3.ZUSTELLUNG_LAEUFT);
+        BestellungBv3 updated = bestellungRepository.update(insertedCopy);
 
         //then
-        Optional<Bestellung> found = bestellungRepository.findResultById(new BestellungId(1l)).resultValue();
+        Optional<BestellungBv3> found = bestellungRepository.findResultById(new BestellungIdBv3(1l)).resultValue();
         Assertions.assertThat(found).isPresent();
         assertResultBestellung(updated, found.get());
 
@@ -86,18 +86,18 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
     @Test
     public void testUpdateAddAktionsCodes() {
         //given
-        Bestellung inserted = bestellungRepository.insert(TestDataGenerator.buildBestellung());
-        Bestellung insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
+        BestellungBv3 inserted = bestellungRepository.insert(TestDataGenerator.buildBestellungBv3());
+        BestellungBv3 insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
 
         //when
         insertedCopy.setAktionsCodes(TestDataGenerator.newArrayListOf(
-            AktionsCode.builder().setValue("ABC").build(),
-            AktionsCode.builder().setValue("DEF").build()
+            AktionsCodeBv3.builder().setValue("ABC").build(),
+            AktionsCodeBv3.builder().setValue("DEF").build()
         ));
-        Bestellung updated = bestellungRepository.update(insertedCopy);
+        BestellungBv3 updated = bestellungRepository.update(insertedCopy);
 
         //then
-        Optional<Bestellung> found = bestellungRepository.findResultById(new BestellungId(1l)).resultValue();
+        Optional<BestellungBv3> found = bestellungRepository.findResultById(new BestellungIdBv3(1l)).resultValue();
         Assertions.assertThat(updated.concurrencyVersion()).isGreaterThan(inserted.concurrencyVersion());
         Assertions.assertThat(found).isPresent();
         assertResultBestellung(updated, found.get());
@@ -111,16 +111,16 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
     @Test
     public void testUpdateStatusUndPrio() {
         //given
-        Bestellung inserted = bestellungRepository.insert(TestDataGenerator.buildBestellung());
-        Bestellung insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
+        BestellungBv3 inserted = bestellungRepository.insert(TestDataGenerator.buildBestellungBv3());
+        BestellungBv3 insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
 
         //when
-        insertedCopy.getBestellStatus().setStatusCode(BestellStatusCodeEnum.ZUSTELLUNG_LAEUFT);
+        insertedCopy.getBestellStatus().setStatusCode(BestellStatusCodeEnumBv3.ZUSTELLUNG_LAEUFT);
         insertedCopy.setPrioritaet(Byte.valueOf("3"));
-        Bestellung updated = bestellungRepository.update(insertedCopy);
+        BestellungBv3 updated = bestellungRepository.update(insertedCopy);
 
         //then
-        Optional<Bestellung> found = bestellungRepository.findResultById(new BestellungId(1l)).resultValue();
+        Optional<BestellungBv3> found = bestellungRepository.findResultById(new BestellungIdBv3(1l)).resultValue();
         Assertions.assertThat(updated.concurrencyVersion()).isGreaterThan(inserted.concurrencyVersion());
         Assertions.assertThat(found).isPresent();
         assertResultBestellung(updated, found.get());
@@ -131,22 +131,22 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
     @Test
     public void testDeleteBestellpositionAddKommentar() {
         //given
-        Bestellung inserted = bestellungRepository.insert(TestDataGenerator.buildBestellung());
-        Bestellung insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
+        BestellungBv3 inserted = bestellungRepository.insert(TestDataGenerator.buildBestellungBv3());
+        BestellungBv3 insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
 
         //when
         insertedCopy.removeBestellPosition(insertedCopy.getBestellPositionen().get(0));
         insertedCopy.getBestellKommentare().add(
-            BestellKommentar.builder()
+            BestellKommentarBv3.builder()
                 .setKommentarText("Den Scheiß will ich doch nicht!")
                 .setKommentarAm(LocalDateTime.of(2021, 01, 2, 12, 2))
-                .setId(new BestellKommentarId(3l))
+                .setId(new BestellKommentarIdBv3(3l))
                 .build()
         );
-        Bestellung updated = bestellungRepository.update(insertedCopy);
+        BestellungBv3 updated = bestellungRepository.update(insertedCopy);
 
         //then
-        Optional<Bestellung> found = bestellungRepository.findResultById(new BestellungId(1l)).resultValue();
+        Optional<BestellungBv3> found = bestellungRepository.findResultById(new BestellungIdBv3(1l)).resultValue();
         Assertions.assertThat(updated.concurrencyVersion()).isGreaterThan(inserted.concurrencyVersion());
         Assertions.assertThat(found).isPresent();
         assertResultBestellung(updated, found.get());
@@ -158,40 +158,40 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
     @Test
     public void testUpdateComplexScenarioUniqueConstraint() {
         //given
-        Bestellung inserted = bestellungRepository.insert(TestDataGenerator.buildBestellung());
-        Bestellung insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
+        BestellungBv3 inserted = bestellungRepository.insert(TestDataGenerator.buildBestellungBv3());
+        BestellungBv3 insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
 
         //when
         insertedCopy.removeBestellPosition(insertedCopy.getBestellPositionen().get(0));
         insertedCopy.getBestellKommentare().add(
-            BestellKommentar.builder()
+            BestellKommentarBv3.builder()
                 .setKommentarText("Den Scheiß will ich doch nicht!")
                 .setKommentarAm(LocalDateTime.of(2021, 01, 2, 12, 2))
-                .setId(new BestellKommentarId(3l))
+                .setId(new BestellKommentarIdBv3(3l))
                 .build()
         );
         insertedCopy.addBestellPosition(
-            BestellPosition.builder()
-                .setId(new BestellPositionId(3l))
-                .setStueckPreis(Preis.builder()
+            BestellPositionBv3.builder()
+                .setId(new BestellPositionIdBv3(3l))
+                .setStueckPreis(PreisBv3.builder()
                     .setBetrag(BigDecimal.ONE)
-                    .setWaehrung(WaehrungEnum.EUR)
+                    .setWaehrung(WaehrungEnumBv3.EUR)
                     .build())
                 .setStueckzahl(50)
-                .setArtikelId(new ArtikelId(1l))
+                .setArtikelId(new ArtikelIdBv3(1l))
                 .build()
         );
         insertedCopy.getBestellKommentare().add(
-            BestellKommentar.builder()
+            BestellKommentarBv3.builder()
                 .setKommentarText("Ne ich nehm's doch, aber nur die Hälfte! (Weil's jetzt billiger ist....hähähähä)")
                 .setKommentarAm(LocalDateTime.of(2021, 01, 2, 12, 3))
-                .setId(new BestellKommentarId(4l))
+                .setId(new BestellKommentarIdBv3(4l))
                 .build()
         );
-        Bestellung updated = bestellungRepository.update(insertedCopy);
+        BestellungBv3 updated = bestellungRepository.update(insertedCopy);
 
         //then
-        Optional<Bestellung> found = bestellungRepository.findResultById(new BestellungId(1l)).resultValue();
+        Optional<BestellungBv3> found = bestellungRepository.findResultById(new BestellungIdBv3(1l)).resultValue();
         Assertions.assertThat(updated.concurrencyVersion()).isGreaterThan(inserted.concurrencyVersion());
         Assertions.assertThat(found).isPresent();
         assertResultBestellung(updated, found.get());
@@ -202,19 +202,19 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
     @Test
     public void testUpdateComplexScenarioUniqueConstraintFail() {
         //given
-        Bestellung inserted = bestellungRepository.insert(TestDataGenerator.buildBestellung());
-        Bestellung insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
+        BestellungBv3 inserted = bestellungRepository.insert(TestDataGenerator.buildBestellungBv3());
+        BestellungBv3 insertedCopy = persistenceEventTestHelper.kryo.copy(inserted);
 
         //when
         insertedCopy.getBestellPositionen().add(
-            BestellPosition.builder()
-                .setId(new BestellPositionId(3l))
-                .setStueckPreis(Preis.builder()
+            BestellPositionBv3.builder()
+                .setId(new BestellPositionIdBv3(3l))
+                .setStueckPreis(PreisBv3.builder()
                     .setBetrag(BigDecimal.ONE)
-                    .setWaehrung(WaehrungEnum.EUR)
+                    .setWaehrung(WaehrungEnumBv3.EUR)
                     .build())
                 .setStueckzahl(50)
-                .setArtikelId(new ArtikelId(1l))
+                .setArtikelId(new ArtikelIdBv3(1l))
                 .build()
         );
 
@@ -226,7 +226,7 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
         DataAccessException ex = assertThrows(DataAccessException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
-                Bestellung updated = bestellungRepository.update(insertedCopy);
+                BestellungBv3 updated = bestellungRepository.update(insertedCopy);
             }
         });
     }
@@ -234,23 +234,23 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
     @Test
     public void testDelete() {
         //given
-        Bestellung inserted = bestellungRepository.insert(TestDataGenerator.buildBestellung());
-        Optional<Bestellung> foundAfter = bestellungRepository.findResultById(new BestellungId(1l)).resultValue();
+        BestellungBv3 inserted = bestellungRepository.insert(TestDataGenerator.buildBestellungBv3());
+        Optional<BestellungBv3> foundAfter = bestellungRepository.findResultById(new BestellungIdBv3(1l)).resultValue();
         Assertions.assertThat(foundAfter).isPresent();
         //when
-        bestellungRepository.deleteById(new BestellungId(1l));
+        bestellungRepository.deleteById(new BestellungIdBv3(1l));
 
         //then
-        Optional<Bestellung> found = bestellungRepository.findResultById(new BestellungId(1l)).resultValue();
+        Optional<BestellungBv3> found = bestellungRepository.findResultById(new BestellungIdBv3(1l)).resultValue();
         Assertions.assertThat(found).isEmpty();
     }
 
     @Test
     public void testFetchById() {
         //given
-        Bestellung inserted = bestellungRepository.insert(TestDataGenerator.buildBestellung());
+        BestellungBv3 inserted = bestellungRepository.insert(TestDataGenerator.buildBestellungBv3());
         //when
-        Optional<Bestellung> foundAfter = bestellungRepository.findResultById(new BestellungId(1l)).resultValue();
+        Optional<BestellungBv3> foundAfter = bestellungRepository.findResultById(new BestellungIdBv3(1l)).resultValue();
         //then
         Assertions.assertThat(foundAfter).isPresent();
 
@@ -260,16 +260,16 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
     @Test
     public void testFetchByStatus() {
         //given
-        Bestellung inserted = bestellungRepository.insert(TestDataGenerator.buildBestellung());
-        Optional<Bestellung> foundAfter = bestellungRepository.findResultById(new BestellungId(1l)).resultValue();
+        BestellungBv3 inserted = bestellungRepository.insert(TestDataGenerator.buildBestellungBv3());
+        Optional<BestellungBv3> foundAfter = bestellungRepository.findResultById(new BestellungIdBv3(1l)).resultValue();
         Assertions.assertThat(foundAfter).isPresent();
         //when
-        List<Bestellung> bestaetigteBestellungen = bestellungRepository.findByStatusCode(
-            BestellStatusCodeEnum.BESTAETIGT);
+        List<BestellungBv3> bestaetigteBestellungen = bestellungRepository.findByStatusCode(
+            BestellStatusCodeEnumBv3.BESTAETIGT);
         //then
         Assertions.assertThat(bestaetigteBestellungen).isEmpty();
         //when
-        List<Bestellung> initialeBestellungen = bestellungRepository.findByStatusCode(BestellStatusCodeEnum.INITIAL);
+        List<BestellungBv3> initialeBestellungen = bestellungRepository.findByStatusCode(BestellStatusCodeEnumBv3.INITIAL);
         //then
         Assertions.assertThat(initialeBestellungen).isNotEmpty();
 
@@ -279,11 +279,11 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
     @Test
     public void testFetchAll() {
         //given
-        List<Bestellung> bestellungen = TestDataGenerator.buildManyBestellungen();
+        List<BestellungBv3> bestellungen = TestDataGenerator.buildManyBestellungenBv3();
         bestellungen.stream().forEach(b -> bestellungRepository.insert(b));
 
         //when
-        List<Bestellung> found = bestellungRepository.findAllBestellungen();
+        List<BestellungBv3> found = bestellungRepository.findAllBestellungen();
 
         //then
         assertThat(bestellungen.size() == found.size());
@@ -306,7 +306,7 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
     @Test
     public void testFetchPaged() {
         //given
-        List<Bestellung> bestellungen = TestDataGenerator.buildManyBestellungen();
+        List<BestellungBv3> bestellungen = TestDataGenerator.buildManyBestellungenBv3();
         bestellungen.stream().forEach(b -> bestellungRepository.insert(b));
 
 
@@ -315,7 +315,7 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
         while (currentOffset < bestellungen.size()) {
             int offsetInLoop = currentOffset;
             //when
-            List<Bestellung> found = bestellungRepository.findBestellungenPaged(currentOffset, pageSize);
+            List<BestellungBv3> found = bestellungRepository.findBestellungenPaged(currentOffset, pageSize);
 
             //then
             assertThat(found.size() <= pageSize);
@@ -345,8 +345,8 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
     @Test
     public void testFetchCustomSubquery() {
         //given
-        Bestellung inserted = bestellungRepository.insert(TestDataGenerator.buildBestellung());
-        Optional<Bestellung> foundAfter = bestellungRepository.findResultById(new BestellungId(1l)).resultValue();
+        BestellungBv3 inserted = bestellungRepository.insert(TestDataGenerator.buildBestellungBv3());
+        Optional<BestellungBv3> foundAfter = bestellungRepository.findResultById(new BestellungIdBv3(1l)).resultValue();
         Assertions.assertThat(foundAfter).isPresent();
         assertResultBestellung(inserted, foundAfter.get());
 
@@ -358,7 +358,7 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
 
         //Die Subquery ergänzt in den Bestellungen nur Positionen mit ArtikelId 1
         //Nicht fachlich sinnvoll -> nur Demozwecke
-        Optional<Bestellung> foundSubquery = bestellungRepository.findWithSubquery(new BestellungId(1l));
+        Optional<BestellungBv3> foundSubquery = bestellungRepository.findWithSubquery(new BestellungIdBv3(1l));
 
         //then
         Assertions.assertThat(foundSubquery).isPresent();
@@ -380,14 +380,14 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
     @Test
     public void testFetchOptimized() {
         //given
-        List<Bestellung> bestellungen = TestDataGenerator.buildManyBestellungen();
+        List<BestellungBv3> bestellungen = TestDataGenerator.buildManyBestellungenBv3();
         bestellungen.stream().forEach(b -> bestellungRepository.insert(b));
 
         int pageSize = 3;
         int currentOffset = 0;
 
         //when
-        List<Bestellung> found = bestellungRepository
+        List<BestellungBv3> found = bestellungRepository
             .findBestellungenOptimized(currentOffset, pageSize)
             .collect(Collectors.toList());
 
@@ -395,7 +395,7 @@ public class BestellungRepository_ITest extends BasePersistence_ITest {
         Assertions.assertThat(found).hasSize(3);
     }
 
-    private void assertResultBestellung(Bestellung result, Bestellung found) {
+    private void assertResultBestellung(BestellungBv3 result, BestellungBv3 found) {
         Assertions.assertThat(result)
             .usingRecursiveComparison()
             .ignoringAllOverriddenEquals()

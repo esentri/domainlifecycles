@@ -26,23 +26,24 @@
 
 package io.domainlifecycles.events.gruelboxproxyjakartajmsidempotency;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.gruelbox.transactionoutbox.DefaultPersistor;
 import com.gruelbox.transactionoutbox.Dialect;
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import com.gruelbox.transactionoutbox.TransactionOutboxListener;
-import com.gruelbox.transactionoutbox.jackson.JacksonInvocationSerializer;
 import com.gruelbox.transactionoutbox.spring.SpringTransactionManager;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.access.classes.DefaultClassProvider;
-import io.domainlifecycles.events.ADomainEvent;
-import io.domainlifecycles.events.ADomainService;
-import io.domainlifecycles.events.AQueryHandler;
-import io.domainlifecycles.events.ARepository;
-import io.domainlifecycles.events.AnApplicationService;
-import io.domainlifecycles.events.AnOutboundService;
-import io.domainlifecycles.events.CounterDomainEvent;
-import io.domainlifecycles.events.TransactionalCounterService;
+import io.domainlifecycles.builder.DomainObjectBuilderProvider;
+import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
+import testdomain.general.ADomainEvent;
+import testdomain.general.ADomainService;
+import testdomain.general.AQueryHandler;
+import testdomain.general.ARepository;
+import testdomain.general.AnApplicationService;
+import testdomain.general.AnOutboundService;
+import testdomain.general.CounterDomainEvent;
+import testdomain.general.TransactionalCounterService;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
@@ -50,9 +51,12 @@ import io.domainlifecycles.events.consume.execution.handler.TransactionalHandler
 import io.domainlifecycles.events.gruelbox.api.DomainEventsInstantiator;
 import io.domainlifecycles.events.gruelbox.idempotent.IdempotencyConfiguration;
 import io.domainlifecycles.events.gruelbox.idempotent.IdempotencyConfigurationEntry;
+import io.domainlifecycles.events.gruelbox.serialize.DlcJacksonInvocationSerializer;
 import io.domainlifecycles.events.jakarta.jms.api.GruelboxProxyJakartaJmsChannelFactory;
 import io.domainlifecycles.events.mq.api.MqProcessingChannel;
 import io.domainlifecycles.events.mq.consume.SpringTransactionalIdempotencyAwareHandlerExecutorProxy;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
+import io.domainlifecycles.events.serialize.jackson3.JacksonDomainEventSerializer;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
 import jakarta.jms.ConnectionFactory;
@@ -141,7 +145,6 @@ public class JakartaJmsGruelboxIdempotencyConfig {
     @Bean
     public TransactionOutbox transactionOutbox(
         SpringTransactionManager springTransactionManager,
-        ObjectMapper objectMapper,
         DomainEventsInstantiator domainEventsInstantiator,
         TransactionOutboxListener transactionOutboxListener
     ) {
@@ -150,7 +153,7 @@ public class JakartaJmsGruelboxIdempotencyConfig {
             .transactionManager(springTransactionManager)
             .blockAfterAttempts(3)
             .persistor(DefaultPersistor.builder()
-                .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
+                .serializer(new DlcJacksonInvocationSerializer())
                 .dialect(Dialect.H2)
                 .build())
             .listener(transactionOutboxListener)
@@ -176,12 +179,22 @@ public class JakartaJmsGruelboxIdempotencyConfig {
     }
 
     @Bean
+    public DomainObjectBuilderProvider domainObjectBuilderProvider(){
+        return new InnerClassDomainObjectBuilderProvider();
+    }
+
+    @Bean
+    public DomainEventSerializer domainEventSerializer(DomainObjectBuilderProvider domainObjectBuilderProvider){
+        return new JacksonDomainEventSerializer(domainObjectBuilderProvider);
+    }
+
+    @Bean
     public GruelboxProxyJakartaJmsChannelFactory gruelboxProxyActiveMqChannelFactory(
         ServiceProvider serviceProvider,
         ClassProvider classProvider,
         TransactionalHandlerExecutor transactionalHandlerExecutor,
         ConnectionFactory jmsConnectionFactory,
-        ObjectMapper objectMapper,
+        DomainEventSerializer domainEventSerializer,
         TransactionOutbox transactionOutbox,
         DomainEventsInstantiator domainEventsInstantiator,
         SpringTransactionalIdempotencyAwareHandlerExecutorProxy springTransactionalIdempotencyAwareHandlerExecutorProxy
@@ -190,7 +203,7 @@ public class JakartaJmsGruelboxIdempotencyConfig {
             serviceProvider,
             classProvider,
             transactionalHandlerExecutor,
-            objectMapper,
+            domainEventSerializer,
             transactionOutbox,
             domainEventsInstantiator,
             jmsConnectionFactory,

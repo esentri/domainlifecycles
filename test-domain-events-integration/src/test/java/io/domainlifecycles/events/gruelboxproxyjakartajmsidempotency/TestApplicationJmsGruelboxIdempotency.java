@@ -27,12 +27,12 @@
 package io.domainlifecycles.events.gruelboxproxyjakartajmsidempotency;
 
 import io.domainlifecycles.domain.types.ServiceKind;
-import io.domainlifecycles.events.ADomainService;
-import io.domainlifecycles.events.AQueryHandler;
-import io.domainlifecycles.events.ARepository;
-import io.domainlifecycles.events.AnApplicationService;
-import io.domainlifecycles.events.AnOutboundService;
-import io.domainlifecycles.events.TransactionalCounterService;
+import testdomain.general.ADomainService;
+import testdomain.general.AQueryHandler;
+import testdomain.general.ARepository;
+import testdomain.general.AnApplicationService;
+import testdomain.general.AnOutboundService;
+import testdomain.general.TransactionalCounterService;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
@@ -64,7 +64,8 @@ public class TestApplicationJmsGruelboxIdempotency {
 
     @Bean
     DomainMirror initializedDomain(){
-        Domain.initialize(new ReflectiveDomainMirrorFactory("io.domainlifecycles.events"));
+        Domain.unInitialize();
+        Domain.initialize(new ReflectiveDomainMirrorFactory("testdomain.general"));
         return Domain.getDomainMirror();
     }
 

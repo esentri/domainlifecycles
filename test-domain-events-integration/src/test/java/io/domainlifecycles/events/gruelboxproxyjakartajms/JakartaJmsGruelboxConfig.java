@@ -26,22 +26,26 @@
 
 package io.domainlifecycles.events.gruelboxproxyjakartajms;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.gruelbox.transactionoutbox.DefaultPersistor;
 import com.gruelbox.transactionoutbox.Dialect;
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import com.gruelbox.transactionoutbox.TransactionOutboxListener;
-import com.gruelbox.transactionoutbox.jackson.JacksonInvocationSerializer;
 import com.gruelbox.transactionoutbox.spring.SpringTransactionManager;
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.access.classes.DefaultClassProvider;
+import io.domainlifecycles.builder.DomainObjectBuilderProvider;
+import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.events.gruelbox.api.DomainEventsInstantiator;
+import io.domainlifecycles.events.gruelbox.serialize.DlcJacksonInvocationSerializer;
 import io.domainlifecycles.events.jakarta.jms.api.GruelboxProxyJakartaJmsChannelFactory;
 import io.domainlifecycles.events.mq.api.MqProcessingChannel;
+import io.domainlifecycles.events.serialize.DomainEventSerializer;
+import io.domainlifecycles.events.serialize.jackson3.JacksonDomainEventSerializer;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
 import jakarta.jms.ConnectionFactory;
@@ -51,6 +55,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.transaction.PlatformTransactionManager;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
@@ -59,6 +64,16 @@ import java.util.List;
 @EnableJms
 @Import({SpringTransactionManager.class})
 public class JakartaJmsGruelboxConfig {
+
+    @Bean
+    public DomainObjectBuilderProvider domainObjectBuilderProvider(){
+        return new InnerClassDomainObjectBuilderProvider();
+    }
+
+    @Bean
+    public DomainEventSerializer domainEventSerializer(DomainObjectBuilderProvider domainObjectBuilderProvider){
+        return new JacksonDomainEventSerializer(domainObjectBuilderProvider);
+    }
 
     @Bean
     public DomainEventsInstantiator domainEventsInstantiator(){
@@ -77,7 +92,7 @@ public class JakartaJmsGruelboxConfig {
             .transactionManager(springTransactionManager)
             .blockAfterAttempts(3)
             .persistor(DefaultPersistor.builder()
-                .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
+                .serializer(new DlcJacksonInvocationSerializer())
                 .dialect(Dialect.H2)
                 .build())
             .listener(transactionOutboxListener)
@@ -90,7 +105,7 @@ public class JakartaJmsGruelboxConfig {
         ClassProvider classProvider,
         TransactionalHandlerExecutor transactionalHandlerExecutor,
         ConnectionFactory jmsConnectionFactory,
-        ObjectMapper objectMapper,
+        DomainEventSerializer domainEventSerializer,
         TransactionOutbox transactionOutbox,
         DomainEventsInstantiator domainEventsInstantiator
     ){
@@ -98,7 +113,7 @@ public class JakartaJmsGruelboxConfig {
             serviceProvider,
             classProvider,
             transactionalHandlerExecutor,
-            objectMapper,
+            domainEventSerializer,
             transactionOutbox,
             domainEventsInstantiator,
             jmsConnectionFactory

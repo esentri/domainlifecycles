@@ -26,14 +26,12 @@
 
 package io.domainlifecycles.events.springgruelboxintegration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gruelbox.transactionoutbox.DefaultPersistor;
 import com.gruelbox.transactionoutbox.Dialect;
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import com.gruelbox.transactionoutbox.TransactionOutboxListener;
-import com.gruelbox.transactionoutbox.jackson.JacksonInvocationSerializer;
 import com.gruelbox.transactionoutbox.spring.SpringTransactionManager;
-import io.domainlifecycles.events.MyTransactionOutboxListener;
+import testdomain.general.MyTransactionOutboxListener;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
@@ -41,6 +39,7 @@ import io.domainlifecycles.events.consume.execution.handler.TransactionalHandler
 import io.domainlifecycles.events.gruelbox.api.DomainEventsInstantiator;
 import io.domainlifecycles.events.gruelbox.api.GruelboxChannelFactory;
 import io.domainlifecycles.events.gruelbox.api.GruelboxProcessingChannel;
+import io.domainlifecycles.events.gruelbox.serialize.DlcJacksonInvocationSerializer;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +59,6 @@ public class GruelboxIntegrationConfig {
     @Bean
     public TransactionOutbox transactionOutbox(
         SpringTransactionManager springTransactionManager,
-        ObjectMapper objectMapper,
         DomainEventsInstantiator domainEventsInstantiator,
         TransactionOutboxListener transactionOutboxListener
     ) {
@@ -70,7 +68,7 @@ public class GruelboxIntegrationConfig {
             .blockAfterAttempts(3)
             .attemptFrequency(Duration.ofSeconds(1))
             .persistor(DefaultPersistor.builder()
-                           .serializer(JacksonInvocationSerializer.builder().mapper(objectMapper).build())
+                           .serializer(new DlcJacksonInvocationSerializer())
                            .dialect(Dialect.H2)
                            .build())
             .listener(transactionOutboxListener)

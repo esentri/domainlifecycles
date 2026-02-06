@@ -26,6 +26,8 @@
 
 package io.domainlifecycles.mirror.reflect;
 
+import io.domainlifecycles.domain.types.DomainEvent;
+import io.domainlifecycles.domain.types.DomainEventListener;
 import io.domainlifecycles.domain.types.ListensTo;
 import io.domainlifecycles.domain.types.Publishes;
 import io.domainlifecycles.mirror.api.AccessLevel;
@@ -133,8 +135,17 @@ public class MethodMirrorBuilder {
 
     private Optional<String> listenedEventTypeName() {
         var listensAnnotation = m.getAnnotation(ListensTo.class);
-        if (listensAnnotation != null && listensAnnotation.domainEventType() != null) {
-            return Optional.of(listensAnnotation.domainEventType().getName());
+        var domainEventListenerAnnotation = m.getAnnotation(DomainEventListener.class);
+        var domainEventTypeName = Arrays.stream(m.getParameters())
+            .filter(p -> DomainEvent.class.isAssignableFrom(p.getType()))
+            .findFirst()
+            .map(p -> p.getType().getName())
+            .orElse(null);
+        if (domainEventListenerAnnotation != null && domainEventTypeName != null) {
+            return Optional.of(domainEventTypeName);
+        }
+        if (listensAnnotation != null && domainEventTypeName != null) {
+            return Optional.of(domainEventTypeName);
         }
         return Optional.empty();
     }

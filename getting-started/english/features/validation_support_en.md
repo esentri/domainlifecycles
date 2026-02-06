@@ -11,10 +11,39 @@ The ByteCode extension, for example, adds corresponding validation calls to all 
 
 ---
 
+**Note:** The validation features are **not** included in DLC's autoconfiguration and need to be activated 
+explicitly as described below.
+
+## Configuration
+The byte code extension used here only works if it has been activated, for example in the
+Spring Boot Application class with `@PostConstruct` call:
+
+```Java
+@SpringBootApplication
+@EnableDlc(
+        dlcDomainBasePackages = "com.example.domain",
+        jooqRecordPackage = "com.example.records",
+        jooqSqlDialect = SQLDialect.H2)
+public class ShopApplication {
+    
+    public static void main(String[] args) {
+        new SpringApplicationBuilder(ShopApplication.class).run(args);
+    }
+
+    /**
+     * Enable DLC byte code extension for the domain model of the "sampleshop"
+     */
+    @PostConstruct
+    public void postConstruct() {
+        ValidationDomainClassExtender.extend("sampleshop");
+    }
+}
+```
+
 ## Implementation
 Validation and implementation of business logic can be implemented in each of the domain types.
 
-For example like this:
+For example, like this:
 
 ```Java
 public class Customer extends AggregateRootBase<CustomerId> {
@@ -61,35 +90,9 @@ public class Customer extends AggregateRootBase<CustomerId> {
 In this example, both BeanValidation annotations (see `@NotNull`) and programmatic
 `DomainAssertions` are used. The ByteCode extension of DLC automatically inserts the calls of `validate()` and 
 `BeanValidations-validate(this);` automatically in the appropriate places. The use of bean validations is optional.
-Alternatively all validations can also be mapped as DomainAssertion.
 
-Of course, the byte code extension used here only works if it has been activated, for example in the 
-Spring Boot Application class with `@PostConstruct` call:
-
-```Java
-@SpringBootApplication
-public class ShopApplication {
-
-    static {
-        Domain.initialize(new ReflectiveDomainMirrorFactory("sampleshop"));
-    }
-    
-    public static void main(String[] args) {
-        new SpringApplicationBuilder(ShopApplication.class).run(args);
-    }
-
-    /**
-     * Enable DLC byte code extension for the domain model of the "sampleshop"
-     */
-    @PostConstruct
-    public void postConstruct() {
-        ValidationDomainClassExtender.extend("sampleshop");
-    }
-}
-```
-
-Alternatively, the calls `BeanValidations.validate(this);` and `validate();`
-can always be made explicitly.
+Alternatively all validations can also be mapped as DomainAssertion or the calls `BeanValidations.validate(this);` and `validate();`
+can always be made explicitly without using the byte code extension.
 
 ## Unit-Tests
 ```Java
@@ -118,9 +121,9 @@ class CustomerTest {
 ```
 ---
 
-|          **Domain-Events**           |        **Spring-Web-Integration**         |
-|:------------------------------------:|:-----------------------------------------:|
-|  [<< Previous](domain_events_en.md)  |  [Next >>](spring_web_integration_en.md)  |
+|         **Domain-Events**          |
+|:----------------------------------:|
+| [<< Previous](domain_events_en.md) |
 
 ---
 

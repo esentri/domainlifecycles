@@ -12,7 +12,6 @@ dependencies {
     implementation project(":assertions")
     implementation libs.slf4j.api
     implementation libs.assertj
-    implementation libs.javax.validation.api
     implementation libs.jakarta.validation.api
     implementation libs.kryo
     compileOnly libs.lombok

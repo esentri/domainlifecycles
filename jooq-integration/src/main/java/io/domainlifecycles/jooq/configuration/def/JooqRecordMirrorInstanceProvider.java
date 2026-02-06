@@ -52,6 +52,11 @@ public class JooqRecordMirrorInstanceProvider
 
     private final NewRecordInstanceProvider newRecordInstanceProvider;
 
+    /**
+     * Constructs a new instance of {@code JooqRecordMirrorInstanceProvider}.
+     *
+     * @param newRecordInstanceProvider the provider responsible for supplying new record instances
+     */
     public JooqRecordMirrorInstanceProvider(final NewRecordInstanceProvider newRecordInstanceProvider) {
         this.newRecordInstanceProvider = newRecordInstanceProvider;
     }

@@ -45,6 +45,7 @@ import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -149,6 +150,17 @@ public class FilteredDomainClasses {
             }
         }
         return this.includedDomainTypes.contains(domainTypeMirror);
+    }
+
+    /**
+     * Query contained domain type mirror
+     * @param fullQualifiedTypeName of a domaintype
+     * @return Optional of the contained DomainType Mirror, empty Optional if not contained
+     */
+    public Optional<DomainTypeMirror> getContained(String fullQualifiedTypeName){
+        return this.includedDomainTypes.stream()
+            .filter(t -> t.getTypeName().equals(fullQualifiedTypeName))
+            .findFirst();
     }
 
     /**

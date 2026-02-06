@@ -63,6 +63,7 @@ public class IdempotentExecutor {
      *
      * @param idempotentExecutionContext The context for executing the idempotent operation.
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void execute(IdempotentExecutionContext idempotentExecutionContext){
         ExecutionContext executionContext = null;
         var service = serviceProvider.getServiceKindInstance(idempotentExecutionContext.handlerClass().getName());

@@ -26,9 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.EnumMirror;
 import io.domainlifecycles.mirror.api.EnumOptionMirror;
@@ -60,14 +57,13 @@ public class EnumModel extends DomainTypeModel implements EnumMirror {
      * @param inheritanceHierarchyTypeNames the list of type names in the inheritance hierarchy of the enum, cannot be null.
      * @param allInterfaceTypeNames the list of interface type names implemented by the enum, cannot be null.
      */
-    @JsonCreator
-    public EnumModel(@JsonProperty("typeName") String typeName,
-                     @JsonProperty("abstract") boolean isAbstract,
-                     @JsonProperty("allFields") List<FieldMirror> allFields,
-                     @JsonProperty("methods") List<MethodMirror> methods,
-                     @JsonProperty("enumOptions") List<EnumOptionMirror> enumOptions,
-                     @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
-                     @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
+    public EnumModel(String typeName,
+                     boolean isAbstract,
+                     List<FieldMirror> allFields,
+                     List<MethodMirror> methods,
+                     List<EnumOptionMirror> enumOptions,
+                     List<String> inheritanceHierarchyTypeNames,
+                     List<String> allInterfaceTypeNames
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
         Objects.requireNonNull(enumOptions);
@@ -101,7 +97,6 @@ public class EnumModel extends DomainTypeModel implements EnumMirror {
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public DomainType getDomainType() {
         return DomainType.ENUM;

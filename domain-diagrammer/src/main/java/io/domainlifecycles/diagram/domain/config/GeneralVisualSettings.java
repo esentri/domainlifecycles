@@ -33,7 +33,7 @@ import java.util.List;
  * The GeneralVisualSettings class is responsible for managing visualization settings in a domain-specific diagram.
  * It encapsulates configuration preferences for various entities and their attributes,
  * determining their visibility and representation in the diagram.
- * 
+ *
  * @author Mario Herb
  */
 public class GeneralVisualSettings {
@@ -73,7 +73,7 @@ public class GeneralVisualSettings {
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KINDS = true;
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_FIELDS = false;
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_METHODS = false;
-    private static final boolean DEFAULT_CALL_APPLICATION_SERVICE_DRIVER = true;
+    private static final boolean DEFAULT_CALL_APPLICATION_SERVICE_DRIVER = false;
     private static final List<String> DEFAULT_FIELD_BLACKLIST = List.of("concurrencyVersion");
     private static final List<String> DEFAULT_METHOD_BLACKLIST = List.of(
         "builder",
@@ -83,6 +83,7 @@ public class GeneralVisualSettings {
         "findResultById",
         "publish",
         "increaseVersion",
+        "getFetcher",
         "equals",
         "hashCode",
         "toString");
@@ -96,6 +97,7 @@ public class GeneralVisualSettings {
     private static final boolean DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_READ_MODELS = false;
     private static final boolean DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_DOMAIN_EVENTS = false;
     private static final boolean DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_DOMAIN_COMMANDS = false;
+    private static final boolean DEFAULT_SHOW_NOTES = false;
 
     private final boolean showFields;
     private final boolean showFullQualifiedClassNames;
@@ -146,57 +148,59 @@ public class GeneralVisualSettings {
     private final boolean showInheritanceStructuresForReadModels;
     private final boolean showInheritanceStructuresForDomainEvents;
     private final boolean showInheritanceStructuresForDomainCommands;
+    private final boolean showNotes;
 
     private GeneralVisualSettings(
-        boolean showFields, 
-        boolean showFullQualifiedClassNames, 
-        boolean showAssertions, 
-        boolean showMethods, 
-        boolean showOnlyPublicMethods, 
-        boolean showAggregates, 
-        boolean showAggregateFields, 
-        boolean showAggregateMethods, 
-        boolean showDomainEvents, 
-        boolean showDomainEventFields, 
-        boolean showDomainEventMethods, 
-        boolean showDomainCommands, 
-        boolean showOnlyTopLevelDomainCommandRelations, 
-        boolean showDomainCommandFields, 
-        boolean showDomainCommandMethods, 
-        boolean showDomainServices, 
-        boolean showDomainServiceFields, 
-        boolean showDomainServiceMethods, 
-        boolean showApplicationServices, 
-        boolean showApplicationServiceFields, 
-        boolean showApplicationServiceMethods, 
-        boolean showRepositories, 
-        boolean showRepositoryFields, 
-        boolean showRepositoryMethods, 
-        boolean showReadModels, 
-        boolean showReadModelFields, 
-        boolean showReadModelMethods, 
-        boolean showQueryHandlers, 
-        boolean showQueryHandlerFields, 
-        boolean showQueryHandlerMethods, 
-        boolean showOutboundServices, 
-        boolean showOutboundServiceFields, 
-        boolean showOutboundServiceMethods, 
-        boolean showUnspecifiedServiceKinds, 
-        boolean showUnspecifiedServiceKindFields, 
-        boolean showUnspecifiedServiceKindMethods, 
-        boolean callApplicationServiceDriver, 
-        List<String> fieldBlacklist, 
-        List<String> methodBlacklist, 
-        boolean showInheritedMembersInClasses, 
-        boolean showObjectMembersInClasses, 
-        boolean multiplicityInLabel, 
-        boolean fieldStereotypes, 
+        boolean showFields,
+        boolean showFullQualifiedClassNames,
+        boolean showAssertions,
+        boolean showMethods,
+        boolean showOnlyPublicMethods,
+        boolean showAggregates,
+        boolean showAggregateFields,
+        boolean showAggregateMethods,
+        boolean showDomainEvents,
+        boolean showDomainEventFields,
+        boolean showDomainEventMethods,
+        boolean showDomainCommands,
+        boolean showOnlyTopLevelDomainCommandRelations,
+        boolean showDomainCommandFields,
+        boolean showDomainCommandMethods,
+        boolean showDomainServices,
+        boolean showDomainServiceFields,
+        boolean showDomainServiceMethods,
+        boolean showApplicationServices,
+        boolean showApplicationServiceFields,
+        boolean showApplicationServiceMethods,
+        boolean showRepositories,
+        boolean showRepositoryFields,
+        boolean showRepositoryMethods,
+        boolean showReadModels,
+        boolean showReadModelFields,
+        boolean showReadModelMethods,
+        boolean showQueryHandlers,
+        boolean showQueryHandlerFields,
+        boolean showQueryHandlerMethods,
+        boolean showOutboundServices,
+        boolean showOutboundServiceFields,
+        boolean showOutboundServiceMethods,
+        boolean showUnspecifiedServiceKinds,
+        boolean showUnspecifiedServiceKindFields,
+        boolean showUnspecifiedServiceKindMethods,
+        boolean callApplicationServiceDriver,
+        List<String> fieldBlacklist,
+        List<String> methodBlacklist,
+        boolean showInheritedMembersInClasses,
+        boolean showObjectMembersInClasses,
+        boolean multiplicityInLabel,
+        boolean fieldStereotypes,
         boolean showAllInheritanceStructures,
         boolean showInheritanceStructuresInAggregates,
         boolean showInheritanceStructuresForServiceKinds,
         boolean showInheritanceStructuresForReadModels,
         boolean showInheritanceStructuresForDomainEvents,
-        boolean showInheritanceStructuresForDomainCommands
+        boolean showInheritanceStructuresForDomainCommands,
+        boolean showNotes
     ) {
         this.showFields = showFields;
         this.showFullQualifiedClassNames = showFullQualifiedClassNames;
@@ -247,6 +251,7 @@ public class GeneralVisualSettings {
         this.showInheritanceStructuresForReadModels = showInheritanceStructuresForReadModels;
         this.showInheritanceStructuresForDomainEvents = showInheritanceStructuresForDomainEvents;
         this.showInheritanceStructuresForDomainCommands = showInheritanceStructuresForDomainCommands;
+        this.showNotes = showNotes;
     }
 
     /**
@@ -691,6 +696,15 @@ public class GeneralVisualSettings {
     }
 
     /**
+     * Returns whether notes should be shown in the diagram.
+     *
+     * @return true if notes should be shown, false otherwise
+     */
+    public boolean isShowNotes() {
+        return showNotes;
+    }
+
+    /**
      * Creates and returns a new instance of GeneralVisualSettingsBuilder.
      *
      * @return a new instance of GeneralVisualSettingsBuilder to configure and build a GeneralVisualSettings object.
@@ -706,7 +720,7 @@ public class GeneralVisualSettings {
      * The builder includes options for toggling visibility of different artifacts
      * such as fields, methods, assertions, aggregates, domain events, domain services,
      * application services, repositories, read models, query handlers, outbound services,
-     * and more. Additionally, it enables customization of behavior like showing only 
+     * and more. Additionally, it enables customization of behavior like showing only
      * public methods, top-level domain relations, and inherited or abstract members.
      * Each configuration method returns the builder instance, enabling method chaining.
      * This builder is initialized with default settings, which can be overridden
@@ -767,6 +781,7 @@ public class GeneralVisualSettings {
         private boolean showInheritanceStructuresForReadModels$value = DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_READ_MODELS;
         private boolean showInheritanceStructuresForDomainEvents$value = DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_DOMAIN_EVENTS;
         private boolean showInheritanceStructuresForDomainCommands$value = DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_DOMAIN_COMMANDS;
+        private boolean showNotes$value = DEFAULT_SHOW_NOTES;
 
         /**
          * Constructs a new GeneralVisualSettingsBuilder with default values.
@@ -1315,6 +1330,17 @@ public class GeneralVisualSettings {
         }
 
         /**
+         * Sets whether to show notes in the diagram.
+         *
+         * @param showNotes true to show notes, false to hide
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowNotes(boolean showNotes) {
+            this.showNotes$value = showNotes;
+            return this;
+        }
+
+        /**
          * Constructs a new instance of the {@code GeneralVisualSettings} class initialized with
          * the current state of the builder. The method uses the configured attributes in this builder
          * to create a fully constructed {@code GeneralVisualSettings} object.
@@ -1371,7 +1397,8 @@ public class GeneralVisualSettings {
                 showInheritanceStructuresForServiceKinds$value,
                 showInheritanceStructuresForReadModels$value,
                 showInheritanceStructuresForDomainEvents$value,
-                showInheritanceStructuresForDomainCommands$value
+                showInheritanceStructuresForDomainCommands$value,
+                showNotes$value
             );
         }
     }

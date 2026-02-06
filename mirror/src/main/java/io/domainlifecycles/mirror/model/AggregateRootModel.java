@@ -26,10 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.FieldMirror;
@@ -48,26 +44,27 @@ public class AggregateRootModel extends EntityModel implements AggregateRootMirr
     /**
      * Constructs an instance of {@code AggregateRootModel}.
      *
-     * @param typeName the name of the type being mirrored
+     * @param typeName the name of the aggregate root type being mirrored
      * @param isAbstract indicates whether the type is abstract
-     * @param allFields a list of all fields in the mirrored type
-     * @param methods a list of methods in the mirrored type
-     * @param identityField the optional field representing the identity of the aggregate root
-     * @param concurrencyVersionField the optional field used for concurrency versioning
-     * @param inheritanceHierarchyTypeNames a list of type names in the inheritance hierarchy of the mirrored type
-     * @param allInterfaceTypeNames a list of all interface type names implemented by the mirrored type
+     * @param allFields a list of all fields in the mirrored aggregate root type
+     * @param methods a list of methods in the mirrored aggregate root type
+     * @param identityField the optional field representing the unique identity of the aggregate root
+     * @param concurrencyVersionField the optional field used for concurrency versioning in the aggregate root
+     * @param inheritanceHierarchyTypeNames a list of type names in the inheritance hierarchy of the mirrored aggregate root
+     * @param allInterfaceTypeNames a list of all interface type names implemented by the mirrored aggregate root
      */
-    @JsonCreator
-    public AggregateRootModel(@JsonProperty("typeName") String typeName,
-                              @JsonProperty("abstract") boolean isAbstract,
-                              @JsonProperty("allFields") List<FieldMirror> allFields,
-                              @JsonProperty("methods") List<MethodMirror> methods,
-                              @JsonProperty("identityField") Optional<FieldMirror> identityField,
-                              @JsonProperty("concurrencyVersionField") Optional<FieldMirror> concurrencyVersionField,
-                              @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
-                              @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
+    public AggregateRootModel(
+        String typeName,
+        boolean isAbstract,
+        List<FieldMirror> allFields,
+        List<MethodMirror> methods,
+        Optional<FieldMirror> identityField,
+        Optional<FieldMirror> concurrencyVersionField,
+        List<String> inheritanceHierarchyTypeNames,
+        List<String> allInterfaceTypeNames
     ) {
-        super(typeName,
+        super(
+            typeName,
             isAbstract,
             allFields,
             methods,
@@ -80,8 +77,8 @@ public class AggregateRootModel extends EntityModel implements AggregateRootMirr
 
     /**
      * {@inheritDoc}
+     * @return domain type
      */
-    @JsonIgnore
     @Override
     public DomainType getDomainType() {
         return DomainType.AGGREGATE_ROOT;
@@ -89,6 +86,7 @@ public class AggregateRootModel extends EntityModel implements AggregateRootMirr
 
     /**
      * {@inheritDoc}
+     * @return string representation of aggregate root model
      */
     @Override
     public String toString() {

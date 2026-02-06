@@ -26,9 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.FieldMirror;
@@ -45,7 +42,6 @@ import java.util.Objects;
  */
 public class DomainServiceModel extends ServiceKindModel implements DomainServiceMirror {
 
-    @JsonProperty
     private final List<String> domainServiceInterfaceTypeNames;
 
     /**
@@ -62,14 +58,13 @@ public class DomainServiceModel extends ServiceKindModel implements DomainServic
      * @param allInterfaceTypeNames a list of fully qualified type names representing all interfaces implemented
      *                               by the represented type.
      */
-    @JsonCreator
-    public DomainServiceModel(@JsonProperty("typeName") String typeName,
-                              @JsonProperty("abstract") boolean isAbstract,
-                              @JsonProperty("allFields") List<FieldMirror> allFields,
-                              @JsonProperty("methods") List<MethodMirror> methods,
-                              @JsonProperty("domainServiceInterfaceTypeNames") List<String> domainServiceInterfaceTypeNames,
-                              @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
-                              @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
+    public DomainServiceModel(String typeName,
+                              boolean isAbstract,
+                              List<FieldMirror> allFields,
+                              List<MethodMirror> methods,
+                              List<String> domainServiceInterfaceTypeNames,
+                              List<String> inheritanceHierarchyTypeNames,
+                              List<String> allInterfaceTypeNames
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
         this.domainServiceInterfaceTypeNames = Collections.unmodifiableList(domainServiceInterfaceTypeNames);
@@ -79,7 +74,6 @@ public class DomainServiceModel extends ServiceKindModel implements DomainServic
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public DomainType getDomainType() {
         return DomainType.DOMAIN_SERVICE;
@@ -88,7 +82,6 @@ public class DomainServiceModel extends ServiceKindModel implements DomainServic
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public List<String> getDomainServiceInterfaceTypeNames() {
         return domainServiceInterfaceTypeNames;

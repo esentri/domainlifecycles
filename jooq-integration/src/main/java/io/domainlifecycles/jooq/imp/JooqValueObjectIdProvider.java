@@ -46,6 +46,12 @@ import java.util.Objects;
 public class JooqValueObjectIdProvider extends BaseValueObjectIdProvider<UpdatableRecord<?>, Long> implements ValueObjectIdProvider<UpdatableRecord<?>> {
     private final DSLContext dslContext;
 
+    /**
+     * Constructor for the JooqValueObjectIdProvider.
+     *
+     * @param domainPersistenceProvider the DomainPersistenceProvider to manage persistence for UpdatableRecord instances.
+     * @param dslContext the DSLContext used to execute database queries and interact with the jOOQ API.
+     */
     public JooqValueObjectIdProvider(
         DomainPersistenceProvider<UpdatableRecord<?>> domainPersistenceProvider,
         DSLContext dslContext) {

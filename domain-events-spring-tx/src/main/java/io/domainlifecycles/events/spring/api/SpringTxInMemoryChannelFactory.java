@@ -44,6 +44,7 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
+@Deprecated
 public class SpringTxInMemoryChannelFactory extends InMemoryChannelFactory {
 
     private final PlatformTransactionManager transactionManager;

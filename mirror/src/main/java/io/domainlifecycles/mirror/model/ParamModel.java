@@ -26,8 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
 import io.domainlifecycles.mirror.api.ParamMirror;
 
@@ -49,9 +47,8 @@ public class ParamModel implements ParamMirror {
      * @param name the name of the parameter, must not be null
      * @param type the type of the parameter, must not be null
      */
-    @JsonCreator
-    public ParamModel(@JsonProperty("name") String name,
-                      @JsonProperty("type") AssertedContainableTypeMirror type) {
+    public ParamModel(String name,
+                      AssertedContainableTypeMirror type) {
         this.name = Objects.requireNonNull(name);
         this.type = Objects.requireNonNull(type);
     }

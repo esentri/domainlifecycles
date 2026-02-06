@@ -1,0 +1,79 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'checkstyle'
+    id 'jacoco'
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+dependencies {
+
+    api project(":access")
+    api project(":domain-events-core")
+    api project(":types")
+    api project(":service-registry")
+    api project(":domain-events-mq")
+    api project(":domain-events-spring-tx")
+    api project(":domain-events-gruelbox")
+    api project(":domain-events-mq")
+
+    api libs.jakarta.jms.api
+    api libs.active.mq.client
+    api libs.active.mq.client.jakarta
+    compileOnly libs.gruelbox.transactionoutbox.core
+    api libs.slf4j.api
+
+    testImplementation project(":access")
+    testImplementation project(":types")
+    testImplementation project(":type-utils")
+    testImplementation project(":mirror")
+    testImplementation project(":service-registry")
+    testImplementation project(":domain-events-core")
+    testImplementation project(":domain-events-serialization-jackson3")
+    testImplementation project(":domain-events-spring-tx")
+    testImplementation project(":domain-events-gruelbox")
+    testImplementation project(":domain-events-mq")
+    testImplementation project(":jackson3-integration")
+    testImplementation project(":builder")
+
+    testImplementation libs.slf4j.api
+    testImplementation libs.jackson3.core
+    testImplementation libs.jackson3.databind
+    testImplementation libs.lombok
+    testAnnotationProcessor libs.lombok
+
+    testImplementation libs.assertj
+    testImplementation libs.logback.classic
+
+
+    testImplementation libs.spring.boot.starter.jackson
+    testImplementation libs.spring.boot.starter.jooq
+    testImplementation libs.spring.boot.starter.test
+    testImplementation libs.spring.boot.starter.webmvc.test
+    testImplementation libs.spring.boot.starter.activemq
+    testImplementation libs.gruelbox.transactionoutbox.core
+    testImplementation libs.gruelbox.transactionoutbox.spring
+
+    testImplementation libs.h2
+    testImplementation libs.awaitility
+
+    testImplementation libs.active.mq.broker
+
+    testImplementation libs.active.mq.client.jakarta
+    testImplementation libs.javax.jms.api
+}
+
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport

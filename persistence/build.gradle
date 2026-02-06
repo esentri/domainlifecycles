@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
+    id 'jacoco'
     alias libs.plugins.yumi.gradle.licenser.plugin
     alias libs.plugins.jaredsburrows.license.plugin
 }
@@ -11,17 +12,24 @@ java {
     withSourcesJar()
 }
 
-
 dependencies {
-    compileOnly libs.slf4j.api
+    api libs.slf4j.api
     implementation libs.classgraph
     api project(":types")
     implementation project(":type-utils")
     implementation project(":mirror")
     implementation project(":access")
     api project(":builder")
-
     implementation libs.commons.collections
 
     testImplementation libs.assertj
 }
+
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport

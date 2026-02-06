@@ -26,17 +26,17 @@
 
 package io.domainlifecycles.events.jakartajms;
 
-import io.domainlifecycles.events.ADomainEvent;
-import io.domainlifecycles.events.ADomainService;
-import io.domainlifecycles.events.AQueryHandler;
-import io.domainlifecycles.events.ARepository;
-import io.domainlifecycles.events.AnAggregate;
-import io.domainlifecycles.events.AnAggregateDomainEvent;
-import io.domainlifecycles.events.AnApplicationService;
-import io.domainlifecycles.events.AnOutboundService;
-import io.domainlifecycles.events.CounterDomainEvent;
-import io.domainlifecycles.events.TransactionalCounterService;
-import io.domainlifecycles.events.UnreceivedDomainEvent;
+import testdomain.general.ADomainEvent;
+import testdomain.general.ADomainService;
+import testdomain.general.AQueryHandler;
+import testdomain.general.ARepository;
+import testdomain.general.AnAggregate;
+import testdomain.general.AnAggregateDomainEvent;
+import testdomain.general.AnApplicationService;
+import testdomain.general.AnOutboundService;
+import testdomain.general.CounterDomainEvent;
+import testdomain.general.TransactionalCounterService;
+import testdomain.general.UnreceivedDomainEvent;
 import io.domainlifecycles.events.api.DomainEvents;
 import io.domainlifecycles.events.api.ProcessingChannel;
 import io.domainlifecycles.events.exception.DLCEventsException;

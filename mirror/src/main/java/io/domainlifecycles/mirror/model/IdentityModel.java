@@ -26,9 +26,6 @@
 
 package io.domainlifecycles.mirror.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.IdentityMirror;
@@ -58,15 +55,13 @@ public class IdentityModel extends DomainTypeModel implements IdentityMirror {
      * @param inheritanceHierarchyTypeNames a list of type names representing the inheritance hierarchy.
      * @param allInterfaceTypeNames a list of type names representing all implemented interfaces.
      */
-    @JsonCreator
-    public IdentityModel(@JsonProperty("typeName") String typeName,
-                         @JsonProperty("abstract") boolean isAbstract,
-                         @JsonProperty("allFields") List<FieldMirror> allFields,
-                         @JsonProperty("methods") List<MethodMirror> methods,
-                         @JsonProperty("valueTypeName") Optional<String> valueTypeName,
-                         @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
-                         @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
-    ) {
+    public IdentityModel(String typeName,
+                         boolean isAbstract,
+                         List<FieldMirror> allFields,
+                         List<MethodMirror> methods,
+                         Optional<String> valueTypeName,
+                         List<String> inheritanceHierarchyTypeNames,
+                         List<String> allInterfaceTypeNames) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
         this.valueTypeName = Objects.requireNonNull(valueTypeName);
     }
@@ -82,7 +77,6 @@ public class IdentityModel extends DomainTypeModel implements IdentityMirror {
     /**
      * {@inheritDoc}
      */
-    @JsonIgnore
     @Override
     public DomainType getDomainType() {
         return DomainType.IDENTITY;
