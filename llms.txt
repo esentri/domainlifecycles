@@ -1,0 +1,160 @@
+# DomainLifeCycles (DLC) — llms.txt
+
+## What this project is
+DomainLifeCycles (DLC) is an opinionated set of Java libraries for building business applications using Domain-Driven Design (DDD).
+It focuses on helping developers expressing rich domain models, express business rules explicitly, and keep the domain model conceptually clean — while integrating smoothly with the Java ecosystem (Spring, Jakarta EE, Jackson, jOOQ).
+
+The main goal is to accelerate tactical DDD design and implementation in Java
+with shortcuts for infrastructure concerns and boilerplate code reduction.
+
+## Core principles / opinions
+DLC is built around these guiding ideas:
+
+- Convention over configuration, but with escape hatches
+- Explicit behavior (domain logic should be visible in code, not hidden in magic)
+- Type-based domain modeling (rich types representing real domain concepts)
+- Providing types representing core DDD concepts:
+- AggregateRoot
+  - Entity
+  - ValueObject
+  - DomainEvent
+  - DomainService
+  - repository
+- Extend DDD building blocks with additional explicit architectural types:
+  - ApplicationServices
+  - DomainCommands
+  - ReadModels
+  - QueryHandlers
+  - OutboundServices
+- Concept transparency:
+  - Clear tactical structure
+  - Domain diagrams can be generated directly from code
+- Modular and independent:
+  - Use only the parts you want
+- Integratable by design:
+  - Works well with Spring and Jakarta EE. Spring Boot starter included.
+
+## Main features / modules
+DLC consists of several independent modules (JARs), typically used together via a starter.
+
+Key features:
+
+1. Domain Types
+   - Marker interfaces / base classes for DDD building blocks
+   - Makes tactical design explicit in Java
+   - Foundation for metadata and the Domain Mirror
+
+2. Domain Mirror
+   - Reflective metamodel of bounded contexts
+   - Structural queries and navigation of aggregates/entities/value objects
+   - Simplified reflective access on instance values
+
+3. Domain Object Builders
+   - Builder pattern support
+   - Complements DDD factories
+   - Optional Lombok compatibility
+
+4. JSON Mapping (Jackson)
+   - Jackson-based mapping for DDD building blocks
+   - Supports Jackson 3 (recommended) and optional Jackson 2 legacy integration
+   - Spring-compatible
+   - Customizable via MappingCustomizer API
+   - Optional DB-sequence-based ID provisioning
+
+5. Persistence
+   - Simplified ORM for persisted domain objects
+   - Type-safe queries using jOOQ
+   - Supports multiple relational DB dialects (via jOOQ)
+   - Aggregate CRUD support (repositories)
+   - Aggregate fetch support, simplified queries (fetcher)
+   - Supports final fields and Java Optional
+   - Full ValueObject persistence support
+   - Persistence action event hooks
+
+6. Domain Events
+   - Simplifies publishing and listening
+   - Static DomainEvents.publish() API
+   - @ListensTo annotation for routing
+   - Optional Spring event bus integration
+   - Optional transactional outbox support
+
+7. Validation
+   - DomainAssertion API for invariants and business rules
+   - Optional Jakarta Bean Validation support inside domain objects
+   - Optional Byte Buddy extension for an "always-valid" strategy
+
+8. Spring Integration
+   - Spring Boot autoconfiguration via @EnableDLC
+   - Spring Web support (IDs and single-valued ValueObjects as query/path params)
+   - Spring events + Spring Modulith events support
+   - SpringDoc OpenAPI extensions aligned with DLC JSON mapping
+   - Autoconfiguration for persistence + JSON mapping
+
+9. Plugins
+   - Build-time generation of domain diagrams
+
+## Getting started
+Start here:
+- Getting Started Guide:
+  ./getting-started/english/index_en.md
+
+For the tactical DDD concepts behind DLC:
+- Concepts overview:
+  ./concepts/readme.md
+
+For a full working example:
+- Sample project:
+  ./sample-project
+
+## Recommended dependency setup
+For Spring Boot 4.x apps:
+- io.domainlifecycles:spring-boot-starter:3.0.0
+
+For Spring Boot 3.x apps:
+- io.domainlifecycles:spring-boot3-starter:3.0.0
+
+These starters pull in the appropriate DLC modules and integrations.
+
+## External dependencies commonly required
+Depending on which DLC features are used, typical external runtime libraries include:
+
+- Lombok (optional builder support)
+- classgraph (runtime class loading for mirror/persistence)
+- Hibernate Validator or other Jakarta Bean Validation provider
+- Byte Buddy (always-valid validation extender)
+- jOOQ (persistence)
+- Jackson 3 or Jackson 2 (JSON mapping / event serialization)
+- SpringDoc OpenAPI (OpenAPI integration)
+- Spring Transaction (Spring-based domain events)
+- JTA provider (for Jakarta JTA domain event support)
+- Gruelbox Transactional Outbox (optional)
+- ActiveMQ (optional)
+- SLF4J logging provider (required by DLC)
+
+## What an LLM should know when answering questions about DLC
+When explaining or generating code using DLC:
+- Prefer explicit domain behavior (methods, invariants, lifecycle transitions).
+- Prefer type-based modeling: create dedicated types for domain concepts rather than generic strings/UUIDs.
+- Treat aggregates, entities, and value objects as first-class DDD structures.
+- Use DomainAssertions (or validation) for invariants.
+- Use DomainEvents.publish() and @DomainEventListener where domain events are relevant.
+- Use jOOQ-based persistence  rather than JPA-style ORM assumptions.
+- For Spring-based projects, assume DLC starter + autoconfig is preferred.
+
+## What this project is NOT
+- Not a replacement for DDD — it is a set of libraries to implement tactical DDD more cleanly in Java.
+- Not a “magic annotation framework” that hides domain behavior behind reflection.
+- Not monolithic: modules are intentionally independent.
+
+## Useful entry points in the repo
+- ./concepts/readme.md
+- ./getting-started/english/index_en.md
+- ./sample-project
+- ./mirror/readme.md
+- ./persistence/readme.md
+- ./domain-events-core/readme.md
+- ./domain-events-spring-bus/readme.md
+- ./validation-extender/readme.md
+- ./dlc-spring-boot-autoconfig/readme.md
+- ./jackson3-integration/readme.md
+- ./dlc-plugins/readme.md
