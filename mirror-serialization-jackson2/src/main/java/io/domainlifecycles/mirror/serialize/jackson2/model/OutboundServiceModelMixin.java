@@ -27,7 +27,9 @@
 package io.domainlifecycles.mirror.serialize.jackson2.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
 
@@ -70,12 +72,9 @@ public abstract class OutboundServiceModelMixin extends ServiceKindModelMixin {
     }
 
     /**
-     * Retrieves the fully qualified type names of the outbound service interfaces
-     * implemented by the mirrored type. Ignored for serialization purposes.
-     *
-     * @return a list of strings representing the fully qualified names of outbound
-     *         service interface types.
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return the {@link DomainType} associated with the domain service.
      */
-    @JsonProperty
-    public abstract List<String> getOutboundServiceInterfaceTypeNames();
+    @JsonIgnore
+    public abstract DomainType getDomainType();
 }

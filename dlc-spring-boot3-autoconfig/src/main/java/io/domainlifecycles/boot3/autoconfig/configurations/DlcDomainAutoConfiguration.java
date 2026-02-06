@@ -31,10 +31,19 @@ import io.domainlifecycles.boot3.autoconfig.exception.DLCAutoConfigException;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
+import io.domainlifecycles.mirror.serialize.DeserializingDomainMirrorFactory;
+import io.domainlifecycles.mirror.serialize.jackson2.JacksonDomainSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.util.StreamUtils;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Core domain configuration for enabling standard domain-related features in the DLC framework.
@@ -75,6 +84,12 @@ public class DlcDomainAutoConfiguration {
             } else if (dlcDomainBasePackages != null && !dlcDomainBasePackages.isBlank()) {
                 basePackages = dlcDomainBasePackages;
             } else {
+                var mirrorSerialized = readMirrorFromMetaInfDlc();
+                if( mirrorSerialized != null){
+                    var serializer = new JacksonDomainSerializer(false);
+                    Domain.initialize(new DeserializingDomainMirrorFactory(serializer));
+                    return Domain.getDomainMirror();
+                }
                 throw DLCAutoConfigException.fail(
                     "Property 'basePackages' is missing. Make sure you specified a property called " +
                         "'dlc.domain.basePackages' or add a 'dlcDomainBasePackages' value on the @EnableDLC annotation.");
@@ -84,5 +99,29 @@ public class DlcDomainAutoConfiguration {
         }
 
         return Domain.getDomainMirror();
+    }
+
+    private String readMirrorFromMetaInfDlc() {
+        try {
+            var resolver = new PathMatchingResourcePatternResolver(getClass().getClassLoader());
+
+            Resource[] resources = resolver.getResources("classpath*:META-INF/dlc/*");
+
+            Resource res = Arrays.stream(resources)
+                .filter(Objects::nonNull)
+                .filter(Resource::exists)
+                .findFirst()
+                .orElse(null);
+
+            if (res == null) return null;
+
+            try (var in = res.getInputStream()) {
+                String content = StreamUtils.copyToString(in, StandardCharsets.UTF_8);
+                return content;
+            }
+        } catch (Exception e) {
+            throw DLCAutoConfigException.fail(
+                "Failed reading mirror from 'META-INF/dlc'!");
+        }
     }
 }

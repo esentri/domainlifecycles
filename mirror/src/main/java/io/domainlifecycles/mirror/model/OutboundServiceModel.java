@@ -66,6 +66,7 @@ public class OutboundServiceModel extends ServiceKindModel implements OutboundSe
         List<String> allInterfaceTypeNames
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
+        Objects.requireNonNull(outboundServiceInterfaceTypeNames);
         this.outboundServiceInterfaceTypeNames = Collections.unmodifiableList(outboundServiceInterfaceTypeNames);
     }
 

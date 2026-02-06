@@ -35,6 +35,7 @@ dependencies {
     api project(":spring-web-integration")
     api project(":swagger-integration")
     api project(":domain-events-spring-bus")
+    implementation project(":mirror-serialization-jackson3")
     compileOnly libs.spring.doc.openapi3.starter.webmvc.ui
     compileOnly libs.spring.web
     compileOnly libs.jackson3.core

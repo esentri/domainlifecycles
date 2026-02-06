@@ -14,7 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Provided fallback support for Jackson 2.x (mirror serialization, domain event serialization, general DLC Jackson 2 integration)
 - Refactored Spring Web integration to be independent of Jackson serialization
 - Added @DomainEventListener annotation for DomainEvents. @ListensTo annotation is deprecated.
-- Fixed jOOQ test class generation 
+- Fixed jOOQ test class generation
+- AutoConfig can load mirror from `META-INF/dlc/mirror.json` without reflection at runtime.
+- DLC Build plugins provide support for deserializing mirror to ``META-INF/dlc/mirror.json``
 
 ## [2.6.0] - 2025-12-02
 - sample-project is not part of the main project anymore, but is now a separate project

@@ -448,10 +448,15 @@ public class JooqDomainPersistenceConfiguration extends DomainPersistenceConfigu
         }
 
         /**
-         * Creates and configures an instance of {@link JooqDomainPersistenceConfiguration}
-         * based on the set properties and defaults for null or uninitialized fields.
-         * This method ensures that necessary components are initialized with default
-         * implementations if not explicitly provided. It also enforces that conflicting
+         * Builds and returns a configured instance of {@link JooqDomainPersistenceConfiguration}.
+         * This method ensures that all required components for the configuration are properly initialized.
+         * If any mandatory component is not explicitly set, default implementations or values are used.
+         *
+         * The method also performs validation to avoid ambiguous or conflicting configurations,
+         * such as ensuring only one between 'recordPackage' and 'recordClassProvider' is set.
+         *
+         * @return a fully constructed instance of {@link JooqDomainPersistenceConfiguration} with all necessary dependencies.
+         * @throws DLCPersistenceException when both 'recordPackage' and 'recordClassProvider' are configured, causing ambiguity.
          */
         public JooqDomainPersistenceConfiguration make() {
 

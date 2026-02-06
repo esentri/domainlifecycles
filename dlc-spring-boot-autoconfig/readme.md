@@ -101,7 +101,10 @@ Optionally use Spring application properties for configuration:
 ```properties
 dlc.domain.basePackages=com.example.domain,com.example.shared
 ```
-Providing either the 'dlcDomainBasePackages' attribute or defining it as a property is mandatory.
+Providing either the 'dlcDomainBasePackages' attribute or defining it as a property is optional.
+It is possible to create the mirror at compile time using the [DLC build plugins](../dlc-plugins/readme.md).
+The AutoConfig will automatically detect the generated mirror JSON file in `META-INF/dlc/mirror.json` and use it
+to load the domain mirror without reflection at runtime.
 
 **Provided Beans:**
 - `DomainMirror` with the bean name `initializedDomain`

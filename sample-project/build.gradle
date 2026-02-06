@@ -157,8 +157,7 @@ dlcGradlePlugin {
         serializations{
             [
                 serial {
-                    fileName = "model"
-                    domainModelPackages = ["sampleshop.core"]
+                    domainModelPackages = ["sampleshop"]
                 }
             ]
         }

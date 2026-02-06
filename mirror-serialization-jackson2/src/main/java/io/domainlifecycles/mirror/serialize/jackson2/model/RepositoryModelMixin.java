@@ -99,22 +99,8 @@ public abstract class RepositoryModelMixin extends ServiceKindModelMixin {
     }
 
     /**
-     * Retrieves an {@link Optional} containing the associated {@link AggregateRootMirror},
-     * which conceptually represents the managed aggregate root at the type level.
-     * If the managed aggregate is not present, an empty {@link Optional} is returned.
-     *
-     * @return an {@link Optional} containing the managed {@link AggregateRootMirror},
-     *         or an empty {@link Optional} if no managed aggregate is associated.
-     */
-    @JsonIgnore
-    public abstract Optional<AggregateRootMirror> getManagedAggregate();
-
-    /**
-     * Retrieves the {@link DomainType} of the current model instance, which defines
-     * the specific type classification within the domain-driven design (DDD) context.
-     * Ignored during serialization and deserialization.
-     *
-     * @return the {@link DomainType} representing the type of the current model instance.
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return the {@link DomainType} associated with the domain service.
      */
     @JsonIgnore
     public abstract DomainType getDomainType();

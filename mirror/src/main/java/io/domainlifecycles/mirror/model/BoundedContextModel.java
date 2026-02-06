@@ -62,8 +62,6 @@ public class BoundedContextModel implements BoundedContextMirror, ProvidedDomain
         this.packageName = Objects.requireNonNull(packageName);
     }
 
-    //TODO alle queries von allen modellen durchgehen bzgl. vereinfachung mit domainmirror
-
     /**
      * {@inheritDoc}
      */

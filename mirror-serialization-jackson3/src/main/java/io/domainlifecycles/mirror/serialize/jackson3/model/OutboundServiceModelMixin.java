@@ -71,7 +71,7 @@ public abstract class OutboundServiceModelMixin extends ServiceKindModelMixin {
 
     /**
      * Retrieves the list of fully qualified type names representing the interfaces
-     * associated with the outbound service. Ignored for serialization purposes.
+     * associated with the outbound service.
      *
      * @return a list of strings containing the fully qualified type names of the
      *         outbound service interfaces.

@@ -79,10 +79,4 @@ public abstract class ApplicationServiceModelMixin extends ServiceKindModelMixin
     @JsonIgnore
     public abstract DomainType getDomainType();
 
-    /**
-     * Mixin method declaration. Ignored for serialization purposes.
-     * @return list of interface types implemented by the application service
-     */
-    @JsonIgnore
-    public abstract List<String> getApplicationServiceInterfaceTypeNames();
 }
