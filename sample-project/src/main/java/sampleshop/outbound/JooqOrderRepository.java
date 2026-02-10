@@ -26,12 +26,11 @@
 
 package sampleshop.outbound;
 
-import sampleshop.outbound.event.SpringPersistenceEventPublisher;
 import io.domainlifecycles.jooq.imp.JooqAggregateRepository;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
+import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.springframework.stereotype.Repository;
 import sampleshop.Sequences;
 import sampleshop.core.domain.order.Order;
 import sampleshop.core.domain.order.OrderItem;
@@ -50,12 +49,11 @@ import static sampleshop.Tables.ORDER;
  * @author Mario Herb
  * @author Tobias Herb
  */
-@Repository
 class JooqOrderRepository extends JooqAggregateRepository<Order, Order.OrderId> implements OrderRepository {
 
     public JooqOrderRepository(DSLContext dslContext,
                                JooqDomainPersistenceProvider domainPersistenceProvider,
-                               SpringPersistenceEventPublisher persistenceEventPublisher) {
+                               PersistenceEventPublisher persistenceEventPublisher) {
         super(Order.class, dslContext, domainPersistenceProvider, persistenceEventPublisher);
     }
 

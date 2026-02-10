@@ -27,12 +27,7 @@
 package io.domainlifecycles.boot3.autoconfig.features.multiplechannels;
 
 import io.domainlifecycles.boot3.autoconfig.annotation.EnableDlc;
-import io.domainlifecycles.boot3.autoconfig.model.events.ADomainService;
-import io.domainlifecycles.boot3.autoconfig.model.events.AQueryHandler;
-import io.domainlifecycles.boot3.autoconfig.model.events.ARepository;
 import io.domainlifecycles.boot3.autoconfig.model.events.AnAggregateDomainEvent;
-import io.domainlifecycles.boot3.autoconfig.model.events.AnApplicationService;
-import io.domainlifecycles.boot3.autoconfig.model.events.AnOutboundService;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.ProcessingChannel;
 import io.domainlifecycles.events.api.PublishingChannel;
@@ -57,31 +52,6 @@ public class TestApplicationEvents {
         Locale.setDefault(Locale.ENGLISH);
         new SpringApplicationBuilder(TestApplicationEvents.class).
             run(args);
-    }
-
-    @Bean
-    public AnApplicationService anApplicationService(){
-        return new AnApplicationService();
-    }
-
-    @Bean
-    public ADomainService aDomainService(){
-        return new ADomainService();
-    }
-
-    @Bean
-    public ARepository aRepository(){
-        return new ARepository();
-    }
-
-    @Bean
-    public AQueryHandler aQueryHandler(){
-        return new AQueryHandler();
-    }
-
-    @Bean
-    public AnOutboundService anOutboundService(){
-        return new AnOutboundService();
     }
 
     @Bean

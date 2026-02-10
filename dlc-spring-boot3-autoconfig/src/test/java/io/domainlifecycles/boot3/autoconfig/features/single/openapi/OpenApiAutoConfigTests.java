@@ -2,6 +2,7 @@ package io.domainlifecycles.boot3.autoconfig.features.single.openapi;
 
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
@@ -19,6 +20,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+
+import java.util.List;
 import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -73,6 +76,9 @@ public class OpenApiAutoConfigTests {
     @Autowired(required = false)
     ResponseEntityBuilder responseEntityBuilder;
 
+    @Autowired(required = false)
+    List<ServiceKind> allServiceKinds;
+
     @Test
     public void testOpenApiSimple() throws Exception {
         Locale.setDefault(Locale.ENGLISH);
@@ -96,6 +102,7 @@ public class OpenApiAutoConfigTests {
         assertThat(jooqDomainPersistenceProvider).isNull();
         assertThat(entityIdentityProvider).isNull();
         assertThat(responseEntityBuilder).isNull();
+        assertThat(allServiceKinds).isNull();
     }
 }
 

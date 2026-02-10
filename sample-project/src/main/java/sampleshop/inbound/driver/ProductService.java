@@ -26,7 +26,6 @@
 
 package sampleshop.inbound.driver;
 
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sampleshop.core.domain.product.Product;
 import sampleshop.core.inport.ProductDriver;
@@ -40,7 +39,6 @@ import java.util.Optional;
  * @author Mario Herb
  * @author Tobias Herb
  */
-@Service
 @Transactional
 public class ProductService implements ProductDriver {
 

@@ -5,6 +5,7 @@ import io.domainlifecycles.boot3.autoconfig.features.single.persistence.Persiste
 import io.domainlifecycles.boot3.autoconfig.features.single.persistence.SimpleAggregateRootRepository;
 import io.domainlifecycles.boot3.autoconfig.model.persistence.TestRootSimple;
 import io.domainlifecycles.boot3.autoconfig.model.persistence.TestRootSimpleId;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tests.shared.events.PersistenceEvent;
 import tests.shared.persistence.PersistenceEventTestHelper;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,6 +72,9 @@ public class PersistenceAutoConfigPropertyValuesTest {
     @Autowired(required = false)
     ResponseEntityBuilder responseEntityBuilder;
 
+    @Autowired(required = false)
+    List<ServiceKind> allServiceKinds;
+
     @Test
     @Transactional
     public void testInsertSimpleEntity() {
@@ -108,5 +113,6 @@ public class PersistenceAutoConfigPropertyValuesTest {
         assertThat(dlcJacksonModule).isNull();
         assertThat(dlcOpenApiCustomizer).isNull();
         assertThat(responseEntityBuilder).isNull();
+        assertThat(allServiceKinds).isNull();
     }
 }

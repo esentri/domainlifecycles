@@ -5,6 +5,7 @@ import io.domainlifecycles.autoconfig.model.persistence.TestRootSimple;
 import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
@@ -15,6 +16,7 @@ import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.services.api.ServiceProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -62,6 +64,9 @@ public class BuilderAutoConfigTest {
     @Autowired(required = false)
     ResponseEntityBuilder responseEntityBuilder;
 
+    @Autowired(required = false)
+    List<ServiceKind> allServiceKinds;
+
     @Test
     void testBuilderProviderIsPresent() {
         assertThat(domainObjectBuilderProvider).isNotNull();
@@ -88,5 +93,6 @@ public class BuilderAutoConfigTest {
         assertThat(entityIdentityProvider).isNull();
         assertThat(dlcOpenApiCustomizer).isNull();
         assertThat(responseEntityBuilder).isNull();
+        assertThat(allServiceKinds).isNull();
     }
 }

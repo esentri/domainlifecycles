@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,38 +24,27 @@
  *  limitations under the License.
  */
 
-package sampleshop.outbound.event;
+package io.domainlifecycles.boot3.autoconfig.features.single.servicekind;
 
+import io.domainlifecycles.builder.DomainObjectBuilderProvider;
+import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
-import io.domainlifecycles.persistence.repository.actions.PersistenceAction;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import tests.shared.persistence.PersistenceEventTestHelper;
 
+@Configuration
 
-/**
- * The event publisher separates event dispatch mechanics
- * from the client logic that triggers a persistence event.
- *
- * @author Mario Herb
- */
-@Component
-public final class SpringPersistenceEventPublisher implements PersistenceEventPublisher {
+public class ServiceKindAutoConfigTestConfiguration {
 
-    private final ApplicationEventPublisher applicationEventPublisher;
-
-    public SpringPersistenceEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
+    @Bean
+    PersistenceEventPublisher persistenceEventPublisher() {
+        PersistenceEventTestHelper testHelper = new PersistenceEventTestHelper();
+        return testHelper.testEventPublisher;
     }
 
-    /**
-     * Publishes DLC persistence actions on the Spring application event bus.
-     * For every DML operation applied an action is emitted.
-     *
-     * @param pa the {@link PersistenceAction}
-     */
-    public void publish(PersistenceAction<?> pa) {
-        applicationEventPublisher.publishEvent(pa);
+    @Bean
+    DomainObjectBuilderProvider innerClassDomainObjectBuilderProvider() {
+        return new InnerClassDomainObjectBuilderProvider();
     }
-
 }
-

@@ -2,6 +2,7 @@ package io.domainlifecycles.boot3.autoconfig.features.single.web;
 
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
@@ -18,6 +19,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -68,6 +71,9 @@ public class WebAutoConfigTest {
     @Autowired(required = false)
     DlcOpenApiCustomizer dlcOpenApiCustomizer;
 
+    @Autowired(required = false)
+    List<ServiceKind> allServiceKinds;
+
     @Test
     void testResponseEntityBuilderIsPresent() {
         assertThat(responseEntityBuilder).isNotNull();
@@ -95,5 +101,6 @@ public class WebAutoConfigTest {
         assertThat(jooqDomainPersistenceProvider).isNull();
         assertThat(entityIdentityProvider).isNull();
         assertThat(dlcOpenApiCustomizer).isNull();
+        assertThat(allServiceKinds).isNull();
     }
 }

@@ -32,11 +32,11 @@ import io.domainlifecycles.autoconfig.configurations.DlcNoTxInMemoryDomainEvents
 import io.domainlifecycles.autoconfig.configurations.DlcSpringBusDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration;
-import io.domainlifecycles.events.spring.listeners.ServiceKindListenerPostProcessor;
+import io.domainlifecycles.autoconfig.configurations.DlcServiceKindAutoConfiguration;
+import java.util.Locale;
+
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-
-import java.util.Locale;
 
 @SpringBootApplication
 @EnableDlc(exclude = {
@@ -44,7 +44,9 @@ import java.util.Locale;
     DlcSpringOpenApiAutoConfiguration.class,
     DlcJacksonAutoConfiguration.class,
     DlcSpringBusDomainEventsAutoConfiguration.class,
-    DlcNoTxInMemoryDomainEventsAutoConfiguration.class
+    DlcNoTxInMemoryDomainEventsAutoConfiguration.class,
+    DlcServiceKindAutoConfiguration.class
+
 })
 public class TestApplicationPersistenceAndBuilderAutoConfig {
 

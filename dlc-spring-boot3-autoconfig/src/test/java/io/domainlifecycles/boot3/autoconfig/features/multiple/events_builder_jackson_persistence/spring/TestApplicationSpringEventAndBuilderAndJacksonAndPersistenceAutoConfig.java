@@ -34,6 +34,7 @@ import io.domainlifecycles.boot3.autoconfig.model.events.AQueryHandler;
 import io.domainlifecycles.boot3.autoconfig.model.events.ARepository;
 import io.domainlifecycles.boot3.autoconfig.model.events.AnApplicationService;
 import io.domainlifecycles.boot3.autoconfig.model.events.AnOutboundService;
+import io.domainlifecycles.boot3.autoconfig.configurations.DlcServiceKindAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
@@ -44,6 +45,7 @@ import java.util.Locale;
 @EnableDlc(exclude = {
     DlcSpringWebAutoConfiguration.class,
     DlcSpringOpenApiAutoConfiguration.class,
+    DlcServiceKindAutoConfiguration.class
 })
 public class TestApplicationSpringEventAndBuilderAndJacksonAndPersistenceAutoConfig {
 

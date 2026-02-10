@@ -26,7 +26,7 @@
 
 package io.domainlifecycles.boot3.autoconfig.configurations;
 
-import io.domainlifecycles.boot3.autoconfig.configurations.properties.DlcJooqPersistenceProperties;
+import io.domainlifecycles.boot3.autoconfig.configurations.persistence.SpringPersistenceEventPublisher;
 import io.domainlifecycles.boot3.autoconfig.exception.DLCAutoConfigException;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.jooq.configuration.JooqDomainPersistenceConfiguration;
@@ -37,19 +37,24 @@ import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
 import io.domainlifecycles.persistence.provider.DomainPersistenceProvider;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
+import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
+import io.domainlifecycles.persistence.repository.actions.PersistenceAction;
 import org.jooq.Configuration;
+import org.jooq.ConnectionProvider;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DataSourceConnectionProvider;
 import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.DefaultDSLContext;
-import org.springframework.beans.factory.annotation.Value;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 import javax.sql.DataSource;
@@ -73,9 +78,6 @@ import java.util.Set;
  * This class is conditionally activated when the JOOQ library is present on the classpath,
  * and certain dependent beans, like {@link DataSource}, are configured.
  *
- * Additional customization can be achieved through the {@link DlcJooqPersistenceProperties} configuration
- * class, which allows specifying properties like the JOOQ record package and SQL dialect.
- *
  * @author Mario Herb
  */
 @AutoConfiguration(
@@ -86,7 +88,6 @@ import java.util.Set;
     afterName = "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration",
     beforeName = "org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration"
 )
-@EnableConfigurationProperties(DlcJooqPersistenceProperties.class)
 @ConditionalOnClass(name = "org.jooq.DSLContext")
 @Deprecated
 public class DlcJooqPersistenceAutoConfiguration {
@@ -102,13 +103,24 @@ public class DlcJooqPersistenceAutoConfiguration {
      */
     @org.springframework.context.annotation.Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(name = "org.jooq.DSLContext")
-    static class JooqPersistenceConfiguration {
+    static class JooqPersistenceConfiguration implements EnvironmentAware{
 
-        @Value("${jooqRecordPackage:#{null}}")
-        private String jooqRecordPackage;
+        private Environment environment;
 
-        @Value("${jooqSqlDialect:#{null}}")
-        private SQLDialect jooqSqlDialect;
+        /**
+         * Creates a {@link PersistenceEventPublisher} bean for publishing {@link PersistenceAction} events.
+         * This method provides a {@link SpringPersistenceEventPublisher} instance, which bridges domain-specific
+         * persistence events and Spring's event-publishing infrastructure.
+         *
+         * @param applicationEventPublisher the {@link ApplicationEventPublisher} used to publish events
+         *                                  within the Spring application context
+         * @return a {@link PersistenceEventPublisher} instance configured with the given {@link ApplicationEventPublisher}
+         */
+        @Bean
+        @ConditionalOnMissingBean(PersistenceEventPublisher.class)
+        public PersistenceEventPublisher persistenceEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+            return new SpringPersistenceEventPublisher(applicationEventPublisher);
+        }
 
         /**
          * Creates a {@link DataSourceConnectionProvider} bean for providing database connections.
@@ -130,29 +142,27 @@ public class DlcJooqPersistenceAutoConfiguration {
          * Configures the JOOQ settings, connection provider, and SQL dialect for database operations.
          * The SQL dialect is determined based on the provided persistence properties or a global dialect field.
          *
-         * @param dataSource the {@link DataSource} used for database connections
-         * @param persistenceProperties the custom persistence configuration properties for JOOQ,
-         *                              providing details such as the SQL dialect to use
+         * @param connectionProvider the {@link ConnectionProvider} for JOOQ database operations
          * @return a configured {@link DefaultConfiguration} instance for JOOQ operations
          * @throws DLCAutoConfigException if the SQL dialect is not specified or cannot be determined
          */
         @Bean
         @ConditionalOnBean(DataSource.class)
         @ConditionalOnMissingBean(name = "org.jooq.Configuration")
-        public DefaultConfiguration configuration(DataSource dataSource, DlcJooqPersistenceProperties persistenceProperties) {
+        public DefaultConfiguration configuration(ConnectionProvider connectionProvider) {
             final var jooqConfig = new DefaultConfiguration();
             jooqConfig.settings().setExecuteWithOptimisticLocking(true);
-            jooqConfig.setConnectionProvider(connectionProvider(dataSource));
-
+            jooqConfig.setConnectionProvider(connectionProvider);
             SQLDialect sqlDialect;
-            if (persistenceProperties != null && persistenceProperties.getSqlDialect() != null) {
-                sqlDialect = persistenceProperties.getSqlDialect();
-            } else if (jooqSqlDialect != null) {
-                sqlDialect = jooqSqlDialect;
-            } else {
-                throw DLCAutoConfigException.fail("Property 'sqlDialect' is missing. Specify 'dlc.persistence.sqlDialect' or 'jooqSqlDialect'.");
+            try {
+                var property = environment.getProperty("dlc.persistence.sqlDialect");
+                if(property == null) {
+                    throw DLCAutoConfigException.fail("Property 'sqlDialect' is missing. Specify 'dlc.persistence.sqlDialect' or 'jooqSqlDialect' on '@EnableDlc'.");
+                }
+                sqlDialect = SQLDialect.valueOf(property);
+            } catch (IllegalArgumentException e) {
+                throw DLCAutoConfigException.fail("Property 'sqlDialect' is missing. Specify 'dlc.persistence.sqlDialect' or 'jooqSqlDialect' on '@EnableDlc'.");
             }
-
             jooqConfig.set(sqlDialect);
             return jooqConfig;
         }
@@ -180,8 +190,8 @@ public class DlcJooqPersistenceAutoConfiguration {
          *
          * @param domainObjectBuilderProvider the provider for building domain objects from database records
          * @param customRecordMappers a set of custom mappers for converting database records to domain objects
-         * @param persistenceProperties configuration properties for JOOQ persistence, including the record package
-         * @param domainMirror the domain mirror for reflection and metadata about domain types
+         * @param domainMirror the domain mirror for reflection and metadata about domain types,
+         *                     needed for correct order of bean instantiation
          * @return a configured {@link JooqDomainPersistenceProvider} instance
          * @throws DLCAutoConfigException if the required JOOQ record package property is missing or invalid
          */
@@ -191,18 +201,11 @@ public class DlcJooqPersistenceAutoConfiguration {
         public JooqDomainPersistenceProvider domainPersistenceProvider(
             DomainObjectBuilderProvider domainObjectBuilderProvider,
             Set<RecordMapper<?, ?, ?>> customRecordMappers,
-            DlcJooqPersistenceProperties persistenceProperties,
             DomainMirror domainMirror
         ) {
-            String recordPackage;
-            if (persistenceProperties != null
-                && persistenceProperties.getJooqRecordPackage() != null
-                && !persistenceProperties.getJooqRecordPackage().isBlank()) {
-                recordPackage = persistenceProperties.getJooqRecordPackage();
-            } else if (jooqRecordPackage != null && !jooqRecordPackage.isBlank()) {
-                recordPackage = jooqRecordPackage;
-            } else {
-                throw DLCAutoConfigException.fail("Property 'jooqRecordPackage' is missing.");
+            String recordPackage = environment.getProperty("dlc.persistence.jooqRecordPackage");
+            if(recordPackage == null) {
+                throw DLCAutoConfigException.fail("Property 'jooqRecordPackage' is missing. Specify 'dlc.persistence.jooqRecordPackage' or 'jooqRecordPackage' on '@EnableDlc'.");
             }
 
             return new JooqDomainPersistenceProvider(
@@ -227,5 +230,18 @@ public class DlcJooqPersistenceAutoConfiguration {
         public EntityIdentityProvider identityProvider(DSLContext dslContext) {
             return new JooqEntityIdentityProvider(dslContext);
         }
+
+        /**
+         * Sets the {@link Environment} for the configuration.
+         * This method is automatically invoked by the Spring framework when the
+         * class is registered as an {@link EnvironmentAware} component.
+         *
+         * @param environment the {@link Environment} object containing the current application environment properties
+         */
+        @Override
+        public void setEnvironment(@NonNull Environment environment) {
+            this.environment = environment;
+        }
     }
+
 }

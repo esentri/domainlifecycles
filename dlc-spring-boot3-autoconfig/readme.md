@@ -174,7 +174,26 @@ Providing the 'dlcJooqRecordPackage' is mandatory for DLC persistence,
 
 More information on [DLC Persistence](./../persistence/readme.md)
 
-### 5. Domain Events Autoconfig 
+### 5. ServiceKind Autoconfig (`DlcServiceKindAutoConfiguration`)
+
+**Purpose:** Automatic registration of ServiceKind beans
+
+**Activation:** Automatically active when `@EnableDlc` annotation is set.
+
+Could be deactivated by:
+```java
+@EnableDlc(exclude = DlcServiceKindAutoConfiguration.class)
+```
+
+**Features:**
+- Automatic registration of ServiceKind beans (all classes implementing `ServiceKind`):
+    - `Repository`
+    - `DomainService`
+    - `ApplicationService` or `Driver`
+    - `QueryHandler`
+    - `OutboundService`
+
+### 6. Domain Events Autoconfig 
 
 **Purpose:** Automatic configuration of DomainEvent handling
 
@@ -234,7 +253,7 @@ More information on [DLC DomainEvents](./../domain-events-core/readme.md)
 
 More information on [DLC DomainEvents Spring integration](./../domain-events-spring-bus/readme.md)
 
-### 6. Spring Web Autoconfig (`DlcSpringWebAutoConfiguration`)
+### 7. Spring Web Autoconfig (`DlcSpringWebAutoConfiguration`)
 
 **Purpose:** REST/Web integration for DLC Domain Objects
 
@@ -251,7 +270,7 @@ Could be deactivated by:
 - Parameter converters for ValueObjects and Identities
 - `ResponseEntityBuilder` for consistent API responses
 
-### 7. OpenAPI Autoconfig (`DlcSpringOpenApiAutoConfiguration`)
+### 8. OpenAPI Autoconfig (`DlcSpringOpenApiAutoConfiguration`)
 
 **Purpose:** Automatic OpenAPI/Swagger documentation for DLC Types
 

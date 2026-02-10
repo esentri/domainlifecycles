@@ -1,7 +1,5 @@
 package io.domainlifecycles.boot3.autoconfig.features.multiple.events_builder_jackson.spring;
 
-
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.domainlifecycles.boot3.autoconfig.model.events.ADomainEvent;
 import io.domainlifecycles.boot3.autoconfig.model.events.ADomainService;
@@ -29,7 +27,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;

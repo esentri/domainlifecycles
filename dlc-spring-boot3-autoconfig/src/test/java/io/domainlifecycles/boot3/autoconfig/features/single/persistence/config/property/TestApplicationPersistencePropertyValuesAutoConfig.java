@@ -29,6 +29,7 @@ package io.domainlifecycles.boot3.autoconfig.features.single.persistence.config.
 import io.domainlifecycles.boot3.autoconfig.annotation.EnableDlc;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcBuilderAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcJackson2AutoConfiguration;
+import io.domainlifecycles.boot3.autoconfig.configurations.DlcServiceKindAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcSpringBusDomainEventsAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcSpringWebAutoConfiguration;
@@ -43,7 +44,8 @@ import java.util.Locale;
     DlcJackson2AutoConfiguration.class,
     DlcSpringOpenApiAutoConfiguration.class,
     DlcSpringWebAutoConfiguration.class,
-    DlcSpringBusDomainEventsAutoConfiguration.class
+    DlcSpringBusDomainEventsAutoConfiguration.class,
+    DlcServiceKindAutoConfiguration.class
 })
 public class TestApplicationPersistencePropertyValuesAutoConfig {
 

@@ -26,17 +26,16 @@
 
 package io.domainlifecycles.boot3.autoconfig.configurations;
 
-import io.domainlifecycles.boot3.autoconfig.configurations.properties.DlcDomainProperties;
 import io.domainlifecycles.boot3.autoconfig.exception.DLCAutoConfigException;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.mirror.serialize.DeserializingDomainMirrorFactory;
 import io.domainlifecycles.mirror.serialize.jackson2.JacksonDomainSerializer;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.StreamUtils;
@@ -53,11 +52,10 @@ import java.util.Objects;
  * @author Leon Völlinger
  */
 @AutoConfiguration
-@EnableConfigurationProperties(DlcDomainProperties.class)
 @Deprecated
-public class DlcDomainAutoConfiguration {
+public class DlcDomainAutoConfiguration implements EnvironmentAware {
 
-    private @Value("${dlcDomainBasePackages}") String dlcDomainBasePackages;
+    private Environment environment;
 
     /**
      * Creates and initializes the domain mirror for the DLC framework.
@@ -68,22 +66,14 @@ public class DlcDomainAutoConfiguration {
      * the configuration properties or the annotation value to determine which packages to scan.
      * </p>
      *
-     * @param dlcDomainProperties the configuration properties containing domain settings
      * @return the initialized DomainMirror instance
      * @throws DLCAutoConfigException if the base packages property is missing or invalid
      */
     @Bean
-    public DomainMirror initializedDomain(DlcDomainProperties dlcDomainProperties) {
+    public DomainMirror initializedDomain() {
         if (!Domain.isInitialized()) {
-            String basePackages;
-            if (dlcDomainProperties != null
-                && dlcDomainProperties.getBasePackages() != null
-                && !dlcDomainProperties.getBasePackages().isBlank()) {
-
-                basePackages = dlcDomainProperties.getBasePackages();
-            } else if (dlcDomainBasePackages != null && !dlcDomainBasePackages.isBlank()) {
-                basePackages = dlcDomainBasePackages;
-            } else {
+            String[] basePackages = environment.getProperty("dlc.domain.basePackages", String[].class);
+            if (basePackages == null || basePackages.length == 0) {
                 var mirrorSerialized = readMirrorFromMetaInfDlc();
                 if( mirrorSerialized != null){
                     var serializer = new JacksonDomainSerializer(false);
@@ -93,9 +83,9 @@ public class DlcDomainAutoConfiguration {
                 throw DLCAutoConfigException.fail(
                     "Property 'basePackages' is missing. Make sure you specified a property called " +
                         "'dlc.domain.basePackages' or add a 'dlcDomainBasePackages' value on the @EnableDLC annotation.");
+
             }
-            String[] domainBasePackages = basePackages.split(",");
-            Domain.initialize(new ReflectiveDomainMirrorFactory(domainBasePackages));
+            Domain.initialize(new ReflectiveDomainMirrorFactory(basePackages));
         }
 
         return Domain.getDomainMirror();
@@ -123,5 +113,10 @@ public class DlcDomainAutoConfiguration {
             throw DLCAutoConfigException.fail(
                 "Failed reading mirror from 'META-INF/dlc'!");
         }
+    }
+
+    @Override
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
     }
 }

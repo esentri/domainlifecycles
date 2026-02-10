@@ -30,6 +30,7 @@ import io.domainlifecycles.boot3.autoconfig.annotation.EnableDlc;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcBuilderAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcJackson2AutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcNoTxInMemoryDomainEventsAutoConfiguration;
+import io.domainlifecycles.boot3.autoconfig.configurations.DlcServiceKindAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcSpringBusDomainEventsAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcSpringWebAutoConfiguration;
@@ -47,6 +48,7 @@ import java.util.Locale;
         DlcSpringWebAutoConfiguration.class,
         DlcSpringBusDomainEventsAutoConfiguration.class,
         DlcNoTxInMemoryDomainEventsAutoConfiguration.class,
+        DlcServiceKindAutoConfiguration.class
     },
     dlcDomainBasePackages = "io.domainlifecycles.autoconfig",
     jooqRecordPackage = "io.domainlifecycles.test.autoconfig",

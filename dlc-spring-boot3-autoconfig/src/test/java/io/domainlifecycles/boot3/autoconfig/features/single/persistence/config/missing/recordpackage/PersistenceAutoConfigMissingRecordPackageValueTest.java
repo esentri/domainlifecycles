@@ -31,6 +31,6 @@ public class PersistenceAutoConfigMissingRecordPackageValueTest {
                         .run("--debug=true")
             )
             .isInstanceOf(BeanCreationException.class)
-            .hasRootCauseMessage("Property 'jooqRecordPackage' is missing.");
+            .hasRootCauseMessage("Property 'jooqRecordPackage' is missing. Specify 'dlc.persistence.jooqRecordPackage' or 'jooqRecordPackage' on '@EnableDlc'.");
     }
 }

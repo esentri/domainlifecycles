@@ -5,6 +5,7 @@ import io.domainlifecycles.autoconfig.model.persistence.TestRootSimple;
 import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
@@ -15,13 +16,13 @@ import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.services.api.ServiceProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
+import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import tools.jackson.databind.ObjectMapper;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = TestApplicationJacksonAndBuilderAutoConfig.class)
@@ -67,6 +68,9 @@ public class JacksonAndBuilderAutoConfigTest {
     @Autowired(required = false)
     private ResponseEntityBuilder responseEntityBuilder;
 
+    @Autowired(required = false)
+    private List<ServiceKind> allServiceKinds;
+
     @Test
     public void testDlcJacksonModuleIsPresent() {
         assertThat(dlcJacksonModule).isNotNull();
@@ -106,5 +110,6 @@ public class JacksonAndBuilderAutoConfigTest {
         assertThat(entityIdentityProvider).isNull();
         assertThat(dlcOpenApiCustomizer).isNull();
         assertThat(responseEntityBuilder).isNull();
+        assertThat(allServiceKinds).isNull();
     }
 }

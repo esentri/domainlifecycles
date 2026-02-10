@@ -27,12 +27,7 @@
 package io.domainlifecycles.autoconfig.features.multiplechannels;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
-import io.domainlifecycles.autoconfig.model.events.ADomainService;
-import io.domainlifecycles.autoconfig.model.events.AQueryHandler;
-import io.domainlifecycles.autoconfig.model.events.ARepository;
 import io.domainlifecycles.autoconfig.model.events.AnAggregateDomainEvent;
-import io.domainlifecycles.autoconfig.model.events.AnApplicationService;
-import io.domainlifecycles.autoconfig.model.events.AnOutboundService;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.ProcessingChannel;
 import io.domainlifecycles.events.api.PublishingChannel;
@@ -49,7 +44,6 @@ import java.util.Locale;
 @SpringBootApplication()
 @EnableDlc()
 public class TestApplicationEvents {
-
     /**
      * Setting the Locale to explicitly force the language in default validation error messages.
      */
@@ -57,31 +51,6 @@ public class TestApplicationEvents {
         Locale.setDefault(Locale.ENGLISH);
         new SpringApplicationBuilder(TestApplicationEvents.class).
             run(args);
-    }
-
-    @Bean
-    public AnApplicationService anApplicationService(){
-        return new AnApplicationService();
-    }
-
-    @Bean
-    public ADomainService aDomainService(){
-        return new ADomainService();
-    }
-
-    @Bean
-    public ARepository aRepository(){
-        return new ARepository();
-    }
-
-    @Bean
-    public AQueryHandler aQueryHandler(){
-        return new AQueryHandler();
-    }
-
-    @Bean
-    public AnOutboundService anOutboundService(){
-        return new AnOutboundService();
     }
 
     @Bean

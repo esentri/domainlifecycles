@@ -26,10 +26,7 @@
 
 package io.domainlifecycles.autoconfig.annotation;
 
-import io.domainlifecycles.autoconfig.configurations.properties.DomainConfigImportSelector;
-import io.domainlifecycles.autoconfig.configurations.properties.JooqPersistenceConfigImportSelector;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.ElementType;
@@ -69,7 +66,6 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import({JooqPersistenceConfigImportSelector.class, DomainConfigImportSelector.class})
 @ImportAutoConfiguration
 public @interface EnableDlc {
 
@@ -83,10 +79,10 @@ public @interface EnableDlc {
      * **/
     String jooqSqlDialect() default "";
 
-    /** DLC always requires all packages which contains all Domain classes used within the application
+    /** DLC always requires all packages, which contain all Domain classes used within the application
      * @return domain base packages
      * **/
-    String dlcDomainBasePackages() default "";
+    String[] dlcDomainBasePackages() default {};
 
     /**
      * Optionally specify AutoConfigurations to be excluded

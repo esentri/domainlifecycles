@@ -29,6 +29,7 @@ package io.domainlifecycles.autoconfig.features.single.events.spring;
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
 import io.domainlifecycles.autoconfig.configurations.DlcBuilderAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcServiceKindAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration;
 import io.domainlifecycles.autoconfig.model.events.ADomainService;
@@ -48,7 +49,8 @@ import java.util.Locale;
         DlcBuilderAutoConfiguration.class,
         DlcSpringWebAutoConfiguration.class,
         DlcSpringOpenApiAutoConfiguration.class,
-        DlcJooqPersistenceAutoConfiguration.class
+        DlcJooqPersistenceAutoConfiguration.class,
+        DlcServiceKindAutoConfiguration.class
     }
 )
 public class TestApplicationSpringEventAutoConfig {

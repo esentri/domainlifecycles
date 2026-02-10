@@ -27,6 +27,7 @@
 package io.domainlifecycles.autoconfig.features.multiple.events_builder_jackson_persistence.spring;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
+import io.domainlifecycles.autoconfig.configurations.DlcServiceKindAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration;
 import io.domainlifecycles.autoconfig.model.events.ADomainService;
@@ -44,6 +45,7 @@ import java.util.Locale;
 @EnableDlc(exclude = {
     DlcSpringWebAutoConfiguration.class,
     DlcSpringOpenApiAutoConfiguration.class,
+    DlcServiceKindAutoConfiguration.class
 })
 public class TestApplicationSpringEventAndBuilderAndJacksonAndPersistenceAutoConfig {
 

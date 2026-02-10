@@ -33,6 +33,7 @@ import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -93,7 +94,9 @@ public class AggregateDomainEventAdapter implements ApplicationContextAware {
         var repositoryMirror = repositoryMirrorForAggregateDomainEventMirror(aggregateDomainEventMirror);
         if(repositoryMirror != null){
             var repo = getBeanByClassName(repositoryMirror.getTypeName());
-            var methodFind = ReflectionUtils.findMethod(repo.getClass(), "findById", event.targetId().getClass());
+            var repoTargetClass = AopUtils.getTargetClass(repo);
+            var methodFind = ReflectionUtils.findMethod(repoTargetClass, "findById", event.targetId().getClass());
+            ReflectionUtils.makeAccessible(methodFind);
             var aggregateOptional = (Optional)ReflectionUtils.invokeMethod(methodFind, repo, event.targetId());
             if(aggregateOptional.isPresent()){
                 var aggregate = aggregateOptional.get();
@@ -110,9 +113,11 @@ public class AggregateDomainEventAdapter implements ApplicationContextAware {
 
                 if(listenerMethod != null) {
                     var methodListener = ReflectionUtils.findMethod(aggregate.getClass(), listenerMethod.getName(), event.getClass());
+                    ReflectionUtils.makeAccessible(methodListener);
                     ReflectionUtils.invokeMethod(methodListener, aggregate, event);
 
-                    var methodUpdate = ReflectionUtils.findMethod(repo.getClass(), "update", aggregate.getClass());
+                    var methodUpdate = ReflectionUtils.findMethod(repoTargetClass, "update", aggregate.getClass());
+                    ReflectionUtils.makeAccessible(methodUpdate);
                     ReflectionUtils.invokeMethod(methodUpdate, repo, aggregate);
                 }else{
                     log.warn("No listener found for event: {}", event);

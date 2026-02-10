@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2025 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,27 +24,22 @@
  *  limitations under the License.
  */
 
-package sampleshop.configuration.domain;
+package io.domainlifecycles.boot3.autoconfig.configurations;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import sampleshop.core.domain.order.OrderPlacementService;
-import sampleshop.core.outport.OrderRepository;
-import sampleshop.core.outport.ProductRepository;
+import io.domainlifecycles.boot3.autoconfig.configurations.registrar.ServiceKindImportRegistrar;
+import io.domainlifecycles.mirror.api.ServiceKindMirror;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.context.annotation.Import;
 
 /**
- * Spring wiring of all domain model related components.
+ * Auto-configuration class for enabling service kind bean registration.
  *
- * @author Tobias Herb
  * @author Mario Herb
  */
-@Configuration
-public class SampleShopConfiguration {
-
-    @Bean
-    public OrderPlacementService orderPlacementService(final OrderRepository orderRepository,
-                                                       final ProductRepository productRepository) {
-        return new OrderPlacementService(orderRepository, productRepository);
-    }
-
+@AutoConfiguration(after = {
+    DlcDomainAutoConfiguration.class,
+    DlcJooqPersistenceAutoConfiguration.class})
+@Import(ServiceKindImportRegistrar.class)
+@Deprecated
+public class DlcServiceKindAutoConfiguration {
 }

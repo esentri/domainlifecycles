@@ -28,7 +28,6 @@ package sampleshop.core.domain.customer;
 
 import io.domainlifecycles.domain.types.DomainEventListener;
 import io.domainlifecycles.domain.types.DomainService;
-import org.springframework.stereotype.Service;
 import sampleshop.core.domain.order.NewOrderPlaced;
 import sampleshop.core.domain.order.OrderCanceled;
 import sampleshop.core.domain.order.OrderShipped;
@@ -42,7 +41,6 @@ import sampleshop.core.outport.EmailNotifierService;
  *
  * @author Mario Herb
  */
-@Service
 public class CustomerNotificationService implements DomainService {
 
     private final EmailNotifierService emailNotifierService;

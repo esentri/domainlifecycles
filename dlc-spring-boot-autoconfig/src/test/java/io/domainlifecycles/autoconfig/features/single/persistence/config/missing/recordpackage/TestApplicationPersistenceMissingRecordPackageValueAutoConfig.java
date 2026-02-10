@@ -27,7 +27,6 @@
 package io.domainlifecycles.autoconfig.features.single.persistence.config.missing.recordpackage;
 
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
-import io.domainlifecycles.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
 import io.domainlifecycles.autoconfig.features.single.persistence.PersistenceAutoConfigTestConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;

@@ -33,9 +33,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import tests.shared.events.PersistenceEvent;
 import tests.shared.persistence.PersistenceEventTestHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.Optional;
-
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;

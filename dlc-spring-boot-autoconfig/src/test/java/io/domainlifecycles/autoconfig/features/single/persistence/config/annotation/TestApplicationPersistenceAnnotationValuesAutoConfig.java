@@ -33,10 +33,10 @@ import io.domainlifecycles.autoconfig.configurations.DlcNoTxInMemoryDomainEvents
 import io.domainlifecycles.autoconfig.configurations.DlcSpringBusDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcServiceKindAutoConfiguration;
+import java.util.Locale;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-
-import java.util.Locale;
 
 @SpringBootApplication
 @EnableDlc(
@@ -47,6 +47,8 @@ import java.util.Locale;
         DlcSpringWebAutoConfiguration.class,
         DlcSpringBusDomainEventsAutoConfiguration.class,
         DlcNoTxInMemoryDomainEventsAutoConfiguration.class,
+        DlcServiceKindAutoConfiguration.class
+
     },
     dlcDomainBasePackages = "io.domainlifecycles.autoconfig",
     jooqRecordPackage = "io.domainlifecycles.test.autoconfig",

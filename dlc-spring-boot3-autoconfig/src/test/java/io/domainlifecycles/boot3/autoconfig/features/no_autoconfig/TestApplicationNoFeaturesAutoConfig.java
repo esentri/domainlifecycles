@@ -31,6 +31,7 @@ import io.domainlifecycles.boot3.autoconfig.configurations.DlcBuilderAutoConfigu
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcDomainAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcJackson2AutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
+import io.domainlifecycles.boot3.autoconfig.configurations.DlcServiceKindAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcSpringBusDomainEventsAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcSpringWebAutoConfiguration;
@@ -47,7 +48,8 @@ import java.util.Locale;
     DlcJooqPersistenceAutoConfiguration.class,
     DlcSpringOpenApiAutoConfiguration.class,
     DlcSpringWebAutoConfiguration.class,
-    DlcSpringBusDomainEventsAutoConfiguration.class
+    DlcSpringBusDomainEventsAutoConfiguration.class,
+    DlcServiceKindAutoConfiguration.class
 })
 public class TestApplicationNoFeaturesAutoConfig {
 

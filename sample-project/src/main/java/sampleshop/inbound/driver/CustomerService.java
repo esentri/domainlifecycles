@@ -28,7 +28,6 @@ package sampleshop.inbound.driver;
 
 import io.domainlifecycles.domain.types.Publishes;
 import io.domainlifecycles.events.api.DomainEvents;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sampleshop.core.domain.customer.AddNewCustomer;
 import sampleshop.core.domain.customer.ChangeCreditCard;
@@ -50,7 +49,6 @@ import java.util.Optional;
  * @author Tobias Herb
  */
 @Transactional
-@Service
 public class CustomerService implements CustomerDriver {
 
     private final CustomerRepository repository;

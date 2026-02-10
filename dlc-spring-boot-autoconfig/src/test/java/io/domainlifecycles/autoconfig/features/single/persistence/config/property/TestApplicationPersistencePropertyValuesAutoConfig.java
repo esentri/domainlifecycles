@@ -30,12 +30,12 @@ import io.domainlifecycles.autoconfig.annotation.EnableDlc;
 import io.domainlifecycles.autoconfig.configurations.DlcBuilderAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJacksonAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringBusDomainEventsAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcServiceKindAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration;
+import java.util.Locale;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-
-import java.util.Locale;
 
 @SpringBootApplication
 @EnableDlc(exclude = {
@@ -43,7 +43,9 @@ import java.util.Locale;
     DlcJacksonAutoConfiguration.class,
     DlcSpringOpenApiAutoConfiguration.class,
     DlcSpringWebAutoConfiguration.class,
-    DlcSpringBusDomainEventsAutoConfiguration.class
+    DlcSpringBusDomainEventsAutoConfiguration.class,
+    DlcServiceKindAutoConfiguration.class
+
 })
 public class TestApplicationPersistencePropertyValuesAutoConfig {
 

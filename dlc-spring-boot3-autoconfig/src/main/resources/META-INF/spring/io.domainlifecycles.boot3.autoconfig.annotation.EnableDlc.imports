@@ -6,3 +6,4 @@ io.domainlifecycles.boot3.autoconfig.configurations.DlcJooqPersistenceAutoConfig
 io.domainlifecycles.boot3.autoconfig.configurations.DlcJackson2AutoConfiguration
 io.domainlifecycles.boot3.autoconfig.configurations.DlcSpringBusDomainEventsAutoConfiguration
 io.domainlifecycles.boot3.autoconfig.configurations.DlcNoTxInMemoryDomainEventsAutoConfiguration
+io.domainlifecycles.boot3.autoconfig.configurations.DlcServiceKindAutoConfiguration

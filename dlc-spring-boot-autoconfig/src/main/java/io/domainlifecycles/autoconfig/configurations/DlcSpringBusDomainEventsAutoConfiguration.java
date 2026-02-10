@@ -42,8 +42,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 
 import java.util.List;
+
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 /**
  * Auto-configuration for integrating domain events with Spring's event bus.
@@ -150,6 +153,7 @@ public class DlcSpringBusDomainEventsAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(ServiceKindListenerPostProcessor.class)
+    @Order(HIGHEST_PRECEDENCE)
     public ServiceKindListenerPostProcessor serviceKindListenerPostProcessor(BeanFactory beanFactory){
         return new ServiceKindListenerPostProcessor(beanFactory);
     }

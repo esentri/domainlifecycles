@@ -1,6 +1,7 @@
 package io.domainlifecycles.boot3.autoconfig.features.all;
 
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.api.PublishingRouter;
@@ -14,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,6 +54,9 @@ public class AllFeaturesAutoConfigTest {
     @Autowired(required = false)
     ResponseEntityBuilder responseEntityBuilder;
 
+    @Autowired(required = false)
+    List<ServiceKind> allServiceKinds;
+
     @Test
     void testAllBeansPresent() {
         assertThat(Domain.isInitialized()).isTrue();
@@ -64,5 +70,6 @@ public class AllFeaturesAutoConfigTest {
         assertThat(entityIdentityProvider).isNotNull();
         assertThat(dlcOpenApiCustomizer).isNotNull();
         assertThat(responseEntityBuilder).isNotNull();
+        assertThat(allServiceKinds).hasSize(6);
     }
 }
