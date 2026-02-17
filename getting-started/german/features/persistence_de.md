@@ -111,7 +111,7 @@ dependencies {
 ```java
 @SpringBootApplication
 @EnableDlc(
-        dlcDomainBasePackages = "com.example.domain", 
+        dlcMirrorBasePackages = "com.example.domain", 
         jooqRecordPackage = "com.example.records",
         jooqSqlDialect = SQLDialect.H2
 )
@@ -138,7 +138,7 @@ public class CustomerRepository extends JooqAggregateRepository<Customer, Custom
     private final JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
     
     public CustomerRepository(DSLContext dslContext,
-                                SpringPersistenceEventPublisher persistenceEventPublisher,
+                                PersistenceEventPublisher persistenceEventPublisher,
                                 JooqDomainPersistenceProvider jooqDomainPersistenceProvider) {
         super(
             Customer.class,

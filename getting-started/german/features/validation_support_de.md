@@ -18,7 +18,7 @@ auch explizit aktiviert wurde, beispielsweise in der Spring Boot Application Kla
 ```Java
 @SpringBootApplication
 @EnableDlc(
-        dlcDomainBasePackages = "com.example.domain",
+        dlcMirrorBasePackages = "com.example.domain",
         jooqRecordPackage = "com.example.records",
         jooqSqlDialect = SQLDialect.H2)
 public class ShopApplication {

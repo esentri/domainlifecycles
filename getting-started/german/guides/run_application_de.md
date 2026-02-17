@@ -14,7 +14,7 @@ Spring Boot App.
 
 ```java
 @SpringBootApplication
-@EnableDlc(dlcDomainBasePackages = "com.example.domain")
+@EnableDlc(dlcMirrorBasePackages = "com.example.domain")
 public class SampleApplication {
 
     public static void main(String[] args) {

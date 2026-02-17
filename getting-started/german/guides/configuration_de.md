@@ -14,7 +14,7 @@ eine Spring-Boot Autoconfiguration zu nutzen, welche im Folgenden erläutert wir
 Im Folgenden findet sich ein Beispiel, wie sich DLC's Autoconfiguration Feature nutzen lässt.
 Aktiviert wird diese, indem an die Spring-Boot App Klasse die Annotation `@EnableDLC` hinzugefügt wird.
 <br/>
-**Hinweis:** Der Parameter `dlcDomainBasePackages` ist verpflichtend. 
+**Hinweis:** Der Parameter `dlcMirrorBasePackages` ist verpflichtend. 
 Sollten hier mehrere Packages gescannt werden müssen, können diese als komma-separierter String übergeben werden.
 
 <details>
@@ -22,7 +22,7 @@ Sollten hier mehrere Packages gescannt werden müssen, können diese als komma-s
 
 ```java
 @SpringBootApplication
-@EnableDlc(dlcDomainBasePackages = "com.example.domain")
+@EnableDlc(dlcMirrorBasePackages = "com.example.domain")
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

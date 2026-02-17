@@ -11,7 +11,7 @@ import java.util.Locale;
 
 @SpringBootApplication
 @EnableDlc(
-    dlcDomainBasePackages = {
+    dlcMirrorBasePackages = {
         "io.domainlifecycles.springboot",
             "tests.shared.openapi",
             "tests.shared.jackson",

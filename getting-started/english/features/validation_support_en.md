@@ -21,7 +21,7 @@ Spring Boot Application class with `@PostConstruct` call:
 ```Java
 @SpringBootApplication
 @EnableDlc(
-        dlcDomainBasePackages = "com.example.domain",
+        dlcMirrorBasePackages = "com.example.domain",
         jooqRecordPackage = "com.example.records",
         jooqSqlDialect = SQLDialect.H2)
 public class ShopApplication {
@@ -89,7 +89,7 @@ public class Customer extends AggregateRootBase<CustomerId> {
 ```
 In this example, both BeanValidation annotations (see `@NotNull`) and programmatic
 `DomainAssertions` are used. The ByteCode extension of DLC automatically inserts the calls of `validate()` and 
-`BeanValidations-validate(this);` automatically in the appropriate places. The use of bean validations is optional.
+`BeanValidations.validate(this);` automatically in the appropriate places. The use of bean validations is optional.
 
 Alternatively all validations can also be mapped as DomainAssertion or the calls `BeanValidations.validate(this);` and `validate();`
 can always be made explicitly without using the byte code extension.

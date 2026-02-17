@@ -34,7 +34,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'io.domainlifecycles:spring-boot-starter'
 }
 ```
 </details>
@@ -61,8 +61,9 @@ dependencies {
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
+            <groupId>io.domainlifecycles</groupId>
             <artifactId>spring-boot-starter</artifactId>
+            <version>3.0.0</version>
         </dependency>
     </dependencies>
 

@@ -14,14 +14,14 @@ with a default configuration.
 Below you see a minimal working example of using DLC's autoconfiguration feature by annotating your Spring-Boot app class
 with `@EnableDLC`.
 <br/>
-**Note:** The `dlcDomainBasePackages` are mandatory. If you have got multiple packages to be scanned, provide a comma-separated string.
+**Note:** The `dlcMirrorBasePackages` are mandatory. If you have got multiple packages to be scanned, provide a comma-separated string.
 
 <details>
 <summary><img style="height: 12px" src="../../icons/java.svg" alt="java"> <b>Application.java</b></summary>
 
 ```java
 @SpringBootApplication
-@EnableDlc(dlcDomainBasePackages = "com.example.domain")
+@EnableDlc(dlcMirrorBasePackages = "com.example.domain")
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
