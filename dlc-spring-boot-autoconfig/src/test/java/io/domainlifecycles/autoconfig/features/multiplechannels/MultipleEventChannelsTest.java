@@ -20,7 +20,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
-@SpringBootTest(classes = TestApplicationEvents.class, properties = {"dlc.events.inmemory.enabled=true", "dlc.events.springbus.enabled=true"})
+@SpringBootTest(classes = TestApplicationEvents.class, properties = {"dlc.features.events.inmemory.enabled=true", "dlc.features.events.springbus.enabled=true"})
 @ActiveProfiles({"test", "test-dlc-domain", "test-dlc-persistence"})
 public class MultipleEventChannelsTest {
 

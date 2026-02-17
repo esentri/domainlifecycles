@@ -1,3 +1,4 @@
+io.domainlifecycles.autoconfig.configurations.DlcPropertiesAutoConfiguration
 io.domainlifecycles.autoconfig.configurations.DlcDomainAutoConfiguration
 io.domainlifecycles.autoconfig.configurations.DlcBuilderAutoConfiguration
 io.domainlifecycles.autoconfig.configurations.DlcSpringWebAutoConfiguration

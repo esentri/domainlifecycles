@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2026 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.mirror.serialize.DeserializingDomainMirrorFactory;
 import io.domainlifecycles.mirror.serialize.jackson3.JacksonDomainSerializer;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -52,6 +53,7 @@ import java.util.Objects;
  * @author Leon Völlinger
  */
 @AutoConfiguration
+@ConditionalOnProperty(prefix = "dlc.features.mirror", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class DlcDomainAutoConfiguration implements EnvironmentAware {
 
     private Environment environment;
@@ -71,7 +73,7 @@ public class DlcDomainAutoConfiguration implements EnvironmentAware {
     @Bean
     public DomainMirror initializedDomain() {
         if (!Domain.isInitialized()) {
-            String[] basePackages = environment.getProperty("dlc.domain.basePackages", String[].class);
+            String[] basePackages = environment.getProperty("dlc.features.mirror.base-packages", String[].class);
             if (basePackages == null || basePackages.length == 0) {
                 var mirrorSerialized = readMirrorFromMetaInfDlc();
                 if( mirrorSerialized != null){
@@ -81,7 +83,7 @@ public class DlcDomainAutoConfiguration implements EnvironmentAware {
                 }
                 throw DLCAutoConfigException.fail(
                         "Property 'basePackages' is missing. Make sure you specified a property called " +
-                            "'dlc.domain.basePackages' or add a 'dlcDomainBasePackages' value on the @EnableDLC annotation.");
+                            "'dlc.features.mirror.base-packages' or add a 'dlcMirrorBasePackages' value on the @EnableDLC annotation.");
 
             }
             Domain.initialize(new ReflectiveDomainMirrorFactory(basePackages));

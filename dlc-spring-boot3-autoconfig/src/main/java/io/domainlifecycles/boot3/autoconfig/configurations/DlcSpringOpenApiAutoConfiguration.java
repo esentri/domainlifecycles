@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2026 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -54,6 +54,7 @@ import org.springframework.context.annotation.Configuration;
     })
 @ConditionalOnClass(name = "org.springdoc.core.properties.SpringDocConfigProperties")
 @ConditionalOnProperty(prefix = "springdoc.api-docs", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "dlc.features.openapi", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Deprecated
 public class DlcSpringOpenApiAutoConfiguration {
 

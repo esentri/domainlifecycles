@@ -31,6 +31,7 @@ import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvi
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 
 /**
@@ -57,6 +58,7 @@ import org.springframework.context.annotation.Bean;
  */
 @AutoConfiguration
 @AutoConfigureAfter(DlcDomainAutoConfiguration.class)
+@ConditionalOnProperty(prefix = "dlc.features.builder", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Deprecated
 public class DlcBuilderAutoConfiguration {
 

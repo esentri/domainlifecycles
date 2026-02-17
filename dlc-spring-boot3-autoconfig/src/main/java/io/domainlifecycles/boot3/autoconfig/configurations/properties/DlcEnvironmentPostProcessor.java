@@ -96,14 +96,14 @@ public class DlcEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
         EnableDlc ann = annotated.getAnnotation(EnableDlc.class);
         if (ann != null) {
-            if(ann.dlcDomainBasePackages() != null && ann.dlcDomainBasePackages().length>0){
-                props.put("dlc.domain.basePackages", ann.dlcDomainBasePackages());
+            if(ann.dlcMirrorBasePackages() != null && ann.dlcMirrorBasePackages().length>0){
+                props.put("dlc.features.mirror.base-packages", ann.dlcMirrorBasePackages());
             }
             if(!ann.jooqRecordPackage().isBlank()){
-                props.put("dlc.persistence.jooqRecordPackage", ann.jooqRecordPackage());
+                props.put("dlc.features.persistence.jooq-record-package", ann.jooqRecordPackage());
             }
             if(!ann.jooqSqlDialect().isBlank()) {
-                props.put("dlc.persistence.sqlDialect", ann.jooqSqlDialect());
+                props.put("dlc.features.persistence.sql-dialect", ann.jooqSqlDialect());
             }
         }
 

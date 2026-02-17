@@ -15,7 +15,6 @@ import testdomain.modulith.AnAggregate;
 import testdomain.modulith.AnAggregateDomainEvent;
 import testdomain.modulith.MulticastedDomainEvent;
 
-
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 

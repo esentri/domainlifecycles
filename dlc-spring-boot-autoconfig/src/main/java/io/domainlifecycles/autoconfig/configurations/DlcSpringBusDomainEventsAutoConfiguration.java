@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2026 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,18 +35,15 @@ import io.domainlifecycles.events.spring.SpringApplicationEventsPublishingChanne
 import io.domainlifecycles.events.spring.listeners.AggregateDomainEventAdapter;
 import io.domainlifecycles.events.spring.listeners.ServiceKindListenerPostProcessor;
 import io.domainlifecycles.mirror.api.DomainMirror;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.annotation.Order;
 
 import java.util.List;
 
-import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 /**
  * Auto-configuration for integrating domain events with Spring's event bus.
@@ -68,12 +65,7 @@ import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
         DlcDomainAutoConfiguration.class
     }
 )
-@ConditionalOnProperty(
-    prefix = "dlc.events.springbus",
-    name = "enabled",
-    havingValue = "true",
-    matchIfMissing = true
-)
+@ConditionalOnProperty(prefix = "dlc.features.events.springbus", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class DlcSpringBusDomainEventsAutoConfiguration {
 
     /**
@@ -138,6 +130,7 @@ public class DlcSpringBusDomainEventsAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(AggregateDomainEventAdapter.class)
+    @ConditionalOnProperty(prefix = "dlc.features.events.springbus", name = "aggregate-domain-events", havingValue = "true", matchIfMissing = true)
     public AggregateDomainEventAdapter aggregateDomainEventAdapter(DomainMirror domainMirror){
         return new AggregateDomainEventAdapter(domainMirror);
     }
@@ -148,14 +141,13 @@ public class DlcSpringBusDomainEventsAutoConfiguration {
      * that contains {@link io.domainlifecycles.domain.types.DomainEventListener} methods.
      * Those proxy listener beans provide Transactional and Async support for event handling.
      *
-     * @param beanFactory The {@link BeanFactory} instance to be used for configuring the post-processor.
      * @return A newly created {@link ServiceKindListenerPostProcessor} instance.
      */
     @Bean
     @ConditionalOnMissingBean(ServiceKindListenerPostProcessor.class)
-    @Order(HIGHEST_PRECEDENCE)
-    public ServiceKindListenerPostProcessor serviceKindListenerPostProcessor(BeanFactory beanFactory){
-        return new ServiceKindListenerPostProcessor(beanFactory);
+    @ConditionalOnProperty(prefix = "dlc.features.events.springbus", name = "service-kind-proxies", havingValue = "true", matchIfMissing = true)
+    public ServiceKindListenerPostProcessor serviceKindListenerPostProcessor(){
+        return new ServiceKindListenerPostProcessor();
     }
 
 }

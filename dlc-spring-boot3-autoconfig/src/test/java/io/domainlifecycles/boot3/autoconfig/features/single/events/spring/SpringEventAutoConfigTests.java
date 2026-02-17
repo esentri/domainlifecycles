@@ -1,6 +1,5 @@
 package io.domainlifecycles.boot3.autoconfig.features.single.events.spring;
 
-
 import io.domainlifecycles.boot3.autoconfig.model.events.ADomainEvent;
 import io.domainlifecycles.boot3.autoconfig.model.events.ADomainService;
 import io.domainlifecycles.boot3.autoconfig.model.events.AQueryHandler;
@@ -27,7 +26,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-@SpringBootTest(classes = TestApplicationSpringEventAutoConfig.class, properties = "dlc.events.springtx.enabled=true")
+@SpringBootTest(classes = TestApplicationSpringEventAutoConfig.class)
 @ActiveProfiles({"test", "test-dlc-domain"})
 public class SpringEventAutoConfigTests {
 

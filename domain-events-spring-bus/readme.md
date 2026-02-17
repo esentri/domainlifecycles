@@ -19,7 +19,7 @@ Registers a proxy domain event listener for each service kind (ApplicationServic
 The proxy domain event listener delegates to the corresponding service kind bean and provides transactional handling.
 Each original listener method is executed as if it was annotated with 
 Springs ``@TransactionalEventListener``, ``@Async``,``@Transactional(propagation=REQUIRES_NEW)``.
-If the original listener method is annotated with ``@TransactionalEventListener`` or ``@EventListener`` or Spring Moduliths ``@ApplicationModuleListener``
+If the original listener method is annotated additionally with ``@TransactionalEventListener`` or ``@EventListener`` or Spring Moduliths ``@ApplicationModuleListener``
 no proxy is created and the original listener method is executed directly with the Spring annotation defined behaviour.
 That way the behaviour of DLCs listener methods (``@DomainEventListener``) can be customized with Spring means.
 

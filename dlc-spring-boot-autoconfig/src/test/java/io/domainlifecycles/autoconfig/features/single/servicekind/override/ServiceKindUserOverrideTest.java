@@ -1,4 +1,4 @@
-package io.domainlifecycles.boot3.autoconfig.features.single.servicekind;
+package io.domainlifecycles.autoconfig.features.single.servicekind.override;
 
 import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.domain.types.ServiceKind;
@@ -20,10 +20,11 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes= TestApplicationServiceKindSingleAutoConfig.class)
+
+@SpringBootTest(classes=TestApplicationServiceKindSingleOverAutoConfig.class)
 @ActiveProfiles({"test", "test-dlc-domain", "test-dlc-persistence"})
-@Import(ServiceKindAutoConfigTestConfiguration.class)
-public class ServiceKindAutoConfigTest {
+@Import(ServiceKindUserOverrideAutoConfigTestConfiguration.class)
+public class ServiceKindUserOverrideTest {
 
     @Autowired
     List<ServiceKind> allServiceKinds;

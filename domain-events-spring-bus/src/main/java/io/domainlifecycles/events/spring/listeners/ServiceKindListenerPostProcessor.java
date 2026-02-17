@@ -40,9 +40,11 @@ import net.bytebuddy.implementation.FieldAccessor;
 import net.bytebuddy.implementation.MethodCall;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -50,6 +52,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.PriorityOrdered;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,18 +66,15 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * A post-processor for Spring beans that identifies and processes beans of type {@code ServiceKind}.
- * It scans the methods of these beans to identify listeners and dynamically registers proxy listener
- * beans for handling specific domain events.
- * <br><br>
- * Implements the {@code BeanDefinitionRegistryPostProcessor} interface to operate on the
- * {@code BeanDefinitionRegistry} and dynamically manage Spring bean definitions. This class is
- * also capable of working with the Spring application context, ensuring appropriate registration
- * of listener beans.
+ * A {@code BeanDefinitionRegistryPostProcessor} implementation designed to scan for service-kind
+ * beans and their associated listeners during the Spring container lifecycle.
+ * This class facilitates the dynamic registration of listener beans for methods annotated with
+ * custom listener-related annotations (@see DomainEventListener).
  *
- * @author Mario Herb
+ * It also implements {@code ApplicationContextAware} to gain access to the Spring application
+ * context and {@code PriorityOrdered} to establish its execution precedence.
  */
-public class ServiceKindListenerPostProcessor implements BeanDefinitionRegistryPostProcessor, ApplicationContextAware {
+public class ServiceKindListenerPostProcessor implements BeanDefinitionRegistryPostProcessor, ApplicationContextAware, PriorityOrdered {
 
     /**
      * A constant representing the field name used to identify the target
@@ -89,7 +89,8 @@ public class ServiceKindListenerPostProcessor implements BeanDefinitionRegistryP
     public static final String PROPAGATION_PROPERTY = "propagation";
 
     private final Logger log = LoggerFactory.getLogger(ServiceKindListenerPostProcessor.class);
-    private final BeanFactory beanFactory;
+
+    private BeanDefinitionRegistry registry;
     private ConfigurableApplicationContext context;
 
     /**
@@ -107,42 +108,42 @@ public class ServiceKindListenerPostProcessor implements BeanDefinitionRegistryP
     }
 
     /**
-     * Constructs a new instance of the ServiceKindListenerPostProcessor class.
-     * The constructor initializes the post-processor with the given bean factory,
-     * which is used for retrieving and managing bean instances in the Spring container.
+     * Post-processes the BeanDefinitionRegistry within the Spring context. This method allows
+     * modifications, additions, or removal of bean definitions before the BeanFactory is created
+     * and the beans are instantiated.
      *
-     * @param beanFactory the BeanFactory instance to be used by the post-processor for
-     *                    interacting with the Spring container. This parameter must not
-     *                    be null and is typically auto-wired by the Spring framework.
+     * @param registry the BeanDefinitionRegistry instance being processed, enabling bean
+     *                 definitions to be registered or manipulated. Must not be null.
+     * @throws BeansException if an error occurs during the post-processing of the registry.
      */
-    public ServiceKindListenerPostProcessor(BeanFactory beanFactory) {
-        this.beanFactory = beanFactory;
+    @Override
+    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
+        this.registry = registry;
     }
 
     /**
-     * Processes the provided {@code BeanDefinitionRegistry} by scanning for beans
-     * of type {@code ServiceKind} and registering their associated listeners. This method
-     * is invoked during the bean definition phase of the Spring container lifecycle and
-     * allows for additional bean definitions or modifications to existing definitions.
+     * Post-processes the given {@code ConfigurableListableBeanFactory} after its standard initialization.
+     * This method scans for beans of type {@code ServiceKind}, logs their detection,
+     * and initiates a listener registration process for each matching bean.
      *
-     * @param registry the {@code BeanDefinitionRegistry} instance that contains
-     *                 bean definitions. It is used to retrieve bean metadata and
-     *                 register additional listener beans dynamically. This parameter
-     *                 must not be null.
+     * @param beanFactory the {@code ConfigurableListableBeanFactory} instance being processed. This allows
+     *                    access to all bean definitions and enables custom modifications or additional
+     *                    registrations during the post-processing phase.
+     * @throws BeansException if an error occurs during the processing of the bean factory.
      */
     @Override
-    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
-        for (String beanName : registry.getBeanDefinitionNames()) {
-            BeanDefinition def = registry.getBeanDefinition(beanName);
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        for (String beanName : beanFactory.getBeanDefinitionNames()) {
+            BeanDefinition def = beanFactory.getBeanDefinition(beanName);
 
-            if (isServiceKind(beanName, def)) {
+            if (isServiceKind(beanName, def, beanFactory)) {
                 log.debug("Found ServiceKind bean {}. Scanning for listeners.", beanName);
-                scanAndRegisterListeners(beanName, registry);
+                scanAndRegisterListeners(beanName, beanFactory);
             }
         }
     }
 
-    boolean isServiceKind(String beanName, BeanDefinition bd) {
+    boolean isServiceKind(String beanName, BeanDefinition bd, BeanFactory beanFactory) {
         if (bd.getRole() != BeanDefinition.ROLE_APPLICATION) {
             return false;
         }
@@ -171,7 +172,7 @@ public class ServiceKindListenerPostProcessor implements BeanDefinitionRegistryP
     @SuppressWarnings("unchecked")
     private void scanAndRegisterListeners(
         String beanName,
-        BeanDefinitionRegistry registry
+        BeanFactory beanFactory
     ) {
         Class<?> beanType = beanFactory.getType(beanName, false);
         if (beanType == null) return;
@@ -232,6 +233,19 @@ public class ServiceKindListenerPostProcessor implements BeanDefinitionRegistryP
         String name = targetBeanName + "_" + method.getName() + "_" + eventType.getSimpleName() + "$Proxy-" + UUID.randomUUID();
         registry.registerBeanDefinition(name, bd);
         log.debug("Registered listener bean {} for method {} on bean {}.", name, method.getName(), targetBeanName);
+    }
+
+    /**
+     * Returns the order value of this post-processor, indicating the priority
+     * with which it should be executed relative to other post-processors
+     * within the Spring container lifecycle.
+     *
+     * @return the lowest precedence value, ensuring that this post-processor
+     *         is executed after others with higher precedence.
+     */
+    @Override
+    public int getOrder() {
+        return PriorityOrdered.LOWEST_PRECEDENCE;
     }
 
     record ListenerSignature(String methodName, Class<?> eventType) {}

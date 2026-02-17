@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2026 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,6 +51,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
@@ -89,6 +90,7 @@ import java.util.Set;
     beforeName = "org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration"
 )
 @ConditionalOnClass(name = "org.jooq.DSLContext")
+@ConditionalOnProperty(prefix = "dlc.features.peristence", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Deprecated
 public class DlcJooqPersistenceAutoConfiguration {
 
@@ -155,13 +157,13 @@ public class DlcJooqPersistenceAutoConfiguration {
             jooqConfig.setConnectionProvider(connectionProvider);
             SQLDialect sqlDialect;
             try {
-                var property = environment.getProperty("dlc.persistence.sqlDialect");
+                var property = environment.getProperty("dlc.features.persistence.sql-dialect");
                 if(property == null) {
-                    throw DLCAutoConfigException.fail("Property 'sqlDialect' is missing. Specify 'dlc.persistence.sqlDialect' or 'jooqSqlDialect' on '@EnableDlc'.");
+                    throw DLCAutoConfigException.fail("Property 'sqlDialect' is missing. Specify 'dlc.features.persistence.sql-dialect' or 'jooqSqlDialect' on '@EnableDlc'.");
                 }
                 sqlDialect = SQLDialect.valueOf(property);
             } catch (IllegalArgumentException e) {
-                throw DLCAutoConfigException.fail("Property 'sqlDialect' is missing. Specify 'dlc.persistence.sqlDialect' or 'jooqSqlDialect' on '@EnableDlc'.");
+                throw DLCAutoConfigException.fail("Property 'sqlDialect' is missing. Specify 'dlc.features-persistence.sql-dialect' or 'jooqSqlDialect' on '@EnableDlc'.");
             }
             jooqConfig.set(sqlDialect);
             return jooqConfig;
@@ -203,9 +205,9 @@ public class DlcJooqPersistenceAutoConfiguration {
             Set<RecordMapper<?, ?, ?>> customRecordMappers,
             DomainMirror domainMirror
         ) {
-            String recordPackage = environment.getProperty("dlc.persistence.jooqRecordPackage");
+            String recordPackage = environment.getProperty("dlc.features.persistence.jooq-record-package");
             if(recordPackage == null) {
-                throw DLCAutoConfigException.fail("Property 'jooqRecordPackage' is missing. Specify 'dlc.persistence.jooqRecordPackage' or 'jooqRecordPackage' on '@EnableDlc'.");
+                throw DLCAutoConfigException.fail("Property 'jooqRecordPackage' is missing. Specify 'dlc.features.persistence.jooq-record-package' or 'jooqRecordPackage' on '@EnableDlc'.");
             }
 
             return new JooqDomainPersistenceProvider(

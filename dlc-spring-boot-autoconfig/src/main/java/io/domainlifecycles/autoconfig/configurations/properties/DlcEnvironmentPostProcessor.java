@@ -48,11 +48,6 @@ import java.util.LinkedHashMap;
  *
  * The retrieved properties are added to a property source named `enableDlcAnnotation` in the environment.
  *
- * The following configuration can be extracted from the {@code @EnableDlc} annotation:
- * - `dlc.domain.basePackages` - An array of base package names required for DLC domain configuration.
- * - `dlc.persistence.jooqRecordPackage` - The package containing jOOQ-generated record classes, if applicable.
- * - `dlc.persistence.sqlDialect` - The SQL dialect to be used with jOOQ, if applicable.
- *
  * This processor uses {@link ClassPathScanningCandidateComponentProvider} to identify eligible
  * classes in the application's base package and process their annotations.
  *
@@ -94,14 +89,14 @@ public class DlcEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
         EnableDlc ann = annotated.getAnnotation(EnableDlc.class);
         if (ann != null) {
-            if(ann.dlcDomainBasePackages() != null && ann.dlcDomainBasePackages().length>0){
-                props.put("dlc.domain.basePackages", ann.dlcDomainBasePackages());
+            if(ann.dlcMirrorBasePackages() != null && ann.dlcMirrorBasePackages().length>0){
+                props.put("dlc.features.mirror.base-packages", ann.dlcMirrorBasePackages());
             }
             if(!ann.jooqRecordPackage().isBlank()){
-                props.put("dlc.persistence.jooqRecordPackage", ann.jooqRecordPackage());
+                props.put("dlc.features.persistence.jooq-record-package", ann.jooqRecordPackage());
             }
             if(!ann.jooqSqlDialect().isBlank()) {
-                props.put("dlc.persistence.sqlDialect", ann.jooqSqlDialect());
+                props.put("dlc.feaures.persistence.sql-dialect", ann.jooqSqlDialect());
             }
         }
 

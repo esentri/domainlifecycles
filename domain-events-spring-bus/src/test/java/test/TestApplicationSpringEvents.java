@@ -30,7 +30,6 @@ import io.domainlifecycles.events.spring.listeners.AggregateDomainEventAdapter;
 import io.domainlifecycles.events.spring.listeners.ServiceKindListenerPostProcessor;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
@@ -59,8 +58,8 @@ public class TestApplicationSpringEvents {
 
 
     @Bean
-    public ServiceKindListenerPostProcessor serviceKindListenerPostProcessor(BeanFactory beanFactory){
-        return new ServiceKindListenerPostProcessor(beanFactory);
+    public ServiceKindListenerPostProcessor serviceKindListenerPostProcessor(){
+        return new ServiceKindListenerPostProcessor();
     }
 
     @Bean

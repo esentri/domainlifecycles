@@ -28,6 +28,6 @@ public class DomainAutoConfigMissingBasePackageValueTest {
     public void testThrowExceptionOnMissingBasePackageConfiguration() {
         assertThatThrownBy(() -> SpringApplication.run(TestApplicationDomainMissingBasePackageValueAutoConfig.class))
             .isInstanceOf(BeanCreationException.class)
-            .hasRootCauseMessage("Property 'basePackages' is missing. Make sure you specified a property called 'dlc.domain.basePackages' or add a 'dlcDomainBasePackages' value on the @EnableDLC annotation.");
+            .hasRootCauseMessage("Property 'basePackages' is missing. Make sure you specified a property called 'dlc.features.mirror.base-packages' or add a 'dlcMirrorBasePackages' value on the @EnableDLC annotation.");
     }
 }

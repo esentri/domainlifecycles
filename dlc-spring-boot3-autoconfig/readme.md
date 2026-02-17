@@ -67,7 +67,7 @@ Enable DLC in your Spring Boot application using the `@EnableDlc` annotation:
 
 ```java
 @EnableDlc(
-    dlcDomainBasePackages = "com.example.domain"
+    dlcMirrorBasePackages = "com.example.domain"
 )
 @SpringBootApplication
 public class Application {
@@ -88,18 +88,23 @@ Could be deactivated by:
 ```java
 @EnableDlc(exclude = DlcDomainAutoConfiguration.class)
 ```
+or by:
+```properties
+dlc.features.mirror.enabled=false
+```
+Annotation-based excludes have priority over property toggles.
 
 **Configuration:**
 ```java
 @EnableDlc(
-    dlcDomainBasePackages = "com.example.domain,com.example.shared"
+    dlcMirrorBasePackages = "com.example.domain,com.example.shared"
 )
 ```
 
 **Properties:**
 Optionally use Spring application properties for configuration:
 ```properties
-dlc.domain.basePackages=com.example.domain,com.example.shared
+dlc.features.mirror.base-packages=com.example.domain,com.example.shared
 ```
 Providing either the 'dlcDomainBasePackages' attribute or defining it as a property is optional.
 It is possible to create the mirror at compile time using the [DLC build plugins](../dlc-plugins/readme.md).
@@ -118,6 +123,11 @@ Could be deactivated by:
 ```java
 @EnableDlc(exclude = DlcBuilderAutoConfiguration.class)
 ```
+or by:
+```properties
+dlc.features.builder.enabled=false
+```
+Annotation-based excludes have priority over property toggles.
 
 More information on [DLC Builders](./../builder/readme.md) 
 
@@ -129,12 +139,13 @@ More information on [DLC Builders](./../builder/readme.md)
 and Jackson is provided on the classpath.
 Could be deactivated by:
 ```java
-@EnableDlc(exclude = DlcJacksonAutoConfiguration.class)
-```
-or regarding Jackson 2
-```java
 @EnableDlc(exclude = DlcJackson2AutoConfiguration.class)
 ```
+or by:
+```properties
+dlc.features.jackson2.enabled=false
+```
+Annotation-based excludes have priority over property toggles.
 
 **Features:**
 - Automatic de-/serialization of ValueObjects and Identities
@@ -153,11 +164,15 @@ Could be deactivated by:
 ```java
 @EnableDlc(exclude = DlcJooqPersistenceAutoConfiguration.class)
 ```
+or by:
+```properties
+dlc.features.persistence.enabled=false
+```
+Annotation-based excludes have priority over property toggles.
 
 **Configuration:**
 ```java
 @EnableDlc(
-    enableJooqPersistenceAutoConfig = true,
     jooqRecordPackage = "com.example.jooq.tables.records",
     jooqSqlDialect = "POSTGRES"
 )
@@ -165,8 +180,8 @@ Could be deactivated by:
 
 **Properties:**
 ```properties
-dlc.jooq.recordPackage=com.example.jooq.tables.records
-dlc.jooq.sqlDialect=POSTGRES
+dlc.features.persistence.jooq-record-package=com.example.jooq.tables.records
+dlc.features.persistence.sql-dialect=POSTGRES
 ```
 
 Providing the 'dlcJooqRecordPackage' is mandatory for DLC persistence, 
@@ -184,6 +199,11 @@ Could be deactivated by:
 ```java
 @EnableDlc(exclude = DlcServiceKindAutoConfiguration.class)
 ```
+or by:
+```properties
+dlc.features.servicekinds.enabled=false
+```
+Annotation-based excludes have priority over property toggles.
 
 **Features:**
 - Automatic registration of ServiceKind beans (all classes implementing `ServiceKind`):
@@ -192,6 +212,12 @@ Could be deactivated by:
     - `ApplicationService` or `Driver`
     - `QueryHandler`
     - `OutboundService`
+
+- If enabled, automatic bean instantiation is configured for all classes implementing `ServiceKind` being defined
+  in the domain base packages ``dlc.features.mirror.base-packages``.
+- Specific packages can be defined for automatic bean instantiation
+  - Use application property, e.g. ``dlc.features.servicekinds.packages=abc,com.acme`` 
+  - multiple packages are supported
 
 ### 6. Domain Events Autoconfig 
 
@@ -203,10 +229,20 @@ DLC provides autoconfiguration for the following event systems for DomainEvents:
 
 **Activation:** Automatically active when `@EnableDlc` annotation is set.
 By default ```DlcSpringBusDomainEventsAutoConfiguration``` is enabled. 
-Disabled by setting config property ```dlc.events.springbus.enabled=false```.
+Disabled by setting config property ```dlc.features.events.springbus.enabled=false```.
 
-The DLC inmemory event system can be enabled by setting the corresponding config property:
-- In memory: ```dlc.events.inmemory.enabled=true```
+The Spring integrated ``AggregateDomainEventAdapter`` allows for Aggregate listener methods being directly
+called by the Spring event bus. This feature can be disabled by setting the config property
+```dlc.features.events.springbus.aggregate-domain-events=false```.
+
+ServiceKind listener proxies allow for using ```@DomainEventListener``` instead of Spring annotations.
+Configuring these listener proxies can be disabled by setting the config property
+```dlc.features.events.springbus.service-kind-proxies=false```
+
+More information on that: [DLC DomainEvents Spring integration](./../domain-events-spring-bus/readme.md)
+
+The DLC inmemory event system is disabled by default and can be enabled by setting the corresponding config property:
+- In memory: ```dlc.features.events.inmemory.enabled=true```
 
 #### AutoConfig supported Event Systems
 - Spring Bus supported Domain Events (DLC autoconfig default):
@@ -264,6 +300,11 @@ Could be deactivated by:
 ```java
 @EnableDlc(exclude = DlcSpringWebAutoConfiguration.class)
 ```
+or by:
+```properties
+dlc.features.springweb.enabled=false
+```
+Annotation-based excludes have priority over property toggles.
 
 **Features:**
 - Automatic conversion of string parameters to Domain Objects
@@ -281,6 +322,11 @@ Could be deactivated by:
 ```java
 @EnableDlc(exclude = DlcSpringOpenApiAutoConfiguration.class)
 ```
+or by:
+```properties
+dlc.features.openapi.enabled=false
+```
+Annotation-based excludes have priority over property toggles.
 
 **Features:**
 - Correct schema generation for ValueObjects and Identities
@@ -291,15 +337,18 @@ More information on [DLC Open API](./../spring-doc2-integration/readme.md)
 
 ## Advanced Configuration
 
+### Test Configuration 
+Property based disabling of DLC features is sometimes helpful for specific test configurations, Test Slicing,...  
+
 ### Properties-based Configuration
 Instead of using annotation attributes, you can define properties:
 ```properties
 # Domain Packages
-dlc.domain.basePackages=com.example.domain,com.example.shared
+dlc.features.mirror.base-packages=com.example.domain,com.example.shared
 
 # jOOQ Configuration
-dlc.jooq.recordPackage=com.example.jooq.tables.records
-dlc.jooq.sqlDialect=POSTGRES
+dlc.features.persistence.jooq-record-package=com.example.jooq.tables.records
+dlc.features.persistence..sql-dialect=POSTGRES
 ```
 
 ### Important Note
