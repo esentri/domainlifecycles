@@ -41,6 +41,8 @@ dependencies {
     compileOnly libs.jackson3.core
     compileOnly libs.jackson3.databind
     compileOnly libs.jooq.codegen
+    annotationProcessor libs.spring.boot3.configuration.processor
+    compileOnly libs.spring.boot3.configuration.processor
     testImplementation platform(libs.spring.boot3.dependencies)
     testImplementation libs.h2
 	testImplementation project(":test-shared-impl")

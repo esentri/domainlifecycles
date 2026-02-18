@@ -24,6 +24,7 @@ def dbPassword = ''
 def dbMigration = 'src/test/resources/db/migration'
 
 dependencies {
+    implementation platform(libs.spring.boot.dependencies)
     compileOnly libs.jooq
     compileOnly libs.spring.jdbc
     api project(":domain-events-core")
@@ -41,6 +42,8 @@ dependencies {
     compileOnly libs.jackson3.core
     compileOnly libs.jackson3.databind
     compileOnly libs.jooq.codegen
+    annotationProcessor libs.spring.boot.configuration.processor
+    compileOnly libs.spring.boot.configuration.processor
     testImplementation platform(libs.spring.boot.dependencies)
     testImplementation libs.h2
 	testImplementation project(":test-shared-impl")
