@@ -26,8 +26,15 @@
 
 package io.domainlifecycles.boot3.autoconfig.configurations;
 
+import io.domainlifecycles.domain.types.ApplicationService;
+import io.domainlifecycles.domain.types.DomainService;
+import io.domainlifecycles.domain.types.Driver;
+import io.domainlifecycles.domain.types.OutboundService;
+import io.domainlifecycles.domain.types.QueryHandler;
+import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.domain.types.ServiceKind;
 import org.jspecify.annotations.NonNull;
+import org.slf4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -70,6 +77,8 @@ public class DlcServiceKindAutoConfiguration {
 
     static final class ServiceKindTwoPassPostProcessor
         implements BeanDefinitionRegistryPostProcessor, EnvironmentAware, PriorityOrdered {
+
+        private static final Logger log = org.slf4j.LoggerFactory.getLogger(DlcServiceKindAutoConfiguration.class);
 
         private Environment environment;
 
@@ -170,13 +179,35 @@ public class DlcServiceKindAutoConfiguration {
 
                 String[] existing = beanFactory.getBeanNamesForType(implClass, true, false);
                 if (existing != null && existing.length > 0) {
-                    continue; // The user (or someone else) has already defined this implementation as a bean
+                    log.debug("Skipping registration of {} as it is already defined by the application", implClass.getName());
+                    continue;
                 }
 
                 String beanName = implClass.getName();
                 if (registry.containsBeanDefinition(beanName) || beanFactory.containsBean(beanName)) {
+                    log.debug("Skipping registration of bean with name {} as it is already defined by the application", implClass.getName());
                     continue;
                 }
+
+                var conflict = false;
+                for (Class<?> itf : implClass.getInterfaces()) {
+                    if (ServiceKind.class.isAssignableFrom(itf)
+                        && !itf.equals(ServiceKind.class)
+                        && !itf.equals(Repository.class)
+                        && !itf.equals(OutboundService.class)
+                        && !itf.equals(ApplicationService.class)
+                        && !itf.equals(DomainService.class)
+                        && !itf.equals(Driver.class)
+                        && !itf.equals(QueryHandler.class)
+                    ) {
+                        if (beanFactory.getBeanNamesForType(itf, true, false).length > 0) {
+                            conflict = true;
+                            log.warn("Skipping registration of {} as it conflicts with an existing bean of type {}", implClass.getName(), itf.getName());
+                            break;
+                        }
+                    }
+                }
+                if (conflict) continue;
 
                 RootBeanDefinition bd = new RootBeanDefinition(implClass);
                 registry.registerBeanDefinition(beanName, bd);

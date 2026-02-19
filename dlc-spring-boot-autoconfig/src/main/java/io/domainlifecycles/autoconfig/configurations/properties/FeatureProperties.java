@@ -25,7 +25,10 @@
  */
 package io.domainlifecycles.autoconfig.configurations.properties;
 
+import io.domainlifecycles.domain.types.DomainEventListener;
+import io.domainlifecycles.domain.types.ServiceKind;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * Configuration properties for defining DLC features and their behavior. The properties
@@ -183,7 +186,8 @@ public class FeatureProperties {
 
         /**
          * Sets the status of the Mirror feature, enabling or disabling it based on the
-         * specified boolean value.
+         * specified boolean value. For most use cases, this should be set to {@code true}
+         * to enable the feature, unless there's a specific reason to disable it.
          *
          * @param enabled a boolean value indicating whether the Mirror feature should be enabled.
          *                Passing {@code true} enables the feature, while {@code false} disables it.
@@ -193,7 +197,7 @@ public class FeatureProperties {
         }
 
         /**
-         * Retrieves the base packages associated with the Mirror feature configuration.
+         * Retrieves the base packages associated with the Domain Mirror feature configuration.
          * These base packages are used to define the scope for scanning or processing
          * within the Mirror functionality.
          *
@@ -206,9 +210,9 @@ public class FeatureProperties {
         }
 
         /**
-         * Sets the base packages associated with the Mirror feature configuration.
-         * These base packages are used to define the scope for scanning or processing
-         * within the Mirror functionality.
+         * Sets the base packages associated with the Domain Mirror feature configuration.
+         * These base packages are used to define the scope for scanning and processing
+         * DLC types marking DDD concepts within the Mirror functionality.
          *
          * @param basePackages an array of strings representing the base package names
          *                     to be configured for the Mirror feature. Passing {@code null}
@@ -231,7 +235,7 @@ public class FeatureProperties {
         private String sqlDialect;
 
         /**
-         * Determines whether the persistence feature is enabled.
+         * Determines whether the DLC persistence feature is enabled.
          *
          * @return {@code true} if persistence is enabled; {@code false} otherwise.
          */
@@ -263,8 +267,8 @@ public class FeatureProperties {
 
         /**
          * Sets the package name for jOOQ-generated record classes. The specified package is
-         * used as the location for placing jOOQ record classes generated during build-time
-         * or runtime for database interaction.
+         * used as the location for placing jOOQ record classes generated during build-time.
+         * DLC persistence uses them for runtime for database interaction.
          *
          * @param jooqRecordPackage the package name where jOOQ-generated records will be located;
          *                          must be a valid package name or {@code null} if no package is to be set.
@@ -292,6 +296,8 @@ public class FeatureProperties {
          * @param sqlDialect the name of the SQL dialect as a string; should be a valid
          *                   dialect supported by the underlying persistence framework.
          *                   Pass {@code null} to clear any previously set value.
+         *                   The following dialects are supported among others:
+         *                   MARIADB, MYSQL, POSTGRES, SQLITE, H2, HSQLDB, ORACLE, SQLSERVER
          */
         public void setSqlDialect(String sqlDialect) {
             this.sqlDialect = sqlDialect;
@@ -341,7 +347,8 @@ public class FeatureProperties {
         private String[] packages;
 
         /**
-         * Checks whether the current service kind is enabled.
+         * Checks whether autowiring for service kind domain implementations
+         * (DomainServices, ApplicationServices, Repositories and OutboundServices) is enabled.
          *
          * @return {@code true} if the service kind is enabled; {@code false} otherwise.
          */
@@ -350,7 +357,8 @@ public class FeatureProperties {
         }
 
         /**
-         * Updates the enabled state for the current service kind.
+         * Sets enabled status for autowiring of service kind domain implementations
+         * (DomainServices, ApplicationServices, Repositories and OutboundServices).
          *
          * @param enabled a {@code boolean} value indicating whether the service kind
          *                should be enabled ({@code true}) or disabled ({@code false}).
@@ -360,24 +368,22 @@ public class FeatureProperties {
         }
 
         /**
-         * Retrieves the list of package names on which automatic bean initialization should occur.
+         * Retrieves the list of package names on which automatic bean autowiring on
+         * {@link ServiceKind} initialization should occur.
          *
-         * @return an array of package names as {@code String[]} that are associated with the service kind,
-         *         or {@code null} if no packages are defined.
+         * @return an array of package names as {@code String[]} that are associated with the service kind
+         * autowiring feature, or {@code null} if no packages are defined.
          */
         public String[] getPackages() {
             return packages;
         }
 
         /**
-         * Updates the packages associated with the service kind. This method allows
-         * setting or modifying the list of package names that are linked to the
-         * service kind and used for automatic bean initialization or related purposes.
+         * Sets the list of package names on which automatic bean autowiring on
+         *          * @link ServiceKind} initialization should occur.
          *
-         * @param packages an array of package names as {@code String[]} to be
-         *                 associated with the service kind. Passing {@code null}
-         *                 or an empty array will clear the existing package
-         *                 configuration.
+         * @param packages an array of package names as {@code String[]} that are associated with the service kind
+         *                 autowiring feature, or {@code null} if no packages are defined.
          */
         public void setPackages(String[] packages) {
             this.packages = packages;
@@ -395,7 +401,7 @@ public class FeatureProperties {
         private boolean serviceKindsProxy = true;
 
         /**
-         * Checks if the Springbus feature is enabled.
+         * Checks if the Springbus DomainEvents feature is enabled.
          *
          * @return true if the Springbus feature is enabled, false otherwise.
          */
@@ -404,7 +410,7 @@ public class FeatureProperties {
         }
 
         /**
-         * Sets the enabled status for the Springbus feature.
+         * Sets the enabled status for the Springbus DomainEvents feature.
          *
          * @param enabled a boolean indicating whether the Springbus feature should be enabled (true) or disabled (false)
          */
@@ -413,18 +419,18 @@ public class FeatureProperties {
         }
 
         /**
-         * Checks if aggregate domain events support is enabled for the Springbus feature.
+         * Checks if Aggregate DomainEvents support is enabled for the Springbus feature.
          *
-         * @return true if aggregate domain events are enabled, false otherwise.
+         * @return true if Aggregate DomainEvents are enabled, false otherwise.
          */
         public boolean isAggregateDomainEvents() {
             return aggregateDomainEvents;
         }
 
         /**
-         * Sets the status for aggregate domain events support.
+         * Sets the enabled status for Aggregate DomainEvents support.
          *
-         * @param aggregateDomainEvents a boolean indicating whether aggregate domain events
+         * @param aggregateDomainEvents a boolean indicating whether Aggregate DomainEvents
          *                              should be enabled (true) or disabled (false)
          */
         public void setAggregateDomainEvents(boolean aggregateDomainEvents) {
@@ -432,7 +438,7 @@ public class FeatureProperties {
         }
 
         /**
-         * Checks if the service kinds proxy is enabled for the Springbus feature.
+         * Checks if the service kinds proxy is enabled for the Springbus DomainEvents feature.
          *
          * @return true if the service kinds proxy is enabled, false otherwise.
          */
@@ -441,9 +447,13 @@ public class FeatureProperties {
         }
 
         /**
-         * Sets the status for enabling or disabling the service kinds proxy in the Springbus feature.
+         * Sets the status for enabling or disabling the service kinds proxy in the Springbus
+         * DomainEvents feature. By enabling this feature, methods marked with {@link DomainEventListener}
+         * behave like being marked with Spring {@link Async}, {@link org.springframework.transaction.event.TransactionalEventListener}
+         * and also starting a new transaction like {@link org.springframework.transaction.annotation.Transactional}
+         * with REQUIRES_NEW.
          *
-         * @param serviceKindsProxy a boolean indicating whether the service kinds proxy
+         * @param serviceKindsProxy a boolean indicating whether the service kinds proxy feature
          *                          should be enabled (true) or disabled (false)
          */
         public void setServiceKindsProxy(boolean serviceKindsProxy) {
@@ -462,18 +472,18 @@ public class FeatureProperties {
         private boolean enabled = false;
 
         /**
-         * Checks whether the in-memory feature is enabled.
+         * Checks whether the in-memory DomainEvents feature is enabled.
          *
-         * @return true if the in-memory feature is enabled; false otherwise
+         * @return true if the in-memory DomainEvents feature is enabled; false otherwise
          */
         public boolean isEnabled() {
             return enabled;
         }
 
         /**
-         * Enables or disables the in-memory feature based on the provided parameter.
+         * Enables or disables the in-memory DomainEvents feature based on the provided parameter.
          *
-         * @param enabled a boolean value indicating whether the in-memory feature
+         * @param enabled a boolean value indicating whether the in-memory DomainEvents feature
          *                should be enabled (true) or disabled (false)
          */
         public void setEnabled(boolean enabled) {

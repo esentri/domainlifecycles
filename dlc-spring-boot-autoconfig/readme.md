@@ -231,6 +231,9 @@ Annotation-based excludes have priority over property toggles.
 - Specific packages can be defined for automatic bean instantiation
     - Use application property, e.g. ``dlc.features.servicekinds.packages=abc,com.acme``
     - multiple packages are supported
+- `ServiceKind` beans are only registered, if they are not already defined by the application.
+  - If there is a possible conflict, which means that a bean of the same interface type is already present,
+    the autoconfig will log a warning and skip the registration of the conflicting bean.
   
 ### 6. Domain Events Autoconfig 
 
