@@ -295,6 +295,7 @@ public class JacksonDomainSerializer implements DomainSerializer {
      * @return the deserialized {@code DomainTypeMirror} object of type {@code T}
      * @throws MirrorException if the deserialization process encounters an error
      */
+    @Override
     @SuppressWarnings("unchecked")
     public <T extends DomainTypeMirror> T deserializeTypeMirror(String serializedTypeMirror) {
         try {
