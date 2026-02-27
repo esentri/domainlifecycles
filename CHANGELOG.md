@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.0.0] - 2026-02-08
+## [3.0.0] - 2026-02-27
 - Upgraded all Spring Boot and Spring dependencies to SpringBoot version 4.0.x and compatible versions
 - Refactored Spring Boot AutoConfiguration to use Spring Boot 4.0.x features
 - Added Spring Boot 3 AutoConfiguration for legacy support
