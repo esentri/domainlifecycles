@@ -40,6 +40,7 @@ import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.work.DisableCachingByDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Collections;
@@ -66,6 +67,7 @@ import java.util.Collections;
  *
  * @author Leon Völlinger
  */
+@DisableCachingByDefault(because = "Outputs depend on external environment and are not safely reproducible yet.")
 public abstract class CreateDiagramTask extends DefaultTask {
 
     private final static Logger log = LoggerFactory.getLogger(CreateDiagramTask.class);

@@ -33,15 +33,23 @@ import io.domainlifecycles.plugins.util.FileIOUtils;
 import io.domainlifecycles.utils.ClassLoaderUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.NamedDomainObjectContainer;
+import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.FileCollection;
+import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputFiles;
+import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.work.DisableCachingByDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URL;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * An abstract Gradle task for rendering domain models as JSON files.
@@ -55,6 +63,7 @@ import java.nio.file.Path;
  *
  * @author Leon Völlinger
  */
+@DisableCachingByDefault(because = "Outputs depend on external environment and are not safely reproducible yet.")
 public abstract class MirrorSerializerTask extends DefaultTask {
 
     private final static Logger log = LoggerFactory.getLogger(MirrorSerializerTask.class);
@@ -82,8 +91,23 @@ public abstract class MirrorSerializerTask extends DefaultTask {
      * @return a {@code NamedDomainObjectContainer} of {@code SerializationConfigurationExtension}
      * providing configuration settings for serialization tasks.
      */
-    @Input
+    @Nested
     public abstract NamedDomainObjectContainer<SerializationConfigurationExtension> getSerializations();
+
+    /**
+     * Retrieves the classpath files required for executing the task.
+     *
+     * This method returns a collection of files that make up the classpath by dynamically
+     * resolving parent project classpath files. It facilitates inclusion of necessary
+     * project dependencies and build directories as inputs to the task.
+     *
+     * @return a {@code FileCollection} representing the resolved parent project classpath files
+     *         included as input for the task.
+     */
+    @Classpath
+    public abstract ConfigurableFileCollection getClasspathFiles();
+
+
 
     private MirrorSerializer mirrorSerializer;
 
@@ -106,8 +130,23 @@ public abstract class MirrorSerializerTask extends DefaultTask {
     }
 
     private void renderAndSaveModelAsJson(final SerializationConfigurationExtension serializationConfigurationExtension) {
-        String jsonContent = mirrorSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(getProject()), serializationConfigurationExtension.getDomainModelPackages().getOrNull());
-        Path filePath = Path.of(getFileOutputDir().get().getAsFile().getAbsolutePath(), serializationConfigurationExtension.getFileName().get());
+        List<URL> urls = getClasspathFiles()
+            .getFiles()
+            .stream()
+            .map(file -> {
+                try {
+                    return file.toURI().toURL();
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to convert file to URL: " + file, e);
+                }
+            })
+            .toList();
+        String jsonContent = mirrorSerializer.serialize(urls, serializationConfigurationExtension.getDomainModelPackages().getOrNull());
+        Path filePath = getFileOutputDir()
+            .file(serializationConfigurationExtension.getFileName().get())
+            .get()
+            .getAsFile()
+            .toPath();
 
         log.info("Saving JSON model to {}", filePath);
         FileIOUtils.writeFileTo(filePath, jsonContent);

@@ -30,6 +30,10 @@ import org.gradle.api.Named;
 import org.gradle.api.Project;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Internal;
+
+import javax.inject.Inject;
 
 /**
  * Represents an abstract extension for configuring serialization settings in a Gradle plugin.
@@ -55,9 +59,22 @@ public abstract class SerializationConfigurationExtension implements Named {
      *
      * @param project the Gradle {@code Project} instance associated with this serialization configuration.
      */
+    @Inject
     public SerializationConfigurationExtension(Project project) {
         getFileName().convention(DEFAULT_MIRROR_JSON_FILE_NAME);
     }
+
+    /**
+     * Retrieves the name of the serialization configuration.
+     *
+     * This method provides access to the name associated with the current instance
+     * of the serialization configuration. The name serves as an identifier for this
+     * particular configuration and is typically used for organizational or reference purposes.
+     *
+     * @return a {@code String} representing the name of the serialization configuration.
+     */
+    @Internal
+    public abstract String getName();
 
     /**
      * Retrieves the list of domain model packages for serialization configuration.
@@ -67,6 +84,7 @@ public abstract class SerializationConfigurationExtension implements Named {
      *
      * @return a {@code ListProperty} of {@code String} representing the domain model packages involved in serialization.
      */
+    @Input
     public abstract ListProperty<String> getDomainModelPackages();
 
     /**
@@ -79,5 +97,6 @@ public abstract class SerializationConfigurationExtension implements Named {
      *
      * @return a {@code Property<String>} representing the file name for the output.
      */
+    @Input
     public abstract Property<String> getFileName();
 }

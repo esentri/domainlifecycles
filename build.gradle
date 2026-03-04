@@ -1,6 +1,7 @@
 plugins {
     alias libs.plugins.release.automation.plugin
     alias libs.plugins.release.plugin
+    alias libs.plugins.yumi.gradle.licenser.plugin apply false
 }
 
 def versionProps = new Properties()
@@ -110,12 +111,10 @@ allprojects {
         checkLicenseMain.enabled = true
         checkLicenseTest.enabled = false
         license {
-            // Add a license header rule, at least one must be present.
-            rule(file("./copyright/HEADER"))
-            // Apply license header ONLY to Java files
-            exclude("**/tests/**/*.java")
-            exclude("**/test/**/*.java")
-            exclude("**/sampleshop/**/*.java")
+            rule(rootProject.file('copyright/HEADER'))
+            include("**/*.java")
+            exclude("**/tests/**")
+            exclude("**/test/**")
         }
     }
 
@@ -243,7 +242,7 @@ tasks.named("build") {
 // ----------------------------------------------------------
 
 wrapper {
-    gradleVersion = '8.10.1'
+    gradleVersion = '9.4.0'
     distributionType = 'ALL'
 }
 
