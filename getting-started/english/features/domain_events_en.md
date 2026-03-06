@@ -42,7 +42,7 @@ The annotation `@Publishes(domainEventTypes = {})` and the call of the static me
 
 
 ### Listening to domain events
-A method listens for published domain events if it has been annotated with `@ListensTo(domainEventType = ...)`.
+A method listens for published domain events if it has been annotated with `@DomainEventListener`.
 The framework handles the delivery of the event, the invocation of the method upon event reception, as well as the associated transaction management:
 
 ```Java

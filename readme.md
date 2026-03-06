@@ -99,7 +99,7 @@ DLC provides following core features:
 - [`Domain Events`](domain-events-core/readme.md): Simplifies some technical concerns about publishing and listening to 
   DomainEvents
     * Reduce publisher boilerplate code using the static `DomainEvents.publish()` API
-    * Reduce listener and event routing boilerplate code by using the `@ListensTo` annotation
+    * Reduce listener and event routing boilerplate code by using the `@DomainEventListener` annotation
     * Optional: Specific support for [Spring events](./domain-events-spring-bus/readme.md) 
     * Optional: Support of the "transactional outbox" pattern for more reliable publishing of DomainEvents
   

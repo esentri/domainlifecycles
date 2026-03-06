@@ -14,12 +14,12 @@ DLC is built around these guiding ideas:
 - Explicit behavior (domain logic should be visible in code, not hidden in magic)
 - Type-based domain modeling (rich types representing real domain concepts)
 - Providing types representing core DDD concepts:
-- AggregateRoot
+  - AggregateRoot
   - Entity
   - ValueObject
   - DomainEvent
   - DomainService
-  - repository
+  - Repository
 - Extend DDD building blocks with additional explicit architectural types:
   - ApplicationServices
   - DomainCommands
@@ -74,7 +74,7 @@ Key features:
 6. Domain Events
    - Simplifies publishing and listening
    - Static DomainEvents.publish() API
-   - @ListensTo annotation for routing
+   - @DomainEventListener annotation for marking listener methods (and provide routing)
    - Optional Spring event bus integration
    - Optional transactional outbox support
 
@@ -92,6 +92,7 @@ Key features:
 
 9. Plugins
    - Build-time generation of domain diagrams
+   - Exporting Domain Mirror at build time (no runtime reflection needed)
 
 ## Getting started
 Start here:
@@ -136,17 +137,18 @@ When explaining or generating code using DLC:
 - Prefer explicit domain behavior (methods, invariants, lifecycle transitions).
 - Prefer type-based modeling: create dedicated types for domain concepts rather than generic strings/UUIDs.
 - Treat aggregates, entities, and value objects as first-class DDD structures.
-- Use DomainAssertions (or validation) for invariants.
+- Use DomainAssertions (or validation/Bean Validation) for invariants.
 - Use DomainEvents.publish() and @DomainEventListener where domain events are relevant.
-- Use jOOQ-based persistence  rather than JPA-style ORM assumptions.
+- Use jOOQ-based persistence.
 - For Spring-based projects, assume DLC starter + autoconfig is preferred.
 
 ## What this project is NOT
 - Not a replacement for DDD — it is a set of libraries to implement tactical DDD more cleanly in Java.
-- Not a “magic annotation framework” that hides domain behavior behind reflection.
+- Not a replacement for typical application frameworks like Spring.
 - Not monolithic: modules are intentionally independent.
 
 ## Useful entry points in the repo
+- ./readme.md
 - ./concepts/readme.md
 - ./getting-started/english/index_en.md
 - ./sample-project

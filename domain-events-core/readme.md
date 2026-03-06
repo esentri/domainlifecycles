@@ -250,6 +250,6 @@ Those are not supported by DLCs Sprng Boot auto-configuration or the DLC Spring 
 ##### Spring Auto-Configuration
 For DLC Domain Events there 2 [auto configurations](../dlc-spring-boot-autoconfig/readme.md) available:
 - io.domainlifecycles.autoconfig.configurations.DlcNoTxInMemoryDomainEventsAutoConfiguration:
-- io.domainlifecycles.autoconfig.configurations.DlcSpringBusDomainEventsAutoConfiguration
+- io.domainlifecycles.autoconfig.configurations.DlcSpringBusDomainEventsAutoConfiguration (integrates with Spring Modulith Events)
   - Enabled by default, disable by using ``@EnableDlc(exclude="DlcSpringBusDomainEventsAutoConfiguration.class")``
 

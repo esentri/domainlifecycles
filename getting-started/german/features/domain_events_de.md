@@ -41,7 +41,7 @@ Hierbei relevant sind die Annotation `@Publishes(domainEventTypes = {})` und der
 Methode `DomainEvents.publish()`.
 
 ### Auf Domain-Events hören
-Eine Methode hört auf veröffentlichte Domain-Events, sofern sie mit der `@ListensTo(domainEventType = ...)`
+Eine Methode hört auf veröffentlichte Domain-Events, sofern sie mit der `@DomainEventListener`
 Annotation versehen wurde. Die Zustellung des Events und den Aufruf der Methode bei Event-Empfang 
 wie auch die zugehörige Transaktionssteuerung übernimmt das Framework:
 
