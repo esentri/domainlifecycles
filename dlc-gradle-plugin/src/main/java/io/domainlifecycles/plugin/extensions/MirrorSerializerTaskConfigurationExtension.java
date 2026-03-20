@@ -30,6 +30,8 @@ import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Project;
 import org.gradle.api.file.DirectoryProperty;
 
+import javax.inject.Inject;
+
 /**
  * Represents the configuration for JSON model generation tasks in a Gradle plugin.
  *

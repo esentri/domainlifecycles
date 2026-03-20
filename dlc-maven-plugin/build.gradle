@@ -16,10 +16,23 @@ java {
     withSourcesJar()
 }
 
+configurations {
+    mavenPluginDeps
+}
+
 dependencies {
     implementation libs.maven.core
     implementation libs.maven.artifact
     implementation libs.maven.plugin.api
     implementation libs.maven.plugin.tools.annotations
-    api project(":dlc-plugins")
+    implementation project(":dlc-plugins")
+
+    mavenPluginDeps libs.maven.core
+    mavenPluginDeps libs.maven.artifact
+    mavenPluginDeps libs.maven.plugin.api
+    mavenPluginDeps libs.maven.plugin.tools.annotations
+}
+
+mavenPlugin {
+    dependencies = configurations.mavenPluginDeps
 }

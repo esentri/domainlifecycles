@@ -37,6 +37,7 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.work.DisableCachingByDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +63,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Leon Völlinger
  */
+@DisableCachingByDefault(because = "Outputs depend on external environment and are not safely reproducible yet.")
 public abstract class UploadDomainModelTask extends DefaultTask {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(UploadDomainModelTask.class);
