@@ -109,10 +109,10 @@ For a full working example:
 
 ## Recommended dependency setup
 For Spring Boot 4.x apps:
-- io.domainlifecycles:spring-boot-starter:3.0.0
+- io.domainlifecycles:spring-boot-starter:3.1.0
 
 For Spring Boot 3.x apps:
-- io.domainlifecycles:spring-boot3-starter:3.0.0
+- io.domainlifecycles:spring-boot3-starter:3.1.0
 
 These starters pull in the appropriate DLC modules and integrations.
 

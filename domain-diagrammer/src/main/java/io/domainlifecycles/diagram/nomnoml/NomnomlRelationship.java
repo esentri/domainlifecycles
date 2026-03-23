@@ -123,6 +123,9 @@ public class NomnomlRelationship implements DiagramElement {
             builder.append(relationshiptype.transposedLineStart);
         }
         if (!label.isEmpty() || !stereotype.isEmpty()) {
+            if(!transposed || !relationshiptype.continuous) {
+                builder.append("-");
+            }
             builder.append("[<label> ");
             if (!stereotype.isEmpty()) {
                 builder.append("<<");
@@ -132,6 +135,9 @@ public class NomnomlRelationship implements DiagramElement {
             }
             builder.append(label);
             builder.append("] ");
+            if(transposed || !relationshiptype.continuous) {
+                builder.append("-");
+            }
         }
         if (!transposed) {
             builder.append(relationshiptype.lineEnd);
@@ -253,53 +259,60 @@ public class NomnomlRelationship implements DiagramElement {
         /**
          * inheritance.
          */
-        INHERITANCE("<:", "-", "-", ":>"),
+        INHERITANCE("<:", "-", "-", ":>", true),
 
         /**
          * realization.
          */
-        REALIZATION("--", ":>", "<:", "--"),
+        REALIZATION("-", "-:>", "<:-", "-", false),
 
         /**
          * composition (not used so far).
          */
-        COMPOSITION("+-", "-", "-", "-+"),
+        COMPOSITION("+", "-", "-", "+", true),
 
         /**
          * aggregation.
          */
-        AGGREGATION("o-", "-", "-", "-o"),
+        AGGREGATION("o", "-", "-", "o", true),
 
         /**
          * association.
          */
-        ASSOCIATION("-", "-", "-", "-"),
+        ASSOCIATION("", "-", "-", "", true),
 
         /**
          * dependency.
          */
-        DEPENDENCY("--", "--", "--", "--"),
+        DEPENDENCY("-", "-", "-", "-", false),
 
         /**
          * directed association.
          */
-        DIRECTED_ASSOCIATION("-", "->", "<-", "-"),
+        DIRECTED_ASSOCIATION("", "->", "<-", "", true),
 
         /**
          * directed dependency.
          */
-        DIRECTED_DEPENDENCY("--", "-->", "<--", "--");
+        DIRECTED_DEPENDENCY("-", "->", "<-", "-", false);
 
         private final String lineStart;
         private final String lineEnd;
         private final String transposedLineStart;
         private final String transposedLineEnd;
+        private final boolean continuous;
 
-        RelationshipType(String lineStart, String lineEnd, String transposedLineStart, String transposedLineEnd) {
+        RelationshipType(
+            String lineStart,
+            String lineEnd,
+            String transposedLineStart,
+            String transposedLineEnd,
+            boolean continuous) {
             this.lineStart = lineStart;
             this.lineEnd = lineEnd;
             this.transposedLineStart = transposedLineStart;
             this.transposedLineEnd = transposedLineEnd;
+            this.continuous = continuous;
         }
     }
 

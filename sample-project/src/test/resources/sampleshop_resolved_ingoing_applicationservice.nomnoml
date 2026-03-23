@@ -61,6 +61,6 @@
 + Order place(PlaceOrder)
 + Optional<Order> ship(ShipOrder)
 ]
-[<DC>CancelOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<ApplicationService>>]
-[<DC>PlaceOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<ApplicationService>>]
-[<DC>ShipOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<ApplicationService>>]
+[<DC>CancelOrder <<DomainCommand>>]  --[<label> <<is processed by>> OrderService.cancel] --> [<AS>OrderDriver <<ApplicationService>>]
+[<DC>PlaceOrder <<DomainCommand>>]  --[<label> <<is processed by>> OrderService.place] --> [<AS>OrderDriver <<ApplicationService>>]
+[<DC>ShipOrder <<DomainCommand>>]  --[<label> <<is processed by>> OrderService.ship] --> [<AS>OrderDriver <<ApplicationService>>]
