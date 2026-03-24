@@ -19,7 +19,7 @@ The plugin is able to create class diagrams in various formats of your implement
 An example configuration in your project could look like the following:
 ```groovy
 plugins {
-    id 'io.domainlifecycles.dlc-gradle-plugin' version '3.0.0'
+    id 'io.domainlifecycles.dlc-gradle-plugin' version '3.1.0'
 }
 
 dlcGradlePlugin {
@@ -61,7 +61,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "io.domainlifecycles.dlc-gradle-plugin") {
-                useModule("io.domainlifecycles:dlc-gradle-plugin:3.0.0")
+                useModule("io.domainlifecycles:dlc-gradle-plugin:3.1.0")
             }
         }
     }
@@ -103,7 +103,6 @@ dlcGradlePlugin {
                 }
             ]
         }
-
     }
 }
 ```
@@ -168,7 +167,7 @@ An example configuration in your project's build plugins could look like the fol
         <plugin>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>dlc-maven-plugin</artifactId>
-            <version>3.0.0</version>
+            <version>3.1.0</version>
             <executions>
                 <execution>
                     <id>createDiagramNomnoml</id>
@@ -233,7 +232,7 @@ An example configuration in your project could look like the following:
         <plugin>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>dlc-maven-plugin</artifactId>
-            <version>3.0.0</version>
+            <version>3.1.0</version>
             <executions>
                 <execution>
                     <id>serializeMirror</id>
@@ -284,7 +283,7 @@ An example configuration in your project could look like the following:
         <plugin>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>dlc-maven-plugin</artifactId>
-            <version>3.0.0</version>
+            <version>3.1.0</version>
             <executions>
                 <execution>
                     <id>upload</id>
@@ -395,6 +394,8 @@ Supported Diagram configuration options are
 - showInheritanceStructuresForReadModels: boolean, default false
 - showInheritanceStructuresForDomainEvents: boolean, default false
 - showInheritanceStructuresForDomainCommands: boolean, default false
+- showRelationshipLabels: boolean, default true
+- showRelationshipStereotypes: boolean, default true
 
 ## How to read DLC Domain Diagrams?
 
@@ -409,7 +410,7 @@ For more details, have a look at our [concept description](./../concepts/readme.
 
 The following list explains how to interpret the rendered edges:
 - DomainCommand → ApplicationService:
-A DomainCommand is passed to an ApplicationService. The ApplicationService provides a method to receive the command.
+A DomainCommand is passed to an ApplicationService. The ApplicationService provides a method to process the command.
 
 - ApplicationService → DomainService:
 An ApplicationService calls a DomainService.

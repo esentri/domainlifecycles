@@ -15,7 +15,7 @@ This integration is not included in the DLC Spring Boot starter and the [DLC Spr
 **Gradle:**
 ```groovy
 dependencies {
-  implementation 'io.domainlifecycles:domain-events-jakarta-jta:3.0.0'
+  implementation 'io.domainlifecycles:domain-events-jakarta-jta:3.1.0'
 }
 ```
 
@@ -24,7 +24,7 @@ dependencies {
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>domain-events-jakarta-jta</artifactId>
-    <version>3.0.0</version>
+    <version>3.1.0</version>
 </dependency>
 ```
 #### Configuration

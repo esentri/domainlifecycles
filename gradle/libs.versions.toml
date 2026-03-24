@@ -59,7 +59,7 @@ spring6-context-version = '6.2.15'
 swagger-version = '2.2.41'
 type-resolver-version = '1.0.3'
 docker-java-version = '3.7.0'
-maven-plugin-development-plugin-version = '0.4.3'
+maven-plugin-development-plugin-version = '1.0.3'
 maven-core-version = '3.9.12'
 maven-artifact-version = '3.9.12'
 maven-plugin-api-version = '3.9.12'
@@ -88,7 +88,7 @@ spring-boot3-platform-version = '3.5.10'
 
 # plugin versions
 flyway-version = '11.20.0'
-yumi-gradle-licenser-version = '2.1.1'
+yumi-gradle-licenser-version = '2.2.2'
 jareds-burrows-license-version = '0.9.8'
 jreleaser-version = '1.22.0'
 researchgate-release-version = '3.1.0'
@@ -199,5 +199,5 @@ release-automation-plugin = { id = "org.jreleaser", version.ref = "jreleaser-ver
 spring-boot-plugin = { id = "org.springframework.boot", version.ref = "spring-boot-platform-version" }
 spring-boot3-plugin = { id = "org.springframework.boot", version.ref = "spring-boot3-platform-version" }
 yumi-gradle-licenser-plugin = { id = "dev.yumi.gradle.licenser", version.ref = "yumi-gradle-licenser-version" }
-maven-plugin-development-plugin =  { id = "de.benediktritter.maven-plugin-development", version.ref = "maven-plugin-development-plugin-version" }
+maven-plugin-development-plugin =  { id = "org.gradlex.maven-plugin-development", version.ref = "maven-plugin-development-plugin-version" }
 

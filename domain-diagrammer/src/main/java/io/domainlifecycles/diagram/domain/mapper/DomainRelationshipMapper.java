@@ -29,6 +29,7 @@ package io.domainlifecycles.diagram.domain.mapper;
 import io.domainlifecycles.diagram.domain.DomainDiagramGenerator;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.diagram.nomnoml.NomnomlRelationship;
+import io.domainlifecycles.mirror.api.AccessLevel;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
@@ -41,6 +42,7 @@ import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.EntityReferenceMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
+import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
@@ -55,6 +57,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 /**
  * Derives the {@link NomnomlRelationship} representations from the given domain structures delivered as mirrors.
@@ -358,12 +361,14 @@ public class DomainRelationshipMapper {
             .fromMultiplicity("")
             .fromStyleClassifier(DomainMapperUtils.styleClassifier(repositoryMirror))
             .label("")
-            .relationshiptype(NomnomlRelationship.RelationshipType.ASSOCIATION)
+            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_DEPENDENCY)
             .toStyleClassifier("<" + DomainDiagramGenerator.AGGREGATE_FRAME_STYLE_TAG + "> ")
             .toMultiplicity("")
             .toName(DomainMapperUtils.mapTypeName(
                 repositoryMirror.getManagedAggregate().map(AggregateRootMirror::getTypeName).orElse("java.lang.Object"),
                 diagramConfig) + " <<Aggregate>>")
+            .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+            .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
             .build();
     }
 
@@ -374,12 +379,15 @@ public class DomainRelationshipMapper {
             .fromMultiplicity("")
             .fromStyleClassifier(DomainMapperUtils.styleClassifier(queryHandlerMirror))
             .label("")
-            .relationshiptype(NomnomlRelationship.RelationshipType.ASSOCIATION)
+            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_DEPENDENCY)
             .toStyleClassifier(DomainMapperUtils.styleClassifier(
                 queryHandlerMirror.getProvidedReadModel().orElse(null)))
             .toMultiplicity("")
             .toName(relationConnectorName(
-                queryHandlerMirror.getProvidedReadModel().orElse(null)))
+                queryHandlerMirror.getProvidedReadModel().orElse(null))
+            )
+            .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+            .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
             .build();
     }
 
@@ -393,10 +401,12 @@ public class DomainRelationshipMapper {
             .fromMultiplicity("")
             .fromStyleClassifier(DomainMapperUtils.styleClassifier(serviceKindMirrorFrom))
             .label("")
-            .relationshiptype(NomnomlRelationship.RelationshipType.ASSOCIATION)
+            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_ASSOCIATION)
             .toName(relationConnectorName(serviceKindMirrorTo))
             .toMultiplicity("")
             .toStyleClassifier(DomainMapperUtils.styleClassifier(serviceKindMirrorTo))
+            .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+            .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
             .build();
     }
 
@@ -407,11 +417,14 @@ public class DomainRelationshipMapper {
             .fromName(relationConnectorName(domainEventMirror))
             .fromMultiplicity("")
             .fromStyleClassifier(DomainMapperUtils.styleClassifier(domainEventMirror))
-            .label("")
-            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_ASSOCIATION)
+            .label(notifiesLabel(domainTypeMirror, domainEventMirror))
+            .stereotype("notifies")
+            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_DEPENDENCY)
             .toName(relationConnectorName(domainTypeMirror))
             .toMultiplicity("")
             .toStyleClassifier(DomainMapperUtils.styleClassifier(domainTypeMirror))
+            .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+            .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
             .build();
     }
 
@@ -422,13 +435,28 @@ public class DomainRelationshipMapper {
             .fromName(relationConnectorName(domainEventMirror))
             .fromMultiplicity("")
             .fromStyleClassifier(DomainMapperUtils.styleClassifier(domainEventMirror))
-            .label("")
-            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_ASSOCIATION)
+            .label(notifiesLabel(aggregateRootMirror, domainEventMirror))
+            .stereotype("notifies")
+            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_DEPENDENCY)
             .toName(DomainMapperUtils.mapTypeName(aggregateRootMirror.getTypeName(), diagramConfig) + " <<Aggregate>>")
             .toMultiplicity("")
-            .toStyleClassifier(
-                DomainMapperUtils.styleClassifier(null))
+            .toStyleClassifier(DomainMapperUtils.styleClassifier(null))
+            .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+            .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
             .build();
+    }
+
+    private String notifiesLabel(DomainTypeMirror domainTypeMirror, DomainEventMirror domainEventMirror){
+        return domainTypeMirror.getMethods()
+            .stream()
+            .filter(m->
+                m.listensTo(domainEventMirror)
+            )
+            .map(m ->
+                DomainMapperUtils.mapTypeName(domainTypeMirror.getTypeName(), diagramConfig)
+                    + "." + m.getName())
+            .distinct()
+            .collect(Collectors.joining(", "));
     }
 
     private NomnomlRelationship mapPublishesDomainEvent(DomainTypeMirror domainTypeMirror,
@@ -438,11 +466,14 @@ public class DomainRelationshipMapper {
             .fromName(relationConnectorName(domainTypeMirror))
             .fromMultiplicity("")
             .fromStyleClassifier(DomainMapperUtils.styleClassifier(domainTypeMirror))
-            .label("")
-            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_ASSOCIATION)
+            .label(publishesLabel(domainTypeMirror, domainEventMirror))
+            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_DEPENDENCY)
+            .stereotype("publishes")
             .toName(relationConnectorName(domainEventMirror))
             .toMultiplicity("")
             .toStyleClassifier(DomainMapperUtils.styleClassifier(domainEventMirror))
+            .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+            .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
             .build();
     }
 
@@ -454,12 +485,28 @@ public class DomainRelationshipMapper {
                 DomainMapperUtils.mapTypeName(aggregateRootMirror.getTypeName(), diagramConfig) + " <<Aggregate>>")
             .fromMultiplicity("")
             .fromStyleClassifier("<" + DomainDiagramGenerator.AGGREGATE_FRAME_STYLE_TAG + "> ")
-            .label("")
-            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_ASSOCIATION)
+            .label(publishesLabel(aggregateRootMirror, domainEventMirror))
+            .stereotype("publishes")
+            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_DEPENDENCY)
             .toName(relationConnectorName(domainEventMirror))
             .toMultiplicity("")
             .toStyleClassifier(DomainMapperUtils.styleClassifier(domainEventMirror))
+            .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+            .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
             .build();
+    }
+
+    private String publishesLabel(DomainTypeMirror domainTypeMirror, DomainEventMirror domainEventMirror){
+        return domainTypeMirror.getMethods()
+            .stream()
+            .filter(m->
+                m.publishes(domainEventMirror)
+            )
+            .map(m ->
+                DomainMapperUtils.mapTypeName(domainTypeMirror.getTypeName(), diagramConfig)
+                    + "." + m.getName())
+            .distinct()
+            .collect(Collectors.joining(", "));
     }
 
     private NomnomlRelationship mapDomainCommandServiceKindRelationship(DomainCommandMirror domainCommandMirror,
@@ -469,11 +516,14 @@ public class DomainRelationshipMapper {
             .fromName(relationConnectorName(domainCommandMirror))
             .fromMultiplicity("")
             .fromStyleClassifier(DomainMapperUtils.styleClassifier(domainCommandMirror))
-            .label("")
-            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_ASSOCIATION)
+            .label(processorLabel(serviceKindMirror, domainCommandMirror))
+            .stereotype("is processed by")
+            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_DEPENDENCY)
             .toName(relationConnectorName(serviceKindMirror))
             .toMultiplicity("")
             .toStyleClassifier(DomainMapperUtils.styleClassifier(serviceKindMirror))
+            .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+            .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
             .build();
     }
 
@@ -484,12 +534,30 @@ public class DomainRelationshipMapper {
             .fromName(relationConnectorName(domainCommandMirror))
             .fromMultiplicity("")
             .fromStyleClassifier(DomainMapperUtils.styleClassifier(domainCommandMirror))
-            .label("")
-            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_ASSOCIATION)
+            .label(processorLabel(aggregateRootMirror, domainCommandMirror))
+            .stereotype("is processed by")
+            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_DEPENDENCY)
             .toStyleClassifier("<" + DomainDiagramGenerator.AGGREGATE_FRAME_STYLE_TAG + "> ")
             .toMultiplicity("")
             .toName(DomainMapperUtils.mapTypeName(aggregateRootMirror.getTypeName(), diagramConfig) + " <<Aggregate>>")
+            .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+            .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
             .build();
+    }
+
+    private String processorLabel(DomainTypeMirror domainTypeMirror, DomainCommandMirror domainCommandMirror){
+        return domainTypeMirror.getMethods()
+            .stream()
+            .filter(m->
+                m.processes(domainCommandMirror)
+                && AccessLevel.PUBLIC.equals(m.getAccessLevel())
+            )
+            .map(m ->
+                DomainMapperUtils.mapTypeName(domainTypeMirror.getTypeName(), diagramConfig)
+                    + "." + m.getName()
+            )
+            .distinct()
+            .collect(Collectors.joining(", "));
     }
 
     /**
@@ -555,6 +623,8 @@ public class DomainRelationshipMapper {
                                 .toStyleClassifier(DomainMapperUtils.styleClassifier(domainTypeMirror))
                                 .toMultiplicity("")
                                 .relationshiptype(NomnomlRelationship.RelationshipType.INHERITANCE)
+                                .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+                                .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
                                 .build()
                         );
                     }
@@ -582,6 +652,8 @@ public class DomainRelationshipMapper {
                                 .toStyleClassifier(DomainMapperUtils.styleClassifier(domainTypeMirror))
                                 .toMultiplicity("")
                                 .relationshiptype(NomnomlRelationship.RelationshipType.INHERITANCE)
+                                .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+                                .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
                                 .build()
                         )
                 .toList();
@@ -608,6 +680,8 @@ public class DomainRelationshipMapper {
             .toMultiplicity(toMultiplicity)
             .toName(relationConnectorName(entityReferenceMirror.getType().getTypeName()))
             .relationshiptype(NomnomlRelationship.RelationshipType.COMPOSITION)
+            .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+            .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
             .build();
     }
 
@@ -629,7 +703,9 @@ public class DomainRelationshipMapper {
             .toStyleClassifier(DomainMapperUtils.styleClassifier(domainMirror.getDomainTypeMirror(valueReferenceMirror.getType().getTypeName()).orElse(null)))
             .toMultiplicity(toMultiplicity)
             .toName(relationConnectorName(valueReferenceMirror.getType().getTypeName()))
-            .relationshiptype(NomnomlRelationship.RelationshipType.AGGREGATION)
+            .relationshiptype(NomnomlRelationship.RelationshipType.COMPOSITION)
+            .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+            .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
             .build();
     }
 
@@ -670,11 +746,14 @@ public class DomainRelationshipMapper {
                     .fromStyleClassifier("<" + DomainDiagramGenerator.AGGREGATE_FRAME_STYLE_TAG + "> ")
                     .label(DomainMapperUtils.mapTypeName(idReferenceMirror.getDeclaredByTypeName(),
                         diagramConfig) + "." + idReferenceMirror.getName())
+                    .stereotype("id-ref")
                     .toStyleClassifier("<" + DomainDiagramGenerator.AGGREGATE_FRAME_STYLE_TAG + "> ")
                     .toMultiplicity("")
                     .toName(DomainMapperUtils.mapTypeName(targetAggregate.get().getTypeName(),
                         diagramConfig) + " <<Aggregate>>")
-                    .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_ASSOCIATION)
+                    .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_DEPENDENCY)
+                    .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+                    .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
                     .build())
                 .toList();
         }

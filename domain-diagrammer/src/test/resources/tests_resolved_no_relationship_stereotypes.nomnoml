@@ -50,10 +50,6 @@
 
 // !!! tests.shared.complete.onlinehandel.zustellung.StarteAuslieferung !!!
 [<DC> StarteAuslieferung <<DomainCommand>> ]
-// !!! tests.shared.inheritance.AbstractDomainCommand !!!
-[<DC> AbstractDomainCommand <<DomainCommand>> ]
-// !!! tests.shared.inheritance.BasicDomainCommandType !!!
-[<DC> BasicDomainCommandType <<DomainCommand>> ]
 // !!! tests.shared.inheritance.ConcreteDomainCommand !!!
 [<DC> ConcreteDomainCommand <<DomainCommand>> ]
 // !!! tests.shared.complete.onlinehandel.benachrichtigung.BenachrichtigungService !!!
@@ -68,8 +64,6 @@
 [<DE> NeueBestellung <<DomainEvent>> ]
 // !!! tests.shared.complete.onlinehandel.zustellung.AuslieferungGestartet !!!
 [<DE> AuslieferungGestartet <<DomainEvent>> ]
-// !!! tests.shared.inheritance.BasicDomainEventType !!!
-[<DE> BasicDomainEventType <<DomainEvent>> ]
 // !!! tests.shared.inheritance.ConcreteDomainEvent !!!
 [<DE> ConcreteDomainEvent <<DomainEvent>> ]
 // !!! {Frame} tests.shared.complete.onlinehandel.bestellung.BestellungBv3 !!!
@@ -819,8 +813,8 @@ o +- optionalText:Optional<String\[0,10\]>
 + String{notBlank} textSetzenReturnVal(String)
 ]
 ]
-[<AF> OptionalAggregate <<Aggregate>>]  --[<label> <<id-ref>> OptionalAggregate.optionalRefId] --> [<AF> RefAgg <<Aggregate>>]
-[<AF> OptionalAggregate <<Aggregate>>]  --[<label> <<id-ref>> RefValueObject.optionalRef] --> [<AF> RefAgg <<Aggregate>>]
+[<AF> OptionalAggregate <<Aggregate>>]  --[<label> OptionalAggregate.optionalRefId] --> [<AF> RefAgg <<Aggregate>>]
+[<AF> OptionalAggregate <<Aggregate>>]  --[<label> RefValueObject.optionalRef] --> [<AF> RefAgg <<Aggregate>>]
 // !!! tests.shared.complete.onlinehandel.bestellung.BestellungRepository !!!
 [<R> BestellungRepository <<Repository>> |
 + BestellungIdBv3 create(\# BestellungBv3)
@@ -834,16 +828,9 @@ o +- optionalText:Optional<String\[0,10\]>
 [<RM> ConcreteReadModel <<ReadModel>> |
 o +- msg:String
 ]
-// !!! tests.shared.inheritance.ReadModelType !!!
-[<RM> ReadModelType <<ReadModel>> |
-]
-[<DC>BasicDomainCommandType <<DomainCommand>>]  <:- [<DC>AbstractDomainCommand <<DomainCommand>>]
-[<DC>AbstractDomainCommand <<DomainCommand>>]  <:- [<DC>ConcreteDomainCommand <<DomainCommand>>]
-[<DC>StarteAuslieferung <<DomainCommand>>]  --[<label> <<is processed by>> ZustellungsService.liefereAus] --> [<DS>ZustellungsService <<DomainService>>]
-[<DE>BasicDomainEventType <<DomainEvent>>]  <:- [<DE>ConcreteDomainEvent <<DomainEvent>>]
-[<R>BestellungRepository <<Repository>>]  --[<label> <<publishes>> BestellungRepository.create] --> [<DE>NeueBestellung <<DomainEvent>>]
-[<DE>AuslieferungGestartet <<DomainEvent>>]  --[<label> <<notifies>> BenachrichtigungService.benachrichtige] --> [<DS>BenachrichtigungService <<DomainService>>]
-[<AF> BestellungBv3 <<Aggregate>>]  --[<label> <<publishes>> BestellungBv3.starteLieferung] --> [<DE>AuslieferungGestartet <<DomainEvent>>]
+[<DC>StarteAuslieferung <<DomainCommand>>]  --[<label> ZustellungsService.liefereAus] --> [<DS>ZustellungsService <<DomainService>>]
+[<R>BestellungRepository <<Repository>>]  --[<label> BestellungRepository.create] --> [<DE>NeueBestellung <<DomainEvent>>]
+[<DE>AuslieferungGestartet <<DomainEvent>>]  --[<label> BenachrichtigungService.benachrichtige] --> [<DS>BenachrichtigungService <<DomainService>>]
+[<AF> BestellungBv3 <<Aggregate>>]  --[<label> BestellungBv3.starteLieferung] --> [<DE>AuslieferungGestartet <<DomainEvent>>]
 [<DS>ZustellungsService <<DomainService>>]  -> [<R>BestellungRepository <<Repository>>]
 [<R>BestellungRepository <<Repository>>]  --> [<AF> BestellungBv3 <<Aggregate>>]
-[<RM>ReadModelType <<ReadModel>>]  <:- [<RM>ConcreteReadModel <<ReadModel>>]
