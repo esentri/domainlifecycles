@@ -36,7 +36,7 @@ import java.util.List;
  * and filtering of elements in the generated diagram.
  *
  * The configuration supports detailed customization for styles, visibility of different
- * components, and filtering options. This allows fine-grained control over what is 
+ * components, and filtering options. This allows fine-grained control over what is
  * included in the diagram and how it is visually represented.
  *
  * Mandatory parameters:
@@ -262,19 +262,19 @@ public class PluginDiagramConfiguration {
 
     @Parameter(property = "includeConnectedTo", required = false)
     private List<String> includeConnectedTo;
-    
+
     @Parameter(property = "includeConnectedToIngoing", required = false)
     private List<String> includeConnectedToIngoing;
-    
+
     @Parameter(property = "includeConnectedToOutgoing", required = false)
     private List<String> includeConnectedToOutgoing;
-    
+
     @Parameter(property = "excludeConnectedToIngoing", required = false)
     private List<String> excludeConnectedToIngoing;
-    
+
     @Parameter(property = "excludeConnectedToOutgoing", required = false)
     private List<String> excludeConnectedToOutgoing;
-    
+
     @Parameter(property = "showAllInheritanceStructures", required = false)
     private Boolean showAllInheritanceStructures;
 
@@ -292,7 +292,13 @@ public class PluginDiagramConfiguration {
 
     @Parameter(property = "showInheritanceStructuresForDomainCommands", required = false)
     private Boolean showInheritanceStructuresForDomainCommands;
-    
+
+    @Parameter(property = "showRelationshipLabels", required = false)
+    private Boolean showRelationshipLabels;
+
+    @Parameter(property = "showRelationshipStereotypes", required = false)
+    private Boolean showRelationshipStereotypes;
+
 
     /**
      * Gets the output format of the diagram.
@@ -1007,5 +1013,23 @@ public class PluginDiagramConfiguration {
      */
     public Boolean getShowInheritanceStructuresForDomainCommands() {
         return showInheritanceStructuresForDomainCommands;
+    }
+
+    /**
+     * Retrieves the current state of whether relationship labels are displayed.
+     *
+     * @return true if relationship labels are enabled, false otherwise
+     */
+    public Boolean getShowRelationshipLabels() {
+        return showRelationshipLabels;
+    }
+
+    /**
+     * Retrieves the current state of the showRelationshipStereotypes flag.
+     *
+     * @return a Boolean indicating whether relationship stereotypes are displayed (true) or not (false).
+     */
+    public Boolean getShowRelationshipStereotypes() {
+        return showRelationshipStereotypes;
     }
 }

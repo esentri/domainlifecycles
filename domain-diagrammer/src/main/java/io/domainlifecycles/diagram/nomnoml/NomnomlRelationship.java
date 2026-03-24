@@ -47,7 +47,8 @@ public class NomnomlRelationship implements DiagramElement {
     private final String stereotype;
     private final RelationshipType relationshiptype;
     private boolean transposed; //declare relationship in the transposed way (semantics stay the same)
-
+    private final boolean showLabel;
+    private final boolean showStereotype;
 
     /**
      * Initializes the relationship.
@@ -61,6 +62,8 @@ public class NomnomlRelationship implements DiagramElement {
      * @param label               for relationship
      * @param stereotype          for relationship
      * @param relationshiptype    for relationship
+     * @param showLabel           for relationship
+     * @param showStereotype      for relationship
      */
     public NomnomlRelationship(String fromName,
                                String fromStyleClassifier,
@@ -70,7 +73,10 @@ public class NomnomlRelationship implements DiagramElement {
                                String toMultiplicity,
                                String label,
                                String stereotype,
-                               RelationshipType relationshiptype) {
+                               RelationshipType relationshiptype,
+                               boolean showLabel,
+                               boolean showStereotype
+    ) {
         this.fromName = Objects.requireNonNull(fromName);
         this.fromStyleClassifier = Objects.requireNonNull(fromStyleClassifier);
         this.fromMultiplicity = Objects.requireNonNull(fromMultiplicity);
@@ -80,6 +86,8 @@ public class NomnomlRelationship implements DiagramElement {
         this.label = Objects.requireNonNull(label);
         this.stereotype = Objects.requireNonNull(stereotype);
         this.relationshiptype = Objects.requireNonNull(relationshiptype);
+        this.showLabel = showLabel;
+        this.showStereotype = showStereotype;
     }
 
     /**
@@ -122,18 +130,22 @@ public class NomnomlRelationship implements DiagramElement {
         } else {
             builder.append(relationshiptype.transposedLineStart);
         }
-        if (!label.isEmpty() || !stereotype.isEmpty()) {
+        if ((!label.isEmpty() && showLabel) || (!stereotype.isEmpty() && showStereotype)) {
             if(!transposed || !relationshiptype.continuous) {
                 builder.append("-");
             }
             builder.append("[<label> ");
             if (!stereotype.isEmpty()) {
-                builder.append("<<");
-                builder.append(stereotype);
-                builder.append(">>");
-                builder.append(" ");
+                if(showStereotype) {
+                    builder.append("<<");
+                    builder.append(stereotype);
+                    builder.append(">>");
+                    builder.append(" ");
+                }
             }
-            builder.append(label);
+            if(showLabel) {
+                builder.append(label);
+            }
             builder.append("] ");
             if(transposed || !relationshiptype.continuous) {
                 builder.append("-");
@@ -341,6 +353,8 @@ public class NomnomlRelationship implements DiagramElement {
         private String label = "";
         private String stereotype = "";
         private RelationshipType relationshiptype;
+        private boolean showLabel = true;
+        private boolean showStereotype = true;
 
         NomnomlRelationshipBuilder() {
         }
@@ -445,6 +459,28 @@ public class NomnomlRelationship implements DiagramElement {
         }
 
         /**
+         * Configures whether the relationship label should be displayed or hidden.
+         *
+         * @param showLabel a boolean indicating whether to show the label (true) or hide it (false)
+         * @return the current instance of {@code NomnomlRelationshipBuilder} for method chaining
+         */
+        public NomnomlRelationshipBuilder showLabel(boolean showLabel) {
+            this.showLabel = showLabel;
+            return this;
+        }
+
+        /**
+         * Configures whether the stereotype of the relationship should be displayed or hidden.
+         *
+         * @param showStereotype a boolean indicating whether to show the stereotype (true) or hide it (false)
+         * @return the current instance of {@code NomnomlRelationshipBuilder} for method chaining
+         */
+        public NomnomlRelationshipBuilder showStereotype(boolean showStereotype) {
+            this.showStereotype = showStereotype;
+            return this;
+        }
+
+        /**
          * Constructs a new NomnomlRelationship object using the configured values
          * in the NomnomlRelationshipBuilder.
          *
@@ -452,7 +488,7 @@ public class NomnomlRelationship implements DiagramElement {
          *         of the builder.
          */
         public NomnomlRelationship build() {
-            return new NomnomlRelationship(this.fromName, this.fromStyleClassifier, this.fromMultiplicity, this.toName, this.toStyleClassifier, this.toMultiplicity, this.label, this.stereotype, this.relationshiptype);
+            return new NomnomlRelationship(this.fromName, this.fromStyleClassifier, this.fromMultiplicity, this.toName, this.toStyleClassifier, this.toMultiplicity, this.label, this.stereotype, this.relationshiptype, this.showLabel, this.showStereotype);
         }
 
         /**
@@ -462,7 +498,19 @@ public class NomnomlRelationship implements DiagramElement {
          * @return a string representation of the current state of the NomnomlRelationshipBuilder.
          */
         public String toString() {
-            return "NomnomlRelationship.NomnomlRelationshipBuilder(fromName=" + this.fromName + ", fromStyleClassifier=" + this.fromStyleClassifier + ", fromMultiplicity=" + this.fromMultiplicity + ", toName=" + this.toName + ", toStyleClassifier=" + this.toStyleClassifier + ", toMultiplicity=" + this.toMultiplicity + ", stereotype=" + this.stereotype + ", label=" + this.label + ", relationshiptype=" + this.relationshiptype + ")";
+            return "NomnomlRelationship.NomnomlRelationshipBuilder(fromName="
+                + this.fromName
+                + ", fromStyleClassifier=" + this.fromStyleClassifier
+                + ", fromMultiplicity=" + this.fromMultiplicity
+                + ", toName=" + this.toName
+                + ", toStyleClassifier=" + this.toStyleClassifier
+                + ", toMultiplicity=" + this.toMultiplicity
+                + ", stereotype=" + this.stereotype
+                + ", label=" + this.label
+                + ", relationshiptype=" + this.relationshiptype
+                + ", showLabel=" + this.showLabel
+                + ", showStereotype=" + this.showStereotype
+                + ")";
         }
     }
 }

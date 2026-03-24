@@ -132,7 +132,8 @@ public class DiagramConfigMapper {
         diagramConfig.setShowInheritanceStructuresForServiceKinds(extension.getShowInheritanceStructuresForServiceKinds().getOrNull());
         diagramConfig.setShowInheritanceStructuresForDomainCommands(extension.getShowInheritanceStructuresForDomainCommands().getOrNull());
         diagramConfig.setShowInheritanceStructuresForDomainEvents(extension.getShowInheritanceStructuresForDomainEvents().getOrNull());
-
+        diagramConfig.setShowRelationshipLabels(extension.getShowRelationshipLabels().getOrNull());
+        diagramConfig.setShowRelationshipStereotypes(extension.getShowRelationshipStereotypes().getOrNull());
         return diagramConfig;
     }
 }

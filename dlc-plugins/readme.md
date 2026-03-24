@@ -394,6 +394,8 @@ Supported Diagram configuration options are
 - showInheritanceStructuresForReadModels: boolean, default false
 - showInheritanceStructuresForDomainEvents: boolean, default false
 - showInheritanceStructuresForDomainCommands: boolean, default false
+- showRelationshipLabels: boolean, default true
+- showRelationshipStereotypes: boolean, default true
 
 ## How to read DLC Domain Diagrams?
 
@@ -408,7 +410,7 @@ For more details, have a look at our [concept description](./../concepts/readme.
 
 The following list explains how to interpret the rendered edges:
 - DomainCommand → ApplicationService:
-A DomainCommand is passed to an ApplicationService. The ApplicationService provides a method to receive the command.
+A DomainCommand is passed to an ApplicationService. The ApplicationService provides a method to process the command.
 
 - ApplicationService → DomainService:
 An ApplicationService calls a DomainService.
