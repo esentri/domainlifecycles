@@ -1,0 +1,1 @@
+org.springframework.boot.env.EnvironmentPostProcessor=io.domainlifecycles.boot3.autoconfig.configurations.properties.DlcEnvironmentPostProcessor

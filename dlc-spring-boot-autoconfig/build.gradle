@@ -12,7 +12,6 @@ plugins {
     id 'jacoco'
 	alias libs.plugins.spring.boot.plugin
 	alias libs.plugins.flyway.plugin
-	alias libs.plugins.jooq.codegen.gradle
 	alias libs.plugins.yumi.gradle.licenser.plugin
 	alias libs.plugins.jaredsburrows.license.plugin
 }
@@ -25,32 +24,26 @@ def dbPassword = ''
 def dbMigration = 'src/test/resources/db/migration'
 
 dependencies {
-	api libs.jooq
-    api libs.spring.jdbc
+    implementation platform(libs.spring.boot.dependencies)
+    compileOnly libs.jooq
+    compileOnly libs.spring.jdbc
     api project(":domain-events-core")
-    api project(":domain-events-jakarta-jta")
-    api project(":domain-events-spring-tx")
-    api project(":domain-events-gruelbox")
-    api project(":jackson-integration")
+    api project(":jackson2-integration")
+    api project(":jackson3-integration")
     api project(":builder")
     api project(":jooq-integration")
-    api project(":spring-doc-2-integration")
+    api project(":spring-doc-integration")
     api project(":spring-web-integration")
-    api project(":swagger-v3-integration")
-    api project(":domain-events-jakarta-jms")
-    api project(":domain-events-activemq-classic-5")
-    api project(":domain-events-mq")
-    api project(":domain-events-serialization-jackson")
-    api libs.gruelbox.transactionoutbox.spring
-    api libs.spring.doc.openapi.starter.webmvc.ui
-    api libs.spring.web
-    api libs.jakarta.transaction.api
-    api libs.jackson3.core
-    api libs.jackson3.databind
-
+    api project(":swagger-integration")
+    api project(":domain-events-spring-bus")
+    implementation project(":mirror-serialization-jackson3")
+    compileOnly libs.spring.doc.openapi3.starter.webmvc.ui
+    compileOnly libs.spring.web
+    compileOnly libs.jackson3.core
+    compileOnly libs.jackson3.databind
     compileOnly libs.jooq.codegen
-	jooqCodegen libs.jooq.meta
-
+    annotationProcessor libs.spring.boot.configuration.processor
+    compileOnly libs.spring.boot.configuration.processor
     testImplementation platform(libs.spring.boot.dependencies)
     testImplementation libs.h2
 	testImplementation project(":test-shared-impl")
@@ -59,30 +52,21 @@ dependencies {
     testImplementation project(":types")
     testImplementation project(":assertions")
     testImplementation project(":domain-events-core")
-    testImplementation project(":domain-events-jakarta-jta")
-    testImplementation project(":domain-events-spring-tx")
-    testImplementation project(":domain-events-gruelbox")
-    testImplementation project(":jackson-integration")
+    testImplementation project(":jackson2-integration")
+    testImplementation project(":jackson3-integration")
     testImplementation project(":jooq-integration")
-    testImplementation project(":spring-doc-2-integration")
+    testImplementation project(":spring-doc-integration")
     testImplementation project(":spring-web-integration")
-    testImplementation project(":swagger-v3-integration")
+    testImplementation project(":swagger-integration")
     testImplementation project(":bean-validations")
-    testImplementation project(":domain-events-jakarta-jms")
-    testImplementation project(":domain-events-mq")
+    testImplementation project(":access")
     testImplementation project(":type-utils")
-    testImplementation project(":domain-events-serialization-jackson")
 	testImplementation libs.assertj
-    testImplementation libs.gruelbox.transactionoutbox.core
-    testImplementation libs.gruelbox.transactionoutbox.jackson
-    testImplementation libs.gruelbox.transactionoutbox.spring
 	testImplementation libs.spring.boot.starter.webmvc.test
     testImplementation libs.spring.boot.starter.jooq
     testImplementation libs.spring.boot.starter.jdbc
     testImplementation libs.spring.boot.starter.test
-    testImplementation libs.spring.boot.starter.artemis
-    testImplementation libs.apache.active.mq.artemis.jms.server
-    testImplementation libs.spring.doc.openapi.starter.webmvc.ui
+    testImplementation libs.spring.doc.openapi3.starter.webmvc.ui
     testImplementation libs.jackson3.core
     testImplementation libs.jackson3.databind
 	testCompileOnly libs.lombok
@@ -121,49 +105,63 @@ flyway {
 }
 
 // ----------------------------------------------------------
-
-jooq {
-	configuration {
-
-		jdbc {
-			driver = dbDriver
-			url = dbUrl
-			user = dbUsername
-			password = dbPassword
-		}
-
-		generator {
-			database {
-				name = "org.jooq.meta.h2.H2Database"
-				includes = ".*"
-				inputSchema = 'TEST_DOMAIN'
-				recordVersionFields = 'CONCURRENCY_VERSION'
-				forceIntegerTypesOnZeroScaleDecimals = true
-			}
-
-			generate {
-				generatedAnnotation = false
-				generatedAnnotationType = 'DETECT_FROM_JDK'
-				javaTimeTypes = true
-			}
-			target {
-				packageName = "io.domainlifecycles.test.autoconfig"
-			}
-		}
-	}
+configurations {
+    jooqCodegenTool
 }
 
-tasks.named("compileJava") {
-	dependsOn(tasks.named("jooqCodegen"))
+dependencies {
+    // jOOQ tool deps for code generation only
+    jooqCodegenTool libs.jooq.codegen
+    jooqCodegenTool libs.jooq.meta
+    jooqCodegenTool libs.h2      // or your JDBC driver
+    // if you use JAXB on newer JDKs, you may need:
+    // jooqCodegenTool "org.glassfish.jaxb:jaxb-runtime:4.0.5"
 }
 
-tasks.named("jooqCodegen") {
+def jooqTestOutputDir = layout.buildDirectory.dir("generated/sources/jooqTest/java").get().asFile
+
+tasks.register("jooqCodegenTest", JavaExec) {
+    group = "jooq"
+    description = "Generate jOOQ sources for tests only"
+
+    classpath = configurations.jooqCodegenTool
+    mainClass = "org.jooq.codegen.GenerationTool"
+
+    // Make Gradle 8+ happy: declare outputs/inputs
+    outputs.dir(jooqTestOutputDir)
+    inputs.file("src/test/resources/jooq-codegen-test.xml")
+
+    // If your schema depends on flyway:
+    dependsOn(tasks.named("flywayMigrate"))
+
+    args("src/test/resources/jooq-codegen-test.xml")
+
+    doFirst { jooqTestOutputDir.mkdirs() }
+}
+
+sourceSets {
+    test {
+        java.srcDir(jooqTestOutputDir)
+    }
+}
+
+tasks.named("compileTestJava") {
+    dependsOn("jooqCodegenTest")
+}
+
+tasks.named("jooqCodegenTest") {
 	dependsOn(tasks.named("flywayMigrate"))
 	inputs.files(fileTree("src/main/resources/db/migration"))
 }
 
-tasks.named("sourcesJar") {
-    dependsOn(tasks.named("jooqCodegen"))
+tasks.named("sourcesJar", Jar).configure {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from("src/main/java")
+    from("src/main/resources")
+}
+
+tasks.named("compileTestJava") {
+    dependsOn("jooqCodegenTest")
 }
 
 tasks.withType(Checkstyle) {

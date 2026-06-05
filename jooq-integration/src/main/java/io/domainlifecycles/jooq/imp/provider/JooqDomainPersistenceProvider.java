@@ -61,6 +61,17 @@ import java.util.stream.Collectors;
  */
 public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<UpdatableRecord<?>> {
 
+    /**
+     * Constructs an instance of {@code JooqDomainPersistenceProvider} using the provided
+     * configuration. Registers converters provided by the type converter provider within the
+     * configuration, if available.
+     *
+     * @param jooqPersistenceConfiguration the configuration object containing settings
+     *                                      and dependencies required for setting up
+     *                                      the Jooq domain persistence provider.
+     *                                      Contains optional type converter provider for
+     *                                      registering custom converters.
+     */
     public JooqDomainPersistenceProvider(JooqDomainPersistenceConfiguration jooqPersistenceConfiguration) {
         super(jooqPersistenceConfiguration);
         if (jooqPersistenceConfiguration.typeConverterProvider != null) {

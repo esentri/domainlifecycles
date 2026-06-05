@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2026-03-24
+- Added Domain diagram relation stereotypes
+- Extended Diagrammer and plugins to hide relation labels or stereotypes
+- Gradle Plugin serialize Mirror fixed
+- Generally upgraded to Gradle 9.4.0 
+- Some smaller readme fixes
+
+## [3.0.0] - 2026-02-27
+- Upgraded all Spring Boot and Spring dependencies to SpringBoot version 4.0.x and compatible versions
+- Refactored Spring Boot AutoConfiguration to use Spring Boot 4.0.x features
+- Added Spring Boot 3 AutoConfiguration for legacy support
+- Added integration for Spring Event Bus supported DomainEvents (and Spring Modulith events)
+- Added support for Jackson 3.x (mirror serialization, domain event serialization, general DLC Jackson 3 integration)
+- Provided fallback support for Jackson 2.x (mirror serialization, domain event serialization, general DLC Jackson 2 integration)
+- Refactored Spring Web integration to be independent of Jackson serialization
+- Added @DomainEventListener annotation for DomainEvents. @ListensTo annotation is deprecated.
+- Fixed jOOQ test class generation
+- AutoConfig can load mirror from `META-INF/dlc/mirror.json` without reflection at runtime.
+- DLC Build plugins provide support for deserializing mirror to ``META-INF/dlc/mirror.json``
+
 ## [2.6.0] - 2025-12-02
 - sample-project is not part of the main project anymore, but is now a separate project
 - Domain Diagramming documentation extended
@@ -166,7 +186,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### jackson-integration
 
 - Integrated new mirror from dlc-mirror (removed old mirror interface from DlcJacksonModule)
-- io.domainlifecycles.jackson.api.JacksonMappingCustomizer interface changed due to new mirror integration
+- io.domainlifecycles.jackson3.api.JacksonMappingCustomizer interface changed due to new mirror integration
 - Integrated access module
 
 #### jooq-integration

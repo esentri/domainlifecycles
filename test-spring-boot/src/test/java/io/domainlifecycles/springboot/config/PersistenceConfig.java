@@ -8,10 +8,7 @@ import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.persistence.records.EntityValueObjectRecordTypeConfiguration;
-import io.domainlifecycles.test.springboot3.tables.records.AktionsCodeBv3Record;
-import java.util.Set;
-import java.util.UUID;
-
+import io.domainlifecycles.test.springboot.tables.records.AktionsCodeBv3Record;
 import org.jooq.DSLContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +17,9 @@ import tests.shared.complete.onlinehandel.bestellung.AktionsCodeBv3;
 import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
 import tests.shared.persistence.domain.simpleUuid.TestRootSimpleUuid;
 import tests.shared.persistence.domain.simpleUuid.TestRootSimpleUuidId;
+
+import java.util.Set;
+import java.util.UUID;
 
 @Configuration
 public class PersistenceConfig {
@@ -33,7 +33,7 @@ public class PersistenceConfig {
             .JooqPersistenceConfigurationBuilder
             .newConfig()
             .withDomainObjectBuilderProvider(domainObjectBuilderProvider)
-            .withRecordPackage("io.domainlifecycles.test.springboot3.tables.records")
+            .withRecordPackage("io.domainlifecycles.test.springboot.tables.records")
             .withCustomRecordMappers(customRecordMappers)
             .withEntityValueObjectRecordTypeConfiguration(
                 new EntityValueObjectRecordTypeConfiguration(

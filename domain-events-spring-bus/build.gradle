@@ -1,0 +1,30 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'checkstyle'
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+dependencies {
+
+    api project(":domain-events-core")
+    api project(":types")
+    api project(":mirror")
+    compileOnly libs.spring.context
+    compileOnly libs.spring.tx
+    api libs.slf4j.api
+    implementation libs.byte.buddy
+    testImplementation platform(libs.spring.boot.dependencies)
+    testImplementation libs.spring.boot.starter.test
+    testImplementation("org.springframework.boot:spring-boot-starter-jdbc:4.0.2")
+    testImplementation libs.h2
+    testImplementation libs.lombok
+    testAnnotationProcessor libs.lombok
+    testImplementation project(":type-utils")
+}

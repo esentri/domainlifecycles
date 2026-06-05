@@ -27,8 +27,8 @@
 package io.domainlifecycles.plugin.viewer;
 
 
-import io.domainlifecycles.plugins.json.JsonSerializer;
-import io.domainlifecycles.plugins.json.JsonSerializerImpl;
+import io.domainlifecycles.plugins.mirror.MirrorSerializer;
+import io.domainlifecycles.plugins.mirror.MirrorSerializerImpl;
 import io.domainlifecycles.plugins.viewer.DomainModelUploader;
 import io.domainlifecycles.plugins.viewer.DomainModelUploaderImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
@@ -37,6 +37,7 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.work.DisableCachingByDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +63,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Leon Völlinger
  */
+@DisableCachingByDefault(because = "Outputs depend on external environment and are not safely reproducible yet.")
 public abstract class UploadDomainModelTask extends DefaultTask {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(UploadDomainModelTask.class);
@@ -128,8 +130,8 @@ public abstract class UploadDomainModelTask extends DefaultTask {
     }
 
     private void uploadDomainModel() {
-        JsonSerializer jsonSerializer = new JsonSerializerImpl(true);
-        final String domainModelJson = jsonSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(getProject()),
+        MirrorSerializer mirrorSerializer = new MirrorSerializerImpl(true);
+        final String domainModelJson = mirrorSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(getProject()),
             getDomainModelPackages().get());
 
         domainModelUploader.uploadDomainModel(

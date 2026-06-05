@@ -42,7 +42,7 @@ import java.util.Optional;
 import org.jmolecules.ddd.types.Identifier;
 
 /**
- * Builder to create {@link EntityMirror}. Uses Java reflection.
+ * Builder to create {@link EntityMirror} for JMolecules marked Entities. Uses Java reflection.
  *
  * @author Mario Herb
  */

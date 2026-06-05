@@ -30,8 +30,8 @@ import io.domainlifecycles.plugin.diagram.CreateDiagramTask;
 import io.domainlifecycles.plugin.extensions.DiagramTaskConfigurationExtension;
 import io.domainlifecycles.plugin.extensions.DlcGradlePluginExtension;
 import io.domainlifecycles.plugin.extensions.DomainModelUploadTaskConfigurationExtension;
-import io.domainlifecycles.plugin.extensions.JsonTaskConfigurationExtension;
-import io.domainlifecycles.plugin.json.JsonRenderTask;
+import io.domainlifecycles.plugin.extensions.MirrorSerializerTaskConfigurationExtension;
+import io.domainlifecycles.plugin.mirror.MirrorSerializerTask;
 import io.domainlifecycles.plugin.viewer.UploadDomainModelTask;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
 import org.gradle.api.Plugin;
@@ -79,12 +79,12 @@ public class DlcGradlePlugin implements Plugin<Project> {
         DlcGradlePluginExtension pluginExtension =
             project.getExtensions().create("dlcGradlePlugin", DlcGradlePluginExtension.class);
 
-        JsonTaskConfigurationExtension jsonModelExtension;
+        MirrorSerializerTaskConfigurationExtension mirrorSerializerExtension;
         DiagramTaskConfigurationExtension diagramExtension;
         DomainModelUploadTaskConfigurationExtension domainModelUploadTaskConfigurationExtension;
 
         if (pluginExtension instanceof ExtensionAware extensionAware) {
-            jsonModelExtension = extensionAware.getExtensions().create("jsonModel", JsonTaskConfigurationExtension.class);
+            mirrorSerializerExtension = extensionAware.getExtensions().create("serializeMirror", MirrorSerializerTaskConfigurationExtension.class);
             diagramExtension = extensionAware.getExtensions().create("diagram", DiagramTaskConfigurationExtension.class);
             domainModelUploadTaskConfigurationExtension = extensionAware.getExtensions()
                 .create("domainModelUpload", DomainModelUploadTaskConfigurationExtension.class);
@@ -99,9 +99,9 @@ public class DlcGradlePlugin implements Plugin<Project> {
                 task.getDiagrams().addAll(diagramExtension.getDiagrams());
             });
 
-            project.getTasks().register("renderJson", JsonRenderTask.class, task -> {
-                task.getFileOutputDir().set(jsonModelExtension.getFileOutputDir());
-                task.getSerializations().addAll(jsonModelExtension.getSerializations());
+            project.getTasks().register("serializeMirror", MirrorSerializerTask.class, task -> {
+                task.getFileOutputDir().set(mirrorSerializerExtension.getFileOutputDir());
+                task.getSerializations().addAll(mirrorSerializerExtension.getSerializations());
             });
 
             project.getTasks().register("domainModelUpload", UploadDomainModelTask.class, task -> {

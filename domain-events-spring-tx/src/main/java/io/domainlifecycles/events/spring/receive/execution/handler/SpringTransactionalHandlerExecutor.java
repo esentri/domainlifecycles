@@ -47,6 +47,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Mario Herb
  */
+@Deprecated
 public final class SpringTransactionalHandlerExecutor extends ReflectiveHandlerExecutor implements TransactionalHandlerExecutor {
 
     private static final Logger log = LoggerFactory.getLogger(SpringTransactionalHandlerExecutor.class);

@@ -79,11 +79,7 @@ concepts and other patterns](./../readme_building_blocks.md), which are commonly
 
 ``` 
   sampleshop
-        ├── configuration
-        │   ├── domain
-        │   │   └── domain wiring
-        │   └── system
-        │       └── data-source and persistence / web config / DLC specific configuration
+ 
         ├── core
         │   ├── domain
         │   │   ├── customer

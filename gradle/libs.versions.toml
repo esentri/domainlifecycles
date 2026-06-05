@@ -40,18 +40,26 @@ gruelbox-version = '6.1.653'
 jakarta-jms-api-version = '3.1.0'
 jakarta-transaction-api-version = '2.0.1'
 jackson-3-version = '3.0.3'
+jackson-2-version = '2.20.1'
 jakarta-validation-api-version = '3.1.1'
 jooq-version = '3.19.29'
 slf4j-version = '2.0.17'
-spring-doc-open-api-2-version = '3.0.1'
+spring-doc-open-api2-version = '2.8.15'
+spring-doc-open-api3-version = '3.0.1'
 spring-jdbc-version = '7.0.2'
 spring-tx-version = '7.0.2'
 spring-web-version = '7.0.2'
 spring-context-version = '7.0.2'
+
+spring6-jdbc-version = '6.2.15'
+spring6-tx-version = '6.2.15'
+spring6-web-version = '6.2.15'
+spring6-context-version = '6.2.15'
+
 swagger-version = '2.2.41'
 type-resolver-version = '1.0.3'
 docker-java-version = '3.7.0'
-maven-plugin-development-plugin-version = '0.4.3'
+maven-plugin-development-plugin-version = '1.0.3'
 maven-core-version = '3.9.12'
 maven-artifact-version = '3.9.12'
 maven-plugin-api-version = '3.9.12'
@@ -59,7 +67,7 @@ maven-plugin-tools-annotations-version = '3.15.2'
 
 # test-versions
 active-mq-artemis-version = '2.44.0'
-assertj-version = '3.27.6'
+assertj-version = '3.27.7'
 atomikos-jta-version = '6.0.0'
 awaitility-version = '4.3.0'
 commons-io-version = '2.21.0'
@@ -77,11 +85,12 @@ kryo-version = '5.6.2'
 logback-classic-version = '1.5.23'
 lombok-version = '1.18.42'
 mockito-core-version = '5.21.0'
-spring-boot-platform-version = '4.0.1'
+spring-boot-platform-version = '4.0.2'
+spring-boot3-platform-version = '3.5.10'
 
 # plugin versions
 flyway-version = '11.20.0'
-yumi-gradle-licenser-version = '2.1.1'
+yumi-gradle-licenser-version = '2.2.2'
 jareds-burrows-license-version = '0.9.8'
 jreleaser-version = '1.22.0'
 researchgate-release-version = '3.1.0'
@@ -110,6 +119,11 @@ h2 = { module = "com.h2database:h2", version.ref = "h2-version"}
 hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", version.ref = "hibernate-validator-jakarta-version" }
 jackson3-core = { module = "tools.jackson.core:jackson-core", version.ref = "jackson-3-version" }
 jackson3-databind = { module = "tools.jackson.core:jackson-databind", version.ref = "jackson-3-version" }
+jackson2-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson-2-version" }
+jackson2-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson-2-version" }
+jackson2-datatype-jdk8 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8", version.ref = "jackson-2-version" }
+jackson2-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson-2-version" }
+jackson2-module-parameter-names = { module = "com.fasterxml.jackson.module:jackson-module-parameter-names", version.ref = "jackson-2-version" }
 jakarta-el-api = { module = "jakarta.el:jakarta.el-api", version.ref = "jakarta-el-version" }
 jakarta-jms-api = { module = "jakarta.jms:jakarta.jms-api", version.ref = "jakarta-jms-api-version" }
 jakarta-transaction-api = { module = "jakarta.transaction:jakarta.transaction-api", version.ref = "jakarta-transaction-api-version"}
@@ -130,6 +144,8 @@ lombok = { module = "org.projectlombok:lombok", version.ref = "lombok-version" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito-core-version" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j-version" }
 spring-boot-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot-platform-version" }
+spring-boot3-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot3-platform-version" }
+
 spring-boot-starter-activemq = { module = "org.springframework.boot:spring-boot-starter-activemq", version.ref = "spring-boot-platform-version"}
 spring-boot-starter-artemis = { module = "org.springframework.boot:spring-boot-starter-artemis", version.ref = "spring-boot-platform-version"}
 spring-boot-starter-artemis-test = { module = "org.springframework.boot:spring-boot-starter-artemis-test", version.ref = "spring-boot-platform-version"}
@@ -140,12 +156,32 @@ spring-boot-starter-jackson = { module = "org.springframework.boot:spring-boot-s
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "spring-boot-platform-version"}
 spring-boot-starter-webmvc = { module = "org.springframework.boot:spring-boot-starter-webmvc", version.ref = "spring-boot-platform-version"}
 spring-boot-starter-webmvc-test = { module = "org.springframework.boot:spring-boot-starter-webmvc-test", version.ref = "spring-boot-platform-version"}
-spring-doc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "spring-doc-open-api-2-version" }
+spring-boot-configuration-processor = { module = "org.springframework.boot:spring-boot-configuration-processor", version.ref = "spring-boot-platform-version"}
+
+
+spring-boot3-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "spring-boot3-platform-version"}
+spring-boot3-autoconfigure = { module = "org.springframework.boot:spring-boot-autoconfigure", version.ref = "spring-boot3-platform-version"}
+spring-boot3-starter-jooq = { module = "org.springframework.boot:spring-boot-starter-jooq", version.ref = "spring-boot3-platform-version"}
+spring-boot3-starter-json = { module = "org.springframework.boot:spring-boot-starter-json", version.ref = "spring-boot3-platform-version"}
+spring-boot3-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "spring-boot3-platform-version"}
+spring-boot3-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "spring-boot3-platform-version"}
+spring-boot3-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "spring-boot3-platform-version"}
+spring-boot3-configuration-processor = { module = "org.springframework.boot:spring-boot-configuration-processor", version.ref = "spring-boot3-platform-version"}
+
+spring-doc-openapi3-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "spring-doc-open-api3-version" }
+spring-doc-openapi2-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "spring-doc-open-api2-version" }
 spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot-platform-version"}
+spring-boot3-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot3-platform-version"}
 spring-jdbc = { module = "org.springframework:spring-jdbc", version.ref = "spring-jdbc-version" }
 spring-web = { module = "org.springframework:spring-web", version.ref = "spring-web-version" }
 spring-context = { module = "org.springframework:spring-context", version.ref = "spring-context-version" }
 spring-tx = { module = "org.springframework:spring-tx", version.ref = "spring-tx-version" }
+
+spring6-jdbc = { module = "org.springframework:spring-jdbc", version.ref = "spring6-jdbc-version" }
+spring6-web = { module = "org.springframework:spring-web", version.ref = "spring6-web-version" }
+spring6-context = { module = "org.springframework:spring-context", version.ref = "spring6-context-version" }
+spring6-tx = { module = "org.springframework:spring-tx", version.ref = "spring6-tx-version" }
+
 swagger = { module = "io.swagger.core.v3:swagger-core-jakarta", version.ref = "swagger-version" }
 type-resolver = { module = "com.github.vladislavsevruk:type-resolver", version.ref = "type-resolver-version" }
 docker-java-core = { module = "com.github.docker-java:docker-java-core", version.ref = "docker-java-version" }
@@ -165,6 +201,7 @@ jooq-codegen-gradle = { id = "org.jooq.jooq-codegen-gradle", version.ref = "jooq
 release-plugin = { id = "net.researchgate.release", version.ref = "researchgate-release-version" }
 release-automation-plugin = { id = "org.jreleaser", version.ref = "jreleaser-version"}
 spring-boot-plugin = { id = "org.springframework.boot", version.ref = "spring-boot-platform-version" }
+spring-boot3-plugin = { id = "org.springframework.boot", version.ref = "spring-boot3-platform-version" }
 yumi-gradle-licenser-plugin = { id = "dev.yumi.gradle.licenser", version.ref = "yumi-gradle-licenser-version" }
-maven-plugin-development-plugin =  { id = "de.benediktritter.maven-plugin-development", version.ref = "maven-plugin-development-plugin-version" }
+maven-plugin-development-plugin =  { id = "org.gradlex.maven-plugin-development", version.ref = "maven-plugin-development-plugin-version" }
 

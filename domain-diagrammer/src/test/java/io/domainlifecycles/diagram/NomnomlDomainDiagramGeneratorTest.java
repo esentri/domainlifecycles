@@ -5,7 +5,6 @@ import io.domainlifecycles.diagram.domain.DomainDiagramGenerator;
 import io.domainlifecycles.diagram.domain.config.DiagramTrimSettings;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.diagram.domain.config.GeneralVisualSettings;
-import io.domainlifecycles.diagram.domain.notes.DomainClassNote;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.mirror.resolver.TypeMetaResolver;
@@ -58,6 +57,66 @@ class NomnomlDomainDiagramGeneratorTest {
         String actualDiagramText = generator.generateDiagramText();
 
         Path filePath = Path.of("src/test/resources/tests_resolved.nomnoml");
+        String content;
+        try {
+            content = Files.readString(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        //then
+        assertThat(actualDiagramText).isEqualTo(content);
+    }
+
+    @Test
+    void generateAllTestsWithResolvedGenericsNoRelationshipLabels() {
+        var factory = new ReflectiveDomainMirrorFactory("tests.shared");
+        factory.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(factory);
+        var trim = DiagramTrimSettings.builder().withExplicitlyIncludedPackageNames(List.of("tests.shared")).build();
+        var general = GeneralVisualSettings.builder().withShowRelationshipLabels(false).build();
+        DomainDiagramConfig diagramConfig =
+            DomainDiagramConfig.builder()
+                .withDiagramTrimSettings(trim)
+                .withGeneralVisualSettings(general)
+                .build();
+
+        DomainDiagramGenerator generator = new DomainDiagramGenerator(
+            diagramConfig, Domain.getDomainMirror());
+
+        // when
+        String actualDiagramText = generator.generateDiagramText();
+
+        Path filePath = Path.of("src/test/resources/tests_resolved_no_relationship_labels.nomnoml");
+        String content;
+        try {
+            content = Files.readString(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        //then
+        assertThat(actualDiagramText).isEqualTo(content);
+    }
+
+    @Test
+    void generateAllTestsWithResolvedGenericsNoRelationshipStereotypes() {
+        var factory = new ReflectiveDomainMirrorFactory("tests.shared");
+        factory.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(factory);
+        var trim = DiagramTrimSettings.builder().withExplicitlyIncludedPackageNames(List.of("tests.shared")).build();
+        var general = GeneralVisualSettings.builder().withShowRelationshipStereotypes(false).build();
+        DomainDiagramConfig diagramConfig =
+            DomainDiagramConfig.builder()
+                .withDiagramTrimSettings(trim)
+                .withGeneralVisualSettings(general)
+                .build();
+
+        DomainDiagramGenerator generator = new DomainDiagramGenerator(
+            diagramConfig, Domain.getDomainMirror());
+
+        // when
+        String actualDiagramText = generator.generateDiagramText();
+
+        Path filePath = Path.of("src/test/resources/tests_resolved_no_relationship_stereotypes.nomnoml");
         String content;
         try {
             content = Files.readString(filePath);

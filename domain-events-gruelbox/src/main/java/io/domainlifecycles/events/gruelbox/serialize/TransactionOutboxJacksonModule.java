@@ -37,6 +37,7 @@ import tools.jackson.databind.jsontype.impl.DefaultTypeResolverBuilder;
 import tools.jackson.databind.module.SimpleDeserializers;
 import tools.jackson.databind.module.SimpleModule;
 import tools.jackson.databind.module.SimpleSerializers;
+
 import static tools.jackson.databind.DefaultTyping.NON_FINAL;
 
 /**
@@ -69,7 +70,7 @@ public class TransactionOutboxJacksonModule extends SimpleModule {
     /**
      * Initializes the module with custom serializers and deserializers.
      *
-     * @param setupContext
+     * @param setupContext Jckson setup context
      */
     @Override
     public void setupModule(JacksonModule.SetupContext setupContext) {

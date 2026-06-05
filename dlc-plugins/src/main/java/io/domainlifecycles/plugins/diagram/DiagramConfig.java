@@ -136,6 +136,8 @@ public class DiagramConfig {
     private Boolean showInheritanceStructuresForReadModels;
     private Boolean showInheritanceStructuresForDomainEvents;
     private Boolean showInheritanceStructuresForDomainCommands;
+    private Boolean showRelationshipLabels;
+    private Boolean showRelationshipStereotypes;
 
     /**
      * Gets the file type for the diagram output
@@ -1524,6 +1526,25 @@ public class DiagramConfig {
     }
 
     /**
+     * Sets whether relationship labels should be displayed.
+     *
+     * @param showRelationshipLabels a Boolean indicating if relationship labels should be shown.
+     *                               True to show the labels, false to hide them.
+     */
+    public void setShowRelationshipLabels(Boolean showRelationshipLabels) {
+        this.showRelationshipLabels = showRelationshipLabels;
+    }
+
+    /**
+     * Sets whether relationship stereotypes should be shown.
+     *
+     * @param showRelationshipStereotypes true if relationship stereotypes should be displayed, false otherwise
+     */
+    public void setShowRelationshipStereotypes(Boolean showRelationshipStereotypes) {
+        this.showRelationshipStereotypes = showRelationshipStereotypes;
+    }
+
+    /**
      * Maps various configuration styles, filters, and properties into a {@link DomainDiagramConfig} object
      * by utilizing a builder pattern. This method processes multiple optional style configurations,
      * filtering options, and display preferences to generate a comprehensive domain diagram configuration.
@@ -1613,6 +1634,8 @@ public class DiagramConfig {
         if(showInheritanceStructuresForDomainEvents != null) visualBuilder.withShowInheritanceStructuresForDomainEvents(showInheritanceStructuresForDomainEvents);
         if(showInheritanceStructuresForReadModels != null) visualBuilder.withShowInheritanceStructuresForReadModels(showInheritanceStructuresForReadModels);
         if(showInheritanceStructuresForServiceKinds != null) visualBuilder.withShowInheritanceStructuresForServiceKinds(showInheritanceStructuresForServiceKinds);
+        if(showRelationshipLabels != null) visualBuilder.withShowRelationshipLabels(showRelationshipLabels);
+        if(showRelationshipStereotypes != null) visualBuilder.withShowRelationshipStereotypes(showRelationshipStereotypes);
         configBuilder
             .withDiagramTrimSettings(trimBuilder.build())
             .withLayoutSettings(layoutBuilder.build())

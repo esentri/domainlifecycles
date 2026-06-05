@@ -44,9 +44,29 @@ import org.jooq.UpdatableRecord;
  */
 public class JooqAggregateRepository<A extends AggregateRoot<I>, I extends Identity<?>> extends PersistenceActionPublishingRepository<I, A, UpdatableRecord<?>> {
 
+    /**
+     * The DSLContext used for database operations within the repository.
+     * <p>
+     * This component is responsible for executing SQL queries and managing
+     * interaction with the underlying database. It provides a fluent API
+     * for constructing and executing type-safe SQL queries.
+     * <p>
+     * The DSLContext is initialized during the construction of the repository
+     * and shared across various components such as fetchers and persisters
+     * to enable consistent database interaction.
+     */
     protected final DSLContext dslContext;
+
     private final JooqAggregateFetcher<A, I> fetcher;
 
+    /**
+     * Constructs an instance of JooqAggregateRepository.
+     *
+     * @param aggregateRootClass the class type of the aggregate root
+     * @param dslContext the DSLContext used for database interaction
+     * @param domainPersistenceProvider the provider for domain-specific persistence actions
+     * @param persistenceEventPublisher the publisher for persistence events
+     */
     public JooqAggregateRepository(Class<A> aggregateRootClass,
                                    DSLContext dslContext,
                                    JooqDomainPersistenceProvider domainPersistenceProvider,
@@ -65,6 +85,11 @@ public class JooqAggregateRepository<A extends AggregateRoot<I>, I extends Ident
         return fetcher.fetchDeep(rootId);
     }
 
+    /**
+     * Returns the {@link JooqAggregateFetcher} instance associated with this repository.
+     *
+     * @return the JooqAggregateFetcher responsible for retrieving aggregate roots from the database
+     */
     public JooqAggregateFetcher<A, I> getFetcher() {
         return fetcher;
     }

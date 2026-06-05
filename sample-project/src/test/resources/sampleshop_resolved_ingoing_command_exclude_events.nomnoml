@@ -99,8 +99,8 @@ o +- blocked:boolean
 \# +- type:<ENUM> CreditCardType
 |
 ]
-[<AR>Customer <<AggregateRoot>>]  o-[<label> address 1] - [<VO>Address <<ValueObject>>]
-[<AR>Customer <<AggregateRoot>>]  o-[<label> creditCard 0..1] - [<VO>CreditCard <<ValueObject>>]
+[<AR>Customer <<AggregateRoot>>]  +-[<label> address 1] - [<VO>Address <<ValueObject>>]
+[<AR>Customer <<AggregateRoot>>]  +-[<label> creditCard 0..1] - [<VO>CreditCard <<ValueObject>>]
 ]
 // !!! {Frame} sampleshop.core.domain.order.Order !!!
 [<AF> Order <<Aggregate>>|
@@ -142,8 +142,8 @@ o +- image:Optional<URI>
 |
 ]
 ]
-[<AF> Order <<Aggregate>>]  -[<label> Order.customerId] -> [<AF> Customer <<Aggregate>>]
-[<AF> Order <<Aggregate>>]  -[<label> OrderItem.productId] -> [<AF> Product <<Aggregate>>]
+[<AF> Order <<Aggregate>>]  --[<label> <<id-ref>> Order.customerId] --> [<AF> Customer <<Aggregate>>]
+[<AF> Order <<Aggregate>>]  --[<label> <<id-ref>> OrderItem.productId] --> [<AF> Product <<Aggregate>>]
 // !!! sampleshop.outbound.JooqCustomerRepository !!!
 [<R> CustomerRepository <<Repository>> |
 + Optional<Customer> deleteById(Customer$CustomerId)
@@ -174,15 +174,15 @@ o +- image:Optional<URI>
 ]
 // !!! sampleshop.outbound.EmailNotifierImpl !!!
 [<OS> EmailNotifierService <<OutboundService>> ]
-[<DC>PlaceOrder <<DomainCommand>>]  --> [<AS>OrderDriver <<ApplicationService>>]
-[<DE>NewOrderPlaced <<DomainEvent>>]  --> [<DS>CustomerNotificationService <<DomainService>>]
-[<DS>OrderPlacementService <<DomainService>>]  --> [<DE>NewOrderPlaced <<DomainEvent>>]
-[<DS>CustomerNotificationService <<DomainService>>]  -- [<OS>EmailNotifierService <<OutboundService>>]
-[<DS>CustomerNotificationService <<DomainService>>]  -- [<R>CustomerRepository <<Repository>>]
-[<DS>OrderPlacementService <<DomainService>>]  -- [<R>OrderRepository <<Repository>>]
-[<DS>OrderPlacementService <<DomainService>>]  -- [<R>ProductRepository <<Repository>>]
-[<AS>OrderDriver <<ApplicationService>>]  -- [<DS>OrderPlacementService <<DomainService>>]
-[<AS>OrderDriver <<ApplicationService>>]  -- [<R>OrderRepository <<Repository>>]
-[<R>CustomerRepository <<Repository>>]  -- [<AF> Customer <<Aggregate>>]
-[<R>OrderRepository <<Repository>>]  -- [<AF> Order <<Aggregate>>]
-[<R>ProductRepository <<Repository>>]  -- [<AF> Product <<Aggregate>>]
+[<DC>PlaceOrder <<DomainCommand>>]  --[<label> <<is processed by>> OrderService.place] --> [<AS>OrderDriver <<ApplicationService>>]
+[<DE>NewOrderPlaced <<DomainEvent>>]  --[<label> <<notifies>> CustomerNotificationService.notifyNewOrderPlaced] --> [<DS>CustomerNotificationService <<DomainService>>]
+[<DS>OrderPlacementService <<DomainService>>]  --[<label> <<publishes>> OrderPlacementService.placeOrder] --> [<DE>NewOrderPlaced <<DomainEvent>>]
+[<DS>CustomerNotificationService <<DomainService>>]  -> [<OS>EmailNotifierService <<OutboundService>>]
+[<DS>CustomerNotificationService <<DomainService>>]  -> [<R>CustomerRepository <<Repository>>]
+[<DS>OrderPlacementService <<DomainService>>]  -> [<R>OrderRepository <<Repository>>]
+[<DS>OrderPlacementService <<DomainService>>]  -> [<R>ProductRepository <<Repository>>]
+[<AS>OrderDriver <<ApplicationService>>]  -> [<DS>OrderPlacementService <<DomainService>>]
+[<AS>OrderDriver <<ApplicationService>>]  -> [<R>OrderRepository <<Repository>>]
+[<R>CustomerRepository <<Repository>>]  --> [<AF> Customer <<Aggregate>>]
+[<R>OrderRepository <<Repository>>]  --> [<AF> Order <<Aggregate>>]
+[<R>ProductRepository <<Repository>>]  --> [<AF> Product <<Aggregate>>]

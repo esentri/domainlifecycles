@@ -33,13 +33,14 @@ import java.lang.annotation.Target;
 
 /**
  * Marker annotation to mark methods
- * in {@link Entity} instances, {@link Repository} or {@link DomainService} instances,
+ * in {@link Entity} instances, or {@link ServiceKind} instances,
  * that listen to {@link DomainEvent}s.
  *
  * @author Mario Herb
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
+@Deprecated
 public @interface ListensTo {
 
     /**

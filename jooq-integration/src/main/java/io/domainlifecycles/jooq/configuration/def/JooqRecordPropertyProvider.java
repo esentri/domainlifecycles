@@ -47,6 +47,12 @@ public class JooqRecordPropertyProvider implements RecordPropertyProvider {
 
     private final NewRecordInstanceProvider newRecordInstanceProvider;
 
+    /**
+     * Constructs a new instance of {@code JooqRecordPropertyProvider}.
+     *
+     * @param newRecordInstanceProvider the provider responsible for creating new record instances,
+     *                                   used to facilitate record property discovery and adaptation
+     */
     public JooqRecordPropertyProvider(NewRecordInstanceProvider newRecordInstanceProvider) {
         this.newRecordInstanceProvider = newRecordInstanceProvider;
     }

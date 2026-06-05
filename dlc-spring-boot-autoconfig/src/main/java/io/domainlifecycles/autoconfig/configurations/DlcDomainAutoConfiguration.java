@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2026 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,16 +26,24 @@
 
 package io.domainlifecycles.autoconfig.configurations;
 
-import io.domainlifecycles.autoconfig.configurations.properties.DlcDomainProperties;
 import io.domainlifecycles.autoconfig.exception.DLCAutoConfigException;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
-import org.springframework.beans.factory.annotation.Value;
+import io.domainlifecycles.mirror.serialize.DeserializingDomainMirrorFactory;
+import io.domainlifecycles.mirror.serialize.jackson3.JacksonDomainSerializer;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.util.StreamUtils;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Core domain configuration for enabling standard domain-related features in the DLC framework.
@@ -45,11 +53,10 @@ import org.springframework.context.annotation.Bean;
  * @author Leon Völlinger
  */
 @AutoConfiguration
-@EnableConfigurationProperties(DlcDomainProperties.class)
-@AutoConfigureBefore(name = "org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration")
-public class DlcDomainAutoConfiguration {
+@ConditionalOnProperty(prefix = "dlc.features.mirror", name = "enabled", havingValue = "true", matchIfMissing = true)
+public class DlcDomainAutoConfiguration implements EnvironmentAware {
 
-    private @Value("${dlcDomainBasePackages}") String dlcDomainBasePackages;
+    private Environment environment;
 
     /**
      * Creates and initializes the domain mirror for the DLC framework.
@@ -60,30 +67,57 @@ public class DlcDomainAutoConfiguration {
      * the configuration properties or the annotation value to determine which packages to scan.
      * </p>
      *
-     * @param dlcDomainProperties the configuration properties containing domain settings
      * @return the initialized DomainMirror instance
      * @throws DLCAutoConfigException if the base packages property is missing or invalid
      */
     @Bean
-    public DomainMirror initializedDomain(DlcDomainProperties dlcDomainProperties) {
+    public DomainMirror initializedDomain() {
         if (!Domain.isInitialized()) {
-            String basePackages;
-            if (dlcDomainProperties != null
-                && dlcDomainProperties.getBasePackages() != null
-                && !dlcDomainProperties.getBasePackages().isBlank()) {
-
-                basePackages = dlcDomainProperties.getBasePackages();
-            } else if (dlcDomainBasePackages != null && !dlcDomainBasePackages.isBlank()) {
-                basePackages = dlcDomainBasePackages;
-            } else {
+            String[] basePackages = environment.getProperty("dlc.features.mirror.base-packages", String[].class);
+            if (basePackages == null || basePackages.length == 0) {
+                var mirrorSerialized = readMirrorFromMetaInfDlc();
+                if( mirrorSerialized != null){
+                    var serializer = new JacksonDomainSerializer(false);
+                    Domain.initialize(new DeserializingDomainMirrorFactory(serializer));
+                    return Domain.getDomainMirror();
+                }
                 throw DLCAutoConfigException.fail(
-                    "Property 'basePackages' is missing. Make sure you specified a property called " +
-                        "'dlc.domain.basePackages' or add a 'dlcDomainBasePackages' value on the @EnableDLC annotation.");
+                        "Property 'basePackages' is missing. Make sure you specified a property called " +
+                            "'dlc.features.mirror.base-packages' or add a 'dlcMirrorBasePackages' value on the @EnableDLC annotation.");
+
             }
-            String[] domainBasePackages = basePackages.split(",");
-            Domain.initialize(new ReflectiveDomainMirrorFactory(domainBasePackages));
+            Domain.initialize(new ReflectiveDomainMirrorFactory(basePackages));
         }
 
         return Domain.getDomainMirror();
+    }
+
+    private String readMirrorFromMetaInfDlc() {
+        try {
+            var resolver = new PathMatchingResourcePatternResolver(getClass().getClassLoader());
+
+            Resource[] resources = resolver.getResources("classpath*:META-INF/dlc/*");
+
+            Resource res = Arrays.stream(resources)
+                .filter(Objects::nonNull)
+                .filter(Resource::exists)
+                .findFirst()
+                .orElse(null);
+
+            if (res == null) return null;
+
+            try (var in = res.getInputStream()) {
+                String content = StreamUtils.copyToString(in, StandardCharsets.UTF_8);
+                return content;
+            }
+        } catch (Exception e) {
+            throw DLCAutoConfigException.fail(
+                "Failed reading mirror from 'META-INF/dlc'!");
+        }
+    }
+
+    @Override
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
     }
 }

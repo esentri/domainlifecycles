@@ -71,6 +71,7 @@ public class ApplicationServiceModel extends ServiceKindModel implements Applica
                                    List<String> allInterfaceTypeNames
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
+        Objects.requireNonNull(applicationServiceInterfaceTypeNames);
         this.applicationServiceInterfaceTypeNames = Collections.unmodifiableList(applicationServiceInterfaceTypeNames);
     }
 

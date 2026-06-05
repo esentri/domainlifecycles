@@ -38,7 +38,7 @@ import java.util.Optional;
 import org.jmolecules.ddd.types.Repository;
 
 /**
- * Builder to create {@link RepositoryMirror}. Uses Java reflection.
+ * Builder to create {@link RepositoryMirror} for JMolecules marked Repositories. Uses Java reflection.
  *
  * @author Mario Herb
  */

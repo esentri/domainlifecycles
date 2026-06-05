@@ -26,7 +26,6 @@
 
 package sampleshop.inbound.driver;
 
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sampleshop.core.domain.order.CancelOrder;
 import sampleshop.core.domain.order.Order;
@@ -47,7 +46,6 @@ import java.util.stream.Collectors;
  * @author Mario Herb
  * @author Tobias Herb
  */
-@Service
 @Transactional
 public class OrderService implements OrderDriver {
 

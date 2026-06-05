@@ -49,6 +49,16 @@ public class JooqEntityRecordMirrorImpl implements EntityRecordMirror<UpdatableR
 
     private final List<String> enforcedReferences;
 
+    /**
+     * Constructs an instance of {@code JooqEntityRecordMirrorImpl}.
+     *
+     * @param recordTypeName the name of the record type.
+     * @param entityTypeName the name of the entity type.
+     * @param entityRecordMapper the {@link RecordMapper} instance responsible for mapping records to entities.
+     * @param enforcedReferences a list of enforced reference names that are part of the entity record structure.
+     * @param valueObjectRecordMirrors a list of {@link ValueObjectRecordMirror} instances that represent
+     *                                 the value objects associated with this entity record.
+     */
     public JooqEntityRecordMirrorImpl(String recordTypeName,
                                       String entityTypeName,
                                       RecordMapper<UpdatableRecord<?>, ?, ?> entityRecordMapper,

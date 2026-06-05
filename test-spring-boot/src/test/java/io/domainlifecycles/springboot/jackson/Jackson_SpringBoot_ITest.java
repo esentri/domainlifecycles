@@ -1,9 +1,9 @@
 package io.domainlifecycles.springboot.jackson;
 
 
-import io.domainlifecycles.jackson.api.JacksonMappingCustomizer;
-import io.domainlifecycles.jackson.api.MappingAction;
-import io.domainlifecycles.jackson.databind.context.DomainObjectMappingContext;
+import io.domainlifecycles.jackson3.api.JacksonMappingCustomizer;
+import io.domainlifecycles.jackson3.api.MappingAction;
+import io.domainlifecycles.jackson3.databind.context.DomainObjectMappingContext;
 import io.domainlifecycles.springboot.persistence.bestellung.BestellungBv3Repository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,6 @@ import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedSimpleVo
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedSimpleVoOneToMany3;
 import tools.jackson.core.ObjectReadContext;
 import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 
 import java.lang.reflect.Field;

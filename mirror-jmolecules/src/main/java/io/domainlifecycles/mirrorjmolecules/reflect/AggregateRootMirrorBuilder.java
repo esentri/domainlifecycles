@@ -34,7 +34,7 @@ import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import java.util.Optional;
 
 /**
- * Builder to create {@link AggregateRootMirror}. Uses Java reflection.
+ * Builder to create {@link AggregateRootMirror} for JMolecules marked Aggregate Roots. Uses Java reflection.
  *
  * @author Mario Herb
  */

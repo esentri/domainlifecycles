@@ -27,7 +27,6 @@
 package sampleshop.outbound;
 
 import org.jooq.DSLContext;
-import org.springframework.stereotype.Service;
 import sampleshop.core.domain.order.OrderStatus;
 import sampleshop.core.outport.OrdersByCustomer;
 import sampleshop.core.outport.OrdersByCustomerQueryHandler;
@@ -43,8 +42,7 @@ import static sampleshop.Tables.ORDER;
  *
  * @author Mario Herb
  */
-@Service
-public class JooqOrdersByCustomerQueryHandler implements OrdersByCustomerQueryHandler {
+class JooqOrdersByCustomerQueryHandler implements OrdersByCustomerQueryHandler {
 
     private final DSLContext dslContext;
 

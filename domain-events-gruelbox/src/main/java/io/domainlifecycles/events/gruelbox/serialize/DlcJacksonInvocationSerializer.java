@@ -29,7 +29,6 @@ package io.domainlifecycles.events.gruelbox.serialize;
 import com.gruelbox.transactionoutbox.Invocation;
 import com.gruelbox.transactionoutbox.InvocationSerializer;
 import tools.jackson.core.JacksonException;
-
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
@@ -69,10 +68,12 @@ public final class DlcJacksonInvocationSerializer implements InvocationSerialize
     }
 
     /**
-     * Serialize an invocation to a Writer.
+     * Serializes the given {@link Invocation} object into the provided {@link Writer}.
      *
-     * @param invocation
-     * @param writer
+     * @param invocation The {@link Invocation} object to serialize. Cannot be null.
+     * @param writer The {@link Writer} instance where the serialized representation
+     *               of the {@link Invocation} object will be written. Cannot be null.
+     * @throws RuntimeException If an error occurs during serialization due to a {@link JacksonException}.
      */
     @Override
     public void serializeInvocation(Invocation invocation, Writer writer) {
@@ -84,11 +85,12 @@ public final class DlcJacksonInvocationSerializer implements InvocationSerialize
     }
 
     /**
-     * Deserialize an invocation to a reader
+     * Deserializes an {@link Invocation} object from a character stream.
      *
-     * @param reader
-     * @return
-     * @throws IOException
+     * @param reader The {@link Reader} instance providing the input data
+     *               to deserialize the {@link Invocation} object from.
+     * @return The deserialized {@link Invocation} object.
+     * @throws IOException If an I/O error occurs while reading the input.
      */
     @Override
     public Invocation deserializeInvocation(Reader reader) throws IOException {

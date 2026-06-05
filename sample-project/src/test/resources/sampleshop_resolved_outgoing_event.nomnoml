@@ -84,9 +84,9 @@ o +- blocked:boolean
 \# +- type:<ENUM> CreditCardType
 |
 ]
-[<AR>Customer <<AggregateRoot>>]  o-[<label> address 1] - [<VO>Address <<ValueObject>>]
-[<AR>Customer <<AggregateRoot>>]  o-[<label> creditCard 0..1] - [<VO>CreditCard <<ValueObject>>]
+[<AR>Customer <<AggregateRoot>>]  +-[<label> address 1] - [<VO>Address <<ValueObject>>]
+[<AR>Customer <<AggregateRoot>>]  +-[<label> creditCard 0..1] - [<VO>CreditCard <<ValueObject>>]
 ]
-[<AF> Customer <<Aggregate>>]  --> [<DE>CustomerAdressChanged <<DomainEvent>>]
-[<AF> Customer <<Aggregate>>]  --> [<DE>CustomerCreditCardChanged <<DomainEvent>>]
-[<DE>FraudDetected <<DomainEvent>>]  --> [Customer <<Aggregate>>]
+[<AF> Customer <<Aggregate>>]  --[<label> <<publishes>> Customer.setAddress] --> [<DE>CustomerAdressChanged <<DomainEvent>>]
+[<AF> Customer <<Aggregate>>]  --[<label> <<publishes>> Customer.setCreditCard] --> [<DE>CustomerCreditCardChanged <<DomainEvent>>]
+[<DE>FraudDetected <<DomainEvent>>]  --[<label> <<notifies>> Customer.onFraudDetected] --> [Customer <<Aggregate>>]

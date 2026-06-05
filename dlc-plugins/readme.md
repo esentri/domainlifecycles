@@ -19,7 +19,7 @@ The plugin is able to create class diagrams in various formats of your implement
 An example configuration in your project could look like the following:
 ```groovy
 plugins {
-    id 'io.domainlifecycles.dlc-gradle-plugin' version '3.0.0'
+    id 'io.domainlifecycles.dlc-gradle-plugin' version '3.1.0'
 }
 
 dlcGradlePlugin {
@@ -61,7 +61,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "io.domainlifecycles.dlc-gradle-plugin") {
-                useModule("io.domainlifecycles:dlc-gradle-plugin:3.0.0")
+                useModule("io.domainlifecycles:dlc-gradle-plugin:3.1.0")
             }
         }
     }
@@ -86,14 +86,14 @@ For all options see [below](#general-dlc-plugin-configuration-options)
 gradle createDiagram
 ```
 
-### JSON Render
+### Serialize Mirror
 Besides creating class diagrams, the plugin is also able to generate a JSON-File containing your domain model.
 
 #### Configuration
 An example configuration in your project could look like the following:
 ```groovy
 dlcGradlePlugin {
-    jsonModel {
+    serializeMirror {
         fileOutputDir = layout.buildDirectory
         serializations{
             [
@@ -103,19 +103,20 @@ dlcGradlePlugin {
                 }
             ]
         }
-
     }
 }
 ```
-Similar to the diagram configuration above you need to specify where your JSON file should be saved to and its name,
-and finally the packages where the model should be read from.
+Similar to the diagram configuration above, you need to specify where your JSON file should be saved to and its name,
+and finally, the packages where the model should be read from.
+However, you can leave the `fileOutputDir` and/or the `fileName` empty. The file will then be saved to the default path
+`src/main/resources/META-INF/dlc/mirror.json`.
 
-The specified DomainModel must be complete an self-contained. 
+The specified DomainModel must be complete and self-contained. 
 All classes that the model consists of must be defined within the `domainModelPackages`.
 
 #### Run
 ```bash
-gradle renderJson
+gradle serializeMirror
 ```
 
 ### Diagram-Viewer Integration 
@@ -166,7 +167,7 @@ An example configuration in your project's build plugins could look like the fol
         <plugin>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>dlc-maven-plugin</artifactId>
-            <version>3.0.0</version>
+            <version>3.1.0</version>
             <executions>
                 <execution>
                     <id>createDiagramNomnoml</id>
@@ -220,7 +221,7 @@ Depending on the Maven phase you specified:
 mvn dlc:createDiagram@createDiagramNomnoml
 ```
 
-### JSON Render
+### Serialize Mirror
 Besides creating class diagrams, the plugin is also able to generate a JSON-File containing your domain-model.
 
 #### Configuration
@@ -231,19 +232,19 @@ An example configuration in your project could look like the following:
         <plugin>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>dlc-maven-plugin</artifactId>
-            <version>3.0.0</version>
+            <version>3.1.0</version>
             <executions>
                 <execution>
-                    <id>renderJson</id>
+                    <id>serializeMirror</id>
                     <phase>compile</phase>
                     <goals>
-                        <goal>renderJson</goal>
+                        <goal>serializeMirror</goal>
                     </goals>
                     <configuration>
                         <fileOutputDir>target</fileOutputDir>
                         <serializations>
                             <serialization>
-                                <fileName>model_1</fileName>
+                                <fileName>model</fileName>
                                 <domainModelPackages>
                                     <contextPackage>io.domainlifecycles.test</contextPackage>
                                 </domainModelPackages>
@@ -256,8 +257,10 @@ An example configuration in your project could look like the following:
     </plugins>
 </build>
 ```
-Similar to the diagram configuration above you need to specify where your JSON file should be saved to and its name,
-and finally the packages where the model should be read from.
+Similar to the diagram configuration above, you need to specify where your JSON file should be saved to and its name,
+and finally, the packages where the model should be read from.
+However, you can leave the `fileOutputDir` and/or the `fileName` empty. The file will then be saved to the default path
+`src/main/resources/META-INF/dlc/mirror.json`.
 
 #### Run
 Depending on the the plugin execution specified above:
@@ -280,7 +283,7 @@ An example configuration in your project could look like the following:
         <plugin>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>dlc-maven-plugin</artifactId>
-            <version>3.0.0</version>
+            <version>3.1.0</version>
             <executions>
                 <execution>
                     <id>upload</id>
@@ -391,6 +394,8 @@ Supported Diagram configuration options are
 - showInheritanceStructuresForReadModels: boolean, default false
 - showInheritanceStructuresForDomainEvents: boolean, default false
 - showInheritanceStructuresForDomainCommands: boolean, default false
+- showRelationshipLabels: boolean, default true
+- showRelationshipStereotypes: boolean, default true
 
 ## How to read DLC Domain Diagrams?
 
@@ -405,7 +410,7 @@ For more details, have a look at our [concept description](./../concepts/readme.
 
 The following list explains how to interpret the rendered edges:
 - DomainCommand → ApplicationService:
-A DomainCommand is passed to an ApplicationService. The ApplicationService provides a method to receive the command.
+A DomainCommand is passed to an ApplicationService. The ApplicationService provides a method to process the command.
 
 - ApplicationService → DomainService:
 An ApplicationService calls a DomainService.

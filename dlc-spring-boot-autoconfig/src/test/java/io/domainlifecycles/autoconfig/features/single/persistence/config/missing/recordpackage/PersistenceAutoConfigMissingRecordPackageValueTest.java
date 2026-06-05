@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
@@ -25,10 +26,11 @@ public class PersistenceAutoConfigMissingRecordPackageValueTest {
     @DirtiesContext(methodMode = BEFORE_METHOD)
     public void testThrowExceptionOnMissingRecordPackageConfiguration() {
         assertThatThrownBy(() ->
-            SpringApplication
-                .from(TestApplicationPersistenceMissingRecordPackageValueAutoConfig::main)
-                .run())
+                SpringApplication
+                    .from(TestApplicationPersistenceMissingRecordPackageValueAutoConfig::main)
+                        .run("--debug=true")
+            )
             .isInstanceOf(BeanCreationException.class)
-            .hasRootCauseMessage("Property 'jooqRecordPackage' is missing. Make sure you specified a property called 'dlc.persistence.jooqRecordPackage' or add a 'jooqRecordPackage' value on the @EnableDLC annotation.");
+            .hasRootCauseMessage("Property 'jooqRecordPackage' is missing. Specify 'dlc.features.persistence.jooq-record-package' or 'jooqRecordPackage' on '@EnableDlc'.");
     }
 }

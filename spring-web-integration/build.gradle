@@ -16,8 +16,8 @@ dependencies {
     api project(":types")
     implementation project(":mirror")
     implementation project(":access")
-    api libs.spring.web
-    api libs.spring.context
+    compileOnly libs.spring.web
+    compileOnly libs.spring.context
     testImplementation libs.spring.context
     testImplementation libs.assertj
     testImplementation libs.slf4j.api

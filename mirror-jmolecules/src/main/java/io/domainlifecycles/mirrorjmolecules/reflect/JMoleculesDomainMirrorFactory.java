@@ -41,6 +41,18 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The JMoleculesDomainMirrorFactory is an extended implementation of the ReflectiveDomainMirrorFactory
+ * that leverages enhanced domain type scanning capabilities specific to the jMolecules framework.
+ * It facilitates the creation of a DomainMirror, a container for all domain type mirrors
+ * analyzed within the specified bounded contexts and additional packages relevant to jMolecules domain types.
+ *
+ * This factory is designed to initialize and validate a domain model structure based on
+ * scanned domain type classes. It extends the capabilities of the reflective domain initialization
+ * by incorporating additional domain lifecycle and type definitions provided by the jMolecules framework.
+ *
+ * @author Mario Herb
+ */
 public class JMoleculesDomainMirrorFactory extends ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
 
     private static final Logger log = LoggerFactory.getLogger(JMoleculesDomainMirrorFactory.class);

@@ -41,6 +41,18 @@ import java.util.Optional;
  */
 public class AggregateRootModel extends EntityModel implements AggregateRootMirror {
 
+    /**
+     * Constructs an instance of {@code AggregateRootModel}.
+     *
+     * @param typeName the name of the aggregate root type being mirrored
+     * @param isAbstract indicates whether the type is abstract
+     * @param allFields a list of all fields in the mirrored aggregate root type
+     * @param methods a list of methods in the mirrored aggregate root type
+     * @param identityField the optional field representing the unique identity of the aggregate root
+     * @param concurrencyVersionField the optional field used for concurrency versioning in the aggregate root
+     * @param inheritanceHierarchyTypeNames a list of type names in the inheritance hierarchy of the mirrored aggregate root
+     * @param allInterfaceTypeNames a list of all interface type names implemented by the mirrored aggregate root
+     */
     public AggregateRootModel(
         String typeName,
         boolean isAbstract,
@@ -63,11 +75,19 @@ public class AggregateRootModel extends EntityModel implements AggregateRootMirr
         );
     }
 
+    /**
+     * {@inheritDoc}
+     * @return domain type
+     */
     @Override
     public DomainType getDomainType() {
         return DomainType.AGGREGATE_ROOT;
     }
 
+    /**
+     * {@inheritDoc}
+     * @return string representation of aggregate root model
+     */
     @Override
     public String toString() {
         return "AggregateRootModel{} " + super.toString();

@@ -94,8 +94,8 @@ o +- blocked:boolean
 \# +- type:<ENUM> CreditCardType
 |
 ]
-[<AR>Customer <<AggregateRoot>>]  o-[<label> address 1] - [<VO>Address <<ValueObject>>]
-[<AR>Customer <<AggregateRoot>>]  o-[<label> creditCard 0..1] - [<VO>CreditCard <<ValueObject>>]
+[<AR>Customer <<AggregateRoot>>]  +-[<label> address 1] - [<VO>Address <<ValueObject>>]
+[<AR>Customer <<AggregateRoot>>]  +-[<label> creditCard 0..1] - [<VO>CreditCard <<ValueObject>>]
 ]
 // !!! sampleshop.outbound.JooqCustomerRepository !!!
 [<R> CustomerRepository <<Repository>> |
@@ -115,11 +115,11 @@ o +- shippedOrders:int
 ]
 // !!! sampleshop.outbound.JooqOrdersByCustomerQueryHandler !!!
 [<QH> OrdersByCustomerQueryHandler <<QueryHandler>> ]
-[<DC>ChangeCustomerAddress <<DomainCommand>>]  --> [<AS>CustomerDriver <<ApplicationService>>]
-[<AF> Customer <<Aggregate>>]  --> [<DE>CustomerAdressChanged <<DomainEvent>>]
-[<AF> Customer <<Aggregate>>]  --> [<DE>CustomerCreditCardChanged <<DomainEvent>>]
-[<AS>CustomerDriver <<ApplicationService>>]  --> [<DE>NewCustomerAdded <<DomainEvent>>]
-[<AS>CustomerDriver <<ApplicationService>>]  -- [<R>CustomerRepository <<Repository>>]
-[<AS>CustomerDriver <<ApplicationService>>]  -- [<QH>OrdersByCustomerQueryHandler <<QueryHandler>>]
-[<R>CustomerRepository <<Repository>>]  -- [<AF> Customer <<Aggregate>>]
-[<QH>OrdersByCustomerQueryHandler <<QueryHandler>>]  -- [<RM>OrdersByCustomer <<ReadModel>>]
+[<DC>ChangeCustomerAddress <<DomainCommand>>]  --[<label> <<is processed by>> CustomerService.changeAddress] --> [<AS>CustomerDriver <<ApplicationService>>]
+[<AF> Customer <<Aggregate>>]  --[<label> <<publishes>> Customer.setAddress] --> [<DE>CustomerAdressChanged <<DomainEvent>>]
+[<AF> Customer <<Aggregate>>]  --[<label> <<publishes>> Customer.setCreditCard] --> [<DE>CustomerCreditCardChanged <<DomainEvent>>]
+[<AS>CustomerDriver <<ApplicationService>>]  --[<label> <<publishes>> CustomerService.add] --> [<DE>NewCustomerAdded <<DomainEvent>>]
+[<AS>CustomerDriver <<ApplicationService>>]  -> [<R>CustomerRepository <<Repository>>]
+[<AS>CustomerDriver <<ApplicationService>>]  -> [<QH>OrdersByCustomerQueryHandler <<QueryHandler>>]
+[<R>CustomerRepository <<Repository>>]  --> [<AF> Customer <<Aggregate>>]
+[<QH>OrdersByCustomerQueryHandler <<QueryHandler>>]  --> [<RM>OrdersByCustomer <<ReadModel>>]

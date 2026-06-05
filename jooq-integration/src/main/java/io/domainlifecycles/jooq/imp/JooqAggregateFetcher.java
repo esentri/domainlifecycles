@@ -60,6 +60,14 @@ public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
 
     private final NewRecordInstanceProvider newRecordInstanceProvider;
 
+    /**
+     * Constructs an instance of JooqAggregateFetcher that facilitates fetching aggregate
+     * roots and their related data using JOOQ infrastructure.
+     *
+     * @param aggregateRootClass the class of the aggregate root being managed
+     * @param dslContext the DSLContext instance used for executing queries
+     * @param domainPersistenceProvider the persistence provider configuration for domain operations
+     */
     public JooqAggregateFetcher(Class<A> aggregateRootClass,
                                 DSLContext dslContext,
                                 JooqDomainPersistenceProvider domainPersistenceProvider) {
@@ -78,6 +86,7 @@ public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     protected UpdatableRecord<?> getEntityRecordById(I id) {
         var entityClassName = Domain.entityMirrorForIdentityTypeName(id.getClass().getName()).getTypeName();
         String recordClassName = domainPersistenceProvider.persistenceMirror.getEntityRecordMirror(
@@ -107,6 +116,7 @@ public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     protected UpdatableRecord<?> getEntityReferenceRecordByParentRecord(UpdatableRecord<?> parentRecord,
                                                                         String referencedEntityClassName) {
         var parentRecordInstance = (UpdatableRecord<?>) parentRecord;
@@ -186,6 +196,7 @@ public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     protected Collection<UpdatableRecord<?>> getChildValueObjectRecordCollectionByParentRecord(UpdatableRecord<?> parentRecord, ValueObjectRecordMirror<UpdatableRecord<?>> vorm) {
         var o = newRecordInstanceProvider.provideNewRecord(vorm.recordTypeName());
         var dummyChildRecord = (TableRecord<?>) o;
@@ -210,9 +221,13 @@ public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
     }
 
     /**
-     * {@inheritDoc}
+     * Retrieves a collection of child entity reference records associated with a given parent record.
+     * The method identifies the entity class of the referenced records, derives its corresponding record type,
+     * and fetches the related child records from the database.
      *
-     * @return
+     * @param parentRecord the parent record for which child entity reference records need to be retrieved
+     * @param referencedEntityClassName the fully qualified class name of the referenced entity
+     * @return a collection of {@link UpdatableRecord} objects representing the child entity reference records
      */
     @Override
     protected Collection<UpdatableRecord<?>> getEntityReferenceRecordCollectionByParentRecord(UpdatableRecord<?> parentRecord, String referencedEntityClassName) {
@@ -221,6 +236,7 @@ public class JooqAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
         return fetchChildren(parentRecord, referencedEntityRecordClassName);
     }
 
+    @SuppressWarnings("unchecked")
     private Collection<UpdatableRecord<?>> fetchChildren(Object parentRecord, String referencedRecordClassName) {
         var parentRecordInstance = (TableRecord<?>) parentRecord;
         var o = newRecordInstanceProvider.provideNewRecord(referencedRecordClassName);

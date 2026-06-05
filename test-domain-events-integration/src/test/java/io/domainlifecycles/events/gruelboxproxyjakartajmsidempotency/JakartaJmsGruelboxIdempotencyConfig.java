@@ -36,14 +36,14 @@ import io.domainlifecycles.access.classes.ClassProvider;
 import io.domainlifecycles.access.classes.DefaultClassProvider;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
-import io.domainlifecycles.events.ADomainEvent;
-import io.domainlifecycles.events.ADomainService;
-import io.domainlifecycles.events.AQueryHandler;
-import io.domainlifecycles.events.ARepository;
-import io.domainlifecycles.events.AnApplicationService;
-import io.domainlifecycles.events.AnOutboundService;
-import io.domainlifecycles.events.CounterDomainEvent;
-import io.domainlifecycles.events.TransactionalCounterService;
+import testdomain.general.ADomainEvent;
+import testdomain.general.ADomainService;
+import testdomain.general.AQueryHandler;
+import testdomain.general.ARepository;
+import testdomain.general.AnApplicationService;
+import testdomain.general.AnOutboundService;
+import testdomain.general.CounterDomainEvent;
+import testdomain.general.TransactionalCounterService;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
@@ -56,7 +56,7 @@ import io.domainlifecycles.events.jakarta.jms.api.GruelboxProxyJakartaJmsChannel
 import io.domainlifecycles.events.mq.api.MqProcessingChannel;
 import io.domainlifecycles.events.mq.consume.SpringTransactionalIdempotencyAwareHandlerExecutorProxy;
 import io.domainlifecycles.events.serialize.DomainEventSerializer;
-import io.domainlifecycles.events.serialize.jackson3.Jackson3DomainEventSerializer;
+import io.domainlifecycles.events.serialize.jackson3.JacksonDomainEventSerializer;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
 import jakarta.jms.ConnectionFactory;
@@ -185,7 +185,7 @@ public class JakartaJmsGruelboxIdempotencyConfig {
 
     @Bean
     public DomainEventSerializer domainEventSerializer(DomainObjectBuilderProvider domainObjectBuilderProvider){
-        return new Jackson3DomainEventSerializer(domainObjectBuilderProvider);
+        return new JacksonDomainEventSerializer(domainObjectBuilderProvider);
     }
 
     @Bean

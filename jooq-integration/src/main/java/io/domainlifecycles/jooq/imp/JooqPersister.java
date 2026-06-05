@@ -41,6 +41,12 @@ public class JooqPersister extends BasePersister<UpdatableRecord<?>> implements 
 
     private final DSLContext dslContext;
 
+    /**
+     * Constructs a JooqPersister instance with the given DSLContext and JooqDomainPersistenceProvider.
+     *
+     * @param dslContext the DSLContext used for executing database queries and configuring records.
+     * @param domainPersistenceProvider the provider for managing domain-specific persistence operations.
+     */
     public JooqPersister(DSLContext dslContext, JooqDomainPersistenceProvider domainPersistenceProvider) {
         super(domainPersistenceProvider,
             new JooqValueObjectIdProvider(domainPersistenceProvider, dslContext),

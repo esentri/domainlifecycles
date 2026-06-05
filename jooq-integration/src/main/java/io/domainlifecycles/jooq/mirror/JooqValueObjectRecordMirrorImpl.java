@@ -54,6 +54,17 @@ public class JooqValueObjectRecordMirrorImpl implements ValueObjectRecordMirror<
 
     private EntityRecordMirror<UpdatableRecord<?>> owner;
 
+    /**
+     * Constructs a new instance of {@code JooqValueObjectRecordMirrorImpl}.
+     *
+     * @param containingEntityTypeName the name of the entity type that contains the value object, must not be null
+     * @param containedValueObjectTypeName the name of the value object type contained within the entity, must not be null
+     * @param valueObjectRecordType the class type of the record representing the value object, must not be null
+     * @param pathFromEntityToValueObject the path segments representing the navigation path from the entity to the value object, must not be null
+     * @param valueObjectRecordMapperInstance the record mapper instance to map the value object record to its domain object and vice versa
+     * @param references the list of database references (e.g., foreign keys) that link the value object's record to its containing entity's record, must not be null or empty
+     * @throws DLCPersistenceException if the references list is null or empty, as a value object requires at least one database reference to its containing entity
+     */
     public JooqValueObjectRecordMirrorImpl(String containingEntityTypeName,
                                            String containedValueObjectTypeName,
                                            Class<? extends UpdatableRecord<?>> valueObjectRecordType,

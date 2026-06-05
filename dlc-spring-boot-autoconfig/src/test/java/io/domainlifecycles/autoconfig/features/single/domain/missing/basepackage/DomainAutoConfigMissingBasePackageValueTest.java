@@ -8,6 +8,7 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
@@ -27,6 +28,6 @@ public class DomainAutoConfigMissingBasePackageValueTest {
     public void testThrowExceptionOnMissingBasePackageConfiguration() {
         assertThatThrownBy(() -> SpringApplication.run(TestApplicationDomainMissingBasePackageValueAutoConfig.class))
             .isInstanceOf(BeanCreationException.class)
-            .hasRootCauseMessage("Property 'basePackages' is missing. Make sure you specified a property called 'dlc.domain.basePackages' or add a 'dlcDomainBasePackages' value on the @EnableDLC annotation.");
+            .hasRootCauseMessage("Property 'basePackages' is missing. Make sure you specified a property called 'dlc.features.mirror.base-packages' or add a 'dlcMirrorBasePackages' value on the @EnableDLC annotation.");
     }
 }

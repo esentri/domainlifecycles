@@ -50,6 +50,15 @@ public class JooqRecordClassProvider implements RecordClassProvider<UpdatableRec
 
     private static final Logger log = LoggerFactory.getLogger(DefaultTypeConverterProvider.class);
 
+    /**
+     * Constructs a {@code JooqRecordClassProvider} instance with the specified package name.
+     *
+     * The provided package name is validated to ensure it is a valid Java package.
+     * If the package name is invalid, an {@code IllegalStateException} is thrown.
+     *
+     * @param recordPackage the name of the package where jOOQ record classes are located
+     * @throws IllegalStateException if the provided {@code recordPackage} is not a valid Java package
+     */
     public JooqRecordClassProvider(String recordPackage) {
         if (!JavaReflect.isValidPackage(recordPackage)) {
             throw new IllegalStateException(String.format("The package '%s' is not a valid package!", recordPackage));
@@ -58,9 +67,14 @@ public class JooqRecordClassProvider implements RecordClassProvider<UpdatableRec
     }
 
     /**
-     * {@inheritDoc}
+     * Provides a set of classes implementing the {@code UpdatableRecord} interface from the specified package.
      *
-     * @return
+     * The method scans the package defined in the {@code recordPackage} field for classes that implement
+     * {@code UpdatableRecord}, loads those classes, and collects them into a set. If the package scan fails,
+     * a {@code DLCPersistenceException} is thrown with an appropriate error message.
+     *
+     * @return a set of classes that implement {@code UpdatableRecord<?>}.
+     * @throws DLCPersistenceException if scanning the specified package for record classes fails.
      */
     @Override
     @SuppressWarnings("unchecked")

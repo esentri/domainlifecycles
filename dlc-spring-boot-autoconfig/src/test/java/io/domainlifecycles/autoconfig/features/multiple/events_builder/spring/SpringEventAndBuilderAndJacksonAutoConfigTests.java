@@ -24,11 +24,12 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-@SpringBootTest(classes = TestApplicationSpringEventAndBuilderAutoConfig.class)
+@SpringBootTest(classes = TestApplicationSpringEventAndBuilderAutoConfiguration.class)
 @ActiveProfiles({"test", "test-dlc-domain"})
 public class SpringEventAndBuilderAndJacksonAutoConfigTests {
 

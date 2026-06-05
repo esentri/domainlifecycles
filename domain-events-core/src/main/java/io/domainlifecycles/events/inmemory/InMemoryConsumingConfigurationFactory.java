@@ -48,7 +48,7 @@ class InMemoryConsumingConfigurationFactory {
      * @param handlerExecutor The executor for handling domain event listeners.
      * @return The InMemoryConsumingConfiguration object containing the necessary instances for consuming domain events synchronously.
      */
-    InMemoryConsumingConfiguration consumeSync(ServiceProvider serviceProvider, HandlerExecutor handlerExecutor){
+     InMemoryConsumingConfiguration consumeSync(ServiceProvider serviceProvider, HandlerExecutor handlerExecutor){
         var executionContextDetector = new MirrorBasedExecutionContextDetector(serviceProvider);
         var executionContextProcessor = new SimpleExecutionContextProcessor(handlerExecutor);
         var domainEventConsumer = new GeneralDomainEventConsumer(executionContextDetector, executionContextProcessor);

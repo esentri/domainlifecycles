@@ -34,7 +34,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'io.domainlifecycles:spring-boot-starter'
 }
 ```
 </details>
@@ -61,8 +61,9 @@ dependencies {
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
+            <groupId>io.domainlifecycles</groupId>
             <artifactId>spring-boot-starter</artifactId>
+            <version>3.1.0</version>
         </dependency>
     </dependencies>
 
@@ -90,7 +91,7 @@ welches die wichtigsten DLC-Funktionen bündelt:
 
 ```groovy
 dependencies {
-    implementation 'io.domainlifecycles:spring-boot-starter:3.0.0'
+    implementation 'io.domainlifecycles:spring-boot-starter:3.1.0'
 }
 ```
 </details>
@@ -103,7 +104,7 @@ dependencies {
     <dependency>
         <groupId>io.domainlifecycles</groupId>
         <artifactId>spring-boot-starter</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.0</version>
     </dependency>
 </dependencies>
 ```

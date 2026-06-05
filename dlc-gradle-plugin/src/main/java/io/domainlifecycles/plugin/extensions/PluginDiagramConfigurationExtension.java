@@ -35,16 +35,16 @@ import org.gradle.api.provider.Property;
  *
  * This class provides a collection of abstract methods to define various configuration
  * properties related to diagram generation. These properties include format, file name,
- * context packages, styling options for domain entities and services, visual settings, 
- * and inclusion/exclusion options for class members or certain types of objects. 
+ * context packages, styling options for domain entities and services, visual settings,
+ * and inclusion/exclusion options for class members or certain types of objects.
  *
- * Implementations can use this extension to dictate how diagrams should be visualized 
+ * Implementations can use this extension to dictate how diagrams should be visualized
  * and what elements of the domain model should be included in the diagrams.
  *
- * The configuration properties primarily rely on Gradle's {@code Property} and 
- * {@code ListProperty} abstractions to enable deferred configuration and improved 
+ * The configuration properties primarily rely on Gradle's {@code Property} and
+ * {@code ListProperty} abstractions to enable deferred configuration and improved
  * flexibility during build time.
- * 
+ *
  * @author Leon Völlinger
  */
 public abstract class PluginDiagramConfigurationExtension implements Named {
@@ -603,4 +603,20 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
      */
     public abstract Property<Boolean> getShowInheritanceStructuresForDomainCommands();
 
+    /**
+     * Retrieves the property that indicates whether relationship labels should be displayed.
+     *
+     * @return a Property object containing a Boolean value which, if true, specifies that relationship labels are to be shown;
+     *         otherwise, if false, specifies that relationship labels are hidden.
+     */
+    public abstract Property<Boolean> getShowRelationshipLabels();
+
+    /**
+     * Retrieves the property that determines whether relationship stereotypes
+     * are shown or not.
+     *
+     * @return a Property object representing the boolean value indicating
+     * whether relationship stereotypes should be displayed.
+     */
+    public abstract Property<Boolean> getShowRelationshipStereotypes();
 }

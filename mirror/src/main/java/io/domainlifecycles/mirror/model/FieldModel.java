@@ -32,7 +32,6 @@ import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
-import io.domainlifecycles.mirror.exception.MirrorException;
 
 import java.util.Objects;
 

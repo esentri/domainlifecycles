@@ -6,15 +6,17 @@ import io.domainlifecycles.autoconfig.model.persistence.TestRootSimple;
 import io.domainlifecycles.autoconfig.model.persistence.TestRootSimpleId;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
+import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
-import io.domainlifecycles.jackson.module.DlcJacksonModule;
+import io.domainlifecycles.jackson3.module.DlcJacksonModule;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.services.api.ServiceProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
+import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
@@ -24,6 +26,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import tests.shared.events.PersistenceEvent;
 import tests.shared.persistence.PersistenceEventTestHelper;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = TestApplicationPersistenceAndBuilderAutoConfig.class)
@@ -65,6 +68,9 @@ public class PersistenceAndBuilderAutoConfigTest {
 
     @Autowired(required = false)
     private ResponseEntityBuilder responseEntityBuilder;
+
+    @Autowired(required = false)
+    private List<ServiceKind> allServiceKinds;
 
     @Test
     @Transactional
@@ -117,5 +123,6 @@ public class PersistenceAndBuilderAutoConfigTest {
         assertThat(dlcJacksonModule).isNull();
         assertThat(dlcOpenApiCustomizer).isNull();
         assertThat(responseEntityBuilder).isNull();
+        assertThat(allServiceKinds).isNull();
     }
 }

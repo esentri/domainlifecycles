@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.19.0.xsd">
+	<jdbc>
+		<driver>org.h2.Driver</driver>
+		<url>jdbc:h2:file:./build/h2-db/test;NON_KEYWORDS=VALUE;AUTO_SERVER=TRUE</url>
+		<user>sa</user>
+		<password></password>
+	</jdbc>
+
+	<generator>
+		<database>
+			<name>org.jooq.meta.h2.H2Database</name>
+			<includes>.*</includes>
+			<inputSchema>TEST_DOMAIN</inputSchema>
+
+			<recordVersionFields>CONCURRENCY_VERSION</recordVersionFields>
+			<forceIntegerTypesOnZeroScaleDecimals>true</forceIntegerTypesOnZeroScaleDecimals>
+		</database>
+
+		<generate>
+			<generatedAnnotation>false</generatedAnnotation>
+			<generatedAnnotationType>DETECT_FROM_JDK</generatedAnnotationType>
+			<javaTimeTypes>true</javaTimeTypes>
+		</generate>
+
+		<target>
+			<directory>build/generated/sources/jooqTest/java</directory>
+			<packageName>io.domainlifecycles.test.autoconfig</packageName>
+		</target>
+	</generator>
+</configuration>

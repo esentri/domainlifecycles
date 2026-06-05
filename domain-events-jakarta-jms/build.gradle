@@ -20,7 +20,7 @@ dependencies {
     api project (":domain-events-spring-tx")
     api project (":domain-events-gruelbox")
     api libs.jakarta.jms.api
-    api libs.gruelbox.transactionoutbox.core
+    compileOnly libs.gruelbox.transactionoutbox.core
     api libs.slf4j.api
 
 }

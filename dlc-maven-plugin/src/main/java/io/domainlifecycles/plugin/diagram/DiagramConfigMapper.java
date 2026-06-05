@@ -123,7 +123,8 @@ public class DiagramConfigMapper {
         diagramConfig.setShowInheritanceStructuresForDomainCommands(mavenDiagramConfig.getShowInheritanceStructuresForDomainCommands());
         diagramConfig.setShowInheritanceStructuresForServiceKinds(mavenDiagramConfig.getShowInheritanceStructuresForServiceKinds());
         diagramConfig.setShowInheritanceStructuresForReadModels(mavenDiagramConfig.getShowInheritanceStructuresForReadModels());
-
+        diagramConfig.setShowRelationshipLabels(mavenDiagramConfig.getShowRelationshipLabels());
+        diagramConfig.setShowRelationshipStereotypes(mavenDiagramConfig.getShowRelationshipStereotypes());
         return diagramConfig;
     }
 }

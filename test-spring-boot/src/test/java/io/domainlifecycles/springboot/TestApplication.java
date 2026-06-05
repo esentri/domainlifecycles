@@ -11,18 +11,19 @@ import java.util.Locale;
 
 @SpringBootApplication
 @EnableDlc(
-    dlcDomainBasePackages =
-        "io.domainlifecycles.springboot3," +
-            "tests.shared.openapi," +
-            "tests.shared.jackson," +
-            "tests.shared.converter," +
-            "tests.shared.complete.onlinehandel.bestellung," +
-            "tests.shared.persistence.domain.optional," +
-            "tests.shared.validation.javax," +
-            "tests.shared.persistence.domain.simpleUuid," +
-            "tests.shared.persistence.domain.simple," +
-            "tests.shared.persistence.domain.valueobjectAutoMapping",
-    jooqRecordPackage = "io.domainlifecycles.test.springboot3.tables.records",
+    dlcMirrorBasePackages =
+        {"io.domainlifecycles.springboot",
+            "tests.shared.openapi",
+            "tests.shared.jackson",
+            "tests.shared.converter",
+            "tests.shared.complete.onlinehandel.bestellung",
+            "tests.shared.persistence.domain.optional",
+            "tests.shared.validation.javax",
+            "tests.shared.persistence.domain.simpleUuid",
+            "tests.shared.persistence.domain.simple",
+            "tests.shared.persistence.domain.valueobjectAutoMapping"
+        },
+    jooqRecordPackage = "io.domainlifecycles.test.springboot.tables.records",
     jooqSqlDialect = "H2"
 )
 @Slf4j

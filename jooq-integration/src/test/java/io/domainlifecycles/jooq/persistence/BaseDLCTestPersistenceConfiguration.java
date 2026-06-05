@@ -40,16 +40,16 @@ import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
 import io.domainlifecycles.persistence.records.EntityValueObjectRecordClassProvider;
 import io.domainlifecycles.persistence.records.EntityValueObjectRecordTypeConfiguration;
-import io.domainlifecycles.test.tables.records.AktionsCodeBv3Record;
-import io.domainlifecycles.test.tables.records.SimpleVoOneToManyRecord;
-import io.domainlifecycles.test.tables.records.SimpleVoOneToMany_2Record;
-import io.domainlifecycles.test.tables.records.SimpleVoOneToMany_3Record;
-import io.domainlifecycles.test.tables.records.TestRootOneToOneVoDedicatedVoRecord;
-import io.domainlifecycles.test.tables.records.VoAggregatePrimitiveRecordMappedComplexRecord;
-import io.domainlifecycles.test.tables.records.VoAggregatePrimitiveRecordMappedNestedRecord;
-import io.domainlifecycles.test.tables.records.VoAggregatePrimitiveRecordMappedSimpleRecord;
-import io.domainlifecycles.test.tables.records.VoOneToManyEntityRecord;
-import io.domainlifecycles.test.tables.records.VoOneToManyEntity_2Record;
+import io.domainlifecycles.test.jooq.tables.records.AktionsCodeBv3Record;
+import io.domainlifecycles.test.jooq.tables.records.SimpleVoOneToManyRecord;
+import io.domainlifecycles.test.jooq.tables.records.SimpleVoOneToMany_2Record;
+import io.domainlifecycles.test.jooq.tables.records.SimpleVoOneToMany_3Record;
+import io.domainlifecycles.test.jooq.tables.records.TestRootOneToOneVoDedicatedVoRecord;
+import io.domainlifecycles.test.jooq.tables.records.VoAggregatePrimitiveRecordMappedComplexRecord;
+import io.domainlifecycles.test.jooq.tables.records.VoAggregatePrimitiveRecordMappedNestedRecord;
+import io.domainlifecycles.test.jooq.tables.records.VoAggregatePrimitiveRecordMappedSimpleRecord;
+import io.domainlifecycles.test.jooq.tables.records.VoOneToManyEntityRecord;
+import io.domainlifecycles.test.jooq.tables.records.VoOneToManyEntity_2Record;
 import org.h2.jdbcx.JdbcDataSource;
 import org.jooq.ConnectionProvider;
 import org.jooq.DSLContext;
@@ -176,7 +176,7 @@ public class BaseDLCTestPersistenceConfiguration {
             .newConfig()
             .withDomainObjectBuilderProvider(domainObjectBuilderProvider)
             .withCustomRecordMappers(customRecordMappers)
-            .withRecordPackage("io.domainlifecycles.test.tables.records")
+            .withRecordPackage("io.domainlifecycles.test.jooq.tables.records")
             .withIgnoredDomainObjectFields(f -> {
                 if (f.getName().equals("gesamtPreis")) return true;
                 if (f.getName().equals("ignoredField")) return true;

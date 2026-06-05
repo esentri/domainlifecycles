@@ -29,15 +29,15 @@ package io.domainlifecycles.events.jta;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import com.atomikos.icatch.jta.UserTransactionManager;
-import io.domainlifecycles.events.ADomainEvent;
-import io.domainlifecycles.events.ADomainService;
-import io.domainlifecycles.events.AQueryHandler;
-import io.domainlifecycles.events.ARepository;
-import io.domainlifecycles.events.AnAggregate;
-import io.domainlifecycles.events.AnAggregateDomainEvent;
-import io.domainlifecycles.events.AnApplicationService;
-import io.domainlifecycles.events.AnOutboundService;
-import io.domainlifecycles.events.UnreceivedDomainEvent;
+import testdomain.general.ADomainEvent;
+import testdomain.general.ADomainService;
+import testdomain.general.AQueryHandler;
+import testdomain.general.ARepository;
+import testdomain.general.AnAggregate;
+import testdomain.general.AnAggregateDomainEvent;
+import testdomain.general.AnApplicationService;
+import testdomain.general.AnOutboundService;
+import testdomain.general.UnreceivedDomainEvent;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.DomainEvents;
@@ -73,7 +73,8 @@ public class DirectJtaTransactionalEventHandlingAfterCommitTests {
 
         userTransactionManager = new UserTransactionManager();
 
-        Domain.initialize(new ReflectiveDomainMirrorFactory("io.domainlifecycles.events"));
+        Domain.unInitialize();
+        Domain.initialize(new ReflectiveDomainMirrorFactory("testdomain.general"));
 
         domainService = new ADomainService();
         repository = new ARepository();

@@ -29,6 +29,7 @@ package io.domainlifecycles.events.jta.api;
 import io.domainlifecycles.events.consume.DomainEventConsumer;
 import io.domainlifecycles.events.consume.execution.handler.HandlerExecutor;
 import io.domainlifecycles.events.inmemory.InMemoryChannelFactory;
+import io.domainlifecycles.events.inmemory.InMemoryDomainEventPublisher;
 import io.domainlifecycles.events.jta.publish.DirectJtaTransactionalDomainEventPublisher;
 import io.domainlifecycles.events.jta.receive.execution.handler.JtaTransactionalHandlerExecutor;
 import io.domainlifecycles.events.publish.DomainEventPublisher;

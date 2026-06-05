@@ -38,7 +38,7 @@ import io.domainlifecycles.events.jakarta.jms.api.SpringTransactionJakartaJmsCha
 import io.domainlifecycles.events.mq.api.MqConsumingChannel;
 import io.domainlifecycles.events.mq.api.MqPublishingChannel;
 import io.domainlifecycles.events.serialize.DomainEventSerializer;
-import io.domainlifecycles.events.serialize.jackson3.Jackson3DomainEventSerializer;
+import io.domainlifecycles.events.serialize.jackson3.JacksonDomainEventSerializer;
 import io.domainlifecycles.events.spring.receive.execution.handler.SpringTransactionalHandlerExecutor;
 import io.domainlifecycles.services.api.ServiceProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +62,7 @@ public class SpringJmsConfigSeparate {
 
     @Bean
     public DomainEventSerializer domainEventSerializer(DomainObjectBuilderProvider domainObjectBuilderProvider){
-        return new Jackson3DomainEventSerializer(domainObjectBuilderProvider);
+        return new JacksonDomainEventSerializer(domainObjectBuilderProvider);
     }
 
     @Bean

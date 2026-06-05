@@ -67,8 +67,8 @@ public class DomainServiceModel extends ServiceKindModel implements DomainServic
                               List<String> allInterfaceTypeNames
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
+        Objects.requireNonNull(domainServiceInterfaceTypeNames);
         this.domainServiceInterfaceTypeNames = Collections.unmodifiableList(domainServiceInterfaceTypeNames);
-
     }
 
     /**

@@ -31,7 +31,9 @@ import io.domainlifecycles.plugins.diagram.DiagramConfig;
 import io.domainlifecycles.plugins.diagram.DiagramGenerator;
 import io.domainlifecycles.plugins.diagram.DiagramGeneratorImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
-import io.domainlifecycles.utils.FileIOUtils;
+import io.domainlifecycles.plugins.util.FileIOUtils;
+import java.nio.file.Path;
+import java.util.List;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -41,8 +43,6 @@ import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.file.Path;
-import java.util.List;
 
 /**
  * Mojo implementation for generating diagrams based on Maven project configurations.
@@ -125,8 +125,8 @@ public class CreateDiagramGoal extends AbstractMojo {
         final Path filePath = Path.of(fileOutputDir,
             diagramConfig.getFileName() + diagramConfig.getFileType().getFileSuffix());
 
-        LOGGER.info(String.format("Saving diagram to %s/%s.%s",
-            fileOutputDir, mavenDiagramConfiguration.getFileName(), mavenDiagramConfiguration.getFormat()));
+        LOGGER.info("Saving diagram to {}/{}.{}", fileOutputDir, mavenDiagramConfiguration.getFileName(),
+            mavenDiagramConfiguration.getFormat());
         FileIOUtils.writeFileTo(filePath, diagramFileContent);
     }
 }

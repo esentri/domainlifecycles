@@ -3,7 +3,7 @@ package io.domainlifecycles.jooq.persistence.tests.inheritance;
 import io.domainlifecycles.jooq.imp.JooqAggregateRepository;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
-import io.domainlifecycles.test.Tables;
+import io.domainlifecycles.test.jooq.Tables;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.jooq.UpdatableRecord;

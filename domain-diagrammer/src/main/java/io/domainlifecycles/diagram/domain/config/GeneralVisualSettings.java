@@ -73,7 +73,7 @@ public class GeneralVisualSettings {
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KINDS = true;
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_FIELDS = false;
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_METHODS = false;
-    private static final boolean DEFAULT_CALL_APPLICATION_SERVICE_DRIVER2 = false;
+    private static final boolean DEFAULT_CALL_APPLICATION_SERVICE_DRIVER = false;
     private static final List<String> DEFAULT_FIELD_BLACKLIST = List.of("concurrencyVersion");
     private static final List<String> DEFAULT_METHOD_BLACKLIST = List.of(
         "builder",
@@ -83,6 +83,7 @@ public class GeneralVisualSettings {
         "findResultById",
         "publish",
         "increaseVersion",
+        "getFetcher",
         "equals",
         "hashCode",
         "toString");
@@ -97,6 +98,8 @@ public class GeneralVisualSettings {
     private static final boolean DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_DOMAIN_EVENTS = false;
     private static final boolean DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_DOMAIN_COMMANDS = false;
     private static final boolean DEFAULT_SHOW_NOTES = false;
+    private static final boolean DEFAULT_SHOW_RELATIONSHIP_LABELS = true;
+    private static final boolean DEFAULT_SHOW_RELATIONSHIP_STEREOTYPES = true;
 
     private final boolean showFields;
     private final boolean showFullQualifiedClassNames;
@@ -148,6 +151,8 @@ public class GeneralVisualSettings {
     private final boolean showInheritanceStructuresForDomainEvents;
     private final boolean showInheritanceStructuresForDomainCommands;
     private final boolean showNotes;
+    private final boolean showRelationshipLabels;
+    private final boolean showRelationshipStereotypes;
 
     private GeneralVisualSettings(
         boolean showFields,
@@ -199,7 +204,9 @@ public class GeneralVisualSettings {
         boolean showInheritanceStructuresForReadModels,
         boolean showInheritanceStructuresForDomainEvents,
         boolean showInheritanceStructuresForDomainCommands,
-        boolean showNotes
+        boolean showNotes,
+        boolean showRelationshipLabels,
+        boolean showRelationshipStereotypes
     ) {
         this.showFields = showFields;
         this.showFullQualifiedClassNames = showFullQualifiedClassNames;
@@ -251,6 +258,8 @@ public class GeneralVisualSettings {
         this.showInheritanceStructuresForDomainEvents = showInheritanceStructuresForDomainEvents;
         this.showInheritanceStructuresForDomainCommands = showInheritanceStructuresForDomainCommands;
         this.showNotes = showNotes;
+        this.showRelationshipLabels = showRelationshipLabels;
+        this.showRelationshipStereotypes = showRelationshipStereotypes;
     }
 
     /**
@@ -704,6 +713,24 @@ public class GeneralVisualSettings {
     }
 
     /**
+     * Returns whether relationship labels are displayed.
+     *
+     * @return true if relationship labels are shown, false otherwise.
+     */
+    public boolean isShowRelationshipLabels() {
+        return showRelationshipLabels;
+    }
+
+    /**
+     * Returns whether relationship stereotypes are displayed.
+     *
+     * @return true if relationship stereotypes are shown, false otherwise.
+     */
+    public boolean isShowRelationshipStereotypes() {
+        return showRelationshipStereotypes;
+    }
+
+    /**
      * Creates and returns a new instance of GeneralVisualSettingsBuilder.
      *
      * @return a new instance of GeneralVisualSettingsBuilder to configure and build a GeneralVisualSettings object.
@@ -767,7 +794,7 @@ public class GeneralVisualSettings {
         private boolean showUnspecifiedServiceKinds$value = DEFAULT_SHOW_UNSPECIFIED_SERVICE_KINDS;
         private boolean showUnspecifiedServiceKindFields$value = DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_FIELDS;
         private boolean showUnspecifiedServiceKindMethods$value = DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_METHODS;
-        private boolean callApplicationServiceDriver$value = false;//DEFAULT_CALL_APPLICATION_SERVICE_DRIVER;
+        private boolean callApplicationServiceDriver$value = DEFAULT_CALL_APPLICATION_SERVICE_DRIVER;
         private List<String> fieldBlacklist$value;
         private List<String> methodBlacklist$value;
         private boolean showInheritedMembersInClasses$value = DEFAULT_SHOW_INHERITED_MEMBERS_IN_CLASSES;
@@ -781,6 +808,8 @@ public class GeneralVisualSettings {
         private boolean showInheritanceStructuresForDomainEvents$value = DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_DOMAIN_EVENTS;
         private boolean showInheritanceStructuresForDomainCommands$value = DEFAULT_SHOW_INHERITANCE_STRUCTURES_FOR_DOMAIN_COMMANDS;
         private boolean showNotes$value = DEFAULT_SHOW_NOTES;
+        private boolean showRelationshipLabels$value = DEFAULT_SHOW_RELATIONSHIP_LABELS;
+        private boolean showRelationshipStereotypes$value = DEFAULT_SHOW_RELATIONSHIP_STEREOTYPES;
 
         /**
          * Constructs a new GeneralVisualSettingsBuilder with default values.
@@ -1340,6 +1369,28 @@ public class GeneralVisualSettings {
         }
 
         /**
+         * Sets whether to show relationship labels in the diagram.
+         *
+         * @param showRelationshipLabels true to show labels, false to hide
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowRelationshipLabels(boolean showRelationshipLabels) {
+            this.showRelationshipLabels$value = showRelationshipLabels;
+            return this;
+        }
+
+        /**
+         * Sets whether to show relationship stereotypes in the diagram.
+         *
+         * @param showRelationshipStereotypes true to show stereotypes, false to hide
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowRelationshipStereotypes(boolean showRelationshipStereotypes) {
+            this.showRelationshipStereotypes$value = showRelationshipStereotypes;
+            return this;
+        }
+
+        /**
          * Constructs a new instance of the {@code GeneralVisualSettings} class initialized with
          * the current state of the builder. The method uses the configured attributes in this builder
          * to create a fully constructed {@code GeneralVisualSettings} object.
@@ -1397,7 +1448,9 @@ public class GeneralVisualSettings {
                 showInheritanceStructuresForReadModels$value,
                 showInheritanceStructuresForDomainEvents$value,
                 showInheritanceStructuresForDomainCommands$value,
-                showNotes$value
+                showNotes$value,
+                showRelationshipLabels$value,
+                showRelationshipStereotypes$value
             );
         }
     }

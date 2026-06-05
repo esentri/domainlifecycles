@@ -27,8 +27,19 @@
 package io.domainlifecycles.mirror.model;
 
 import io.domainlifecycles.mirror.api.AssertionMirror;
+
 import java.util.Objects;
 
+/**
+ * Represents a model for assertions implementing the {@code AssertionMirror} interface.
+ * This class encapsulates details about an assertion, including its type, associated parameters,
+ * and a descriptive message.
+ *
+ * AssertionModel is designed to provide an immutable representation of an assertion
+ * by maintaining its properties in final fields.
+ *
+ * @author Mario Herb
+ */
 public class AssertionModel implements AssertionMirror {
 
     private final AssertionType assertionType;

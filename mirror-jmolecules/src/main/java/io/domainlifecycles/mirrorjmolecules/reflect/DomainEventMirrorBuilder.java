@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2026 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import io.domainlifecycles.mirror.reflect.DomainTypeMirrorBuilder;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 /**
- * Builder to create {@link DomainEventMirror}. Uses Java reflection.
+ * Builder to create {@link DomainEventMirror} for JMolecules marked Domain Events. Uses Java reflection.
  *
  * @author Mario Herb
  */

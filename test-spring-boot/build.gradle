@@ -24,7 +24,7 @@ def dbPassword = ''
 def dbMigration = 'src/test/resources/db/migration'
 
 dependencies {
-    api libs.jooq
+    implementation libs.jooq
     testImplementation platform(libs.spring.boot.dependencies)
     testImplementation project(":spring-boot-starter")
     testImplementation project(":test-shared-impl")
@@ -37,7 +37,7 @@ dependencies {
     testImplementation libs.spring.boot.starter.jooq
     testImplementation libs.spring.boot.starter.validation
     testImplementation libs.spring.boot.devtools
-    testImplementation libs.spring.doc.openapi.starter.webmvc.ui
+    testImplementation libs.spring.doc.openapi3.starter.webmvc.ui
     testImplementation libs.h2
 
     runtimeOnly libs.jooq.codegen
@@ -91,7 +91,7 @@ jooq {
                 javaTimeTypes = true
             }
             target {
-                packageName = "io.domainlifecycles.test.springboot3"
+                packageName = "io.domainlifecycles.test.springboot"
             }
         }
     }

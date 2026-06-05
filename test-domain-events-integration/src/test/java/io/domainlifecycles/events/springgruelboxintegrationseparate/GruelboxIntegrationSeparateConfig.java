@@ -31,7 +31,7 @@ import com.gruelbox.transactionoutbox.Dialect;
 import com.gruelbox.transactionoutbox.TransactionOutbox;
 import com.gruelbox.transactionoutbox.TransactionOutboxListener;
 import com.gruelbox.transactionoutbox.spring.SpringTransactionManager;
-import io.domainlifecycles.events.MyTransactionOutboxListener;
+import testdomain.general.MyTransactionOutboxListener;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;

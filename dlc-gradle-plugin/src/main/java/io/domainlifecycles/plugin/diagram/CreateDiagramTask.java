@@ -31,18 +31,18 @@ import io.domainlifecycles.plugin.extensions.PluginDiagramConfigurationExtension
 import io.domainlifecycles.plugins.diagram.DiagramConfig;
 import io.domainlifecycles.plugins.diagram.DiagramGenerator;
 import io.domainlifecycles.plugins.diagram.DiagramGeneratorImpl;
+import io.domainlifecycles.plugins.util.FileIOUtils;
 import io.domainlifecycles.utils.ClassLoaderUtils;
-import io.domainlifecycles.utils.FileIOUtils;
+import java.nio.file.Path;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.work.DisableCachingByDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.nio.file.Path;
 import java.util.Collections;
 
 /**
@@ -67,6 +67,7 @@ import java.util.Collections;
  *
  * @author Leon Völlinger
  */
+@DisableCachingByDefault(because = "Outputs depend on external environment and are not safely reproducible yet.")
 public abstract class CreateDiagramTask extends DefaultTask {
 
     private final static Logger log = LoggerFactory.getLogger(CreateDiagramTask.class);
@@ -135,7 +136,7 @@ public abstract class CreateDiagramTask extends DefaultTask {
         final Path filePath = Path.of(getFileOutputDir().get().toString(),
             diagramConfig.getFileName() + diagramConfig.getFileType().getFileSuffix());
 
-        log.info(String.format("Saving diagram to %s", filePath));
+        log.info("Saving diagram to {}", filePath);
         FileIOUtils.writeFileTo(filePath, diagramFileContent);
     }
 }

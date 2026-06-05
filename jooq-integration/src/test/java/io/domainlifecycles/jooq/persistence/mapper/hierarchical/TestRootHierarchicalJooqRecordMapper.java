@@ -3,8 +3,8 @@ package io.domainlifecycles.jooq.persistence.mapper.hierarchical;
 import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.persistence.mapping.AbstractRecordMapper;
-import io.domainlifecycles.test.Tables;
-import io.domainlifecycles.test.tables.records.TestRootHierarchicalRecord;
+import io.domainlifecycles.test.jooq.Tables;
+import io.domainlifecycles.test.jooq.tables.records.TestRootHierarchicalRecord;
 import tests.shared.persistence.domain.hierarchical.TestRootHierarchical;
 import tests.shared.persistence.domain.hierarchical.TestRootHierarchicalId;
 

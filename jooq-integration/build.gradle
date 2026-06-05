@@ -11,7 +11,6 @@ plugins {
     id 'checkstyle'
     id 'jacoco'
     alias libs.plugins.flyway.plugin
-    alias libs.plugins.jooq.codegen.gradle
     alias libs.plugins.yumi.gradle.licenser.plugin
     alias libs.plugins.jaredsburrows.license.plugin
 }
@@ -35,7 +34,7 @@ def dbMigration = 'src/test/resources/db/migration'
 
 dependencies {
     api libs.slf4j.api
-    api libs.jooq
+    compileOnly libs.jooq
     implementation libs.classgraph
 
     api project(":types")
@@ -65,9 +64,7 @@ dependencies {
     testImplementation libs.glassfish.jakarta.el
     testImplementation libs.jakarta.el.api
 
-    compileOnly libs.jooq.codegen
-    jooqCodegen libs.jooq.meta
-
+    testCompileOnly libs.jooq.codegen
     testImplementation libs.lombok
     testAnnotationProcessor libs.lombok
 }
@@ -84,7 +81,59 @@ flyway {
 }
 
 // ----------------------------------------------------------
+configurations {
+    jooqCodegenTool
+}
 
+dependencies {
+    // jOOQ tool deps for code generation only
+    jooqCodegenTool libs.jooq.codegen
+    jooqCodegenTool libs.jooq.meta
+    jooqCodegenTool libs.h2      // or your JDBC driver
+    // if you use JAXB on newer JDKs, you may need:
+    // jooqCodegenTool "org.glassfish.jaxb:jaxb-runtime:4.0.5"
+}
+
+def jooqTestOutputDir = layout.buildDirectory.dir("generated/sources/jooqTest/java").get().asFile
+
+tasks.register("jooqCodegenTest", JavaExec) {
+    group = "jooq"
+    description = "Generate jOOQ sources for tests only"
+
+    classpath = configurations.jooqCodegenTool
+    mainClass = "org.jooq.codegen.GenerationTool"
+
+    // Make Gradle 8+ happy: declare outputs/inputs
+    outputs.dir(jooqTestOutputDir)
+    inputs.file("src/test/resources/jooq-codegen-test.xml")
+
+    // If your schema depends on flyway:
+    dependsOn(tasks.named("flywayMigrate"))
+
+    args("src/test/resources/jooq-codegen-test.xml")
+
+    doFirst { jooqTestOutputDir.mkdirs() }
+}
+
+sourceSets {
+    test {
+        java.srcDir(jooqTestOutputDir)
+    }
+}
+
+tasks.named("compileTestJava") {
+    dependsOn("jooqCodegenTest")
+}
+
+tasks.named("jooqCodegenTest") {
+    dependsOn(tasks.named("flywayMigrate"))
+    inputs.files(fileTree("src/main/resources/db/migration"))
+}
+
+tasks.named("compileTestJava") {
+    dependsOn("jooqCodegenTest")
+}
+/*
 jooq {
     configuration {
 
@@ -132,7 +181,7 @@ tasks.named('sourcesJar') {
 
 jar {
     exclude('io/domainlifecycles/test/**')
-}
+}*/
 
 // Although test classes are not scanned by checkstyle, as configured in the root-level build.gradle file,
 // checkstyle will throw errors and hints as soon as you add a JavaDoc in test file methods, which is the case in some

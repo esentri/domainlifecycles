@@ -34,7 +34,7 @@ import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import java.util.Optional;
 
 /**
- * Builder to create {@link IdentityMirror}. Uses Java reflection.
+ * Builder to create {@link IdentityMirror} for JMolecules marked Identities. Uses Java reflection.
  *
  * @author Mario Herb
  */

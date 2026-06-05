@@ -3,8 +3,8 @@ package io.domainlifecycles.jooq.persistence.mapper.oneToOneFollowingLeadingFK;
 import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.persistence.mapping.AbstractRecordMapper;
-import io.domainlifecycles.test.Tables;
-import io.domainlifecycles.test.tables.records.TestRootOneToOneFollowingLeadingRecord;
+import io.domainlifecycles.test.jooq.Tables;
+import io.domainlifecycles.test.jooq.tables.records.TestRootOneToOneFollowingLeadingRecord;
 import tests.shared.persistence.domain.oneToOneFollowingLeadingFK.TestRootOneToOneFollowingLeading;
 import tests.shared.persistence.domain.oneToOneFollowingLeadingFK.TestRootOneToOneFollowingLeadingId;
 

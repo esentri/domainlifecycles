@@ -71,7 +71,7 @@ public class ReflectiveDomainMirrorFactory extends AbstractDomainMirrorFactory i
     public DomainMirror initializeDomainMirror() {
         initializeForScanning();
         var domainModelPackagesExtended = Arrays.copyOf(domainModelPackages, domainModelPackages.length+1);
-        domainModelPackagesExtended[domainModelPackages.length] = "io.domainlifecycles";
+        domainModelPackagesExtended[domainModelPackages.length] = "io.domainlifecycles.domain.types";
 
         Map<String, ? extends DomainTypeMirror> builtTypeMirrors =
             classGraphDomainTypesScanner
@@ -86,7 +86,10 @@ public class ReflectiveDomainMirrorFactory extends AbstractDomainMirrorFactory i
 
         builtTypeMirrors
             .values()
-            .forEach(m -> log.debug("Created Mirror:" + m));
+            .forEach(m -> {
+                log.debug("Created Mirror:" + m.getTypeName());
+
+            });
 
         var dm = new DomainModel(builtTypeMirrors, boundedContextPackages);
         var c = new CompletenessChecker(dm);

@@ -1,6 +1,7 @@
 package io.dommainlifecycles.events.gruelbox;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 

@@ -26,11 +26,10 @@
 
 package sampleshop.outbound;
 
-import sampleshop.outbound.event.SpringPersistenceEventPublisher;
 import io.domainlifecycles.jooq.imp.JooqAggregateRepository;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
+import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
 import org.jooq.DSLContext;
-import org.springframework.stereotype.Repository;
 import sampleshop.Sequences;
 import sampleshop.core.domain.product.Product;
 import sampleshop.core.outport.ProductRepository;
@@ -43,12 +42,11 @@ import static sampleshop.Tables.PRODUCT;
  * @author Mario Herb
  * @author Tobias Herb
  */
-@Repository
-public class JooqProductRepository extends JooqAggregateRepository<Product, Product.ProductId> implements ProductRepository {
+class JooqProductRepository extends JooqAggregateRepository<Product, Product.ProductId> implements ProductRepository {
 
     public JooqProductRepository(DSLContext dslContext,
                                  JooqDomainPersistenceProvider domainPersistenceProvider,
-                                 SpringPersistenceEventPublisher persistenceEventPublisher) {
+                                 PersistenceEventPublisher persistenceEventPublisher) {
         super(Product.class, dslContext, domainPersistenceProvider, persistenceEventPublisher);
     }
 

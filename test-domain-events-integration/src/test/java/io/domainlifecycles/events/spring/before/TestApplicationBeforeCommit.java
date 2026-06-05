@@ -27,11 +27,12 @@
 package io.domainlifecycles.events.spring.before;
 
 import io.domainlifecycles.domain.types.ServiceKind;
-import io.domainlifecycles.events.ADomainService;
-import io.domainlifecycles.events.AQueryHandler;
-import io.domainlifecycles.events.ARepository;
-import io.domainlifecycles.events.AnApplicationService;
-import io.domainlifecycles.events.AnOutboundService;
+import io.domainlifecycles.mirror.api.DomainMirror;
+import testdomain.general.ADomainService;
+import testdomain.general.AQueryHandler;
+import testdomain.general.ARepository;
+import testdomain.general.AnApplicationService;
+import testdomain.general.AnOutboundService;
 import io.domainlifecycles.events.api.ChannelRoutingConfiguration;
 import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.spring.api.SpringTxInMemoryChannelFactory;
@@ -52,9 +53,6 @@ import java.util.Locale;
 @EnableTransactionManagement
 public class TestApplicationBeforeCommit {
 
-    static {
-        Domain.initialize(new ReflectiveDomainMirrorFactory("io.domainlifecycles.events"));
-    }
 
     /**
      * Setting the Locale to explicitly force the language in default validation error messages.
@@ -62,6 +60,13 @@ public class TestApplicationBeforeCommit {
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH);
         new SpringApplicationBuilder(TestApplicationBeforeCommit.class).run(args);
+    }
+
+    @Bean
+    DomainMirror initializedDomain(){
+        Domain.unInitialize();
+        Domain.initialize(new ReflectiveDomainMirrorFactory("testdomain.general"));
+        return Domain.getDomainMirror();
     }
 
     @Bean

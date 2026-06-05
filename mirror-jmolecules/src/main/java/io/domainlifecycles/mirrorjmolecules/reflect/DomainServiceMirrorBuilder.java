@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2026 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,21 +26,17 @@
 
 package io.domainlifecycles.mirrorjmolecules.reflect;
 
-import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.model.DomainServiceModel;
 import io.domainlifecycles.mirror.reflect.DomainTypeDetector;
 import io.domainlifecycles.mirror.reflect.DomainTypeMirrorBuilder;
-import io.domainlifecycles.mirror.reflect.ServiceKindMirrorBuilder;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
- * Builder to create {@link DomainServiceMirror}. Uses Java reflection.
+ * Builder to create {@link DomainServiceMirror} for JMolecules marked Domain Services. Uses Java reflection.
  *
  * @author Mario Herb
  */

@@ -16,15 +16,17 @@ dependencies {
     testImplementation project(":mirror")
     testImplementation project(":service-registry")
     testImplementation project(":domain-events-core")
-    testImplementation project(":domain-events-serialization-jackson")
+    testImplementation project(":domain-events-serialization-jackson3")
     testImplementation project(":domain-events-jakarta-jta")
     testImplementation project(":domain-events-spring-tx")
+    testImplementation project(":domain-events-spring-bus")
     testImplementation project(":domain-events-gruelbox")
-    testImplementation project(":jackson-integration")
+    testImplementation project(":jackson3-integration")
     testImplementation project(":builder")
     testImplementation project(":domain-events-jakarta-jms")
     testImplementation project(":domain-events-mq")
     testImplementation project(":dlc-spring-boot-autoconfig")
+    testImplementation("org.springframework.modulith:spring-modulith-starter-jdbc:2.0.2")
     testImplementation libs.slf4j.api
     testImplementation libs.lombok
     testAnnotationProcessor libs.lombok
