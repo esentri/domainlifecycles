@@ -30,6 +30,7 @@ import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
 import io.domainlifecycles.mirror.api.DomainMirror;
+import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
@@ -40,6 +41,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tests.mirror.annotation.AggregateRootJMoleculesAnnotation;
 import tests.mirror.annotation.DomainEventJMoleculesAnnotation;
+import tests.mirror.annotation.DomainServiceJMoleculesAnnotation;
 import tests.mirror.annotation.EntityJMoleculesAnnotation;
 import tests.mirror.annotation.RepositoryJMoleculesAnnotation;
 import tests.mirror.annotation.ValueObjectJMoleculesAnnotation;
@@ -57,7 +59,7 @@ public class TestDomainAnnotation {
     @Test
     void testDomainInitJMoleculesAnnotation() {
         DomainMirror dm = Domain.getDomainMirror();
-        assertThat(dm.getAllDomainTypeMirrors()).hasSize(5);
+        assertThat(dm.getAllDomainTypeMirrors().stream().filter(m -> m.getTypeName().startsWith("tests.mirror.annotation")).toList()).hasSize(6);
     }
 
     @Test
@@ -70,6 +72,8 @@ public class TestDomainAnnotation {
         assertThat(aggregateRootMirror.getIdentityField()).isPresent();
         assertThat(aggregateRootMirror.getAllFields().get(0).getName()).isEqualTo("id");
         assertThat(aggregateRootMirror.getAllFields().get(1).getName()).isEqualTo("someField");
+        assertThat(aggregateRootMirror.getEntityReferences().get(0).getName()).isEqualTo("entity");
+        assertThat(aggregateRootMirror.getValueReferences().get(0).getName()).isEqualTo("valueObject");
     }
 
     @Test
@@ -91,6 +95,17 @@ public class TestDomainAnnotation {
         assertThat(entityMirror.getIdentityField()).isPresent();
         assertThat(entityMirror.getAllFields().get(0).getName()).isEqualTo("id");
         assertThat(entityMirror.getAllFields().get(1).getName()).isEqualTo("someField");
+    }
+
+    @Test
+    void testDomainServiceAnnotation() {
+        DomainServiceMirror domainServiceMirror = (DomainServiceMirror) Domain.typeMirror(
+            DomainServiceJMoleculesAnnotation.class.getName()).get();
+
+        assertThat(domainServiceMirror.getDomainType()).isEqualTo(DomainType.DOMAIN_SERVICE);
+        assertThat(domainServiceMirror.getTypeName()).isEqualTo(DomainServiceJMoleculesAnnotation.class.getName());
+        assertThat(domainServiceMirror.getAllFields().get(0).getName()).isEqualTo("repository");
+
     }
 
     @Test

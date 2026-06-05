@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2026 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,10 +26,10 @@
 
 package io.domainlifecycles.mirrorjmolecules.reflect;
 
-import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.mirror.api.IdentityMirror;
 import io.domainlifecycles.mirror.model.IdentityModel;
-import io.domainlifecycles.mirror.reflect.GenericInterfaceTypeResolver;
+import io.domainlifecycles.mirror.reflect.DomainTypeDetector;
+import io.domainlifecycles.mirror.reflect.DomainTypeMirrorBuilder;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import java.util.Optional;
 
@@ -46,9 +46,14 @@ public class IdentityMirrorBuilder extends DomainTypeMirrorBuilder<IdentityMirro
      *
      * @param identityClass class being mirrored
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector detector for domain types
      */
-    public IdentityMirrorBuilder(Class<?> identityClass, GenericTypeResolver genericTypeResolver) {
-        super(identityClass, genericTypeResolver);
+    public IdentityMirrorBuilder(
+        Class<?> identityClass,
+        GenericTypeResolver genericTypeResolver,
+        DomainTypeDetector domainTypeDetector
+    ) {
+        super(identityClass, genericTypeResolver, domainTypeDetector);
         this.identityClass = identityClass;
     }
 
@@ -71,14 +76,9 @@ public class IdentityMirrorBuilder extends DomainTypeMirrorBuilder<IdentityMirro
     }
 
     private Optional<String> idValueType() {
-        return getValueType(identityClass)
-            .map(Class::getName);
+        return Optional.empty();
     }
 
-    private static Optional<Class<?>> getValueType(Class<?> c) {
-        var resolver = new GenericInterfaceTypeResolver(c);
-        var resolved = resolver.resolveFor(Identity.class, 0);
-        return Optional.ofNullable(resolved);
-    }
+
 
 }

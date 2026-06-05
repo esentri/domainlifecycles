@@ -50,12 +50,14 @@ public class EnumMirrorBuilder extends DomainTypeMirrorBuilder<EnumMirror> {
      *
      * @param enumClass class being mirrored
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector domain type detector implementation, that detects domain types
      */
     public EnumMirrorBuilder(
         Class<? extends Enum<?>> enumClass,
-        GenericTypeResolver genericTypeResolver
+        GenericTypeResolver genericTypeResolver,
+        DomainTypeDetector domainTypeDetector
     ) {
-        super(enumClass, genericTypeResolver);
+        super(enumClass, genericTypeResolver, domainTypeDetector);
         this.enumClass = enumClass;
     }
 

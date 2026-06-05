@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2025 the original author or authors.
+ *  Copyright 2019-2026 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,7 +30,8 @@ import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainMirrorFactory;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.model.DomainModel;
-import io.domainlifecycles.mirror.reflect.AbstractDomainMirrorFactory;
+
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.mirror.resolver.DefaultEmptyGenericTypeResolver;
 import io.domainlifecycles.mirror.validate.CompletenessChecker;
 import java.util.Arrays;
@@ -40,11 +41,11 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JMoleculesDomainMirrorFactory extends AbstractDomainMirrorFactory implements DomainMirrorFactory {
+public class JMoleculesDomainMirrorFactory extends ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
 
     private static final Logger log = LoggerFactory.getLogger(JMoleculesDomainMirrorFactory.class);
 
-    private JMoleculesDomainTypesScanner jMoleculesDomainTypesScanner;
+    private ExtendedJMoleculesDomainTypesScanner extendedJMoleculesDomainTypesScanner;
 
     /**
      * Initialize the factory with the domainModelPackages to be scanned.
@@ -63,11 +64,11 @@ public class JMoleculesDomainMirrorFactory extends AbstractDomainMirrorFactory i
     @Override
     public DomainMirror initializeDomainMirror() {
         initializeForScanning();
-        var domainModelPackagesExtended = Arrays.copyOf(domainModelPackages, domainModelPackages.length+1);
+        var domainModelPackagesExtended = Arrays.copyOf(domainModelPackages, domainModelPackages.length+2);
         domainModelPackagesExtended[domainModelPackages.length] = "io.domainlifecycles";
-
+        domainModelPackagesExtended[domainModelPackages.length+1] = "org.jmolecules.ddd.types";
         Map<String, ? extends DomainTypeMirror> builtTypeMirrors =
-            jMoleculesDomainTypesScanner
+            extendedJMoleculesDomainTypesScanner
                 .scan(domainModelPackagesExtended)
                 .stream()
                 .collect(
@@ -92,10 +93,13 @@ public class JMoleculesDomainMirrorFactory extends AbstractDomainMirrorFactory i
         if(this.genericTypeResolver == null){
             this.genericTypeResolver = new DefaultEmptyGenericTypeResolver();
         }
+        if(this.domainTypeDetector == null){
+            this.domainTypeDetector = new ExtendedJMoleculesDomainTypeDetector();
+        }
         if(this.externalClassLoader == null){
-            this.jMoleculesDomainTypesScanner = new JMoleculesDomainTypesScanner(genericTypeResolver);
+            this.extendedJMoleculesDomainTypesScanner = new ExtendedJMoleculesDomainTypesScanner(genericTypeResolver, domainTypeDetector);
         }else{
-            this.jMoleculesDomainTypesScanner = new JMoleculesDomainTypesScanner(externalClassLoader, genericTypeResolver);
+            this.extendedJMoleculesDomainTypesScanner = new ExtendedJMoleculesDomainTypesScanner(externalClassLoader, genericTypeResolver, domainTypeDetector);
         }
         if(boundedContextPackages == null){
             this.boundedContextPackages = domainModelPackages;

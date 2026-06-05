@@ -51,12 +51,14 @@ public class DomainCommandMirrorBuilder extends DomainTypeMirrorBuilder<DomainCo
      *
      * @param domainCommandClass class being mirrored
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector domain type detector implementation, that detects domain types
      */
     public DomainCommandMirrorBuilder(
         Class<? extends DomainCommand> domainCommandClass,
-        GenericTypeResolver genericTypeResolver
+        GenericTypeResolver genericTypeResolver,
+        DomainTypeDetector domainTypeDetector
     ) {
-        super(domainCommandClass, genericTypeResolver);
+        super(domainCommandClass, genericTypeResolver, domainTypeDetector);
         this.domainCommandClass = domainCommandClass;
     }
 

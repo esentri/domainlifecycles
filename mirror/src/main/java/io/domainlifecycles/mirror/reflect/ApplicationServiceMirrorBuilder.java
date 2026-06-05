@@ -49,12 +49,14 @@ public class ApplicationServiceMirrorBuilder extends ServiceKindMirrorBuilder<Ap
      *
      * @param applicationServiceClass the mirrored application service type
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector domain type detector implementation, that detects domain types
      */
     public ApplicationServiceMirrorBuilder(
         Class<? extends ApplicationService> applicationServiceClass,
-        GenericTypeResolver genericTypeResolver
+        GenericTypeResolver genericTypeResolver,
+        DomainTypeDetector domainTypeDetector
     ) {
-        super(applicationServiceClass, genericTypeResolver);
+        super(applicationServiceClass, genericTypeResolver, domainTypeDetector);
         this.applicationServiceClass = applicationServiceClass;
     }
 

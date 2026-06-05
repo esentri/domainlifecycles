@@ -46,9 +46,12 @@ public class IdentityMirrorBuilder extends DomainTypeMirrorBuilder<IdentityMirro
      *
      * @param identityClass class being mirrored
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector domain type detector implementation, that detects domain types
      */
-    public IdentityMirrorBuilder(Class<? extends Identity<?>> identityClass, GenericTypeResolver genericTypeResolver) {
-        super(identityClass, genericTypeResolver);
+    public IdentityMirrorBuilder(Class<? extends Identity<?>> identityClass,
+                                 GenericTypeResolver genericTypeResolver,
+                                 DomainTypeDetector domainTypeDetector) {
+        super(identityClass, genericTypeResolver, domainTypeDetector);
         this.identityClass = identityClass;
     }
 

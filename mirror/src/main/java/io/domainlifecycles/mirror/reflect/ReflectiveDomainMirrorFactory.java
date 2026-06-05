@@ -99,10 +99,13 @@ public class ReflectiveDomainMirrorFactory extends AbstractDomainMirrorFactory i
         if(this.genericTypeResolver == null){
             this.genericTypeResolver = new DefaultEmptyGenericTypeResolver();
         }
+        if(domainTypeDetector == null){
+            this.domainTypeDetector = new DefaultDomainTypeDetector();
+        }
         if(this.externalClassLoader == null){
-            this.classGraphDomainTypesScanner = new ClassGraphDomainTypesScanner(genericTypeResolver);
+            this.classGraphDomainTypesScanner = new ClassGraphDomainTypesScanner(genericTypeResolver, domainTypeDetector);
         }else{
-            this.classGraphDomainTypesScanner = new ClassGraphDomainTypesScanner(externalClassLoader, genericTypeResolver);
+            this.classGraphDomainTypesScanner = new ClassGraphDomainTypesScanner(externalClassLoader, genericTypeResolver, domainTypeDetector);
         }
         if(boundedContextPackages == null){
             this.boundedContextPackages = domainModelPackages;

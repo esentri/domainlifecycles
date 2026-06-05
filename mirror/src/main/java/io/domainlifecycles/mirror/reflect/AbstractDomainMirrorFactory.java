@@ -36,6 +36,7 @@ public abstract class AbstractDomainMirrorFactory {
     protected String[] boundedContextPackages;
     protected GenericTypeResolver genericTypeResolver;
     protected ClassLoader externalClassLoader;
+    protected DomainTypeDetector domainTypeDetector;
 
     private static final Pattern packagePattern = Pattern.compile("^[a-z]+(\\.[a-zA-Z_][a-zA-Z0-9_]*)*$");
 
@@ -92,4 +93,17 @@ public abstract class AbstractDomainMirrorFactory {
     public void setExternalClassLoader(ClassLoader externalClassLoader) {
         this.externalClassLoader = externalClassLoader;
     }
+
+    /**
+     * Sets the DomainTypeDetector instance to be used by this factory. The DomainTypeDetector
+     * is responsible for determining the domain type of a given Type.
+     *
+     * @param domainTypeDetector an implementation of the DomainTypeDetector interface,
+     *                           responsible for detecting and resolving the domain type
+     *                           for a provided Type object.
+     */
+    public void setDomainTypeDetector(DomainTypeDetector domainTypeDetector) {
+        this.domainTypeDetector = domainTypeDetector;
+    }
+
 }

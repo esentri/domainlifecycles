@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2026 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ package io.domainlifecycles.mirrorjmolecules.reflect;
 import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.model.AggregateRootModel;
+import io.domainlifecycles.mirror.reflect.DomainTypeDetector;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import java.util.Optional;
 
@@ -44,12 +45,14 @@ public class AggregateRootMirrorBuilder extends EntityMirrorBuilder<AggregateRoo
      *
      * @param aggregateRootClass mirrored type of AggregateRoot
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector detector to identify domain types
      */
     public AggregateRootMirrorBuilder(
         Class<?> aggregateRootClass,
-        GenericTypeResolver genericTypeResolver
+        GenericTypeResolver genericTypeResolver,
+        DomainTypeDetector domainTypeDetector
     ) {
-        super(aggregateRootClass, genericTypeResolver);
+        super(aggregateRootClass, genericTypeResolver, domainTypeDetector);
     }
 
     /**

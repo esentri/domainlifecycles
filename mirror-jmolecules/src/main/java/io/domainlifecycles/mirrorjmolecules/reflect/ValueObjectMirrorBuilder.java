@@ -28,6 +28,8 @@ package io.domainlifecycles.mirrorjmolecules.reflect;
 
 import io.domainlifecycles.mirror.api.ValueObjectMirror;
 import io.domainlifecycles.mirror.model.ValueObjectModel;
+import io.domainlifecycles.mirror.reflect.DomainTypeDetector;
+import io.domainlifecycles.mirror.reflect.DomainTypeMirrorBuilder;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 /**
@@ -42,12 +44,14 @@ public class ValueObjectMirrorBuilder extends DomainTypeMirrorBuilder<ValueObjec
      *
      * @param valueObjectClass class being mirrored
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector type detector implementation, that detects domain types
      */
     public ValueObjectMirrorBuilder(
         Class<?> valueObjectClass,
-        GenericTypeResolver genericTypeResolver
+        GenericTypeResolver genericTypeResolver,
+        DomainTypeDetector domainTypeDetector
     ) {
-        super(valueObjectClass, genericTypeResolver);
+        super(valueObjectClass, genericTypeResolver, domainTypeDetector);
     }
 
     /**

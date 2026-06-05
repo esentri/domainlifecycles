@@ -9,7 +9,7 @@
  *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
  *                      |__╱
  *
- *  Copyright 2019-2024 the original author or authors.
+ *  Copyright 2019-2026 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,6 +31,8 @@ import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.model.EntityModel;
+import io.domainlifecycles.mirror.reflect.DomainTypeDetector;
+import io.domainlifecycles.mirror.reflect.DomainTypeMirrorBuilder;
 import io.domainlifecycles.mirror.reflect.FieldMirrorBuilder;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import io.domainlifecycles.reflect.JavaReflect;
@@ -52,13 +54,15 @@ public class EntityMirrorBuilder<T extends EntityMirror> extends DomainTypeMirro
      *
      * @param entityClass class being mirrored
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector detector for domain types
      */
     public EntityMirrorBuilder(
         Class<?> entityClass,
-        GenericTypeResolver genericTypeResolver
+        GenericTypeResolver genericTypeResolver,
+        DomainTypeDetector domainTypeDetector
 
     ) {
-        super(entityClass, genericTypeResolver);
+        super(entityClass, genericTypeResolver, domainTypeDetector);
         this.entityClass = entityClass;
     }
 
@@ -67,6 +71,7 @@ public class EntityMirrorBuilder<T extends EntityMirror> extends DomainTypeMirro
      *
      * @return new instance of EntityMirror
      */
+    @SuppressWarnings("unchecked")
     @Override
     public T build() {
         return (T) new EntityModel(
@@ -99,7 +104,10 @@ public class EntityMirrorBuilder<T extends EntityMirror> extends DomainTypeMirro
                     Identifier.class.isAssignableFrom(field.getType()))
             .findFirst();
 
-        return idProperty.map(field -> new FieldMirrorBuilder(field, entityClass, isHidden(field), genericTypeResolver).build());
+        return idProperty.map(field -> new FieldMirrorBuilder(
+            field, entityClass, isHidden(field),
+            genericTypeResolver, domainTypeDetector
+        ).build());
 
     }
 }

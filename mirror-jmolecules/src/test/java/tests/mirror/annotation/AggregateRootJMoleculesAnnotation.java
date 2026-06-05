@@ -36,4 +36,8 @@ public class AggregateRootJMoleculesAnnotation {
     private Long id;
 
     private String someField;
+
+    private EntityJMoleculesAnnotation entity;
+
+    private ValueObjectJMoleculesAnnotation valueObject;
 }

@@ -24,14 +24,18 @@
  *  limitations under the License.
  */
 
-package io.domainlifecycles.mirror.reflect;
+package io.domainlifecycles.mirrorjmolecules.reflect;
 
 import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.model.DomainServiceModel;
+import io.domainlifecycles.mirror.reflect.DomainTypeDetector;
+import io.domainlifecycles.mirror.reflect.DomainTypeMirrorBuilder;
+import io.domainlifecycles.mirror.reflect.ServiceKindMirrorBuilder;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,9 +44,9 @@ import java.util.stream.Collectors;
  *
  * @author Mario Herb
  */
-public class DomainServiceMirrorBuilder extends ServiceKindMirrorBuilder<DomainServiceMirror> {
+public class DomainServiceMirrorBuilder extends DomainTypeMirrorBuilder<DomainServiceMirror> {
 
-    private final Class<? extends DomainService> domainServiceClass;
+    private final Class<?> domainServiceClass;
 
     /**
      * Constructor
@@ -52,7 +56,7 @@ public class DomainServiceMirrorBuilder extends ServiceKindMirrorBuilder<DomainS
      * @param domainTypeDetector type detector implementation, that detects domain types
      */
     public DomainServiceMirrorBuilder(
-        Class<? extends DomainService> domainServiceClass,
+        Class<?> domainServiceClass,
         GenericTypeResolver genericTypeResolver,
         DomainTypeDetector domainTypeDetector
     ) {
@@ -79,9 +83,6 @@ public class DomainServiceMirrorBuilder extends ServiceKindMirrorBuilder<DomainS
     }
 
     private List<String> domainServiceInterfaceTypeNames() {
-        return Arrays.stream(domainServiceClass.getInterfaces())
-            .filter(i -> DomainService.class.isAssignableFrom(i) && !i.getName().equals(DomainService.class.getName()))
-            .map(Class::getName)
-            .collect(Collectors.toList());
+        return Collections.emptyList();
     }
 }

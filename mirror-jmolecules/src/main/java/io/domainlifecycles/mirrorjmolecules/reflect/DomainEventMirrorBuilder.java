@@ -28,6 +28,8 @@ package io.domainlifecycles.mirrorjmolecules.reflect;
 
 import io.domainlifecycles.mirror.api.DomainEventMirror;
 import io.domainlifecycles.mirror.model.DomainEventModel;
+import io.domainlifecycles.mirror.reflect.DomainTypeDetector;
+import io.domainlifecycles.mirror.reflect.DomainTypeMirrorBuilder;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
 /**
@@ -42,12 +44,14 @@ public class DomainEventMirrorBuilder extends DomainTypeMirrorBuilder<DomainEven
      *
      * @param domainEventClass class being mirrored
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector type detector implementation, that detects domain types
      */
     public DomainEventMirrorBuilder(
         Class<?> domainEventClass,
-        GenericTypeResolver genericTypeResolver
+        GenericTypeResolver genericTypeResolver,
+        DomainTypeDetector domainTypeDetector
     ) {
-        super(domainEventClass, genericTypeResolver);
+        super(domainEventClass, genericTypeResolver, domainTypeDetector);
     }
 
     /**

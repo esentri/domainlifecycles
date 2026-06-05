@@ -37,7 +37,11 @@ public class AggregateRootJMoleculesInterface implements AggregateRoot<Aggregate
 
     private final String someField;
 
-    public AggregateRootJMoleculesInterface(AggregateRootId id, String someField) {
+    private EntityJMoleculesInterface entity;
+
+    private ValueObjectJMoleculesInterface valueObject;
+
+    public AggregateRootJMoleculesInterface(AggregateRootId id, EntityJMoleculesInterface entity, String someField) {
         this.id = id;
         this.someField = someField;
     }
@@ -53,5 +57,13 @@ public class AggregateRootJMoleculesInterface implements AggregateRoot<Aggregate
         AggregateRootId(UUID id) {
             this.id = id;
         }
+    }
+
+    public EntityJMoleculesInterface getEntity() {
+        return entity;
+    }
+
+    public ValueObjectJMoleculesInterface getValueObject() {
+        return valueObject;
     }
 }
