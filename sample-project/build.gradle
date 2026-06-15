@@ -1,7 +1,7 @@
 buildscript {
     dependencies {
-        classpath 'com.h2database:h2:2.3.232'
-        classpath 'org.flywaydb:flyway-core:11.12.0'
+        classpath 'com.h2database:h2:2.4.240'
+        classpath 'org.flywaydb:flyway-core:11.20.0'
     }
 }
 
@@ -9,10 +9,10 @@ plugins {
     id 'java'
     id 'checkstyle'
     id 'jacoco'
-    id 'org.springframework.boot' version '4.0.2'
-    id 'org.flywaydb.flyway' version '11.12.0'
-    id 'org.jooq.jooq-codegen-gradle' version '3.19.26'
-    id 'io.domainlifecycles.dlc-gradle-plugin' version '3.1.0'
+    id 'org.springframework.boot' version '4.1.0'
+    id 'org.flywaydb.flyway' version '11.20.0'
+    id 'org.jooq.jooq-codegen-gradle' version '3.19.29'
+    id 'io.domainlifecycles.dlc-gradle-plugin' version '3.2.0'
 }
 
 
@@ -41,6 +41,12 @@ tasks.register('runApp', JavaExec) {
 // ----------------------------------------------------------
 
 dependencies {
+    implementation('org.jooq:jooq') { version { strictly '3.19.29' } }
+    implementation('org.jooq:jooq-codegen') { version { strictly '3.19.29' } }
+    implementation('org.jooq:jooq-meta') { version { strictly '3.19.29' } }
+    testImplementation('org.jooq:jooq') { version { strictly '3.19.29' } }
+    testImplementation('org.jooq:jooq-codegen') { version { strictly '3.19.29' } }
+    testImplementation('org.jooq:jooq-meta') { version { strictly '3.19.29' } }
     implementation platform('org.springframework.boot:spring-boot-dependencies:4.0.1')
 
 
@@ -52,21 +58,21 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jooq'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'jakarta.transaction:jakarta.transaction-api:2.0.1'
-    implementation 'io.domainlifecycles:spring-boot-starter:3.1.0'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1'
-    implementation 'org.projectlombok:lombok:1.18.42'
-    annotationProcessor 'org.projectlombok:lombok:1.18.42'
+    implementation 'io.domainlifecycles:spring-boot-starter:3.2.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3'
+    implementation 'org.projectlombok:lombok:1.18.46'
+    annotationProcessor 'org.projectlombok:lombok:1.18.46'
 
-    runtimeOnly 'org.jooq:jooq-codegen:3.19.26'
-    jooqCodegen 'org.jooq:jooq-meta:3.19.26'
+    runtimeOnly 'org.jooq:jooq-codegen:3.19.29'
+    jooqCodegen 'org.jooq:jooq-meta:3.19.29'
 
-    testImplementation 'io.domainlifecycles:domain-diagrammer:3.1.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
-    testImplementation 'org.assertj:assertj-core:3.27.6'
+    testImplementation 'io.domainlifecycles:domain-diagrammer:3.2.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:6.1.0'
+    testImplementation 'org.assertj:assertj-core:3.27.7'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
-    testCompileOnly 'org.projectlombok:lombok:1.18.42'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.42'
+    testCompileOnly 'org.projectlombok:lombok:1.18.46'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.46'
 }
 
 // ----------------------------------------------------------
