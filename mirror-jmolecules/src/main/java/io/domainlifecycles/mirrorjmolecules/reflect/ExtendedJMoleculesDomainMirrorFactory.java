@@ -53,9 +53,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author Mario Herb
  */
-public class JMoleculesDomainMirrorFactory extends ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
+public class ExtendedJMoleculesDomainMirrorFactory extends ReflectiveDomainMirrorFactory implements DomainMirrorFactory {
 
-    private static final Logger log = LoggerFactory.getLogger(JMoleculesDomainMirrorFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(ExtendedJMoleculesDomainMirrorFactory.class);
 
     private ExtendedJMoleculesDomainTypesScanner extendedJMoleculesDomainTypesScanner;
 
@@ -64,7 +64,7 @@ public class JMoleculesDomainMirrorFactory extends ReflectiveDomainMirrorFactory
      *
      * @param domainModelPackages the packages containing the domain model classes
      */
-    public JMoleculesDomainMirrorFactory(String... domainModelPackages) {
+    public ExtendedJMoleculesDomainMirrorFactory(String... domainModelPackages) {
         super(domainModelPackages);
     }
 
@@ -78,7 +78,7 @@ public class JMoleculesDomainMirrorFactory extends ReflectiveDomainMirrorFactory
         initializeForScanning();
         var domainModelPackagesExtended = Arrays.copyOf(domainModelPackages, domainModelPackages.length+2);
         domainModelPackagesExtended[domainModelPackages.length] = "io.domainlifecycles";
-        domainModelPackagesExtended[domainModelPackages.length+1] = "org.jmolecules.ddd.types";
+        domainModelPackagesExtended[domainModelPackages.length+1] = "org.jmolecules.ddd";
         Map<String, ? extends DomainTypeMirror> builtTypeMirrors =
             extendedJMoleculesDomainTypesScanner
                 .scan(domainModelPackagesExtended)
@@ -96,8 +96,8 @@ public class JMoleculesDomainMirrorFactory extends ReflectiveDomainMirrorFactory
 
         var dm = new DomainModel(builtTypeMirrors, boundedContextPackages);
         var c = new CompletenessChecker(dm);
+        c.addIgnoredPackage("org.jmolecules.ddd");
         c.checkForCompleteness();
-
         return dm;
     }
 

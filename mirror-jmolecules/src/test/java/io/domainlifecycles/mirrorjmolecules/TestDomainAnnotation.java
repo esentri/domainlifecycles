@@ -35,8 +35,7 @@ import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.ValueObjectMirror;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
-import io.domainlifecycles.mirrorjmolecules.reflect.JMoleculesDomainMirrorFactory;
+import io.domainlifecycles.mirrorjmolecules.reflect.ExtendedJMoleculesDomainMirrorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tests.mirror.annotation.AggregateRootJMoleculesAnnotation;
@@ -52,7 +51,7 @@ public class TestDomainAnnotation {
 
     @BeforeAll
     public static void init() {
-        JMoleculesDomainMirrorFactory factory = new JMoleculesDomainMirrorFactory("tests.mirror.annotation");
+        ExtendedJMoleculesDomainMirrorFactory factory = new ExtendedJMoleculesDomainMirrorFactory("tests.mirror.annotation");
         Domain.initialize(factory);
     }
 
