@@ -26,6 +26,7 @@
 
 package io.domainlifecycles.mirror.reflect;
 
+import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
@@ -80,6 +81,20 @@ public abstract class DomainTypeMirrorBuilder<T extends DomainTypeMirror> {
     protected final GenericTypeResolver genericTypeResolver;
 
     /**
+     * Detects the specific domain type of a given class or type.
+     *
+     * This variable is responsible for determining the {@link DomainType} of the domain class
+     * being mirrored. It leverages the {@link DomainTypeDetector} interface to analyze
+     * and classify types based on their characteristics and relationships.
+     *
+     * The domain type detection process is utilized during the construction of metadata models
+     * (e.g., field and method mirrors) to provide contextual understanding of the domain class.
+     *
+     * This field is immutable and shared across the operations of the {@code DomainTypeMirrorBuilder}.
+     */
+    protected final DomainTypeDetector domainTypeDetector;
+
+    /**
      * Build and return the built mirror
      * @return built mirror
      */
@@ -90,10 +105,14 @@ public abstract class DomainTypeMirrorBuilder<T extends DomainTypeMirror> {
      *
      * @param domainClass class being mirrored
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector domain type detector implementation, that detects domain types
      */
-    public DomainTypeMirrorBuilder(final Class<?> domainClass, GenericTypeResolver genericTypeResolver) {
+    public DomainTypeMirrorBuilder(final Class<?> domainClass,
+                                   GenericTypeResolver genericTypeResolver,
+                                   DomainTypeDetector domainTypeDetector) {
         this.domainClass = domainClass;
         this.genericTypeResolver = genericTypeResolver;
+        this.domainTypeDetector = Objects.requireNonNull(domainTypeDetector, "A Domain type detector mus be provided!");
         List<Field> theFields = Collections.emptyList();
         try {
             theFields = JavaReflect.fields(domainClass, MemberSelect.HIERARCHY);
@@ -120,7 +139,8 @@ public abstract class DomainTypeMirrorBuilder<T extends DomainTypeMirror> {
                             f,
                             domainClass,
                             isHidden(f),
-                            genericTypeResolver
+                            genericTypeResolver,
+                            domainTypeDetector
                         ).build();
                     }catch (Throwable t) {
                         //ignore
@@ -176,7 +196,10 @@ public abstract class DomainTypeMirrorBuilder<T extends DomainTypeMirror> {
             .filter(m -> !m.isSynthetic() && !m.isBridge())
             .map(m -> {
                     try{
-                        return new MethodMirrorBuilder(m, domainClass, isOverridden(m, meth), genericTypeResolver).build();
+                        return new MethodMirrorBuilder(
+                            m, domainClass, isOverridden(m, meth),
+                            genericTypeResolver, domainTypeDetector
+                        ).build();
                     }catch (Throwable t){
                         //ignore
                         log.error("Building MethodMirror failed {}.{}", domainClass.getName(), m.getName(), t);

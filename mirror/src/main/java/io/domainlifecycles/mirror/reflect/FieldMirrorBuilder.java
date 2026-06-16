@@ -50,6 +50,7 @@ public class FieldMirrorBuilder {
     private final Field field;
 
     private final GenericTypeResolver genericTypeResolver;
+    private final DomainTypeDetector domainTypeDetector;
 
     private final Class<?> topLevelClass;
     private final AssertedContainableTypeMirrorBuilder typeMirrorBuilder;
@@ -61,16 +62,20 @@ public class FieldMirrorBuilder {
      * @param topLevelClass most specific class that contains this field
      * @param hidden boolean flag stating the fact, that this field is hiding by other field definitions
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector domain type detector implementation
      */
-    public FieldMirrorBuilder(Field field, Class<?> topLevelClass, boolean hidden, GenericTypeResolver genericTypeResolver) {
+    public FieldMirrorBuilder(Field field, Class<?> topLevelClass, boolean hidden,
+                              GenericTypeResolver genericTypeResolver, DomainTypeDetector domainTypeDetector) {
         this.field = field;
         this.topLevelClass = Objects.requireNonNull(topLevelClass, "The corresponding top level class cannot be null!");
         this.genericTypeResolver = genericTypeResolver;
+        this.domainTypeDetector = Objects.requireNonNull(domainTypeDetector, "A domain type detector must be provided!");
         this.typeMirrorBuilder = new AssertedContainableTypeMirrorBuilder(
             field.getType(),
             field.getAnnotatedType(),
             field.getGenericType(),
-            genericTypeResolver.resolveFieldType(field, topLevelClass)
+            genericTypeResolver.resolveFieldType(field, topLevelClass),
+            domainTypeDetector
         );
         this.hidden = hidden;
     }

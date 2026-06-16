@@ -15,7 +15,7 @@ dependencies {
     implementation gradleApi()
     implementation libs.docker.java.core
     implementation libs.docker.java.transport.httpclient5
-    implementation project(":mirror")
+    implementation project(":mirror-jmolecules")
     implementation project(":mirror-serialization-jackson3")
     implementation project(":types")
     implementation project(":domain-diagrammer")

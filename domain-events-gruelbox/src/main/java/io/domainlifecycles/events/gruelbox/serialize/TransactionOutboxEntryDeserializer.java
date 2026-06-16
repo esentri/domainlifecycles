@@ -32,6 +32,7 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.ObjectReadContext;
 import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JavaType;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ValueDeserializer;
 
@@ -99,9 +100,9 @@ class TransactionOutboxEntryDeserializer extends ValueDeserializer<TransactionOu
         if (node == null || node.isNull()) {
             return null;
         }
-        Map<String, String> result = new HashMap<>();
-        node.forEachEntry((key, value) -> result.put(key, value.asText()));
-        return result;
+        JavaType mapType = c.getTypeFactory()
+            .constructMapType(HashMap.class, String.class, String.class);
+        return c.readTreeAsValue(node, mapType);
     }
 
 }

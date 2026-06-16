@@ -62,6 +62,8 @@ public class MethodMirrorBuilder {
 
     private final GenericTypeResolver genericTypeResolver;
 
+    private final DomainTypeDetector domainTypeDetector;
+
     /**
      * Constructor
      *
@@ -69,11 +71,14 @@ public class MethodMirrorBuilder {
      * @param topLevelClass most specific class containing this method
      * @param overridden boolean stating the fact, if the method is overridden by the given top-level class
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector the domain type detector used
      */
-    public MethodMirrorBuilder(Method m, Class<?> topLevelClass, boolean overridden, GenericTypeResolver genericTypeResolver) {
+    public MethodMirrorBuilder(Method m, Class<?> topLevelClass, boolean overridden,
+                               GenericTypeResolver genericTypeResolver, DomainTypeDetector domainTypeDetector) {
         this.m = Objects.requireNonNull(m);
         this.topLevelClass = Objects.requireNonNull(topLevelClass, "The corresponding top level class cannot be null!");
         this.overridden = overridden;
+        this.domainTypeDetector = Objects.requireNonNull(domainTypeDetector, "A domain type detector must be provided!");
         this.genericTypeResolver = Objects.requireNonNull(genericTypeResolver, "The generic type resolver cannot be null!");
     }
 
@@ -100,7 +105,8 @@ public class MethodMirrorBuilder {
             m.getReturnType(),
             m.getAnnotatedReturnType(),
             m.getGenericReturnType(),
-            genericTypeResolver.resolveExecutableReturnType(m, topLevelClass));
+            genericTypeResolver.resolveExecutableReturnType(m, topLevelClass),
+            domainTypeDetector);
         return builder.build();
     }
 
@@ -117,7 +123,8 @@ public class MethodMirrorBuilder {
                 p.getType(),
                 p.getAnnotatedType(),
                 p.getParameterizedType(),
-                resolved
+                resolved,
+                domainTypeDetector
             );
             mirroredParams.add(new ParamModel(p.getName(), typeMirrorBuilder.build()));
             i++;

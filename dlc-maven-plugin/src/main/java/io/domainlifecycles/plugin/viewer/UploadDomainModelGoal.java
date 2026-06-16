@@ -40,6 +40,8 @@ import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,13 +67,18 @@ import java.util.List;
  *
  * @author Leon Völlinger
  */
-@Mojo(name = "uploadDomainModel", requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.INITIALIZE)
+@Mojo(
+    name = "uploadDomainModel",
+    requiresDependencyResolution = ResolutionScope.COMPILE,
+    aggregator = true,
+    defaultPhase = LifecyclePhase.VERIFY
+)
 public class UploadDomainModelGoal extends AbstractMojo {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(UploadDomainModelGoal.class);
 
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject project;
+    @Parameter(defaultValue = "${reactorProjects}", readonly = true, required = true)
+    private List<MavenProject> reactorProjects;
 
     @Parameter(property = "diagramViewerBaseUrl", required = true)
     private String diagramViewerBaseUrl;
@@ -109,7 +116,11 @@ public class UploadDomainModelGoal extends AbstractMojo {
 
     private void uploadDomainModel() {
         MirrorSerializer mirrorSerializer = new MirrorSerializerImpl(true);
-        final String domainModelJson = mirrorSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(project), domainModelPackages);
+        var classPath = new ArrayList<URL>();
+        for (var project : reactorProjects) {
+            classPath.addAll(ClassLoaderUtils.getParentClasspathFiles(project));
+        }
+        final String domainModelJson = mirrorSerializer.serialize(classPath, domainModelPackages);
         domainModelUploader.uploadDomainModel(domainModelJson, domainModelPackages, apiKey, projectName, diagramViewerBaseUrl);
     }
 }

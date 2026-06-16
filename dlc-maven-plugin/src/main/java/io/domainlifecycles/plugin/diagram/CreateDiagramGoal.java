@@ -32,7 +32,10 @@ import io.domainlifecycles.plugins.diagram.DiagramGenerator;
 import io.domainlifecycles.plugins.diagram.DiagramGeneratorImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
 import io.domainlifecycles.plugins.util.FileIOUtils;
+
+import java.net.URL;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -80,13 +83,18 @@ import org.slf4j.LoggerFactory;
  * @author Leon Völlinger
  * @author Mario Herb
  */
-@Mojo(name = "createDiagram", requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.INITIALIZE)
+@Mojo(
+    name = "createDiagram",
+    requiresDependencyResolution = ResolutionScope.COMPILE,
+    aggregator = true,
+    defaultPhase = LifecyclePhase.VERIFY
+)
 public class CreateDiagramGoal extends AbstractMojo {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(CreateDiagramGoal.class);
 
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject project;
+    @Parameter(defaultValue = "${reactorProjects}", readonly = true, required = true)
+    private List<MavenProject> reactorProjects;
 
     @Parameter(property = "fileOutputDir", required = true)
     private String fileOutputDir;
@@ -116,8 +124,14 @@ public class CreateDiagramGoal extends AbstractMojo {
 
     private void createAndSaveDiagram(PluginDiagramConfiguration mavenDiagramConfiguration) {
         DiagramConfig diagramConfig = DiagramConfigMapper.map(mavenDiagramConfiguration);
+
+        var classPath = new ArrayList<URL>();
+        for (var project : reactorProjects) {
+            classPath.addAll(ClassLoaderUtils.getParentClasspathFiles(project));
+        }
+
         byte[] diagramFileContent = diagramGenerator.generateDiagram(
-            ClassLoaderUtils.getParentClasspathFiles(project),
+            classPath,
             diagramConfig,
             mavenDiagramConfiguration.getDomainModelPackages().toArray(String[]::new)
         );

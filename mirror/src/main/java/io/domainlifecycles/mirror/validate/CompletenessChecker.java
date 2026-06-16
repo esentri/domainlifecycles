@@ -50,6 +50,7 @@ public class CompletenessChecker {
 
     private final List<String> messages = new ArrayList<>();
     private final DomainMirror domainMirror;
+    private final List<String> ignoredPackages;
 
     /**
      * Constructs a new CompletenessChecker instance.
@@ -67,6 +68,9 @@ public class CompletenessChecker {
             domainMirror,
             "A DomainMirror instance must be provided to be checked!"
         );
+        this.ignoredPackages = new ArrayList<>();
+        this.ignoredPackages.add("io.domainlifecycles");
+        this.ignoredPackages.add("java");
     }
 
     /**
@@ -84,11 +88,28 @@ public class CompletenessChecker {
     public void checkForCompleteness() {
         domainMirror.getAllDomainTypeMirrors()
             .stream()
-            .filter(t -> !t.getTypeName().startsWith("io.domainlifecycles."))
+            .filter(t ->
+                ignoredPackages.stream().noneMatch(p -> t.getTypeName().startsWith(p))
+            )
             .forEach(this::checkMirror);
         if(!messages.isEmpty()){
             throw MirrorException.fail("Domain Model is not complete: \n%s", String.join(",\n", messages));
         }
+    }
+
+    /**
+     * Adds a package name to the list of ignored packages for completeness checks.
+     *
+     * This method allows specific packages to be excluded from the completeness
+     * verification process. Ignored packages are not evaluated for completeness,
+     * which can be useful to bypass third-party libraries or irrelevant domain
+     * components.
+     *
+     * @param ignoredPackage the fully qualified name of the package to be ignored.
+     *                       Must not be null or empty, otherwise the behavior is undefined.
+     */
+    public void addIgnoredPackage(String ignoredPackage){
+        ignoredPackages.add(ignoredPackage);
     }
 
     private void checkMirror(DomainTypeMirror mirror) {
@@ -97,7 +118,7 @@ public class CompletenessChecker {
     }
 
     private void checkField(FieldMirror field) {
-        if(!field.getDeclaredByTypeName().startsWith("io.domainlifecycles.")) {
+        if( ignoredPackages.stream().noneMatch(p -> field.getDeclaredByTypeName().startsWith(p)) ){
             check(
                 field.getType(),
                 String.format(
@@ -111,7 +132,7 @@ public class CompletenessChecker {
     }
 
     private void checkMethod(MethodMirror method) {
-        if(!method.getDeclaredByTypeName().startsWith("io.domainlifecycles.")) {
+        if( ignoredPackages.stream().noneMatch(p -> method.getDeclaredByTypeName().startsWith(p)) ){
             checkReturnType(method);
             method.getParameters().forEach(param -> checkMethodParam(method, param));
         }
@@ -147,8 +168,7 @@ public class CompletenessChecker {
             return;
         }
         if (domainMirror.getDomainTypeMirror(typeToCheck.getTypeName()).isEmpty()
-            && !typeToCheck.getTypeName().startsWith("io.domainlifecycles.")
-            && !typeToCheck.getTypeName().startsWith("java")
+            && ignoredPackages.stream().noneMatch(p -> typeToCheck.getTypeName().startsWith(p))
         ) {
             messages.add(
                 message
