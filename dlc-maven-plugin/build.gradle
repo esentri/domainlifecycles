@@ -21,6 +21,8 @@ configurations {
 }
 
 dependencies {
+    implementation libs.jackson2.databind
+    implementation libs.jackson2.core
     implementation libs.maven.core
     implementation libs.maven.artifact
     implementation libs.maven.plugin.api

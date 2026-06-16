@@ -36,9 +36,14 @@ import io.domainlifecycles.utils.ClassLoaderUtils;
 import java.nio.file.Path;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.NamedDomainObjectContainer;
+import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.work.DisableCachingByDefault;
 import org.slf4j.Logger;
@@ -101,6 +106,41 @@ public abstract class CreateDiagramTask extends DefaultTask {
     @Input
     public abstract NamedDomainObjectContainer<PluginDiagramConfigurationExtension> getDiagrams();
 
+    private final ConfigurableFileCollection classesDirs = getProject().getObjects().fileCollection();
+    private final ConfigurableFileCollection classpath = getProject().getObjects().fileCollection();
+
+    /**
+     * Retrieves the collection of directories containing the compiled class files.
+     *
+     * This method is annotated with `@InputFiles`, indicating that the returned
+     * file collection is treated as input for Gradle's incremental build mechanism.
+     * The classes directories are typically used as an input for analyzing or
+     * processing compiled class files within the task.
+     *
+     * @return a `ConfigurableFileCollection` representing the directories of compiled class files.
+     */
+    @InputFiles
+    @PathSensitive(PathSensitivity.RELATIVE)
+    public ConfigurableFileCollection getClassesDirs() {
+        return classesDirs;
+    }
+
+    /**
+     * Retrieves the collection of files that form the classpath for this task.
+     *
+     * This method is annotated with `@InputFiles`, which indicates that the returned
+     * file collection is treated as input for Gradle's incremental build mechanism.
+     * The classpath typically includes dependencies and other resources required for
+     * executing or generating output in the context of this task.
+     *
+     * @return a `ConfigurableFileCollection` representing the files that constitute
+     *         the classpath for this task.
+     */
+    @Classpath
+    public ConfigurableFileCollection getClasspath() {
+        return classpath;
+    }
+
     private DiagramGenerator diagramGenerator;
 
     /**
@@ -126,9 +166,11 @@ public abstract class CreateDiagramTask extends DefaultTask {
     }
 
     private void createAndSaveDiagram(PluginDiagramConfigurationExtension diagramConfigExtension) {
+
+
         final DiagramConfig diagramConfig = DiagramConfigMapper.map(diagramConfigExtension);
         byte[] diagramFileContent = diagramGenerator.generateDiagram(
-            ClassLoaderUtils.getParentClasspathFiles(getProject()),
+            ClassLoaderUtils.getClasspathFiles(this.getClasspath(), this.getClassesDirs()),
             diagramConfig,
             diagramConfigExtension.getDomainModelPackages().getOrElse(Collections.emptyList()).toArray(String[]::new)
         );

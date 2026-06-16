@@ -83,7 +83,7 @@ public class ClassLoaderUtils {
                 })
                 .collect(Collectors.toList());
         } catch (DependencyResolutionRequiredException e) {
-            throw DLCMavenPluginException.fail("Error while changing Classloader.", e);
+            throw DLCMavenPluginException.fail("Error while identifying classpath elements fpr project %s.", e, project.getId());
         }
     }
 }
