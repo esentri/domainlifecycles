@@ -30,7 +30,10 @@ import io.domainlifecycles.plugins.mirror.MirrorSerializer;
 import io.domainlifecycles.plugins.mirror.MirrorSerializerImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
 import io.domainlifecycles.plugins.util.FileIOUtils;
+
+import java.net.URL;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -76,13 +79,17 @@ import org.slf4j.LoggerFactory;
  * @author Mario Herb
  * @author Leon Völlinger
  */
-@Mojo(name = "serializeMirror", requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.INITIALIZE)
+@Mojo(
+    name = "serializeMirror",
+    requiresDependencyResolution = ResolutionScope.COMPILE,
+    aggregator = true,
+    defaultPhase = LifecyclePhase.VERIFY)
 public class MirrorSerializerGoal extends AbstractMojo {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(MirrorSerializerGoal.class);
 
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject project;
+    @Parameter(defaultValue = "${reactorProjects}", readonly = true, required = true)
+    private List<MavenProject> reactorProjects;
 
     @Parameter(property = "fileOutputDir", defaultValue = "src/main/resources/META-INF/dlc/")
     private String fileOutputDir;
@@ -116,7 +123,12 @@ public class MirrorSerializerGoal extends AbstractMojo {
     }
 
     private void renderAndSaveModelAsJson(final PluginSerializationConfiguration pluginSerializationConfiguration) {
-        String jsonContent = mirrorSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(project), pluginSerializationConfiguration.getDomainModelPackages());
+        var classPath = new ArrayList<URL>();
+        for (var project : reactorProjects) {
+            classPath.addAll(ClassLoaderUtils.getParentClasspathFiles(project));
+        }
+
+        String jsonContent = mirrorSerializer.serialize(classPath, pluginSerializationConfiguration.getDomainModelPackages());
         Path filePath = Path.of(fileOutputDir, pluginSerializationConfiguration.getFileName());
 
         LOGGER.info("Saving JSON model to {}", filePath);

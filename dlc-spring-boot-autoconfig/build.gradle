@@ -24,6 +24,14 @@ def dbPassword = ''
 def dbMigration = 'src/test/resources/db/migration'
 
 dependencies {
+    constraints {
+        compileOnly('org.jooq:jooq') { version { strictly '3.19.29' } }
+        compileOnly('org.jooq:jooq-codegen') { version { strictly '3.19.29' } }
+        compileOnly('org.jooq:jooq-meta') { version { strictly '3.19.29' } }
+        testImplementation('org.jooq:jooq') { version { strictly '3.19.29' } }
+        testImplementation('org.jooq:jooq-codegen') { version { strictly '3.19.29' } }
+        testImplementation('org.jooq:jooq-meta') { version { strictly '3.19.29' } }
+    }
     implementation platform(libs.spring.boot.dependencies)
     compileOnly libs.jooq
     compileOnly libs.spring.jdbc

@@ -27,8 +27,8 @@
 package io.domainlifecycles.plugins.util;
 
 import io.domainlifecycles.mirror.api.DomainMirror;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.mirror.resolver.TypeMetaResolver;
+import io.domainlifecycles.mirrorjmolecules.reflect.ExtendedJMoleculesDomainMirrorFactory;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +65,7 @@ public class DLCUtils {
             var cl = subClassLoader(classPathFiles);
             if (cl.isPresent()) {
                 log.info("Classes loaded - Initializing domain model");
-                final ReflectiveDomainMirrorFactory domainModelFactory = new ReflectiveDomainMirrorFactory(domainMirrorPackages);
+                final ExtendedJMoleculesDomainMirrorFactory domainModelFactory = new ExtendedJMoleculesDomainMirrorFactory(domainMirrorPackages);
                 domainModelFactory.setExternalClassLoader(cl.get());
                 domainModelFactory.setGenericTypeResolver(new TypeMetaResolver());
                 var dm = domainModelFactory.initializeDomainMirror();

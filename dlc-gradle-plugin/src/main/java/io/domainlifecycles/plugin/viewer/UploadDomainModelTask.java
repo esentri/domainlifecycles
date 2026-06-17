@@ -33,9 +33,14 @@ import io.domainlifecycles.plugins.viewer.DomainModelUploader;
 import io.domainlifecycles.plugins.viewer.DomainModelUploaderImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputFiles;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.work.DisableCachingByDefault;
 import org.slf4j.Logger;
@@ -101,6 +106,41 @@ public abstract class UploadDomainModelTask extends DefaultTask {
     @Input
     public abstract ListProperty<String> getDomainModelPackages();
 
+    private final ConfigurableFileCollection classesDirs = getProject().getObjects().fileCollection();
+    private final ConfigurableFileCollection classpath = getProject().getObjects().fileCollection();
+
+    /**
+     * Retrieves the collection of directories containing the compiled class files.
+     *
+     * This method is annotated with `@InputFiles`, indicating that the returned
+     * file collection is treated as input for Gradle's incremental build mechanism.
+     * The classes directories are typically used as an input for analyzing or
+     * processing compiled class files within the task.
+     *
+     * @return a `ConfigurableFileCollection` representing the directories of compiled class files.
+     */
+    @InputFiles
+    @PathSensitive(PathSensitivity.RELATIVE)
+    public ConfigurableFileCollection getClassesDirs() {
+        return classesDirs;
+    }
+
+    /**
+     * Retrieves the collection of files that form the classpath for this task.
+     *
+     * This method is annotated with `@InputFiles`, which indicates that the returned
+     * file collection is treated as input for Gradle's incremental build mechanism.
+     * The classpath typically includes dependencies and other resources required for
+     * executing or generating output in the context of this task.
+     *
+     * @return a `ConfigurableFileCollection` representing the files that constitute
+     *         the classpath for this task.
+     */
+    @Classpath
+    public ConfigurableFileCollection getClasspath() {
+        return classpath;
+    }
+
     private DomainModelUploader domainModelUploader;
 
     /**
@@ -131,8 +171,10 @@ public abstract class UploadDomainModelTask extends DefaultTask {
 
     private void uploadDomainModel() {
         MirrorSerializer mirrorSerializer = new MirrorSerializerImpl(true);
-        final String domainModelJson = mirrorSerializer.serialize(ClassLoaderUtils.getParentClasspathFiles(getProject()),
-            getDomainModelPackages().get());
+        final String domainModelJson = mirrorSerializer.serialize(
+            ClassLoaderUtils.getClasspathFiles(this.getClasspath(), this.getClassesDirs()),
+            getDomainModelPackages().get()
+        );
 
         domainModelUploader.uploadDomainModel(
             domainModelJson, getDomainModelPackages().get(), getApiKey().get(), getProjectName().get(), getDiagramViewerBaseUrl().get());

@@ -28,7 +28,6 @@ package io.domainlifecycles.mirror.reflect;
 
 import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
 import io.domainlifecycles.mirror.api.AssertionMirror;
-import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.ResolvedGenericTypeMirror;
 import io.domainlifecycles.mirror.model.AssertedContainableTypeModel;
 import io.domainlifecycles.reflect.JavaReflect;
@@ -56,6 +55,7 @@ public class AssertedContainableTypeMirrorBuilder {
     private final AnnotatedType annotatedType;
     private final Type genericType;
     private final ResolvedGenericTypeMirror resolvedGenericType;
+    private final DomainTypeDetector domainTypeDetector;
 
 
     /**
@@ -65,13 +65,15 @@ public class AssertedContainableTypeMirrorBuilder {
      * @param annotatedType       the annotated type
      * @param genericType         the generic type
      * @param resolvedGenericType the resolved generic type
+     * @param domainTypeDetector  the used domain type detector
      */
     public AssertedContainableTypeMirrorBuilder(Class<?> type, AnnotatedType annotatedType, Type genericType,
-                                                ResolvedGenericTypeMirror resolvedGenericType) {
+                                                ResolvedGenericTypeMirror resolvedGenericType, DomainTypeDetector domainTypeDetector) {
         this.type = Objects.requireNonNull(type);
         this.annotatedType = Objects.requireNonNull(annotatedType);
         this.genericType = genericType;
         this.resolvedGenericType = resolvedGenericType;
+        this.domainTypeDetector = Objects.requireNonNull(domainTypeDetector);
     }
 
     /**
@@ -86,7 +88,7 @@ public class AssertedContainableTypeMirrorBuilder {
             Collections.emptyList();
         return new AssertedContainableTypeModel(
             getTypeName(),
-            DomainType.of(getBasicType()),
+            domainTypeDetector.detectDomainType(getBasicType()),
             assertions,
             Optional.class.isAssignableFrom(type),
             Collection.class.isAssignableFrom(type),

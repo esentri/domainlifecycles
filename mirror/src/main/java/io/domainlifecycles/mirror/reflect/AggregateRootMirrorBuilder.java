@@ -43,12 +43,14 @@ public class AggregateRootMirrorBuilder extends EntityMirrorBuilder<AggregateRoo
      *
      * @param aggregateRootClass mirrored type of AggregateRoot
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector domain type detector implementation, that detects domain types
      */
     public AggregateRootMirrorBuilder(
         Class<? extends AggregateRoot<?>> aggregateRootClass,
-        GenericTypeResolver genericTypeResolver
+        GenericTypeResolver genericTypeResolver,
+        DomainTypeDetector domainTypeDetector
     ) {
-        super(aggregateRootClass, genericTypeResolver);
+        super(aggregateRootClass, genericTypeResolver, domainTypeDetector);
     }
 
     /**

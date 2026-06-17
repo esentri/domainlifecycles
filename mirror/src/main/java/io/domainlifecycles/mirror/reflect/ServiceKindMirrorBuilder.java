@@ -44,9 +44,12 @@ public class ServiceKindMirrorBuilder<T extends ServiceKindMirror> extends Domai
      *
      * @param serviceKindClass class being mirrored
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector type detector implementation, that detects domain types
      */
-    public ServiceKindMirrorBuilder(Class<? extends ServiceKind> serviceKindClass, GenericTypeResolver genericTypeResolver) {
-        super(serviceKindClass, genericTypeResolver);
+    public ServiceKindMirrorBuilder(Class<? extends ServiceKind> serviceKindClass,
+                                    GenericTypeResolver genericTypeResolver,
+                                    DomainTypeDetector domainTypeDetector) {
+        super(serviceKindClass, genericTypeResolver, domainTypeDetector);
     }
 
     /**

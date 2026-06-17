@@ -16,7 +16,7 @@ Den Ausgangspunkt bildet in diesem Guide ein Build-Setup für ein minimales Spri
 ```groovy
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '4.0.1'
+    id 'org.springframework.boot' version '4.1.0'
 
 }
 
@@ -50,7 +50,7 @@ dependencies {
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.1</version>
+        <version>4.1.0</version>
         <relativePath/>
     </parent>
     <groupId>com.example</groupId>
@@ -63,7 +63,7 @@ dependencies {
         <dependency>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <version>3.1.0</version>
+            <version>3.2.0</version>
         </dependency>
     </dependencies>
 
@@ -91,7 +91,7 @@ welches die wichtigsten DLC-Funktionen bündelt:
 
 ```groovy
 dependencies {
-    implementation 'io.domainlifecycles:spring-boot-starter:3.1.0'
+    implementation 'io.domainlifecycles:spring-boot-starter:3.2.0'
 }
 ```
 </details>
@@ -104,7 +104,7 @@ dependencies {
     <dependency>
         <groupId>io.domainlifecycles</groupId>
         <artifactId>spring-boot-starter</artifactId>
-        <version>3.1.0</version>
+        <version>3.2.0</version>
     </dependency>
 </dependencies>
 ```

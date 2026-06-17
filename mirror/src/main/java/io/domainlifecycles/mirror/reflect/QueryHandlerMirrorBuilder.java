@@ -50,12 +50,14 @@ public class QueryHandlerMirrorBuilder extends ServiceKindMirrorBuilder<QueryHan
      *
      * @param queryHandlerClass class being mirrored
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector type detector implementation, that detects domain types
      */
     public QueryHandlerMirrorBuilder(
         Class<? extends QueryHandler<?>> queryHandlerClass,
-        GenericTypeResolver genericTypeResolver
+        GenericTypeResolver genericTypeResolver,
+        DomainTypeDetector domainTypeDetector
     ) {
-        super(queryHandlerClass, genericTypeResolver);
+        super(queryHandlerClass, genericTypeResolver, domainTypeDetector);
         this.queryHandlerClass = queryHandlerClass;
     }
 

@@ -35,21 +35,19 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
-import org.gradle.api.file.FileCollection;
 import org.gradle.api.tasks.Classpath;
-import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.work.DisableCachingByDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URL;
 import java.nio.file.Path;
-import java.util.List;
 
 /**
  * An abstract Gradle task for rendering domain models as JSON files.
@@ -94,18 +92,40 @@ public abstract class MirrorSerializerTask extends DefaultTask {
     @Nested
     public abstract NamedDomainObjectContainer<SerializationConfigurationExtension> getSerializations();
 
+    private final ConfigurableFileCollection classesDirs = getProject().getObjects().fileCollection();
+    private final ConfigurableFileCollection classpath = getProject().getObjects().fileCollection();
+
     /**
-     * Retrieves the classpath files required for executing the task.
+     * Retrieves the collection of directories containing the compiled class files.
      *
-     * This method returns a collection of files that make up the classpath by dynamically
-     * resolving parent project classpath files. It facilitates inclusion of necessary
-     * project dependencies and build directories as inputs to the task.
+     * This method is annotated with `@InputFiles`, indicating that the returned
+     * file collection is treated as input for Gradle's incremental build mechanism.
+     * The classes directories are typically used as an input for analyzing or
+     * processing compiled class files within the task.
      *
-     * @return a {@code FileCollection} representing the resolved parent project classpath files
-     *         included as input for the task.
+     * @return a `ConfigurableFileCollection` representing the directories of compiled class files.
+     */
+    @InputFiles
+    @PathSensitive(PathSensitivity.RELATIVE)
+    public ConfigurableFileCollection getClassesDirs() {
+        return classesDirs;
+    }
+
+    /**
+     * Retrieves the collection of files that form the classpath for this task.
+     *
+     * This method is annotated with `@InputFiles`, which indicates that the returned
+     * file collection is treated as input for Gradle's incremental build mechanism.
+     * The classpath typically includes dependencies and other resources required for
+     * executing or generating output in the context of this task.
+     *
+     * @return a `ConfigurableFileCollection` representing the files that constitute
+     *         the classpath for this task.
      */
     @Classpath
-    public abstract ConfigurableFileCollection getClasspathFiles();
+    public ConfigurableFileCollection getClasspath() {
+        return classpath;
+    }
 
 
 
@@ -130,17 +150,7 @@ public abstract class MirrorSerializerTask extends DefaultTask {
     }
 
     private void renderAndSaveModelAsJson(final SerializationConfigurationExtension serializationConfigurationExtension) {
-        List<URL> urls = getClasspathFiles()
-            .getFiles()
-            .stream()
-            .map(file -> {
-                try {
-                    return file.toURI().toURL();
-                } catch (Exception e) {
-                    throw new RuntimeException("Failed to convert file to URL: " + file, e);
-                }
-            })
-            .toList();
+        var urls = ClassLoaderUtils.getClasspathFiles(this.getClasspath(), this.getClassesDirs());
         String jsonContent = mirrorSerializer.serialize(urls, serializationConfigurationExtension.getDomainModelPackages().getOrNull());
         Path filePath = getFileOutputDir()
             .file(serializationConfigurationExtension.getFileName().get())

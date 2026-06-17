@@ -49,12 +49,14 @@ public class RepositoryMirrorBuilder extends ServiceKindMirrorBuilder<Repository
      *
      * @param repositoryClass class being mirrored
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector type detector implementation, that detects domain types
      */
     public RepositoryMirrorBuilder(
         Class<? extends Repository<?, ?>> repositoryClass,
-        GenericTypeResolver genericTypeResolver
+        GenericTypeResolver genericTypeResolver,
+        DomainTypeDetector domainTypeDetector
     ) {
-        super(repositoryClass, genericTypeResolver);
+        super(repositoryClass, genericTypeResolver, domainTypeDetector);
         this.repositoryClass = repositoryClass;
     }
 

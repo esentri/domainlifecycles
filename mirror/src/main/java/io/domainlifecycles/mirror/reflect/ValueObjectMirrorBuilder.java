@@ -43,12 +43,14 @@ public class ValueObjectMirrorBuilder extends DomainTypeMirrorBuilder<ValueObjec
      *
      * @param valueObjectClass class being mirrored
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector type detector implementation, that detects domain types
      */
     public ValueObjectMirrorBuilder(
         Class<? extends ValueObject> valueObjectClass,
-        GenericTypeResolver genericTypeResolver
+        GenericTypeResolver genericTypeResolver,
+        DomainTypeDetector domainTypeDetector
     ) {
-        super(valueObjectClass, genericTypeResolver);
+        super(valueObjectClass, genericTypeResolver, domainTypeDetector);
     }
 
     /**

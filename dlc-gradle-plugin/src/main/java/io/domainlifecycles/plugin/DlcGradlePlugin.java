@@ -36,7 +36,11 @@ import io.domainlifecycles.plugin.viewer.UploadDomainModelTask;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.plugins.ExtensionAware;
+import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.plugins.JavaPluginExtension;
+import org.gradle.api.tasks.SourceSet;
 
 /**
  * Implements a Gradle plugin for dynamically configuring and registering tasks related
@@ -76,6 +80,10 @@ public class DlcGradlePlugin implements Plugin<Project> {
      */
     @Override
     public void apply(Project project) {
+        if (project != project.getRootProject()) {
+            project.getLogger().warn("DlcGradlePlugin should be applied to the root project to support multi-module aggregation.");
+        }
+
         DlcGradlePluginExtension pluginExtension =
             project.getExtensions().create("dlcGradlePlugin", DlcGradlePluginExtension.class);
 
@@ -94,14 +102,36 @@ public class DlcGradlePlugin implements Plugin<Project> {
         }
 
         project.afterEvaluate(proj -> {
+
+            ConfigurableFileCollection totalClassesDirs = project.getObjects().fileCollection();
+            ConfigurableFileCollection totalClasspath = project.getObjects().fileCollection();
+
+            // check all project and all sub projects
+            project.allprojects(subProject -> {
+                // check if Java code available
+                subProject.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
+                    JavaPluginExtension javaExt = subProject.getExtensions().getByType(JavaPluginExtension.class);
+                    SourceSet mainSourceSet = javaExt.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+
+                    // aggregate paths
+                    totalClassesDirs.from(mainSourceSet.getOutput().getClassesDirs());
+                    totalClasspath.from(mainSourceSet.getCompileClasspath());
+                });
+            });
+
+            // register tasks and aggregated paths
             project.getTasks().register("createDiagram", CreateDiagramTask.class, task -> {
                 task.getFileOutputDir().set(diagramExtension.getFileOutputDir());
                 task.getDiagrams().addAll(diagramExtension.getDiagrams());
+                task.getClassesDirs().from(totalClassesDirs);
+                task.getClasspath().from(totalClasspath);
             });
 
             project.getTasks().register("serializeMirror", MirrorSerializerTask.class, task -> {
                 task.getFileOutputDir().set(mirrorSerializerExtension.getFileOutputDir());
                 task.getSerializations().addAll(mirrorSerializerExtension.getSerializations());
+                task.getClassesDirs().from(totalClassesDirs);
+                task.getClasspath().from(totalClasspath);
             });
 
             project.getTasks().register("domainModelUpload", UploadDomainModelTask.class, task -> {
@@ -109,7 +139,10 @@ public class DlcGradlePlugin implements Plugin<Project> {
                 task.getApiKey().set(domainModelUploadTaskConfigurationExtension.getApiKey());
                 task.getDiagramViewerBaseUrl().set(domainModelUploadTaskConfigurationExtension.getDiagramViewerBaseUrl());
                 task.getDomainModelPackages().set(domainModelUploadTaskConfigurationExtension.getDomainModelPackages());
+                task.getClassesDirs().from(totalClassesDirs);
+                task.getClasspath().from(totalClasspath);
             });
         });
+
     }
 }

@@ -49,12 +49,14 @@ public class DomainServiceMirrorBuilder extends ServiceKindMirrorBuilder<DomainS
      *
      * @param domainServiceClass class being mirrored
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector type detector implementation, that detects domain types
      */
     public DomainServiceMirrorBuilder(
         Class<? extends DomainService> domainServiceClass,
-        GenericTypeResolver genericTypeResolver
+        GenericTypeResolver genericTypeResolver,
+        DomainTypeDetector domainTypeDetector
     ) {
-        super(domainServiceClass, genericTypeResolver);
+        super(domainServiceClass, genericTypeResolver, domainTypeDetector);
         this.domainServiceClass = domainServiceClass;
     }
 

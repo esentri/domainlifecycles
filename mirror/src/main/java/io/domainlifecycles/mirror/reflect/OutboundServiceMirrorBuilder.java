@@ -47,12 +47,14 @@ public class OutboundServiceMirrorBuilder extends ServiceKindMirrorBuilder<Outbo
      *
      * @param outboundServiceClass class being mirrored
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector domain type detector implementation, that detects domain types
      */
     public OutboundServiceMirrorBuilder(
         Class<? extends OutboundService> outboundServiceClass,
-        GenericTypeResolver genericTypeResolver
+        GenericTypeResolver genericTypeResolver,
+        DomainTypeDetector domainTypeDetector
     ) {
-        super(outboundServiceClass, genericTypeResolver);
+        super(outboundServiceClass, genericTypeResolver, domainTypeDetector);
         this.outboundServiceClass = outboundServiceClass;
     }
 

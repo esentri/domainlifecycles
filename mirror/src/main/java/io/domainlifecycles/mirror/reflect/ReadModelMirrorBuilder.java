@@ -43,12 +43,14 @@ public class ReadModelMirrorBuilder extends DomainTypeMirrorBuilder<ReadModelMir
      *
      * @param readModelClass class being mirrored
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector type detector implementation, that detects domain types
      */
     public ReadModelMirrorBuilder(
         Class<? extends ReadModel> readModelClass,
-        GenericTypeResolver genericTypeResolver
+        GenericTypeResolver genericTypeResolver,
+        DomainTypeDetector domainTypeDetector
     ) {
-        super(readModelClass, genericTypeResolver);
+        super(readModelClass, genericTypeResolver, domainTypeDetector);
     }
 
     /**

@@ -53,13 +53,15 @@ public class EntityMirrorBuilder<T extends EntityMirror> extends DomainTypeMirro
      *
      * @param entityClass class being mirrored
      * @param genericTypeResolver type Resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector domain type detector implementation, that detects domain types
      */
     public EntityMirrorBuilder(
         Class<? extends Entity<?>> entityClass,
-        GenericTypeResolver genericTypeResolver
+        GenericTypeResolver genericTypeResolver,
+        DomainTypeDetector domainTypeDetector
 
     ) {
-        super(entityClass, genericTypeResolver);
+        super(entityClass, genericTypeResolver, domainTypeDetector);
         this.entityClass = entityClass;
     }
 
@@ -69,6 +71,7 @@ public class EntityMirrorBuilder<T extends EntityMirror> extends DomainTypeMirro
      * @return new instance of EntityMirror
      */
     @Override
+    @SuppressWarnings("unchecked")
     public T build() {
         return (T) new EntityModel(
             getTypeName(),
@@ -94,7 +97,7 @@ public class EntityMirrorBuilder<T extends EntityMirror> extends DomainTypeMirro
      */
     protected Optional<FieldMirror> identityField() {
         Optional<Field> idProperty = ReflectionEntityTypeUtils.identityField(entityClass);
-        return idProperty.map(field -> new FieldMirrorBuilder(field, entityClass, isHidden(field), genericTypeResolver).build());
+        return idProperty.map(field -> new FieldMirrorBuilder(field, entityClass, isHidden(field), genericTypeResolver, domainTypeDetector).build());
 
     }
 
@@ -118,7 +121,10 @@ public class EntityMirrorBuilder<T extends EntityMirror> extends DomainTypeMirro
         if (concurrencyFieldCandidates.size() == 1) {
             concurrencyField = concurrencyFieldCandidates.get(0);
             return Optional.of(
-                new FieldMirrorBuilder(concurrencyField, entityClass, isHidden(concurrencyField), genericTypeResolver).build());
+                new FieldMirrorBuilder(
+                    concurrencyField, entityClass, isHidden(concurrencyField),
+                    genericTypeResolver, domainTypeDetector
+                ).build());
         }
         return Optional.empty();
     }
