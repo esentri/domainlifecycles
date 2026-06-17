@@ -17,7 +17,7 @@ The starting point in this guide is a build setup for a minimal Spring Boot proj
 ```groovy
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '4.0.1'
+    id 'org.springframework.boot' version '4.1.0'
 }
 
 group = 'com.example'
@@ -63,7 +63,7 @@ dependencies {
         <dependency>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <version>3.1.0</version>
+            <version>3.2.0</version>
         </dependency>
     </dependencies>
 
@@ -91,7 +91,7 @@ functions:
 
 ```groovy
 dependencies {
-    implementation 'io.domainlifecycles:spring-boot-starter:3.1.0'
+    implementation 'io.domainlifecycles:spring-boot-starter:3.2.0'
 }
 ```
 </details>
@@ -104,7 +104,7 @@ dependencies {
     <dependency>
         <groupId>io.domainlifecycles</groupId>
         <artifactId>spring-boot-starter</artifactId>
-        <version>3.1.0</version>
+        <version>3.2.0</version>
     </dependency>
 </dependencies>
 ```

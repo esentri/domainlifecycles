@@ -26,7 +26,7 @@ databases, transaction management and dependency injection frameworks.
 **Gradle:**
 ```groovy
 dependencies {
-  implementation 'io.domainlifecycles:domain-events-gruelbox:3.1.0'
+  implementation 'io.domainlifecycles:domain-events-gruelbox:3.2.0'
 }
 ```
 
@@ -35,7 +35,7 @@ dependencies {
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>domain-events-gruelbox</artifactId>
-    <version>3.1.0</version>
+    <version>3.2.0</version>
 </dependency>
 ```
 #### Configuration
