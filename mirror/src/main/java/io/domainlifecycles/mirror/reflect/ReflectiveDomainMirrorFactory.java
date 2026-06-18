@@ -70,8 +70,10 @@ public class ReflectiveDomainMirrorFactory extends AbstractDomainMirrorFactory i
     @Override
     public DomainMirror initializeDomainMirror() {
         initializeForScanning();
-        var domainModelPackagesExtended = Arrays.copyOf(domainModelPackages, domainModelPackages.length+1);
+        var domainModelPackagesExtended = Arrays.copyOf(domainModelPackages, domainModelPackages.length+3);
         domainModelPackagesExtended[domainModelPackages.length] = "io.domainlifecycles.domain.types";
+        domainModelPackagesExtended[domainModelPackages.length+1] = "io.domainlifecycles.persistence.repository";
+        domainModelPackagesExtended[domainModelPackages.length+2] = "io.domainlifecycles.jooq.imp";
 
         Map<String, ? extends DomainTypeMirror> builtTypeMirrors =
             classGraphDomainTypesScanner

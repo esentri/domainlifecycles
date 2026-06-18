@@ -23,10 +23,13 @@ dependencies {
     testImplementation libs.assertj
     testImplementation libs.logback.classic
     testImplementation libs.commons.io
+    testImplementation libs.lombok
+    testImplementation libs.jooq
     testImplementation project(":assertions")
     testImplementation project(":builder")
     testImplementation project(":access")
     testImplementation project(":types")
+    testImplementation project(":jooq-integration")
     testImplementation project(":type-utils")
     testImplementation project(":test-shared-impl")
     testAnnotationProcessor libs.lombok

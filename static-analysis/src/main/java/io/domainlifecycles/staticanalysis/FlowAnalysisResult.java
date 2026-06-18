@@ -8,11 +8,8 @@ import java.util.Map;
 public class FlowAnalysisResult {
 
 
+    public FlowAnalysisResult(DomainCalls domainCalls) {
 
-
-
-    public FlowAnalysisResult(Map<MethodMirror,  CalledMethods> calls) {
-        this.calls = calls;
     }
 
     public Flow flowFor(Step startingStep){
