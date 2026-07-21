@@ -637,6 +637,16 @@ o +- rootId:<IDREF> Optional<TreeRootId>
 [<AR>TreeRoot <<AggregateRoot>>]  +-[<label> directChildNodes 0..*] - [<E>TreeNode <<Entity>>]
 [<E>TreeNode <<Entity>>]  +-[<label> childNodes 0..*] - [<E>TreeNode <<Entity>>]
 ]
+// !!! {Frame} tests.shared.persistence.domain.uuid.TestRootUuid !!!
+[<AF> TestRootUuid <<Aggregate>>|
+// !!! tests.shared.persistence.domain.uuid.TestRootUuid !!!
+[<AR> TestRootUuid <<AggregateRoot>> |
+\# +- id:<ID> TestRootUuid$TestRootUuidId
+o +- name:String
+o +- voList:<VO> List<TestVoUuid>
+|
+]
+]
 // !!! {Frame} tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedVoAggregateRoot !!!
 [<AF> AutoMappedVoAggregateRoot <<Aggregate>>|
 // !!! tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedVoAggregateRoot !!!

@@ -16,6 +16,8 @@ dependencies {
     implementation libs.docker.java.core
     implementation libs.docker.java.transport.httpclient5
     implementation project(":mirror-jmolecules")
+    implementation libs.jmolecules.ddd
+    implementation libs.jmolecules.events
     implementation project(":mirror-serialization-jackson3")
     implementation project(":types")
     implementation project(":domain-diagrammer")

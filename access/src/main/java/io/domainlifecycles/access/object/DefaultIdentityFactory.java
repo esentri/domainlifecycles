@@ -33,6 +33,7 @@ import io.domainlifecycles.reflect.JavaReflect;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Default implementation of {@link IdentityFactory}.
@@ -60,17 +61,31 @@ public class DefaultIdentityFactory implements IdentityFactory {
     public <V, I extends Identity<V>> I newInstance(V value, String identityTypeName) {
         Objects.requireNonNull(identityTypeName);
         Class<I> identityClass = (Class<I>) classProvider.getClassForName(identityTypeName);
-        return JavaReflect
-            .findConstructor(identityClass, value.getClass())
-            .map(constructor -> {
+        var constr =  JavaReflect
+            .findConstructor(identityClass, value.getClass());
+        Object valTyped = value;
+        if(constr.isEmpty() ){
+            if(value.getClass().equals(String.class)){
+                constr =  JavaReflect
+                    .findConstructor(identityClass, UUID.class);
+            }
+            if(constr.isEmpty()){
+                throw DLCAccessException.fail("Failed to instantiate Identity '%s'.", identityTypeName);
+            }else{
+                valTyped = UUID.fromString((String)value);
+            }
+        }
+        Object valTypedFinal = valTyped;
+        return
+            constr.map(constructor -> {
                 try {
-                    return (I) constructor.newInstance(value);
+                    return (I) constructor.newInstance(valTypedFinal);
                 } catch (InstantiationException | InvocationTargetException |
                          IllegalAccessException ex) {
                     throw DLCAccessException.fail("Couldn't instantiate Identity (Identity class: %s) for: '%s'.", ex,
                         identityTypeName, value);
                 }
-            })
-            .orElseThrow(() -> DLCAccessException.fail("Failed to instantiate Identity '%s'.", identityTypeName));
+            }).orElse(null);
+
     }
 }

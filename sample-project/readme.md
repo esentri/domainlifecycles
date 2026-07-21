@@ -277,7 +277,7 @@ based on the well known tactical design building blocks:
   DLC persistence works well with immutability (Java records and final field modifiers) and has no need for default
   constructors.
   Java Optional fields are also supported.
-- Furthermore, DLC provides an integration for Spring (Spring Boot 2 and Spring Boot 3, Spring Boot 3 being demonstrated
+- Furthermore, DLC provides an integration for Spring (Spring Boot 3 and Spring Boot 4, Spring Boot 4 being demonstrated
   here)
   and Spring Doc Open API to simplify correct API documentation (Open API/Swagger).
 - DLC works well with Lombok.
