@@ -888,6 +888,22 @@ CREATE TABLE test_domain.test_root_simple_ignoring
     ignored_column      VARCHAR2(200)
 );
 
+
+CREATE TABLE test_domain.test_root_uuid
+(
+    id                  VARCHAR2(36) PRIMARY KEY,
+    concurrency_version NUMBER(18) NOT NULL,
+    name                VARCHAR2(200)
+);
+
+CREATE TABLE test_domain.test_root_uuid_vo_list
+(
+    id                  VARCHAR2(36) PRIMARY KEY,
+    container_id        VARCHAR2(36) NOT NULL,
+    name                VARCHAR2(200),
+    FOREIGN KEY (container_id) REFERENCES test_domain.test_root_uuid (id)
+);
+
 /*
 CREATE TABLE test_domain.root_id_enum_list (
                                                     id NUMBER(18) PRIMARY KEY,

@@ -37,6 +37,7 @@ import org.jooq.Sequence;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -72,6 +73,10 @@ public class JooqEntityIdentityProvider implements EntityIdentityProvider {
             .getIdentityField()
             .map(fm -> fm.getType().getTypeName())
             .orElseThrow(() -> DLCPersistenceException.fail("Identity type not found for entity '%s'", entityTypeName));
+        var im = Domain.identityMirrorFor(identityTypeName);
+        if(im.getValueTypeName().isPresent() &&im.getValueTypeName().get().equals(UUID.class.getName())){
+            return DlcAccess.newIdentityInstance(UUID.randomUUID(), identityTypeName);
+        }
         var sequence = getSequence(identityTypeName);
         var idValue = dslContext.nextval(sequence);
         var id = DlcAccess.newIdentityInstance(idValue, identityTypeName);

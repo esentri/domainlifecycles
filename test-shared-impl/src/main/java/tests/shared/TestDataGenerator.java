@@ -118,6 +118,8 @@ import tests.shared.persistence.domain.tree.TreeNode;
 import tests.shared.persistence.domain.tree.TreeNodeId;
 import tests.shared.persistence.domain.tree.TreeRoot;
 import tests.shared.persistence.domain.tree.TreeRootId;
+import tests.shared.persistence.domain.uuid.TestRootUuid;
+import tests.shared.persistence.domain.uuid.TestVoUuid;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedComplexVo;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedSimpleVo;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedSimpleVoOneToMany;
@@ -1643,6 +1645,21 @@ public class TestDataGenerator {
             .setNestedSimpleVoList(List.of(NestedSimpleVo.builder().setNested(
                 tests.shared.persistence.domain.valueobjectsNested.SimpleVo.builder().setVal(90l).build()).build()))
             .setNestedIdList(List.of(NestedId.builder().setIdRef(new VoAggregateNestedId(550l)).build()))
+            .build();
+    }
+
+    public static TestRootUuid buildTestRootUuidMin() {
+        return TestRootUuid.builder()
+            .id(new TestRootUuid.TestRootUuidId(UUID.randomUUID()))
+            .name("TestRootUuidMin")
+            .build();
+    }
+
+    public static TestRootUuid buildTestRootUuidMax() {
+        return TestRootUuid.builder()
+            .id(new TestRootUuid.TestRootUuidId(UUID.randomUUID()))
+            .name("TestRootUuidMin")
+            .voList(newArrayListOf(TestVoUuid.builder().name("A").build(), TestVoUuid.builder().name("B").build()))
             .build();
     }
 

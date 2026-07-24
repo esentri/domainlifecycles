@@ -176,7 +176,7 @@ database persistence management, we provide a Spring Boot 4 starter:
 Gradle setup for a Spring Boot 4.x app:
 ```Groovy
 dependencies{
-    implementation 'io.domainlifecycles:spring-boot-starter:3.2.0'
+    implementation 'io.domainlifecycles:spring-boot-starter:3.3.0'
 }
 ```
 
@@ -185,7 +185,7 @@ Maven setup for a Spring Boot 4 app:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>spring-boot-starter</artifactId>
-    <version>3.2.0</version>
+    <version>3.3.0</version>
 </dependency>
 ```
 
@@ -197,7 +197,7 @@ We also support Spring Boot 3.x:
 Gradle setup for a Spring Boot 3.x app:
 ```Groovy
 dependencies{
-    implementation 'io.domainlifecycles:spring-boot3-starter:3.2.0'
+    implementation 'io.domainlifecycles:spring-boot3-starter:3.3.0'
 }
 ```
 
@@ -206,7 +206,7 @@ Maven setup for a Spring Boot 3.x app:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>spring-boot3-starter</artifactId>
-    <version>3.2.0</version>
+    <version>3.3.0</version>
 </dependency>
 ```
 
