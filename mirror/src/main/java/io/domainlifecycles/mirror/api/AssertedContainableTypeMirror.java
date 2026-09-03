@@ -108,6 +108,67 @@ public interface AssertedContainableTypeMirror {
     boolean isArray();
 
     /**
+     * Returns the JVM binary name (as returned by {@link Class#getName()}) of the type reflected by
+     * {@link #getTypeName()}.
+     * <p>
+     * {@link #getTypeName()} always reports the component type of an array (e.g. {@code byte} for a
+     * {@code byte[]} field), the array characteristic being exposed separately via {@link #isArray()}.
+     * Callers that need a name which can be compared against {@link Class#getName()} or passed to
+     * {@link Class#forName(String)} must therefore reassemble the array name. This method does that:
+     * for a {@code byte[]} it returns {@code [B}, for a {@code java.lang.Byte[]} it returns
+     * {@code [Ljava.lang.Byte;}.
+     * <p>
+     * For non array types the result is identical to {@link #getTypeName()}.
+     *
+     * @return the JVM binary name of the mirrored type
+     */
+    default String getBinaryTypeName() {
+        if (!isArray()) {
+            return getTypeName();
+        }
+        return "[" + jvmDescriptor(getTypeName());
+    }
+
+    /**
+     * Maps a type name to its JVM type descriptor.
+     *
+     * @param typeName the type name to map, either a primitive name, a full qualified class name or an
+     *                 array type name in binary ({@code [B}) or source ({@code byte[]}) notation
+     * @return the JVM type descriptor
+     */
+    private static String jvmDescriptor(String typeName) {
+        switch (typeName) {
+            case "byte":
+                return "B";
+            case "short":
+                return "S";
+            case "int":
+                return "I";
+            case "long":
+                return "J";
+            case "char":
+                return "C";
+            case "float":
+                return "F";
+            case "double":
+                return "D";
+            case "boolean":
+                return "Z";
+            default:
+                break;
+        }
+        if (typeName.startsWith("[")) {
+            // already a binary array name, the component type of a multidimensional array
+            return typeName;
+        }
+        if (typeName.endsWith("[]")) {
+            // source notation of a multidimensional array component type
+            return "[" + jvmDescriptor(typeName.substring(0, typeName.length() - 2));
+        }
+        return "L" + typeName + ";";
+    }
+
+    /**
      * @return the full qualified container type name, if the mirrored type is a container type.
      * Otherwise returns empty.
      */
