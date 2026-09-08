@@ -1,8 +1,36 @@
+/*
+ *     ___
+ *     │   ╲                 _
+ *     │    ╲ ___ _ __  __ _(_)_ _
+ *     |     ╲ _ ╲ '  ╲╱ _` │ │ ' ╲
+ *     |_____╱___╱_│_│_╲__,_│_│_||_|
+ *     │ │  (_)╱ _│___ __ _  _ __│ |___ ___
+ *     │ │__│ │  _╱ -_) _│ ││ ╱ _│ ╱ -_|_-<
+ *     │____│_│_│ ╲___╲__│╲_, ╲__│_╲___╱__╱
+ *                      |__╱
+ *
+ *  Copyright 2019-2025 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package io.domainlifecycles.staticanalysis;
 
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.ParamMirror;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sootup.core.inputlocation.AnalysisInputLocation;
 import sootup.core.jimple.basic.Immediate;
 import sootup.core.jimple.basic.Value;
@@ -16,7 +44,6 @@ import sootup.core.model.Body;
 import sootup.core.model.SootClass;
 import sootup.core.model.SootMethod;
 import sootup.core.signatures.MethodSignature;
-import sootup.core.signatures.MethodSubSignature;
 import sootup.core.typehierarchy.TypeHierarchy;
 import sootup.core.types.ClassType;
 import sootup.core.types.Type;
@@ -24,10 +51,9 @@ import sootup.java.bytecode.frontend.inputlocation.JavaClassPathAnalysisInputLoc
 import sootup.java.core.JavaIdentifierFactory;
 import sootup.java.core.views.JavaView;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
@@ -41,23 +67,135 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * {@link StaticAnalyzer} implementation on top of SootUp.
+ * <p>
+ * No global call graph is built. Instead the invoke instructions are read directly out of the
+ * bodies of the mirrored methods, which keeps the analysis confined to the domain: only calls
+ * whose target resolves to a mirrored type are kept, and only the bodies actually inspected are
+ * translated to Jimple.
+ * <p>
+ * Out of scope by design: constructors and static initializers. The mirror does not model them as
+ * {@link MethodMirror}, so {@code new SomeAggregate(...)} and {@code super(...)} do not appear in
+ * the result and are not reported as a gap either.
+ * <p>
+ * Known limitation: a method is analyzed once per {@link MethodSignature}, not once per concrete
+ * owner. For an inherited, non-overridden method the calls are therefore resolved against the
+ * static types visible in the <i>base</i> class body. A {@code this.someOverridable()} call inside
+ * such a body is attributed to the declaring base type, not to the concrete subtype that would be
+ * dispatched to at runtime.
+ * <p>
+ * Everything else that could not be analyzed is reported as a {@link Diagnostic} on the result -
+ * most importantly a mirrored type missing from the classpath, which would otherwise silently
+ * shrink the result.
+ *
+ * @author Mario Herb
+ */
 public class SootupStaticAnalyzer implements StaticAnalyzer {
 
-    /** A call target resolved to a concrete domain class. */
-    private record ResolvedTarget(String concreteOwnerTypeName, MethodSignature signature) {}
+    private static final Logger log = LoggerFactory.getLogger(SootupStaticAnalyzer.class);
 
-    public DomainCalls analyze(DomainMirror domainMirror, String classpath) {
-        JavaView view = buildView(classpath);
-        JavaIdentifierFactory idf = view.getIdentifierFactory();
-        TypeHierarchy typeHierarchy = view.getTypeHierarchy();
+    /**
+     * Everything the resolution steps need, so it does not have to be threaded through every
+     * method signature. Also holds the caches and the diagnostics of one analysis run; a fresh
+     * instance is created per {@link #analyze(DomainMirror, List)} call, which keeps the analyzer
+     * itself stateless.
+     */
+    private static final class AnalysisContext {
 
-        // Set of fully qualified names of all domain types. Used to keep the
-        // analysis confined to the mirrored classes: only calls whose target
-        // resolves to a domain type are kept, so we never descend into JDK or
-        // third-party dependency code.
-        Set<String> domainTypeNames = new HashSet<>();
-        domainMirror.getAllDomainTypeMirrors()
-            .forEach(dtm -> domainTypeNames.add(dtm.getTypeName()));
+        private final JavaView view;
+
+        private final JavaIdentifierFactory idf;
+
+        private final TypeHierarchy typeHierarchy;
+
+        /**
+         * The full qualified names of all mirrored types, used to keep the analysis inside the
+         * domain.
+         */
+        private final Set<String> domainTypeNames;
+
+        /** Memoizes the scan of a single method body, see {@link #scanBody}. */
+        private final Map<MethodSignature, BodyScan> bodyScans = new HashMap<>();
+
+        /** Memoizes the concrete realizations of a type. */
+        private final Map<ClassType, Set<SootClass>> concreteImplementations = new HashMap<>();
+
+        /** Memoizes the own and inherited methods of a concrete class. */
+        private final Map<ClassType, Collection<MethodSignature>> methodsWithInherited =
+            new HashMap<>();
+
+        private final Set<Diagnostic> diagnostics = new LinkedHashSet<>();
+
+        /** How often a body scan was requested, to tell the cache hit ratio. */
+        private int bodyScanRequests;
+
+        private AnalysisContext(JavaView view, Set<String> domainTypeNames) {
+            this.view = view;
+            this.idf = view.getIdentifierFactory();
+            this.typeHierarchy = view.getTypeHierarchy();
+            this.domainTypeNames = domainTypeNames;
+        }
+
+        private JavaView view() {
+            return view;
+        }
+
+        private JavaIdentifierFactory idf() {
+            return idf;
+        }
+
+        private TypeHierarchy typeHierarchy() {
+            return typeHierarchy;
+        }
+
+        private Set<String> domainTypeNames() {
+            return domainTypeNames;
+        }
+
+        private Set<Diagnostic> diagnostics() {
+            return diagnostics;
+        }
+
+        private void report(Diagnostic diagnostic) {
+            diagnostics.add(diagnostic);
+        }
+    }
+
+    /**
+     * The result of scanning one method body: the calls it makes into the domain, and the further
+     * bodies that have to be scanned to attribute all of its calls (lambda bodies, method
+     * reference targets).
+     * <p>
+     * This is a pure function of the body, so it is memoized per method signature. Without that,
+     * a method reachable from many entry points has its bytecode translated to Jimple again for
+     * every one of them, which is the expensive part of the analysis.
+     */
+    private record BodyScan(List<ResolvedTarget> targets, List<MethodSignature> descendInto) {
+
+        private static final BodyScan EMPTY = new BodyScan(List.of(), List.of());
+    }
+
+    /**
+     * A call target resolved to a concrete domain class, together with the position of the invoke
+     * instruction it was resolved from.
+     */
+    private record ResolvedTarget(String concreteOwnerTypeName,
+                                  MethodSignature signature,
+                                  String callSiteTypeName,
+                                  int lineNumber) {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DomainCalls analyze(DomainMirror domainMirror, List<Path> classpath) {
+        AnalysisContext ctx = new AnalysisContext(
+            buildView(classpath),
+            domainMirror.getAllDomainTypeMirrors().stream()
+                .map(dtm -> dtm.getTypeName())
+                .collect(Collectors.toCollection(HashSet::new)));
 
         // Signature -> set of concrete owner classes.
         // Multimap, because an inherited, non-overridden method shares the same
@@ -65,45 +203,76 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
         Map<MethodSignature, Set<String>> entryPointOwners = new LinkedHashMap<>();
 
         domainMirror.getAllDomainTypeMirrors().forEach(domainTypeMirror -> {
-            ClassType domainClassType = idf.getClassType(domainTypeMirror.getTypeName());
+            ClassType domainClassType = ctx.idf().getClassType(domainTypeMirror.getTypeName());
 
-            for (SootClass concrete : concreteImplementations(view, typeHierarchy, domainClassType)) {
+            // A mirrored type missing from the classpath yields no calls at all - without a
+            // diagnostic that is indistinguishable from a type that simply calls nothing.
+            if (ctx.view().getClass(domainClassType).isEmpty()) {
+                ctx.report(Diagnostic.typeNotOnClasspath(domainTypeMirror.getTypeName()));
+                return;
+            }
+
+            for (SootClass concrete : concreteImplementations(ctx, domainClassType)) {
                 String ownerName = concrete.getType().getFullyQualifiedName();
-                collectMethodsWithInherited(view, typeHierarchy, concrete).forEach(sig ->
+                collectMethodsWithInherited(ctx, concrete).forEach(sig ->
                     entryPointOwners
                         .computeIfAbsent(sig, k -> new LinkedHashSet<>())
                         .add(ownerName));
             }
         });
 
-        Map<DomainCalls.MethodCall, DomainCalls.CalledMethods> domainCalls = new HashMap<>();
+        DomainCalls.Builder builder = DomainCalls.builder();
 
         for (MethodSignature method : entryPointOwners.keySet()) {
             // Read the invoke expressions directly from this method's body
-            // (and its lambda bodies). No global call graph is built, so only
-            // the bodies of the mirrored classes are loaded and translated.
-            Set<ResolvedTarget> targets =
-                resolveDomainCallsFromMethod(view, idf, typeHierarchy, method, domainTypeNames);
-            if (targets.isEmpty()) continue;
+            // (and its lambda bodies).
+            Set<ResolvedTarget> targets = resolveDomainCallsFromMethod(ctx, method);
+            if (targets.isEmpty()) {
+                continue;
+            }
 
             // Map each resolved target to its concrete owner class (handles
             // inherited methods, whose signature points to a base class).
-            List<DomainCalls.MethodCall> targetMethods = targets.stream()
-                .map(rt -> mapToOwner(domainMirror, rt.signature(), rt.concreteOwnerTypeName()))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .toList();
-            if (targetMethods.isEmpty()) continue;
+            List<DomainCalls.CallSite> callSites = new ArrayList<>();
+            for (ResolvedTarget target : targets) {
+                Optional<DomainMethod> called =
+                    mapToOwner(domainMirror, target.signature(), target.concreteOwnerTypeName());
+                if (called.isEmpty()) {
+                    if (!isCompilerGenerated(target.signature())) {
+                        ctx.report(Diagnostic.targetNotInMirror(target.signature().toString(),
+                            target.concreteOwnerTypeName()));
+                    }
+                    continue;
+                }
+                callSites.add(new DomainCalls.CallSite(
+                    called.get(), target.callSiteTypeName(), target.lineNumber()));
+            }
+            if (callSites.isEmpty()) {
+                continue;
+            }
 
             // Each concrete owner of this signature gets its own entry, always
             // mapped to the concrete calling class (not the declaring class).
+            // Merging, not replacing: several signatures (e.g. a generic method and its
+            // bridge) can map onto the same caller node.
             for (String ownerTypeName : entryPointOwners.get(method)) {
-                mapToOwner(domainMirror, method, ownerTypeName).ifPresent(caller ->
-                    domainCalls.put(caller, new DomainCalls.CalledMethods(targetMethods)));
+                Optional<DomainMethod> caller = mapToOwner(domainMirror, method, ownerTypeName);
+                if (caller.isEmpty()) {
+                    if (!isCompilerGenerated(method)) {
+                        ctx.report(Diagnostic.callerNotInMirror(method.toString(), ownerTypeName));
+                    }
+                    continue;
+                }
+                builder.add(caller.get(), callSites);
             }
         }
 
-        return new DomainCalls(domainCalls);
+        log.debug("Analyzed {} entry points: {} body scan requests served by {} actual scans, "
+                + "{} diagnostics.",
+            entryPointOwners.size(), ctx.bodyScanRequests, ctx.bodyScans.size(),
+            ctx.diagnostics().size());
+
+        return builder.addAll(ctx.diagnostics()).build();
     }
 
     // ---------------------------------------------------------------------
@@ -111,17 +280,15 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
     // ---------------------------------------------------------------------
 
     /**
-     * Splits the externally provided classpath at the platform separator and
-     * registers each path as its own input location. Classes are loaded lazily,
+     * Registers every classpath entry as its own input location. Classes are loaded lazily,
      * so providing the full classpath is cheap as long as we do not force-load
      * everything: only the bodies we actually inspect are translated to Jimple.
      */
-    private JavaView buildView(String classpath) {
-        List<AnalysisInputLocation> inputLocations =
-            Arrays.stream(classpath.split(File.pathSeparator))
-                .filter(p -> !p.isBlank())
-                .map(p -> (AnalysisInputLocation) new JavaClassPathAnalysisInputLocation(p))
-                .collect(Collectors.toCollection(ArrayList::new));
+    private JavaView buildView(List<Path> classpath) {
+        List<AnalysisInputLocation> inputLocations = classpath.stream()
+            .map(path -> (AnalysisInputLocation)
+                new JavaClassPathAnalysisInputLocation(path.toString()))
+            .collect(Collectors.toCollection(ArrayList::new));
         return new JavaView(inputLocations);
     }
 
@@ -135,10 +302,12 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
      * synthetic method (lambda$...) of the same class; those are traversed and
      * their calls attributed to the original method. Lambdas and method
      * references are emitted as invokedynamic and handled separately.
+     * <p>
+     * The per-body work is done by {@link #scanBody}, which is memoized: only the traversal over
+     * the descent targets is specific to this entry point.
      */
     private Set<ResolvedTarget> resolveDomainCallsFromMethod(
-        JavaView view, JavaIdentifierFactory idf, TypeHierarchy typeHierarchy,
-        MethodSignature caller, Set<String> domainTypeNames) {
+        AnalysisContext ctx, MethodSignature caller) {
 
         Set<ResolvedTarget> result = new LinkedHashSet<>();
         Deque<MethodSignature> worklist = new ArrayDeque<>();
@@ -148,37 +317,64 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
 
         while (!worklist.isEmpty()) {
             MethodSignature current = worklist.poll();
-            if (!visited.add(current)) continue;
-
-            Optional<Body> bodyOpt = bodyOf(view, current);
-            if (bodyOpt.isEmpty()) continue;
-
-            for (Stmt stmt : bodyOpt.get().getStmts()) {
-                AbstractInvokeExpr invokeExpr = invokeExprOf(stmt);
-                if (invokeExpr == null) continue;
-
-                if (invokeExpr instanceof JDynamicInvokeExpr dyn) {
-                    handleDynamicInvoke(view, idf, typeHierarchy, dyn,
-                        domainTypeNames, worklist, result);
-                    continue;
-                }
-
-                MethodSignature target = invokeExpr.getMethodSignature();
-
-                // direct synthetic lambda invoke of the same class
-                if (isSyntheticLambdaOf(caller, target)) {
-                    worklist.add(target);
-                    continue;
-                }
-
-                result.addAll(resolveTargetsAgainstDomain(
-                    view, typeHierarchy, target, domainTypeNames));
+            if (!visited.add(current)) {
+                continue;
             }
+
+            ctx.bodyScanRequests++;
+            BodyScan scan = ctx.bodyScans.computeIfAbsent(current, sig -> scanBody(ctx, sig));
+            result.addAll(scan.targets());
+            worklist.addAll(scan.descendInto());
         }
 
         // remove self-reference (caller calling itself by the same signature)
         result.removeIf(rt -> rt.signature().equals(caller));
         return result;
+    }
+
+    /**
+     * Reads the invoke expressions out of one method body and splits them into the calls it makes
+     * into the domain and the bodies that still have to be scanned to attribute all of its calls.
+     * <p>
+     * Depends on nothing but the body itself, which is what makes it memoizable. A synthetic
+     * lambda invoke is recognized relative to the scanned body's own class, so descending into a
+     * body of another class (via a method reference) also picks up that class's lambdas.
+     */
+    private BodyScan scanBody(AnalysisContext ctx, MethodSignature signature) {
+        Optional<Body> bodyOpt = bodyOf(ctx, signature);
+        if (bodyOpt.isEmpty()) {
+            return BodyScan.EMPTY;
+        }
+
+        List<ResolvedTarget> targets = new ArrayList<>();
+        List<MethodSignature> descendInto = new ArrayList<>();
+        String callSiteTypeName = signature.getDeclClassType().getFullyQualifiedName();
+
+        for (Stmt stmt : bodyOpt.get().getStmts()) {
+            AbstractInvokeExpr invokeExpr = invokeExprOf(stmt);
+            if (invokeExpr == null) {
+                continue;
+            }
+            int lineNumber = lineNumberOf(stmt);
+
+            if (invokeExpr instanceof JDynamicInvokeExpr dyn) {
+                handleDynamicInvoke(ctx, dyn, callSiteTypeName, lineNumber, descendInto, targets);
+                continue;
+            }
+
+            MethodSignature target = invokeExpr.getMethodSignature();
+
+            // direct synthetic lambda invoke of the scanned body's own class
+            if (isSyntheticLambdaOf(signature, target)) {
+                descendInto.add(target);
+                continue;
+            }
+
+            targets.addAll(resolveTargetsAgainstDomain(
+                ctx, target, callSiteTypeName, lineNumber));
+        }
+
+        return new BodyScan(List.copyOf(targets), List.copyOf(descendInto));
     }
 
     /**
@@ -194,22 +390,26 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
      * implementation via resolveTargetsAgainstDomain / the worklist.
      */
     private void handleDynamicInvoke(
-        JavaView view, JavaIdentifierFactory idf, TypeHierarchy typeHierarchy,
-        JDynamicInvokeExpr dyn, Set<String> domainTypeNames,
-        Deque<MethodSignature> worklist, Set<ResolvedTarget> result) {
+        AnalysisContext ctx, JDynamicInvokeExpr dyn,
+        String callSiteTypeName, int lineNumber,
+        List<MethodSignature> descendInto, List<ResolvedTarget> targets) {
 
         // static type of the bound receiver (first dynamic arg), if any
         Optional<ClassType> receiverType = boundReceiverType(dyn);
 
         for (Immediate bootstrapArg : dyn.getBootstrapArgs()) {
-            if (!(bootstrapArg instanceof MethodHandle methodHandle)) continue;
+            if (!(bootstrapArg instanceof MethodHandle methodHandle)) {
+                continue;
+            }
             MethodSignature handleMethod = referencedMethodSignature(methodHandle);
-            if (handleMethod == null) continue; // field handle (record accessor etc.)
+            if (handleMethod == null) {
+                continue; // field handle (record accessor etc.)
+            }
 
             if (handleMethod.getName().startsWith("lambda$")) {
                 // synthetic lambda body - its body lives in the (same) class, so the
                 // handle signature is directly loadable: descend into it, not a target.
-                worklist.add(handleMethod);
+                descendInto.add(handleMethod);
                 continue;
             }
 
@@ -219,30 +419,26 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
             // the normal invoke path.
             MethodSignature reportSignature = handleMethod;
             if (receiverType.isPresent()
-                && domainTypeNames.contains(receiverType.get().getFullyQualifiedName())) {
-                reportSignature = idf.getMethodSignature(
+                && ctx.domainTypeNames().contains(receiverType.get().getFullyQualifiedName())) {
+                reportSignature = ctx.idf().getMethodSignature(
                     receiverType.get(), handleMethod.getSubSignature());
             }
 
             // resolve against the domain for REPORTING - on the receiver type this
             // yields e.g. MyRepository.someOperation as a direct hit, which is the
             // call-site type we want in the result.
-            Set<ResolvedTarget> resolved = resolveTargetsAgainstDomain(
-                view, typeHierarchy, reportSignature, domainTypeNames);
-            result.addAll(resolved);
+            targets.addAll(resolveTargetsAgainstDomain(
+                ctx, reportSignature, callSiteTypeName, lineNumber));
 
             // DESCENT is separate from reporting: descend into the concrete
             // implementation bodies. The reporting owner may be an interface (direct
             // hit), whose method has no body - so we explicitly resolve the concrete
             // implementations of the reporting type and descend into their loadable
             // method with the same sub-signature.
-            for (MethodSignature descendInto :
-                concreteDescentTargets(view, typeHierarchy, reportSignature)) {
-                worklist.add(descendInto);
-            }
+            descendInto.addAll(concreteDescentTargets(ctx, reportSignature));
             // also descend into the raw handle method, in case its body genuinely
             // lives on the declaring type (e.g. a static method or a default method)
-            worklist.add(handleMethod);
+            descendInto.add(handleMethod);
         }
     }
 
@@ -255,14 +451,13 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
      * keeps the call-site (interface) type.
      */
     private Set<MethodSignature> concreteDescentTargets(
-        JavaView view, TypeHierarchy typeHierarchy, MethodSignature reportSignature) {
+        AnalysisContext ctx, MethodSignature reportSignature) {
 
         Set<MethodSignature> descent = new LinkedHashSet<>();
         String subSignature = reportSignature.getSubSignature().toString();
 
-        for (SootClass impl :
-            concreteImplementations(view, typeHierarchy, reportSignature.getDeclClassType())) {
-            collectMethodsWithInherited(view, typeHierarchy, impl).stream()
+        for (SootClass impl : concreteImplementations(ctx, reportSignature.getDeclClassType())) {
+            collectMethodsWithInherited(ctx, impl).stream()
                 .filter(sig -> sig.getSubSignature().toString().equals(subSignature))
                 .findFirst()
                 .ifPresent(descent::add);
@@ -309,33 +504,34 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
      * nevertheless attributed to the concrete implementation.
      */
     private Set<ResolvedTarget> resolveTargetsAgainstDomain(
-        JavaView view, TypeHierarchy typeHierarchy,
-        MethodSignature target, Set<String> domainTypeNames) {
+        AnalysisContext ctx, MethodSignature target,
+        String callSiteTypeName, int lineNumber) {
 
         String declName = target.getDeclClassType().getFullyQualifiedName();
 
         // direct hit: declaring type is itself a domain type
-        if (domainTypeNames.contains(declName)) {
-            return Collections.singleton(new ResolvedTarget(declName, target));
+        if (ctx.domainTypeNames().contains(declName)) {
+            return Collections.singleton(
+                new ResolvedTarget(declName, target, callSiteTypeName, lineNumber));
         }
 
         // otherwise expand to concrete implementations that are domain types
         Set<ResolvedTarget> resolved = new LinkedHashSet<>();
         String subSignature = target.getSubSignature().toString();
 
-        for (SootClass impl :
-            concreteImplementations(view, typeHierarchy, target.getDeclClassType())) {
+        for (SootClass impl : concreteImplementations(ctx, target.getDeclClassType())) {
 
             String implName = impl.getType().getFullyQualifiedName();
-            if (!domainTypeNames.contains(implName)) {
+            if (!ctx.domainTypeNames().contains(implName)) {
                 continue;
             }
             // find the method with the same sub-signature on the implementation
             // (own or inherited) and attribute it to the concrete implementation
-            collectMethodsWithInherited(view, typeHierarchy, impl).stream()
+            collectMethodsWithInherited(ctx, impl).stream()
                 .filter(sig -> sig.getSubSignature().toString().equals(subSignature))
                 .findFirst()
-                .ifPresent(sig -> resolved.add(new ResolvedTarget(implName, sig)));
+                .ifPresent(sig -> resolved.add(
+                    new ResolvedTarget(implName, sig, callSiteTypeName, lineNumber)));
         }
 
         return resolved;
@@ -362,19 +558,61 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
     }
 
     /**
-     * Loads the body of a method, swallowing resolution errors (e.g. abstract
-     * methods, methods without a body, or bytecode that fails to translate).
+     * Reads the source line of a statement from the line number table of the analyzed bytecode,
+     * or {@link DomainCalls.CallSite#UNKNOWN_LINE} if it carries no position information.
      */
-    private Optional<Body> bodyOf(JavaView view, MethodSignature signature) {
+    private int lineNumberOf(Stmt stmt) {
         try {
-            Optional<? extends SootMethod> methodOpt = view.getMethod(signature);
-            if (methodOpt.isEmpty()) return Optional.empty();
+            int line = stmt.getPositionInfo().getStmtPosition().getFirstLine();
+            return line > 0 ? line : DomainCalls.CallSite.UNKNOWN_LINE;
+        } catch (RuntimeException e) {
+            return DomainCalls.CallSite.UNKNOWN_LINE;
+        }
+    }
+
+    /**
+     * Loads the body of a method, swallowing resolution errors.
+     * <p>
+     * The three ways this can come up empty are told apart, because they mean different things: a
+     * method without a body is normal (abstract or interface methods) and not reported, a method
+     * missing from the classpath is expected for references outside it and reported as info, and
+     * a body that fails to translate is a real gap and reported as a warning.
+     */
+    private Optional<Body> bodyOf(AnalysisContext ctx, MethodSignature signature) {
+        try {
+            Optional<? extends SootMethod> methodOpt = ctx.view().getMethod(signature);
+            if (methodOpt.isEmpty()) {
+                ctx.report(Diagnostic.methodNotOnClasspath(signature.toString()));
+                return Optional.empty();
+            }
             SootMethod method = methodOpt.get();
-            if (!method.hasBody()) return Optional.empty();
+            if (!method.hasBody()) {
+                // abstract or interface method: nothing to analyze, nothing to report
+                return Optional.empty();
+            }
             return Optional.of(method.getBody());
         } catch (RuntimeException e) {
+            ctx.report(Diagnostic.bodyNotLoadable(signature.toString(),
+                e.getClass().getSimpleName()
+                    + (e.getMessage() == null ? "" : ": " + e.getMessage())));
             return Optional.empty();
         }
+    }
+
+    /**
+     * Whether a method exists only in the bytecode and has no counterpart in the mirror by design.
+     * <p>
+     * Constructors and static initializers are not modelled as {@link MethodMirror} at all,
+     * and synthetic methods (lambda bodies, enum {@code $values}, {@code access$}
+     * bridges) are an implementation detail of the compiler. Failing to map them is expected, not
+     * a gap worth reporting: a lambda body's calls are attributed to the method that defines it.
+     */
+    private boolean isCompilerGenerated(MethodSignature signature) {
+        String name = signature.getName();
+        return name.startsWith("<")
+            || name.startsWith("$")
+            || name.startsWith("lambda$")
+            || name.startsWith("access$");
     }
 
     private boolean isSyntheticLambdaOf(MethodSignature caller, MethodSignature target) {
@@ -392,28 +630,33 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
      * interface all implementers, for an abstract class all concrete subclasses
      * (each transitively).
      */
-    private Set<SootClass> concreteImplementations(
-        JavaView view, TypeHierarchy typeHierarchy, ClassType classType) {
+    private Set<SootClass> concreteImplementations(AnalysisContext ctx, ClassType classType) {
+        return ctx.concreteImplementations.computeIfAbsent(classType,
+            type -> resolveConcreteImplementations(ctx, type));
+    }
 
-        if (!typeHierarchy.contains(classType)) {
+    private Set<SootClass> resolveConcreteImplementations(
+        AnalysisContext ctx, ClassType classType) {
+
+        if (!ctx.typeHierarchy().contains(classType)) {
             return Collections.emptySet();
         }
 
         Set<SootClass> result = new LinkedHashSet<>();
 
-        view.getClass(classType).ifPresent(cls -> {
+        ctx.view().getClass(classType).ifPresent(cls -> {
             if (!cls.isAbstract() && !cls.isInterface()) {
                 result.add(cls);
             }
         });
 
         Collection<ClassType> candidates =
-            typeHierarchy.isInterface(classType)
-                ? typeHierarchy.implementersOf(classType).collect(Collectors.toList())
-                : typeHierarchy.subclassesOf(classType).collect(Collectors.toList());
+            ctx.typeHierarchy().isInterface(classType)
+                ? ctx.typeHierarchy().implementersOf(classType).collect(Collectors.toList())
+                : ctx.typeHierarchy().subclassesOf(classType).collect(Collectors.toList());
 
         for (ClassType sub : candidates) {
-            view.getClass(sub).ifPresent(subCls -> {
+            ctx.view().getClass(sub).ifPresent(subCls -> {
                 if (!subCls.isAbstract() && !subCls.isInterface()) {
                     result.add(subCls);
                 }
@@ -434,7 +677,14 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
      * methods are added first to take precedence over inherited ones.
      */
     private Collection<MethodSignature> collectMethodsWithInherited(
-        JavaView view, TypeHierarchy typeHierarchy, SootClass concrete) {
+        AnalysisContext ctx, SootClass concrete) {
+
+        return ctx.methodsWithInherited.computeIfAbsent(concrete.getType(),
+            type -> resolveMethodsWithInherited(ctx, concrete));
+    }
+
+    private Collection<MethodSignature> resolveMethodsWithInherited(
+        AnalysisContext ctx, SootClass concrete) {
 
         Map<String, MethodSignature> collected = new LinkedHashMap<>();
 
@@ -444,8 +694,8 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
                 m.getSignature()));
 
         // all superclasses (transitively, up to Object)
-        typeHierarchy.superClassesOf(concrete.getType()).forEach(superType ->
-            view.getClass(superType).ifPresent(superCls ->
+        ctx.typeHierarchy().superClassesOf(concrete.getType()).forEach(superType ->
+            ctx.view().getClass(superType).ifPresent(superCls ->
                 superCls.getMethods().forEach(m ->
                     collected.putIfAbsent(m.getSignature().getSubSignature().toString(),
                         m.getSignature())))
@@ -463,14 +713,14 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
      * signature). Finds the method by name + parameters, independent of the
      * declaring class, so inherited methods are attributed to the concrete owner.
      */
-    private Optional<DomainCalls.MethodCall> mapToOwner(
+    private Optional<DomainMethod> mapToOwner(
         DomainMirror domainMirror, MethodSignature methodSignature, String ownerTypeName) {
 
         return domainMirror.getDomainTypeMirror(ownerTypeName)
             .flatMap(domainTypeMirror -> domainTypeMirror.getMethods()
                 .stream()
                 .filter(m -> areSemanticallyEqualIgnoringDeclaringClass(methodSignature, m))
-                .map(m -> new DomainCalls.MethodCall(domainTypeMirror.getTypeName(), m))
+                .map(m -> new DomainMethod(domainTypeMirror.getTypeName(), m))
                 .findFirst());
     }
 
