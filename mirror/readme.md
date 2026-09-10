@@ -40,7 +40,9 @@ that does deep type resolving.
 public class ShopApplication {
 
     static {
-        Domain.initialize(new ReflectiveDomainMirrorFactory(new TypeMetaResolver(), "sampleshop"));
+        var factory = new ReflectiveDomainMirrorFactory("sampleshop");
+        factory.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(factory);
     }
 
     public static void main(String[] args) {

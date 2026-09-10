@@ -121,6 +121,15 @@ DLC provides following core features:
     * API documentation consistently to DLCs Jackson AutoMapping features (out-of-the-box)
     * Autoconfiguration for DLC Persistence via jOOQ and DLC JSON Mapping via Jackson 2/3
 
+- [`Static Analysis`](static-analysis/readme.md): Answers which domain methods call each other, and which
+  domain types and methods take part in one concrete flow
+    * Based on the Domain Mirror and the compiled domain classes
+    * A flow follows method calls, the dispatch into implementations, published DomainEvents together with
+      the methods listening to them, and the methods processing a DomainCommand
+    * Reduce a domain diagram to the classes taking part in one flow
+    * The SootUp based analysis implementation is a module of its own
+      (`io.domainlifecycles:static-analysis-sootup`), so reading a result does not require it
+
 - [`Plugins`](dlc-plugins/readme.md): Generate domain model diagrams in the build process.
 
 ## Getting started
@@ -164,6 +173,8 @@ DLC provides several JARs which enable the DLC features independently
 | General Swagger / Open API v3 support                               | only internally used   | io.domainlifecycles:swagger-integration                                                                                                           |  
 | Spring 6 Web support                                                | application developers | io.domainlifecycles:spring-web6-integration                                                                                                       |
 | Spring 7 Web support                                                | application developers | io.domainlifecycles:spring-web-integration                                                                                                        |
+| Static analysis of domain calls and flows                           | application developers | io.domainlifecycles:static-analysis                                                                                                               |
+| SootUp based static analysis implementation                         | application developers | io.domainlifecycles:static-analysis-sootup                                                                                                        |
 | Domain Diagrams                                                     | application developers | io.domainlifecycles:domain-diagrammer                                                                                                             | 
 
 To simplify the dependency management using all features in a Spring Boot 4.x app using jOOQ for the relational

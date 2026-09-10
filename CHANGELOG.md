@@ -41,6 +41,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   maximum depth reports truncation
 - `FlowConfig` allows limiting the depth, switching off event or implementation edges and filtering
   methods (e.g. excluding accessors); a flow renders as an indented tree
+- The [domain diagrammer](./domain-diagrammer) optionally takes such an analysis result and can
+  reduce a diagram to the classes taking part in one flow, via the new `includeFlowsFrom` trim
+  setting - starting at a domain command, a domain event, a single method or a whole type. The
+  restriction is combined with the existing trim settings and can only narrow what they allow
 
 ## [3.2.0] - 2026-06-16
 - Added support for JMolecules DDD types for DLC mirror, now able to render Domain diagrams using JMolecules marker interfaces or annotations
