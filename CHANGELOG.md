@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+- Added [static analysis](./static-analysis) module, answering which domain methods are called from
+  which other domain methods, based on the DomainMirror and a compiled classpath
+- `StaticAnalyzer` (with a SootUp based implementation) reads the invoke instructions directly out
+  of the bodies of the mirrored methods instead of building a global call graph, so only the
+  inspected bodies are translated and the analysis stays confined to the domain
+- Resolves lambdas (also nested ones), method references (bound, unbound and static), private
+  helper methods, overloads, generic methods with compiler generated bridge methods and inherited
+  methods; recursive and mutually recursive calls terminate
+- Calls are resolved once per concrete owner: a `this` dispatch inside an inherited body is
+  attributed to the overriding subtype, while `super.x()` stays attributed to the base class
+- Default methods of mirrored interfaces are analyzed for every implementation not overriding them
+- `DomainCalls` holds the immutable result and indexes both directions (`callsFor` and
+  `callersOf`). Its nodes combine the concrete owner type with the mirrored method, its edges carry
+  the type whose body contained the call and the source line
+- `Diagnostic` reports what could not be analyzed - most importantly a mirrored type missing from
+  the classpath - so that an empty result can be told apart from an unanalyzable one; `isComplete()`
+  summarizes whether the result can be trusted
+- `DomainClasspath` derives the classpath to analyze from the mirror, from given types or from a
+  classpath string
+- Added `FlowAnalyzer`, answering which domain types and methods are reachable from a given method,
+  domain event or domain command, by joining the analyzed calls with the event and command
+  information of the mirror
+- A flow follows four kinds of edges: method calls, dispatch into implementations and overrides,
+  published domain events together with the methods listening to them, and the methods processing a
+  domain command. Several listeners of one event branch the flow into independent continuations
+- Flows are traversed breadth first and stay bounded: every node is expanded at most once, cycles -
+  including those closing over a published event - are reported and not followed, and a configurable
+  maximum depth reports truncation
+- `FlowConfig` allows limiting the depth, switching off event or implementation edges and filtering
+  methods (e.g. excluding accessors); a flow renders as an indented tree
+
 ## [3.2.0] - 2026-06-16
 - Added support for JMolecules DDD types for DLC mirror, now able to render Domain diagrams using JMolecules marker interfaces or annotations
 - Upgraded several libraries, minor version upgrades
