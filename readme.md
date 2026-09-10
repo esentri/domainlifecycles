@@ -129,6 +129,8 @@ DLC provides following core features:
     * Reduce a domain diagram to the classes taking part in one flow
     * The SootUp based analysis implementation is a module of its own
       (`io.domainlifecycles:static-analysis-sootup`), so reading a result does not require it
+    * JSON (de)serialization of an analysis result via `static-analysis-serialization-jackson3`/`jackson2`,
+      so it can be produced once and consumed elsewhere, e.g. by an external diagram viewer tool
 
 - [`Plugins`](dlc-plugins/readme.md): Generate domain model diagrams in the build process.
 
@@ -175,6 +177,8 @@ DLC provides several JARs which enable the DLC features independently
 | Spring 7 Web support                                                | application developers | io.domainlifecycles:spring-web-integration                                                                                                        |
 | Static analysis of domain calls and flows                           | application developers | io.domainlifecycles:static-analysis                                                                                                               |
 | SootUp based static analysis implementation                         | application developers | io.domainlifecycles:static-analysis-sootup                                                                                                        |
+| Static analysis result (DomainCalls) serialization (Jackson 2)      | application developers | io.domainlifecycles:static-analysis-serialization-jackson2                                                                                        |
+| Static analysis result (DomainCalls) serialization (Jackson 3)      | application developers | io.domainlifecycles:static-analysis-serialization-jackson3                                                                                        |
 | Domain Diagrams                                                     | application developers | io.domainlifecycles:domain-diagrammer                                                                                                             | 
 
 To simplify the dependency management using all features in a Spring Boot 4.x app using jOOQ for the relational

@@ -50,6 +50,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `flowExcludeAccessors` diagram options mirror the diagrammer's flow settings. Whenever
   `includeFlowsFrom` is configured, the plugin runs the SootUp based static analysis on the
   project's compiled classes as part of diagram generation
+- Added [static analysis serialization Jackson 3](./static-analysis-serialization-jackson3) and
+  [Jackson 2](./static-analysis-serialization-jackson2) modules, JSON (de)serializing a `DomainCalls`
+  analysis result so it can be produced once (e.g. in a build step) and consumed elsewhere - for
+  instance by an external diagram viewer tool - without re-running the static analysis. A
+  `DomainMethod` is written as a compact type/method/parameter-types reference rather than an
+  embedded mirror, and resolved back against a `DomainMirror` given at deserialization time
 
 ## [3.2.0] - 2026-06-16
 - Added support for JMolecules DDD types for DLC mirror, now able to render Domain diagrams using JMolecules marker interfaces or annotations

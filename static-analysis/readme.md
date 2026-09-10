@@ -226,6 +226,53 @@ initialized — it defines which types belong to the domain.
 Beyond that, the analysis needs the *compiled* domain classes: it reads bytecode, not source code
 and not the mirror alone. That makes it a test time or build time feature rather than a runtime one.
 
+## Serializing a DomainCalls result
+
+Since the analysis needs the compiled domain classes, it typically runs once, at build or test time.
+To let a `DomainCalls` result be produced there and *consumed* elsewhere - for instance by an
+external tool that visualizes the domain, without shipping a bytecode analysis framework to it - it
+can be serialized to JSON and deserialized again.
+
+This is provided by two dedicated modules, `static-analysis-serialization-jackson3` and
+`static-analysis-serialization-jackson2` (legacy, prefer the Jackson 3 module for new code), each
+holding a `JacksonDomainCallsSerializer`. Gradle setup:
+
+```Groovy
+dependencies{
+    implementation 'io.domainlifecycles:static-analysis-serialization-jackson3:3.2.0'
+}
+```
+
+Maven setup:
+
+```XML
+<dependency>
+    <groupId>io.domainlifecycles</groupId>
+    <artifactId>static-analysis-serialization-jackson3</artifactId>
+    <version>3.2.0</version>
+</dependency>
+```
+
+Both bring `io.domainlifecycles:static-analysis` along transitively.
+
+```Java
+DomainCallsSerializer serializer = new JacksonDomainCallsSerializer();
+String json = serializer.serialize(domainCalls);
+
+// elsewhere, e.g. in a different tool, against a DomainMirror deserialized the same way
+// (see mirror-serialization-jackson3) from the very domain the DomainCalls was analyzed against:
+DomainCalls deserialized = serializer.deserialize(json, domainMirror);
+```
+
+A `DomainMethod` node is not serialized by embedding its `MethodMirror`: a mirror is only meaningful
+wired into a fully initialized `DomainMirror`, so embedding it would either duplicate large parts of
+that mirror's own JSON representation or produce a half-initialized mirror on the reading side.
+Instead, a `DomainMethod` is written as a compact reference - its owner type name, method name and
+parameter type names - and resolved back against the `DomainMirror` given to `deserialize(...)`.
+That `DomainMirror` therefore has to be the one the serialized `DomainCalls` was analyzed against
+(or an equally built one); an unresolvable reference fails deserialization with a
+`DomainCallsSerializationException`.
+
 ## Restricting a domain diagram to a flow
 
 The main consumer of an analysis result within DLC is
