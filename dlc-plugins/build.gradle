@@ -21,4 +21,5 @@ dependencies {
     implementation project(":domain-diagrammer")
     api libs.slf4j.api
 
+    testImplementation libs.assertj
 }

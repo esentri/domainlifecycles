@@ -1617,7 +1617,7 @@ public class DiagramConfig {
         if(showUnspecifiedServiceKindMethods != null) visualBuilder.withShowUnspecifiedServiceKindMethods(showUnspecifiedServiceKindMethods);
         if(callApplicationServiceDriver != null) visualBuilder.withCallApplicationServiceDriver(callApplicationServiceDriver);
         if(fieldBlacklist != null && !fieldBlacklist.isEmpty()) visualBuilder.withFieldBlacklist(fieldBlacklist);
-        if(methodBlacklist != null && !methodBlacklist.isEmpty()) visualBuilder.withMethodBlacklist(classesBlacklist);
+        if(methodBlacklist != null && !methodBlacklist.isEmpty()) visualBuilder.withMethodBlacklist(methodBlacklist);
         if(showInheritedMembersInClasses != null) visualBuilder.withShowInheritedMembersInClasses(showInheritedMembersInClasses);
         if(showObjectMembersInClasses != null) visualBuilder.withShowObjectMembersInClasses(showObjectMembersInClasses);
         if(multiplicityInLabel != null) visualBuilder.withMultiplicityInLabel(multiplicityInLabel);
