@@ -33,10 +33,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sootup.core.inputlocation.AnalysisInputLocation;
 import sootup.core.jimple.basic.Immediate;
+import sootup.core.jimple.basic.Local;
 import sootup.core.jimple.basic.Value;
 import sootup.core.jimple.common.constant.MethodHandle;
+import sootup.core.jimple.common.expr.AbstractInstanceInvokeExpr;
 import sootup.core.jimple.common.expr.AbstractInvokeExpr;
 import sootup.core.jimple.common.expr.JDynamicInvokeExpr;
+import sootup.core.jimple.common.expr.JSpecialInvokeExpr;
 import sootup.core.jimple.common.stmt.AbstractDefinitionStmt;
 import sootup.core.jimple.common.stmt.JInvokeStmt;
 import sootup.core.jimple.common.stmt.Stmt;
@@ -79,11 +82,18 @@ import java.util.stream.Collectors;
  * {@link MethodMirror}, so {@code new SomeAggregate(...)} and {@code super(...)} do not appear in
  * the result and are not reported as a gap either.
  * <p>
- * Known limitation: a method is analyzed once per {@link MethodSignature}, not once per concrete
- * owner. For an inherited, non-overridden method the calls are therefore resolved against the
- * static types visible in the <i>base</i> class body. A {@code this.someOverridable()} call inside
- * such a body is attributed to the declaring base type, not to the concrete subtype that would be
- * dispatched to at runtime.
+ * Calls are resolved once per concrete owner, not once per {@link MethodSignature}. That matters
+ * for an inherited, non-overridden method: its body lives in the base class, but a virtual
+ * {@code this.someOverridable()} call inside it dispatches to the override of the concrete
+ * subtype at runtime, and that is what is reported. The body itself is still read only once, see
+ * {@link BodyScan}. {@code super.x()} is an {@code invokespecial} and therefore genuinely not
+ * virtual: it stays attributed to the base class.
+ * <p>
+ * Remaining imprecision: a call through a <i>reference</i> whose static type is an interface or
+ * an abstract class is reported on that type, not on the implementations it may dispatch to at
+ * runtime. That is deliberate - it is the honest information about the code - and the
+ * polymorphic continuation is added by the {@link FlowAnalyzer} as a separate kind of edge,
+ * instead of being merged into the call graph.
  * <p>
  * Everything else that could not be analyzed is reported as a {@link Diagnostic} on the result -
  * most importantly a mirrored type missing from the classpath, which would otherwise silently
@@ -163,17 +173,43 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
     }
 
     /**
-     * The result of scanning one method body: the calls it makes into the domain, and the further
+     * The result of scanning one method body: the invoke instructions it contains, and the further
      * bodies that have to be scanned to attribute all of its calls (lambda bodies, method
      * reference targets).
      * <p>
-     * This is a pure function of the body, so it is memoized per method signature. Without that,
-     * a method reachable from many entry points has its bytecode translated to Jimple again for
-     * every one of them, which is the expensive part of the analysis.
+     * This is a pure function of the body - deliberately so: it is memoized per method signature,
+     * while resolving its invokes against the domain happens once per concrete owner. Without the
+     * memoization a method reachable from many entry points has its bytecode translated to Jimple
+     * again for every one of them, which is the expensive part of the analysis.
      */
-    private record BodyScan(List<ResolvedTarget> targets, List<MethodSignature> descendInto) {
+    private record BodyScan(List<RawInvoke> invokes, List<Descent> descendInto) {
 
         private static final BodyScan EMPTY = new BodyScan(List.of(), List.of());
+    }
+
+    /**
+     * One invoke instruction as it stands in the body, before it is resolved against the domain.
+     *
+     * @param target           the statically resolved target of the invoke
+     * @param callSiteTypeName the type whose body contains the instruction
+     * @param lineNumber       the source line of the instruction
+     * @param thisDispatch     whether this is a virtual or interface dispatch on the enclosing
+     *                         instance, i.e. a call whose actual target depends on the concrete
+     *                         owner the body runs on
+     */
+    private record RawInvoke(MethodSignature target, String callSiteTypeName, int lineNumber,
+                             boolean thisDispatch) {
+    }
+
+    /**
+     * A further body to scan, together with the concrete owner it runs on.
+     *
+     * @param signature     the method whose body is to be scanned
+     * @param ownerTypeName the concrete owner the body runs on, or {@code null} to keep the owner
+     *                      of the body it was found in - which is what a lambda of the same class
+     *                      does, its {@code this} is the enclosing instance
+     */
+    private record Descent(MethodSignature signature, String ownerTypeName) {
     }
 
     /**
@@ -224,38 +260,41 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
         DomainCalls.Builder builder = DomainCalls.builder();
 
         for (MethodSignature method : entryPointOwners.keySet()) {
-            // Read the invoke expressions directly from this method's body
-            // (and its lambda bodies).
-            Set<ResolvedTarget> targets = resolveDomainCallsFromMethod(ctx, method);
-            if (targets.isEmpty()) {
-                continue;
-            }
+            // Once per concrete owner, not once per signature: an inherited body dispatches
+            // differently depending on the subtype it runs on.
+            for (String ownerTypeName : entryPointOwners.get(method)) {
 
-            // Map each resolved target to its concrete owner class (handles
-            // inherited methods, whose signature points to a base class).
-            List<DomainCalls.CallSite> callSites = new ArrayList<>();
-            for (ResolvedTarget target : targets) {
-                Optional<DomainMethod> called =
-                    mapToOwner(domainMirror, target.signature(), target.concreteOwnerTypeName());
-                if (called.isEmpty()) {
-                    if (!isCompilerGenerated(target.signature())) {
-                        ctx.report(Diagnostic.targetNotInMirror(target.signature().toString(),
-                            target.concreteOwnerTypeName()));
-                    }
+                // Read the invoke expressions directly from this method's body
+                // (and its lambda bodies).
+                Set<ResolvedTarget> targets =
+                    resolveDomainCallsFromMethod(ctx, method, ownerTypeName);
+                if (targets.isEmpty()) {
                     continue;
                 }
-                callSites.add(new DomainCalls.CallSite(
-                    called.get(), target.callSiteTypeName(), target.lineNumber()));
-            }
-            if (callSites.isEmpty()) {
-                continue;
-            }
 
-            // Each concrete owner of this signature gets its own entry, always
-            // mapped to the concrete calling class (not the declaring class).
-            // Merging, not replacing: several signatures (e.g. a generic method and its
-            // bridge) can map onto the same caller node.
-            for (String ownerTypeName : entryPointOwners.get(method)) {
+                // Map each resolved target to its concrete owner class (handles
+                // inherited methods, whose signature points to a base class).
+                List<DomainCalls.CallSite> callSites = new ArrayList<>();
+                for (ResolvedTarget target : targets) {
+                    Optional<DomainMethod> called = mapToOwner(
+                        domainMirror, target.signature(), target.concreteOwnerTypeName());
+                    if (called.isEmpty()) {
+                        if (!isCompilerGenerated(target.signature())) {
+                            ctx.report(Diagnostic.targetNotInMirror(target.signature().toString(),
+                                target.concreteOwnerTypeName()));
+                        }
+                        continue;
+                    }
+                    callSites.add(new DomainCalls.CallSite(
+                        called.get(), target.callSiteTypeName(), target.lineNumber()));
+                }
+                if (callSites.isEmpty()) {
+                    continue;
+                }
+
+                // Always mapped to the concrete calling class, not the declaring class.
+                // Merging, not replacing: several signatures (e.g. a generic method and its
+                // bridge) can map onto the same caller node.
                 Optional<DomainMethod> caller = mapToOwner(domainMirror, method, ownerTypeName);
                 if (caller.isEmpty()) {
                     if (!isCompilerGenerated(method)) {
@@ -297,60 +336,133 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
     // ---------------------------------------------------------------------
 
     /**
-     * Resolves the calls made from a single method by reading the invoke
-     * expressions out of its body. Calls residing inside a lambda end up in a
+     * Resolves the calls made from a single method <i>as run by one concrete owner</i>, by reading
+     * the invoke expressions out of its body. Calls residing inside a lambda end up in a
      * synthetic method (lambda$...) of the same class; those are traversed and
      * their calls attributed to the original method. Lambdas and method
      * references are emitted as invokedynamic and handled separately.
      * <p>
-     * The per-body work is done by {@link #scanBody}, which is memoized: only the traversal over
-     * the descent targets is specific to this entry point.
+     * The per-body work is done by {@link #scanBody}, which is memoized and owner independent.
+     * Specific to this entry point are only the traversal over the descent targets and the
+     * resolution of the invokes, which is where the owner comes in: the owner travels along the
+     * worklist, because descending into a body of another class also changes whose instance
+     * {@code this} is.
      */
     private Set<ResolvedTarget> resolveDomainCallsFromMethod(
-        AnalysisContext ctx, MethodSignature caller) {
+        AnalysisContext ctx, MethodSignature caller, String ownerTypeName) {
 
         Set<ResolvedTarget> result = new LinkedHashSet<>();
-        Deque<MethodSignature> worklist = new ArrayDeque<>();
-        Set<MethodSignature> visited = new HashSet<>();
+        Deque<Descent> worklist = new ArrayDeque<>();
+        Set<Descent> visited = new HashSet<>();
 
-        worklist.add(caller);
+        worklist.add(new Descent(caller, ownerTypeName));
 
         while (!worklist.isEmpty()) {
-            MethodSignature current = worklist.poll();
+            Descent current = worklist.poll();
             if (!visited.add(current)) {
                 continue;
             }
 
             ctx.bodyScanRequests++;
-            BodyScan scan = ctx.bodyScans.computeIfAbsent(current, sig -> scanBody(ctx, sig));
-            result.addAll(scan.targets());
-            worklist.addAll(scan.descendInto());
+            BodyScan scan =
+                ctx.bodyScans.computeIfAbsent(current.signature(), sig -> scanBody(ctx, sig));
+
+            for (RawInvoke invoke : scan.invokes()) {
+                result.addAll(resolveInvoke(ctx, invoke, current.ownerTypeName()));
+            }
+            for (Descent descent : scan.descendInto()) {
+                worklist.add(descent.ownerTypeName() == null
+                    ? new Descent(descent.signature(), current.ownerTypeName())
+                    : descent);
+            }
         }
 
-        // remove self-reference (caller calling itself by the same signature)
-        result.removeIf(rt -> rt.signature().equals(caller));
+        // remove self-reference (caller calling itself). Comparing the owner and the
+        // sub-signature as well, because a redispatched call carries the owner's signature
+        // while the entry point may still carry the base class' one.
+        result.removeIf(rt -> rt.signature().equals(caller)
+            || (rt.concreteOwnerTypeName().equals(ownerTypeName)
+            && rt.signature().getSubSignature().equals(caller.getSubSignature())));
         return result;
     }
 
     /**
-     * Reads the invoke expressions out of one method body and splits them into the calls it makes
-     * into the domain and the bodies that still have to be scanned to attribute all of its calls.
+     * Resolves one invoke instruction against the domain, for the concrete owner the containing
+     * body runs on.
      * <p>
-     * Depends on nothing but the body itself, which is what makes it memoizable. A synthetic
-     * lambda invoke is recognized relative to the scanned body's own class, so descending into a
-     * body of another class (via a method reference) also picks up that class's lambdas.
+     * A virtual or interface dispatch on {@code this} is the one case where the static target is
+     * knowably wrong: the receiver is the concrete owner, so the call is re-resolved against its
+     * method table. Everything else is resolved against the static type at the call site, which
+     * is the honest information the code gives.
+     */
+    private Set<ResolvedTarget> resolveInvoke(
+        AnalysisContext ctx, RawInvoke invoke, String ownerTypeName) {
+
+        if (invoke.thisDispatch()) {
+            Optional<ResolvedTarget> redispatched = redispatchOnOwner(ctx, invoke, ownerTypeName);
+            if (redispatched.isPresent()) {
+                return Collections.singleton(redispatched.get());
+            }
+        }
+        return resolveTargetsAgainstDomain(
+            ctx, invoke.target(), invoke.callSiteTypeName(), invoke.lineNumber());
+    }
+
+    /**
+     * Re-resolves a {@code this} dispatch against the method table of the concrete owner, so that
+     * an overridden method is attributed to the overriding subtype rather than to the base class
+     * the body happens to live in.
+     * <p>
+     * Empty if the owner is unknown to the mirror, or if it does not actually realize the invoked
+     * type - in which case {@code this} is not what it was taken for and the static target is
+     * kept.
+     */
+    private Optional<ResolvedTarget> redispatchOnOwner(
+        AnalysisContext ctx, RawInvoke invoke, String ownerTypeName) {
+
+        if (ownerTypeName == null || !ctx.domainTypeNames().contains(ownerTypeName)) {
+            return Optional.empty();
+        }
+        ClassType ownerType = ctx.idf().getClassType(ownerTypeName);
+        Optional<SootClass> ownerClass =
+            concreteImplementations(ctx, invoke.target().getDeclClassType()).stream()
+                .filter(impl -> impl.getType().equals(ownerType))
+                .findFirst();
+        if (ownerClass.isEmpty()) {
+            return Optional.empty();
+        }
+
+        String subSignature = invoke.target().getSubSignature().toString();
+        return collectMethodsWithInherited(ctx, ownerClass.get()).stream()
+            .filter(sig -> sig.getSubSignature().toString().equals(subSignature))
+            .findFirst()
+            .map(sig -> new ResolvedTarget(
+                ownerTypeName, sig, invoke.callSiteTypeName(), invoke.lineNumber()));
+    }
+
+    /**
+     * Reads the invoke expressions out of one method body and splits them into the invokes it
+     * contains and the bodies that still have to be scanned to attribute all of its calls.
+     * <p>
+     * Depends on nothing but the body itself, which is what makes it memoizable - in particular
+     * it does not resolve anything against a concrete owner, that happens in
+     * {@link #resolveInvoke}. A synthetic lambda invoke is recognized relative to the scanned
+     * body's own class, so descending into a body of another class (via a method reference) also
+     * picks up that class's lambdas.
      */
     private BodyScan scanBody(AnalysisContext ctx, MethodSignature signature) {
         Optional<Body> bodyOpt = bodyOf(ctx, signature);
         if (bodyOpt.isEmpty()) {
             return BodyScan.EMPTY;
         }
+        Body body = bodyOpt.get();
+        Local thisLocal = thisLocalOf(body);
 
-        List<ResolvedTarget> targets = new ArrayList<>();
-        List<MethodSignature> descendInto = new ArrayList<>();
+        List<RawInvoke> invokes = new ArrayList<>();
+        List<Descent> descendInto = new ArrayList<>();
         String callSiteTypeName = signature.getDeclClassType().getFullyQualifiedName();
 
-        for (Stmt stmt : bodyOpt.get().getStmts()) {
+        for (Stmt stmt : body.getStmts()) {
             AbstractInvokeExpr invokeExpr = invokeExprOf(stmt);
             if (invokeExpr == null) {
                 continue;
@@ -358,7 +470,8 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
             int lineNumber = lineNumberOf(stmt);
 
             if (invokeExpr instanceof JDynamicInvokeExpr dyn) {
-                handleDynamicInvoke(ctx, dyn, callSiteTypeName, lineNumber, descendInto, targets);
+                handleDynamicInvoke(ctx, dyn, signature, callSiteTypeName, lineNumber,
+                    descendInto, invokes);
                 continue;
             }
 
@@ -366,15 +479,44 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
 
             // direct synthetic lambda invoke of the scanned body's own class
             if (isSyntheticLambdaOf(signature, target)) {
-                descendInto.add(target);
+                descendInto.add(new Descent(target, null));
                 continue;
             }
 
-            targets.addAll(resolveTargetsAgainstDomain(
-                ctx, target, callSiteTypeName, lineNumber));
+            invokes.add(new RawInvoke(target, callSiteTypeName, lineNumber,
+                isThisDispatch(invokeExpr, thisLocal)));
         }
 
-        return new BodyScan(List.copyOf(targets), List.copyOf(descendInto));
+        return new BodyScan(List.copyOf(invokes), List.copyOf(descendInto));
+    }
+
+    /**
+     * The local holding the enclosing instance of a body, or {@code null} for a static method,
+     * which has none. SootUp signals the absence by throwing.
+     */
+    private Local thisLocalOf(Body body) {
+        try {
+            return body.getThisLocal();
+        } catch (RuntimeException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Whether an invoke dispatches virtually on the enclosing instance, i.e. whether its actual
+     * target depends on the concrete owner rather than on the type written at the call site.
+     * <p>
+     * {@code invokespecial} - {@code super.x()}, a private method, a constructor - is excluded:
+     * its target is fixed at compile time, so re-resolving it against the owner would turn
+     * {@code super.process()} into a call to the overriding {@code process()}, i.e. into
+     * self-recursion that does not exist.
+     */
+    private boolean isThisDispatch(AbstractInvokeExpr invokeExpr, Local thisLocal) {
+        if (thisLocal == null || invokeExpr instanceof JSpecialInvokeExpr) {
+            return false;
+        }
+        return invokeExpr instanceof AbstractInstanceInvokeExpr instanceInvoke
+            && thisLocal.equals(instanceInvoke.getBase());
     }
 
     /**
@@ -390,9 +532,9 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
      * implementation via resolveTargetsAgainstDomain / the worklist.
      */
     private void handleDynamicInvoke(
-        AnalysisContext ctx, JDynamicInvokeExpr dyn,
+        AnalysisContext ctx, JDynamicInvokeExpr dyn, MethodSignature scannedBody,
         String callSiteTypeName, int lineNumber,
-        List<MethodSignature> descendInto, List<ResolvedTarget> targets) {
+        List<Descent> descendInto, List<RawInvoke> invokes) {
 
         // static type of the bound receiver (first dynamic arg), if any
         Optional<ClassType> receiverType = boundReceiverType(dyn);
@@ -409,7 +551,7 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
             if (handleMethod.getName().startsWith("lambda$")) {
                 // synthetic lambda body - its body lives in the (same) class, so the
                 // handle signature is directly loadable: descend into it, not a target.
-                descendInto.add(handleMethod);
+                descendInto.add(descentOn(scannedBody, handleMethod));
                 continue;
             }
 
@@ -424,11 +566,11 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
                     receiverType.get(), handleMethod.getSubSignature());
             }
 
-            // resolve against the domain for REPORTING - on the receiver type this
-            // yields e.g. MyRepository.someOperation as a direct hit, which is the
-            // call-site type we want in the result.
-            targets.addAll(resolveTargetsAgainstDomain(
-                ctx, reportSignature, callSiteTypeName, lineNumber));
+            // report against the domain - on the receiver type this yields e.g.
+            // MyRepository.someOperation as a direct hit, which is the call-site type we
+            // want in the result. Not a `this` dispatch: the receiver is the bound
+            // variable, not the enclosing instance.
+            invokes.add(new RawInvoke(reportSignature, callSiteTypeName, lineNumber, false));
 
             // DESCENT is separate from reporting: descend into the concrete
             // implementation bodies. The reporting owner may be an interface (direct
@@ -438,31 +580,44 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
             descendInto.addAll(concreteDescentTargets(ctx, reportSignature));
             // also descend into the raw handle method, in case its body genuinely
             // lives on the declaring type (e.g. a static method or a default method)
-            descendInto.add(handleMethod);
+            descendInto.add(descentOn(scannedBody, handleMethod));
         }
     }
 
     /**
-     * Returns loadable method signatures to descend into for a call whose reporting
-     * signature is given. If the reporting type is concrete, that method is returned.
-     * If it is an interface or abstract type, the same method (by sub-signature) on
-     * every concrete implementation is returned, each built on the concrete class so
-     * its body can actually be loaded. This is used for the descent only - reporting
-     * keeps the call-site (interface) type.
+     * Returns the bodies to descend into for a call whose reporting signature is given, each
+     * with the concrete owner it runs on. If the reporting type is concrete, that method is
+     * returned. If it is an interface or abstract type, the same method (by sub-signature) on
+     * every concrete implementation is returned, each built on the concrete class so its body
+     * can actually be loaded. This is used for the descent only - reporting keeps the call-site
+     * (interface) type.
      */
-    private Set<MethodSignature> concreteDescentTargets(
+    private Set<Descent> concreteDescentTargets(
         AnalysisContext ctx, MethodSignature reportSignature) {
 
-        Set<MethodSignature> descent = new LinkedHashSet<>();
+        Set<Descent> descent = new LinkedHashSet<>();
         String subSignature = reportSignature.getSubSignature().toString();
 
         for (SootClass impl : concreteImplementations(ctx, reportSignature.getDeclClassType())) {
             collectMethodsWithInherited(ctx, impl).stream()
                 .filter(sig -> sig.getSubSignature().toString().equals(subSignature))
                 .findFirst()
-                .ifPresent(descent::add);
+                .ifPresent(sig -> descent.add(
+                    new Descent(sig, impl.getType().getFullyQualifiedName())));
         }
         return descent;
+    }
+
+    /**
+     * Builds the descent into a referenced method. A method of the scanned body's own class
+     * keeps the current owner - a lambda or a private helper runs on the very same instance -
+     * while a method of another class switches the owner to that class, because its {@code this}
+     * is a different object.
+     */
+    private Descent descentOn(MethodSignature scannedBody, MethodSignature target) {
+        return target.getDeclClassType().equals(scannedBody.getDeclClassType())
+            ? new Descent(target, null)
+            : new Descent(target, target.getDeclClassType().getFullyQualifiedName());
     }
 
     /**
@@ -675,6 +830,12 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
      * sub-signature so that on overriding the most specific (own) variant wins.
      * superClassesOf returns the full superclass chain (transitively), so own
      * methods are added first to take precedence over inherited ones.
+     * <p>
+     * Implemented interfaces are collected as well, and last: a {@code default} method has a
+     * body and is inherited through the interface rather than through the superclass chain, so
+     * without them the calls made by a default method that nobody overrides would be missing
+     * from the result entirely. Being last is what makes an implementation of the method win
+     * over the default.
      */
     private Collection<MethodSignature> collectMethodsWithInherited(
         AnalysisContext ctx, SootClass concrete) {
@@ -689,19 +850,49 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
         Map<String, MethodSignature> collected = new LinkedHashMap<>();
 
         // own methods first so they win on overriding
-        concrete.getMethods().forEach(m ->
-            collected.putIfAbsent(m.getSignature().getSubSignature().toString(),
-                m.getSignature()));
+        collectInto(concrete, collected);
 
         // all superclasses (transitively, up to Object)
         ctx.typeHierarchy().superClassesOf(concrete.getType()).forEach(superType ->
             ctx.view().getClass(superType).ifPresent(superCls ->
-                superCls.getMethods().forEach(m ->
-                    collected.putIfAbsent(m.getSignature().getSubSignature().toString(),
-                        m.getSignature())))
-        );
+                collectInto(superCls, collected)));
+
+        // and finally the interfaces, for their default methods
+        allInterfacesOf(ctx, concrete).forEach(interfaceType ->
+            ctx.view().getClass(interfaceType).ifPresent(
+                interfaceCls -> collectInto(interfaceCls, collected)));
 
         return collected.values();
+    }
+
+    private void collectInto(SootClass declaring, Map<String, MethodSignature> collected) {
+        declaring.getMethods().forEach(method ->
+            collected.putIfAbsent(method.getSignature().getSubSignature().toString(),
+                method.getSignature()));
+    }
+
+    /**
+     * All interfaces a class realizes: its own, those of its superclasses, and the interfaces
+     * those extend, transitively. Walked over the classes rather than asked of the hierarchy,
+     * because both directions - up the superclass chain and up the interface chain - contribute.
+     */
+    private Set<ClassType> allInterfacesOf(AnalysisContext ctx, SootClass concrete) {
+        Set<ClassType> interfaces = new LinkedHashSet<>();
+        Deque<ClassType> worklist = new ArrayDeque<>();
+
+        worklist.add(concrete.getType());
+        ctx.typeHierarchy().superClassesOf(concrete.getType()).forEach(worklist::add);
+
+        while (!worklist.isEmpty()) {
+            ClassType current = worklist.poll();
+            ctx.view().getClass(current).ifPresent(cls ->
+                cls.getInterfaces().forEach(interfaceType -> {
+                    if (interfaces.add(interfaceType)) {
+                        worklist.add(interfaceType);
+                    }
+                }));
+        }
+        return interfaces;
     }
 
     // ---------------------------------------------------------------------

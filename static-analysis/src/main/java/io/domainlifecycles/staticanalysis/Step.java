@@ -192,6 +192,21 @@ public sealed interface Step {
     }
 
     /**
+     * Creates a step for a method implementing the abstract or interface method of the given
+     * predecessor, i.e. for the target the call dispatches to at runtime.
+     *
+     * @param from           the step holding the abstract or interface method, must not be
+     *                       {@code null}
+     * @param implementation the implementing method, must not be {@code null}
+     * @param cyclic         whether the implementing method already occurs among the predecessors
+     * @return the step
+     */
+    static MethodStep implementing(Step from, DomainMethod implementation, boolean cyclic) {
+        return new MethodStep(Optional.of(from), StepKind.IMPLEMENTATION, from.depth() + 1,
+            cyclic, implementation);
+    }
+
+    /**
      * Creates a step for an event published by the given predecessor.
      *
      * @param from   the publishing step, must not be {@code null}

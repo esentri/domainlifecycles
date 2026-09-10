@@ -35,12 +35,19 @@ import org.junit.jupiter.api.Test;
 import test.domain.MyAggregateRoot;
 import test.domain.MyApplicationService;
 import test.domain.MyBaseService;
+import test.domain.MyConcreteBaseService;
 import test.domain.MyDomainCommand;
 import test.domain.MyDomainEvent;
 import test.domain.MyDomainService;
+import test.domain.MyEventHandlingService;
+import test.domain.MyExtendingService;
+import test.domain.MyLoggingOutboundServiceImpl;
 import test.domain.MyOutboundService;
+import test.domain.MyOutboundServiceImpl;
 import test.domain.MyOverridingService;
 import test.domain.MyRepository;
+import test.domain.MyRepositoryImpl;
+import test.domain.MySecondOverridingService;
 
 import java.util.List;
 import java.util.Optional;
@@ -89,7 +96,8 @@ public class TestFlowAnalysis {
 
     @Test
     public void testFlowOfAMethodWithoutDomainCallsIsEmpty() {
-        var flow = analyzer.flowFrom(methodCall(MyBaseService.class, "process"));
+        // a concrete leaf: no calls of its own, and nothing implements it either
+        var flow = analyzer.flowFrom(methodCall(MyOutboundServiceImpl.class, "doSomething"));
 
         assertThat(flow.isEmpty()).isTrue();
         assertThat(flow.steps()).hasSize(1);
@@ -110,9 +118,11 @@ public class TestFlowAnalysis {
         var called = methodStep(flow, MyBaseService.class, "process");
         assertThat(called).isPresent();
         assertThat(called.get().depth()).isEqualTo(1);
+        // from the base class the flow dispatches back down into both subclasses
         assertThat(flow.reachedTypeNames())
             .containsExactly(MyOverridingService.class.getTypeName(),
-                MyBaseService.class.getTypeName());
+                MyBaseService.class.getTypeName(),
+                MySecondOverridingService.class.getTypeName());
     }
 
     @Test
@@ -126,6 +136,99 @@ public class TestFlowAnalysis {
         assertThat(path).hasSize(2);
         assertThat(path.get(0)).isSameAs(flow.start());
         assertThat(path.get(1)).isSameAs(aggregateStep.get());
+    }
+
+    // ---------------------------------------------------------------------
+    // Implementation join - the part the call analysis reports on the interface
+    // ---------------------------------------------------------------------
+
+    @Test
+    public void testFlowContinuesIntoTheImplementation() {
+        // the call is written against the MyRepository interface, so DomainCalls reports it
+        // there - and the interface method has no body, which is where the flow used to end
+        var flow = analyzer.flowFrom(methodCall(MyApplicationService.class, "doSomething"));
+
+        var onTheInterface = methodStep(flow, MyRepository.class, "findById");
+        assertThat(onTheInterface).isPresent();
+        assertThat(onTheInterface.get().kind()).isEqualTo(StepKind.CALL);
+
+        var onTheImplementation = methodStep(flow, MyRepositoryImpl.class, "findById");
+        assertThat(onTheImplementation).isPresent();
+        assertThat(onTheImplementation.get().kind()).isEqualTo(StepKind.IMPLEMENTATION);
+        assertThat(onTheImplementation.get().depth())
+            .isEqualTo(onTheInterface.get().depth() + 1);
+        assertThat(onTheImplementation.get().from()).contains(onTheInterface.get());
+    }
+
+    @Test
+    public void testImplementationsOfAnAbstractBaseAreBothReached() {
+        // one edge per concrete subtype: dispatch is not a single target
+        var flow = analyzer.flowFrom(methodCall(MyBaseService.class, "baseTemplate"));
+
+        assertThat(methodStep(flow, MyOverridingService.class, "process")).isPresent();
+        assertThat(methodStep(flow, MySecondOverridingService.class, "process")).isPresent();
+    }
+
+    @Test
+    public void testCallThroughAnInterfaceBranchesIntoEveryImplementation() {
+        // the dispatch counterpart to an event with several listeners: two implementations are
+        // two alternative continuations of the same call
+        var flow = analyzer.flowFrom(methodCall(MyDomainService.class, "onMyDomainEvent"));
+
+        var onTheInterface = methodStep(flow, MyOutboundService.class, "doSomething").orElseThrow();
+        var implementations = flow.steps().stream()
+            .filter(step -> step.kind() == StepKind.IMPLEMENTATION)
+            .filter(step -> step.from().filter(from -> from == onTheInterface).isPresent())
+            .toList();
+
+        assertThat(implementations).hasSize(2);
+        assertThat(implementations).extracting(Step::typeName)
+            .containsExactlyInAnyOrder(MyOutboundServiceImpl.class.getTypeName(),
+                MyLoggingOutboundServiceImpl.class.getTypeName());
+        // alternatives, not a sequence: same predecessor, same distance
+        assertThat(implementations)
+            .allMatch(step -> step.depth() == onTheInterface.depth() + 1);
+    }
+
+    @Test
+    public void testCallOnAConcreteBaseAlsoBranchesIntoTheOverride() {
+        // the static type at the call site is instantiable, so it can run - but it is also
+        // overridden, so the override can run instead. Both are runtime targets.
+        var flow = analyzer.flowFrom(methodCall(MyApplicationService.class,
+            "doCallOnConcreteBase"));
+
+        var onTheBase = methodStep(flow, MyConcreteBaseService.class, "execute").orElseThrow();
+        assertThat(onTheBase.kind()).isEqualTo(StepKind.CALL);
+
+        var onTheOverride = methodStep(flow, MyExtendingService.class, "execute").orElseThrow();
+        assertThat(onTheOverride.kind()).isEqualTo(StepKind.IMPLEMENTATION);
+        assertThat(onTheOverride.from()).contains(onTheBase);
+        assertThat(onTheOverride.depth()).isEqualTo(onTheBase.depth() + 1);
+    }
+
+    @Test
+    public void testTheMethodFilterAlsoAppliesToImplementations() {
+        var withoutTheImpl = new DomainCallFlowAnalyzer(domainMirror, calls,
+            FlowConfig.defaults().withMethodFilter(method ->
+                !method.typeName().equals(MyRepositoryImpl.class.getTypeName())));
+
+        var flow = withoutTheImpl.flowFrom(methodCall(MyApplicationService.class, "doSomething"));
+
+        assertThat(methodStep(flow, MyRepository.class, "findById")).isPresent();
+        assertThat(methodStep(flow, MyRepositoryImpl.class, "findById")).isEmpty();
+    }
+
+    @Test
+    public void testImplementationsCanBeSwitchedOff() {
+        var callSitesOnly = new DomainCallFlowAnalyzer(domainMirror, calls,
+            FlowConfig.defaults().withFollowImplementations(false));
+
+        var flow = callSitesOnly.flowFrom(methodCall(MyApplicationService.class, "doSomething"));
+
+        assertThat(flow.steps()).noneMatch(step -> step.kind() == StepKind.IMPLEMENTATION);
+        assertThat(flow.reachedTypeNames())
+            .contains(MyRepository.class.getTypeName())
+            .doesNotContain(MyRepositoryImpl.class.getTypeName());
     }
 
     // ---------------------------------------------------------------------
@@ -181,7 +284,136 @@ public class TestFlowAnalysis {
         assertThat(flow.reachedTypeNames())
             .doesNotContain(MyDomainEvent.class.getTypeName(),
                 MyDomainService.class.getTypeName(),
+                MyEventHandlingService.class.getTypeName(),
                 MyOutboundService.class.getTypeName());
+    }
+
+    // ---------------------------------------------------------------------
+    // Event fan-out - one event, several listeners running independently
+    // ---------------------------------------------------------------------
+
+    @Test
+    public void testAnEventBranchesIntoEveryListener() {
+        var flow = analyzer.flowFrom(eventMirror(MyDomainEvent.class));
+
+        // two listeners, two branches - all of them hanging off the event itself
+        var listeners = flow.stepsAtDepth(1);
+        assertThat(listeners).hasSize(2);
+        assertThat(listeners).allMatch(step -> step.kind() == StepKind.EVENT_LISTEN);
+        assertThat(listeners).allMatch(
+            step -> step.from().filter(from -> from == flow.start()).isPresent());
+        assertThat(listeners).extracting(Step::typeName)
+            .containsExactlyInAnyOrder(MyDomainService.class.getTypeName(),
+                MyEventHandlingService.class.getTypeName());
+    }
+
+    @Test
+    public void testListenerBranchesAreIndependentOfEachOther() {
+        var flow = analyzer.flowFrom(eventMirror(MyDomainEvent.class));
+
+        var first = methodStep(flow, MyDomainService.class, "onMyDomainEvent").orElseThrow();
+        var second =
+            methodStep(flow, MyEventHandlingService.class, "onMyDomainEvent").orElseThrow();
+
+        // neither listener is reachable through the other: the event is all they share
+        assertThat(first.path()).noneMatch(step -> step == second);
+        assertThat(second.path()).noneMatch(step -> step == first);
+
+        // and what each of them reaches on its own stays in its own branch
+        var onlyInFirst = methodStep(flow, MyOutboundService.class, "doSomething").orElseThrow();
+        assertThat(onlyInFirst.path()).anyMatch(step -> step == first);
+        assertThat(onlyInFirst.path()).noneMatch(step -> step == second);
+
+        var onlyInSecond =
+            methodStep(flow, MyAggregateRoot.class, "doSomethingNoArg").orElseThrow();
+        assertThat(onlyInSecond.path()).anyMatch(step -> step == second);
+        assertThat(onlyInSecond.path()).noneMatch(step -> step == first);
+    }
+
+    @Test
+    public void testPublishingMethodReachesBothBranches() {
+        // the fan-out is not a property of starting at the event - publishing it branches too
+        var flow = analyzer.flowFrom(methodCall(MyApplicationService.class, "doSomething"));
+
+        var listeners = flow.steps().stream()
+            .filter(step -> step.kind() == StepKind.EVENT_LISTEN)
+            .toList();
+
+        assertThat(listeners).hasSize(2);
+        assertThat(listeners).allMatch(step -> step.depth() == 3);
+        assertThat(listeners).extracting(Step::typeName)
+            .containsExactlyInAnyOrder(MyDomainService.class.getTypeName(),
+                MyEventHandlingService.class.getTypeName());
+
+        // both continuations are part of the flow, at the same distance from the start
+        assertThat(methodStep(flow, MyOutboundService.class, "doSomething").orElseThrow().depth())
+            .isEqualTo(4);
+        assertThat(methodStep(flow, MyAggregateRoot.class, "doSomethingNoArg")
+            .orElseThrow().depth()).isEqualTo(4);
+    }
+
+    @Test
+    public void testTargetSharedByBothBranchesIsReportedPerBranchButExpandedOnce() {
+        var flow = analyzer.flowFrom(eventMirror(MyDomainEvent.class));
+
+        var findByIdSteps = flow.steps().stream()
+            .filter(step -> step instanceof Step.MethodStep)
+            .map(step -> (Step.MethodStep) step)
+            .filter(step -> step.typeName().equals(MyRepository.class.getTypeName()))
+            .filter(step -> step.method().name().equals("findById"))
+            .toList();
+
+        // both listeners call findById, so both edges are reported - one per branch
+        assertThat(findByIdSteps).hasSize(2);
+        assertThat(findByIdSteps).extracting(Step.MethodStep::nodeKey)
+            .containsOnly(findByIdSteps.get(0).nodeKey());
+        assertThat(findByIdSteps).extracting(step -> step.from().orElseThrow().typeName())
+            .containsExactlyInAnyOrder(MyDomainService.class.getTypeName(),
+                MyEventHandlingService.class.getTypeName());
+
+        // the subtree below it is built only once though, under whichever branch got there
+        // first - that is what bounds the traversal, and it means a shared node's children
+        // are not repeated in every branch
+        var below = flow.steps().stream()
+            .filter(step -> step.from().filter(findByIdSteps::contains).isPresent())
+            .toList();
+        assertThat(below).hasSize(1);
+        assertThat(below.get(0).typeName()).isEqualTo(MyRepositoryImpl.class.getTypeName());
+        assertThat(below.get(0).from()).contains(findByIdSteps.get(0));
+    }
+
+    @Test
+    @org.junit.jupiter.api.Timeout(value = 30, unit = TimeUnit.SECONDS)
+    public void testAnEventRepublishedByItsListenerIsMarkedAsACycle() {
+        // MyEventHandlingService listens to MyDomainEvent and publishes it again. The cycle
+        // closes over the event join rather than over a method call, which is the one place a
+        // static call analysis cannot see it coming.
+        var flow = analyzer.flowFrom(eventMirror(MyDomainEvent.class));
+
+        var republished = flow.steps().stream()
+            .filter(step -> step instanceof Step.EventStep)
+            .filter(step -> step.typeName().equals(MyDomainEvent.class.getTypeName()))
+            .filter(step -> !step.isStart())
+            .toList();
+
+        assertThat(republished).hasSize(1);
+        assertThat(republished.get(0).kind()).isEqualTo(StepKind.EVENT_PUBLISH);
+        assertThat(republished.get(0).cyclic()).isTrue();
+
+        // reported, but not expanded - otherwise the listeners would run again, forever
+        assertThat(flow.steps()).noneMatch(step -> step.from()
+            .filter(from -> from == republished.get(0)).isPresent());
+    }
+
+    @Test
+    public void testRenderingShowsBothListenerBranchesSideBySide() {
+        var flow = analyzer.flowFrom(eventMirror(MyDomainEvent.class));
+
+        assertThat(flow.toString().lines())
+            .filteredOn(line -> line.stripLeading().startsWith("EVENT_LISTEN -> "))
+            .hasSize(2)
+            // same indentation: siblings of one another, not nested
+            .allMatch(line -> line.startsWith("  EVENT_LISTEN -> "));
     }
 
     @Test
@@ -254,6 +486,7 @@ public class TestFlowAnalysis {
         var findByIdSteps = flow.steps().stream()
             .filter(step -> step instanceof Step.MethodStep)
             .map(step -> (Step.MethodStep) step)
+            .filter(step -> step.typeName().equals(MyRepository.class.getTypeName()))
             .filter(step -> step.method().name().equals("findById"))
             .toList();
 
@@ -312,6 +545,12 @@ public class TestFlowAnalysis {
             MyOverridingService.class.getTypeName()
                 + ".process(" + MyDomainCommand.class.getTypeName() + ")\n"
                 + "  CALL -> " + MyBaseService.class.getTypeName()
+                + ".process(" + MyDomainCommand.class.getTypeName() + ")\n"
+                // super.process reaches the base, which at runtime dispatches back down into
+                // both subclasses - the way back to the start is a cycle and stops there
+                + "    IMPLEMENTATION -> " + MyOverridingService.class.getTypeName()
+                + ".process(" + MyDomainCommand.class.getTypeName() + ") (cycle)\n"
+                + "    IMPLEMENTATION -> " + MySecondOverridingService.class.getTypeName()
                 + ".process(" + MyDomainCommand.class.getTypeName() + ")\n");
     }
 

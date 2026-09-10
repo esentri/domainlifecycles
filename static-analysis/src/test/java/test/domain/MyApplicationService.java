@@ -8,8 +8,17 @@ public class MyApplicationService implements ApplicationService {
 
     private final MyRepository repository;
 
-    public MyApplicationService(MyRepository repository) {
+    private final MyConcreteBaseService baseService;
+
+    public MyApplicationService(MyRepository repository, MyConcreteBaseService baseService) {
         this.repository = repository;
+        this.baseService = baseService;
+    }
+
+    // Case Q: the static type at the call site is a CONCRETE class that is nevertheless
+    // overridden. Both MyConcreteBaseService.execute and MyExtendingService.execute can run.
+    public void doCallOnConcreteBase(MyDomainCommand command) {
+        baseService.execute(command);
     }
 
     public void doSomething(MyDomainCommand command) {

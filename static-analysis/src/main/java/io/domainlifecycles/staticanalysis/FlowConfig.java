@@ -36,16 +36,20 @@ import java.util.function.Predicate;
  * calls. Real domains produce a lot of those ({@code command.id()}, identity getters), so
  * {@link #excludingAccessors()} is provided as the filter most consumers will want.
  *
- * @param maxDepth     the maximum distance from the starting point that is expanded, must be
- *                     greater than {@code 0}
- * @param followEvents whether the flow continues across published domain events into their
- *                     listeners
- * @param methodFilter methods for which the predicate is {@code false} are neither reported nor
- *                     expanded; the starting point itself is never filtered
+ * @param maxDepth              the maximum distance from the starting point that is expanded,
+ *                              must be greater than {@code 0}
+ * @param followEvents          whether the flow continues across published domain events into
+ *                              their listeners
+ * @param followImplementations whether the flow continues from a method on an interface or an
+ *                              abstract class into the implementations it dispatches to at
+ *                              runtime
+ * @param methodFilter          methods for which the predicate is {@code false} are neither
+ *                              reported nor expanded; the starting point itself is never filtered
  * @author Mario Herb
  */
 public record FlowConfig(int maxDepth,
                          boolean followEvents,
+                         boolean followImplementations,
                          Predicate<DomainMethod> methodFilter) {
 
     /**
@@ -62,10 +66,10 @@ public record FlowConfig(int maxDepth,
     }
 
     /**
-     * @return unlimited depth, following domain events, without filtering
+     * @return unlimited depth, following domain events and implementations, without filtering
      */
     public static FlowConfig defaults() {
-        return new FlowConfig(UNLIMITED_DEPTH, true, methodCall -> true);
+        return new FlowConfig(UNLIMITED_DEPTH, true, true, methodCall -> true);
     }
 
     /**
@@ -73,7 +77,7 @@ public record FlowConfig(int maxDepth,
      * @return a copy of this configuration with the given depth limit
      */
     public FlowConfig withMaxDepth(int maxDepth) {
-        return new FlowConfig(maxDepth, followEvents, methodFilter);
+        return new FlowConfig(maxDepth, followEvents, followImplementations, methodFilter);
     }
 
     /**
@@ -81,7 +85,20 @@ public record FlowConfig(int maxDepth,
      * @return a copy of this configuration with the given event behaviour
      */
     public FlowConfig withFollowEvents(boolean followEvents) {
-        return new FlowConfig(maxDepth, followEvents, methodFilter);
+        return new FlowConfig(maxDepth, followEvents, followImplementations, methodFilter);
+    }
+
+    /**
+     * Switching this off keeps the flow strictly on the types written at the call sites, which is
+     * what {@link DomainCalls} holds. It answers "which types does this code name" rather than
+     * "which code can run".
+     *
+     * @param followImplementations whether to continue from an abstract or interface method into
+     *                              its implementations
+     * @return a copy of this configuration with the given dispatch behaviour
+     */
+    public FlowConfig withFollowImplementations(boolean followImplementations) {
+        return new FlowConfig(maxDepth, followEvents, followImplementations, methodFilter);
     }
 
     /**
@@ -89,7 +106,7 @@ public record FlowConfig(int maxDepth,
      * @return a copy of this configuration with the given filter
      */
     public FlowConfig withMethodFilter(Predicate<DomainMethod> methodFilter) {
-        return new FlowConfig(maxDepth, followEvents, methodFilter);
+        return new FlowConfig(maxDepth, followEvents, followImplementations, methodFilter);
     }
 
     /**

@@ -44,7 +44,9 @@ public class MyAggregateRoot extends AggregateRootBase<MyAggregateRoot.Id> {
 
     // In MyAggregateRoot
     public static boolean staticValidate(MyAggregateRoot a) {
-        // some domain-level static check
+        // some domain-level static check. A static body has no `this`, so nothing here can be
+        // redispatched - the call goes to the parameter's static type.
+        a.doSomethingNoArg();
         return true;
     }
 

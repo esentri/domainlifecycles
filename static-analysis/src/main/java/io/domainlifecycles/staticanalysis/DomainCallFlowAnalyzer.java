@@ -43,14 +43,19 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * {@link FlowAnalyzer} on top of a {@link DomainCalls} graph joined with the event and command
  * information of the {@link DomainMirror}.
  * <p>
- * Three kinds of edges are followed:
+ * Four kinds of edges are followed:
  * <ul>
  *     <li>{@link StepKind#CALL} - a resolved method call, taken from {@link DomainCalls},</li>
+ *     <li>{@link StepKind#IMPLEMENTATION} - the overrides a method dispatches to at runtime,
+ *     taken from the mirror. {@link DomainCalls} reports a call on the type written at the call
+ *     site, which for a repository or outbound service is the interface; without this edge the
+ *     flow would end there,</li>
  *     <li>{@link StepKind#EVENT_PUBLISH} / {@link StepKind#EVENT_LISTEN} - a published domain
  *     event and the methods listening to it, taken from the mirror. No static call analysis can
  *     see this edge, yet it is where the domain flow continues,</li>
@@ -74,6 +79,8 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
     private final Map<String, List<DomainMethod>> listenersByEventTypeName;
 
     private final Map<String, List<DomainMethod>> processorsByCommandTypeName;
+
+    private final Map<String, List<DomainTypeMirror>> implementationsBySupertypeName;
 
     /**
      * Creates an analyzer with {@link FlowConfig#defaults()}.
@@ -101,6 +108,8 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
         indexEventsAndCommands(listeners, processors);
         this.listenersByEventTypeName = Collections.unmodifiableMap(listeners);
         this.processorsByCommandTypeName = Collections.unmodifiableMap(processors);
+        this.implementationsBySupertypeName =
+            Collections.unmodifiableMap(indexImplementations());
     }
 
     /**
@@ -209,6 +218,16 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
                 isOnPath(current, Step.nodeKeyOf(called))));
         }
 
+        if (config.followImplementations()) {
+            for (DomainMethod implementation : implementationsOf(current.method())) {
+                if (!config.methodFilter().test(implementation)) {
+                    continue;
+                }
+                successors.add(Step.implementing(current, implementation,
+                    isOnPath(current, Step.nodeKeyOf(implementation))));
+            }
+        }
+
         if (config.followEvents()) {
             for (DomainEventMirror published : current.method().mirror().getPublishedEvents()) {
                 successors.add(Step.published(current, published,
@@ -295,5 +314,74 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
 
     private List<DomainMethod> processorsOf(DomainCommandMirror command) {
         return processorsByCommandTypeName.getOrDefault(command.getTypeName(), List.of());
+    }
+
+    // ---------------------------------------------------------------------
+    // Implementation index
+    // ---------------------------------------------------------------------
+
+    /**
+     * Indexes, for every mirrored supertype, the instantiable mirrored types realizing it. Only
+     * those are worth recording: an abstract type never runs, so the flow can only continue on a
+     * concrete one.
+     */
+    private Map<String, List<DomainTypeMirror>> indexImplementations() {
+        Map<String, List<DomainTypeMirror>> implementations = new LinkedHashMap<>();
+
+        for (DomainTypeMirror typeMirror : domainMirror.getAllDomainTypeMirrors()) {
+            if (typeMirror.isAbstract()) {
+                continue;
+            }
+            Stream.concat(typeMirror.getInheritanceHierarchyTypeNames().stream(),
+                    typeMirror.getAllInterfaceTypeNames().stream())
+                .distinct()
+                .forEach(supertypeName -> implementations
+                    .computeIfAbsent(supertypeName, k -> new ArrayList<>())
+                    .add(typeMirror));
+        }
+        return implementations;
+    }
+
+    /**
+     * The methods the given one dispatches to at runtime: the same method on every instantiable
+     * subtype of its owner. Empty if nothing in the domain extends or implements the owner.
+     * <p>
+     * Deliberately not restricted to abstract owners. A concrete class can be overridden just as
+     * an abstract one can, and then a call written against it has more than one possible target
+     * as well - the difference is only that the owner itself is a possible target too, which it
+     * already is by being the step the edges start from. The index holds instantiable subtypes
+     * only and never the owner itself, so this cannot produce a self edge.
+     */
+    private List<DomainMethod> implementationsOf(DomainMethod method) {
+        List<DomainMethod> implementations = new ArrayList<>();
+        for (DomainTypeMirror implementation
+            : implementationsBySupertypeName.getOrDefault(method.typeName(), List.of())) {
+
+            implementation.getMethods().stream()
+                .filter(candidate -> hasSameSignature(candidate, method.mirror()))
+                .findFirst()
+                .ifPresent(candidate -> implementations.add(
+                    new DomainMethod(implementation.getTypeName(), candidate)));
+        }
+        return implementations;
+    }
+
+    /**
+     * Whether two mirrored methods are the same method seen on different types, i.e. whether one
+     * overrides the other. Compared by name and parameter types, which is what identifies a
+     * method within its owner.
+     */
+    private static boolean hasSameSignature(MethodMirror candidate, MethodMirror declared) {
+        if (!candidate.getName().equals(declared.getName())
+            || candidate.getParameters().size() != declared.getParameters().size()) {
+            return false;
+        }
+        for (int i = 0; i < candidate.getParameters().size(); i++) {
+            if (!candidate.getParameters().get(i).getType().getTypeName()
+                .equals(declared.getParameters().get(i).getType().getTypeName())) {
+                return false;
+            }
+        }
+        return true;
     }
 }

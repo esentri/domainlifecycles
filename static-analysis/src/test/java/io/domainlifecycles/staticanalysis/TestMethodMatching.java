@@ -33,13 +33,16 @@ import test.domain.MyAbstractService;
 import test.domain.MyAggregateRoot;
 import test.domain.MyApplicationService;
 import test.domain.MyBaseService;
+import test.domain.MyConcreteBaseService;
 import test.domain.MyDomainCommand;
 import test.domain.MyDomainService;
 import test.domain.MyOutboundService;
 import test.domain.MyOverridingService;
 import test.domain.MyPlainInterface;
+import test.domain.MyPlainInterfaceImpl;
 import test.domain.MyRepository;
 import test.domain.MyRepositoryImpl;
+import test.domain.MySecondOverridingService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -268,6 +271,137 @@ public class TestMethodMatching {
         // and it must NOT be attributed to the subclass itself
         assertThat(called.methods()).doesNotContain(new DomainMethod(
             serviceMirror.getTypeName(), serviceMirror.methodByName("process")));
+    }
+
+    @Test
+    public void testInheritedBodyIsResolvedPerConcreteOwner() {
+        // baseTemplate(...) is declared and implemented once, in the abstract MyBaseService, and
+        // inherited unchanged by both subclasses. Its body calls process(...) on `this`, which
+        // dispatches to the override of whoever owns the instance - so the two owners of the very
+        // same body must end up with different targets.
+        var baseMirror = Domain.getDomainMirror().getDomainTypeMirror(
+            MyBaseService.class.getTypeName()).get();
+        var firstMirror = Domain.getDomainMirror().getDomainTypeMirror(
+            MyOverridingService.class.getTypeName()).get();
+        var secondMirror = Domain.getDomainMirror().getDomainTypeMirror(
+            MySecondOverridingService.class.getTypeName()).get();
+
+        var calledByFirst = calls.callsFor(new DomainMethod(
+            firstMirror.getTypeName(), firstMirror.methodByName("baseTemplate")));
+        var calledBySecond = calls.callsFor(new DomainMethod(
+            secondMirror.getTypeName(), secondMirror.methodByName("baseTemplate")));
+
+        assertThat(calledByFirst.methods()).containsExactly(new DomainMethod(
+            firstMirror.getTypeName(), firstMirror.methodByName("process")));
+        assertThat(calledBySecond.methods()).containsExactly(new DomainMethod(
+            secondMirror.getTypeName(), secondMirror.methodByName("process")));
+
+        // in particular NOT the base class' process, which is what the declaring type of the
+        // invoke instruction says and what a per-signature analysis would report for both
+        assertThat(calledByFirst.methods()).doesNotContain(new DomainMethod(
+            baseMirror.getTypeName(), baseMirror.methodByName("process")));
+
+        // the call site is still the body it was found in - the base class
+        assertThat(calledByFirst.callSites())
+            .allMatch(callSite -> callSite.callSiteTypeName()
+                .equals(MyBaseService.class.getTypeName()));
+    }
+
+    @Test
+    public void testLambdaInAnInheritedBodyKeepsTheConcreteOwner() {
+        // baseTemplate dispatches on `this` twice: once directly and once from inside a lambda.
+        // The lambda body lives in MyBaseService too, but it runs on the same instance - so
+        // descending into it must keep the concrete owner instead of falling back to the
+        // declaring class.
+        var firstMirror = Domain.getDomainMirror().getDomainTypeMirror(
+            MyOverridingService.class.getTypeName()).get();
+        var secondMirror = Domain.getDomainMirror().getDomainTypeMirror(
+            MySecondOverridingService.class.getTypeName()).get();
+
+        var byFirst = calls.callsFor(new DomainMethod(
+            firstMirror.getTypeName(), firstMirror.methodByName("baseTemplate")));
+        var bySecond = calls.callsFor(new DomainMethod(
+            secondMirror.getTypeName(), secondMirror.methodByName("baseTemplate")));
+
+        // two call sites, one target: both dispatches land on the owner's own override
+        assertThat(byFirst.callSites()).hasSize(2);
+        assertThat(byFirst.methods()).containsExactly(new DomainMethod(
+            firstMirror.getTypeName(), firstMirror.methodByName("process")));
+
+        assertThat(bySecond.callSites()).hasSize(2);
+        assertThat(bySecond.methods()).containsExactly(new DomainMethod(
+            secondMirror.getTypeName(), secondMirror.methodByName("process")));
+    }
+
+    @Test
+    public void testCallOnAConcreteBaseIsReportedOnTheStaticTypeOnly() {
+        // the counterpart to the flow's IMPLEMENTATION edge: the call graph stays with the type
+        // the code actually names. Expanding it here would merge "what is written" with "what
+        // can run" into one flat list.
+        var m = Domain.getDomainMirror().getDomainTypeMirror(
+            MyApplicationService.class.getTypeName()).get();
+        var baseMirror = Domain.getDomainMirror().getDomainTypeMirror(
+            MyConcreteBaseService.class.getTypeName()).get();
+
+        var called = calls.callsFor(new DomainMethod(
+            m.getTypeName(), m.methodByName("doCallOnConcreteBase")));
+
+        assertThat(called.methods()).containsExactly(new DomainMethod(
+            baseMirror.getTypeName(), baseMirror.methodByName("execute")));
+    }
+
+    @Test
+    public void testDefaultMethodIsAnalyzedForItsImplementation() {
+        // a default method has a body, and that body is inherited through the INTERFACE, not
+        // through a superclass - so it belongs to every implementation not overriding it
+        var interfaceMirror = Domain.getDomainMirror().getDomainTypeMirror(
+            MyPlainInterface.class.getTypeName()).get();
+        var implMirror = Domain.getDomainMirror().getDomainTypeMirror(
+            MyPlainInterfaceImpl.class.getTypeName()).get();
+
+        var called = calls.callsFor(new DomainMethod(
+            implMirror.getTypeName(), implMirror.methodByName("defaultOperation")));
+
+        // declaredOnly(...) is an invokeinterface on `this`, so it resolves to the
+        // implementation, not to the interface it is declared on
+        assertThat(called.methods()).containsExactly(new DomainMethod(
+            implMirror.getTypeName(), implMirror.methodByName("declaredOnly")));
+
+        // the instruction itself stands in the interface's body
+        assertThat(called.callSites()).allMatch(callSite -> callSite.callSiteTypeName()
+            .equals(MyPlainInterface.class.getTypeName()));
+
+        // the interface is no entry point of its own - it cannot be instantiated
+        assertThat(calls.callsFor(new DomainMethod(interfaceMirror.getTypeName(),
+            interfaceMirror.methodByName("defaultOperation"))).isEmpty()).isTrue();
+    }
+
+    @Test
+    public void testStaticBodyIsAnalyzedWithoutAThisDispatch() {
+        // a static body has no `this`, so nothing in it can be redispatched - reading the
+        // enclosing instance must not fail either
+        var aggregateRootMirror = Domain.getDomainMirror().getDomainTypeMirror(
+            MyAggregateRoot.class.getTypeName()).get();
+
+        var called = calls.callsFor(new DomainMethod(
+            aggregateRootMirror.getTypeName(),
+            aggregateRootMirror.methodByName("staticValidate")));
+
+        assertThat(called.methods()).containsExactly(new DomainMethod(
+            aggregateRootMirror.getTypeName(),
+            aggregateRootMirror.methodByName("doSomethingNoArg")));
+    }
+
+    @Test
+    public void testAbstractOwnerIsNoEntryPoint() {
+        // MyBaseService cannot be instantiated, so its inherited body never runs "as
+        // MyBaseService" - the calls are held under the concrete owners only
+        var baseMirror = Domain.getDomainMirror().getDomainTypeMirror(
+            MyBaseService.class.getTypeName()).get();
+
+        assertThat(calls.callsFor(new DomainMethod(
+            baseMirror.getTypeName(), baseMirror.methodByName("baseTemplate"))).isEmpty())
+            .isTrue();
     }
 
     @Test

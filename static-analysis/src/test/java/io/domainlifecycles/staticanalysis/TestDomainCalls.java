@@ -33,7 +33,6 @@ import org.junit.jupiter.api.Test;
 import test.domain.MyAggregateRoot;
 import test.domain.MyApplicationService;
 import test.domain.MyBaseService;
-import test.domain.MyOverridingService;
 import test.domain.MyRepository;
 import test.domain.MyRepositoryImpl;
 
@@ -83,7 +82,7 @@ public class TestDomainCalls {
 
     @Test
     public void testCallersOfANeverCalledMethodIsEmpty() {
-        assertThat(calls.callersOf(methodCall(MyOverridingService.class, "process"))).isEmpty();
+        assertThat(calls.callersOf(methodCall(MyRepository.class, "findSome"))).isEmpty();
     }
 
     @Test

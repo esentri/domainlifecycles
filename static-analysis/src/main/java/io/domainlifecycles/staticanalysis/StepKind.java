@@ -48,6 +48,22 @@ public enum StepKind {
     CALL,
 
     /**
+     * The step's method overrides or implements the predecessor's method. Taken from the
+     * mirror's inheritance information, not from {@link DomainCalls}.
+     * <p>
+     * A call is resolved against the static type at the call site, so a call through a repository
+     * or outbound service interface ends at that interface - where there is no body, and thus no
+     * continuation. This edge is that continuation: at runtime the call dispatches to the
+     * implementation, and the flow goes on there. The same holds for an overridden method of a
+     * concrete class, the only difference being that the predecessor is then a possible runtime
+     * target itself.
+     * <p>
+     * Several such edges from one step are alternatives, not a sequence: exactly one of them is
+     * taken per execution, unlike {@link #EVENT_LISTEN}, where all of them run.
+     */
+    IMPLEMENTATION,
+
+    /**
      * The predecessor method publishes the step's domain event. Taken from the mirror
      * ({@code @Publishes}).
      */
