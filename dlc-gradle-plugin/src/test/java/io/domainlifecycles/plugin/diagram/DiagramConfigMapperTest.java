@@ -60,6 +60,11 @@ public class DiagramConfigMapperTest {
         extension.getAggregateRootStyle().set("fill:#ff0000");
         extension.getShowFields().set(true);
         extension.getMethodBlacklist().set(List.of("internalHelper"));
+        extension.getIncludeFlowsFrom().set(List.of("com.example.order.PlaceOrder"));
+        extension.getFlowMaxDepth().set(2);
+        extension.getFlowFollowEvents().set(false);
+        extension.getFlowFollowImplementations().set(false);
+        extension.getFlowExcludeAccessors().set(true);
 
         DiagramConfig diagramConfig = DiagramConfigMapper.map(extension);
 
@@ -69,6 +74,11 @@ public class DiagramConfigMapperTest {
         assertThat(diagramConfig.getAggregateRootStyle()).isEqualTo("fill:#ff0000");
         assertThat(diagramConfig.getShowFields()).isTrue();
         assertThat(diagramConfig.getMethodBlacklist()).containsExactly("internalHelper");
+        assertThat(diagramConfig.getIncludeFlowsFrom()).containsExactly("com.example.order.PlaceOrder");
+        assertThat(diagramConfig.getFlowMaxDepth()).isEqualTo(2);
+        assertThat(diagramConfig.getFlowFollowEvents()).isFalse();
+        assertThat(diagramConfig.getFlowFollowImplementations()).isFalse();
+        assertThat(diagramConfig.getFlowExcludeAccessors()).isTrue();
     }
 
     @Test
@@ -84,6 +94,11 @@ public class DiagramConfigMapperTest {
         assertThat(diagramConfig.getShowFields()).isNull();
         // ListProperty falls back to Gradle's built-in empty-list convention rather than null when unset
         assertThat(diagramConfig.getExplicitlyIncludedPackageNames()).isEmpty();
+        assertThat(diagramConfig.getIncludeFlowsFrom()).isEmpty();
+        assertThat(diagramConfig.getFlowMaxDepth()).isNull();
+        assertThat(diagramConfig.getFlowFollowEvents()).isNull();
+        assertThat(diagramConfig.getFlowFollowImplementations()).isNull();
+        assertThat(diagramConfig.getFlowExcludeAccessors()).isNull();
     }
 
     @Test

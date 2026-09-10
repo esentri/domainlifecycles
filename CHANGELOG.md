@@ -45,6 +45,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   reduce a diagram to the classes taking part in one flow, via the new `includeFlowsFrom` trim
   setting - starting at a domain command, a domain event, a single method or a whole type. The
   restriction is combined with the existing trim settings and can only narrow what they allow
+- The Gradle and Maven diagram plugins now support flow-based diagram filtering too: the new
+  `includeFlowsFrom`, `flowMaxDepth`, `flowFollowEvents`, `flowFollowImplementations` and
+  `flowExcludeAccessors` diagram options mirror the diagrammer's flow settings. Whenever
+  `includeFlowsFrom` is configured, the plugin runs the SootUp based static analysis on the
+  project's compiled classes as part of diagram generation
 
 ## [3.2.0] - 2026-06-16
 - Added support for JMolecules DDD types for DLC mirror, now able to render Domain diagrams using JMolecules marker interfaces or annotations

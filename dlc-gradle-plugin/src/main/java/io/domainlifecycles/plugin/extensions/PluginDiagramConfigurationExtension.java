@@ -619,4 +619,46 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
      * whether relationship stereotypes should be displayed.
      */
     public abstract Property<Boolean> getShowRelationshipStereotypes();
+
+    /**
+     * Retrieves the flow starting points the diagram is restricted to.
+     *
+     * Each entry names a domain type, optionally suffixed with {@code #methodName}, from which a flow
+     * (through method calls, published DomainEvents and processed DomainCommands) is followed. Only classes
+     * reached by at least one of these flows are kept in the diagram, on top of any other restriction already
+     * in place. Configuring this triggers a static analysis of the compiled domain classes during diagram
+     * generation.
+     *
+     * @return a ListProperty containing the flow starting points.
+     */
+    public abstract ListProperty<String> getIncludeFlowsFrom();
+
+    /**
+     * Retrieves the maximum depth a flow is followed to, when flow-based filtering is enabled via
+     * {@link #getIncludeFlowsFrom()}.
+     *
+     * @return a Property containing the maximum flow depth, unlimited if unset.
+     */
+    public abstract Property<Integer> getFlowMaxDepth();
+
+    /**
+     * Indicates whether a flow follows published DomainEvents to their listening methods.
+     *
+     * @return a Property containing the flag, defaulting to {@code true} if unset.
+     */
+    public abstract Property<Boolean> getFlowFollowEvents();
+
+    /**
+     * Indicates whether a flow follows the dispatch from an interface/abstract method into its implementations.
+     *
+     * @return a Property containing the flag, defaulting to {@code true} if unset.
+     */
+    public abstract Property<Boolean> getFlowFollowImplementations();
+
+    /**
+     * Indicates whether simple accessor methods (getters/setters) should be excluded from a followed flow.
+     *
+     * @return a Property containing the flag, defaulting to {@code false} if unset.
+     */
+    public abstract Property<Boolean> getFlowExcludeAccessors();
 }

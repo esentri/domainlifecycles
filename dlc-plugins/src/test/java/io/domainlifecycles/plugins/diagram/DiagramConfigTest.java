@@ -27,6 +27,7 @@
 package io.domainlifecycles.plugins.diagram;
 
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
+import io.domainlifecycles.staticanalysis.FlowConfig;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -149,6 +150,71 @@ public class DiagramConfigTest {
         assertThat(mapped.getDiagramTrimSettings().getExcludeConnectedToIngoing()).containsExactly("com.example.D");
         assertThat(mapped.getDiagramTrimSettings().getExcludeConnectedToOutgoing()).containsExactly("com.example.E");
         assertThat(mapped.getDiagramTrimSettings().getExplicitlyIncludedPackageNames()).containsExactly("com.example.pkg");
+    }
+
+    @Test
+    void mapAppliesFlowMaxDepthEvenWithoutIncludeFlowsFromSet() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        // flow traversal knobs alone (without includeFlowsFrom) still take effect on the mapped FlowConfig,
+        // since FlowConfig is only *used* by the diagrammer together with includeFlowsFrom, not gated by it here.
+        diagramConfig.setFlowMaxDepth(3);
+
+        DomainDiagramConfig mapped = diagramConfig.map();
+
+        assertThat(mapped.getDiagramTrimSettings().getIncludeFlowsFrom()).isEmpty();
+        assertThat(mapped.getFlowConfig().maxDepth()).isEqualTo(3);
+    }
+
+    @Test
+    void mapCopiesIncludeFlowsFromIntoTrimSettings() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setIncludeFlowsFrom(List.of("com.example.order.PlaceOrder"));
+
+        DomainDiagramConfig mapped = diagramConfig.map();
+
+        assertThat(mapped.getDiagramTrimSettings().getIncludeFlowsFrom()).containsExactly("com.example.order.PlaceOrder");
+    }
+
+    @Test
+    void mapWithoutAnyFlowSettingKeepsDefaultFlowConfig() {
+        FlowConfig defaults = FlowConfig.defaults();
+
+        DomainDiagramConfig mapped = new DiagramConfig().map();
+
+        assertThat(mapped.getFlowConfig().maxDepth()).isEqualTo(defaults.maxDepth());
+        assertThat(mapped.getFlowConfig().followEvents()).isEqualTo(defaults.followEvents());
+        assertThat(mapped.getFlowConfig().followImplementations()).isEqualTo(defaults.followImplementations());
+    }
+
+    @Test
+    void mapCopiesFlowTraversalSettingsIntoFlowConfig() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setIncludeFlowsFrom(List.of("com.example.order.PlaceOrder"));
+        diagramConfig.setFlowMaxDepth(2);
+        diagramConfig.setFlowFollowEvents(false);
+        diagramConfig.setFlowFollowImplementations(false);
+
+        DomainDiagramConfig mapped = diagramConfig.map();
+
+        FlowConfig flowConfig = mapped.getFlowConfig();
+        assertThat(flowConfig.maxDepth()).isEqualTo(2);
+        assertThat(flowConfig.followEvents()).isFalse();
+        assertThat(flowConfig.followImplementations()).isFalse();
+    }
+
+    @Test
+    void mapExcludingAccessorsAppliesTheAccessorFilterOnTopOfDefaults() {
+        DiagramConfig withoutFilter = new DiagramConfig();
+        withoutFilter.setIncludeFlowsFrom(List.of("com.example.order.PlaceOrder"));
+        DiagramConfig withFilter = new DiagramConfig();
+        withFilter.setIncludeFlowsFrom(List.of("com.example.order.PlaceOrder"));
+        withFilter.setFlowExcludeAccessors(true);
+
+        FlowConfig defaultFlowConfig = withoutFilter.map().getFlowConfig();
+        FlowConfig excludingAccessorsFlowConfig = withFilter.map().getFlowConfig();
+
+        // the default (no-op) methodFilter accepts everything, excludingAccessors() must reject at least accessors
+        assertThat(defaultFlowConfig.methodFilter()).isNotSameAs(excludingAccessorsFlowConfig.methodFilter());
     }
 
     @Test

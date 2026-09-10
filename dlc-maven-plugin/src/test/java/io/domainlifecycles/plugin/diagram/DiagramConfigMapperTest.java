@@ -49,6 +49,11 @@ public class DiagramConfigMapperTest {
         when(mavenDiagramConfig.getAggregateRootStyle()).thenReturn("fill:#ff0000");
         when(mavenDiagramConfig.getShowFields()).thenReturn(true);
         when(mavenDiagramConfig.getMethodBlacklist()).thenReturn(List.of("internalHelper"));
+        when(mavenDiagramConfig.getIncludeFlowsFrom()).thenReturn(List.of("com.example.order.PlaceOrder"));
+        when(mavenDiagramConfig.getFlowMaxDepth()).thenReturn(2);
+        when(mavenDiagramConfig.getFlowFollowEvents()).thenReturn(false);
+        when(mavenDiagramConfig.getFlowFollowImplementations()).thenReturn(false);
+        when(mavenDiagramConfig.getFlowExcludeAccessors()).thenReturn(true);
 
         DiagramConfig diagramConfig = DiagramConfigMapper.map(mavenDiagramConfig);
 
@@ -58,6 +63,11 @@ public class DiagramConfigMapperTest {
         assertThat(diagramConfig.getAggregateRootStyle()).isEqualTo("fill:#ff0000");
         assertThat(diagramConfig.getShowFields()).isTrue();
         assertThat(diagramConfig.getMethodBlacklist()).containsExactly("internalHelper");
+        assertThat(diagramConfig.getIncludeFlowsFrom()).containsExactly("com.example.order.PlaceOrder");
+        assertThat(diagramConfig.getFlowMaxDepth()).isEqualTo(2);
+        assertThat(diagramConfig.getFlowFollowEvents()).isFalse();
+        assertThat(diagramConfig.getFlowFollowImplementations()).isFalse();
+        assertThat(diagramConfig.getFlowExcludeAccessors()).isTrue();
     }
 
     @Test
@@ -65,9 +75,13 @@ public class DiagramConfigMapperTest {
         PluginDiagramConfiguration mavenDiagramConfig = mock(PluginDiagramConfiguration.class);
         when(mavenDiagramConfig.getFormat()).thenReturn("png");
         when(mavenDiagramConfig.getFileName()).thenReturn("diagram");
-        // Mockito's default answer for an unstubbed Boolean-returning method is `false`, not `null`;
-        // stub it explicitly to test the actual "unset" mapping behaviour of DiagramConfigMapper.
+        // Mockito's default answer for an unstubbed Boolean/Integer-returning method is `false`/`0`, not `null`;
+        // stub these explicitly to test the actual "unset" mapping behaviour of DiagramConfigMapper.
         when(mavenDiagramConfig.getShowFields()).thenReturn(null);
+        when(mavenDiagramConfig.getFlowMaxDepth()).thenReturn(null);
+        when(mavenDiagramConfig.getFlowFollowEvents()).thenReturn(null);
+        when(mavenDiagramConfig.getFlowFollowImplementations()).thenReturn(null);
+        when(mavenDiagramConfig.getFlowExcludeAccessors()).thenReturn(null);
 
         DiagramConfig diagramConfig = DiagramConfigMapper.map(mavenDiagramConfig);
 
@@ -78,6 +92,11 @@ public class DiagramConfigMapperTest {
         // it is passed through by DiagramConfigMapper/DiagramConfig unchanged.
         assertThat(diagramConfig.getExplicitlyIncludedPackageNames()).isEmpty();
         assertThat(diagramConfig.getMethodBlacklist()).isEmpty();
+        assertThat(diagramConfig.getIncludeFlowsFrom()).isEmpty();
+        assertThat(diagramConfig.getFlowMaxDepth()).isNull();
+        assertThat(diagramConfig.getFlowFollowEvents()).isNull();
+        assertThat(diagramConfig.getFlowFollowImplementations()).isNull();
+        assertThat(diagramConfig.getFlowExcludeAccessors()).isNull();
     }
 
     @Test

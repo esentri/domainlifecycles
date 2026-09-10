@@ -31,12 +31,17 @@ import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.plugins.diagram.kroki.KrokiClient;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
 import io.domainlifecycles.plugins.util.DLCUtils;
+import io.domainlifecycles.staticanalysis.DomainCalls;
+import io.domainlifecycles.staticanalysis.SootupStaticAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementation class for generating visual domain diagrams based on class path inputs and configuration details.
@@ -118,14 +123,47 @@ public class DiagramGeneratorImpl implements DiagramGenerator {
 
 
     private String generateRawNomnomlDiagramText(List<URL> classPathFiles, final DiagramConfig diagramConfig, final String... domainPackages) {
-        DomainMirror dm = null;
+        DomainMirror dm;
         try {
             dm = DLCUtils.initializeDomainMirrorFromClassPath(classPathFiles, domainPackages);
         } catch(RuntimeException e) {
             throw DLCPluginsException.fail("DomainMirror couldn't be initialized.", e);
         }
 
-        final DomainDiagramGenerator generator = new DomainDiagramGenerator(diagramConfig.map(), dm);
+        final DomainDiagramGenerator generator;
+        if (diagramConfig.getIncludeFlowsFrom() != null && !diagramConfig.getIncludeFlowsFrom().isEmpty()) {
+            final DomainCalls domainCalls = analyzeDomainCalls(classPathFiles, dm);
+            generator = new DomainDiagramGenerator(diagramConfig.map(), dm, domainCalls);
+        } else {
+            generator = new DomainDiagramGenerator(diagramConfig.map(), dm);
+        }
         return generator.generateDiagramText();
+    }
+
+    /**
+     * Runs a static (bytecode) analysis of the classes on {@code classPathFiles} to determine which domain
+     * methods call which other domain methods. The result is required by {@link DomainDiagramGenerator} to
+     * restrict a diagram to the classes reached by the flows configured via
+     * {@code DiagramConfig#getIncludeFlowsFrom()}, and is only computed when such a restriction is configured,
+     * since the analysis is comparatively expensive.
+     */
+    private DomainCalls analyzeDomainCalls(List<URL> classPathFiles, DomainMirror domainMirror) {
+        LOGGER.info("Running static analysis for flow-based diagram filtering");
+        try {
+            final List<Path> classpath = classPathFiles.stream()
+                .map(this::toPath)
+                .collect(Collectors.toList());
+            return new SootupStaticAnalyzer().analyze(domainMirror, classpath);
+        } catch (RuntimeException e) {
+            throw DLCPluginsException.fail("Static analysis for flow-based diagram filtering failed.", e);
+        }
+    }
+
+    private Path toPath(URL url) {
+        try {
+            return Path.of(url.toURI());
+        } catch (URISyntaxException e) {
+            throw DLCPluginsException.fail(String.format("Could not resolve classpath entry '%s'.", url), e);
+        }
     }
 }

@@ -396,6 +396,71 @@ Supported Diagram configuration options are
 - showInheritanceStructuresForDomainCommands: boolean, default false
 - showRelationshipLabels: boolean, default true
 - showRelationshipStereotypes: boolean, default true
+- includeFlowsFrom: list of flow starting points (see [Restricting a diagram to a flow](#restricting-a-diagram-to-a-flow)), default none (flow-based filtering disabled)
+- flowMaxDepth: integer, maximum depth a flow is followed to, default unlimited
+- flowFollowEvents: boolean, whether a flow follows published DomainEvents to their listening methods, default true
+- flowFollowImplementations: boolean, whether a flow follows the dispatch from an interface/abstract method into its implementations, default true
+- flowExcludeAccessors: boolean, whether simple accessor methods (getters/setters) are excluded from a followed flow, default false
+
+## Restricting a diagram to a flow
+
+Besides the structural filters above (packages, blacklists, connection filters), a diagram can be restricted to the
+classes taking part in one or more concrete flows through the domain. A flow starts at a domain command, a domain
+event, or any other domain method, and follows method calls, the dispatch into implementations, published
+DomainEvents together with the methods listening to them, and the methods processing a DomainCommand.
+
+This is configured with `includeFlowsFrom`, a list of flow starting points. Each entry is a fully qualified type
+name, optionally followed by `#methodName`:
+- a DomainCommand or DomainEvent type name starts the flow(s) triggered by it
+- any other domain type name starts the flows of all its methods
+- `type#methodName` starts the flows of all overloads of that method
+
+Several entries are combined (their reached classes are unioned). The restriction only ever narrows an already
+configured diagram: a class outside `domainModelPackages`/`explicitlyIncludedPackages` or on the `classesBlacklist`
+stays out, even when the flow reaches it.
+
+Since determining which classes take part in a flow requires analyzing the compiled domain classes, configuring
+`includeFlowsFrom` makes the plugin run a static (bytecode) analysis of your domain classes as part of diagram
+generation. This is skipped whenever `includeFlowsFrom` is not configured for a diagram. `flowMaxDepth`,
+`flowFollowEvents`, `flowFollowImplementations` and `flowExcludeAccessors` further tune how far/what such a flow
+traversal follows; they have no effect unless `includeFlowsFrom` is also set.
+
+Gradle example, restricted to the flow of the `PlaceOrder` domain command:
+```groovy
+dlcGradlePlugin {
+    diagram {
+        fileOutputDir = layout.buildDirectory
+        diagrams {
+            placeOrderFlow {
+                domainModelPackages = ["io.domainlifecycles.test"]
+                format = "svg"
+                fileName = "place-order-flow"
+                includeFlowsFrom = ["io.domainlifecycles.test.order.PlaceOrder"]
+                flowMaxDepth = 5
+            }
+        }
+    }
+}
+```
+
+Maven example:
+```xml
+<diagram>
+    <domainModelPackages>
+        <domainModelPackage>io.domainlifecycles.test</domainModelPackage>
+    </domainModelPackages>
+    <format>svg</format>
+    <fileName>place-order-flow</fileName>
+    <includeFlowsFrom>
+        <includeFlowFrom>io.domainlifecycles.test.order.PlaceOrder</includeFlowFrom>
+    </includeFlowsFrom>
+    <flowMaxDepth>5</flowMaxDepth>
+</diagram>
+```
+
+For the full semantics of `includeFlowsFrom` and the flow traversal settings, see the domain-diagrammer's
+["Restricting a diagram to a flow"](../domain-diagrammer/readme.md#restricting-a-diagram-to-a-flow) section, and for
+background on the underlying static analysis, see the [static-analysis readme](../static-analysis/readme.md).
 
 ## How to read DLC Domain Diagrams?
 
