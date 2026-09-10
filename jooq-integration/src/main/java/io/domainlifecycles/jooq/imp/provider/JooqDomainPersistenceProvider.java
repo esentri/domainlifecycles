@@ -111,10 +111,9 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
             .map(dtm -> (EntityMirror) dtm)
             .toList();
 
+        Set<Class<? extends UpdatableRecord<?>>> recordTypeSet = jooqPersistenceConfiguration
+            .recordClassProvider.provideRecordClasses();
         allEntityMirrors.forEach(em -> {
-
-                Set<Class<? extends UpdatableRecord<?>>> recordTypeSet = jooqPersistenceConfiguration
-                    .recordClassProvider.provideRecordClasses();
                 Optional<Class<? extends UpdatableRecord<?>>> recordType;
                 if (recordTypeSet != null && !recordTypeSet.isEmpty()) {
                     recordType = jooqPersistenceConfiguration.recordTypeToEntityTypeMatcher.findMatchingRecordType(
