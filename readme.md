@@ -116,7 +116,7 @@ DLC provides following core features:
       Identities and “single-valued” ValueObjects being directly used as path or query
       parameters
     * Domain Events via Spring Event Bus - compatible with Spring Boot 3 and 4, also supports Spring Modulith Events 
-    * SpringDoc OpenAPI Extension. See [`Open API Extension`](spring-doc-2-integration/readme.md): API documentation DDD
+    * SpringDoc OpenAPI Extension. See [`Open API Extension`](spring-doc2-integration/readme.md): API documentation DDD
         building blocks based on [Spring Doc Open API](https://springdoc.org/)
     * API documentation consistently to DLCs Jackson AutoMapping features (out-of-the-box)
     * Autoconfiguration for DLC Persistence via jOOQ and DLC JSON Mapping via Jackson 2/3
