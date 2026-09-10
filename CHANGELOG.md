@@ -7,10 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - Added [static analysis](./static-analysis) module, answering which domain methods are called from
-  which other domain methods, based on the DomainMirror and a compiled classpath
-- `StaticAnalyzer` (with a SootUp based implementation) reads the invoke instructions directly out
-  of the bodies of the mirrored methods instead of building a global call graph, so only the
-  inspected bodies are translated and the analysis stays confined to the domain
+  which other domain methods, based on the DomainMirror and a compiled classpath. It carries the
+  `StaticAnalyzer` abstraction, the result model and the flow analysis, and depends on nothing but
+  the mirror
+- Added [static analysis sootup](./static-analysis-sootup) module holding the SootUp based
+  `StaticAnalyzer` implementation. Kept as a module of its own so that reading an analysis result -
+  for instance to filter a diagram - does not drag a bytecode analysis framework onto the classpath
+- The analyzer reads the invoke instructions directly out of the bodies of the mirrored methods
+  instead of building a global call graph, so only the inspected bodies are translated and the
+  analysis stays confined to the domain
 - Resolves lambdas (also nested ones), method references (bound, unbound and static), private
   helper methods, overloads, generic methods with compiler generated bridge methods and inherited
   methods; recursive and mutually recursive calls terminate

@@ -14,23 +14,5 @@ java {
 
 dependencies {
     api libs.slf4j.api
-    implementation 'org.soot-oss:sootup.core:2.0.0'
-    implementation 'org.soot-oss:sootup.java.core:2.0.0'
-    implementation 'org.soot-oss:sootup.java.bytecode.frontend:2.0.0'
-    implementation 'org.soot-oss:sootup.callgraph:2.0.0'
     api project(":mirror")
-
-    testImplementation libs.assertj
-    testImplementation libs.logback.classic
-    testImplementation libs.commons.io
-    testImplementation libs.lombok
-    testImplementation libs.jooq
-    testImplementation project(":assertions")
-    testImplementation project(":builder")
-    testImplementation project(":access")
-    testImplementation project(":types")
-    testImplementation project(":jooq-integration")
-    testImplementation project(":type-utils")
-    testImplementation project(":test-shared-impl")
-    testAnnotationProcessor libs.lombok
 }
