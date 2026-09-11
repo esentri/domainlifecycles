@@ -299,6 +299,24 @@ public class PluginDiagramConfiguration {
     @Parameter(property = "showRelationshipStereotypes", required = false)
     private Boolean showRelationshipStereotypes;
 
+    @Parameter(property = "includeFlowsFrom", required = false)
+    private List<String> includeFlowsFrom;
+
+    @Parameter(property = "flowMaxDepth", required = false)
+    private Integer flowMaxDepth;
+
+    @Parameter(property = "flowFollowEvents", required = false)
+    private Boolean flowFollowEvents;
+
+    @Parameter(property = "flowFollowImplementations", required = false)
+    private Boolean flowFollowImplementations;
+
+    @Parameter(property = "flowExcludeAccessors", required = false)
+    private Boolean flowExcludeAccessors;
+
+    @Parameter(property = "staticAnalysisPackages", required = false)
+    private List<String> staticAnalysisPackages;
+
 
     /**
      * Gets the output format of the diagram.
@@ -1031,5 +1049,64 @@ public class PluginDiagramConfiguration {
      */
     public Boolean getShowRelationshipStereotypes() {
         return showRelationshipStereotypes;
+    }
+
+    /**
+     * Gets the flow starting points the diagram is restricted to.
+     * Each entry names a domain type, optionally suffixed with {@code #methodName}, from which a flow
+     * (through method calls, published DomainEvents and processed DomainCommands) is followed. Configuring
+     * this triggers a static analysis of the compiled domain classes during diagram generation.
+     *
+     * @return the flow starting points.
+     */
+    public List<String> getIncludeFlowsFrom() {
+        return includeFlowsFrom;
+    }
+
+    /**
+     * Gets the maximum depth a flow is followed to, when flow-based filtering is enabled.
+     *
+     * @return the maximum flow depth, unlimited if unset.
+     */
+    public Integer getFlowMaxDepth() {
+        return flowMaxDepth;
+    }
+
+    /**
+     * Checks whether a flow follows published DomainEvents to their listening methods.
+     *
+     * @return true if DomainEvents are followed, false otherwise, defaults to true if unset.
+     */
+    public Boolean getFlowFollowEvents() {
+        return flowFollowEvents;
+    }
+
+    /**
+     * Checks whether a flow follows the dispatch from an interface/abstract method into its implementations.
+     *
+     * @return true if implementations are followed, false otherwise, defaults to true if unset.
+     */
+    public Boolean getFlowFollowImplementations() {
+        return flowFollowImplementations;
+    }
+
+    /**
+     * Checks whether simple accessor methods (getters/setters) are excluded from a followed flow.
+     *
+     * @return true if accessors are excluded, false otherwise, defaults to false if unset.
+     */
+    public Boolean getFlowExcludeAccessors() {
+        return flowExcludeAccessors;
+    }
+
+    /**
+     * Gets the packages the static analysis (triggered by {@link #getIncludeFlowsFrom()}) restricts
+     * itself to, to a package itself or any of its sub-packages, instead of considering every class
+     * on the classpath. Falls back to {@link #getDomainModelPackages()} when unset.
+     *
+     * @return the packages to restrict the static analysis to.
+     */
+    public List<String> getStaticAnalysisPackages() {
+        return staticAnalysisPackages;
     }
 }

@@ -82,4 +82,44 @@ public abstract class DomainModelUploadTaskConfigurationExtension {
      * @return a {@code ListProperty<String>} representing the list of package names.
      */
     public abstract ListProperty<String> getDomainModelPackages();
+
+    /**
+     * Indicates whether a static analysis of the domain classes should be run and its result
+     * ({@code DomainCalls}) uploaded alongside the domain model, so the Diagram Viewer can offer
+     * flow based diagram filtering.
+     *
+     * @return a Property containing the flag, defaulting to {@code true} if unset.
+     */
+    public abstract Property<Boolean> getRunStaticAnalysis();
+
+    /**
+     * Indicates whether the upload request body should be streamed directly to the Diagram Viewer as
+     * it is produced, rather than first assembled completely in memory. Reduces the build's memory
+     * footprint for large domains, at the cost of the added complexity of a background thread
+     * producing the body while the request is in flight; see
+     * {@code DomainModelUploader#uploadDomainModelStreaming} for details and trade-offs.
+     *
+     * @return a Property containing the flag, defaulting to {@code false} if unset.
+     */
+    public abstract Property<Boolean> getStreamUpload();
+
+    /**
+     * The maximum number of classes held at once in the bounded cache backing the static analysis,
+     * when {@link #getRunStaticAnalysis()} is enabled. Evicted classes are simply re-parsed on
+     * demand, so a smaller cache only trades CPU for a lower memory footprint.
+     *
+     * @return a Property containing the cache size, defaulting to a sensible size if unset.
+     */
+    public abstract Property<Integer> getStaticAnalysisCacheSize();
+
+    /**
+     * Restricts the static analysis (when {@link #getRunStaticAnalysis()} is enabled) to classes in
+     * these packages (a package itself or any of its sub-packages) instead of the whole classpath,
+     * which for a large project can itself be an expensive scan. Falls back to
+     * {@link #getDomainModelPackages()} when unset - should cover at least the domain model packages
+     * and any package holding relevant implementations of domain interfaces.
+     *
+     * @return a ListProperty containing the packages to restrict the static analysis to.
+     */
+    public abstract ListProperty<String> getStaticAnalysisPackages();
 }

@@ -27,8 +27,7 @@
 package io.domainlifecycles.plugin.viewer;
 
 
-import io.domainlifecycles.plugins.mirror.MirrorSerializer;
-import io.domainlifecycles.plugins.mirror.MirrorSerializerImpl;
+import io.domainlifecycles.plugins.staticanalysis.DomainCallsAnalyzerImpl;
 import io.domainlifecycles.plugins.viewer.DomainModelUploader;
 import io.domainlifecycles.plugins.viewer.DomainModelUploaderImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
@@ -45,6 +44,8 @@ import org.gradle.api.tasks.TaskAction;
 import org.gradle.work.DisableCachingByDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * Abstract task for creating UML-like diagrams based on domain models or other configurations.
@@ -106,6 +107,43 @@ public abstract class UploadDomainModelTask extends DefaultTask {
     @Input
     public abstract ListProperty<String> getDomainModelPackages();
 
+    /**
+     * Indicates whether a static analysis of the domain classes should be run and its result
+     * ({@code DomainCalls}) uploaded alongside the domain model.
+     *
+     * @return a {@code Property<Boolean>} representing the flag
+     */
+    @Input
+    public abstract Property<Boolean> getRunStaticAnalysis();
+
+    /**
+     * Indicates whether the upload request body should be streamed directly to the Diagram Viewer as
+     * it is produced, rather than first assembled completely in memory.
+     *
+     * @return a {@code Property<Boolean>} representing the flag
+     */
+    @Input
+    public abstract Property<Boolean> getStreamUpload();
+
+    /**
+     * The maximum number of classes held at once in the bounded cache backing the static analysis,
+     * when {@link #getRunStaticAnalysis()} is enabled.
+     *
+     * @return a {@code Property<Integer>} representing the cache size
+     */
+    @Input
+    public abstract Property<Integer> getStaticAnalysisCacheSize();
+
+    /**
+     * Restricts the static analysis (when {@link #getRunStaticAnalysis()} is enabled) to classes in
+     * these packages instead of the whole classpath. Falls back to {@link #getDomainModelPackages()}
+     * when unset.
+     *
+     * @return a {@code ListProperty<String>} representing the packages
+     */
+    @Input
+    public abstract ListProperty<String> getStaticAnalysisPackages();
+
     private final ConfigurableFileCollection classesDirs = getProject().getObjects().fileCollection();
     private final ConfigurableFileCollection classpath = getProject().getObjects().fileCollection();
 
@@ -165,18 +203,28 @@ public abstract class UploadDomainModelTask extends DefaultTask {
     @TaskAction
     public void action() {
         LOGGER.info("Running Upload Domain Model Goal...");
-        domainModelUploader = new DomainModelUploaderImpl();
+        domainModelUploader = new DomainModelUploaderImpl(
+            getStaticAnalysisCacheSize().getOrElse(DomainCallsAnalyzerImpl.DEFAULT_CACHE_SIZE));
         uploadDomainModel();
     }
 
     private void uploadDomainModel() {
-        MirrorSerializer mirrorSerializer = new MirrorSerializerImpl(true);
-        final String domainModelJson = mirrorSerializer.serialize(
-            ClassLoaderUtils.getClasspathFiles(this.getClasspath(), this.getClassesDirs()),
-            getDomainModelPackages().get()
-        );
+        var classPathFiles = ClassLoaderUtils.getClasspathFiles(this.getClasspath(), this.getClassesDirs());
+        var domainModelPackages = getDomainModelPackages().get();
+        var staticAnalysisPackages = getStaticAnalysisPackages().getOrElse(List.of());
+        var runStaticAnalysis = getRunStaticAnalysis().getOrElse(true);
+        var apiKey = getApiKey().get();
+        var projectName = getProjectName().get();
+        var diagramViewerBaseUrl = getDiagramViewerBaseUrl().get();
 
-        domainModelUploader.uploadDomainModel(
-            domainModelJson, getDomainModelPackages().get(), getApiKey().get(), getProjectName().get(), getDiagramViewerBaseUrl().get());
+        if (getStreamUpload().getOrElse(false)) {
+            domainModelUploader.uploadDomainModelStreaming(
+                classPathFiles, domainModelPackages, staticAnalysisPackages, runStaticAnalysis,
+                apiKey, projectName, diagramViewerBaseUrl);
+        } else {
+            domainModelUploader.uploadDomainModel(
+                classPathFiles, domainModelPackages, staticAnalysisPackages, runStaticAnalysis,
+                apiKey, projectName, diagramViewerBaseUrl);
+        }
     }
 }

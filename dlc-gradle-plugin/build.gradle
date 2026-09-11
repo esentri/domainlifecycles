@@ -29,4 +29,6 @@ gradlePlugin {
 
 dependencies {
     api project(":dlc-plugins")
+
+    testImplementation libs.assertj
 }

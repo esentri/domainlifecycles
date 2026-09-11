@@ -30,6 +30,7 @@ package io.domainlifecycles.plugin.diagram;
 import io.domainlifecycles.plugins.diagram.DiagramConfig;
 import io.domainlifecycles.plugins.diagram.DiagramGenerator;
 import io.domainlifecycles.plugins.diagram.DiagramGeneratorImpl;
+import io.domainlifecycles.plugins.staticanalysis.DomainCallsAnalyzerImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
 import io.domainlifecycles.plugins.util.FileIOUtils;
 
@@ -102,6 +103,9 @@ public class CreateDiagramGoal extends AbstractMojo {
     @Parameter(property = "diagrams", required = true)
     private List<PluginDiagramConfiguration> diagrams;
 
+    @Parameter(property = "staticAnalysisCacheSize", defaultValue = "" + DomainCallsAnalyzerImpl.DEFAULT_CACHE_SIZE)
+    private int staticAnalysisCacheSize;
+
     private DiagramGenerator diagramGenerator;
 
     /**
@@ -117,7 +121,7 @@ public class CreateDiagramGoal extends AbstractMojo {
     @Override
     public void execute() {
         LOGGER.info("Running Create Diagram Goal...");
-        diagramGenerator = new DiagramGeneratorImpl();
+        diagramGenerator = new DiagramGeneratorImpl(staticAnalysisCacheSize);
         diagrams.forEach(this::createAndSaveDiagram);
         diagramGenerator.tearDown();
     }

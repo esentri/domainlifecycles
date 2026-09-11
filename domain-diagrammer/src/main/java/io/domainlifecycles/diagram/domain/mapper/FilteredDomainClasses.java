@@ -68,20 +68,24 @@ public class FilteredDomainClasses {
      * @param diagramTrimSettings the configuration defining trim settings for the diagram
      * @param generalVisualSettings the configuration defining visual settings for the diagram
      * @param domainMirror the representation of the domain used to extract and filter domain elements
+     * @param domainFlowFilter the restriction to the domain types taking part in a flow
      */
     public FilteredDomainClasses(
         DiagramTrimSettings diagramTrimSettings,
         GeneralVisualSettings generalVisualSettings,
-        DomainMirror domainMirror) {
+        DomainMirror domainMirror,
+        DomainFlowFilter domainFlowFilter) {
 
         Objects.requireNonNull(diagramTrimSettings,"diagramTrimSettings must not be null");
         this.generalVisualSettings = Objects.requireNonNull(generalVisualSettings,"generalVisualSettings must not be null");
         Objects.requireNonNull(domainMirror,"domainMirror must not be null");
+        Objects.requireNonNull(domainFlowFilter,"domainFlowFilter must not be null");
 
         var diagramSettingsFilter = new DiagramSettingsFilter(
             domainMirror,
             diagramTrimSettings,
-            generalVisualSettings
+            generalVisualSettings,
+            domainFlowFilter
         );
 
         includedDomainTypes = domainMirror.getAllDomainTypeMirrors().stream().filter(diagramSettingsFilter::filter).collect(Collectors.toSet());

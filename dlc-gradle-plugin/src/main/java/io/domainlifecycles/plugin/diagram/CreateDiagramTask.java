@@ -31,6 +31,7 @@ import io.domainlifecycles.plugin.extensions.PluginDiagramConfigurationExtension
 import io.domainlifecycles.plugins.diagram.DiagramConfig;
 import io.domainlifecycles.plugins.diagram.DiagramGenerator;
 import io.domainlifecycles.plugins.diagram.DiagramGeneratorImpl;
+import io.domainlifecycles.plugins.staticanalysis.DomainCallsAnalyzerImpl;
 import io.domainlifecycles.plugins.util.FileIOUtils;
 import io.domainlifecycles.utils.ClassLoaderUtils;
 import java.nio.file.Path;
@@ -38,6 +39,7 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
@@ -106,6 +108,15 @@ public abstract class CreateDiagramTask extends DefaultTask {
     @Input
     public abstract NamedDomainObjectContainer<PluginDiagramConfigurationExtension> getDiagrams();
 
+    /**
+     * The maximum number of classes held at once in the bounded cache backing the static analysis
+     * run for flow-based diagram filtering.
+     *
+     * @return a {@code Property<Integer>} representing the cache size
+     */
+    @Input
+    public abstract Property<Integer> getStaticAnalysisCacheSize();
+
     private final ConfigurableFileCollection classesDirs = getProject().getObjects().fileCollection();
     private final ConfigurableFileCollection classpath = getProject().getObjects().fileCollection();
 
@@ -160,7 +171,8 @@ public abstract class CreateDiagramTask extends DefaultTask {
      */
     @TaskAction
     public void action() {
-        diagramGenerator = new DiagramGeneratorImpl();
+        diagramGenerator = new DiagramGeneratorImpl(
+            getStaticAnalysisCacheSize().getOrElse(DomainCallsAnalyzerImpl.DEFAULT_CACHE_SIZE));
         getDiagrams().forEach(this::createAndSaveDiagram);
         diagramGenerator.tearDown();
     }

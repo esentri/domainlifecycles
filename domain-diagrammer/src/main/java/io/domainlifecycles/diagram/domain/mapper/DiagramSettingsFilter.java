@@ -67,6 +67,7 @@ public class DiagramSettingsFilter {
     private final GeneralVisualSettings generalVisualSettings;
     private final Set<DomainTypeMirror> includedDomainTypesByConnections;
     private final DomainMirror domainMirror;
+    private final DomainFlowFilter domainFlowFilter;
 
     /**
      * Constructs a new instance of DiagramSettingsFilter with the specified parameters.
@@ -76,13 +77,17 @@ public class DiagramSettingsFilter {
      * @param diagramTrimSettings Configuration settings that determine how the diagram should be trimmed
      *                           and which elements should be included or excluded
      * @param generalVisualSettings  Configuration for general visual settings
+     * @param domainFlowFilter       Restriction to the types taking part in a flow, use
+     *                               {@link DomainFlowFilter#INACTIVE} to not restrict by flow
      */
     public DiagramSettingsFilter(DomainMirror domainMirror,
                                  DiagramTrimSettings diagramTrimSettings,
-                                 GeneralVisualSettings generalVisualSettings) {
+                                 GeneralVisualSettings generalVisualSettings,
+                                 DomainFlowFilter domainFlowFilter) {
         this.trimSettings = Objects.requireNonNull(diagramTrimSettings, "TrimSettings must be provided!");
         this.domainMirror = Objects.requireNonNull(domainMirror, "A DomainMirror must be provided!");
         this.generalVisualSettings = Objects.requireNonNull(generalVisualSettings, "GeneralVisualSettings must be provided!");
+        this.domainFlowFilter = Objects.requireNonNull(domainFlowFilter, "A DomainFlowFilter must be provided!");
 
         this.includedDomainTypesByConnections = new HashSet<>();
         this.includedDomainTypesByConnections.addAll(calculateConnectedIngoing(diagramTrimSettings.getIncludeConnectedToIngoing()));
@@ -302,6 +307,9 @@ public class DiagramSettingsFilter {
             && dtm.getAllInterfaceTypeNames().stream().noneMatch(
                 it -> trimSettings.getClassesBlacklist().contains(it)
         );
+        // last, because restricting to a flow may only narrow what the other settings allowed,
+        // never widen it
+        contained = contained && domainFlowFilter.contains(dtm);
         return contained;
     }
 

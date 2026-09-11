@@ -116,10 +116,24 @@ DLC provides following core features:
       Identities and “single-valued” ValueObjects being directly used as path or query
       parameters
     * Domain Events via Spring Event Bus - compatible with Spring Boot 3 and 4, also supports Spring Modulith Events 
-    * SpringDoc OpenAPI Extension. See [`Open API Extension`](spring-doc-2-integration/readme.md): API documentation DDD
+    * SpringDoc OpenAPI Extension. See [`Open API Extension`](spring-doc2-integration/readme.md): API documentation DDD
         building blocks based on [Spring Doc Open API](https://springdoc.org/)
     * API documentation consistently to DLCs Jackson AutoMapping features (out-of-the-box)
     * Autoconfiguration for DLC Persistence via jOOQ and DLC JSON Mapping via Jackson 2/3
+
+- [`Static Analysis`](static-analysis/readme.md): Answers which domain methods call each other, and which
+  domain types and methods take part in one concrete flow
+    * Based on the Domain Mirror and the compiled domain classes
+    * A flow follows method calls, the dispatch into implementations, published DomainEvents together with
+      the methods listening to them, and the methods processing a DomainCommand
+    * Reduce a domain diagram to the classes taking part in one flow
+    * The SootUp based analysis implementation is a module of its own
+      (`io.domainlifecycles:static-analysis-sootup`), so reading a result does not require it
+    * JSON (de)serialization of an analysis result, so it can be produced once and consumed
+      elsewhere, e.g. by an external diagram viewer tool:
+      [`static-analysis-serialization-jackson3`](static-analysis-serialization-jackson3/readme.md)
+        * Optional Jackson 2 legacy support:
+          [`static-analysis-serialization-jackson2`](static-analysis-serialization-jackson2/readme.md)
 
 - [`Plugins`](dlc-plugins/readme.md): Generate domain model diagrams in the build process.
 
@@ -164,6 +178,10 @@ DLC provides several JARs which enable the DLC features independently
 | General Swagger / Open API v3 support                               | only internally used   | io.domainlifecycles:swagger-integration                                                                                                           |  
 | Spring 6 Web support                                                | application developers | io.domainlifecycles:spring-web6-integration                                                                                                       |
 | Spring 7 Web support                                                | application developers | io.domainlifecycles:spring-web-integration                                                                                                        |
+| Static analysis of domain calls and flows                           | application developers | io.domainlifecycles:static-analysis                                                                                                               |
+| SootUp based static analysis implementation                         | application developers | io.domainlifecycles:static-analysis-sootup                                                                                                        |
+| Static analysis result (DomainCalls) serialization (Jackson 2)      | application developers | io.domainlifecycles:static-analysis-serialization-jackson2                                                                                        |
+| Static analysis result (DomainCalls) serialization (Jackson 3)      | application developers | io.domainlifecycles:static-analysis-serialization-jackson3                                                                                        |
 | Domain Diagrams                                                     | application developers | io.domainlifecycles:domain-diagrammer                                                                                                             | 
 
 To simplify the dependency management using all features in a Spring Boot 4.x app using jOOQ for the relational

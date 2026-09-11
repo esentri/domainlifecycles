@@ -16,6 +16,7 @@ dependencies {
     api libs.slf4j.api
     implementation project(":types")
     api project(":mirror")
+    api project(":static-analysis")
 
     testImplementation libs.assertj
     testImplementation libs.logback.classic

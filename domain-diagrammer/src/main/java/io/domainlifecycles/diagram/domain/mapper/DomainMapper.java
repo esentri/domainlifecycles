@@ -36,6 +36,7 @@ import io.domainlifecycles.diagram.nomnoml.NomnomlNote;
 import io.domainlifecycles.diagram.nomnoml.NomnomlStereotype;
 import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.DomainMirror;
+import io.domainlifecycles.staticanalysis.DomainCalls;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 
@@ -68,17 +69,25 @@ public class DomainMapper {
      * @param domainDiagramConfig diagram configuration
      * @param domainMirror mapped domain
      * @param notes a collection of externally provided notes to be attached to the shown classes
+     * @param domainCalls the result of a static analysis of the mapped domain, needed only to
+     *                    restrict the diagram to a flow, may be {@code null}
      */
     public DomainMapper(
         DomainDiagramConfig domainDiagramConfig,
         DomainMirror domainMirror,
-        Collection<DomainClassNote> notes) {
+        Collection<DomainClassNote> notes,
+        DomainCalls domainCalls) {
         this.domainDiagramConfig = domainDiagramConfig;
         this.notes = notes;
         this.filteredDomainClasses = new FilteredDomainClasses(
             domainDiagramConfig.getDiagramTrimSettings(),
             domainDiagramConfig.getGeneralVisualSettings(),
-            domainMirror);
+            domainMirror,
+            DomainFlowFilter.of(
+                domainMirror,
+                domainCalls,
+                domainDiagramConfig.getFlowConfig(),
+                domainDiagramConfig.getDiagramTrimSettings().getIncludeFlowsFrom()));
 
         this.domainClassMapper = new DomainClassMapper(domainDiagramConfig);
         this.domainRelationshipMapper = new DomainRelationshipMapper(domainDiagramConfig, domainMirror, filteredDomainClasses);
