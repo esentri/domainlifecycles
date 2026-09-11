@@ -314,6 +314,9 @@ public class PluginDiagramConfiguration {
     @Parameter(property = "flowExcludeAccessors", required = false)
     private Boolean flowExcludeAccessors;
 
+    @Parameter(property = "staticAnalysisPackages", required = false)
+    private List<String> staticAnalysisPackages;
+
 
     /**
      * Gets the output format of the diagram.
@@ -1094,5 +1097,16 @@ public class PluginDiagramConfiguration {
      */
     public Boolean getFlowExcludeAccessors() {
         return flowExcludeAccessors;
+    }
+
+    /**
+     * Gets the packages the static analysis (triggered by {@link #getIncludeFlowsFrom()}) restricts
+     * itself to, to a package itself or any of its sub-packages, instead of considering every class
+     * on the classpath. Falls back to {@link #getDomainModelPackages()} when unset.
+     *
+     * @return the packages to restrict the static analysis to.
+     */
+    public List<String> getStaticAnalysisPackages() {
+        return staticAnalysisPackages;
     }
 }

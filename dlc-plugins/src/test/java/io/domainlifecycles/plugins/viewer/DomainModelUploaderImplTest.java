@@ -60,6 +60,8 @@ public class DomainModelUploaderImplTest {
 
     private static final List<String> DOMAIN_MODEL_PACKAGES = List.of("tests.shared");
 
+    private static final List<String> STATIC_ANALYSIS_PACKAGES = List.of();
+
     private static final List<URL> CLASS_PATH_FILES = currentTestClasspath();
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -87,7 +89,7 @@ public class DomainModelUploaderImplTest {
         });
 
         new DomainModelUploaderImpl().uploadDomainModel(
-            CLASS_PATH_FILES, DOMAIN_MODEL_PACKAGES, true, "secret-api-key", "my-project", baseUrl());
+            CLASS_PATH_FILES, DOMAIN_MODEL_PACKAGES, STATIC_ANALYSIS_PACKAGES, true, "secret-api-key", "my-project", baseUrl());
 
         assertThat(capturedPath.get()).isEqualTo("/api/upload/domain-mirror/my-project");
         assertThat(capturedApiKeyHeader.get()).isEqualTo("secret-api-key");
@@ -106,7 +108,7 @@ public class DomainModelUploaderImplTest {
         startServer(exchange -> capturedBody.set(exchange.getRequestBody().readAllBytes()));
 
         new DomainModelUploaderImpl().uploadDomainModel(
-            CLASS_PATH_FILES, DOMAIN_MODEL_PACKAGES, false, "secret-api-key", "my-project", baseUrl());
+            CLASS_PATH_FILES, DOMAIN_MODEL_PACKAGES, STATIC_ANALYSIS_PACKAGES, false, "secret-api-key", "my-project", baseUrl());
 
         JsonNode body = objectMapper.readTree(gunzip(capturedBody.get()));
         assertThat(body.get("domainMirror").isObject()).isTrue();
@@ -118,7 +120,7 @@ public class DomainModelUploaderImplTest {
         startServer(500, exchange -> exchange.getRequestBody().readAllBytes());
 
         assertThatThrownBy(() -> new DomainModelUploaderImpl().uploadDomainModel(
-            CLASS_PATH_FILES, DOMAIN_MODEL_PACKAGES, false, "secret-api-key", "my-project", baseUrl()))
+            CLASS_PATH_FILES, DOMAIN_MODEL_PACKAGES, STATIC_ANALYSIS_PACKAGES, false, "secret-api-key", "my-project", baseUrl()))
             .isInstanceOf(DLCPluginsException.class)
             .hasMessageContaining("500");
     }
@@ -141,7 +143,7 @@ public class DomainModelUploaderImplTest {
         });
 
         new DomainModelUploaderImpl().uploadDomainModelStreaming(
-            CLASS_PATH_FILES, DOMAIN_MODEL_PACKAGES, true, "secret-api-key", "my-project", baseUrl());
+            CLASS_PATH_FILES, DOMAIN_MODEL_PACKAGES, STATIC_ANALYSIS_PACKAGES, true, "secret-api-key", "my-project", baseUrl());
 
         assertThat(capturedPath.get()).isEqualTo("/api/upload/domain-mirror/my-project");
         assertThat(capturedApiKeyHeader.get()).isEqualTo("secret-api-key");
@@ -164,7 +166,7 @@ public class DomainModelUploaderImplTest {
         startServer(exchange -> capturedBody.set(exchange.getRequestBody().readAllBytes()));
 
         new DomainModelUploaderImpl().uploadDomainModelStreaming(
-            CLASS_PATH_FILES, DOMAIN_MODEL_PACKAGES, false, "secret-api-key", "my-project", baseUrl());
+            CLASS_PATH_FILES, DOMAIN_MODEL_PACKAGES, STATIC_ANALYSIS_PACKAGES, false, "secret-api-key", "my-project", baseUrl());
 
         JsonNode body = objectMapper.readTree(gunzip(capturedBody.get()));
         assertThat(body.get("domainMirror").isObject()).isTrue();
@@ -176,13 +178,13 @@ public class DomainModelUploaderImplTest {
         AtomicReference<byte[]> nonStreamingBody = new AtomicReference<>();
         startServer(exchange -> nonStreamingBody.set(exchange.getRequestBody().readAllBytes()));
         new DomainModelUploaderImpl().uploadDomainModel(
-            CLASS_PATH_FILES, DOMAIN_MODEL_PACKAGES, true, "secret-api-key", "my-project", baseUrl());
+            CLASS_PATH_FILES, DOMAIN_MODEL_PACKAGES, STATIC_ANALYSIS_PACKAGES, true, "secret-api-key", "my-project", baseUrl());
         server.stop(0);
 
         AtomicReference<byte[]> streamingBody = new AtomicReference<>();
         startServer(exchange -> streamingBody.set(exchange.getRequestBody().readAllBytes()));
         new DomainModelUploaderImpl().uploadDomainModelStreaming(
-            CLASS_PATH_FILES, DOMAIN_MODEL_PACKAGES, true, "secret-api-key", "my-project", baseUrl());
+            CLASS_PATH_FILES, DOMAIN_MODEL_PACKAGES, STATIC_ANALYSIS_PACKAGES, true, "secret-api-key", "my-project", baseUrl());
 
         // both calls independently re-run the domain mirror initialization and the static analysis
         // from scratch, so the two JSON documents are not guaranteed to be byte-for-byte identical
@@ -204,7 +206,7 @@ public class DomainModelUploaderImplTest {
         startServer(500, exchange -> exchange.getRequestBody().readAllBytes());
 
         assertThatThrownBy(() -> new DomainModelUploaderImpl().uploadDomainModelStreaming(
-            CLASS_PATH_FILES, DOMAIN_MODEL_PACKAGES, false, "secret-api-key", "my-project", baseUrl()))
+            CLASS_PATH_FILES, DOMAIN_MODEL_PACKAGES, STATIC_ANALYSIS_PACKAGES, false, "secret-api-key", "my-project", baseUrl()))
             .isInstanceOf(DLCPluginsException.class)
             .hasMessageContaining("500");
     }

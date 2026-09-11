@@ -111,4 +111,15 @@ public abstract class DomainModelUploadTaskConfigurationExtension {
      * @return a Property containing the cache size, defaulting to a sensible size if unset.
      */
     public abstract Property<Integer> getStaticAnalysisCacheSize();
+
+    /**
+     * Restricts the static analysis (when {@link #getRunStaticAnalysis()} is enabled) to classes in
+     * these packages (a package itself or any of its sub-packages) instead of the whole classpath,
+     * which for a large project can itself be an expensive scan. Falls back to
+     * {@link #getDomainModelPackages()} when unset - should cover at least the domain model packages
+     * and any package holding relevant implementations of domain interfaces.
+     *
+     * @return a ListProperty containing the packages to restrict the static analysis to.
+     */
+    public abstract ListProperty<String> getStaticAnalysisPackages();
 }

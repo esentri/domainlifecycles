@@ -30,6 +30,7 @@ import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.staticanalysis.DomainCalls;
 
 import java.net.URL;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -41,12 +42,30 @@ import java.util.List;
 public interface DomainCallsAnalyzer {
 
     /**
-     * Runs a static analysis of the classes on {@code classPathFiles}, resolving calls against the
-     * given, already initialized {@code domainMirror}.
+     * Same as {@link #analyze(List, DomainMirror, Collection)}, without restricting which classes
+     * on the classpath are analyzed.
      *
      * @param classPathFiles the classpath the analyzed domain classes are loaded from
      * @param domainMirror   the domain mirror to resolve the analyzed calls against
      * @return the analysis result
      */
-    DomainCalls analyze(List<URL> classPathFiles, DomainMirror domainMirror);
+    default DomainCalls analyze(List<URL> classPathFiles, DomainMirror domainMirror) {
+        return analyze(classPathFiles, domainMirror, List.of());
+    }
+
+    /**
+     * Runs a static analysis of the classes on {@code classPathFiles}, resolving calls against the
+     * given, already initialized {@code domainMirror}.
+     *
+     * @param classPathFiles   the classpath the analyzed domain classes are loaded from
+     * @param domainMirror     the domain mirror to resolve the analyzed calls against
+     * @param analyzedPackages restricts which classes on the classpath are considered, to a
+     *                         package itself or any of its sub-packages; an empty collection
+     *                         means no restriction (the whole classpath is considered, which for a
+     *                         large project can itself be expensive to analyze). This should cover
+     *                         at least the domain model packages and any package holding relevant
+     *                         implementations of domain interfaces
+     * @return the analysis result
+     */
+    DomainCalls analyze(List<URL> classPathFiles, DomainMirror domainMirror, Collection<String> analyzedPackages);
 }

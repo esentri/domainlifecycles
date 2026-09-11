@@ -138,6 +138,7 @@ dlcGradlePlugin {
         runStaticAnalysis = true
         streamUpload = false
         staticAnalysisCacheSize = 500
+        staticAnalysisPackages = ["io.domainlifecycles.test"]
     }
 }
 ```
@@ -173,6 +174,13 @@ the cache are simply re-parsed from the classpath on the next access. The defaul
 holds a mid-sized domain plus its immediate dependencies without evicting on every lookup. Lower it to
 cap memory usage further for very large projects (at the cost of more re-parsing), or raise it if you
 have memory to spare and want to avoid re-parsing.
+
+By default, the static analysis also considers only classes in `domainModelPackages` (and their
+sub-packages) - not the project's entire classpath, which for a large multi-module project can be
+considerably more expensive to scan. Set `staticAnalysisPackages` to restrict (or widen) this
+explicitly, e.g. to also include an infrastructure package holding the concrete implementations of
+your domain's repository/outbound-service interfaces - a concrete implementation outside the analyzed
+packages is not found, the same as if it were simply missing from the classpath.
 
 #### Run
 ```bash
@@ -332,6 +340,9 @@ An example configuration in your project could look like the following:
                     <runStaticAnalysis>true</runStaticAnalysis>
                     <streamUpload>false</streamUpload>
                     <staticAnalysisCacheSize>500</staticAnalysisCacheSize>
+                    <staticAnalysisPackages>
+                        <staticAnalysisPackage>io.domainlifecycles.test</staticAnalysisPackage>
+                    </staticAnalysisPackages>
                     </configuration>
                 </execution>
             </executions>
@@ -371,6 +382,13 @@ the cache are simply re-parsed from the classpath on the next access. The defaul
 holds a mid-sized domain plus its immediate dependencies without evicting on every lookup. Lower it to
 cap memory usage further for very large projects (at the cost of more re-parsing), or raise it if you
 have memory to spare and want to avoid re-parsing.
+
+By default, the static analysis also considers only classes in `domainModelPackages` (and their
+sub-packages) - not the project's entire classpath, which for a large multi-module project can be
+considerably more expensive to scan. Set `staticAnalysisPackages` to restrict (or widen) this
+explicitly, e.g. to also include an infrastructure package holding the concrete implementations of
+your domain's repository/outbound-service interfaces - a concrete implementation outside the analyzed
+packages is not found, the same as if it were simply missing from the classpath.
 
 #### Run
 ```bash
@@ -463,6 +481,7 @@ Supported Diagram configuration options are
 - flowFollowEvents: boolean, whether a flow follows published DomainEvents to their listening methods, default true
 - flowFollowImplementations: boolean, whether a flow follows the dispatch from an interface/abstract method into its implementations, default true
 - flowExcludeAccessors: boolean, whether simple accessor methods (getters/setters) are excluded from a followed flow, default false
+- staticAnalysisPackages: list of packages the static analysis (triggered by `includeFlowsFrom`) restricts itself to, default `domainModelPackages` (see [Restricting a diagram to a flow](#restricting-a-diagram-to-a-flow))
 
 ## Restricting a diagram to a flow
 
@@ -493,6 +512,16 @@ next access. Configure this via `staticAnalysisCacheSize` on the `diagram` task 
 (not per diagram, since one analysis is shared by all diagrams generated in the same run) - see
 [Diagram-Viewer Integration](#diagram-viewer-integration) below for the same setting on the upload task.
 
+By default, the static analysis for a given diagram also considers only classes in that diagram's own
+`domainModelPackages` (and their sub-packages) - not the project's entire classpath, which for a large
+multi-module project can be considerably more expensive to scan. Set `staticAnalysisPackages` on the
+individual `diagram` entry to restrict (or widen) this explicitly, e.g. to also include an
+infrastructure package holding the concrete implementations of your domain's repository/outbound-service
+interfaces - a concrete implementation outside the analyzed packages is not found, the same as if it
+were simply missing from the classpath. Unlike `staticAnalysisCacheSize`, this is configured per diagram,
+not on the surrounding `diagram` task, since different diagrams in the same run may restrict to different
+flows/packages.
+
 Gradle example, restricted to the flow of the `PlaceOrder` domain command:
 ```groovy
 dlcGradlePlugin {
@@ -502,6 +531,7 @@ dlcGradlePlugin {
         diagrams {
             placeOrderFlow {
                 domainModelPackages = ["io.domainlifecycles.test"]
+                staticAnalysisPackages = ["io.domainlifecycles.test"]
                 format = "svg"
                 fileName = "place-order-flow"
                 includeFlowsFrom = ["io.domainlifecycles.test.order.PlaceOrder"]
@@ -513,12 +543,16 @@ dlcGradlePlugin {
 ```
 
 Maven example (`<staticAnalysisCacheSize>` goes into the surrounding `<configuration>` of the
-`createDiagram` execution, alongside `<fileOutputDir>` and `<diagrams>`, not into an individual `<diagram>`):
+`createDiagram` execution, alongside `<fileOutputDir>` and `<diagrams>`, not into an individual `<diagram>`;
+`<staticAnalysisPackages>` goes into the individual `<diagram>` instead, alongside `<domainModelPackages>`):
 ```xml
 <diagram>
     <domainModelPackages>
         <domainModelPackage>io.domainlifecycles.test</domainModelPackage>
     </domainModelPackages>
+    <staticAnalysisPackages>
+        <staticAnalysisPackage>io.domainlifecycles.test</staticAnalysisPackage>
+    </staticAnalysisPackages>
     <format>svg</format>
     <fileName>place-order-flow</fileName>
     <includeFlowsFrom>

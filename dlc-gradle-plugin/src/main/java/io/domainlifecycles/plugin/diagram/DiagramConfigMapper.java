@@ -139,6 +139,7 @@ public class DiagramConfigMapper {
         diagramConfig.setFlowFollowEvents(extension.getFlowFollowEvents().getOrNull());
         diagramConfig.setFlowFollowImplementations(extension.getFlowFollowImplementations().getOrNull());
         diagramConfig.setFlowExcludeAccessors(extension.getFlowExcludeAccessors().getOrNull());
+        diagramConfig.setStaticAnalysisPackages(extension.getStaticAnalysisPackages().getOrNull());
         return diagramConfig;
     }
 }

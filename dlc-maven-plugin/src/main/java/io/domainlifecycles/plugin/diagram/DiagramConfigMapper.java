@@ -130,6 +130,7 @@ public class DiagramConfigMapper {
         diagramConfig.setFlowFollowEvents(mavenDiagramConfig.getFlowFollowEvents());
         diagramConfig.setFlowFollowImplementations(mavenDiagramConfig.getFlowFollowImplementations());
         diagramConfig.setFlowExcludeAccessors(mavenDiagramConfig.getFlowExcludeAccessors());
+        diagramConfig.setStaticAnalysisPackages(mavenDiagramConfig.getStaticAnalysisPackages());
         return diagramConfig;
     }
 }

@@ -661,4 +661,14 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
      * @return a Property containing the flag, defaulting to {@code false} if unset.
      */
     public abstract Property<Boolean> getFlowExcludeAccessors();
+
+    /**
+     * Retrieves the packages the static analysis (triggered by {@link #getIncludeFlowsFrom()})
+     * restricts itself to, to a package itself or any of its sub-packages, instead of considering
+     * every class on the classpath - which for a large project can itself be an expensive scan.
+     * Falls back to {@link #getDomainModelPackages()} when unset.
+     *
+     * @return a ListProperty containing the packages to restrict the static analysis to.
+     */
+    public abstract ListProperty<String> getStaticAnalysisPackages();
 }

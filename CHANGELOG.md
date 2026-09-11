@@ -91,6 +91,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   taking it, and the Gradle `diagram`/`domainModelUpload` task configurations and the Maven
   `createDiagram`/`domainModelUpload` goals gained a `staticAnalysisCacheSize` option (default `500`)
   wherever they can trigger the static analysis
+- The static analysis run by the Gradle/Maven plugins no longer scans the whole project classpath:
+  `StaticAnalyzer#analyze`, `DomainCallsAnalyzer#analyze` and `SootupStaticAnalyzer` gained an
+  `analyzedPackages` parameter restricting which classes are considered (a package itself or any of
+  its sub-packages), defaulting to no restriction when empty. `SootupStaticAnalyzer` enforces this by
+  wrapping each classpath entry in a `PackageScopedAnalysisInputLocation` that filters SootUp's bulk
+  class enumeration (used to build the type hierarchy) to those packages, while leaving by-name type
+  lookups (needed to resolve framework/library base types a domain class extends) unrestricted - this
+  is what previously forced every class reachable from the classpath, JDK and third-party libraries
+  included, to be resolved just to compute the type hierarchy. The Gradle `diagram`/`domainModelUpload`
+  task configurations and the Maven `createDiagram`/`domainModelUpload` goals gained a matching
+  `staticAnalysisPackages` option, defaulting to the already-configured `domainModelPackages` when
+  unset. A concrete implementation of a mirrored domain interface living outside the analyzed packages
+  (e.g. in a separate infrastructure package) is not found, the same as if it were simply missing from
+  the classpath, so `staticAnalysisPackages` should be widened to cover such packages when needed
 
 ## [3.2.0] - 2026-06-16
 - Added support for JMolecules DDD types for DLC mirror, now able to render Domain diagrams using JMolecules marker interfaces or annotations

@@ -29,6 +29,7 @@ package io.domainlifecycles.staticanalysis;
 import io.domainlifecycles.mirror.api.DomainMirror;
 
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -48,6 +49,18 @@ import java.util.List;
 public interface StaticAnalyzer {
 
     /**
+     * Same as {@link #analyze(DomainMirror, List, Collection)}, without restricting which classes
+     * on the classpath are analyzed.
+     *
+     * @param domainMirror the mirror defining which types belong to the domain
+     * @param classpath    the classpath entries to analyze
+     * @return the resolved domain calls
+     */
+    default DomainCalls analyze(DomainMirror domainMirror, List<Path> classpath) {
+        return analyze(domainMirror, classpath, List.of());
+    }
+
+    /**
      * Analyzes all methods of all mirrored types and resolves the calls they make into the domain.
      * <p>
      * The classpath must hold the compiled domain classes and everything needed to resolve them.
@@ -55,11 +68,19 @@ public interface StaticAnalyzer {
      * result. Use {@link DomainClasspath#ofMirroredTypes(DomainMirror)} to derive it from the
      * mirror instead of assembling it by hand.
      *
-     * @param domainMirror the mirror defining which types belong to the domain
-     * @param classpath    the classpath entries to analyze
+     * @param domainMirror     the mirror defining which types belong to the domain
+     * @param classpath        the classpath entries to analyze
+     * @param analyzedPackages restricts which classes on the classpath are considered, to a
+     *                         package itself or any of its sub-packages; an empty collection
+     *                         means no restriction. This is a scanning-scope optimization, not a
+     *                         correctness boundary: a concrete implementation of a mirrored
+     *                         domain interface is only found if its package is included here,
+     *                         same as if it were simply missing from the classpath, so this
+     *                         should cover at least the domain model packages and any package
+     *                         holding relevant implementations of domain interfaces
      * @return the resolved domain calls
      */
-    DomainCalls analyze(DomainMirror domainMirror, List<Path> classpath);
+    DomainCalls analyze(DomainMirror domainMirror, List<Path> classpath, Collection<String> analyzedPackages);
 
     /**
      * Analyzes a classpath given in the string form used on command lines and by build plugins.

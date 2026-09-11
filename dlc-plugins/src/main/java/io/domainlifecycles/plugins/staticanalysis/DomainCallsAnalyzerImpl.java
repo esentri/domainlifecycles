@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,13 +87,14 @@ public class DomainCallsAnalyzerImpl implements DomainCallsAnalyzer {
      *                             not be resolved
      */
     @Override
-    public DomainCalls analyze(List<URL> classPathFiles, DomainMirror domainMirror) {
+    public DomainCalls analyze(
+        List<URL> classPathFiles, DomainMirror domainMirror, Collection<String> analyzedPackages) {
         log.info("Running static analysis of the domain classes");
         try {
             final List<Path> classpath = classPathFiles.stream()
                 .map(this::toPath)
                 .collect(Collectors.toList());
-            return staticAnalyzer.analyze(domainMirror, classpath);
+            return staticAnalyzer.analyze(domainMirror, classpath, analyzedPackages);
         } catch (RuntimeException e) {
             throw DLCPluginsException.fail("Static analysis of the domain classes failed.", e);
         }

@@ -70,6 +70,9 @@ import java.util.List;
  * - staticAnalysisCacheSize: Maximum number of classes held at once in the bounded cache backing
  *   the static analysis, when runStaticAnalysis is enabled. Defaults to
  *   DomainCallsAnalyzerImpl.DEFAULT_CACHE_SIZE.
+ * - staticAnalysisPackages: Restricts the static analysis (when runStaticAnalysis is enabled) to
+ *   classes in these packages instead of the whole classpath. Falls back to domainModelPackages
+ *   when unset.
  *
  * @author Leon Völlinger
  */
@@ -107,6 +110,9 @@ public class UploadDomainModelGoal extends AbstractMojo {
     @Parameter(property = "staticAnalysisCacheSize", defaultValue = "" + DomainCallsAnalyzerImpl.DEFAULT_CACHE_SIZE)
     private int staticAnalysisCacheSize;
 
+    @Parameter(property = "staticAnalysisPackages", required = false)
+    private List<String> staticAnalysisPackages;
+
     private DomainModelUploader domainModelUploader;
 
     /**
@@ -134,12 +140,15 @@ public class UploadDomainModelGoal extends AbstractMojo {
         for (var project : reactorProjects) {
             classPath.addAll(ClassLoaderUtils.getParentClasspathFiles(project));
         }
+        var effectiveStaticAnalysisPackages = staticAnalysisPackages == null ? List.<String>of() : staticAnalysisPackages;
         if (streamUpload) {
             domainModelUploader.uploadDomainModelStreaming(
-                classPath, domainModelPackages, runStaticAnalysis, apiKey, projectName, diagramViewerBaseUrl);
+                classPath, domainModelPackages, effectiveStaticAnalysisPackages, runStaticAnalysis,
+                apiKey, projectName, diagramViewerBaseUrl);
         } else {
             domainModelUploader.uploadDomainModel(
-                classPath, domainModelPackages, runStaticAnalysis, apiKey, projectName, diagramViewerBaseUrl);
+                classPath, domainModelPackages, effectiveStaticAnalysisPackages, runStaticAnalysis,
+                apiKey, projectName, diagramViewerBaseUrl);
         }
     }
 }

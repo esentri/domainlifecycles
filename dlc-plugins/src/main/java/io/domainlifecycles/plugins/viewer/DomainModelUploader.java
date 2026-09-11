@@ -64,17 +64,24 @@ public interface DomainModelUploader {
      * @param classPathFiles        the classpath the domain model (and, if run, the static analysis)
      *                              is initialized from
      * @param domainModelPackages   a list of package names defining the domain model classes for processing
+     * @param staticAnalysisPackages restricts the static analysis (when {@code runStaticAnalysis} is
+     *                              {@code true}) to classes in these packages (a package itself or any of
+     *                              its sub-packages) instead of the whole classpath; falls back to
+     *                              {@code domainModelPackages} when {@code null} or empty. Should cover at
+     *                              least the domain model packages and any package holding relevant
+     *                              implementations of domain interfaces
      * @param runStaticAnalysis     whether a static analysis of the domain classes should be run and its
      *                              result ({@code DomainCalls}) uploaded alongside the domain model
      * @param apiKey                the API key required for authentication with the Diagram Viewer platform
      * @param projectName           the name of the target project on the Diagram Viewer platform
      * @param diagramViewerBaseUrl  the base URL of the Diagram Viewer instance where the domain model should be uploaded
      */
-    void uploadDomainModel(List<URL> classPathFiles, List<String> domainModelPackages, boolean runStaticAnalysis,
+    void uploadDomainModel(List<URL> classPathFiles, List<String> domainModelPackages,
+                           List<String> staticAnalysisPackages, boolean runStaticAnalysis,
                            String apiKey, String projectName, String diagramViewerBaseUrl);
 
     /**
-     * Same as {@link #uploadDomainModel(List, List, boolean, String, String, String)}, but streams the
+     * Same as {@link #uploadDomainModel(List, List, List, boolean, String, String, String)}, but streams the
      * request body to the Diagram Viewer as it is produced, instead of first assembling it completely
      * in memory as a JSON string and only then gzip-compressing and sending it as a whole.
      * <p>
@@ -91,18 +98,25 @@ public interface DomainModelUploader {
      * added complexity of a background thread producing the body while the request is in flight, and
      * for very large domains it is the difference between comfortably fitting into a build's memory
      * budget and risking an {@code OutOfMemoryError}. For smaller domains, the plain
-     * {@link #uploadDomainModel(List, List, boolean, String, String, String)} is simpler and
+     * {@link #uploadDomainModel(List, List, List, boolean, String, String, String)} is simpler and
      * sufficiently efficient.
      *
      * @param classPathFiles        the classpath the domain model (and, if run, the static analysis)
      *                              is initialized from
      * @param domainModelPackages   a list of package names defining the domain model classes for processing
+     * @param staticAnalysisPackages restricts the static analysis (when {@code runStaticAnalysis} is
+     *                              {@code true}) to classes in these packages (a package itself or any of
+     *                              its sub-packages) instead of the whole classpath; falls back to
+     *                              {@code domainModelPackages} when {@code null} or empty. Should cover at
+     *                              least the domain model packages and any package holding relevant
+     *                              implementations of domain interfaces
      * @param runStaticAnalysis     whether a static analysis of the domain classes should be run and its
      *                              result ({@code DomainCalls}) uploaded alongside the domain model
      * @param apiKey                the API key required for authentication with the Diagram Viewer platform
      * @param projectName           the name of the target project on the Diagram Viewer platform
      * @param diagramViewerBaseUrl  the base URL of the Diagram Viewer instance where the domain model should be uploaded
      */
-    void uploadDomainModelStreaming(List<URL> classPathFiles, List<String> domainModelPackages, boolean runStaticAnalysis,
+    void uploadDomainModelStreaming(List<URL> classPathFiles, List<String> domainModelPackages,
+                                    List<String> staticAnalysisPackages, boolean runStaticAnalysis,
                                     String apiKey, String projectName, String diagramViewerBaseUrl);
 }

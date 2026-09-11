@@ -168,6 +168,10 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
      * @param classPathFiles         the classpath the domain model (and, if run, the static analysis)
      *                               is initialized from
      * @param domainModelPackages    a list of package names that define the domain model classes to be included
+     * @param staticAnalysisPackages restricts the static analysis (when {@code runStaticAnalysis} is
+     *                               {@code true}) to classes in these packages instead of the whole
+     *                               classpath; falls back to {@code domainModelPackages} when {@code null}
+     *                               or empty
      * @param runStaticAnalysis      whether a static analysis of the domain classes should be run and its
      *                               result ({@code DomainCalls}) uploaded alongside the domain model
      * @param apiKey                 the API key required for authenticating with the Diagram Viewer platform
@@ -175,7 +179,8 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
      * @param diagramViewerBaseUrl   the base URL of the Diagram Viewer instance to which the upload request is sent
      */
     @Override
-    public void uploadDomainModel(List<URL> classPathFiles, List<String> domainModelPackages, boolean runStaticAnalysis,
+    public void uploadDomainModel(List<URL> classPathFiles, List<String> domainModelPackages,
+                                  List<String> staticAnalysisPackages, boolean runStaticAnalysis,
                                   String apiKey, String projectName, String diagramViewerBaseUrl) {
         LOGGER.debug(String.format("Trying to upload Domain-Model to Diagram-Viewer project '%s' with base url '%s'.", projectName, diagramViewerBaseUrl));
 
@@ -184,7 +189,8 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
 
         final String domainCallsJson;
         if (runStaticAnalysis) {
-            final DomainCalls domainCalls = domainCallsAnalyzer.analyze(classPathFiles, domainMirror);
+            final DomainCalls domainCalls = domainCallsAnalyzer.analyze(
+                classPathFiles, domainMirror, effectivePackages(domainModelPackages, staticAnalysisPackages));
             domainCallsJson = serializeDomainCalls(domainCalls);
         } else {
             domainCallsJson = null;
@@ -203,13 +209,17 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
     }
 
     /**
-     * Same as {@link #uploadDomainModel(List, List, boolean, String, String, String)}, but streams the
+     * Same as {@link #uploadDomainModel(List, List, List, boolean, String, String, String)}, but streams the
      * gzip-compressed request body directly into the HTTP request as it is produced, instead of first
      * assembling it completely in memory. See the interface javadoc for details and trade-offs.
      *
      * @param classPathFiles         the classpath the domain model (and, if run, the static analysis)
      *                               is initialized from
      * @param domainModelPackages    a list of package names that define the domain model classes to be included
+     * @param staticAnalysisPackages restricts the static analysis (when {@code runStaticAnalysis} is
+     *                               {@code true}) to classes in these packages instead of the whole
+     *                               classpath; falls back to {@code domainModelPackages} when {@code null}
+     *                               or empty
      * @param runStaticAnalysis      whether a static analysis of the domain classes should be run and its
      *                               result ({@code DomainCalls}) uploaded alongside the domain model
      * @param apiKey                 the API key required for authenticating with the Diagram Viewer platform
@@ -217,12 +227,16 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
      * @param diagramViewerBaseUrl   the base URL of the Diagram Viewer instance to which the upload request is sent
      */
     @Override
-    public void uploadDomainModelStreaming(List<URL> classPathFiles, List<String> domainModelPackages, boolean runStaticAnalysis,
+    public void uploadDomainModelStreaming(List<URL> classPathFiles, List<String> domainModelPackages,
+                                           List<String> staticAnalysisPackages, boolean runStaticAnalysis,
                                            String apiKey, String projectName, String diagramViewerBaseUrl) {
         LOGGER.debug(String.format("Trying to stream Domain-Model to Diagram-Viewer project '%s' with base url '%s'.", projectName, diagramViewerBaseUrl));
 
         final DomainMirror domainMirror = buildDomainMirror(classPathFiles, domainModelPackages);
-        final DomainCalls domainCalls = runStaticAnalysis ? domainCallsAnalyzer.analyze(classPathFiles, domainMirror) : null;
+        final DomainCalls domainCalls = runStaticAnalysis
+            ? domainCallsAnalyzer.analyze(
+                classPathFiles, domainMirror, effectivePackages(domainModelPackages, staticAnalysisPackages))
+            : null;
 
         final AtomicReference<Exception> writerFailure = new AtomicReference<>();
         final HttpRequest request = buildStreamingDomainMirrorUploadRequest(
@@ -241,6 +255,18 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
             }
             throw DLCPluginsException.fail("Could not send Domain-Mirror to Diagram-Viewer.", e);
         }
+    }
+
+    /**
+     * Falls back to {@code domainModelPackages} when {@code staticAnalysisPackages} was not
+     * explicitly configured, so the static analysis is restricted to the domain by default without
+     * requiring separate configuration.
+     */
+    private static List<String> effectivePackages(
+        List<String> domainModelPackages, List<String> staticAnalysisPackages) {
+        return staticAnalysisPackages == null || staticAnalysisPackages.isEmpty()
+            ? domainModelPackages
+            : staticAnalysisPackages;
     }
 
     private DomainMirror buildDomainMirror(List<URL> classPathFiles, List<String> domainModelPackages) {

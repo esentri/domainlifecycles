@@ -144,6 +144,7 @@ public class DiagramConfig {
     private Boolean flowFollowEvents;
     private Boolean flowFollowImplementations;
     private Boolean flowExcludeAccessors;
+    private List<String> staticAnalysisPackages;
 
     /**
      * Gets the file type for the diagram output
@@ -1643,6 +1644,27 @@ public class DiagramConfig {
      */
     public void setFlowExcludeAccessors(Boolean flowExcludeAccessors) {
         this.flowExcludeAccessors = flowExcludeAccessors;
+    }
+
+    /**
+     * Gets the packages the static analysis (triggered by {@link #getIncludeFlowsFrom()}) restricts
+     * itself to, to a package itself or any of its sub-packages, instead of considering every class
+     * on the classpath - which for a large project can itself be an expensive scan. Falls back to
+     * the diagram's own {@code domainModelPackages} when unset.
+     *
+     * @return the packages to restrict the static analysis to, or {@code null}/empty for the default
+     */
+    public List<String> getStaticAnalysisPackages() {
+        return staticAnalysisPackages;
+    }
+
+    /**
+     * Sets the packages the static analysis should restrict itself to.
+     *
+     * @param staticAnalysisPackages the packages to set
+     */
+    public void setStaticAnalysisPackages(List<String> staticAnalysisPackages) {
+        this.staticAnalysisPackages = staticAnalysisPackages;
     }
 
     /**

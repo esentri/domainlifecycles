@@ -149,7 +149,11 @@ public class DiagramGeneratorImpl implements DiagramGenerator {
         if (diagramConfig.getIncludeFlowsFrom() != null && !diagramConfig.getIncludeFlowsFrom().isEmpty()) {
             // only run the (comparatively expensive) static analysis when the diagram is actually
             // restricted to a flow
-            final DomainCalls domainCalls = domainCallsAnalyzer.analyze(classPathFiles, dm);
+            final List<String> analyzedPackages = diagramConfig.getStaticAnalysisPackages() != null
+                && !diagramConfig.getStaticAnalysisPackages().isEmpty()
+                ? diagramConfig.getStaticAnalysisPackages()
+                : List.of(domainPackages);
+            final DomainCalls domainCalls = domainCallsAnalyzer.analyze(classPathFiles, dm, analyzedPackages);
             generator = new DomainDiagramGenerator(diagramConfig.map(), dm, domainCalls);
         } else {
             generator = new DomainDiagramGenerator(diagramConfig.map(), dm);

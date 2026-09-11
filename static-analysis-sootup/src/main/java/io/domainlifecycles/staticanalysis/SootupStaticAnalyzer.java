@@ -32,6 +32,7 @@ import io.domainlifecycles.mirror.api.ParamMirror;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sootup.core.cache.provider.LRUCacheProvider;
+import sootup.core.frontend.SootClassSource;
 import sootup.core.inputlocation.AnalysisInputLocation;
 import sootup.core.jimple.basic.Immediate;
 import sootup.core.jimple.basic.Local;
@@ -47,10 +48,13 @@ import sootup.core.jimple.common.stmt.Stmt;
 import sootup.core.model.Body;
 import sootup.core.model.SootClass;
 import sootup.core.model.SootMethod;
+import sootup.core.model.SourceType;
 import sootup.core.signatures.MethodSignature;
+import sootup.core.transform.BodyInterceptor;
 import sootup.core.typehierarchy.TypeHierarchy;
 import sootup.core.types.ClassType;
 import sootup.core.types.Type;
+import sootup.core.views.View;
 import sootup.java.bytecode.frontend.inputlocation.JavaClassPathAnalysisInputLocation;
 import sootup.java.core.JavaIdentifierFactory;
 import sootup.java.core.views.JavaView;
@@ -70,6 +74,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * {@link StaticAnalyzer} implementation on top of SootUp.
@@ -262,9 +267,10 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
      * {@inheritDoc}
      */
     @Override
-    public DomainCalls analyze(DomainMirror domainMirror, List<Path> classpath) {
+    public DomainCalls analyze(
+        DomainMirror domainMirror, List<Path> classpath, Collection<String> analyzedPackages) {
         AnalysisContext ctx = new AnalysisContext(
-            buildView(classpath),
+            buildView(classpath, effectiveAnalyzedPackages(domainMirror, analyzedPackages)),
             domainMirror.getAllDomainTypeMirrors().stream()
                 .map(dtm -> dtm.getTypeName())
                 .collect(Collectors.toCollection(HashSet::new)));
@@ -355,20 +361,130 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
     // ---------------------------------------------------------------------
 
     /**
+     * Widens {@code analyzedPackages} with the packages of every one of the mirror's own domain
+     * type mirrors, unless {@code analyzedPackages} is empty (which means no restriction at all).
+     * <p>
+     * The mirror is not confined to a single package tree: a {@code ReflectiveDomainMirrorFactory}
+     * also mirrors the DLC base types a domain type extends (e.g. {@code AggregateRootBase}), which
+     * typically live in a different package than the domain itself. Resolving the concrete
+     * implementations of one of <i>those</i> mirrored types requires its own class to be part of the
+     * bulk-scanned type hierarchy (see {@link PackageScopedAnalysisInputLocation}) - without this
+     * widening, an {@code analyzedPackages} restricted to just the domain's own package(s) would
+     * silently drop every entry point rooted at such a base type, which is not what "restrict the
+     * analysis to my domain packages" is meant to do.
+     */
+    private static Set<String> effectiveAnalyzedPackages(
+        DomainMirror domainMirror, Collection<String> analyzedPackages) {
+        if (analyzedPackages.isEmpty()) {
+            return Set.of();
+        }
+        Set<String> effective = new LinkedHashSet<>(analyzedPackages);
+        domainMirror.getAllDomainTypeMirrors()
+            .forEach(dtm -> effective.add(packageOf(dtm.getTypeName())));
+        return effective;
+    }
+
+    private static String packageOf(String fullyQualifiedTypeName) {
+        int lastDot = fullyQualifiedTypeName.lastIndexOf('.');
+        return lastDot < 0 ? "" : fullyQualifiedTypeName.substring(0, lastDot);
+    }
+
+    /**
      * Registers every classpath entry as its own input location. Classes are loaded lazily,
      * so providing the full classpath is cheap as long as we do not force-load
      * everything: only the bodies we actually inspect are translated to Jimple.
      * <p>
      * The view is backed by a bounded, LRU-evicting cache (see {@link #cacheSize}) instead of
      * SootUp's default unbounded cache, so memory usage stays capped regardless of how many
-     * distinct classes end up being touched while resolving method bodies.
+     * distinct classes end up being touched while resolving method bodies. When
+     * {@code analyzedPackages} is non-empty, every input location is additionally wrapped in a
+     * {@link PackageScopedAnalysisInputLocation}, see there for why that keeps the (comparatively
+     * expensive) type hierarchy scan confined to those packages instead of touching every class on
+     * the classpath.
      */
-    private JavaView buildView(List<Path> classpath) {
+    private JavaView buildView(List<Path> classpath, Set<String> analyzedPackages) {
         List<AnalysisInputLocation> inputLocations = classpath.stream()
             .map(path -> (AnalysisInputLocation)
                 new JavaClassPathAnalysisInputLocation(path.toString()))
+            .map(location -> scopeToAnalyzedPackages(location, analyzedPackages))
             .collect(Collectors.toCollection(ArrayList::new));
         return new JavaView(inputLocations, new LRUCacheProvider(cacheSize));
+    }
+
+    private static AnalysisInputLocation scopeToAnalyzedPackages(
+        AnalysisInputLocation location, Set<String> analyzedPackages) {
+        return analyzedPackages.isEmpty()
+            ? location
+            : new PackageScopedAnalysisInputLocation(location, analyzedPackages);
+    }
+
+    /**
+     * Restricts the bulk enumeration of an {@link AnalysisInputLocation} ({@link #getClassSources})
+     * to classes inside a fixed set of package prefixes (a package itself or any sub-package of
+     * it), while leaving single, by-name lookups ({@link #getClassSource}) untouched.
+     * <p>
+     * That split matters: {@link JavaView#getClasses()} - and with it the type hierarchy computed
+     * from it, used to find the concrete implementations of a domain interface - only ever calls
+     * {@link #getClassSources}, so restricting it is what keeps that scan confined to the
+     * configured packages instead of resolving every class reachable from the classpath (JDK and
+     * third-party libraries included). A single {@link #getClassSource} lookup - used whenever a
+     * specific type is resolved by name, e.g. a mirrored domain type itself, or a superclass/
+     * interface reference encountered while walking up a class' hierarchy - stays classpath-wide:
+     * narrowing it too would risk failing to resolve framework or library base types that a domain
+     * class legitimately extends but that do not themselves live inside the analyzed packages.
+     * <p>
+     * One consequence: a concrete implementation of a mirrored domain interface is only found if its
+     * package is included here too - same as it silently would not be found if it were simply
+     * missing from the classpath. This is not a concern for the mirror's own types themselves (a
+     * domain type, or a DLC base type it extends such as {@code AggregateRootBase}, possibly living
+     * in a different package than the domain itself): {@link #analyze} always widens
+     * {@code analyzedPackages} with their packages first, see {@link #effectiveAnalyzedPackages}. It
+     * is a concern for a concrete implementation the mirror itself does not know about, e.g. an
+     * interface implemented in an infrastructure package that was not part of the reflective scan
+     * building the mirror - such a package needs to be added to {@code analyzedPackages} explicitly.
+     */
+    private static final class PackageScopedAnalysisInputLocation implements AnalysisInputLocation {
+
+        private final AnalysisInputLocation delegate;
+        private final Set<String> analyzedPackages;
+
+        private PackageScopedAnalysisInputLocation(
+            AnalysisInputLocation delegate, Set<String> analyzedPackages) {
+            this.delegate = delegate;
+            this.analyzedPackages = analyzedPackages;
+        }
+
+        @Override
+        public Optional<? extends SootClassSource> getClassSource(ClassType type, View view) {
+            return delegate.getClassSource(type, view);
+        }
+
+        @Override
+        public Stream<? extends SootClassSource> getClassSources(View view) {
+            return delegate.getClassSources(view)
+                .filter(source -> isInScope(source.getClassType(), analyzedPackages));
+        }
+
+        @Override
+        public SourceType getSourceType() {
+            return delegate.getSourceType();
+        }
+
+        @Override
+        public List<BodyInterceptor> getBodyInterceptors() {
+            return delegate.getBodyInterceptors();
+        }
+
+        private static boolean isInScope(ClassType type, Set<String> analyzedPackages) {
+            String packageName = type.getPackageName().getName();
+            for (String analyzedPackage : analyzedPackages) {
+                if (packageName.equals(analyzedPackage)
+                    || packageName.startsWith(analyzedPackage + ".")) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     // ---------------------------------------------------------------------
