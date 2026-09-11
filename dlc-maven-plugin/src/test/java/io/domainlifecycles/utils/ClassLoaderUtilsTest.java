@@ -31,8 +31,12 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Build;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,14 +48,18 @@ import static org.mockito.Mockito.when;
 public class ClassLoaderUtilsTest {
 
     @Test
-    void combinesCompileAndRuntimeClasspathWithOutputDirectory() throws DependencyResolutionRequiredException {
+    void combinesCompileAndRuntimeClasspathWithOutputDirectory(@TempDir Path tempDir) throws IOException, DependencyResolutionRequiredException {
+        Path compileJar = Files.createFile(tempDir.resolve("compile.jar"));
+        Path runtimeJar = Files.createFile(tempDir.resolve("runtime.jar"));
+        Path outputDirectory = Files.createDirectory(tempDir.resolve("classes"));
+
         MavenProject project = mock(MavenProject.class);
         when(project.getCompileClasspathElements())
-            .thenReturn(new ArrayList<>(List.of("/project/compile.jar")));
+            .thenReturn(new ArrayList<>(List.of(compileJar.toString())));
         when(project.getRuntimeClasspathElements())
-            .thenReturn(new ArrayList<>(List.of("/project/runtime.jar")));
+            .thenReturn(new ArrayList<>(List.of(runtimeJar.toString())));
         Build build = new Build();
-        build.setOutputDirectory("/project/target/classes");
+        build.setOutputDirectory(outputDirectory.toString());
         when(project.getBuild()).thenReturn(build);
 
         List<URL> urls = ClassLoaderUtils.getParentClasspathFiles(project);
@@ -61,6 +69,27 @@ public class ClassLoaderUtilsTest {
         assertThat(paths).anySatisfy(path -> assertThat(path).endsWith("compile.jar"));
         assertThat(paths).anySatisfy(path -> assertThat(path).endsWith("runtime.jar"));
         assertThat(paths).anySatisfy(path -> assertThat(path).contains("classes"));
+    }
+
+    @Test
+    void skipsClasspathElementsThatDoNotExistOnDisk(@TempDir Path tempDir) throws IOException, DependencyResolutionRequiredException {
+        Path compileJar = Files.createFile(tempDir.resolve("compile.jar"));
+
+        MavenProject project = mock(MavenProject.class);
+        when(project.getCompileClasspathElements())
+            .thenReturn(new ArrayList<>(List.of(compileJar.toString())));
+        when(project.getRuntimeClasspathElements())
+            .thenReturn(new ArrayList<>(List.of(tempDir.resolve("missing-runtime.jar").toString())));
+        Build build = new Build();
+        // Never compiled, e.g. the output directory of a pom-packaged reactor project.
+        build.setOutputDirectory(tempDir.resolve("never-built-classes").toString());
+        when(project.getBuild()).thenReturn(build);
+
+        List<URL> urls = ClassLoaderUtils.getParentClasspathFiles(project);
+
+        List<String> paths = urls.stream().map(URL::getPath).toList();
+        assertThat(paths).hasSize(1);
+        assertThat(paths).anySatisfy(path -> assertThat(path).endsWith("compile.jar"));
     }
 
     @Test
