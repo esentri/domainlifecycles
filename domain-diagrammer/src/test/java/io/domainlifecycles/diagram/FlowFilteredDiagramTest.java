@@ -63,6 +63,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *                                                --listened by--&gt; BenachrichtigungService
  * </pre>
  * Only the call edges have to be supplied, the command and event edges come from the mirror.
+ *
+ * @author Mario Herb
  */
 public class FlowFilteredDiagramTest {
 

@@ -129,8 +129,11 @@ DLC provides following core features:
     * Reduce a domain diagram to the classes taking part in one flow
     * The SootUp based analysis implementation is a module of its own
       (`io.domainlifecycles:static-analysis-sootup`), so reading a result does not require it
-    * JSON (de)serialization of an analysis result via `static-analysis-serialization-jackson3`/`jackson2`,
-      so it can be produced once and consumed elsewhere, e.g. by an external diagram viewer tool
+    * JSON (de)serialization of an analysis result, so it can be produced once and consumed
+      elsewhere, e.g. by an external diagram viewer tool:
+      [`static-analysis-serialization-jackson3`](static-analysis-serialization-jackson3/readme.md)
+        * Optional Jackson 2 legacy support:
+          [`static-analysis-serialization-jackson2`](static-analysis-serialization-jackson2/readme.md)
 
 - [`Plugins`](dlc-plugins/readme.md): Generate domain model diagrams in the build process.
 

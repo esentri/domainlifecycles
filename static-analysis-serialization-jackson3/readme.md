@@ -1,0 +1,72 @@
+# DLC Static Analysis Result Serialization (Jackson 3)
+
+This module provides [Jackson 3](https://github.com/FasterXML/jackson) based JSON (de)serialization
+for a `DomainCalls` result of the [DLC Static Analysis](../static-analysis/readme.md).
+
+Since the analysis needs the compiled domain classes, it typically runs once, at build or test time.
+This module lets that result be serialized there and deserialized again elsewhere - for instance by
+an external tool that visualizes the domain - without dragging the bytecode analysis framework
+(`static-analysis-sootup`) along to the consuming side.
+
+## Dependencies
+
+Gradle setup:
+
+```Groovy
+dependencies{
+    implementation 'io.domainlifecycles:static-analysis-serialization-jackson3:3.2.0'
+}
+```
+
+Maven setup:
+
+```XML
+<dependency>
+    <groupId>io.domainlifecycles</groupId>
+    <artifactId>static-analysis-serialization-jackson3</artifactId>
+    <version>3.2.0</version>
+</dependency>
+```
+
+This brings `io.domainlifecycles:static-analysis` along transitively.
+
+## Usage
+
+```Java
+DomainCallsSerializer serializer = new JacksonDomainCallsSerializer();
+
+String json = serializer.serialize(domainCalls);
+
+// elsewhere, against a DomainMirror deserialized the same way (see mirror-serialization-jackson3)
+// from the very domain the DomainCalls was analyzed against:
+DomainCalls deserialized = serializer.deserialize(json, domainMirror);
+```
+
+`JacksonDomainCallsSerializer(boolean prettyPrint)` additionally lets you request indented output.
+
+## How a `DomainMethod` is represented
+
+A `DomainCalls` node (`DomainMethod`) is not serialized by embedding its `MethodMirror`: a mirror is
+only meaningful wired into a fully initialized `DomainMirror` - it carries a back-reference used e.g.
+by `getPublishedEvents()` and `getListenedEvent()`. Embedding it would therefore either duplicate
+large parts of that `DomainMirror`'s own JSON representation, or produce a half-initialized mirror on
+the reading side.
+
+Instead, a `DomainMethod` is written as a compact reference - its owner type name, method name and
+parameter type names, i.e. the information `DomainMethod#signature()` is built from:
+
+```JSON
+{
+  "typeName": "yourdomain.order.OrderService",
+  "methodName": "placeOrder",
+  "parameterTypeNames": ["yourdomain.order.PlaceOrder"]
+}
+```
+
+`deserialize(...)` resolves each such reference back against the `DomainMirror` passed to it. That
+`DomainMirror` therefore has to be the one the serialized `DomainCalls` was analyzed against (or an
+equally built one) - an unresolvable type or method reference fails deserialization with a
+`DomainCallsSerializationException`.
+
+The derived reverse index (`DomainCalls#callersOf(...)`) is not part of the JSON either; it is
+rebuilt from the deserialized calls.
