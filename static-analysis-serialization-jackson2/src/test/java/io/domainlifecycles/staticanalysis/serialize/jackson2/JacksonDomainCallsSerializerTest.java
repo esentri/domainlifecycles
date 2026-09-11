@@ -36,6 +36,12 @@ import io.domainlifecycles.staticanalysis.serialize.DomainCallsSerializationExce
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FilterInputStream;
+import java.io.FilterOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -93,6 +99,51 @@ public class JacksonDomainCallsSerializerTest {
     }
 
     @Test
+    void roundTripsCallsAndDiagnosticsViaStreams() {
+        var caller = domainMethod(ZUSTELLUNGS_SERVICE, "liefereAus");
+        var original = DomainCalls.builder()
+            .add(caller, List.of(
+                new DomainCalls.CallSite(domainMethod(REPOSITORY, "findById"), ZUSTELLUNGS_SERVICE, 42)))
+            .add(Diagnostic.typeNotOnClasspath("does.not.Exist"))
+            .build();
+
+        var out = new ByteArrayOutputStream();
+        serializer.serialize(original, out);
+        var deserialized = serializer.deserialize(new ByteArrayInputStream(out.toByteArray()), Domain.getDomainMirror());
+
+        assertThat(deserialized.callers()).isEqualTo(original.callers());
+        assertThat(deserialized.callsFor(caller).callSites()).isEqualTo(original.callsFor(caller).callSites());
+        assertThat(deserialized.diagnostics()).isEqualTo(original.diagnostics());
+        // the stream based serialization produces exactly the same JSON as the String based one
+        assertThat(out.toString(StandardCharsets.UTF_8)).isEqualTo(serializer.serialize(original));
+    }
+
+    /**
+     * The stream based serialize/deserialize methods document that they leave closing the given
+     * stream to the caller. Jackson closes a stream it was given by default once done with it, so
+     * this has to be explicitly turned off - this test guards against that regressing silently (a
+     * {@link ByteArrayOutputStream}/{@link ByteArrayInputStream} would not catch this: closing them
+     * has no effect either way).
+     */
+    @Test
+    void streamsAreNotClosedByTheSerializer() throws IOException {
+        var caller = domainMethod(ZUSTELLUNGS_SERVICE, "liefereAus");
+        var original = DomainCalls.builder()
+            .add(caller, List.of(
+                new DomainCalls.CallSite(domainMethod(REPOSITORY, "findById"), ZUSTELLUNGS_SERVICE, 42)))
+            .build();
+
+        var byteStream = new ByteArrayOutputStream();
+        var trackingOut = new CloseTrackingOutputStream(byteStream);
+        serializer.serialize(original, trackingOut);
+        assertThat(trackingOut.closed).isFalse();
+
+        var trackingIn = new CloseTrackingInputStream(new ByteArrayInputStream(byteStream.toByteArray()));
+        serializer.deserialize(trackingIn, Domain.getDomainMirror());
+        assertThat(trackingIn.closed).isFalse();
+    }
+
+    @Test
     void roundTripsAnEmptyResult() {
         var original = DomainCalls.builder().build();
 
@@ -145,5 +196,36 @@ public class JacksonDomainCallsSerializerTest {
             .findFirst()
             .orElseThrow();
         return new DomainMethod(typeMirror.getTypeName(), method);
+    }
+
+    private static final class CloseTrackingOutputStream extends FilterOutputStream {
+        boolean closed = false;
+
+        CloseTrackingOutputStream(java.io.OutputStream out) {
+            super(out);
+        }
+
+        @Override
+        public void write(byte[] b, int off, int len) throws IOException {
+            out.write(b, off, len);
+        }
+
+        @Override
+        public void close() throws IOException {
+            closed = true;
+        }
+    }
+
+    private static final class CloseTrackingInputStream extends FilterInputStream {
+        boolean closed = false;
+
+        CloseTrackingInputStream(java.io.InputStream in) {
+            super(in);
+        }
+
+        @Override
+        public void close() {
+            closed = true;
+        }
     }
 }

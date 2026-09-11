@@ -48,6 +48,22 @@ DomainCalls deserialized = serializer.deserialize(json, domainMirror);
 
 `JacksonDomainCallsSerializer(boolean prettyPrint)` additionally lets you request indented output.
 
+## Streaming
+
+For a domain of a few hundred types the serialized `DomainCalls` can already reach several megabytes.
+`serialize`/`deserialize` also come in stream based variants that write to, respectively read from, an
+`OutputStream`/`InputStream` directly, without ever holding the complete JSON in memory as a single
+String - useful when the JSON is itself compressed or sent over the network as it is produced or
+consumed:
+
+```Java
+serializer.serialize(domainCalls, outputStream);
+
+DomainCalls deserialized = serializer.deserialize(inputStream, domainMirror);
+```
+
+Neither method closes the given stream; that remains the caller's responsibility.
+
 ## How a `DomainMethod` is represented
 
 A `DomainCalls` node (`DomainMethod`) is not serialized by embedding its `MethodMirror`: a mirror is

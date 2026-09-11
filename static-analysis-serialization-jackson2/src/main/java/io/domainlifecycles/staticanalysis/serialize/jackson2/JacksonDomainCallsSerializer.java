@@ -27,6 +27,8 @@
 package io.domainlifecycles.staticanalysis.serialize.jackson2;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.StreamReadFeature;
+import com.fasterxml.jackson.core.StreamWriteFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -40,6 +42,9 @@ import io.domainlifecycles.staticanalysis.DomainMethod;
 import io.domainlifecycles.staticanalysis.serialize.DomainCallsSerializationException;
 import io.domainlifecycles.staticanalysis.serialize.DomainCallsSerializer;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Objects;
 
@@ -85,6 +90,12 @@ public class JacksonDomainCallsSerializer implements DomainCallsSerializer {
             jsonMapperBuilder.enable(SerializationFeature.INDENT_OUTPUT);
         }
 
+        // the stream based serialize/deserialize overloads document that they do not close the given
+        // stream, leaving that to the caller - Jackson's default is to auto-close it, so that default
+        // has to be turned off here to make good on that promise
+        jsonMapperBuilder.configure(StreamWriteFeature.AUTO_CLOSE_TARGET, false);
+        jsonMapperBuilder.configure(StreamReadFeature.AUTO_CLOSE_SOURCE, false);
+
         this.objectMapper = jsonMapperBuilder.build();
     }
 
@@ -99,6 +110,17 @@ public class JacksonDomainCallsSerializer implements DomainCallsSerializer {
     }
 
     @Override
+    public void serialize(DomainCalls domainCalls, OutputStream outputStream) {
+        Objects.requireNonNull(domainCalls, "A DomainCalls instance must be given!");
+        Objects.requireNonNull(outputStream, "An OutputStream to write to must be given!");
+        try {
+            objectMapper.writeValue(outputStream, toDto(domainCalls));
+        } catch (IOException e) {
+            throw DomainCallsSerializationException.fail("Jackson serialization of DomainCalls failed!", e);
+        }
+    }
+
+    @Override
     public DomainCalls deserialize(String serializedDomainCalls, DomainMirror domainMirror) {
         Objects.requireNonNull(serializedDomainCalls, "The serialized DomainCalls string must be given!");
         Objects.requireNonNull(domainMirror,
@@ -107,6 +129,19 @@ public class JacksonDomainCallsSerializer implements DomainCallsSerializer {
             DomainCallsDto dto = objectMapper.readValue(serializedDomainCalls, DomainCallsDto.class);
             return fromDto(dto, domainMirror);
         } catch (JsonProcessingException e) {
+            throw DomainCallsSerializationException.fail("Jackson deserialization of DomainCalls failed!", e);
+        }
+    }
+
+    @Override
+    public DomainCalls deserialize(InputStream serializedDomainCalls, DomainMirror domainMirror) {
+        Objects.requireNonNull(serializedDomainCalls, "The serialized DomainCalls input stream must be given!");
+        Objects.requireNonNull(domainMirror,
+            "A DomainMirror to resolve the DomainCalls' methods against must be given!");
+        try {
+            DomainCallsDto dto = objectMapper.readValue(serializedDomainCalls, DomainCallsDto.class);
+            return fromDto(dto, domainMirror);
+        } catch (IOException e) {
             throw DomainCallsSerializationException.fail("Jackson deserialization of DomainCalls failed!", e);
         }
     }

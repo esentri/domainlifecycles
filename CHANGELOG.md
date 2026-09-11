@@ -56,6 +56,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   instance by an external diagram viewer tool - without re-running the static analysis. A
   `DomainMethod` is written as a compact type/method/parameter-types reference rather than an
   embedded mirror, and resolved back against a `DomainMirror` given at deserialization time
+- The Gradle and Maven `domainModelUpload` task/goal now optionally (`runStaticAnalysis`, default
+  `true`) also run a static analysis of the compiled domain classes and upload its result
+  (`DomainCalls`) alongside the domain model, so a Diagram Viewer can offer flow based diagram
+  filtering. `DomainModelUploader` now builds the domain model itself instead of receiving an
+  already-serialized JSON string, so the very same `DomainMirror` is reused for both the mirror and
+  the static analysis rather than building it twice
+- The domain model upload request is now gzip-compressed (`Content-Encoding: gzip`) before being
+  sent, since the combined domain model and static analysis JSON can reach the tens of megabytes for
+  larger domains; a 10 second connect timeout and a 5 minute overall request timeout were added so an
+  unreachable or slow Diagram Viewer fails the build instead of hanging it indefinitely
+- `DomainSerializer` (`mirror-serialization-jackson3`/`jackson2`) and `DomainCallsSerializer`
+  (`static-analysis-serialization-jackson3`/`jackson2`) gained stream based `serialize`/`deserialize`
+  overloads (`OutputStream`/`InputStream`), so a `DomainMirror`/`DomainCalls` can be written to or read
+  from a stream directly, without ever holding the complete serialized JSON in memory as a single
+  String - a building block towards streaming the domain model upload itself. Both also had Jackson's
+  default of closing the given stream once done turned off, to actually honor that contract
+- `DomainModelUploader` gained `uploadDomainModelStreaming`, an opt-in alternative to
+  `uploadDomainModel` (wired up via the new `streamUpload` option on the Gradle/Maven
+  `domainModelUpload` task/goal, default `false`) that streams the gzip-compressed request body
+  directly into the HTTP request as it is produced - via a background thread and a bounded
+  producer/consumer queue - instead of assembling it completely in memory first. For very large
+  domains this trades a flatter memory footprint for the added complexity of a background writer.
+  `DomainModelUploaderImpl` also now reuses a single `HttpClient` (previously one was created per
+  upload call), avoiding lingering non-daemon client threads
 
 ## [3.2.0] - 2026-06-16
 - Added support for JMolecules DDD types for DLC mirror, now able to render Domain diagrams using JMolecules marker interfaces or annotations

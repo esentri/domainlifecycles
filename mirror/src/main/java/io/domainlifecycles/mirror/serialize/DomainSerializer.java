@@ -29,6 +29,9 @@ package io.domainlifecycles.mirror.serialize;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 /**
  * Generic interface to de-/serialize the DomainModel.
  *
@@ -45,12 +48,38 @@ public interface DomainSerializer {
     String serialize(DomainMirror domainMirror);
 
     /**
+     * Serializes a given DomainMirror instance directly to the given output stream, without ever
+     * holding the complete serialized representation in memory as a single String. Useful for large
+     * domains, or when the output is itself being streamed on, e.g. compressed or sent over the
+     * network as it is produced.
+     * <p>
+     * The stream is written to, but not closed; the caller remains responsible for it.
+     *
+     * @param domainMirror the DomainMirror instance to be serialized
+     * @param outputStream the stream the serialized DomainMirror is written to
+     */
+    void serialize(DomainMirror domainMirror, OutputStream outputStream);
+
+    /**
      * Deserializes the given string representation of a domain into a DomainMirror object.
      *
      * @param serializedDomain the string representation of a serialized domain
      * @return the deserialized DomainMirror object
      */
     DomainMirror deserialize(String serializedDomain);
+
+    /**
+     * Deserializes a domain, read directly from the given input stream, into a DomainMirror object,
+     * without ever holding the complete serialized representation in memory as a single String.
+     * Useful for large domains, or when the input is itself being streamed from, e.g. decompressed or
+     * received over the network as it is consumed.
+     * <p>
+     * The stream is read from, but not closed; the caller remains responsible for it.
+     *
+     * @param serializedDomain the stream a serialized domain is read from
+     * @return the deserialized DomainMirror object
+     */
+    DomainMirror deserialize(InputStream serializedDomain);
 
     /**
      * Deserializes the given string representation of a serialized type into its corresponding

@@ -82,4 +82,24 @@ public abstract class DomainModelUploadTaskConfigurationExtension {
      * @return a {@code ListProperty<String>} representing the list of package names.
      */
     public abstract ListProperty<String> getDomainModelPackages();
+
+    /**
+     * Indicates whether a static analysis of the domain classes should be run and its result
+     * ({@code DomainCalls}) uploaded alongside the domain model, so the Diagram Viewer can offer
+     * flow based diagram filtering.
+     *
+     * @return a Property containing the flag, defaulting to {@code true} if unset.
+     */
+    public abstract Property<Boolean> getRunStaticAnalysis();
+
+    /**
+     * Indicates whether the upload request body should be streamed directly to the Diagram Viewer as
+     * it is produced, rather than first assembled completely in memory. Reduces the build's memory
+     * footprint for large domains, at the cost of the added complexity of a background thread
+     * producing the body while the request is in flight; see
+     * {@code DomainModelUploader#uploadDomainModelStreaming} for details and trade-offs.
+     *
+     * @return a Property containing the flag, defaulting to {@code false} if unset.
+     */
+    public abstract Property<Boolean> getStreamUpload();
 }

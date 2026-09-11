@@ -26,8 +26,6 @@
 
 package io.domainlifecycles.plugin.viewer;
 
-import io.domainlifecycles.plugins.mirror.MirrorSerializer;
-import io.domainlifecycles.plugins.mirror.MirrorSerializerImpl;
 import io.domainlifecycles.plugins.viewer.DomainModelUploader;
 import io.domainlifecycles.plugins.viewer.DomainModelUploaderImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
@@ -49,21 +47,25 @@ import java.util.List;
  * This Mojo is configured to execute during the "initialize" phase of the Maven lifecycle
  * and requires compile-level dependency resolution.
  *
- * The goal leverages a {@link DomainModelUploader} implementation to send the serialized
- * domain model JSON along with other metadata to a specified Diagram Viewer endpoint.
- * It uses a {@link MirrorSerializer} implementation to convert the domain model into
- * a JSON string before uploading.
+ * The goal leverages a {@link DomainModelUploader} implementation to initialize and serialize the
+ * domain model, optionally run a static analysis of the domain classes on top of it, and send both
+ * along with other metadata to a specified Diagram Viewer endpoint.
  *
  * Key Responsibilities:
  * - Collect classpath files and context packages from the Maven project.
- * - Serialize the domain model into a JSON format using {@link MirrorSerializer}.
- * - Upload the serialized domain model to the Diagram Viewer using {@link DomainModelUploader}.
+ * - Initialize, serialize, and optionally statically analyze the domain model, and upload it to
+ *   the Diagram Viewer using {@link DomainModelUploader}.
  *
  * Configuration Parameters:
  * - diagramViewerBaseUrl: Base URL of the Diagram Viewer application.
  * - apiKey: API key for authentication with the Diagram Viewer application.
  * - projectName: Name of the project to associate with the domain model upload.
- * - contextPackages: List of package names containing domain model classes.
+ * - domainModelPackages: List of package names containing domain model classes.
+ * - runStaticAnalysis: Whether a static analysis of the domain classes should be run and its
+ *   result (DomainCalls) uploaded alongside the domain model. Defaults to {@code true}.
+ * - streamUpload: Whether the upload request body should be streamed directly to the Diagram
+ *   Viewer as it is produced, rather than first assembled completely in memory. Defaults to
+ *   {@code false}.
  *
  * @author Leon Völlinger
  */
@@ -92,6 +94,12 @@ public class UploadDomainModelGoal extends AbstractMojo {
     @Parameter(property = "domainModelPackages", required = true)
     private List<String> domainModelPackages;
 
+    @Parameter(property = "runStaticAnalysis", defaultValue = "true")
+    private boolean runStaticAnalysis;
+
+    @Parameter(property = "streamUpload", defaultValue = "false")
+    private boolean streamUpload;
+
     private DomainModelUploader domainModelUploader;
 
     /**
@@ -115,12 +123,16 @@ public class UploadDomainModelGoal extends AbstractMojo {
     }
 
     private void uploadDomainModel() {
-        MirrorSerializer mirrorSerializer = new MirrorSerializerImpl(true);
         var classPath = new ArrayList<URL>();
         for (var project : reactorProjects) {
             classPath.addAll(ClassLoaderUtils.getParentClasspathFiles(project));
         }
-        final String domainModelJson = mirrorSerializer.serialize(classPath, domainModelPackages);
-        domainModelUploader.uploadDomainModel(domainModelJson, domainModelPackages, apiKey, projectName, diagramViewerBaseUrl);
+        if (streamUpload) {
+            domainModelUploader.uploadDomainModelStreaming(
+                classPath, domainModelPackages, runStaticAnalysis, apiKey, projectName, diagramViewerBaseUrl);
+        } else {
+            domainModelUploader.uploadDomainModel(
+                classPath, domainModelPackages, runStaticAnalysis, apiKey, projectName, diagramViewerBaseUrl);
+        }
     }
 }

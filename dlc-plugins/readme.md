@@ -135,6 +135,8 @@ dlcGradlePlugin {
         projectName = "test-project"
         apiKey = "<YOUR-API-KEY>"
         diagramViewerBaseUrl = "http://localhost:8090"
+        runStaticAnalysis = true
+        streamUpload = false
     }
 }
 ```
@@ -142,6 +144,27 @@ Specify the packages you want to be scanned by the Diagram-Viewer. These can lat
 can be specified even further.
 You can generate a new API-Key by clicking on the profile tab in the Diagram-Viewer App.
 All classes that the model consists of must be defined within the `domainModelPackages`.
+
+By default (`runStaticAnalysis = true`), the plugin additionally runs a static analysis of the compiled
+domain classes and uploads its result (`DomainCalls`) alongside the domain model, so the Diagram-Viewer
+can offer flow based diagram filtering (see [static analysis](../static-analysis/readme.md) and
+[restricting a diagram to a flow](../domain-diagrammer/readme.md#restricting-a-diagram-to-a-flow)).
+Set `runStaticAnalysis = false` to upload only the domain model, skipping the analysis.
+
+For a domain of a few hundred types the uploaded JSON (domain model plus static analysis result) can
+already reach the tens of megabytes, so the upload request is gzip-compressed (`Content-Encoding: gzip`)
+before being sent - your Diagram-Viewer endpoint needs to decompress the request body accordingly. The
+plugin also applies a 10 second connect timeout and an overall 5 minute request timeout, so an
+unreachable or slow Diagram-Viewer fails the build instead of hanging it indefinitely.
+
+By default, the (already gzip-compressed) request body is assembled completely in memory before being
+sent. Set `streamUpload = true` to instead stream it directly into the HTTP request as it is produced -
+this avoids ever holding the complete JSON in memory (and, since the compressed size is then not known
+upfront, sends the request with chunked transfer encoding). This is opt-in rather than the default,
+since it trades a lower, flatter memory footprint for a background thread producing the body while the
+request is in flight; for very large domains it can be the difference between comfortably fitting into
+a build's memory budget and risking an `OutOfMemoryError`, while for smaller domains the default is
+simpler and sufficiently efficient.
 
 #### Run
 ```bash
@@ -298,6 +321,8 @@ An example configuration in your project could look like the following:
                     <diagramViewerBaseUrl>http://localhost:8090</diagramViewerBaseUrl>
                     <apiKey>YOUR-API-KEY</apiKey>
                     <projectName>test-project</projectName>
+                    <runStaticAnalysis>true</runStaticAnalysis>
+                    <streamUpload>false</streamUpload>
                     </configuration>
                 </execution>
             </executions>
@@ -309,6 +334,27 @@ Specify the packages you want to be scanned by the Diagram-Viewer. These can lat
 can be specified even further.
 You can generate a new API-Key by clicking on the profile tab in the Diagram-Viewer App.
 All classes that the model consists of must be defined within the `domainModelPackages`.
+
+By default (`runStaticAnalysis` defaults to `true`), the plugin additionally runs a static analysis of the
+compiled domain classes and uploads its result (`DomainCalls`) alongside the domain model, so the
+Diagram-Viewer can offer flow based diagram filtering (see [static analysis](../static-analysis/readme.md)
+and [restricting a diagram to a flow](../domain-diagrammer/readme.md#restricting-a-diagram-to-a-flow)).
+Set `<runStaticAnalysis>false</runStaticAnalysis>` to upload only the domain model, skipping the analysis.
+
+For a domain of a few hundred types the uploaded JSON (domain model plus static analysis result) can
+already reach the tens of megabytes, so the upload request is gzip-compressed (`Content-Encoding: gzip`)
+before being sent - your Diagram-Viewer endpoint needs to decompress the request body accordingly. The
+plugin also applies a 10 second connect timeout and an overall 5 minute request timeout, so an
+unreachable or slow Diagram-Viewer fails the build instead of hanging it indefinitely.
+
+By default, the (already gzip-compressed) request body is assembled completely in memory before being
+sent. Set `<streamUpload>true</streamUpload>` to instead stream it directly into the HTTP request as it
+is produced - this avoids ever holding the complete JSON in memory (and, since the compressed size is
+then not known upfront, sends the request with chunked transfer encoding). This is opt-in rather than
+the default, since it trades a lower, flatter memory footprint for a background thread producing the
+body while the request is in flight; for very large domains it can be the difference between
+comfortably fitting into a build's memory budget and risking an `OutOfMemoryError`, while for smaller
+domains the default is simpler and sufficiently efficient.
 
 #### Run
 ```bash

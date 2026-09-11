@@ -139,10 +139,15 @@ import io.domainlifecycles.mirror.serialize.jackson3.model.ValueObjectModelMixin
 import io.domainlifecycles.mirror.serialize.jackson3.model.ValueReferenceModelMixin;
 import io.domainlifecycles.mirror.serialize.DomainSerializer;
 import tools.jackson.core.JacksonException;
+import tools.jackson.core.StreamReadFeature;
+import tools.jackson.core.StreamWriteFeature;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
+
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * Jackson 2 specific implementation of a {@link DomainSerializer}.
@@ -256,6 +261,12 @@ public class JacksonDomainSerializer implements DomainSerializer {
 
         jsonMapperBuilder.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
 
+        // the stream based serialize/deserialize overloads document that they do not close the given
+        // stream, leaving that to the caller - Jackson's default is to auto-close it, so that default
+        // has to be turned off here to make good on that promise
+        jsonMapperBuilder.configure(StreamWriteFeature.AUTO_CLOSE_TARGET, false);
+        jsonMapperBuilder.configure(StreamReadFeature.AUTO_CLOSE_SOURCE, false);
+
         this.objectMapper = jsonMapperBuilder.build();
     }
 
@@ -274,6 +285,22 @@ public class JacksonDomainSerializer implements DomainSerializer {
     }
 
     /**
+     * Serializes the given domain mirrors directly to the given output stream, without holding the
+     * complete serialized representation in memory as a single String.
+     *
+     * @param domainMirror the DomainMirror instance to be serialized
+     * @param outputStream the stream the serialized DomainMirror is written to; not closed by this method
+     */
+    @Override
+    public void serialize(DomainMirror domainMirror, OutputStream outputStream) {
+        try {
+            objectMapper.writeValue(outputStream, domainMirror);
+        } catch (JacksonException e) {
+            throw MirrorException.fail("Jackson serialization failed!", e);
+        }
+    }
+
+    /**
      * Deserializes a given serialized domain String, which was created by this Serializer.
      */
     @Override
@@ -281,6 +308,23 @@ public class JacksonDomainSerializer implements DomainSerializer {
         try {
             var dm =  objectMapper.readValue(serializedDomain, DomainMirror.class);
             return dm;
+        } catch (JacksonException e) {
+            throw MirrorException.fail("Jackson deserialization failed!", e);
+        }
+    }
+
+    /**
+     * Deserializes a domain, read directly from the given input stream, which was created by this
+     * Serializer, without holding the complete serialized representation in memory as a single
+     * String.
+     *
+     * @param serializedDomain the stream a serialized domain is read from; not closed by this method
+     * @return the deserialized DomainMirror object
+     */
+    @Override
+    public DomainMirror deserialize(InputStream serializedDomain) {
+        try {
+            return objectMapper.readValue(serializedDomain, DomainMirror.class);
         } catch (JacksonException e) {
             throw MirrorException.fail("Jackson deserialization failed!", e);
         }

@@ -20,7 +20,15 @@ dependencies {
     implementation project(":types")
     implementation project(":domain-diagrammer")
     implementation project(":static-analysis-sootup")
+    implementation project(":static-analysis-serialization-jackson3")
     api libs.slf4j.api
 
     testImplementation libs.assertj
+    testImplementation libs.logback.classic
+    testImplementation project(":assertions")
+    testImplementation project(":builder")
+    testImplementation project(":access")
+    testImplementation project(":type-utils")
+    testImplementation project(":test-shared-impl")
+    testAnnotationProcessor libs.lombok
 }

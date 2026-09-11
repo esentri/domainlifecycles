@@ -29,6 +29,9 @@ package io.domainlifecycles.staticanalysis.serialize;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.staticanalysis.DomainCalls;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 /**
  * Generic interface to de-/serialize a {@link DomainCalls} analysis result, so it can be produced
  * once (e.g. in a build step, alongside the {@link DomainMirror} it was analyzed against) and
@@ -54,6 +57,19 @@ public interface DomainCallsSerializer {
     String serialize(DomainCalls domainCalls);
 
     /**
+     * Serializes a given {@link DomainCalls} instance directly to the given output stream, without
+     * ever holding the complete serialized representation in memory as a single String. Useful for
+     * large analysis results, or when the output is itself being streamed on, e.g. compressed or
+     * sent over the network as it is produced.
+     * <p>
+     * The stream is written to, but not closed; the caller remains responsible for it.
+     *
+     * @param domainCalls  the DomainCalls instance to be serialized
+     * @param outputStream the stream the serialized DomainCalls is written to
+     */
+    void serialize(DomainCalls domainCalls, OutputStream outputStream);
+
+    /**
      * Deserializes the given string representation of a {@link DomainCalls} result back into a
      * {@link DomainCalls} instance, resolving its methods against the given {@link DomainMirror}.
      *
@@ -62,4 +78,18 @@ public interface DomainCallsSerializer {
      * @return the deserialized DomainCalls instance
      */
     DomainCalls deserialize(String serializedDomainCalls, DomainMirror domainMirror);
+
+    /**
+     * Deserializes a {@link DomainCalls} result, read directly from the given input stream, back
+     * into a {@link DomainCalls} instance, resolving its methods against the given
+     * {@link DomainMirror}, without ever holding the complete serialized representation in memory as
+     * a single String.
+     * <p>
+     * The stream is read from, but not closed; the caller remains responsible for it.
+     *
+     * @param serializedDomainCalls the stream a serialized DomainCalls result is read from
+     * @param domainMirror          the DomainMirror the serialized result was analyzed against
+     * @return the deserialized DomainCalls instance
+     */
+    DomainCalls deserialize(InputStream serializedDomainCalls, DomainMirror domainMirror);
 }
