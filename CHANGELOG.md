@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [3.4.0] - 2026-09-11
+- Improved DLC persistence initialization performance
 - Fixed auto record mapping of array typed fields (e.g. `byte[]`): the mirror reports the component type for arrays, which made the mapper look up a converter (`[B` -> `java.lang.Byte`) that could never be served. Added `AssertedContainableTypeMirror#getBinaryTypeName()` and used it for type resolution in `AutoRecordMapper` and `AutoMapperNestedValueObjectAccessor`.
 - Added [static analysis](./static-analysis) module, answering which domain methods are called from
   which other domain methods, based on the DomainMirror and a compiled classpath. It carries the
