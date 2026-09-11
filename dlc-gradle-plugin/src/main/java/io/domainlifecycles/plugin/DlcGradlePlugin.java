@@ -34,6 +34,7 @@ import io.domainlifecycles.plugin.extensions.MirrorSerializerTaskConfigurationEx
 import io.domainlifecycles.plugin.mirror.MirrorSerializerTask;
 import io.domainlifecycles.plugin.viewer.UploadDomainModelTask;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
+import io.domainlifecycles.plugins.staticanalysis.DomainCallsAnalyzerImpl;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.file.ConfigurableFileCollection;
@@ -123,6 +124,8 @@ public class DlcGradlePlugin implements Plugin<Project> {
             project.getTasks().register("createDiagram", CreateDiagramTask.class, task -> {
                 task.getFileOutputDir().set(diagramExtension.getFileOutputDir());
                 task.getDiagrams().addAll(diagramExtension.getDiagrams());
+                task.getStaticAnalysisCacheSize().set(
+                    diagramExtension.getStaticAnalysisCacheSize().convention(DomainCallsAnalyzerImpl.DEFAULT_CACHE_SIZE));
                 task.getClassesDirs().from(totalClassesDirs);
                 task.getClasspath().from(totalClasspath);
             });
@@ -141,6 +144,8 @@ public class DlcGradlePlugin implements Plugin<Project> {
                 task.getDomainModelPackages().set(domainModelUploadTaskConfigurationExtension.getDomainModelPackages());
                 task.getRunStaticAnalysis().set(domainModelUploadTaskConfigurationExtension.getRunStaticAnalysis().convention(true));
                 task.getStreamUpload().set(domainModelUploadTaskConfigurationExtension.getStreamUpload().convention(false));
+                task.getStaticAnalysisCacheSize().set(domainModelUploadTaskConfigurationExtension.getStaticAnalysisCacheSize()
+                    .convention(DomainCallsAnalyzerImpl.DEFAULT_CACHE_SIZE));
                 task.getClassesDirs().from(totalClassesDirs);
                 task.getClasspath().from(totalClasspath);
             });

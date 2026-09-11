@@ -71,14 +71,28 @@ public class DiagramGeneratorImpl implements DiagramGenerator {
     private final DomainCallsAnalyzer domainCallsAnalyzer;
 
     /**
-     * Constructs a new instance of {@code DiagramGeneratorImpl}.
+     * Constructs a new instance of {@code DiagramGeneratorImpl}, with the static analysis (used for
+     * flow-based diagram filtering) backed by a bounded cache of
+     * {@link DomainCallsAnalyzerImpl#DEFAULT_CACHE_SIZE}.
      *
      * This constructor initializes the {@code krokiClient} field with a new instance of {@link KrokiClient}.
      * The {@link KrokiClient} is used for interacting with a Kroki Docker container to render diagrams.
      */
     public DiagramGeneratorImpl() {
+        this(DomainCallsAnalyzerImpl.DEFAULT_CACHE_SIZE);
+    }
+
+    /**
+     * Constructs a new instance of {@code DiagramGeneratorImpl}, whose static analysis (used for
+     * flow-based diagram filtering) is backed by a bounded cache of the given size. See
+     * {@link io.domainlifecycles.staticanalysis.SootupStaticAnalyzer#SootupStaticAnalyzer(int)}.
+     *
+     * @param staticAnalysisCacheSize the maximum number of classes held in the static analysis
+     *                                cache at once
+     */
+    public DiagramGeneratorImpl(int staticAnalysisCacheSize) {
         this.krokiClient = new KrokiClient();
-        this.domainCallsAnalyzer = new DomainCallsAnalyzerImpl();
+        this.domainCallsAnalyzer = new DomainCallsAnalyzerImpl(staticAnalysisCacheSize);
     }
 
     /**

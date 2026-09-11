@@ -27,6 +27,7 @@
 package io.domainlifecycles.plugin.viewer;
 
 
+import io.domainlifecycles.plugins.staticanalysis.DomainCallsAnalyzerImpl;
 import io.domainlifecycles.plugins.viewer.DomainModelUploader;
 import io.domainlifecycles.plugins.viewer.DomainModelUploaderImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
@@ -122,6 +123,15 @@ public abstract class UploadDomainModelTask extends DefaultTask {
     @Input
     public abstract Property<Boolean> getStreamUpload();
 
+    /**
+     * The maximum number of classes held at once in the bounded cache backing the static analysis,
+     * when {@link #getRunStaticAnalysis()} is enabled.
+     *
+     * @return a {@code Property<Integer>} representing the cache size
+     */
+    @Input
+    public abstract Property<Integer> getStaticAnalysisCacheSize();
+
     private final ConfigurableFileCollection classesDirs = getProject().getObjects().fileCollection();
     private final ConfigurableFileCollection classpath = getProject().getObjects().fileCollection();
 
@@ -181,7 +191,8 @@ public abstract class UploadDomainModelTask extends DefaultTask {
     @TaskAction
     public void action() {
         LOGGER.info("Running Upload Domain Model Goal...");
-        domainModelUploader = new DomainModelUploaderImpl();
+        domainModelUploader = new DomainModelUploaderImpl(
+            getStaticAnalysisCacheSize().getOrElse(DomainCallsAnalyzerImpl.DEFAULT_CACHE_SIZE));
         uploadDomainModel();
     }
 

@@ -80,6 +80,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   domains this trades a flatter memory footprint for the added complexity of a background writer.
   `DomainModelUploaderImpl` also now reuses a single `HttpClient` (previously one was created per
   upload call), avoiding lingering non-daemon client threads
+- `SootupStaticAnalyzer` now builds its `JavaView` on a bounded, LRU-evicting class cache instead of
+  SootUp's unbounded default, capping memory usage regardless of how many distinct classes (domain,
+  JDK or library) end up being touched while resolving method bodies. The cache size defaults to
+  `SootupStaticAnalyzer.DEFAULT_CACHE_SIZE` (500) and can be configured via the new
+  `SootupStaticAnalyzer(int cacheSize)` constructor; evicted classes are simply re-parsed on demand,
+  so a smaller cache only trades CPU for a lower memory ceiling and does not affect analysis results
+- This cache size is now also configurable through the plugin layer: `DomainCallsAnalyzerImpl`,
+  `DiagramGeneratorImpl` and `DomainModelUploaderImpl` (dlc-plugins) gained a constructor overload
+  taking it, and the Gradle `diagram`/`domainModelUpload` task configurations and the Maven
+  `createDiagram`/`domainModelUpload` goals gained a `staticAnalysisCacheSize` option (default `500`)
+  wherever they can trigger the static analysis
 
 ## [3.2.0] - 2026-06-16
 - Added support for JMolecules DDD types for DLC mirror, now able to render Domain diagrams using JMolecules marker interfaces or annotations

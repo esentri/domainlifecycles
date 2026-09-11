@@ -26,6 +26,7 @@
 
 package io.domainlifecycles.plugin.viewer;
 
+import io.domainlifecycles.plugins.staticanalysis.DomainCallsAnalyzerImpl;
 import io.domainlifecycles.plugins.viewer.DomainModelUploader;
 import io.domainlifecycles.plugins.viewer.DomainModelUploaderImpl;
 import io.domainlifecycles.utils.ClassLoaderUtils;
@@ -66,6 +67,9 @@ import java.util.List;
  * - streamUpload: Whether the upload request body should be streamed directly to the Diagram
  *   Viewer as it is produced, rather than first assembled completely in memory. Defaults to
  *   {@code false}.
+ * - staticAnalysisCacheSize: Maximum number of classes held at once in the bounded cache backing
+ *   the static analysis, when runStaticAnalysis is enabled. Defaults to
+ *   DomainCallsAnalyzerImpl.DEFAULT_CACHE_SIZE.
  *
  * @author Leon Völlinger
  */
@@ -100,6 +104,9 @@ public class UploadDomainModelGoal extends AbstractMojo {
     @Parameter(property = "streamUpload", defaultValue = "false")
     private boolean streamUpload;
 
+    @Parameter(property = "staticAnalysisCacheSize", defaultValue = "" + DomainCallsAnalyzerImpl.DEFAULT_CACHE_SIZE)
+    private int staticAnalysisCacheSize;
+
     private DomainModelUploader domainModelUploader;
 
     /**
@@ -118,7 +125,7 @@ public class UploadDomainModelGoal extends AbstractMojo {
     @Override
     public void execute() {
         LOGGER.info("Running Upload Domain Model Goal...");
-        domainModelUploader = new DomainModelUploaderImpl();
+        domainModelUploader = new DomainModelUploaderImpl(staticAnalysisCacheSize);
         uploadDomainModel();
     }
 

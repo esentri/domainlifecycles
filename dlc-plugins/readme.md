@@ -137,6 +137,7 @@ dlcGradlePlugin {
         diagramViewerBaseUrl = "http://localhost:8090"
         runStaticAnalysis = true
         streamUpload = false
+        staticAnalysisCacheSize = 500
     }
 }
 ```
@@ -165,6 +166,13 @@ since it trades a lower, flatter memory footprint for a background thread produc
 request is in flight; for very large domains it can be the difference between comfortably fitting into
 a build's memory budget and risking an `OutOfMemoryError`, while for smaller domains the default is
 simpler and sufficiently efficient.
+
+The static analysis itself keeps memory bounded by caching only up to `staticAnalysisCacheSize` classes
+(domain, JDK and library classes alike) at a time while resolving method bodies; classes evicted from
+the cache are simply re-parsed from the classpath on the next access. The default, `500`, comfortably
+holds a mid-sized domain plus its immediate dependencies without evicting on every lookup. Lower it to
+cap memory usage further for very large projects (at the cost of more re-parsing), or raise it if you
+have memory to spare and want to avoid re-parsing.
 
 #### Run
 ```bash
@@ -323,6 +331,7 @@ An example configuration in your project could look like the following:
                     <projectName>test-project</projectName>
                     <runStaticAnalysis>true</runStaticAnalysis>
                     <streamUpload>false</streamUpload>
+                    <staticAnalysisCacheSize>500</staticAnalysisCacheSize>
                     </configuration>
                 </execution>
             </executions>
@@ -355,6 +364,13 @@ the default, since it trades a lower, flatter memory footprint for a background 
 body while the request is in flight; for very large domains it can be the difference between
 comfortably fitting into a build's memory budget and risking an `OutOfMemoryError`, while for smaller
 domains the default is simpler and sufficiently efficient.
+
+The static analysis itself keeps memory bounded by caching only up to `staticAnalysisCacheSize` classes
+(domain, JDK and library classes alike) at a time while resolving method bodies; classes evicted from
+the cache are simply re-parsed from the classpath on the next access. The default, `500`, comfortably
+holds a mid-sized domain plus its immediate dependencies without evicting on every lookup. Lower it to
+cap memory usage further for very large projects (at the cost of more re-parsing), or raise it if you
+have memory to spare and want to avoid re-parsing.
 
 #### Run
 ```bash
@@ -471,11 +487,18 @@ generation. This is skipped whenever `includeFlowsFrom` is not configured for a 
 `flowFollowEvents`, `flowFollowImplementations` and `flowExcludeAccessors` further tune how far/what such a flow
 traversal follows; they have no effect unless `includeFlowsFrom` is also set.
 
+The static analysis keeps memory bounded by caching only up to a fixed number of classes at a time while
+resolving method bodies; classes evicted from the cache are simply re-parsed from the classpath on the
+next access. Configure this via `staticAnalysisCacheSize` on the `diagram` task configuration itself
+(not per diagram, since one analysis is shared by all diagrams generated in the same run) - see
+[Diagram-Viewer Integration](#diagram-viewer-integration) below for the same setting on the upload task.
+
 Gradle example, restricted to the flow of the `PlaceOrder` domain command:
 ```groovy
 dlcGradlePlugin {
     diagram {
         fileOutputDir = layout.buildDirectory
+        staticAnalysisCacheSize = 500
         diagrams {
             placeOrderFlow {
                 domainModelPackages = ["io.domainlifecycles.test"]
@@ -489,7 +512,8 @@ dlcGradlePlugin {
 }
 ```
 
-Maven example:
+Maven example (`<staticAnalysisCacheSize>` goes into the surrounding `<configuration>` of the
+`createDiagram` execution, alongside `<fileOutputDir>` and `<diagrams>`, not into an individual `<diagram>`):
 ```xml
 <diagram>
     <domainModelPackages>

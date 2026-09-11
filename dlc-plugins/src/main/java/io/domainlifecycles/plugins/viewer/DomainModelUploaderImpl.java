@@ -111,7 +111,27 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
 
     private final DomainSerializer domainSerializer = new JacksonDomainSerializer(true);
     private final DomainCallsSerializer domainCallsSerializer = new JacksonDomainCallsSerializer(true);
-    private final DomainCallsAnalyzer domainCallsAnalyzer = new DomainCallsAnalyzerImpl();
+    private final DomainCallsAnalyzer domainCallsAnalyzer;
+
+    /**
+     * Creates a new uploader whose static analysis (run when {@code runStaticAnalysis} is passed to
+     * {@link #uploadDomainModel} / {@link #uploadDomainModelStreaming}) is backed by a bounded cache
+     * of {@link DomainCallsAnalyzerImpl#DEFAULT_CACHE_SIZE}.
+     */
+    public DomainModelUploaderImpl() {
+        this(DomainCallsAnalyzerImpl.DEFAULT_CACHE_SIZE);
+    }
+
+    /**
+     * Creates a new uploader whose static analysis is backed by a bounded cache of the given size.
+     * See {@link io.domainlifecycles.staticanalysis.SootupStaticAnalyzer#SootupStaticAnalyzer(int)}.
+     *
+     * @param staticAnalysisCacheSize the maximum number of classes held in the static analysis
+     *                                cache at once
+     */
+    public DomainModelUploaderImpl(int staticAnalysisCacheSize) {
+        this.domainCallsAnalyzer = new DomainCallsAnalyzerImpl(staticAnalysisCacheSize);
+    }
 
     /**
      * A single, reused {@link HttpClient} rather than one created per upload call. This matters

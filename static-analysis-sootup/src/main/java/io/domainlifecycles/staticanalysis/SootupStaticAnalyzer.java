@@ -31,6 +31,7 @@ import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.ParamMirror;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sootup.core.cache.provider.LRUCacheProvider;
 import sootup.core.inputlocation.AnalysisInputLocation;
 import sootup.core.jimple.basic.Immediate;
 import sootup.core.jimple.basic.Local;
@@ -104,6 +105,41 @@ import java.util.stream.Collectors;
 public class SootupStaticAnalyzer implements StaticAnalyzer {
 
     private static final Logger log = LoggerFactory.getLogger(SootupStaticAnalyzer.class);
+
+    /**
+     * Default size of the bounded, LRU-evicting class cache backing the {@link JavaView} built for
+     * each {@link #analyze(DomainMirror, List)} call, used when no explicit size is given via
+     * {@link #SootupStaticAnalyzer(int)}. SootUp itself defaults to an unbounded cache, which lets
+     * memory usage grow with the number of distinct classes touched while resolving method bodies
+     * (including JDK and library classes, not just mirrored domain types) - for large projects this
+     * can exhaust the heap. 500 is chosen to comfortably hold the classes of a mid-sized domain
+     * model plus its immediate dependencies without evicting on every lookup; projects with a much
+     * larger or smaller class footprint should size this explicitly.
+     */
+    public static final int DEFAULT_CACHE_SIZE = 500;
+
+    private final int cacheSize;
+
+    /**
+     * Creates a new analyzer whose {@link JavaView} is backed by a bounded LRU cache sized
+     * {@link #DEFAULT_CACHE_SIZE}.
+     */
+    public SootupStaticAnalyzer() {
+        this(DEFAULT_CACHE_SIZE);
+    }
+
+    /**
+     * Creates a new analyzer whose {@link JavaView} is backed by a bounded LRU cache of the given
+     * size. Evicted classes are simply re-parsed from the classpath on the next access, so a
+     * smaller cache trades CPU (re-parsing) for a lower, bounded memory footprint - it does not
+     * affect the correctness of the analysis result.
+     *
+     * @param cacheSize the maximum number of {@code SootClass} instances held in the cache at once,
+     *                  must be at least 1
+     */
+    public SootupStaticAnalyzer(int cacheSize) {
+        this.cacheSize = cacheSize;
+    }
 
     /**
      * Everything the resolution steps need, so it does not have to be threaded through every
@@ -322,13 +358,17 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
      * Registers every classpath entry as its own input location. Classes are loaded lazily,
      * so providing the full classpath is cheap as long as we do not force-load
      * everything: only the bodies we actually inspect are translated to Jimple.
+     * <p>
+     * The view is backed by a bounded, LRU-evicting cache (see {@link #cacheSize}) instead of
+     * SootUp's default unbounded cache, so memory usage stays capped regardless of how many
+     * distinct classes end up being touched while resolving method bodies.
      */
     private JavaView buildView(List<Path> classpath) {
         List<AnalysisInputLocation> inputLocations = classpath.stream()
             .map(path -> (AnalysisInputLocation)
                 new JavaClassPathAnalysisInputLocation(path.toString()))
             .collect(Collectors.toCollection(ArrayList::new));
-        return new JavaView(inputLocations);
+        return new JavaView(inputLocations, new LRUCacheProvider(cacheSize));
     }
 
     // ---------------------------------------------------------------------

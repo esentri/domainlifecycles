@@ -102,4 +102,13 @@ public abstract class DomainModelUploadTaskConfigurationExtension {
      * @return a Property containing the flag, defaulting to {@code false} if unset.
      */
     public abstract Property<Boolean> getStreamUpload();
+
+    /**
+     * The maximum number of classes held at once in the bounded cache backing the static analysis,
+     * when {@link #getRunStaticAnalysis()} is enabled. Evicted classes are simply re-parsed on
+     * demand, so a smaller cache only trades CPU for a lower memory footprint.
+     *
+     * @return a Property containing the cache size, defaulting to a sensible size if unset.
+     */
+    public abstract Property<Integer> getStaticAnalysisCacheSize();
 }

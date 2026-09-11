@@ -49,7 +49,35 @@ public class DomainCallsAnalyzerImpl implements DomainCallsAnalyzer {
 
     private final static Logger log = LoggerFactory.getLogger(DomainCallsAnalyzerImpl.class);
 
-    private final StaticAnalyzer staticAnalyzer = new SootupStaticAnalyzer();
+    /**
+     * Default size of the bounded class cache the underlying {@link SootupStaticAnalyzer} is created
+     * with, used when no explicit size is given via {@link #DomainCallsAnalyzerImpl(int)}. Re-exposed
+     * here (rather than referencing {@link SootupStaticAnalyzer#DEFAULT_CACHE_SIZE} directly) so
+     * Gradle/Maven plugin code, which does not depend on {@code static-analysis-sootup} itself, has a
+     * documented default to fall back to.
+     */
+    public static final int DEFAULT_CACHE_SIZE = SootupStaticAnalyzer.DEFAULT_CACHE_SIZE;
+
+    private final StaticAnalyzer staticAnalyzer;
+
+    /**
+     * Creates a new analyzer whose underlying {@link SootupStaticAnalyzer} is backed by a bounded
+     * LRU cache sized {@link #DEFAULT_CACHE_SIZE}.
+     */
+    public DomainCallsAnalyzerImpl() {
+        this(DEFAULT_CACHE_SIZE);
+    }
+
+    /**
+     * Creates a new analyzer whose underlying {@link SootupStaticAnalyzer} is backed by a bounded
+     * LRU cache of the given size, trading CPU (re-parsing evicted classes) for a lower, bounded
+     * memory footprint. See {@link SootupStaticAnalyzer#SootupStaticAnalyzer(int)}.
+     *
+     * @param cacheSize the maximum number of classes held in the analyzer's cache at once
+     */
+    public DomainCallsAnalyzerImpl(int cacheSize) {
+        this.staticAnalyzer = new SootupStaticAnalyzer(cacheSize);
+    }
 
     /**
      * {@inheritDoc}

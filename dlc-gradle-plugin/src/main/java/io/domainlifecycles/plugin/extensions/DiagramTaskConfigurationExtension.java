@@ -28,6 +28,7 @@ package io.domainlifecycles.plugin.extensions;
 
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.provider.Property;
 
 /**
  * Represents an abstract extension for configuring diagram-related tasks. This class
@@ -58,4 +59,14 @@ public abstract class DiagramTaskConfigurationExtension {
      * @return a {@code NamedDomainObjectContainer} containing the configurations for plugin diagrams.
      */
     public abstract NamedDomainObjectContainer<PluginDiagramConfigurationExtension> getDiagrams();
+
+    /**
+     * The maximum number of classes held at once in the bounded cache backing the static analysis
+     * run for flow-based diagram filtering (see {@code includeFlowsFrom} on a diagram configuration).
+     * Evicted classes are simply re-parsed on demand, so a smaller cache only trades CPU for a lower
+     * memory footprint. Applies to the whole {@code createDiagram} task run, not per diagram.
+     *
+     * @return a Property containing the cache size, defaulting to a sensible size if unset.
+     */
+    public abstract Property<Integer> getStaticAnalysisCacheSize();
 }
