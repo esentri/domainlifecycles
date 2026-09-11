@@ -90,9 +90,23 @@ Key features:
    - SpringDoc OpenAPI extensions aligned with DLC JSON mapping
    - Autoconfiguration for persistence + JSON mapping
 
-9. Plugins
-   - Build-time generation of domain diagrams
+9. Static Analysis & Domain Diagrams
+   - Static (bytecode) analysis answering which domain methods call which other domain methods,
+     based on the Domain Mirror and the compiled domain classes (SootUp based implementation)
+   - Flow analysis: which domain types/methods are reachable from a given method, DomainEvent, or
+     DomainCommand, following method calls, dispatch into implementations, published events and
+     processed commands
+   - Domain diagrams can be reduced to just the classes taking part in one such flow
+   - JSON (de)serialization of an analysis result (Jackson 2/3), so it can be produced once (e.g. in
+     a build step) and consumed elsewhere, e.g. by an external diagram viewer tool
+
+10. Plugins (Gradle / Maven)
+   - Build-time generation of domain diagrams, optionally restricted to a flow (see above)
    - Exporting Domain Mirror at build time (no runtime reflection needed)
+   - Uploading the domain model (and, optionally, the static analysis result) to a Diagram Viewer
+     instance as part of the build
+   - Not part of the Spring Boot starters - added as a separate build plugin
+     (io.domainlifecycles.dlc-gradle-plugin / dlc-maven-plugin)
 
 ## Getting started
 Start here:
@@ -109,10 +123,10 @@ For a full working example:
 
 ## Recommended dependency setup
 For Spring Boot 4.x apps:
-- io.domainlifecycles:spring-boot-starter:3.1.0
+- io.domainlifecycles:spring-boot-starter:3.4.0
 
 For Spring Boot 3.x apps:
-- io.domainlifecycles:spring-boot3-starter:3.1.0
+- io.domainlifecycles:spring-boot3-starter:3.4.0
 
 These starters pull in the appropriate DLC modules and integrations.
 
@@ -141,6 +155,12 @@ When explaining or generating code using DLC:
 - Use DomainEvents.publish() and @DomainEventListener where domain events are relevant.
 - Use jOOQ-based persistence.
 - For Spring-based projects, assume DLC starter + autoconfig is preferred.
+- If asked to visualize the domain model, restrict a diagram to one business flow, or answer "what
+  calls what" questions, point to the static-analysis module and the domain-diagrammer's
+  `includeFlowsFrom` setting rather than suggesting a hand-rolled solution.
+- The Gradle/Maven plugins (diagram generation, mirror export, model upload) are a separate concern
+  from the runtime starters - do not conflate `io.domainlifecycles.dlc-gradle-plugin` with
+  `spring-boot-starter`, they solve different problems and are added independently.
 
 ## What this project is NOT
 - Not a replacement for DDD — it is a set of libraries to implement tactical DDD more cleanly in Java.
@@ -159,4 +179,6 @@ When explaining or generating code using DLC:
 - ./validation-extender/readme.md
 - ./dlc-spring-boot-autoconfig/readme.md
 - ./jackson3-integration/readme.md
+- ./static-analysis/readme.md
+- ./domain-diagrammer/readme.md
 - ./dlc-plugins/readme.md

@@ -18,7 +18,7 @@ Gradle setup:
 
 ```Groovy
 dependencies{
-    implementation 'io.domainlifecycles:static-analysis-serialization-jackson2:3.2.0'
+    implementation 'io.domainlifecycles:static-analysis-serialization-jackson2:3.4.0'
 }
 ```
 
@@ -28,7 +28,7 @@ Maven setup:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>static-analysis-serialization-jackson2</artifactId>
-    <version>3.2.0</version>
+    <version>3.4.0</version>
 </dependency>
 ```
 

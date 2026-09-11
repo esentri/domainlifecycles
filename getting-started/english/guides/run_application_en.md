@@ -31,4 +31,4 @@ public class SampleApplication {
 
 ---
 
-**EN** / [DE](../../german/guides/configuration_de.md)
+**EN** / [DE](../../german/guides/run_application_de.md)
