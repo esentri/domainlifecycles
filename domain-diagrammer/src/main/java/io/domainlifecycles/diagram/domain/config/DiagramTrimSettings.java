@@ -50,6 +50,37 @@ public class DiagramTrimSettings {
     private final List<String> includeConnectedToOutgoing;
     private final List<String> excludeConnectedToIngoing;
     private final List<String> excludeConnectedToOutgoing;
+    private final List<String> includeFlowsFrom;
+
+    /**
+     * Gets the starting points of the flows the diagram is restricted to.
+     * <p>
+     * Unlike the connection based settings, which walk the structural relations of the mirror,
+     * a flow is walked over the analyzed method calls of the domain. It therefore requires the
+     * result of a static analysis to be handed to the generator.
+     * <p>
+     * An entry is a full qualified type name, optionally followed by {@code #} and a method name:
+     * <ul>
+     *     <li>a domain command or domain event starts the flow triggered by it,</li>
+     *     <li>any other domain type starts the flows of all of its methods,</li>
+     *     <li>{@code type#method} starts the flows of all overloads of that method.</li>
+     * </ul>
+     * Several entries are united, as the other include settings are.
+     *
+     * @return List of flow starting points, empty if the diagram is not restricted to a flow
+     */
+    public List<String> getIncludeFlowsFrom() {
+        return includeFlowsFrom;
+    }
+
+    /**
+     * Determines whether the diagram is restricted to one or more flows.
+     *
+     * @return {@code true} if at least one flow starting point is configured
+     */
+    public boolean hasFlowSettings() {
+        return !this.getIncludeFlowsFrom().isEmpty();
+    }
 
     /**
      * Gets the list of blacklisted class names that should be excluded from the diagram.
@@ -146,8 +177,9 @@ public class DiagramTrimSettings {
         List<String> includeConnectedTo, 
         List<String> includeConnectedToIngoing, 
         List<String> includeConnectedToOutgoing, 
-        List<String> excludeConnectedToIngoing, 
-        List<String> excludeConnectedToOutgoing
+        List<String> excludeConnectedToIngoing,
+        List<String> excludeConnectedToOutgoing,
+        List<String> includeFlowsFrom
     ) {
         this.classesBlacklist = classesBlacklist;
         this.explicitlyIncludedPackageNames = explicitlyIncludedPackageNames;
@@ -156,6 +188,7 @@ public class DiagramTrimSettings {
         this.includeConnectedToOutgoing = includeConnectedToOutgoing;
         this.excludeConnectedToIngoing = excludeConnectedToIngoing;
         this.excludeConnectedToOutgoing = excludeConnectedToOutgoing;
+        this.includeFlowsFrom = includeFlowsFrom;
     }
 
     /**
@@ -178,6 +211,7 @@ public class DiagramTrimSettings {
         private List<String> includeConnectedToOutgoing$value;
         private List<String> excludeConnectedToIngoing$value;
         private List<String> excludeConnectedToOutgoing$value;
+        private List<String> includeFlowsFrom$value;
 
         /**
          * Sets the list of blacklisted classes.
@@ -257,6 +291,20 @@ public class DiagramTrimSettings {
         }
 
         /**
+         * Restricts the diagram to the domain types reached by the flows starting at the given
+         * points. Requires the result of a static analysis to be handed to the generator, see
+         * {@link DiagramTrimSettings#getIncludeFlowsFrom()} for the entry syntax.
+         *
+         * @param includeFlowsFrom List of flow starting points, a full qualified type name each,
+         *                         optionally followed by {@code #} and a method name
+         * @return This builder instance
+         */
+        public DiagramTrimSettingsBuilder withIncludeFlowsFrom(List<String> includeFlowsFrom) {
+            this.includeFlowsFrom$value = includeFlowsFrom;
+            return this;
+        }
+
+        /**
          * Builds and returns a new DiagramTrimSettings instance.
          *
          * @return A new DiagramTrimSettings instance with the configured settings
@@ -278,7 +326,10 @@ public class DiagramTrimSettings {
                 includeConnectedToIngoing$value == null ? Collections.emptyList() : includeConnectedToIngoing$value,
                 includeConnectedToOutgoing$value == null ? Collections.emptyList() : includeConnectedToOutgoing$value,
                 excludeConnectedToIngoing$value == null ? Collections.emptyList() : excludeConnectedToIngoing$value,
-                excludeConnectedToOutgoing$value == null ? Collections.emptyList() : excludeConnectedToOutgoing$value);
+                excludeConnectedToOutgoing$value == null ? Collections.emptyList() : excludeConnectedToOutgoing$value,
+                // deliberately not part of checkNoOverlap: a flow starting point may well also be
+                // named in a connection setting, the two mechanisms are independent
+                includeFlowsFrom$value == null ? Collections.emptyList() : includeFlowsFrom$value);
         }
     }
 

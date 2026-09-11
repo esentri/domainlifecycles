@@ -115,7 +115,7 @@ public class AutoMapperNestedValueObjectAccessor<R, DO extends DomainObject> imp
         RecordProperty p = valuePathToRecordProperty.get(path);
         if (p != null) {
             var recordPropertyValue = recordPropertyAccessor.getPropertyValue(p, record);
-            String valueType = path.getFinalFieldMirror().getType().getTypeName();
+            String valueType = path.getFinalFieldMirror().getType().getBinaryTypeName();
             DomainType valueDomainType = path.getFinalFieldMirror().getType().getDomainType();
             if (recordPropertyValue != null) {
                 String recordPropertyType = recordPropertyValue.getClass().getName();

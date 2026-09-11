@@ -134,6 +134,12 @@ public class DiagramConfigMapper {
         diagramConfig.setShowInheritanceStructuresForDomainEvents(extension.getShowInheritanceStructuresForDomainEvents().getOrNull());
         diagramConfig.setShowRelationshipLabels(extension.getShowRelationshipLabels().getOrNull());
         diagramConfig.setShowRelationshipStereotypes(extension.getShowRelationshipStereotypes().getOrNull());
+        diagramConfig.setIncludeFlowsFrom(extension.getIncludeFlowsFrom().getOrNull());
+        diagramConfig.setFlowMaxDepth(extension.getFlowMaxDepth().getOrNull());
+        diagramConfig.setFlowFollowEvents(extension.getFlowFollowEvents().getOrNull());
+        diagramConfig.setFlowFollowImplementations(extension.getFlowFollowImplementations().getOrNull());
+        diagramConfig.setFlowExcludeAccessors(extension.getFlowExcludeAccessors().getOrNull());
+        diagramConfig.setStaticAnalysisPackages(extension.getStaticAnalysisPackages().getOrNull());
         return diagramConfig;
     }
 }

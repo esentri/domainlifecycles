@@ -26,6 +26,7 @@
 
 package io.domainlifecycles.plugins.viewer.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.domainlifecycles.plugins.viewer.model.jackson.DomainMirrorJsonSerializer;
 
@@ -35,11 +36,15 @@ import java.util.List;
  * A Data Transfer Object (DTO) that encapsulates the required information
  * for uploading a domain mirror to an external service or system.
  *
- * The class includes two primary attributes:
+ * The class includes three attributes:
  * - `domainMirror`: A serialized JSON string representing the domain mirror,
  *   which is expected to be in its raw JSON form. This field is serialized using
  *   a custom serializer, {@code DomainMirrorJsonSerializer}, to ensure the raw
  *   JSON format is preserved during serialization.
+ * - `domainCalls`: An optional serialized JSON string representing the result of a static
+ *   analysis of the domain classes ({@code DomainCalls}), also preserved in its raw JSON form.
+ *   {@code null} when the static analysis was not run, in which case the field is omitted from
+ *   the JSON output entirely.
  * - `domainModelPackages`: A list of package names associated with the domain mirror.
  *
  * This DTO is useful for constructing JSON payloads required for interaction
@@ -55,18 +60,27 @@ public class DomainMirrorUploadDto {
 
     @JsonSerialize(using = DomainMirrorJsonSerializer.class)
     private final String domainMirror;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonSerialize(using = DomainMirrorJsonSerializer.class)
+    private final String domainCalls;
+
     private final List<String> domainModelPackages;
 
     /**
-     * Constructs a {@code DomainMirrorUploadDto} with the specified domain mirror
-     * and associated domain model packages.
+     * Constructs a {@code DomainMirrorUploadDto} with the specified domain mirror, the optional
+     * static analysis result and the associated domain model packages.
      *
      * @param domainMirror a serialized JSON string representing the domain mirror,
      *                     which is preserved in its raw JSON format
+     * @param domainCalls  a serialized JSON string representing the {@code DomainCalls} of a static
+     *                     analysis run, preserved in its raw JSON format, or {@code null} if the
+     *                     static analysis was not run
      * @param domainModelPackages a list of package names associated with the domain mirror
      */
-    public DomainMirrorUploadDto(String domainMirror, List<String> domainModelPackages) {
+    public DomainMirrorUploadDto(String domainMirror, String domainCalls, List<String> domainModelPackages) {
         this.domainMirror = domainMirror;
+        this.domainCalls = domainCalls;
         this.domainModelPackages = domainModelPackages;
     }
 
@@ -81,6 +95,16 @@ public class DomainMirrorUploadDto {
      */
     public String getDomainMirror() {
         return domainMirror;
+    }
+
+    /**
+     * Retrieves the result of a static analysis run (a {@code DomainCalls}) in its raw JSON string
+     * format, or {@code null} if the static analysis was not run.
+     *
+     * @return a serialized JSON string representing the DomainCalls, or {@code null}
+     */
+    public String getDomainCalls() {
+        return domainCalls;
     }
 
     /**

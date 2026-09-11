@@ -27,6 +27,7 @@
 package io.domainlifecycles.diagram.domain.config;
 
 import io.domainlifecycles.diagram.DiagramConfig;
+import io.domainlifecycles.staticanalysis.FlowConfig;
 
 import java.util.Objects;
 
@@ -41,6 +42,7 @@ public class DomainDiagramConfig implements DiagramConfig {
     private LayoutSettings layoutSettings =  LayoutSettings.builder().build();
     private StyleSettings styleSettings =  StyleSettings.builder().build();
     private DiagramTrimSettings diagramTrimSettings = DiagramTrimSettings.builder().build();
+    private FlowConfig flowConfig = FlowConfig.defaults();
 
     /**
      * Gets the general visual settings for the diagram.
@@ -76,6 +78,15 @@ public class DomainDiagramConfig implements DiagramConfig {
      */
     public DiagramTrimSettings getDiagramTrimSettings() {
         return diagramTrimSettings;
+    }
+
+    /**
+     * Gets how the flows are traversed that the diagram is restricted to.
+     *
+     * @return the flow traversal options, {@link FlowConfig#defaults()} if never set
+     */
+    public FlowConfig getFlowConfig() {
+        return flowConfig;
     }
 
     /**
@@ -119,6 +130,17 @@ public class DomainDiagramConfig implements DiagramConfig {
     }
 
     /**
+     * Sets how the flows are traversed that the diagram is restricted to. Only has an effect
+     * together with {@link DiagramTrimSettings#getIncludeFlowsFrom()}.
+     *
+     * @param flowConfig the flow traversal options to set
+     * @throws NullPointerException if flowConfig is null
+     */
+    public void setFlowConfig(FlowConfig flowConfig) {
+        this.flowConfig = Objects.requireNonNull(flowConfig, "FlowConfig must not be null");
+    }
+
+    /**
      * Creates a new instance of DomainDiagramConfigBuilder.
      *
      * @return a new DomainDiagramConfigBuilder instance
@@ -135,6 +157,7 @@ public class DomainDiagramConfig implements DiagramConfig {
         private LayoutSettings layoutSettings = LayoutSettings.builder().build();
         private StyleSettings styleSettings = StyleSettings.builder().build();
         private DiagramTrimSettings diagramTrimSettings = DiagramTrimSettings.builder().build();
+        private FlowConfig flowConfig = FlowConfig.defaults();
 
         /**
          * Sets the general visual settings for the diagram.
@@ -185,6 +208,19 @@ public class DomainDiagramConfig implements DiagramConfig {
         }
 
         /**
+         * Sets how the flows are traversed that the diagram is restricted to. Only has an effect
+         * together with {@link DiagramTrimSettings#getIncludeFlowsFrom()}.
+         *
+         * @param flowConfig the flow traversal options to be used
+         * @return this builder instance
+         * @throws NullPointerException if flowConfig is null
+         */
+        public DomainDiagramConfigBuilder withFlowConfig(FlowConfig flowConfig) {
+            this.flowConfig = Objects.requireNonNull(flowConfig, "FlowConfig must not be null");
+            return this;
+        }
+
+        /**
          * Builds a new DomainDiagramConfig instance with the current builder settings.
          *
          * @return a new DomainDiagramConfig instance
@@ -195,6 +231,7 @@ public class DomainDiagramConfig implements DiagramConfig {
             config.setLayoutSettings(layoutSettings);
             config.setStyleSettings(styleSettings);
             config.setDiagramTrimSettings(diagramTrimSettings);
+            config.setFlowConfig(flowConfig);
             return config;
         }
     }

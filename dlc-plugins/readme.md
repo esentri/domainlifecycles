@@ -19,7 +19,7 @@ The plugin is able to create class diagrams in various formats of your implement
 An example configuration in your project could look like the following:
 ```groovy
 plugins {
-    id 'io.domainlifecycles.dlc-gradle-plugin' version '3.3.0'
+    id 'io.domainlifecycles.dlc-gradle-plugin' version '3.4.0'
 }
 
 dlcGradlePlugin {
@@ -61,7 +61,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "io.domainlifecycles.dlc-gradle-plugin") {
-                useModule("io.domainlifecycles:dlc-gradle-plugin:3.3.0")
+                useModule("io.domainlifecycles:dlc-gradle-plugin:3.4.0")
             }
         }
     }
@@ -135,6 +135,10 @@ dlcGradlePlugin {
         projectName = "test-project"
         apiKey = "<YOUR-API-KEY>"
         diagramViewerBaseUrl = "http://localhost:8090"
+        runStaticAnalysis = true
+        streamUpload = false
+        staticAnalysisCacheSize = 500
+        staticAnalysisPackages = ["io.domainlifecycles.test"]
     }
 }
 ```
@@ -142,6 +146,41 @@ Specify the packages you want to be scanned by the Diagram-Viewer. These can lat
 can be specified even further.
 You can generate a new API-Key by clicking on the profile tab in the Diagram-Viewer App.
 All classes that the model consists of must be defined within the `domainModelPackages`.
+
+By default (`runStaticAnalysis = true`), the plugin additionally runs a static analysis of the compiled
+domain classes and uploads its result (`DomainCalls`) alongside the domain model, so the Diagram-Viewer
+can offer flow based diagram filtering (see [static analysis](../static-analysis/readme.md) and
+[restricting a diagram to a flow](../domain-diagrammer/readme.md#restricting-a-diagram-to-a-flow)).
+Set `runStaticAnalysis = false` to upload only the domain model, skipping the analysis.
+
+For a domain of a few hundred types the uploaded JSON (domain model plus static analysis result) can
+already reach the tens of megabytes, so the upload request is gzip-compressed (`Content-Encoding: gzip`)
+before being sent - your Diagram-Viewer endpoint needs to decompress the request body accordingly. The
+plugin also applies a 10 second connect timeout and an overall 5 minute request timeout, so an
+unreachable or slow Diagram-Viewer fails the build instead of hanging it indefinitely.
+
+By default, the (already gzip-compressed) request body is assembled completely in memory before being
+sent. Set `streamUpload = true` to instead stream it directly into the HTTP request as it is produced -
+this avoids ever holding the complete JSON in memory (and, since the compressed size is then not known
+upfront, sends the request with chunked transfer encoding). This is opt-in rather than the default,
+since it trades a lower, flatter memory footprint for a background thread producing the body while the
+request is in flight; for very large domains it can be the difference between comfortably fitting into
+a build's memory budget and risking an `OutOfMemoryError`, while for smaller domains the default is
+simpler and sufficiently efficient.
+
+The static analysis itself keeps memory bounded by caching only up to `staticAnalysisCacheSize` classes
+(domain, JDK and library classes alike) at a time while resolving method bodies; classes evicted from
+the cache are simply re-parsed from the classpath on the next access. The default, `500`, comfortably
+holds a mid-sized domain plus its immediate dependencies without evicting on every lookup. Lower it to
+cap memory usage further for very large projects (at the cost of more re-parsing), or raise it if you
+have memory to spare and want to avoid re-parsing.
+
+By default, the static analysis also considers only classes in `domainModelPackages` (and their
+sub-packages) - not the project's entire classpath, which for a large multi-module project can be
+considerably more expensive to scan. Set `staticAnalysisPackages` to restrict (or widen) this
+explicitly, e.g. to also include an infrastructure package holding the concrete implementations of
+your domain's repository/outbound-service interfaces - a concrete implementation outside the analyzed
+packages is not found, the same as if it were simply missing from the classpath.
 
 #### Run
 ```bash
@@ -167,7 +206,7 @@ An example configuration in your project's build plugins could look like the fol
         <plugin>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>dlc-maven-plugin</artifactId>
-            <version>3.3.0</version>
+            <version>3.4.0</version>
             <executions>
                 <execution>
                     <id>createDiagramNomnoml</id>
@@ -232,7 +271,7 @@ An example configuration in your project could look like the following:
         <plugin>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>dlc-maven-plugin</artifactId>
-            <version>3.3.0</version>
+            <version>3.4.0</version>
             <executions>
                 <execution>
                     <id>serializeMirror</id>
@@ -283,7 +322,7 @@ An example configuration in your project could look like the following:
         <plugin>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>dlc-maven-plugin</artifactId>
-            <version>3.3.0</version>
+            <version>3.4.0</version>
             <executions>
                 <execution>
                     <id>upload</id>
@@ -298,6 +337,12 @@ An example configuration in your project could look like the following:
                     <diagramViewerBaseUrl>http://localhost:8090</diagramViewerBaseUrl>
                     <apiKey>YOUR-API-KEY</apiKey>
                     <projectName>test-project</projectName>
+                    <runStaticAnalysis>true</runStaticAnalysis>
+                    <streamUpload>false</streamUpload>
+                    <staticAnalysisCacheSize>500</staticAnalysisCacheSize>
+                    <staticAnalysisPackages>
+                        <staticAnalysisPackage>io.domainlifecycles.test</staticAnalysisPackage>
+                    </staticAnalysisPackages>
                     </configuration>
                 </execution>
             </executions>
@@ -309,6 +354,41 @@ Specify the packages you want to be scanned by the Diagram-Viewer. These can lat
 can be specified even further.
 You can generate a new API-Key by clicking on the profile tab in the Diagram-Viewer App.
 All classes that the model consists of must be defined within the `domainModelPackages`.
+
+By default (`runStaticAnalysis` defaults to `true`), the plugin additionally runs a static analysis of the
+compiled domain classes and uploads its result (`DomainCalls`) alongside the domain model, so the
+Diagram-Viewer can offer flow based diagram filtering (see [static analysis](../static-analysis/readme.md)
+and [restricting a diagram to a flow](../domain-diagrammer/readme.md#restricting-a-diagram-to-a-flow)).
+Set `<runStaticAnalysis>false</runStaticAnalysis>` to upload only the domain model, skipping the analysis.
+
+For a domain of a few hundred types the uploaded JSON (domain model plus static analysis result) can
+already reach the tens of megabytes, so the upload request is gzip-compressed (`Content-Encoding: gzip`)
+before being sent - your Diagram-Viewer endpoint needs to decompress the request body accordingly. The
+plugin also applies a 10 second connect timeout and an overall 5 minute request timeout, so an
+unreachable or slow Diagram-Viewer fails the build instead of hanging it indefinitely.
+
+By default, the (already gzip-compressed) request body is assembled completely in memory before being
+sent. Set `<streamUpload>true</streamUpload>` to instead stream it directly into the HTTP request as it
+is produced - this avoids ever holding the complete JSON in memory (and, since the compressed size is
+then not known upfront, sends the request with chunked transfer encoding). This is opt-in rather than
+the default, since it trades a lower, flatter memory footprint for a background thread producing the
+body while the request is in flight; for very large domains it can be the difference between
+comfortably fitting into a build's memory budget and risking an `OutOfMemoryError`, while for smaller
+domains the default is simpler and sufficiently efficient.
+
+The static analysis itself keeps memory bounded by caching only up to `staticAnalysisCacheSize` classes
+(domain, JDK and library classes alike) at a time while resolving method bodies; classes evicted from
+the cache are simply re-parsed from the classpath on the next access. The default, `500`, comfortably
+holds a mid-sized domain plus its immediate dependencies without evicting on every lookup. Lower it to
+cap memory usage further for very large projects (at the cost of more re-parsing), or raise it if you
+have memory to spare and want to avoid re-parsing.
+
+By default, the static analysis also considers only classes in `domainModelPackages` (and their
+sub-packages) - not the project's entire classpath, which for a large multi-module project can be
+considerably more expensive to scan. Set `staticAnalysisPackages` to restrict (or widen) this
+explicitly, e.g. to also include an infrastructure package holding the concrete implementations of
+your domain's repository/outbound-service interfaces - a concrete implementation outside the analyzed
+packages is not found, the same as if it were simply missing from the classpath.
 
 #### Run
 ```bash
@@ -396,6 +476,95 @@ Supported Diagram configuration options are
 - showInheritanceStructuresForDomainCommands: boolean, default false
 - showRelationshipLabels: boolean, default true
 - showRelationshipStereotypes: boolean, default true
+- includeFlowsFrom: list of flow starting points (see [Restricting a diagram to a flow](#restricting-a-diagram-to-a-flow)), default none (flow-based filtering disabled)
+- flowMaxDepth: integer, maximum depth a flow is followed to, default unlimited
+- flowFollowEvents: boolean, whether a flow follows published DomainEvents to their listening methods, default true
+- flowFollowImplementations: boolean, whether a flow follows the dispatch from an interface/abstract method into its implementations, default true
+- flowExcludeAccessors: boolean, whether simple accessor methods (getters/setters) are excluded from a followed flow, default false
+- staticAnalysisPackages: list of packages the static analysis (triggered by `includeFlowsFrom`) restricts itself to, default `domainModelPackages` (see [Restricting a diagram to a flow](#restricting-a-diagram-to-a-flow))
+
+## Restricting a diagram to a flow
+
+Besides the structural filters above (packages, blacklists, connection filters), a diagram can be restricted to the
+classes taking part in one or more concrete flows through the domain. A flow starts at a domain command, a domain
+event, or any other domain method, and follows method calls, the dispatch into implementations, published
+DomainEvents together with the methods listening to them, and the methods processing a DomainCommand.
+
+This is configured with `includeFlowsFrom`, a list of flow starting points. Each entry is a fully qualified type
+name, optionally followed by `#methodName`:
+- a DomainCommand or DomainEvent type name starts the flow(s) triggered by it
+- any other domain type name starts the flows of all its methods
+- `type#methodName` starts the flows of all overloads of that method
+
+Several entries are combined (their reached classes are unioned). The restriction only ever narrows an already
+configured diagram: a class outside `domainModelPackages`/`explicitlyIncludedPackages` or on the `classesBlacklist`
+stays out, even when the flow reaches it.
+
+Since determining which classes take part in a flow requires analyzing the compiled domain classes, configuring
+`includeFlowsFrom` makes the plugin run a static (bytecode) analysis of your domain classes as part of diagram
+generation. This is skipped whenever `includeFlowsFrom` is not configured for a diagram. `flowMaxDepth`,
+`flowFollowEvents`, `flowFollowImplementations` and `flowExcludeAccessors` further tune how far/what such a flow
+traversal follows; they have no effect unless `includeFlowsFrom` is also set.
+
+The static analysis keeps memory bounded by caching only up to a fixed number of classes at a time while
+resolving method bodies; classes evicted from the cache are simply re-parsed from the classpath on the
+next access. Configure this via `staticAnalysisCacheSize` on the `diagram` task configuration itself
+(not per diagram, since one analysis is shared by all diagrams generated in the same run) - see
+[Diagram-Viewer Integration](#diagram-viewer-integration) below for the same setting on the upload task.
+
+By default, the static analysis for a given diagram also considers only classes in that diagram's own
+`domainModelPackages` (and their sub-packages) - not the project's entire classpath, which for a large
+multi-module project can be considerably more expensive to scan. Set `staticAnalysisPackages` on the
+individual `diagram` entry to restrict (or widen) this explicitly, e.g. to also include an
+infrastructure package holding the concrete implementations of your domain's repository/outbound-service
+interfaces - a concrete implementation outside the analyzed packages is not found, the same as if it
+were simply missing from the classpath. Unlike `staticAnalysisCacheSize`, this is configured per diagram,
+not on the surrounding `diagram` task, since different diagrams in the same run may restrict to different
+flows/packages.
+
+Gradle example, restricted to the flow of the `PlaceOrder` domain command:
+```groovy
+dlcGradlePlugin {
+    diagram {
+        fileOutputDir = layout.buildDirectory
+        staticAnalysisCacheSize = 500
+        diagrams {
+            placeOrderFlow {
+                domainModelPackages = ["io.domainlifecycles.test"]
+                staticAnalysisPackages = ["io.domainlifecycles.test"]
+                format = "svg"
+                fileName = "place-order-flow"
+                includeFlowsFrom = ["io.domainlifecycles.test.order.PlaceOrder"]
+                flowMaxDepth = 5
+            }
+        }
+    }
+}
+```
+
+Maven example (`<staticAnalysisCacheSize>` goes into the surrounding `<configuration>` of the
+`createDiagram` execution, alongside `<fileOutputDir>` and `<diagrams>`, not into an individual `<diagram>`;
+`<staticAnalysisPackages>` goes into the individual `<diagram>` instead, alongside `<domainModelPackages>`):
+```xml
+<diagram>
+    <domainModelPackages>
+        <domainModelPackage>io.domainlifecycles.test</domainModelPackage>
+    </domainModelPackages>
+    <staticAnalysisPackages>
+        <staticAnalysisPackage>io.domainlifecycles.test</staticAnalysisPackage>
+    </staticAnalysisPackages>
+    <format>svg</format>
+    <fileName>place-order-flow</fileName>
+    <includeFlowsFrom>
+        <includeFlowFrom>io.domainlifecycles.test.order.PlaceOrder</includeFlowFrom>
+    </includeFlowsFrom>
+    <flowMaxDepth>5</flowMaxDepth>
+</diagram>
+```
+
+For the full semantics of `includeFlowsFrom` and the flow traversal settings, see the domain-diagrammer's
+["Restricting a diagram to a flow"](../domain-diagrammer/readme.md#restricting-a-diagram-to-a-flow) section, and for
+background on the underlying static analysis, see the [static-analysis readme](../static-analysis/readme.md).
 
 ## How to read DLC Domain Diagrams?
 

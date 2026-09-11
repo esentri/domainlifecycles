@@ -31,6 +31,7 @@ import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.diagram.domain.mapper.DomainMapper;
 import io.domainlifecycles.diagram.domain.notes.DomainClassNote;
 import io.domainlifecycles.mirror.api.DomainMirror;
+import io.domainlifecycles.staticanalysis.DomainCalls;
 
 import java.util.Collection;
 /**
@@ -166,8 +167,7 @@ public class DomainDiagramGenerator implements Diagram {
         DomainMirror domainMirror
 
     ) {
-        this.diagramConfig = diagramConfig;
-        this.domainMapper = new DomainMapper(diagramConfig, domainMirror, null);
+        this(diagramConfig, domainMirror, null, null);
     }
 
     /**
@@ -183,8 +183,49 @@ public class DomainDiagramGenerator implements Diagram {
         Collection<DomainClassNote> notes
 
     ) {
+        this(diagramConfig, domainMirror, notes, null);
+    }
+
+    /**
+     * Initializes the DomainDiagramGenerator with a given {@link DomainDiagramConfig} and the
+     * result of a static analysis of the domain, without any notes.
+     * <p>
+     * The analysis result is what allows a diagram to be restricted to a flow, see
+     * {@link io.domainlifecycles.diagram.domain.config.DiagramTrimSettings#getIncludeFlowsFrom()}.
+     * It is ignored if no flow is configured.
+     *
+     * @param diagramConfig diagram configuration
+     * @param domainMirror domain
+     * @param domainCalls the analyzed calls of that domain
+     */
+    public DomainDiagramGenerator(
+        final DomainDiagramConfig diagramConfig,
+        DomainMirror domainMirror,
+        DomainCalls domainCalls
+
+    ) {
+        this(diagramConfig, domainMirror, null, domainCalls);
+    }
+
+    /**
+     * Initializes the DomainDiagramGenerator with a given {@link DomainDiagramConfig}, notes and
+     * the result of a static analysis of the domain.
+     *
+     * @param diagramConfig diagram configuration
+     * @param domainMirror domain
+     * @param notes A collection of notes to be added to depicted diagram elements
+     * @param domainCalls the analyzed calls of that domain, needed only to restrict the diagram
+     *                    to a flow, may be {@code null}
+     */
+    public DomainDiagramGenerator(
+        final DomainDiagramConfig diagramConfig,
+        DomainMirror domainMirror,
+        Collection<DomainClassNote> notes,
+        DomainCalls domainCalls
+
+    ) {
         this.diagramConfig = diagramConfig;
-        this.domainMapper = new DomainMapper(diagramConfig, domainMirror, notes);
+        this.domainMapper = new DomainMapper(diagramConfig, domainMirror, notes, domainCalls);
     }
 
     /**

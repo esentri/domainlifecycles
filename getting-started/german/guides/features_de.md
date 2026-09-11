@@ -19,6 +19,9 @@ DLC Modul für die Vereinfachung von Repository-Implementierungen auf Basis von 
 DLC Modul für automatisches Routing von Domain Events
 ### [Validation](../features/validation_support_de.md)
 Optionales DLC Modul für die DDD spezifische Abbildung von Invarianten per BeanValidation Annotations
+### [Diagramme & Static Analysis](../../../static-analysis/readme.md)
+Erzeugt Domain-Diagramme aus den kompilierten Klassen, optional eingeschränkt auf einen konkreten
+Fluss durch die Domäne; verfügbar als [Gradle/Maven Build-Plugin](../../../dlc-plugins/readme.md)
 
 ---
 

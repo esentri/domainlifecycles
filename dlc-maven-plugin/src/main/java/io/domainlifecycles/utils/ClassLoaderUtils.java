@@ -58,6 +58,9 @@ public class ClassLoaderUtils {
     /**
      * Generates a list of URLs representing the classpath elements of the provided Maven project.
      * This includes compile classpath elements, runtime classpath elements, and the build output directory.
+     * Elements that do not exist on disk (e.g. the output directory of a {@code pom}-packaged reactor
+     * project, which is never compiled) are skipped, since a non-existent classpath entry would
+     * otherwise be handed downstream (e.g. to a static analysis input location) as-is.
      *
      * @param project the MavenProject from which to retrieve classpath elements
      * @return a list of URLs representing the parent classpath elements
@@ -73,6 +76,7 @@ public class ClassLoaderUtils {
 
             return classpathElements.stream()
                 .map(File::new)
+                .filter(File::exists)
                 .map(File::toURI)
                 .map(uri -> {
                     try {

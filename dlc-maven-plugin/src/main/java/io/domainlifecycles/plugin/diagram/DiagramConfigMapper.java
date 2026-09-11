@@ -125,6 +125,12 @@ public class DiagramConfigMapper {
         diagramConfig.setShowInheritanceStructuresForReadModels(mavenDiagramConfig.getShowInheritanceStructuresForReadModels());
         diagramConfig.setShowRelationshipLabels(mavenDiagramConfig.getShowRelationshipLabels());
         diagramConfig.setShowRelationshipStereotypes(mavenDiagramConfig.getShowRelationshipStereotypes());
+        diagramConfig.setIncludeFlowsFrom(mavenDiagramConfig.getIncludeFlowsFrom());
+        diagramConfig.setFlowMaxDepth(mavenDiagramConfig.getFlowMaxDepth());
+        diagramConfig.setFlowFollowEvents(mavenDiagramConfig.getFlowFollowEvents());
+        diagramConfig.setFlowFollowImplementations(mavenDiagramConfig.getFlowFollowImplementations());
+        diagramConfig.setFlowExcludeAccessors(mavenDiagramConfig.getFlowExcludeAccessors());
+        diagramConfig.setStaticAnalysisPackages(mavenDiagramConfig.getStaticAnalysisPackages());
         return diagramConfig;
     }
 }

@@ -32,6 +32,7 @@ import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig.DomainDiagr
 import io.domainlifecycles.diagram.domain.config.GeneralVisualSettings;
 import io.domainlifecycles.diagram.domain.config.LayoutSettings;
 import io.domainlifecycles.diagram.domain.config.StyleSettings;
+import io.domainlifecycles.staticanalysis.FlowConfig;
 
 import java.util.List;
 
@@ -138,6 +139,12 @@ public class DiagramConfig {
     private Boolean showInheritanceStructuresForDomainCommands;
     private Boolean showRelationshipLabels;
     private Boolean showRelationshipStereotypes;
+    private List<String> includeFlowsFrom;
+    private Integer flowMaxDepth;
+    private Boolean flowFollowEvents;
+    private Boolean flowFollowImplementations;
+    private Boolean flowExcludeAccessors;
+    private List<String> staticAnalysisPackages;
 
     /**
      * Gets the file type for the diagram output
@@ -1545,6 +1552,122 @@ public class DiagramConfig {
     }
 
     /**
+     * Gets the flow starting points the diagram is restricted to.
+     * Each entry names a domain type, optionally suffixed with {@code #methodName}, from which a
+     * flow (through method calls, published DomainEvents and processed DomainCommands) is followed.
+     * Only classes reached by at least one of these flows are kept in the diagram, on top of any other
+     * restriction already in place (package inclusion, blacklists, connection filters).
+     * Requires a static analysis result to be available; see {@link DiagramGenerator}.
+     *
+     * @return the flow starting points, or {@code null}/empty if flow-based filtering is disabled
+     */
+    public List<String> getIncludeFlowsFrom() {
+        return includeFlowsFrom;
+    }
+
+    /**
+     * Sets the flow starting points the diagram should be restricted to.
+     *
+     * @param includeFlowsFrom the flow starting points to set
+     */
+    public void setIncludeFlowsFrom(List<String> includeFlowsFrom) {
+        this.includeFlowsFrom = includeFlowsFrom;
+    }
+
+    /**
+     * Gets the maximum depth a flow is followed to, when flow-based filtering is enabled.
+     *
+     * @return the maximum flow depth, or {@code null} for the default (unlimited)
+     */
+    public Integer getFlowMaxDepth() {
+        return flowMaxDepth;
+    }
+
+    /**
+     * Sets the maximum depth a flow is followed to, when flow-based filtering is enabled.
+     *
+     * @param flowMaxDepth the maximum flow depth to set
+     */
+    public void setFlowMaxDepth(Integer flowMaxDepth) {
+        this.flowMaxDepth = flowMaxDepth;
+    }
+
+    /**
+     * Gets whether a flow follows published DomainEvents to their listening methods.
+     *
+     * @return whether DomainEvents are followed, or {@code null} for the default (true)
+     */
+    public Boolean getFlowFollowEvents() {
+        return flowFollowEvents;
+    }
+
+    /**
+     * Sets whether a flow follows published DomainEvents to their listening methods.
+     *
+     * @param flowFollowEvents whether DomainEvents should be followed
+     */
+    public void setFlowFollowEvents(Boolean flowFollowEvents) {
+        this.flowFollowEvents = flowFollowEvents;
+    }
+
+    /**
+     * Gets whether a flow follows the dispatch from an interface/abstract method into its implementations.
+     *
+     * @return whether implementations are followed, or {@code null} for the default (true)
+     */
+    public Boolean getFlowFollowImplementations() {
+        return flowFollowImplementations;
+    }
+
+    /**
+     * Sets whether a flow follows the dispatch from an interface/abstract method into its implementations.
+     *
+     * @param flowFollowImplementations whether implementations should be followed
+     */
+    public void setFlowFollowImplementations(Boolean flowFollowImplementations) {
+        this.flowFollowImplementations = flowFollowImplementations;
+    }
+
+    /**
+     * Gets whether simple accessor methods (getters/setters) are excluded from a followed flow.
+     *
+     * @return whether accessors are excluded, or {@code null} for the default (false)
+     */
+    public Boolean getFlowExcludeAccessors() {
+        return flowExcludeAccessors;
+    }
+
+    /**
+     * Sets whether simple accessor methods (getters/setters) should be excluded from a followed flow.
+     *
+     * @param flowExcludeAccessors whether accessors should be excluded
+     */
+    public void setFlowExcludeAccessors(Boolean flowExcludeAccessors) {
+        this.flowExcludeAccessors = flowExcludeAccessors;
+    }
+
+    /**
+     * Gets the packages the static analysis (triggered by {@link #getIncludeFlowsFrom()}) restricts
+     * itself to, to a package itself or any of its sub-packages, instead of considering every class
+     * on the classpath - which for a large project can itself be an expensive scan. Falls back to
+     * the diagram's own {@code domainModelPackages} when unset.
+     *
+     * @return the packages to restrict the static analysis to, or {@code null}/empty for the default
+     */
+    public List<String> getStaticAnalysisPackages() {
+        return staticAnalysisPackages;
+    }
+
+    /**
+     * Sets the packages the static analysis should restrict itself to.
+     *
+     * @param staticAnalysisPackages the packages to set
+     */
+    public void setStaticAnalysisPackages(List<String> staticAnalysisPackages) {
+        this.staticAnalysisPackages = staticAnalysisPackages;
+    }
+
+    /**
      * Maps various configuration styles, filters, and properties into a {@link DomainDiagramConfig} object
      * by utilizing a builder pattern. This method processes multiple optional style configurations,
      * filtering options, and display preferences to generate a comprehensive domain diagram configuration.
@@ -1617,7 +1740,7 @@ public class DiagramConfig {
         if(showUnspecifiedServiceKindMethods != null) visualBuilder.withShowUnspecifiedServiceKindMethods(showUnspecifiedServiceKindMethods);
         if(callApplicationServiceDriver != null) visualBuilder.withCallApplicationServiceDriver(callApplicationServiceDriver);
         if(fieldBlacklist != null && !fieldBlacklist.isEmpty()) visualBuilder.withFieldBlacklist(fieldBlacklist);
-        if(methodBlacklist != null && !methodBlacklist.isEmpty()) visualBuilder.withMethodBlacklist(classesBlacklist);
+        if(methodBlacklist != null && !methodBlacklist.isEmpty()) visualBuilder.withMethodBlacklist(methodBlacklist);
         if(showInheritedMembersInClasses != null) visualBuilder.withShowInheritedMembersInClasses(showInheritedMembersInClasses);
         if(showObjectMembersInClasses != null) visualBuilder.withShowObjectMembersInClasses(showObjectMembersInClasses);
         if(multiplicityInLabel != null) visualBuilder.withMultiplicityInLabel(multiplicityInLabel);
@@ -1636,6 +1759,28 @@ public class DiagramConfig {
         if(showInheritanceStructuresForServiceKinds != null) visualBuilder.withShowInheritanceStructuresForServiceKinds(showInheritanceStructuresForServiceKinds);
         if(showRelationshipLabels != null) visualBuilder.withShowRelationshipLabels(showRelationshipLabels);
         if(showRelationshipStereotypes != null) visualBuilder.withShowRelationshipStereotypes(showRelationshipStereotypes);
+        if(includeFlowsFrom != null && !includeFlowsFrom.isEmpty()) trimBuilder.withIncludeFlowsFrom(includeFlowsFrom);
+
+        FlowConfig flowConfig = FlowConfig.defaults();
+        boolean flowConfigured = false;
+        if(flowMaxDepth != null) {
+            flowConfig = flowConfig.withMaxDepth(flowMaxDepth);
+            flowConfigured = true;
+        }
+        if(flowFollowEvents != null) {
+            flowConfig = flowConfig.withFollowEvents(flowFollowEvents);
+            flowConfigured = true;
+        }
+        if(flowFollowImplementations != null) {
+            flowConfig = flowConfig.withFollowImplementations(flowFollowImplementations);
+            flowConfigured = true;
+        }
+        if(Boolean.TRUE.equals(flowExcludeAccessors)) {
+            flowConfig = flowConfig.excludingAccessors();
+            flowConfigured = true;
+        }
+        if(flowConfigured) configBuilder.withFlowConfig(flowConfig);
+
         configBuilder
             .withDiagramTrimSettings(trimBuilder.build())
             .withLayoutSettings(layoutBuilder.build())

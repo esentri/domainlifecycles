@@ -30,7 +30,10 @@ import io.domainlifecycles.diagram.domain.DomainDiagramGenerator;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.plugins.diagram.kroki.KrokiClient;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
+import io.domainlifecycles.plugins.staticanalysis.DomainCallsAnalyzer;
+import io.domainlifecycles.plugins.staticanalysis.DomainCallsAnalyzerImpl;
 import io.domainlifecycles.plugins.util.DLCUtils;
+import io.domainlifecycles.staticanalysis.DomainCalls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,14 +68,31 @@ public class DiagramGeneratorImpl implements DiagramGenerator {
 
     private final KrokiClient krokiClient;
 
+    private final DomainCallsAnalyzer domainCallsAnalyzer;
+
     /**
-     * Constructs a new instance of {@code DiagramGeneratorImpl}.
+     * Constructs a new instance of {@code DiagramGeneratorImpl}, with the static analysis (used for
+     * flow-based diagram filtering) backed by a bounded cache of
+     * {@link DomainCallsAnalyzerImpl#DEFAULT_CACHE_SIZE}.
      *
      * This constructor initializes the {@code krokiClient} field with a new instance of {@link KrokiClient}.
      * The {@link KrokiClient} is used for interacting with a Kroki Docker container to render diagrams.
      */
     public DiagramGeneratorImpl() {
+        this(DomainCallsAnalyzerImpl.DEFAULT_CACHE_SIZE);
+    }
+
+    /**
+     * Constructs a new instance of {@code DiagramGeneratorImpl}, whose static analysis (used for
+     * flow-based diagram filtering) is backed by a bounded cache of the given size. See
+     * {@link io.domainlifecycles.staticanalysis.SootupStaticAnalyzer#SootupStaticAnalyzer(int)}.
+     *
+     * @param staticAnalysisCacheSize the maximum number of classes held in the static analysis
+     *                                cache at once
+     */
+    public DiagramGeneratorImpl(int staticAnalysisCacheSize) {
         this.krokiClient = new KrokiClient();
+        this.domainCallsAnalyzer = new DomainCallsAnalyzerImpl(staticAnalysisCacheSize);
     }
 
     /**
@@ -118,14 +138,26 @@ public class DiagramGeneratorImpl implements DiagramGenerator {
 
 
     private String generateRawNomnomlDiagramText(List<URL> classPathFiles, final DiagramConfig diagramConfig, final String... domainPackages) {
-        DomainMirror dm = null;
+        DomainMirror dm;
         try {
             dm = DLCUtils.initializeDomainMirrorFromClassPath(classPathFiles, domainPackages);
         } catch(RuntimeException e) {
             throw DLCPluginsException.fail("DomainMirror couldn't be initialized.", e);
         }
 
-        final DomainDiagramGenerator generator = new DomainDiagramGenerator(diagramConfig.map(), dm);
+        final DomainDiagramGenerator generator;
+        if (diagramConfig.getIncludeFlowsFrom() != null && !diagramConfig.getIncludeFlowsFrom().isEmpty()) {
+            // only run the (comparatively expensive) static analysis when the diagram is actually
+            // restricted to a flow
+            final List<String> analyzedPackages = diagramConfig.getStaticAnalysisPackages() != null
+                && !diagramConfig.getStaticAnalysisPackages().isEmpty()
+                ? diagramConfig.getStaticAnalysisPackages()
+                : List.of(domainPackages);
+            final DomainCalls domainCalls = domainCallsAnalyzer.analyze(classPathFiles, dm, analyzedPackages);
+            generator = new DomainDiagramGenerator(diagramConfig.map(), dm, domainCalls);
+        } else {
+            generator = new DomainDiagramGenerator(diagramConfig.map(), dm);
+        }
         return generator.generateDiagramText();
     }
 }

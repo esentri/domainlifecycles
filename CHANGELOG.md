@@ -5,6 +5,109 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.4.0] - 2026-09-11
+- Improved DLC persistence initialization performance
+- Fixed auto record mapping of array typed fields (e.g. `byte[]`): the mirror reports the component type for arrays, which made the mapper look up a converter (`[B` -> `java.lang.Byte`) that could never be served. Added `AssertedContainableTypeMirror#getBinaryTypeName()` and used it for type resolution in `AutoRecordMapper` and `AutoMapperNestedValueObjectAccessor`.
+- Added [static analysis](./static-analysis) module, answering which domain methods are called from
+  which other domain methods, based on the DomainMirror and a compiled classpath. It carries the
+  `StaticAnalyzer` abstraction, the result model and the flow analysis, and depends on nothing but
+  the mirror
+- Added [static analysis sootup](./static-analysis-sootup) module holding the SootUp based
+  `StaticAnalyzer` implementation. Kept as a module of its own so that reading an analysis result -
+  for instance to filter a diagram - does not drag a bytecode analysis framework onto the classpath
+- The analyzer reads the invoke instructions directly out of the bodies of the mirrored methods
+  instead of building a global call graph, so only the inspected bodies are translated and the
+  analysis stays confined to the domain
+- Resolves lambdas (also nested ones), method references (bound, unbound and static), private
+  helper methods, overloads, generic methods with compiler generated bridge methods and inherited
+  methods; recursive and mutually recursive calls terminate
+- Calls are resolved once per concrete owner: a `this` dispatch inside an inherited body is
+  attributed to the overriding subtype, while `super.x()` stays attributed to the base class
+- Default methods of mirrored interfaces are analyzed for every implementation not overriding them
+- `DomainCalls` holds the immutable result and indexes both directions (`callsFor` and
+  `callersOf`). Its nodes combine the concrete owner type with the mirrored method, its edges carry
+  the type whose body contained the call and the source line
+- `Diagnostic` reports what could not be analyzed - most importantly a mirrored type missing from
+  the classpath - so that an empty result can be told apart from an unanalyzable one; `isComplete()`
+  summarizes whether the result can be trusted
+- `DomainClasspath` derives the classpath to analyze from the mirror, from given types or from a
+  classpath string
+- Added `FlowAnalyzer`, answering which domain types and methods are reachable from a given method,
+  domain event or domain command, by joining the analyzed calls with the event and command
+  information of the mirror
+- A flow follows four kinds of edges: method calls, dispatch into implementations and overrides,
+  published domain events together with the methods listening to them, and the methods processing a
+  domain command. Several listeners of one event branch the flow into independent continuations
+- Flows are traversed breadth first and stay bounded: every node is expanded at most once, cycles -
+  including those closing over a published event - are reported and not followed, and a configurable
+  maximum depth reports truncation
+- `FlowConfig` allows limiting the depth, switching off event or implementation edges and filtering
+  methods (e.g. excluding accessors); a flow renders as an indented tree
+- The [domain diagrammer](./domain-diagrammer) optionally takes such an analysis result and can
+  reduce a diagram to the classes taking part in one flow, via the new `includeFlowsFrom` trim
+  setting - starting at a domain command, a domain event, a single method or a whole type. The
+  restriction is combined with the existing trim settings and can only narrow what they allow
+- The Gradle and Maven diagram plugins now support flow-based diagram filtering too: the new
+  `includeFlowsFrom`, `flowMaxDepth`, `flowFollowEvents`, `flowFollowImplementations` and
+  `flowExcludeAccessors` diagram options mirror the diagrammer's flow settings. Whenever
+  `includeFlowsFrom` is configured, the plugin runs the SootUp based static analysis on the
+  project's compiled classes as part of diagram generation
+- Added [static analysis serialization Jackson 3](./static-analysis-serialization-jackson3) and
+  [Jackson 2](./static-analysis-serialization-jackson2) modules, JSON (de)serializing a `DomainCalls`
+  analysis result so it can be produced once (e.g. in a build step) and consumed elsewhere - for
+  instance by an external diagram viewer tool - without re-running the static analysis. A
+  `DomainMethod` is written as a compact type/method/parameter-types reference rather than an
+  embedded mirror, and resolved back against a `DomainMirror` given at deserialization time
+- The Gradle and Maven `domainModelUpload` task/goal now optionally (`runStaticAnalysis`, default
+  `true`) also run a static analysis of the compiled domain classes and upload its result
+  (`DomainCalls`) alongside the domain model, so a Diagram Viewer can offer flow based diagram
+  filtering. `DomainModelUploader` now builds the domain model itself instead of receiving an
+  already-serialized JSON string, so the very same `DomainMirror` is reused for both the mirror and
+  the static analysis rather than building it twice
+- The domain model upload request is now gzip-compressed (`Content-Encoding: gzip`) before being
+  sent, since the combined domain model and static analysis JSON can reach the tens of megabytes for
+  larger domains; a 10 second connect timeout and a 5 minute overall request timeout were added so an
+  unreachable or slow Diagram Viewer fails the build instead of hanging it indefinitely
+- `DomainSerializer` (`mirror-serialization-jackson3`/`jackson2`) and `DomainCallsSerializer`
+  (`static-analysis-serialization-jackson3`/`jackson2`) gained stream based `serialize`/`deserialize`
+  overloads (`OutputStream`/`InputStream`), so a `DomainMirror`/`DomainCalls` can be written to or read
+  from a stream directly, without ever holding the complete serialized JSON in memory as a single
+  String - a building block towards streaming the domain model upload itself. Both also had Jackson's
+  default of closing the given stream once done turned off, to actually honor that contract
+- `DomainModelUploader` gained `uploadDomainModelStreaming`, an opt-in alternative to
+  `uploadDomainModel` (wired up via the new `streamUpload` option on the Gradle/Maven
+  `domainModelUpload` task/goal, default `false`) that streams the gzip-compressed request body
+  directly into the HTTP request as it is produced - via a background thread and a bounded
+  producer/consumer queue - instead of assembling it completely in memory first. For very large
+  domains this trades a flatter memory footprint for the added complexity of a background writer.
+  `DomainModelUploaderImpl` also now reuses a single `HttpClient` (previously one was created per
+  upload call), avoiding lingering non-daemon client threads
+- `SootupStaticAnalyzer` now builds its `JavaView` on a bounded, LRU-evicting class cache instead of
+  SootUp's unbounded default, capping memory usage regardless of how many distinct classes (domain,
+  JDK or library) end up being touched while resolving method bodies. The cache size defaults to
+  `SootupStaticAnalyzer.DEFAULT_CACHE_SIZE` (500) and can be configured via the new
+  `SootupStaticAnalyzer(int cacheSize)` constructor; evicted classes are simply re-parsed on demand,
+  so a smaller cache only trades CPU for a lower memory ceiling and does not affect analysis results
+- This cache size is now also configurable through the plugin layer: `DomainCallsAnalyzerImpl`,
+  `DiagramGeneratorImpl` and `DomainModelUploaderImpl` (dlc-plugins) gained a constructor overload
+  taking it, and the Gradle `diagram`/`domainModelUpload` task configurations and the Maven
+  `createDiagram`/`domainModelUpload` goals gained a `staticAnalysisCacheSize` option (default `500`)
+  wherever they can trigger the static analysis
+- The static analysis run by the Gradle/Maven plugins no longer scans the whole project classpath:
+  `StaticAnalyzer#analyze`, `DomainCallsAnalyzer#analyze` and `SootupStaticAnalyzer` gained an
+  `analyzedPackages` parameter restricting which classes are considered (a package itself or any of
+  its sub-packages), defaulting to no restriction when empty. `SootupStaticAnalyzer` enforces this by
+  wrapping each classpath entry in a `PackageScopedAnalysisInputLocation` that filters SootUp's bulk
+  class enumeration (used to build the type hierarchy) to those packages, while leaving by-name type
+  lookups (needed to resolve framework/library base types a domain class extends) unrestricted - this
+  is what previously forced every class reachable from the classpath, JDK and third-party libraries
+  included, to be resolved just to compute the type hierarchy. The Gradle `diagram`/`domainModelUpload`
+  task configurations and the Maven `createDiagram`/`domainModelUpload` goals gained a matching
+  `staticAnalysisPackages` option, defaulting to the already-configured `domainModelPackages` when
+  unset. A concrete implementation of a mirrored domain interface living outside the analyzed packages
+  (e.g. in a separate infrastructure package) is not found, the same as if it were simply missing from
+  the classpath, so `staticAnalysisPackages` should be widened to cover such packages when needed
+
 ## [3.3.0] - 2026-07-24
 - Extending persistence support for UUID based identities
 - Fixed DLC plugins to remove the need for externally provided JMolecules lib, if not used in the project

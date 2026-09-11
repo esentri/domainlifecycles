@@ -124,6 +124,24 @@ o +- stueckzahl:int{>0}
 [<AR>BestellungBv3 <<AggregateRoot>>]  +-[<label> gesamtPreis 1] - [<VO>PreisBv3 <<ValueObject>>]
 [<AR>BestellungBv3 <<AggregateRoot>>]  +-[<label> bestellKommentare 0..*] - [<E>BestellKommentarBv3 <<Entity>>]
 ]
+// !!! {Frame} tests.shared.persistence.domain.arrays.TestRootArray !!!
+[<AF> TestRootArray <<Aggregate>>|
+// !!! tests.shared.persistence.domain.arrays.TestRootArray !!!
+[<AR> TestRootArray <<AggregateRoot>> |
+\# +- id:<ID> TestRootArrayId
+o +- name:String
+o +- payload:byte\[\]
+|
+]
+// !!! tests.shared.persistence.domain.arrays.CryptoVo !!!
+[<VO> CryptoVo <<ValueObject>> |
+o +- chiffrat:byte\[\]
+o +- salt:byte\[\]
+o +- schluesselVersion:long
+|
+]
+[<AR>TestRootArray <<AggregateRoot>>]  +-[<label> cryptoVo 0..1] - [<VO>CryptoVo <<ValueObject>>]
+]
 // !!! {Frame} tests.shared.persistence.domain.complex.TestRoot !!!
 [<AF> TestRoot <<Aggregate>>|
 // !!! tests.shared.persistence.domain.complex.TestRoot !!!

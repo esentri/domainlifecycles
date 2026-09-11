@@ -967,3 +967,20 @@ CREATE SEQUENCE test_domain.entity_id_enum_list_value_with_lists_enums_seq  MINV
 CREATE SEQUENCE test_domain.entity_id_enum_list_value_with_lists_ids_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
 
 */
+
+/*
+Array typed fields (see AssertedContainableTypeMirror#getBinaryTypeName)
+*/
+
+CREATE SEQUENCE test_domain.test_root_array_id_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1111;
+
+CREATE TABLE test_domain.test_root_array
+(
+    id                           NUMBER(18) PRIMARY KEY,
+    concurrency_version          NUMBER(18) NOT NULL,
+    name                         VARCHAR2(20) NULL,
+    payload                      VARBINARY(255) NULL,
+    crypto_vo_chiffrat           VARBINARY(255) NULL,
+    crypto_vo_salt               VARBINARY(255) NULL,
+    crypto_vo_schluessel_version NUMBER(18) NULL
+);

@@ -18,6 +18,9 @@ DLC module to simplify Repository Implementations based on jOOQ
 DLC module to support automatic routing of Domain Events
 ### [Validation](../features/validation_support_en.md)
 Optional DLC module for the DDD specific implementation of invariants via BeanValidation annotations
+### [Diagrams & Static Analysis](../../../static-analysis/readme.md)
+Generate domain diagrams from your compiled classes, optionally restricted to one concrete flow
+through the domain; available as a [Gradle/Maven build plugin](../../../dlc-plugins/readme.md)
 
 
 ---

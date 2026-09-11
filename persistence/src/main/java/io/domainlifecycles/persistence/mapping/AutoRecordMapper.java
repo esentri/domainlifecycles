@@ -198,7 +198,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
                         }
                         Object value = this.recordPropertyAccessor.getPropertyValue(recordProperty, record);
                         if (value != null) {
-                            var fieldTypeName = fm.getType().getTypeName();
+                            var fieldTypeName = fm.getType().getBinaryTypeName();
                             var domainType = fm.getType().getDomainType();
 
                             if (DomainType.IDENTITY.equals(domainType)) {
@@ -246,7 +246,7 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
                 var recordProperty = this.valuePathToRecordProperty.get(path);
                 if (path.pathElements().size() == 1) {
                     var fm = path.getFinalFieldMirror();
-                    var domainObjectFieldType = fm.getType().getTypeName();
+                    var domainObjectFieldType = fm.getType().getBinaryTypeName();
                     Object value = DlcAccess.accessorFor(domainObject).peek(fm.getName());
                     var domainType = fm.getType().getDomainType();
 

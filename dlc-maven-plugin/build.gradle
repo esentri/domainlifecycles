@@ -33,6 +33,9 @@ dependencies {
     mavenPluginDeps libs.maven.artifact
     mavenPluginDeps libs.maven.plugin.api
     mavenPluginDeps libs.maven.plugin.tools.annotations
+
+    testImplementation libs.assertj
+    testImplementation libs.mockito.core
 }
 
 mavenPlugin {
