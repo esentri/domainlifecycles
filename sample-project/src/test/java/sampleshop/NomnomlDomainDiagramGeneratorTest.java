@@ -65,7 +65,7 @@ class NomnomlDomainDiagramGeneratorTest {
         var trim = DiagramTrimSettings.builder().withExplicitlyIncludedPackageNames(List.of("sampleshop")).build();
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withDiagramTrimSettings(trim).build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-            diagramConfig, Domain.getDomainMirror(), null);
+            diagramConfig, Domain.getDomainMirror());
 
         // when
         String actualDiagramText = generator.generateDiagramText();
@@ -150,7 +150,7 @@ class NomnomlDomainDiagramGeneratorTest {
             .build();
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder().withDiagramTrimSettings(trim).build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-            diagramConfig, Domain.getDomainMirror(), null);
+            diagramConfig, Domain.getDomainMirror());
 
         // when
         String actualDiagramText = generator.generateDiagramText();
