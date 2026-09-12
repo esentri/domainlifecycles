@@ -74,6 +74,7 @@ public class ScalarListElementRecordMapper<R> extends AbstractRecordMapper<R, Sc
     private final NewRecordInstanceProvider newRecordInstanceProvider;
     private final RecordPropertyAccessor<R> recordPropertyAccessor;
     private final RecordClassProvider<?> recordClassProvider;
+    private final Class<R> recordClass;
 
     /**
      * Constructs an instance of ScalarListElementRecordMapper.
@@ -97,12 +98,59 @@ public class ScalarListElementRecordMapper<R> extends AbstractRecordMapper<R, Sc
         RecordPropertyProvider recordPropertyProvider,
         RecordClassProvider<?> recordClassProvider
     ) {
+        this(elementTypeName, recordTypeName, converterRegistry, newRecordInstanceProvider, recordPropertyAccessor,
+            recordPropertyProvider, Objects.requireNonNull(recordClassProvider), null);
+    }
+
+    /**
+     * Constructs an instance of ScalarListElementRecordMapper for persistence integrations where every record
+     * type is represented by one and the same Java class (e.g. a single generic record class shared by all
+     * database tables, as used by plain JDBC based persistence integrations without per-table code
+     * generation). See {@link AutoRecordMapper#AutoRecordMapper(String, String, RecordPropertyMatcher,
+     * DomainObjectBuilderProvider, IgnoredFieldProvider, IgnoredRecordPropertyProvider, ConverterRegistry,
+     * NewRecordInstanceProvider, RecordPropertyAccessor, RecordPropertyProvider,
+     * EntityValueObjectRecordClassProvider, Class)} for the rationale.
+     *
+     * @param elementTypeName           full qualified type name of the wrapped {@code Identity} or {@code Enum}
+     *                                  implementation
+     * @param recordTypeName            the name of the record type for this scalar list's child table
+     * @param converterRegistry         a registry for converters used to transform values between record and
+     *                                  domain object
+     * @param newRecordInstanceProvider a provider for new record instances
+     * @param recordPropertyAccessor    used to access the properties of a record
+     * @param recordPropertyProvider    a provider for the properties of a record
+     * @param recordClass               the record class returned as-is by {@link #recordType()}
+     */
+    public ScalarListElementRecordMapper(
+        String elementTypeName,
+        String recordTypeName,
+        ConverterRegistry converterRegistry,
+        NewRecordInstanceProvider newRecordInstanceProvider,
+        RecordPropertyAccessor<R> recordPropertyAccessor,
+        RecordPropertyProvider recordPropertyProvider,
+        Class<R> recordClass
+    ) {
+        this(elementTypeName, recordTypeName, converterRegistry, newRecordInstanceProvider, recordPropertyAccessor,
+            recordPropertyProvider, null, Objects.requireNonNull(recordClass));
+    }
+
+    private ScalarListElementRecordMapper(
+        String elementTypeName,
+        String recordTypeName,
+        ConverterRegistry converterRegistry,
+        NewRecordInstanceProvider newRecordInstanceProvider,
+        RecordPropertyAccessor<R> recordPropertyAccessor,
+        RecordPropertyProvider recordPropertyProvider,
+        RecordClassProvider<?> recordClassProvider,
+        Class<R> recordClass
+    ) {
         this.elementTypeName = Objects.requireNonNull(elementTypeName);
         this.recordTypeName = Objects.requireNonNull(recordTypeName);
         this.converterRegistry = Objects.requireNonNull(converterRegistry);
         this.newRecordInstanceProvider = Objects.requireNonNull(newRecordInstanceProvider);
         this.recordPropertyAccessor = Objects.requireNonNull(recordPropertyAccessor);
-        this.recordClassProvider = Objects.requireNonNull(recordClassProvider);
+        this.recordClassProvider = recordClassProvider;
+        this.recordClass = recordClass;
         this.elementDomainType = Domain.typeMirror(elementTypeName)
             .map(DomainTypeMirror::getDomainType)
             .orElseThrow(() -> DLCPersistenceException.fail("DomainTypeMirror not found for '%s'!", elementTypeName));
@@ -189,6 +237,9 @@ public class ScalarListElementRecordMapper<R> extends AbstractRecordMapper<R, Sc
     @Override
     @SuppressWarnings("unchecked")
     public Class<R> recordType() {
+        if (recordClass != null) {
+            return recordClass;
+        }
         return (Class<R>) this.recordClassProvider
             .provideRecordClasses()
             .stream()

@@ -1,0 +1,55 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'checkstyle'
+    id 'jacoco'
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+dependencies {
+    api libs.slf4j.api
+
+    api project(":types")
+    implementation project(":reflect")
+    implementation project(":access")
+    api project(":builder")
+    implementation project(":mirror")
+    api project(":persistence")
+
+    testImplementation project(":test-shared-impl")
+    testImplementation project(":type-utils")
+    testImplementation project(":assertions")
+    testImplementation project(":bean-validations")
+    testImplementation project(":validation-extender")
+
+    testImplementation libs.assertj
+    testImplementation libs.slf4j.api
+    testImplementation libs.logback.classic
+    testImplementation libs.mockito.core
+    testImplementation libs.h2
+
+    //jakarta config
+    testImplementation libs.hibernate.validator
+    testImplementation libs.glassfish.jakarta.el
+    testImplementation libs.jakarta.el.api
+}
+
+// Although test classes are not scanned by checkstyle, as configured in the root-level build.gradle file,
+// checkstyle will throw errors and hints as soon as you add a JavaDoc in test file methods, which is the case in some
+// of the more complex test files in this module. That's why the checkstyleTest task is explicitly disabled.
+checkstyleTest.enabled = false
+
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport

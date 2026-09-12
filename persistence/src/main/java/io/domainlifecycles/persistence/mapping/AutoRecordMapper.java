@@ -114,6 +114,8 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
 
     private final RecordClassProvider<?> recordClassProvider;
 
+    private final Class<R> recordClass;
+
     /**
      * Constructs an instance of AutoRecordMapper.
      *
@@ -144,6 +146,69 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
         EntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider,
         RecordClassProvider<?> recordClassProvider
     ) {
+        this(typeName, recordTypeName, recordPropertyMatcher, domainObjectBuilderProvider, ignoredFields,
+            ignoredRecordPropertyProvider, converterRegistry, newRecordInstanceProvider, recordPropertyAccessor,
+            recordPropertyProvider, entityValueObjectRecordClassProvider,
+            Objects.requireNonNull(recordClassProvider), null);
+    }
+
+    /**
+     * Constructs an instance of AutoRecordMapper for persistence integrations where every record type is
+     * represented by one and the same Java class (e.g. a single generic record class shared by all database
+     * tables, as used by plain JDBC based persistence integrations without per-table code generation). In
+     * that case a {@link RecordClassProvider} cannot distinguish between record types by {@code Class}
+     * identity or name (they would all be equal), so the concrete record {@code Class} is passed in directly
+     * and returned as-is by {@link #recordType()}, instead of being looked up by matching
+     * {@code recordTypeName} against {@link RecordClassProvider#provideRecordClasses()}.
+     *
+     * @param typeName the name of the domain type.
+     * @param recordTypeName the name of the record type.
+     * @param recordPropertyMatcher an instance used to match record properties with entity fields.
+     * @param domainObjectBuilderProvider a provider for DomainObjectBuilders, used to build domain objects.
+     * @param ignoredFields a provider defining entity or value object fields to be ignored during auto mapping.
+     * @param ignoredRecordPropertyProvider a provider defining record properties to be ignored during auto mapping.
+     * @param converterRegistry a registry for converters used to transform values between record and domain object.
+     * @param newRecordInstanceProvider a provider for new record instances.
+     * @param recordPropertyAccessor used to access the properties of a record.
+     * @param recordPropertyProvider a provider for the properties of a record.
+     * @param entityValueObjectRecordClassProvider a provider for configurations of value objects contained within an entity.
+     * @param recordClass the record class returned as-is by {@link #recordType()}.
+     */
+    public AutoRecordMapper(
+        String typeName,
+        String recordTypeName,
+        RecordPropertyMatcher recordPropertyMatcher,
+        DomainObjectBuilderProvider domainObjectBuilderProvider,
+        IgnoredFieldProvider ignoredFields,
+        IgnoredRecordPropertyProvider ignoredRecordPropertyProvider,
+        ConverterRegistry converterRegistry,
+        NewRecordInstanceProvider newRecordInstanceProvider,
+        RecordPropertyAccessor<R> recordPropertyAccessor,
+        RecordPropertyProvider recordPropertyProvider,
+        EntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider,
+        Class<R> recordClass
+    ) {
+        this(typeName, recordTypeName, recordPropertyMatcher, domainObjectBuilderProvider, ignoredFields,
+            ignoredRecordPropertyProvider, converterRegistry, newRecordInstanceProvider, recordPropertyAccessor,
+            recordPropertyProvider, entityValueObjectRecordClassProvider,
+            null, Objects.requireNonNull(recordClass));
+    }
+
+    private AutoRecordMapper(
+        String typeName,
+        String recordTypeName,
+        RecordPropertyMatcher recordPropertyMatcher,
+        DomainObjectBuilderProvider domainObjectBuilderProvider,
+        IgnoredFieldProvider ignoredFields,
+        IgnoredRecordPropertyProvider ignoredRecordPropertyProvider,
+        ConverterRegistry converterRegistry,
+        NewRecordInstanceProvider newRecordInstanceProvider,
+        RecordPropertyAccessor<R> recordPropertyAccessor,
+        RecordPropertyProvider recordPropertyProvider,
+        EntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider,
+        RecordClassProvider<?> recordClassProvider,
+        Class<R> recordClass
+    ) {
         this.typeName = Objects.requireNonNull(typeName);
         this.domainType = Domain.typeMirror(typeName).map(DomainTypeMirror::getDomainType).orElse(
             DomainType.NON_DOMAIN);
@@ -156,7 +221,8 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
         this.newRecordInstanceProvider = Objects.requireNonNull(newRecordInstanceProvider);
         this.recordPropertyAccessor = Objects.requireNonNull(recordPropertyAccessor);
         Objects.requireNonNull(recordPropertyProvider);
-        this.recordClassProvider = Objects.requireNonNull(recordClassProvider);
+        this.recordClassProvider = recordClassProvider;
+        this.recordClass = recordClass;
         relevantValueObjectRecordConfigs = new ArrayList<>();
         if (entityValueObjectRecordClassProvider != null) {
             relevantValueObjectRecordConfigs.addAll(
@@ -562,6 +628,9 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
 
     @Override
     public Class<R> recordType() {
+        if (recordClass != null) {
+            return recordClass;
+        }
         return (Class<R>) recordClassProvider
             .provideRecordClasses()
             .stream()
