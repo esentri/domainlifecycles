@@ -42,6 +42,11 @@ import tests.shared.complete.onlinehandel.bestellung.LieferadresseBv3;
 import tests.shared.complete.onlinehandel.bestellung.LieferadresseIdBv3;
 import tests.shared.complete.onlinehandel.bestellung.PreisBv3;
 import tests.shared.complete.onlinehandel.bestellung.WaehrungEnumBv3;
+import tests.shared.persistence.domain.oneToManyIdentityEnum.EntityIdEnumList;
+import tests.shared.persistence.domain.oneToManyIdentityEnum.MyId;
+import tests.shared.persistence.domain.oneToManyIdentityEnum.RootIdEnumList;
+import tests.shared.persistence.domain.oneToManyIdentityEnum.RootIdEnumListId;
+import tests.shared.persistence.domain.oneToManyIdentityEnum.ValueWithLists;
 import tests.shared.persistence.domain.complex.TestEntity1;
 import tests.shared.persistence.domain.complex.TestEntity1Id;
 import tests.shared.persistence.domain.complex.TestEntity2;
@@ -1663,7 +1668,6 @@ public class TestDataGenerator {
             .build();
     }
 
-/*
     public static RootIdEnumList buildRootIdEnumListOnlyRoot(){
         var r = RootIdEnumList
             .builder()
@@ -1682,7 +1686,7 @@ public class TestDataGenerator {
                 new EntityIdEnumList(
                     new EntityIdEnumList.EntityIdEnumListId(1l),
                     1l,
-                    newArrayListOf(MyEnum.TWO),
+                    newArrayListOf(tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.TWO),
                     newArrayListOf(new MyId(44L)),
                     null
                 )
@@ -1696,21 +1700,69 @@ public class TestDataGenerator {
             .builder()
             .setId(new RootIdEnumListId(1l))
             .setName("Complete")
-            .setEnumList(newArrayListOf(MyEnum.ONE, MyEnum.TWO))
+            .setEnumList(newArrayListOf(tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.ONE,
+                tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.TWO))
             .setIdList(newArrayListOf(new MyId(1l), new MyId(2l)))
             .setEntity(
                 new EntityIdEnumList(
                     new EntityIdEnumList.EntityIdEnumListId(1l),
                     1l,
-                    newArrayListOf(MyEnum.TWO),
+                    newArrayListOf(tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.TWO),
                     newArrayListOf(new MyId(44L)),
-                    new ValueWithLists(newArrayListOf(MyEnum.ONE, MyEnum.TWO), newArrayListOf(new MyId(88l), new MyId
-                    (99l), new MyId(111l)))
+                    null
                 )
             )
             .build();
         return r;
-    }*/
+    }
+
+    public static RootIdEnumList buildRootIdEnumListWithDuplicates(){
+        var r = RootIdEnumList
+            .builder()
+            .setId(new RootIdEnumListId(1l))
+            .setName("Duplicates")
+            .setEnumList(newArrayListOf(
+                tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.ONE,
+                tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.ONE,
+                tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.TWO))
+            .setIdList(newArrayListOf(new MyId(7l), new MyId(7l), new MyId(9l)))
+            .build();
+        return r;
+    }
+
+    public static RootIdEnumList buildRootIdEnumListWithUuidIds(){
+        var r = RootIdEnumList
+            .builder()
+            .setId(new RootIdEnumListId(1l))
+            .setName("UuidIds")
+            .setUuidIdList(newArrayListOf(
+                new tests.shared.persistence.domain.oneToManyIdentityEnum.MyUuidId(
+                    UUID.fromString("11111111-1111-1111-1111-111111111111")),
+                new tests.shared.persistence.domain.oneToManyIdentityEnum.MyUuidId(
+                    UUID.fromString("22222222-2222-2222-2222-222222222222"))
+            ))
+            .build();
+        return r;
+    }
+
+    public static RootIdEnumList buildRootIdEnumListWithValueWithListsList(){
+        var r = RootIdEnumList
+            .builder()
+            .setId(new RootIdEnumListId(1l))
+            .setName("ValueWithListsList")
+            .setValueWithListsList(newArrayListOf(
+                new ValueWithLists(
+                    newArrayListOf(tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.ONE),
+                    newArrayListOf(new MyId(10l))),
+                new ValueWithLists(
+                    newArrayListOf(
+                        tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.TWO,
+                        tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.TWO),
+                    newArrayListOf(new MyId(20l), new MyId(21l)))
+            ))
+            .build();
+        return r;
+    }
 
     @SafeVarargs
     public static <T> List<T> newArrayListOf(final T... p) {

@@ -28,7 +28,10 @@ package io.domainlifecycles.persistence.fetcher.simple;
 
 import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.persistence.fetcher.FetcherContext;
+import io.domainlifecycles.persistence.mapping.ScalarListElement;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -48,6 +51,21 @@ public class SimpleFetcherContext<BASE_RECORD_TYPE> implements FetcherContext<BA
 
     private final Map<DomainObject, BASE_RECORD_TYPE> fetchedRecordMap = new IdentityHashMap<>();
 
+    /**
+     * A {@link ScalarListElement} wraps a single {@code List<Identity>}/{@code List<Enum>} element and is
+     * re-created (a new instance, equal by value) every time it is re-derived from an already-fetched
+     * entity's plain field (e.g. to build the "database state" access model for diffing) - it can therefore
+     * never be found again in {@link #fetchedRecordMap}, which relies on reference identity. Records for
+     * such elements are tracked here instead, keyed by value equality plus a caller-provided "scope" (in
+     * practice the owning {@code ValueObjectRecordMirror}), since the wrapped value alone (e.g. the enum
+     * constant {@code TWO}) does not distinguish "this aggregate root's own enum list" from "this
+     * aggregate's child entity's enum list" - both may legitimately contain an equal element at the same
+     * time. A {@link Deque} per key additionally keeps multiple records for duplicate-valued elements within
+     * the very same list (e.g. the same enum constant twice) distinct, so each lookup consumes exactly one
+     * matching record.
+     */
+    private final Map<ScalarListKey, Deque<BASE_RECORD_TYPE>> scalarListElementRecords = new HashMap<>();
+
     private final Map<FetchedRecord<BASE_RECORD_TYPE>, DomainObject> recordToDomainObjectMap = new HashMap<>();
 
     /**
@@ -55,10 +73,28 @@ public class SimpleFetcherContext<BASE_RECORD_TYPE> implements FetcherContext<BA
      */
     @Override
     public Optional<BASE_RECORD_TYPE> getRecordFor(DomainObject p) {
+        return getRecordFor(p, null);
+    }
+
+    /**
+     * Like {@link #getRecordFor(DomainObject)}, but for a {@link ScalarListElement} additionally scoped by
+     * the given {@code scope} (in practice the owning {@code ValueObjectRecordMirror}), to distinguish
+     * equal-valued elements belonging to different lists. The {@code scope} is ignored for any other kind
+     * of domain object.
+     *
+     * @param p     the domain object to get the record for
+     * @param scope disambiguates equal-valued {@link ScalarListElement}s belonging to different lists
+     * @return the record for the given domain object
+     */
+    public Optional<BASE_RECORD_TYPE> getRecordFor(DomainObject p, Object scope) {
         if (p == null) {
             return Optional.empty();
         }
-        return Optional.of(fetchedRecordMap.get(p));
+        if (p instanceof ScalarListElement<?> scalarListElement) {
+            var records = scalarListElementRecords.get(new ScalarListKey(scope, scalarListElement));
+            return Optional.ofNullable(records == null ? null : records.poll());
+        }
+        return Optional.ofNullable(fetchedRecordMap.get(p));
     }
 
     /**
@@ -87,8 +123,27 @@ public class SimpleFetcherContext<BASE_RECORD_TYPE> implements FetcherContext<BA
      * @param record the record
      */
     public void assignRecordToDomainObject(DomainObject p, BASE_RECORD_TYPE record) {
+        assignRecordToDomainObject(p, record, null);
+    }
+
+    /**
+     * Like {@link #assignRecordToDomainObject(DomainObject, Object)}, but for a {@link ScalarListElement}
+     * additionally scoped by the given {@code scope} (in practice the owning {@code
+     * ValueObjectRecordMirror}) - see {@link #getRecordFor(DomainObject, Object)}. The {@code scope} is
+     * ignored for any other kind of domain object.
+     *
+     * @param p      the domain object
+     * @param record the record
+     * @param scope  disambiguates equal-valued {@link ScalarListElement}s belonging to different lists
+     */
+    public void assignRecordToDomainObject(DomainObject p, BASE_RECORD_TYPE record, Object scope) {
         if (p == null) return;
-        fetchedRecordMap.put(p, record);
+        if (p instanceof ScalarListElement<?> scalarListElement) {
+            scalarListElementRecords.computeIfAbsent(new ScalarListKey(scope, scalarListElement),
+                k -> new ArrayDeque<>()).add(record);
+        } else {
+            fetchedRecordMap.put(p, record);
+        }
         recordToDomainObjectMap.put(FetchedRecord.of(record), p);
     }
 
@@ -101,5 +156,7 @@ public class SimpleFetcherContext<BASE_RECORD_TYPE> implements FetcherContext<BA
         fetchedRecordSet.add(FetchedRecord.of(record));
     }
 
+    private record ScalarListKey(Object scope, ScalarListElement<?> element) {
+    }
 
 }

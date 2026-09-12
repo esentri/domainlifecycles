@@ -38,6 +38,7 @@ import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.fetcher.FetcherResult;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
+import io.domainlifecycles.persistence.mapping.ScalarListElement;
 import io.domainlifecycles.persistence.provider.DomainObjectInstanceAccessModel;
 import io.domainlifecycles.persistence.provider.DomainPersistenceProvider;
 import io.domainlifecycles.persistence.repository.actions.PersistenceAction;
@@ -267,6 +268,13 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
      */
     protected void notifyChanges(PersistenceContext<BASE_RECORD_TYPE> pc, A root) {
         pc.getActionsInNotificationOrder().forEach(action -> {
+            if (action.instanceAccessModel.domainObject() instanceof ScalarListElement) {
+                //a ScalarListElement is only the internal carrier for a single List<Identity>/List<Enum>
+                //element; it is not a meaningful domain concept on its own (unlike a real ValueObject or
+                //Entity) and is therefore not published as its own persistence event - the change is fully
+                //reflected by the owning entity's own INSERT/UPDATE/DELETE event
+                return;
+            }
             if (PersistenceAction.ActionType.DELETE_UPDATE.equals(action.actionType)) {
                 //delete updates must only be published, if not another update had happened on that entity
                 //that means only if the reference of a deleted child entity was "nulled"

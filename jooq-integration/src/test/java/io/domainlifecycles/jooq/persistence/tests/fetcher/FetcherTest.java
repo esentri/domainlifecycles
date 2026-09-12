@@ -11,6 +11,7 @@ import io.domainlifecycles.jooq.persistence.tests.manyToManyWithJoinEntity.ManyT
 import io.domainlifecycles.jooq.persistence.tests.oneToMany.OneToManyAggregateRootRepository;
 import io.domainlifecycles.jooq.persistence.tests.oneToOneFollowingFK.OneToOneFollowingAggregateRootRepository;
 import io.domainlifecycles.jooq.persistence.tests.oneToOneFollowingLeadingFK.OneToOneFollowingLeadingAggregateRootRepository;
+import io.domainlifecycles.jooq.persistence.tests.oneToManyIdentityEnum.RootIdEnumListRepository;
 import io.domainlifecycles.jooq.persistence.tests.oneToOneLeadingFK.OneToOneLeadingAggregateRootRepository;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.fetcher.RecordProvider;
@@ -49,6 +50,8 @@ import tests.shared.persistence.domain.oneToOneFollowingFK.TestRootOneToOneFollo
 import tests.shared.persistence.domain.oneToOneFollowingFK.TestRootOneToOneFollowingId;
 import tests.shared.persistence.domain.oneToOneFollowingLeadingFK.TestRootOneToOneFollowingLeading;
 import tests.shared.persistence.domain.oneToOneFollowingLeadingFK.TestRootOneToOneFollowingLeadingId;
+import tests.shared.persistence.domain.oneToManyIdentityEnum.RootIdEnumList;
+import tests.shared.persistence.domain.oneToManyIdentityEnum.RootIdEnumListId;
 import tests.shared.persistence.domain.oneToOneLeadingFK.TestEntityOneToOneLeading;
 import tests.shared.persistence.domain.oneToOneLeadingFK.TestRootOneToOneLeading;
 import tests.shared.persistence.domain.oneToOneLeadingFK.TestRootOneToOneLeadingId;
@@ -81,8 +84,15 @@ public class FetcherTest extends BasePersistence_ITest {
 
     private static ManyToManyAggregateRootRepository manyToManyAggregateRootRepository;
 
+    private static RootIdEnumListRepository rootIdEnumListRepository;
+
     @BeforeAll
     public void init() {
+        rootIdEnumListRepository = new RootIdEnumListRepository(
+            persistenceConfiguration.dslContext,
+            persistenceEventTestHelper.testEventPublisher,
+            persistenceConfiguration.domainPersistenceProvider
+        );
         manyToManyAggregateRootRepository = new ManyToManyAggregateRootRepository(
             persistenceConfiguration.dslContext,
             persistenceEventTestHelper.testEventPublisher,
@@ -584,6 +594,87 @@ public class FetcherTest extends BasePersistence_ITest {
             TestDataGenerator.buildManyToManyComplete());
         Optional<TestRootManyToMany> result = jooqEntityFetcher.fetchDeep(new TestRootManyToManyId(1l)).resultValue();
         Assertions.assertThat(result).isPresent();
+        assertInsertedWithResult(inserted, result.get());
+    }
+
+    // --- List<Identity>/List<Enum> fields (aggregate root, nested entity, and a List<ValueObject> whose ---
+    // --- own fields are scalar Id/Enum lists) - exercised directly via JooqAggregateFetcher, bypassing ----
+    // --- the repository's insert/update diffing, the same way every other scenario in this class does. ---
+
+    @Test
+    public void testFetcherIdEnumListEmpty() {
+        JooqAggregateFetcher<RootIdEnumList, RootIdEnumListId> jooqEntityFetcher =
+            new JooqAggregateFetcher<>(RootIdEnumList.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
+
+        Optional<RootIdEnumList> result = jooqEntityFetcher.fetchDeep(new RootIdEnumListId(1L)).resultValue();
+        Assertions.assertThat(result).isEmpty();
+    }
+
+    @Test
+    public void testFetcherIdEnumListComplete() {
+        JooqAggregateFetcher<RootIdEnumList, RootIdEnumListId> jooqEntityFetcher =
+            new JooqAggregateFetcher<>(RootIdEnumList.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
+
+        RootIdEnumList inserted = rootIdEnumListRepository.insert(TestDataGenerator.buildRootIdEnumListComplete());
+        Optional<RootIdEnumList> result = jooqEntityFetcher.fetchDeep(new RootIdEnumListId(1l)).resultValue();
+        Assertions.assertThat(result).isPresent();
+        assertThat(result.get().getEnumList()).hasSize(2);
+        assertThat(result.get().getIdList()).hasSize(2);
+        assertThat(result.get().getEntity().getEnumList()).hasSize(1);
+        assertThat(result.get().getEntity().getIdList()).hasSize(1);
+        assertInsertedWithResult(inserted, result.get());
+    }
+
+    @Test
+    public void testFetcherIdEnumListWithDuplicateValues() {
+        JooqAggregateFetcher<RootIdEnumList, RootIdEnumListId> jooqEntityFetcher =
+            new JooqAggregateFetcher<>(RootIdEnumList.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
+
+        //two equal MyEnum.ONE and two equal MyId(7) - a fetcher that (incorrectly) deduplicated by value would
+        //come back with only 2 elements per list instead of 3
+        RootIdEnumList inserted = rootIdEnumListRepository.insert(
+            TestDataGenerator.buildRootIdEnumListWithDuplicates());
+        Optional<RootIdEnumList> result = jooqEntityFetcher.fetchDeep(new RootIdEnumListId(1l)).resultValue();
+        Assertions.assertThat(result).isPresent();
+        assertThat(result.get().getEnumList()).hasSize(3);
+        assertThat(result.get().getIdList()).hasSize(3);
+        assertInsertedWithResult(inserted, result.get());
+    }
+
+    @Test
+    public void testFetcherIdEnumListWithUuidIds() {
+        JooqAggregateFetcher<RootIdEnumList, RootIdEnumListId> jooqEntityFetcher =
+            new JooqAggregateFetcher<>(RootIdEnumList.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
+
+        //an Identity value type other than Long (UUID, stored as VARCHAR2(36)) - proves the write-side
+        //UUID->String conversion (via the auto-discovered DefaultUuidToStringConverter) and the read-side
+        //String->UUID coercion (via DefaultIdentityFactory) both apply to scalar list elements exactly as
+        //they already do for a single (non-list) Identity field
+        RootIdEnumList inserted = rootIdEnumListRepository.insert(
+            TestDataGenerator.buildRootIdEnumListWithUuidIds());
+        Optional<RootIdEnumList> result = jooqEntityFetcher.fetchDeep(new RootIdEnumListId(1l)).resultValue();
+        Assertions.assertThat(result).isPresent();
+        assertThat(result.get().getUuidIdList()).hasSize(2);
+        assertInsertedWithResult(inserted, result.get());
+    }
+
+    @Test
+    public void testFetcherIdEnumListWithValueWithListsList() {
+        JooqAggregateFetcher<RootIdEnumList, RootIdEnumListId> jooqEntityFetcher =
+            new JooqAggregateFetcher<>(RootIdEnumList.class, persistenceConfiguration.dslContext,
+                persistenceConfiguration.domainPersistenceProvider);
+
+        //a List<ValueWithLists>: a value object used as a to-many element, itself holding its own
+        //List<MyEnum>/List<MyId> fields - a three-level fetch (root -> VO row -> VO's own scalar list rows)
+        RootIdEnumList inserted = rootIdEnumListRepository.insert(
+            TestDataGenerator.buildRootIdEnumListWithValueWithListsList());
+        Optional<RootIdEnumList> result = jooqEntityFetcher.fetchDeep(new RootIdEnumListId(1l)).resultValue();
+        Assertions.assertThat(result).isPresent();
+        assertThat(result.get().getValueWithListsList()).hasSize(2);
         assertInsertedWithResult(inserted, result.get());
     }
 

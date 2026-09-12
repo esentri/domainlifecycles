@@ -42,6 +42,7 @@ import io.domainlifecycles.mirror.visitor.ContextDomainObjectVisitor;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.fetcher.simple.FetchedRecord;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
+import io.domainlifecycles.persistence.mapping.ScalarListElement;
 import io.domainlifecycles.persistence.mirror.api.EntityRecordMirror;
 import io.domainlifecycles.persistence.mirror.api.ValueObjectRecordMirror;
 import io.domainlifecycles.persistence.provider.DomainPersistenceProvider;
@@ -391,8 +392,17 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
                     BuilderAndBuilt childBuilderAndBuilt = builderMap.get(FetchedRecord.of(child));
                     childBuilderAndBuilt.build();
                     //its important to provide all fetched records to the fetcher context
-                    fetcherContext.assignRecordToDomainObject(childBuilderAndBuilt.getBuilt(), child);
+                    //the vorm is passed as scope so that equal-valued ScalarListElements belonging to
+                    //different lists (e.g. an aggregate root's own enum list vs. its child entity's enum
+                    //list) are not confused with one another
+                    fetcherContext.assignRecordToDomainObject(childBuilderAndBuilt.getBuilt(), child,
+                        comp.valueObjectRecordMirror);
                     DomainObject childInstance = childBuilderAndBuilt.getBuilt();
+                    //a ScalarListElement is only an internal carrier for a single List<Identity>/List<Enum>
+                    //element; the owning domain object's field expects the raw wrapped value, not the wrapper
+                    Object valueToAttach = childInstance instanceof ScalarListElement<?> scalarListElement
+                        ? scalarListElement.value()
+                        : childInstance;
                     BuilderAndBuilt parentBuilderAndBuilt = builderMap.get(FetchedRecord.of(comp.parentRecord));
                     String fieldName = comp.valueObjectRecordMirror.pathSegments().get(
                         comp.valueObjectRecordMirror.pathSegments().size() - 1);
@@ -402,9 +412,9 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
                             () -> DLCPersistenceException.fail("DomainTypeMirror not found for '%s'", parentTypeName));
                     var fm = dtm.fieldByName(fieldName);
                     if (fm.getType().hasCollectionContainer()) {
-                        parentBuilderAndBuilt.getBuilder().addValueToCollection(childInstance, fieldName);
+                        parentBuilderAndBuilt.getBuilder().addValueToCollection(valueToAttach, fieldName);
                     } else {
-                        parentBuilderAndBuilt.getBuilder().setFieldValue(childInstance, fieldName);
+                        parentBuilderAndBuilt.getBuilder().setFieldValue(valueToAttach, fieldName);
                     }
 
                 }

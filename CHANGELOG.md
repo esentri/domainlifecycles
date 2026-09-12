@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+- Added persistence support for `List<Identity>` and `List<Enum>` fields (1-n relations) on aggregate roots, entities and value objects - insert, load, update and delete, including duplicate values and arbitrary identity value types (e.g. `UUID`). Implemented via a new internal `ScalarListElement` carrier reusing the existing value-object list machinery, so persistence of aggregates without such fields is unaffected.
+
 ## [3.4.0] - 2026-09-11
 - Improved DLC persistence initialization performance
 - Fixed auto record mapping of array typed fields (e.g. `byte[]`): the mirror reports the component type for arrays, which made the mapper look up a converter (`[B` -> `java.lang.Byte`) that could never be served. Added `AssertedContainableTypeMirror#getBinaryTypeName()` and used it for type resolution in `AutoRecordMapper` and `AutoMapperNestedValueObjectAccessor`.

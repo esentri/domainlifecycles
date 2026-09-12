@@ -38,8 +38,10 @@ import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.ValueObjectMirror;
+import io.domainlifecycles.mirror.api.ValueReferenceMirror;
 import io.domainlifecycles.persistence.configuration.DomainPersistenceConfiguration;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
+import io.domainlifecycles.persistence.mapping.ScalarListElement;
 import io.domainlifecycles.persistence.mapping.converter.ConverterRegistry;
 import io.domainlifecycles.persistence.mirror.api.PersistenceMirror;
 import io.domainlifecycles.persistence.mirror.api.RecordMirror;
@@ -128,14 +130,19 @@ public abstract class DomainPersistenceProvider<BASE_RECORD> {
                 em.getAggregateRootReferences().stream().filter(ar -> !ar.isStatic()).forEach(
                     ar -> addChildrenToBuilder(position, ar, builder));
                 em.getValueReferences().stream().filter(vr -> !vr.isStatic())
-                    .filter(vr -> DomainType.VALUE_OBJECT.equals(vr.getType().getDomainType()))
+                    .filter(DomainPersistenceProvider::isChildValueReference)
                     .forEach(voc -> addChildrenToBuilder(position, voc, builder));
+            } else if (instance instanceof ScalarListElement) {
+                //a scalar list element (the internal carrier used to persist a single element of a
+                //List<Identity>/List<Enum> field) is always a leaf: it wraps a raw value that is not
+                //part of the reflected domain model, so it must not be looked up via
+                //Domain.valueObjectMirrorFor and has no nested value references of its own
             } else {
                 ValueObjectMirror vm = Domain.valueObjectMirrorFor((ValueObject) instance);
                 vm.getValueReferences()
                     .stream()
                     .filter(vr -> !vr.isStatic())
-                    .filter(vr -> DomainType.VALUE_OBJECT.equals(vr.getType().getDomainType()))
+                    .filter(DomainPersistenceProvider::isChildValueReference)
                     .forEach(voc -> addChildrenToBuilder(position, voc, builder));
             }
         }
@@ -147,12 +154,17 @@ public abstract class DomainPersistenceProvider<BASE_RECORD> {
                                       DomainObjectInstanceAccessModel.DomainObjectInstanceAccessModelBuilder<BASE_RECORD> builder) {
         Object childObjectInstance = DlcAccess.accessorFor(parentStructuralPosition.instance).peek(
             accessToChildMirror.getName());
+        boolean isScalarListField = DomainType.IDENTITY.equals(accessToChildMirror.getType().getDomainType())
+            || DomainType.ENUM.equals(accessToChildMirror.getType().getDomainType());
         if (childObjectInstance != null) {
             if (childObjectInstance instanceof Iterable iterable) {
                 iterable.forEach(
                     child -> {
+                        Object childToAdd = isScalarListField
+                            ? new ScalarListElement<>(child, accessToChildMirror.getType().getTypeName())
+                            : child;
                         DomainObjectInstanceAccessModel<BASE_RECORD> childInstance = buildAccessModelForInstance(
-                            (DomainObject) child, parentStructuralPosition, accessToChildMirror.getName());
+                            (DomainObject) childToAdd, parentStructuralPosition, accessToChildMirror.getName());
 
                         builder.withChildInstance(childInstance);
                     }
@@ -202,13 +214,26 @@ public abstract class DomainPersistenceProvider<BASE_RECORD> {
             final var containingEntityTypeName = containingEntityType.getName();
             final var erm = persistenceMirror.getEntityRecordMirror(containingEntityTypeName);
 
+            //a ScalarListElement is not itself a registered domain type (unlike a real ValueObject), so it
+            //is matched by the type name of the value it wraps rather than by its own (wrapper) class name
+            final var domainObjectTypeNameToMatch = structuralPosition.instance instanceof ScalarListElement<?> sle
+                ? sle.elementTypeName()
+                : structuralPosition.instance.getClass().getName();
+
             return erm.valueObjectRecords()
                 .stream()
-                .filter(vorm -> vorm.domainObjectTypeName().equals(structuralPosition.instance.getClass().getName()))
+                .filter(vorm -> vorm.domainObjectTypeName().equals(domainObjectTypeNameToMatch))
                 .filter(vorm -> vorm.pathSegments().equals(pathSegments))
                 .findFirst()
                 .orElse(null);
         }
+    }
+
+    private static boolean isChildValueReference(ValueReferenceMirror valueReferenceMirror) {
+        var domainType = valueReferenceMirror.getType().getDomainType();
+        return DomainType.VALUE_OBJECT.equals(domainType)
+            || ((DomainType.IDENTITY.equals(domainType) || DomainType.ENUM.equals(domainType))
+                && valueReferenceMirror.getType().hasCollectionContainer());
     }
 
     /**

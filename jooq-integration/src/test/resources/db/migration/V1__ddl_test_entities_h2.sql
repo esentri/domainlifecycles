@@ -904,7 +904,6 @@ CREATE TABLE test_domain.test_root_uuid_vo_list
     FOREIGN KEY (container_id) REFERENCES test_domain.test_root_uuid (id)
 );
 
-/*
 CREATE TABLE test_domain.root_id_enum_list (
                                                     id NUMBER(18) PRIMARY KEY,
                                                     concurrency_version NUMBER(18) NOT NULL,
@@ -927,7 +926,7 @@ CREATE TABLE test_domain.root_id_enum_list_id_list (
 
 CREATE TABLE test_domain.entity_id_enum_list (
                                                id NUMBER(18) PRIMARY KEY,
-                                               root_id NUMBER(10) NOT NULL,
+                                               root_id NUMBER(18) NOT NULL,
                                                concurrency_version NUMBER(18) NOT NULL,
                                                FOREIGN KEY (root_id) REFERENCES test_domain.root_id_enum_list(id)
 );
@@ -942,14 +941,14 @@ CREATE TABLE test_domain.entity_id_enum_list_id_list (
 CREATE TABLE test_domain.entity_id_enum_list_enum_list (
                                                          id NUMBER(18) PRIMARY KEY,
                                                          container_id NUMBER(18) NOT NULL,
-                                                         name VARCHAR2(200),
+                                                         value VARCHAR2(20),
                                                          FOREIGN KEY (container_id) REFERENCES test_domain.entity_id_enum_list(id)
 );
 
 CREATE TABLE test_domain.entity_id_enum_list_value_with_lists_enums (
                                                            id NUMBER(18) PRIMARY KEY,
                                                            container_id NUMBER(18) NOT NULL,
-                                                           name VARCHAR2(200),
+                                                           value VARCHAR2(20),
                                                            FOREIGN KEY (container_id) REFERENCES test_domain.entity_id_enum_list(id)
 );
 
@@ -959,14 +958,44 @@ CREATE TABLE test_domain.entity_id_enum_list_value_with_lists_ids (
                                                                         value NUMBER(18),
                                                                         FOREIGN KEY (container_id) REFERENCES test_domain.entity_id_enum_list(id)
 );
+CREATE TABLE test_domain.root_id_enum_list_value_with_lists_list (
+                                                        id NUMBER(18) PRIMARY KEY,
+                                                        container_id NUMBER(18) NOT NULL,
+                                                        FOREIGN KEY (container_id) REFERENCES test_domain.root_id_enum_list(id)
+);
+
+CREATE TABLE test_domain.root_id_enum_list_value_with_lists_list_enums (
+                                                        id NUMBER(18) PRIMARY KEY,
+                                                        container_id NUMBER(18) NOT NULL,
+                                                        value VARCHAR2(20),
+                                                        FOREIGN KEY (container_id) REFERENCES test_domain.root_id_enum_list_value_with_lists_list(id)
+);
+
+CREATE TABLE test_domain.root_id_enum_list_value_with_lists_list_ids (
+                                                        id NUMBER(18) PRIMARY KEY,
+                                                        container_id NUMBER(18) NOT NULL,
+                                                        value NUMBER(18),
+                                                        FOREIGN KEY (container_id) REFERENCES test_domain.root_id_enum_list_value_with_lists_list(id)
+);
+
 CREATE SEQUENCE test_domain.root_id_enum_list_id_list_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
 CREATE SEQUENCE test_domain.root_id_enum_list_enum_list_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
 CREATE SEQUENCE test_domain.entity_id_enum_list_id_list_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
 CREATE SEQUENCE test_domain.entity_id_enum_list_enum_list_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
 CREATE SEQUENCE test_domain.entity_id_enum_list_value_with_lists_enums_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
 CREATE SEQUENCE test_domain.entity_id_enum_list_value_with_lists_ids_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
+CREATE SEQUENCE test_domain.root_id_enum_list_value_with_lists_list_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
+CREATE SEQUENCE test_domain.root_id_enum_list_value_with_lists_list_enums_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
+CREATE SEQUENCE test_domain.root_id_enum_list_value_with_lists_list_ids_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
 
-*/
+CREATE SEQUENCE test_domain.root_id_enum_list_uuid_id_list_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
+
+CREATE TABLE test_domain.root_id_enum_list_uuid_id_list (
+                                                        id NUMBER(18) PRIMARY KEY,
+                                                        container_id NUMBER(18) NOT NULL,
+                                                        value VARCHAR2(36),
+                                                        FOREIGN KEY (container_id) REFERENCES test_domain.root_id_enum_list(id)
+);
 
 /*
 Array typed fields (see AssertedContainableTypeMirror#getBinaryTypeName)
