@@ -95,14 +95,17 @@ public final class JdbcSchemaMetadata {
         try {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
             Map<String, TableMetadata> tables = new LinkedHashMap<>();
-            List<String> tableNames = new ArrayList<>();
+            record TableIdentifier(String schema, String name) {
+            }
+            List<TableIdentifier> tableIdentifiers = new ArrayList<>();
             try (ResultSet rs = databaseMetaData.getTables(catalog, schemaPattern, "%", new String[]{"TABLE"})) {
                 while (rs.next()) {
-                    tableNames.add(rs.getString("TABLE_NAME"));
+                    tableIdentifiers.add(new TableIdentifier(rs.getString("TABLE_SCHEM"), rs.getString("TABLE_NAME")));
                 }
             }
-            for (String tableName : tableNames) {
-                tables.put(tableName, readTable(databaseMetaData, catalog, schemaPattern, tableName));
+            for (TableIdentifier tableIdentifier : tableIdentifiers) {
+                tables.put(tableIdentifier.name(), readTable(
+                    databaseMetaData, catalog, schemaPattern, tableIdentifier.schema(), tableIdentifier.name()));
             }
             return new JdbcSchemaMetadata(tables);
         } catch (SQLException e) {
@@ -114,13 +117,14 @@ public final class JdbcSchemaMetadata {
         DatabaseMetaData databaseMetaData,
         String catalog,
         String schemaPattern,
+        String tableSchema,
         String tableName
     ) throws SQLException {
         String primaryKeyName = readPrimaryKeyColumn(databaseMetaData, catalog, schemaPattern, tableName);
         List<ForeignKeyMetadata> foreignKeys = readForeignKeys(databaseMetaData, catalog, schemaPattern, tableName);
         List<ColumnMetadata> columns = readColumns(
             databaseMetaData, catalog, schemaPattern, tableName, primaryKeyName);
-        return new TableMetadata(tableName, columns, primaryKeyName, foreignKeys);
+        return new TableMetadata(tableSchema, tableName, columns, primaryKeyName, foreignKeys);
     }
 
     private static String readPrimaryKeyColumn(
@@ -183,9 +187,11 @@ public final class JdbcSchemaMetadata {
                 String columnName = rs.getString("COLUMN_NAME");
                 int sqlType = rs.getInt("DATA_TYPE");
                 String typeName = rs.getString("TYPE_NAME");
+                int decimalDigits = rs.getInt("DECIMAL_DIGITS");
+                int precision = rs.getInt("COLUMN_SIZE");
                 boolean nullable = rs.getInt("NULLABLE") == DatabaseMetaData.columnNullable;
                 boolean primaryKey = columnName.equalsIgnoreCase(primaryKeyName);
-                Class<?> javaType = JdbcSqlTypeMapping.javaType(sqlType, typeName);
+                Class<?> javaType = JdbcSqlTypeMapping.javaType(sqlType, typeName, decimalDigits, precision);
                 columns.add(new ColumnMetadata(columnName, sqlType, typeName, javaType, nullable, primaryKey));
             }
         }

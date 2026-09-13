@@ -26,6 +26,7 @@
 
 package io.domainlifecycles.jdbc.records;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -98,11 +99,16 @@ public final class JdbcRecord {
 
     /**
      * Returns an immutable view of the column values currently held by this record, in insertion order.
+     * <p>
+     * Unlike {@link Map#copyOf(Map)}, this tolerates {@code null} values - entirely legitimate here for a
+     * nullable database column - by snapshotting into a plain {@link LinkedHashMap} wrapped as unmodifiable,
+     * rather than into a {@code Map.of(...)}-style immutable map, which throws {@link NullPointerException}
+     * on any {@code null} value.
      *
      * @return the column name to value map
      */
     public Map<String, Object> values() {
-        return Map.copyOf(values);
+        return Collections.unmodifiableMap(new LinkedHashMap<>(values));
     }
 
     /**

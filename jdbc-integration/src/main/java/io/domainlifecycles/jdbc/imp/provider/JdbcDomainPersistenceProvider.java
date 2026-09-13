@@ -27,6 +27,7 @@
 package io.domainlifecycles.jdbc.imp.provider;
 
 import io.domainlifecycles.jdbc.configuration.JdbcDomainPersistenceConfiguration;
+import io.domainlifecycles.jdbc.configuration.JdbcEntityValueObjectRecordTypeConfiguration;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainType;
@@ -44,8 +45,11 @@ import io.domainlifecycles.persistence.mirror.api.EntityRecordMirror;
 import io.domainlifecycles.persistence.mirror.api.PersistenceMirror;
 import io.domainlifecycles.persistence.mirror.api.ValueObjectRecordMirror;
 import io.domainlifecycles.persistence.provider.DomainPersistenceProvider;
+import io.domainlifecycles.persistence.records.EntityValueObjectRecordClassProvider;
+import io.domainlifecycles.persistence.records.EntityValueObjectRecordTypeConfiguration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -150,39 +154,50 @@ public class JdbcDomainPersistenceProvider extends DomainPersistenceProvider<Jdb
                             (DomainType.IDENTITY.equals(referencedDomainType) || DomainType.ENUM.equals(
                                 referencedDomainType))
                                 && valueReferenceMirror.getType().hasCollectionContainer();
-                        if ((DomainType.VALUE_OBJECT.equals(referencedDomainType) || isScalarListElement)
-                            && valueReferenceMirror.getType().hasCollectionContainer()) {
+                        if (DomainType.VALUE_OBJECT.equals(referencedDomainType) || isScalarListElement) {
                             var context = getVisitorContext();
                             var accessPath = context.getCurrentPath().stream().map(FieldMirror::getName).toList();
-                            var definition = createAutoMappingValueObjectRecordDefinition(
+                            var definition = findCustomValueObjectRecordDefinition(
                                 em.getTypeName(),
                                 valueReferenceMirror.getType().getTypeName(),
                                 accessPath,
                                 jdbcPersistenceConfiguration);
-
-                            addRecordToDomainObjectTypeEntry(
-                                definition.tableName(),
-                                definition.containedValueObjectTypeName(),
-                                recordCanonicalNameToDomainObjectTypeMap
-                            );
-                            RecordMapper<JdbcRecord, ?, ?> mapper = isScalarListElement
-                                ? getScalarListElementRecordMapperFor(definition, jdbcPersistenceConfiguration)
-                                : getValueObjectRecordMapperFor(definition, jdbcPersistenceConfiguration);
-                            ValueObjectRecordMirror<JdbcRecord> vorm = jdbcPersistenceConfiguration
-                                .recordMirrorInstanceProvider
-                                .provideValueObjectRecordMirror(
-                                    definition.containingEntityTypeName(),
-                                    definition.containedValueObjectTypeName(),
-                                    definition.tableName(),
+                            if (definition == null && valueReferenceMirror.getType().hasCollectionContainer()) {
+                                //no explicit configuration found for a to-many relationship: fall back to
+                                //auto-mapping by naming convention
+                                definition = createAutoMappingValueObjectRecordDefinition(
+                                    em.getTypeName(),
+                                    valueReferenceMirror.getType().getTypeName(),
                                     accessPath,
-                                    mapper,
+                                    jdbcPersistenceConfiguration);
+                            }
+
+                            if (definition != null) {
+                                addRecordToDomainObjectTypeEntry(
+                                    definition.tableName(),
+                                    definition.containedValueObjectTypeName(),
                                     recordCanonicalNameToDomainObjectTypeMap
                                 );
-                            valueObjectRecordMirrors.add(vorm);
+                                RecordMapper<JdbcRecord, ?, ?> mapper = isScalarListElement
+                                    ? getScalarListElementRecordMapperFor(definition, jdbcPersistenceConfiguration)
+                                    : getValueObjectRecordMapperFor(definition, jdbcPersistenceConfiguration);
+                                ValueObjectRecordMirror<JdbcRecord> vorm = jdbcPersistenceConfiguration
+                                    .recordMirrorInstanceProvider
+                                    .provideValueObjectRecordMirror(
+                                        definition.containingEntityTypeName(),
+                                        definition.containedValueObjectTypeName(),
+                                        definition.tableName(),
+                                        accessPath,
+                                        mapper,
+                                        recordCanonicalNameToDomainObjectTypeMap
+                                    );
+                                valueObjectRecordMirrors.add(vorm);
+                            }
+                            //else: a value object without a collection container and without an explicit
+                            //table configuration is embedded inline in its containing record and mapped by
+                            //that record's own AutoRecordMapper; the visitor still descends into it (see
+                            //visitEnterValue) to discover any collection-valued fields nested deeper
                         }
-                        //a value object without a collection container is embedded inline in its containing
-                        //record and mapped by that record's own AutoRecordMapper; the visitor still descends
-                        //into it (see visitEnterValue) to discover any collection-valued fields nested deeper
                     }
                 };
                 v.start();
@@ -212,6 +227,38 @@ public class JdbcDomainPersistenceProvider extends DomainPersistenceProvider<Jdb
         List<String>> recordToDomainObjectTypeMap) {
         var list = recordToDomainObjectTypeMap.computeIfAbsent(recordName, k -> new ArrayList<>());
         list.add(domainObjectTypeName);
+    }
+
+    private InternalValueObjectRecordDefinition findCustomValueObjectRecordDefinition(
+        String entityTypeName,
+        String valueObjectTypeName,
+        List<String> accessPath,
+        JdbcDomainPersistenceConfiguration jdbcPersistenceConfiguration) {
+
+        if (jdbcPersistenceConfiguration.entityValueObjectRecordClassProvider == null) {
+            return null;
+        }
+        var configs = jdbcPersistenceConfiguration.entityValueObjectRecordClassProvider
+            .provideContainedValueObjectRecordClassConfigurations();
+        if (configs == null) {
+            return null;
+        }
+        var matches = configs.stream()
+            .filter(c -> c.containingEntityType().getName().equals(entityTypeName)
+                && c.containedValueObjectType().getName().equals(valueObjectTypeName)
+                && Arrays.asList(c.pathFromEntityToValueObject()).equals(accessPath))
+            .toList();
+        if (matches.size() > 1) {
+            throw DLCPersistenceException.fail(
+                "Multiple value object table configurations found for composition of '%1$s' within '%2$s' at " +
+                    "path '%3$s'!", valueObjectTypeName, entityTypeName, String.join(".", accessPath));
+        }
+        if (matches.isEmpty()) {
+            return null;
+        }
+        var config = matches.get(0);
+        return new InternalValueObjectRecordDefinition(
+            entityTypeName, valueObjectTypeName, config.tableName(), accessPath);
     }
 
     private InternalValueObjectRecordDefinition createAutoMappingValueObjectRecordDefinition(
@@ -289,7 +336,7 @@ public class JdbcDomainPersistenceProvider extends DomainPersistenceProvider<Jdb
                 jdbcPersistenceConfiguration.newRecordInstanceProvider,
                 jdbcPersistenceConfiguration.recordPropertyAccessor,
                 jdbcPersistenceConfiguration.recordPropertyProvider,
-                null,
+                adaptEntityValueObjectRecordClassProvider(jdbcPersistenceConfiguration),
                 JdbcRecord.class
             );
         }
@@ -314,11 +361,43 @@ public class JdbcDomainPersistenceProvider extends DomainPersistenceProvider<Jdb
                 jdbcPersistenceConfiguration.newRecordInstanceProvider,
                 jdbcPersistenceConfiguration.recordPropertyAccessor,
                 jdbcPersistenceConfiguration.recordPropertyProvider,
-                null,
+                adaptEntityValueObjectRecordClassProvider(jdbcPersistenceConfiguration),
                 JdbcRecord.class
             );
         }
         return (RecordMapper<JdbcRecord, ?, ?>) mapper;
+    }
+
+    /**
+     * Adapts this module's table-name-based {@code JdbcEntityValueObjectRecordClassProvider} to the shared,
+     * {@code Class}-based {@link EntityValueObjectRecordClassProvider} that {@link AutoRecordMapper} expects.
+     * <p>
+     * {@code AutoRecordMapper} only ever reads {@link EntityValueObjectRecordTypeConfiguration#pathFromEntityToValueObject()}
+     * from the configurations this yields (to know which nested value object paths are mapped in their own,
+     * separate record rather than inline) - it never reads {@code valueObjectRecordType()} - so passing a
+     * constant, unused {@link JdbcRecord} class for that field is safe and requires no change to the shared
+     * {@code persistence} module.
+     */
+    private EntityValueObjectRecordClassProvider adaptEntityValueObjectRecordClassProvider(
+        JdbcDomainPersistenceConfiguration jdbcPersistenceConfiguration
+    ) {
+        if (jdbcPersistenceConfiguration.entityValueObjectRecordClassProvider == null) {
+            return null;
+        }
+        return () -> {
+            var configs = jdbcPersistenceConfiguration.entityValueObjectRecordClassProvider
+                .provideContainedValueObjectRecordClassConfigurations();
+            if (configs == null) {
+                return List.of();
+            }
+            return configs.stream()
+                .map(c -> new EntityValueObjectRecordTypeConfiguration(
+                    c.containingEntityType(),
+                    c.containedValueObjectType(),
+                    JdbcRecord.class,
+                    c.pathFromEntityToValueObject()))
+                .toList();
+        };
     }
 
     private RecordMapper<JdbcRecord, ?, ?> getScalarListElementRecordMapperFor(

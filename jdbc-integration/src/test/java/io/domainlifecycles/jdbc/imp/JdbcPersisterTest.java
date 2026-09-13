@@ -84,11 +84,13 @@ class JdbcPersisterTest {
 
         persister.doInsert(record);
 
+        // mirrors jOOQ's recordVersionFields codegen option: the initial version on INSERT is always 1,
+        // regardless of what value the record carried beforehand
         try (var stmt = connection.createStatement();
              var rs = stmt.executeQuery("SELECT NAME, CONCURRENCY_VERSION FROM WIDGET WHERE ID = 1")) {
             assertThat(rs.next()).isTrue();
             assertThat(rs.getString("NAME")).isEqualTo("Alice");
-            assertThat(rs.getLong("CONCURRENCY_VERSION")).isEqualTo(0L);
+            assertThat(rs.getLong("CONCURRENCY_VERSION")).isEqualTo(1L);
         }
     }
 

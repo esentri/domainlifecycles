@@ -34,6 +34,8 @@ import java.util.Optional;
 /**
  * Metadata of a single database table (or view), as discovered via {@link java.sql.DatabaseMetaData}.
  *
+ * @param schema         the schema the table lives in, exactly as reported by the database, or {@code null}
+ *                        if the database reported none (e.g. a table in H2's default, unqualified schema)
  * @param name           the physical table name, exactly as reported by the database
  * @param columns        the table's columns, in the order reported by the database
  * @param primaryKeyName the physical name of the single-column primary key of this table, or {@code null} if
@@ -42,11 +44,22 @@ import java.util.Optional;
  * @author Mario Herb
  */
 public record TableMetadata(
+    String schema,
     String name,
     List<ColumnMetadata> columns,
     String primaryKeyName,
     List<ForeignKeyMetadata> foreignKeys
 ) {
+
+    /**
+     * Returns the name to use when referring to this table in generated SQL: schema-qualified if a schema
+     * was reported for it, the bare table name otherwise.
+     *
+     * @return the (possibly schema-qualified) SQL reference for this table
+     */
+    public String qualifiedName() {
+        return (schema == null || schema.isBlank()) ? name : schema + "." + name;
+    }
 
     /**
      * Returns the column with the given physical name.

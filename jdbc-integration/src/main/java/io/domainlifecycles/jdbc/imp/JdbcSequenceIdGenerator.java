@@ -30,16 +30,14 @@ import io.domainlifecycles.jdbc.dialect.JdbcDialect;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 /**
  * Reads the next value of a named database sequence, shared by {@link JdbcEntityIdentityProvider} (entity ids,
  * keyed by identity type name) and {@link JdbcValueObjectIdProvider} (value object ids, keyed by table name) -
  * the two providers use different naming conventions for the sequence name itself, but both ultimately need
- * to execute the same kind of "next value" query and tolerate the sequence name being reported back in
- * lowercase by some databases.
+ * to obtain the next value the same way and tolerate the sequence name being reported back in lowercase by
+ * some databases.
  *
  * @author Mario Herb
  */
@@ -52,34 +50,22 @@ final class JdbcSequenceIdGenerator {
      * Returns the next value of the sequence with the given name.
      *
      * @param connection   the connection to query
-     * @param dialect      the dialect providing the "next value" SQL syntax
+     * @param dialect      the dialect obtaining the next value
      * @param sequenceName the sequence name, tried as given and, if that fails, in all-lowercase
      * @return the next sequence value
      * @throws DLCPersistenceException if no sequence with that name (in either casing) exists
      */
     static long nextValue(Connection connection, JdbcDialect dialect, String sequenceName) {
         try {
-            return executeNextValue(connection, dialect, sequenceName);
+            return dialect.nextSequenceValue(connection, sequenceName);
         } catch (SQLException primaryFailure) {
             try {
-                return executeNextValue(connection, dialect, sequenceName.toLowerCase());
+                return dialect.nextSequenceValue(connection, sequenceName.toLowerCase());
             } catch (SQLException fallbackFailure) {
                 throw DLCPersistenceException.fail(
                     "Sequence '%s' not found. Please create the sequence in your database!", primaryFailure,
                     sequenceName);
             }
-        }
-    }
-
-    private static long executeNextValue(Connection connection, JdbcDialect dialect, String sequenceName)
-        throws SQLException {
-        var sql = dialect.nextSequenceValueSql(sequenceName);
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
-            if (!resultSet.next()) {
-                throw DLCPersistenceException.fail("Sequence '%s' returned no value.", sequenceName);
-            }
-            return resultSet.getLong(1);
         }
     }
 }

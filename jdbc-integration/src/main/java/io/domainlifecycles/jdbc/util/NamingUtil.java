@@ -66,6 +66,11 @@ public final class NamingUtil {
 
     /**
      * Transform a camel case String into snake case.
+     * <p>
+     * A digit run is also treated as its own segment (e.g. {@code "testEntity2Id"} becomes {@code
+     * "test_entity_2_id"}, matching this module's own migration schema's {@code test_entity_2_id} column) -
+     * not just a transition into an uppercase letter - since the physical column names this maps against
+     * consistently separate a trailing/embedded number from the preceding word with its own underscore.
      *
      * @param camelCase input String
      * @return snake case String
@@ -74,13 +79,19 @@ public final class NamingUtil {
         StringBuilder builder = new StringBuilder(camelCase);
 
         for (int i = 0; i < builder.length(); i++) {
-            if (Character.isUpperCase(builder.charAt(i))) {
+            char c = builder.charAt(i);
+            if (Character.isUpperCase(c)) {
                 builder.insert(i, "_");
                 builder.replace(
                     i + 1, i + 2,
                     String.valueOf(
                         Character.toLowerCase(
                             builder.charAt(i + 1))));
+            } else if (Character.isDigit(c) && i > 0) {
+                char previous = builder.charAt(i - 1);
+                if (previous != '_' && !Character.isDigit(previous)) {
+                    builder.insert(i, "_");
+                }
             }
         }
         var returnVal = builder.toString();

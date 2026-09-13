@@ -47,6 +47,7 @@ import io.domainlifecycles.persistence.records.NewRecordInstanceProvider;
 import io.domainlifecycles.persistence.records.RecordPropertyAccessor;
 import io.domainlifecycles.persistence.records.RecordPropertyProvider;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
 
@@ -59,10 +60,11 @@ import java.util.Set;
  * java.sql.DatabaseMetaData} from a JDBC {@link java.sql.Connection}: there is no code generation step, and
  * every table is represented by the same {@link JdbcRecord} class at runtime.
  * <p>
- * This configuration does not (yet) support explicit, custom "value object own table" configurations (the
- * equivalent of the jOOQ integration's {@code EntityValueObjectRecordClassProvider}): every {@code
- * List<ValueObject>}/{@code List<Identity>}/{@code List<Enum>} field is mapped to its own child table
- * purely by naming convention (see {@link JdbcTableToEntityTypeMatcher}).
+ * By default every {@code List<ValueObject>}/{@code List<Identity>}/{@code List<Enum>} field is mapped to
+ * its own child table purely by naming convention (see {@link JdbcTableToEntityTypeMatcher}); {@link
+ * #entityValueObjectRecordClassProvider} is the escape hatch for the cases that convention cannot resolve -
+ * a table name that doesn't follow it, or a single (non-collection) value object that should still be
+ * persisted in its own dedicated table rather than embedded inline into its owner's record.
  *
  * @author Mario Herb
  */
@@ -120,6 +122,13 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
      */
     public final IgnoredRecordPropertyProvider ignoredRecordProperties;
 
+    /**
+     * Provides explicit value object table configurations for cases the naming-convention based auto-mapping
+     * cannot resolve on its own. May be {@code null}, in which case only naming-convention based auto-mapping
+     * is used.
+     */
+    public final JdbcEntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider;
+
     private JdbcDomainPersistenceConfiguration(
         DomainObjectBuilderProvider domainObjectBuilderProvider,
         Set<RecordMapper<?, ?, ?>> customRecordMappers,
@@ -132,7 +141,8 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
         RecordPropertyProvider recordPropertyProvider,
         RecordPropertyAccessor<JdbcRecord> recordPropertyAccessor,
         IgnoredFieldProvider ignoredDomainObjectFields,
-        IgnoredRecordPropertyProvider ignoredRecordProperties
+        IgnoredRecordPropertyProvider ignoredRecordProperties,
+        JdbcEntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider
     ) {
         super(domainObjectBuilderProvider, customRecordMappers);
         this.schemaMetadata = Objects.requireNonNull(schemaMetadata);
@@ -145,6 +155,7 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
         this.recordPropertyAccessor = Objects.requireNonNull(recordPropertyAccessor);
         this.ignoredDomainObjectFields = ignoredDomainObjectFields;
         this.ignoredRecordProperties = ignoredRecordProperties;
+        this.entityValueObjectRecordClassProvider = entityValueObjectRecordClassProvider;
     }
 
     /**
@@ -163,6 +174,7 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
         private RecordPropertyAccessor<JdbcRecord> recordPropertyAccessor;
         private IgnoredFieldProvider ignoredDomainObjectFields;
         private IgnoredRecordPropertyProvider ignoredRecordProperties;
+        private JdbcEntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider;
 
         /**
          * Creates a new instance of {@code JdbcPersistenceConfigurationBuilder}.
@@ -323,6 +335,31 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
         }
 
         /**
+         * Sets the {@code JdbcEntityValueObjectRecordClassProvider}, which provides explicit value object
+         * table configurations for cases the naming-convention based auto-mapping cannot resolve on its own.
+         *
+         * @param entityValueObjectRecordClassProvider the provider instance to be used
+         * @return this builder
+         */
+        public JdbcPersistenceConfigurationBuilder withEntityValueObjectRecordClassProvider(
+            JdbcEntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider) {
+            this.entityValueObjectRecordClassProvider = entityValueObjectRecordClassProvider;
+            return this;
+        }
+
+        /**
+         * Configures the builder with the given value object table configurations directly.
+         *
+         * @param entityValueObjectRecordTypeConfigurations the configurations to apply
+         * @return this builder
+         */
+        public JdbcPersistenceConfigurationBuilder withEntityValueObjectRecordTypeConfiguration(
+            JdbcEntityValueObjectRecordTypeConfiguration... entityValueObjectRecordTypeConfigurations) {
+            return withEntityValueObjectRecordClassProvider(
+                () -> Arrays.asList(entityValueObjectRecordTypeConfigurations));
+        }
+
+        /**
          * Builds and returns a configured instance of {@link JdbcDomainPersistenceConfiguration}.
          * If any non-mandatory component is not explicitly set, a default implementation is used.
          *
@@ -376,7 +413,8 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
                 this.recordPropertyProvider,
                 this.recordPropertyAccessor,
                 this.ignoredDomainObjectFields,
-                this.ignoredRecordProperties
+                this.ignoredRecordProperties,
+                this.entityValueObjectRecordClassProvider
             );
         }
     }

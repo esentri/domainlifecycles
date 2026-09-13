@@ -1,8 +1,16 @@
+buildscript {
+    dependencies {
+        classpath libs.h2
+        classpath libs.flyway.core
+    }
+}
+
 plugins {
     id 'java-library'
     id 'maven-publish'
     id 'checkstyle'
     id 'jacoco'
+    alias libs.plugins.flyway.plugin
     alias libs.plugins.yumi.gradle.licenser.plugin
     alias libs.plugins.jaredsburrows.license.plugin
 }
@@ -11,6 +19,20 @@ java {
     withJavadocJar()
     withSourcesJar()
 }
+
+// ----------------------------------------------------------
+// Full H2 test schema, shared with jooq-integration (same DDL file, copied into this module so it stays
+// self-contained): a file-based H2 database is migrated once via Flyway, and every _ITest wraps its test
+// methods in a transaction that is rolled back afterward (see JdbcBasePersistence_ITest), so the same schema
+// can be reused across the whole test suite without tests interfering with each other.
+
+def dbDriver = 'org.h2.Driver'
+def dbUrl = "jdbc:h2:file:${project.projectDir}/build/h2-db/test;NON_KEYWORDS=VALUE;AUTO_SERVER=TRUE"
+def dbUsername = 'sa'
+def dbPassword = ''
+def dbMigration = 'src/test/resources/db/migration'
+
+// ----------------------------------------------------------
 
 dependencies {
     api libs.slf4j.api
@@ -31,6 +53,7 @@ dependencies {
     testImplementation libs.assertj
     testImplementation libs.slf4j.api
     testImplementation libs.logback.classic
+    testImplementation libs.kryo
     testImplementation libs.mockito.core
     testImplementation libs.h2
 
@@ -38,6 +61,25 @@ dependencies {
     testImplementation libs.hibernate.validator
     testImplementation libs.glassfish.jakarta.el
     testImplementation libs.jakarta.el.api
+
+    testImplementation libs.lombok
+    testAnnotationProcessor libs.lombok
+}
+
+flyway {
+    url = dbUrl
+    user = dbUsername
+    password = dbPassword
+    driver = dbDriver
+    defaultSchema = 'TEST_DOMAIN_FLYWAY'
+    createSchemas = true
+    encoding = 'UTF-8'
+    locations = ["filesystem:./${dbMigration}"]
+}
+
+tasks.named("test") {
+    dependsOn(tasks.named("flywayMigrate"))
+    inputs.files(fileTree("src/test/resources/db/migration"))
 }
 
 // Although test classes are not scanned by checkstyle, as configured in the root-level build.gradle file,

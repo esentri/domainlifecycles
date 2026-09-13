@@ -26,6 +26,9 @@
 
 package io.domainlifecycles.jdbc.dialect;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 /**
  * {@link JdbcDialect} for the H2 database.
  *
@@ -45,7 +48,7 @@ public final class H2JdbcDialect implements JdbcDialect {
      * {@inheritDoc}
      */
     @Override
-    public String nextSequenceValueSql(String sequenceName) {
-        return "SELECT NEXT VALUE FOR " + sequenceName;
+    public long nextSequenceValue(Connection connection, String sequenceName) throws SQLException {
+        return JdbcDialect.executeScalarLongQuery(connection, "SELECT NEXT VALUE FOR " + sequenceName);
     }
 }

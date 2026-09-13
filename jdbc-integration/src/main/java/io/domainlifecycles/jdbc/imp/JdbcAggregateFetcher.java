@@ -218,7 +218,7 @@ public class JdbcAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
     }
 
     private List<JdbcRecord> selectByColumn(TableMetadata table, String columnName, Object value) {
-        var sql = "SELECT * FROM " + table.name() + " WHERE " + columnName + " = ?";
+        var sql = "SELECT * FROM " + table.qualifiedName() + " WHERE " + columnName + " = ?";
         try (PreparedStatement statement = connectionProvider.getConnection().prepareStatement(sql)) {
             statement.setObject(1, value);
             try (ResultSet resultSet = statement.executeQuery()) {

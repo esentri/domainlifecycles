@@ -98,9 +98,16 @@ public class JdbcPersister extends BasePersister<JdbcRecord> implements Persiste
     @Override
     protected void doInsert(JdbcRecord record) {
         var table = schemaMetadata.table(record.tableName());
+        var concurrencyColumn = table.findColumn(CONCURRENCY_VERSION_COLUMN_NAME).orElse(null);
+        if (concurrencyColumn != null && record.has(concurrencyColumn.name())) {
+            // mirrors jOOQ's recordVersionFields codegen option: on INSERT, the initial version value is
+            // always 1, regardless of whatever value the in-memory entity carried beforehand - adapted back
+            // onto the entity afterward via BasePersister#adaptChangesFromRecordToEntity
+            record.set(concurrencyColumn.name(), 1L);
+        }
         var values = record.values();
         var columnNames = new ArrayList<>(values.keySet());
-        var sql = "INSERT INTO " + table.name()
+        var sql = "INSERT INTO " + table.qualifiedName()
             + " (" + String.join(", ", columnNames) + ")"
             + " VALUES (" + columnNames.stream().map(c -> "?").collect(Collectors.joining(", ")) + ")";
         try (PreparedStatement statement = connectionProvider.getConnection().prepareStatement(sql)) {
@@ -133,7 +140,7 @@ public class JdbcPersister extends BasePersister<JdbcRecord> implements Persiste
         var concurrencyColumn = table.findColumn(CONCURRENCY_VERSION_COLUMN_NAME).orElse(null);
         var versionChecked = concurrencyColumn != null && values.containsKey(concurrencyColumn.name());
 
-        var sql = new StringBuilder("DELETE FROM ").append(table.name())
+        var sql = new StringBuilder("DELETE FROM ").append(table.qualifiedName())
             .append(" WHERE ").append(pkColumn.name()).append(" = ?");
         if (versionChecked) {
             sql.append(" AND ").append(concurrencyColumn.name()).append(" = ?");
@@ -183,7 +190,7 @@ public class JdbcPersister extends BasePersister<JdbcRecord> implements Persiste
             .filter(c -> !versionChecked || !c.equals(concurrencyColumn.name()))
             .toList();
 
-        var sql = new StringBuilder("UPDATE ").append(table.name()).append(" SET ");
+        var sql = new StringBuilder("UPDATE ").append(table.qualifiedName()).append(" SET ");
         var setClauses = new ArrayList<>(setColumns.stream().map(c -> c + " = ?").toList());
         if (versionChecked) {
             setClauses.add(concurrencyColumn.name() + " = ?");

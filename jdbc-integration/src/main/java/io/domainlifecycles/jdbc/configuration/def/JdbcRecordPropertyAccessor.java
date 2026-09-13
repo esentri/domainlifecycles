@@ -28,7 +28,7 @@ package io.domainlifecycles.jdbc.configuration.def;
 
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.jdbc.schema.JdbcSchemaMetadata;
-import io.domainlifecycles.jdbc.util.NamingUtil;
+import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.records.RecordProperty;
 import io.domainlifecycles.persistence.records.RecordPropertyAccessor;
 
@@ -71,9 +71,26 @@ public class JdbcRecordPropertyAccessor implements RecordPropertyAccessor<JdbcRe
         return record.get(columnName(property));
     }
 
+    /**
+     * Resolves the physical column matching the given property by the same normalized (lower-cased,
+     * underscore-stripped) comparison {@link io.domainlifecycles.jdbc.imp.matcher.JdbcRecordPropertyMatcher}
+     * already uses for discovery, rather than by reconstructing an assumed exact snake_case column name -
+     * this module's own migration schema is not itself consistent about whether an embedded digit gets its
+     * own underscore (compare {@code test_entity_2_id} against {@code my_vo_value2}), so no single
+     * camelCase-to-snake_case reconstruction could match both.
+     */
     private String columnName(RecordProperty property) {
         var table = schemaMetadata.table(property.getRecordClassName());
-        var snakeCaseName = NamingUtil.camelCaseToSnakeCase(property.getName());
-        return table.column(snakeCaseName).name();
+        var normalizedPropertyName = normalize(property.getName());
+        return table.columns().stream()
+            .filter(c -> normalize(c.name()).equals(normalizedPropertyName))
+            .findFirst()
+            .map(io.domainlifecycles.jdbc.schema.ColumnMetadata::name)
+            .orElseThrow(() -> DLCPersistenceException.fail(
+                "Table '%s' has no column matching property '%s'.", table.name(), property.getName()));
+    }
+
+    private static String normalize(String name) {
+        return name.toLowerCase().replace("_", "");
     }
 }

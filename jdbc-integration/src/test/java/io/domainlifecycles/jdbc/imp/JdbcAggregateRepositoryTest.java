@@ -107,14 +107,15 @@ class JdbcAggregateRepositoryTest {
         var found = repository.findById(id);
         assertThat(found).isPresent();
         assertThat(found.get().getName()).isEqualTo("Alice");
-        assertThat(found.get().concurrencyVersion()).isEqualTo(0L);
+        // mirrors jOOQ's recordVersionFields codegen option: the initial version on INSERT is always 1
+        assertThat(found.get().concurrencyVersion()).isEqualTo(1L);
 
         found.get().setName("Alice Updated");
         repository.update(found.get());
 
         var updated = repository.findById(id).orElseThrow();
         assertThat(updated.getName()).isEqualTo("Alice Updated");
-        assertThat(updated.concurrencyVersion()).isEqualTo(1L);
+        assertThat(updated.concurrencyVersion()).isEqualTo(2L);
 
         var deleted = repository.deleteById(id);
         assertThat(deleted).isPresent();
