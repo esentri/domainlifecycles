@@ -233,7 +233,7 @@ CREATE SEQUENCE test_domain.vo_aggregate_three_level_id_seq MINVALUE 1000 MAXVAL
 
 CREATE TABLE test_domain.vo_aggregate_three_level
 (
-    identifikations_nummer                           NUMBER(18) PRIMARY KEY,
+    identification_number                             NUMBER(18) PRIMARY KEY,
     concurrency_version                              NUMBER(18) NOT NULL,
     info                                             VARCHAR2(200),
     my_complex_vo_value_a                            VARCHAR2(200),
@@ -250,91 +250,92 @@ CREATE TABLE test_domain.vo_aggregate_three_level
 );
 
 /*
-   1 BestellungBv3 hat 1-n BestellpositionenBv3
-   1 BestellungBv3 hat genau 1 BestellstatusBv3
-   1 BestellungBv3 hat 0-n KommentareBv3
-   1 BestellungBv3 muss genau 1 LieferadresseBv3 besitzen
-   1 BestellungBv3 kann mehrere AktionsCodesBv3 (Value Object) zugeordnet haben
-   Es wird pro Bestellung nur maximal 1 Position pro Artikel erlaubt, d.h.
-   es darf keine 2 Positionen in einer Bestellung geben, bei welcher der gleiche Artikel gewählt wurde
+   1 OrderBv3 has 1-n OrderItemsBv3
+   1 OrderBv3 has exactly 1 OrderStatusBv3
+   1 OrderBv3 has 0-n CommentsBv3
+   1 OrderBv3 must have exactly 1 DeliveryAddressBv3
+   1 OrderBv3 can have several PromoCodesBv3 (Value Object) assigned
 
-   Der Artikel aus einer Bestellposition verweist auf ein anderes AggregateRoot
+   Only a maximum of 1 item per article is allowed per order, i.e.
+   there must not be 2 items in an order referencing the same article
 
-   Der Kunde mit Kundennummer ist Teil eines anderen Bounded Context
+   The article referenced by an order item points to another AggregateRoot
+
+   The customer identified by customer number is part of another Bounded Context
  */
 
-CREATE SEQUENCE test_domain.lieferadresse_id_bv3_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
+CREATE SEQUENCE test_domain.delivery_address_id_bv3_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
 
-CREATE TABLE test_domain.lieferadresse_bv3
+CREATE TABLE test_domain.delivery_address_bv3
 (
     id                  NUMBER(18) PRIMARY KEY,
     concurrency_version NUMBER(18) NOT NULL,
     name                VARCHAR2(200) NOT NULL,
-    strasse             VARCHAR2(200) NOT NULL,
-    postleitzahl        VARCHAR2(10) NOT NULL,
-    ort                 VARCHAR2(200) NOT NULL
+    street              VARCHAR2(200) NOT NULL,
+    postal_code         VARCHAR2(10) NOT NULL,
+    city                VARCHAR2(200) NOT NULL
 );
 
-CREATE SEQUENCE test_domain.bestellung_id_bv3_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
+CREATE SEQUENCE test_domain.order_id_bv3_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
 
-CREATE TABLE test_domain.bestellung_bv3
+CREATE TABLE test_domain.order_bv3
 (
     id                  NUMBER(18) PRIMARY KEY,
     concurrency_version NUMBER(18) NOT NULL,
-    prioritaet          NUMBER(1) NOT NULL,
-    kunden_nummer       VARCHAR2(20) NOT NULL,
-    lieferadresse_id    NUMBER(18) NOT NULL,
-    FOREIGN KEY (lieferadresse_id) REFERENCES test_domain.lieferadresse_bv3 (id)
+    priority            NUMBER(1) NOT NULL,
+    customer_number     VARCHAR2(20) NOT NULL,
+    delivery_address_id NUMBER(18) NOT NULL,
+    FOREIGN KEY (delivery_address_id) REFERENCES test_domain.delivery_address_bv3 (id)
 );
 
-CREATE TABLE test_domain.aktions_code_bv3
+CREATE TABLE test_domain.promo_code_bv3
 (
     id           NUMBER(18) PRIMARY KEY,
     container_id NUMBER(18) NOT NULL,
     value        VARCHAR2(10) NOT NULL,
-    FOREIGN KEY (container_id) REFERENCES test_domain.bestellung_bv3 (id)
+    FOREIGN KEY (container_id) REFERENCES test_domain.order_bv3 (id)
 );
 
-CREATE SEQUENCE test_domain.aktions_code_bv3_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
+CREATE SEQUENCE test_domain.promo_code_bv3_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
 
-CREATE SEQUENCE test_domain.bestell_position_id_bv3_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
+CREATE SEQUENCE test_domain.order_item_id_bv3_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
 
-CREATE TABLE test_domain.bestell_position_bv3
+CREATE TABLE test_domain.order_item_bv3
 (
-    id                   NUMBER(18) PRIMARY KEY,
-    concurrency_version  NUMBER(18) NOT NULL,
-    bestellung_id        NUMBER(18) NOT NULL,
-    artikel_id           NUMBER(18) NOT NULL,
-    stueckzahl           NUMBER(10) NOT NULL,
-    stueckpreis_betrag   NUMBER(10,2) NOT NULL,
-    stueckpreis_waehrung VARCHAR2(3) NOT NULL,
-    FOREIGN KEY (bestellung_id) REFERENCES test_domain.bestellung_bv3 (id)
+    id                    NUMBER(18) PRIMARY KEY,
+    concurrency_version   NUMBER(18) NOT NULL,
+    order_id              NUMBER(18) NOT NULL,
+    article_id            NUMBER(18) NOT NULL,
+    quantity              NUMBER(10) NOT NULL,
+    unit_price_amount     NUMBER(10,2) NOT NULL,
+    unit_price_currency   VARCHAR2(3) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES test_domain.order_bv3 (id)
 );
 
-CREATE UNIQUE INDEX test_domain.bestellung_artikel_bv3_unique ON test_domain.bestell_position_bv3 (bestellung_id, artikel_id);
+CREATE UNIQUE INDEX test_domain.order_article_bv3_unique ON test_domain.order_item_bv3 (order_id, article_id);
 
-CREATE SEQUENCE test_domain.bestell_status_id_bv3_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
+CREATE SEQUENCE test_domain.order_status_id_bv3_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
 
-CREATE TABLE test_domain.bestell_status_bv3
+CREATE TABLE test_domain.order_status_bv3
 (
     id                  NUMBER(18) PRIMARY KEY,
     concurrency_version NUMBER(18) NOT NULL,
-    bestellung_id       NUMBER(18) NOT NULL,
+    order_id            NUMBER(18) NOT NULL,
     status_code         VARCHAR2(20),
-    status_aenderung_am TIMESTAMP(6) WITH TIME ZONE NOT NULL,
-    FOREIGN KEY (bestellung_id) REFERENCES test_domain.bestellung_bv3 (id)
+    status_changed_at   TIMESTAMP(6) WITH TIME ZONE NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES test_domain.order_bv3 (id)
 );
 
-CREATE SEQUENCE test_domain.bestell_kommentar_id_bv3_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
+CREATE SEQUENCE test_domain.order_comment_id_bv3_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
 
-CREATE TABLE test_domain.bestell_kommentar_bv3
+CREATE TABLE test_domain.order_comment_bv3
 (
     id                  NUMBER(18) PRIMARY KEY,
     concurrency_version NUMBER(18) NOT NULL,
-    bestellung_id       NUMBER(18) NOT NULL,
-    kommentar_am        TIMESTAMP(6) WITH TIME ZONE NOT NULL,
-    kommentar_text      VARCHAR2(1000),
-    FOREIGN KEY (bestellung_id) REFERENCES test_domain.bestellung_bv3 (id)
+    order_id            NUMBER(18) NOT NULL,
+    commented_at        TIMESTAMP(6) WITH TIME ZONE NOT NULL,
+    comment_text        VARCHAR2(1000),
+    FOREIGN KEY (order_id) REFERENCES test_domain.order_bv3 (id)
 );
 
 /*
@@ -1011,5 +1012,5 @@ CREATE TABLE test_domain.test_root_array
     payload                      VARBINARY(255) NULL,
     crypto_vo_chiffrat           VARBINARY(255) NULL,
     crypto_vo_salt               VARBINARY(255) NULL,
-    crypto_vo_schluessel_version NUMBER(18) NULL
+    crypto_vo_key_version        NUMBER(18) NULL
 );

@@ -16,7 +16,7 @@ import java.util.Locale;
             "tests.shared.openapi",
             "tests.shared.jackson",
             "tests.shared.converter",
-            "tests.shared.complete.onlinehandel.bestellung",
+            "tests.shared.complete.ecommerce.order",
             "tests.shared.persistence.domain.optional",
             "tests.shared.validation.javax",
             "tests.shared.persistence.domain.simpleUuid",

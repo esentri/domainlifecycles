@@ -35,22 +35,22 @@ import tests.shared.persistence.domain.valueobjects.ComplexVo;
 @Getter
 public class VoAggregateThreeLevel extends AggregateRootBase<VoAggregateThreeLevelId> {
 
-    private VoAggregateThreeLevelId identifikationsNummer;
+    private VoAggregateThreeLevelId identificationNumber;
     private String info;
     private ThreeLevelVo threeLevelVo;
     private ComplexVo myComplexVo;
 
     @Builder(setterPrefix = "set")
-    public VoAggregateThreeLevel(VoAggregateThreeLevelId identifikationsNummer,
+    public VoAggregateThreeLevel(VoAggregateThreeLevelId identificationNumber,
                                  long concurrencyVersion,
                                  String info,
                                  ThreeLevelVo threeLevelVo,
                                  ComplexVo myComplexVo
     ) {
         super(concurrencyVersion);
-        this.identifikationsNummer = identifikationsNummer;
+        this.identificationNumber = identificationNumber;
 
-        DomainAssertions.isNotNull(identifikationsNummer, "Eine Identifikationsnummer muss angegeben sein!");
+        DomainAssertions.isNotNull(identificationNumber, "Eine Identifikationsnummer muss angegeben sein!");
         setInfo(info);
         setThreeLevelVo(threeLevelVo);
         setComplexVo(myComplexVo);

@@ -18,7 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
+import tests.shared.complete.ecommerce.order.OrderBv3;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedComplexVo;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedSimpleVo;
 import tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedVoEntity;
@@ -67,7 +67,7 @@ public class OpenApiMirrorBased_SpringBoot_ITest {
     public void testRegularAPICall() throws Exception {
         //test call with "singleValued" VO path param and identity reference path param in flat String representation
         final MvcResult response = mockMvc.perform(
-                MockMvcRequestBuilders.get(API_CALL_PREFIX + "/1/abc?bestellPositionId=5&kundennummern=2,3,4"))
+                MockMvcRequestBuilders.get(API_CALL_PREFIX + "/1/abc?orderItemId=5&customerNumbers=2,3,4"))
             .andExpect(status().isOk())
             .andReturn();
         var res = objectMapper.readValue(response.getResponse().getContentAsString(),
@@ -84,12 +84,12 @@ public class OpenApiMirrorBased_SpringBoot_ITest {
 
     @Test
     public void testFlatAPIDocRepresentationOfIdentityReferenceAsString() {
-        assertPropertyTypeAndGetSchema(BestellungBv3.class, "kundennummer", SCHEMA_TYPE_STRING, null, null);
+        assertPropertyTypeAndGetSchema(OrderBv3.class, "customerNumber", SCHEMA_TYPE_STRING, null, null);
     }
 
     @Test
     public void testFlatAPIDocRepresentationOfListOfSingleValuedVOReferenceAsStringArray() {
-        Schema schema = assertPropertyTypeAndGetSchema(BestellungBv3.class, "aktionsCodes", SCHEMA_TYPE_ARRAY, null,
+        Schema schema = assertPropertyTypeAndGetSchema(OrderBv3.class, "promoCodes", SCHEMA_TYPE_ARRAY, null,
             null);
         Schema itemSchema = schema.getItems();
         assertThat(itemSchema).isNotNull();
@@ -98,11 +98,11 @@ public class OpenApiMirrorBased_SpringBoot_ITest {
     }
 
     @Test
-    public void testBestellungIdPrimaryNotRequired() {
-        Schema schema = assertPropertyTypeAndGetSchema(BestellungBv3.class, "id", SCHEMA_TYPE_INTEGER,
+    public void testOrderIdPrimaryNotRequired() {
+        Schema schema = assertPropertyTypeAndGetSchema(OrderBv3.class, "id", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT64, null);
         var openAPI = openAPIService.getCachedOpenAPI(Locale.getDefault());
-        var testSchema = openAPI.getComponents().getSchemas().get(BestellungBv3.class.getName());
+        var testSchema = openAPI.getComponents().getSchemas().get(OrderBv3.class.getName());
         assertThat(testSchema).isNotNull();
         assertThat(testSchema.getRequired()).doesNotContain("id");
     }
@@ -120,14 +120,14 @@ public class OpenApiMirrorBased_SpringBoot_ITest {
         assertThat(pathItemOptional).isPresent();
         assertThat(pathItemOptional.get().getGet().getParameters()).isNotNull();
         for (Parameter p : pathItemOptional.get().getGet().getParameters()) {
-            if (p.getName().equals("kundennummern")) {
+            if (p.getName().equals("customerNumbers")) {
                 assertThat(p.getSchema().getTypes().contains(SCHEMA_TYPE_ARRAY)).isTrue();
                 assertThat(p.getSchema().getItems().getTypes().contains(SCHEMA_TYPE_STRING)).isTrue();
             }
-            if (p.getName().equals("bestellungId")) {
+            if (p.getName().equals("orderId")) {
                 assertThat(p.getSchema().getTypes().contains(SCHEMA_TYPE_INTEGER)).isTrue();
             }
-            if (p.getName().equals("bestellPositionId")) {
+            if (p.getName().equals("orderItemId")) {
                 assertThat(p.getSchema().getTypes().contains(SCHEMA_TYPE_INTEGER)).isTrue();
             }
             if (p.getName().equals("simpleVo")) {

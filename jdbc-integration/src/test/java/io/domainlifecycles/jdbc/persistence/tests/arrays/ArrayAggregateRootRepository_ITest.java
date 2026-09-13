@@ -39,7 +39,7 @@ public class ArrayAggregateRootRepository_ITest extends JdbcBasePersistence_ITes
             .setCryptoVo(CryptoVo.builder()
                 .setChiffrat(CHIFFRAT.clone())
                 .setSalt(SALT.clone())
-                .setSchluesselVersion(7L)
+                .setKeyVersion(7L)
                 .build())
             .build();
     }
@@ -59,7 +59,7 @@ public class ArrayAggregateRootRepository_ITest extends JdbcBasePersistence_ITes
         Assertions.assertThat(found.get().getCryptoVo()).isNotNull();
         Assertions.assertThat(found.get().getCryptoVo().getChiffrat()).isEqualTo(CHIFFRAT);
         Assertions.assertThat(found.get().getCryptoVo().getSalt()).isEqualTo(SALT);
-        Assertions.assertThat(found.get().getCryptoVo().getSchluesselVersion()).isEqualTo(7L);
+        Assertions.assertThat(found.get().getCryptoVo().getKeyVersion()).isEqualTo(7L);
         Assertions.assertThat(inserted.getPayload()).isEqualTo(PAYLOAD);
     }
 
@@ -73,7 +73,7 @@ public class ArrayAggregateRootRepository_ITest extends JdbcBasePersistence_ITes
         insertedCopy.setCryptoVo(CryptoVo.builder()
             .setChiffrat(new byte[]{42})
             .setSalt(new byte[]{43})
-            .setSchluesselVersion(8L)
+            .setKeyVersion(8L)
             .build());
         //when
         TestRootArray updated = arrayAggregateRootRepository.update(insertedCopy);
@@ -84,7 +84,7 @@ public class ArrayAggregateRootRepository_ITest extends JdbcBasePersistence_ITes
         Assertions.assertThat(found).isPresent();
         Assertions.assertThat(found.get().getPayload()).isEqualTo(updatedPayload);
         Assertions.assertThat(found.get().getCryptoVo().getChiffrat()).isEqualTo(new byte[]{42});
-        Assertions.assertThat(found.get().getCryptoVo().getSchluesselVersion()).isEqualTo(8L);
+        Assertions.assertThat(found.get().getCryptoVo().getKeyVersion()).isEqualTo(8L);
         Assertions.assertThat(updated.getPayload()).isEqualTo(updatedPayload);
     }
 

@@ -40,7 +40,7 @@ import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
 import io.domainlifecycles.persistence.records.EntityValueObjectRecordClassProvider;
 import io.domainlifecycles.persistence.records.EntityValueObjectRecordTypeConfiguration;
-import io.domainlifecycles.test.jooq.tables.records.AktionsCodeBv3Record;
+import io.domainlifecycles.test.jooq.tables.records.PromoCodeBv3Record;
 import io.domainlifecycles.test.jooq.tables.records.SimpleVoOneToManyRecord;
 import io.domainlifecycles.test.jooq.tables.records.SimpleVoOneToMany_2Record;
 import io.domainlifecycles.test.jooq.tables.records.SimpleVoOneToMany_3Record;
@@ -57,8 +57,8 @@ import org.jooq.SQLDialect;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.DefaultDSLContext;
-import tests.shared.complete.onlinehandel.bestellung.AktionsCodeBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
+import tests.shared.complete.ecommerce.order.PromoCodeBv3;
+import tests.shared.complete.ecommerce.order.OrderBv3;
 import tests.shared.persistence.domain.oneToOneVoDedicatedTable.TestRootOneToOneVoDedicated;
 import tests.shared.persistence.domain.oneToOneVoDedicatedTable.VoDedicated;
 import tests.shared.persistence.domain.valueobjects.SimpleVoOneToMany;
@@ -178,7 +178,7 @@ public class BaseDLCTestPersistenceConfiguration {
             .withCustomRecordMappers(customRecordMappers)
             .withRecordPackage("io.domainlifecycles.test.jooq.tables.records")
             .withIgnoredDomainObjectFields(f -> {
-                if (f.getName().equals("gesamtPreis")) return true;
+                if (f.getName().equals("totalPrice")) return true;
                 if (f.getName().equals("ignoredField")) return true;
                 return false;
             })
@@ -221,10 +221,10 @@ public class BaseDLCTestPersistenceConfiguration {
                                 "valueObjectsOneToMany", "oneToManySet"
                             ),
                             new EntityValueObjectRecordTypeConfiguration(
-                                BestellungBv3.class,
-                                AktionsCodeBv3.class,
-                                AktionsCodeBv3Record.class,
-                                "aktionsCodes"
+                                OrderBv3.class,
+                                PromoCodeBv3.class,
+                                PromoCodeBv3Record.class,
+                                "promoCodes"
                             ),
                             new EntityValueObjectRecordTypeConfiguration(
                                 TestRootOneToOneVoDedicated.class,

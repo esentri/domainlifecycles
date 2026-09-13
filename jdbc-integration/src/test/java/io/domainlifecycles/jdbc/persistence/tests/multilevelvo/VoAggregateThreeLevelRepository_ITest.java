@@ -53,7 +53,7 @@ public class VoAggregateThreeLevelRepository_ITest extends JdbcBasePersistence_I
 
         //then
         Optional<VoAggregateThreeLevel> found = voAggregateThreeLevelRepository.findResultById(
-                inserted.getIdentifikationsNummer())
+                inserted.getIdentificationNumber())
             .resultValue();
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
 
@@ -76,7 +76,7 @@ public class VoAggregateThreeLevelRepository_ITest extends JdbcBasePersistence_I
 
         //then
         Optional<VoAggregateThreeLevel> found = voAggregateThreeLevelRepository.findResultById(
-            inserted.getIdentifikationsNummer()).resultValue();
+            inserted.getIdentificationNumber()).resultValue();
         assertThat(inserted == copy);
         persistenceEventTestHelper.assertFoundWithResult(found, inserted);
 
@@ -99,7 +99,7 @@ public class VoAggregateThreeLevelRepository_ITest extends JdbcBasePersistence_I
         persistenceEventTestHelper.resetEventsCaught();
         //then
         Optional<VoAggregateThreeLevel> found = voAggregateThreeLevelRepository.findResultById(
-            inserted.getIdentifikationsNummer()).resultValue();
+            inserted.getIdentificationNumber()).resultValue();
 
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         Mockito.verify(voAggregateThreeLevelRepository, Mockito.times(0)).publish(any());
@@ -114,11 +114,11 @@ public class VoAggregateThreeLevelRepository_ITest extends JdbcBasePersistence_I
         VoAggregateThreeLevel inserted = voAggregateThreeLevelRepository.insert(r);
         persistenceEventTestHelper.resetEventsCaught();
         //when
-        voAggregateThreeLevelRepository.deleteById(inserted.getIdentifikationsNummer());
+        voAggregateThreeLevelRepository.deleteById(inserted.getIdentificationNumber());
 
         //then
         Optional<VoAggregateThreeLevel> found = voAggregateThreeLevelRepository.findResultById(
-            inserted.getIdentifikationsNummer()).resultValue();
+            inserted.getIdentificationNumber()).resultValue();
         Assertions.assertThat(found).isEmpty();
 
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted);
@@ -134,11 +134,11 @@ public class VoAggregateThreeLevelRepository_ITest extends JdbcBasePersistence_I
         persistenceEventTestHelper.resetEventsCaught();
 
         //when
-        voAggregateThreeLevelRepository.deleteById(inserted.getIdentifikationsNummer());
+        voAggregateThreeLevelRepository.deleteById(inserted.getIdentificationNumber());
 
         //then
         Optional<VoAggregateThreeLevel> found = voAggregateThreeLevelRepository.findResultById(
-            inserted.getIdentifikationsNummer()).resultValue();
+            inserted.getIdentificationNumber()).resultValue();
         Assertions.assertThat(found).isEmpty();
 
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted);
@@ -159,7 +159,7 @@ public class VoAggregateThreeLevelRepository_ITest extends JdbcBasePersistence_I
 
         //then
         Optional<VoAggregateThreeLevel> found = voAggregateThreeLevelRepository.findResultById(
-            inserted.getIdentifikationsNummer()).resultValue();
+            inserted.getIdentificationNumber()).resultValue();
         Assertions.assertThat(found).isPresent();
         assertThat(updated == copy);
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
@@ -183,7 +183,7 @@ public class VoAggregateThreeLevelRepository_ITest extends JdbcBasePersistence_I
 
         //then
         Optional<VoAggregateThreeLevel> found = voAggregateThreeLevelRepository.findResultById(
-            inserted.getIdentifikationsNummer()).resultValue();
+            inserted.getIdentificationNumber()).resultValue();
         assertThat(updated == copy);
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
 
@@ -207,7 +207,7 @@ public class VoAggregateThreeLevelRepository_ITest extends JdbcBasePersistence_I
 
         //then
         Optional<VoAggregateThreeLevel> found = voAggregateThreeLevelRepository.findResultById(
-            inserted.getIdentifikationsNummer()).resultValue();
+            inserted.getIdentificationNumber()).resultValue();
         assertThat(updated == copy);
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
 
@@ -233,7 +233,7 @@ public class VoAggregateThreeLevelRepository_ITest extends JdbcBasePersistence_I
 
         //then
         Optional<VoAggregateThreeLevel> found = voAggregateThreeLevelRepository.findResultById(
-            inserted.getIdentifikationsNummer()).resultValue();
+            inserted.getIdentificationNumber()).resultValue();
         assertThat(updated == copy);
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
 
@@ -255,7 +255,7 @@ public class VoAggregateThreeLevelRepository_ITest extends JdbcBasePersistence_I
 
         //then
         Optional<VoAggregateThreeLevel> found = voAggregateThreeLevelRepository.findResultById(
-            inserted.getIdentifikationsNummer()).resultValue();
+            inserted.getIdentificationNumber()).resultValue();
         assertThat(updated == copy);
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.UPDATED, updated);
@@ -281,7 +281,7 @@ public class VoAggregateThreeLevelRepository_ITest extends JdbcBasePersistence_I
 
         //then
         Optional<VoAggregateThreeLevel> found = voAggregateThreeLevelRepository.findResultById(
-            inserted.getIdentifikationsNummer()).resultValue();
+            inserted.getIdentificationNumber()).resultValue();
         assertThat(updated == copy);
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
 
@@ -310,7 +310,7 @@ public class VoAggregateThreeLevelRepository_ITest extends JdbcBasePersistence_I
 
         //then
         Optional<VoAggregateThreeLevel> found = voAggregateThreeLevelRepository.findResultById(
-            inserted.getIdentifikationsNummer()).resultValue();
+            inserted.getIdentificationNumber()).resultValue();
         assertThat(updated == copy);
         persistenceEventTestHelper.assertFoundWithResult(found, updated);
 
@@ -325,11 +325,11 @@ public class VoAggregateThreeLevelRepository_ITest extends JdbcBasePersistence_I
         VoAggregateThreeLevel inserted = voAggregateThreeLevelRepository.insert(r);
         persistenceEventTestHelper.resetEventsCaught();
         //when
-        voAggregateThreeLevelRepository.deleteById(inserted.getIdentifikationsNummer());
+        voAggregateThreeLevelRepository.deleteById(inserted.getIdentificationNumber());
 
         //then
         Optional<VoAggregateThreeLevel> found = voAggregateThreeLevelRepository.findResultById(
-            inserted.getIdentifikationsNummer()).resultValue();
+            inserted.getIdentificationNumber()).resultValue();
         Assertions.assertThat(found).isEmpty();
         persistenceEventTestHelper.addExpectedEvent(PersistenceEvent.PersistenceEventType.DELETED, inserted);
         persistenceEventTestHelper.assertEvents();

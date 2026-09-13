@@ -22,8 +22,8 @@ import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
 import org.h2.jdbcx.JdbcDataSource;
-import tests.shared.complete.onlinehandel.bestellung.AktionsCodeBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
+import tests.shared.complete.ecommerce.order.PromoCodeBv3;
+import tests.shared.complete.ecommerce.order.OrderBv3;
 import tests.shared.persistence.domain.oneToOneVoDedicatedTable.TestRootOneToOneVoDedicated;
 import tests.shared.persistence.domain.oneToOneVoDedicatedTable.VoDedicated;
 import tests.shared.persistence.domain.valueobjects.SimpleVoOneToMany;
@@ -112,7 +112,7 @@ public class JdbcTestPersistenceConfiguration {
             .withDomainObjectBuilderProvider(domainObjectBuilderProvider)
             .withSchemaMetadata(schemaMetadata)
             .withCustomRecordMappers(customRecordMappers)
-            .withIgnoredDomainObjectFields(f -> f.getName().equals("gesamtPreis") || f.getName().equals(
+            .withIgnoredDomainObjectFields(f -> f.getName().equals("totalPrice") || f.getName().equals(
                 "ignoredField"))
             .withIgnoredRecordProperties(p -> p.getName().equals("ignoredColumn"))
             .withEntityValueObjectRecordTypeConfiguration(
@@ -147,10 +147,10 @@ public class JdbcTestPersistenceConfiguration {
                     "valueObjectsOneToMany", "oneToManySet"
                 ),
                 new JdbcEntityValueObjectRecordTypeConfiguration(
-                    BestellungBv3.class,
-                    AktionsCodeBv3.class,
-                    "AKTIONS_CODE_BV3",
-                    "aktionsCodes"
+                    OrderBv3.class,
+                    PromoCodeBv3.class,
+                    "PROMO_CODE_BV3",
+                    "promoCodes"
                 ),
                 new JdbcEntityValueObjectRecordTypeConfiguration(
                     TestRootOneToOneVoDedicated.class,

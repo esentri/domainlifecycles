@@ -56,26 +56,26 @@ public class ValidatedAggregateRoot extends AggregateRootBase<ValidatedAggregate
         this.optionalText = Optional.ofNullable(optionalText);
     }
 
-    public void komischeBerechnungMitValidationError() {
+    public void strangeCalculationWithValidationError() {
         text = "WRONG";
     }
 
-    public ValidatedAggregateRoot textSetzenMitReturn(String neuerText) {
-        this.text = neuerText;
+    public ValidatedAggregateRoot setTextWithReturn(String newText) {
+        this.text = newText;
         return this;
     }
 
-    public ValidatedAggregateRoot optionalTextSetzenMitReturn(Optional<@NotBlank String> neuerTextOptional) {
-        this.optionalText = neuerTextOptional;
+    public ValidatedAggregateRoot setOptionalTextWithReturn(Optional<@NotBlank String> newTextOptional) {
+        this.optionalText = newTextOptional;
         return this;
     }
 
-    public void textSetzenPrecondition(@NotBlank String neuerText) {
-        this.text = neuerText;
+    public void setTextPrecondition(@NotBlank String newText) {
+        this.text = newText;
     }
 
-    public @NotBlank String textSetzenReturnVal(String neuerText) {
-        this.text = neuerText;
+    public @NotBlank String setTextReturnVal(String newText) {
+        this.text = newText;
         return this.text;
     }
 

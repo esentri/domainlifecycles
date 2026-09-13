@@ -11,21 +11,21 @@ import io.domainlifecycles.persistence.repository.actions.PersistenceAction;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.UpdatableRecord;
 import org.junit.jupiter.api.Test;
-import tests.shared.complete.onlinehandel.bestellung.ArtikelIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellKommentarBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellKommentarIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellPositionBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellPositionIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellStatusBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellStatusCodeEnumBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellStatusIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellungIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.KundennummerBv3;
-import tests.shared.complete.onlinehandel.bestellung.LieferadresseBv3;
-import tests.shared.complete.onlinehandel.bestellung.LieferadresseIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.PreisBv3;
-import tests.shared.complete.onlinehandel.bestellung.WaehrungEnumBv3;
+import tests.shared.complete.ecommerce.order.ArticleIdBv3;
+import tests.shared.complete.ecommerce.order.OrderCommentBv3;
+import tests.shared.complete.ecommerce.order.OrderCommentIdBv3;
+import tests.shared.complete.ecommerce.order.OrderItemBv3;
+import tests.shared.complete.ecommerce.order.OrderItemIdBv3;
+import tests.shared.complete.ecommerce.order.OrderStatusBv3;
+import tests.shared.complete.ecommerce.order.OrderStatusCodeEnumBv3;
+import tests.shared.complete.ecommerce.order.OrderStatusIdBv3;
+import tests.shared.complete.ecommerce.order.OrderBv3;
+import tests.shared.complete.ecommerce.order.OrderIdBv3;
+import tests.shared.complete.ecommerce.order.CustomerNumberBv3;
+import tests.shared.complete.ecommerce.order.DeliveryAddressBv3;
+import tests.shared.complete.ecommerce.order.DeliveryAddressIdBv3;
+import tests.shared.complete.ecommerce.order.PriceBv3;
+import tests.shared.complete.ecommerce.order.CurrencyEnumBv3;
 import tests.shared.persistence.domain.simple.TestRootSimple;
 import tests.shared.persistence.domain.simple.TestRootSimpleId;
 
@@ -61,63 +61,63 @@ public class UpdateEventChangeCalculationTest extends BasePersistence_ITest {
 
     @Test
     public void testChangeSimpleProperty() {
-        BestellungBv3 a = buildBestellung();
-        BestellungBv3 b = buildBestellung();
-        b.setPrioritaet(Byte.valueOf("2"));
+        OrderBv3 a = buildOrder();
+        OrderBv3 b = buildOrder();
+        b.setPriority(Byte.valueOf("2"));
 
         PersistenceAction<?> action = new PersistenceAction<>(
             persistenceConfiguration.domainPersistenceProvider.buildAccessModel(b), PersistenceAction.ActionType.UPDATE,
             persistenceConfiguration.domainPersistenceProvider.buildAccessModel(a));
         Set<String> changes = calculateChangedProperties(action);
-        assertThat(changes).containsExactlyInAnyOrder("prioritaet");
+        assertThat(changes).containsExactlyInAnyOrder("priority");
 
-        assertThat(getNewValue(action, "prioritaet")).isEqualTo(b.getPrioritaet());
-        assertThat(getOldValue(action, "prioritaet")).isEqualTo(a.getPrioritaet());
+        assertThat(getNewValue(action, "priority")).isEqualTo(b.getPriority());
+        assertThat(getOldValue(action, "priority")).isEqualTo(a.getPriority());
     }
 
     @Test
     public void testChangeSimpleRefIdentity() {
-        BestellungBv3 a = buildBestellung();
-        BestellungBv3 b = buildBestellung();
-        b.setKundennummer(new KundennummerBv3("88888"));
+        OrderBv3 a = buildOrder();
+        OrderBv3 b = buildOrder();
+        b.setCustomerNumber(new CustomerNumberBv3("88888"));
 
         PersistenceAction<?> action = new PersistenceAction<>(
             persistenceConfiguration.domainPersistenceProvider.buildAccessModel(b), PersistenceAction.ActionType.UPDATE,
             persistenceConfiguration.domainPersistenceProvider.buildAccessModel(a));
         Set<String> changes = calculateChangedProperties(action);
-        assertThat(changes).containsExactlyInAnyOrder("kundennummer");
-        assertThat(getNewValue(action, "kundennummer")).isEqualTo(b.getKundennummer());
-        assertThat(getOldValue(action, "kundennummer")).isEqualTo(a.getKundennummer());
+        assertThat(changes).containsExactlyInAnyOrder("customerNumber");
+        assertThat(getNewValue(action, "customerNumber")).isEqualTo(b.getCustomerNumber());
+        assertThat(getOldValue(action, "customerNumber")).isEqualTo(a.getCustomerNumber());
     }
 
     @Test
     public void testChangeSimplePropertyPrimitive() {
-        BestellungBv3 a = buildBestellung();
-        BestellungBv3 b = buildBestellung();
-        b.getBestellPositionen().get(0).setStueckzahl(66);
+        OrderBv3 a = buildOrder();
+        OrderBv3 b = buildOrder();
+        b.getOrderItems().get(0).setQuantity(66);
         DomainObjectInstanceAccessModel<?> bModel = persistenceConfiguration.domainPersistenceProvider.buildAccessModel(
             b);
         DomainObjectInstanceAccessModel<?> bPosModel = bModel.children.stream()
-            .filter(c -> c.domainObject().equals(b.getBestellPositionen().get(0)))
+            .filter(c -> c.domainObject().equals(b.getOrderItems().get(0)))
             .findFirst()
             .get();
         DomainObjectInstanceAccessModel<?> aModel = persistenceConfiguration.domainPersistenceProvider.buildAccessModel(
             a);
         DomainObjectInstanceAccessModel<?> aPosModel = aModel.children.stream()
-            .filter(c -> c.domainObject().equals(a.getBestellPositionen().get(0)))
+            .filter(c -> c.domainObject().equals(a.getOrderItems().get(0)))
             .findFirst()
             .get();
         PersistenceAction<?> action = new PersistenceAction(bPosModel, PersistenceAction.ActionType.UPDATE, aPosModel);
         Set<String> changes = calculateChangedProperties(action);
-        assertThat(changes).containsExactlyInAnyOrder("stueckzahl");
-        assertThat(getNewValue(action, "stueckzahl")).isEqualTo(b.getBestellPositionen().get(0).getStueckzahl());
-        assertThat(getOldValue(action, "stueckzahl")).isEqualTo(a.getBestellPositionen().get(0).getStueckzahl());
+        assertThat(changes).containsExactlyInAnyOrder("quantity");
+        assertThat(getNewValue(action, "quantity")).isEqualTo(b.getOrderItems().get(0).getQuantity());
+        assertThat(getOldValue(action, "quantity")).isEqualTo(a.getOrderItems().get(0).getQuantity());
     }
 
     @Test
     public void testNoChanges() {
-        BestellungBv3 a = buildBestellung();
-        BestellungBv3 b = buildBestellung();
+        OrderBv3 a = buildOrder();
+        OrderBv3 b = buildOrder();
         PersistenceAction<?> action = new PersistenceAction<>(
             persistenceConfiguration.domainPersistenceProvider.buildAccessModel(b), PersistenceAction.ActionType.UPDATE,
             persistenceConfiguration.domainPersistenceProvider.buildAccessModel(a));
@@ -127,33 +127,33 @@ public class UpdateEventChangeCalculationTest extends BasePersistence_ITest {
 
     @Test
     public void testChangeComplexVo() {
-        BestellungBv3 a = buildBestellung();
-        BestellungBv3 b = buildBestellung();
-        b.getBestellPositionen().get(0).setStueckPreis(PreisBv3
+        OrderBv3 a = buildOrder();
+        OrderBv3 b = buildOrder();
+        b.getOrderItems().get(0).setUnitPrice(PriceBv3
             .builder()
-            .setBetrag(BigDecimal.valueOf(44))
-            .setWaehrung(WaehrungEnumBv3.EUR)
+            .setAmount(BigDecimal.valueOf(44))
+            .setCurrency(CurrencyEnumBv3.EUR)
             .build());
         DomainObjectInstanceAccessModel<UpdatableRecord<?>> bModel =
             persistenceConfiguration.domainPersistenceProvider.buildAccessModel(
                 b);
         DomainObjectInstanceAccessModel<UpdatableRecord<?>> bPosModel = bModel.children.stream()
-            .filter(c -> c.domainObject().equals(b.getBestellPositionen().get(0)))
+            .filter(c -> c.domainObject().equals(b.getOrderItems().get(0)))
             .findFirst()
             .get();
         DomainObjectInstanceAccessModel<UpdatableRecord<?>> aModel =
             persistenceConfiguration.domainPersistenceProvider.buildAccessModel(
                 a);
         DomainObjectInstanceAccessModel<UpdatableRecord<?>> aPosModel = aModel.children.stream()
-            .filter(c -> c.domainObject().equals(a.getBestellPositionen().get(0)))
+            .filter(c -> c.domainObject().equals(a.getOrderItems().get(0)))
             .findFirst()
             .get();
         PersistenceAction<UpdatableRecord<?>> action = new PersistenceAction<>(bPosModel,
             PersistenceAction.ActionType.UPDATE, aPosModel);
         Set<String> changes = calculateChangedProperties(action);
-        assertThat(changes).containsExactlyInAnyOrder("stueckPreis");
-        assertThat(getNewValue(action, "stueckPreis")).isEqualTo(b.getBestellPositionen().get(0).getStueckPreis());
-        assertThat(getOldValue(action, "stueckPreis")).isEqualTo(a.getBestellPositionen().get(0).getStueckPreis());
+        assertThat(changes).containsExactlyInAnyOrder("unitPrice");
+        assertThat(getNewValue(action, "unitPrice")).isEqualTo(b.getOrderItems().get(0).getUnitPrice());
+        assertThat(getOldValue(action, "unitPrice")).isEqualTo(a.getOrderItems().get(0).getUnitPrice());
 
     }
 
@@ -186,56 +186,56 @@ public class UpdateEventChangeCalculationTest extends BasePersistence_ITest {
         assertThat(getOldValue(action, "name")).isEqualTo(a.getName());
     }
 
-    private BestellungBv3 buildBestellung() {
-        BestellungBv3 b = BestellungBv3.builder()
-            .setId(new BestellungIdBv3(1l))
-            .setKundennummer(new KundennummerBv3("777777"))
-            .setPrioritaet(Byte.valueOf("1"))
-            .setLieferadresse(
-                LieferadresseBv3.builder()
-                    .setId(new LieferadresseIdBv3(1l))
+    private OrderBv3 buildOrder() {
+        OrderBv3 b = OrderBv3.builder()
+            .setId(new OrderIdBv3(1l))
+            .setCustomerNumber(new CustomerNumberBv3("777777"))
+            .setPriority(Byte.valueOf("1"))
+            .setDeliveryAddress(
+                DeliveryAddressBv3.builder()
+                    .setId(new DeliveryAddressIdBv3(1l))
                     .setName("Thor")
-                    .setOrt("Donnerberg")
-                    .setPostleitzahl("77777")
-                    .setStrasse("Hammerallee 7")
+                    .setCity("Donnerberg")
+                    .setPostalCode("77777")
+                    .setStreet("Hammerallee 7")
                     .build()
             )
-            .setBestellKommentare(newArrayListOf(
-                BestellKommentarBv3.builder()
-                    .setId(new BestellKommentarIdBv3(1l))
-                    .setKommentarAm(LocalDateTime.of(2021, 01, 1, 12, 0))
-                    .setKommentarText("Mach schnell sonst kommt der Hammer!")
+            .setOrderComments(newArrayListOf(
+                OrderCommentBv3.builder()
+                    .setId(new OrderCommentIdBv3(1l))
+                    .setCommentedAt(LocalDateTime.of(2021, 01, 1, 12, 0))
+                    .setCommentText("Mach schnell sonst kommt der Hammer!")
                     .build(),
-                BestellKommentarBv3.builder()
-                    .setId(new BestellKommentarIdBv3(2l))
-                    .setKommentarAm(LocalDateTime.of(2021, 01, 2, 12, 0))
-                    .setKommentarText("Der Donnergott grüßt!")
+                OrderCommentBv3.builder()
+                    .setId(new OrderCommentIdBv3(2l))
+                    .setCommentedAt(LocalDateTime.of(2021, 01, 2, 12, 0))
+                    .setCommentText("Der Donnergott grüßt!")
                     .build()
             ))
-            .setBestellStatus(
-                BestellStatusBv3.builder()
-                    .setStatusAenderungAm(LocalDateTime.of(2021, 01, 1, 12, 1))
-                    .setStatusCode(BestellStatusCodeEnumBv3.INITIAL)
-                    .setId(new BestellStatusIdBv3(1l))
+            .setOrderStatus(
+                OrderStatusBv3.builder()
+                    .setStatusChangedAt(LocalDateTime.of(2021, 01, 1, 12, 1))
+                    .setStatusCode(OrderStatusCodeEnumBv3.INITIAL)
+                    .setId(new OrderStatusIdBv3(1l))
                     .build()
-            ).setBestellPositionen(
+            ).setOrderItems(
                 newArrayListOf(
-                    BestellPositionBv3.builder()
-                        .setId(new BestellPositionIdBv3(1l))
-                        .setArtikelId(new ArtikelIdBv3(1l))
-                        .setStueckzahl(100)
-                        .setStueckPreis(PreisBv3.builder()
-                            .setBetrag(BigDecimal.ONE)
-                            .setWaehrung(WaehrungEnumBv3.EUR)
+                    OrderItemBv3.builder()
+                        .setId(new OrderItemIdBv3(1l))
+                        .setArticleId(new ArticleIdBv3(1l))
+                        .setQuantity(100)
+                        .setUnitPrice(PriceBv3.builder()
+                            .setAmount(BigDecimal.ONE)
+                            .setCurrency(CurrencyEnumBv3.EUR)
                             .build())
                         .build(),
-                    BestellPositionBv3.builder()
-                        .setId(new BestellPositionIdBv3(2l))
-                        .setArtikelId(new ArtikelIdBv3(2l))
-                        .setStueckzahl(10)
-                        .setStueckPreis(PreisBv3.builder()
-                            .setBetrag(BigDecimal.TEN)
-                            .setWaehrung(WaehrungEnumBv3.EUR)
+                    OrderItemBv3.builder()
+                        .setId(new OrderItemIdBv3(2l))
+                        .setArticleId(new ArticleIdBv3(2l))
+                        .setQuantity(10)
+                        .setUnitPrice(PriceBv3.builder()
+                            .setAmount(BigDecimal.TEN)
+                            .setCurrency(CurrencyEnumBv3.EUR)
                             .build())
                         .build()
                 )
