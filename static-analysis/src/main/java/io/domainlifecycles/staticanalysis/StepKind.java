@@ -80,5 +80,21 @@ public enum StepKind {
      * The step's method processes the predecessor's domain command, i.e. it takes the command as
      * a parameter. Taken from the mirror.
      */
-    COMMAND_PROCESS
+    COMMAND_PROCESS,
+
+    /**
+     * The predecessor is a method of a {@code QueryHandler}, and the step is the ReadModel it
+     * provides. Taken from the mirror, not from {@link DomainCalls}: a query handler's contract
+     * with its ReadModel holds regardless of which of its methods happens to be reached, and
+     * regardless of whether that method's body literally names the ReadModel type.
+     */
+    PROVIDES_READ_MODEL,
+
+    /**
+     * The predecessor is a method of a {@code Repository}, and the step is the Aggregate it
+     * manages. Taken from the mirror, not from {@link DomainCalls}: a repository's contract with
+     * its Aggregate holds regardless of which of its methods happens to be reached, and
+     * regardless of whether that method's body literally names the Aggregate type.
+     */
+    MANAGES_AGGREGATE
 }

@@ -28,6 +28,7 @@ package io.domainlifecycles.staticanalysis;
 
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
+import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
 
 import java.util.ArrayList;
@@ -150,6 +151,16 @@ public sealed interface Step {
     }
 
     /**
+     * The {@link #nodeKey()} a {@link TypeStep} for the given domain type would have.
+     *
+     * @param type the domain type, must not be {@code null}
+     * @return the node key
+     */
+    static String nodeKeyOf(DomainTypeMirror type) {
+        return "T:" + type.getTypeName();
+    }
+
+    /**
      * Creates the starting step of a flow beginning at a domain method.
      *
      * @param method the method to start from, must not be {@code null}
@@ -243,6 +254,33 @@ public sealed interface Step {
     static MethodStep processing(Step from, DomainMethod processor, boolean cyclic) {
         return new MethodStep(Optional.of(from), StepKind.COMMAND_PROCESS, from.depth() + 1,
             cyclic, processor);
+    }
+
+    /**
+     * Creates a step for the ReadModel provided by the QueryHandler method of the given
+     * predecessor.
+     *
+     * @param from      the step holding the QueryHandler method, must not be {@code null}
+     * @param readModel the provided ReadModel, must not be {@code null}
+     * @param cyclic    whether the ReadModel already occurs among the predecessors
+     * @return the step
+     */
+    static TypeStep providingReadModel(Step from, DomainTypeMirror readModel, boolean cyclic) {
+        return new TypeStep(Optional.of(from), StepKind.PROVIDES_READ_MODEL, from.depth() + 1,
+            cyclic, readModel);
+    }
+
+    /**
+     * Creates a step for the Aggregate managed by the Repository method of the given predecessor.
+     *
+     * @param from      the step holding the Repository method, must not be {@code null}
+     * @param aggregate the managed Aggregate, must not be {@code null}
+     * @param cyclic    whether the Aggregate already occurs among the predecessors
+     * @return the step
+     */
+    static TypeStep managingAggregate(Step from, DomainTypeMirror aggregate, boolean cyclic) {
+        return new TypeStep(Optional.of(from), StepKind.MANAGES_AGGREGATE, from.depth() + 1,
+            cyclic, aggregate);
     }
 
     /**
@@ -356,6 +394,53 @@ public sealed interface Step {
         @Override
         public String describe() {
             return command.getTypeName();
+        }
+
+        @Override
+        public String toString() {
+            return renderStep(this);
+        }
+    }
+
+    /**
+     * A plain domain type reached by the flow, because it is the ReadModel provided by a
+     * QueryHandler method, or the Aggregate managed by a Repository method, of the preceding step.
+     * <p>
+     * Unlike a {@link MethodStep}, this is not a callable: it carries no method, and the flow does
+     * not continue past it. A repository's or query handler's contract with its Aggregate/ReadModel
+     * is a structural fact of the domain, not a call - the same relationship {@link
+     * io.domainlifecycles.mirror.api.RepositoryMirror#getManagedAggregate()} and {@link
+     * io.domainlifecycles.mirror.api.QueryHandlerMirror#getProvidedReadModel()} already expose on
+     * the mirror.
+     *
+     * @param from   the step this one was reached from, empty for the start of the flow
+     * @param kind   the mechanism that carried the flow to this step
+     * @param depth  the distance from the start of the flow
+     * @param cyclic whether this step closes a cycle
+     * @param type   the reached domain type
+     */
+    record TypeStep(Optional<Step> from, StepKind kind, int depth, boolean cyclic,
+                    DomainTypeMirror type) implements Step {
+
+        public TypeStep {
+            Objects.requireNonNull(from, "A from Optional must be given!");
+            Objects.requireNonNull(kind, "A StepKind must be given!");
+            Objects.requireNonNull(type, "A DomainTypeMirror must be given!");
+        }
+
+        @Override
+        public String typeName() {
+            return type.getTypeName();
+        }
+
+        @Override
+        public String nodeKey() {
+            return nodeKeyOf(type);
+        }
+
+        @Override
+        public String describe() {
+            return type.getTypeName();
         }
 
         @Override

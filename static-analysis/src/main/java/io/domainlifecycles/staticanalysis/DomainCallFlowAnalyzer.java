@@ -31,6 +31,8 @@ import io.domainlifecycles.mirror.api.DomainEventMirror;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
+import io.domainlifecycles.mirror.api.QueryHandlerMirror;
+import io.domainlifecycles.mirror.api.RepositoryMirror;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -234,6 +236,20 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
                     isOnPath(current, Step.nodeKeyOf(published))));
             }
         }
+
+        domainMirror.getDomainTypeMirror(current.method().typeName())
+            .filter(QueryHandlerMirror.class::isInstance)
+            .map(QueryHandlerMirror.class::cast)
+            .flatMap(QueryHandlerMirror::getProvidedReadModel)
+            .ifPresent(readModel -> successors.add(Step.providingReadModel(current, readModel,
+                isOnPath(current, Step.nodeKeyOf(readModel)))));
+
+        domainMirror.getDomainTypeMirror(current.method().typeName())
+            .filter(RepositoryMirror.class::isInstance)
+            .map(RepositoryMirror.class::cast)
+            .flatMap(RepositoryMirror::getManagedAggregate)
+            .ifPresent(aggregate -> successors.add(Step.managingAggregate(current, aggregate,
+                isOnPath(current, Step.nodeKeyOf(aggregate)))));
 
         return successors;
     }
