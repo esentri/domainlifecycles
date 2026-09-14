@@ -279,35 +279,14 @@ public class DomainRelationshipMapper {
                 .map(dtm -> (DomainCommandProcessingMirror) dtm)
                 .noneMatch(d -> d.processes(domainCommandMirror));
         }
-        for (var referencingType : typesReferencing) {
-            switch (referencingType.getDomainType()) {
-                case AGGREGATE_ROOT, ENTITY -> {
-                    return !((EntityMirror) referencingType).processes(domainCommandMirror);
-                }
-                case REPOSITORY -> {
-                    return !((RepositoryMirror) referencingType).processes(domainCommandMirror);
-                }
-                case DOMAIN_SERVICE -> {
-                    return !((DomainServiceMirror) referencingType).processes(domainCommandMirror);
-                }
-                case APPLICATION_SERVICE -> {
-                    return !((ApplicationServiceMirror) referencingType).processes(domainCommandMirror);
-                }
-                case OUTBOUND_SERVICE -> {
-                    return !((OutboundServiceMirror) referencingType).processes(domainCommandMirror);
-                }
-                case QUERY_HANDLER -> {
-                    return !((QueryHandlerMirror) referencingType).processes(domainCommandMirror);
-                }
-                case SERVICE_KIND -> {
-                    return !((ServiceKindMirror) referencingType).processes(domainCommandMirror);
-                }
-                default -> {
-                    return true;
-                }
-            }
-        }
-        return true;
+        // domainTypeMirror is top-level unless SOME referencing type also processes the very same
+        // command - a referencing type kept around for an unrelated purpose (e.g. a field of the
+        // same service used just to call one of its other methods) must not by itself suppress the
+        // relationship, so every referencing type is checked, not just the first one encountered.
+        return typesReferencing.stream()
+            .filter(DomainCommandProcessingMirror.class::isInstance)
+            .map(DomainCommandProcessingMirror.class::cast)
+            .noneMatch(referencingType -> referencingType.processes(domainCommandMirror));
     }
 
     /**
