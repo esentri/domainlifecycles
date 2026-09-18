@@ -62,12 +62,12 @@ class JdbcPersisterTest {
         var schemaMetadata = JdbcSchemaMetadata.read(connection);
         var configuration = JdbcDomainPersistenceConfiguration.JdbcPersistenceConfigurationBuilder.newConfig()
             .withSchemaMetadata(schemaMetadata)
+            .withConnectionProvider(new SingleJdbcConnectionProvider(connection))
+            .withDialect(new H2JdbcDialect())
             .withDomainObjectBuilderProvider(new InnerClassDomainObjectBuilderProvider())
             .make();
         var domainPersistenceProvider = new JdbcDomainPersistenceProvider(configuration);
-        persister = new JdbcPersister(
-            new SingleJdbcConnectionProvider(connection), new H2JdbcDialect(), schemaMetadata,
-            domainPersistenceProvider);
+        persister = new JdbcPersister(domainPersistenceProvider);
     }
 
     @AfterEach

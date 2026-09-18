@@ -25,9 +25,6 @@ public class TestRootUuidRepository_ITest extends JdbcBasePersistence_ITest {
     @BeforeAll
     public void init() {
         testRootUuidRepository = new TestRootUuidRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );

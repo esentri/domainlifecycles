@@ -34,9 +34,6 @@ public class VoAggregateNestedRepository_ITest extends JdbcBasePersistence_ITest
     @BeforeAll
     public void init() {
         voAggregateNestedRepository = spy(new VoAggregateNestedRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         ));

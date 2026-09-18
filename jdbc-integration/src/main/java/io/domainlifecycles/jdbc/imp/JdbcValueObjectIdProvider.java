@@ -28,11 +28,11 @@ package io.domainlifecycles.jdbc.imp;
 
 import io.domainlifecycles.jdbc.connection.JdbcConnectionProvider;
 import io.domainlifecycles.jdbc.dialect.JdbcDialect;
+import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.jdbc.schema.JdbcSchemaMetadata;
 import io.domainlifecycles.jdbc.schema.TableMetadata;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
-import io.domainlifecycles.persistence.provider.DomainPersistenceProvider;
 import io.domainlifecycles.persistence.repository.persister.BaseValueObjectIdProvider;
 import io.domainlifecycles.persistence.repository.persister.ValueObjectIdProvider;
 
@@ -65,21 +65,14 @@ public class JdbcValueObjectIdProvider extends BaseValueObjectIdProvider<JdbcRec
      * Constructs a new instance of {@code JdbcValueObjectIdProvider}.
      *
      * @param domainPersistenceProvider the domain persistence provider used to resolve the technical id of an
-     *                                  already persisted ancestor entity
-     * @param connectionProvider        supplies the connection used to query sequences
-     * @param dialect                   the dialect providing the "next sequence value" SQL syntax
-     * @param schemaMetadata            the schema metadata snapshot used to resolve column names and types
+     *                                  already persisted ancestor entity, and supplying the connection, dialect
+     *                                  and schema metadata registered centrally on it
      */
-    public JdbcValueObjectIdProvider(
-        DomainPersistenceProvider<JdbcRecord> domainPersistenceProvider,
-        JdbcConnectionProvider connectionProvider,
-        JdbcDialect dialect,
-        JdbcSchemaMetadata schemaMetadata
-    ) {
+    public JdbcValueObjectIdProvider(JdbcDomainPersistenceProvider domainPersistenceProvider) {
         super(domainPersistenceProvider);
-        this.connectionProvider = Objects.requireNonNull(connectionProvider);
-        this.dialect = Objects.requireNonNull(dialect);
-        this.schemaMetadata = Objects.requireNonNull(schemaMetadata);
+        this.connectionProvider = Objects.requireNonNull(domainPersistenceProvider.connectionProvider);
+        this.dialect = Objects.requireNonNull(domainPersistenceProvider.dialect);
+        this.schemaMetadata = Objects.requireNonNull(domainPersistenceProvider.schemaMetadata);
     }
 
     /**

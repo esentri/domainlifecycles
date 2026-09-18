@@ -27,7 +27,6 @@
 package io.domainlifecycles.jdbc.imp;
 
 import io.domainlifecycles.jdbc.connection.JdbcConnectionProvider;
-import io.domainlifecycles.jdbc.dialect.JdbcDialect;
 import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.jdbc.schema.ColumnMetadata;
@@ -73,23 +72,17 @@ public class JdbcPersister extends BasePersister<JdbcRecord> implements Persiste
     /**
      * Constructs a new instance of {@code JdbcPersister}.
      *
-     * @param connectionProvider        supplies the connection used to execute insert/update/delete statements
-     * @param dialect                   the dialect used by the value object id provider for sequence access
-     * @param schemaMetadata            the schema metadata snapshot used to build SQL statements
-     * @param domainPersistenceProvider the persistence provider used to resolve entity record mirrors
+     * @param domainPersistenceProvider the persistence provider used to resolve entity record mirrors, and
+     *                                  supplying the connection, dialect and schema metadata registered
+     *                                  centrally on it
      */
-    public JdbcPersister(
-        JdbcConnectionProvider connectionProvider,
-        JdbcDialect dialect,
-        JdbcSchemaMetadata schemaMetadata,
-        JdbcDomainPersistenceProvider domainPersistenceProvider
-    ) {
+    public JdbcPersister(JdbcDomainPersistenceProvider domainPersistenceProvider) {
         super(domainPersistenceProvider,
-            new JdbcValueObjectIdProvider(domainPersistenceProvider, connectionProvider, dialect, schemaMetadata),
-            new JdbcEntityParentReferenceProvider(domainPersistenceProvider, schemaMetadata)
+            new JdbcValueObjectIdProvider(domainPersistenceProvider),
+            new JdbcEntityParentReferenceProvider(domainPersistenceProvider)
         );
-        this.connectionProvider = Objects.requireNonNull(connectionProvider);
-        this.schemaMetadata = Objects.requireNonNull(schemaMetadata);
+        this.connectionProvider = Objects.requireNonNull(domainPersistenceProvider.connectionProvider);
+        this.schemaMetadata = Objects.requireNonNull(domainPersistenceProvider.schemaMetadata);
     }
 
     /**

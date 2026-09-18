@@ -21,9 +21,6 @@ public class OneToOneLeadingAggregateRootRepository_ITest extends JdbcBasePersis
     @BeforeAll
     public void init() {
         oneToOneLeadingAggregateRootRepository = new OneToOneLeadingAggregateRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );

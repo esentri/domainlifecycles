@@ -23,9 +23,6 @@ public class OneToOneFollowingLeadingAggregateRootRepository_ITest extends JdbcB
     @BeforeAll
     public void init() {
         oneToOneFollowingLeadingAggregateRootRepository = new OneToOneFollowingLeadingAggregateRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher);
     }

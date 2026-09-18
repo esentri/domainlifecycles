@@ -4,6 +4,7 @@ import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvi
 import io.domainlifecycles.jdbc.configuration.JdbcDomainPersistenceConfiguration;
 import io.domainlifecycles.jdbc.connection.JdbcConnectionProvider;
 import io.domainlifecycles.jdbc.connection.SingleJdbcConnectionProvider;
+import io.domainlifecycles.jdbc.dialect.H2JdbcDialect;
 import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
 import io.domainlifecycles.jdbc.mirror.JdbcValueObjectRecordMirrorImpl;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
@@ -94,6 +95,8 @@ class JdbcAggregateFetcherTest {
         schemaMetadata = JdbcSchemaMetadata.read(connection);
         var configuration = JdbcDomainPersistenceConfiguration.JdbcPersistenceConfigurationBuilder.newConfig()
             .withSchemaMetadata(schemaMetadata)
+            .withConnectionProvider(connectionProvider)
+            .withDialect(new H2JdbcDialect())
             .withDomainObjectBuilderProvider(new InnerClassDomainObjectBuilderProvider())
             .make();
         domainPersistenceProvider = new JdbcDomainPersistenceProvider(configuration);
@@ -107,7 +110,7 @@ class JdbcAggregateFetcherTest {
     @Test
     void fetchesRootOnlyAggregateById() {
         var fetcher = new JdbcAggregateFetcher<>(
-            TestRootSimple.class, connectionProvider, schemaMetadata, domainPersistenceProvider);
+            TestRootSimple.class, domainPersistenceProvider);
 
         var result = fetcher.fetchDeep(new TestRootSimpleId(1L));
 
@@ -120,7 +123,7 @@ class JdbcAggregateFetcherTest {
     @Test
     void fetchesUnknownIdAsEmpty() {
         var fetcher = new JdbcAggregateFetcher<>(
-            TestRootSimple.class, connectionProvider, schemaMetadata, domainPersistenceProvider);
+            TestRootSimple.class, domainPersistenceProvider);
 
         var result = fetcher.fetchDeep(new TestRootSimpleId(999L));
 
@@ -130,7 +133,7 @@ class JdbcAggregateFetcherTest {
     @Test
     void fetchesAggregateRootWithOneToManyChildren() {
         var fetcher = new JdbcAggregateFetcher<>(
-            TestRootOneToMany.class, connectionProvider, schemaMetadata, domainPersistenceProvider);
+            TestRootOneToMany.class, domainPersistenceProvider);
 
         var result = fetcher.fetchDeep(new TestRootOneToManyId(1L));
 
@@ -145,7 +148,7 @@ class JdbcAggregateFetcherTest {
     @Test
     void fetchesChildRecordsByForeignKeyForAValueObjectRecordMirror() {
         var fetcher = new JdbcAggregateFetcher<>(
-            TestRootSimple.class, connectionProvider, schemaMetadata, domainPersistenceProvider);
+            TestRootSimple.class, domainPersistenceProvider);
         var parentRecord = new JdbcRecord("WIDGET");
         parentRecord.set("ID", 1L);
         parentRecord.set("NAME", "W1");

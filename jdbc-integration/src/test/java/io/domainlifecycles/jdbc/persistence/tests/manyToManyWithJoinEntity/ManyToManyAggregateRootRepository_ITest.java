@@ -35,9 +35,6 @@ public class ManyToManyAggregateRootRepository_ITest extends JdbcBasePersistence
     @BeforeAll
     public void init() {
         manyToManyAggregateRootRepository = new ManyToManyAggregateRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );

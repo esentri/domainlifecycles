@@ -111,6 +111,8 @@ public class JdbcTestPersistenceConfiguration {
         var configuration = JdbcDomainPersistenceConfiguration.JdbcPersistenceConfigurationBuilder.newConfig()
             .withDomainObjectBuilderProvider(domainObjectBuilderProvider)
             .withSchemaMetadata(schemaMetadata)
+            .withConnectionProvider(connectionProvider)
+            .withDialect(dialect)
             .withCustomRecordMappers(customRecordMappers)
             .withIgnoredDomainObjectFields(f -> f.getName().equals("totalPrice") || f.getName().equals(
                 "ignoredField"))

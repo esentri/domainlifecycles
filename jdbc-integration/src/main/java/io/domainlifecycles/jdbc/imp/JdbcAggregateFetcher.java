@@ -33,15 +33,12 @@ import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.jdbc.schema.JdbcSchemaMetadata;
 import io.domainlifecycles.jdbc.schema.TableMetadata;
+import io.domainlifecycles.jdbc.util.JdbcRecordMapper;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.fetcher.InternalAggregateFetcher;
 import io.domainlifecycles.persistence.mirror.api.ValueObjectRecordMirror;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -69,20 +66,17 @@ public class JdbcAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
      * Constructs an instance of {@code JdbcAggregateFetcher}.
      *
      * @param aggregateRootClass        the class of the aggregate root being managed
-     * @param connectionProvider        supplies the connection used to execute queries
-     * @param schemaMetadata            the schema metadata snapshot used to resolve tables and foreign keys
-     * @param domainPersistenceProvider the persistence provider used to resolve entity record mirrors
+     * @param domainPersistenceProvider the persistence provider used to resolve entity record mirrors, and
+     *                                  supplying the connection and schema metadata registered centrally on it
      */
     public JdbcAggregateFetcher(
         Class<A> aggregateRootClass,
-        JdbcConnectionProvider connectionProvider,
-        JdbcSchemaMetadata schemaMetadata,
         JdbcDomainPersistenceProvider domainPersistenceProvider
     ) {
         super(aggregateRootClass, domainPersistenceProvider);
         this.domainPersistenceProvider = domainPersistenceProvider;
-        this.connectionProvider = Objects.requireNonNull(connectionProvider);
-        this.schemaMetadata = Objects.requireNonNull(schemaMetadata);
+        this.connectionProvider = Objects.requireNonNull(domainPersistenceProvider.connectionProvider);
+        this.schemaMetadata = Objects.requireNonNull(domainPersistenceProvider.schemaMetadata);
     }
 
     /**
@@ -195,12 +189,12 @@ public class JdbcAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
         var parentPkColumn = parentTable.column(requirePrimaryKeyName(parentTable));
         var parentPkValue = parentRecord.get(parentPkColumn.name());
         var foreignKeyColumn = childTable.column(foreignKeyColumnName);
-        return selectByColumn(childTable, foreignKeyColumn.name(), parentPkValue);
+        return JdbcRecordMapper.selectByColumn(connectionProvider, childTable, foreignKeyColumn.name(), parentPkValue);
     }
 
     private JdbcRecord selectByPrimaryKey(TableMetadata table, Object primaryKeyValue) {
         var pkColumn = table.column(requirePrimaryKeyName(table));
-        var rows = selectByColumn(table, pkColumn.name(), primaryKeyValue);
+        var rows = JdbcRecordMapper.selectByColumn(connectionProvider, table, pkColumn.name(), primaryKeyValue);
         if (rows.size() > 1) {
             throw DLCPersistenceException.fail(
                 "Find by ID: more than one row found for primary key value '%s' in table '%s'.",
@@ -215,29 +209,5 @@ public class JdbcAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
             throw DLCPersistenceException.fail("Table '%s' has no primary key defined.", table.name());
         }
         return pkName;
-    }
-
-    private List<JdbcRecord> selectByColumn(TableMetadata table, String columnName, Object value) {
-        var sql = "SELECT * FROM " + table.qualifiedName() + " WHERE " + columnName + " = ?";
-        try (PreparedStatement statement = connectionProvider.getConnection().prepareStatement(sql)) {
-            statement.setObject(1, value);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                List<JdbcRecord> rows = new ArrayList<>();
-                while (resultSet.next()) {
-                    rows.add(mapRow(resultSet, table));
-                }
-                return rows;
-            }
-        } catch (SQLException e) {
-            throw DLCPersistenceException.fail("Query on '%s' failed.", e, table.name());
-        }
-    }
-
-    private JdbcRecord mapRow(ResultSet resultSet, TableMetadata table) throws SQLException {
-        var record = new JdbcRecord(table.name());
-        for (var column : table.columns()) {
-            record.set(column.name(), resultSet.getObject(column.name(), column.javaType()));
-        }
-        return record;
     }
 }

@@ -55,15 +55,12 @@ public class JdbcEntityParentReferenceProvider implements EntityParentReferenceP
     /**
      * Constructs a new instance of {@code JdbcEntityParentReferenceProvider}.
      *
-     * @param jdbcDomainPersistenceProvider the persistence provider used to look up entity record mirrors
-     * @param schemaMetadata                the schema metadata snapshot used to resolve foreign key columns
+     * @param jdbcDomainPersistenceProvider the persistence provider used to look up entity record mirrors, and
+     *                                      supplying the schema metadata registered centrally on it
      */
-    public JdbcEntityParentReferenceProvider(
-        JdbcDomainPersistenceProvider jdbcDomainPersistenceProvider,
-        JdbcSchemaMetadata schemaMetadata
-    ) {
+    public JdbcEntityParentReferenceProvider(JdbcDomainPersistenceProvider jdbcDomainPersistenceProvider) {
         this.jdbcDomainPersistenceProvider = Objects.requireNonNull(jdbcDomainPersistenceProvider);
-        this.schemaMetadata = Objects.requireNonNull(schemaMetadata);
+        this.schemaMetadata = Objects.requireNonNull(jdbcDomainPersistenceProvider.schemaMetadata);
     }
 
     /**

@@ -32,9 +32,6 @@ public class VoAggregatePrimitiveRepository_ITest extends JdbcBasePersistence_IT
     @BeforeAll
     public void init() {
         voAggregatePrimitiveRepository = spy(new VoAggregatePrimitiveRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         ));

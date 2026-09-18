@@ -27,9 +27,6 @@ public class VehicleExtendedRepository_ITest extends JdbcBasePersistence_ITest {
     @BeforeAll
     public void init() {
         vehicleRepository = new VehicleExtendedRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );

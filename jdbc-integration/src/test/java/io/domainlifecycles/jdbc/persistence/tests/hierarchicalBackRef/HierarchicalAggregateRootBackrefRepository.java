@@ -4,13 +4,12 @@ import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.jdbc.connection.JdbcConnectionProvider;
-import io.domainlifecycles.jdbc.dialect.JdbcDialect;
 import io.domainlifecycles.jdbc.imp.JdbcPersister;
 import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.jdbc.schema.JdbcSchemaMetadata;
 import io.domainlifecycles.jdbc.schema.TableMetadata;
-import io.domainlifecycles.persistence.exception.DLCPersistenceException;
+import io.domainlifecycles.jdbc.util.JdbcRecordMapper;
 import io.domainlifecycles.persistence.fetcher.AggregateFetcher;
 import io.domainlifecycles.persistence.fetcher.FetcherResult;
 import io.domainlifecycles.persistence.fetcher.RecordProvider;
@@ -22,9 +21,6 @@ import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
 import tests.shared.persistence.domain.hierarchicalBackRef.TestRootHierarchicalBackref;
 import tests.shared.persistence.domain.hierarchicalBackRef.TestRootHierarchicalBackrefId;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -42,18 +38,15 @@ public class HierarchicalAggregateRootBackrefRepository
     private final SimpleAggregateFetcher<Long, TestRootHierarchicalBackref, TestRootHierarchicalBackrefId,
         JdbcRecord> simpleAggregateFetcher;
 
-    public HierarchicalAggregateRootBackrefRepository(JdbcConnectionProvider connectionProvider,
-                                                       JdbcDialect dialect,
-                                                       JdbcSchemaMetadata schemaMetadata,
-                                                       JdbcDomainPersistenceProvider domainPersistenceProvider,
+    public HierarchicalAggregateRootBackrefRepository(JdbcDomainPersistenceProvider domainPersistenceProvider,
                                                        PersistenceEventPublisher persistenceEventPublisher) {
         super(
-            new JdbcPersister(connectionProvider, dialect, schemaMetadata, domainPersistenceProvider),
+            new JdbcPersister(domainPersistenceProvider),
             domainPersistenceProvider,
             persistenceEventPublisher
         );
-        this.connectionProvider = connectionProvider;
-        this.schemaMetadata = schemaMetadata;
+        this.connectionProvider = domainPersistenceProvider.connectionProvider;
+        this.schemaMetadata = domainPersistenceProvider.schemaMetadata;
         this.domainPersistenceProvider = domainPersistenceProvider;
         this.simpleAggregateFetcher = provideFetcher();
     }
@@ -112,22 +105,7 @@ public class HierarchicalAggregateRootBackrefRepository
     }
 
     private JdbcRecord selectByColumn(TableMetadata table, String columnName, Object value) {
-        var sql = "SELECT * FROM " + table.qualifiedName() + " WHERE " + columnName + " = ?";
-        try (PreparedStatement statement = connectionProvider.getConnection().prepareStatement(sql)) {
-            statement.setObject(1, value);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (!resultSet.next()) {
-                    return null;
-                }
-                JdbcRecord record = new JdbcRecord(table.name());
-                for (var column : table.columns()) {
-                    record.set(column.name(), resultSet.getObject(column.name(), column.javaType()));
-                }
-                return record;
-            }
-        } catch (SQLException e) {
-            throw DLCPersistenceException.fail("Query on '%s' failed.", e, table.name());
-        }
+        return JdbcRecordMapper.selectOneByColumn(connectionProvider, table, columnName, value);
     }
 
     @Override

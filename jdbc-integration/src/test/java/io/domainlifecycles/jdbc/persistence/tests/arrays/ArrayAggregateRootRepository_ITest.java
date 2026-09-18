@@ -23,9 +23,6 @@ public class ArrayAggregateRootRepository_ITest extends JdbcBasePersistence_ITes
     @BeforeAll
     public void init() {
         arrayAggregateRootRepository = new ArrayAggregateRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );

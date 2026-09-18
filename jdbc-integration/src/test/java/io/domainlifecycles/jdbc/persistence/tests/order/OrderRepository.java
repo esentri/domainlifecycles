@@ -8,6 +8,7 @@ import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.jdbc.schema.JdbcSchemaMetadata;
 import io.domainlifecycles.jdbc.schema.TableMetadata;
+import io.domainlifecycles.jdbc.util.JdbcRecordMapper;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.fetcher.RecordProvider;
 import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
@@ -20,10 +21,7 @@ import tests.shared.complete.ecommerce.order.OrderBv3;
 import tests.shared.complete.ecommerce.order.OrderIdBv3;
 import tests.shared.complete.ecommerce.order.DeliveryAddressIdBv3;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -37,16 +35,12 @@ public class OrderRepository extends JdbcAggregateRepository<OrderBv3, OrderIdBv
     private final JdbcSchemaMetadata schemaMetadata;
     private final JdbcDomainPersistenceProvider domainPersistenceProvider;
 
-    public OrderRepository(JdbcConnectionProvider connectionProvider,
-                                 JdbcDialect dialect,
-                                 JdbcSchemaMetadata schemaMetadata,
-                                 JdbcDomainPersistenceProvider domainPersistenceProvider,
+    public OrderRepository(JdbcDomainPersistenceProvider domainPersistenceProvider,
                                  PersistenceEventPublisher persistenceEventPublisher) {
-        super(OrderBv3.class, connectionProvider, dialect, schemaMetadata, domainPersistenceProvider,
-            persistenceEventPublisher);
-        this.connectionProvider = connectionProvider;
-        this.dialect = dialect;
-        this.schemaMetadata = schemaMetadata;
+        super(OrderBv3.class, domainPersistenceProvider, persistenceEventPublisher);
+        this.connectionProvider = domainPersistenceProvider.connectionProvider;
+        this.dialect = domainPersistenceProvider.dialect;
+        this.schemaMetadata = domainPersistenceProvider.schemaMetadata;
         this.domainPersistenceProvider = domainPersistenceProvider;
     }
 
@@ -85,7 +79,7 @@ public class OrderRepository extends JdbcAggregateRepository<OrderBv3, OrderIdBv
 
     public Optional<OrderBv3> findWithSubquery(OrderIdBv3 id) {
         var fetcher = new JdbcAggregateFetcher<OrderBv3, OrderIdBv3>(
-            OrderBv3.class, connectionProvider, schemaMetadata, domainPersistenceProvider);
+            OrderBv3.class, domainPersistenceProvider);
 
         var itemTable = schemaMetadata.table("ORDER_ITEM_BV3");
         fetcher.withRecordProvider(
@@ -146,23 +140,6 @@ public class OrderRepository extends JdbcAggregateRepository<OrderBv3, OrderIdBv
     }
 
     private List<JdbcRecord> selectWithSql(TableMetadata table, String sql, Object... params) {
-        try (PreparedStatement statement = connectionProvider.getConnection().prepareStatement(sql)) {
-            for (int i = 0; i < params.length; i++) {
-                statement.setObject(i + 1, params[i]);
-            }
-            try (ResultSet resultSet = statement.executeQuery()) {
-                List<JdbcRecord> rows = new ArrayList<>();
-                while (resultSet.next()) {
-                    var record = new JdbcRecord(table.name());
-                    for (var column : table.columns()) {
-                        record.set(column.name(), resultSet.getObject(column.name(), column.javaType()));
-                    }
-                    rows.add(record);
-                }
-                return rows;
-            }
-        } catch (SQLException e) {
-            throw DLCPersistenceException.fail("Query on '%s' failed.", e, table.name());
-        }
+        return JdbcRecordMapper.selectWithSql(connectionProvider, table, sql, params);
     }
 }

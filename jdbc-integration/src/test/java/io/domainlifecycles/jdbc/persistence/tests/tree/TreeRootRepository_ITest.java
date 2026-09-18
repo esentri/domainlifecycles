@@ -22,9 +22,6 @@ public class TreeRootRepository_ITest extends JdbcBasePersistence_ITest {
     @BeforeAll
     public void init() {
         treeRootRepository = new TreeRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );

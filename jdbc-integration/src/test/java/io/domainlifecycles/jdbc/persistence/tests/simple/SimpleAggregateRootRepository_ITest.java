@@ -19,9 +19,6 @@ public class SimpleAggregateRootRepository_ITest extends JdbcBasePersistence_ITe
     @BeforeAll
     public void init() {
         simpleAggregateRootRepository = new SimpleAggregateRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );

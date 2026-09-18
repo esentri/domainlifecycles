@@ -26,16 +26,10 @@ public class ConfigurationRepository_ITest extends JdbcBasePersistence_ITest {
     @BeforeAll
     public void init() {
         configurationRepository = new ConfigurationRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );
         anotherConfigurationRepository = new AnotherConfigurationRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );

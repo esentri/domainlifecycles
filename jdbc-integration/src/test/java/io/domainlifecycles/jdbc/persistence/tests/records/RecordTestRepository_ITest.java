@@ -25,9 +25,6 @@ public class RecordTestRepository_ITest extends JdbcBasePersistence_ITest {
     @BeforeAll
     public void init() {
         recordTestRepository = new RecordTestRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );

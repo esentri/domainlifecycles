@@ -20,9 +20,6 @@ public class OneToOneVoDedicatedRepository_ITest extends JdbcBasePersistence_ITe
     @BeforeAll
     public void init() {
         oneToOneVoDedicatedRepository = new OneToOneVoDedicatedRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );

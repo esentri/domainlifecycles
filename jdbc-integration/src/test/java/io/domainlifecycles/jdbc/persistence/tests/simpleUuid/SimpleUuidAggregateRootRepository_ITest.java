@@ -20,9 +20,6 @@ public class SimpleUuidAggregateRootRepository_ITest extends JdbcBasePersistence
     @BeforeAll
     public void init() {
         simpleUuidAggregateRootRepository = new SimpleUuidAggregateRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher);
     }
