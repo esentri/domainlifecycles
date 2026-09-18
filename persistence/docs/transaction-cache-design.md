@@ -84,12 +84,40 @@ Ausschließlich in `InternalAggregateFetcher.fetchDeep(BASE_RECORD_TYPE aggregat
 bestehenden `fetcherContext` unter dem Schlüssel `(rootClass, id)` in den aktuellen Transaktions-Cache
 einfügen.
 
-### 3.3 Konsum — „Take“-Semantik (get-and-remove), nur bei Schreiboperationen
+### 3.3 Konsum — „Take”-Semantik (get-and-remove), nur bei Schreiboperationen
 
 `DomainStructureAwareRepository.update()`, `.deleteById()` und `.increaseVersion()` fragen **vor** dem
 eigenen `findResultById(id)`-Aufruf den Cache per `take(key)` ab (Treffer entfernt den Eintrag sofort aus
 dem Cache). Bei Treffer: kein DB-Fetch. Bei Miss: normaler Fetch wie heute (der seinerseits über den Hook in
 3.2 den Cache wieder befüllt).
+
+`insert()` (siehe `DomainStructureAwareRepository.insert()`) ruft nie `findResultById` auf — es gibt vor dem
+Insert keinen Alt-Zustand und folglich auch keinen Cache-Key, der befüllt sein könnte. `insert()` braucht
+daher keine Cache-Interaktion.
+
+#### 3.3.1 Zwingend: Invalidierung nach dem Schreibvorgang (auch im Miss-Fall)
+
+Der Populate-Hook aus 3.2 hängt **unbedingt** an jedem `fetchDeep`-Aufruf — unabhängig davon, ob der Aufrufer
+ein Anwendungs-Finder oder der interne Fallback-Fetch von `update()`/`deleteById()`/`increaseVersion()` bei
+einem `take()`-Miss ist (verifiziert: beide Pfade laufen über dieselbe `InternalAggregateFetcher.fetchDeep`-
+Implementierung, siehe `JooqAggregateRepository.findResultById`/`JdbcAggregateRepository.findResultById`).
+
+Daraus folgt ein Korrektheitsproblem, wenn man es bei der reinen Take-Semantik beließe: Bei einem Miss holt
+sich `update()`/`deleteById()`/`increaseVersion()` den Alt-Zustand über den normalen Fetch — **dieser Fetch
+befüllt über den Populate-Hook den Cache erneut**, und zwar mit exakt dem Zustand, der durch den unmittelbar
+danach ausgeführten Schreibvorgang gleich veraltet. Ohne weitere Maßnahme bliebe dieser jetzt falsche
+Eintrag für den Rest der Transaktion im Cache stehen und könnte von einer späteren Operation auf dieselbe
+`AggregateCacheKey` fälschlich als aktueller Zustand gelesen werden.
+
+**Regel:** `update()`, `deleteById()` und `increaseVersion()` rufen nach erfolgreichem Abschluss des
+Schreibvorgangs **unbedingt** `invalidate(key)` auf — unabhängig davon, ob der vorangehende `take()` ein
+Hit oder ein Miss war. Im Hit-Fall ist das ein No-op (Eintrag wurde bereits durch `take()` entfernt); im
+Miss-Fall entfernt es genau den durch den Fallback-Fetch neu angelegten, jetzt veralteten Eintrag.
+
+Bewusst **kein** Refill mit dem neuen (Post-Write-)Zustand — das bleibt aus denselben Gründen wie in 3.4
+beschrieben (technische VO-IDs, `ScalarListElement`-Deque-Konsum) zu riskant. Invalidierung ist die
+risikofreie Variante: ein danach fehlender Eintrag führt beim nächsten `take()` einfach zu einem Miss →
+normaler, korrekter DB-Fetch — nie zu falschen Daten.
 
 ### 3.4 Bewusst NICHT unterstützt (Scope-Grenze für v1)
 
@@ -126,7 +154,8 @@ muss in der öffentlichen Doku klar benannt werden.
 -Repository brauchen keine eigene Anpassung an dieser Stelle):
 
 - `InternalAggregateFetcher.fetchDeep(BASE_RECORD_TYPE record)` — Cache-Populate-Hook (3.2).
-- `DomainStructureAwareRepository.update/deleteById/increaseVersion` — Cache-Take-Hook (3.3).
+- `DomainStructureAwareRepository.update/deleteById/increaseVersion` — Cache-Take- und -Invalidate-Hook
+  (3.3/3.3.1). `insert` bleibt unverändert, keine Cache-Interaktion (3.3).
 
 ## 5. `ThreadBoundTransactionCacheProvider` — Aufbau und Härtung
 
@@ -283,6 +312,11 @@ Subklassen, wie z. B. bereits bei `recordPropertyAccessor`):
      Interception, dass bei „find → update“ **ein** SELECT statt zwei ausgeführt wird.
    - Regressionstests für VO-Collection-Deletes über den Cache-Pfad (der in Abschnitt 3 identifizierte
      fragile Fall).
+   - Regressionstest für 3.3.1: `update()`/`deleteById()`/`increaseVersion()` bei Cache-**Miss** (Fallback-
+     Fetch befüllt den Cache) — danach darf für denselben Key **kein** Eintrag mehr im Cache stehen; eine
+     zweite Operation auf denselben Key innerhalb derselben Transaktion muss wieder einen echten DB-Fetch
+     auslösen und den tatsächlichen (bereits geschriebenen) DB-Zustand sehen, nie den veralteten Vor-Write-
+     Zustand.
    - Nested-Transaction-/Savepoint-Tests für den jOOQ-Binder (Tiefenzähler).
    - Test für Feature-Deaktivierung: Verhalten identisch zum Ist-Zustand vor diesem Feature.
 
