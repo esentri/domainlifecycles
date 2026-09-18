@@ -67,8 +67,12 @@ technical ids of "record mapped" ValueObjects, see [id generation](#id-generatio
 - `MySqlJdbcDialect` (standard MySQL has no native `SEQUENCE` object and emulates one)
 - `SqlServerJdbcDialect`
 
-A `JdbcDialect` instance is passed explicitly to every `JdbcAggregateRepository`, so different Aggregates
-could in principle even be backed by different databases within the same application.
+A `JdbcConnectionProvider` and `JdbcDialect` instance are registered once, centrally, on the
+`JdbcDomainPersistenceConfiguration` (see [DLC Persistence configuration](#persistence-configuration)) and are
+then available to every Repository, Persister and Fetcher built from the resulting
+`JdbcDomainPersistenceProvider` - so different Aggregates could in principle even be backed by different
+databases within the same application, by building a separate `JdbcDomainPersistenceProvider` (with its own
+connection provider and dialect) per database.
 
 <a name="setup"></a>
 
@@ -157,19 +161,27 @@ A minimal configuration example of a `JdbcDomainPersistenceProvider`:
 @Bean
 public JdbcDomainPersistenceProvider domainPersistenceProvider(
         DomainObjectBuilderProvider domainObjectBuilderProvider,
-        JdbcSchemaMetadata schemaMetadata
+        JdbcSchemaMetadata schemaMetadata,
+        JdbcConnectionProvider connectionProvider,
+        JdbcDialect dialect
         ) {
     return new JdbcDomainPersistenceProvider(
         JdbcDomainPersistenceConfiguration.JdbcPersistenceConfigurationBuilder
             .newConfig()
             .withDomainObjectBuilderProvider(domainObjectBuilderProvider)
             .withSchemaMetadata(schemaMetadata)
+            .withConnectionProvider(connectionProvider)
+            .withDialect(dialect)
             .make());
 }
 ```
 
-`withSchemaMetadata(...)` is the only mandatory setting - everything else falls back to a sensible default,
-mirroring `JooqDomainPersistenceConfiguration`'s extension points:
+`withSchemaMetadata(...)`, `withConnectionProvider(...)` and `withDialect(...)` are the only mandatory settings
+- everything else falls back to a sensible default, mirroring `JooqDomainPersistenceConfiguration`'s extension
+points. The resulting `JdbcDomainPersistenceProvider` exposes them back as `connectionProvider`, `dialect` and
+`schemaMetadata` fields that every Repository, Persister and Fetcher built from it reads directly - so none of
+those need the connection provider, dialect or schema metadata as a separate constructor parameter of their own
+(see [Repositories](#repositories)). The remaining, optional settings:
 
 - `withCustomRecordMappers(...)`: register custom `RecordMapper`s, see [RecordMapper](#recordmapper).
 - `withTypeConverterProvider(...)`: customize data type conversions, see
@@ -198,16 +210,10 @@ Extend `io.domainlifecycles.jdbc.imp.JdbcAggregateRepository` the same way you w
 @Component
 public class OrderRepository extends JdbcAggregateRepository<Order, OrderId> {
 
-    public OrderRepository(JdbcConnectionProvider connectionProvider,
-                            JdbcDialect dialect,
-                            JdbcSchemaMetadata schemaMetadata,
-                            JdbcDomainPersistenceProvider jdbcDomainPersistenceProvider,
+    public OrderRepository(JdbcDomainPersistenceProvider jdbcDomainPersistenceProvider,
                             PersistenceEventPublisher persistenceEventPublisher) {
         super(
             Order.class,
-            connectionProvider,
-            dialect,
-            schemaMetadata,
             jdbcDomainPersistenceProvider,
             persistenceEventPublisher
         );
@@ -217,9 +223,10 @@ public class OrderRepository extends JdbcAggregateRepository<Order, OrderId> {
 
 `insert(A root)`, `update(A root)`, `deleteById(I id)`, `findById(I id)`/`findResultById(I id)` and
 `getFetcher()` all behave exactly as described for `JooqAggregateRepository` in
-[DLC Persistence - DLC Repositories](../persistence/readme.md#dlc-repositories): the additional `JdbcDialect`
-and `JdbcSchemaMetadata` constructor parameters are this module's only difference, needed for sequence access
-and table/foreign-key resolution respectively.
+[DLC Persistence - DLC Repositories](../persistence/readme.md#dlc-repositories). A custom finder method that
+needs the connection, dialect or schema metadata directly (e.g. to run its own SQL) reads them off the injected
+`jdbcDomainPersistenceProvider.connectionProvider` / `.dialect` / `.schemaMetadata` fields, rather than
+requiring them as separate constructor parameters of its own.
 
 <a name="fetcher"></a>
 
@@ -229,23 +236,23 @@ and table/foreign-key resolution respectively.
 trees are loaded, resolving `1:1`/`1:n` relations between tables via the foreign keys captured in
 `JdbcSchemaMetadata`, instead of jOOQ's generated, live table metamodel.
 
+Where jOOQ hands back a typed, generated record for a hand-written query, plain JDBC only ever hands back a
+`ResultSet`, which still needs to be mapped onto a `JdbcRecord` (by physical column name, via
+`JdbcSchemaMetadata`) before the fetcher can use it. Rather than hand-rolling that
+`PreparedStatement`/`ResultSet`/`JdbcRecord` mapping loop in every custom finder,
+`io.domainlifecycles.jdbc.util.JdbcRecordMapper` provides it as a set of static helpers
+(`mapRow`, `selectWithSql`, `selectByColumn`, `selectOne`, `selectOneByColumn`) - this is the same mapping
+`JdbcAggregateFetcher` uses internally to resolve foreign keys.
+
 A typical custom `findAll`-style query, resolving the resulting rows into full Aggregates via the fetcher:
 
 ```Java
 public Stream<Order> findAllOrders() {
     var fetcher = getFetcher();
-    try (Connection connection = connectionProvider.getConnection();
-         PreparedStatement statement = connection.prepareStatement("SELECT * FROM \"ORDER\"");
-         ResultSet resultSet = statement.executeQuery()) {
-        List<Order> result = new ArrayList<>();
-        while (resultSet.next()) {
-            var record = mapRow(resultSet, schemaMetadata.table("ORDER"));
-            result.add(fetcher.fetchDeep(record).resultValue().get());
-        }
-        return result.stream();
-    } catch (SQLException e) {
-        throw DLCPersistenceException.fail("Query failed.", e);
-    }
+    var table = schemaMetadata.table("ORDER");
+    var records = JdbcRecordMapper.selectWithSql(connectionProvider, table, "SELECT * FROM " + table.qualifiedName());
+    return records.stream()
+        .map(record -> fetcher.fetchDeep(record).resultValue().get());
 }
 ```
 
@@ -253,7 +260,24 @@ For performance-sensitive queries, a `RecordProvider` can be attached to a fetch
 child records (e.g. via a single joined query), exactly as with the jOOQ integration - see
 [DLC Persistence - Queries via Fetcher](../persistence/readme.md#fetcher) for the general pattern; the only
 difference is that a `RecordProvider<JdbcRecord, JdbcRecord>` operates on the generic `JdbcRecord` type on both
-sides, rather than on two distinct generated record types.
+sides, rather than on two distinct generated record types. Extending
+`io.domainlifecycles.jdbc.imp.JdbcRecordProvider` instead of implementing `RecordProvider<JdbcRecord,
+JdbcRecord>` directly gives access to the same `JdbcRecordMapper`-backed helpers as `protected` instance
+methods, so only `provide(JdbcRecord)`/`provideCollection(JdbcRecord)` need to be written:
+
+```Java
+var itemTable = schemaMetadata.table("ORDER_ITEM");
+fetcher.withRecordProvider(
+    new JdbcRecordProvider(connectionProvider) {
+        @Override
+        public Collection<JdbcRecord> provideCollection(JdbcRecord parentRecord) {
+            return selectByColumn(itemTable, "ORDER_ID", parentRecord.get("ID"));
+        }
+    },
+    Order.class,
+    OrderItem.class,
+    List.of("orderItems"));
+```
 
 <a name="or-mapping"></a>
 
