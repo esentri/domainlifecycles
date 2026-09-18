@@ -27,6 +27,7 @@
 package io.domainlifecycles.jdbc.util;
 
 import io.domainlifecycles.jdbc.connection.JdbcConnectionProvider;
+import io.domainlifecycles.jdbc.dialect.JdbcDialect;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.jdbc.schema.TableMetadata;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
@@ -107,9 +108,11 @@ public final class JdbcRecordMapper {
 
     /**
      * Convenience shorthand for {@link #selectWithSql} building the common {@code SELECT * FROM <table> WHERE
-     * <columnName> = ?} query.
+     * <columnName> = ?} query via {@link JdbcDialect#selectByColumnSql(TableMetadata, String)}, so table and
+     * column names are quoted exactly as every other statement {@code dialect} generates.
      *
      * @param connectionProvider supplies the connection to run the query on
+     * @param dialect            builds the {@code SELECT} statement, quoting identifiers as it requires
      * @param table              the table metadata describing the columns to read
      * @param columnName         the physical column to filter on
      * @param value              the value to filter for
@@ -117,10 +120,10 @@ public final class JdbcRecordMapper {
      * @throws DLCPersistenceException if the query fails
      */
     public static List<JdbcRecord> selectByColumn(
-        JdbcConnectionProvider connectionProvider, TableMetadata table, String columnName, Object value
+        JdbcConnectionProvider connectionProvider, JdbcDialect dialect, TableMetadata table, String columnName,
+        Object value
     ) {
-        var sql = "SELECT * FROM " + table.qualifiedName() + " WHERE " + columnName + " = ?";
-        return selectWithSql(connectionProvider, table, sql, value);
+        return selectWithSql(connectionProvider, table, dialect.selectByColumnSql(table, columnName), value);
     }
 
     /**
@@ -146,9 +149,11 @@ public final class JdbcRecordMapper {
 
     /**
      * Convenience shorthand for {@link #selectOne} building the common {@code SELECT * FROM <table> WHERE
-     * <columnName> = ?} query.
+     * <columnName> = ?} query via {@link JdbcDialect#selectByColumnSql(TableMetadata, String)}, so table and
+     * column names are quoted exactly as every other statement {@code dialect} generates.
      *
      * @param connectionProvider supplies the connection to run the query on
+     * @param dialect            builds the {@code SELECT} statement, quoting identifiers as it requires
      * @param table              the table metadata describing the columns to read
      * @param columnName         the physical column to filter on
      * @param value              the value to filter for
@@ -156,9 +161,9 @@ public final class JdbcRecordMapper {
      * @throws DLCPersistenceException if the query fails, or more than one row matched
      */
     public static JdbcRecord selectOneByColumn(
-        JdbcConnectionProvider connectionProvider, TableMetadata table, String columnName, Object value
+        JdbcConnectionProvider connectionProvider, JdbcDialect dialect, TableMetadata table, String columnName,
+        Object value
     ) {
-        var sql = "SELECT * FROM " + table.qualifiedName() + " WHERE " + columnName + " = ?";
-        return selectOne(connectionProvider, table, sql, value);
+        return selectOne(connectionProvider, table, dialect.selectByColumnSql(table, columnName), value);
     }
 }

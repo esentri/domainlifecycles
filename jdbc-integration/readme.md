@@ -57,15 +57,45 @@ backends for exactly the same programming model.
 ### Supported database dialects
 
 Plain JDBC does not abstract SQL dialect differences the way jOOQ does, so this module makes the (small) set
-of differences it actually depends on explicit via `io.domainlifecycles.jdbc.dialect.JdbcDialect`. The only
-dialect-specific operation is obtaining the next value of a sequence (used for entity identities and for the
-technical ids of "record mapped" ValueObjects, see [id generation](#id-generation)):
+of differences it actually depends on explicit via `io.domainlifecycles.jdbc.dialect.JdbcDialect`. Obtaining
+the next value of a sequence (used for entity identities and for the technical ids of "record mapped"
+ValueObjects, see [id generation](#id-generation)) is the one operation every dialect must implement:
 
 - `H2JdbcDialect`
 - `PostgresJdbcDialect`
 - `OracleJdbcDialect`
 - `MySqlJdbcDialect` (standard MySQL has no native `SEQUENCE` object and emulates one)
 - `SqlServerJdbcDialect`
+
+`JdbcDialect` also builds the `INSERT`/`UPDATE`/`DELETE` statements `JdbcPersister` executes
+(`insertSql(...)`/`updateSql(...)`/`deleteSql(...)`), each with a default implementation generating plain,
+unquoted ANSI SQL - the same statements this module always generated, before these hooks existed. A custom
+dialect only needs to override what it actually needs to change; the most common case is identifier quoting
+(reserved words, case-sensitive identifiers, ...), for which overriding a single method is enough - the
+default `insertSql`/`updateSql`/`deleteSql` implementations already route every table and column name through
+it:
+
+```Java
+public class QuotingPostgresJdbcDialect implements JdbcDialect {
+
+    private final JdbcDialect delegate = new PostgresJdbcDialect();
+
+    @Override
+    public String name() {
+        return delegate.name();
+    }
+
+    @Override
+    public long nextSequenceValue(Connection connection, String sequenceName) throws SQLException {
+        return delegate.nextSequenceValue(connection, sequenceName);
+    }
+
+    @Override
+    public String quoteIdentifier(String identifier) {
+        return "\"" + identifier + "\"";
+    }
+}
+```
 
 A `JdbcConnectionProvider` and `JdbcDialect` instance are registered once, centrally, on the
 `JdbcDomainPersistenceConfiguration` (see [DLC Persistence configuration](#persistence-configuration)) and are
@@ -242,7 +272,11 @@ Where jOOQ hands back a typed, generated record for a hand-written query, plain 
 `PreparedStatement`/`ResultSet`/`JdbcRecord` mapping loop in every custom finder,
 `io.domainlifecycles.jdbc.util.JdbcRecordMapper` provides it as a set of static helpers
 (`mapRow`, `selectWithSql`, `selectByColumn`, `selectOne`, `selectOneByColumn`) - this is the same mapping
-`JdbcAggregateFetcher` uses internally to resolve foreign keys.
+`JdbcAggregateFetcher` uses internally to resolve foreign keys. `selectByColumn`/`selectOneByColumn` build
+their `SELECT` via `JdbcDialect.selectByColumnSql(...)` (see [dialects](#dialects)), so a custom dialect's
+`quoteIdentifier(...)` override is honored there exactly as it is for `JdbcPersister`'s statements - `sql`
+passed to `selectWithSql`/`selectOne` directly is, by definition, already fully written by the caller and is
+not touched.
 
 A typical custom `findAll`-style query, resolving the resulting rows into full Aggregates via the fetcher:
 
@@ -268,7 +302,7 @@ methods, so only `provide(JdbcRecord)`/`provideCollection(JdbcRecord)` need to b
 ```Java
 var itemTable = schemaMetadata.table("ORDER_ITEM");
 fetcher.withRecordProvider(
-    new JdbcRecordProvider(connectionProvider) {
+    new JdbcRecordProvider(jdbcDomainPersistenceProvider) {
         @Override
         public Collection<JdbcRecord> provideCollection(JdbcRecord parentRecord) {
             return selectByColumn(itemTable, "ORDER_ID", parentRecord.get("ID"));

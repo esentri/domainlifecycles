@@ -29,6 +29,7 @@ package io.domainlifecycles.jdbc.imp;
 import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.jdbc.connection.JdbcConnectionProvider;
+import io.domainlifecycles.jdbc.dialect.JdbcDialect;
 import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.jdbc.schema.JdbcSchemaMetadata;
@@ -60,6 +61,7 @@ public class JdbcAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
 
     private final JdbcDomainPersistenceProvider domainPersistenceProvider;
     private final JdbcConnectionProvider connectionProvider;
+    private final JdbcDialect dialect;
     private final JdbcSchemaMetadata schemaMetadata;
 
     /**
@@ -67,7 +69,8 @@ public class JdbcAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
      *
      * @param aggregateRootClass        the class of the aggregate root being managed
      * @param domainPersistenceProvider the persistence provider used to resolve entity record mirrors, and
-     *                                  supplying the connection and schema metadata registered centrally on it
+     *                                  supplying the connection, dialect and schema metadata registered
+     *                                  centrally on it
      */
     public JdbcAggregateFetcher(
         Class<A> aggregateRootClass,
@@ -76,6 +79,7 @@ public class JdbcAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
         super(aggregateRootClass, domainPersistenceProvider);
         this.domainPersistenceProvider = domainPersistenceProvider;
         this.connectionProvider = Objects.requireNonNull(domainPersistenceProvider.connectionProvider);
+        this.dialect = Objects.requireNonNull(domainPersistenceProvider.dialect);
         this.schemaMetadata = Objects.requireNonNull(domainPersistenceProvider.schemaMetadata);
     }
 
@@ -189,12 +193,13 @@ public class JdbcAggregateFetcher<A extends AggregateRoot<I>, I extends Identity
         var parentPkColumn = parentTable.column(requirePrimaryKeyName(parentTable));
         var parentPkValue = parentRecord.get(parentPkColumn.name());
         var foreignKeyColumn = childTable.column(foreignKeyColumnName);
-        return JdbcRecordMapper.selectByColumn(connectionProvider, childTable, foreignKeyColumn.name(), parentPkValue);
+        return JdbcRecordMapper.selectByColumn(
+            connectionProvider, dialect, childTable, foreignKeyColumn.name(), parentPkValue);
     }
 
     private JdbcRecord selectByPrimaryKey(TableMetadata table, Object primaryKeyValue) {
         var pkColumn = table.column(requirePrimaryKeyName(table));
-        var rows = JdbcRecordMapper.selectByColumn(connectionProvider, table, pkColumn.name(), primaryKeyValue);
+        var rows = JdbcRecordMapper.selectByColumn(connectionProvider, dialect, table, pkColumn.name(), primaryKeyValue);
         if (rows.size() > 1) {
             throw DLCPersistenceException.fail(
                 "Find by ID: more than one row found for primary key value '%s' in table '%s'.",

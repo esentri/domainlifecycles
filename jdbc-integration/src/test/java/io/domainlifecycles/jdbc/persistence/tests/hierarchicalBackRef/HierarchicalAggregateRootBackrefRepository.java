@@ -105,7 +105,7 @@ public class HierarchicalAggregateRootBackrefRepository
     }
 
     private JdbcRecord selectByColumn(TableMetadata table, String columnName, Object value) {
-        return JdbcRecordMapper.selectOneByColumn(connectionProvider, table, columnName, value);
+        return JdbcRecordMapper.selectOneByColumn(connectionProvider, domainPersistenceProvider.dialect, table, columnName, value);
     }
 
     @Override

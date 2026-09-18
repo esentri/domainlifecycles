@@ -27,6 +27,8 @@
 package io.domainlifecycles.jdbc.imp;
 
 import io.domainlifecycles.jdbc.connection.JdbcConnectionProvider;
+import io.domainlifecycles.jdbc.dialect.JdbcDialect;
+import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.jdbc.schema.TableMetadata;
 import io.domainlifecycles.jdbc.util.JdbcRecordMapper;
@@ -43,7 +45,9 @@ import java.util.Objects;
  * A subclass only needs to override {@link #provide(JdbcRecord)} and/or {@link #provideCollection(JdbcRecord)}
  * and call one of the {@code select*} methods below to obtain the child record(s) - the {@code
  * PreparedStatement} -&gt; {@code ResultSet} -&gt; {@link JdbcRecord} mapping is handled by {@link
- * JdbcRecordMapper} underneath, so it doesn't have to be re-implemented in every custom provider.
+ * JdbcRecordMapper} underneath, so it doesn't have to be re-implemented in every custom provider; {@link
+ * #selectByColumn} and {@link #selectOneByColumn} are quoted exactly as every other statement the injected
+ * {@link JdbcDialect} generates.
  *
  * @author Mario Herb
  */
@@ -55,12 +59,20 @@ public abstract class JdbcRecordProvider implements RecordProvider<JdbcRecord, J
     protected final JdbcConnectionProvider connectionProvider;
 
     /**
+     * Builds the generated {@link #selectByColumn}/{@link #selectOneByColumn} statements, quoting identifiers
+     * as it requires.
+     */
+    protected final JdbcDialect dialect;
+
+    /**
      * Constructs a new instance of {@code JdbcRecordProvider}.
      *
-     * @param connectionProvider supplies the connection used to execute this provider's queries
+     * @param domainPersistenceProvider supplies the connection and dialect used to execute this provider's
+     *                                  queries, registered centrally on it
      */
-    protected JdbcRecordProvider(JdbcConnectionProvider connectionProvider) {
-        this.connectionProvider = Objects.requireNonNull(connectionProvider);
+    protected JdbcRecordProvider(JdbcDomainPersistenceProvider domainPersistenceProvider) {
+        this.connectionProvider = Objects.requireNonNull(domainPersistenceProvider.connectionProvider);
+        this.dialect = Objects.requireNonNull(domainPersistenceProvider.dialect);
     }
 
     /**
@@ -86,7 +98,7 @@ public abstract class JdbcRecordProvider implements RecordProvider<JdbcRecord, J
      * @return the mapped rows, in the order returned by the database
      */
     protected List<JdbcRecord> selectByColumn(TableMetadata table, String columnName, Object value) {
-        return JdbcRecordMapper.selectByColumn(connectionProvider, table, columnName, value);
+        return JdbcRecordMapper.selectByColumn(connectionProvider, dialect, table, columnName, value);
     }
 
     /**
@@ -111,6 +123,6 @@ public abstract class JdbcRecordProvider implements RecordProvider<JdbcRecord, J
      * @return the single mapped row, or {@code null} if none matched
      */
     protected JdbcRecord selectOneByColumn(TableMetadata table, String columnName, Object value) {
-        return JdbcRecordMapper.selectOneByColumn(connectionProvider, table, columnName, value);
+        return JdbcRecordMapper.selectOneByColumn(connectionProvider, dialect, table, columnName, value);
     }
 }

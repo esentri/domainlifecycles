@@ -186,14 +186,16 @@ public class ComplexAggregateRootRepository
         if (value == null) {
             return null;
         }
-        return JdbcRecordMapper.selectOneByColumn(connectionProvider, schemaMetadata.table(tableName), columnName, value);
+        return JdbcRecordMapper.selectOneByColumn(
+            connectionProvider, domainPersistenceProvider.dialect, schemaMetadata.table(tableName), columnName, value);
     }
 
     private List<JdbcRecord> selectMany(String tableName, String columnName, Object value) {
         if (value == null) {
             return List.of();
         }
-        return JdbcRecordMapper.selectByColumn(connectionProvider, schemaMetadata.table(tableName), columnName, value);
+        return JdbcRecordMapper.selectByColumn(
+            connectionProvider, domainPersistenceProvider.dialect, schemaMetadata.table(tableName), columnName, value);
     }
 
     @Override

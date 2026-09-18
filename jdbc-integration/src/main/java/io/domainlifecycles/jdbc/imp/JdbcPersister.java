@@ -27,6 +27,7 @@
 package io.domainlifecycles.jdbc.imp;
 
 import io.domainlifecycles.jdbc.connection.JdbcConnectionProvider;
+import io.domainlifecycles.jdbc.dialect.JdbcDialect;
 import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.jdbc.schema.ColumnMetadata;
@@ -41,7 +42,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Plain JDBC based implementation of a {@link Persister}.
@@ -67,6 +67,7 @@ public class JdbcPersister extends BasePersister<JdbcRecord> implements Persiste
     private static final String CONCURRENCY_VERSION_COLUMN_NAME = "CONCURRENCY_VERSION";
 
     private final JdbcConnectionProvider connectionProvider;
+    private final JdbcDialect dialect;
     private final JdbcSchemaMetadata schemaMetadata;
 
     /**
@@ -82,6 +83,7 @@ public class JdbcPersister extends BasePersister<JdbcRecord> implements Persiste
             new JdbcEntityParentReferenceProvider(domainPersistenceProvider)
         );
         this.connectionProvider = Objects.requireNonNull(domainPersistenceProvider.connectionProvider);
+        this.dialect = Objects.requireNonNull(domainPersistenceProvider.dialect);
         this.schemaMetadata = Objects.requireNonNull(domainPersistenceProvider.schemaMetadata);
     }
 
@@ -100,9 +102,7 @@ public class JdbcPersister extends BasePersister<JdbcRecord> implements Persiste
         }
         var values = record.values();
         var columnNames = new ArrayList<>(values.keySet());
-        var sql = "INSERT INTO " + table.qualifiedName()
-            + " (" + String.join(", ", columnNames) + ")"
-            + " VALUES (" + columnNames.stream().map(c -> "?").collect(Collectors.joining(", ")) + ")";
+        var sql = dialect.insertSql(table, columnNames);
         try (PreparedStatement statement = connectionProvider.getConnection().prepareStatement(sql)) {
             int index = 1;
             for (var columnName : columnNames) {
@@ -133,13 +133,10 @@ public class JdbcPersister extends BasePersister<JdbcRecord> implements Persiste
         var concurrencyColumn = table.findColumn(CONCURRENCY_VERSION_COLUMN_NAME).orElse(null);
         var versionChecked = concurrencyColumn != null && values.containsKey(concurrencyColumn.name());
 
-        var sql = new StringBuilder("DELETE FROM ").append(table.qualifiedName())
-            .append(" WHERE ").append(pkColumn.name()).append(" = ?");
-        if (versionChecked) {
-            sql.append(" AND ").append(concurrencyColumn.name()).append(" = ?");
-        }
+        var sql = dialect.deleteSql(
+            table, pkColumn.name(), versionChecked ? concurrencyColumn.name() : null, versionChecked);
 
-        try (PreparedStatement statement = connectionProvider.getConnection().prepareStatement(sql.toString())) {
+        try (PreparedStatement statement = connectionProvider.getConnection().prepareStatement(sql)) {
             statement.setObject(1, values.get(pkColumn.name()));
             if (versionChecked) {
                 statement.setObject(2, values.get(concurrencyColumn.name()));
@@ -183,18 +180,10 @@ public class JdbcPersister extends BasePersister<JdbcRecord> implements Persiste
             .filter(c -> !versionChecked || !c.equals(concurrencyColumn.name()))
             .toList();
 
-        var sql = new StringBuilder("UPDATE ").append(table.qualifiedName()).append(" SET ");
-        var setClauses = new ArrayList<>(setColumns.stream().map(c -> c + " = ?").toList());
-        if (versionChecked) {
-            setClauses.add(concurrencyColumn.name() + " = ?");
-        }
-        sql.append(String.join(", ", setClauses));
-        sql.append(" WHERE ").append(pkColumn.name()).append(" = ?");
-        if (versionChecked) {
-            sql.append(" AND ").append(concurrencyColumn.name()).append(" = ?");
-        }
+        var sql = dialect.updateSql(
+            table, setColumns, pkColumn.name(), versionChecked ? concurrencyColumn.name() : null, versionChecked);
 
-        try (PreparedStatement statement = connectionProvider.getConnection().prepareStatement(sql.toString())) {
+        try (PreparedStatement statement = connectionProvider.getConnection().prepareStatement(sql)) {
             int index = 1;
             for (var columnName : setColumns) {
                 statement.setObject(index++, values.get(columnName));

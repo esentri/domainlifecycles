@@ -4,6 +4,7 @@ import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvi
 import io.domainlifecycles.jdbc.configuration.JdbcDomainPersistenceConfiguration;
 import io.domainlifecycles.jdbc.connection.SingleJdbcConnectionProvider;
 import io.domainlifecycles.jdbc.dialect.H2JdbcDialect;
+import io.domainlifecycles.jdbc.dialect.JdbcDialect;
 import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.jdbc.schema.JdbcSchemaMetadata;
@@ -206,6 +207,71 @@ class JdbcPersisterTest {
              var rs = stmt.executeQuery("SELECT CONCURRENCY_VERSION FROM WIDGET WHERE ID = 1")) {
             assertThat(rs.next()).isTrue();
             assertThat(rs.getLong("CONCURRENCY_VERSION")).isEqualTo(1L);
+        }
+    }
+
+    @Test
+    void insertUpdateDeleteRoundtripWorksWithACustomQuotingDialect() throws SQLException {
+        // a custom dialect overriding only quoteIdentifier() - the generated INSERT/UPDATE/DELETE statements
+        // should come out fully quoted, and still execute correctly against a real database (H2 supports
+        // standard SQL double-quoted identifiers), proving the dialect hook is actually wired through
+        // JdbcPersister end-to-end, not just exercised in isolation against plain strings.
+        var quotingDialect = new JdbcDialect() {
+            private final H2JdbcDialect delegate = new H2JdbcDialect();
+
+            @Override
+            public String name() {
+                return "QUOTING-H2";
+            }
+
+            @Override
+            public long nextSequenceValue(Connection connection, String sequenceName) throws SQLException {
+                return delegate.nextSequenceValue(connection, sequenceName);
+            }
+
+            @Override
+            public String quoteIdentifier(String identifier) {
+                return "\"" + identifier + "\"";
+            }
+        };
+        var schemaMetadata = JdbcSchemaMetadata.read(connection);
+        var configuration = JdbcDomainPersistenceConfiguration.JdbcPersistenceConfigurationBuilder.newConfig()
+            .withSchemaMetadata(schemaMetadata)
+            .withConnectionProvider(new SingleJdbcConnectionProvider(connection))
+            .withDialect(quotingDialect)
+            .withDomainObjectBuilderProvider(new InnerClassDomainObjectBuilderProvider())
+            .make();
+        var quotingPersister = new JdbcPersister(new JdbcDomainPersistenceProvider(configuration));
+
+        var inserted = new JdbcRecord("WIDGET");
+        inserted.set("ID", 1L);
+        inserted.set("NAME", "Alice");
+        inserted.set("CONCURRENCY_VERSION", 0L);
+        quotingPersister.doInsert(inserted);
+
+        var updated = new JdbcRecord("WIDGET");
+        updated.set("ID", 1L);
+        updated.set("NAME", "Alice Updated");
+        updated.set("CONCURRENCY_VERSION", 1L);
+        quotingPersister.doUpdate(updated);
+        assertThat(updated.get("CONCURRENCY_VERSION")).isEqualTo(2L);
+
+        try (var stmt = connection.createStatement();
+             var rs = stmt.executeQuery("SELECT NAME, CONCURRENCY_VERSION FROM WIDGET WHERE ID = 1")) {
+            assertThat(rs.next()).isTrue();
+            assertThat(rs.getString("NAME")).isEqualTo("Alice Updated");
+            assertThat(rs.getLong("CONCURRENCY_VERSION")).isEqualTo(2L);
+        }
+
+        var toDelete = new JdbcRecord("WIDGET");
+        toDelete.set("ID", 1L);
+        toDelete.set("CONCURRENCY_VERSION", 2L);
+        quotingPersister.doDelete(toDelete);
+
+        try (var stmt = connection.createStatement();
+             var rs = stmt.executeQuery("SELECT COUNT(*) FROM WIDGET WHERE ID = 1")) {
+            rs.next();
+            assertThat(rs.getInt(1)).isZero();
         }
     }
 
