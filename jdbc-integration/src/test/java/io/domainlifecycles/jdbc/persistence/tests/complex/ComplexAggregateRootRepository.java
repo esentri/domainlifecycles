@@ -4,13 +4,11 @@ import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.jdbc.connection.JdbcConnectionProvider;
-import io.domainlifecycles.jdbc.dialect.JdbcDialect;
 import io.domainlifecycles.jdbc.imp.JdbcPersister;
 import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.jdbc.schema.JdbcSchemaMetadata;
-import io.domainlifecycles.jdbc.schema.TableMetadata;
-import io.domainlifecycles.persistence.exception.DLCPersistenceException;
+import io.domainlifecycles.jdbc.util.JdbcRecordMapper;
 import io.domainlifecycles.persistence.fetcher.AggregateFetcher;
 import io.domainlifecycles.persistence.fetcher.FetcherResult;
 import io.domainlifecycles.persistence.fetcher.RecordProvider;
@@ -28,10 +26,6 @@ import tests.shared.persistence.domain.complex.TestEntity6;
 import tests.shared.persistence.domain.complex.TestRoot;
 import tests.shared.persistence.domain.complex.TestRootId;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,18 +45,15 @@ public class ComplexAggregateRootRepository
     private final JdbcDomainPersistenceProvider domainPersistenceProvider;
     private final SimpleAggregateFetcher<Long, TestRoot, TestRootId, JdbcRecord> simpleAggregateFetcher;
 
-    public ComplexAggregateRootRepository(JdbcConnectionProvider connectionProvider,
-                                           JdbcDialect dialect,
-                                           JdbcSchemaMetadata schemaMetadata,
-                                           JdbcDomainPersistenceProvider domainPersistenceProvider,
+    public ComplexAggregateRootRepository(JdbcDomainPersistenceProvider domainPersistenceProvider,
                                            PersistenceEventPublisher persistenceEventPublisher) {
         super(
-            new JdbcPersister(connectionProvider, dialect, schemaMetadata, domainPersistenceProvider),
+            new JdbcPersister(domainPersistenceProvider),
             domainPersistenceProvider,
             persistenceEventPublisher
         );
-        this.connectionProvider = connectionProvider;
-        this.schemaMetadata = schemaMetadata;
+        this.connectionProvider = domainPersistenceProvider.connectionProvider;
+        this.schemaMetadata = domainPersistenceProvider.schemaMetadata;
         this.domainPersistenceProvider = domainPersistenceProvider;
         this.simpleAggregateFetcher = provideFetcher();
     }
@@ -192,40 +183,19 @@ public class ComplexAggregateRootRepository
     }
 
     private JdbcRecord selectOne(String tableName, String columnName, Object value) {
-        List<JdbcRecord> rows = selectMany(tableName, columnName, value);
-        if (rows.size() > 1) {
-            throw DLCPersistenceException.fail(
-                "Find by '%s': more than one row found for value '%s' in table '%s'.", columnName, value, tableName);
+        if (value == null) {
+            return null;
         }
-        return rows.isEmpty() ? null : rows.get(0);
+        return JdbcRecordMapper.selectOneByColumn(
+            connectionProvider, domainPersistenceProvider.dialect, schemaMetadata.table(tableName), columnName, value);
     }
 
     private List<JdbcRecord> selectMany(String tableName, String columnName, Object value) {
         if (value == null) {
             return List.of();
         }
-        var table = schemaMetadata.table(tableName);
-        var sql = "SELECT * FROM " + table.qualifiedName() + " WHERE " + columnName + " = ?";
-        try (PreparedStatement statement = connectionProvider.getConnection().prepareStatement(sql)) {
-            statement.setObject(1, value);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                List<JdbcRecord> rows = new ArrayList<>();
-                while (resultSet.next()) {
-                    rows.add(mapRow(resultSet, table));
-                }
-                return rows;
-            }
-        } catch (SQLException e) {
-            throw DLCPersistenceException.fail("Query on '%s' failed.", e, table.name());
-        }
-    }
-
-    private JdbcRecord mapRow(ResultSet resultSet, TableMetadata table) throws SQLException {
-        var record = new JdbcRecord(table.name());
-        for (var column : table.columns()) {
-            record.set(column.name(), resultSet.getObject(column.name(), column.javaType()));
-        }
-        return record;
+        return JdbcRecordMapper.selectByColumn(
+            connectionProvider, domainPersistenceProvider.dialect, schemaMetadata.table(tableName), columnName, value);
     }
 
     @Override

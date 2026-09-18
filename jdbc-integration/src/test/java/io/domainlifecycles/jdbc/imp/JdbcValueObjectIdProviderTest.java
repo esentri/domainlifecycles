@@ -47,12 +47,12 @@ class JdbcValueObjectIdProviderTest {
         var schemaMetadata = JdbcSchemaMetadata.read(connection);
         var configuration = JdbcDomainPersistenceConfiguration.JdbcPersistenceConfigurationBuilder.newConfig()
             .withSchemaMetadata(schemaMetadata)
+            .withConnectionProvider(new SingleJdbcConnectionProvider(connection))
+            .withDialect(new H2JdbcDialect())
             .withDomainObjectBuilderProvider(new InnerClassDomainObjectBuilderProvider())
             .make();
         var domainPersistenceProvider = new JdbcDomainPersistenceProvider(configuration);
-        provider = new JdbcValueObjectIdProvider(
-            domainPersistenceProvider, new SingleJdbcConnectionProvider(connection), new H2JdbcDialect(),
-            schemaMetadata);
+        provider = new JdbcValueObjectIdProvider(domainPersistenceProvider);
     }
 
     @AfterEach

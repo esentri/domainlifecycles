@@ -22,9 +22,6 @@ public class OneToManyAggregateRootRepository_ITest extends JdbcBasePersistence_
     @BeforeAll
     public void init() {
         oneToManyAggregateRootRepository = new OneToManyAggregateRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );

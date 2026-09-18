@@ -20,9 +20,6 @@ public class HierarchicalAggregateRootBackrefRepository_ITest extends JdbcBasePe
     @BeforeAll
     public void init() {
         hierarchicalAggregateRootBackrefRepository = new HierarchicalAggregateRootBackrefRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );

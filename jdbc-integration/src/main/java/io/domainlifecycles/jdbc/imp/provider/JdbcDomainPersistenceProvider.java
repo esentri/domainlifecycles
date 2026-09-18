@@ -28,7 +28,10 @@ package io.domainlifecycles.jdbc.imp.provider;
 
 import io.domainlifecycles.jdbc.configuration.JdbcDomainPersistenceConfiguration;
 import io.domainlifecycles.jdbc.configuration.JdbcEntityValueObjectRecordTypeConfiguration;
+import io.domainlifecycles.jdbc.connection.JdbcConnectionProvider;
+import io.domainlifecycles.jdbc.dialect.JdbcDialect;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
+import io.domainlifecycles.jdbc.schema.JdbcSchemaMetadata;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.EntityMirror;
@@ -80,6 +83,25 @@ import java.util.stream.Collectors;
 public class JdbcDomainPersistenceProvider extends DomainPersistenceProvider<JdbcRecord> {
 
     /**
+     * Supplies the connection used for all database interaction. Registered centrally here (via the
+     * configuration this provider is built from) so that repositories, persisters and fetchers can obtain it
+     * from the provider instead of requiring it as a separate constructor parameter of their own.
+     */
+    public final JdbcConnectionProvider connectionProvider;
+
+    /**
+     * The dialect used for sequence access. Registered centrally for the same reason as {@link
+     * #connectionProvider}.
+     */
+    public final JdbcDialect dialect;
+
+    /**
+     * The schema metadata snapshot used to resolve tables and foreign keys. Registered centrally for the same
+     * reason as {@link #connectionProvider}.
+     */
+    public final JdbcSchemaMetadata schemaMetadata;
+
+    /**
      * Constructs an instance of {@code JdbcDomainPersistenceProvider} using the provided configuration.
      * Registers converters provided by the type converter provider within the configuration, if available.
      *
@@ -88,6 +110,9 @@ public class JdbcDomainPersistenceProvider extends DomainPersistenceProvider<Jdb
      */
     public JdbcDomainPersistenceProvider(JdbcDomainPersistenceConfiguration jdbcPersistenceConfiguration) {
         super(jdbcPersistenceConfiguration);
+        this.connectionProvider = jdbcPersistenceConfiguration.connectionProvider;
+        this.dialect = jdbcPersistenceConfiguration.dialect;
+        this.schemaMetadata = jdbcPersistenceConfiguration.schemaMetadata;
         if (jdbcPersistenceConfiguration.typeConverterProvider != null) {
             jdbcPersistenceConfiguration.typeConverterProvider.provideConverters().forEach(
                 converterRegistry::registerConverter

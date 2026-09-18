@@ -39,9 +39,6 @@ public class OrderRepository_ITest extends JdbcBasePersistence_ITest {
     public void init() {
 
         orderRepository = new OrderRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher);
     }

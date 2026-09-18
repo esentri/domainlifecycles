@@ -37,9 +37,6 @@ public class VoAggregateRootRepository_ITest extends JdbcBasePersistence_ITest {
     @BeforeAll
     public void init() {
         voAggregateRootRepository = new VoAggregateRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );

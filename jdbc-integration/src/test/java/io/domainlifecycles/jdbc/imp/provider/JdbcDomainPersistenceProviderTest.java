@@ -2,6 +2,8 @@ package io.domainlifecycles.jdbc.imp.provider;
 
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
 import io.domainlifecycles.jdbc.configuration.JdbcDomainPersistenceConfiguration;
+import io.domainlifecycles.jdbc.connection.SingleJdbcConnectionProvider;
+import io.domainlifecycles.jdbc.dialect.H2JdbcDialect;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.jdbc.schema.JdbcSchemaMetadata;
 import io.domainlifecycles.mirror.api.Domain;
@@ -51,6 +53,8 @@ class JdbcDomainPersistenceProviderTest {
         var schemaMetadata = JdbcSchemaMetadata.read(connection);
         var configuration = JdbcDomainPersistenceConfiguration.JdbcPersistenceConfigurationBuilder.newConfig()
             .withSchemaMetadata(schemaMetadata)
+            .withConnectionProvider(new SingleJdbcConnectionProvider(connection))
+            .withDialect(new H2JdbcDialect())
             .withDomainObjectBuilderProvider(new InnerClassDomainObjectBuilderProvider())
             .make();
         provider = new JdbcDomainPersistenceProvider(configuration);

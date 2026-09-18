@@ -33,9 +33,6 @@ public class TemporalAggregateRootRepository_ITest extends JdbcBasePersistence_I
     @BeforeAll
     public void init() {
         temporalAggregateRootRepository = new TemporalAggregateRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );

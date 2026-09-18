@@ -82,6 +82,8 @@ class JdbcAggregateRepositoryTest {
         schemaMetadata = JdbcSchemaMetadata.read(connection);
         var configuration = JdbcDomainPersistenceConfiguration.JdbcPersistenceConfigurationBuilder.newConfig()
             .withSchemaMetadata(schemaMetadata)
+            .withConnectionProvider(connectionProvider)
+            .withDialect(new H2JdbcDialect())
             .withDomainObjectBuilderProvider(new InnerClassDomainObjectBuilderProvider())
             .make();
         domainPersistenceProvider = new JdbcDomainPersistenceProvider(configuration);
@@ -96,8 +98,7 @@ class JdbcAggregateRepositoryTest {
     @Test
     void insertsFindsUpdatesAndDeletesARootOnlyAggregate() {
         var repository = new JdbcAggregateRepository<TestRootSimple, TestRootSimpleId>(
-            TestRootSimple.class, connectionProvider, new H2JdbcDialect(), schemaMetadata,
-            domainPersistenceProvider, publishedActions::add);
+            TestRootSimple.class, domainPersistenceProvider, publishedActions::add);
 
         var id = (TestRootSimpleId) identityProvider.provideFor(TestRootSimple.class.getName());
         var root = TestRootSimple.builder().setId(id).setConcurrencyVersion(0L).setName("Alice").build();
@@ -127,8 +128,7 @@ class JdbcAggregateRepositoryTest {
     @Test
     void insertsAndFetchesAggregateWithOneToManyChildren() {
         var repository = new JdbcAggregateRepository<TestRootOneToMany, TestRootOneToManyId>(
-            TestRootOneToMany.class, connectionProvider, new H2JdbcDialect(), schemaMetadata,
-            domainPersistenceProvider, publishedActions::add);
+            TestRootOneToMany.class, domainPersistenceProvider, publishedActions::add);
 
         var rootId = (TestRootOneToManyId) identityProvider.provideFor(TestRootOneToMany.class.getName());
         var childId1 = (TestEntityOneToManyId) identityProvider.provideFor(TestEntityOneToMany.class.getName());

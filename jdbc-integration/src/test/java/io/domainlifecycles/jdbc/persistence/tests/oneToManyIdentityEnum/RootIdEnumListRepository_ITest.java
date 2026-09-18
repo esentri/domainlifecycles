@@ -28,9 +28,6 @@ public class RootIdEnumListRepository_ITest extends JdbcBasePersistence_ITest {
     @BeforeAll
     public void init() {
         rootIdEnumListRepository = new RootIdEnumListRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );

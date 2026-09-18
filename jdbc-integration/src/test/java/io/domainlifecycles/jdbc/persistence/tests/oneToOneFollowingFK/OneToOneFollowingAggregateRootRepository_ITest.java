@@ -22,9 +22,6 @@ public class OneToOneFollowingAggregateRootRepository_ITest extends JdbcBasePers
     @BeforeAll
     public void init() {
         oneToOneFollowingAggregateRootRepository = new OneToOneFollowingAggregateRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );

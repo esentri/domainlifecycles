@@ -15,6 +15,7 @@ import io.domainlifecycles.jdbc.persistence.tests.oneToManyIdentityEnum.RootIdEn
 import io.domainlifecycles.jdbc.persistence.tests.oneToOneLeadingFK.OneToOneLeadingAggregateRootRepository;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.jdbc.schema.TableMetadata;
+import io.domainlifecycles.jdbc.util.JdbcRecordMapper;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.fetcher.RecordProvider;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
@@ -47,10 +48,6 @@ import tests.shared.persistence.domain.oneToOneLeadingFK.TestEntityOneToOneLeadi
 import tests.shared.persistence.domain.oneToOneLeadingFK.TestRootOneToOneLeading;
 import tests.shared.persistence.domain.oneToOneLeadingFK.TestRootOneToOneLeadingId;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -84,64 +81,37 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @BeforeAll
     public void init() {
         rootIdEnumListRepository = new RootIdEnumListRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );
         manyToManyAggregateRootRepository = new ManyToManyAggregateRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher);
         hierarchicalAggregateRootBackrefRepository = new HierarchicalAggregateRootBackrefRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );
         hierarchicalAggregateRootRepository = new HierarchicalAggregateRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );
         complexAggregateRootRepository = new ComplexAggregateRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );
         oneToOneFollowingLeadingAggregateRootRepository = new OneToOneFollowingLeadingAggregateRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );
         oneToManyAggregateRootRepository = new OneToManyAggregateRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );
         oneToOneLeadingAggregateRootRepository = new OneToOneLeadingAggregateRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );
         oneToOneFollowingAggregateRootRepository = new OneToOneFollowingAggregateRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );
@@ -150,8 +120,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherOneToOneFollowingCompleteByRootRecord() {
         JdbcAggregateFetcher<TestRootOneToOneFollowing, TestRootOneToOneFollowingId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRootOneToOneFollowing.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRootOneToOneFollowing.class, persistenceConfiguration.domainPersistenceProvider);
         List<TestRootOneToOneFollowing> inserted = TestDataGenerator.buildManyOneToOneFollowingComplete().stream().map(
             r -> oneToOneFollowingAggregateRootRepository.insert(r)
         ).collect(Collectors.toList());
@@ -171,8 +140,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherOneToOneFollowingEmpty() {
         JdbcAggregateFetcher<TestRootOneToOneFollowing, TestRootOneToOneFollowingId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRootOneToOneFollowing.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRootOneToOneFollowing.class, persistenceConfiguration.domainPersistenceProvider);
 
         Optional<TestRootOneToOneFollowing> result = jdbcEntityFetcher.fetchDeep(
             new TestRootOneToOneFollowingId(1L)).resultValue();
@@ -222,8 +190,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherOneToOneFollowingComplete() {
         JdbcAggregateFetcher<TestRootOneToOneFollowing, TestRootOneToOneFollowingId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRootOneToOneFollowing.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRootOneToOneFollowing.class, persistenceConfiguration.domainPersistenceProvider);
 
         TestRootOneToOneFollowing inserted = oneToOneFollowingAggregateRootRepository.insert(
             TestDataGenerator.buildOneToOneFollowingComplete());
@@ -237,8 +204,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherOneToOneFollowingOnlyRoot() {
         JdbcAggregateFetcher<TestRootOneToOneFollowing, TestRootOneToOneFollowingId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRootOneToOneFollowing.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRootOneToOneFollowing.class, persistenceConfiguration.domainPersistenceProvider);
         TestRootOneToOneFollowing inserted = oneToOneFollowingAggregateRootRepository.insert(
             TestDataGenerator.buildOneToOneFollowingOnlyRoot());
         Optional<TestRootOneToOneFollowing> result = jdbcEntityFetcher.fetchDeep(
@@ -250,8 +216,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherOneToOneLeadingComplete() {
         JdbcAggregateFetcher<TestRootOneToOneLeading, TestRootOneToOneLeadingId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRootOneToOneLeading.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRootOneToOneLeading.class, persistenceConfiguration.domainPersistenceProvider);
         TestRootOneToOneLeading inserted = oneToOneLeadingAggregateRootRepository.insert(
             TestDataGenerator.buildOneToOneLeadingComplete());
         Optional<TestRootOneToOneLeading> result = jdbcEntityFetcher.fetchDeep(
@@ -263,8 +228,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherOneToOneLeadingCompleteCustomPropertyProvider() {
         JdbcAggregateFetcher<TestRootOneToOneLeading, TestRootOneToOneLeadingId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRootOneToOneLeading.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRootOneToOneLeading.class, persistenceConfiguration.domainPersistenceProvider);
         var entityTable = persistenceConfiguration.schemaMetadata.table("TEST_ENTITY_ONE_TO_ONE_LEADING");
         RecordProvider<JdbcRecord, JdbcRecord> prp = new RecordProvider<>() {
             @Override
@@ -293,8 +257,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherOneToOneLeadingOnlyRoot() {
         JdbcAggregateFetcher<TestRootOneToOneLeading, TestRootOneToOneLeadingId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRootOneToOneLeading.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRootOneToOneLeading.class, persistenceConfiguration.domainPersistenceProvider);
 
         TestRootOneToOneLeading inserted = oneToOneLeadingAggregateRootRepository.insert(
             TestDataGenerator.buildOneToOneLeadingOnlyRoot());
@@ -307,8 +270,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherOneToOneLeadingEmpty() {
         JdbcAggregateFetcher<TestRootOneToOneLeading, TestRootOneToOneLeadingId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRootOneToOneLeading.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRootOneToOneLeading.class, persistenceConfiguration.domainPersistenceProvider);
 
         Optional<TestRootOneToOneLeading> result = jdbcEntityFetcher.fetchDeep(
             new TestRootOneToOneLeadingId(1L)).resultValue();
@@ -318,8 +280,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherOneToManyComplete() {
         JdbcAggregateFetcher<TestRootOneToMany, TestRootOneToManyId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRootOneToMany.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRootOneToMany.class, persistenceConfiguration.domainPersistenceProvider);
 
         TestRootOneToMany inserted = oneToManyAggregateRootRepository.insert(
             TestDataGenerator.buildOneToManyComplete());
@@ -331,8 +292,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherOneToManyEmpty() {
         JdbcAggregateFetcher<TestRootOneToMany, TestRootOneToManyId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRootOneToMany.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRootOneToMany.class, persistenceConfiguration.domainPersistenceProvider);
 
         Optional<TestRootOneToMany> result = jdbcEntityFetcher.fetchDeep(new TestRootOneToManyId(1L)).resultValue();
         Assertions.assertThat(result).isEmpty();
@@ -341,8 +301,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherOneToManyCompleteCustomProvider() {
         JdbcAggregateFetcher<TestRootOneToMany, TestRootOneToManyId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRootOneToMany.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRootOneToMany.class, persistenceConfiguration.domainPersistenceProvider);
 
         var entityTable = persistenceConfiguration.schemaMetadata.table("TEST_ENTITY_ONE_TO_MANY");
         RecordProvider<JdbcRecord, JdbcRecord> prp = new RecordProvider<>() {
@@ -374,8 +333,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherOneToManyOnlyRoot() {
         JdbcAggregateFetcher<TestRootOneToMany, TestRootOneToManyId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRootOneToMany.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRootOneToMany.class, persistenceConfiguration.domainPersistenceProvider);
 
         TestRootOneToMany inserted = oneToManyAggregateRootRepository.insert(
             TestDataGenerator.buildOneToManyOnlyRoot());
@@ -389,8 +347,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     public void testFetcherOneToOneFollowingLeadingComplete() {
         JdbcAggregateFetcher<TestRootOneToOneFollowingLeading, TestRootOneToOneFollowingLeadingId> jdbcEntityFetcher =
             new JdbcAggregateFetcher<>(TestRootOneToOneFollowingLeading.class,
-                persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+                persistenceConfiguration.domainPersistenceProvider);
 
         TestRootOneToOneFollowingLeading inserted = oneToOneFollowingLeadingAggregateRootRepository.insert(
             TestDataGenerator.buildOneToOneFollowingLeadingComplete());
@@ -404,8 +361,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     public void testFetcherOneToOneFollowingLeadingOnlyRoot() {
         JdbcAggregateFetcher<TestRootOneToOneFollowingLeading, TestRootOneToOneFollowingLeadingId> jdbcEntityFetcher =
             new JdbcAggregateFetcher<>(TestRootOneToOneFollowingLeading.class,
-                persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+                persistenceConfiguration.domainPersistenceProvider);
 
         TestRootOneToOneFollowingLeading inserted = oneToOneFollowingLeadingAggregateRootRepository.insert(
             TestDataGenerator.buildOneToOneFollowingLeadingOnlyRoot());
@@ -418,8 +374,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     public void testFetcherOneToOneFollowingLeadingEmpty() {
         JdbcAggregateFetcher<TestRootOneToOneFollowingLeading, TestRootOneToOneFollowingLeadingId> jdbcEntityFetcher =
             new JdbcAggregateFetcher<>(TestRootOneToOneFollowingLeading.class,
-                persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+                persistenceConfiguration.domainPersistenceProvider);
 
         Optional<TestRootOneToOneFollowingLeading> result = jdbcEntityFetcher.fetchDeep(
             new TestRootOneToOneFollowingLeadingId(1L)).resultValue();
@@ -429,8 +384,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherComplexExpectedException() {
         JdbcAggregateFetcher<TestRoot, TestRootId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRoot.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRoot.class, persistenceConfiguration.domainPersistenceProvider);
 
         complexAggregateRootRepository.insert(TestDataGenerator.buildTestRootComplex());
 
@@ -444,8 +398,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherComplex() {
         JdbcAggregateFetcher<TestRoot, TestRootId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRoot.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRoot.class, persistenceConfiguration.domainPersistenceProvider);
 
         var entity2Table = persistenceConfiguration.schemaMetadata.table("TEST_ENTITY_2");
         RecordProvider<JdbcRecord, JdbcRecord> prpA = new RecordProvider<>() {
@@ -490,8 +443,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherHierarchicalEmpty() {
         JdbcAggregateFetcher<TestRootHierarchical, TestRootHierarchicalId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRootHierarchical.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRootHierarchical.class, persistenceConfiguration.domainPersistenceProvider);
 
         Optional<TestRootHierarchical> result = jdbcEntityFetcher.fetchDeep(
             new TestRootHierarchicalId(1L)).resultValue();
@@ -501,8 +453,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherHierarchicalComplete() {
         JdbcAggregateFetcher<TestRootHierarchical, TestRootHierarchicalId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRootHierarchical.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRootHierarchical.class, persistenceConfiguration.domainPersistenceProvider);
 
         TestRootHierarchical inserted = hierarchicalAggregateRootRepository.insert(
             TestDataGenerator.buildTestRootHierarchicalCompleteLevel3());
@@ -528,8 +479,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherHierarchicalBackRefComplete() {
         JdbcAggregateFetcher<TestRootHierarchicalBackref, TestRootHierarchicalBackrefId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRootHierarchicalBackref.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRootHierarchicalBackref.class, persistenceConfiguration.domainPersistenceProvider);
 
         TestRootHierarchicalBackref inserted = hierarchicalAggregateRootBackrefRepository.insert(
             TestDataGenerator.buildTestRootHierarchicalBackrefCompleteLevel3());
@@ -573,8 +523,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherComplexEmpty() {
         JdbcAggregateFetcher<TestRoot, TestRootId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRoot.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRoot.class, persistenceConfiguration.domainPersistenceProvider);
 
         Optional<TestRoot> result = jdbcEntityFetcher.fetchDeep(new TestRootId(1L)).resultValue();
         Assertions.assertThat(result).isEmpty();
@@ -583,8 +532,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherManyToManyEmpty() {
         JdbcAggregateFetcher<TestRootManyToMany, TestRootManyToManyId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRootManyToMany.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRootManyToMany.class, persistenceConfiguration.domainPersistenceProvider);
 
         Optional<TestRootManyToMany> result = jdbcEntityFetcher.fetchDeep(new TestRootManyToManyId(1L)).resultValue();
         Assertions.assertThat(result).isEmpty();
@@ -593,8 +541,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherManyToManyComplete() {
         JdbcAggregateFetcher<TestRootManyToMany, TestRootManyToManyId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(TestRootManyToMany.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(TestRootManyToMany.class, persistenceConfiguration.domainPersistenceProvider);
 
         TestRootManyToMany inserted = manyToManyAggregateRootRepository.insert(
             TestDataGenerator.buildManyToManyComplete());
@@ -606,8 +553,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherIdEnumListEmpty() {
         JdbcAggregateFetcher<RootIdEnumList, RootIdEnumListId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(RootIdEnumList.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(RootIdEnumList.class, persistenceConfiguration.domainPersistenceProvider);
 
         Optional<RootIdEnumList> result = jdbcEntityFetcher.fetchDeep(new RootIdEnumListId(1L)).resultValue();
         Assertions.assertThat(result).isEmpty();
@@ -616,8 +562,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherIdEnumListComplete() {
         JdbcAggregateFetcher<RootIdEnumList, RootIdEnumListId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(RootIdEnumList.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(RootIdEnumList.class, persistenceConfiguration.domainPersistenceProvider);
 
         RootIdEnumList inserted = rootIdEnumListRepository.insert(TestDataGenerator.buildRootIdEnumListComplete());
         Optional<RootIdEnumList> result = jdbcEntityFetcher.fetchDeep(inserted.getId()).resultValue();
@@ -632,8 +577,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherIdEnumListWithDuplicateValues() {
         JdbcAggregateFetcher<RootIdEnumList, RootIdEnumListId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(RootIdEnumList.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(RootIdEnumList.class, persistenceConfiguration.domainPersistenceProvider);
 
         //two equal MyEnum.ONE and two equal MyId(7) - a fetcher that (incorrectly) deduplicated by value would
         //come back with only 2 elements per list instead of 3
@@ -649,8 +593,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherIdEnumListWithUuidIds() {
         JdbcAggregateFetcher<RootIdEnumList, RootIdEnumListId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(RootIdEnumList.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(RootIdEnumList.class, persistenceConfiguration.domainPersistenceProvider);
 
         //an Identity value type other than Long (UUID, stored as VARCHAR2(36)) - proves the write-side
         //UUID->String conversion (via the auto-discovered DefaultUuidToStringConverter) and the read-side
@@ -667,8 +610,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     @Test
     public void testFetcherIdEnumListWithValueWithListsList() {
         JdbcAggregateFetcher<RootIdEnumList, RootIdEnumListId> jdbcEntityFetcher =
-            new JdbcAggregateFetcher<>(RootIdEnumList.class, persistenceConfiguration.connectionProvider,
-                persistenceConfiguration.schemaMetadata, persistenceConfiguration.domainPersistenceProvider);
+            new JdbcAggregateFetcher<>(RootIdEnumList.class, persistenceConfiguration.domainPersistenceProvider);
 
         //a List<ValueWithLists>: a value object used as a to-many element, itself holding its own
         //List<MyEnum>/List<MyId> fields - a three-level fetch (root -> VO row -> VO's own scalar list rows)
@@ -697,24 +639,6 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     }
 
     private List<JdbcRecord> selectMany(TableMetadata table, String sql, Object... params) {
-        try (PreparedStatement statement = persistenceConfiguration.connectionProvider.getConnection()
-            .prepareStatement(sql)) {
-            for (int i = 0; i < params.length; i++) {
-                statement.setObject(i + 1, params[i]);
-            }
-            try (ResultSet resultSet = statement.executeQuery()) {
-                List<JdbcRecord> rows = new ArrayList<>();
-                while (resultSet.next()) {
-                    var record = new JdbcRecord(table.name());
-                    for (var column : table.columns()) {
-                        record.set(column.name(), resultSet.getObject(column.name(), column.javaType()));
-                    }
-                    rows.add(record);
-                }
-                return rows;
-            }
-        } catch (SQLException e) {
-            throw DLCPersistenceException.fail("Query on '%s' failed.", e, table.name());
-        }
+        return JdbcRecordMapper.selectWithSql(persistenceConfiguration.connectionProvider, table, sql, params);
     }
 }

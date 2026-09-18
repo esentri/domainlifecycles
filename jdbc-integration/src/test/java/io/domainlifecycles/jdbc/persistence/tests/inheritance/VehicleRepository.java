@@ -1,7 +1,6 @@
 package io.domainlifecycles.jdbc.persistence.tests.inheritance;
 
 import io.domainlifecycles.jdbc.connection.JdbcConnectionProvider;
-import io.domainlifecycles.jdbc.dialect.JdbcDialect;
 import io.domainlifecycles.jdbc.imp.JdbcAggregateRepository;
 import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
@@ -32,15 +31,11 @@ public class VehicleRepository extends JdbcAggregateRepository<Vehicle, VehicleI
     private final JdbcConnectionProvider connectionProvider;
     private final JdbcSchemaMetadata schemaMetadata;
 
-    public VehicleRepository(JdbcConnectionProvider connectionProvider,
-                              JdbcDialect dialect,
-                              JdbcSchemaMetadata schemaMetadata,
-                              JdbcDomainPersistenceProvider domainPersistenceProvider,
+    public VehicleRepository(JdbcDomainPersistenceProvider domainPersistenceProvider,
                               PersistenceEventPublisher persistenceEventPublisher) {
-        super(Vehicle.class, connectionProvider, dialect, schemaMetadata, domainPersistenceProvider,
-            persistenceEventPublisher);
-        this.connectionProvider = connectionProvider;
-        this.schemaMetadata = schemaMetadata;
+        super(Vehicle.class, domainPersistenceProvider, persistenceEventPublisher);
+        this.connectionProvider = domainPersistenceProvider.connectionProvider;
+        this.schemaMetadata = domainPersistenceProvider.schemaMetadata;
     }
 
     public Stream<Vehicle> findAll() {

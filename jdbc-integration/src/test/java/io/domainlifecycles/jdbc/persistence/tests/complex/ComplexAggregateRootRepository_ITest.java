@@ -30,9 +30,6 @@ public class ComplexAggregateRootRepository_ITest extends JdbcBasePersistence_IT
     @BeforeAll
     public void init() {
         complexAggregateRootRepository = new ComplexAggregateRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher);
     }

@@ -32,9 +32,6 @@ public class VoAggregateThreeLevelRepository_ITest extends JdbcBasePersistence_I
     @BeforeAll
     public void init() {
         voAggregateThreeLevelRepository = Mockito.spy(new VoAggregateThreeLevelRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         ));

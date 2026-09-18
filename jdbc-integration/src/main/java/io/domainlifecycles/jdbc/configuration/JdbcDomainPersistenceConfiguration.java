@@ -29,6 +29,8 @@ package io.domainlifecycles.jdbc.configuration;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
 import io.domainlifecycles.jdbc.configuration.def.JdbcRecordPropertyAccessor;
 import io.domainlifecycles.jdbc.configuration.def.JdbcRecordPropertyProvider;
+import io.domainlifecycles.jdbc.connection.JdbcConnectionProvider;
+import io.domainlifecycles.jdbc.dialect.JdbcDialect;
 import io.domainlifecycles.jdbc.imp.matcher.JdbcRecordPropertyMatcher;
 import io.domainlifecycles.jdbc.imp.matcher.JdbcTableToEntityTypeMatcher;
 import io.domainlifecycles.jdbc.imp.provider.JdbcRecordMirrorInstanceProvider;
@@ -75,6 +77,20 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
      * from.
      */
     public final JdbcSchemaMetadata schemaMetadata;
+
+    /**
+     * Supplies the connection used for all database interaction. Registered centrally here so that the
+     * {@link io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider} built from this configuration
+     * can hand it on to repositories, persisters and fetchers, instead of every one of them requiring it as a
+     * separate constructor parameter.
+     */
+    public final JdbcConnectionProvider connectionProvider;
+
+    /**
+     * The dialect used for sequence access. Registered centrally for the same reason as {@link
+     * #connectionProvider}.
+     */
+    public final JdbcDialect dialect;
 
     /**
      * Matches a physical table name to an entity type.
@@ -133,6 +149,8 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
         DomainObjectBuilderProvider domainObjectBuilderProvider,
         Set<RecordMapper<?, ?, ?>> customRecordMappers,
         JdbcSchemaMetadata schemaMetadata,
+        JdbcConnectionProvider connectionProvider,
+        JdbcDialect dialect,
         JdbcTableToEntityTypeMatcher tableToEntityTypeMatcher,
         JdbcRecordMirrorInstanceProvider recordMirrorInstanceProvider,
         TypeConverterProvider typeConverterProvider,
@@ -146,6 +164,8 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
     ) {
         super(domainObjectBuilderProvider, customRecordMappers);
         this.schemaMetadata = Objects.requireNonNull(schemaMetadata);
+        this.connectionProvider = Objects.requireNonNull(connectionProvider);
+        this.dialect = Objects.requireNonNull(dialect);
         this.tableToEntityTypeMatcher = Objects.requireNonNull(tableToEntityTypeMatcher);
         this.recordMirrorInstanceProvider = Objects.requireNonNull(recordMirrorInstanceProvider);
         this.typeConverterProvider = typeConverterProvider;
@@ -165,6 +185,8 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
         private DomainObjectBuilderProvider domainObjectBuilderProvider;
         private Set<RecordMapper<?, ?, ?>> customRecordMappers;
         private JdbcSchemaMetadata schemaMetadata;
+        private JdbcConnectionProvider connectionProvider;
+        private JdbcDialect dialect;
         private JdbcTableToEntityTypeMatcher tableToEntityTypeMatcher;
         private JdbcRecordMirrorInstanceProvider recordMirrorInstanceProvider;
         private TypeConverterProvider typeConverterProvider;
@@ -193,6 +215,32 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
          */
         public JdbcPersistenceConfigurationBuilder withSchemaMetadata(JdbcSchemaMetadata schemaMetadata) {
             this.schemaMetadata = schemaMetadata;
+            return this;
+        }
+
+        /**
+         * Sets the {@link JdbcConnectionProvider} supplying the connection used for all database interaction.
+         * Mandatory. Registered here once, so that repositories, persisters and fetchers built through the
+         * resulting {@link io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider} no longer need
+         * it as a separate constructor parameter.
+         *
+         * @param connectionProvider the connection provider to use
+         * @return this builder
+         */
+        public JdbcPersistenceConfigurationBuilder withConnectionProvider(JdbcConnectionProvider connectionProvider) {
+            this.connectionProvider = connectionProvider;
+            return this;
+        }
+
+        /**
+         * Sets the {@link JdbcDialect} used for sequence access. Mandatory. Registered here for the same
+         * reason as {@link #withConnectionProvider(JdbcConnectionProvider)}.
+         *
+         * @param dialect the dialect to use
+         * @return this builder
+         */
+        public JdbcPersistenceConfigurationBuilder withDialect(JdbcDialect dialect) {
+            this.dialect = dialect;
             return this;
         }
 
@@ -373,6 +421,16 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
                         "read from your database connection.");
             }
 
+            if (this.connectionProvider == null) {
+                throw DLCPersistenceException.fail(
+                    "No connection provider configured. Call 'withConnectionProvider' with a JdbcConnectionProvider.");
+            }
+
+            if (this.dialect == null) {
+                throw DLCPersistenceException.fail(
+                    "No dialect configured. Call 'withDialect' with a JdbcDialect.");
+            }
+
             if (this.tableToEntityTypeMatcher == null) {
                 this.tableToEntityTypeMatcher = new JdbcTableToEntityTypeMatcher();
             }
@@ -405,6 +463,8 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
                 this.domainObjectBuilderProvider,
                 this.customRecordMappers,
                 this.schemaMetadata,
+                this.connectionProvider,
+                this.dialect,
                 this.tableToEntityTypeMatcher,
                 this.recordMirrorInstanceProvider,
                 this.typeConverterProvider,

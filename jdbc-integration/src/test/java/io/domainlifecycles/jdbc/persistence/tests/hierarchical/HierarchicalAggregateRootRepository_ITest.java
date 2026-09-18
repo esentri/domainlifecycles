@@ -23,9 +23,6 @@ public class HierarchicalAggregateRootRepository_ITest extends JdbcBasePersisten
     @BeforeAll
     public void init() {
         hierarchicalAggregateRootRepository = new HierarchicalAggregateRootRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );

@@ -26,16 +26,10 @@ public class OptionalAggregateRepository_ITest extends JdbcBasePersistence_ITest
     @BeforeAll
     public void init() {
         optionalAggregateRepository = new OptionalAggregateRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );
         refAggRepository = new RefAggRepository(
-            persistenceConfiguration.connectionProvider,
-            persistenceConfiguration.dialect,
-            persistenceConfiguration.schemaMetadata,
             persistenceConfiguration.domainPersistenceProvider,
             persistenceEventTestHelper.testEventPublisher
         );
