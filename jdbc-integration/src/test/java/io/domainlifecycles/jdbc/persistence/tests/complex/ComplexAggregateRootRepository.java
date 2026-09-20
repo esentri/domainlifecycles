@@ -7,6 +7,7 @@ import io.domainlifecycles.jdbc.connection.JdbcConnectionProvider;
 import io.domainlifecycles.jdbc.imp.JdbcPersister;
 import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
+import io.domainlifecycles.jdbc.persistence.PhysicalNames;
 import io.domainlifecycles.jdbc.schema.JdbcSchemaMetadata;
 import io.domainlifecycles.jdbc.util.JdbcRecordMapper;
 import io.domainlifecycles.persistence.fetcher.AggregateFetcher;
@@ -84,15 +85,15 @@ public class ComplexAggregateRootRepository
 
     @SuppressWarnings("unchecked")
     private TestRoot findByIdCustom(Long id) {
-        JdbcRecord testRootRecord = selectOne("TEST_ROOT", "ID", id);
+        JdbcRecord testRootRecord = selectOne(PhysicalNames.name("TEST_ROOT"), PhysicalNames.name("ID"), id);
         if (testRootRecord == null) {
             return null;
         }
         TestEntity1 te1 = null;
-        JdbcRecord testEntity1Record = selectOne("TEST_ENTITY_1", "TEST_ROOT_ID", id);
+        JdbcRecord testEntity1Record = selectOne(PhysicalNames.name("TEST_ENTITY_1"), PhysicalNames.name("TEST_ROOT_ID"), id);
         if (testEntity1Record != null) {
-            TestEntity2 testEntity2A = fetchSubTreeEntity2((Long) testEntity1Record.get("TEST_ENTITY_2_ID_A"));
-            TestEntity2 testEntity2B = fetchSubTreeEntity2((Long) testEntity1Record.get("TEST_ENTITY_2_ID_B"));
+            TestEntity2 testEntity2A = fetchSubTreeEntity2((Long) testEntity1Record.get(PhysicalNames.name("TEST_ENTITY_2_ID_A")));
+            TestEntity2 testEntity2B = fetchSubTreeEntity2((Long) testEntity1Record.get(PhysicalNames.name("TEST_ENTITY_2_ID_B")));
             RecordMapper<JdbcRecord, TestEntity1, TestRoot> mapper1 =
                 (RecordMapper<JdbcRecord, TestEntity1, TestRoot>) domainPersistenceProvider
                     .persistenceMirror
@@ -116,7 +117,7 @@ public class ComplexAggregateRootRepository
         if (testEntity2Id == null) {
             return null;
         }
-        JdbcRecord testEntity2Record = selectOne("TEST_ENTITY_2", "ID", testEntity2Id);
+        JdbcRecord testEntity2Record = selectOne(PhysicalNames.name("TEST_ENTITY_2"), PhysicalNames.name("ID"), testEntity2Id);
         if (testEntity2Record == null) {
             return null;
         }
@@ -126,7 +127,7 @@ public class ComplexAggregateRootRepository
                 .getEntityRecordMapper(TestEntity2.class.getName());
         DomainObjectBuilder<TestEntity2> b = mapper.recordToDomainObjectBuilder(testEntity2Record);
 
-        List<JdbcRecord> testEntity3List = selectMany("TEST_ENTITY_3", "TEST_ENTITY_2_ID", testEntity2Id);
+        List<JdbcRecord> testEntity3List = selectMany(PhysicalNames.name("TEST_ENTITY_3"), PhysicalNames.name("TEST_ENTITY_2_ID"), testEntity2Id);
         for (JdbcRecord te3 : testEntity3List) {
             TestEntity3 te3Entity = fetchSubTreeEntity3(te3);
             b.addValueToCollection(te3Entity, "testEntity3List");
@@ -136,7 +137,7 @@ public class ComplexAggregateRootRepository
 
     @SuppressWarnings("unchecked")
     private TestEntity3 fetchSubTreeEntity3(JdbcRecord te3) {
-        List<JdbcRecord> testEntity4List = selectMany("TEST_ENTITY_4", "TEST_ENTITY_3_ID", (Long) te3.get("ID"));
+        List<JdbcRecord> testEntity4List = selectMany(PhysicalNames.name("TEST_ENTITY_4"), PhysicalNames.name("TEST_ENTITY_3_ID"), (Long) te3.get(PhysicalNames.name("ID")));
         RecordMapper<JdbcRecord, TestEntity3, TestRoot> mapper =
             (RecordMapper<JdbcRecord, TestEntity3, TestRoot>) domainPersistenceProvider
                 .persistenceMirror
@@ -151,7 +152,7 @@ public class ComplexAggregateRootRepository
 
     @SuppressWarnings("unchecked")
     private TestEntity4 fetchSubTreeEntity4(JdbcRecord te4) {
-        List<JdbcRecord> testEntity5List = selectMany("TEST_ENTITY_5", "TEST_ENTITY_4_ID", (Long) te4.get("ID"));
+        List<JdbcRecord> testEntity5List = selectMany(PhysicalNames.name("TEST_ENTITY_5"), PhysicalNames.name("TEST_ENTITY_4_ID"), (Long) te4.get(PhysicalNames.name("ID")));
         RecordMapper<JdbcRecord, TestEntity4, TestRoot> mapper =
             (RecordMapper<JdbcRecord, TestEntity4, TestRoot>) domainPersistenceProvider
                 .persistenceMirror
@@ -171,7 +172,7 @@ public class ComplexAggregateRootRepository
                 .persistenceMirror
                 .getEntityRecordMapper(TestEntity5.class.getName());
         DomainObjectBuilder<TestEntity5> b = mapper5.recordToDomainObjectBuilder(te5);
-        JdbcRecord testEntity6Record = selectOne("TEST_ENTITY_6", "ID", (Long) te5.get("TEST_ENTITY_6_ID"));
+        JdbcRecord testEntity6Record = selectOne(PhysicalNames.name("TEST_ENTITY_6"), PhysicalNames.name("ID"), (Long) te5.get(PhysicalNames.name("TEST_ENTITY_6_ID")));
         if (testEntity6Record != null) {
             RecordMapper<JdbcRecord, TestEntity6, TestRoot> mapper6 =
                 (RecordMapper<JdbcRecord, TestEntity6, TestRoot>) domainPersistenceProvider

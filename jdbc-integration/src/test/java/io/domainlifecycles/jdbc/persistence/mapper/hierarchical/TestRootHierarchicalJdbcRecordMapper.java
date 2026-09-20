@@ -4,6 +4,7 @@ import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.persistence.mapping.AbstractRecordMapper;
+import io.domainlifecycles.jdbc.persistence.PhysicalNames;
 import tests.shared.persistence.domain.hierarchical.TestRootHierarchical;
 import tests.shared.persistence.domain.hierarchical.TestRootHierarchicalId;
 
@@ -24,22 +25,22 @@ public class TestRootHierarchicalJdbcRecordMapper extends AbstractRecordMapper<J
         if (record == null) {
             return null;
         }
-        Long parentId = (Long) record.get("PARENT_ID");
+        Long parentId = (Long) record.get(PhysicalNames.name("PARENT_ID"));
         return new InnerClassDomainObjectBuilder<>(TestRootHierarchical.builder()
-            .setId(new TestRootHierarchicalId((Long) record.get("ID")))
-            .setName((String) record.get("NAME"))
+            .setId(new TestRootHierarchicalId((Long) record.get(PhysicalNames.name("ID"))))
+            .setName((String) record.get(PhysicalNames.name("NAME")))
             .setParentId(parentId == null ? null : new TestRootHierarchicalId(parentId))
-            .setConcurrencyVersion((Long) record.get("CONCURRENCY_VERSION")));
+            .setConcurrencyVersion((Long) record.get(PhysicalNames.name("CONCURRENCY_VERSION"))));
     }
 
     @Override
     public JdbcRecord from(TestRootHierarchical testRootHierarchical, TestRootHierarchical root) {
-        JdbcRecord record = new JdbcRecord("TEST_ROOT_HIERARCHICAL");
-        record.set("ID", testRootHierarchical.getId().value());
-        record.set("NAME", testRootHierarchical.getName());
-        record.set("PARENT_ID", testRootHierarchical.getParentId() == null
+        JdbcRecord record = new JdbcRecord(PhysicalNames.name("TEST_ROOT_HIERARCHICAL"));
+        record.set(PhysicalNames.name("ID"), testRootHierarchical.getId().value());
+        record.set(PhysicalNames.name("NAME"), testRootHierarchical.getName());
+        record.set(PhysicalNames.name("PARENT_ID"), testRootHierarchical.getParentId() == null
             ? null : testRootHierarchical.getParentId().value());
-        record.set("CONCURRENCY_VERSION", testRootHierarchical.concurrencyVersion());
+        record.set(PhysicalNames.name("CONCURRENCY_VERSION"), testRootHierarchical.concurrencyVersion());
         return record;
     }
 

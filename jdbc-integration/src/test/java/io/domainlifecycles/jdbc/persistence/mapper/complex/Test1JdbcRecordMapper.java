@@ -4,6 +4,7 @@ import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.persistence.mapping.AbstractRecordMapper;
+import io.domainlifecycles.jdbc.persistence.PhysicalNames;
 import tests.shared.persistence.domain.complex.TestEntity1;
 import tests.shared.persistence.domain.complex.TestEntity1Id;
 import tests.shared.persistence.domain.complex.TestRoot;
@@ -24,23 +25,23 @@ public class Test1JdbcRecordMapper extends AbstractRecordMapper<JdbcRecord, Test
             return null;
         }
         return new InnerClassDomainObjectBuilder<>(TestEntity1.builder()
-            .setId(new TestEntity1Id((Long) record.get("ID")))
-            .setTestRootId(new TestRootId((Long) record.get("TEST_ROOT_ID")))
-            .setName((String) record.get("NAME"))
-            .setConcurrencyVersion((Long) record.get("CONCURRENCY_VERSION")));
+            .setId(new TestEntity1Id((Long) record.get(PhysicalNames.name("ID"))))
+            .setTestRootId(new TestRootId((Long) record.get(PhysicalNames.name("TEST_ROOT_ID"))))
+            .setName((String) record.get(PhysicalNames.name("NAME")))
+            .setConcurrencyVersion((Long) record.get(PhysicalNames.name("CONCURRENCY_VERSION"))));
     }
 
     @Override
     public JdbcRecord from(TestEntity1 testEntity1, TestRoot root) {
-        JdbcRecord record = new JdbcRecord("TEST_ENTITY_1");
-        record.set("ID", testEntity1.getId().value());
-        record.set("TEST_ROOT_ID", testEntity1.getTestRootId().value());
-        record.set("NAME", testEntity1.getName());
-        record.set("TEST_ENTITY_2_ID_A",
+        JdbcRecord record = new JdbcRecord(PhysicalNames.name("TEST_ENTITY_1"));
+        record.set(PhysicalNames.name("ID"), testEntity1.getId().value());
+        record.set(PhysicalNames.name("TEST_ROOT_ID"), testEntity1.getTestRootId().value());
+        record.set(PhysicalNames.name("NAME"), testEntity1.getName());
+        record.set(PhysicalNames.name("TEST_ENTITY_2_ID_A"),
             testEntity1.getTestEntity2A() != null ? testEntity1.getTestEntity2A().getId().value() : null);
-        record.set("TEST_ENTITY_2_ID_B",
+        record.set(PhysicalNames.name("TEST_ENTITY_2_ID_B"),
             testEntity1.getTestEntity2B() != null ? testEntity1.getTestEntity2B().getId().value() : null);
-        record.set("CONCURRENCY_VERSION", testEntity1.concurrencyVersion());
+        record.set(PhysicalNames.name("CONCURRENCY_VERSION"), testEntity1.concurrencyVersion());
         return record;
     }
 

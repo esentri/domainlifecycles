@@ -182,6 +182,7 @@ public final class JdbcSchemaMetadata {
         String primaryKeyName
     ) throws SQLException {
         List<ColumnMetadata> columns = new ArrayList<>();
+        String databaseProductName = databaseMetaData.getDatabaseProductName();
         try (ResultSet rs = databaseMetaData.getColumns(catalog, schemaPattern, tableName, "%")) {
             while (rs.next()) {
                 String columnName = rs.getString("COLUMN_NAME");
@@ -191,7 +192,8 @@ public final class JdbcSchemaMetadata {
                 int precision = rs.getInt("COLUMN_SIZE");
                 boolean nullable = rs.getInt("NULLABLE") == DatabaseMetaData.columnNullable;
                 boolean primaryKey = columnName.equalsIgnoreCase(primaryKeyName);
-                Class<?> javaType = JdbcSqlTypeMapping.javaType(sqlType, typeName, decimalDigits, precision);
+                Class<?> javaType = JdbcSqlTypeMapping.javaType(
+                    sqlType, typeName, decimalDigits, precision, databaseProductName);
                 columns.add(new ColumnMetadata(columnName, sqlType, typeName, javaType, nullable, primaryKey));
             }
         }

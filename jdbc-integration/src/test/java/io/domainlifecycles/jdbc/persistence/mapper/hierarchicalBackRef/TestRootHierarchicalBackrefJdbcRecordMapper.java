@@ -4,6 +4,7 @@ import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.persistence.mapping.AbstractRecordMapper;
+import io.domainlifecycles.jdbc.persistence.PhysicalNames;
 import tests.shared.persistence.domain.hierarchicalBackRef.TestRootHierarchicalBackref;
 import tests.shared.persistence.domain.hierarchicalBackRef.TestRootHierarchicalBackrefId;
 
@@ -23,20 +24,20 @@ public class TestRootHierarchicalBackrefJdbcRecordMapper extends AbstractRecordM
             return null;
         }
         return new InnerClassDomainObjectBuilder<>(TestRootHierarchicalBackref.builder()
-            .setId(new TestRootHierarchicalBackrefId((Long) record.get("ID")))
-            .setName((String) record.get("NAME"))
-            .setConcurrencyVersion((Long) record.get("CONCURRENCY_VERSION")));
+            .setId(new TestRootHierarchicalBackrefId((Long) record.get(PhysicalNames.name("ID"))))
+            .setName((String) record.get(PhysicalNames.name("NAME")))
+            .setConcurrencyVersion((Long) record.get(PhysicalNames.name("CONCURRENCY_VERSION"))));
     }
 
     @Override
     public JdbcRecord from(TestRootHierarchicalBackref testRootHierarchicalBackref,
                            TestRootHierarchicalBackref root) {
-        JdbcRecord record = new JdbcRecord("TEST_ROOT_HIERARCHICAL_BACKREF");
-        record.set("ID", testRootHierarchicalBackref.getId().value());
-        record.set("NAME", testRootHierarchicalBackref.getName());
-        record.set("PARENT_ID", testRootHierarchicalBackref.getParent() == null
+        JdbcRecord record = new JdbcRecord(PhysicalNames.name("TEST_ROOT_HIERARCHICAL_BACKREF"));
+        record.set(PhysicalNames.name("ID"), testRootHierarchicalBackref.getId().value());
+        record.set(PhysicalNames.name("NAME"), testRootHierarchicalBackref.getName());
+        record.set(PhysicalNames.name("PARENT_ID"), testRootHierarchicalBackref.getParent() == null
             ? null : testRootHierarchicalBackref.getParent().getId().value());
-        record.set("CONCURRENCY_VERSION", testRootHierarchicalBackref.concurrencyVersion());
+        record.set(PhysicalNames.name("CONCURRENCY_VERSION"), testRootHierarchicalBackref.concurrencyVersion());
         return record;
     }
 

@@ -480,8 +480,13 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
                 //and a shorter path length
                 String compPath = comp.valueObjectRecordMirror.completePath();
                 String vormPath = vorm.completePath();
+                // a strict prefix *at a path-segment boundary* - completePath() joins segments with ".", so
+                // plain String.startsWith(compPath) would also match an unrelated sibling field whose name
+                // happens to extend compPath's last segment (e.g. "valueObjectsOneToMany2" is a startsWith
+                // match for "valueObjectsOneToMany", even though they are sibling fields, not ancestor/
+                // descendant)
                 if (vorm.pathSegments().size() > (comp.valueObjectRecordMirror.pathSegments().size())
-                    && vormPath.startsWith(compPath)) {
+                    && vormPath.startsWith(compPath + ".")) {
                     predecessorComp = comp;
                     break;
                 }

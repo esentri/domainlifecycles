@@ -4,6 +4,7 @@ import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.persistence.mapping.AbstractRecordMapper;
+import io.domainlifecycles.jdbc.persistence.PhysicalNames;
 import tests.shared.persistence.domain.oneToOneLeadingFK.TestRootOneToOneLeading;
 import tests.shared.persistence.domain.oneToOneLeadingFK.TestRootOneToOneLeadingId;
 
@@ -21,19 +22,19 @@ public class TestRootOneToOneLeadingJdbcRecordMapper extends AbstractRecordMappe
             return null;
         }
         return new InnerClassDomainObjectBuilder<>(TestRootOneToOneLeading.builder()
-            .setId(new TestRootOneToOneLeadingId((Long) record.get("ID")))
-            .setName((String) record.get("NAME"))
-            .setConcurrencyVersion((Long) record.get("CONCURRENCY_VERSION")));
+            .setId(new TestRootOneToOneLeadingId((Long) record.get(PhysicalNames.name("ID"))))
+            .setName((String) record.get(PhysicalNames.name("NAME")))
+            .setConcurrencyVersion((Long) record.get(PhysicalNames.name("CONCURRENCY_VERSION"))));
     }
 
     @Override
     public JdbcRecord from(TestRootOneToOneLeading testRootOneToOneLeading, TestRootOneToOneLeading root) {
-        JdbcRecord record = new JdbcRecord("TEST_ROOT_ONE_TO_ONE_LEADING");
-        record.set("ID", testRootOneToOneLeading.getId().value());
-        record.set("TEST_ENTITY_ID", testRootOneToOneLeading.getTestEntityOneToOneLeading() == null
+        JdbcRecord record = new JdbcRecord(PhysicalNames.name("TEST_ROOT_ONE_TO_ONE_LEADING"));
+        record.set(PhysicalNames.name("ID"), testRootOneToOneLeading.getId().value());
+        record.set(PhysicalNames.name("TEST_ENTITY_ID"), testRootOneToOneLeading.getTestEntityOneToOneLeading() == null
             ? null : testRootOneToOneLeading.getTestEntityOneToOneLeading().getId().value());
-        record.set("NAME", testRootOneToOneLeading.getName());
-        record.set("CONCURRENCY_VERSION", testRootOneToOneLeading.concurrencyVersion());
+        record.set(PhysicalNames.name("NAME"), testRootOneToOneLeading.getName());
+        record.set(PhysicalNames.name("CONCURRENCY_VERSION"), testRootOneToOneLeading.concurrencyVersion());
         return record;
     }
 

@@ -85,8 +85,13 @@ kryo-version = '5.6.2'
 logback-classic-version = '1.5.34'
 lombok-version = '1.18.46'
 mockito-core-version = '5.23.0'
+mssql-jdbc-version = '12.10.0.jre11'
+mysql-connector-j-version = '9.3.0'
+oracle-jdbc-version = '21.18.0.0'
+postgresql-jdbc-version = '42.7.7'
 spring-boot-platform-version = '4.1.0'
 spring-boot3-platform-version = '3.5.15'
+testcontainers-version = '1.21.3'
 
 # plugin versions
 flyway-version = '11.20.0'
@@ -111,6 +116,10 @@ commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "co
 commons-io = { module = "commons-io:commons-io", version.ref = "commons-io-version" }
 commons-validator = { module = "commons-validator:commons-validator", version.ref = "commons-validator-version" }
 flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway-version" }
+flyway-database-oracle = { module = "org.flywaydb:flyway-database-oracle", version.ref = "flyway-version" }
+flyway-database-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway-version" }
+flyway-mysql = { module = "org.flywaydb:flyway-mysql", version.ref = "flyway-version" }
+flyway-sqlserver = { module = "org.flywaydb:flyway-sqlserver", version.ref = "flyway-version" }
 glassfish-jakarta-el = { module = "org.glassfish:jakarta.el", version.ref = "glassfish-jakarta-version" }
 gruelbox-transactionoutbox-core = { module = "com.gruelbox:transactionoutbox-core", version.ref = "gruelbox-version"}
 gruelbox-transactionoutbox-spring = { module = "com.gruelbox:transactionoutbox-spring", version.ref = "gruelbox-version"}
@@ -142,6 +151,10 @@ kryo = { module = "com.esotericsoftware:kryo", version.ref = "kryo-version" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback-classic-version" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok-version" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito-core-version" }
+mssql-jdbc = { module = "com.microsoft.sqlserver:mssql-jdbc", version.ref = "mssql-jdbc-version" }
+mysql-connector-j = { module = "com.mysql:mysql-connector-j", version.ref = "mysql-connector-j-version" }
+oracle-jdbc = { module = "com.oracle.database.jdbc:ojdbc11", version.ref = "oracle-jdbc-version" }
+postgresql-jdbc = { module = "org.postgresql:postgresql", version.ref = "postgresql-jdbc-version" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j-version" }
 spring-boot-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot-platform-version" }
 spring-boot3-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot3-platform-version" }
@@ -183,6 +196,12 @@ spring6-context = { module = "org.springframework:spring-context", version.ref =
 spring6-tx = { module = "org.springframework:spring-tx", version.ref = "spring6-tx-version" }
 
 swagger = { module = "io.swagger.core.v3:swagger-core-jakarta", version.ref = "swagger-version" }
+testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers-version" }
+testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers-version" }
+testcontainers-mssqlserver = { module = "org.testcontainers:mssqlserver", version.ref = "testcontainers-version" }
+testcontainers-mysql = { module = "org.testcontainers:mysql", version.ref = "testcontainers-version" }
+testcontainers-oracle-free = { module = "org.testcontainers:oracle-free", version.ref = "testcontainers-version" }
+testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers-version" }
 type-resolver = { module = "com.github.vladislavsevruk:type-resolver", version.ref = "type-resolver-version" }
 docker-java-core = { module = "com.github.docker-java:docker-java-core", version.ref = "docker-java-version" }
 docker-java-transport-httpclient5 = { module = "com.github.docker-java:docker-java-transport-httpclient5", version.ref = "docker-java-version" }

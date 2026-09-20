@@ -57,6 +57,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
@@ -129,7 +130,17 @@ public class JdbcDomainPersistenceProvider extends DomainPersistenceProvider<Jdb
         JdbcDomainPersistenceConfiguration jdbcPersistenceConfiguration =
             (JdbcDomainPersistenceConfiguration) domainPersistenceConfiguration;
 
-        Map<String, List<String>> recordCanonicalNameToDomainObjectTypeMap = new HashMap<>();
+        // Table-name-keyed, and thus - like every physical-name lookup in this module (see
+        // JdbcSchemaMetadata.findTable) - case-insensitive: entries added for a plain entity are already
+        // schema-metadata-derived (correct physical case), but entries added for an explicit
+        // JdbcEntityValueObjectRecordTypeConfiguration use whatever case the caller wrote the table name
+        // literal in (this module's own tests always write it upper case), while enforcedReferences() below
+        // looks entries up by ForeignKeyMetadata.referencedTableName() - always schema-metadata-derived, i.e.
+        // physical case (upper on H2/Oracle, lower on Postgres/MySQL/SQL Server). A case-sensitive HashMap
+        // silently failed that lookup on every non-upper-case-folding dialect, which
+        // JdbcValueObjectRecordMirrorImpl then read as "value object has no FK to its container" and dropped
+        // the whole nested value-object-record-mirror without any other symptom until fetch time.
+        Map<String, List<String>> recordCanonicalNameToDomainObjectTypeMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         Map<String, String> entityToRecordTypeMap = new HashMap<>();
 
         var allEntityMirrors = Domain.getDomainMirror()
@@ -196,7 +207,6 @@ public class JdbcDomainPersistenceProvider extends DomainPersistenceProvider<Jdb
                                     accessPath,
                                     jdbcPersistenceConfiguration);
                             }
-
                             if (definition != null) {
                                 addRecordToDomainObjectTypeEntry(
                                     definition.tableName(),

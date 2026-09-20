@@ -47,6 +47,11 @@ import java.sql.Statement;
  * session-scoped "last insert id" to the value of {@code expr}, safely per-connection even under concurrent
  * updates on the same row, since the row-level lock the {@code UPDATE} takes serialises concurrent
  * increments), followed by reading that value back with {@code SELECT LAST_INSERT_ID()}.
+ * <p>
+ * Every identifier is backtick-quoted (see {@link #quoteIdentifier(String)}): MySQL has an unusually large
+ * reserved word list, including several that look like perfectly ordinary column names (e.g. {@code
+ * YEAR_MONTH}, reserved for {@code INTERVAL} expressions) and would otherwise fail with a syntax error the
+ * moment a domain field happened to be named that way.
  *
  * @author Mario Herb
  */
@@ -58,6 +63,14 @@ public final class MySqlJdbcDialect implements JdbcDialect {
     @Override
     public String name() {
         return "MySQL";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String quoteIdentifier(String identifier) {
+        return "`" + identifier + "`";
     }
 
     /**

@@ -4,6 +4,7 @@ import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.persistence.mapping.AbstractRecordMapper;
+import io.domainlifecycles.jdbc.persistence.PhysicalNames;
 import tests.shared.persistence.domain.inheritance.Bike;
 import tests.shared.persistence.domain.inheritance.Car;
 import tests.shared.persistence.domain.inheritance.Vehicle;
@@ -21,12 +22,12 @@ public class VehicleJdbcRecordMapper extends AbstractRecordMapper<JdbcRecord, Ve
         if (record == null) {
             return null;
         }
-        VehicleId id = new VehicleId((Long) record.get("ID"));
-        Integer lengthCm = (Integer) record.get("LENGTH_CM");
-        Long concurrencyVersion = (Long) record.get("CONCURRENCY_VERSION");
-        String type = (String) record.get("TYPE");
+        VehicleId id = new VehicleId((Long) record.get(PhysicalNames.name("ID")));
+        Integer lengthCm = (Integer) record.get(PhysicalNames.name("LENGTH_CM"));
+        Long concurrencyVersion = (Long) record.get(PhysicalNames.name("CONCURRENCY_VERSION"));
+        String type = (String) record.get(PhysicalNames.name("TYPE"));
         if (Bike.class.getSimpleName().equals(type)) {
-            Long gears = (Long) record.get("GEARS");
+            Long gears = (Long) record.get(PhysicalNames.name("GEARS"));
             return new InnerClassDomainObjectBuilder<>(Bike.builder()
                 .setId(id)
                 .setGears(gears.intValue())
@@ -36,7 +37,7 @@ public class VehicleJdbcRecordMapper extends AbstractRecordMapper<JdbcRecord, Ve
         if (Car.class.getSimpleName().equals(type)) {
             return new InnerClassDomainObjectBuilder<>(Car.builder()
                 .setId(id)
-                .setBrand(Car.Brand.valueOf((String) record.get("BRAND")))
+                .setBrand(Car.Brand.valueOf((String) record.get(PhysicalNames.name("BRAND"))))
                 .setLengthCm(lengthCm)
                 .setConcurrencyVersion(concurrencyVersion));
         }
@@ -45,16 +46,16 @@ public class VehicleJdbcRecordMapper extends AbstractRecordMapper<JdbcRecord, Ve
 
     @Override
     public JdbcRecord from(Vehicle vehicle, Vehicle root) {
-        JdbcRecord record = new JdbcRecord("VEHICLE");
-        record.set("ID", vehicle.getId().value());
-        record.set("CONCURRENCY_VERSION", vehicle.concurrencyVersion());
-        record.set("LENGTH_CM", vehicle.getLengthCm());
+        JdbcRecord record = new JdbcRecord(PhysicalNames.name("VEHICLE"));
+        record.set(PhysicalNames.name("ID"), vehicle.getId().value());
+        record.set(PhysicalNames.name("CONCURRENCY_VERSION"), vehicle.concurrencyVersion());
+        record.set(PhysicalNames.name("LENGTH_CM"), vehicle.getLengthCm());
         if (vehicle instanceof Bike bike) {
-            record.set("GEARS", (long) bike.getGears());
-            record.set("TYPE", Bike.class.getSimpleName());
+            record.set(PhysicalNames.name("GEARS"), (long) bike.getGears());
+            record.set(PhysicalNames.name("TYPE"), Bike.class.getSimpleName());
         } else if (vehicle instanceof Car car) {
-            record.set("BRAND", car.getBrand().name());
-            record.set("TYPE", Car.class.getSimpleName());
+            record.set(PhysicalNames.name("BRAND"), car.getBrand().name());
+            record.set(PhysicalNames.name("TYPE"), Car.class.getSimpleName());
         } else {
             throw new IllegalStateException("Vehicles are only Cars or Bikes!");
         }

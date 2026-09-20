@@ -4,6 +4,7 @@ import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilder;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.persistence.mapping.AbstractRecordMapper;
+import io.domainlifecycles.jdbc.persistence.PhysicalNames;
 import tests.shared.persistence.domain.manyToManyWithJoinEntity.TestEntityManyToManyAId;
 import tests.shared.persistence.domain.manyToManyWithJoinEntity.TestEntityManyToManyJoin;
 import tests.shared.persistence.domain.manyToManyWithJoinEntity.TestEntityManyToManyJoinId;
@@ -24,18 +25,18 @@ public class TestManyToManyJoinJdbcRecordMapper extends AbstractRecordMapper<Jdb
             return null;
         }
         return new InnerClassDomainObjectBuilder<>(TestEntityManyToManyJoin.builder()
-            .setId(new TestEntityManyToManyJoinId((Long) record.get("ID")))
-            .setTestEntityManyToManyAId(new TestEntityManyToManyAId((Long) record.get("TEST_ENTITY_A_ID")))
-            .setConcurrencyVersion((Long) record.get("CONCURRENCY_VERSION")));
+            .setId(new TestEntityManyToManyJoinId((Long) record.get(PhysicalNames.name("ID"))))
+            .setTestEntityManyToManyAId(new TestEntityManyToManyAId((Long) record.get(PhysicalNames.name("TEST_ENTITY_A_ID"))))
+            .setConcurrencyVersion((Long) record.get(PhysicalNames.name("CONCURRENCY_VERSION"))));
     }
 
     @Override
     public JdbcRecord from(TestEntityManyToManyJoin testEntityManyToManyJoin, TestRootManyToMany root) {
-        JdbcRecord record = new JdbcRecord("TEST_ENTITY_MANY_TO_MANY_JOIN");
-        record.set("ID", testEntityManyToManyJoin.getId().value());
-        record.set("TEST_ENTITY_A_ID", testEntityManyToManyJoin.getTestEntityManyToManyAId().value());
-        record.set("TEST_ENTITY_B_ID", testEntityManyToManyJoin.getTestEntityManyToManyB().getId().value());
-        record.set("CONCURRENCY_VERSION", testEntityManyToManyJoin.concurrencyVersion());
+        JdbcRecord record = new JdbcRecord(PhysicalNames.name("TEST_ENTITY_MANY_TO_MANY_JOIN"));
+        record.set(PhysicalNames.name("ID"), testEntityManyToManyJoin.getId().value());
+        record.set(PhysicalNames.name("TEST_ENTITY_A_ID"), testEntityManyToManyJoin.getTestEntityManyToManyAId().value());
+        record.set(PhysicalNames.name("TEST_ENTITY_B_ID"), testEntityManyToManyJoin.getTestEntityManyToManyB().getId().value());
+        record.set(PhysicalNames.name("CONCURRENCY_VERSION"), testEntityManyToManyJoin.concurrencyVersion());
         return record;
     }
 

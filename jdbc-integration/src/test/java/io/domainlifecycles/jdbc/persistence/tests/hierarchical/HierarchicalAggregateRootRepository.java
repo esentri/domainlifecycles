@@ -6,6 +6,7 @@ import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.jdbc.connection.JdbcConnectionProvider;
 import io.domainlifecycles.jdbc.imp.JdbcPersister;
 import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
+import io.domainlifecycles.jdbc.persistence.PhysicalNames;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.jdbc.schema.JdbcSchemaMetadata;
 import io.domainlifecycles.jdbc.schema.TableMetadata;
@@ -79,8 +80,8 @@ public class HierarchicalAggregateRootRepository
 
     @SuppressWarnings("unchecked")
     public TestRootHierarchical findByIdCustom(Long testRootHierarchicalId) {
-        var table = schemaMetadata.table("TEST_ROOT_HIERARCHICAL");
-        JdbcRecord record = selectByColumn(table, "ID", testRootHierarchicalId);
+        var table = schemaMetadata.table(PhysicalNames.name("TEST_ROOT_HIERARCHICAL"));
+        JdbcRecord record = selectByColumn(table, PhysicalNames.name("ID"), testRootHierarchicalId);
         if (record == null) {
             return null;
         }
@@ -91,9 +92,9 @@ public class HierarchicalAggregateRootRepository
                     .getEntityRecordMapper(TestRootHierarchical.class.getName()))
                 .recordToDomainObjectBuilder(record);
 
-        JdbcRecord childRecord = selectByColumn(table, "PARENT_ID", testRootHierarchicalId);
+        JdbcRecord childRecord = selectByColumn(table, PhysicalNames.name("PARENT_ID"), testRootHierarchicalId);
         if (childRecord != null) {
-            TestRootHierarchical child = findByIdCustom((Long) childRecord.get("ID"));
+            TestRootHierarchical child = findByIdCustom((Long) childRecord.get(PhysicalNames.name("ID")));
             b.setFieldValue(child, "child");
         }
 

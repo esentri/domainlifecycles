@@ -6,6 +6,7 @@ import io.domainlifecycles.jdbc.imp.JdbcAggregateFetcher;
 import io.domainlifecycles.jdbc.imp.JdbcAggregateRepository;
 import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
+import io.domainlifecycles.jdbc.persistence.PhysicalNames;
 import io.domainlifecycles.jdbc.schema.JdbcSchemaMetadata;
 import io.domainlifecycles.jdbc.schema.TableMetadata;
 import io.domainlifecycles.jdbc.util.JdbcRecordMapper;
@@ -56,7 +57,7 @@ public class OrderRepository extends JdbcAggregateRepository<OrderBv3, OrderIdBv
     }
 
     public List<OrderBv3> findOrdersPaged(int offset, int pageSize) {
-        var table = schemaMetadata.table("ORDER_BV3");
+        var table = schemaMetadata.table(PhysicalNames.name("ORDER_BV3"));
         var sql = "SELECT * FROM " + table.qualifiedName() + " ORDER BY ID LIMIT ? OFFSET ?";
         return selectWithSql(table, sql, pageSize, offset)
             .stream()
@@ -65,8 +66,8 @@ public class OrderRepository extends JdbcAggregateRepository<OrderBv3, OrderIdBv
     }
 
     public List<OrderBv3> findByStatusCode(OrderStatusCodeEnumBv3 statusCode) {
-        var table = schemaMetadata.table("ORDER_BV3");
-        var statusTable = schemaMetadata.table("ORDER_STATUS_BV3");
+        var table = schemaMetadata.table(PhysicalNames.name("ORDER_BV3"));
+        var statusTable = schemaMetadata.table(PhysicalNames.name("ORDER_STATUS_BV3"));
         // mirrors jooq-integration's own (unconditional, not FK-linked) cross join - purely to demonstrate
         // a custom finder, not a semantically meaningful query
         var sql = "SELECT b.* FROM " + table.qualifiedName() + " b, " + statusTable.qualifiedName()
@@ -81,14 +82,14 @@ public class OrderRepository extends JdbcAggregateRepository<OrderBv3, OrderIdBv
         var fetcher = new JdbcAggregateFetcher<OrderBv3, OrderIdBv3>(
             OrderBv3.class, domainPersistenceProvider);
 
-        var itemTable = schemaMetadata.table("ORDER_ITEM_BV3");
+        var itemTable = schemaMetadata.table(PhysicalNames.name("ORDER_ITEM_BV3"));
         fetcher.withRecordProvider(
             new RecordProvider<JdbcRecord, JdbcRecord>() {
                 @Override
                 public Collection<JdbcRecord> provideCollection(JdbcRecord parentRecord) {
                     var sql = "SELECT * FROM " + itemTable.qualifiedName()
                         + " WHERE ORDER_ID = ? AND ARTICLE_ID = ?";
-                    return selectWithSql(itemTable, sql, parentRecord.get("ID"), 1L);
+                    return selectWithSql(itemTable, sql, parentRecord.get(PhysicalNames.name("ID")), 1L);
                 }
             },
             OrderBv3.class,
@@ -107,23 +108,23 @@ public class OrderRepository extends JdbcAggregateRepository<OrderBv3, OrderIdBv
     }
 
     public OrderIdBv3 newOrderId() {
-        return new OrderIdBv3(nextVal("ORDER_ID_BV3_SEQ"));
+        return new OrderIdBv3(nextVal(PhysicalNames.name("ORDER_ID_BV3_SEQ")));
     }
 
     public OrderItemIdBv3 newOrderItemId() {
-        return new OrderItemIdBv3(nextVal("ORDER_ITEM_ID_BV3_SEQ"));
+        return new OrderItemIdBv3(nextVal(PhysicalNames.name("ORDER_ITEM_ID_BV3_SEQ")));
     }
 
     public OrderCommentIdBv3 newOrderCommentId() {
-        return new OrderCommentIdBv3(nextVal("ORDER_COMMENT_ID_BV3_SEQ"));
+        return new OrderCommentIdBv3(nextVal(PhysicalNames.name("ORDER_COMMENT_ID_BV3_SEQ")));
     }
 
     public OrderStatusIdBv3 newOrderStatusId() {
-        return new OrderStatusIdBv3(nextVal("ORDER_STATUS_ID_BV3_SEQ"));
+        return new OrderStatusIdBv3(nextVal(PhysicalNames.name("ORDER_STATUS_ID_BV3_SEQ")));
     }
 
     public DeliveryAddressIdBv3 newDeliveryAddressId() {
-        return new DeliveryAddressIdBv3(nextVal("DELIVERY_ADDRESS_ID_BV3_SEQ"));
+        return new DeliveryAddressIdBv3(nextVal(PhysicalNames.name("DELIVERY_ADDRESS_ID_BV3_SEQ")));
     }
 
     private long nextVal(String sequenceName) {

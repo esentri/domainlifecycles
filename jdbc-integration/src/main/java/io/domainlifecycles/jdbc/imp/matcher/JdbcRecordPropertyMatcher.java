@@ -26,12 +26,15 @@
 
 package io.domainlifecycles.jdbc.imp.matcher;
 
+import io.domainlifecycles.jdbc.configuration.JdbcValueObjectColumnNameOverride;
 import io.domainlifecycles.mirror.api.EntityReferenceMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.persistence.mapping.RecordPropertyMatcher;
 import io.domainlifecycles.persistence.records.RecordProperty;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Plain JDBC based implementation of a {@link RecordPropertyMatcher}. The matching rules are identical to
@@ -44,6 +47,27 @@ import java.util.List;
  */
 public class JdbcRecordPropertyMatcher implements RecordPropertyMatcher {
 
+    private final List<JdbcValueObjectColumnNameOverride> columnNameOverrides;
+
+    /**
+     * Constructs a new instance of {@code JdbcRecordPropertyMatcher} using the naming convention for every
+     * embedded value object field, with no {@link JdbcValueObjectColumnNameOverride}s.
+     */
+    public JdbcRecordPropertyMatcher() {
+        this(List.of());
+    }
+
+    /**
+     * Constructs a new instance of {@code JdbcRecordPropertyMatcher}, consulting the given overrides in
+     * {@link #matchValueObjectPath} in place of the naming convention for exactly the field paths they
+     * register.
+     *
+     * @param columnNameOverrides the embedded value object field column name overrides to apply
+     */
+    public JdbcRecordPropertyMatcher(List<JdbcValueObjectColumnNameOverride> columnNameOverrides) {
+        this.columnNameOverrides = Objects.requireNonNull(columnNameOverrides);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -55,9 +79,22 @@ public class JdbcRecordPropertyMatcher implements RecordPropertyMatcher {
 
     /**
      * {@inheritDoc}
+     * <p>
+     * A path matching a registered {@link JdbcValueObjectColumnNameOverride} is compared against that
+     * override's {@link JdbcValueObjectColumnNameOverride#columnName()} instead of the naming-convention
+     * derived name (still folded to lower case with underscores stripped, exactly like every other
+     * comparison this class makes) - see the class-level Javadoc there for why this escape hatch exists.
      */
     @Override
     public boolean matchValueObjectPath(RecordProperty recordProperty, List<FieldMirror> path) {
+        var pathNames = path.stream().map(FieldMirror::getName).toList();
+        var override = columnNameOverrides.stream()
+            .filter(o -> Arrays.asList(o.pathFromEntityToValueObjectField()).equals(pathNames))
+            .findFirst();
+        if (override.isPresent()) {
+            return recordProperty.getName().toLowerCase().replaceAll("_", "")
+                .equals(override.get().columnName().toLowerCase().replaceAll("_", ""));
+        }
         var pathName = new StringBuilder();
         path.forEach(e -> pathName.append(e.getName()));
         return recordProperty.getName()

@@ -64,6 +64,26 @@ dependencies {
 
     testImplementation libs.lombok
     testAnnotationProcessor libs.lombok
+
+    // Testcontainers-based dialect integration tests (see src/test/java/.../persistence/containers and the
+    // testPostgres/testMySql/testSqlServer/testOracle/containerTest tasks below) - not needed by the default,
+    // Docker-free ./gradlew test run against H2, but kept as regular testImplementation so the same compiled
+    // test classes can be reused for both.
+    testImplementation libs.testcontainers
+    testImplementation libs.testcontainers.junit.jupiter
+    testImplementation libs.testcontainers.postgresql
+    testImplementation libs.testcontainers.mysql
+    testImplementation libs.testcontainers.mssqlserver
+    testImplementation libs.testcontainers.oracle.free
+    testImplementation libs.flyway.core
+    testImplementation libs.flyway.database.postgresql
+    testImplementation libs.flyway.mysql
+    testImplementation libs.flyway.sqlserver
+    testImplementation libs.flyway.database.oracle
+    testImplementation libs.postgresql.jdbc
+    testImplementation libs.mysql.connector.j
+    testImplementation libs.mssql.jdbc
+    testImplementation libs.oracle.jdbc
 }
 
 flyway {
@@ -95,3 +115,36 @@ jacocoTestReport {
 }
 
 jacocoTestCoverageVerification.dependsOn jacocoTestReport
+
+// ----------------------------------------------------------
+// Testcontainers-based integration tests: the exact same compiled _ITest classes as the default `test` task
+// (see sourceSets.test.output/.runtimeClasspath below), re-run against real Postgres/MySQL/SQL
+// Server/Oracle databases started on demand via Testcontainers (see JdbcTestPersistenceConfiguration and
+// src/test/java/.../persistence/containers). Deliberately NOT wired into `check`/`build`/`test`, so the
+// default, Docker-free build is unaffected - run explicitly, e.g. `./gradlew :jdbc-integration:testPostgres`
+// or `./gradlew :jdbc-integration:containerTest` for all four.
+
+def registerContainerTestTask = { String taskName, String dialect ->
+    tasks.register(taskName, Test) {
+        group = 'verification'
+        description = "Runs the JDBC integration suite against ${dialect} via Testcontainers (requires Docker)."
+        testClassesDirs = sourceSets.test.output.classesDirs
+        classpath = sourceSets.test.runtimeClasspath
+        useJUnitPlatform()
+        systemProperty 'dlc.jdbc.testDialect', dialect
+        // container startup + a full ~150-class suite against a real database is far slower than the H2 run
+        maxHeapSize = '2g'
+    }
+}
+
+registerContainerTestTask('testPostgres', 'POSTGRES')
+registerContainerTestTask('testMySql', 'MYSQL')
+registerContainerTestTask('testSqlServer', 'SQLSERVER')
+registerContainerTestTask('testOracle', 'ORACLE')
+
+tasks.register('containerTest') {
+    group = 'verification'
+    description = 'Runs the JDBC integration suite against every Testcontainers-backed dialect (requires Docker).'
+    dependsOn tasks.named('testPostgres'), tasks.named('testMySql'), tasks.named('testSqlServer'),
+        tasks.named('testOracle')
+}

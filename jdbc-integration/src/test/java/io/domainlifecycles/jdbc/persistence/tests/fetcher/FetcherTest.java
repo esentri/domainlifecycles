@@ -4,6 +4,7 @@ import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.jdbc.imp.JdbcAggregateFetcher;
 import io.domainlifecycles.jdbc.persistence.JdbcBasePersistence_ITest;
+import io.domainlifecycles.jdbc.persistence.PhysicalNames;
 import io.domainlifecycles.jdbc.persistence.tests.complex.ComplexAggregateRootRepository;
 import io.domainlifecycles.jdbc.persistence.tests.hierarchical.HierarchicalAggregateRootRepository;
 import io.domainlifecycles.jdbc.persistence.tests.hierarchicalBackRef.HierarchicalAggregateRootBackrefRepository;
@@ -125,7 +126,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
             r -> oneToOneFollowingAggregateRootRepository.insert(r)
         ).collect(Collectors.toList());
 
-        var table = persistenceConfiguration.schemaMetadata.table("TEST_ROOT_ONE_TO_ONE_FOLLOWING");
+        var table = persistenceConfiguration.schemaMetadata.table(PhysicalNames.name("TEST_ROOT_ONE_TO_ONE_FOLLOWING"));
         List<TestRootOneToOneFollowing> result = selectMany(table,
                 "SELECT * FROM " + table.qualifiedName() + " WHERE NAME LIKE ? ORDER BY ID", "%Root%")
             .stream()
@@ -165,15 +166,15 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
                     .persistenceMirror
                     .getEntityRecordMapper(TestEntityOneToOneFollowing.class.getName());
 
-        var rootTable = persistenceConfiguration.schemaMetadata.table("TEST_ROOT_ONE_TO_ONE_FOLLOWING");
-        var entityTable = persistenceConfiguration.schemaMetadata.table("TEST_ENTITY_ONE_TO_ONE_FOLLOWING");
+        var rootTable = persistenceConfiguration.schemaMetadata.table(PhysicalNames.name("TEST_ROOT_ONE_TO_ONE_FOLLOWING"));
+        var entityTable = persistenceConfiguration.schemaMetadata.table(PhysicalNames.name("TEST_ENTITY_ONE_TO_ONE_FOLLOWING"));
 
         List<TestRootOneToOneFollowing> result = selectMany(rootTable,
                 "SELECT * FROM " + rootTable.qualifiedName() + " WHERE NAME LIKE ? ORDER BY ID", "%Root%")
             .stream()
             .map(recRoot -> {
                 JdbcRecord recEntity = selectOne(entityTable,
-                    "SELECT * FROM " + entityTable.qualifiedName() + " WHERE TEST_ROOT_ID = ?", recRoot.get("ID"));
+                    "SELECT * FROM " + entityTable.qualifiedName() + " WHERE TEST_ROOT_ID = ?", recRoot.get(PhysicalNames.name("ID")));
                 DomainObjectBuilder<TestRootOneToOneFollowing> rootDomainObjectBuilder =
                     rmRoot.recordToDomainObjectBuilder(recRoot);
                 TestEntityOneToOneFollowing entity = rmEntity.recordToDomainObjectBuilder(recEntity).build();
@@ -229,13 +230,13 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
     public void testFetcherOneToOneLeadingCompleteCustomPropertyProvider() {
         JdbcAggregateFetcher<TestRootOneToOneLeading, TestRootOneToOneLeadingId> jdbcEntityFetcher =
             new JdbcAggregateFetcher<>(TestRootOneToOneLeading.class, persistenceConfiguration.domainPersistenceProvider);
-        var entityTable = persistenceConfiguration.schemaMetadata.table("TEST_ENTITY_ONE_TO_ONE_LEADING");
+        var entityTable = persistenceConfiguration.schemaMetadata.table(PhysicalNames.name("TEST_ENTITY_ONE_TO_ONE_LEADING"));
         RecordProvider<JdbcRecord, JdbcRecord> prp = new RecordProvider<>() {
             @Override
             public JdbcRecord provide(JdbcRecord parentRecord) {
                 return selectOne(entityTable,
                     "SELECT * FROM " + entityTable.qualifiedName() + " WHERE ID = ?",
-                    parentRecord.get("TEST_ENTITY_ID"));
+                    parentRecord.get(PhysicalNames.name("TEST_ENTITY_ID")));
             }
 
             @Override
@@ -303,7 +304,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
         JdbcAggregateFetcher<TestRootOneToMany, TestRootOneToManyId> jdbcEntityFetcher =
             new JdbcAggregateFetcher<>(TestRootOneToMany.class, persistenceConfiguration.domainPersistenceProvider);
 
-        var entityTable = persistenceConfiguration.schemaMetadata.table("TEST_ENTITY_ONE_TO_MANY");
+        var entityTable = persistenceConfiguration.schemaMetadata.table(PhysicalNames.name("TEST_ENTITY_ONE_TO_MANY"));
         RecordProvider<JdbcRecord, JdbcRecord> prp = new RecordProvider<>() {
             @Override
             public JdbcRecord provide(JdbcRecord parentRecord) {
@@ -314,7 +315,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
             public Collection<JdbcRecord> provideCollection(JdbcRecord parentRecord) {
                 return selectMany(entityTable,
                     "SELECT * FROM " + entityTable.qualifiedName() + " WHERE TEST_ROOT_ID = ?",
-                    parentRecord.get("ID"));
+                    parentRecord.get(PhysicalNames.name("ID")));
             }
 
         };
@@ -400,13 +401,13 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
         JdbcAggregateFetcher<TestRoot, TestRootId> jdbcEntityFetcher =
             new JdbcAggregateFetcher<>(TestRoot.class, persistenceConfiguration.domainPersistenceProvider);
 
-        var entity2Table = persistenceConfiguration.schemaMetadata.table("TEST_ENTITY_2");
+        var entity2Table = persistenceConfiguration.schemaMetadata.table(PhysicalNames.name("TEST_ENTITY_2"));
         RecordProvider<JdbcRecord, JdbcRecord> prpA = new RecordProvider<>() {
             @Override
             public JdbcRecord provide(JdbcRecord parentRecord) {
                 return selectOne(entity2Table,
                     "SELECT * FROM " + entity2Table.qualifiedName() + " WHERE ID = ?",
-                    parentRecord.get("TEST_ENTITY_2_ID_A"));
+                    parentRecord.get(PhysicalNames.name("TEST_ENTITY_2_ID_A")));
             }
 
             @Override
@@ -421,7 +422,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
             public JdbcRecord provide(JdbcRecord parentRecord) {
                 return selectOne(entity2Table,
                     "SELECT * FROM " + entity2Table.qualifiedName() + " WHERE ID = ?",
-                    parentRecord.get("TEST_ENTITY_2_ID_B"));
+                    parentRecord.get(PhysicalNames.name("TEST_ENTITY_2_ID_B")));
             }
 
             @Override
@@ -457,14 +458,14 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
 
         TestRootHierarchical inserted = hierarchicalAggregateRootRepository.insert(
             TestDataGenerator.buildTestRootHierarchicalCompleteLevel3());
-        var table = persistenceConfiguration.schemaMetadata.table("TEST_ROOT_HIERARCHICAL");
+        var table = persistenceConfiguration.schemaMetadata.table(PhysicalNames.name("TEST_ROOT_HIERARCHICAL"));
         Optional<TestRootHierarchical> result = jdbcEntityFetcher
             .withRecordProvider(new RecordProvider<JdbcRecord, JdbcRecord>() {
                                     @Override
                                     public JdbcRecord provide(JdbcRecord parentRecord) {
                                         var rows = selectMany(table,
                                             "SELECT * FROM " + table.qualifiedName() + " WHERE PARENT_ID = ?",
-                                            parentRecord.get("ID"));
+                                            parentRecord.get(PhysicalNames.name("ID")));
                                         return rows.isEmpty() ? null : rows.get(0);
                                     }
                                 },
@@ -483,14 +484,14 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
 
         TestRootHierarchicalBackref inserted = hierarchicalAggregateRootBackrefRepository.insert(
             TestDataGenerator.buildTestRootHierarchicalBackrefCompleteLevel3());
-        var table = persistenceConfiguration.schemaMetadata.table("TEST_ROOT_HIERARCHICAL_BACKREF");
+        var table = persistenceConfiguration.schemaMetadata.table(PhysicalNames.name("TEST_ROOT_HIERARCHICAL_BACKREF"));
         Optional<TestRootHierarchicalBackref> result = jdbcEntityFetcher
             .withRecordProvider(new RecordProvider<JdbcRecord, JdbcRecord>() {
                                     @Override
                                     public JdbcRecord provide(JdbcRecord parentRecord) {
                                         var rows = selectMany(table,
                                             "SELECT * FROM " + table.qualifiedName() + " WHERE PARENT_ID = ?",
-                                            parentRecord.get("ID"));
+                                            parentRecord.get(PhysicalNames.name("ID")));
                                         return rows.isEmpty() ? null : rows.get(0);
                                     }
                                 },
@@ -500,7 +501,7 @@ public class FetcherTest extends JdbcBasePersistence_ITest {
             .withRecordProvider(new RecordProvider<JdbcRecord, JdbcRecord>() {
                                     @Override
                                     public JdbcRecord provide(JdbcRecord parentRecord) {
-                                        Object parentId = parentRecord.get("PARENT_ID");
+                                        Object parentId = parentRecord.get(PhysicalNames.name("PARENT_ID"));
                                         if (parentId != null) {
                                             var rows = selectMany(table,
                                                 "SELECT * FROM " + table.qualifiedName() + " WHERE ID = ?",

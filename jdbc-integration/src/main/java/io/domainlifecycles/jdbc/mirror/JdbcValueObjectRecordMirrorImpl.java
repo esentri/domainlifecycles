@@ -163,7 +163,11 @@ public class JdbcValueObjectRecordMirrorImpl implements ValueObjectRecordMirror<
             var predecessorVorm = entityRecordMirror
                 .valueObjectRecords()
                 .stream()
-                .filter(vorm -> this.completePath().startsWith(vorm.completePath())
+                // a strict prefix *at a path-segment boundary* - plain String.startsWith(vorm.completePath())
+                // would also match an unrelated sibling field whose name happens to extend the candidate's
+                // last segment (e.g. "valueObjectsOneToMany2..." is a startsWith match for
+                // "valueObjectsOneToMany", even though they are sibling fields, not ancestor/descendant)
+                .filter(vorm -> this.completePath().startsWith(vorm.completePath() + ".")
                     && (this.pathSegments().size() == (vorm.pathSegments().size() + 1))).min(
                     (o1, o2) -> Integer.compare(o1.pathSegments().size(), o2.pathSegments().size()) * -1);
             if (predecessorVorm.isPresent()) {

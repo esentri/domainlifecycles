@@ -33,6 +33,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -40,7 +41,21 @@ import java.util.UUID;
  * <p>
  * Native {@code UUID} columns (reported by H2 and PostgreSQL with the database specific type name
  * {@code "UUID"} rather than a standard {@link java.sql.Types} constant) are special-cased, since plain JDBC
- * has no {@link java.sql.Types} constant of its own for them.
+ * has no {@link java.sql.Types} constant of its own for them. Postgres' {@code timestamptz}/{@code timetz}
+ * columns are special-cased the same way: PostgreSQL's JDBC driver reports their {@code DATA_TYPE} as plain
+ * {@link Types#TIMESTAMP}/{@link Types#TIME} rather than the {@code _WITH_TIMEZONE} variants (a
+ * long-standing pgjdbc {@code DatabaseMetaData.getColumns()} limitation), which would otherwise make this
+ * mapping resolve them to {@link LocalDateTime}/{@link LocalTime} and then fail every read with "Cannot
+ * convert the column of type TIMESTAMPTZ to requested type java.time.LocalDateTime."
+ * <p>
+ * MySQL's native {@code TIMESTAMP} column is special-cased the same way again, but for a different reason:
+ * unlike Postgres, MySQL's JDBC driver reports the correct {@code DATA_TYPE} ({@link Types#TIMESTAMP}), and
+ * {@code TYPE_NAME} is genuinely the only signal distinguishing it from a plain, non-offset-aware {@code
+ * DATETIME} column (both report {@code DATA_TYPE}, since MySQL has no {@code TIMESTAMP_WITH_TIMEZONE}
+ * concept of its own) - unlike Postgres' {@code timestamptz}, this can only be resolved to {@link
+ * OffsetDateTime} when the {@code databaseProductName} is actually MySQL, since H2/Oracle/SQL Server also
+ * report plain {@code TYPE_NAME} {@code "TIMESTAMP"} for their own, genuinely non-offset-aware columns
+ * (distinguished there by {@code DATA_TYPE} alone, i.e. the {@code switch} below).
  *
  * @author Mario Herb
  */
@@ -62,20 +77,38 @@ public final class JdbcSqlTypeMapping {
      * Integer}/{@link Short}, not {@link Long}). Only a column with actual decimal digits (e.g. a monetary
      * amount) is mapped to {@link BigDecimal}.
      *
-     * @param sqlType       the JDBC SQL type ({@link java.sql.Types}) as reported by the database
-     * @param typeName      the database specific type name as reported by the database, used to detect
-     *                      native {@code UUID} columns
-     * @param decimalDigits the number of decimal digits ({@code DatabaseMetaData.getColumns()}'
-     *                      {@code DECIMAL_DIGITS}) the column was reported with; only meaningful for
-     *                      {@code NUMERIC}/{@code DECIMAL} columns
-     * @param precision     the column's precision ({@code DatabaseMetaData.getColumns()}' {@code COLUMN_SIZE}),
-     *                      used to pick an integer width for a zero-scale {@code NUMERIC}/{@code DECIMAL}
-     *                      column; only meaningful for {@code NUMERIC}/{@code DECIMAL} columns
+     * @param sqlType            the JDBC SQL type ({@link java.sql.Types}) as reported by the database
+     * @param typeName           the database specific type name as reported by the database, used to detect
+     *                           native {@code UUID} columns and Postgres/MySQL columns whose {@code
+     *                           DATA_TYPE} alone does not distinguish an offset-aware column from a plain one
+     * @param decimalDigits      the number of decimal digits ({@code DatabaseMetaData.getColumns()}'
+     *                           {@code DECIMAL_DIGITS}) the column was reported with; only meaningful for
+     *                           {@code NUMERIC}/{@code DECIMAL} columns
+     * @param precision          the column's precision ({@code DatabaseMetaData.getColumns()}' {@code
+     *                           COLUMN_SIZE}), used to pick an integer width for a zero-scale {@code
+     *                           NUMERIC}/{@code DECIMAL} column; only meaningful for {@code NUMERIC}/{@code
+     *                           DECIMAL} columns
+     * @param databaseProductName {@code DatabaseMetaData.getDatabaseProductName()}, used to scope the
+     *                           MySQL-only {@code TIMESTAMP} special case above to actual MySQL connections
      * @return the Java type values of such a column are mapped to
      */
-    public static Class<?> javaType(int sqlType, String typeName, int decimalDigits, int precision) {
-        if (typeName != null && "UUID".equalsIgnoreCase(typeName)) {
-            return UUID.class;
+    public static Class<?> javaType(
+        int sqlType, String typeName, int decimalDigits, int precision, String databaseProductName
+    ) {
+        if (typeName != null) {
+            var normalizedTypeName = typeName.toLowerCase(Locale.ROOT);
+            if ("uuid".equals(normalizedTypeName)) {
+                return UUID.class;
+            }
+            if ("timestamptz".equals(normalizedTypeName)) {
+                return OffsetDateTime.class;
+            }
+            if ("timetz".equals(normalizedTypeName)) {
+                return OffsetTime.class;
+            }
+            if ("timestamp".equals(normalizedTypeName) && "MySQL".equalsIgnoreCase(databaseProductName)) {
+                return OffsetDateTime.class;
+            }
         }
         return switch (sqlType) {
             case Types.BIT, Types.BOOLEAN -> Boolean.class;

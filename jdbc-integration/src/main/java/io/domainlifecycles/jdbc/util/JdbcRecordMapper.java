@@ -32,11 +32,13 @@ import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.jdbc.schema.TableMetadata;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 
+import java.nio.ByteBuffer;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Maps plain JDBC {@link ResultSet} rows onto {@link JdbcRecord} instances, and runs simple parameterized
@@ -123,7 +125,9 @@ public final class JdbcRecordMapper {
         JdbcConnectionProvider connectionProvider, JdbcDialect dialect, TableMetadata table, String columnName,
         Object value
     ) {
-        return selectWithSql(connectionProvider, table, dialect.selectByColumnSql(table, columnName), value);
+        return selectWithSql(
+            connectionProvider, table, dialect.selectByColumnSql(table, columnName),
+            normalizeForColumn(table, columnName, value));
     }
 
     /**
@@ -164,6 +168,35 @@ public final class JdbcRecordMapper {
         JdbcConnectionProvider connectionProvider, JdbcDialect dialect, TableMetadata table, String columnName,
         Object value
     ) {
-        return selectOne(connectionProvider, table, dialect.selectByColumnSql(table, columnName), value);
+        return selectOne(
+            connectionProvider, table, dialect.selectByColumnSql(table, columnName),
+            normalizeForColumn(table, columnName, value));
+    }
+
+    /**
+     * Converts a {@link UUID} filter value to whatever physical representation ({@link UUID}, {@link String}
+     * or {@code byte[]}) the target column actually holds, mirroring {@code JdbcValueObjectIdProvider}'s
+     * identical conversion for insert values. Without this, a UUID stored in a {@code VARCHAR}/{@code CHAR}
+     * column (the common case - see {@code db/migration-*}'s {@code VARCHAR2(36)} id columns) binds as a
+     * {@code uuid}-typed parameter on strict dialects like Postgres, which then reject the generated {@code
+     * WHERE column = ?} comparison with "operator does not exist: character varying = uuid" - Postgres does
+     * allow the same UUID-to-text value on {@code INSERT} (an assignment cast), which is why this surfaces
+     * only on the read side. Any value that is not a {@link UUID}, or whose target column already is one,
+     * passes through unchanged.
+     */
+    private static Object normalizeForColumn(TableMetadata table, String columnName, Object value) {
+        if (!(value instanceof UUID uuid)) {
+            return value;
+        }
+        var physicalType = table.column(columnName).javaType();
+        if (physicalType == String.class) {
+            return uuid.toString();
+        }
+        if (physicalType == byte[].class) {
+            var bytes = new byte[16];
+            ByteBuffer.wrap(bytes).putLong(uuid.getMostSignificantBits()).putLong(uuid.getLeastSignificantBits());
+            return bytes;
+        }
+        return value;
     }
 }
