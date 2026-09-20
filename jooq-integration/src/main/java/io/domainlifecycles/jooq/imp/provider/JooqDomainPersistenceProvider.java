@@ -74,7 +74,7 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
      *                                      registering custom converters.
      */
     public JooqDomainPersistenceProvider(JooqDomainPersistenceConfiguration jooqPersistenceConfiguration) {
-        super(jooqPersistenceConfiguration);
+        super(jooqPersistenceConfiguration, jooqPersistenceConfiguration.transactionCacheProvider);
         if (jooqPersistenceConfiguration.typeConverterProvider != null) {
             jooqPersistenceConfiguration.typeConverterProvider.provideConverters().forEach(
                 converterRegistry::registerConverter

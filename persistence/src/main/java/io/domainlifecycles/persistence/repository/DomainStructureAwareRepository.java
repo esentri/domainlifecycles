@@ -35,6 +35,7 @@ import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainType;
+import io.domainlifecycles.persistence.cache.AggregateCacheSupport;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.fetcher.FetcherResult;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
@@ -175,9 +176,15 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
      */
     public A update(A root) {
         Objects.requireNonNull(root);
-        var rootCurrentDatabaseState = findResultById((I) domainPersistenceProvider.getId(root));
+        var key = AggregateCacheSupport.keyFor(domainPersistenceProvider, root);
+        var rootCurrentDatabaseState = AggregateCacheSupport.<A, BASE_RECORD_TYPE>take(domainPersistenceProvider, key)
+            .orElseGet(() -> findResultById((I) domainPersistenceProvider.getId(root)));
         if (rootCurrentDatabaseState.resultValue().isPresent()) {
             processAggregates(root, rootCurrentDatabaseState);
+            //a cache-miss above would have re-populated the cache with the now stale, pre-write state via
+            //the fetch's own populate hook (see InternalAggregateFetcher) - invalidate unconditionally,
+            //whether the lookup above was a hit (already removed, so this is a no-op) or a miss
+            AggregateCacheSupport.invalidate(domainPersistenceProvider, key);
             return root;
         }
         throw DLCPersistenceException.fail("The given root was not found in the database! Root:" + root);
@@ -191,10 +198,14 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
      */
     public A increaseVersion(A root) {
         Objects.requireNonNull(root);
-        var rootCurrentDatabaseState = findResultById((I) domainPersistenceProvider.getId(root));
+        var key = AggregateCacheSupport.keyFor(domainPersistenceProvider, root);
+        var rootCurrentDatabaseState = AggregateCacheSupport.<A, BASE_RECORD_TYPE>take(domainPersistenceProvider, key)
+            .orElseGet(() -> findResultById((I) domainPersistenceProvider.getId(root)));
         if (rootCurrentDatabaseState.resultValue().isPresent()) {
             var pc = new PersistenceContext<>(domainPersistenceProvider, root, rootCurrentDatabaseState);
             persister.increaseVersion(rootCurrentDatabaseState.resultValue().get(), pc);
+            //see the comment in update() above for why this must run unconditionally, hit or miss
+            AggregateCacheSupport.invalidate(domainPersistenceProvider, key);
             return root;
         }
         throw DLCPersistenceException.fail("The given root was not found in the database! Root:" + root);
@@ -209,9 +220,13 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
      */
     public Optional<A> deleteById(I id) {
         Objects.requireNonNull(id);
-        var rootCurrentDatabaseState = findResultById(id);
+        var key = AggregateCacheSupport.keyFor(id);
+        var rootCurrentDatabaseState = AggregateCacheSupport.<A, BASE_RECORD_TYPE>take(domainPersistenceProvider, key)
+            .orElseGet(() -> findResultById(id));
         if (rootCurrentDatabaseState.resultValue().isPresent()) {
             processAggregates(null, rootCurrentDatabaseState);
+            //see the comment in update() above for why this must run unconditionally, hit or miss
+            AggregateCacheSupport.invalidate(domainPersistenceProvider, key);
             return rootCurrentDatabaseState.resultValue();
         }
         return Optional.empty();

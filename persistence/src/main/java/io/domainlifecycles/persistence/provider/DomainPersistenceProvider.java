@@ -39,6 +39,8 @@ import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.ValueObjectMirror;
 import io.domainlifecycles.mirror.api.ValueReferenceMirror;
+import io.domainlifecycles.persistence.cache.NoOpTransactionCacheProvider;
+import io.domainlifecycles.persistence.cache.TransactionCacheProvider;
 import io.domainlifecycles.persistence.configuration.DomainPersistenceConfiguration;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.mapping.ScalarListElement;
@@ -48,6 +50,7 @@ import io.domainlifecycles.persistence.mirror.api.RecordMirror;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -73,18 +76,39 @@ public abstract class DomainPersistenceProvider<BASE_RECORD> {
      */
     public final DomainPersistenceConfiguration domainPersistenceConfiguration;
 
+    /**
+     * Supplies the {@code TransactionCache} active for the currently running transaction, if any. Used by
+     * {@code InternalAggregateFetcher} to populate the cache after a real fetch, and by
+     * {@code DomainStructureAwareRepository} to consume/invalidate a cache entry around a write - see
+     * {@code AggregateCacheSupport}.
+     */
+    public final TransactionCacheProvider<BASE_RECORD> transactionCacheProvider;
+
+
+    /**
+     * Constructor. Uses a {@link NoOpTransactionCacheProvider}, i.e. the transaction cache feature is
+     * disabled.
+     *
+     * @param domainPersistenceConfiguration the domain persistence configuration
+     */
+    public DomainPersistenceProvider(DomainPersistenceConfiguration domainPersistenceConfiguration) {
+        this(domainPersistenceConfiguration, new NoOpTransactionCacheProvider<>());
+    }
 
     /**
      * Constructor.
      *
      * @param domainPersistenceConfiguration the domain persistence configuration
+     * @param transactionCacheProvider       the transaction cache provider to use
      */
-    public DomainPersistenceProvider(DomainPersistenceConfiguration domainPersistenceConfiguration) {
+    public DomainPersistenceProvider(DomainPersistenceConfiguration domainPersistenceConfiguration,
+                                     TransactionCacheProvider<BASE_RECORD> transactionCacheProvider) {
         if (!Domain.isInitialized()) {
             throw DLCPersistenceException.fail(
                 "The Domain must be initialized before creating the DomainPersistenceProvider!");
         }
         this.domainPersistenceConfiguration = domainPersistenceConfiguration;
+        this.transactionCacheProvider = Objects.requireNonNull(transactionCacheProvider);
         this.converterRegistry = new ConverterRegistry();
         this.persistenceMirror = buildPersistenceMirror();
 

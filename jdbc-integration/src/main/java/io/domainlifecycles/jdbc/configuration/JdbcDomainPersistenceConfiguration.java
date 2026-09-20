@@ -27,6 +27,7 @@
 package io.domainlifecycles.jdbc.configuration;
 
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
+import io.domainlifecycles.jdbc.cache.TransactionCacheAwareConnectionProvider;
 import io.domainlifecycles.jdbc.configuration.def.JdbcRecordPropertyAccessor;
 import io.domainlifecycles.jdbc.configuration.def.JdbcRecordPropertyProvider;
 import io.domainlifecycles.jdbc.connection.JdbcConnectionProvider;
@@ -37,6 +38,9 @@ import io.domainlifecycles.jdbc.imp.provider.JdbcRecordMirrorInstanceProvider;
 import io.domainlifecycles.jdbc.records.JdbcNewRecordInstanceProvider;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.jdbc.schema.JdbcSchemaMetadata;
+import io.domainlifecycles.persistence.cache.NoOpTransactionCacheProvider;
+import io.domainlifecycles.persistence.cache.ThreadBoundTransactionCacheProvider;
+import io.domainlifecycles.persistence.cache.TransactionCacheProvider;
 import io.domainlifecycles.persistence.configuration.DomainPersistenceConfiguration;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.mapping.IgnoredFieldProvider;
@@ -145,9 +149,19 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
      */
     public final JdbcEntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider;
 
+    /**
+     * Supplies the {@code TransactionCache} active for the currently running transaction, if any - see
+     * {@link DomainPersistenceConfiguration#transactionCacheEnabled}. Defaults to a
+     * {@link ThreadBoundTransactionCacheProvider} automatically bound to the connection's transaction
+     * boundary (via {@link #connectionProvider} being wrapped in a {@link TransactionCacheAwareConnectionProvider})
+     * when the feature is enabled, or to a {@link NoOpTransactionCacheProvider} when it is disabled.
+     */
+    public final TransactionCacheProvider<JdbcRecord> transactionCacheProvider;
+
     private JdbcDomainPersistenceConfiguration(
         DomainObjectBuilderProvider domainObjectBuilderProvider,
         Set<RecordMapper<?, ?, ?>> customRecordMappers,
+        boolean transactionCacheEnabled,
         JdbcSchemaMetadata schemaMetadata,
         JdbcConnectionProvider connectionProvider,
         JdbcDialect dialect,
@@ -160,9 +174,10 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
         RecordPropertyAccessor<JdbcRecord> recordPropertyAccessor,
         IgnoredFieldProvider ignoredDomainObjectFields,
         IgnoredRecordPropertyProvider ignoredRecordProperties,
-        JdbcEntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider
+        JdbcEntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider,
+        TransactionCacheProvider<JdbcRecord> transactionCacheProvider
     ) {
-        super(domainObjectBuilderProvider, customRecordMappers);
+        super(domainObjectBuilderProvider, customRecordMappers, transactionCacheEnabled);
         this.schemaMetadata = Objects.requireNonNull(schemaMetadata);
         this.connectionProvider = Objects.requireNonNull(connectionProvider);
         this.dialect = Objects.requireNonNull(dialect);
@@ -176,6 +191,7 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
         this.ignoredDomainObjectFields = ignoredDomainObjectFields;
         this.ignoredRecordProperties = ignoredRecordProperties;
         this.entityValueObjectRecordClassProvider = entityValueObjectRecordClassProvider;
+        this.transactionCacheProvider = Objects.requireNonNull(transactionCacheProvider);
     }
 
     /**
@@ -197,6 +213,9 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
         private IgnoredFieldProvider ignoredDomainObjectFields;
         private IgnoredRecordPropertyProvider ignoredRecordProperties;
         private JdbcEntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider;
+        private boolean transactionCacheEnabled = true;
+        private TransactionCacheProvider<JdbcRecord> transactionCacheProvider;
+        private int transactionCacheMaxSize = 256;
 
         /**
          * Creates a new instance of {@code JdbcPersistenceConfigurationBuilder}.
@@ -383,6 +402,48 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
         }
 
         /**
+         * Enables or disables the transaction cache feature (enabled by default). When disabled, behavior is
+         * identical to a build without the feature at all - {@link #connectionProvider} is not wrapped and no
+         * additional memory is used.
+         *
+         * @param transactionCacheEnabled whether the transaction cache feature should be enabled
+         * @return this builder
+         */
+        public JdbcPersistenceConfigurationBuilder withTransactionCacheEnabled(boolean transactionCacheEnabled) {
+            this.transactionCacheEnabled = transactionCacheEnabled;
+            return this;
+        }
+
+        /**
+         * Sets a custom {@code TransactionCacheProvider}, overriding the default
+         * {@link ThreadBoundTransactionCacheProvider}. Note that {@link #connectionProvider} is only
+         * automatically wrapped in a {@link TransactionCacheAwareConnectionProvider} for the default
+         * {@link ThreadBoundTransactionCacheProvider} - a custom provider must be wired to the connection's
+         * transaction boundary by the caller.
+         *
+         * @param transactionCacheProvider the transaction cache provider to use
+         * @return this builder
+         */
+        public JdbcPersistenceConfigurationBuilder withTransactionCacheProvider(
+            TransactionCacheProvider<JdbcRecord> transactionCacheProvider) {
+            this.transactionCacheProvider = transactionCacheProvider;
+            return this;
+        }
+
+        /**
+         * Sets the maximum number of aggregate roots held in the transaction cache per transaction (default
+         * 256). Only relevant for the default {@link ThreadBoundTransactionCacheProvider} - ignored if a
+         * custom provider was set via {@link #withTransactionCacheProvider(TransactionCacheProvider)}.
+         *
+         * @param transactionCacheMaxSize the maximum number of entries held per transaction
+         * @return this builder
+         */
+        public JdbcPersistenceConfigurationBuilder withTransactionCacheMaxSize(int transactionCacheMaxSize) {
+            this.transactionCacheMaxSize = transactionCacheMaxSize;
+            return this;
+        }
+
+        /**
          * Sets the {@code JdbcEntityValueObjectRecordClassProvider}, which provides explicit value object
          * table configurations for cases the naming-convention based auto-mapping cannot resolve on its own.
          *
@@ -459,9 +520,22 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
                 this.recordPropertyAccessor = new JdbcRecordPropertyAccessor(schemaMetadata);
             }
 
+            if (this.transactionCacheProvider == null) {
+                if (this.transactionCacheEnabled) {
+                    var threadBoundProvider = new ThreadBoundTransactionCacheProvider<JdbcRecord>(
+                        this.transactionCacheMaxSize);
+                    this.transactionCacheProvider = threadBoundProvider;
+                    this.connectionProvider = new TransactionCacheAwareConnectionProvider(
+                        this.connectionProvider, threadBoundProvider);
+                } else {
+                    this.transactionCacheProvider = new NoOpTransactionCacheProvider<>();
+                }
+            }
+
             return new JdbcDomainPersistenceConfiguration(
                 this.domainObjectBuilderProvider,
                 this.customRecordMappers,
+                this.transactionCacheEnabled,
                 this.schemaMetadata,
                 this.connectionProvider,
                 this.dialect,
@@ -474,7 +548,8 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
                 this.recordPropertyAccessor,
                 this.ignoredDomainObjectFields,
                 this.ignoredRecordProperties,
-                this.entityValueObjectRecordClassProvider
+                this.entityValueObjectRecordClassProvider,
+                this.transactionCacheProvider
             );
         }
     }

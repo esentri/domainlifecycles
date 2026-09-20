@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -176,6 +177,30 @@ public class EntityCloner {
                                 domainObjectBuilder.addValueToCollection(clonedAssociation, erm.getName());
                             }
                         });
+                    }
+                } else if (erm.getType().hasOptionalContainer()) {
+                    //an Optional<Entity> field: peek returns the Optional wrapper itself (unlike a plain
+                    //single-valued reference below), so it must be unwrapped before use - setFieldValue is
+                    //then given the raw entity (or null) either way, exactly as InternalAggregateFetcher
+                    //already does for such fields when building the original, un-cloned graph
+                    Optional<?> optionalReference = accessor.peek(erm.getName());
+                    Entity<?> reference = optionalReference == null ? null : (Entity<?>) optionalReference.orElse(null);
+                    if (reference != null && cloningEntityIds.contains(getId(reference))) {
+                        Entity<?> clonedAssociation = clonedEntities.get(getId(reference));
+                        if (clonedAssociation != null) {
+                            domainObjectBuilder.setFieldValue(clonedAssociation, erm.getName());
+                        } else {
+                            BackReference br = new BackReference(entity, erm, getId(reference));
+                            backReferences.add(br);
+                        }
+                    } else {
+                        Entity<?> clonedEntityReference = cloneInternal(
+                            reference,
+                            cloningEntityIds,
+                            backReferences,
+                            clonedEntities
+                        );
+                        domainObjectBuilder.setFieldValue(clonedEntityReference, erm.getName());
                     }
                 } else {
                     Entity<?> reference = accessor.peek(erm.getName());

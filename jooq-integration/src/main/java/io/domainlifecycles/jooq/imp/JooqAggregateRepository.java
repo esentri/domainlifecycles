@@ -28,7 +28,9 @@ package io.domainlifecycles.jooq.imp;
 
 import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.jooq.cache.TransactionCacheJooqBinder;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
+import io.domainlifecycles.persistence.cache.ThreadBoundTransactionCacheProvider;
 import io.domainlifecycles.persistence.fetcher.FetcherResult;
 import io.domainlifecycles.persistence.repository.PersistenceActionPublishingRepository;
 import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
@@ -75,6 +77,17 @@ public class JooqAggregateRepository<A extends AggregateRoot<I>, I extends Ident
             persistenceEventPublisher);
         this.fetcher = new JooqAggregateFetcher<>(aggregateRootClass, dslContext, domainPersistenceProvider);
         this.dslContext = dslContext;
+        registerTransactionCacheBinderIfApplicable(dslContext, domainPersistenceProvider);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void registerTransactionCacheBinderIfApplicable(
+        DSLContext dslContext, JooqDomainPersistenceProvider domainPersistenceProvider) {
+        if (domainPersistenceProvider.domainPersistenceConfiguration.transactionCacheEnabled
+            && domainPersistenceProvider.transactionCacheProvider instanceof ThreadBoundTransactionCacheProvider<?> threadBoundProvider) {
+            TransactionCacheJooqBinder.registerOn(dslContext.configuration(),
+                (ThreadBoundTransactionCacheProvider<UpdatableRecord<?>>) threadBoundProvider);
+        }
     }
 
     /**

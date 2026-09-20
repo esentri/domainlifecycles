@@ -31,6 +31,7 @@ import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.domain.types.clone.EntityCloner;
 import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.mirror.api.AggregateRootReferenceMirror;
 import io.domainlifecycles.mirror.api.Domain;
@@ -39,6 +40,7 @@ import io.domainlifecycles.mirror.api.EntityReferenceMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.ValueReferenceMirror;
 import io.domainlifecycles.mirror.visitor.ContextDomainObjectVisitor;
+import io.domainlifecycles.persistence.cache.AggregateCacheSupport;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.fetcher.simple.FetchedRecord;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
@@ -71,7 +73,9 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
 
     private final Map<PropertyProviderKey, RecordProvider<? extends BASE_RECORD_TYPE, ? extends BASE_RECORD_TYPE>> recordProviderMap = new HashMap<>();
 
-    private final DomainPersistenceProvider<?> domainPersistenceProvider;
+    private final DomainPersistenceProvider<BASE_RECORD_TYPE> domainPersistenceProvider;
+
+    private final EntityCloner entityCloner;
 
 
     /**
@@ -81,10 +85,11 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
      * @param domainPersistenceProvider the persistence provider
      */
     public InternalAggregateFetcher(Class<A> aggregateRootEntityClass,
-                                    DomainPersistenceProvider<?> domainPersistenceProvider
+                                    DomainPersistenceProvider<BASE_RECORD_TYPE> domainPersistenceProvider
     ) {
         this.aggregateRootEntityClass = aggregateRootEntityClass;
         this.domainPersistenceProvider = domainPersistenceProvider;
+        this.entityCloner = new EntityCloner(domainPersistenceProvider.domainPersistenceConfiguration.domainObjectBuilderProvider);
 
     }
 
@@ -195,7 +200,12 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
             }
         );
 
-        return new FetcherResult<>(domainObjectDeepFetched, fetcherContext);
+        FetcherResult<A, BASE_RECORD_TYPE> result = new FetcherResult<>(domainObjectDeepFetched, fetcherContext);
+        //populate the transaction cache with every real fetch (whether triggered by an application finder or
+        //by a repository's own fallback fetch on a cache miss, see DomainStructureAwareRepository) - a no-op
+        //unless a transaction cache scope is currently open
+        AggregateCacheSupport.populate(domainPersistenceProvider, entityCloner, result);
+        return result;
     }
 
     /**

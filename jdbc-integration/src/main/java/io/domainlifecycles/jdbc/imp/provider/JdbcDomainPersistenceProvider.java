@@ -109,7 +109,7 @@ public class JdbcDomainPersistenceProvider extends DomainPersistenceProvider<Jdb
      *                                     required for setting up the JDBC domain persistence provider
      */
     public JdbcDomainPersistenceProvider(JdbcDomainPersistenceConfiguration jdbcPersistenceConfiguration) {
-        super(jdbcPersistenceConfiguration);
+        super(jdbcPersistenceConfiguration, jdbcPersistenceConfiguration.transactionCacheProvider);
         this.connectionProvider = jdbcPersistenceConfiguration.connectionProvider;
         this.dialect = jdbcPersistenceConfiguration.dialect;
         this.schemaMetadata = jdbcPersistenceConfiguration.schemaMetadata;
