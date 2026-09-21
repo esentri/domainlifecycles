@@ -240,4 +240,63 @@ public class NumericDefaultConvertersTest {
 
         assertThatThrownBy(() -> converter.convert(null)).isInstanceOf(NullPointerException.class);
     }
+
+    @Test
+    public void testByteToShort() {
+        var converter = new DefaultByteToShortConverter();
+
+        assertThat(converter.convert((byte) 42)).isEqualTo((short) 42);
+        assertThat(converter.convert(null)).isNull();
+    }
+
+    @Test
+    public void testShortToByteWithinRange() {
+        var converter = new DefaultShortToByteConverter();
+
+        assertThat(converter.convert((short) 42)).isEqualTo((byte) 42);
+        assertThat(converter.convert(null)).isNull();
+    }
+
+    @Test
+    public void testShortToByteOutOfRangeSilentlyTruncatesWithoutThrowing() {
+        // like DefaultLongToByteConverter/DefaultLongToIntConverter, this uses Short.byteValue(), a plain
+        // narrowing conversion: out-of-range values wrap around instead of raising an ArithmeticException.
+        var converter = new DefaultShortToByteConverter();
+
+        assertThat(converter.convert((short) 200)).isEqualTo((byte) -56);
+    }
+
+    @Test
+    public void testBooleanToShort() {
+        var converter = new DefaultBooleanToShortConverter();
+
+        assertThat(converter.convert(Boolean.TRUE)).isEqualTo((short) 1);
+        assertThat(converter.convert(Boolean.FALSE)).isEqualTo((short) 0);
+    }
+
+    @Test
+    public void testBooleanToShortTreatsNullAsFalse() {
+        // note the asymmetry with ShortToBoolean below: this converter never returns null.
+        var converter = new DefaultBooleanToShortConverter();
+
+        assertThat(converter.convert(null)).isEqualTo((short) 0);
+    }
+
+    @Test
+    public void testShortToBoolean() {
+        var converter = new DefaultShortToBooleanConverter();
+
+        assertThat(converter.convert((short) 1)).isTrue();
+        assertThat(converter.convert((short) 0)).isFalse();
+        assertThat(converter.convert((short) 2)).isFalse();
+    }
+
+    @Test
+    public void testShortToBooleanThrowsOnNullUnlikeItsInverseConverter() {
+        // ShortToBoolean does not null-check its argument before unboxing it (from.shortValue()), so a null
+        // input throws NullPointerException rather than returning a default value.
+        var converter = new DefaultShortToBooleanConverter();
+
+        assertThatThrownBy(() -> converter.convert(null)).isInstanceOf(NullPointerException.class);
+    }
 }
