@@ -1,6 +1,7 @@
 package io.domainlifecycles.boot3.autoconfig.features.multiple.events_builder_jackson.spring;
 
 import io.domainlifecycles.boot3.autoconfig.annotation.EnableDlc;
+import io.domainlifecycles.boot3.autoconfig.configurations.DlcJdbcPersistenceAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcSpringOpenApiAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcSpringWebAutoConfiguration;
@@ -20,6 +21,7 @@ import java.util.Locale;
 @EnableDlc(exclude = {
     DlcSpringWebAutoConfiguration.class,
     DlcJooqPersistenceAutoConfiguration.class,
+    DlcJdbcPersistenceAutoConfiguration.class,
     DlcSpringOpenApiAutoConfiguration.class,
     DlcServiceKindAutoConfiguration.class
 })

@@ -206,7 +206,54 @@ so it works correctly for `@Transactional` methods with no extra setup - nothing
 
 More information on [DLC Persistence](./../persistence/readme.md)
 
-### 5. ServiceKind Autoconfig (`DlcServiceKindAutoConfiguration`)
+### 5. JDBC Persistence Autoconfig (`DlcJdbcPersistenceAutoConfiguration`)
+
+**Purpose:** Automatic configuration of plain JDBC based persistence (`jdbc-integration`) - the
+code-generation-free alternative to the jOOQ Persistence Autoconfig above, reading the database schema once at
+startup instead of relying on generated record classes.
+
+**Activation:** Automatically active when `@EnableDlc` annotation is set
+and `jdbc-integration` is provided on the classpath.
+Could be deactivated by:
+```java
+@EnableDlc(exclude = DlcJdbcPersistenceAutoConfiguration.class)
+```
+or by:
+```properties
+dlc.features.persistence.enabled=false
+```
+Annotation-based excludes have priority over property toggles.
+
+If both jOOQ and `jdbc-integration` happen to be on the classpath at the same time, this autoconfig is
+deliberately ordered after the jOOQ Persistence Autoconfig, so jOOQ wins the shared persistence-provider slot
+deterministically - a project normally only ever has one of the two integrations on its classpath at all, so
+this only matters in that edge case.
+
+**Configuration:**
+```java
+@EnableDlc(
+    jooqSqlDialect = "POSTGRES"
+)
+```
+The same `jooqSqlDialect` attribute/property jOOQ uses selects the `JdbcDialect` implementation here too -
+no separate attribute, since a project only ever activates one of the two persistence backends. No
+record-package equivalent is needed, since `jdbc-integration` reads the schema at runtime.
+
+**Properties:**
+```properties
+dlc.features.persistence.sql-dialect=POSTGRES
+# Optional: narrow the schema read to one schema (see JdbcSchemaMetadata's class javadoc for when this is
+# required - a same-named table visible in more than one schema)
+dlc.features.persistence.jdbc.schema-pattern=my_schema
+```
+
+This autoconfig also wires DLC's [Transaction Cache](./../persistence/readme.md#transaction-cache) to Spring's
+own transaction management automatically (via [`persistence-spring-tx`](./../persistence-spring-tx/readme.md)),
+so it works correctly for `@Transactional` methods with no extra setup - nothing to configure by hand.
+
+More information on [DLC JDBC Integration](./../jdbc-integration/readme.md)
+
+### 6. ServiceKind Autoconfig (`DlcServiceKindAutoConfiguration`)
 
 **Purpose:** Automatic registration of ServiceKind beans 
 
@@ -239,7 +286,7 @@ Annotation-based excludes have priority over property toggles.
   - If there is a possible conflict, which means that a bean of the same interface type is already present,
     the autoconfig will log a warning and skip the registration of the conflicting bean.
   
-### 6. Domain Events Autoconfig 
+### 7. Domain Events Autoconfig 
 
 **Purpose:** Automatic configuration of DomainEvent handling
 
@@ -309,7 +356,7 @@ More information on [DLC DomainEvents](./../domain-events-core/readme.md)
 
 More information on [DLC DomainEvents Spring integration](./../domain-events-spring-bus/readme.md)
 
-### 7. Spring Web Autoconfig (`DlcSpringWebAutoConfiguration`)
+### 8. Spring Web Autoconfig (`DlcSpringWebAutoConfiguration`)
 
 **Purpose:** REST/Web integration for DLC Domain Objects
 
@@ -331,7 +378,7 @@ Annotation-based excludes have priority over property toggles.
 - Parameter converters for ValueObjects and Identities
 - `ResponseEntityBuilder` for consistent API responses
 
-### 8. OpenAPI Autoconfig (`DlcSpringOpenApiAutoConfiguration`)
+### 9. OpenAPI Autoconfig (`DlcSpringOpenApiAutoConfiguration`)
 
 **Purpose:** Automatic OpenAPI/Swagger documentation for DLC Types
 

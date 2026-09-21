@@ -3,6 +3,7 @@ package io.domainlifecycles.autoconfig.features.single.web;
 import io.domainlifecycles.autoconfig.annotation.EnableDlc;
 import io.domainlifecycles.autoconfig.configurations.DlcBuilderAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJacksonAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcJdbcPersistenceAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcNoTxInMemoryDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringBusDomainEventsAutoConfiguration;
@@ -18,6 +19,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
     DlcSpringOpenApiAutoConfiguration.class,
     DlcJacksonAutoConfiguration.class,
     DlcJooqPersistenceAutoConfiguration.class,
+    DlcJdbcPersistenceAutoConfiguration.class,
     DlcSpringBusDomainEventsAutoConfiguration.class,
     DlcNoTxInMemoryDomainEventsAutoConfiguration.class,
     DlcJooqPersistenceAutoConfiguration.class,

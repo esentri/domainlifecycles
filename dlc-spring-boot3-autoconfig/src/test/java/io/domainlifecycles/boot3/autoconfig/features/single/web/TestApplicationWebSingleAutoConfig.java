@@ -3,6 +3,7 @@ package io.domainlifecycles.boot3.autoconfig.features.single.web;
 import io.domainlifecycles.boot3.autoconfig.annotation.EnableDlc;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcBuilderAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcJackson2AutoConfiguration;
+import io.domainlifecycles.boot3.autoconfig.configurations.DlcJdbcPersistenceAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcNoTxInMemoryDomainEventsAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcServiceKindAutoConfiguration;
@@ -19,6 +20,7 @@ import java.util.Locale;
     DlcSpringOpenApiAutoConfiguration.class,
     DlcJackson2AutoConfiguration.class,
     DlcJooqPersistenceAutoConfiguration.class,
+    DlcJdbcPersistenceAutoConfiguration.class,
     DlcSpringBusDomainEventsAutoConfiguration.class,
     DlcNoTxInMemoryDomainEventsAutoConfiguration.class,
     DlcServiceKindAutoConfiguration.class

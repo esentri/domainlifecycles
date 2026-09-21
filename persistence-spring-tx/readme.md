@@ -56,12 +56,14 @@ native binder alone.
 
 ### Usage
 
-For `jooq-integration`, this is wired automatically by [`DlcJooqPersistenceAutoConfiguration`](../dlc-spring-boot-autoconfig/readme.md#4-jooq-persistence-autoconfig-dlcjooqpersistenceautoconfiguration)
-(both the Spring Boot 3 and Spring Boot 4 autoconfig modules) - nothing to configure by hand in a Spring Boot
+For both `jooq-integration` (via [`DlcJooqPersistenceAutoConfiguration`](../dlc-spring-boot-autoconfig/readme.md#4-jooq-persistence-autoconfig-dlcjooqpersistenceautoconfiguration))
+and `jdbc-integration` (via [`DlcJdbcPersistenceAutoConfiguration`](../dlc-spring-boot-autoconfig/readme.md#5-jdbc-persistence-autoconfig-dlcjdbcpersistenceautoconfiguration)),
+this is wired automatically - both the Spring Boot 3 and Spring Boot 4 autoconfig modules wire the Transaction
+Cache to Spring's own transaction management by default, with nothing to configure by hand in a Spring Boot
 application.
 
-For a manual setup (no autoconfig, or `jdbc-integration`, which has none yet), wire the same shared
-`ThreadBoundTransactionCacheProvider` into both the connection provider and the `DomainPersistenceProvider`:
+For a manual setup (no autoconfig), wire the same shared `ThreadBoundTransactionCacheProvider` into both the
+connection provider and the `DomainPersistenceProvider`, for example for `jooq-integration`:
 
 ```java
 @Bean

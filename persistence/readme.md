@@ -667,7 +667,7 @@ by a small binder class for each way a transaction can be driven:
 |---------------------------------------------------------------|--------------------------------------------------------------------------|------------------------------------------------------------------------------------------------|
 | jOOQ itself (`dslContext.transaction(...)`, jOOQ's own `TransactionListener` events) | `TransactionCacheJooqBinder` (`jooq-integration`)                       | `JooqDomainPersistenceProvider`'s `DSLContext`-taking constructor, once, at provider construction time |
 | Plain JDBC, driven via commit/rollback on the connection provider's proxy | `TransactionCacheAwareConnectionProvider` (`jdbc-integration`)          | Manual - wrap your own `JdbcConnectionProvider` with it                                        |
-| Spring (`@Transactional`, `DataSourceTransactionManager`)      | `SpringTransactionCacheBinder` + a `SpringTransactionCacheAwareConnectionProvider` decorator (see [`persistence-spring-tx`](../persistence-spring-tx/readme.md)) | `DlcJooqPersistenceAutoConfiguration` (Spring Boot autoconfig) for `jooq-integration`; manual for `jdbc-integration` |
+| Spring (`@Transactional`, `DataSourceTransactionManager`)      | `SpringTransactionCacheBinder` + a `SpringTransactionCacheAwareConnectionProvider` decorator (see [`persistence-spring-tx`](../persistence-spring-tx/readme.md)) | `DlcJooqPersistenceAutoConfiguration`/`DlcJdbcPersistenceAutoConfiguration` (Spring Boot autoconfig), for both `jooq-integration` and `jdbc-integration` |
 
 A purely Spring-managed transaction bypasses both jOOQ's own `TransactionListener` (never fires unless
 application code calls `dslContext.transaction(...)` itself) and plain JDBC's connection-proxy commit/rollback
