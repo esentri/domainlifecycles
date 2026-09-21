@@ -226,6 +226,10 @@ public class DlcJooqPersistenceAutoConfiguration {
          * @param transactionCacheProvider the same transaction cache provider {@link #connectionProvider}
          *                                 opens/closes a scope for, so that the two agree on what "the
          *                                 current transaction's cache" is
+         * @param dslContext the {@link DSLContext} the transaction cache's jOOQ-native
+         *                   {@code TransactionCacheJooqBinder} is registered on, once, here, centrally -
+         *                   so every repository/fetcher built later against the same {@link DSLContext}
+         *                   bean is covered, regardless of which one is built first
          * @return a configured {@link JooqDomainPersistenceProvider} instance
          * @throws DLCAutoConfigException if the required JOOQ record package property is missing or invalid
          */
@@ -236,7 +240,8 @@ public class DlcJooqPersistenceAutoConfiguration {
             DomainObjectBuilderProvider domainObjectBuilderProvider,
             Set<RecordMapper<?, ?, ?>> customRecordMappers,
             DomainMirror domainMirror,
-            ThreadBoundTransactionCacheProvider<UpdatableRecord<?>> transactionCacheProvider
+            ThreadBoundTransactionCacheProvider<UpdatableRecord<?>> transactionCacheProvider,
+            DSLContext dslContext
         ) {
             String recordPackage = environment.getProperty("dlc.features.persistence.jooq-record-package");
             if(recordPackage == null) {
@@ -250,7 +255,8 @@ public class DlcJooqPersistenceAutoConfiguration {
                     .withCustomRecordMappers(customRecordMappers)
                     .withRecordClassProvider(new JooqRecordClassProvider(recordPackage))
                     .withTransactionCacheProvider(transactionCacheProvider)
-                    .make());
+                    .make(),
+                dslContext);
         }
 
         /**

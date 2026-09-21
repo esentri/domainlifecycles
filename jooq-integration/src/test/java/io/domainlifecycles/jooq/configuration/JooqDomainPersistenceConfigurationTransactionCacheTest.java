@@ -59,15 +59,16 @@ class JooqDomainPersistenceConfigurationTransactionCacheTest {
 
     @Test
     void registerOnIsANoOpForANoOpProviderBasedConfiguration() {
-        //JooqAggregateRepository only ever calls TransactionCacheJooqBinder.registerOn(...) for a
-        //ThreadBoundTransactionCacheProvider (see registerTransactionCacheBinderIfApplicable) - a disabled
-        //feature must therefore never end up with a binder on the jOOQ Configuration at all, which this
-        //documents at the unit that would otherwise silently start firing again if that guard regressed
+        //JooqDomainPersistenceProvider's DSLContext-taking constructor only ever calls
+        //TransactionCacheJooqBinder.registerOn(...) for a ThreadBoundTransactionCacheProvider (see
+        //registerTransactionCacheBinderIfApplicable) - a disabled feature must therefore never end up with
+        //a binder on the jOOQ Configuration at all, which this documents at the unit that would otherwise
+        //silently start firing again if that guard regressed
         var configuration = minimalConfig().withTransactionCacheEnabled(false).make();
 
         assertThat(configuration.transactionCacheProvider)
-            .as("a ThreadBoundTransactionCacheProvider is the only kind JooqAggregateRepository ever binds "
-                + "a " + TransactionCacheJooqBinder.class.getSimpleName() + " to")
+            .as("a ThreadBoundTransactionCacheProvider is the only kind JooqDomainPersistenceProvider ever "
+                + "binds a " + TransactionCacheJooqBinder.class.getSimpleName() + " to")
             .isNotInstanceOf(ThreadBoundTransactionCacheProvider.class);
     }
 }

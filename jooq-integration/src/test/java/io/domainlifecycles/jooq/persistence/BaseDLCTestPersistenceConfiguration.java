@@ -255,7 +255,7 @@ public class BaseDLCTestPersistenceConfiguration {
                 }
             )
             .make();
-        return new JooqDomainPersistenceProvider(jooqDomainPersistenceConfiguration);
+        return new JooqDomainPersistenceProvider(jooqDomainPersistenceConfiguration, dslContext);
     }
 
     public void startTransaction() {

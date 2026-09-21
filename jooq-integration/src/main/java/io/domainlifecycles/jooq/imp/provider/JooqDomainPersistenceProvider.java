@@ -26,6 +26,7 @@
 
 package io.domainlifecycles.jooq.imp.provider;
 
+import io.domainlifecycles.jooq.cache.TransactionCacheJooqBinder;
 import io.domainlifecycles.jooq.configuration.JooqDomainPersistenceConfiguration;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainType;
@@ -40,10 +41,12 @@ import io.domainlifecycles.persistence.mapping.RecordMapper;
 import io.domainlifecycles.persistence.mapping.ScalarListElementRecordMapper;
 import io.domainlifecycles.persistence.mirror.PersistenceModel;
 import io.domainlifecycles.persistence.mirror.api.EntityRecordMirror;
+import io.domainlifecycles.persistence.cache.ThreadBoundTransactionCacheProvider;
 import io.domainlifecycles.persistence.mirror.api.PersistenceMirror;
 import io.domainlifecycles.persistence.mirror.api.ValueObjectRecordMirror;
 import io.domainlifecycles.persistence.provider.DomainPersistenceProvider;
 import io.domainlifecycles.persistence.records.EntityValueObjectRecordTypeConfiguration;
+import org.jooq.DSLContext;
 import org.jooq.UpdatableRecord;
 
 import java.util.ArrayList;
@@ -66,6 +69,13 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
      * Constructs an instance of {@code JooqDomainPersistenceProvider} using the provided
      * configuration. Registers converters provided by the type converter provider within the
      * configuration, if available.
+     * <p>
+     * This constructor does <b>not</b> wire the transaction cache to jOOQ's own transaction lifecycle
+     * ({@code dslContext.transaction(...)}/{@code SpringTransactionProvider}) - use it only when the
+     * transaction cache feature is disabled, or a custom {@code TransactionCacheProvider} is configured
+     * that isn't a {@link ThreadBoundTransactionCacheProvider} and therefore isn't bound automatically
+     * anyway. Otherwise, prefer {@link #JooqDomainPersistenceProvider(JooqDomainPersistenceConfiguration,
+     * DSLContext)}.
      *
      * @param jooqPersistenceConfiguration the configuration object containing settings
      *                                      and dependencies required for setting up
@@ -79,6 +89,39 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
             jooqPersistenceConfiguration.typeConverterProvider.provideConverters().forEach(
                 converterRegistry::registerConverter
             );
+        }
+    }
+
+    /**
+     * Constructs an instance of {@code JooqDomainPersistenceProvider} exactly like
+     * {@link #JooqDomainPersistenceProvider(JooqDomainPersistenceConfiguration)}, additionally registering
+     * the transaction cache's {@link TransactionCacheJooqBinder} on {@code dslContext}'s jOOQ
+     * {@code Configuration} - once, here, centrally - so that the transaction cache feature works for
+     * every {@code JooqAggregateRepository}/{@code JooqAggregateFetcher} later built against the same,
+     * shared {@code DSLContext}, regardless of which one is built first or whether a
+     * {@code JooqAggregateRepository} is ever built at all (e.g. a caller going through
+     * {@code JooqAggregateFetcher} directly). This is the preferred constructor whenever the transaction
+     * cache feature is enabled with the default {@link ThreadBoundTransactionCacheProvider}.
+     *
+     * @param jooqPersistenceConfiguration the configuration object containing settings and dependencies
+     *                                      required for setting up the Jooq domain persistence provider
+     * @param dslContext                   the {@code DSLContext} shared by all repositories/fetchers built
+     *                                      against this provider, whose jOOQ {@code Configuration} the
+     *                                      transaction cache binder is registered on
+     */
+    public JooqDomainPersistenceProvider(JooqDomainPersistenceConfiguration jooqPersistenceConfiguration,
+                                         DSLContext dslContext) {
+        this(jooqPersistenceConfiguration);
+        registerTransactionCacheBinderIfApplicable(dslContext, jooqPersistenceConfiguration);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void registerTransactionCacheBinderIfApplicable(
+        DSLContext dslContext, JooqDomainPersistenceConfiguration jooqPersistenceConfiguration) {
+        if (jooqPersistenceConfiguration.transactionCacheEnabled
+            && jooqPersistenceConfiguration.transactionCacheProvider instanceof ThreadBoundTransactionCacheProvider<?> threadBoundProvider) {
+            TransactionCacheJooqBinder.registerOn(dslContext.configuration(),
+                (ThreadBoundTransactionCacheProvider<UpdatableRecord<?>>) threadBoundProvider);
         }
     }
 

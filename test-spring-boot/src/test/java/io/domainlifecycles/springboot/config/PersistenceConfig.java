@@ -27,7 +27,8 @@ public class PersistenceConfig {
     @Bean
     @DependsOn("initializedDomain")
     public JooqDomainPersistenceProvider domainPersistenceProvider(DomainObjectBuilderProvider domainObjectBuilderProvider,
-                                                                   Set<RecordMapper<?,?,?>> customRecordMappers) {
+                                                                   Set<RecordMapper<?,?,?>> customRecordMappers,
+                                                                   DSLContext dslContext) {
 
         JooqDomainPersistenceConfiguration jooqDomainPersistenceConfiguration = JooqDomainPersistenceConfiguration
             .JooqPersistenceConfigurationBuilder
@@ -46,7 +47,7 @@ public class PersistenceConfig {
             .make();
 
         return new JooqDomainPersistenceProvider(
-            jooqDomainPersistenceConfiguration);
+            jooqDomainPersistenceConfiguration, dslContext);
     }
 
     @Bean
