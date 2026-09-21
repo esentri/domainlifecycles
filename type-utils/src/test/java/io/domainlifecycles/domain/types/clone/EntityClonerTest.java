@@ -68,6 +68,20 @@ public class EntityClonerTest {
     }
 
     @Test
+    public void clonesASelfReferencingOptionalTypedEntityFieldWithoutThrowing() {
+        var original = CycleTestEntity.builder()
+            .setId(new CycleTestEntityId(4L))
+            .setConcurrencyVersion(0)
+            .build();
+        original.setSelf(original);
+
+        var cloned = (CycleTestEntity) entityCloner.clone(original);
+
+        assertThat(cloned).isNotSameAs(original);
+        assertThat(cloned.getSelf()).contains(cloned);
+    }
+
+    @Test
     public void nullListAndArrayFieldsCloneAsNull() {
         var original = CloneTestEntity.builder()
             .setId(new CloneTestEntityId(3L))

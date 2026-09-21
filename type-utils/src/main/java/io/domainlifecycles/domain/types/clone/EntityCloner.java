@@ -105,6 +105,12 @@ public class EntityCloner {
                 if (backReference.entityReferenceMirror.getType().hasCollectionContainer()) {
                     Collection<Entity<?>> c = accessor.peek(backReference.entityReferenceMirror.getName());
                     c.add(clonedEntity);
+                } else if (backReference.entityReferenceMirror.getType().hasOptionalContainer()) {
+                    // poke() is a raw reflection field set (unlike DomainObjectBuilder.setFieldValue, which
+                    // the non-cyclic path above uses and which wraps a raw value for an Optional-typed
+                    // setter itself) - an Optional<Entity>-typed field needs that wrapping done here instead,
+                    // or Field.set() throws IllegalArgumentException for the un-wrapped Entity value
+                    accessor.poke(backReference.entityReferenceMirror.getName(), Optional.of(clonedEntity));
                 } else {
                     accessor.poke(backReference.entityReferenceMirror.getName(), clonedEntity);
                 }
