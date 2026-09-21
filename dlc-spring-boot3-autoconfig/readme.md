@@ -187,6 +187,10 @@ dlc.features.persistence.sql-dialect=POSTGRES
 Providing the 'dlcJooqRecordPackage' is mandatory for DLC persistence, 
 'dlcJooqSqlDialect' is recommended.
 
+This autoconfig also wires DLC's [Transaction Cache](./../persistence/readme.md#transaction-cache) to Spring's
+own transaction management automatically (via [`persistence-spring-tx`](./../persistence-spring-tx/readme.md)),
+so it works correctly for `@Transactional` methods with no extra setup - nothing to configure by hand.
+
 More information on [DLC Persistence](./../persistence/readme.md)
 
 ### 5. ServiceKind Autoconfig (`DlcServiceKindAutoConfiguration`)

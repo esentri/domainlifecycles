@@ -95,6 +95,8 @@ DLC provides following core features:
     * Persistence Action Event hooks
     * Full ValueObject support regarding persistence
     * Supports `final` Keywords and Java-Optionals within persisted structures
+    * Optional per-transaction Transaction Cache, reducing redundant `SELECT`s on `update()`/`deleteById()` -
+      works out of the box with Spring-managed transactions
 
 - [`Domain Events`](domain-events-core/readme.md): Simplifies some technical concerns about publishing and listening to 
   DomainEvents
@@ -168,6 +170,7 @@ DLC provides several JARs which enable the DLC features independently
 | Jackson 3 based JSON mapping                                        | application developers | io.domainlifecycles:jackson3-integration                                                                                                          |
 | Service registry                                                    | only internally used   | io.domainlifecycles:service-registry                                                                                                              |
 | Persistence interfaces and general persistence management           | only internally used   | io.domainlifecycles:persistence                                                                                                                   | 
+| Spring transaction binding for the DLC Transaction Cache             | only internally used   | io.domainlifecycles:persistence-spring-tx                                                                                                         |
 | Spring Boot 3 Autoconfig                                            | application developers | io.domainlifecycles:dlc-spring-boot3-autoconfig                                                                                                   |
 | Spring Boot 4 Autoconfig                                            | application developers | io.domainlifecycles:dlc-spring-boot-autoconfig                                                                                                    |
 | jOOQ based implementation for persistence management                | application developers | io.domainlifecycles:jooq-integration                                                                                                              |

@@ -23,6 +23,7 @@ TypeConverter, ...). This readme only covers what is specific to the JDBC based 
     - [Schema metadata](#schema-metadata)
     - [Connection provider](#connection-provider)
     - [DLC Persistence configuration](#persistence-configuration)
+    - [Transaction Cache](#transaction-cache)
 - [Repositories](#repositories)
 - [Fetcher and RecordProvider](#fetcher)
 - [Object relational mapping](#or-mapping)
@@ -228,6 +229,22 @@ those need the connection provider, dialect or schema metadata as a separate con
 
 The resulting `JdbcDomainPersistenceProvider` instance is passed into every Repository, exactly as
 `JooqDomainPersistenceProvider` is for `jooq-integration`.
+
+<a name="transaction-cache"></a>
+
+#### Transaction Cache
+
+`jdbc-integration` shares the [Transaction Cache](../persistence/readme.md#transaction-cache) feature with
+`jooq-integration` - enabled by default via `withTransactionCacheEnabled(...)`/`withTransactionCacheProvider(...)`/
+`withTransactionCacheMaxSize(...)` on `JdbcPersistenceConfigurationBuilder`, identical to the jOOQ side.
+
+The one difference is activation: this module has no Spring Boot autoconfig yet, so both the native and the
+Spring-aware binder need to be wired by hand. For a plain JDBC transaction (driven via commit/rollback on the
+connection provider itself, no Spring involved), wrap your `JdbcConnectionProvider` with
+`TransactionCacheAwareConnectionProvider`. For a Spring-managed (`@Transactional`) transaction, wrap it with
+`io.domainlifecycles.jdbc.cache.SpringTransactionCacheAwareConnectionProvider` instead (or in addition - see
+[`persistence-spring-tx`](../persistence-spring-tx/readme.md) for how the two binders coexist), using the same
+`ThreadBoundTransactionCacheProvider` instance passed to `JdbcDomainPersistenceConfiguration`.
 
 <a name="repositories"></a>
 

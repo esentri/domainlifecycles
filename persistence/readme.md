@@ -50,6 +50,8 @@ Here is an overview of more details about DLC Persistence and some additional fe
     - [Optimistic Locking](#optimistic-locking)
     - [Change Tracking with Persistence Actions](#change-tracking)
     - [Queries via Fetcher](#fetcher)
+    - [Transaction Cache](#transaction-cache)
+        - [Activation: how the cache learns when a transaction begins and ends](#transaction-cache-activation)
     - [Object relational mapping](#or-mapping)
         - [AutoMapping](#automapping)
         - [RecordMapper](#recordmapper)
@@ -245,7 +247,8 @@ A minimal configuration example of a `io.domainlifecycles.persistence.provider.D
 @Bean
 public JooqDomainPersistenceProvider domainPersistenceProvider(
         DomainObjectBuilderProvider domainObjectBuilderProvider,
-        Set<RecordMapper<?, ?, ?>> customRecordMappers
+        Set<RecordMapper<?, ?, ?>> customRecordMappers,
+        DSLContext dslContext
         ) {
           return new JooqDomainPersistenceProvider(
           JooqDomainPersistenceConfiguration.JooqPersistenceConfigurationBuilder
@@ -253,7 +256,8 @@ public JooqDomainPersistenceProvider domainPersistenceProvider(
           .withDomainObjectBuilderProvider(domainObjectBuilderProvider)
           .withCustomRecordMappers(customRecordMappers)
           .withRecordPackage(JOOQ_RECORD_PKG)
-          .make());
+          .make(),
+          dslContext);
         }
         
 ```
@@ -264,6 +268,9 @@ For a minimal setup:
 - We can add a list of custom RecordMappers (optionally).
 - Also, the full qualified package name where DLC persistence can expect to find all corresponding jOOQ record classes
   must be defined.
+- Passing the same `DSLContext` your Repositories are built with lets `JooqDomainPersistenceProvider` wire the
+  [Transaction Cache](#transaction-cache) to it centrally, once, here - see that section for when this can be
+  omitted (falling back to the single-argument constructor).
 
 The DomainPersistenceProvider instance must finally be injected into all repository instances.
 
@@ -603,6 +610,71 @@ optimized alternative, is demonstrated here:
         return orders;
     }
 ```
+
+<a name="transaction-cache"></a>
+
+#### Transaction Cache
+
+DLC Persistence keeps a small, per-transaction read cache of previously fetched Aggregate roots, so that a
+write operation (`update()`, `deleteById()`) which needs the currently persisted state to detect changes does
+not have to issue a redundant `SELECT` if the same Aggregate was already loaded via the Fetcher earlier in the
+same transaction. It is enabled by default and requires no application code changes to benefit from - it only
+ever changes *how many* `SELECT`s a transaction issues, never the result of `insert()`/`update()`/`deleteById()`/
+`findById()`.
+
+How it works:
+
+- Every real fetch of a complete Aggregate root (`getFetcher().fetchDeep(...)`, `findById(...)`) puts a cloned
+  copy of the result into the cache, keyed by the Aggregate root's type and id. Only Entities are cloned
+  (`io.domainlifecycles.domain.types.clone.EntityCloner`) - ValueObject instances are immutable in DLC and are
+  reused by reference, never duplicated.
+- `update()`/`deleteById()` take (and remove) a matching cache entry instead of fetching the currently persisted
+  state again, if one is present; otherwise they fall back to a real fetch exactly as before. Either way, the
+  entry is always removed from the cache once consumed - the next fetch of that Aggregate root within the same
+  transaction fetches for real again.
+- The cache is scoped to exactly one transaction and is thread-bound: it is only ever visible on the thread the
+  transaction is running on, and is entirely discarded once the transaction ends (commit or rollback), regardless
+  of outcome.
+
+Configuration (identical builder methods on both `JooqPersistenceConfigurationBuilder` and
+`JdbcPersistenceConfigurationBuilder`):
+
+```java
+JooqDomainPersistenceConfiguration.JooqPersistenceConfigurationBuilder
+    .newConfig()
+    // ...
+    .withTransactionCacheEnabled(true)     // default; false disables the feature entirely - no transaction
+                                            // listener is registered and no additional memory is used
+    .withTransactionCacheMaxSize(256)      // default; the maximum number of Aggregate roots held per
+                                            // transaction, ignored if a custom provider is set below
+    .make();
+```
+
+A custom `io.domainlifecycles.persistence.cache.TransactionCacheProvider` can be supplied via
+`.withTransactionCacheProvider(...)` instead of the default `ThreadBoundTransactionCacheProvider` - for example
+to share a cache implementation across persistence technologies, or to back it with something other than an
+in-memory map. Note that only the default `ThreadBoundTransactionCacheProvider` is bound automatically to a
+transaction's lifecycle by the mechanisms described below; a custom provider must arrange for that itself.
+
+<a name="transaction-cache-activation"></a>
+
+##### Activation: how the cache learns when a transaction begins and ends
+
+The cache itself has no idea when a transaction starts or ends - that part is technology-specific, and handled
+by a small binder class for each way a transaction can be driven:
+
+| Transaction driven by...                                    | Binder                                                                  | Wired automatically by                                                                        |
+|---------------------------------------------------------------|--------------------------------------------------------------------------|------------------------------------------------------------------------------------------------|
+| jOOQ itself (`dslContext.transaction(...)`, jOOQ's own `TransactionListener` events) | `TransactionCacheJooqBinder` (`jooq-integration`)                       | `JooqDomainPersistenceProvider`'s `DSLContext`-taking constructor, once, at provider construction time |
+| Plain JDBC, driven via commit/rollback on the connection provider's proxy | `TransactionCacheAwareConnectionProvider` (`jdbc-integration`)          | Manual - wrap your own `JdbcConnectionProvider` with it                                        |
+| Spring (`@Transactional`, `DataSourceTransactionManager`)      | `SpringTransactionCacheBinder` + a `SpringTransactionCacheAwareConnectionProvider` decorator (see [`persistence-spring-tx`](../persistence-spring-tx/readme.md)) | `DlcJooqPersistenceAutoConfiguration` (Spring Boot autoconfig) for `jooq-integration`; manual for `jdbc-integration` |
+
+A purely Spring-managed transaction bypasses both jOOQ's own `TransactionListener` (never fires unless
+application code calls `dslContext.transaction(...)` itself) and plain JDBC's connection-proxy commit/rollback
+hooks (Spring's `DataSourceTransactionManager` commits/rolls back the physical `Connection` directly) - which is
+exactly the gap `persistence-spring-tx` closes. Both binders can be active on the same connection provider at
+once without conflict: the jOOQ-native binder handles a `dslContext.transaction(...)` call, the Spring binder
+handles an `@Transactional` method, and each is a no-op outside of the case it is meant for.
 
 <a name="or-mapping"></a>
 
