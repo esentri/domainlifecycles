@@ -66,6 +66,11 @@ import java.util.UUID;
  * JDBC driver reports its {@code DATA_TYPE} as the vendor-specific {@code oracle.jdbc.OracleTypes.TIMESTAMPTZ}
  * ({@code -101}), and its {@code TYPE_NAME} carries the column's precision inline (e.g. {@code "TIMESTAMP(6)
  * WITH TIME ZONE"}), hence the prefix/suffix match below rather than an exact one.
+ * <p>
+ * Oracle's {@code DATE} column is special-cased once more, the other way around: Oracle's {@code DATE}
+ * always carries a time-of-day internally, so the Oracle JDBC driver reports its {@code DATA_TYPE} as
+ * {@link Types#TIMESTAMP} (which the {@code switch} below would otherwise resolve to {@link LocalDateTime})
+ * rather than {@link Types#DATE}, even though {@code TYPE_NAME} is still plainly {@code "DATE"}.
  *
  * @author Mario Herb
  */
@@ -90,9 +95,10 @@ public final class JdbcSqlTypeMapping {
      * @param sqlType            the JDBC SQL type ({@link java.sql.Types}) as reported by the database
      * @param typeName           the database specific type name as reported by the database, used to detect
      *                           native {@code UUID} columns, Postgres/MySQL columns whose {@code DATA_TYPE}
-     *                           alone does not distinguish an offset-aware column from a plain one, and SQL
+     *                           alone does not distinguish an offset-aware column from a plain one, SQL
      *                           Server's {@code datetimeoffset}/Oracle's {@code TIMESTAMP WITH TIME ZONE},
-     *                           whose {@code DATA_TYPE} the {@code switch} below has no case for
+     *                           whose {@code DATA_TYPE} the {@code switch} below has no case for, and
+     *                           Oracle's {@code DATE}, whose {@code DATA_TYPE} the switch resolves wrongly
      * @param decimalDigits      the number of decimal digits ({@code DatabaseMetaData.getColumns()}'
      *                           {@code DECIMAL_DIGITS}) the column was reported with; only meaningful for
      *                           {@code NUMERIC}/{@code DECIMAL} columns
@@ -126,6 +132,9 @@ public final class JdbcSqlTypeMapping {
             }
             if (normalizedTypeName.startsWith("timestamp") && normalizedTypeName.endsWith("with time zone")) {
                 return OffsetDateTime.class;
+            }
+            if ("date".equals(normalizedTypeName)) {
+                return LocalDate.class;
             }
         }
         return switch (sqlType) {
