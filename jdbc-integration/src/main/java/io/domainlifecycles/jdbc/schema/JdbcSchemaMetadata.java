@@ -35,6 +35,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -62,9 +63,15 @@ public final class JdbcSchemaMetadata {
 
     /**
      * Reads the schema metadata for all tables visible through the given connection.
+     * <p>
+     * Every table lookup on the returned snapshot ({@link #table(String)}/{@link #findTable(String)}) is by
+     * bare table name alone - if two different schemas visible through {@code connection} both contain a
+     * table of the same name, there is no way to keep both in one snapshot without that ambiguity, so this
+     * throws instead. Narrow the read to one schema via {@link #read(Connection, String)} to avoid it.
      *
      * @param connection the JDBC connection to read metadata from
      * @return the schema metadata snapshot
+     * @throws DLCPersistenceException if two visible schemas contain a same-named table
      */
     public static JdbcSchemaMetadata read(Connection connection) {
         return read(connection, null, null);
@@ -95,6 +102,10 @@ public final class JdbcSchemaMetadata {
         try {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
             Map<String, TableMetadata> tables = new LinkedHashMap<>();
+            // tracks which schema each table name was already read from, by the same case-insensitive key
+            // findTable() below resolves lookups with, so a same-named table in a second schema is caught
+            // as a collision under exactly the casing combinations that would later be genuinely ambiguous
+            Map<String, String> schemaByNormalizedTableName = new LinkedHashMap<>();
             record TableIdentifier(String schema, String name) {
             }
             List<TableIdentifier> tableIdentifiers = new ArrayList<>();
@@ -104,8 +115,18 @@ public final class JdbcSchemaMetadata {
                 }
             }
             for (TableIdentifier tableIdentifier : tableIdentifiers) {
+                var normalizedName = tableIdentifier.name().toUpperCase(Locale.ROOT);
+                var previousSchema = schemaByNormalizedTableName.putIfAbsent(
+                    normalizedName, tableIdentifier.schema());
+                if (previousSchema != null) {
+                    throw DLCPersistenceException.fail(
+                        "Table name '%s' is ambiguous: it exists in both schema '%s' and schema '%s', "
+                            + "visible through the same connection. Narrow the read to a single schema via "
+                            + "JdbcSchemaMetadata.read(connection, schemaPattern) instead.",
+                        tableIdentifier.name(), previousSchema, tableIdentifier.schema());
+                }
                 tables.put(tableIdentifier.name(), readTable(
-                    databaseMetaData, catalog, schemaPattern, tableIdentifier.schema(), tableIdentifier.name()));
+                    databaseMetaData, catalog, tableIdentifier.schema(), tableIdentifier.name()));
             }
             return new JdbcSchemaMetadata(tables);
         } catch (SQLException e) {
@@ -113,28 +134,35 @@ public final class JdbcSchemaMetadata {
         }
     }
 
+    /**
+     * Reads one table's own metadata, scoped to exactly the schema {@code getTables()} reported it under -
+     * every sub-query below is deliberately given {@code tableSchema}, not the {@code read()} call's own,
+     * possibly wildcard/{@code null}, {@code schemaPattern}: passing that wildcard straight through here
+     * would let a same-named table in a different schema bleed into this one's primary key/foreign
+     * key/column results whenever more than one schema is visible through the connection - surfacing as
+     * spurious "composite primary/foreign key" failures below rather than the schema mix-up they really are.
+     */
     private static TableMetadata readTable(
         DatabaseMetaData databaseMetaData,
         String catalog,
-        String schemaPattern,
         String tableSchema,
         String tableName
     ) throws SQLException {
-        String primaryKeyName = readPrimaryKeyColumn(databaseMetaData, catalog, schemaPattern, tableName);
-        List<ForeignKeyMetadata> foreignKeys = readForeignKeys(databaseMetaData, catalog, schemaPattern, tableName);
+        String primaryKeyName = readPrimaryKeyColumn(databaseMetaData, catalog, tableSchema, tableName);
+        List<ForeignKeyMetadata> foreignKeys = readForeignKeys(databaseMetaData, catalog, tableSchema, tableName);
         List<ColumnMetadata> columns = readColumns(
-            databaseMetaData, catalog, schemaPattern, tableName, primaryKeyName);
+            databaseMetaData, catalog, tableSchema, tableName, primaryKeyName);
         return new TableMetadata(tableSchema, tableName, columns, primaryKeyName, foreignKeys);
     }
 
     private static String readPrimaryKeyColumn(
         DatabaseMetaData databaseMetaData,
         String catalog,
-        String schemaPattern,
+        String tableSchema,
         String tableName
     ) throws SQLException {
         List<String> primaryKeyColumns = new ArrayList<>();
-        try (ResultSet rs = databaseMetaData.getPrimaryKeys(catalog, schemaPattern, tableName)) {
+        try (ResultSet rs = databaseMetaData.getPrimaryKeys(catalog, tableSchema, tableName)) {
             while (rs.next()) {
                 primaryKeyColumns.add(rs.getString("COLUMN_NAME"));
             }
@@ -150,12 +178,12 @@ public final class JdbcSchemaMetadata {
     private static List<ForeignKeyMetadata> readForeignKeys(
         DatabaseMetaData databaseMetaData,
         String catalog,
-        String schemaPattern,
+        String tableSchema,
         String tableName
     ) throws SQLException {
         List<ForeignKeyMetadata> foreignKeys = new ArrayList<>();
         Map<String, Integer> columnCountPerForeignKey = new LinkedHashMap<>();
-        try (ResultSet rs = databaseMetaData.getImportedKeys(catalog, schemaPattern, tableName)) {
+        try (ResultSet rs = databaseMetaData.getImportedKeys(catalog, tableSchema, tableName)) {
             while (rs.next()) {
                 String foreignKeyName = rs.getString("FK_NAME");
                 String foreignKeyColumn = rs.getString("FKCOLUMN_NAME");
@@ -177,13 +205,13 @@ public final class JdbcSchemaMetadata {
     private static List<ColumnMetadata> readColumns(
         DatabaseMetaData databaseMetaData,
         String catalog,
-        String schemaPattern,
+        String tableSchema,
         String tableName,
         String primaryKeyName
     ) throws SQLException {
         List<ColumnMetadata> columns = new ArrayList<>();
         String databaseProductName = databaseMetaData.getDatabaseProductName();
-        try (ResultSet rs = databaseMetaData.getColumns(catalog, schemaPattern, tableName, "%")) {
+        try (ResultSet rs = databaseMetaData.getColumns(catalog, tableSchema, tableName, "%")) {
             while (rs.next()) {
                 String columnName = rs.getString("COLUMN_NAME");
                 int sqlType = rs.getInt("DATA_TYPE");

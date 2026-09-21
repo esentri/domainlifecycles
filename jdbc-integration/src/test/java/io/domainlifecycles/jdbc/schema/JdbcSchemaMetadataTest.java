@@ -1,5 +1,6 @@
 package io.domainlifecycles.jdbc.schema;
 
+import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import java.sql.Statement;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class JdbcSchemaMetadataTest {
 
@@ -98,5 +100,39 @@ class JdbcSchemaMetadataTest {
 
         assertThat(schema.findTable("parent")).isPresent();
         assertThat(schema.findTable("does_not_exist")).isEmpty();
+    }
+
+    @Test
+    void throwsInsteadOfSilentlyMergingATableNameThatExistsInTwoSchemas() throws SQLException {
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("CREATE SCHEMA SCHEMA_A");
+            stmt.execute("CREATE SCHEMA SCHEMA_B");
+            stmt.execute("CREATE TABLE SCHEMA_A.DUPLICATE_NAME (ID BIGINT PRIMARY KEY)");
+            stmt.execute("CREATE TABLE SCHEMA_B.DUPLICATE_NAME (ID BIGINT PRIMARY KEY)");
+        }
+
+        // reading all schemas visible through the connection (no schemaPattern) is exactly the mode where
+        // a table name existing in two different schemas would otherwise silently overwrite one with the
+        // other in the snapshot
+        assertThatThrownBy(() -> JdbcSchemaMetadata.read(connection))
+            .isInstanceOf(DLCPersistenceException.class)
+            .hasMessageContaining("DUPLICATE_NAME")
+            .hasMessageContaining("SCHEMA_A")
+            .hasMessageContaining("SCHEMA_B");
+    }
+
+    @Test
+    void readingASingleSchemaAvoidsTheAmbiguityEvenWithASameNamedTableInAnotherSchema() throws SQLException {
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("CREATE SCHEMA SCHEMA_A");
+            stmt.execute("CREATE SCHEMA SCHEMA_B");
+            stmt.execute("CREATE TABLE SCHEMA_A.DUPLICATE_NAME (ID BIGINT PRIMARY KEY)");
+            stmt.execute("CREATE TABLE SCHEMA_B.DUPLICATE_NAME (ID BIGINT PRIMARY KEY)");
+        }
+
+        // narrowing to one schema (as documented) is unaffected by the same table name existing elsewhere
+        var schema = JdbcSchemaMetadata.read(connection, "SCHEMA_A");
+
+        assertThat(schema.table("DUPLICATE_NAME").schema()).isEqualTo("SCHEMA_A");
     }
 }
