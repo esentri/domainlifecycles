@@ -9,6 +9,7 @@ import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.jdbc.schema.JdbcSchemaMetadata;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
+import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +22,7 @@ import java.sql.Statement;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class JdbcValueObjectIdProviderTest {
 
@@ -43,6 +45,8 @@ class JdbcValueObjectIdProviderTest {
             stmt.execute("CREATE TABLE SEQ_VO (ID BIGINT PRIMARY KEY, CONTAINER_ID BIGINT)");
             stmt.execute("CREATE TABLE UUID_VO (ID UUID PRIMARY KEY, CONTAINER_ID UUID)");
             stmt.execute("CREATE TABLE STRING_UUID_VO (ID VARCHAR(36) PRIMARY KEY, CONTAINER_ID VARCHAR(36))");
+            stmt.execute("CREATE TABLE BINARY_UUID_VO (ID BINARY(16) PRIMARY KEY, CONTAINER_ID BINARY(16))");
+            stmt.execute("CREATE TABLE NATURAL_KEY_VO (ID VARCHAR(50) PRIMARY KEY, CONTAINER_ID VARCHAR(50))");
         }
         var schemaMetadata = JdbcSchemaMetadata.read(connection);
         var configuration = JdbcDomainPersistenceConfiguration.JdbcPersistenceConfigurationBuilder.newConfig()
@@ -88,6 +92,27 @@ class JdbcValueObjectIdProviderTest {
 
         assertThat(record.get("ID")).isInstanceOf(String.class);
         assertThat(UUID.fromString((String) record.get("ID"))).isNotNull();
+    }
+
+    @Test
+    void generatesRandomUuidStoredAsBytesForBinaryPrimaryKey() {
+        var record = new JdbcRecord("BINARY_UUID_VO");
+
+        provider.provideNewTechIdForValueObjectRecord(record);
+
+        assertThat(record.get("ID")).isInstanceOf(byte[].class);
+        assertThat((byte[]) record.get("ID")).hasSize(16);
+    }
+
+    @Test
+    void throwsForNonUuidSizedVarcharPrimaryKeyInsteadOfSilentlyWritingARandomUuid() {
+        // a VARCHAR(50) primary key is neither UUID-sized (32-36) nor long-compatible - e.g. a natural or
+        // sequence-derived key that merely happens to share String as its Java type - so it must be
+        // rejected loudly rather than silently overwritten with a random UUID
+        var record = new JdbcRecord("NATURAL_KEY_VO");
+
+        assertThatThrownBy(() -> provider.provideNewTechIdForValueObjectRecord(record))
+            .isInstanceOf(DLCPersistenceException.class);
     }
 
     @Test

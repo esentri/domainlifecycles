@@ -194,7 +194,7 @@ public final class JdbcSchemaMetadata {
                 boolean primaryKey = columnName.equalsIgnoreCase(primaryKeyName);
                 Class<?> javaType = JdbcSqlTypeMapping.javaType(
                     sqlType, typeName, decimalDigits, precision, databaseProductName);
-                columns.add(new ColumnMetadata(columnName, sqlType, typeName, javaType, nullable, primaryKey));
+                columns.add(new ColumnMetadata(columnName, sqlType, typeName, javaType, precision, nullable, primaryKey));
             }
         }
         return List.copyOf(columns);

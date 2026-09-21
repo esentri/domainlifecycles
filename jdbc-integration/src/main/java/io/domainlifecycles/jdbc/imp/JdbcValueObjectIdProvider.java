@@ -106,7 +106,7 @@ public class JdbcValueObjectIdProvider extends BaseValueObjectIdProvider<JdbcRec
         }
         var pkColumn = table.column(pkColumnName);
 
-        if (isUuidCompatible(pkColumn.javaType())) {
+        if (isUuidCompatible(pkColumn.javaType(), pkColumn.precision())) {
             newVoRecord.set(pkColumn.name(), toPhysicalValue(UUID.randomUUID(), pkColumn.javaType()));
         } else if (isLongCompatible(pkColumn.javaType())) {
             var sequenceName = table.name() + "_SEQ";
@@ -114,9 +114,9 @@ public class JdbcValueObjectIdProvider extends BaseValueObjectIdProvider<JdbcRec
             newVoRecord.set(pkColumn.name(), newTechId);
         } else {
             throw DLCPersistenceException.fail(
-                "Unsupported primary key type '%s' for table '%s'. "
-                    + "Only long-compatible or UUID (uuid/VARCHAR/BINARY(16)) types are supported.",
-                pkColumn.javaType().getName(), table.name());
+                "Unsupported primary key type '%s' (precision %d) for table '%s'. Only long-compatible or "
+                    + "UUID (uuid, or VARCHAR/CHAR sized 32-36, or BINARY(16)) types are supported.",
+                pkColumn.javaType().getName(), pkColumn.precision(), table.name());
         }
     }
 
@@ -177,8 +177,26 @@ public class JdbcValueObjectIdProvider extends BaseValueObjectIdProvider<JdbcRec
             || type == int.class;
     }
 
-    private static boolean isUuidCompatible(Class<?> type) {
-        return type == UUID.class || type == String.class || type == byte[].class;
+    /**
+     * A {@code String}/{@code byte[]}-typed primary key column is only UUID-compatible if its declared
+     * length actually fits a UUID's physical representation - a {@code VARCHAR}/{@code BINARY} column of
+     * any other length is a natural or sequence-derived key that merely happens to share the same Java
+     * type, and must not be silently overwritten with a random UUID (see {@link #looksLikeUuid} for the
+     * equivalent, value-based check this mirrors on the read side). A native {@link UUID} column has no
+     * such ambiguity and is always compatible regardless of {@code precision}.
+     */
+    private static boolean isUuidCompatible(Class<?> type, int precision) {
+        if (type == UUID.class) {
+            return true;
+        }
+        if (type == String.class) {
+            // 36 chars with dashes (8-4-4-4-12), or 32 without
+            return precision >= 32 && precision <= 36;
+        }
+        if (type == byte[].class) {
+            return precision == 16;
+        }
+        return false;
     }
 
     private static boolean looksLikeUuid(String s) {

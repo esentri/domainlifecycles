@@ -34,6 +34,9 @@ package io.domainlifecycles.jdbc.schema;
  * @param typeName   the database specific type name (e.g. {@code "UUID"} on H2/Postgres), as reported by the
  *                   database
  * @param javaType   the Java type that values of this column are mapped to
+ * @param precision  the column's precision ({@code DatabaseMetaData.getColumns()}' {@code COLUMN_SIZE}) -
+ *                   for a {@code VARCHAR}/{@code CHAR} column, its declared character length; for a
+ *                   {@code BINARY}/{@code VARBINARY} column, its declared byte length
  * @param nullable   whether the column accepts {@code NULL} values
  * @param primaryKey whether the column is (part of) the table's primary key
  * @author Mario Herb
@@ -43,6 +46,7 @@ public record ColumnMetadata(
     int sqlType,
     String typeName,
     Class<?> javaType,
+    int precision,
     boolean nullable,
     boolean primaryKey
 ) {
