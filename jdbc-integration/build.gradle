@@ -43,6 +43,7 @@ dependencies {
     api project(":builder")
     implementation project(":mirror")
     api project(":persistence")
+    api project(":persistence-spring-tx")
 
     testImplementation project(":test-shared-impl")
     testImplementation project(":type-utils")
@@ -56,6 +57,7 @@ dependencies {
     testImplementation libs.kryo
     testImplementation libs.mockito.core
     testImplementation libs.h2
+    testImplementation libs.spring.tx
 
     //jakarta config
     testImplementation libs.hibernate.validator
