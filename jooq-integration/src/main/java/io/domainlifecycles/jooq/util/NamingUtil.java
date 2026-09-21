@@ -52,12 +52,15 @@ public class NamingUtil {
             // Check char is underscore
             if (builder.charAt(i) == '_') {
 
-                builder.deleteCharAt(i);
-                builder.replace(
-                    i, i + 1,
-                    String.valueOf(
-                        Character.toUpperCase(
-                            builder.charAt(i))));
+                // collapse a run of one or more consecutive underscores into a single word
+                // boundary, and stop deleting once nothing is left to capitalize (a trailing
+                // underscore), rather than reading past the end of the shrunk builder
+                do {
+                    builder.deleteCharAt(i);
+                } while (i < builder.length() && builder.charAt(i) == '_');
+                if (i < builder.length()) {
+                    builder.setCharAt(i, Character.toUpperCase(builder.charAt(i)));
+                }
             }
         }
 

@@ -41,4 +41,18 @@ public class NamingUtilTest {
         var camel = NamingUtil.camelCaseToSnakeCase(snake);
         Assertions.assertThat(camel).isEqualTo("this_is_a_test");
     }
+
+    @Test
+    public void testSnakeToCamelTrailingUnderscoreDoesNotThrow() {
+        var snake = "foo_";
+        var camel = NamingUtil.snakeCaseToCamelCase(snake);
+        Assertions.assertThat(camel).isEqualTo("foo");
+    }
+
+    @Test
+    public void testSnakeToCamelDoubleUnderscoreCollapsesToOneWordBoundary() {
+        var snake = "foo__bar";
+        var camel = NamingUtil.snakeCaseToCamelCase(snake);
+        Assertions.assertThat(camel).isEqualTo("fooBar");
+    }
 }
