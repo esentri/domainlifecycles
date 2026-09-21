@@ -26,6 +26,8 @@
 
 package io.domainlifecycles.jdbc.dialect;
 
+import io.domainlifecycles.jdbc.schema.TableMetadata;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -54,5 +56,18 @@ public final class SqlServerJdbcDialect implements JdbcDialect {
     @Override
     public long nextSequenceValue(Connection connection, String sequenceName) throws SQLException {
         return JdbcDialect.executeScalarLongQuery(connection, "SELECT NEXT VALUE FOR " + sequenceName);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * SQL Server has no {@code LIMIT}/{@code OFFSET} keywords at all; it requires the ANSI {@code OFFSET ?
+     * ROWS FETCH NEXT ? ROWS ONLY} clause instead, bound offset-then-page-size.
+     */
+    @Override
+    public PagedSelect pagedSelectSql(TableMetadata table, String orderByColumnName, int offset, int pageSize) {
+        var sql = "SELECT * FROM " + quotedTableName(table)
+            + " ORDER BY " + quoteIdentifier(orderByColumnName) + " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        return new PagedSelect(sql, new Object[]{offset, pageSize});
     }
 }

@@ -58,8 +58,8 @@ public class OrderRepository extends JdbcAggregateRepository<OrderBv3, OrderIdBv
 
     public List<OrderBv3> findOrdersPaged(int offset, int pageSize) {
         var table = schemaMetadata.table(PhysicalNames.name("ORDER_BV3"));
-        var sql = "SELECT * FROM " + table.qualifiedName() + " ORDER BY ID LIMIT ? OFFSET ?";
-        return selectWithSql(table, sql, pageSize, offset)
+        var pagedSelect = dialect.pagedSelectSql(table, "ID", offset, pageSize);
+        return selectWithSql(table, pagedSelect.sql(), pagedSelect.params())
             .stream()
             .map(r -> getFetcher().fetchDeep(r).resultValue().get())
             .collect(Collectors.toList());

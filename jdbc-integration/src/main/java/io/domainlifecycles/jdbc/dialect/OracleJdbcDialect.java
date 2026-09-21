@@ -26,6 +26,8 @@
 
 package io.domainlifecycles.jdbc.dialect;
 
+import io.domainlifecycles.jdbc.schema.TableMetadata;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -53,5 +55,19 @@ public final class OracleJdbcDialect implements JdbcDialect {
     @Override
     public long nextSequenceValue(Connection connection, String sequenceName) throws SQLException {
         return JdbcDialect.executeScalarLongQuery(connection, "SELECT " + sequenceName + ".NEXTVAL FROM DUAL");
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Oracle has no {@code LIMIT}/{@code OFFSET} keywords either (its legacy pagination idiom is {@code
+     * ROWNUM}); Oracle 12c and later support the same ANSI {@code OFFSET ? ROWS FETCH NEXT ? ROWS ONLY}
+     * clause SQL Server does, bound offset-then-page-size.
+     */
+    @Override
+    public PagedSelect pagedSelectSql(TableMetadata table, String orderByColumnName, int offset, int pageSize) {
+        var sql = "SELECT * FROM " + quotedTableName(table)
+            + " ORDER BY " + quoteIdentifier(orderByColumnName) + " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        return new PagedSelect(sql, new Object[]{offset, pageSize});
     }
 }

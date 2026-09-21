@@ -212,4 +212,37 @@ public interface JdbcDialect {
     default String selectByColumnSql(TableMetadata table, String columnName) {
         return "SELECT * FROM " + quotedTableName(table) + " WHERE " + quoteIdentifier(columnName) + " = ?";
     }
+
+    /**
+     * Builds a paged {@code SELECT} statement fetching every column of {@code table}, ordered by {@code
+     * orderByColumnName}, restricted to one page of {@code pageSize} rows starting at {@code offset}.
+     * <p>
+     * The default implementation uses the {@code LIMIT ? OFFSET ?} clause H2/PostgreSQL/MySQL all understand
+     * (in that bind order: page size, then offset). SQL Server and Oracle understand neither keyword and
+     * need the ANSI {@code OFFSET ? ROWS FETCH NEXT ? ROWS ONLY} clause instead - bound in the opposite
+     * order, offset then page size - which is why the SQL and its bind parameters are returned together as
+     * one {@link PagedSelect}, rather than as a plain SQL string a caller might bind in the wrong order.
+     *
+     * @param table             the table to select from
+     * @param orderByColumnName the physical column to order by
+     * @param offset            the number of rows to skip
+     * @param pageSize          the maximum number of rows to return
+     * @return the paged {@code SELECT} statement, together with its bind parameters in the correct order
+     */
+    default PagedSelect pagedSelectSql(TableMetadata table, String orderByColumnName, int offset, int pageSize) {
+        var sql = "SELECT * FROM " + quotedTableName(table)
+            + " ORDER BY " + quoteIdentifier(orderByColumnName) + " LIMIT ? OFFSET ?";
+        return new PagedSelect(sql, new Object[]{pageSize, offset});
+    }
+
+    /**
+     * A paged {@code SELECT} statement built by {@link #pagedSelectSql}, together with its bind parameters in
+     * the order its placeholders expect - dialects order/paginate differently enough (see {@link
+     * #pagedSelectSql}) that the two must always travel together.
+     *
+     * @param sql    the paged {@code SELECT} statement
+     * @param params the values to bind to {@code sql}'s placeholders, in order
+     */
+    record PagedSelect(String sql, Object[] params) {
+    }
 }

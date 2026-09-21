@@ -61,6 +61,11 @@ import java.util.UUID;
  * {@code DATA_TYPE} as the vendor-specific {@code microsoft.sql.Types.DATETIMEOFFSET} ({@code -155}) rather
  * than the standard {@link Types#TIMESTAMP_WITH_TIMEZONE}, which the {@code switch} below has no case for
  * (see <a href="https://github.com/microsoft/mssql-jdbc/issues/1976">mssql-jdbc#1976</a>).
+ * <p>
+ * Oracle's {@code TIMESTAMP WITH TIME ZONE} column is special-cased for the exact same reason: the Oracle
+ * JDBC driver reports its {@code DATA_TYPE} as the vendor-specific {@code oracle.jdbc.OracleTypes.TIMESTAMPTZ}
+ * ({@code -101}), and its {@code TYPE_NAME} carries the column's precision inline (e.g. {@code "TIMESTAMP(6)
+ * WITH TIME ZONE"}), hence the prefix/suffix match below rather than an exact one.
  *
  * @author Mario Herb
  */
@@ -86,8 +91,8 @@ public final class JdbcSqlTypeMapping {
      * @param typeName           the database specific type name as reported by the database, used to detect
      *                           native {@code UUID} columns, Postgres/MySQL columns whose {@code DATA_TYPE}
      *                           alone does not distinguish an offset-aware column from a plain one, and SQL
-     *                           Server's {@code datetimeoffset}, whose {@code DATA_TYPE} the {@code switch}
-     *                           below has no case for
+     *                           Server's {@code datetimeoffset}/Oracle's {@code TIMESTAMP WITH TIME ZONE},
+     *                           whose {@code DATA_TYPE} the {@code switch} below has no case for
      * @param decimalDigits      the number of decimal digits ({@code DatabaseMetaData.getColumns()}'
      *                           {@code DECIMAL_DIGITS}) the column was reported with; only meaningful for
      *                           {@code NUMERIC}/{@code DECIMAL} columns
@@ -117,6 +122,9 @@ public final class JdbcSqlTypeMapping {
                 return OffsetDateTime.class;
             }
             if ("datetimeoffset".equals(normalizedTypeName)) {
+                return OffsetDateTime.class;
+            }
+            if (normalizedTypeName.startsWith("timestamp") && normalizedTypeName.endsWith("with time zone")) {
                 return OffsetDateTime.class;
             }
         }
