@@ -81,11 +81,20 @@ public final class JdbcRecordMapper {
     /**
      * Executes the given SQL with the given positional parameters and maps every returned row onto a {@link
      * JdbcRecord} via {@link #mapRow(ResultSet, TableMetadata)}.
+     * <p>
+     * Unlike {@link #selectByColumn}/{@link #selectOneByColumn}, this does <em>not</em> apply {@link
+     * #normalizeForColumn}: an arbitrary {@code sql} string has no declared column for a given positional
+     * parameter to look up a target physical type against (it may not even be a {@code WHERE column = ?}
+     * comparison at all). A caller binding a {@link UUID} value against a column whose physical
+     * representation is {@link String} or {@code byte[]} (see {@link #normalizeForColumn}) is responsible for
+     * converting it to that representation itself before calling this method - the same way it is already
+     * responsible for getting every other aspect of its own hand-written {@code sql} right.
      *
      * @param connectionProvider supplies the connection to run the query on
      * @param table              the table metadata describing the columns to read
      * @param sql                the SQL to execute, with {@code ?} placeholders for {@code params}
-     * @param params             the positional parameter values to bind
+     * @param params             the positional parameter values to bind, already in the physical
+     *                           representation each corresponding column expects
      * @return the mapped rows, in the order returned by the database
      * @throws DLCPersistenceException if the query fails
      */
@@ -131,12 +140,14 @@ public final class JdbcRecordMapper {
     }
 
     /**
-     * Like {@link #selectWithSql}, but expects at most one matching row.
+     * Like {@link #selectWithSql}, but expects at most one matching row. Applies no UUID normalization
+     * either, for exactly the same reason - see {@link #selectWithSql}'s Javadoc.
      *
      * @param connectionProvider supplies the connection to run the query on
      * @param table              the table metadata describing the columns to read
      * @param sql                the SQL to execute, with {@code ?} placeholders for {@code params}
-     * @param params             the positional parameter values to bind
+     * @param params             the positional parameter values to bind, already in the physical
+     *                           representation each corresponding column expects
      * @return the single mapped row, or {@code null} if none matched
      * @throws DLCPersistenceException if the query fails, or more than one row matched
      */
@@ -183,6 +194,11 @@ public final class JdbcRecordMapper {
      * allow the same UUID-to-text value on {@code INSERT} (an assignment cast), which is why this surfaces
      * only on the read side. Any value that is not a {@link UUID}, or whose target column already is one,
      * passes through unchanged.
+     * <p>
+     * Only {@link #selectByColumn}/{@link #selectOneByColumn} apply this - they alone know, from {@code
+     * columnName}, which single column a filter value is compared against. {@link #selectWithSql}/{@link
+     * #selectOne} do not and cannot apply it (see their Javadoc): a caller binding a raw {@link UUID} value
+     * through those two is responsible for this same conversion itself.
      */
     private static Object normalizeForColumn(TableMetadata table, String columnName, Object value) {
         if (!(value instanceof UUID uuid)) {

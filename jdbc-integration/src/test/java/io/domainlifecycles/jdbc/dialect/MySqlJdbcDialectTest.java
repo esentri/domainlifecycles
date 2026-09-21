@@ -38,7 +38,7 @@ class MySqlJdbcDialectTest {
 
         assertThat(value).isEqualTo(5L);
         verify(statement).executeUpdate(
-            "UPDATE TEST_ROOT_SIMPLE_ID_SEQ SET next_val = LAST_INSERT_ID(next_val + 1)");
+            "UPDATE `TEST_ROOT_SIMPLE_ID_SEQ` SET `next_val` = LAST_INSERT_ID(`next_val` + 1)");
         verify(statement).executeQuery("SELECT LAST_INSERT_ID()");
     }
 

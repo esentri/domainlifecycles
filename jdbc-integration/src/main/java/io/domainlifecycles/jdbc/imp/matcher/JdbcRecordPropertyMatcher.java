@@ -80,16 +80,22 @@ public class JdbcRecordPropertyMatcher implements RecordPropertyMatcher {
     /**
      * {@inheritDoc}
      * <p>
-     * A path matching a registered {@link JdbcValueObjectColumnNameOverride} is compared against that
-     * override's {@link JdbcValueObjectColumnNameOverride#columnName()} instead of the naming-convention
-     * derived name (still folded to lower case with underscores stripped, exactly like every other
-     * comparison this class makes) - see the class-level Javadoc there for why this escape hatch exists.
+     * A path matching a registered {@link JdbcValueObjectColumnNameOverride} - both its {@link
+     * JdbcValueObjectColumnNameOverride#containingEntityType()} (compared against {@code
+     * path.get(0).getDeclaredByTypeName()}, the fully-qualified name of the entity that declares the path's
+     * first segment) and its {@link JdbcValueObjectColumnNameOverride#pathFromEntityToValueObjectField()}
+     * (compared against every segment's name) must match - is compared against that override's {@link
+     * JdbcValueObjectColumnNameOverride#columnName()} instead of the naming-convention derived name (still
+     * folded to lower case with underscores stripped, exactly like every other comparison this class makes)
+     * - see the class-level Javadoc there for why this escape hatch exists.
      */
     @Override
     public boolean matchValueObjectPath(RecordProperty recordProperty, List<FieldMirror> path) {
         var pathNames = path.stream().map(FieldMirror::getName).toList();
         var override = columnNameOverrides.stream()
-            .filter(o -> Arrays.asList(o.pathFromEntityToValueObjectField()).equals(pathNames))
+            .filter(o -> !path.isEmpty()
+                && o.containingEntityType().getName().equals(path.get(0).getDeclaredByTypeName())
+                && Arrays.asList(o.pathFromEntityToValueObjectField()).equals(pathNames))
             .findFirst();
         if (override.isPresent()) {
             return recordProperty.getName().toLowerCase().replaceAll("_", "")

@@ -78,9 +78,12 @@ public final class MySqlJdbcDialect implements JdbcDialect {
      */
     @Override
     public long nextSequenceValue(Connection connection, String sequenceName) throws SQLException {
+        var quotedSequenceName = quoteIdentifier(sequenceName);
+        var quotedNextValColumn = quoteIdentifier("next_val");
         try (Statement statement = connection.createStatement()) {
             int affected = statement.executeUpdate(
-                "UPDATE " + sequenceName + " SET next_val = LAST_INSERT_ID(next_val + 1)");
+                "UPDATE " + quotedSequenceName + " SET " + quotedNextValColumn + " = LAST_INSERT_ID("
+                    + quotedNextValColumn + " + 1)");
             if (affected == 0) {
                 throw new SQLException("Sequence table '" + sequenceName + "' has no row to increment. Create "
                     + "it with a single row, e.g. INSERT INTO " + sequenceName + " (next_val) VALUES (0).");
