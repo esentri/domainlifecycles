@@ -12,12 +12,14 @@ import io.domainlifecycles.events.api.DomainEventTypeBasedRouter;
 import io.domainlifecycles.events.api.PublishingChannel;
 import io.domainlifecycles.events.consume.execution.handler.TransactionalHandlerExecutor;
 import io.domainlifecycles.jackson3.module.DlcJacksonModule;
+import io.domainlifecycles.jooq.cache.SpringTransactionCacheAwareConnectionProvider;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.services.api.ServiceProvider;
 import io.domainlifecycles.spring.http.ResponseEntityBuilder;
 import io.domainlifecycles.springdoc2.openapi.DlcOpenApiCustomizer;
 import java.util.List;
 import java.util.Optional;
+import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ public class PersistenceAndBuilderAutoConfigTest {
 
     @Autowired
     private DSLContext dslContext;
+
+    @Autowired
+    private Configuration jooqConfiguration;
 
     @Autowired
     private DomainObjectBuilderProvider domainObjectBuilderProvider;
@@ -110,6 +115,21 @@ public class PersistenceAndBuilderAutoConfigTest {
         var innerBuilder = new InnerClassDomainObjectBuilder<>(aggregateRootTestBuilder);
         var built = innerBuilder.build();
         assertThat(built).isNotNull();
+    }
+
+    @Test
+    void testDlcOwnJooqWiringIsActiveNotSpringBootsOwnFallback() {
+        //DlcJooqPersistenceAutoConfiguration's own configuration()/connectionProvider() bean methods used
+        //to be silently skipped under Spring Boot 4 (stale afterName/beforeName package references broke
+        //the ordering guarantee against DataSourceAutoConfiguration/JooqAutoConfiguration, both moved
+        //packages in Boot 4) - Spring Boot's own, unconfigured jOOQ auto-configuration took over instead,
+        //with no error raised. executeWithOptimisticLocking is only ever set by DLC's own configuration()
+        //bean method, and the connection provider is only ever wrapped for the transaction cache by DLC's
+        //own connectionProvider() bean method - either one reverting to Spring Boot's own fallback bean
+        //would flip these assertions.
+        assertThat(jooqConfiguration.settings().isExecuteWithOptimisticLocking()).isTrue();
+        assertThat(jooqConfiguration.connectionProvider())
+            .isInstanceOf(SpringTransactionCacheAwareConnectionProvider.class);
     }
 
     @Test

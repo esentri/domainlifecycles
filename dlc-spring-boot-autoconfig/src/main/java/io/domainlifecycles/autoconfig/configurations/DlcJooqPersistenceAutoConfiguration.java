@@ -82,6 +82,18 @@ import java.util.Set;
  *
  * This class is conditionally activated when the JOOQ library is present on the classpath,
  * and certain dependent beans, like {@link DataSource}, are configured.
+ * <p>
+ * {@code afterName}/{@code beforeName} reference {@code DataSourceAutoConfiguration}/
+ * {@code JooqAutoConfiguration} by their Spring Boot 4.x package (this module targets exactly that major
+ * version via its own dependency platform, see {@code spring-boot-platform-version} in the version
+ * catalog) - Spring Boot 4 split the former, unified {@code spring-boot-autoconfigure} module, moving both
+ * classes out of {@code org.springframework.boot.autoconfigure.*} into their own dedicated modules/packages.
+ * A stale name here is not a compile error (these are plain strings, resolved reflectively at runtime) but
+ * silently drops the ordering guarantee: without it, this configuration was observed to be processed
+ * <em>before</em> {@code DataSourceAutoConfiguration} ever ran, so every {@code @ConditionalOnBean(DataSource.class)}
+ * bean below ({@link #connectionProvider}/{@link #configuration}/{@link #dslContext}) silently never got
+ * created - Spring Boot's own, unconfigured jOOQ auto-configuration took over everywhere instead, with no
+ * error raised. If a future Spring Boot upgrade moves these classes again, update these two strings to match.
  *
  * @author Mario Herb
  */
@@ -90,8 +102,8 @@ import java.util.Set;
         DlcBuilderAutoConfiguration.class,
         DlcDomainAutoConfiguration.class
     },
-    afterName = "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration",
-    beforeName = "org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration"
+    afterName = "org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration",
+    beforeName = "org.springframework.boot.jooq.autoconfigure.JooqAutoConfiguration"
 )
 @ConditionalOnClass(name = "org.jooq.DSLContext")
 @ConditionalOnProperty(prefix = "dlc.features.persistence", name = "enabled", havingValue = "true", matchIfMissing = true)
