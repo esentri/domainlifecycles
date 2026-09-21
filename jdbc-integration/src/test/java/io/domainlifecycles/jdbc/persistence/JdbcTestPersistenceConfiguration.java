@@ -252,6 +252,17 @@ public class JdbcTestPersistenceConfiguration {
             currentConnection.rollback();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            // startTransaction() opens a fresh physical connection per test method (this configuration is
+            // shared across a whole @TestInstance(PER_CLASS) test class), so it must be closed here too -
+            // otherwise every method but the last in a class leaks one, held open server-side for the rest
+            // of the run (observed as connection/session exhaustion against containerized databases with
+            // low connection limits, e.g. Oracle).
+            try {
+                currentConnection.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }
