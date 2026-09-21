@@ -36,6 +36,7 @@ import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -117,10 +118,37 @@ public class EntityCloner {
                                        DomainObjectBuilder<?> entityDomainObjectBuilder) {
         em.getBasicFields().stream().filter(fm -> !fm.isStatic()).forEach(fm -> {
             if (entityDomainObjectBuilder.canInstantiateField(fm.getName())) {
-                Object value = DlcAccess.accessorFor(entity).peek(fm.getName());
-                entityDomainObjectBuilder.setFieldValue(value, fm.getName());
+                var accessor = DlcAccess.accessorFor(entity);
+                if (fm.getType().hasCollectionContainer()) {
+                    // a basic-typed field's elements (String, boxed numbers, enums, ...) are themselves
+                    // immutable, but the collection instance is not - it must not be shared with the
+                    // original entity, unlike the container-less case below, where the value itself is
+                    // immutable and reference-copying it is safe
+                    Collection<?> c = accessor.peek(fm.getName());
+                    if (c != null) {
+                        c.forEach(element -> entityDomainObjectBuilder.addValueToCollection(element, fm.getName()));
+                    }
+                } else {
+                    Object value = accessor.peek(fm.getName());
+                    if (fm.getType().isArray() && value != null) {
+                        value = shallowCopyArray(value);
+                    }
+                    entityDomainObjectBuilder.setFieldValue(value, fm.getName());
+                }
             }
         });
+    }
+
+    /**
+     * Shallow-copies an array of unknown (possibly primitive) component type - the array instance is mutable
+     * and must not be shared with the original entity, even though (like a basic-typed collection's elements)
+     * its own elements are immutable and safe to reuse by reference.
+     */
+    private static Object shallowCopyArray(Object array) {
+        int length = Array.getLength(array);
+        Object copy = Array.newInstance(array.getClass().getComponentType(), length);
+        System.arraycopy(array, 0, copy, 0, length);
+        return copy;
     }
 
     private void cloneEntityValueObjectCompositions(EntityMirror em,
