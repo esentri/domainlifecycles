@@ -106,7 +106,7 @@ public class JdbcPersister extends BasePersister<JdbcRecord> implements Persiste
         try (PreparedStatement statement = connectionProvider.getConnection().prepareStatement(sql)) {
             int index = 1;
             for (var columnName : columnNames) {
-                statement.setObject(index++, values.get(columnName));
+                bindValue(statement, index++, table.column(columnName), values.get(columnName));
             }
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -186,7 +186,7 @@ public class JdbcPersister extends BasePersister<JdbcRecord> implements Persiste
         try (PreparedStatement statement = connectionProvider.getConnection().prepareStatement(sql)) {
             int index = 1;
             for (var columnName : setColumns) {
-                statement.setObject(index++, values.get(columnName));
+                bindValue(statement, index++, table.column(columnName), values.get(columnName));
             }
             if (versionChecked) {
                 statement.setObject(index++, newVersion);
@@ -204,6 +204,23 @@ public class JdbcPersister extends BasePersister<JdbcRecord> implements Persiste
             }
         } catch (SQLException e) {
             throw DLCPersistenceException.fail("Update of '%s' failed.", e, table.name());
+        }
+    }
+
+    /**
+     * Binds a single parameter, routing a {@code null} value through {@link PreparedStatement#setNull} with
+     * the target column's own JDBC SQL type rather than {@link PreparedStatement#setObject}: an untyped
+     * {@code null} leaves the driver to guess a default type for the parameter, and SQL Server's driver picks
+     * one that it then refuses to implicitly convert into some column types (observed for {@code VARBINARY}
+     * columns, raising {@code "Implicit conversion from data type nvarchar to varbinary is not allowed"})
+     * even though the value being inserted is {@code null}.
+     */
+    private void bindValue(PreparedStatement statement, int index, ColumnMetadata column, Object value)
+        throws SQLException {
+        if (value == null) {
+            statement.setNull(index, column.sqlType());
+        } else {
+            statement.setObject(index, value);
         }
     }
 

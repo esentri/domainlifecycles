@@ -56,6 +56,11 @@ import java.util.UUID;
  * OffsetDateTime} when the {@code databaseProductName} is actually MySQL, since H2/Oracle/SQL Server also
  * report plain {@code TYPE_NAME} {@code "TIMESTAMP"} for their own, genuinely non-offset-aware columns
  * (distinguished there by {@code DATA_TYPE} alone, i.e. the {@code switch} below).
+ * <p>
+ * SQL Server's {@code datetimeoffset} column is special-cased the same way again: mssql-jdbc reports its
+ * {@code DATA_TYPE} as the vendor-specific {@code microsoft.sql.Types.DATETIMEOFFSET} ({@code -155}) rather
+ * than the standard {@link Types#TIMESTAMP_WITH_TIMEZONE}, which the {@code switch} below has no case for
+ * (see <a href="https://github.com/microsoft/mssql-jdbc/issues/1976">mssql-jdbc#1976</a>).
  *
  * @author Mario Herb
  */
@@ -79,8 +84,10 @@ public final class JdbcSqlTypeMapping {
      *
      * @param sqlType            the JDBC SQL type ({@link java.sql.Types}) as reported by the database
      * @param typeName           the database specific type name as reported by the database, used to detect
-     *                           native {@code UUID} columns and Postgres/MySQL columns whose {@code
-     *                           DATA_TYPE} alone does not distinguish an offset-aware column from a plain one
+     *                           native {@code UUID} columns, Postgres/MySQL columns whose {@code DATA_TYPE}
+     *                           alone does not distinguish an offset-aware column from a plain one, and SQL
+     *                           Server's {@code datetimeoffset}, whose {@code DATA_TYPE} the {@code switch}
+     *                           below has no case for
      * @param decimalDigits      the number of decimal digits ({@code DatabaseMetaData.getColumns()}'
      *                           {@code DECIMAL_DIGITS}) the column was reported with; only meaningful for
      *                           {@code NUMERIC}/{@code DECIMAL} columns
@@ -107,6 +114,9 @@ public final class JdbcSqlTypeMapping {
                 return OffsetTime.class;
             }
             if ("timestamp".equals(normalizedTypeName) && "MySQL".equalsIgnoreCase(databaseProductName)) {
+                return OffsetDateTime.class;
+            }
+            if ("datetimeoffset".equals(normalizedTypeName)) {
                 return OffsetDateTime.class;
             }
         }
