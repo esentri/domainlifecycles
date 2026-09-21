@@ -23,6 +23,7 @@ dependencies {
     implementation libs.commons.collections
 
     testImplementation libs.assertj
+    testImplementation libs.mockito.core
 }
 
 test {
