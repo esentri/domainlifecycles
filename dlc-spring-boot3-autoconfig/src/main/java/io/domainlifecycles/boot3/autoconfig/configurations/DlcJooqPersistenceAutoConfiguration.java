@@ -94,7 +94,7 @@ import java.util.Set;
     beforeName = "org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration"
 )
 @ConditionalOnClass(name = "org.jooq.DSLContext")
-@ConditionalOnProperty(prefix = "dlc.features.peristence", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "dlc.features.persistence", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Deprecated
 public class DlcJooqPersistenceAutoConfiguration {
 
@@ -104,11 +104,16 @@ public class DlcJooqPersistenceAutoConfiguration {
      * the application’s data source and domain persistence layer.
      *
      * The configuration is conditional on the presence of the JOOQ library in the classpath
-     * and sets up beans only if required dependencies are available.
+     * and sets up beans only if required dependencies are available. Additionally gated by
+     * {@code dlc.features.persistence.jooq.enabled} (default {@code true}), independent of
+     * {@code dlc.features.persistence.jdbc.enabled} - see {@link DlcJdbcPersistenceAutoConfiguration}'s
+     * class javadoc for when to use one over the other, e.g. to force jOOQ off while both integrations
+     * are on the classpath, without excluding this whole autoconfiguration class.
      *
      */
     @org.springframework.context.annotation.Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(name = "org.jooq.DSLContext")
+    @ConditionalOnProperty(prefix = "dlc.features.persistence.jooq", name = "enabled", havingValue = "true", matchIfMissing = true)
     static class JooqPersistenceConfiguration implements EnvironmentAware{
 
         private Environment environment;
@@ -226,10 +231,6 @@ public class DlcJooqPersistenceAutoConfiguration {
          * @param transactionCacheProvider the same transaction cache provider {@link #connectionProvider}
          *                                 opens/closes a scope for, so that the two agree on what "the
          *                                 current transaction's cache" is
-         * @param dslContext the {@link DSLContext} the transaction cache's jOOQ-native
-         *                   {@code TransactionCacheJooqBinder} is registered on, once, here, centrally -
-         *                   so every repository/fetcher built later against the same {@link DSLContext}
-         *                   bean is covered, regardless of which one is built first
          * @return a configured {@link JooqDomainPersistenceProvider} instance
          * @throws DLCAutoConfigException if the required JOOQ record package property is missing or invalid
          */
@@ -240,14 +241,20 @@ public class DlcJooqPersistenceAutoConfiguration {
             DomainObjectBuilderProvider domainObjectBuilderProvider,
             Set<RecordMapper<?, ?, ?>> customRecordMappers,
             DomainMirror domainMirror,
-            ThreadBoundTransactionCacheProvider<UpdatableRecord<?>> transactionCacheProvider,
-            DSLContext dslContext
+            ThreadBoundTransactionCacheProvider<UpdatableRecord<?>> transactionCacheProvider
         ) {
             String recordPackage = environment.getProperty("dlc.features.persistence.jooq-record-package");
             if(recordPackage == null) {
                 throw DLCAutoConfigException.fail("Property 'jooqRecordPackage' is missing. Specify 'dlc.features.persistence.jooq-record-package' or 'jooqRecordPackage' on '@EnableDlc'.");
             }
 
+            // the single-argument constructor is used deliberately here, not the one that also registers
+            // jOOQ's own TransactionCacheJooqBinder (a native org.jooq.TransactionListener) on the DSLContext:
+            // this autoconfig only ever runs under Spring, and #connectionProvider already binds the
+            // transaction cache to Spring's own transaction lifecycle (SpringTransactionCacheAwareConnectionProvider/
+            // SpringTransactionCacheBinder) - registering the jOOQ-native listener too would be redundant at
+            // best, and could open/close a second, independent cache scope if application code ever calls
+            // dslContext.transaction(...) directly, bypassing Spring's @Transactional.
             return new JooqDomainPersistenceProvider(
                 JooqDomainPersistenceConfiguration.JooqPersistenceConfigurationBuilder
                     .newConfig()
@@ -255,8 +262,7 @@ public class DlcJooqPersistenceAutoConfiguration {
                     .withCustomRecordMappers(customRecordMappers)
                     .withRecordClassProvider(new JooqRecordClassProvider(recordPackage))
                     .withTransactionCacheProvider(transactionCacheProvider)
-                    .make(),
-                dslContext);
+                    .make());
         }
 
         /**

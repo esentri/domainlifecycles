@@ -98,13 +98,6 @@ import java.util.Set;
     after = {
         DlcBuilderAutoConfiguration.class,
         DlcDomainAutoConfiguration.class,
-        // deliberately ordered after the jOOQ persistence autoconfig: if both jooq-integration and
-        // jdbc-integration happen to be on the classpath at once (e.g. a migration in progress, or - as
-        // in this module's own test suite - a shared test classpath that always has both), jOOQ's own
-        // domainPersistenceProvider() bean must be the one to win the shared
-        // @ConditionalOnMissingBean(DomainPersistenceProvider.class) race deterministically, since it is
-        // the more established of the two integrations. Without this, which one wins is merely an
-        // accident of Spring's own autoconfiguration sorting.
         DlcJooqPersistenceAutoConfiguration.class
     },
     afterName = "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration"
@@ -120,10 +113,14 @@ public class DlcJdbcPersistenceAutoConfiguration {
      * application's data source and domain persistence layer.
      * <p>
      * The configuration is conditional on the presence of {@code jdbc-integration} on the classpath and sets
-     * up beans only if required dependencies are available.
+     * up beans only if required dependencies are available. Additionally gated by
+     * {@code dlc.features.persistence.jdbc.enabled} (default {@code true}), independent of
+     * {@code dlc.features.persistence.jooq.enabled} - e.g. to force JDBC off while both integrations are on
+     * the classpath, without excluding this whole autoconfiguration class.
      */
     @org.springframework.context.annotation.Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(name = "io.domainlifecycles.jdbc.connection.JdbcConnectionProvider")
+    @ConditionalOnProperty(prefix = "dlc.features.persistence.jdbc", name = "enabled", havingValue = "true", matchIfMissing = true)
     static class JdbcPersistenceConfiguration implements EnvironmentAware {
 
         private Environment environment;
@@ -172,7 +169,7 @@ public class DlcJdbcPersistenceAutoConfiguration {
          */
         @Bean
         @ConditionalOnBean(DataSource.class)
-        @ConditionalOnMissingBean(JdbcConnectionProvider.class)
+        @ConditionalOnMissingBean({JdbcConnectionProvider.class, DomainPersistenceProvider.class})
         public JdbcConnectionProvider jdbcConnectionProvider(
             DataSource dataSource, ThreadBoundTransactionCacheProvider<JdbcRecord> transactionCacheProvider) {
             JdbcConnectionProvider dataSourceBackedProvider = () -> DataSourceUtils.getConnection(dataSource);
@@ -190,7 +187,7 @@ public class DlcJdbcPersistenceAutoConfiguration {
          */
         @Bean
         @ConditionalOnBean(DataSource.class)
-        @ConditionalOnMissingBean(JdbcDialect.class)
+        @ConditionalOnMissingBean({JdbcDialect.class, DomainPersistenceProvider.class})
         public JdbcDialect jdbcDialect() {
             var property = environment.getProperty("dlc.features.persistence.sql-dialect");
             if (property == null) {
@@ -227,7 +224,7 @@ public class DlcJdbcPersistenceAutoConfiguration {
          */
         @Bean
         @ConditionalOnBean(DataSource.class)
-        @ConditionalOnMissingBean(JdbcSchemaMetadata.class)
+        @ConditionalOnMissingBean({JdbcSchemaMetadata.class, DomainPersistenceProvider.class})
         public JdbcSchemaMetadata jdbcSchemaMetadata(DataSource dataSource) {
             var schemaPattern = environment.getProperty("dlc.features.persistence.jdbc.schema-pattern");
             try (Connection connection = dataSource.getConnection()) {

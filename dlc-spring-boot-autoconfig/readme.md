@@ -183,6 +183,13 @@ dlc.features.persistence.enabled=false
 ```
 Annotation-based excludes have priority over property toggles.
 
+If both jOOQ and `jdbc-integration` happen to be on the classpath at the same time (e.g. a migration in
+progress), jOOQ wins by default - see the JDBC Persistence Autoconfig section below. To force jOOQ off
+specifically in that case, without excluding the whole autoconfiguration class:
+```properties
+dlc.features.persistence.jooq.enabled=false
+```
+
 **Configuration:**
 ```java
 @EnableDlc(
@@ -227,7 +234,11 @@ Annotation-based excludes have priority over property toggles.
 If both jOOQ and `jdbc-integration` happen to be on the classpath at the same time, this autoconfig is
 deliberately ordered after the jOOQ Persistence Autoconfig, so jOOQ wins the shared persistence-provider slot
 deterministically - a project normally only ever has one of the two integrations on its classpath at all, so
-this only matters in that edge case.
+this only matters in that edge case. To force JDBC off specifically instead, without excluding the whole
+autoconfiguration class:
+```properties
+dlc.features.persistence.jdbc.enabled=false
+```
 
 **Configuration:**
 ```java
