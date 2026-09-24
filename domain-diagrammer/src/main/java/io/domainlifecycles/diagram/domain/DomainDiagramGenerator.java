@@ -154,6 +154,13 @@ public class DomainDiagramGenerator implements Diagram {
      */
     public static final String IDENTITY_STYLE_TAG = "I";
 
+    /**
+     * Represents the style tag identifier for non-domain classes in the domain diagram.
+     * This tag is used to define visual styles specifically for classes not classified as any
+     * recognized domain type, when generating domain diagrams within the system.
+     */
+    public static final String NON_DOMAIN_CLASS_STYLE_TAG = "ND";
+
 
     /**
      * Initializes the DomainDiagramGenerator with a given {@link DomainDiagramConfig}
@@ -249,6 +256,7 @@ public class DomainDiagramGenerator implements Diagram {
         builder.append(repositoryStyleDeclaration());
         builder.append(outboundServiceStyleDeclaration());
         builder.append(unspecifiedServiceKindStyleDeclaration());
+        builder.append(nonDomainClassStyleDeclaration());
         builder.append(queryHandlerStyleDeclaration());
         builder.append(readModelStyleDeclaration());
         builder.append(fontStyleDeclaration());
@@ -283,11 +291,15 @@ public class DomainDiagramGenerator implements Diagram {
 
         domainMapper.getUnspecifiedServiceKinds().forEach(f -> builder.append(f.getDiagramText()));
 
+        domainMapper.getNonDomainClasses().forEach(f -> builder.append(f.getDiagramText()));
+
         domainMapper.getDomainRelationshipMapper().mapAllDomainCommandRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
         domainMapper.getDomainRelationshipMapper().mapAllDomainEventRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
         domainMapper.getDomainRelationshipMapper().mapAllServiceKindRelationships()
+            .forEach(f -> builder.append(f.getDiagramText()));
+        domainMapper.getDomainRelationshipMapper().mapAllNonDomainRelationships()
             .forEach(f -> builder.append(f.getDiagramText()));
 
         domainMapper.getDomainRelationshipMapper().mapAllAggregateRepositoryRelationships()
@@ -396,6 +408,13 @@ public class DomainDiagramGenerator implements Diagram {
     private String unspecifiedServiceKindStyleDeclaration() {
         if (diagramConfig.getStyleSettings().getUnspecifiedServiceKindStyle() != null) {
             return completeStyleDeclaration(diagramConfig.getStyleSettings().getUnspecifiedServiceKindStyle(), SERVICE_KIND_STYLE_TAG);
+        }
+        return "";
+    }
+
+    private String nonDomainClassStyleDeclaration() {
+        if (diagramConfig.getStyleSettings().getNonDomainClassStyle() != null) {
+            return completeStyleDeclaration(diagramConfig.getStyleSettings().getNonDomainClassStyle(), NON_DOMAIN_CLASS_STYLE_TAG);
         }
         return "";
     }

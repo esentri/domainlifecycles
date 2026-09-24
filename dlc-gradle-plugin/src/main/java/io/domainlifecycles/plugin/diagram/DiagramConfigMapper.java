@@ -72,6 +72,7 @@ public class DiagramConfigMapper {
         diagramConfig.setReadModelStyle(extension.getReadModelStyle().getOrNull());
         diagramConfig.setQueryHandlerStyle(extension.getQueryHandlerStyle().getOrNull());
         diagramConfig.setOutboundServiceStyle(extension.getOutboundServiceStyle().getOrNull());
+        diagramConfig.setNonDomainClassStyle(extension.getNonDomainClassStyle().getOrNull());
         diagramConfig.setFont(extension.getFont().getOrNull());
         diagramConfig.setDirection(extension.getDirection().getOrNull());
         diagramConfig.setRanker(extension.getRanker().getOrNull());
@@ -114,6 +115,9 @@ public class DiagramConfigMapper {
         diagramConfig.setShowUnspecifiedServiceKinds(extension.getShowUnspecifiedServiceKinds().getOrNull());
         diagramConfig.setShowUnspecifiedServiceKindFields(extension.getShowUnspecifiedServiceKindFields().getOrNull());
         diagramConfig.setShowUnspecifiedServiceKindMethods(extension.getShowUnspecifiedServiceKindMethods().getOrNull());
+        diagramConfig.setShowNonDomainClasses(extension.getShowNonDomainClasses().getOrNull());
+        diagramConfig.setShowNonDomainClassFields(extension.getShowNonDomainClassFields().getOrNull());
+        diagramConfig.setShowNonDomainClassMethods(extension.getShowNonDomainClassMethods().getOrNull());
         diagramConfig.setCallApplicationServiceDriver(extension.getCallApplicationServiceDriver().getOrNull());
         diagramConfig.setFieldBlacklist(extension.getFieldBlacklist().getOrNull());
         diagramConfig.setMethodBlacklist(extension.getMethodBlacklist().getOrNull());

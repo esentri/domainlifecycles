@@ -47,6 +47,7 @@ import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
+import io.domainlifecycles.mirror.api.NonDomainTypeMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.mirror.api.ParamMirror;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
@@ -198,6 +199,20 @@ public class DomainClassMapper {
         return mapToNomnomlClass(serviceKindMirror,
             domainDiagramConfig.getGeneralVisualSettings().isShowUnspecifiedServiceKindFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
             domainDiagramConfig.getGeneralVisualSettings().isShowUnspecifiedServiceKindMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()
+        );
+    }
+
+    /**
+     * Maps a non-domain class (a class referenced by a service kind that is not classified as any
+     * recognized domain type) to a {@link NomnomlClass} representation.
+     *
+     * @param nonDomainTypeMirror mirrored non-domain class
+     * @return mapped non-domain class
+     */
+    public NomnomlClass mapNonDomainClass(NonDomainTypeMirror nonDomainTypeMirror) {
+        return mapToNomnomlClass(nonDomainTypeMirror,
+            domainDiagramConfig.getGeneralVisualSettings().isShowNonDomainClassFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
+            domainDiagramConfig.getGeneralVisualSettings().isShowNonDomainClassMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()
         );
     }
 

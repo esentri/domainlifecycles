@@ -183,6 +183,13 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
     public abstract Property<String> getOutboundServiceStyle();
 
     /**
+     * Gets the style for non-domain classes in the diagram.
+     *
+     * @return the style for non-domain classes in the diagram
+     */
+    public abstract Property<String> getNonDomainClassStyle();
+
+    /**
      * Gets the font style for the diagram.
      *
      * @return the font style for the diagram
@@ -476,6 +483,27 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
      * @return true if methods of unspecified service kinds should be shown, false otherwise
      */
     public abstract Property<Boolean> getShowUnspecifiedServiceKindMethods();
+
+    /**
+     * Indicates whether non-domain classes should be shown in the diagram.
+     *
+     * @return true if non-domain classes should be shown, false otherwise
+     */
+    public abstract Property<Boolean> getShowNonDomainClasses();
+
+    /**
+     * Indicates whether fields of non-domain classes should be shown in the diagram.
+     *
+     * @return true if fields of non-domain classes should be shown, false otherwise
+     */
+    public abstract Property<Boolean> getShowNonDomainClassFields();
+
+    /**
+     * Indicates whether methods of non-domain classes should be shown in the diagram.
+     *
+     * @return true if methods of non-domain classes should be shown, false otherwise
+     */
+    public abstract Property<Boolean> getShowNonDomainClassMethods();
 
     /**
      * Indicates whether the application service should be called 'driver'.

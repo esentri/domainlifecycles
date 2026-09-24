@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+- Extended the [mirror](./mirror) module to optionally also mirror classes in the scanned domain
+  model packages that implement no domain marker interface, as `NonDomainTypeMirror`/
+  `NonDomainTypeModel`, reflecting their fields and methods like any other type - no marker
+  interface is required, classification only depends on a class living in a scanned package and
+  not matching any recognized `DomainType`. Controlled via
+  `AbstractDomainMirrorFactory#setIncludeNonDomainClasses` (default `true`, can be switched off).
+  `ServiceKindMirror` gained `getReferencedNonDomainTypes()`, resolving the non-domain classes
+  referenced by a service kind's fields, method parameters or return types
+- The [domain diagrammer](./domain-diagrammer) can now render those non-domain classes as diagram
+  nodes, restricted to the ones actually referenced by a service kind (domain service, application
+  service, repository, query handler, outbound service or unspecified service kind), via the new
+  `showNonDomainClasses`, `showNonDomainClassFields` and `showNonDomainClassMethods` settings on
+  `GeneralVisualSettings` (all shown by default) and a configurable `nonDomainClassStyle` on
+  `StyleSettings`
+- `mirror-serialization-jackson2`/`jackson3` gained mixins to (de)serialize `NonDomainTypeModel`
+
 ## [3.4.0] - 2026-09-11
 - Improved DLC persistence initialization performance
 - Fixed auto record mapping of array typed fields (e.g. `byte[]`): the mirror reports the component type for arrays, which made the mapper look up a converter (`[B` -> `java.lang.Byte`) that could never be served. Added `AssertedContainableTypeMirror#getBinaryTypeName()` and used it for type resolution in `AutoRecordMapper` and `AutoMapperNestedValueObjectAccessor`.

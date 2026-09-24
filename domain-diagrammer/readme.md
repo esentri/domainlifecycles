@@ -131,6 +131,34 @@ The restriction only ever narrows: a class outside the configured packages or on
 `classesBlacklist` stays out, even when the flow reaches it. Entities and value objects inside an
 aggregate that survives the filter are still drawn, as with every other trim setting.
 
+## Showing non-domain classes
+
+The [mirror](../mirror/readme.md#mirroring-non-domain-classes) does not only mirror classes
+implementing one of the DLC marker interfaces - every other class in the scanned domain model
+packages (a mapper, helper or utility class, say) is mirrored too, without needing any marker
+interface. Building on that, the diagrammer can draw such a class as a node, but only when it is
+actually referenced (by a field, method parameter or return type) by a service kind - a domain
+service, application service, repository, query handler, outbound service or unspecified service
+kind - that is itself shown in the diagram. Classes that are not referenced by any shown service
+never appear, even though the mirror knows about them.
+
+This is enabled by default via `GeneralVisualSettings.isShowNonDomainClasses()`. Fields and methods
+of a non-domain class are hidden by default and can be switched on individually:
+
+```Java
+var general = GeneralVisualSettings.builder()
+    .withShowNonDomainClasses(true)
+    .withShowNonDomainClassFields(true)
+    .withShowNonDomainClassMethods(true)
+    .build();
+DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
+    .withGeneralVisualSettings(general)
+    .build();
+```
+
+To hide non-domain classes altogether, set `withShowNonDomainClasses(false)`. Their look can be
+adjusted like every other kind via `StyleSettings.builder().withNonDomainClassStyle(...)`.
+
 ## Rendering from commandline to image
 
 First install `nomnom-cli` via `npm`.

@@ -77,6 +77,7 @@ public class StyleSettings {
     private static final String DEFAULT_QUERY_HANDLER_STYLE = "fill=#C0C0C0 bold";
     private static final String DEFAULT_OUTBOUND_SERVICE_STYLE = "fill=#C0C0C0 bold";
     private static final String DEFAULT_UNSPECIFIED_SERVICE_KIND_STYLE = "fill=#C0C0C0 bold";
+    private static final String DEFAULT_NON_DOMAIN_CLASS_STYLE = "fill=#EAEAEA";
     private static final String DEFAULT_FONT = "Helvetica";
     private static final String DEFAULT_BACKGROUND_COLOR = "transparent";
 
@@ -96,6 +97,7 @@ public class StyleSettings {
     private final String queryHandlerStyle;
     private final String outboundServiceStyle;
     private final String unspecifiedServiceKindStyle;
+    private final String nonDomainClassStyle;
     private final String font;
     private final String backgroundColor;
 
@@ -116,6 +118,7 @@ public class StyleSettings {
         String queryHandlerStyle,
         String outboundServiceStyle,
         String unspecifiedServiceKindStyle,
+        String nonDomainClassStyle,
         String font,
         String backgroundColor
     ) {
@@ -135,6 +138,7 @@ public class StyleSettings {
         this.queryHandlerStyle = queryHandlerStyle;
         this.outboundServiceStyle = outboundServiceStyle;
         this.unspecifiedServiceKindStyle = unspecifiedServiceKindStyle;
+        this.nonDomainClassStyle = nonDomainClassStyle;
         this.font = font;
         this.backgroundColor = backgroundColor;
     }
@@ -284,6 +288,15 @@ public class StyleSettings {
     }
 
     /**
+     * Gets the style configuration for non-domain class elements.
+     *
+     * @return the style string for non-domain classes
+     */
+    public String getNonDomainClassStyle() {
+        return nonDomainClassStyle;
+    }
+
+    /**
      * Gets the font configuration.
      *
      * @return the font string
@@ -336,6 +349,7 @@ public class StyleSettings {
         private String queryHandlerStyle$value;
         private String outboundServiceStyle$value;
         private String unspecifiedServiceKindStyle$value;
+        private String nonDomainClassStyle$value;
         private String font$value;
         private String backgroundColor$value;
 
@@ -516,6 +530,17 @@ public class StyleSettings {
         }
 
         /**
+         * Sets the style configuration for non-domain class elements in the domain diagram.
+         *
+         * @param value the style to be applied to non-domain classes
+         * @return the current instance of {@code StyleSettingsBuilder} for method chaining
+         */
+        public StyleSettingsBuilder withNonDomainClassStyle(String value) {
+            this.nonDomainClassStyle$value = value;
+            return this;
+        }
+
+        /**
          * Sets the font configuration for elements in the domain diagram.
          *
          * @param value the font to be used
@@ -561,6 +586,7 @@ public class StyleSettings {
                 queryHandlerStyle$value == null ? DEFAULT_QUERY_HANDLER_STYLE : queryHandlerStyle$value,
                 outboundServiceStyle$value == null ? DEFAULT_OUTBOUND_SERVICE_STYLE : outboundServiceStyle$value,
                 unspecifiedServiceKindStyle$value == null ? DEFAULT_UNSPECIFIED_SERVICE_KIND_STYLE : unspecifiedServiceKindStyle$value,
+                nonDomainClassStyle$value == null ? DEFAULT_NON_DOMAIN_CLASS_STYLE : nonDomainClassStyle$value,
                 font$value == null ? DEFAULT_FONT : font$value,
                 backgroundColor$value == null ? DEFAULT_BACKGROUND_COLOR : backgroundColor$value
             );

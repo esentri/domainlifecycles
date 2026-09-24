@@ -416,6 +416,7 @@ Supported Diagram configuration options are
 - readModelStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
 - queryHandlerStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
 - outboundServiceStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
+- nonDomainClassStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
 - font: e.g. "Calibri", "Arial"
 - direction: "right" or "down"
 - ranker: network-simplex | tight-tree | longest-path, see [Nomnoml](https://www.nomnoml.com/)
@@ -455,6 +456,9 @@ Supported Diagram configuration options are
 - showUnspecifiedServiceKinds: boolean, default true
 - showUnspecifiedServiceKindFields: boolean, default false
 - showUnspecifiedServiceKindMethods: boolean, default false
+- showNonDomainClasses: boolean, default true (classes not implementing any domain marker interface are drawn too, but only when actually referenced by a shown service kind)
+- showNonDomainClassFields: boolean, default false
+- showNonDomainClassMethods: boolean, default false
 - callApplicationServiceDriver: boolean, default false
 - fieldBlacklist: field names to be excluded in field list, default "concurrencyVersion"  
 - methodBlacklist: method names to be excluded in field list, default "builder", "validate", "concurrencyVersion", "id", "findResultById", "publish", "increaseVersion", "equals", "hashCode", "toString"

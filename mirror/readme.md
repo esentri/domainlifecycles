@@ -54,4 +54,40 @@ public class ShopApplication {
 This is especially useful for rendering the most concrete type information
 using [DLC Domain Diagrams](../domain-diagrammer/readme.md).
 
+## Mirroring non-domain classes
+
+By default, the mirror does not only pick up classes implementing one of the DLC marker interfaces
+(`Entity`, `ValueObject`, `AggregateRoot`, `DomainService`, `Repository`, `ApplicationService`,
+`DomainCommand`, `DomainEvent`, `ReadModel`, `QueryHandler`, `OutboundService`, `ServiceKind`, ...).
+Every other class within the scanned domain model packages (e.g. a mapper, helper or utility class)
+is mirrored too, as a `io.domainlifecycles.mirror.api.NonDomainTypeMirror` tagged with
+`DomainType.NON_DOMAIN` - reflecting its fields and methods just like any other mirrored type. No
+marker interface is needed for this: a class only has to live in one of the packages passed to the
+`ReflectiveDomainMirrorFactory` and not match any recognized `DomainType`.
+
+Any `ServiceKindMirror` (domain service, application service, repository, query handler, outbound
+service or an unspecified service kind) exposes the non-domain classes it actually uses via
+`getReferencedNonDomainTypes()`, resolved from its fields, method parameters and return types.
+
+This behaviour is enabled by default and can be switched off, e.g. to keep the mirror initialization
+faster on very large codebases, or to preserve the previous, marker-interface-only behaviour:
+
+```Java
+public class ShopApplication {
+
+    static {
+        var factory = new ReflectiveDomainMirrorFactory("sampleshop");
+        factory.setIncludeNonDomainClasses(false);
+        Domain.initialize(factory);
+    }
+
+    public static void main(String[] args) {
+        ...
+    }
+}
+```
+
+The [DLC Domain Diagrammer](../domain-diagrammer/readme.md#showing-non-domain-classes) builds on
+this to optionally draw the non-domain classes referenced by a service in a diagram.
+
 

@@ -36,6 +36,7 @@ import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
+import io.domainlifecycles.mirror.api.NonDomainTypeMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
@@ -354,6 +355,23 @@ public class FilteredDomainClasses {
         return this.includedDomainTypes.stream()
             .filter(dtm -> dtm.getDomainType().equals(DomainType.SERVICE_KIND))
             .map(dtm -> (ServiceKindMirror) dtm)
+            .sorted(Comparator.comparing(DomainTypeMirror::getTypeName))
+            .toList();
+    }
+
+    /**
+     * Retrieves the list of filtered {@link NonDomainTypeMirror} instances associated with the domain.
+     *
+     * These instances represent classes not classified as any recognized {@link DomainType}, identified
+     * and filtered based on the domain mirror and filter configuration. Only non-domain classes that are
+     * referenced by a service kind are ever included (see {@link DiagramSettingsFilter}).
+     *
+     * @return a list of {@link NonDomainTypeMirror} instances representing the filtered non-domain classes.
+     */
+    public List<NonDomainTypeMirror> getNonDomainClasses() {
+        return this.includedDomainTypes.stream()
+            .filter(dtm -> dtm.getDomainType().equals(DomainType.NON_DOMAIN))
+            .map(dtm -> (NonDomainTypeMirror) dtm)
             .sorted(Comparator.comparing(DomainTypeMirror::getTypeName))
             .toList();
     }

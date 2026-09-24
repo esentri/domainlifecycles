@@ -73,6 +73,9 @@ public class GeneralVisualSettings {
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KINDS = true;
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_FIELDS = false;
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_METHODS = false;
+    private static final boolean DEFAULT_SHOW_NON_DOMAIN_CLASSES = true;
+    private static final boolean DEFAULT_SHOW_NON_DOMAIN_CLASS_FIELDS = false;
+    private static final boolean DEFAULT_SHOW_NON_DOMAIN_CLASS_METHODS = false;
     private static final boolean DEFAULT_CALL_APPLICATION_SERVICE_DRIVER = false;
     private static final List<String> DEFAULT_FIELD_BLACKLIST = List.of("concurrencyVersion");
     private static final List<String> DEFAULT_METHOD_BLACKLIST = List.of(
@@ -137,6 +140,9 @@ public class GeneralVisualSettings {
     private final boolean showUnspecifiedServiceKinds;
     private final boolean showUnspecifiedServiceKindFields;
     private final boolean showUnspecifiedServiceKindMethods;
+    private final boolean showNonDomainClasses;
+    private final boolean showNonDomainClassFields;
+    private final boolean showNonDomainClassMethods;
     private final boolean callApplicationServiceDriver;
     private final List<String> fieldBlacklist;
     private final List<String> methodBlacklist;
@@ -191,6 +197,9 @@ public class GeneralVisualSettings {
         boolean showUnspecifiedServiceKinds,
         boolean showUnspecifiedServiceKindFields,
         boolean showUnspecifiedServiceKindMethods,
+        boolean showNonDomainClasses,
+        boolean showNonDomainClassFields,
+        boolean showNonDomainClassMethods,
         boolean callApplicationServiceDriver,
         List<String> fieldBlacklist,
         List<String> methodBlacklist,
@@ -244,6 +253,9 @@ public class GeneralVisualSettings {
         this.showUnspecifiedServiceKinds = showUnspecifiedServiceKinds;
         this.showUnspecifiedServiceKindFields = showUnspecifiedServiceKindFields;
         this.showUnspecifiedServiceKindMethods = showUnspecifiedServiceKindMethods;
+        this.showNonDomainClasses = showNonDomainClasses;
+        this.showNonDomainClassFields = showNonDomainClassFields;
+        this.showNonDomainClassMethods = showNonDomainClassMethods;
         this.callApplicationServiceDriver = callApplicationServiceDriver;
         this.fieldBlacklist = fieldBlacklist;
         this.methodBlacklist = methodBlacklist;
@@ -587,6 +599,36 @@ public class GeneralVisualSettings {
     }
 
     /**
+     * Returns whether non-domain classes (classes not classified as any recognized domain type)
+     * should be shown in the diagram. Such classes are only ever shown when they are referenced by
+     * a service kind (domain service, application service, repository, query handler or outbound
+     * service).
+     *
+     * @return true if non-domain classes should be shown, false otherwise
+     */
+    public boolean isShowNonDomainClasses() {
+        return showNonDomainClasses;
+    }
+
+    /**
+     * Returns whether fields of non-domain classes should be shown in the diagram.
+     *
+     * @return true if non-domain class fields should be shown, false otherwise
+     */
+    public boolean isShowNonDomainClassFields() {
+        return showNonDomainClassFields;
+    }
+
+    /**
+     * Returns whether methods of non-domain classes should be shown in the diagram.
+     *
+     * @return true if non-domain class methods should be shown, false otherwise
+     */
+    public boolean isShowNonDomainClassMethods() {
+        return showNonDomainClassMethods;
+    }
+
+    /**
      * Returns whether application service driver calls should be included in the diagram.
      *
      * @return true if application service driver calls should be included, false otherwise
@@ -794,6 +836,9 @@ public class GeneralVisualSettings {
         private boolean showUnspecifiedServiceKinds$value = DEFAULT_SHOW_UNSPECIFIED_SERVICE_KINDS;
         private boolean showUnspecifiedServiceKindFields$value = DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_FIELDS;
         private boolean showUnspecifiedServiceKindMethods$value = DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_METHODS;
+        private boolean showNonDomainClasses$value = DEFAULT_SHOW_NON_DOMAIN_CLASSES;
+        private boolean showNonDomainClassFields$value = DEFAULT_SHOW_NON_DOMAIN_CLASS_FIELDS;
+        private boolean showNonDomainClassMethods$value = DEFAULT_SHOW_NON_DOMAIN_CLASS_METHODS;
         private boolean callApplicationServiceDriver$value = DEFAULT_CALL_APPLICATION_SERVICE_DRIVER;
         private List<String> fieldBlacklist$value;
         private List<String> methodBlacklist$value;
@@ -1214,6 +1259,41 @@ public class GeneralVisualSettings {
         }
 
         /**
+         * Sets whether to show non-domain classes (classes not classified as any recognized domain
+         * type) in the diagram. Such classes are only ever shown when they are referenced by a
+         * service kind.
+         *
+         * @param showNonDomainClasses true to show non-domain classes, false to hide
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowNonDomainClasses(boolean showNonDomainClasses) {
+            this.showNonDomainClasses$value = showNonDomainClasses;
+            return this;
+        }
+
+        /**
+         * Sets whether to show fields of non-domain classes in the diagram.
+         *
+         * @param showNonDomainClassFields true to show non-domain class fields, false to hide
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowNonDomainClassFields(boolean showNonDomainClassFields) {
+            this.showNonDomainClassFields$value = showNonDomainClassFields;
+            return this;
+        }
+
+        /**
+         * Sets whether to show methods of non-domain classes in the diagram.
+         *
+         * @param showNonDomainClassMethods true to show non-domain class methods, false to hide
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowNonDomainClassMethods(boolean showNonDomainClassMethods) {
+            this.showNonDomainClassMethods$value = showNonDomainClassMethods;
+            return this;
+        }
+
+        /**
          * Sets whether to call application service driver.
          *
          * @param callApplicationServiceDriver true to enable calling application service driver, false to disable
@@ -1435,6 +1515,9 @@ public class GeneralVisualSettings {
                 showUnspecifiedServiceKinds$value,
                 showUnspecifiedServiceKindFields$value,
                 showUnspecifiedServiceKindMethods$value,
+                showNonDomainClasses$value,
+                showNonDomainClassFields$value,
+                showNonDomainClassMethods$value,
                 callApplicationServiceDriver$value,
                 fieldBlacklist$value == null ? DEFAULT_FIELD_BLACKLIST : fieldBlacklist$value,
                 methodBlacklist$value == null ? DEFAULT_METHOD_BLACKLIST : methodBlacklist$value,

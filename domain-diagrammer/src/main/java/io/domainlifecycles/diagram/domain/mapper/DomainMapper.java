@@ -176,6 +176,15 @@ public class DomainMapper {
     }
 
     /**
+     * @return all non-domain classes referenced by a service kind in the diagram as {@link NomnomlClass}.
+     */
+    public List<NomnomlClass> getNonDomainClasses() {
+        return filteredDomainClasses.getNonDomainClasses().stream()
+            .map(domainClassMapper::mapNonDomainClass)
+            .toList();
+    }
+
+    /**
      * @return all Aggregates of in the diagram as {@link NomnomlFrame}.
      */
     public List<NomnomlFrame> getAggregateFrames() {

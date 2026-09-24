@@ -63,6 +63,7 @@ public class DiagramConfigMapper {
         diagramConfig.setReadModelStyle(mavenDiagramConfig.getReadModelStyle());
         diagramConfig.setQueryHandlerStyle(mavenDiagramConfig.getQueryHandlerStyle());
         diagramConfig.setOutboundServiceStyle(mavenDiagramConfig.getOutboundServiceStyle());
+        diagramConfig.setNonDomainClassStyle(mavenDiagramConfig.getNonDomainClassStyle());
         diagramConfig.setFont(mavenDiagramConfig.getFont());
         diagramConfig.setDirection(mavenDiagramConfig.getDirection());
         diagramConfig.setRanker(mavenDiagramConfig.getRanker());
@@ -105,6 +106,9 @@ public class DiagramConfigMapper {
         diagramConfig.setShowUnspecifiedServiceKinds(mavenDiagramConfig.getShowUnspecifiedServiceKinds());
         diagramConfig.setShowUnspecifiedServiceKindFields(mavenDiagramConfig.getShowUnspecifiedServiceKindFields());
         diagramConfig.setShowUnspecifiedServiceKindMethods(mavenDiagramConfig.getShowUnspecifiedServiceKindMethods());
+        diagramConfig.setShowNonDomainClasses(mavenDiagramConfig.getShowNonDomainClasses());
+        diagramConfig.setShowNonDomainClassFields(mavenDiagramConfig.getShowNonDomainClassFields());
+        diagramConfig.setShowNonDomainClassMethods(mavenDiagramConfig.getShowNonDomainClassMethods());
         diagramConfig.setCallApplicationServiceDriver(mavenDiagramConfig.getCallApplicationServiceDriver());
         diagramConfig.setFieldBlacklist(mavenDiagramConfig.getFieldBlacklist());
         diagramConfig.setMethodBlacklist(mavenDiagramConfig.getMethodBlacklist());

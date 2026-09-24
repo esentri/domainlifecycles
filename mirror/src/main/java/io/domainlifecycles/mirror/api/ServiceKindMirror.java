@@ -67,4 +67,12 @@ public interface ServiceKindMirror extends DomainTypeMirror, DomainCommandProces
      */
     List<ApplicationServiceMirror> getReferencedApplicationServices();
 
+    /**
+     * @return the list of referenced {@link NonDomainTypeMirror} instances, i.e. classes not classified
+     * as any recognized {@link DomainType} that are referenced by a field, method parameter or method
+     * return type of this service kind and that were themselves mirrored (non-domain class scanning
+     * must be enabled on the domain mirror factory for such mirrors to exist).
+     */
+    List<NonDomainTypeMirror> getReferencedNonDomainTypes();
+
 }

@@ -37,6 +37,7 @@ public abstract class AbstractDomainMirrorFactory {
     protected GenericTypeResolver genericTypeResolver;
     protected ClassLoader externalClassLoader;
     protected DomainTypeDetector domainTypeDetector;
+    protected boolean includeNonDomainClasses = true;
 
     private static final Pattern packagePattern = Pattern.compile("^[a-z]+(\\.[a-zA-Z_][a-zA-Z0-9_]*)*$");
 
@@ -104,6 +105,17 @@ public abstract class AbstractDomainMirrorFactory {
      */
     public void setDomainTypeDetector(DomainTypeDetector domainTypeDetector) {
         this.domainTypeDetector = domainTypeDetector;
+    }
+
+    /**
+     * Controls whether classes within {@code domainModelPackages} that do not implement any domain
+     * marker interface are also mirrored (tagged with {@code DomainType.NON_DOMAIN}). Defaults to
+     * {@code true}.
+     *
+     * @param includeNonDomainClasses whether non-domain classes should also be mirrored
+     */
+    public void setIncludeNonDomainClasses(boolean includeNonDomainClasses) {
+        this.includeNonDomainClasses = includeNonDomainClasses;
     }
 
 }

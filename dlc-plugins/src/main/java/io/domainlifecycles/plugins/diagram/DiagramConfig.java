@@ -76,6 +76,7 @@ public class DiagramConfig {
     private String readModelStyle;
     private String queryHandlerStyle;
     private String outboundServiceStyle;
+    private String nonDomainClassStyle;
     private String font;
     private String direction;
     private String ranker;
@@ -118,6 +119,9 @@ public class DiagramConfig {
     private Boolean showUnspecifiedServiceKinds;
     private Boolean showUnspecifiedServiceKindFields;
     private Boolean showUnspecifiedServiceKindMethods;
+    private Boolean showNonDomainClasses;
+    private Boolean showNonDomainClassFields;
+    private Boolean showNonDomainClassMethods;
     private Boolean callApplicationServiceDriver;
     private List<String> fieldBlacklist;
     private List<String> methodBlacklist;
@@ -432,6 +436,24 @@ public class DiagramConfig {
      */
     public void setOutboundServiceStyle(String outboundServiceStyle) {
         this.outboundServiceStyle = outboundServiceStyle;
+    }
+
+    /**
+     * Gets the style configuration for non-domain classes
+     *
+     * @return The non-domain class style configuration
+     */
+    public String getNonDomainClassStyle() {
+        return nonDomainClassStyle;
+    }
+
+    /**
+     * Sets the style configuration for non-domain classes
+     *
+     * @param nonDomainClassStyle The style configuration to set
+     */
+    public void setNonDomainClassStyle(String nonDomainClassStyle) {
+        this.nonDomainClassStyle = nonDomainClassStyle;
     }
 
     /**
@@ -1191,6 +1213,60 @@ public class DiagramConfig {
     }
 
     /**
+     * Gets whether to show non-domain classes in the diagram
+     *
+     * @return Whether non-domain classes should be shown
+     */
+    public Boolean getShowNonDomainClasses() {
+        return showNonDomainClasses;
+    }
+
+    /**
+     * Sets whether to show non-domain classes in the diagram
+     *
+     * @param showNonDomainClasses Whether non-domain classes should be shown
+     */
+    public void setShowNonDomainClasses(Boolean showNonDomainClasses) {
+        this.showNonDomainClasses = showNonDomainClasses;
+    }
+
+    /**
+     * Gets whether to show non-domain class fields
+     *
+     * @return Whether non-domain class fields should be shown
+     */
+    public Boolean getShowNonDomainClassFields() {
+        return showNonDomainClassFields;
+    }
+
+    /**
+     * Sets whether to show non-domain class fields
+     *
+     * @param showNonDomainClassFields Whether non-domain class fields should be shown
+     */
+    public void setShowNonDomainClassFields(Boolean showNonDomainClassFields) {
+        this.showNonDomainClassFields = showNonDomainClassFields;
+    }
+
+    /**
+     * Gets whether to show non-domain class methods
+     *
+     * @return Whether non-domain class methods should be shown
+     */
+    public Boolean getShowNonDomainClassMethods() {
+        return showNonDomainClassMethods;
+    }
+
+    /**
+     * Sets whether to show non-domain class methods
+     *
+     * @param showNonDomainClassMethods Whether non-domain class methods should be shown
+     */
+    public void setShowNonDomainClassMethods(Boolean showNonDomainClassMethods) {
+        this.showNonDomainClassMethods = showNonDomainClassMethods;
+    }
+
+    /**
      * Gets whether to call application service driver
      *
      * @return Whether application service driver should be called
@@ -1696,6 +1772,7 @@ public class DiagramConfig {
         if(readModelStyle != null) styleBuilder.withReadModelStyle(readModelStyle);
         if(queryHandlerStyle != null) styleBuilder.withQueryHandlerStyle(queryHandlerStyle);
         if(outboundServiceStyle != null) styleBuilder.withOutboundServiceStyle(outboundServiceStyle);
+        if(nonDomainClassStyle != null) styleBuilder.withNonDomainClassStyle(nonDomainClassStyle);
         if(font != null) styleBuilder.withFont(font);
         if(direction != null) layoutBuilder.withDirection(direction);
         if(ranker != null) layoutBuilder.withRanker(ranker);
@@ -1738,6 +1815,9 @@ public class DiagramConfig {
         if(showUnspecifiedServiceKinds != null) visualBuilder.withShowUnspecifiedServiceKinds(showUnspecifiedServiceKinds);
         if(showUnspecifiedServiceKindFields != null) visualBuilder.withShowUnspecifiedServiceKindFields(showUnspecifiedServiceKindFields);
         if(showUnspecifiedServiceKindMethods != null) visualBuilder.withShowUnspecifiedServiceKindMethods(showUnspecifiedServiceKindMethods);
+        if(showNonDomainClasses != null) visualBuilder.withShowNonDomainClasses(showNonDomainClasses);
+        if(showNonDomainClassFields != null) visualBuilder.withShowNonDomainClassFields(showNonDomainClassFields);
+        if(showNonDomainClassMethods != null) visualBuilder.withShowNonDomainClassMethods(showNonDomainClassMethods);
         if(callApplicationServiceDriver != null) visualBuilder.withCallApplicationServiceDriver(callApplicationServiceDriver);
         if(fieldBlacklist != null && !fieldBlacklist.isEmpty()) visualBuilder.withFieldBlacklist(fieldBlacklist);
         if(methodBlacklist != null && !methodBlacklist.isEmpty()) visualBuilder.withMethodBlacklist(methodBlacklist);

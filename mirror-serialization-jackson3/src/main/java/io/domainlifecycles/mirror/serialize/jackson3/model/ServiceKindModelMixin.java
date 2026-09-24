@@ -36,6 +36,7 @@ import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
+import io.domainlifecycles.mirror.api.NonDomainTypeMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
@@ -124,6 +125,13 @@ import java.util.List;
          */
         @JsonIgnore
         public abstract List<ApplicationServiceMirror> getReferencedApplicationServices();
+
+        /**
+         * Mixin method declaration. Ignored for serialization.
+         * @return list of {@link NonDomainTypeMirror} instances representing referenced non-domain types
+         */
+        @JsonIgnore
+        public abstract List<NonDomainTypeMirror> getReferencedNonDomainTypes();
 
         /**
          * Mixin method declaration. Ignored for serialization.

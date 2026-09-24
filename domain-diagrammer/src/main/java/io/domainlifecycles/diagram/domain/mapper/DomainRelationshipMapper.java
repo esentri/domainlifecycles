@@ -43,6 +43,7 @@ import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.EntityReferenceMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
+import io.domainlifecycles.mirror.api.NonDomainTypeMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
@@ -108,6 +109,23 @@ public class DomainRelationshipMapper {
                     mapInheritance(s).ifPresent(relationShips::add);
                 });
         }
+        return relationShips;
+    }
+
+    /**
+     * Derives a {@link NomnomlRelationship} for all ServiceKinds that reference a non-domain class.
+     *
+     * @return mapped service kind - non-domain class relationships
+     */
+    public List<NomnomlRelationship> mapAllNonDomainRelationships() {
+        var relationShips = new ArrayList<NomnomlRelationship>();
+        filteredDomainClasses
+            .getServiceKinds()
+            .forEach(s -> s.getReferencedNonDomainTypes()
+                .stream()
+                .filter(filteredDomainClasses::contains)
+                .forEach(t -> relationShips.add(mapServiceKindToNonDomainRelationship(s, t)))
+            );
         return relationShips;
     }
 
@@ -384,6 +402,25 @@ public class DomainRelationshipMapper {
             .toName(relationConnectorName(serviceKindMirrorTo))
             .toMultiplicity("")
             .toStyleClassifier(DomainMapperUtils.styleClassifier(serviceKindMirrorTo))
+            .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+            .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
+            .build();
+    }
+
+    private NomnomlRelationship mapServiceKindToNonDomainRelationship(
+        ServiceKindMirror serviceKindMirrorFrom,
+        NonDomainTypeMirror nonDomainTypeMirrorTo
+    ) {
+        return NomnomlRelationship
+            .builder()
+            .fromName(relationConnectorName(serviceKindMirrorFrom))
+            .fromMultiplicity("")
+            .fromStyleClassifier(DomainMapperUtils.styleClassifier(serviceKindMirrorFrom))
+            .label("")
+            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_ASSOCIATION)
+            .toName(relationConnectorName(nonDomainTypeMirrorTo))
+            .toMultiplicity("")
+            .toStyleClassifier(DomainMapperUtils.styleClassifier(nonDomainTypeMirrorTo))
             .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
             .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
             .build();

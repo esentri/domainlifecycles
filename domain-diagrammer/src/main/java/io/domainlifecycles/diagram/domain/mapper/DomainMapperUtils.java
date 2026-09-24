@@ -170,6 +170,7 @@ public class DomainMapperUtils {
             case QUERY_HANDLER -> "<" + DomainDiagramGenerator.QUERY_HANDLER_STYLE_TAG + ">";
             case OUTBOUND_SERVICE -> "<" + DomainDiagramGenerator.OUTBOUND_SERVICE_STYLE_TAG + ">";
             case SERVICE_KIND -> "<" + DomainDiagramGenerator.SERVICE_KIND_STYLE_TAG + ">";
+            case NON_DOMAIN -> "<" + DomainDiagramGenerator.NON_DOMAIN_CLASS_STYLE_TAG + ">";
             default -> "";
         };
     }
@@ -203,6 +204,7 @@ public class DomainMapperUtils {
             case QUERY_HANDLER -> "QueryHandler";
             case OUTBOUND_SERVICE -> "OutboundService";
             case SERVICE_KIND -> "ServiceKind";
+            case NON_DOMAIN -> "NonDomain";
             default -> "";
         };
     }

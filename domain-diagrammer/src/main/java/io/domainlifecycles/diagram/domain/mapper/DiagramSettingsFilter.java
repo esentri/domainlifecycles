@@ -364,8 +364,19 @@ public class DiagramSettingsFilter {
                 included = included && generalVisualSettings.isShowDomainCommands();
             }
             case SERVICE_KIND -> included = included && generalVisualSettings.isShowUnspecifiedServiceKinds();
+            case NON_DOMAIN -> included = included
+                && generalVisualSettings.isShowNonDomainClasses()
+                && isReferencedByServiceKind(dtm);
         }
         return included;
+    }
+
+    private boolean isReferencedByServiceKind(DomainTypeMirror dtm) {
+        return domainMirror.getAllServiceKindMirrors()
+            .stream()
+            .anyMatch(sk -> sk.getReferencedNonDomainTypes()
+                .stream()
+                .anyMatch(nd -> nd.getTypeName().equals(dtm.getTypeName())));
     }
 
     private boolean noConcreteTypeExists(DomainTypeMirror dtm) {

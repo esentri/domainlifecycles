@@ -113,6 +113,9 @@ public class PluginDiagramConfiguration {
      @Parameter(property = "outboundServiceStyle", required = false)
      private String outboundServiceStyle;
 
+     @Parameter(property = "nonDomainClassStyle", required = false)
+     private String nonDomainClassStyle;
+
      @Parameter(property = "font", required = false)
      private String font;
 
@@ -238,6 +241,15 @@ public class PluginDiagramConfiguration {
 
      @Parameter(property = "showUnspecifiedServiceKindMethods", required = false)
      private Boolean showUnspecifiedServiceKindMethods;
+
+     @Parameter(property = "showNonDomainClasses", required = false)
+     private Boolean showNonDomainClasses;
+
+     @Parameter(property = "showNonDomainClassFields", required = false)
+     private Boolean showNonDomainClassFields;
+
+     @Parameter(property = "showNonDomainClassMethods", required = false)
+     private Boolean showNonDomainClassMethods;
 
      @Parameter(property = "callApplicationServiceDriver", required = false)
      private Boolean callApplicationServiceDriver;
@@ -478,6 +490,15 @@ public class PluginDiagramConfiguration {
      */
     public String getOutboundServiceStyle() {
         return outboundServiceStyle;
+    }
+
+    /**
+     * Gets the style for non-domain classes.
+     *
+     * @return the non-domain class style.
+     */
+    public String getNonDomainClassStyle() {
+        return nonDomainClassStyle;
     }
 
     /**
@@ -857,6 +878,33 @@ public class PluginDiagramConfiguration {
      */
     public Boolean getShowUnspecifiedServiceKindMethods() {
         return showUnspecifiedServiceKindMethods;
+    }
+
+    /**
+     * Checks if non-domain classes should be shown in the diagram.
+     *
+     * @return true if non-domain classes are shown, false otherwise.
+     */
+    public Boolean getShowNonDomainClasses() {
+        return showNonDomainClasses;
+    }
+
+    /**
+     * Checks if non-domain class fields should be shown in the diagram.
+     *
+     * @return true if non-domain class fields are shown, false otherwise.
+     */
+    public Boolean getShowNonDomainClassFields() {
+        return showNonDomainClassFields;
+    }
+
+    /**
+     * Checks if non-domain class methods should be shown in the diagram.
+     *
+     * @return true if non-domain class methods are shown, false otherwise.
+     */
+    public Boolean getShowNonDomainClassMethods() {
+        return showNonDomainClassMethods;
     }
 
     /**

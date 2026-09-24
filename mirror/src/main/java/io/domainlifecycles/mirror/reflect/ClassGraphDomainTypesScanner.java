@@ -41,8 +41,10 @@ import io.domainlifecycles.domain.types.ReadModel;
 import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.domain.types.ValueObject;
+import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.EntityMirror;
+import io.domainlifecycles.mirror.api.NonDomainTypeMirror;
 import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import io.github.classgraph.ClassGraph;
@@ -55,6 +57,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 /**
@@ -102,13 +105,33 @@ public class ClassGraphDomainTypesScanner {
     /**
      * Scans the specified package(s) to discover domain types, including enums, interfaces,
      * and classes implementing or extending various domain-related interfaces and types.
-     * This method uses ClassGraph to perform the scanning.
+     * This method uses ClassGraph to perform the scanning. Non-domain classes are not scanned.
      *
      * @param packages the array of package names to scan. If no packages are provided, the scan will include all available packages.
      * @return a list of discovered domain types represented as {@code DomainTypeMirror} instances.
      */
-    @SuppressWarnings("unchecked")
     public List<DomainTypeMirror> scan(String... packages) {
+        return scan(packages, new String[0], false);
+    }
+
+    /**
+     * Scans the specified package(s) to discover domain types, including enums, interfaces,
+     * and classes implementing or extending various domain-related interfaces and types.
+     * This method uses ClassGraph to perform the scanning.
+     *
+     * @param packages the array of package names to scan. If no packages are provided, the scan will include all available packages.
+     * @param nonDomainScanPackages the array of package names within which classes not implementing any
+     *                              domain marker interface are also turned into {@link NonDomainTypeMirror}
+     *                              instances, if {@code includeNonDomainClasses} is {@code true}. This is
+     *                              typically a subset of {@code packages} (excluding internally appended
+     *                              framework packages).
+     * @param includeNonDomainClasses whether classes within {@code nonDomainScanPackages} that do not
+     *                                 implement any domain marker interface should also be mirrored, tagged
+     *                                 with {@link io.domainlifecycles.mirror.api.DomainType#NON_DOMAIN}.
+     * @return a list of discovered domain types represented as {@code DomainTypeMirror} instances.
+     */
+    @SuppressWarnings("unchecked")
+    public List<DomainTypeMirror> scan(String[] packages, String[] nonDomainScanPackages, boolean includeNonDomainClasses) {
 
         if(packages.length>0) {
             var packageNames = String.join(", ", packages);
@@ -127,6 +150,9 @@ public class ClassGraphDomainTypesScanner {
 
         try (ScanResult scanResult = classGraph.scan()) {  // Start the scan
             var domainTypes = buildMirrorsFromScanResult(scanResult);
+            if (includeNonDomainClasses) {
+                domainTypes.addAll(buildNonDomainMirrors(scanResult, domainTypes, nonDomainScanPackages));
+            }
             return domainTypes;
         } catch (Throwable t) {
             log.error("Scanning packages '{}' failed!", packages, t);
@@ -284,6 +310,53 @@ public class ClassGraphDomainTypesScanner {
             .forEach(domainTypes::add);
 
         return domainTypes;
+    }
+
+    /**
+     * Builds {@link NonDomainTypeMirror} instances for classes that are not classified as any
+     * recognized {@link DomainType} by the configured {@link DomainTypeDetector}, restricted to
+     * classes whose type name lies within one of {@code nonDomainScanPackages}, and that were not
+     * already mirrored by {@link #buildMirrorsFromScanResult(ScanResult)}.
+     *
+     * @param scanResult the result of the ClassGraph scan
+     * @param alreadyBuilt the domain type mirrors already built for this scan
+     * @param nonDomainScanPackages the packages within which non-domain classes should be mirrored
+     * @return a list of newly built {@link NonDomainTypeMirror} instances
+     */
+    protected List<DomainTypeMirror> buildNonDomainMirrors(ScanResult scanResult,
+                                                           List<DomainTypeMirror> alreadyBuilt,
+                                                           String[] nonDomainScanPackages) {
+        if (nonDomainScanPackages == null || nonDomainScanPackages.length == 0) {
+            return Collections.emptyList();
+        }
+        var alreadyClassifiedNames = alreadyBuilt
+            .stream()
+            .map(DomainTypeMirror::getTypeName)
+            .collect(Collectors.toSet());
+
+        List<DomainTypeMirror> nonDomainTypes = new ArrayList<>();
+        scanResult.getAllStandardClasses()
+            .stream()
+            .filter(ci -> !ci.isEnum())
+            .filter(ci -> !alreadyClassifiedNames.contains(ci.getName()))
+            .filter(ci -> isWithinPackages(ci.getName(), nonDomainScanPackages))
+            .map(this::loadClass)
+            .filter(Objects::nonNull)
+            .filter(c -> !c.isAnonymousClass() && !c.isLocalClass() && !c.isSynthetic())
+            .filter(c -> DomainType.NON_DOMAIN.equals(domainTypeDetector.detectDomainType(c)))
+            .map(dt -> build(new NonDomainTypeMirrorBuilder(dt, genericTypeResolver, domainTypeDetector)))
+            .filter(Objects::nonNull)
+            .forEach(nonDomainTypes::add);
+        return nonDomainTypes;
+    }
+
+    private boolean isWithinPackages(String typeName, String[] packages) {
+        for (String p : packages) {
+            if (typeName.equals(p) || typeName.startsWith(p + ".")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected Class<?> loadClass(ClassInfo classInfo) {
