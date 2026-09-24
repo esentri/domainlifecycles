@@ -34,6 +34,7 @@ import io.domainlifecycles.mirror.api.DomainEventMirror;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
+import io.domainlifecycles.mirror.api.NonDomainTypeMirror;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
@@ -366,17 +367,31 @@ public class DiagramSettingsFilter {
             case SERVICE_KIND -> included = included && generalVisualSettings.isShowUnspecifiedServiceKinds();
             case NON_DOMAIN -> included = included
                 && generalVisualSettings.isShowNonDomainClasses()
-                && isReferencedByServiceKind(dtm);
+                && (isReferencedByServiceKind(dtm) || referencesAServiceKind(dtm));
         }
         return included;
     }
 
+    /**
+     * A non-domain class is shown when a service kind depends on it (e.g. a mapper or helper class
+     * a domain service holds a field for).
+     */
     private boolean isReferencedByServiceKind(DomainTypeMirror dtm) {
         return domainMirror.getAllServiceKindMirrors()
             .stream()
             .anyMatch(sk -> sk.getReferencedNonDomainTypes()
                 .stream()
                 .anyMatch(nd -> nd.getTypeName().equals(dtm.getTypeName())));
+    }
+
+    /**
+     * A non-domain class is also shown when it depends on a service kind itself (e.g. a controller
+     * or a message listener calling into an application service) - the inverse relationship of
+     * {@link #isReferencedByServiceKind(DomainTypeMirror)}.
+     */
+    private boolean referencesAServiceKind(DomainTypeMirror dtm) {
+        return dtm instanceof NonDomainTypeMirror nonDomainTypeMirror
+            && !nonDomainTypeMirror.getReferencedServiceKinds().isEmpty();
     }
 
     private boolean noConcreteTypeExists(DomainTypeMirror dtm) {

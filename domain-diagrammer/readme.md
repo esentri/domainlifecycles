@@ -135,21 +135,24 @@ aggregate that survives the filter are still drawn, as with every other trim set
 
 The [mirror](../mirror/readme.md#mirroring-non-domain-classes) does not only mirror classes
 implementing one of the DLC marker interfaces - every other class in the scanned domain model
-packages (a mapper, helper or utility class, say) is mirrored too, without needing any marker
-interface. Building on that, the diagrammer can draw such a class as a node, but only when it is
-actually referenced (by a field, method parameter or return type) by a service kind - a domain
-service, application service, repository, query handler, outbound service or unspecified service
-kind - that is itself shown in the diagram. Classes that are not referenced by any shown service
-never appear, even though the mirror knows about them.
+packages (a mapper, helper, utility or controller class, say) is mirrored too, without needing any
+marker interface. Building on that, the diagrammer can draw such a class as a node, but only when it
+has a relationship (by a field, method parameter or return type, in either direction) to a service
+kind - a domain service, application service, repository, query handler, outbound service or
+unspecified service kind. That covers both directions: a service depending on a non-domain helper
+class (e.g. a mapper it holds a field for), and a non-domain class that itself calls into a service
+(e.g. a REST controller or a message listener holding an application service). Classes that have no
+such relationship to any service kind never appear, even though the mirror knows about them.
 
-This is enabled by default via `GeneralVisualSettings.isShowNonDomainClasses()`. Fields and methods
-of a non-domain class are hidden by default and can be switched on individually:
+This is enabled by default via `GeneralVisualSettings.isShowNonDomainClasses()`. Methods of a
+non-domain class are shown by default too (e.g. so a controller's endpoint methods are visible),
+while fields are hidden by default; both can be switched individually:
 
 ```Java
 var general = GeneralVisualSettings.builder()
     .withShowNonDomainClasses(true)
     .withShowNonDomainClassFields(true)
-    .withShowNonDomainClassMethods(true)
+    .withShowNonDomainClassMethods(false)
     .build();
 DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
     .withGeneralVisualSettings(general)

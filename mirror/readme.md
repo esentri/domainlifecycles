@@ -68,6 +68,9 @@ marker interface is needed for this: a class only has to live in one of the pack
 Any `ServiceKindMirror` (domain service, application service, repository, query handler, outbound
 service or an unspecified service kind) exposes the non-domain classes it actually uses via
 `getReferencedNonDomainTypes()`, resolved from its fields, method parameters and return types.
+The inverse also holds: any `NonDomainTypeMirror` exposes the service kinds it itself references
+via `getReferencedServiceKinds()` - useful for classes that call *into* a service kind rather than
+being called by it, e.g. a controller or a message listener that holds an application service.
 
 This behaviour is enabled by default and can be switched off, e.g. to keep the mirror initialization
 faster on very large codebases, or to preserve the previous, marker-interface-only behaviour:

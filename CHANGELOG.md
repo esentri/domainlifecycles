@@ -17,10 +17,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The [domain diagrammer](./domain-diagrammer) can now render those non-domain classes as diagram
   nodes, restricted to the ones actually referenced by a service kind (domain service, application
   service, repository, query handler, outbound service or unspecified service kind), via the new
-  `showNonDomainClasses`, `showNonDomainClassFields` and `showNonDomainClassMethods` settings on
-  `GeneralVisualSettings` (all shown by default) and a configurable `nonDomainClassStyle` on
+  `showNonDomainClasses` and `showNonDomainClassMethods` settings on `GeneralVisualSettings`
+  (both `true` by default, so e.g. a controller's endpoint methods are visible out of the box),
+  `showNonDomainClassFields` (`false` by default) and a configurable `nonDomainClassStyle` on
   `StyleSettings`
 - `mirror-serialization-jackson2`/`jackson3` gained mixins to (de)serialize `NonDomainTypeModel`
+- `NonDomainTypeMirror` gained `getReferencedServiceKinds()`, the inverse of
+  `ServiceKindMirror#getReferencedNonDomainTypes()`: it resolves the service kinds a non-domain
+  class itself references via a field, method parameter or return type - e.g. a controller or a
+  message listener calling into an application service. The domain diagrammer now draws a
+  non-domain class whenever either direction applies, with an edge pointing from the non-domain
+  class to the service kind it calls
+- The Gradle and Maven diagram plugins (`dlc-gradle-plugin`/`dlc-maven-plugin`, via the shared
+  `dlc-plugins` `DiagramConfig`) now expose `showNonDomainClasses`, `showNonDomainClassFields`,
+  `showNonDomainClassMethods` and `nonDomainClassStyle` as diagram configuration options, matching
+  the diagrammer's `GeneralVisualSettings`/`StyleSettings`
+- Fixed `ExtendedJMoleculesDomainMirrorFactory` (`mirror-jmolecules`), which the Gradle and Maven
+  diagram plugins use internally, to also honor `setIncludeNonDomainClasses` - it previously always
+  scanned with non-domain class mirroring disabled, regardless of the (default-on) setting,
+  silencing the entire feature for every plugin-based diagram
+- Fixed `KrokiDockerAdapter` (`dlc-plugins`, used by the Gradle/Maven `svg` diagram format) to pull
+  the `yuzutech/kroki` Docker image first if it is not present locally, instead of only ever trying
+  to create a container from it - previously the very first SVG diagram generation on a machine
+  failed with a Docker "image not known" error, since `docker create` (unlike `docker run`) does not
+  pull automatically
 
 ## [3.4.0] - 2026-09-11
 - Improved DLC persistence initialization performance

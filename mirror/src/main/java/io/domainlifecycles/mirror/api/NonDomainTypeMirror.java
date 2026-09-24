@@ -26,6 +26,8 @@
 
 package io.domainlifecycles.mirror.api;
 
+import java.util.List;
+
 /**
  * A NonDomainTypeMirror mirrors a class that is not classified as one of the recognized
  * {@link DomainType}s (its {@link #getDomainType()} is {@link DomainType#NON_DOMAIN}), but that
@@ -37,5 +39,15 @@ package io.domainlifecycles.mirror.api;
  * @author Mario Herb
  */
 public interface NonDomainTypeMirror extends DomainTypeMirror {
+
+    /**
+     * @return the list of referenced {@link ServiceKindMirror} instances, i.e. service kinds
+     * (domain service, application service, repository, query handler, outbound service or an
+     * unspecified service kind) referenced by a field, method parameter or method return type of
+     * this non-domain class. This is the inverse of
+     * {@link ServiceKindMirror#getReferencedNonDomainTypes()} and typically identifies callers of a
+     * service kind, e.g. a controller or a message listener.
+     */
+    List<ServiceKindMirror> getReferencedServiceKinds();
 
 }

@@ -75,7 +75,7 @@ public class GeneralVisualSettings {
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_METHODS = false;
     private static final boolean DEFAULT_SHOW_NON_DOMAIN_CLASSES = true;
     private static final boolean DEFAULT_SHOW_NON_DOMAIN_CLASS_FIELDS = false;
-    private static final boolean DEFAULT_SHOW_NON_DOMAIN_CLASS_METHODS = false;
+    private static final boolean DEFAULT_SHOW_NON_DOMAIN_CLASS_METHODS = true;
     private static final boolean DEFAULT_CALL_APPLICATION_SERVICE_DRIVER = false;
     private static final List<String> DEFAULT_FIELD_BLACKLIST = List.of("concurrencyVersion");
     private static final List<String> DEFAULT_METHOD_BLACKLIST = List.of(

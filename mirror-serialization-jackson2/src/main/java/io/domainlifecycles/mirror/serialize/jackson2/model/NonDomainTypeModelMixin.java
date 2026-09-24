@@ -27,9 +27,11 @@
 package io.domainlifecycles.mirror.serialize.jackson2.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
+import io.domainlifecycles.mirror.api.ServiceKindMirror;
 
 import java.util.List;
 
@@ -65,4 +67,13 @@ public abstract class NonDomainTypeModelMixin extends DomainTypeModelMixin {
     ) {
         super(typeName, isAbstract, allFields, methods, inheritanceHierarchyTypeNames, allInterfaceTypeNames);
     }
+
+    /**
+     * Retrieves a list of {@link ServiceKindMirror} instances referenced by the current model.
+     * This method is ignored during JSON serialization or deserialization.
+     *
+     * @return a list of {@link ServiceKindMirror} objects that are referenced by the model.
+     */
+    @JsonIgnore
+    public abstract List<ServiceKindMirror> getReferencedServiceKinds();
 }

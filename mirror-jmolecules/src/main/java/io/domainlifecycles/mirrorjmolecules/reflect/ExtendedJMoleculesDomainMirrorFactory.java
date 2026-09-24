@@ -81,7 +81,7 @@ public class ExtendedJMoleculesDomainMirrorFactory extends ReflectiveDomainMirro
         domainModelPackagesExtended[domainModelPackages.length+1] = "org.jmolecules.ddd";
         Map<String, ? extends DomainTypeMirror> builtTypeMirrors =
             extendedJMoleculesDomainTypesScanner
-                .scan(domainModelPackagesExtended)
+                .scan(domainModelPackagesExtended, domainModelPackages, includeNonDomainClasses)
                 .stream()
                 .collect(
                     Collectors.toMap(

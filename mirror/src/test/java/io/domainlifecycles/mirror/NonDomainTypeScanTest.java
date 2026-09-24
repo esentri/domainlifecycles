@@ -29,7 +29,8 @@ public class NonDomainTypeScanTest {
             .extracting(NonDomainTypeMirror::getTypeName)
             .containsExactlyInAnyOrder(
                 "tests.mirror.nondomain.NonDomainHelper",
-                "tests.mirror.nondomain.UnreferencedHelper"
+                "tests.mirror.nondomain.UnreferencedHelper",
+                "tests.mirror.nondomain.NonDomainCaller"
             );
 
         var service = domainMirror.getAllDomainServiceMirrors()
@@ -41,6 +42,15 @@ public class NonDomainTypeScanTest {
         assertThat(service.getReferencedNonDomainTypes())
             .extracting(NonDomainTypeMirror::getTypeName)
             .containsExactly("tests.mirror.nondomain.NonDomainHelper");
+
+        var caller = nonDomainMirrors.stream()
+            .filter(m -> m.getTypeName().equals("tests.mirror.nondomain.NonDomainCaller"))
+            .findFirst()
+            .orElseThrow();
+
+        assertThat(caller.getReferencedServiceKinds())
+            .extracting(ServiceKindMirror::getTypeName)
+            .containsExactly("tests.mirror.nondomain.NonDomainAwareService");
     }
 
     @Test

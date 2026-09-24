@@ -26,16 +26,21 @@
 
 package io.domainlifecycles.mirror.model;
 
+import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
+import io.domainlifecycles.mirror.api.ParamMirror;
 import io.domainlifecycles.mirror.exception.MirrorException;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Model implementation of a {@link DomainTypeMirror}.
@@ -264,6 +269,35 @@ public abstract class DomainTypeModel implements DomainTypeMirror, ProvidedDomai
     public int hashCode() {
         return Objects.hash(typeName, allFields, methods, isAbstract, inheritanceHierarchyTypeNames,
             allInterfaceTypeNames);
+    }
+
+    /**
+     * Resolves the mirrors of the types referenced by this type's fields, method parameters and
+     * method return types, restricted to those whose resolved (and thereby authoritative)
+     * {@link DomainType} matches the given predicate. A field's or parameter's own locally cached
+     * {@code DomainType} classification is not relied upon, since it can be stale for generically
+     * resolved types; only the actually resolved mirror's own {@code getDomainType()} decides.
+     * Types not present in the domain model (e.g. JDK or library types) are silently excluded.
+     *
+     * @param domainTypeMatcher decides which resolved {@link DomainType}s to include
+     * @return the matching referenced type mirrors, in no particular order
+     */
+    protected List<DomainTypeMirror> resolveReferencedTypes(Predicate<DomainType> domainTypeMatcher) {
+        var fieldTypeNames = allFields.stream()
+            .map(fieldMirror -> fieldMirror.getType().getTypeName());
+
+        var methodTypeNames = methods.stream()
+            .flatMap(methodMirror -> Stream.concat(
+                methodMirror.getParameters().stream().map(ParamMirror::getType),
+                Stream.of(methodMirror.getReturnType())
+            ))
+            .map(AssertedContainableTypeMirror::getTypeName);
+
+        return Stream.concat(fieldTypeNames, methodTypeNames)
+            .distinct()
+            .flatMap(typeName -> domainMirror.getDomainTypeMirror(typeName).stream())
+            .filter(dtm -> domainTypeMatcher.test(dtm.getDomainType()))
+            .collect(Collectors.toList());
     }
 
     /**

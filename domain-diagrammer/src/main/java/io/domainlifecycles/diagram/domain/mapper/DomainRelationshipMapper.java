@@ -113,7 +113,9 @@ public class DomainRelationshipMapper {
     }
 
     /**
-     * Derives a {@link NomnomlRelationship} for all ServiceKinds that reference a non-domain class.
+     * Derives a {@link NomnomlRelationship} for all ServiceKinds that reference a non-domain class,
+     * as well as for all non-domain classes that reference a ServiceKind themselves (e.g. a
+     * controller or a message listener calling into an application service).
      *
      * @return mapped service kind - non-domain class relationships
      */
@@ -125,6 +127,13 @@ public class DomainRelationshipMapper {
                 .stream()
                 .filter(filteredDomainClasses::contains)
                 .forEach(t -> relationShips.add(mapServiceKindToNonDomainRelationship(s, t)))
+            );
+        filteredDomainClasses
+            .getNonDomainClasses()
+            .forEach(nd -> nd.getReferencedServiceKinds()
+                .stream()
+                .filter(filteredDomainClasses::contains)
+                .forEach(s -> relationShips.add(mapNonDomainToServiceKindRelationship(nd, s)))
             );
         return relationShips;
     }
@@ -421,6 +430,25 @@ public class DomainRelationshipMapper {
             .toName(relationConnectorName(nonDomainTypeMirrorTo))
             .toMultiplicity("")
             .toStyleClassifier(DomainMapperUtils.styleClassifier(nonDomainTypeMirrorTo))
+            .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+            .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
+            .build();
+    }
+
+    private NomnomlRelationship mapNonDomainToServiceKindRelationship(
+        NonDomainTypeMirror nonDomainTypeMirrorFrom,
+        ServiceKindMirror serviceKindMirrorTo
+    ) {
+        return NomnomlRelationship
+            .builder()
+            .fromName(relationConnectorName(nonDomainTypeMirrorFrom))
+            .fromMultiplicity("")
+            .fromStyleClassifier(DomainMapperUtils.styleClassifier(nonDomainTypeMirrorFrom))
+            .label("")
+            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_ASSOCIATION)
+            .toName(relationConnectorName(serviceKindMirrorTo))
+            .toMultiplicity("")
+            .toStyleClassifier(DomainMapperUtils.styleClassifier(serviceKindMirrorTo))
             .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
             .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
             .build();

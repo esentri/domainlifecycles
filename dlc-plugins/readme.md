@@ -456,9 +456,9 @@ Supported Diagram configuration options are
 - showUnspecifiedServiceKinds: boolean, default true
 - showUnspecifiedServiceKindFields: boolean, default false
 - showUnspecifiedServiceKindMethods: boolean, default false
-- showNonDomainClasses: boolean, default true (classes not implementing any domain marker interface are drawn too, but only when actually referenced by a shown service kind)
+- showNonDomainClasses: boolean, default true (classes not implementing any domain marker interface are drawn too, but only when they have a relationship - in either direction - to a service kind)
 - showNonDomainClassFields: boolean, default false
-- showNonDomainClassMethods: boolean, default false
+- showNonDomainClassMethods: boolean, default true
 - callApplicationServiceDriver: boolean, default false
 - fieldBlacklist: field names to be excluded in field list, default "concurrencyVersion"  
 - methodBlacklist: method names to be excluded in field list, default "builder", "validate", "concurrencyVersion", "id", "findResultById", "publish", "increaseVersion", "equals", "hashCode", "toString"

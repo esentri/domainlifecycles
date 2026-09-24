@@ -27,7 +27,6 @@
 package io.domainlifecycles.mirror.model;
 
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
-import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
@@ -36,7 +35,6 @@ import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.NonDomainTypeMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
-import io.domainlifecycles.mirror.api.ParamMirror;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.ServiceKindMirror;
@@ -44,7 +42,6 @@ import io.domainlifecycles.mirror.exception.MirrorException;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Represents the model of a service kind within a domain, implementing the
@@ -184,23 +181,8 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
      */
     @Override
     public List<NonDomainTypeMirror> getReferencedNonDomainTypes() {
-        var fieldTypeNames = allFields.stream()
-            .map(fieldMirror -> fieldMirror.getType().getTypeName());
-
-        var methodTypeNames = methods.stream()
-            .flatMap(methodMirror -> Stream.concat(
-                methodMirror.getParameters().stream().map(ParamMirror::getType),
-                Stream.of(methodMirror.getReturnType())
-            ))
-            .map(AssertedContainableTypeMirror::getTypeName);
-
-        // The DomainType cached on a FieldMirror/ParamMirror can be stale for generically resolved
-        // types, so the resolved mirror's own DomainType (authoritative) is checked instead of the
-        // field/parameter's locally cached classification.
-        return Stream.concat(fieldTypeNames, methodTypeNames)
-            .distinct()
-            .flatMap(typeName -> domainMirror.getDomainTypeMirror(typeName).stream())
-            .filter(dtm -> DomainType.NON_DOMAIN.equals(dtm.getDomainType()))
+        return resolveReferencedTypes(DomainType.NON_DOMAIN::equals)
+            .stream()
             .map(dtm -> (NonDomainTypeMirror) dtm)
             .collect(Collectors.toList());
     }
