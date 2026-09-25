@@ -24,3 +24,48 @@
  *  limitations under the License.
  */
 
+package tests.shared.persistence.domain.oneToManyIdentityEnum;
+
+import io.domainlifecycles.assertion.DomainAssertions;
+import io.domainlifecycles.domain.types.base.EntityBase;
+import io.domainlifecycles.domain.types.base.IdentityBase;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@Setter
+public class EntityIdEnumList extends EntityBase<EntityIdEnumList.EntityIdEnumListId> {
+
+    private EntityIdEnumListId id;
+    private List<MyEnum> enumList;
+    private List<MyId> idList;
+    private ValueWithLists valueWithLists;
+
+    @Builder(setterPrefix = "set")
+    public EntityIdEnumList(EntityIdEnumListId id,
+                            long concurrencyVersion,
+                            List<MyEnum> enumList,
+                            List<MyId> idList,
+                            ValueWithLists valueWithLists
+    ) {
+        super(concurrencyVersion);
+        this.id = id;
+        DomainAssertions.isNotNull(id, "Eine ID muss angegeben sein!");
+        this.enumList = (enumList == null ? new ArrayList<>() : enumList);
+        this.idList = (idList == null ? new ArrayList<>() : idList);
+        this.valueWithLists = valueWithLists;
+    }
+
+    public static class EntityIdEnumListId extends IdentityBase<Long> {
+
+        public EntityIdEnumListId(Long anId) {
+            super(anId);
+        }
+
+    }
+
+}

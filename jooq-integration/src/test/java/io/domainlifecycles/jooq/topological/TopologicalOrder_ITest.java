@@ -4,12 +4,12 @@ import io.domainlifecycles.jooq.persistence.BasePersistence_ITest;
 import io.domainlifecycles.persistence.repository.order.TopologicalPersistenceActionOrderProvider;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
-import tests.shared.complete.onlinehandel.bestellung.AktionsCodeBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellKommentarBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellPositionBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellStatusBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
-import tests.shared.complete.onlinehandel.bestellung.LieferadresseBv3;
+import tests.shared.complete.ecommerce.order.PromoCodeBv3;
+import tests.shared.complete.ecommerce.order.OrderCommentBv3;
+import tests.shared.complete.ecommerce.order.OrderItemBv3;
+import tests.shared.complete.ecommerce.order.OrderStatusBv3;
+import tests.shared.complete.ecommerce.order.OrderBv3;
+import tests.shared.complete.ecommerce.order.DeliveryAddressBv3;
 import tests.shared.persistence.domain.complex.TestEntity1;
 import tests.shared.persistence.domain.complex.TestEntity2;
 import tests.shared.persistence.domain.complex.TestEntity3;
@@ -81,30 +81,30 @@ public class TopologicalOrder_ITest extends BasePersistence_ITest {
     }
 
     @Test
-    public void testOrderingBestellung() {
+    public void testOrderingOrder() {
         TopologicalPersistenceActionOrderProvider orderProvider = new TopologicalPersistenceActionOrderProvider(
             persistenceConfiguration.domainPersistenceProvider);
-        var order = orderProvider.insertionOrder(BestellungBv3.class.getName());
-        log.info("INSERT/UPDATE Order for: " + BestellungBv3.class.getName());
+        var order = orderProvider.insertionOrder(OrderBv3.class.getName());
+        log.info("INSERT/UPDATE Order for: " + OrderBv3.class.getName());
         order.forEach(log::info);
         assertThat(order).containsExactlyInAnyOrder(
-            LieferadresseBv3.class.getName(),
-            BestellungBv3.class.getName(),
-            BestellStatusBv3.class.getName(),
-            BestellKommentarBv3.class.getName(),
-            AktionsCodeBv3.class.getName(),
-            BestellPositionBv3.class.getName()
+            DeliveryAddressBv3.class.getName(),
+            OrderBv3.class.getName(),
+            OrderStatusBv3.class.getName(),
+            OrderCommentBv3.class.getName(),
+            PromoCodeBv3.class.getName(),
+            OrderItemBv3.class.getName()
         );
 
-        assertThat(order.get(0)).isEqualTo(LieferadresseBv3.class.getName());
-        assertThat(order.get(1)).isEqualTo(BestellungBv3.class.getName());
-        assertThat(order.indexOf(BestellStatusBv3.class.getName())).isGreaterThan(
-            order.indexOf(BestellungBv3.class.getName()));
-        assertThat(order.indexOf(BestellKommentarBv3.class.getName())).isGreaterThan(
-            order.indexOf(BestellungBv3.class.getName()));
-        assertThat(order.indexOf(AktionsCodeBv3.class.getName())).isGreaterThan(order.indexOf(BestellungBv3.class.getName()));
-        assertThat(order.indexOf(BestellPositionBv3.class.getName())).isGreaterThan(
-            order.indexOf(BestellungBv3.class.getName()));
+        assertThat(order.get(0)).isEqualTo(DeliveryAddressBv3.class.getName());
+        assertThat(order.get(1)).isEqualTo(OrderBv3.class.getName());
+        assertThat(order.indexOf(OrderStatusBv3.class.getName())).isGreaterThan(
+            order.indexOf(OrderBv3.class.getName()));
+        assertThat(order.indexOf(OrderCommentBv3.class.getName())).isGreaterThan(
+            order.indexOf(OrderBv3.class.getName()));
+        assertThat(order.indexOf(PromoCodeBv3.class.getName())).isGreaterThan(order.indexOf(OrderBv3.class.getName()));
+        assertThat(order.indexOf(OrderItemBv3.class.getName())).isGreaterThan(
+            order.indexOf(OrderBv3.class.getName()));
     }
 
     @Test

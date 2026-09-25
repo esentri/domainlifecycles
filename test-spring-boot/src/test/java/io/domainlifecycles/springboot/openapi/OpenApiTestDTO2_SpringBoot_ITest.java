@@ -19,8 +19,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import tests.shared.complete.onlinehandel.bestellung.BestellungIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.KundennummerBv3;
+import tests.shared.complete.ecommerce.order.OrderIdBv3;
+import tests.shared.complete.ecommerce.order.CustomerNumberBv3;
 import tests.shared.openapi.TestId;
 import tests.shared.openapi.TestIdInterface;
 import tests.shared.openapi.jakarta.TestDTO2;
@@ -1519,8 +1519,8 @@ public class OpenApiTestDTO2_SpringBoot_ITest {
     public void testIdentitySchemata() {
         testIdentitySchema(TestId.class);
         testIdentitySchema(TestIdInterface.class);
-        testIdentitySchema(KundennummerBv3.class);
-        testIdentitySchema(BestellungIdBv3.class);
+        testIdentitySchema(CustomerNumberBv3.class);
+        testIdentitySchema(OrderIdBv3.class);
     }
 
     private void testIdentitySchema(Class identityClass) {

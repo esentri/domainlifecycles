@@ -50,7 +50,7 @@ dependencies {
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.1</version>
+        <version>4.1.0</version>
         <relativePath/>
     </parent>
     <groupId>com.example</groupId>
@@ -63,7 +63,7 @@ dependencies {
         <dependency>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <version>3.4.0</version>
+            <version>3.5.0</version>
         </dependency>
     </dependencies>
 
@@ -91,7 +91,7 @@ functions:
 
 ```groovy
 dependencies {
-    implementation 'io.domainlifecycles:spring-boot-starter:3.4.0'
+    implementation 'io.domainlifecycles:spring-boot-starter:3.5.0'
 }
 ```
 </details>
@@ -104,11 +104,16 @@ dependencies {
     <dependency>
         <groupId>io.domainlifecycles</groupId>
         <artifactId>spring-boot-starter</artifactId>
-        <version>3.4.0</version>
+        <version>3.5.0</version>
     </dependency>
 </dependencies>
 ```
 </details>
+
+**Note:** `spring-boot-starter` targets Spring Boot 4.x, as shown above. If your project is still on Spring Boot
+3.x, use `io.domainlifecycles:spring-boot3-starter` instead - it bundles the same DLC functionality on top of the
+Spring Boot 3 autoconfiguration (`dlc-spring-boot3-autoconfig`). See the [root readme](../../../readme.md#dlc-project-setup)
+for both starters' dependency coordinates.
 
 ---
 

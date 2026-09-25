@@ -28,7 +28,7 @@ at application runtime. Gradle setup:
 
 ```Groovy
 dependencies{
-    testImplementation 'io.domainlifecycles:static-analysis-sootup:3.4.0'
+    testImplementation 'io.domainlifecycles:static-analysis-sootup:3.5.0'
 }
 ```
 
@@ -38,7 +38,7 @@ Maven setup:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>static-analysis-sootup</artifactId>
-    <version>3.4.0</version>
+    <version>3.5.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -52,7 +52,7 @@ module alone. Gradle setup:
 
 ```Groovy
 dependencies{
-    implementation 'io.domainlifecycles:static-analysis:3.4.0'
+    implementation 'io.domainlifecycles:static-analysis:3.5.0'
 }
 ```
 
@@ -62,7 +62,7 @@ Maven setup:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>static-analysis</artifactId>
-    <version>3.4.0</version>
+    <version>3.5.0</version>
 </dependency>
 ```
 
@@ -262,7 +262,7 @@ holding a `JacksonDomainCallsSerializer`. Gradle setup:
 
 ```Groovy
 dependencies{
-    implementation 'io.domainlifecycles:static-analysis-serialization-jackson3:3.4.0'
+    implementation 'io.domainlifecycles:static-analysis-serialization-jackson3:3.5.0'
 }
 ```
 
@@ -272,7 +272,7 @@ Maven setup:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>static-analysis-serialization-jackson3</artifactId>
-    <version>3.4.0</version>
+    <version>3.5.0</version>
 </dependency>
 ```
 

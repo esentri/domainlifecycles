@@ -51,87 +51,87 @@
 #background: transparent
 #.note: fill=#ffffff italic
 
-// !!! tests.shared.complete.onlinehandel.zustellung.StarteAuslieferung !!!
-[<DC> StarteAuslieferung <<DomainCommand>> ]
+// !!! tests.shared.complete.ecommerce.delivery.StartDelivery !!!
+[<DC> StartDelivery <<DomainCommand>> ]
 // !!! tests.shared.inheritance.AbstractDomainCommand !!!
 [<DC> AbstractDomainCommand <<DomainCommand>> ]
 // !!! tests.shared.inheritance.BasicDomainCommandType !!!
 [<DC> BasicDomainCommandType <<DomainCommand>> ]
 // !!! tests.shared.inheritance.ConcreteDomainCommand !!!
 [<DC> ConcreteDomainCommand <<DomainCommand>> ]
-// !!! tests.shared.complete.onlinehandel.benachrichtigung.BenachrichtigungService !!!
-[<DS> BenachrichtigungService <<DomainService>> |
-+ void benachrichtige(\# AuslieferungGestartet)
+// !!! tests.shared.complete.ecommerce.delivery.DeliveryService !!!
+[<DS> DeliveryService <<DomainService>> |
++ void deliver(StartDelivery)
 ]
-// !!! tests.shared.complete.onlinehandel.zustellung.ZustellungsService !!!
-[<DS> ZustellungsService <<DomainService>> |
-+ void liefereAus(StarteAuslieferung)
+// !!! tests.shared.complete.ecommerce.notification.NotificationService !!!
+[<DS> NotificationService <<DomainService>> |
++ void notifyCustomer(\# DeliveryStarted)
 ]
-// !!! tests.shared.complete.onlinehandel.bestellung.NeueBestellung !!!
-[<DE> NeueBestellung <<DomainEvent>> ]
-// !!! tests.shared.complete.onlinehandel.zustellung.AuslieferungGestartet !!!
-[<DE> AuslieferungGestartet <<DomainEvent>> ]
+// !!! tests.shared.complete.ecommerce.delivery.DeliveryStarted !!!
+[<DE> DeliveryStarted <<DomainEvent>> ]
+// !!! tests.shared.complete.ecommerce.order.NewOrder !!!
+[<DE> NewOrder <<DomainEvent>> ]
 // !!! tests.shared.inheritance.BasicDomainEventType !!!
 [<DE> BasicDomainEventType <<DomainEvent>> ]
 // !!! tests.shared.inheritance.ConcreteDomainEvent !!!
 [<DE> ConcreteDomainEvent <<DomainEvent>> ]
-// !!! {Frame} tests.shared.complete.onlinehandel.bestellung.BestellungBv3 !!!
-[<AF> BestellungBv3 <<Aggregate>>|
-// !!! tests.shared.complete.onlinehandel.bestellung.BestellungBv3 !!!
-[<AR> BestellungBv3 <<AggregateRoot>> |
-\# +- id:<ID> BestellungIdBv3
-o +- aktionsCodes:<VO> List<AktionsCodeBv3>
-\# +- kundennummer:<IDREF> KundennummerBv3
-\# +- prioritaet:Byte{>=1.0}{<=3.0}
+// !!! {Frame} tests.shared.complete.ecommerce.order.OrderBv3 !!!
+[<AF> OrderBv3 <<Aggregate>>|
+// !!! tests.shared.complete.ecommerce.order.OrderBv3 !!!
+[<AR> OrderBv3 <<AggregateRoot>> |
+\# +- id:<ID> OrderIdBv3
+\# +- customerNumber:<IDREF> CustomerNumberBv3
+\# +- priority:Byte{>=1.0}{<=3.0}
+o +- promoCodes:<VO> List<PromoCodeBv3>
 |
-+ void addBestellKommentar(BestellKommentarBv3)
-+ void addBestellPosition(BestellPositionBv3)
-+ void removeBestellKommentar(BestellKommentarBv3)
-+ void removeBestellPosition(BestellPositionBv3)
-+ void starteLieferung()
++ void addOrderComment(OrderCommentBv3)
++ void addOrderItem(OrderItemBv3)
++ void removeOrderComment(OrderCommentBv3)
++ void removeOrderItem(OrderItemBv3)
++ void startDelivery()
 ]
-// !!! tests.shared.complete.onlinehandel.bestellung.LieferadresseBv3 !!!
-[<E> LieferadresseBv3 <<Entity>> |
-\# +- id:<ID> LieferadresseIdBv3
+// !!! tests.shared.complete.ecommerce.order.DeliveryAddressBv3 !!!
+[<E> DeliveryAddressBv3 <<Entity>> |
+\# +- id:<ID> DeliveryAddressIdBv3
+\# +- city:String\[0,200\]
 \# +- name:String\[0,200\]
-\# +- ort:String\[0,200\]
-\# +- postleitzahl:String\[0,200\]
-\# +- strasse:String\[0,200\]
+\# +- postalCode:String\[0,200\]
+\# +- street:String\[0,200\]
 |
 ]
-// !!! tests.shared.complete.onlinehandel.bestellung.BestellPositionBv3 !!!
-[<E> BestellPositionBv3 <<Entity>> |
-\# +- id:<ID> BestellPositionIdBv3
-\# +- artikelId:<IDREF> ArtikelIdBv3
-o +- stueckzahl:int{>0}
+// !!! tests.shared.complete.ecommerce.order.OrderItemBv3 !!!
+[<E> OrderItemBv3 <<Entity>> |
+\# +- id:<ID> OrderItemIdBv3
+\# +- articleId:<IDREF> ArticleIdBv3
+o +- quantity:int{>0}
 |
 ]
-// !!! tests.shared.complete.onlinehandel.bestellung.PreisBv3 !!!
-[<VO> PreisBv3 <<ValueObject>> |
-\# +- betrag:BigDecimal{>0}
-\# +- waehrung:<ENUM> WaehrungEnumBv3
+// !!! tests.shared.complete.ecommerce.order.PriceBv3 !!!
+[<VO> PriceBv3 <<ValueObject>> |
+\# +- amount:BigDecimal{>0}
+\# +- currency:<ENUM> CurrencyEnumBv3
 |
 ]
-// !!! tests.shared.complete.onlinehandel.bestellung.BestellStatusBv3 !!!
-[<E> BestellStatusBv3 <<Entity>> |
-\# +- id:<ID> BestellStatusIdBv3
-\# +- statusAenderungAm:LocalDateTime
-\# +- statusCode:<ENUM> BestellStatusCodeEnumBv3
+// !!! tests.shared.complete.ecommerce.order.OrderStatusBv3 !!!
+[<E> OrderStatusBv3 <<Entity>> |
+\# +- id:<ID> OrderStatusIdBv3
+\# +- statusChangedAt:LocalDateTime
+\# +- statusCode:<ENUM> OrderStatusCodeEnumBv3
 |
 ]
-// !!! tests.shared.complete.onlinehandel.bestellung.BestellKommentarBv3 !!!
-[<E> BestellKommentarBv3 <<Entity>> |
-\# +- id:<ID> BestellKommentarIdBv3
-\# +- kommentarAm:LocalDateTime{past}
-\# +- kommentarText:String\[0,1000\]{notEmpty}
+// !!! tests.shared.complete.ecommerce.order.OrderCommentBv3 !!!
+[<E> OrderCommentBv3 <<Entity>> |
+\# +- id:<ID> OrderCommentIdBv3
+\# +- commentText:String\[0,1000\]{notEmpty}
+\# +- commentedAt:LocalDateTime{past}
 |
 ]
-[<AR>BestellungBv3 <<AggregateRoot>>]  +-[<label> lieferadresse 1] - [<E>LieferadresseBv3 <<Entity>>]
-[<AR>BestellungBv3 <<AggregateRoot>>]  +-[<label> bestellPositionen 2147483647..*] - [<E>BestellPositionBv3 <<Entity>>]
-[<E>BestellPositionBv3 <<Entity>>]  +-[<label> stueckPreis 1] - [<VO>PreisBv3 <<ValueObject>>]
-[<AR>BestellungBv3 <<AggregateRoot>>]  +-[<label> bestellStatus 1] - [<E>BestellStatusBv3 <<Entity>>]
-[<AR>BestellungBv3 <<AggregateRoot>>]  +-[<label> gesamtPreis 1] - [<VO>PreisBv3 <<ValueObject>>]
-[<AR>BestellungBv3 <<AggregateRoot>>]  +-[<label> bestellKommentare 0..*] - [<E>BestellKommentarBv3 <<Entity>>]
+[<AR>OrderBv3 <<AggregateRoot>>]  +-[<label> deliveryAddress 1] - [<E>DeliveryAddressBv3 <<Entity>>]
+[<AR>OrderBv3 <<AggregateRoot>>]  +-[<label> orderItems 2147483647..*] - [<E>OrderItemBv3 <<Entity>>]
+[<E>OrderItemBv3 <<Entity>>]  +-[<label> unitPrice 1] - [<VO>PriceBv3 <<ValueObject>>]
+[<AR>OrderBv3 <<AggregateRoot>>]  +-[<label> orderStatus 1] - [<E>OrderStatusBv3 <<Entity>>]
+[<AR>OrderBv3 <<AggregateRoot>>]  +-[<label> totalPrice 1] - [<VO>PriceBv3 <<ValueObject>>]
+[<AR>OrderBv3 <<AggregateRoot>>]  +-[<label> orderComments 0..*] - [<E>OrderCommentBv3 <<Entity>>]
 ]
 // !!! {Frame} tests.shared.persistence.domain.arrays.TestRootArray !!!
 [<AF> TestRootArray <<Aggregate>>|
@@ -145,8 +145,8 @@ o +- payload:byte\[\]
 // !!! tests.shared.persistence.domain.arrays.CryptoVo !!!
 [<VO> CryptoVo <<ValueObject>> |
 o +- chiffrat:byte\[\]
+o +- keyVersion:long
 o +- salt:byte\[\]
-o +- schluesselVersion:long
 |
 ]
 [<AR>TestRootArray <<AggregateRoot>>]  +-[<label> cryptoVo 0..1] - [<VO>CryptoVo <<ValueObject>>]
@@ -379,7 +379,7 @@ o +- name:String
 [<AF> VoAggregateThreeLevel <<Aggregate>>|
 // !!! tests.shared.persistence.domain.multilevelvo.VoAggregateThreeLevel !!!
 [<AR> VoAggregateThreeLevel <<AggregateRoot>> |
-\# +- identifikationsNummer:<ID> VoAggregateThreeLevelId
+\# +- identificationNumber:<ID> VoAggregateThreeLevelId
 o +- info:String
 |
 + void setComplexVo(ComplexVo)
@@ -428,6 +428,34 @@ o +- testRootId:<IDREF> TestRootOneToManyId
 |
 ]
 [<AR>TestRootOneToMany <<AggregateRoot>>]  +-[<label> testEntityOneToManyList 0..*] - [<E>TestEntityOneToMany <<Entity>>]
+]
+// !!! {Frame} tests.shared.persistence.domain.oneToManyIdentityEnum.RootIdEnumList !!!
+[<AF> RootIdEnumList <<Aggregate>>|
+// !!! tests.shared.persistence.domain.oneToManyIdentityEnum.RootIdEnumList !!!
+[<AR> RootIdEnumList <<AggregateRoot>> |
+\# +- id:<ID> RootIdEnumListId
+o +- enumList:<ENUM> List<MyEnum>
+o +- idList:<IDREF> List<MyId>
+o +- name:String
+o +- uuidIdList:<IDREF> List<MyUuidId>
+|
+]
+// !!! tests.shared.persistence.domain.oneToManyIdentityEnum.ValueWithLists !!!
+[<VO> ValueWithLists <<ValueObject>> |
+o +- enums:<ENUM> List<MyEnum>
+o +- ids:<IDREF> List<MyId>
+|
+]
+// !!! tests.shared.persistence.domain.oneToManyIdentityEnum.EntityIdEnumList !!!
+[<E> EntityIdEnumList <<Entity>> |
+\# +- id:<ID> EntityIdEnumList$EntityIdEnumListId
+o +- enumList:<ENUM> List<MyEnum>
+o +- idList:<IDREF> List<MyId>
+|
+]
+[<AR>RootIdEnumList <<AggregateRoot>>]  +-[<label> valueWithListsList 0..*] - [<VO>ValueWithLists <<ValueObject>>]
+[<AR>RootIdEnumList <<AggregateRoot>>]  +-[<label> entity 0..1] - [<E>EntityIdEnumList <<Entity>>]
+[<E>EntityIdEnumList <<Entity>>]  +-[<label> valueWithLists 0..1] - [<VO>ValueWithLists <<ValueObject>>]
 ]
 // !!! {Frame} tests.shared.persistence.domain.oneToOneFollowingFK.TestRootOneToOneFollowing !!!
 [<AF> TestRootOneToOneFollowing <<Aggregate>>|
@@ -843,23 +871,23 @@ o +- simple:<VO> SimpleVoPrimitive
 o +- optionalText:Optional<String\[0,10\]>
 \# +- text:String\[0,100\]{notEmpty}
 |
-+ void komischeBerechnungMitValidationError()
-+ ValidatedAggregateRoot optionalTextSetzenMitReturn(Optional<String{notBlank}>)
-+ ValidatedAggregateRoot textSetzenMitReturn(String)
-+ void textSetzenPrecondition(String{notBlank})
-+ String{notBlank} textSetzenReturnVal(String)
++ ValidatedAggregateRoot setOptionalTextWithReturn(Optional<String{notBlank}>)
++ void setTextPrecondition(String{notBlank})
++ String{notBlank} setTextReturnVal(String)
++ ValidatedAggregateRoot setTextWithReturn(String)
++ void strangeCalculationWithValidationError()
 ]
 ]
 [<AF> OptionalAggregate <<Aggregate>>]  --[<label> <<id-ref>> OptionalAggregate.optionalRefId] --> [<AF> RefAgg <<Aggregate>>]
 [<AF> OptionalAggregate <<Aggregate>>]  --[<label> <<id-ref>> RefValueObject.optionalRef] --> [<AF> RefAgg <<Aggregate>>]
-// !!! tests.shared.complete.onlinehandel.bestellung.BestellungRepository !!!
-[<R> BestellungRepository <<Repository>> |
-+ BestellungIdBv3 create(\# BestellungBv3)
-+ Optional<BestellungBv3> deleteById(BestellungIdBv3)
-+ Optional<BestellungBv3> findById(\# BestellungIdBv3)
-+ Stream<BestellungBv3> findByStatus(\# BestellStatusCodeEnumBv3)
-+ BestellungBv3 insert(BestellungBv3)
-+ BestellungBv3 update(BestellungBv3)
+// !!! tests.shared.complete.ecommerce.order.OrderRepository !!!
+[<R> OrderRepository <<Repository>> |
++ OrderIdBv3 create(\# OrderBv3)
++ Optional<OrderBv3> deleteById(OrderIdBv3)
++ Optional<OrderBv3> findById(\# OrderIdBv3)
++ Stream<OrderBv3> findByStatus(\# OrderStatusCodeEnumBv3)
++ OrderBv3 insert(OrderBv3)
++ OrderBv3 update(OrderBv3)
 ]
 // !!! tests.shared.inheritance.ConcreteReadModel !!!
 [<RM> ConcreteReadModel <<ReadModel>> |
@@ -870,11 +898,11 @@ o +- msg:String
 ]
 [<DC>BasicDomainCommandType <<DomainCommand>>]  <:- [<DC>AbstractDomainCommand <<DomainCommand>>]
 [<DC>AbstractDomainCommand <<DomainCommand>>]  <:- [<DC>ConcreteDomainCommand <<DomainCommand>>]
-[<DC>StarteAuslieferung <<DomainCommand>>]  --[<label> <<is processed by>> ZustellungsService.liefereAus] --> [<DS>ZustellungsService <<DomainService>>]
+[<DC>StartDelivery <<DomainCommand>>]  --[<label> <<is processed by>> DeliveryService.deliver] --> [<DS>DeliveryService <<DomainService>>]
 [<DE>BasicDomainEventType <<DomainEvent>>]  <:- [<DE>ConcreteDomainEvent <<DomainEvent>>]
-[<R>BestellungRepository <<Repository>>]  --[<label> <<publishes>> BestellungRepository.create] --> [<DE>NeueBestellung <<DomainEvent>>]
-[<DE>AuslieferungGestartet <<DomainEvent>>]  --[<label> <<notifies>> BenachrichtigungService.benachrichtige] --> [<DS>BenachrichtigungService <<DomainService>>]
-[<AF> BestellungBv3 <<Aggregate>>]  --[<label> <<publishes>> BestellungBv3.starteLieferung] --> [<DE>AuslieferungGestartet <<DomainEvent>>]
-[<DS>ZustellungsService <<DomainService>>]  -> [<R>BestellungRepository <<Repository>>]
-[<R>BestellungRepository <<Repository>>]  --> [<AF> BestellungBv3 <<Aggregate>>]
+[<DE>DeliveryStarted <<DomainEvent>>]  --[<label> <<notifies>> NotificationService.notifyCustomer] --> [<DS>NotificationService <<DomainService>>]
+[<AF> OrderBv3 <<Aggregate>>]  --[<label> <<publishes>> OrderBv3.startDelivery] --> [<DE>DeliveryStarted <<DomainEvent>>]
+[<R>OrderRepository <<Repository>>]  --[<label> <<publishes>> OrderRepository.create] --> [<DE>NewOrder <<DomainEvent>>]
+[<DS>DeliveryService <<DomainService>>]  -> [<R>OrderRepository <<Repository>>]
+[<R>OrderRepository <<Repository>>]  --> [<AF> OrderBv3 <<Aggregate>>]
 [<RM>ReadModelType <<ReadModel>>]  <:- [<RM>ConcreteReadModel <<ReadModel>>]

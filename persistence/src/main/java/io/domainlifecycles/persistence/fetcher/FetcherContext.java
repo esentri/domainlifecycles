@@ -61,4 +61,18 @@ public interface FetcherContext<BASE_RECORD_TYPE> {
      * @return the record for the given domain object
      */
     Optional<BASE_RECORD_TYPE> getRecordFor(DomainObject p);
+
+    /**
+     * Like {@link #getRecordFor(DomainObject)}, but allows implementations to additionally scope the
+     * lookup (e.g. for a scalar list element - a single {@code List<Identity>}/{@code List<Enum>} element -
+     * whose wrapped value alone does not distinguish which list it belongs to). The default implementation
+     * ignores {@code scope} and simply delegates to {@link #getRecordFor(DomainObject)}.
+     *
+     * @param p     the domain object to get the record for
+     * @param scope implementation-specific disambiguation context
+     * @return the record for the given domain object
+     */
+    default Optional<BASE_RECORD_TYPE> getRecordFor(DomainObject p, Object scope) {
+        return getRecordFor(p);
+    }
 }

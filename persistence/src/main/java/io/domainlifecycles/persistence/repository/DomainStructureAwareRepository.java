@@ -35,9 +35,11 @@ import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainType;
+import io.domainlifecycles.persistence.cache.AggregateCacheSupport;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.fetcher.FetcherResult;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
+import io.domainlifecycles.persistence.mapping.ScalarListElement;
 import io.domainlifecycles.persistence.provider.DomainObjectInstanceAccessModel;
 import io.domainlifecycles.persistence.provider.DomainPersistenceProvider;
 import io.domainlifecycles.persistence.repository.actions.PersistenceAction;
@@ -174,9 +176,15 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
      */
     public A update(A root) {
         Objects.requireNonNull(root);
-        var rootCurrentDatabaseState = findResultById((I) domainPersistenceProvider.getId(root));
+        var key = AggregateCacheSupport.keyFor(domainPersistenceProvider, root);
+        var rootCurrentDatabaseState = AggregateCacheSupport.<A, BASE_RECORD_TYPE>take(domainPersistenceProvider, key)
+            .orElseGet(() -> findResultById((I) domainPersistenceProvider.getId(root)));
         if (rootCurrentDatabaseState.resultValue().isPresent()) {
             processAggregates(root, rootCurrentDatabaseState);
+            //a cache-miss above would have re-populated the cache with the now stale, pre-write state via
+            //the fetch's own populate hook (see InternalAggregateFetcher) - invalidate unconditionally,
+            //whether the lookup above was a hit (already removed, so this is a no-op) or a miss
+            AggregateCacheSupport.invalidate(domainPersistenceProvider, key);
             return root;
         }
         throw DLCPersistenceException.fail("The given root was not found in the database! Root:" + root);
@@ -190,10 +198,14 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
      */
     public A increaseVersion(A root) {
         Objects.requireNonNull(root);
-        var rootCurrentDatabaseState = findResultById((I) domainPersistenceProvider.getId(root));
+        var key = AggregateCacheSupport.keyFor(domainPersistenceProvider, root);
+        var rootCurrentDatabaseState = AggregateCacheSupport.<A, BASE_RECORD_TYPE>take(domainPersistenceProvider, key)
+            .orElseGet(() -> findResultById((I) domainPersistenceProvider.getId(root)));
         if (rootCurrentDatabaseState.resultValue().isPresent()) {
             var pc = new PersistenceContext<>(domainPersistenceProvider, root, rootCurrentDatabaseState);
             persister.increaseVersion(rootCurrentDatabaseState.resultValue().get(), pc);
+            //see the comment in update() above for why this must run unconditionally, hit or miss
+            AggregateCacheSupport.invalidate(domainPersistenceProvider, key);
             return root;
         }
         throw DLCPersistenceException.fail("The given root was not found in the database! Root:" + root);
@@ -208,9 +220,13 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
      */
     public Optional<A> deleteById(I id) {
         Objects.requireNonNull(id);
-        var rootCurrentDatabaseState = findResultById(id);
+        var key = AggregateCacheSupport.keyFor(id);
+        var rootCurrentDatabaseState = AggregateCacheSupport.<A, BASE_RECORD_TYPE>take(domainPersistenceProvider, key)
+            .orElseGet(() -> findResultById(id));
         if (rootCurrentDatabaseState.resultValue().isPresent()) {
             processAggregates(null, rootCurrentDatabaseState);
+            //see the comment in update() above for why this must run unconditionally, hit or miss
+            AggregateCacheSupport.invalidate(domainPersistenceProvider, key);
             return rootCurrentDatabaseState.resultValue();
         }
         return Optional.empty();
@@ -267,6 +283,13 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
      */
     protected void notifyChanges(PersistenceContext<BASE_RECORD_TYPE> pc, A root) {
         pc.getActionsInNotificationOrder().forEach(action -> {
+            if (action.instanceAccessModel.domainObject() instanceof ScalarListElement) {
+                //a ScalarListElement is only the internal carrier for a single List<Identity>/List<Enum>
+                //element; it is not a meaningful domain concept on its own (unlike a real ValueObject or
+                //Entity) and is therefore not published as its own persistence event - the change is fully
+                //reflected by the owning entity's own INSERT/UPDATE/DELETE event
+                return;
+            }
             if (PersistenceAction.ActionType.DELETE_UPDATE.equals(action.actionType)) {
                 //delete updates must only be published, if not another update had happened on that entity
                 //that means only if the reference of a deleted child entity was "nulled"

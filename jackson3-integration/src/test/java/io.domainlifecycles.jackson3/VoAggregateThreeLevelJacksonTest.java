@@ -111,10 +111,10 @@ public class VoAggregateThreeLevelJacksonTest {
         Assertions.assertThat(read).usingRecursiveComparison()
             .ignoringAllOverriddenEquals()
             .ignoringFieldsOfTypes(UUID.class)
-            .ignoringFields("identifikationsNummer")
+            .ignoringFields("identificationNumber")
             .withStrictTypeChecking()
             .isEqualTo(r);
-        Assertions.assertThat(read.getIdentifikationsNummer()).isEqualTo(new VoAggregateThreeLevelId(1L));
+        Assertions.assertThat(read.getIdentificationNumber()).isEqualTo(new VoAggregateThreeLevelId(1L));
     }
 
     @Test
@@ -141,10 +141,10 @@ public class VoAggregateThreeLevelJacksonTest {
         Assertions.assertThat(read).usingRecursiveComparison()
             .ignoringAllOverriddenEquals()
             .ignoringFieldsOfTypes(UUID.class)
-            .ignoringFields("identifikationsNummer")
+            .ignoringFields("identificationNumber")
             .withStrictTypeChecking()
             .isEqualTo(r);
-        Assertions.assertThat(read.getIdentifikationsNummer()).isEqualTo(new VoAggregateThreeLevelId(1L));
+        Assertions.assertThat(read.getIdentificationNumber()).isEqualTo(new VoAggregateThreeLevelId(1L));
     }
 
     @Test
@@ -189,9 +189,9 @@ public class VoAggregateThreeLevelJacksonTest {
         Assertions.assertThat(read).usingRecursiveComparison()
             .ignoringAllOverriddenEquals()
             .ignoringFieldsOfTypes(UUID.class)
-            .ignoringFields("identifikationsNummer")
+            .ignoringFields("identificationNumber")
             .withStrictTypeChecking()
             .isEqualTo(r);
-        Assertions.assertThat(read.getIdentifikationsNummer()).isEqualTo(new VoAggregateThreeLevelId(1L));
+        Assertions.assertThat(read.getIdentificationNumber()).isEqualTo(new VoAggregateThreeLevelId(1L));
     }
 }

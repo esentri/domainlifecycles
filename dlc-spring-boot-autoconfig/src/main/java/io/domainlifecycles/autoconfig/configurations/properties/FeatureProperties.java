@@ -231,11 +231,15 @@ public class FeatureProperties {
     public static class Persistence {
 
         private boolean enabled = true;
+        private final Feature jooq = new Feature();
+        private final Feature jdbc = new Feature();
         private String jooqRecordPackage;
         private String sqlDialect;
 
         /**
-         * Determines whether the DLC persistence feature is enabled.
+         * Determines whether the DLC persistence feature is enabled. Acts as the master switch for both
+         * backends - if {@code false}, neither {@link #getJooq()} nor {@link #getJdbc()} activates,
+         * regardless of their own settings.
          *
          * @return {@code true} if persistence is enabled; {@code false} otherwise.
          */
@@ -251,6 +255,30 @@ public class FeatureProperties {
          */
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
+        }
+
+        /**
+         * Retrieves the jOOQ persistence backend's own enabled state, independent of {@link #getJdbc()} -
+         * a project only ever activates one of the two persistence backends, so this is mainly useful to
+         * force jOOQ off while both integrations happen to be on the classpath at once, without excluding
+         * the whole autoconfiguration class.
+         *
+         * @return the {@code Feature} instance representing the jOOQ persistence backend's configuration.
+         */
+        public Feature getJooq() {
+            return jooq;
+        }
+
+        /**
+         * Retrieves the plain JDBC persistence backend's own enabled state, independent of {@link #getJooq()} -
+         * a project only ever activates one of the two persistence backends, so this is mainly useful to
+         * force JDBC off while both integrations happen to be on the classpath at once, without excluding
+         * the whole autoconfiguration class.
+         *
+         * @return the {@code Feature} instance representing the plain JDBC persistence backend's configuration.
+         */
+        public Feature getJdbc() {
+            return jdbc;
         }
 
         /**

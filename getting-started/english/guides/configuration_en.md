@@ -12,7 +12,7 @@ with a default configuration.
 
 ## Auto-Configuration
 Below you see a minimal working example of using DLC's autoconfiguration feature by annotating your Spring-Boot app class
-with `@EnableDLC`.
+with `@EnableDlc`.
 <br/>
 **Note:** The `dlcMirrorBasePackages` are mandatory. If you have got multiple packages to be scanned, provide a comma-separated string.
 
@@ -29,6 +29,13 @@ public class Application {
 }
 ```
 </details>
+
+Every DLC feature can also be individually enabled/disabled and configured via Spring application properties
+instead of (or on top of) `@EnableDlc`'s annotation attributes, e.g. `dlc.features.mirror.base-packages=...`,
+`dlc.features.persistence.jooq.enabled=false` or `dlc.features.persistence.sql-dialect=POSTGRES`. jOOQ- vs
+plain-JDBC-based persistence autoconfiguration is selected automatically based on what's on the classpath (jOOQ
+wins if both are present). See the [DLC Spring Boot AutoConfig readme](../../../dlc-spring-boot-autoconfig/readme.md#available-autoconfig-modules)
+for the full list of autoconfig modules and their properties.
 
 ---
 

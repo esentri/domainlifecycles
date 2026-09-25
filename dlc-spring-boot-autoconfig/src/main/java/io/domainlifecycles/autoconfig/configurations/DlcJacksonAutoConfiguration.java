@@ -69,7 +69,10 @@ import java.util.List;
 @AutoConfiguration
 @ConditionalOnBean(DomainObjectBuilderProvider.class)
 @AutoConfigureAfter({DlcJooqPersistenceAutoConfiguration.class, DlcBuilderAutoConfiguration.class, DlcDomainAutoConfiguration.class})
-@AutoConfigureBefore(name="org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration")
+//Spring Boot 4 moved JacksonAutoConfiguration out of org.springframework.boot.autoconfigure.jackson into its
+//own module/package below - see DlcJooqPersistenceAutoConfiguration's class javadoc for why a stale name
+//here would silently drop the ordering guarantee instead of failing loudly
+@AutoConfigureBefore(name="org.springframework.boot.jackson.autoconfigure.JacksonAutoConfiguration")
 @ConditionalOnClass(name="tools.jackson.databind.ObjectMapper")
 @ConditionalOnProperty(prefix = "dlc.features.jackson", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class DlcJacksonAutoConfiguration {

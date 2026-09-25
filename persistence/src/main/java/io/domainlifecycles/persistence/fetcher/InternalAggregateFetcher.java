@@ -31,6 +31,7 @@ import io.domainlifecycles.builder.DomainObjectBuilder;
 import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.domain.types.clone.EntityCloner;
 import io.domainlifecycles.domain.types.internal.DomainObject;
 import io.domainlifecycles.mirror.api.AggregateRootReferenceMirror;
 import io.domainlifecycles.mirror.api.Domain;
@@ -39,9 +40,11 @@ import io.domainlifecycles.mirror.api.EntityReferenceMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.ValueReferenceMirror;
 import io.domainlifecycles.mirror.visitor.ContextDomainObjectVisitor;
+import io.domainlifecycles.persistence.cache.AggregateCacheSupport;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.fetcher.simple.FetchedRecord;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
+import io.domainlifecycles.persistence.mapping.ScalarListElement;
 import io.domainlifecycles.persistence.mirror.api.EntityRecordMirror;
 import io.domainlifecycles.persistence.mirror.api.ValueObjectRecordMirror;
 import io.domainlifecycles.persistence.provider.DomainPersistenceProvider;
@@ -70,7 +73,9 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
 
     private final Map<PropertyProviderKey, RecordProvider<? extends BASE_RECORD_TYPE, ? extends BASE_RECORD_TYPE>> recordProviderMap = new HashMap<>();
 
-    private final DomainPersistenceProvider<?> domainPersistenceProvider;
+    private final DomainPersistenceProvider<BASE_RECORD_TYPE> domainPersistenceProvider;
+
+    private final EntityCloner entityCloner;
 
 
     /**
@@ -80,10 +85,11 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
      * @param domainPersistenceProvider the persistence provider
      */
     public InternalAggregateFetcher(Class<A> aggregateRootEntityClass,
-                                    DomainPersistenceProvider<?> domainPersistenceProvider
+                                    DomainPersistenceProvider<BASE_RECORD_TYPE> domainPersistenceProvider
     ) {
         this.aggregateRootEntityClass = aggregateRootEntityClass;
         this.domainPersistenceProvider = domainPersistenceProvider;
+        this.entityCloner = new EntityCloner(domainPersistenceProvider.domainPersistenceConfiguration.domainObjectBuilderProvider);
 
     }
 
@@ -194,7 +200,12 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
             }
         );
 
-        return new FetcherResult<>(domainObjectDeepFetched, fetcherContext);
+        FetcherResult<A, BASE_RECORD_TYPE> result = new FetcherResult<>(domainObjectDeepFetched, fetcherContext);
+        //populate the transaction cache with every real fetch (whether triggered by an application finder or
+        //by a repository's own fallback fetch on a cache miss, see DomainStructureAwareRepository) - a no-op
+        //unless a transaction cache scope is currently open
+        AggregateCacheSupport.populate(domainPersistenceProvider, entityCloner, result);
+        return result;
     }
 
     /**
@@ -391,8 +402,17 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
                     BuilderAndBuilt childBuilderAndBuilt = builderMap.get(FetchedRecord.of(child));
                     childBuilderAndBuilt.build();
                     //its important to provide all fetched records to the fetcher context
-                    fetcherContext.assignRecordToDomainObject(childBuilderAndBuilt.getBuilt(), child);
+                    //the vorm is passed as scope so that equal-valued ScalarListElements belonging to
+                    //different lists (e.g. an aggregate root's own enum list vs. its child entity's enum
+                    //list) are not confused with one another
+                    fetcherContext.assignRecordToDomainObject(childBuilderAndBuilt.getBuilt(), child,
+                        comp.valueObjectRecordMirror);
                     DomainObject childInstance = childBuilderAndBuilt.getBuilt();
+                    //a ScalarListElement is only an internal carrier for a single List<Identity>/List<Enum>
+                    //element; the owning domain object's field expects the raw wrapped value, not the wrapper
+                    Object valueToAttach = childInstance instanceof ScalarListElement<?> scalarListElement
+                        ? scalarListElement.value()
+                        : childInstance;
                     BuilderAndBuilt parentBuilderAndBuilt = builderMap.get(FetchedRecord.of(comp.parentRecord));
                     String fieldName = comp.valueObjectRecordMirror.pathSegments().get(
                         comp.valueObjectRecordMirror.pathSegments().size() - 1);
@@ -402,9 +422,9 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
                             () -> DLCPersistenceException.fail("DomainTypeMirror not found for '%s'", parentTypeName));
                     var fm = dtm.fieldByName(fieldName);
                     if (fm.getType().hasCollectionContainer()) {
-                        parentBuilderAndBuilt.getBuilder().addValueToCollection(childInstance, fieldName);
+                        parentBuilderAndBuilt.getBuilder().addValueToCollection(valueToAttach, fieldName);
                     } else {
-                        parentBuilderAndBuilt.getBuilder().setFieldValue(childInstance, fieldName);
+                        parentBuilderAndBuilt.getBuilder().setFieldValue(valueToAttach, fieldName);
                     }
 
                 }
@@ -460,8 +480,13 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
                 //and a shorter path length
                 String compPath = comp.valueObjectRecordMirror.completePath();
                 String vormPath = vorm.completePath();
+                // a strict prefix *at a path-segment boundary* - completePath() joins segments with ".", so
+                // plain String.startsWith(compPath) would also match an unrelated sibling field whose name
+                // happens to extend compPath's last segment (e.g. "valueObjectsOneToMany2" is a startsWith
+                // match for "valueObjectsOneToMany", even though they are sibling fields, not ancestor/
+                // descendant)
                 if (vorm.pathSegments().size() > (comp.valueObjectRecordMirror.pathSegments().size())
-                    && vormPath.startsWith(compPath)) {
+                    && vormPath.startsWith(compPath + ".")) {
                     predecessorComp = comp;
                     break;
                 }

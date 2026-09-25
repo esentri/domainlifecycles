@@ -37,23 +37,23 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import tests.mirror.BaseEntityWithHidden;
 import tests.mirror.SubEntityHiding;
-import tests.shared.complete.onlinehandel.benachrichtigung.BenachrichtigungService;
-import tests.shared.complete.onlinehandel.bestellung.AktionsCodeBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellKommentarBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellPositionBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellStatusBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellStatusCodeEnumBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellungIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellungRepository;
-import tests.shared.complete.onlinehandel.bestellung.KundennummerBv3;
-import tests.shared.complete.onlinehandel.bestellung.LieferadresseBv3;
-import tests.shared.complete.onlinehandel.bestellung.NeueBestellung;
-import tests.shared.complete.onlinehandel.bestellung.PreisBv3;
-import tests.shared.complete.onlinehandel.bestellung.WaehrungEnumBv3;
-import tests.shared.complete.onlinehandel.zustellung.AuslieferungGestartet;
-import tests.shared.complete.onlinehandel.zustellung.StarteAuslieferung;
-import tests.shared.complete.onlinehandel.zustellung.ZustellungsService;
+import tests.shared.complete.ecommerce.notification.NotificationService;
+import tests.shared.complete.ecommerce.order.PromoCodeBv3;
+import tests.shared.complete.ecommerce.order.OrderCommentBv3;
+import tests.shared.complete.ecommerce.order.OrderItemBv3;
+import tests.shared.complete.ecommerce.order.OrderStatusBv3;
+import tests.shared.complete.ecommerce.order.OrderStatusCodeEnumBv3;
+import tests.shared.complete.ecommerce.order.OrderBv3;
+import tests.shared.complete.ecommerce.order.OrderIdBv3;
+import tests.shared.complete.ecommerce.order.OrderRepository;
+import tests.shared.complete.ecommerce.order.CustomerNumberBv3;
+import tests.shared.complete.ecommerce.order.DeliveryAddressBv3;
+import tests.shared.complete.ecommerce.order.NewOrder;
+import tests.shared.complete.ecommerce.order.PriceBv3;
+import tests.shared.complete.ecommerce.order.CurrencyEnumBv3;
+import tests.shared.complete.ecommerce.delivery.DeliveryStarted;
+import tests.shared.complete.ecommerce.delivery.StartDelivery;
+import tests.shared.complete.ecommerce.delivery.DeliveryService;
 import tests.shared.openapi.TestId;
 import tests.shared.openapi.TestIdExtended;
 import tests.shared.openapi.TestIdInterface;
@@ -106,7 +106,7 @@ public class ReflectiveDomainMirrorFactoryTest {
             arguments(TestIdInterface.class, UUID.class),
             arguments(TestIdExtended.class, UUID.class),
             arguments(TestIdInterfaceExtended.class, UUID.class),
-            arguments(BestellungIdBv3.class, Long.class)
+            arguments(OrderIdBv3.class, Long.class)
         );
     }
 
@@ -128,8 +128,8 @@ public class ReflectiveDomainMirrorFactoryTest {
 
     private static Stream<Arguments> enumTypes() {
         return Stream.of(
-            arguments(BestellStatusCodeEnumBv3.class),
-            arguments(WaehrungEnumBv3.class)
+            arguments(OrderStatusCodeEnumBv3.class),
+            arguments(CurrencyEnumBv3.class)
         );
     }
 
@@ -540,16 +540,16 @@ public class ReflectiveDomainMirrorFactoryTest {
     }
 
     @Test
-    public void testBestellung() {
+    public void testOrder() {
         assertDomainObject(
-            BestellungBv3.class.getName(),
+            OrderBv3.class.getName(),
             AggregateRootBase.class.getName(),
             "id",
             List.of(
                 new ExpectedProperty(
                     Byte.class,
-                    "prioritaet",
-                    BestellungBv3.class.getName(),
+                    "priority",
+                    OrderBv3.class.getName(),
                     true,
                     false,
                     true,
@@ -580,9 +580,9 @@ public class ReflectiveDomainMirrorFactoryTest {
             ),
             List.of(
                 new ExpectedReference(
-                    KundennummerBv3.class,
-                    "kundennummer",
-                    BestellungBv3.class.getName(),
+                    CustomerNumberBv3.class,
+                    "customerNumber",
+                    OrderBv3.class.getName(),
                     false,
                     true,
                     false,
@@ -596,9 +596,9 @@ public class ReflectiveDomainMirrorFactoryTest {
                     Collections.emptyList()
                 ),
                 new ExpectedReference(
-                    PreisBv3.class,
-                    "gesamtPreis",
-                    BestellungBv3.class.getName(),
+                    PriceBv3.class,
+                    "totalPrice",
+                    OrderBv3.class.getName(),
                     false,
                     true,
                     false,
@@ -612,9 +612,9 @@ public class ReflectiveDomainMirrorFactoryTest {
                     Collections.emptyList()
                 ),
                 new ExpectedReference(
-                    AktionsCodeBv3.class,
-                    "aktionsCodes",
-                    BestellungBv3.class.getName(),
+                    PromoCodeBv3.class,
+                    "promoCodes",
+                    OrderBv3.class.getName(),
                     true,
                     true,
                     false,
@@ -627,9 +627,9 @@ public class ReflectiveDomainMirrorFactoryTest {
             ),
             List.of(
                 new ExpectedReference(
-                    LieferadresseBv3.class,
-                    "lieferadresse",
-                    BestellungBv3.class.getName(),
+                    DeliveryAddressBv3.class,
+                    "deliveryAddress",
+                    OrderBv3.class.getName(),
                     false,
                     true,
                     false,
@@ -643,9 +643,9 @@ public class ReflectiveDomainMirrorFactoryTest {
                     Collections.emptyList()
                 ),
                 new ExpectedReference(
-                    BestellPositionBv3.class,
-                    "bestellPositionen",
-                    BestellungBv3.class.getName(),
+                    OrderItemBv3.class,
+                    "orderItems",
+                    OrderBv3.class.getName(),
                     true,
                     false,
                     false,
@@ -662,9 +662,9 @@ public class ReflectiveDomainMirrorFactoryTest {
 
                 ),
                 new ExpectedReference(
-                    BestellStatusBv3.class,
-                    "bestellStatus",
-                    BestellungBv3.class.getName(),
+                    OrderStatusBv3.class,
+                    "orderStatus",
+                    OrderBv3.class.getName(),
                     false,
                     true,
                     false,
@@ -678,9 +678,9 @@ public class ReflectiveDomainMirrorFactoryTest {
                     Collections.emptyList()
                 ),
                 new ExpectedReference(
-                    BestellKommentarBv3.class,
-                    "bestellKommentare",
-                    BestellungBv3.class.getName(),
+                    OrderCommentBv3.class,
+                    "orderComments",
+                    OrderBv3.class.getName(),
                     true,
                     false,
                     false,
@@ -695,18 +695,18 @@ public class ReflectiveDomainMirrorFactoryTest {
                 )
             ),
             Collections.emptyList(),
-            List.of(AuslieferungGestartet.class.getName()),
+            List.of(DeliveryStarted.class.getName()),
             Collections.emptyList(),
             List.of(AggregateRootBase.class.getName(), EntityBase.class.getName(), Object.class.getName())
         );
-        var aggMirror = (AggregateRootMirror) Domain.typeMirror(BestellungBv3.class.getName()).get();
+        var aggMirror = (AggregateRootMirror) Domain.typeMirror(OrderBv3.class.getName()).get();
         assertMethods(
-            BestellungBv3.class,
+            OrderBv3.class,
             aggMirror.getMethods(),
             List.of(
-                new ExpectedMethod("builder", BestellungBv3.class.getName(), AccessLevel.PUBLIC,
+                new ExpectedMethod("builder", OrderBv3.class.getName(), AccessLevel.PUBLIC,
                     new ExpectedReturnType(
-                        BestellungBv3.BestellungBv3Builder.class,
+                        OrderBv3.OrderBv3Builder.class,
                         null,
                         false,
                         false,
@@ -716,7 +716,7 @@ public class ReflectiveDomainMirrorFactoryTest {
                     ),
                     Collections.emptyList(), Collections.emptyList(), null
                 ),
-                new ExpectedMethod("starteLieferung", BestellungBv3.class.getName(), AccessLevel.PUBLIC,
+                new ExpectedMethod("startDelivery", OrderBv3.class.getName(), AccessLevel.PUBLIC,
                     new ExpectedReturnType(
                         void.class,
                         null,
@@ -726,23 +726,23 @@ public class ReflectiveDomainMirrorFactoryTest {
                         Collections.emptyList(),
                         Collections.emptyList()
                     ),
-                    Collections.emptyList(), List.of(AuslieferungGestartet.class.getName()), null
+                    Collections.emptyList(), List.of(DeliveryStarted.class.getName()), null
                 )
             )
         );
     }
 
     @Test
-    public void testAktionsCode() {
+    public void testPromoCode() {
         assertDomainObject(
-            AktionsCodeBv3.class.getName(),
+            PromoCodeBv3.class.getName(),
             java.lang.Record.class.getName(),
             null,
             List.of(
                 new ExpectedProperty(
                     String.class,
                     "value",
-                    AktionsCodeBv3.class.getName(),
+                    PromoCodeBv3.class.getName(),
                     false,
                     false,
                     true,
@@ -767,16 +767,16 @@ public class ReflectiveDomainMirrorFactoryTest {
     }
 
     @Test
-    public void testBestellStatus() {
+    public void testOrderStatus() {
         assertDomainObject(
-            BestellStatusBv3.class.getName(),
+            OrderStatusBv3.class.getName(),
             EntityBase.class.getName(),
             "id",
             List.of(
                 new ExpectedProperty(
                     LocalDateTime.class,
-                    "statusAenderungAm",
-                    BestellStatusBv3.class.getName(),
+                    "statusChangedAt",
+                    OrderStatusBv3.class.getName(),
                     true,
                     false,
                     true,
@@ -803,9 +803,9 @@ public class ReflectiveDomainMirrorFactoryTest {
             ),
             List.of(
                 new ExpectedReference(
-                    BestellStatusCodeEnumBv3.class,
+                    OrderStatusCodeEnumBv3.class,
                     "statusCode",
-                    BestellStatusBv3.class.getName(),
+                    OrderStatusBv3.class.getName(),
                     false,
                     true,
                     false,
@@ -828,16 +828,16 @@ public class ReflectiveDomainMirrorFactoryTest {
     }
 
     @Test
-    public void testPreis() {
+    public void testPrice() {
         assertDomainObject(
-            PreisBv3.class.getName(),
+            PriceBv3.class.getName(),
             java.lang.Record.class.getName(),
             null,
             List.of(
                 new ExpectedProperty(
                     BigDecimal.class,
-                    "betrag",
-                    PreisBv3.class.getName(),
+                    "amount",
+                    PriceBv3.class.getName(),
                     false,
                     false,
                     true,
@@ -854,9 +854,9 @@ public class ReflectiveDomainMirrorFactoryTest {
             ),
             List.of(
                 new ExpectedReference(
-                    WaehrungEnumBv3.class,
-                    "waehrung",
-                    PreisBv3.class.getName(),
+                    CurrencyEnumBv3.class,
+                    "currency",
+                    PriceBv3.class.getName(),
                     false,
                     false,
                     false,
@@ -879,21 +879,21 @@ public class ReflectiveDomainMirrorFactoryTest {
     }
 
     @Test
-    public void testBenachrichtigungService() {
-        var serviceMirrorOpt = Domain.typeMirror(BenachrichtigungService.class.getName()).map(
+    public void testNotificationService() {
+        var serviceMirrorOpt = Domain.typeMirror(NotificationService.class.getName()).map(
             s -> (DomainServiceMirror) s);
         assertThat(serviceMirrorOpt).isPresent();
         var serviceMirror = serviceMirrorOpt.get();
-        assertThat(serviceMirror.getTypeName()).isEqualTo(BenachrichtigungService.class.getName());
+        assertThat(serviceMirror.getTypeName()).isEqualTo(NotificationService.class.getName());
         assertThat(serviceMirror.getInheritanceHierarchyTypeNames().get(0)).isEqualTo(Object.class.getName());
         assertThat(serviceMirror.getAllInterfaceTypeNames().get(0)).isEqualTo(DomainService.class.getName());
-        var auslieferungGestartetEvent = Domain.typeMirror(AuslieferungGestartet.class.getName()).map(
+        var deliveryStartedEvent = Domain.typeMirror(DeliveryStarted.class.getName()).map(
             e -> (DomainEventMirror) e);
-        assertThat(auslieferungGestartetEvent).isPresent();
-        assertThat(serviceMirror.listensTo(auslieferungGestartetEvent.get())).isTrue();
-        assertMethods(BenachrichtigungService.class, serviceMirror.getMethods(),
+        assertThat(deliveryStartedEvent).isPresent();
+        assertThat(serviceMirror.listensTo(deliveryStartedEvent.get())).isTrue();
+        assertMethods(NotificationService.class, serviceMirror.getMethods(),
             List.of(
-                new ExpectedMethod("benachrichtige", BenachrichtigungService.class.getName(), AccessLevel.PUBLIC,
+                new ExpectedMethod("notifyCustomer", NotificationService.class.getName(), AccessLevel.PUBLIC,
                     new ExpectedReturnType(
                         void.class,
                         null,
@@ -906,7 +906,7 @@ public class ReflectiveDomainMirrorFactoryTest {
                     List.of(
                         new ExpectedParameter(
                             "arg0",
-                            AuslieferungGestartet.class,
+                            DeliveryStarted.class,
                             null,
                             false,
                             false,
@@ -917,7 +917,7 @@ public class ReflectiveDomainMirrorFactoryTest {
                         )
                     ),
                     Collections.emptyList(),
-                    AuslieferungGestartet.class.getName()
+                    DeliveryStarted.class.getName()
                 )
             )
         );
@@ -925,22 +925,22 @@ public class ReflectiveDomainMirrorFactoryTest {
     }
 
     @Test
-    public void testBestellungRepository() {
-        var repositoryMirrorOpt = Domain.typeMirror(BestellungRepository.class.getName()).map(
+    public void testOrderRepository() {
+        var repositoryMirrorOpt = Domain.typeMirror(OrderRepository.class.getName()).map(
             r -> (RepositoryMirror) r);
         assertThat(repositoryMirrorOpt).isPresent();
         var repMirror = repositoryMirrorOpt.get();
-        assertThat(repMirror.getTypeName()).isEqualTo(BestellungRepository.class.getName());
+        assertThat(repMirror.getTypeName()).isEqualTo(OrderRepository.class.getName());
         assertThat(repMirror.getInheritanceHierarchyTypeNames().get(0)).isEqualTo(Object.class.getName());
         assertThat(repMirror.getAllInterfaceTypeNames().get(0)).isEqualTo(Repository.class.getName());
-        var neueBestellungEventOpt = Domain.typeMirror(NeueBestellung.class.getName()).map(e -> (DomainEventMirror) e);
-        assertThat(neueBestellungEventOpt).isPresent();
-        assertThat(repMirror.publishes(neueBestellungEventOpt.get())).isTrue();
-        assertMethods(BestellungRepository.class, repMirror.getMethods(),
+        var newOrderEventOpt = Domain.typeMirror(NewOrder.class.getName()).map(e -> (DomainEventMirror) e);
+        assertThat(newOrderEventOpt).isPresent();
+        assertThat(repMirror.publishes(newOrderEventOpt.get())).isTrue();
+        assertMethods(OrderRepository.class, repMirror.getMethods(),
             List.of(
-                new ExpectedMethod("findByStatus", BestellungRepository.class.getName(), AccessLevel.PUBLIC,
+                new ExpectedMethod("findByStatus", OrderRepository.class.getName(), AccessLevel.PUBLIC,
                     new ExpectedReturnType(
-                        BestellungBv3.class,
+                        OrderBv3.class,
                         Stream.class.getName(),
                         false,
                         false,
@@ -951,7 +951,7 @@ public class ReflectiveDomainMirrorFactoryTest {
                     List.of(
                         new ExpectedParameter(
                             "arg0",
-                            BestellStatusCodeEnumBv3.class,
+                            OrderStatusCodeEnumBv3.class,
                             null,
                             false,
                             false,
@@ -964,9 +964,9 @@ public class ReflectiveDomainMirrorFactoryTest {
                     Collections.emptyList(),
                     null
                 ),
-                new ExpectedMethod("findById", BestellungRepository.class.getName(), AccessLevel.PUBLIC,
+                new ExpectedMethod("findById", OrderRepository.class.getName(), AccessLevel.PUBLIC,
                     new ExpectedReturnType(
-                        BestellungBv3.class,
+                        OrderBv3.class,
                         Optional.class.getName(),
                         true,
                         false,
@@ -977,7 +977,7 @@ public class ReflectiveDomainMirrorFactoryTest {
                     List.of(
                         new ExpectedParameter(
                             "arg0",
-                            BestellungIdBv3.class,
+                            OrderIdBv3.class,
                             null,
                             false,
                             false,
@@ -990,9 +990,9 @@ public class ReflectiveDomainMirrorFactoryTest {
                     Collections.emptyList(),
                     null
                 ),
-                new ExpectedMethod("create", BestellungRepository.class.getName(), AccessLevel.PUBLIC,
+                new ExpectedMethod("create", OrderRepository.class.getName(), AccessLevel.PUBLIC,
                     new ExpectedReturnType(
-                        BestellungIdBv3.class,
+                        OrderIdBv3.class,
                         null,
                         false,
                         false,
@@ -1003,7 +1003,7 @@ public class ReflectiveDomainMirrorFactoryTest {
                     List.of(
                         new ExpectedParameter(
                             "arg0",
-                            BestellungBv3.class,
+                            OrderBv3.class,
                             null,
                             false,
                             false,
@@ -1013,7 +1013,7 @@ public class ReflectiveDomainMirrorFactoryTest {
 
                         )
                     ),
-                    List.of(NeueBestellung.class.getName()),
+                    List.of(NewOrder.class.getName()),
                     null
                 )
             )
@@ -1023,44 +1023,44 @@ public class ReflectiveDomainMirrorFactoryTest {
     }
 
     @Test
-    public void testStarteAuslieferungCommand() {
-        var commandMirrorOpt = Domain.typeMirror(StarteAuslieferung.class.getName()).map(r -> (DomainCommandMirror) r);
+    public void testStartDeliveryCommand() {
+        var commandMirrorOpt = Domain.typeMirror(StartDelivery.class.getName()).map(r -> (DomainCommandMirror) r);
         assertThat(commandMirrorOpt).isPresent();
         var commandMirror = commandMirrorOpt.get();
-        assertThat(commandMirror.getTypeName()).isEqualTo(StarteAuslieferung.class.getName());
+        assertThat(commandMirror.getTypeName()).isEqualTo(StartDelivery.class.getName());
         assertThat(commandMirror.getInheritanceHierarchyTypeNames().get(0)).isEqualTo(Record.class.getName());
         assertThat(commandMirror.getAllInterfaceTypeNames().get(0)).isEqualTo(DomainServiceCommand.class.getName());
         assertThat(commandMirror.getValueReferences().stream()
-            .filter(vr -> vr.getName().equals("bestellungId")).findFirst()).isPresent();
+            .filter(vr -> vr.getName().equals("orderId")).findFirst()).isPresent();
         assertThat(commandMirror.getDomainServiceTarget()).isPresent();
         assertThat(commandMirror.getDomainServiceTarget().get().getTypeName()).isEqualTo(
-            ZustellungsService.class.getName());
-        var zustellungServiceOpt = Domain.typeMirror(ZustellungsService.class.getName()).map(
+            DeliveryService.class.getName());
+        var deliveryServiceOpt = Domain.typeMirror(DeliveryService.class.getName()).map(
             s -> (DomainServiceMirror) s);
-        assertThat(zustellungServiceOpt).isPresent();
-        assertThat(zustellungServiceOpt.get().processes(commandMirror)).isTrue();
+        assertThat(deliveryServiceOpt).isPresent();
+        assertThat(deliveryServiceOpt.get().processes(commandMirror)).isTrue();
     }
 
     @Test
-    public void testAuslieferungGestartetEvent() {
-        var eventOpt = Domain.typeMirror(AuslieferungGestartet.class.getName()).map(e -> (DomainEventMirror) e);
+    public void testDeliveryStartedEvent() {
+        var eventOpt = Domain.typeMirror(DeliveryStarted.class.getName()).map(e -> (DomainEventMirror) e);
         assertThat(eventOpt).isPresent();
         var event = eventOpt.get();
-        assertThat(event.getTypeName()).isEqualTo(AuslieferungGestartet.class.getName());
+        assertThat(event.getTypeName()).isEqualTo(DeliveryStarted.class.getName());
         assertThat(event.getInheritanceHierarchyTypeNames().get(0)).isEqualTo(Record.class.getName());
         assertThat(event.getAllInterfaceTypeNames().get(0)).isEqualTo(DomainEvent.class.getName());
-        var prop = event.getBasicFields().stream().filter(p -> p.getName().equals("premiumVersand")).findFirst();
+        var prop = event.getBasicFields().stream().filter(p -> p.getName().equals("premiumShipping")).findFirst();
         assertThat(prop).isPresent();
         assertThat(prop.get().isModifiable()).isFalse();
         var best = event.getAggregateRootReferences().stream()
-            .filter(p -> p.getName().equals("bestellung")).findFirst();
+            .filter(p -> p.getName().equals("order")).findFirst();
         assertThat(best).isPresent();
         assertThat(best.get().isModifiable()).isFalse();
         assertThat(event.getListeningDomainServices().size()).isEqualTo(1);
         assertThat(event.getListeningDomainServices().get(0).getTypeName()).isEqualTo(
-            BenachrichtigungService.class.getName());
+            NotificationService.class.getName());
         assertThat(event.getPublishingAggregates().size()).isEqualTo(1);
-        assertThat(event.getPublishingAggregates().get(0).getTypeName()).isEqualTo(BestellungBv3.class.getName());
+        assertThat(event.getPublishingAggregates().get(0).getTypeName()).isEqualTo(OrderBv3.class.getName());
     }
 
     @Test

@@ -14,9 +14,13 @@ Some of the functions it offers are:
 -  Persistence Action Event hooks
 -  Full ValueObject support regarding persistence
 -  Supports Java `final` keywords and Java optionals within persisted structures
+-  Optional per-transaction Transaction Cache, reducing redundant `SELECT`s on `update()`/`deleteById()` -
+   works out of the box with Spring-managed transactions
 
 ## Configuration
-As soon as jOOQ is provided as dependency, DLC jOOQ Persistence will be enabled automatically.
+As soon as jOOQ is provided as dependency, DLC jOOQ Persistence will be enabled automatically. Alternatively, DLC
+also offers a plain JDBC based persistence implementation (`jdbc-integration`) for projects that don't want to
+depend on jOOQ or run a code generation step - see its [readme](./../../../jdbc-integration/readme.md) for details.
 See [DLC Spring Boot AutoConfig](./../../../dlc-spring-boot-autoconfig/readme.md).
 
 Specifically, you need to use JOOQ's code generator so that the required tables and records are generated.
@@ -114,7 +118,7 @@ dependencies {
 @EnableDlc(
         dlcMirrorBasePackages = "com.example.domain", 
         jooqRecordPackage = "com.example.records",
-        jooqSqlDialect = SQLDialect.H2)
+        jooqSqlDialect = "H2")
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

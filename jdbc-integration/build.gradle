@@ -1,0 +1,152 @@
+buildscript {
+    dependencies {
+        classpath libs.h2
+        classpath libs.flyway.core
+    }
+}
+
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'checkstyle'
+    id 'jacoco'
+    alias libs.plugins.flyway.plugin
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+// ----------------------------------------------------------
+// Full H2 test schema, shared with jooq-integration (same DDL file, copied into this module so it stays
+// self-contained): a file-based H2 database is migrated once via Flyway, and every _ITest wraps its test
+// methods in a transaction that is rolled back afterward (see JdbcBasePersistence_ITest), so the same schema
+// can be reused across the whole test suite without tests interfering with each other.
+
+def dbDriver = 'org.h2.Driver'
+def dbUrl = "jdbc:h2:file:${project.projectDir}/build/h2-db/test;NON_KEYWORDS=VALUE;AUTO_SERVER=TRUE"
+def dbUsername = 'sa'
+def dbPassword = ''
+def dbMigration = 'src/test/resources/db/migration'
+
+// ----------------------------------------------------------
+
+dependencies {
+    api libs.slf4j.api
+
+    api project(":types")
+    implementation project(":reflect")
+    implementation project(":access")
+    api project(":builder")
+    implementation project(":mirror")
+    api project(":persistence")
+    api project(":persistence-spring-tx")
+
+    testImplementation project(":test-shared-impl")
+    testImplementation project(":type-utils")
+    testImplementation project(":assertions")
+    testImplementation project(":bean-validations")
+    testImplementation project(":validation-extender")
+
+    testImplementation libs.assertj
+    testImplementation libs.slf4j.api
+    testImplementation libs.logback.classic
+    testImplementation libs.kryo
+    testImplementation libs.mockito.core
+    testImplementation libs.h2
+    testImplementation libs.spring.tx
+
+    //jakarta config
+    testImplementation libs.hibernate.validator
+    testImplementation libs.glassfish.jakarta.el
+    testImplementation libs.jakarta.el.api
+
+    testImplementation libs.lombok
+    testAnnotationProcessor libs.lombok
+
+    // Testcontainers-based dialect integration tests (see src/test/java/.../persistence/containers and the
+    // testPostgres/testMySql/testSqlServer/testOracle/containerTest tasks below) - not needed by the default,
+    // Docker-free ./gradlew test run against H2, but kept as regular testImplementation so the same compiled
+    // test classes can be reused for both.
+    testImplementation libs.testcontainers
+    testImplementation libs.testcontainers.junit.jupiter
+    testImplementation libs.testcontainers.postgresql
+    testImplementation libs.testcontainers.mysql
+    testImplementation libs.testcontainers.mssqlserver
+    testImplementation libs.testcontainers.oracle.free
+    testImplementation libs.flyway.core
+    testImplementation libs.flyway.database.postgresql
+    testImplementation libs.flyway.mysql
+    testImplementation libs.flyway.sqlserver
+    testImplementation libs.flyway.database.oracle
+    testImplementation libs.postgresql.jdbc
+    testImplementation libs.mysql.connector.j
+    testImplementation libs.mssql.jdbc
+    testImplementation libs.oracle.jdbc
+}
+
+flyway {
+    url = dbUrl
+    user = dbUsername
+    password = dbPassword
+    driver = dbDriver
+    defaultSchema = 'TEST_DOMAIN_FLYWAY'
+    createSchemas = true
+    encoding = 'UTF-8'
+    locations = ["filesystem:./${dbMigration}"]
+}
+
+tasks.named("test") {
+    dependsOn(tasks.named("flywayMigrate"))
+    inputs.files(fileTree("src/test/resources/db/migration"))
+}
+
+// Although test classes are not scanned by checkstyle, as configured in the root-level build.gradle file,
+// checkstyle will throw errors and hints as soon as you add a JavaDoc in test file methods, which is the case in some
+// of the more complex test files in this module. That's why the checkstyleTest task is explicitly disabled.
+checkstyleTest.enabled = false
+
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification.dependsOn jacocoTestReport
+
+// ----------------------------------------------------------
+// Testcontainers-based integration tests: the exact same compiled _ITest classes as the default `test` task
+// (see sourceSets.test.output/.runtimeClasspath below), re-run against real Postgres/MySQL/SQL
+// Server/Oracle databases started on demand via Testcontainers (see JdbcTestPersistenceConfiguration and
+// src/test/java/.../persistence/containers). Deliberately NOT wired into `check`/`build`/`test`, so the
+// default, Docker-free build is unaffected - run explicitly, e.g. `./gradlew :jdbc-integration:testPostgres`
+// or `./gradlew :jdbc-integration:containerTest` for all four.
+
+def registerContainerTestTask = { String taskName, String dialect ->
+    tasks.register(taskName, Test) {
+        group = 'verification'
+        description = "Runs the JDBC integration suite against ${dialect} via Testcontainers (requires Docker)."
+        testClassesDirs = sourceSets.test.output.classesDirs
+        classpath = sourceSets.test.runtimeClasspath
+        useJUnitPlatform()
+        systemProperty 'dlc.jdbc.testDialect', dialect
+        // container startup + a full ~150-class suite against a real database is far slower than the H2 run
+        maxHeapSize = '2g'
+    }
+}
+
+registerContainerTestTask('testPostgres', 'POSTGRES')
+registerContainerTestTask('testMySql', 'MYSQL')
+registerContainerTestTask('testSqlServer', 'SQLSERVER')
+registerContainerTestTask('testOracle', 'ORACLE')
+
+tasks.register('containerTest') {
+    group = 'verification'
+    description = 'Runs the JDBC integration suite against every Testcontainers-backed dialect (requires Docker).'
+    dependsOn tasks.named('testPostgres'), tasks.named('testMySql'), tasks.named('testSqlServer'),
+        tasks.named('testOracle')
+}

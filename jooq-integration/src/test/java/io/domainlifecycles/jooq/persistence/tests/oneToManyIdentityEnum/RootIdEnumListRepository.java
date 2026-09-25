@@ -24,8 +24,7 @@
  *  limitations under the License.
  */
 
-/*
-package io.domainlifecycles.test.persistence.tests.oneToManyIdentityEnum;
+package io.domainlifecycles.jooq.persistence.tests.oneToManyIdentityEnum;
 
 import io.domainlifecycles.jooq.imp.JooqAggregateRepository;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
@@ -51,5 +50,5 @@ public class RootIdEnumListRepository extends JooqAggregateRepository<RootIdEnum
 
     }
 
-}*/
+}
 

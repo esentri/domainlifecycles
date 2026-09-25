@@ -1,0 +1,28 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'checkstyle'
+    alias libs.plugins.yumi.gradle.licenser.plugin
+    alias libs.plugins.jaredsburrows.license.plugin
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+dependencies {
+    api project(":persistence")
+    api libs.slf4j.api
+    compileOnly libs.spring.tx
+
+    testImplementation libs.spring.tx
+    testImplementation libs.assertj
+    testImplementation libs.logback.classic
+
+    constraints {
+        // :persistence -> :type-utils's type-resolver pulls in a log4j-api too old for commons-logging
+        // 1.3.x's Log4jApiLogFactory (brought in transitively by spring-tx here); force a compatible one.
+        testImplementation('org.apache.logging.log4j:log4j-api:2.24.3')
+    }
+}

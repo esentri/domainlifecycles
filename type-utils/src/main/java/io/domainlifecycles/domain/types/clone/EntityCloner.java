@@ -36,12 +36,14 @@ import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -103,6 +105,12 @@ public class EntityCloner {
                 if (backReference.entityReferenceMirror.getType().hasCollectionContainer()) {
                     Collection<Entity<?>> c = accessor.peek(backReference.entityReferenceMirror.getName());
                     c.add(clonedEntity);
+                } else if (backReference.entityReferenceMirror.getType().hasOptionalContainer()) {
+                    // poke() is a raw reflection field set (unlike DomainObjectBuilder.setFieldValue, which
+                    // the non-cyclic path above uses and which wraps a raw value for an Optional-typed
+                    // setter itself) - an Optional<Entity>-typed field needs that wrapping done here instead,
+                    // or Field.set() throws IllegalArgumentException for the un-wrapped Entity value
+                    accessor.poke(backReference.entityReferenceMirror.getName(), Optional.of(clonedEntity));
                 } else {
                     accessor.poke(backReference.entityReferenceMirror.getName(), clonedEntity);
                 }
@@ -116,10 +124,37 @@ public class EntityCloner {
                                        DomainObjectBuilder<?> entityDomainObjectBuilder) {
         em.getBasicFields().stream().filter(fm -> !fm.isStatic()).forEach(fm -> {
             if (entityDomainObjectBuilder.canInstantiateField(fm.getName())) {
-                Object value = DlcAccess.accessorFor(entity).peek(fm.getName());
-                entityDomainObjectBuilder.setFieldValue(value, fm.getName());
+                var accessor = DlcAccess.accessorFor(entity);
+                if (fm.getType().hasCollectionContainer()) {
+                    // a basic-typed field's elements (String, boxed numbers, enums, ...) are themselves
+                    // immutable, but the collection instance is not - it must not be shared with the
+                    // original entity, unlike the container-less case below, where the value itself is
+                    // immutable and reference-copying it is safe
+                    Collection<?> c = accessor.peek(fm.getName());
+                    if (c != null) {
+                        c.forEach(element -> entityDomainObjectBuilder.addValueToCollection(element, fm.getName()));
+                    }
+                } else {
+                    Object value = accessor.peek(fm.getName());
+                    if (fm.getType().isArray() && value != null) {
+                        value = shallowCopyArray(value);
+                    }
+                    entityDomainObjectBuilder.setFieldValue(value, fm.getName());
+                }
             }
         });
+    }
+
+    /**
+     * Shallow-copies an array of unknown (possibly primitive) component type - the array instance is mutable
+     * and must not be shared with the original entity, even though (like a basic-typed collection's elements)
+     * its own elements are immutable and safe to reuse by reference.
+     */
+    private static Object shallowCopyArray(Object array) {
+        int length = Array.getLength(array);
+        Object copy = Array.newInstance(array.getClass().getComponentType(), length);
+        System.arraycopy(array, 0, copy, 0, length);
+        return copy;
     }
 
     private void cloneEntityValueObjectCompositions(EntityMirror em,
@@ -176,6 +211,30 @@ public class EntityCloner {
                                 domainObjectBuilder.addValueToCollection(clonedAssociation, erm.getName());
                             }
                         });
+                    }
+                } else if (erm.getType().hasOptionalContainer()) {
+                    //an Optional<Entity> field: peek returns the Optional wrapper itself (unlike a plain
+                    //single-valued reference below), so it must be unwrapped before use - setFieldValue is
+                    //then given the raw entity (or null) either way, exactly as InternalAggregateFetcher
+                    //already does for such fields when building the original, un-cloned graph
+                    Optional<?> optionalReference = accessor.peek(erm.getName());
+                    Entity<?> reference = optionalReference == null ? null : (Entity<?>) optionalReference.orElse(null);
+                    if (reference != null && cloningEntityIds.contains(getId(reference))) {
+                        Entity<?> clonedAssociation = clonedEntities.get(getId(reference));
+                        if (clonedAssociation != null) {
+                            domainObjectBuilder.setFieldValue(clonedAssociation, erm.getName());
+                        } else {
+                            BackReference br = new BackReference(entity, erm, getId(reference));
+                            backReferences.add(br);
+                        }
+                    } else {
+                        Entity<?> clonedEntityReference = cloneInternal(
+                            reference,
+                            cloningEntityIds,
+                            backReferences,
+                            clonedEntities
+                        );
+                        domainObjectBuilder.setFieldValue(clonedEntityReference, erm.getName());
                     }
                 } else {
                     Entity<?> reference = accessor.peek(erm.getName());

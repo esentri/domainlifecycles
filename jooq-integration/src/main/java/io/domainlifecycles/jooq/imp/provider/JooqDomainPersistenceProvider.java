@@ -26,6 +26,7 @@
 
 package io.domainlifecycles.jooq.imp.provider;
 
+import io.domainlifecycles.jooq.cache.TransactionCacheJooqBinder;
 import io.domainlifecycles.jooq.configuration.JooqDomainPersistenceConfiguration;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainType;
@@ -37,12 +38,15 @@ import io.domainlifecycles.mirror.visitor.ContextDomainObjectVisitor;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.mapping.AutoRecordMapper;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
+import io.domainlifecycles.persistence.mapping.ScalarListElementRecordMapper;
 import io.domainlifecycles.persistence.mirror.PersistenceModel;
 import io.domainlifecycles.persistence.mirror.api.EntityRecordMirror;
+import io.domainlifecycles.persistence.cache.ThreadBoundTransactionCacheProvider;
 import io.domainlifecycles.persistence.mirror.api.PersistenceMirror;
 import io.domainlifecycles.persistence.mirror.api.ValueObjectRecordMirror;
 import io.domainlifecycles.persistence.provider.DomainPersistenceProvider;
 import io.domainlifecycles.persistence.records.EntityValueObjectRecordTypeConfiguration;
+import org.jooq.DSLContext;
 import org.jooq.UpdatableRecord;
 
 import java.util.ArrayList;
@@ -65,6 +69,13 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
      * Constructs an instance of {@code JooqDomainPersistenceProvider} using the provided
      * configuration. Registers converters provided by the type converter provider within the
      * configuration, if available.
+     * <p>
+     * This constructor does <b>not</b> wire the transaction cache to jOOQ's own transaction lifecycle
+     * ({@code dslContext.transaction(...)}/{@code SpringTransactionProvider}) - use it only when the
+     * transaction cache feature is disabled, or a custom {@code TransactionCacheProvider} is configured
+     * that isn't a {@link ThreadBoundTransactionCacheProvider} and therefore isn't bound automatically
+     * anyway. Otherwise, prefer {@link #JooqDomainPersistenceProvider(JooqDomainPersistenceConfiguration,
+     * DSLContext)}.
      *
      * @param jooqPersistenceConfiguration the configuration object containing settings
      *                                      and dependencies required for setting up
@@ -73,11 +84,44 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
      *                                      registering custom converters.
      */
     public JooqDomainPersistenceProvider(JooqDomainPersistenceConfiguration jooqPersistenceConfiguration) {
-        super(jooqPersistenceConfiguration);
+        super(jooqPersistenceConfiguration, jooqPersistenceConfiguration.transactionCacheProvider);
         if (jooqPersistenceConfiguration.typeConverterProvider != null) {
             jooqPersistenceConfiguration.typeConverterProvider.provideConverters().forEach(
                 converterRegistry::registerConverter
             );
+        }
+    }
+
+    /**
+     * Constructs an instance of {@code JooqDomainPersistenceProvider} exactly like
+     * {@link #JooqDomainPersistenceProvider(JooqDomainPersistenceConfiguration)}, additionally registering
+     * the transaction cache's {@link TransactionCacheJooqBinder} on {@code dslContext}'s jOOQ
+     * {@code Configuration} - once, here, centrally - so that the transaction cache feature works for
+     * every {@code JooqAggregateRepository}/{@code JooqAggregateFetcher} later built against the same,
+     * shared {@code DSLContext}, regardless of which one is built first or whether a
+     * {@code JooqAggregateRepository} is ever built at all (e.g. a caller going through
+     * {@code JooqAggregateFetcher} directly). This is the preferred constructor whenever the transaction
+     * cache feature is enabled with the default {@link ThreadBoundTransactionCacheProvider}.
+     *
+     * @param jooqPersistenceConfiguration the configuration object containing settings and dependencies
+     *                                      required for setting up the Jooq domain persistence provider
+     * @param dslContext                   the {@code DSLContext} shared by all repositories/fetchers built
+     *                                      against this provider, whose jOOQ {@code Configuration} the
+     *                                      transaction cache binder is registered on
+     */
+    public JooqDomainPersistenceProvider(JooqDomainPersistenceConfiguration jooqPersistenceConfiguration,
+                                         DSLContext dslContext) {
+        this(jooqPersistenceConfiguration);
+        registerTransactionCacheBinderIfApplicable(dslContext, jooqPersistenceConfiguration);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void registerTransactionCacheBinderIfApplicable(
+        DSLContext dslContext, JooqDomainPersistenceConfiguration jooqPersistenceConfiguration) {
+        if (jooqPersistenceConfiguration.transactionCacheEnabled
+            && jooqPersistenceConfiguration.transactionCacheProvider instanceof ThreadBoundTransactionCacheProvider<?> threadBoundProvider) {
+            TransactionCacheJooqBinder.registerOn(dslContext.configuration(),
+                (ThreadBoundTransactionCacheProvider<UpdatableRecord<?>>) threadBoundProvider);
         }
     }
 
@@ -162,7 +206,15 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
 
                     @Override
                     public void visitValueReference(ValueReferenceMirror valueReferenceMirror) {
-                        if (valueReferenceMirror.getType().getDomainType().equals(DomainType.VALUE_OBJECT)) {
+                        var referencedDomainType = valueReferenceMirror.getType().getDomainType();
+                        //a "scalar list element" is a field like List<SomeIdentity>/List<SomeEnum>: the raw
+                        //element is not a ValueObject, but it is persisted as a child record exactly like a
+                        //List<ValueObject> field is (own table, id + containerId, single "value" column)
+                        boolean isScalarListElement =
+                            (DomainType.IDENTITY.equals(referencedDomainType) || DomainType.ENUM.equals(
+                                referencedDomainType))
+                                && valueReferenceMirror.getType().hasCollectionContainer();
+                        if (DomainType.VALUE_OBJECT.equals(referencedDomainType) || isScalarListElement) {
                             var context = getVisitorContext();
                             var valueObjectRecordDefinition =
                                 findCustomValueObjectRecordDefinition(
@@ -176,7 +228,7 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
                                 //if we have no custom record and record mapper definition and we have a to-many
                                 // relationship,
                                 // we need to build a valueObjectRecordDefinition for the auto mapping of the value
-                                // object
+                                // object (or, for a scalar list element, of the Identity/Enum type)
                                 valueObjectRecordDefinition = createAutoMappingValueObjectRecordDefinition(
                                     em.getTypeName(),
                                     valueReferenceMirror.getType().getTypeName(),
@@ -190,6 +242,14 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
                                     valueObjectRecordDefinition.containedValueObjectTypeName(),
                                     recordCanonicalNameToDomainObjectTypeMap
                                 );
+                                RecordMapper<UpdatableRecord<?>, ?, ?> mapper = isScalarListElement
+                                    ? getScalarListElementRecordMapperFor(
+                                        valueObjectRecordDefinition,
+                                        jooqPersistenceConfiguration)
+                                    : getValueObjectRecordMapperFor(
+                                        valueObjectRecordDefinition,
+                                        jooqPersistenceConfiguration
+                                    );
                                 ValueObjectRecordMirror<UpdatableRecord<?>> vorm = jooqPersistenceConfiguration
                                     .recordMirrorInstanceProvider
                                     .provideValueObjectRecordMirror(
@@ -197,10 +257,7 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
                                         valueObjectRecordDefinition.containedValueObjectTypeName,
                                         (Class<? extends UpdatableRecord<?>>) valueObjectRecordDefinition.valueObjectRecordType(),
                                         Arrays.asList(valueObjectRecordDefinition.pathFromEntityToValueObject),
-                                        getValueObjectRecordMapperFor(
-                                            valueObjectRecordDefinition,
-                                            jooqPersistenceConfiguration
-                                        ),
+                                        mapper,
                                         recordCanonicalNameToDomainObjectTypeMap
                                     );
 
@@ -406,6 +463,22 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
             );
         }
         return (RecordMapper<UpdatableRecord<?>, ?, ?>) mapper;
+    }
+
+
+    private RecordMapper<UpdatableRecord<?>, ?, ?> getScalarListElementRecordMapperFor(
+        InternalValueObjectRecordDefinition scalarListRecordDefinition,
+        JooqDomainPersistenceConfiguration jooqPersistenceConfiguration
+    ) {
+        return new ScalarListElementRecordMapper<>(
+            scalarListRecordDefinition.containedValueObjectTypeName(),
+            scalarListRecordDefinition.valueObjectRecordType().getName(),
+            this.converterRegistry,
+            jooqPersistenceConfiguration.newRecordInstanceProvider,
+            jooqPersistenceConfiguration.recordPropertyAccessor,
+            jooqPersistenceConfiguration.recordPropertyProvider,
+            jooqPersistenceConfiguration.recordClassProvider
+        );
     }
 
 

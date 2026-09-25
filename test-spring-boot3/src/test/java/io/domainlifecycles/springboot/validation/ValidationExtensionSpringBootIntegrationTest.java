@@ -81,7 +81,7 @@ public class ValidationExtensionSpringBootIntegrationTest {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
             ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1l), "OK", null,
                 1l);
-            root.komischeBerechnungMitValidationError();
+            root.strangeCalculationWithValidationError();
         });
         assertThat(ex).hasMessageContaining("text darf niemals 'WRONG' sein!");
     }
@@ -120,7 +120,7 @@ public class ValidationExtensionSpringBootIntegrationTest {
     @Test
     public void testInstrumentationTextSetzenmitReturnOk() {
         ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1l), "test", null, 1l);
-        ValidatedAggregateRoot returned = root.textSetzenMitReturn("OK");
+        ValidatedAggregateRoot returned = root.setTextWithReturn("OK");
         assertThat(returned).isNotNull();
         assertThat(returned.getText()).isEqualTo("OK");
     }
@@ -130,7 +130,7 @@ public class ValidationExtensionSpringBootIntegrationTest {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
             ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1l), "test", null,
                 1l);
-            root.textSetzenMitReturn("WRONG");
+            root.setTextWithReturn("WRONG");
         });
         assertThat(ex).hasMessageContaining("text darf niemals 'WRONG' sein!");
     }
@@ -138,7 +138,7 @@ public class ValidationExtensionSpringBootIntegrationTest {
     @Test
     public void testInstrumentationTextSetzenPreconditionOk() {
         ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1l), "test", null, 1l);
-        root.textSetzenPrecondition("OK");
+        root.setTextPrecondition("OK");
         assertThat(root).isNotNull();
         assertThat(root.getText()).isEqualTo("OK");
     }
@@ -148,15 +148,15 @@ public class ValidationExtensionSpringBootIntegrationTest {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
             ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1l), "test", null,
                 1l);
-            root.textSetzenPrecondition(" ");
+            root.setTextPrecondition(" ");
         });
-        assertThat(ex).hasMessageContaining("textSetzenPrecondition");
+        assertThat(ex).hasMessageContaining("setTextPrecondition");
     }
 
     @Test
     public void testInstrumentationTextSetzenReturnValOk() {
         ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1l), "test", null, 1l);
-        root.textSetzenMitReturn("OK");
+        root.setTextWithReturn("OK");
         assertThat(root).isNotNull();
         assertThat(root.getText()).isEqualTo("OK");
     }
@@ -166,9 +166,9 @@ public class ValidationExtensionSpringBootIntegrationTest {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
             ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1l), "test", null,
                 1l);
-            root.textSetzenReturnVal(" ");
+            root.setTextReturnVal(" ");
         });
-        assertThat(ex).hasMessageContaining("textSetzenReturnVal");
+        assertThat(ex).hasMessageContaining("setTextReturnVal");
     }
 
     @Test
@@ -176,7 +176,7 @@ public class ValidationExtensionSpringBootIntegrationTest {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
             ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1l), "test", null,
                 1l);
-            root.textSetzenPrecondition("WRONG");
+            root.setTextPrecondition("WRONG");
         });
         assertThat(ex).hasMessageContaining("text darf niemals 'WRONG' sein!");
     }
@@ -184,7 +184,7 @@ public class ValidationExtensionSpringBootIntegrationTest {
     @Test
     public void testInstrumentationOptionalTextSetzenOk() {
         ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1l), "test", null, 1l);
-        root.optionalTextSetzenMitReturn(Optional.of("OK"));
+        root.setOptionalTextWithReturn(Optional.of("OK"));
         assertThat(root).isNotNull();
         assertThat(root.getOptionalText()).isPresent();
         assertThat(root.getOptionalText().get()).isEqualTo("OK");
@@ -194,16 +194,16 @@ public class ValidationExtensionSpringBootIntegrationTest {
     public void testInstrumentationOptionalTextSetzenFailPrecon() {
         ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1l), "test", null, 1l);
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
-            root.optionalTextSetzenMitReturn(Optional.of(" "));
+            root.setOptionalTextWithReturn(Optional.of(" "));
         });
-        assertThat(ex).hasMessageContaining("optionalTextSetzenMitReturn");
+        assertThat(ex).hasMessageContaining("setOptionalTextWithReturn");
     }
 
     @Test
     public void testInstrumentationOptionalTextSetzenFailLength() {
         ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1l), "test", null, 1l);
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
-            root.optionalTextSetzenMitReturn(Optional.of("1223344556677876555"));
+            root.setOptionalTextWithReturn(Optional.of("1223344556677876555"));
         });
         assertThat(ex).hasMessageContaining("optionalText");
     }
@@ -222,7 +222,7 @@ public class ValidationExtensionSpringBootIntegrationTest {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
             ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1l), "test", null,
                 1l);
-            root.textSetzenReturnVal("WRONG");
+            root.setTextReturnVal("WRONG");
         });
         assertThat(ex).hasMessageContaining("text darf niemals 'WRONG' sein!");
     }

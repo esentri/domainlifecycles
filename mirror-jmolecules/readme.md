@@ -44,7 +44,8 @@ recognized and included in the domain mirror.
 ## Key classes
 
 - **`ExtendedJMoleculesDomainMirrorFactory`** — drop-in replacement for `ReflectiveDomainMirrorFactory`; scans for both
-  DLC and jMolecules domain types.
+  DLC and jMolecules domain types. Also honors `setIncludeNonDomainClasses` (see [mirror](../mirror/readme.md#mirroring-non-domain-classes)),
+  since this is the factory the Gradle/Maven diagram plugins use internally.
 - **`ExtendedJMoleculesDomainTypeDetector`** — extends the default detector with jMolecules interface and annotation checks.
 - **`ExtendedJMoleculesDomainTypesScanner`** — extends the classpath scanner to also pick up classes identified via
   jMolecules annotations and interfaces.

@@ -14,19 +14,19 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import tests.shared.TestDataGenerator;
-import tests.shared.complete.onlinehandel.bestellung.ArtikelIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellKommentarBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellKommentarIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellPositionBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellPositionIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellStatusBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellStatusIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellungIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.LieferadresseBv3;
-import tests.shared.complete.onlinehandel.bestellung.LieferadresseIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.PreisBv3;
-import tests.shared.complete.onlinehandel.bestellung.WaehrungEnumBv3;
+import tests.shared.complete.ecommerce.order.ArticleIdBv3;
+import tests.shared.complete.ecommerce.order.OrderCommentBv3;
+import tests.shared.complete.ecommerce.order.OrderCommentIdBv3;
+import tests.shared.complete.ecommerce.order.OrderItemBv3;
+import tests.shared.complete.ecommerce.order.OrderItemIdBv3;
+import tests.shared.complete.ecommerce.order.OrderStatusBv3;
+import tests.shared.complete.ecommerce.order.OrderStatusIdBv3;
+import tests.shared.complete.ecommerce.order.OrderBv3;
+import tests.shared.complete.ecommerce.order.OrderIdBv3;
+import tests.shared.complete.ecommerce.order.DeliveryAddressBv3;
+import tests.shared.complete.ecommerce.order.DeliveryAddressIdBv3;
+import tests.shared.complete.ecommerce.order.PriceBv3;
+import tests.shared.complete.ecommerce.order.CurrencyEnumBv3;
 import tests.shared.jackson.TypeTestValueObject;
 import tests.shared.persistence.domain.complex.TestRoot;
 import tests.shared.persistence.domain.complex.TestRootId;
@@ -91,16 +91,16 @@ public class JacksonTest {
                     return new TestRootSimpleUuidId(UUID.randomUUID());
                 } else if (entityTypeName.equals(TestRootSimple.class.getName())) {
                     return new TestRootSimpleId(1L);
-                } else if (entityTypeName.equals(BestellungBv3.class.getName())) {
-                    return new BestellungIdBv3(1L);
-                } else if (entityTypeName.equals(BestellPositionBv3.class.getName())) {
-                    return new BestellPositionIdBv3(1L);
-                } else if (entityTypeName.equals(LieferadresseBv3.class.getName())) {
-                    return new LieferadresseIdBv3(1L);
-                } else if (entityTypeName.equals(BestellKommentarBv3.class.getName())) {
-                    return new BestellKommentarIdBv3(1L);
-                } else if (entityTypeName.equals(BestellStatusBv3.class.getName())) {
-                    return new BestellStatusIdBv3(1L);
+                } else if (entityTypeName.equals(OrderBv3.class.getName())) {
+                    return new OrderIdBv3(1L);
+                } else if (entityTypeName.equals(OrderItemBv3.class.getName())) {
+                    return new OrderItemIdBv3(1L);
+                } else if (entityTypeName.equals(DeliveryAddressBv3.class.getName())) {
+                    return new DeliveryAddressIdBv3(1L);
+                } else if (entityTypeName.equals(OrderCommentBv3.class.getName())) {
+                    return new OrderCommentIdBv3(1L);
+                } else if (entityTypeName.equals(OrderStatusBv3.class.getName())) {
+                    return new OrderStatusIdBv3(1L);
                 }
                 return null;
             }
@@ -513,12 +513,12 @@ public class JacksonTest {
     }
 
     @Test
-    public void testBestellung() throws IOException{
-        BestellungBv3 b = TestDataGenerator.buildBestellungBv3();
+    public void testOrder() throws IOException{
+        OrderBv3 b = TestDataGenerator.buildOrderBv3();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(b);
         log.info("JSON = " + json);
 
-        BestellungBv3 b2 = objectMapper.readValue(json, BestellungBv3.class);
+        OrderBv3 b2 = objectMapper.readValue(json, OrderBv3.class);
         log.info("Read = " + b2);
         Assertions.assertThat(b2)
             .usingRecursiveComparison()
@@ -532,61 +532,61 @@ public class JacksonTest {
     }
 
     @Test
-    public void testBestellungIdProvisioningAndCallbacks() throws IOException{
+    public void testOrderIdProvisioningAndCallbacks() throws IOException{
 
         String json = """
             {
-              "prioritaet" : 1,
-              "kundennummer" : "777777",
-              "gesamtPreis" : {
-                "betrag" : 200,
-                "waehrung" : "EUR"
+              "priority" : 1,
+              "customerNumber" : "777777",
+              "totalPrice" : {
+                "amount" : 200,
+                "currency" : "EUR"
               },
-              "lieferadresse" : {
+              "deliveryAddress" : {
                 "name" : "Thor",
-                "strasse" : "Hammerallee 7",
-                "postleitzahl" : "77777",
-                "ort" : "Donnerberg"
+                "street" : "Hammerallee 7",
+                "postalCode" : "77777",
+                "city" : "Donnerberg"
               },
-              "bestellPositionen" : [ {
-                "artikelId" : 1,
-                "stueckzahl" : 100,
-                "stueckPreis" : {
-                  "betrag" : 1,
-                  "waehrung" : "EUR"
+              "orderItems" : [ {
+                "articleId" : 1,
+                "quantity" : 100,
+                "unitPrice" : {
+                  "amount" : 1,
+                  "currency" : "EUR"
                 }
               }, {
-                "artikelId" : 2,
-                "stueckzahl" : 10,
-                "stueckPreis" : {
-                  "betrag" : 10,
-                  "waehrung" : "EUR"
+                "articleId" : 2,
+                "quantity" : 10,
+                "unitPrice" : {
+                  "amount" : 10,
+                  "currency" : "EUR"
                 }
               } ],
-              "bestellStatus" : {
+              "orderStatus" : {
                 "statusCode" : "INITIAL",
-                "statusAenderungAm" : "2021-01-01T12:01:00"
+                "statusChangedAt" : "2021-01-01T12:01:00"
               },
-              "bestellKommentare" : [ {
-                "kommentarText" : "Mach schnell sonst kommt der Hammer!",
-                "kommentarAm" : "2021-01-01T12:00:00"
+              "orderComments" : [ {
+                "commentText" : "Mach schnell sonst kommt der Hammer!",
+                "commentedAt" : "2021-01-01T12:00:00"
               }, {
-                "kommentarText" : "Der Donnergott grüßt!",
-                "kommentarAm" : "2021-01-02T12:00:00"
+                "commentText" : "Der Donnergott grüßt!",
+                "commentedAt" : "2021-01-02T12:00:00"
               } ]
             }""";
         log.info("JSON = " + json);
 
-        BestellungBv3 b2 = objectMapper.readValue(json, BestellungBv3.class);
+        OrderBv3 b2 = objectMapper.readValue(json, OrderBv3.class);
         log.info("Read = " + b2);
     }
 
     @Test
-    public void testManyBestellungen() throws IOException{
-        var many = TestDataGenerator.buildManyBestellungenBv3();
+    public void testManyOrders() throws IOException{
+        var many = TestDataGenerator.buildManyOrdersBv3();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(many);
         log.info("JSON = " + json);
-        var b2 = objectMapper.readValue(json, new TypeReference<List<BestellungBv3>>() {
+        var b2 = objectMapper.readValue(json, new TypeReference<List<OrderBv3>>() {
         });
 
         log.info("Read = " + b2);
@@ -665,13 +665,13 @@ public class JacksonTest {
     @Test
     public void testIdProvisioningDtoRegularWithId() throws IOException{
         IdProvisioningDto dto = new IdProvisioningDto();
-        dto.bestellPosition = BestellPositionBv3.builder()
-            .setId(new BestellPositionIdBv3(1L))
-            .setArtikelId(new ArtikelIdBv3(1L))
-            .setStueckzahl(100)
-            .setStueckPreis(PreisBv3.builder()
-                .setBetrag(BigDecimal.ONE)
-                .setWaehrung(WaehrungEnumBv3.EUR)
+        dto.orderItem = OrderItemBv3.builder()
+            .setId(new OrderItemIdBv3(1L))
+            .setArticleId(new ArticleIdBv3(1L))
+            .setQuantity(100)
+            .setUnitPrice(PriceBv3.builder()
+                .setAmount(BigDecimal.ONE)
+                .setCurrency(CurrencyEnumBv3.EUR)
                 .build())
             .build();
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(dto);
@@ -703,59 +703,59 @@ public class JacksonTest {
     public void testReadIdProvisioningDtoWithoutId() throws IOException{
         String json = """
             {
-              "bestellPosition" : {
-                "artikelId" : 1,
-                "stueckzahl" : 100,
+              "orderItem" : {
+                "articleId" : 1,
+                "quantity" : 100,
                 "concurrencyVersion" : 0,
-                "stueckPreis" : {
-                  "betrag" : 1,
-                  "waehrung" : "EUR"
+                "unitPrice" : {
+                  "amount" : 1,
+                  "currency" : "EUR"
                 }
               }
             }""";
 
         IdProvisioningDto dtoToAssert = new IdProvisioningDto();
-        dtoToAssert.bestellPosition = BestellPositionBv3.builder()
-            .setId(new BestellPositionIdBv3(1L))
-            .setArtikelId(new ArtikelIdBv3(1L))
-            .setStueckzahl(100)
-            .setStueckPreis(PreisBv3.builder()
-                .setBetrag(BigDecimal.ONE)
-                .setWaehrung(WaehrungEnumBv3.EUR)
+        dtoToAssert.orderItem = OrderItemBv3.builder()
+            .setId(new OrderItemIdBv3(1L))
+            .setArticleId(new ArticleIdBv3(1L))
+            .setQuantity(100)
+            .setUnitPrice(PriceBv3.builder()
+                .setAmount(BigDecimal.ONE)
+                .setCurrency(CurrencyEnumBv3.EUR)
                 .build())
             .build();
 
 
         IdProvisioningDto dtoRead = objectMapper.readValue(json, IdProvisioningDto.class);
         log.info("Read = " + dtoRead);
-        Assertions.assertThat(dtoRead.getBestellPosition().getArtikelId()).isEqualTo(
-            dtoToAssert.getBestellPosition().getArtikelId());
-        Assertions.assertThat(dtoRead.getBestellPosition().getId()).isNotNull();
-        Assertions.assertThat(dtoRead.getBestellPosition().getStueckzahl()).isEqualTo(
-            dtoToAssert.getBestellPosition().getStueckzahl());
-        Assertions.assertThat(dtoRead.getBestellPosition().getStueckPreis()).isEqualTo(
-            dtoToAssert.getBestellPosition().getStueckPreis());
+        Assertions.assertThat(dtoRead.getOrderItem().getArticleId()).isEqualTo(
+            dtoToAssert.getOrderItem().getArticleId());
+        Assertions.assertThat(dtoRead.getOrderItem().getId()).isNotNull();
+        Assertions.assertThat(dtoRead.getOrderItem().getQuantity()).isEqualTo(
+            dtoToAssert.getOrderItem().getQuantity());
+        Assertions.assertThat(dtoRead.getOrderItem().getUnitPrice()).isEqualTo(
+            dtoToAssert.getOrderItem().getUnitPrice());
     }
 
     public static class IdProvisioningDto {
 
-        public BestellPositionBv3 getBestellPosition() {
-            return bestellPosition;
+        public OrderItemBv3 getOrderItem() {
+            return orderItem;
         }
 
-        private BestellPositionBv3 bestellPosition;
+        private OrderItemBv3 orderItem;
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             IdProvisioningDto that = (IdProvisioningDto) o;
-            return bestellPosition.equals(that.bestellPosition);
+            return orderItem.equals(that.orderItem);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(bestellPosition);
+            return Objects.hash(orderItem);
         }
     }
 

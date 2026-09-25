@@ -35,6 +35,7 @@ import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.fetcher.FetcherResult;
+import io.domainlifecycles.persistence.mapping.ScalarListElement;
 import io.domainlifecycles.persistence.provider.DomainObjectInstanceAccessModel;
 import io.domainlifecycles.persistence.provider.DomainPersistenceProvider;
 
@@ -163,7 +164,7 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
 
     private PersistenceAction<BASE_RECORD_TYPE> addToPartitionedActionsMap(PersistenceAction<BASE_RECORD_TYPE> a) {
         checkActionConsistency(a);
-        var key = a.instanceAccessModel.instanceType().getName() + "-" + a.actionType.name();
+        var key = partitionTypeName(a.instanceAccessModel) + "-" + a.actionType.name();
         var actionList = partitionedActionsMap.computeIfAbsent(key, k -> new ArrayList<>());
         boolean contained = actionList
             .stream()
@@ -203,6 +204,23 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
         }
 
         return a;
+    }
+
+    /**
+     * The type name used to partition/order persistence actions. This must line up with {@code
+     * vorm.domainObjectTypeName()} as used by {@link
+     * io.domainlifecycles.persistence.repository.order.TopologicalPersistenceActionOrderProvider} to build
+     * the insertion/deletion order graph: for a {@link ScalarListElement} that is the wrapped element's own
+     * type name (e.g. an Identity or Enum implementation), not the wrapper's own (shared) class name.
+     *
+     * @param instanceAccessModel the instance access model to compute the partition type name for
+     * @return the partition type name
+     */
+    private String partitionTypeName(DomainObjectInstanceAccessModel<BASE_RECORD_TYPE> instanceAccessModel) {
+        if (instanceAccessModel.domainObject() instanceof ScalarListElement<?> scalarListElement) {
+            return scalarListElement.elementTypeName();
+        }
+        return instanceAccessModel.instanceType().getName();
     }
 
     /**

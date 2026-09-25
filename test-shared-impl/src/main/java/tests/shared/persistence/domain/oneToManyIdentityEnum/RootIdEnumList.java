@@ -24,7 +24,6 @@
  *  limitations under the License.
  */
 
-/*
 package tests.shared.persistence.domain.oneToManyIdentityEnum;
 
 
@@ -45,6 +44,8 @@ public class RootIdEnumList extends AggregateRootBase<RootIdEnumListId> {
     private String name;
     private List<MyEnum> enumList;
     private List<MyId> idList;
+    private List<MyUuidId> uuidIdList;
+    private List<ValueWithLists> valueWithListsList;
     private EntityIdEnumList entity;
 
     @Builder(setterPrefix = "set")
@@ -53,6 +54,8 @@ public class RootIdEnumList extends AggregateRootBase<RootIdEnumListId> {
                           EntityIdEnumList entity,
                           List<MyEnum> enumList,
                           List<MyId> idList,
+                          List<MyUuidId> uuidIdList,
+                          List<ValueWithLists> valueWithListsList,
                           long concurrencyVersion
 
     ) {
@@ -62,8 +65,9 @@ public class RootIdEnumList extends AggregateRootBase<RootIdEnumListId> {
         setName(name);
         this.enumList = (enumList == null ? new ArrayList<>() : enumList);
         this.idList = (idList == null ? new ArrayList<>() : idList);
+        this.uuidIdList = (uuidIdList == null ? new ArrayList<>() : uuidIdList);
+        this.valueWithListsList = (valueWithListsList == null ? new ArrayList<>() : valueWithListsList);
         this.entity = entity;
     }
 
 }
-*/

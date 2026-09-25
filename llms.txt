@@ -63,13 +63,22 @@ Key features:
 
 5. Persistence
    - Simplified ORM for persisted domain objects
-   - Type-safe queries using jOOQ
-   - Supports multiple relational DB dialects (via jOOQ)
+   - Two interchangeable backends, sharing the same programming model (Repositories, Fetcher,
+     AutoMapping, RecordMapper, optimistic locking, Persistence Action events) - a project picks one:
+     - `jooq-integration`: type-safe queries via jOOQ's generated `UpdatableRecord` classes (requires a
+       jOOQ code generation build step)
+     - `jdbc-integration`: plain JDBC, code-generation-free - reads the schema once at runtime via
+       `java.sql.DatabaseMetaData` instead of relying on generated record classes; no jOOQ dependency at all
+   - Supports multiple relational DB dialects
    - Aggregate CRUD support (repositories)
    - Aggregate fetch support, simplified queries (fetcher)
    - Supports final fields and Java Optional
    - Full ValueObject persistence support
    - Persistence action event hooks
+   - Transaction Cache: an opt-out, per-transaction read cache avoiding redundant SELECTs when
+     `update()`/`deleteById()` need the currently persisted state right after a fetch in the same
+     transaction; wired automatically to Spring's own transaction management by the Spring autoconfig
+     (via the small `persistence-spring-tx` module), for both backends, with nothing to configure by hand
 
 6. Domain Events
    - Simplifies publishing and listening
@@ -128,7 +137,11 @@ For Spring Boot 4.x apps:
 For Spring Boot 3.x apps:
 - io.domainlifecycles:spring-boot3-starter:3.4.0
 
-These starters pull in the appropriate DLC modules and integrations.
+These starters pull in the appropriate DLC modules and integrations, including both persistence backends
+(`jooq-integration` and `jdbc-integration`) - the Spring autoconfig picks the right one automatically: jOOQ
+wins by default when both are usable, independently overridable via `dlc.features.persistence.jooq.enabled`
+/ `dlc.features.persistence.jdbc.enabled`. Nothing extra to add for either backend; only an actual jOOQ
+dependency (see below) and, for the jOOQ backend, generated record classes are still needed at runtime.
 
 ## External dependencies commonly required
 Depending on which DLC features are used, typical external runtime libraries include:
@@ -137,7 +150,8 @@ Depending on which DLC features are used, typical external runtime libraries inc
 - classgraph (runtime class loading for mirror/persistence)
 - Hibernate Validator or other Jakarta Bean Validation provider
 - Byte Buddy (always-valid validation extender)
-- jOOQ (persistence)
+- jOOQ (only for the `jooq-integration` persistence backend; `jdbc-integration` needs no extra library
+  beyond a JDBC driver for the target database)
 - Jackson 3 or Jackson 2 (JSON mapping / event serialization)
 - SpringDoc OpenAPI (OpenAPI integration)
 - Spring Transaction (Spring-based domain events)
@@ -153,7 +167,10 @@ When explaining or generating code using DLC:
 - Treat aggregates, entities, and value objects as first-class DDD structures.
 - Use DomainAssertions (or validation/Bean Validation) for invariants.
 - Use DomainEvents.publish() and @DomainEventListener where domain events are relevant.
-- Use jOOQ-based persistence.
+- For persistence, default to jOOQ-based persistence (`jooq-integration`, pulled in by the starters) unless
+  the user cannot or does not want a jOOQ code generation build step (build-time DB access, Maven/Gradle
+  plugin setup, jOOQ licensing for some dialects) - in that case, use the plain-JDBC backend
+  (`jdbc-integration`) instead; both share the same Repository/Fetcher/AutoMapping programming model.
 - For Spring-based projects, assume DLC starter + autoconfig is preferred.
 - If asked to visualize the domain model, restrict a diagram to one business flow, or answer "what
   calls what" questions, point to the static-analysis module and the domain-diagrammer's
@@ -174,10 +191,13 @@ When explaining or generating code using DLC:
 - ./sample-project
 - ./mirror/readme.md
 - ./persistence/readme.md
+- ./jdbc-integration/readme.md
+- ./persistence-spring-tx/readme.md
 - ./domain-events-core/readme.md
 - ./domain-events-spring-bus/readme.md
 - ./validation-extender/readme.md
 - ./dlc-spring-boot-autoconfig/readme.md
+- ./dlc-spring-boot3-autoconfig/readme.md
 - ./jackson3-integration/readme.md
 - ./static-analysis/readme.md
 - ./domain-diagrammer/readme.md

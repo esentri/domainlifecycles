@@ -6,8 +6,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tests.shared.TestDataGenerator;
-import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellungIdBv3;
+import tests.shared.complete.ecommerce.order.OrderBv3;
+import tests.shared.complete.ecommerce.order.OrderIdBv3;
 import tests.shared.converter.ConverterBigDecimalVo;
 import tests.shared.converter.LongId;
 import tests.shared.converter.StringId;
@@ -77,10 +77,10 @@ public class BaseClassCompanionTest {
     }
 
     @Test
-    public void testToStringBestellung() {
-        BestellungBv3 b = TestDataGenerator.buildBestellungBv3();
-        Assertions.assertThat(b.toString()).isEqualTo(BestellungBv3.class.getName() + "@" + System.identityHashCode(b)
-            + "(id=" + BestellungIdBv3.class.getSimpleName()  + "[value=1])");
+    public void testToStringOrder() {
+        OrderBv3 b = TestDataGenerator.buildOrderBv3();
+        Assertions.assertThat(b.toString()).isEqualTo(OrderBv3.class.getName() + "@" + System.identityHashCode(b)
+            + "(id=" + OrderIdBv3.class.getSimpleName()  + "[value=1])");
     }
 
     @Test

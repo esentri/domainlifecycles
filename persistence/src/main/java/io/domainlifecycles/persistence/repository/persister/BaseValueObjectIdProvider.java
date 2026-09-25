@@ -28,11 +28,15 @@ package io.domainlifecycles.persistence.repository.persister;
 
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.ValueObject;
+import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.provider.DomainObjectInstanceAccessModel;
 import io.domainlifecycles.persistence.provider.DomainPersistenceProvider;
+import io.domainlifecycles.persistence.provider.StructuralPosition;
+import io.domainlifecycles.persistence.repository.actions.PersistenceAction;
 import io.domainlifecycles.persistence.repository.actions.PersistenceContext;
 
 import java.io.Serializable;
+import java.util.Iterator;
 
 /**
  * A BaseValueObjectIdProvider provides basic functionality for providing technical ids for new {@link ValueObject}s.
@@ -56,21 +60,73 @@ public abstract class BaseValueObjectIdProvider<BASE_RECORD_TYPE> implements Val
     public void provideTechnicalIdsForNewVoRecord(BASE_RECORD_TYPE newVoRecord,
                                                   DomainObjectInstanceAccessModel<BASE_RECORD_TYPE> instanceAccessModel,
                                                   PersistenceContext<BASE_RECORD_TYPE> pc) {
-        var container = instanceAccessModel
-            .structuralPosition
-            .accessPathFromRoot
-            .descendingIterator()
-            .next()
-            .domainObject;
-        Serializable containerTechId;
-        if (container instanceof Entity) {
-            containerTechId = (Serializable) domainPersistenceProvider.getId((Entity<?>) container).value();
-        } else {
-            BASE_RECORD_TYPE voContainerRecord = pc.getNewValueObjectRecord((ValueObject) container);
-            containerTechId = selectExistingTechIdOfValueObject(voContainerRecord);
-        }
+        Serializable containerTechId = resolveContainerTechId(
+            instanceAccessModel.structuralPosition.accessPathFromRoot.descendingIterator(), pc);
         setContainerIdInNewVoRecord(newVoRecord, containerTechId);
         provideNewTechIdForValueObjectRecord(newVoRecord);
+    }
+
+    /**
+     * Resolves the technical id of the nearest actually persisted container (an {@link Entity}, or a
+     * {@link ValueObject} that already has its own inserted record) for a new value object / scalar list
+     * element record, walking up the access path from the immediate parent towards the root.
+     * <p>
+     * This walk-up is needed because an intermediate ancestor may be an inline value object (a plain,
+     * non-collection value object field that is mapped as columns on its own owner's record rather than as
+     * a separate row) - such an ancestor never has an entry in {@link PersistenceContext#getNewValueObjectRecord}
+     * and must be skipped in favor of the next persisted ancestor.
+     * <p>
+     * A missing entry alone does not tell "genuinely inline" apart from "record-mapped, but not inserted
+     * yet due to an ordering bug" - both look identical to {@link PersistenceContext#getNewValueObjectRecord}.
+     * {@link #hasPendingInsertAction} resolves that ambiguity by checking whether an {@code INSERT} action
+     * was ever detected for the ancestor in the first place: only a truly inline ancestor (no such action)
+     * is skipped; one with a not-yet-run {@code INSERT} action fails loudly instead of being silently
+     * misattributed to a more distant ancestor.
+     *
+     * @param ancestorsNearestFirst the access path ancestors, nearest (immediate parent) first
+     * @param pc                    the persistence context
+     * @return the technical id of the nearest persisted container
+     */
+    private Serializable resolveContainerTechId(
+        Iterator<StructuralPosition.AccessPathElement> ancestorsNearestFirst,
+        PersistenceContext<BASE_RECORD_TYPE> pc) {
+        while (ancestorsNearestFirst.hasNext()) {
+            var ancestor = ancestorsNearestFirst.next().domainObject;
+            if (ancestor instanceof Entity) {
+                return (Serializable) domainPersistenceProvider.getId((Entity<?>) ancestor).value();
+            }
+            BASE_RECORD_TYPE voContainerRecord = pc.getNewValueObjectRecord((ValueObject) ancestor);
+            if (voContainerRecord != null) {
+                return selectExistingTechIdOfValueObject(voContainerRecord);
+            }
+            if (hasPendingInsertAction((ValueObject) ancestor, pc)) {
+                // this ancestor IS record-mapped - an INSERT action for it was detected during structure
+                // processing - but that action has not actually run yet, so its record isn't registered
+                // in the persistence context. Unlike a genuinely inline ancestor (handled below), this is
+                // an insertion-ordering bug: walking further up would silently attribute the new value
+                // object to the wrong (grand-)container instead.
+                throw DLCPersistenceException.fail(
+                    "Insertion ordering error: the record-mapped value object ancestor '%s' has not been "
+                        + "inserted yet, so its technical id is not yet known.",
+                    ancestor.getClass().getName());
+            }
+            //this ancestor has no INSERT action of its own at all - it is genuinely an inline (non
+            //record-mapped) value object without a record of its own - keep walking up to find the
+            //nearest persisted container
+        }
+        throw DLCPersistenceException.fail(
+            "Could not determine the persisted container of a new value object record: neither an Entity nor a " +
+                "previously inserted ValueObject was found in the access path!");
+    }
+
+    /**
+     * Checks whether an {@code INSERT} action was detected for {@code ancestor} during structure processing
+     * (making it record-mapped, i.e. not inline), regardless of whether that action has already run.
+     */
+    private boolean hasPendingInsertAction(ValueObject ancestor, PersistenceContext<BASE_RECORD_TYPE> pc) {
+        return pc.getActionsPartitioned(ancestor.getClass().getName(), PersistenceAction.ActionType.INSERT)
+            .stream()
+            .anyMatch(action -> action.instanceAccessModel.domainObject() == ancestor);
     }
 
     protected abstract void setContainerIdInNewVoRecord(BASE_RECORD_TYPE newVoRecord,

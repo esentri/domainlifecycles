@@ -96,7 +96,7 @@ public class DlcEnvironmentPostProcessor implements EnvironmentPostProcessor {
                 props.put("dlc.features.persistence.jooq-record-package", ann.jooqRecordPackage());
             }
             if(!ann.jooqSqlDialect().isBlank()) {
-                props.put("dlc.feaures.persistence.sql-dialect", ann.jooqSqlDialect());
+                props.put("dlc.features.persistence.sql-dialect", ann.jooqSqlDialect());
             }
         }
 

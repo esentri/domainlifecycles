@@ -80,7 +80,7 @@ public class ValidationExtensionTest {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
             ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "OK", null,
                 1L);
-            root.komischeBerechnungMitValidationError();
+            root.strangeCalculationWithValidationError();
         });
         Assertions.assertThat(ex).hasMessageContaining("text darf niemals 'WRONG' sein!");
     }
@@ -119,7 +119,7 @@ public class ValidationExtensionTest {
     @Test
     public void testInstrumentationTextSetzenmitReturnOk() {
         ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null, 1L);
-        ValidatedAggregateRoot returned = root.textSetzenMitReturn("OK");
+        ValidatedAggregateRoot returned = root.setTextWithReturn("OK");
         Assertions.assertThat(returned).isNotNull();
         Assertions.assertThat(returned.getText()).isEqualTo("OK");
     }
@@ -129,7 +129,7 @@ public class ValidationExtensionTest {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
             ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null,
                 1L);
-            root.textSetzenMitReturn("WRONG");
+            root.setTextWithReturn("WRONG");
         });
         Assertions.assertThat(ex).hasMessageContaining("text darf niemals 'WRONG' sein!");
     }
@@ -137,7 +137,7 @@ public class ValidationExtensionTest {
     @Test
     public void testInstrumentationTextSetzenPreconditionOk() {
         ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null, 1L);
-        root.textSetzenPrecondition("OK");
+        root.setTextPrecondition("OK");
         Assertions.assertThat(root).isNotNull();
         Assertions.assertThat(root.getText()).isEqualTo("OK");
     }
@@ -147,15 +147,15 @@ public class ValidationExtensionTest {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
             ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null,
                 1L);
-            root.textSetzenPrecondition(" ");
+            root.setTextPrecondition(" ");
         });
-        Assertions.assertThat(ex).hasMessageContaining("textSetzenPrecondition");
+        Assertions.assertThat(ex).hasMessageContaining("setTextPrecondition");
     }
 
     @Test
     public void testInstrumentationTextSetzenReturnValOk() {
         ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null, 1L);
-        root.textSetzenMitReturn("OK");
+        root.setTextWithReturn("OK");
         Assertions.assertThat(root).isNotNull();
         Assertions.assertThat(root.getText()).isEqualTo("OK");
     }
@@ -165,9 +165,9 @@ public class ValidationExtensionTest {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
             ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null,
                 1L);
-            root.textSetzenReturnVal(" ");
+            root.setTextReturnVal(" ");
         });
-        Assertions.assertThat(ex).hasMessageContaining("textSetzenReturnVal");
+        Assertions.assertThat(ex).hasMessageContaining("setTextReturnVal");
     }
 
     @Test
@@ -175,7 +175,7 @@ public class ValidationExtensionTest {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
             ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null,
                 1L);
-            root.textSetzenPrecondition("WRONG");
+            root.setTextPrecondition("WRONG");
         });
         Assertions.assertThat(ex).hasMessageContaining("text darf niemals 'WRONG' sein!");
     }
@@ -184,7 +184,7 @@ public class ValidationExtensionTest {
     public void testInstrumentationOptionalTextSetzenFailLength() {
         ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null, 1L);
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
-            root.optionalTextSetzenMitReturn(Optional.of("1223344556677876555"));
+            root.setOptionalTextWithReturn(Optional.of("1223344556677876555"));
         });
         Assertions.assertThat(ex).hasMessageContaining("optionalText");
     }
@@ -203,7 +203,7 @@ public class ValidationExtensionTest {
         DomainAssertionException ex = assertThrows(DomainAssertionException.class, () -> {
             ValidatedAggregateRoot root = new ValidatedAggregateRoot(new ValidatedAggregateRootId(1L), "test", null,
                 1L);
-            root.textSetzenReturnVal("WRONG");
+            root.setTextReturnVal("WRONG");
         });
         Assertions.assertThat(ex).hasMessageContaining("text darf niemals 'WRONG' sein!");
     }

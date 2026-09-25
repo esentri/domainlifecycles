@@ -5,6 +5,7 @@ import io.domainlifecycles.autoconfig.configurations.DlcBuilderAutoConfiguration
 import io.domainlifecycles.autoconfig.configurations.DlcDomainAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJackson2AutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJacksonAutoConfiguration;
+import io.domainlifecycles.autoconfig.configurations.DlcJdbcPersistenceAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcSpringBusDomainEventsAutoConfiguration;
 import io.domainlifecycles.autoconfig.configurations.DlcServiceKindAutoConfiguration;
@@ -22,6 +23,7 @@ import java.util.Locale;
     DlcJackson2AutoConfiguration.class,
     DlcBuilderAutoConfiguration.class,
     DlcJooqPersistenceAutoConfiguration.class,
+    DlcJdbcPersistenceAutoConfiguration.class,
     DlcSpringOpenApiAutoConfiguration.class,
     DlcSpringWebAutoConfiguration.class,
     DlcSpringBusDomainEventsAutoConfiguration.class,

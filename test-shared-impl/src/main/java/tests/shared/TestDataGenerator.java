@@ -26,22 +26,27 @@
 
 package tests.shared;
 
-import tests.shared.complete.onlinehandel.bestellung.AktionsCodeBv3;
-import tests.shared.complete.onlinehandel.bestellung.ArtikelIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellKommentarBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellKommentarIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellPositionBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellPositionIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellStatusBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellStatusCodeEnumBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellStatusIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellungIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.KundennummerBv3;
-import tests.shared.complete.onlinehandel.bestellung.LieferadresseBv3;
-import tests.shared.complete.onlinehandel.bestellung.LieferadresseIdBv3;
-import tests.shared.complete.onlinehandel.bestellung.PreisBv3;
-import tests.shared.complete.onlinehandel.bestellung.WaehrungEnumBv3;
+import tests.shared.complete.ecommerce.order.PromoCodeBv3;
+import tests.shared.complete.ecommerce.order.ArticleIdBv3;
+import tests.shared.complete.ecommerce.order.OrderCommentBv3;
+import tests.shared.complete.ecommerce.order.OrderCommentIdBv3;
+import tests.shared.complete.ecommerce.order.OrderItemBv3;
+import tests.shared.complete.ecommerce.order.OrderItemIdBv3;
+import tests.shared.complete.ecommerce.order.OrderStatusBv3;
+import tests.shared.complete.ecommerce.order.OrderStatusCodeEnumBv3;
+import tests.shared.complete.ecommerce.order.OrderStatusIdBv3;
+import tests.shared.complete.ecommerce.order.OrderBv3;
+import tests.shared.complete.ecommerce.order.OrderIdBv3;
+import tests.shared.complete.ecommerce.order.CustomerNumberBv3;
+import tests.shared.complete.ecommerce.order.DeliveryAddressBv3;
+import tests.shared.complete.ecommerce.order.DeliveryAddressIdBv3;
+import tests.shared.complete.ecommerce.order.PriceBv3;
+import tests.shared.complete.ecommerce.order.CurrencyEnumBv3;
+import tests.shared.persistence.domain.oneToManyIdentityEnum.EntityIdEnumList;
+import tests.shared.persistence.domain.oneToManyIdentityEnum.MyId;
+import tests.shared.persistence.domain.oneToManyIdentityEnum.RootIdEnumList;
+import tests.shared.persistence.domain.oneToManyIdentityEnum.RootIdEnumListId;
+import tests.shared.persistence.domain.oneToManyIdentityEnum.ValueWithLists;
 import tests.shared.persistence.domain.complex.TestEntity1;
 import tests.shared.persistence.domain.complex.TestEntity1Id;
 import tests.shared.persistence.domain.complex.TestEntity2;
@@ -179,57 +184,57 @@ import java.util.stream.Stream;
 
 public class TestDataGenerator {
 
-    public static BestellungBv3 buildBestellungBv3() {
+    public static OrderBv3 buildOrderBv3() {
 
-        return BestellungBv3.builder()
-            .setId(new BestellungIdBv3(1L))
-            .setKundennummer(new KundennummerBv3("777777"))
-            .setPrioritaet(Byte.valueOf("1"))
-            .setLieferadresse(
-                LieferadresseBv3.builder()
-                    .setId(new LieferadresseIdBv3(1L))
+        return OrderBv3.builder()
+            .setId(new OrderIdBv3(1L))
+            .setCustomerNumber(new CustomerNumberBv3("777777"))
+            .setPriority(Byte.valueOf("1"))
+            .setDeliveryAddress(
+                DeliveryAddressBv3.builder()
+                    .setId(new DeliveryAddressIdBv3(1L))
                     .setName("Thor")
-                    .setOrt("Donnerberg")
-                    .setPostleitzahl("77777")
-                    .setStrasse("Hammerallee 7")
+                    .setCity("Donnerberg")
+                    .setPostalCode("77777")
+                    .setStreet("Hammerallee 7")
                     .build()
             )
-            .setBestellKommentare(newArrayListOf(
-                BestellKommentarBv3.builder()
-                    .setId(new BestellKommentarIdBv3(1L))
-                    .setKommentarAm(LocalDateTime.of(2021, 1, 1, 12, 0))
-                    .setKommentarText("Mach schnell sonst kommt der Hammer!")
+            .setOrderComments(newArrayListOf(
+                OrderCommentBv3.builder()
+                    .setId(new OrderCommentIdBv3(1L))
+                    .setCommentedAt(LocalDateTime.of(2021, 1, 1, 12, 0))
+                    .setCommentText("Mach schnell sonst kommt der Hammer!")
                     .build(),
-                BestellKommentarBv3.builder()
-                    .setId(new BestellKommentarIdBv3(2L))
-                    .setKommentarAm(LocalDateTime.of(2021, 1, 2, 12, 0))
-                    .setKommentarText("Der Donnergott grüßt!")
+                OrderCommentBv3.builder()
+                    .setId(new OrderCommentIdBv3(2L))
+                    .setCommentedAt(LocalDateTime.of(2021, 1, 2, 12, 0))
+                    .setCommentText("Der Donnergott grüßt!")
                     .build()
             ))
-            .setBestellStatus(
-                BestellStatusBv3.builder()
-                    .setStatusAenderungAm(LocalDateTime.of(2021, 1, 1, 12, 1))
-                    .setStatusCode(BestellStatusCodeEnumBv3.INITIAL)
-                    .setId(new BestellStatusIdBv3(1L))
+            .setOrderStatus(
+                OrderStatusBv3.builder()
+                    .setStatusChangedAt(LocalDateTime.of(2021, 1, 1, 12, 1))
+                    .setStatusCode(OrderStatusCodeEnumBv3.INITIAL)
+                    .setId(new OrderStatusIdBv3(1L))
                     .build()
-            ).setBestellPositionen(
+            ).setOrderItems(
                 newArrayListOf(
-                    BestellPositionBv3.builder()
-                        .setId(new BestellPositionIdBv3(1L))
-                        .setArtikelId(new ArtikelIdBv3(1L))
-                        .setStueckzahl(100)
-                        .setStueckPreis(PreisBv3.builder()
-                            .setBetrag(BigDecimal.ONE)
-                            .setWaehrung(WaehrungEnumBv3.EUR)
+                    OrderItemBv3.builder()
+                        .setId(new OrderItemIdBv3(1L))
+                        .setArticleId(new ArticleIdBv3(1L))
+                        .setQuantity(100)
+                        .setUnitPrice(PriceBv3.builder()
+                            .setAmount(BigDecimal.ONE)
+                            .setCurrency(CurrencyEnumBv3.EUR)
                             .build())
                         .build(),
-                    BestellPositionBv3.builder()
-                        .setId(new BestellPositionIdBv3(2L))
-                        .setArtikelId(new ArtikelIdBv3(2L))
-                        .setStueckzahl(10)
-                        .setStueckPreis(PreisBv3.builder()
-                            .setBetrag(BigDecimal.TEN)
-                            .setWaehrung(WaehrungEnumBv3.EUR)
+                    OrderItemBv3.builder()
+                        .setId(new OrderItemIdBv3(2L))
+                        .setArticleId(new ArticleIdBv3(2L))
+                        .setQuantity(10)
+                        .setUnitPrice(PriceBv3.builder()
+                            .setAmount(BigDecimal.TEN)
+                            .setCurrency(CurrencyEnumBv3.EUR)
                             .build())
                         .build()
                 )
@@ -237,70 +242,70 @@ public class TestDataGenerator {
             .build();
     }
 
-    public static List<BestellungBv3> buildManyBestellungenBv3() {
-        List<BestellungBv3> bestellungen = new ArrayList<>();
+    public static List<OrderBv3> buildManyOrdersBv3() {
+        List<OrderBv3> orders = new ArrayList<>();
         for (long i = 1; i < 11; i++) {
-            BestellungBv3 b = BestellungBv3.builder()
-                .setId(new BestellungIdBv3(i))
-                .setKundennummer(new KundennummerBv3("" + 777777 + i))
-                .setPrioritaet(Byte.valueOf("1"))
-                .setLieferadresse(
-                    LieferadresseBv3.builder()
-                        .setId(new LieferadresseIdBv3(i))
+            OrderBv3 b = OrderBv3.builder()
+                .setId(new OrderIdBv3(i))
+                .setCustomerNumber(new CustomerNumberBv3("" + 777777 + i))
+                .setPriority(Byte.valueOf("1"))
+                .setDeliveryAddress(
+                    DeliveryAddressBv3.builder()
+                        .setId(new DeliveryAddressIdBv3(i))
                         .setName("Thor" + i)
-                        .setOrt("Donnerberg")
-                        .setPostleitzahl("77777")
-                        .setStrasse("Hammerallee 7")
+                        .setCity("Donnerberg")
+                        .setPostalCode("77777")
+                        .setStreet("Hammerallee 7")
                         .build()
                 )
-                .setBestellKommentare(newArrayListOf(
-                    BestellKommentarBv3.builder()
-                        .setId(new BestellKommentarIdBv3(i))
-                        .setKommentarAm(LocalDateTime.of(2021, 1, 1, 12, 0))
-                        .setKommentarText("Mach schnell sonst kommt der Hammer!")
+                .setOrderComments(newArrayListOf(
+                    OrderCommentBv3.builder()
+                        .setId(new OrderCommentIdBv3(i))
+                        .setCommentedAt(LocalDateTime.of(2021, 1, 1, 12, 0))
+                        .setCommentText("Mach schnell sonst kommt der Hammer!")
                         .build(),
-                    BestellKommentarBv3.builder()
-                        .setId(new BestellKommentarIdBv3(i + 10))
-                        .setKommentarAm(LocalDateTime.of(2021, 1, 2, 12, 0))
-                        .setKommentarText("Der Donnergott grüßt!")
+                    OrderCommentBv3.builder()
+                        .setId(new OrderCommentIdBv3(i + 10))
+                        .setCommentedAt(LocalDateTime.of(2021, 1, 2, 12, 0))
+                        .setCommentText("Der Donnergott grüßt!")
                         .build()
                 ))
-                .setBestellStatus(
-                    BestellStatusBv3.builder()
-                        .setStatusAenderungAm(LocalDateTime.of(2021, 1, 1, 12, 1))
-                        .setStatusCode(BestellStatusCodeEnumBv3.INITIAL)
-                        .setId(new BestellStatusIdBv3(i))
+                .setOrderStatus(
+                    OrderStatusBv3.builder()
+                        .setStatusChangedAt(LocalDateTime.of(2021, 1, 1, 12, 1))
+                        .setStatusCode(OrderStatusCodeEnumBv3.INITIAL)
+                        .setId(new OrderStatusIdBv3(i))
                         .build()
-                ).setBestellPositionen(
+                ).setOrderItems(
                     newArrayListOf(
-                        BestellPositionBv3.builder()
-                            .setId(new BestellPositionIdBv3(i))
-                            .setArtikelId(new ArtikelIdBv3(1L))
-                            .setStueckzahl(100)
-                            .setStueckPreis(PreisBv3.builder()
-                                .setBetrag(BigDecimal.ONE)
-                                .setWaehrung(WaehrungEnumBv3.EUR)
+                        OrderItemBv3.builder()
+                            .setId(new OrderItemIdBv3(i))
+                            .setArticleId(new ArticleIdBv3(1L))
+                            .setQuantity(100)
+                            .setUnitPrice(PriceBv3.builder()
+                                .setAmount(BigDecimal.ONE)
+                                .setCurrency(CurrencyEnumBv3.EUR)
                                 .build())
                             .build(),
-                        BestellPositionBv3.builder()
-                            .setId(new BestellPositionIdBv3(i + 10))
-                            .setArtikelId(new ArtikelIdBv3(2L))
-                            .setStueckzahl(10)
-                            .setStueckPreis(PreisBv3.builder()
-                                .setBetrag(BigDecimal.TEN)
-                                .setWaehrung(WaehrungEnumBv3.EUR)
+                        OrderItemBv3.builder()
+                            .setId(new OrderItemIdBv3(i + 10))
+                            .setArticleId(new ArticleIdBv3(2L))
+                            .setQuantity(10)
+                            .setUnitPrice(PriceBv3.builder()
+                                .setAmount(BigDecimal.TEN)
+                                .setCurrency(CurrencyEnumBv3.EUR)
                                 .build())
                             .build()
                     )
                 )
-                .setAktionsCodes(newArrayListOf(
-                    AktionsCodeBv3.builder().setValue("Code1").build(),
-                    AktionsCodeBv3.builder().setValue("Code2").build()
+                .setPromoCodes(newArrayListOf(
+                    PromoCodeBv3.builder().setValue("Code1").build(),
+                    PromoCodeBv3.builder().setValue("Code2").build()
                 ))
                 .build();
-            bestellungen.add(b);
+            orders.add(b);
         }
-        return bestellungen;
+        return orders;
     }
 
     public static TestRoot buildTestRootComplex() {
@@ -578,7 +583,7 @@ public class TestDataGenerator {
 
     public static VoAggregateThreeLevel buildVoAggregateThreeLevelMax() {
         return VoAggregateThreeLevel.builder()
-            .setIdentifikationsNummer(new VoAggregateThreeLevelId(3L))
+            .setIdentificationNumber(new VoAggregateThreeLevelId(3L))
             .setInfo("TestMax")
             .setMyComplexVo(ComplexVo.builder()
                 .setValueA("myComplex_ValueA")
@@ -619,7 +624,7 @@ public class TestDataGenerator {
 
     public static VoAggregateThreeLevel buildVoAggregateThreeLevelMiddle() {
         return VoAggregateThreeLevel.builder()
-            .setIdentifikationsNummer(new VoAggregateThreeLevelId(2L))
+            .setIdentificationNumber(new VoAggregateThreeLevelId(2L))
             .setInfo("TestMiddle")
             .setThreeLevelVo(
                 ThreeLevelVo.builder()
@@ -639,7 +644,7 @@ public class TestDataGenerator {
 
     public static VoAggregateThreeLevel buildVoAggregateThreeLevelMin() {
         return VoAggregateThreeLevel.builder()
-            .setIdentifikationsNummer(new VoAggregateThreeLevelId(1L))
+            .setIdentificationNumber(new VoAggregateThreeLevelId(1L))
             .build();
     }
 
@@ -1663,7 +1668,6 @@ public class TestDataGenerator {
             .build();
     }
 
-/*
     public static RootIdEnumList buildRootIdEnumListOnlyRoot(){
         var r = RootIdEnumList
             .builder()
@@ -1682,7 +1686,7 @@ public class TestDataGenerator {
                 new EntityIdEnumList(
                     new EntityIdEnumList.EntityIdEnumListId(1l),
                     1l,
-                    newArrayListOf(MyEnum.TWO),
+                    newArrayListOf(tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.TWO),
                     newArrayListOf(new MyId(44L)),
                     null
                 )
@@ -1696,21 +1700,69 @@ public class TestDataGenerator {
             .builder()
             .setId(new RootIdEnumListId(1l))
             .setName("Complete")
-            .setEnumList(newArrayListOf(MyEnum.ONE, MyEnum.TWO))
+            .setEnumList(newArrayListOf(tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.ONE,
+                tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.TWO))
             .setIdList(newArrayListOf(new MyId(1l), new MyId(2l)))
             .setEntity(
                 new EntityIdEnumList(
                     new EntityIdEnumList.EntityIdEnumListId(1l),
                     1l,
-                    newArrayListOf(MyEnum.TWO),
+                    newArrayListOf(tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.TWO),
                     newArrayListOf(new MyId(44L)),
-                    new ValueWithLists(newArrayListOf(MyEnum.ONE, MyEnum.TWO), newArrayListOf(new MyId(88l), new MyId
-                    (99l), new MyId(111l)))
+                    null
                 )
             )
             .build();
         return r;
-    }*/
+    }
+
+    public static RootIdEnumList buildRootIdEnumListWithDuplicates(){
+        var r = RootIdEnumList
+            .builder()
+            .setId(new RootIdEnumListId(1l))
+            .setName("Duplicates")
+            .setEnumList(newArrayListOf(
+                tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.ONE,
+                tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.ONE,
+                tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.TWO))
+            .setIdList(newArrayListOf(new MyId(7l), new MyId(7l), new MyId(9l)))
+            .build();
+        return r;
+    }
+
+    public static RootIdEnumList buildRootIdEnumListWithUuidIds(){
+        var r = RootIdEnumList
+            .builder()
+            .setId(new RootIdEnumListId(1l))
+            .setName("UuidIds")
+            .setUuidIdList(newArrayListOf(
+                new tests.shared.persistence.domain.oneToManyIdentityEnum.MyUuidId(
+                    UUID.fromString("11111111-1111-1111-1111-111111111111")),
+                new tests.shared.persistence.domain.oneToManyIdentityEnum.MyUuidId(
+                    UUID.fromString("22222222-2222-2222-2222-222222222222"))
+            ))
+            .build();
+        return r;
+    }
+
+    public static RootIdEnumList buildRootIdEnumListWithValueWithListsList(){
+        var r = RootIdEnumList
+            .builder()
+            .setId(new RootIdEnumListId(1l))
+            .setName("ValueWithListsList")
+            .setValueWithListsList(newArrayListOf(
+                new ValueWithLists(
+                    newArrayListOf(tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.ONE),
+                    newArrayListOf(new MyId(10l))),
+                new ValueWithLists(
+                    newArrayListOf(
+                        tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.TWO,
+                        tests.shared.persistence.domain.oneToManyIdentityEnum.MyEnum.TWO),
+                    newArrayListOf(new MyId(20l), new MyId(21l)))
+            ))
+            .build();
+        return r;
+    }
 
     @SafeVarargs
     public static <T> List<T> newArrayListOf(final T... p) {

@@ -95,6 +95,8 @@ DLC provides following core features:
     * Persistence Action Event hooks
     * Full ValueObject support regarding persistence
     * Supports `final` Keywords and Java-Optionals within persisted structures
+    * Optional per-transaction Transaction Cache, reducing redundant `SELECT`s on `update()`/`deleteById()` -
+      works out of the box with Spring-managed transactions
 
 - [`Domain Events`](domain-events-core/readme.md): Simplifies some technical concerns about publishing and listening to 
   DomainEvents
@@ -161,16 +163,19 @@ DLC provides several JARs which enable the DLC features independently
 | Domain mirror                                                       | only internally used   | io.domainlifecycles:mirror                                                                                                                        |
 | Domain mirror serialization (Jackson 2)                             | only internally used   | io.domainlifecycles:mirror-serialization-jackson2                                                                                                 |
 | Domain mirror serialization (Jackson 3)                             | only internally used   | io.domainlifecycles:mirror-serialization-jackson3                                                                                                 |
-| Domain event support                                                | application developers | io.domainlifecycles:domain-events-{active-mq-classic, core, gruelbox, jakarta-jms, jakarta-jta, mq, serialization-jackson, spring-tx, spring-bus} |  
+| jMolecules DDD annotation/interface support for the Domain Mirror   | application developers | io.domainlifecycles:mirror-jmolecules                                                                                                             |
+| Domain event support                                                | application developers | io.domainlifecycles:domain-events-{activemq-classic5, core, gruelbox, jakarta-jms, jakarta-jta, mq, spring-tx, spring-bus} |  
 | Domain event serialization (Jackson 2)                              | only internally used   | io.domainlifecycles:domain-events-serialization-jackson2                                                                                          |
 | Domain event serialization (Jackson 3)                              | only internally used   | io.domainlifecycles:domain-events-serialization-jackson3                                                                                          |
 | Jackson 2 based JSON mapping                                        | application developers | io.domainlifecycles:jackson2-integration                                                                                                          |                         
 | Jackson 3 based JSON mapping                                        | application developers | io.domainlifecycles:jackson3-integration                                                                                                          |
 | Service registry                                                    | only internally used   | io.domainlifecycles:service-registry                                                                                                              |
 | Persistence interfaces and general persistence management           | only internally used   | io.domainlifecycles:persistence                                                                                                                   | 
+| Spring transaction binding for the DLC Transaction Cache             | only internally used   | io.domainlifecycles:persistence-spring-tx                                                                                                         |
 | Spring Boot 3 Autoconfig                                            | application developers | io.domainlifecycles:dlc-spring-boot3-autoconfig                                                                                                   |
 | Spring Boot 4 Autoconfig                                            | application developers | io.domainlifecycles:dlc-spring-boot-autoconfig                                                                                                    |
 | jOOQ based implementation for persistence management                | application developers | io.domainlifecycles:jooq-integration                                                                                                              |
+| Plain JDBC based implementation for persistence management (no jOOQ / code generation required) | application developers | io.domainlifecycles:jdbc-integration                                                                                         |
 | Bean Validation support (jakarta)                                   | application developers | io.domainlifecycles:bean-validations                                                                                                              |
 | Byte Buddy based auto validation extension                          | application developers | io.domainlifecycles:validation-extender                                                                                                           |
 | Spring Doc 2 Open API support                                       | application developers | io.domainlifecycles:spring-doc2-integration                                                                                                       | 
@@ -183,6 +188,7 @@ DLC provides several JARs which enable the DLC features independently
 | Static analysis result (DomainCalls) serialization (Jackson 2)      | application developers | io.domainlifecycles:static-analysis-serialization-jackson2                                                                                        |
 | Static analysis result (DomainCalls) serialization (Jackson 3)      | application developers | io.domainlifecycles:static-analysis-serialization-jackson3                                                                                        |
 | Domain Diagrams                                                     | application developers | io.domainlifecycles:domain-diagrammer                                                                                                             | 
+| Shared support code for the DLC Gradle/Maven build plugins          | only internally used   | io.domainlifecycles:dlc-plugins                                                                                                                    |
 
 To simplify the dependency management using all features in a Spring Boot 4.x app using jOOQ for the relational
 database persistence management, we provide a Spring Boot 4 starter:
@@ -194,7 +200,7 @@ database persistence management, we provide a Spring Boot 4 starter:
 Gradle setup for a Spring Boot 4.x app:
 ```Groovy
 dependencies{
-    implementation 'io.domainlifecycles:spring-boot-starter:3.4.0'
+    implementation 'io.domainlifecycles:spring-boot-starter:3.5.0'
 }
 ```
 
@@ -203,7 +209,7 @@ Maven setup for a Spring Boot 4 app:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>spring-boot-starter</artifactId>
-    <version>3.4.0</version>
+    <version>3.5.0</version>
 </dependency>
 ```
 
@@ -215,7 +221,7 @@ We also support Spring Boot 3.x:
 Gradle setup for a Spring Boot 3.x app:
 ```Groovy
 dependencies{
-    implementation 'io.domainlifecycles:spring-boot3-starter:3.4.0'
+    implementation 'io.domainlifecycles:spring-boot3-starter:3.5.0'
 }
 ```
 
@@ -224,7 +230,7 @@ Maven setup for a Spring Boot 3.x app:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>spring-boot3-starter</artifactId>
-    <version>3.4.0</version>
+    <version>3.5.0</version>
 </dependency>
 ```
 
@@ -276,6 +282,17 @@ A Gradle based sample project that demonstrates all DLC features can be found [h
 
 Just clone the repository, then `cd sample-project`
 and run `./gradlew bootRun` to start the application.
+
+### Gradle and Maven Plugins
+
+DLC provides Gradle (`dlc-gradle-plugin`) and Maven (`dlc-maven-plugin`) build plugins that generate visual domain
+diagrams (SVG, PNG or plain Nomnoml) directly from your compiled domain model, without depending on any DLC library
+at runtime. Diagrams can be restricted to structural filters (packages, blacklists, connection filters) or to the
+classes taking part in a concrete call flow, forward (`includeFlowsFrom`, "what does this lead to") or backward
+(`includeFlowsTo`, "what leads into this"), and can optionally render non-domain classes (e.g. controllers) that
+reference or are referenced by a service kind. The plugins also support exporting the domain model as JSON and
+uploading it to an external diagram viewer. See [dlc-plugins/readme.md](./dlc-plugins/readme.md) for full
+configuration options and Gradle/Maven examples.
 
 The DLC plugin is configured to generate domain model diagrams. 
 Within the sample projects directory, run `./gradlew createDiagram` to generate the diagrams.
