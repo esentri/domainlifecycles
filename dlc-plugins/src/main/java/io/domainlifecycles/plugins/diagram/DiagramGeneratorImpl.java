@@ -145,10 +145,13 @@ public class DiagramGeneratorImpl implements DiagramGenerator {
             throw DLCPluginsException.fail("DomainMirror couldn't be initialized.", e);
         }
 
+        boolean hasFlowsFrom = diagramConfig.getIncludeFlowsFrom() != null && !diagramConfig.getIncludeFlowsFrom().isEmpty();
+        boolean hasFlowsTo = diagramConfig.getIncludeFlowsTo() != null && !diagramConfig.getIncludeFlowsTo().isEmpty();
+
         final DomainDiagramGenerator generator;
-        if (diagramConfig.getIncludeFlowsFrom() != null && !diagramConfig.getIncludeFlowsFrom().isEmpty()) {
+        if (hasFlowsFrom || hasFlowsTo) {
             // only run the (comparatively expensive) static analysis when the diagram is actually
-            // restricted to a flow
+            // restricted to a flow, forward or backward
             final List<String> analyzedPackages = diagramConfig.getStaticAnalysisPackages() != null
                 && !diagramConfig.getStaticAnalysisPackages().isEmpty()
                 ? diagramConfig.getStaticAnalysisPackages()

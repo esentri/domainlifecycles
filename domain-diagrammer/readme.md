@@ -131,6 +131,36 @@ The restriction only ever narrows: a class outside the configured packages or on
 `classesBlacklist` stays out, even when the flow reaches it. Entities and value objects inside an
 aggregate that survives the filter are still drawn, as with every other trim setting.
 
+### The backward direction: entry channels into a target
+
+`includeFlowsFrom` answers "what does this lead to". `withIncludeFlowsTo(...)` is its backward
+counterpart: "what leads into this" - all the entry channels through which a target is reached:
+
+```Java
+var trim = DiagramTrimSettings.builder()
+    .withExplicitlyIncludedPackageNames(List.of("yourdomain"))
+    .withIncludeFlowsTo(List.of("yourdomain.order.OrderService"))
+    .build();
+```
+
+Same entry syntax as `includeFlowsFrom`:
+
+| Entry | Reaches the entry points into |
+|---|---|
+| a domain event | the methods publishing that event |
+| any other domain type (aggregate, service, ...) | everything calling any of its methods, plus, for an aggregate/read model, the repository/query handler structurally managing/providing it |
+| `type#method` | everything calling that method |
+
+A domain command cannot be a backward flow target (nothing in the analyzed data leads *into* a
+command) - passing one throws `IllegalArgumentException`. A command can still appear *as a reached
+node* in the result, when a target is reached because it processes that command.
+
+`includeFlowsFrom` and `includeFlowsTo` can be configured together; their reached classes are
+united, so a diagram can show both what a seed leads to and what leads into another (or the same)
+seed at once. The rendering direction of every edge is unaffected either way - it always follows
+the structural direction of the mirror data (e.g. service → repository), regardless of which
+direction the flow search that kept a node visible ran in.
+
 ## Showing non-domain classes
 
 The [mirror](../mirror/readme.md#mirroring-non-domain-classes) does not only mirror classes

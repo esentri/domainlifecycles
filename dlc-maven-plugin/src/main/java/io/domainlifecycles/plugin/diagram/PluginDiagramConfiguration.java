@@ -314,6 +314,9 @@ public class PluginDiagramConfiguration {
     @Parameter(property = "includeFlowsFrom", required = false)
     private List<String> includeFlowsFrom;
 
+    @Parameter(property = "includeFlowsTo", required = false)
+    private List<String> includeFlowsTo;
+
     @Parameter(property = "flowMaxDepth", required = false)
     private Integer flowMaxDepth;
 
@@ -1109,6 +1112,20 @@ public class PluginDiagramConfiguration {
      */
     public List<String> getIncludeFlowsFrom() {
         return includeFlowsFrom;
+    }
+
+    /**
+     * Gets the flow target points the diagram is restricted to - the backward counterpart of
+     * {@link #getIncludeFlowsFrom()}: instead of "what does this lead to", it restricts the diagram
+     * to "what leads into this", the entry channels through which a type or method is reached. Same
+     * entry syntax and requirements as {@link #getIncludeFlowsFrom()}, except a domain command can
+     * never be a target. If both are configured, their reached types are united. Configuring this
+     * triggers a static analysis of the compiled domain classes during diagram generation.
+     *
+     * @return the flow target points.
+     */
+    public List<String> getIncludeFlowsTo() {
+        return includeFlowsTo;
     }
 
     /**

@@ -176,6 +176,16 @@ public class DiagramConfigTest {
     }
 
     @Test
+    void mapCopiesIncludeFlowsToIntoTrimSettings() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setIncludeFlowsTo(List.of("com.example.order.OrderPlaced"));
+
+        DomainDiagramConfig mapped = diagramConfig.map();
+
+        assertThat(mapped.getDiagramTrimSettings().getIncludeFlowsTo()).containsExactly("com.example.order.OrderPlaced");
+    }
+
+    @Test
     void mapWithoutAnyFlowSettingKeepsDefaultFlowConfig() {
         FlowConfig defaults = FlowConfig.defaults();
 

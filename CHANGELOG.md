@@ -41,6 +41,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   to create a container from it - previously the very first SVG diagram generation on a machine
   failed with a Docker "image not known" error, since `docker create` (unlike `docker run`) does not
   pull automatically
+- Added backward flow filtering, the counterpart to the existing (forward) `flowFrom`/
+  `includeFlowsFrom` restriction:
+  - [static-analysis](./static-analysis)'s `FlowAnalyzer` gained `flowTo(DomainMethod)`,
+    `flowTo(DomainEventMirror)`, `flowTo(DomainTypeMirror)` and
+    `flowTo(String typeName, String methodName)`, answering "what leads into this" instead of
+    "what does this lead to" - reversing `CALL`, `IMPLEMENTATION`, `EVENT_LISTEN` and
+    `COMMAND_PROCESS` edges, plus, for an `AggregateRootMirror`/`ReadModelMirror`, structurally
+    resolving the repository/query handler managing/providing it. There is deliberately no
+    `flowTo(DomainCommandMirror)`, since nothing in the analyzed data leads into a command - a
+    command can still appear as a reached leaf via reversed `COMMAND_PROCESS`
+  - The [domain diagrammer](./domain-diagrammer)'s `DiagramTrimSettings` gained
+    `includeFlowsTo`, the backward counterpart of `includeFlowsFrom`, using the same entry syntax
+    (except a domain command cannot be a target - `IllegalArgumentException` if attempted). Both
+    settings can be combined; their reached classes are united. The direction diagram edges are
+    drawn in is unaffected either way, since it always follows the structural mirror data, not the
+    flow search direction
+  - The Gradle and Maven diagram plugins (via the shared `dlc-plugins` `DiagramConfig`) now expose
+    `includeFlowsTo` as a diagram configuration option, mirroring `includeFlowsFrom` exactly,
+    including triggering the static analysis whenever either is configured
 
 ## [3.4.0] - 2026-09-11
 - Improved DLC persistence initialization performance

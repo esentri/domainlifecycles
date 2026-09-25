@@ -50,6 +50,7 @@ public class DiagramConfigMapperTest {
         when(mavenDiagramConfig.getShowFields()).thenReturn(true);
         when(mavenDiagramConfig.getMethodBlacklist()).thenReturn(List.of("internalHelper"));
         when(mavenDiagramConfig.getIncludeFlowsFrom()).thenReturn(List.of("com.example.order.PlaceOrder"));
+        when(mavenDiagramConfig.getIncludeFlowsTo()).thenReturn(List.of("com.example.order.OrderPlaced"));
         when(mavenDiagramConfig.getFlowMaxDepth()).thenReturn(2);
         when(mavenDiagramConfig.getFlowFollowEvents()).thenReturn(false);
         when(mavenDiagramConfig.getFlowFollowImplementations()).thenReturn(false);
@@ -64,6 +65,7 @@ public class DiagramConfigMapperTest {
         assertThat(diagramConfig.getShowFields()).isTrue();
         assertThat(diagramConfig.getMethodBlacklist()).containsExactly("internalHelper");
         assertThat(diagramConfig.getIncludeFlowsFrom()).containsExactly("com.example.order.PlaceOrder");
+        assertThat(diagramConfig.getIncludeFlowsTo()).containsExactly("com.example.order.OrderPlaced");
         assertThat(diagramConfig.getFlowMaxDepth()).isEqualTo(2);
         assertThat(diagramConfig.getFlowFollowEvents()).isFalse();
         assertThat(diagramConfig.getFlowFollowImplementations()).isFalse();
@@ -93,6 +95,7 @@ public class DiagramConfigMapperTest {
         assertThat(diagramConfig.getExplicitlyIncludedPackageNames()).isEmpty();
         assertThat(diagramConfig.getMethodBlacklist()).isEmpty();
         assertThat(diagramConfig.getIncludeFlowsFrom()).isEmpty();
+        assertThat(diagramConfig.getIncludeFlowsTo()).isEmpty();
         assertThat(diagramConfig.getFlowMaxDepth()).isNull();
         assertThat(diagramConfig.getFlowFollowEvents()).isNull();
         assertThat(diagramConfig.getFlowFollowImplementations()).isNull();

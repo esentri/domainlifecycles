@@ -61,6 +61,7 @@ public class DiagramConfigMapperTest {
         extension.getShowFields().set(true);
         extension.getMethodBlacklist().set(List.of("internalHelper"));
         extension.getIncludeFlowsFrom().set(List.of("com.example.order.PlaceOrder"));
+        extension.getIncludeFlowsTo().set(List.of("com.example.order.OrderPlaced"));
         extension.getFlowMaxDepth().set(2);
         extension.getFlowFollowEvents().set(false);
         extension.getFlowFollowImplementations().set(false);
@@ -75,6 +76,7 @@ public class DiagramConfigMapperTest {
         assertThat(diagramConfig.getShowFields()).isTrue();
         assertThat(diagramConfig.getMethodBlacklist()).containsExactly("internalHelper");
         assertThat(diagramConfig.getIncludeFlowsFrom()).containsExactly("com.example.order.PlaceOrder");
+        assertThat(diagramConfig.getIncludeFlowsTo()).containsExactly("com.example.order.OrderPlaced");
         assertThat(diagramConfig.getFlowMaxDepth()).isEqualTo(2);
         assertThat(diagramConfig.getFlowFollowEvents()).isFalse();
         assertThat(diagramConfig.getFlowFollowImplementations()).isFalse();
@@ -95,6 +97,7 @@ public class DiagramConfigMapperTest {
         // ListProperty falls back to Gradle's built-in empty-list convention rather than null when unset
         assertThat(diagramConfig.getExplicitlyIncludedPackageNames()).isEmpty();
         assertThat(diagramConfig.getIncludeFlowsFrom()).isEmpty();
+        assertThat(diagramConfig.getIncludeFlowsTo()).isEmpty();
         assertThat(diagramConfig.getFlowMaxDepth()).isNull();
         assertThat(diagramConfig.getFlowFollowEvents()).isNull();
         assertThat(diagramConfig.getFlowFollowImplementations()).isNull();

@@ -139,6 +139,7 @@ public class DiagramConfigMapper {
         diagramConfig.setShowRelationshipLabels(extension.getShowRelationshipLabels().getOrNull());
         diagramConfig.setShowRelationshipStereotypes(extension.getShowRelationshipStereotypes().getOrNull());
         diagramConfig.setIncludeFlowsFrom(extension.getIncludeFlowsFrom().getOrNull());
+        diagramConfig.setIncludeFlowsTo(extension.getIncludeFlowsTo().getOrNull());
         diagramConfig.setFlowMaxDepth(extension.getFlowMaxDepth().getOrNull());
         diagramConfig.setFlowFollowEvents(extension.getFlowFollowEvents().getOrNull());
         diagramConfig.setFlowFollowImplementations(extension.getFlowFollowImplementations().getOrNull());

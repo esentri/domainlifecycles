@@ -144,6 +144,7 @@ public class DiagramConfig {
     private Boolean showRelationshipLabels;
     private Boolean showRelationshipStereotypes;
     private List<String> includeFlowsFrom;
+    private List<String> includeFlowsTo;
     private Integer flowMaxDepth;
     private Boolean flowFollowEvents;
     private Boolean flowFollowImplementations;
@@ -1651,6 +1652,29 @@ public class DiagramConfig {
     }
 
     /**
+     * Gets the flow target points the diagram is restricted to - the backward counterpart of
+     * {@link #getIncludeFlowsFrom()}: instead of "what does this lead to", it restricts the
+     * diagram to "what leads into this", the entry channels through which a type or method is
+     * reached. Same entry syntax and requirements as {@link #getIncludeFlowsFrom()}, except a
+     * domain command can never be a target. If both are configured, their reached types are
+     * united.
+     *
+     * @return the flow target points, or {@code null}/empty if backward flow-based filtering is disabled
+     */
+    public List<String> getIncludeFlowsTo() {
+        return includeFlowsTo;
+    }
+
+    /**
+     * Sets the flow target points the diagram should be restricted to.
+     *
+     * @param includeFlowsTo the flow target points to set
+     */
+    public void setIncludeFlowsTo(List<String> includeFlowsTo) {
+        this.includeFlowsTo = includeFlowsTo;
+    }
+
+    /**
      * Gets the maximum depth a flow is followed to, when flow-based filtering is enabled.
      *
      * @return the maximum flow depth, or {@code null} for the default (unlimited)
@@ -1840,6 +1864,7 @@ public class DiagramConfig {
         if(showRelationshipLabels != null) visualBuilder.withShowRelationshipLabels(showRelationshipLabels);
         if(showRelationshipStereotypes != null) visualBuilder.withShowRelationshipStereotypes(showRelationshipStereotypes);
         if(includeFlowsFrom != null && !includeFlowsFrom.isEmpty()) trimBuilder.withIncludeFlowsFrom(includeFlowsFrom);
+        if(includeFlowsTo != null && !includeFlowsTo.isEmpty()) trimBuilder.withIncludeFlowsTo(includeFlowsTo);
 
         FlowConfig flowConfig = FlowConfig.defaults();
         boolean flowConfigured = false;

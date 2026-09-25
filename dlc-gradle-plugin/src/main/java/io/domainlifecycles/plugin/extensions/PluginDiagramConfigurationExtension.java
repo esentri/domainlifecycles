@@ -662,8 +662,20 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
     public abstract ListProperty<String> getIncludeFlowsFrom();
 
     /**
+     * Retrieves the flow target points the diagram is restricted to - the backward counterpart of
+     * {@link #getIncludeFlowsFrom()}: instead of "what does this lead to", it restricts the diagram
+     * to "what leads into this", the entry channels through which a type or method is reached. Same
+     * entry syntax and requirements as {@link #getIncludeFlowsFrom()}, except a domain command can
+     * never be a target. If both are configured, their reached types are united. Configuring this
+     * triggers a static analysis of the compiled domain classes during diagram generation.
+     *
+     * @return a ListProperty containing the flow target points.
+     */
+    public abstract ListProperty<String> getIncludeFlowsTo();
+
+    /**
      * Retrieves the maximum depth a flow is followed to, when flow-based filtering is enabled via
-     * {@link #getIncludeFlowsFrom()}.
+     * {@link #getIncludeFlowsFrom()} or {@link #getIncludeFlowsTo()}.
      *
      * @return a Property containing the maximum flow depth, unlimited if unset.
      */

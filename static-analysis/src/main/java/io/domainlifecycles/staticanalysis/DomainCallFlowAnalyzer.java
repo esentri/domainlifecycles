@@ -26,12 +26,14 @@
 
 package io.domainlifecycles.staticanalysis;
 
+import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
+import io.domainlifecycles.mirror.api.ReadModelMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
 
 import java.util.ArrayDeque;
@@ -45,6 +47,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -82,6 +85,8 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
 
     private final Map<String, List<DomainMethod>> processorsByCommandTypeName;
 
+    private final Map<String, List<DomainMethod>> publishersByEventTypeName;
+
     private final Map<String, List<DomainTypeMirror>> implementationsBySupertypeName;
 
     /**
@@ -107,9 +112,11 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
 
         Map<String, List<DomainMethod>> listeners = new LinkedHashMap<>();
         Map<String, List<DomainMethod>> processors = new LinkedHashMap<>();
-        indexEventsAndCommands(listeners, processors);
+        Map<String, List<DomainMethod>> publishers = new LinkedHashMap<>();
+        indexEventsAndCommands(listeners, processors, publishers);
         this.listenersByEventTypeName = Collections.unmodifiableMap(listeners);
         this.processorsByCommandTypeName = Collections.unmodifiableMap(processors);
+        this.publishersByEventTypeName = Collections.unmodifiableMap(publishers);
         this.implementationsBySupertypeName =
             Collections.unmodifiableMap(indexImplementations());
     }
@@ -120,7 +127,7 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
     @Override
     public Flow flowFrom(DomainMethod start) {
         Objects.requireNonNull(start, "A starting DomainMethod must be given!");
-        return traverse(Step.start(start));
+        return traverse(Step.start(start), this::successorsOf);
     }
 
     /**
@@ -129,7 +136,7 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
     @Override
     public Flow flowFrom(DomainEventMirror event) {
         Objects.requireNonNull(event, "A starting DomainEventMirror must be given!");
-        return traverse(Step.start(event));
+        return traverse(Step.start(event), this::successorsOf);
     }
 
     /**
@@ -138,7 +145,7 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
     @Override
     public Flow flowFrom(DomainCommandMirror command) {
         Objects.requireNonNull(command, "A starting DomainCommandMirror must be given!");
-        return traverse(Step.start(command));
+        return traverse(Step.start(command), this::successorsOf);
     }
 
     /**
@@ -154,11 +161,51 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
             .map(this::flowFrom);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Flow flowTo(DomainMethod target) {
+        Objects.requireNonNull(target, "A target DomainMethod must be given!");
+        return traverse(Step.start(target), this::predecessorsOf);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Flow flowTo(DomainEventMirror event) {
+        Objects.requireNonNull(event, "A target DomainEventMirror must be given!");
+        return traverse(Step.start(event), this::predecessorsOf);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Flow flowTo(DomainTypeMirror target) {
+        Objects.requireNonNull(target, "A target DomainTypeMirror must be given!");
+        return traverse(Step.start(target), this::predecessorsOf);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<Flow> flowTo(String typeName, String methodName) {
+        Optional<DomainTypeMirror> typeMirror = domainMirror.getDomainTypeMirror(typeName);
+        return typeMirror.flatMap(mirror -> mirror.getMethods().stream()
+            .filter(method -> method.getName().equals(methodName))
+            .findFirst()
+            .map(method -> new DomainMethod(mirror.getTypeName(), method)))
+            .map(this::flowTo);
+    }
+
     // ---------------------------------------------------------------------
     // Traversal
     // ---------------------------------------------------------------------
 
-    private Flow traverse(Step start) {
+    private Flow traverse(Step start, Function<Step, List<Step>> edgesOf) {
         List<Step> steps = new ArrayList<>();
         Set<String> expanded = new HashSet<>();
         Deque<Step> queue = new ArrayDeque<>();
@@ -170,7 +217,7 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
 
         while (!queue.isEmpty()) {
             Step current = queue.poll();
-            List<Step> successors = successorsOf(current);
+            List<Step> successors = edgesOf.apply(current);
             if (successors.isEmpty()) {
                 continue;
             }
@@ -281,6 +328,111 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
         return successors;
     }
 
+    // ---------------------------------------------------------------------
+    // Backward traversal (flowTo)
+    // ---------------------------------------------------------------------
+
+    private List<Step> predecessorsOf(Step current) {
+        // no pattern matching switch: the module targets Java 17, where it is still a preview
+        if (current instanceof Step.MethodStep methodStep) {
+            return predecessorsOfMethod(methodStep, methodStep.method());
+        }
+        if (current instanceof Step.EventStep eventStep) {
+            return predecessorsOfEvent(eventStep);
+        }
+        if (current instanceof Step.TypeStep typeStep) {
+            return predecessorsOfType(typeStep);
+        }
+        // CommandStep: nothing in the analyzed data models where a command originates
+        return List.of();
+    }
+
+    /**
+     * The predecessors of the given method, attached to the given step. Split out from
+     * {@link #predecessorsOf(Step)} so {@link #predecessorsOfType(Step.TypeStep)} can apply it to
+     * every method of a type without an intermediate per-method step of its own.
+     */
+    private List<Step> predecessorsOfMethod(Step from, DomainMethod method) {
+        List<Step> predecessors = new ArrayList<>();
+
+        for (DomainMethod caller : domainCalls.callersOf(method)) {
+            if (!config.methodFilter().test(caller)) {
+                continue;
+            }
+            predecessors.add(Step.calledBy(from, caller, isOnPath(from, Step.nodeKeyOf(caller))));
+        }
+
+        if (config.followImplementations()) {
+            for (DomainMethod overridden : overriddenSupertypeMethodsOf(method)) {
+                if (!config.methodFilter().test(overridden)) {
+                    continue;
+                }
+                predecessors.add(Step.implementedBy(from, overridden,
+                    isOnPath(from, Step.nodeKeyOf(overridden))));
+            }
+        }
+
+        if (config.followEvents()) {
+            method.mirror().getListenedEvent().ifPresent(event ->
+                predecessors.add(Step.listenedTo(from, event,
+                    isOnPath(from, Step.nodeKeyOf(event)))));
+        }
+
+        for (DomainCommandMirror command : method.mirror().getProcessedCommands()) {
+            predecessors.add(Step.processedCommand(from, command,
+                isOnPath(from, Step.nodeKeyOf(command))));
+        }
+
+        return predecessors;
+    }
+
+    private List<Step> predecessorsOfEvent(Step.EventStep current) {
+        if (!config.followEvents()) {
+            return List.of();
+        }
+        List<Step> predecessors = new ArrayList<>();
+        for (DomainMethod publisher : publishersOf(current.event())) {
+            if (!config.methodFilter().test(publisher)) {
+                continue;
+            }
+            predecessors.add(Step.publishedBy(current, publisher,
+                isOnPath(current, Step.nodeKeyOf(publisher))));
+        }
+        return predecessors;
+    }
+
+    /**
+     * The predecessors of a plain domain type: the callers of any of its own methods, unioned with
+     * - for an Aggregate or ReadModel - the Repository or QueryHandler exposing it. The latter is
+     * itself a {@link Step.TypeStep}, so the BFS expands it the same way on its next turn, which is
+     * what lets "who calls the repository" chain in automatically.
+     */
+    private List<Step> predecessorsOfType(Step.TypeStep current) {
+        List<Step> predecessors = new ArrayList<>();
+        DomainTypeMirror type = current.type();
+
+        for (MethodMirror method : type.getMethods()) {
+            predecessors.addAll(
+                predecessorsOfMethod(current, new DomainMethod(type.getTypeName(), method)));
+        }
+
+        if (type instanceof AggregateRootMirror) {
+            for (DomainTypeMirror repository : repositoriesManaging(type.getTypeName())) {
+                predecessors.add(Step.managedBy(current, repository,
+                    isOnPath(current, Step.nodeKeyOf(repository))));
+            }
+        }
+
+        if (type instanceof ReadModelMirror) {
+            for (DomainTypeMirror queryHandler : queryHandlersProviding(type.getTypeName())) {
+                predecessors.add(Step.providedBy(current, queryHandler,
+                    isOnPath(current, Step.nodeKeyOf(queryHandler))));
+            }
+        }
+
+        return predecessors;
+    }
+
     /**
      * Whether the given node already occurs among the predecessors of the given step, which means
      * following it would close a cycle.
@@ -301,12 +453,16 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
     // ---------------------------------------------------------------------
 
     /**
-     * Indexes, for every domain event, the methods listening to it, and for every domain command
-     * the methods processing it. Both are attributed to the concrete owner type, matching the way
-     * {@link DomainCalls} attributes calls.
+     * Indexes, for every domain event, the methods listening to it and the methods publishing it,
+     * and for every domain command the methods processing it. All are attributed to the concrete
+     * owner type, matching the way {@link DomainCalls} attributes calls. The publishers index is
+     * only needed for the backward traversal ({@link #predecessorsOfEvent(Step.EventStep)}): going
+     * forward, a method's own published events are read directly off its mirror, with no need for
+     * a global index.
      */
     private void indexEventsAndCommands(Map<String, List<DomainMethod>> listeners,
-                                        Map<String, List<DomainMethod>> processors) {
+                                        Map<String, List<DomainMethod>> processors,
+                                        Map<String, List<DomainMethod>> publishers) {
 
         for (DomainTypeMirror typeMirror : domainMirror.getAllDomainTypeMirrors()) {
             for (MethodMirror method : typeMirror.getMethods()) {
@@ -320,6 +476,11 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
                     processors.computeIfAbsent(command.getTypeName(), k -> new ArrayList<>())
                         .add(methodCall);
                 }
+
+                for (DomainEventMirror published : method.getPublishedEvents()) {
+                    publishers.computeIfAbsent(published.getTypeName(), k -> new ArrayList<>())
+                        .add(methodCall);
+                }
             }
         }
     }
@@ -330,6 +491,34 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
 
     private List<DomainMethod> processorsOf(DomainCommandMirror command) {
         return processorsByCommandTypeName.getOrDefault(command.getTypeName(), List.of());
+    }
+
+    private List<DomainMethod> publishersOf(DomainEventMirror event) {
+        return publishersByEventTypeName.getOrDefault(event.getTypeName(), List.of());
+    }
+
+    // ---------------------------------------------------------------------
+    // Repository / QueryHandler lookup (backward MANAGES_AGGREGATE / PROVIDES_READ_MODEL)
+    // ---------------------------------------------------------------------
+
+    private List<DomainTypeMirror> repositoriesManaging(String aggregateTypeName) {
+        List<DomainTypeMirror> repositories = new ArrayList<>();
+        for (RepositoryMirror repository : domainMirror.getAllRepositoryMirrors()) {
+            repository.getManagedAggregate()
+                .filter(aggregate -> aggregate.getTypeName().equals(aggregateTypeName))
+                .ifPresent(aggregate -> repositories.add(repository));
+        }
+        return repositories;
+    }
+
+    private List<DomainTypeMirror> queryHandlersProviding(String readModelTypeName) {
+        List<DomainTypeMirror> queryHandlers = new ArrayList<>();
+        for (QueryHandlerMirror queryHandler : domainMirror.getAllQueryHandlerMirrors()) {
+            queryHandler.getProvidedReadModel()
+                .filter(readModel -> readModel.getTypeName().equals(readModelTypeName))
+                .ifPresent(readModel -> queryHandlers.add(queryHandler));
+        }
+        return queryHandlers;
     }
 
     // ---------------------------------------------------------------------
@@ -380,6 +569,28 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
                     new DomainMethod(implementation.getTypeName(), candidate)));
         }
         return implementations;
+    }
+
+    /**
+     * The abstract or interface methods the given one overrides: for every ancestor type
+     * (superclass or interface) of its owner, the method with the same signature, if the ancestor
+     * declares one. This is the inverse of {@link #implementationsOf(DomainMethod)}, walked from
+     * the owner's own hierarchy rather than via a precomputed index - the owner is already known
+     * from the single method being reversed, so no global index is needed here.
+     */
+    private List<DomainMethod> overriddenSupertypeMethodsOf(DomainMethod method) {
+        List<DomainMethod> overridden = new ArrayList<>();
+        domainMirror.getDomainTypeMirror(method.typeName()).ifPresent(owner ->
+            Stream.concat(owner.getInheritanceHierarchyTypeNames().stream(),
+                    owner.getAllInterfaceTypeNames().stream())
+                .distinct()
+                .forEach(supertypeName -> domainMirror.getDomainTypeMirror(supertypeName)
+                    .ifPresent(supertype -> supertype.getMethods().stream()
+                        .filter(candidate -> hasSameSignature(candidate, method.mirror()))
+                        .findFirst()
+                        .ifPresent(candidate -> overridden.add(
+                            new DomainMethod(supertype.getTypeName(), candidate))))));
+        return overridden;
     }
 
     /**

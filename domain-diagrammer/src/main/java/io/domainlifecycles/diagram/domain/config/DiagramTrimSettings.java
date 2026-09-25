@@ -51,6 +51,7 @@ public class DiagramTrimSettings {
     private final List<String> excludeConnectedToIngoing;
     private final List<String> excludeConnectedToOutgoing;
     private final List<String> includeFlowsFrom;
+    private final List<String> includeFlowsTo;
 
     /**
      * Gets the starting points of the flows the diagram is restricted to.
@@ -74,12 +75,32 @@ public class DiagramTrimSettings {
     }
 
     /**
-     * Determines whether the diagram is restricted to one or more flows.
+     * Gets the target points of the flows the diagram is restricted to - the backward counterpart
+     * of {@link #getIncludeFlowsFrom()}: instead of "what does this lead to", it answers "what
+     * leads into this", i.e. the entry channels through which a type or method is reached.
+     * <p>
+     * Same entry syntax and requirements as {@link #getIncludeFlowsFrom()} (a full qualified type
+     * name, optionally followed by {@code #} and a method name; requires the result of a static
+     * analysis). There is one difference: a domain command can never be a target, since nothing in
+     * the analyzed data models where a command originates - a command can still appear as a
+     * reached node on the way to a target, just never as a target itself.
+     * <p>
+     * If both {@link #getIncludeFlowsFrom()} and this are configured, their reached types are
+     * united: a type survives if reached by either direction.
      *
-     * @return {@code true} if at least one flow starting point is configured
+     * @return List of flow target points, empty if the diagram is not restricted to a backward flow
+     */
+    public List<String> getIncludeFlowsTo() {
+        return includeFlowsTo;
+    }
+
+    /**
+     * Determines whether the diagram is restricted to one or more flows, forward or backward.
+     *
+     * @return {@code true} if at least one flow starting or target point is configured
      */
     public boolean hasFlowSettings() {
-        return !this.getIncludeFlowsFrom().isEmpty();
+        return !this.getIncludeFlowsFrom().isEmpty() || !this.getIncludeFlowsTo().isEmpty();
     }
 
     /**
@@ -179,7 +200,8 @@ public class DiagramTrimSettings {
         List<String> includeConnectedToOutgoing, 
         List<String> excludeConnectedToIngoing,
         List<String> excludeConnectedToOutgoing,
-        List<String> includeFlowsFrom
+        List<String> includeFlowsFrom,
+        List<String> includeFlowsTo
     ) {
         this.classesBlacklist = classesBlacklist;
         this.explicitlyIncludedPackageNames = explicitlyIncludedPackageNames;
@@ -189,6 +211,7 @@ public class DiagramTrimSettings {
         this.excludeConnectedToIngoing = excludeConnectedToIngoing;
         this.excludeConnectedToOutgoing = excludeConnectedToOutgoing;
         this.includeFlowsFrom = includeFlowsFrom;
+        this.includeFlowsTo = includeFlowsTo;
     }
 
     /**
@@ -212,6 +235,7 @@ public class DiagramTrimSettings {
         private List<String> excludeConnectedToIngoing$value;
         private List<String> excludeConnectedToOutgoing$value;
         private List<String> includeFlowsFrom$value;
+        private List<String> includeFlowsTo$value;
 
         /**
          * Sets the list of blacklisted classes.
@@ -305,6 +329,22 @@ public class DiagramTrimSettings {
         }
 
         /**
+         * Restricts the diagram to the domain types leading into the given target points - the
+         * backward counterpart of {@link #withIncludeFlowsFrom(List)}. Requires the result of a
+         * static analysis to be handed to the generator, see
+         * {@link DiagramTrimSettings#getIncludeFlowsTo()} for the entry syntax and how it combines
+         * with {@link #withIncludeFlowsFrom(List)}.
+         *
+         * @param includeFlowsTo List of flow target points, a full qualified type name each,
+         *                       optionally followed by {@code #} and a method name
+         * @return This builder instance
+         */
+        public DiagramTrimSettingsBuilder withIncludeFlowsTo(List<String> includeFlowsTo) {
+            this.includeFlowsTo$value = includeFlowsTo;
+            return this;
+        }
+
+        /**
          * Builds and returns a new DiagramTrimSettings instance.
          *
          * @return A new DiagramTrimSettings instance with the configured settings
@@ -327,9 +367,10 @@ public class DiagramTrimSettings {
                 includeConnectedToOutgoing$value == null ? Collections.emptyList() : includeConnectedToOutgoing$value,
                 excludeConnectedToIngoing$value == null ? Collections.emptyList() : excludeConnectedToIngoing$value,
                 excludeConnectedToOutgoing$value == null ? Collections.emptyList() : excludeConnectedToOutgoing$value,
-                // deliberately not part of checkNoOverlap: a flow starting point may well also be
-                // named in a connection setting, the two mechanisms are independent
-                includeFlowsFrom$value == null ? Collections.emptyList() : includeFlowsFrom$value);
+                // deliberately not part of checkNoOverlap: a flow starting/target point may well
+                // also be named in a connection setting, the mechanisms are independent
+                includeFlowsFrom$value == null ? Collections.emptyList() : includeFlowsFrom$value,
+                includeFlowsTo$value == null ? Collections.emptyList() : includeFlowsTo$value);
         }
     }
 

@@ -191,6 +191,17 @@ public sealed interface Step {
     }
 
     /**
+     * Creates the starting step of a flow beginning at a plain domain type, e.g. for a backward
+     * flow answering "what leads into this Aggregate/DomainService/...".
+     *
+     * @param type the domain type to start from, must not be {@code null}
+     * @return the starting step
+     */
+    static TypeStep start(DomainTypeMirror type) {
+        return new TypeStep(Optional.empty(), StepKind.START, 0, false, type);
+    }
+
+    /**
      * Creates a step for a method called from the given predecessor.
      *
      * @param from   the calling step, must not be {@code null}
@@ -281,6 +292,104 @@ public sealed interface Step {
     static TypeStep managingAggregate(Step from, DomainTypeMirror aggregate, boolean cyclic) {
         return new TypeStep(Optional.of(from), StepKind.MANAGES_AGGREGATE, from.depth() + 1,
             cyclic, aggregate);
+    }
+
+    // -----------------------------------------------------------------------------------------
+    // Backward factories: same StepKinds, roles reversed - the step represents what leads INTO
+    // the predecessor, not what it leads to. Kept distinct from the forward factories above so
+    // that the resulting Step always carries the semantically correct StepKind.
+    // -----------------------------------------------------------------------------------------
+
+    /**
+     * Creates a step for a method that calls into the given predecessor.
+     *
+     * @param from   the called step, must not be {@code null}
+     * @param caller the calling method, must not be {@code null}
+     * @param cyclic whether the calling method already occurs among the predecessors
+     * @return the step
+     */
+    static MethodStep calledBy(Step from, DomainMethod caller, boolean cyclic) {
+        return new MethodStep(Optional.of(from), StepKind.CALL, from.depth() + 1, cyclic, caller);
+    }
+
+    /**
+     * Creates a step for the abstract or interface method the given predecessor implements, i.e.
+     * the method a caller would have to call to dispatch to the predecessor at runtime.
+     *
+     * @param from             the step holding the implementing method, must not be {@code null}
+     * @param supertypeMethod  the overridden abstract or interface method, must not be {@code null}
+     * @param cyclic           whether the method already occurs among the predecessors
+     * @return the step
+     */
+    static MethodStep implementedBy(Step from, DomainMethod supertypeMethod, boolean cyclic) {
+        return new MethodStep(Optional.of(from), StepKind.IMPLEMENTATION, from.depth() + 1,
+            cyclic, supertypeMethod);
+    }
+
+    /**
+     * Creates a step for the event the given predecessor listens to.
+     *
+     * @param from   the listening step, must not be {@code null}
+     * @param event  the listened-to event, must not be {@code null}
+     * @param cyclic whether the event already occurs among the predecessors
+     * @return the step
+     */
+    static EventStep listenedTo(Step from, DomainEventMirror event, boolean cyclic) {
+        return new EventStep(Optional.of(from), StepKind.EVENT_LISTEN, from.depth() + 1, cyclic,
+            event);
+    }
+
+    /**
+     * Creates a step for a method that publishes the event of the given predecessor.
+     *
+     * @param from      the event step, must not be {@code null}
+     * @param publisher the publishing method, must not be {@code null}
+     * @param cyclic    whether the publishing method already occurs among the predecessors
+     * @return the step
+     */
+    static MethodStep publishedBy(Step from, DomainMethod publisher, boolean cyclic) {
+        return new MethodStep(Optional.of(from), StepKind.EVENT_PUBLISH, from.depth() + 1, cyclic,
+            publisher);
+    }
+
+    /**
+     * Creates a step for the command the given predecessor processes. The flow does not continue
+     * past such a step: nothing in the analyzed data models where a command originates.
+     *
+     * @param from    the processing step, must not be {@code null}
+     * @param command the processed command, must not be {@code null}
+     * @param cyclic  whether the command already occurs among the predecessors
+     * @return the step
+     */
+    static CommandStep processedCommand(Step from, DomainCommandMirror command, boolean cyclic) {
+        return new CommandStep(Optional.of(from), StepKind.COMMAND_PROCESS, from.depth() + 1,
+            cyclic, command);
+    }
+
+    /**
+     * Creates a step for the Repository managing the Aggregate of the given predecessor.
+     *
+     * @param from       the step holding the managed Aggregate, must not be {@code null}
+     * @param repository the managing Repository, must not be {@code null}
+     * @param cyclic     whether the Repository already occurs among the predecessors
+     * @return the step
+     */
+    static TypeStep managedBy(Step from, DomainTypeMirror repository, boolean cyclic) {
+        return new TypeStep(Optional.of(from), StepKind.MANAGES_AGGREGATE, from.depth() + 1,
+            cyclic, repository);
+    }
+
+    /**
+     * Creates a step for the QueryHandler providing the ReadModel of the given predecessor.
+     *
+     * @param from         the step holding the provided ReadModel, must not be {@code null}
+     * @param queryHandler the providing QueryHandler, must not be {@code null}
+     * @param cyclic       whether the QueryHandler already occurs among the predecessors
+     * @return the step
+     */
+    static TypeStep providedBy(Step from, DomainTypeMirror queryHandler, boolean cyclic) {
+        return new TypeStep(Optional.of(from), StepKind.PROVIDES_READ_MODEL, from.depth() + 1,
+            cyclic, queryHandler);
     }
 
     /**

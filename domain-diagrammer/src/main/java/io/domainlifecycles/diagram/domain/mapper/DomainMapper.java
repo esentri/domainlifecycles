@@ -87,7 +87,8 @@ public class DomainMapper {
                 domainMirror,
                 domainCalls,
                 domainDiagramConfig.getFlowConfig(),
-                domainDiagramConfig.getDiagramTrimSettings().getIncludeFlowsFrom()));
+                domainDiagramConfig.getDiagramTrimSettings().getIncludeFlowsFrom(),
+                domainDiagramConfig.getDiagramTrimSettings().getIncludeFlowsTo()));
 
         this.domainClassMapper = new DomainClassMapper(domainDiagramConfig);
         this.domainRelationshipMapper = new DomainRelationshipMapper(domainDiagramConfig, domainMirror, filteredDomainClasses);

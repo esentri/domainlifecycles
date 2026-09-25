@@ -141,6 +141,29 @@ A flow can start at a domain command (beginning with the methods processing it),
 `analyzer.flowFrom("yourdomain.order.OrderService", "placeOrder")` resolves the starting method in
 the mirror and returns an empty `Optional` if the type or the method is unknown.
 
+### The backward direction: "what leads into this"
+
+`flowFrom(...)` answers "what does this trigger". The mirrored counterpart, `flowTo(...)`, answers
+"what leads into this" - the entry channels through which a type or method is reached:
+
+```Java
+var target = domainMirror.getDomainTypeMirror("yourdomain.order.OrderService").orElseThrow();
+Flow flow = analyzer.flowTo(target);
+```
+
+`flowTo` accepts a `DomainMethod`, a `DomainEventMirror` or any other `DomainTypeMirror` (reporting
+the union of all its methods' predecessors, plus, for an `AggregateRootMirror`/`ReadModelMirror`,
+the repositories/query handlers structurally managing/providing it), and the same
+`flowTo(String typeName, String methodName)` lookup-by-name convenience as `flowFrom`. Every
+`StepKind` is mirrored in reverse - `CALL` becomes "called by", `IMPLEMENTATION` becomes "overridden
+supertype method", `EVENT_LISTEN` becomes "published by", `COMMAND_PROCESS` becomes "processed
+command" - so a `Flow` from `flowTo(...)` is read and rendered exactly like one from `flowFrom(...)`.
+
+There is deliberately **no** `flowTo(DomainCommandMirror)`: nothing in the analyzed data models
+where a command originates, so a command can only ever appear as a reached leaf (via
+`COMMAND_PROCESS` reversal - "this service is reached because it processes command C"), never as a
+backward search's own starting point.
+
 A flow is a graph, not a sequence: a method may call several others, each of which continues on its
 own. It is represented as a flat list of `Step`s, each linking back to the step it was reached from
 (`Step#from()`), so the branching structure is preserved while staying easy to iterate, filter and

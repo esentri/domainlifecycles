@@ -481,6 +481,7 @@ Supported Diagram configuration options are
 - showRelationshipLabels: boolean, default true
 - showRelationshipStereotypes: boolean, default true
 - includeFlowsFrom: list of flow starting points (see [Restricting a diagram to a flow](#restricting-a-diagram-to-a-flow)), default none (flow-based filtering disabled)
+- includeFlowsTo: list of flow target points, the backward counterpart of `includeFlowsFrom` (see [Restricting a diagram to a flow](#restricting-a-diagram-to-a-flow)), default none (backward flow-based filtering disabled)
 - flowMaxDepth: integer, maximum depth a flow is followed to, default unlimited
 - flowFollowEvents: boolean, whether a flow follows published DomainEvents to their listening methods, default true
 - flowFollowImplementations: boolean, whether a flow follows the dispatch from an interface/abstract method into its implementations, default true
@@ -504,11 +505,20 @@ Several entries are combined (their reached classes are unioned). The restrictio
 configured diagram: a class outside `domainModelPackages`/`explicitlyIncludedPackages` or on the `classesBlacklist`
 stays out, even when the flow reaches it.
 
+`includeFlowsTo` is the backward counterpart of `includeFlowsFrom`: instead of "what does this lead
+to", it restricts the diagram to "what leads into this" - the entry channels (callers, event
+publishers, and, for an aggregate/read model, its managing repository/providing query handler)
+through which a type or method is reached. It uses the same entry syntax, except a domain command
+can never be a target (nothing leads *into* a command in the analyzed data - it can still appear as
+a reached node when a target is found to process it). `includeFlowsFrom` and `includeFlowsTo` can be
+set together; their reached classes are united.
+
 Since determining which classes take part in a flow requires analyzing the compiled domain classes, configuring
-`includeFlowsFrom` makes the plugin run a static (bytecode) analysis of your domain classes as part of diagram
-generation. This is skipped whenever `includeFlowsFrom` is not configured for a diagram. `flowMaxDepth`,
+`includeFlowsFrom` and/or `includeFlowsTo` makes the plugin run a static (bytecode) analysis of your domain classes
+as part of diagram generation. This is skipped whenever neither is configured for a diagram. `flowMaxDepth`,
 `flowFollowEvents`, `flowFollowImplementations` and `flowExcludeAccessors` further tune how far/what such a flow
-traversal follows; they have no effect unless `includeFlowsFrom` is also set.
+traversal follows, in either direction; they have no effect unless `includeFlowsFrom` or `includeFlowsTo` is also
+set.
 
 The static analysis keeps memory bounded by caching only up to a fixed number of classes at a time while
 resolving method bodies; classes evicted from the cache are simply re-parsed from the classpath on the
@@ -566,7 +576,38 @@ Maven example (`<staticAnalysisCacheSize>` goes into the surrounding `<configura
 </diagram>
 ```
 
-For the full semantics of `includeFlowsFrom` and the flow traversal settings, see the domain-diagrammer's
+Gradle example, restricted to the entry channels into the `OrderService` domain service:
+```groovy
+dlcGradlePlugin {
+    diagram {
+        fileOutputDir = layout.buildDirectory
+        diagrams {
+            orderServiceEntryPoints {
+                domainModelPackages = ["io.domainlifecycles.test"]
+                format = "svg"
+                fileName = "order-service-entry-points"
+                includeFlowsTo = ["io.domainlifecycles.test.order.OrderService"]
+            }
+        }
+    }
+}
+```
+
+Maven example:
+```xml
+<diagram>
+    <domainModelPackages>
+        <domainModelPackage>io.domainlifecycles.test</domainModelPackage>
+    </domainModelPackages>
+    <format>svg</format>
+    <fileName>order-service-entry-points</fileName>
+    <includeFlowsTo>
+        <includeFlowTo>io.domainlifecycles.test.order.OrderService</includeFlowTo>
+    </includeFlowsTo>
+</diagram>
+```
+
+For the full semantics of `includeFlowsFrom`/`includeFlowsTo` and the flow traversal settings, see the domain-diagrammer's
 ["Restricting a diagram to a flow"](../domain-diagrammer/readme.md#restricting-a-diagram-to-a-flow) section, and for
 background on the underlying static analysis, see the [static-analysis readme](../static-analysis/readme.md).
 

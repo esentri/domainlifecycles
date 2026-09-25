@@ -130,6 +130,7 @@ public class DiagramConfigMapper {
         diagramConfig.setShowRelationshipLabels(mavenDiagramConfig.getShowRelationshipLabels());
         diagramConfig.setShowRelationshipStereotypes(mavenDiagramConfig.getShowRelationshipStereotypes());
         diagramConfig.setIncludeFlowsFrom(mavenDiagramConfig.getIncludeFlowsFrom());
+        diagramConfig.setIncludeFlowsTo(mavenDiagramConfig.getIncludeFlowsTo());
         diagramConfig.setFlowMaxDepth(mavenDiagramConfig.getFlowMaxDepth());
         diagramConfig.setFlowFollowEvents(mavenDiagramConfig.getFlowFollowEvents());
         diagramConfig.setFlowFollowImplementations(mavenDiagramConfig.getFlowFollowImplementations());
