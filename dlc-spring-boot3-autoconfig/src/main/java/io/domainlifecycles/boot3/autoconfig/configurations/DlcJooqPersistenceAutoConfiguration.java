@@ -197,7 +197,7 @@ public class DlcJooqPersistenceAutoConfiguration {
                 }
                 sqlDialect = SQLDialect.valueOf(property);
             } catch (IllegalArgumentException e) {
-                throw DLCAutoConfigException.fail("Property 'sqlDialect' is missing. Specify 'dlc.features-persistence.sql-dialect' or 'jooqSqlDialect' on '@EnableDlc'.");
+                throw DLCAutoConfigException.fail("Property 'sqlDialect' is missing. Specify 'dlc.features.persistence.sql-dialect' or 'jooqSqlDialect' on '@EnableDlc'.");
             }
             jooqConfig.set(sqlDialect);
             return jooqConfig;

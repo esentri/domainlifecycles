@@ -55,4 +55,21 @@ public class NamingUtilTest {
         var camel = NamingUtil.snakeCaseToCamelCase(snake);
         Assertions.assertThat(camel).isEqualTo("fooBar");
     }
+
+    @Test
+    public void testCamelToSnakeDigitStaysAttachedToItsPrecedingSegment() {
+        // matches io.domainlifecycles.jdbc.util.NamingUtil's behavior - both integrations must derive
+        // the same sequence name from an Identity class name containing a digit (e.g. OrderIdBv3,
+        // whose real sequence in the shared test migration schema is order_id_bv3_seq, glued together)
+        var camel = "orderIdBv3";
+        var snake = NamingUtil.camelCaseToSnakeCase(camel);
+        Assertions.assertThat(snake).isEqualTo("order_id_bv3");
+    }
+
+    @Test
+    public void testCamelToSnakeDigitAfterAWordBoundaryAlsoStaysAttached() {
+        var camel = "testEntity2Id";
+        var snake = NamingUtil.camelCaseToSnakeCase(camel);
+        Assertions.assertThat(snake).isEqualTo("test_entity2_id");
+    }
 }

@@ -42,7 +42,7 @@ import java.util.Objects;
  * JDBC (registered via {@code AggregateFetcher#withRecordProvider}, for a relationship the standard {@link
  * JdbcAggregateFetcher} resolution can't or shouldn't resolve on its own).
  * <p>
- * A subclass only needs to override {@link #provide(JdbcRecord)} and/or {@link #provideCollection(JdbcRecord)}
+ * A subclass only needs to override {@link RecordProvider#provide} and/or {@link RecordProvider#provideCollection}
  * and call one of the {@code select*} methods below to obtain the child record(s) - the {@code
  * PreparedStatement} -&gt; {@code ResultSet} -&gt; {@link JdbcRecord} mapping is handled by {@link
  * JdbcRecordMapper} underneath, so it doesn't have to be re-implemented in every custom provider; {@link

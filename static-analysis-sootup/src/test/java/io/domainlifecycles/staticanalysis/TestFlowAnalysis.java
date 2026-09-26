@@ -373,13 +373,18 @@ public class TestFlowAnalysis {
 
         // the subtree below it is built only once though, under whichever branch got there
         // first - that is what bounds the traversal, and it means a shared node's children
-        // are not repeated in every branch
+        // are not repeated in every branch. findById is both dispatched to its implementation
+        // (IMPLEMENTATION) and, since MyRepository manages MyAggregateRoot, reports that
+        // managed aggregate (MANAGES_AGGREGATE) - both are children of the very same shared
+        // node, not duplicated once per branch.
         var below = flow.steps().stream()
             .filter(step -> step.from().filter(findByIdSteps::contains).isPresent())
             .toList();
-        assertThat(below).hasSize(1);
-        assertThat(below.get(0).typeName()).isEqualTo(MyRepositoryImpl.class.getTypeName());
-        assertThat(below.get(0).from()).contains(findByIdSteps.get(0));
+        assertThat(below).hasSize(2);
+        assertThat(below).allMatch(step -> step.from().equals(Optional.of(findByIdSteps.get(0))));
+        assertThat(below).extracting(Step::typeName)
+            .containsExactlyInAnyOrder(MyRepositoryImpl.class.getTypeName(),
+                MyAggregateRoot.class.getTypeName());
     }
 
     @Test

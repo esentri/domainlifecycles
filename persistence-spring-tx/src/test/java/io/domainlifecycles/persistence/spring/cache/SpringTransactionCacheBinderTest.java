@@ -59,6 +59,23 @@ class SpringTransactionCacheBinderTest {
     }
 
     @Test
+    void closesTheScopeOnRollbackJustLikeOnCommit() {
+        // afterCompletion(status) ignores the status - a rolled back transaction must not leave a
+        // stale scope behind for the next transaction on this thread to accidentally inherit
+        TransactionSynchronizationManager.initSynchronization();
+
+        binder.ensureScopeOpenForCurrentTransaction();
+        assertThat(transactionCacheProvider.currentTransactionCache()).isPresent();
+
+        TransactionSynchronizationUtils.triggerAfterCompletion(TransactionSynchronization.STATUS_ROLLED_BACK);
+        TransactionSynchronizationManager.clearSynchronization();
+
+        assertThat(transactionCacheProvider.currentTransactionCache())
+            .as("the scope must be closed on rollback too, not just on commit")
+            .isEmpty();
+    }
+
+    @Test
     void opensASeparateScopeForEachSubsequentTransaction() {
         TransactionSynchronizationManager.initSynchronization();
         binder.ensureScopeOpenForCurrentTransaction();

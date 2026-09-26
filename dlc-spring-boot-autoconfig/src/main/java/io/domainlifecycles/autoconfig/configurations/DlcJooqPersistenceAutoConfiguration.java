@@ -91,7 +91,8 @@ import java.util.Set;
  * A stale name here is not a compile error (these are plain strings, resolved reflectively at runtime) but
  * silently drops the ordering guarantee: without it, this configuration was observed to be processed
  * <em>before</em> {@code DataSourceAutoConfiguration} ever ran, so every {@code @ConditionalOnBean(DataSource.class)}
- * bean below ({@link #connectionProvider}/{@link #configuration}/{@link #dslContext}) silently never got
+ * bean below ({@link JooqPersistenceConfiguration#connectionProvider}/
+ * {@link JooqPersistenceConfiguration#configuration}/{@link JooqPersistenceConfiguration#dslContext}) silently never got
  * created - Spring Boot's own, unconfigured jOOQ auto-configuration took over everywhere instead, with no
  * error raised. If a future Spring Boot upgrade moves these classes again, update these two strings to match.
  *
@@ -204,7 +205,7 @@ public class DlcJooqPersistenceAutoConfiguration {
             try {
                 var property = environment.getProperty("dlc.features.persistence.sql-dialect");
                 if(property == null) {
-                    throw DLCAutoConfigException.fail("Property 'sqlDialect' is missing. Specify 'dlc.persistence.sql-dialect' or 'jooqSqlDialect' on '@EnableDlc'.");
+                    throw DLCAutoConfigException.fail("Property 'sqlDialect' is missing. Specify 'dlc.features.persistence.sql-dialect' or 'jooqSqlDialect' on '@EnableDlc'.");
                 }
                 sqlDialect = SQLDialect.valueOf(property);
             } catch (IllegalArgumentException e) {

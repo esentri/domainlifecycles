@@ -343,7 +343,13 @@ public class MirrorBasedOpenApiExtension {
             .forEach(
                 (typeName, typeSchema) -> {
                     var dtmOptional = Domain.typeMirror(typeName);
-                    if (dtmOptional.isEmpty()) {
+                    // a NON_DOMAIN mirrored type (e.g. a controller DTO living in a scanned domain model
+                    // package) has no DLC-specific field semantics of its own - it must be treated the same
+                    // as a type the mirror doesn't know about at all, so its VO/Identity-typed properties
+                    // still get unwrapped below
+                    boolean isExternal = dtmOptional.isEmpty()
+                        || DomainType.NON_DOMAIN.equals(dtmOptional.get().getDomainType());
+                    if (isExternal) {
                         if (typeSchema.getProperties() != null) {
                             typeSchema.getProperties().forEach(
                                 (n, p) -> {

@@ -70,10 +70,14 @@ public final class NamingUtil {
     /**
      * Transform a camel case String into snake case.
      * <p>
-     * A digit run is also treated as its own segment (e.g. {@code "testEntity2Id"} becomes {@code
-     * "test_entity_2_id"}, matching this module's own migration schema's {@code test_entity_2_id} column) -
-     * not just a transition into an uppercase letter - since the physical column names this maps against
-     * consistently separate a trailing/embedded number from the preceding word with its own underscore.
+     * A digit run stays attached to the word segment it trails (e.g. {@code "orderIdBv3"} becomes
+     * {@code "order_id_bv3"}, not {@code "order_id_bv_3"}) - only a transition into an uppercase
+     * letter starts a new segment. This matches {@code io.domainlifecycles.jooq.util.NamingUtil}'s
+     * behavior (see this class's own class-level javadoc): both integrations derive a database
+     * sequence name from an {@code Identity} class's simple name this way, and a digit-suffixed
+     * class name (e.g. {@code OrderIdBv3}) already has a real, glued-together sequence name in the
+     * shared test migration schema (e.g. {@code order_id_bv3_seq}) that a segmented conversion would
+     * fail to find.
      *
      * @param camelCase input String
      * @return snake case String
@@ -90,11 +94,6 @@ public final class NamingUtil {
                     String.valueOf(
                         Character.toLowerCase(
                             builder.charAt(i + 1))));
-            } else if (Character.isDigit(c) && i > 0) {
-                char previous = builder.charAt(i - 1);
-                if (previous != '_' && !Character.isDigit(previous)) {
-                    builder.insert(i, "_");
-                }
             }
         }
         var returnVal = builder.toString();

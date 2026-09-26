@@ -84,7 +84,7 @@ import java.util.Set;
  *   property name is shared rather than duplicated per backend.
  * - Reading the database schema once, via {@link JdbcSchemaMetadata}.
  * - Creating a {@link JdbcConnectionProvider} bean already wired to the DLC transaction cache for
- *   Spring-managed transactions - see {@link #jdbcConnectionProvider}.
+ *   Spring-managed transactions - see {@link JdbcPersistenceConfiguration#jdbcConnectionProvider}.
  * - Providing a {@link JdbcDomainPersistenceProvider} for domain persistence if a {@link DomainMirror} is
  *   available.
  * - Setting up an {@link EntityIdentityProvider} for handling entity identities in JDBC operations.

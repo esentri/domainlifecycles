@@ -5,6 +5,14 @@ import io.domainlifecycles.domain.types.Identity;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.fetcher.FetcherResult;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+
+import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -177,5 +185,72 @@ public class ThreadBoundTransactionCacheProviderTest {
             .isInstanceOf(DLCPersistenceException.class);
         assertThatThrownBy(() -> new ThreadBoundTransactionCacheProvider<String>(-1))
             .isInstanceOf(DLCPersistenceException.class);
+    }
+
+    /**
+     * The provider is shared by one long-lived instance across every transaction/thread in a real
+     * application (bound only via {@link ThreadLocal}), so its isolation guarantee has to hold under
+     * genuine concurrent access, not just across sequential calls on a single thread - two real threads
+     * racing each other are the only way to actually exercise that.
+     */
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    public void twoThreadsGetCompletelyIsolatedScopesUnderRealConcurrency() throws Exception {
+        var provider = new ThreadBoundTransactionCacheProvider<String>();
+        var sharedKey = key(1L);
+
+        var bothScopesOpen = new CyclicBarrier(2);
+        var threadAHasPopulated = new CountDownLatch(1);
+        var threadBHasClosed = new CountDownLatch(1);
+
+        AtomicReference<Optional<FetcherResult<?, String>>> whatThreadBSeesForThreadAsKey =
+            new AtomicReference<>();
+        AtomicBoolean threadAScopeSurvivesThreadBClosing = new AtomicBoolean();
+        AtomicReference<Exception> failureOnAnyThread = new AtomicReference<>();
+
+        Thread threadA = new Thread(() -> {
+            try (var scope = provider.open()) {
+                provider.currentTransactionCache().orElseThrow().put(sharedKey, result());
+                bothScopesOpen.await();
+                threadAHasPopulated.countDown();
+
+                //thread B's own scope (opened and closed entirely on its own thread) must not interfere
+                //with this thread's still-open one, the same way one transaction's scope must survive an
+                //unrelated, concurrently completing transaction
+                threadBHasClosed.await();
+                threadAScopeSurvivesThreadBClosing.set(provider.currentTransactionCache().isPresent());
+            } catch (Exception e) {
+                failureOnAnyThread.set(e);
+            }
+        });
+
+        Thread threadB = new Thread(() -> {
+            try {
+                try (var scope = provider.open()) {
+                    bothScopesOpen.await();
+                    threadAHasPopulated.await();
+
+                    //thread A just populated the identical key on its own thread - this thread's own,
+                    //independently bound scope must not see it
+                    whatThreadBSeesForThreadAsKey.set(provider.currentTransactionCache().orElseThrow().take(sharedKey));
+                }
+                threadBHasClosed.countDown();
+            } catch (Exception e) {
+                failureOnAnyThread.set(e);
+            }
+        });
+
+        threadA.start();
+        threadB.start();
+        threadA.join();
+        threadB.join();
+
+        assertThat(failureOnAnyThread.get()).isNull();
+        assertThat(whatThreadBSeesForThreadAsKey.get())
+            .as("a key put on one thread's scope must be invisible to a different thread's own scope")
+            .isEmpty();
+        assertThat(threadAScopeSurvivesThreadBClosing.get())
+            .as("closing one thread's scope must not affect a different thread's still-open scope")
+            .isTrue();
     }
 }

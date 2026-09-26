@@ -34,7 +34,8 @@ import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.ParamMirror;
-import io.domainlifecycles.mirror.exception.MirrorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -48,6 +49,8 @@ import java.util.stream.Collectors;
  * @author Mario Herb
  */
 public class MethodModel implements MethodMirror, ProvidedDomain {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodModel.class);
 
     private final String name;
     private final String declaredByTypeName;
@@ -145,8 +148,9 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
     public List<DomainEventMirror> getPublishedEvents() {
         return this.publishedEventTypeNames
             .stream()
-            .map(n -> (DomainEventMirror) domainMirror.getDomainTypeMirror(n).orElseThrow(
-                () -> MirrorException.fail("DomainEventMirror not found for '%s'", n)))
+            .map(n -> resolveOrWarn(n, "DomainEventMirror"))
+            .filter(Objects::nonNull)
+            .map(DomainEventMirror.class::cast)
             .distinct()
             .collect(Collectors.toList());
     }
@@ -157,8 +161,9 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
     @Override
     public Optional<DomainEventMirror> getListenedEvent() {
         return listenedEventTypeName
-            .map(n -> (DomainEventMirror) domainMirror.getDomainTypeMirror(n).orElseThrow(
-                () -> MirrorException.fail("DomainEventMirror not found for '%s'", n)));
+            .map(n -> resolveOrWarn(n, "DomainEventMirror"))
+            .filter(Objects::nonNull)
+            .map(DomainEventMirror.class::cast);
     }
 
     /**
@@ -168,10 +173,29 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
     public List<DomainCommandMirror> getProcessedCommands() {
         return parameters.stream()
             .filter(p -> p.getType().getDomainType().equals(DomainType.DOMAIN_COMMAND))
-            .map(p -> (DomainCommandMirror) domainMirror.getDomainTypeMirror(p.getType().getTypeName()).orElseThrow(
-                () -> MirrorException.fail("DomainCommandMirror not found for '%s'", p.getType().getTypeName())))
+            .map(p -> resolveOrWarn(p.getType().getTypeName(), "DomainCommandMirror"))
+            .filter(Objects::nonNull)
+            .map(DomainCommandMirror.class::cast)
             .distinct()
             .toList();
+    }
+
+    /**
+     * Resolves a mirrored type name recorded as an event/command reference of this method, tolerating a
+     * name that doesn't resolve to anything in the domain mirror instead of failing the whole lookup. Such
+     * a name is itself a mirror data inconsistency (e.g. a generic type resolver falling back to
+     * {@code Object} for an unresolvable, self-referential type variable, as in a Lombok
+     * {@code @SuperBuilder}'s own builder class), not a reason to also break every well-formed method
+     * reachable from the same domain model - it is logged instead so the cause remains diagnosable.
+     */
+    private Object resolveOrWarn(String typeName, String mirrorKind) {
+        var resolved = domainMirror.getDomainTypeMirror(typeName);
+        if (resolved.isEmpty()) {
+            log.warn("{} not found for '{}', referenced by {}.{} - skipping this reference",
+                mirrorKind, typeName, declaredByTypeName, name);
+            return null;
+        }
+        return resolved.get();
     }
 
     /**

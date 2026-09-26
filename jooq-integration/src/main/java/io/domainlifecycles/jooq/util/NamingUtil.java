@@ -27,7 +27,13 @@
 package io.domainlifecycles.jooq.util;
 
 /**
- * Helper naming utilities to transform snake case String into caml case and the other way round.
+ * Helper naming utilities to transform snake case String into camel case and the other way round.
+ * <p>
+ * Mirrored by {@code io.domainlifecycles.jdbc.util.NamingUtil} in the plain-JDBC based persistence
+ * integration: both integrations use the same "camelCase property name" &lt;-&gt; "SNAKE_CASE column
+ * name" convention, so record property names stay consistent across both, which lets shared
+ * components such as {@code io.domainlifecycles.persistence.mapping.RecordPropertyMatcher}
+ * implementations behave identically.
  *
  * @author Mario Herb
  */
@@ -68,7 +74,16 @@ public class NamingUtil {
     }
 
     /**
-     * Transforma a camel case String into snake case.
+     * Transform a camel case String into snake case.
+     * <p>
+     * A digit run stays attached to the word segment it trails (e.g. {@code "orderIdBv3"} becomes
+     * {@code "order_id_bv3"}, not {@code "order_id_bv_3"}) - only a transition into an uppercase
+     * letter starts a new segment. This matches {@code io.domainlifecycles.jdbc.util.NamingUtil}'s
+     * behavior (see this class's own class-level javadoc): both integrations derive a database
+     * sequence name from an {@code Identity} class's simple name this way, and a digit-suffixed
+     * class name (e.g. {@code OrderIdBv3}) already has a real, glued-together sequence name in the
+     * shared test migration schema (e.g. {@code order_id_bv3_seq}) that a segmented conversion would
+     * fail to find.
      *
      * @param camelCase input String
      * @return snake case String

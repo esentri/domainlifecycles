@@ -14,6 +14,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `AbstractDomainMirrorFactory#setIncludeNonDomainClasses` (default `true`, can be switched off).
   `ServiceKindMirror` gained `getReferencedNonDomainTypes()`, resolving the non-domain classes
   referenced by a service kind's fields, method parameters or return types
+- Fixed two related bugs surfaced by the non-domain class mirroring above, both triggered by a
+  Lombok `@SuperBuilder`-generated builder class (or any other self-referential/F-bounded generic,
+  e.g. `<C extends X, B extends Builder<C, B>>`) now also being mirrored:
+  - `AssertedContainableTypeMirrorBuilder` could produce a mirror whose domain type and type name
+    described two different classes - the domain type came from reflection's erased bound (correct),
+    while the type name came from a generic type resolver that, lacking a concrete usage context for
+    such a self-referential type variable, fell back to `java.lang.Object`. Fixed by preferring the
+    reflectively known, more specific type whenever the resolved generic type degrades to `Object`.
+  - That mismatch made `MethodModel#getProcessedCommands()`/`getListenedEvent()`/`getPublishedEvents()`
+    throw `MirrorException` for a command/event type name that could never resolve, which in turn
+    made `DomainCallFlowAnalyzer`'s constructor fail for the *entire* domain model as soon as it
+    contained such a builder anywhere - not just for a flow reaching it. These three methods now log
+    a warning and skip an unresolvable reference instead of throwing, so a single inconsistent entry
+    can no longer break flow analysis for an otherwise well-formed domain model
 - The [domain diagrammer](./domain-diagrammer) can now render those non-domain classes as diagram
   nodes, restricted to the ones actually referenced by a service kind (domain service, application
   service, repository, query handler, outbound service or unspecified service kind), via the new
@@ -72,6 +86,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed a bounds bug in `jooq-integration`'s `NamingUtil.snakeCaseToCamelCase()` that threw `StringIndexOutOfBoundsException` for a column name ending in an underscore, and silently left a stray underscore in the mapped property name for a column name with two consecutive underscores.
 - Fixed `DlcJooqPersistenceAutoConfiguration` and `DlcJacksonAutoConfiguration` (`dlc-spring-boot-autoconfig`) silently never running their own `@Bean` methods under Spring Boot 4.1+: their `@AutoConfiguration`/`@AutoConfigureBefore` ordering referenced `DataSourceAutoConfiguration`/`JooqAutoConfiguration`/`JacksonAutoConfiguration` by their pre-Spring-Boot-4 package, which Spring Boot 4 moved into dedicated modules - a stale name silently drops the ordering guarantee instead of failing, so Spring Boot's own, unconfigured jOOQ wiring silently took over. Also fixed a property-key typo in `DlcEnvironmentPostProcessor` (`dlc.feaures...` instead of `dlc.features.persistence.sql-dialect`) that this exposed, since it had until then been masked by the same ordering bug.
 - Added `Byte<->Short` and `Boolean<->Short` default `TypeConverter`s, needed for SQL Server's more aggressive mapping of zero-scale `NUMERIC`/`DECIMAL` columns to `Short`/`Byte`.
+- Fixed `javadoc` generation failing for `dlc-spring-boot-autoconfig`, `dlc-spring-boot3-autoconfig` and `jdbc-integration`: a class-level `{@link #member}` referenced a method declared on a nested class (or, in `jdbc-integration`'s case, a default method inherited from a generic interface with an unresolvable type-variable signature), which javadoc cannot resolve from the enclosing class. Publishing the javadoc jar for these three modules previously failed silently as part of a larger multi-module build unless run in isolation.
+- Fixed two copy-pasted typos in the missing-SQL-dialect error message thrown by `DlcJooqPersistenceAutoConfiguration` (`dlc-spring-boot-autoconfig`/`dlc-spring-boot3-autoconfig`), each module carrying a different wrong property name (`dlc.persistence.sql-dialect` / `dlc.features-persistence.sql-dialect` instead of `dlc.features.persistence.sql-dialect`), misleading a developer debugging exactly the misconfiguration this message is meant to explain.
+- Fixed `jdbc-integration`'s `NamingUtil.camelCaseToSnakeCase()` silently diverging from `jooq-integration`'s: a digit run adjacent to a letter (e.g. in the `Identity` class `OrderIdBv3`) was split into its own segment (`order_id_bv_3`) instead of staying glued to the preceding word segment (`order_id_bv3`) as `jooq-integration` already does - both integrations derive a database sequence name from an `Identity` class's simple name this way, and the real sequence in the shared test migration schema (`order_id_bv3_seq`) is glued together, so `jdbc-integration`'s divergence was an unnoticed latent bug (never exercised by its own test suite) that would fail sequence-based id generation for any digit-suffixed `Identity` class name in a real project.
+- Added `dlc-spring-boot3-autoconfig` test coverage for `DlcJdbcPersistenceAutoConfiguration` and for disabling either persistence backend by property (`dlc.features.persistence.jooq.enabled=false`/`dlc.features.persistence.jdbc.enabled=false`) - this Spring Boot 3 variant had none, unlike its Spring Boot 4 counterpart.
+- Added further Transaction Cache test coverage: a dedicated unit test for both `SpringTransactionCacheAwareConnectionProvider` implementations (jOOQ/JDBC) - previously untested despite being the central glue of the Spring-native wiring path; a `jdbc-integration` counterpart of `jooq-integration`'s `SimpleAggregateRootRepository_TransactionCache_ITest`, exercising the cache-miss/cache-hit invalidation rule and the SELECT-avoidance behavior through `jdbc-integration`'s own, independent repository/fetcher code path; a rollback-path test for `SpringTransactionCacheBinder` (only commit was covered before); and a genuine multi-threaded concurrency test for `ThreadBoundTransactionCacheProvider`, proving its `ThreadLocal`-based isolation under real concurrent access rather than only sequential single-thread calls.
 
 ## [3.4.0] - 2026-09-11
 - Improved DLC persistence initialization performance

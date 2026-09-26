@@ -206,6 +206,15 @@ public class JooqDomainPersistenceProvider extends DomainPersistenceProvider<Upd
 
                     @Override
                     public void visitValueReference(ValueReferenceMirror valueReferenceMirror) {
+                        //fields explicitly excluded from auto mapping (e.g. handled by a custom record mapper)
+                        //must not require a value object record definition of their own - neither must any
+                        //field nested within them, so the whole path from the entity is checked, not just the
+                        //current field (the path always ends with the current field)
+                        if (jooqPersistenceConfiguration.ignoredDomainObjectFields != null
+                            && getVisitorContext().getCurrentPath().stream()
+                            .anyMatch(jooqPersistenceConfiguration.ignoredDomainObjectFields::isIgnored)) {
+                            return;
+                        }
                         var referencedDomainType = valueReferenceMirror.getType().getDomainType();
                         //a "scalar list element" is a field like List<SomeIdentity>/List<SomeEnum>: the raw
                         //element is not a ValueObject, but it is persisted as a child record exactly like a
