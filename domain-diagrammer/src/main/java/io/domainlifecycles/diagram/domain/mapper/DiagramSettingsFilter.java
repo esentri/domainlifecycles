@@ -69,6 +69,7 @@ public class DiagramSettingsFilter {
     private final Set<DomainTypeMirror> includedDomainTypesByConnections;
     private final DomainMirror domainMirror;
     private final DomainFlowFilter domainFlowFilter;
+    private Set<String> nonDomainTypeNamesReferencedByServiceKinds;
 
     /**
      * Constructs a new instance of DiagramSettingsFilter with the specified parameters.
@@ -377,11 +378,17 @@ public class DiagramSettingsFilter {
      * a domain service holds a field for).
      */
     private boolean isReferencedByServiceKind(DomainTypeMirror dtm) {
-        return domainMirror.getAllServiceKindMirrors()
-            .stream()
-            .anyMatch(sk -> sk.getReferencedNonDomainTypes()
+        if (nonDomainTypeNamesReferencedByServiceKinds == null) {
+            // resolved once per filter instead of once per checked type: resolving the references of
+            // all service kinds for every non-domain class is quadratic and dominated the diagram
+            // generation of large models
+            nonDomainTypeNamesReferencedByServiceKinds = domainMirror.getAllServiceKindMirrors()
                 .stream()
-                .anyMatch(nd -> nd.getTypeName().equals(dtm.getTypeName())));
+                .flatMap(sk -> sk.getReferencedNonDomainTypes().stream())
+                .map(DomainTypeMirror::getTypeName)
+                .collect(Collectors.toUnmodifiableSet());
+        }
+        return nonDomainTypeNamesReferencedByServiceKinds.contains(dtm.getTypeName());
     }
 
     /**

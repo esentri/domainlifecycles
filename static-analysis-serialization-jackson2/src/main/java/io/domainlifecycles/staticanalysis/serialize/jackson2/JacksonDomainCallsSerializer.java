@@ -45,7 +45,10 @@ import io.domainlifecycles.staticanalysis.serialize.DomainCallsSerializer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -166,11 +169,12 @@ public class JacksonDomainCallsSerializer implements DomainCallsSerializer {
 
     private DomainCalls fromDto(DomainCallsDto dto, DomainMirror domainMirror) {
         DomainCalls.Builder builder = DomainCalls.builder();
+        MethodResolver resolver = new MethodResolver(domainMirror);
         for (CallsByCallerEntryDto entry : dto.callsByCaller()) {
-            DomainMethod caller = resolve(entry.caller(), domainMirror);
+            DomainMethod caller = resolver.resolve(entry.caller());
             List<DomainCalls.CallSite> callSites = entry.callSites().stream()
                 .map(callSiteDto -> new DomainCalls.CallSite(
-                    resolve(callSiteDto.called(), domainMirror),
+                    resolver.resolve(callSiteDto.called()),
                     callSiteDto.callSiteTypeName(),
                     callSiteDto.lineNumber()))
                 .toList();
@@ -180,22 +184,54 @@ public class JacksonDomainCallsSerializer implements DomainCallsSerializer {
         return builder.build();
     }
 
-    private DomainMethod resolve(DomainMethodDto dto, DomainMirror domainMirror) {
-        DomainTypeMirror typeMirror = domainMirror.<DomainTypeMirror>getDomainTypeMirror(dto.typeName())
-            .orElseThrow(() -> DomainCallsSerializationException.fail(
-                "Could not resolve a DomainMethod: type '%s' is unknown to the given DomainMirror.",
-                dto.typeName()));
-        MethodMirror method = typeMirror.getMethods().stream()
-            .filter(candidate -> candidate.getName().equals(dto.methodName()))
-            .filter(candidate -> parameterTypeNames(candidate).equals(dto.parameterTypeNames()))
-            .findFirst()
-            .orElseThrow(() -> DomainCallsSerializationException.fail(
-                "Could not resolve a DomainMethod: '%s(%s)' is unknown on type '%s'.",
-                dto.methodName(), String.join(", ", dto.parameterTypeNames()), dto.typeName()));
-        return new DomainMethod(dto.typeName(), method);
+    /**
+     * Resolves serialized methods against a domain mirror, once per distinct method. A large domain has
+     * millions of call sites but only tens of thousands of distinct methods: resolving each call site anew
+     * scanned all methods of its type (thousands, for generated classes) and created a new
+     * {@link DomainMethod} each time. Here each distinct method is resolved once and its {@link DomainMethod}
+     * shared, and the methods of a type are indexed by name once.
+     */
+    private static final class MethodResolver {
+
+        private final DomainMirror domainMirror;
+        private final Map<DomainMethodDto, DomainMethod> resolved = new HashMap<>();
+        private final Map<String, Map<String, List<MethodMirror>>> methodsByNameByType = new HashMap<>();
+
+        private MethodResolver(DomainMirror domainMirror) {
+            this.domainMirror = domainMirror;
+        }
+
+        private DomainMethod resolve(DomainMethodDto dto) {
+            DomainMethod domainMethod = resolved.get(dto);
+            if (domainMethod == null) {
+                domainMethod = resolveUncached(dto);
+                resolved.put(dto, domainMethod);
+            }
+            return domainMethod;
+        }
+
+        private DomainMethod resolveUncached(DomainMethodDto dto) {
+            Map<String, List<MethodMirror>> methodsByName = methodsByNameByType.computeIfAbsent(dto.typeName(), typeName -> {
+                DomainTypeMirror typeMirror = domainMirror.<DomainTypeMirror>getDomainTypeMirror(typeName)
+                    .orElseThrow(() -> DomainCallsSerializationException.fail(
+                        "Could not resolve a DomainMethod: type '%s' is unknown to the given DomainMirror.",
+                        typeName));
+                Map<String, List<MethodMirror>> index = new HashMap<>();
+                typeMirror.getMethods().forEach(method ->
+                    index.computeIfAbsent(method.getName(), name -> new ArrayList<>()).add(method));
+                return index;
+            });
+            MethodMirror method = methodsByName.getOrDefault(dto.methodName(), List.of()).stream()
+                .filter(candidate -> parameterTypeNames(candidate).equals(dto.parameterTypeNames()))
+                .findFirst()
+                .orElseThrow(() -> DomainCallsSerializationException.fail(
+                    "Could not resolve a DomainMethod: '%s(%s)' is unknown on type '%s'.",
+                    dto.methodName(), String.join(", ", dto.parameterTypeNames()), dto.typeName()));
+            return new DomainMethod(dto.typeName(), method);
+        }
     }
 
-    private List<String> parameterTypeNames(MethodMirror method) {
+    private static List<String> parameterTypeNames(MethodMirror method) {
         return method.getParameters().stream().map(param -> param.getType().getTypeName()).toList();
     }
 

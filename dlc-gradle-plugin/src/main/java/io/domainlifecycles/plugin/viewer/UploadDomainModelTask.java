@@ -164,6 +164,15 @@ public abstract class UploadDomainModelTask extends DefaultTask {
     @Input
     public abstract ListProperty<String> getNonDomainExcludedPackages();
 
+    /**
+     * How long to wait for the whole upload (request body plus response), in minutes. Defaults to
+     * {@link DomainModelUploaderImpl#DEFAULT_REQUEST_TIMEOUT_MINUTES}.
+     *
+     * @return a {@code Property<Integer>} representing the timeout in minutes
+     */
+    @Input
+    public abstract Property<Integer> getUploadRequestTimeoutMinutes();
+
     private final ConfigurableFileCollection classesDirs = getProject().getObjects().fileCollection();
     private final ConfigurableFileCollection classpath = getProject().getObjects().fileCollection();
 
@@ -225,7 +234,8 @@ public abstract class UploadDomainModelTask extends DefaultTask {
         LOGGER.info("Running Upload Domain Model Goal...");
         domainModelUploader = new DomainModelUploaderImpl(
             getStaticAnalysisCacheSize().getOrElse(DomainCallsAnalyzerImpl.DEFAULT_CACHE_SIZE),
-            getNonDomainExcludedSupertypePackages().getOrNull(), getNonDomainExcludedPackages().getOrNull());
+            getNonDomainExcludedSupertypePackages().getOrNull(), getNonDomainExcludedPackages().getOrNull(),
+            getUploadRequestTimeoutMinutes().getOrElse(DomainModelUploaderImpl.DEFAULT_REQUEST_TIMEOUT_MINUTES));
         uploadDomainModel();
     }
 

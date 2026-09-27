@@ -139,6 +139,7 @@ dlcGradlePlugin {
         streamUpload = false
         staticAnalysisCacheSize = 500
         staticAnalysisPackages = ["io.domainlifecycles.test"]
+        uploadRequestTimeoutMinutes = 5
     }
 }
 ```
@@ -156,8 +157,9 @@ Set `runStaticAnalysis = false` to upload only the domain model, skipping the an
 For a domain of a few hundred types the uploaded JSON (domain model plus static analysis result) can
 already reach the tens of megabytes, so the upload request is gzip-compressed (`Content-Encoding: gzip`)
 before being sent - your Diagram-Viewer endpoint needs to decompress the request body accordingly. The
-plugin also applies a 10 second connect timeout and an overall 5 minute request timeout, so an
-unreachable or slow Diagram-Viewer fails the build instead of hanging it indefinitely.
+plugin also applies a 10 second connect timeout and an overall request timeout of 5 minutes by default, so an
+unreachable or slow Diagram-Viewer fails the build instead of hanging it indefinitely. For very large domains
+raise the request timeout via `uploadRequestTimeoutMinutes`.
 
 By default, the (already gzip-compressed) request body is assembled completely in memory before being
 sent. Set `streamUpload = true` to instead stream it directly into the HTTP request as it is produced -
@@ -343,6 +345,7 @@ An example configuration in your project could look like the following:
                     <staticAnalysisPackages>
                         <staticAnalysisPackage>io.domainlifecycles.test</staticAnalysisPackage>
                     </staticAnalysisPackages>
+                    <uploadRequestTimeoutMinutes>5</uploadRequestTimeoutMinutes>
                     </configuration>
                 </execution>
             </executions>
@@ -364,8 +367,9 @@ Set `<runStaticAnalysis>false</runStaticAnalysis>` to upload only the domain mod
 For a domain of a few hundred types the uploaded JSON (domain model plus static analysis result) can
 already reach the tens of megabytes, so the upload request is gzip-compressed (`Content-Encoding: gzip`)
 before being sent - your Diagram-Viewer endpoint needs to decompress the request body accordingly. The
-plugin also applies a 10 second connect timeout and an overall 5 minute request timeout, so an
-unreachable or slow Diagram-Viewer fails the build instead of hanging it indefinitely.
+plugin also applies a 10 second connect timeout and an overall request timeout of 5 minutes by default, so an
+unreachable or slow Diagram-Viewer fails the build instead of hanging it indefinitely. For very large domains
+raise the request timeout via `uploadRequestTimeoutMinutes`.
 
 By default, the (already gzip-compressed) request body is assembled completely in memory before being
 sent. Set `<streamUpload>true</streamUpload>` to instead stream it directly into the HTTP request as it

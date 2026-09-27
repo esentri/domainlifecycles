@@ -188,6 +188,28 @@ public class JacksonDomainCallsSerializerTest {
             .hasMessageContaining(DELIVERY_SERVICE);
     }
 
+    @Test
+    void deserializedCallSitesShareOneDomainMethodInstancePerMethod() {
+        var original = DomainCalls.builder()
+            .add(domainMethod(DELIVERY_SERVICE, "deliver"), List.of(
+                new DomainCalls.CallSite(domainMethod(REPOSITORY, "findById"), DELIVERY_SERVICE, 42),
+                new DomainCalls.CallSite(domainMethod(REPOSITORY, "findById"), DELIVERY_SERVICE, 43)))
+            .add(domainMethod(AGGREGATE, "startDelivery"), List.of(
+                new DomainCalls.CallSite(domainMethod(REPOSITORY, "findById"), AGGREGATE, 7)))
+            .build();
+
+        var deserialized = serializer.deserialize(serializer.serialize(original), Domain.getDomainMirror());
+
+        // a method is resolved once and shared by all call sites referring to it, instead of a new
+        // DomainMethod per call site (millions of them for a large domain)
+        var firstCallSites = deserialized.callsFor(domainMethod(DELIVERY_SERVICE, "deliver")).callSites();
+        var secondCallSites = deserialized.callsFor(domainMethod(AGGREGATE, "startDelivery")).callSites();
+        assertThat(firstCallSites.get(0).called())
+            .isEqualTo(domainMethod(REPOSITORY, "findById"))
+            .isSameAs(firstCallSites.get(1).called())
+            .isSameAs(secondCallSites.get(0).called());
+    }
+
     private static DomainMethod domainMethod(String typeName, String methodName) {
         var typeMirror = Domain.getDomainMirror().getDomainTypeMirror(typeName).orElseThrow();
         var method = typeMirror.getMethods().stream()

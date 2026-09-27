@@ -99,8 +99,11 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
     /** How long to wait for the connection to the Diagram Viewer to be established. */
     private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(10);
 
-    /** How long to wait for the whole upload (request body, most importantly) plus response. */
-    private static final Duration REQUEST_TIMEOUT = Duration.ofMinutes(5);
+    /**
+     * Default of how long to wait for the whole upload (request body, most importantly) plus response, in minutes.
+     * Very large models may need longer, see {@link #DomainModelUploaderImpl(int, List, List, int)}.
+     */
+    public static final int DEFAULT_REQUEST_TIMEOUT_MINUTES = 5;
 
     /**
      * Number of not-yet-consumed chunks {@link #uploadDomainModelStreaming} buffers between the
@@ -114,6 +117,7 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
     private final DomainCallsSerializer domainCallsSerializer = new JacksonDomainCallsSerializer(true);
     private final DomainCallsAnalyzer domainCallsAnalyzer;
     private final NonDomainClassFilter nonDomainClassFilter;
+    private final Duration requestTimeout;
 
     /**
      * Creates a new uploader whose static analysis (run when {@code runStaticAnalysis} is passed to
@@ -151,8 +155,36 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
     public DomainModelUploaderImpl(int staticAnalysisCacheSize,
                                    List<String> nonDomainExcludedSupertypePackages,
                                    List<String> nonDomainExcludedPackages) {
+        this(staticAnalysisCacheSize, nonDomainExcludedSupertypePackages, nonDomainExcludedPackages,
+            DEFAULT_REQUEST_TIMEOUT_MINUTES);
+    }
+
+    /**
+     * Like {@link #DomainModelUploaderImpl(int, List, List)}, with a configurable timeout for the upload request.
+     *
+     * @param staticAnalysisCacheSize            the maximum number of classes held in the static analysis cache
+     * @param nonDomainExcludedSupertypePackages see {@link #DomainModelUploaderImpl(int, List, List)}
+     * @param nonDomainExcludedPackages          see {@link #DomainModelUploaderImpl(int, List, List)}
+     * @param requestTimeoutMinutes              how long to wait for the whole upload (request body plus response),
+     *                                           in minutes; must be positive
+     */
+    public DomainModelUploaderImpl(int staticAnalysisCacheSize,
+                                   List<String> nonDomainExcludedSupertypePackages,
+                                   List<String> nonDomainExcludedPackages,
+                                   int requestTimeoutMinutes) {
+        if (requestTimeoutMinutes <= 0) {
+            throw DLCPluginsException.fail("The upload request timeout must be positive, but was %d minutes.", requestTimeoutMinutes);
+        }
         this.domainCallsAnalyzer = new DomainCallsAnalyzerImpl(staticAnalysisCacheSize);
         this.nonDomainClassFilter = DLCUtils.nonDomainClassFilter(nonDomainExcludedSupertypePackages, nonDomainExcludedPackages);
+        this.requestTimeout = Duration.ofMinutes(requestTimeoutMinutes);
+    }
+
+    /**
+     * @return how long this uploader waits for the whole upload request plus response
+     */
+    Duration requestTimeout() {
+        return requestTimeout;
     }
 
     /**
@@ -316,7 +348,7 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
             .header("Content-Type", "application/json")
             .header("Content-Encoding", "gzip")
             .header(API_KEY_HEADER_NAME, apiKey)
-            .timeout(REQUEST_TIMEOUT)
+            .timeout(requestTimeout)
             .PUT(BodyPublishers.ofByteArray(compressedBody))
             .build();
     }
@@ -352,7 +384,7 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
             .header("Content-Type", "application/json")
             .header("Content-Encoding", "gzip")
             .header(API_KEY_HEADER_NAME, apiKey)
-            .timeout(REQUEST_TIMEOUT)
+            .timeout(requestTimeout)
             .PUT(BodyPublishers.ofInputStream(
                 () -> queuedRequestBody(domainMirror, domainCalls, domainModelPackages, writerFailure)))
             .build();

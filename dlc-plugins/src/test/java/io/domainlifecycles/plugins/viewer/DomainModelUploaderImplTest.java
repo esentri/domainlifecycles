@@ -103,6 +103,20 @@ public class DomainModelUploaderImplTest {
     }
 
     @Test
+    void usesTheDefaultRequestTimeoutOfFiveMinutesUnlessConfigured() {
+        assertThat(new DomainModelUploaderImpl().requestTimeout()).isEqualTo(java.time.Duration.ofMinutes(5));
+        assertThat(new DomainModelUploaderImpl(100, null, null, 30).requestTimeout())
+            .isEqualTo(java.time.Duration.ofMinutes(30));
+    }
+
+    @Test
+    void rejectsANonPositiveRequestTimeout() {
+        assertThatThrownBy(() -> new DomainModelUploaderImpl(100, null, null, 0))
+            .isInstanceOf(DLCPluginsException.class)
+            .hasMessageContaining("timeout");
+    }
+
+    @Test
     void omitsDomainCallsWhenStaticAnalysisIsDisabled() throws Exception {
         AtomicReference<byte[]> capturedBody = new AtomicReference<>();
         startServer(exchange -> capturedBody.set(exchange.getRequestBody().readAllBytes()));

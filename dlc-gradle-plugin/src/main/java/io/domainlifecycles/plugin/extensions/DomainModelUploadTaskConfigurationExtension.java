@@ -140,4 +140,13 @@ public abstract class DomainModelUploadTaskConfigurationExtension {
      * @return a ListProperty containing the excluded packages
      */
     public abstract ListProperty<String> getNonDomainExcludedPackages();
+
+    /**
+     * How long to wait for the whole upload (request body plus response of the Diagram Viewer), in minutes. Very
+     * large models may need longer than the default of
+     * {@link io.domainlifecycles.plugins.viewer.DomainModelUploaderImpl#DEFAULT_REQUEST_TIMEOUT_MINUTES}.
+     *
+     * @return a Property containing the timeout in minutes
+     */
+    public abstract Property<Integer> getUploadRequestTimeoutMinutes();
 }

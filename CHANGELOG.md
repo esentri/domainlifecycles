@@ -106,6 +106,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   plugins an empty list of excluded supertype packages keeps the default, since Maven injects an empty
   list for an unconfigured list parameter
 
+- Fixed building and deserializing `DomainCalls` (static analysis result) scaling quadratically with the
+  number of call sites per calling method: `DomainCalls.Builder` deduplicated call sites with a linear
+  `List.contains` per added call site - each a deep `MethodMirror` comparison - and is hash based now;
+  `JacksonDomainCallsSerializer` (Jackson 2 and 3) resolved every call site anew against the domain mirror
+  (scanning all methods of its type and creating a new `DomainMethod` each time) and now resolves each
+  distinct method once, sharing its `DomainMethod`. In a real world project (8.2 million call sites, callers
+  with more than 12,000 call sites) deserialization took 283 s and 2.4 GB heap; a prototype of the fix took
+  15 s and 0.9 GB. The static analysis in the build plugins benefits as well, since it uses the same builder
+- The Diagram-Viewer upload of the [Gradle and Maven plugins](./dlc-plugins/readme.md) has a configurable
+  request timeout: `uploadRequestTimeoutMinutes` (default 5, as fixed before), for very large domain models
+- Fixed the [domain diagrammer](./domain-diagrammer) spending most of the generation of large diagrams in
+  deciding which non-domain classes to show: `DiagramSettingsFilter` resolved the non-domain classes
+  referenced by every service kind anew for each non-domain class it checked (quadratic). It now resolves
+  them once per filter. In a real world model (4,771 types) generating a flow restricted diagram went from
+  about 7 s to 0.2 s, the whole model from 11 s to 3.5 s
+
 ## [3.4.0] - 2026-09-11
 - Improved DLC persistence initialization performance
 - Fixed auto record mapping of array typed fields (e.g. `byte[]`): the mirror reports the component type for arrays, which made the mapper look up a converter (`[B` -> `java.lang.Byte`) that could never be served. Added `AssertedContainableTypeMirror#getBinaryTypeName()` and used it for type resolution in `AutoRecordMapper` and `AutoMapperNestedValueObjectAccessor`.

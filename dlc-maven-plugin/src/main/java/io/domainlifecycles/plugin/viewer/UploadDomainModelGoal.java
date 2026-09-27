@@ -73,6 +73,8 @@ import java.util.List;
  * - staticAnalysisPackages: Restricts the static analysis (when runStaticAnalysis is enabled) to
  *   classes in these packages instead of the whole classpath. Falls back to domainModelPackages
  *   when unset.
+ * - uploadRequestTimeoutMinutes: How long to wait for the whole upload (request body plus response), in
+ *   minutes. Defaults to DomainModelUploaderImpl.DEFAULT_REQUEST_TIMEOUT_MINUTES (5).
  *
  * @author Leon Völlinger
  */
@@ -129,6 +131,12 @@ public class UploadDomainModelGoal extends AbstractMojo {
     @Parameter(property = "nonDomainExcludedPackages", required = false)
     private List<String> nonDomainExcludedPackages;
 
+    /**
+     * How long to wait for the whole upload (request body plus response of the Diagram Viewer), in minutes.
+     */
+    @Parameter(property = "uploadRequestTimeoutMinutes", defaultValue = "" + DomainModelUploaderImpl.DEFAULT_REQUEST_TIMEOUT_MINUTES)
+    private int uploadRequestTimeoutMinutes;
+
     private DomainModelUploader domainModelUploader;
 
     /**
@@ -148,7 +156,8 @@ public class UploadDomainModelGoal extends AbstractMojo {
     public void execute() {
         LOGGER.info("Running Upload Domain Model Goal...");
         domainModelUploader = new DomainModelUploaderImpl(
-            staticAnalysisCacheSize, nonDomainExcludedSupertypePackages, nonDomainExcludedPackages);
+            staticAnalysisCacheSize, nonDomainExcludedSupertypePackages, nonDomainExcludedPackages,
+            uploadRequestTimeoutMinutes);
         uploadDomainModel();
     }
 
