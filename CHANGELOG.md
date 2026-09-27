@@ -121,6 +121,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   referenced by every service kind anew for each non-domain class it checked (quadratic). It now resolves
   them once per filter. In a real world model (4,771 types) generating a flow restricted diagram went from
   about 7 s to 0.2 s, the whole model from 11 s to 3.5 s
+- Raised the default size of the static analysis class cache (`SootupStaticAnalyzer.DEFAULT_CACHE_SIZE`, and with
+  it the `staticAnalysisCacheSize` default of the [Gradle and Maven plugins](./dlc-plugins/readme.md)) from 500 to
+  5000. The cache only holds classes actually parsed, so smaller projects are unaffected; in a real world project
+  (4,771 mirrored types) the analysis got about 13 % faster without a measurable increase of the heap needed
 
 ## [3.4.0] - 2026-09-11
 - Improved DLC persistence initialization performance

@@ -117,11 +117,13 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
      * {@link #SootupStaticAnalyzer(int)}. SootUp itself defaults to an unbounded cache, which lets
      * memory usage grow with the number of distinct classes touched while resolving method bodies
      * (including JDK and library classes, not just mirrored domain types) - for large projects this
-     * can exhaust the heap. 500 is chosen to comfortably hold the classes of a mid-sized domain
-     * model plus its immediate dependencies without evicting on every lookup; projects with a much
-     * larger or smaller class footprint should size this explicitly.
+     * can exhaust the heap. The cache only ever holds the classes actually parsed, so a smaller
+     * project does not pay for a large bound. 5000 avoids most re-parsing even for large domain
+     * models: in a real world project (4,771 mirrored types) it shortened the analysis by about 13 %
+     * compared to the former default of 500, without a measurable increase of the heap needed;
+     * beyond 5000 the gain levels off.
      */
-    public static final int DEFAULT_CACHE_SIZE = 500;
+    public static final int DEFAULT_CACHE_SIZE = 5000;
 
     private final int cacheSize;
 
