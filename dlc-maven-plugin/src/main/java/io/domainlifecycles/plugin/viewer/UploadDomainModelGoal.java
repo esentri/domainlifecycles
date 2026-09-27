@@ -113,6 +113,22 @@ public class UploadDomainModelGoal extends AbstractMojo {
     @Parameter(property = "staticAnalysisPackages", required = false)
     private List<String> staticAnalysisPackages;
 
+    /**
+     * Packages whose types, as superclass or interface (direct or inherited), exclude a class from being
+     * mirrored as non-domain class. Unset means the default {@code org.jooq}, which leaves out the code
+     * jOOQ generates for tables, records, schemas and catalogs; an empty list also means this default
+     * (Maven cannot distinguish an unset list parameter from an empty one).
+     */
+    @Parameter(property = "nonDomainExcludedSupertypePackages", required = false)
+    private List<String> nonDomainExcludedSupertypePackages;
+
+    /**
+     * Packages whose classes are not mirrored as non-domain classes, e.g. generated code without a common
+     * supertype. Unset means none.
+     */
+    @Parameter(property = "nonDomainExcludedPackages", required = false)
+    private List<String> nonDomainExcludedPackages;
+
     private DomainModelUploader domainModelUploader;
 
     /**
@@ -131,7 +147,8 @@ public class UploadDomainModelGoal extends AbstractMojo {
     @Override
     public void execute() {
         LOGGER.info("Running Upload Domain Model Goal...");
-        domainModelUploader = new DomainModelUploaderImpl(staticAnalysisCacheSize);
+        domainModelUploader = new DomainModelUploaderImpl(
+            staticAnalysisCacheSize, nonDomainExcludedSupertypePackages, nonDomainExcludedPackages);
         uploadDomainModel();
     }
 

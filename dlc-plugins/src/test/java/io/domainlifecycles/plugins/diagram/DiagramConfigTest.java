@@ -237,4 +237,40 @@ public class DiagramConfigTest {
         assertThat(diagramConfig.getFileType()).isEqualTo(FileType.SVG);
         assertThat(diagramConfig.getFileName()).isEqualTo("myDiagram");
     }
+
+    @Test
+    void nonDomainClassFilterExcludesJooqGeneratedClassesByDefault() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+
+        var filter = diagramConfig.nonDomainClassFilter();
+
+        assertThat(filter.excludedSupertypePackages()).containsExactly("org.jooq");
+        assertThat(filter.excludedPackages()).isEmpty();
+    }
+
+    @Test
+    void nonDomainClassFilterUsesConfiguredExclusions() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setNonDomainExcludedSupertypePackages(List.of("com.example.codegen"));
+        diagramConfig.setNonDomainExcludedPackages(List.of("com.example.generated"));
+
+        var filter = diagramConfig.nonDomainClassFilter();
+
+        assertThat(filter.excludedSupertypePackages()).containsExactly("com.example.codegen");
+        assertThat(filter.excludedPackages()).containsExactly("com.example.generated");
+    }
+
+    @Test
+    void nonDomainClassFilterTreatsEmptySupertypePackagesAsDefault() {
+        // Maven injects an empty list for an unconfigured list parameter (verified with -X), Gradle
+        // list properties default to an empty list - both must keep the default exclusion of jOOQ code
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setNonDomainExcludedSupertypePackages(List.of());
+        diagramConfig.setNonDomainExcludedPackages(List.of());
+
+        var filter = diagramConfig.nonDomainClassFilter();
+
+        assertThat(filter.excludedSupertypePackages()).containsExactly("org.jooq");
+        assertThat(filter.excludedPackages()).isEmpty();
+    }
 }

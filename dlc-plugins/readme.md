@@ -487,6 +487,8 @@ Supported Diagram configuration options are
 - flowFollowImplementations: boolean, whether a flow follows the dispatch from an interface/abstract method into its implementations, default true
 - flowExcludeAccessors: boolean, whether simple accessor methods (getters/setters) are excluded from a followed flow, default false
 - staticAnalysisPackages: list of packages the static analysis (triggered by `includeFlowsFrom`) restricts itself to, default `domainModelPackages` (see [Restricting a diagram to a flow](#restricting-a-diagram-to-a-flow))
+- nonDomainExcludedSupertypePackages: list of packages whose types, as superclass or interface, exclude a class from the mirrored non-domain classes, default `["org.jooq"]` (leaves out the code jOOQ generates); an empty list also means this default (see [Leaving generated code out](#leaving-generated-code-out))
+- nonDomainExcludedPackages: list of packages whose classes are not mirrored as non-domain classes, default none (see [Leaving generated code out](#leaving-generated-code-out))
 
 ## Restricting a diagram to a flow
 
@@ -610,6 +612,49 @@ Maven example:
 For the full semantics of `includeFlowsFrom`/`includeFlowsTo` and the flow traversal settings, see the domain-diagrammer's
 ["Restricting a diagram to a flow"](../domain-diagrammer/readme.md#restricting-a-diagram-to-a-flow) section, and for
 background on the underlying static analysis, see the [static-analysis readme](../static-analysis/readme.md).
+
+## Leaving generated code out
+
+Classes in the domain model packages that implement no domain marker interface are mirrored as
+non-domain classes (see the [mirror](../mirror/readme.md#mirroring-non-domain-classes)). Generated code
+is left out of these by default: every class whose superclass or interfaces - direct or inherited - lie
+within `org.jooq`, i.e. the table, record, schema and catalog classes jOOQ generates. In a real world
+project these made up 95 % of the mirrored non-domain classes' size. Leaving them out also shrinks the
+static analysis result considerably, since calls from and to classes that are not mirrored are not
+recorded (there: 87 % of all call sites).
+
+All goals/tasks building a domain mirror - the diagram, the mirror serialization and the Diagram-Viewer
+upload - accept the same two options:
+
+- `nonDomainExcludedSupertypePackages`: packages whose types, as supertypes, exclude a class; default
+  `["org.jooq"]`. Setting it replaces the default, so add `org.jooq` again to keep excluding jOOQ code.
+  An empty list also means the default: Maven cannot tell an unconfigured list parameter from an empty
+  one. Switching the exclusion off entirely is only possible via the
+  [mirror API](../mirror/readme.md#leaving-generated-code-out).
+- `nonDomainExcludedPackages`: packages whose classes are not mirrored as non-domain classes (e.g.
+  generated code without a common supertype, like jOOQ's `Keys`/`Tables`); default none
+
+```groovy
+dlcGradlePlugin {
+    domainModelUpload {
+        domainModelPackages = ["com.example"]
+        nonDomainExcludedPackages = ["com.example.persistence.generated"]
+        // ...
+    }
+}
+```
+
+```xml
+<configuration>
+    <domainModelPackages>
+        <domainModelPackage>com.example</domainModelPackage>
+    </domainModelPackages>
+    <nonDomainExcludedPackages>
+        <nonDomainExcludedPackage>com.example.persistence.generated</nonDomainExcludedPackage>
+    </nonDomainExcludedPackages>
+    <!-- ... -->
+</configuration>
+```
 
 ## How to read DLC Domain Diagrams?
 

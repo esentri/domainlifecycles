@@ -332,6 +332,22 @@ public class PluginDiagramConfiguration {
     @Parameter(property = "staticAnalysisPackages", required = false)
     private List<String> staticAnalysisPackages;
 
+    /**
+     * Packages whose types, as superclass or interface (direct or inherited), exclude a class from being
+     * mirrored as non-domain class. Unset means the default {@code org.jooq}, which leaves out the code
+     * jOOQ generates for tables, records, schemas and catalogs; an empty list also means this default
+     * (Maven cannot distinguish an unset list parameter from an empty one).
+     */
+    @Parameter(property = "nonDomainExcludedSupertypePackages", required = false)
+    private List<String> nonDomainExcludedSupertypePackages;
+
+    /**
+     * Packages whose classes are not mirrored as non-domain classes, e.g. generated code without a common
+     * supertype. Unset means none.
+     */
+    @Parameter(property = "nonDomainExcludedPackages", required = false)
+    private List<String> nonDomainExcludedPackages;
+
 
     /**
      * Gets the output format of the diagram.
@@ -1173,5 +1189,23 @@ public class PluginDiagramConfiguration {
      */
     public List<String> getStaticAnalysisPackages() {
         return staticAnalysisPackages;
+    }
+
+    /**
+     * Gets the packages whose types, as supertypes, exclude a class from the mirrored non-domain classes.
+     *
+     * @return the excluded supertype packages, {@code null} or empty for the default ({@code org.jooq})
+     */
+    public List<String> getNonDomainExcludedSupertypePackages() {
+        return nonDomainExcludedSupertypePackages;
+    }
+
+    /**
+     * Gets the packages whose classes are not mirrored as non-domain classes.
+     *
+     * @return the excluded packages, or {@code null} for none
+     */
+    public List<String> getNonDomainExcludedPackages() {
+        return nonDomainExcludedPackages;
     }
 }

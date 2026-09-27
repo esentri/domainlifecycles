@@ -140,7 +140,7 @@ public class DiagramGeneratorImpl implements DiagramGenerator {
     private String generateRawNomnomlDiagramText(List<URL> classPathFiles, final DiagramConfig diagramConfig, final String... domainPackages) {
         DomainMirror dm;
         try {
-            dm = DLCUtils.initializeDomainMirrorFromClassPath(classPathFiles, domainPackages);
+            dm = DLCUtils.initializeDomainMirrorFromClassPath(classPathFiles, diagramConfig.nonDomainClassFilter(), domainPackages);
         } catch(RuntimeException e) {
             throw DLCPluginsException.fail("DomainMirror couldn't be initialized.", e);
         }

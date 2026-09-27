@@ -130,8 +130,29 @@ public class ClassGraphDomainTypesScanner {
      *                                 with {@link io.domainlifecycles.mirror.api.DomainType#NON_DOMAIN}.
      * @return a list of discovered domain types represented as {@code DomainTypeMirror} instances.
      */
-    @SuppressWarnings("unchecked")
     public List<DomainTypeMirror> scan(String[] packages, String[] nonDomainScanPackages, boolean includeNonDomainClasses) {
+        return scan(packages, nonDomainScanPackages, includeNonDomainClasses, NonDomainClassFilter.DEFAULT);
+    }
+
+    /**
+     * Scans the specified package(s) to discover domain types, including enums, interfaces,
+     * and classes implementing or extending various domain-related interfaces and types.
+     * This method uses ClassGraph to perform the scanning.
+     *
+     * @param packages the array of package names to scan. If no packages are provided, the scan will include all available packages.
+     * @param nonDomainScanPackages the array of package names within which classes not implementing any
+     *                              domain marker interface are also turned into {@link NonDomainTypeMirror}
+     *                              instances, if {@code includeNonDomainClasses} is {@code true}.
+     * @param includeNonDomainClasses whether classes within {@code nonDomainScanPackages} that do not
+     *                                 implement any domain marker interface should also be mirrored.
+     * @param nonDomainClassFilter which of those non-domain classes to leave out, e.g. generated code
+     * @return a list of discovered domain types represented as {@code DomainTypeMirror} instances.
+     */
+    @SuppressWarnings("unchecked")
+    public List<DomainTypeMirror> scan(String[] packages,
+                                       String[] nonDomainScanPackages,
+                                       boolean includeNonDomainClasses,
+                                       NonDomainClassFilter nonDomainClassFilter) {
 
         if(packages.length>0) {
             var packageNames = String.join(", ", packages);
@@ -151,7 +172,8 @@ public class ClassGraphDomainTypesScanner {
         try (ScanResult scanResult = classGraph.scan()) {  // Start the scan
             var domainTypes = buildMirrorsFromScanResult(scanResult);
             if (includeNonDomainClasses) {
-                domainTypes.addAll(buildNonDomainMirrors(scanResult, domainTypes, nonDomainScanPackages));
+                domainTypes.addAll(buildNonDomainMirrors(scanResult, domainTypes, nonDomainScanPackages,
+                    Objects.requireNonNull(nonDomainClassFilter, "A NonDomainClassFilter must be provided!")));
             }
             return domainTypes;
         } catch (Throwable t) {
@@ -326,6 +348,24 @@ public class ClassGraphDomainTypesScanner {
     protected List<DomainTypeMirror> buildNonDomainMirrors(ScanResult scanResult,
                                                            List<DomainTypeMirror> alreadyBuilt,
                                                            String[] nonDomainScanPackages) {
+        return buildNonDomainMirrors(scanResult, alreadyBuilt, nonDomainScanPackages, NonDomainClassFilter.DEFAULT);
+    }
+
+    /**
+     * Same as {@link #buildNonDomainMirrors(ScanResult, List, String[])}, leaving out the classes the
+     * given filter excludes. Package based exclusion is checked before a class is loaded, supertype based
+     * exclusion right after loading - in both cases before its (possibly large) mirror is built.
+     *
+     * @param scanResult            the ClassGraph scan result
+     * @param alreadyBuilt          the domain type mirrors already built from the scan result
+     * @param nonDomainScanPackages the packages within which non-domain classes should be mirrored
+     * @param nonDomainClassFilter  which non-domain classes to leave out
+     * @return the built non-domain type mirrors
+     */
+    protected List<DomainTypeMirror> buildNonDomainMirrors(ScanResult scanResult,
+                                                           List<DomainTypeMirror> alreadyBuilt,
+                                                           String[] nonDomainScanPackages,
+                                                           NonDomainClassFilter nonDomainClassFilter) {
         if (nonDomainScanPackages == null || nonDomainScanPackages.length == 0) {
             return Collections.emptyList();
         }
@@ -340,10 +380,12 @@ public class ClassGraphDomainTypesScanner {
             .filter(ci -> !ci.isEnum())
             .filter(ci -> !alreadyClassifiedNames.contains(ci.getName()))
             .filter(ci -> isWithinPackages(ci.getName(), nonDomainScanPackages))
+            .filter(ci -> !nonDomainClassFilter.isExcludedByName(ci.getName()))
             .map(this::loadClass)
             .filter(Objects::nonNull)
             .filter(c -> !c.isAnonymousClass() && !c.isLocalClass() && !c.isSynthetic())
             .filter(c -> DomainType.NON_DOMAIN.equals(domainTypeDetector.detectDomainType(c)))
+            .filter(c -> !nonDomainClassFilter.isExcludedBySupertype(c))
             .map(dt -> build(new NonDomainTypeMirrorBuilder(dt, genericTypeResolver, domainTypeDetector)))
             .filter(Objects::nonNull)
             .forEach(nonDomainTypes::add);

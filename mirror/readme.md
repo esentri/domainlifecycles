@@ -90,6 +90,30 @@ public class ShopApplication {
 }
 ```
 
+### Leaving generated code out
+
+Generated code can make up the vast majority of a domain model's non-domain classes - most notably the
+table and record classes jOOQ generates, which declare hundreds to thousands of methods each. In a real
+world project these accounted for 95 % of the mirrored non-domain classes' size, bloating the mirror
+(and the static analysis built on top of it) without adding anything a domain diagram shows. Such
+classes are therefore left out by default.
+
+Generated classes are recognized by their supertypes: a class is left out if one of its superclasses or
+interfaces - direct or inherited - lies within one of the *excluded supertype packages*, by default
+`org.jooq` (catching jOOQ's tables, records, schemas and catalogs). Generation annotations like
+`@Generated` cannot be used for this, since they are only retained in the source code. For generated
+classes without a common supertype (like jOOQ's `Keys` or `Tables`), whole packages can be excluded:
+
+```Java
+var factory = new ReflectiveDomainMirrorFactory("sampleshop");
+// default: List.of("org.jooq"); an empty list switches the supertype based exclusion off
+factory.setNonDomainExcludedSupertypePackages(List.of("org.jooq", "com.example.codegen.base"));
+// default: none
+factory.setNonDomainExcludedPackages(List.of("sampleshop.persistence.generated"));
+```
+
+Package names match the package itself and all its sub-packages. See `NonDomainClassFilter`.
+
 The [DLC Domain Diagrammer](../domain-diagrammer/readme.md#showing-non-domain-classes) builds on
 this to optionally draw the non-domain classes referenced by a service in a diagram.
 

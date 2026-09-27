@@ -77,7 +77,7 @@ public class ReflectiveDomainMirrorFactory extends AbstractDomainMirrorFactory i
 
         Map<String, ? extends DomainTypeMirror> builtTypeMirrors =
             classGraphDomainTypesScanner
-                .scan(domainModelPackagesExtended, domainModelPackages, includeNonDomainClasses)
+                .scan(domainModelPackagesExtended, domainModelPackages, includeNonDomainClasses, nonDomainClassFilter())
                 .stream()
                 .collect(
                     Collectors.toMap(

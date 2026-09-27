@@ -27,6 +27,7 @@
 package io.domainlifecycles.plugins.mirror;
 
 import io.domainlifecycles.mirror.api.DomainMirror;
+import io.domainlifecycles.mirror.reflect.NonDomainClassFilter;
 import io.domainlifecycles.mirror.serialize.DomainSerializer;
 import io.domainlifecycles.mirror.serialize.jackson3.JacksonDomainSerializer;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
@@ -55,6 +56,8 @@ public class MirrorSerializerImpl implements MirrorSerializer {
 
     private final DomainSerializer domainSerializer;
 
+    private final NonDomainClassFilter nonDomainClassFilter;
+
     /**
      * Constructs an instance of the JsonSerializerImpl.
      *
@@ -65,7 +68,26 @@ public class MirrorSerializerImpl implements MirrorSerializer {
      *                    in a human-readable way with indentation (true) or minified (false).
      */
     public MirrorSerializerImpl(boolean prettyPrint) {
+        this(prettyPrint, null, null);
+    }
+
+    /**
+     * Initializes the internal domain serializer with the provided configuration for pretty print, and
+     * leaves out the non-domain classes the given filter excludes (by default the code jOOQ generates,
+     * see {@link NonDomainClassFilter}).
+     *
+     * @param prettyPrint                        whether the JSON output should be formatted in a human-readable way
+     * @param nonDomainExcludedSupertypePackages packages whose types, as supertypes, exclude a class from the
+     *                                           mirrored non-domain classes; {@code null} or empty for the
+     *                                           default ({@code org.jooq})
+     * @param nonDomainExcludedPackages          packages whose classes are not mirrored as non-domain classes;
+     *                                           {@code null} for none
+     */
+    public MirrorSerializerImpl(boolean prettyPrint,
+                                List<String> nonDomainExcludedSupertypePackages,
+                                List<String> nonDomainExcludedPackages) {
         this.domainSerializer = new JacksonDomainSerializer(prettyPrint);
+        this.nonDomainClassFilter = DLCUtils.nonDomainClassFilter(nonDomainExcludedSupertypePackages, nonDomainExcludedPackages);
     }
 
     /**
@@ -81,7 +103,7 @@ public class MirrorSerializerImpl implements MirrorSerializer {
     public String serialize(List<URL> classPathFiles, final List<String> domainModelPackages) {
         DomainMirror dm = null;
         try {
-            dm = DLCUtils.initializeDomainMirrorFromClassPath(classPathFiles, domainModelPackages.toArray(String[]::new));
+            dm = DLCUtils.initializeDomainMirrorFromClassPath(classPathFiles, nonDomainClassFilter, domainModelPackages.toArray(String[]::new));
         } catch(RuntimeException e) {
             throw DLCPluginsException.fail("DLC couldn't be initialized.", e);
         }

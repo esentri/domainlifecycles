@@ -28,6 +28,7 @@ package io.domainlifecycles.mirror.reflect;
 
 import io.domainlifecycles.mirror.exception.MirrorException;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public abstract class AbstractDomainMirrorFactory {
@@ -38,6 +39,8 @@ public abstract class AbstractDomainMirrorFactory {
     protected ClassLoader externalClassLoader;
     protected DomainTypeDetector domainTypeDetector;
     protected boolean includeNonDomainClasses = true;
+    protected List<String> nonDomainExcludedSupertypePackages = NonDomainClassFilter.DEFAULT_EXCLUDED_SUPERTYPE_PACKAGES;
+    protected List<String> nonDomainExcludedPackages = List.of();
 
     private static final Pattern packagePattern = Pattern.compile("^[a-z]+(\\.[a-zA-Z_][a-zA-Z0-9_]*)*$");
 
@@ -116,6 +119,39 @@ public abstract class AbstractDomainMirrorFactory {
      */
     public void setIncludeNonDomainClasses(boolean includeNonDomainClasses) {
         this.includeNonDomainClasses = includeNonDomainClasses;
+    }
+
+    /**
+     * Sets the packages whose types, as superclass or interface (direct or inherited), exclude a class from
+     * being mirrored as non-domain class. Defaults to {@code org.jooq}, which leaves out the table, record,
+     * schema and catalog classes jOOQ generates - generated code that can make up the vast majority of a
+     * domain model's non-domain classes without adding anything a domain diagram shows. An empty list
+     * switches the supertype based exclusion off, {@code null} restores the default. See
+     * {@link NonDomainClassFilter}.
+     *
+     * @param nonDomainExcludedSupertypePackages the excluded supertype packages
+     */
+    public void setNonDomainExcludedSupertypePackages(List<String> nonDomainExcludedSupertypePackages) {
+        this.nonDomainExcludedSupertypePackages = nonDomainExcludedSupertypePackages == null
+            ? NonDomainClassFilter.DEFAULT_EXCLUDED_SUPERTYPE_PACKAGES
+            : List.copyOf(nonDomainExcludedSupertypePackages);
+    }
+
+    /**
+     * Sets packages whose classes are not mirrored as non-domain classes, e.g. packages of generated code
+     * whose classes share no common supertype. Defaults to none. See {@link NonDomainClassFilter}.
+     *
+     * @param nonDomainExcludedPackages the excluded packages
+     */
+    public void setNonDomainExcludedPackages(List<String> nonDomainExcludedPackages) {
+        this.nonDomainExcludedPackages = nonDomainExcludedPackages == null ? List.of() : List.copyOf(nonDomainExcludedPackages);
+    }
+
+    /**
+     * @return the filter for non-domain classes built from the configured exclusions
+     */
+    protected NonDomainClassFilter nonDomainClassFilter() {
+        return new NonDomainClassFilter(nonDomainExcludedSupertypePackages, nonDomainExcludedPackages);
     }
 
 }

@@ -118,7 +118,6 @@ public class MirrorSerializerGoal extends AbstractMojo {
     @Override
     public void execute() {
         LOGGER.info("Running Serialize Mirror Goal...");
-        mirrorSerializer = new MirrorSerializerImpl(true);
         serializations.forEach(this::renderAndSaveModelAsJson);
     }
 
@@ -128,6 +127,9 @@ public class MirrorSerializerGoal extends AbstractMojo {
             classPath.addAll(ClassLoaderUtils.getParentClasspathFiles(project));
         }
 
+        mirrorSerializer = new MirrorSerializerImpl(true,
+            pluginSerializationConfiguration.getNonDomainExcludedSupertypePackages(),
+            pluginSerializationConfiguration.getNonDomainExcludedPackages());
         String jsonContent = mirrorSerializer.serialize(classPath, pluginSerializationConfiguration.getDomainModelPackages());
         Path filePath = Path.of(fileOutputDir, pluginSerializationConfiguration.getFileName());
 

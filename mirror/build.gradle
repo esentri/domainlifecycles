@@ -29,6 +29,8 @@ dependencies {
     testImplementation libs.junit.jupiter.params
     testImplementation libs.lombok
     testImplementation libs.assertj
+    // only to verify that jOOQ generated classes are left out of the non-domain classes by default
+    testImplementation libs.jooq
     testAnnotationProcessor libs.lombok
 }
 

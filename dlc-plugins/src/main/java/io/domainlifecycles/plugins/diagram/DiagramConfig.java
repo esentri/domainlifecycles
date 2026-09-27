@@ -32,6 +32,8 @@ import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig.DomainDiagr
 import io.domainlifecycles.diagram.domain.config.GeneralVisualSettings;
 import io.domainlifecycles.diagram.domain.config.LayoutSettings;
 import io.domainlifecycles.diagram.domain.config.StyleSettings;
+import io.domainlifecycles.mirror.reflect.NonDomainClassFilter;
+import io.domainlifecycles.plugins.util.DLCUtils;
 import io.domainlifecycles.staticanalysis.FlowConfig;
 
 import java.util.List;
@@ -150,6 +152,8 @@ public class DiagramConfig {
     private Boolean flowFollowImplementations;
     private Boolean flowExcludeAccessors;
     private List<String> staticAnalysisPackages;
+    private List<String> nonDomainExcludedSupertypePackages;
+    private List<String> nonDomainExcludedPackages;
 
     /**
      * Gets the file type for the diagram output
@@ -1765,6 +1769,52 @@ public class DiagramConfig {
      */
     public void setStaticAnalysisPackages(List<String> staticAnalysisPackages) {
         this.staticAnalysisPackages = staticAnalysisPackages;
+    }
+
+    /**
+     * Gets the packages whose types, as superclass or interface, exclude a class from being mirrored as
+     * non-domain class. {@code null} or empty means the default {@code org.jooq} (leaves out the code
+     * jOOQ generates). See {@link NonDomainClassFilter} and {@link DLCUtils#nonDomainClassFilter}.
+     *
+     * @return the excluded supertype packages, or {@code null} for the default
+     */
+    public List<String> getNonDomainExcludedSupertypePackages() {
+        return nonDomainExcludedSupertypePackages;
+    }
+
+    /**
+     * Sets the packages whose types, as superclass or interface, exclude a class from being mirrored as
+     * non-domain class.
+     *
+     * @param nonDomainExcludedSupertypePackages the excluded supertype packages, or {@code null} for the default
+     */
+    public void setNonDomainExcludedSupertypePackages(List<String> nonDomainExcludedSupertypePackages) {
+        this.nonDomainExcludedSupertypePackages = nonDomainExcludedSupertypePackages;
+    }
+
+    /**
+     * Gets the packages whose classes are not mirrored as non-domain classes. {@code null} means none.
+     *
+     * @return the excluded packages, or {@code null} for none
+     */
+    public List<String> getNonDomainExcludedPackages() {
+        return nonDomainExcludedPackages;
+    }
+
+    /**
+     * Sets the packages whose classes are not mirrored as non-domain classes.
+     *
+     * @param nonDomainExcludedPackages the excluded packages, or {@code null} for none
+     */
+    public void setNonDomainExcludedPackages(List<String> nonDomainExcludedPackages) {
+        this.nonDomainExcludedPackages = nonDomainExcludedPackages;
+    }
+
+    /**
+     * @return the filter for non-domain classes built from the configured exclusions
+     */
+    NonDomainClassFilter nonDomainClassFilter() {
+        return DLCUtils.nonDomainClassFilter(nonDomainExcludedSupertypePackages, nonDomainExcludedPackages);
     }
 
     /**

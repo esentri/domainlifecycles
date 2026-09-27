@@ -56,6 +56,9 @@ public class DiagramConfigMapperTest {
         when(mavenDiagramConfig.getFlowFollowImplementations()).thenReturn(false);
         when(mavenDiagramConfig.getFlowExcludeAccessors()).thenReturn(true);
 
+        when(mavenDiagramConfig.getNonDomainExcludedSupertypePackages()).thenReturn(List.of("com.example.codegen"));
+        when(mavenDiagramConfig.getNonDomainExcludedPackages()).thenReturn(List.of("com.example.generated"));
+
         DiagramConfig diagramConfig = DiagramConfigMapper.map(mavenDiagramConfig);
 
         assertThat(diagramConfig.getFileType()).isEqualTo(FileType.SVG);
@@ -69,6 +72,8 @@ public class DiagramConfigMapperTest {
         assertThat(diagramConfig.getFlowMaxDepth()).isEqualTo(2);
         assertThat(diagramConfig.getFlowFollowEvents()).isFalse();
         assertThat(diagramConfig.getFlowFollowImplementations()).isFalse();
+        assertThat(diagramConfig.getNonDomainExcludedSupertypePackages()).containsExactly("com.example.codegen");
+        assertThat(diagramConfig.getNonDomainExcludedPackages()).containsExactly("com.example.generated");
         assertThat(diagramConfig.getFlowExcludeAccessors()).isTrue();
     }
 
@@ -84,6 +89,8 @@ public class DiagramConfigMapperTest {
         when(mavenDiagramConfig.getFlowFollowEvents()).thenReturn(null);
         when(mavenDiagramConfig.getFlowFollowImplementations()).thenReturn(null);
         when(mavenDiagramConfig.getFlowExcludeAccessors()).thenReturn(null);
+        when(mavenDiagramConfig.getNonDomainExcludedSupertypePackages()).thenReturn(null);
+        when(mavenDiagramConfig.getNonDomainExcludedPackages()).thenReturn(null);
 
         DiagramConfig diagramConfig = DiagramConfigMapper.map(mavenDiagramConfig);
 
@@ -100,6 +107,9 @@ public class DiagramConfigMapperTest {
         assertThat(diagramConfig.getFlowFollowEvents()).isNull();
         assertThat(diagramConfig.getFlowFollowImplementations()).isNull();
         assertThat(diagramConfig.getFlowExcludeAccessors()).isNull();
+        // unset (null) means the default exclusion of jOOQ generated classes, applied by NonDomainClassFilter
+        assertThat(diagramConfig.getNonDomainExcludedSupertypePackages()).isNull();
+        assertThat(diagramConfig.getNonDomainExcludedPackages()).isNull();
     }
 
     @Test

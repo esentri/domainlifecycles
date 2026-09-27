@@ -145,6 +145,8 @@ public class DiagramConfigMapper {
         diagramConfig.setFlowFollowImplementations(extension.getFlowFollowImplementations().getOrNull());
         diagramConfig.setFlowExcludeAccessors(extension.getFlowExcludeAccessors().getOrNull());
         diagramConfig.setStaticAnalysisPackages(extension.getStaticAnalysisPackages().getOrNull());
+        diagramConfig.setNonDomainExcludedSupertypePackages(extension.getNonDomainExcludedSupertypePackages().getOrNull());
+        diagramConfig.setNonDomainExcludedPackages(extension.getNonDomainExcludedPackages().getOrNull());
         return diagramConfig;
     }
 }

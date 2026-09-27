@@ -29,6 +29,7 @@ package io.domainlifecycles.plugins.viewer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.mirror.api.DomainMirror;
+import io.domainlifecycles.mirror.reflect.NonDomainClassFilter;
 import io.domainlifecycles.mirror.serialize.DomainSerializer;
 import io.domainlifecycles.mirror.serialize.jackson3.JacksonDomainSerializer;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
@@ -112,6 +113,7 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
     private final DomainSerializer domainSerializer = new JacksonDomainSerializer(true);
     private final DomainCallsSerializer domainCallsSerializer = new JacksonDomainCallsSerializer(true);
     private final DomainCallsAnalyzer domainCallsAnalyzer;
+    private final NonDomainClassFilter nonDomainClassFilter;
 
     /**
      * Creates a new uploader whose static analysis (run when {@code runStaticAnalysis} is passed to
@@ -130,7 +132,27 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
      *                                cache at once
      */
     public DomainModelUploaderImpl(int staticAnalysisCacheSize) {
+        this(staticAnalysisCacheSize, null, null);
+    }
+
+    /**
+     * Creates a new uploader whose static analysis is backed by a bounded cache of the given size, and
+     * whose domain mirror leaves out the non-domain classes the given filter excludes (by default the
+     * code jOOQ generates, see {@link NonDomainClassFilter}). Leaving generated code out also shrinks the
+     * static analysis result, since calls from and to classes that are not mirrored are not recorded.
+     *
+     * @param staticAnalysisCacheSize            the maximum number of classes held in the static analysis cache
+     * @param nonDomainExcludedSupertypePackages packages whose types, as supertypes, exclude a class from the
+     *                                           mirrored non-domain classes; {@code null} or empty for the
+     *                                           default ({@code org.jooq})
+     * @param nonDomainExcludedPackages          packages whose classes are not mirrored as non-domain classes;
+     *                                           {@code null} for none
+     */
+    public DomainModelUploaderImpl(int staticAnalysisCacheSize,
+                                   List<String> nonDomainExcludedSupertypePackages,
+                                   List<String> nonDomainExcludedPackages) {
         this.domainCallsAnalyzer = new DomainCallsAnalyzerImpl(staticAnalysisCacheSize);
+        this.nonDomainClassFilter = DLCUtils.nonDomainClassFilter(nonDomainExcludedSupertypePackages, nonDomainExcludedPackages);
     }
 
     /**
@@ -271,7 +293,7 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
 
     private DomainMirror buildDomainMirror(List<URL> classPathFiles, List<String> domainModelPackages) {
         try {
-            return DLCUtils.initializeDomainMirrorFromClassPath(classPathFiles, domainModelPackages.toArray(String[]::new));
+            return DLCUtils.initializeDomainMirrorFromClassPath(classPathFiles, nonDomainClassFilter, domainModelPackages.toArray(String[]::new));
         } catch (RuntimeException e) {
             throw DLCPluginsException.fail("DomainMirror couldn't be initialized.", e);
         }

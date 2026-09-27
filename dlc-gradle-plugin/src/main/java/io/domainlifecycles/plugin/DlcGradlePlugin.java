@@ -147,6 +147,8 @@ public class DlcGradlePlugin implements Plugin<Project> {
                 task.getStaticAnalysisCacheSize().set(domainModelUploadTaskConfigurationExtension.getStaticAnalysisCacheSize()
                     .convention(DomainCallsAnalyzerImpl.DEFAULT_CACHE_SIZE));
                 task.getStaticAnalysisPackages().set(domainModelUploadTaskConfigurationExtension.getStaticAnalysisPackages());
+                task.getNonDomainExcludedSupertypePackages().set(domainModelUploadTaskConfigurationExtension.getNonDomainExcludedSupertypePackages());
+                task.getNonDomainExcludedPackages().set(domainModelUploadTaskConfigurationExtension.getNonDomainExcludedPackages());
                 task.getClassesDirs().from(totalClassesDirs);
                 task.getClasspath().from(totalClasspath);
             });

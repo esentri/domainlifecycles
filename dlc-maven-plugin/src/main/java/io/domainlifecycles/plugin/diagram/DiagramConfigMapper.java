@@ -136,6 +136,8 @@ public class DiagramConfigMapper {
         diagramConfig.setFlowFollowImplementations(mavenDiagramConfig.getFlowFollowImplementations());
         diagramConfig.setFlowExcludeAccessors(mavenDiagramConfig.getFlowExcludeAccessors());
         diagramConfig.setStaticAnalysisPackages(mavenDiagramConfig.getStaticAnalysisPackages());
+        diagramConfig.setNonDomainExcludedSupertypePackages(mavenDiagramConfig.getNonDomainExcludedSupertypePackages());
+        diagramConfig.setNonDomainExcludedPackages(mavenDiagramConfig.getNonDomainExcludedPackages());
         return diagramConfig;
     }
 }
