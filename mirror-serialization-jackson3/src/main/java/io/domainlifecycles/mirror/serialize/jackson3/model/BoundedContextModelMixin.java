@@ -57,9 +57,10 @@ public abstract class BoundedContextModelMixin {
      * associated with the bounded context model.
      *
      * @param packageName the name of the package associated with the bounded context model.
+     * @param name the optional human-readable name of the bounded context model, may be null.
      */
     @JsonCreator
-    public BoundedContextModelMixin(@JsonProperty("packageName") String packageName) {}
+    public BoundedContextModelMixin(@JsonProperty("packageName") String packageName, @JsonProperty("name") String name) {}
 
     /**
      * Retrieves the list of aggregate root mirrors associated with the bounded

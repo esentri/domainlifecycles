@@ -54,6 +54,35 @@ public class ShopApplication {
 This is especially useful for rendering the most concrete type information
 using [DLC Domain Diagrams](../domain-diagrammer/readme.md).
 
+## Bounded Contexts
+
+The Domain Mirror splits the mirrored domain model into Bounded Contexts
+(`io.domainlifecycles.mirror.api.BoundedContextMirror`), each one rooted at exactly one Java package -
+every domain type whose type name starts with that package name belongs to it.
+
+Bounded Context boundaries can be derived automatically from the code, by annotating a Bounded
+Context's root package (in its `package-info.java`) with `@io.domainlifecycles.domain.types.BoundedContext`:
+
+```Java
+@BoundedContext("Order Management")
+package sampleshop.orders;
+
+import io.domainlifecycles.domain.types.BoundedContext;
+```
+
+The annotation's optional name is exposed via `BoundedContextMirror.getName()`, in addition to the
+package name.
+
+The effective Bounded Contexts are resolved with the following precedence:
+
+1. Bounded Context packages configured explicitly via `AbstractDomainMirrorFactory#setBoundedContextPackages(String...)`
+   always take precedence, regardless of any `@BoundedContext` annotation.
+2. Otherwise, Bounded Contexts derived from `@BoundedContext`-annotated packages are used, if any are found.
+3. Otherwise, the whole scanned domain model falls back to a single Bounded Context, as before.
+
+Bounded Context packages - whether derived or explicitly configured - must not be nested within one
+another; an overlap is rejected with a `MirrorException` when the mirror is initialized.
+
 ## Mirroring non-domain classes
 
 By default, the mirror does not only pick up classes implementing one of the DLC marker interfaces

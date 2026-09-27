@@ -41,6 +41,7 @@ import io.domainlifecycles.mirror.api.ServiceKindMirror;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Model implementation of a {@link BoundedContextMirror}.
@@ -50,16 +51,28 @@ import java.util.Objects;
 public class BoundedContextModel implements BoundedContextMirror, ProvidedDomain {
 
     private final String packageName;
+    private final String name;
     DomainMirror domainMirror;
     private boolean domainMirrorSet = false;
+
+    /**
+     * Constructs an instance of the BoundedContextModel class, without a separate human-readable name.
+     *
+     * @param packageName the package name of the bounded context, cannot be null.
+     */
+    public BoundedContextModel(String packageName) {
+        this(packageName, null);
+    }
 
     /**
      * Constructs an instance of the BoundedContextModel class.
      *
      * @param packageName the package name of the bounded context, cannot be null.
+     * @param name        an optional human-readable name of the bounded context, may be null or blank
      */
-    public BoundedContextModel(String packageName) {
+    public BoundedContextModel(String packageName, String name) {
         this.packageName = Objects.requireNonNull(packageName);
+        this.name = (name == null || name.isBlank()) ? null : name;
     }
 
     /**
@@ -185,6 +198,14 @@ public class BoundedContextModel implements BoundedContextMirror, ProvidedDomain
     @Override
     public String getPackageName() {
         return packageName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<String> getName() {
+        return Optional.ofNullable(name);
     }
 
     /**

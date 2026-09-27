@@ -35,6 +35,7 @@ import io.github.classgraph.ScanResult;
 import java.util.List;
 import java.util.Objects;
 import org.jmolecules.ddd.annotation.AggregateRoot;
+import org.jmolecules.ddd.annotation.BoundedContext;
 import org.jmolecules.ddd.annotation.Entity;
 import org.jmolecules.ddd.annotation.Repository;
 import org.jmolecules.ddd.annotation.Service;
@@ -191,6 +192,21 @@ public class ExtendedJMoleculesDomainTypesScanner extends ClassGraphDomainTypesS
             .map(dt -> build(new DomainEventMirrorBuilder(dt, genericTypeResolver, domainTypeDetector)))
             .filter(Objects::nonNull)
             .forEach(domainTypes::add);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Additionally recognizes jMolecules' own, structurally equivalent {@link BoundedContext} package
+     * annotation, so a jMolecules-based project gets Bounded Context derivation without needing DLC's
+     * own annotation.
+     */
+    @Override
+    protected List<String> boundedContextAnnotationClassNames() {
+        return List.of(
+            "io.domainlifecycles.domain.types.BoundedContext",
+            BoundedContext.class.getName()
+        );
     }
 
 }

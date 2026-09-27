@@ -94,7 +94,8 @@ public class ExtendedJMoleculesDomainMirrorFactory extends ReflectiveDomainMirro
             .values()
             .forEach(m -> log.debug("Created Mirror:" + m));
 
-        var dm = new DomainModel(builtTypeMirrors, boundedContextPackages);
+        var resolvedBoundedContexts = resolveBoundedContexts(extendedJMoleculesDomainTypesScanner.derivedBoundedContexts());
+        var dm = new DomainModel(builtTypeMirrors, resolvedBoundedContexts);
         var c = new CompletenessChecker(dm);
         c.addIgnoredPackage("org.jmolecules.ddd");
         c.checkForCompleteness();
@@ -113,9 +114,8 @@ public class ExtendedJMoleculesDomainMirrorFactory extends ReflectiveDomainMirro
         }else{
             this.extendedJMoleculesDomainTypesScanner = new ExtendedJMoleculesDomainTypesScanner(externalClassLoader, genericTypeResolver, domainTypeDetector);
         }
-        if(boundedContextPackages == null){
-            this.boundedContextPackages = domainModelPackages;
+        if(boundedContextPackages != null){
+            validatePackages(boundedContextPackages);
         }
-        validatePackages(boundedContextPackages);
     }
 }

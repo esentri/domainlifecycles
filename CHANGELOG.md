@@ -125,6 +125,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   it the `staticAnalysisCacheSize` default of the [Gradle and Maven plugins](./dlc-plugins/readme.md)) from 500 to
   5000. The cache only holds classes actually parsed, so smaller projects are unaffected; in a real world project
   (4,771 mirrored types) the analysis got about 13 % faster without a measurable increase of the heap needed
+- The [mirror](./mirror) module can now derive Bounded Context boundaries directly from the code
+  instead of requiring `AbstractDomainMirrorFactory#setBoundedContextPackages(String...)` to be called
+  manually: a Bounded Context's root package can be marked with the new
+  `@io.domainlifecycles.domain.types.BoundedContext` package annotation (with an optional
+  human-readable name, exposed via the new `BoundedContextMirror#getName()`). An explicit
+  `setBoundedContextPackages(...)` call still takes precedence over derived Bounded Contexts, which in
+  turn take precedence over the previous default fallback (the whole scanned domain model as one
+  Bounded Context). Nested/overlapping Bounded Context packages - derived or explicitly configured -
+  are now rejected with a `MirrorException`. [mirror-jmolecules](./mirror-jmolecules) additionally
+  recognizes jMolecules' own, structurally equivalent `@org.jmolecules.ddd.annotation.BoundedContext`
+  package annotation
 
 ## [3.4.0] - 2026-09-11
 - Improved DLC persistence initialization performance

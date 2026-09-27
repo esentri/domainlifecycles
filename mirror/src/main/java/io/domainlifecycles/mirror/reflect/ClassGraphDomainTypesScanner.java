@@ -41,11 +41,13 @@ import io.domainlifecycles.domain.types.ReadModel;
 import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.domain.types.ValueObject;
+import io.domainlifecycles.mirror.api.BoundedContextMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.NonDomainTypeMirror;
 import io.domainlifecycles.mirror.api.ServiceKindMirror;
+import io.domainlifecycles.mirror.model.BoundedContextModel;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
@@ -72,6 +74,12 @@ public class ClassGraphDomainTypesScanner {
     protected final ClassLoader classLoader;
     protected final GenericTypeResolver genericTypeResolver;
     protected final DomainTypeDetector domainTypeDetector;
+
+    /**
+     * The Bounded Contexts derived from {@code @BoundedContext}-annotated packages (see {@link
+     * #boundedContextAnnotationClassNames()}) during the last {@link #scan} call, empty until then.
+     */
+    private List<BoundedContextMirror> derivedBoundedContexts = List.of();
 
     /**
      * Constructs a new instance of the ClassGraphDomainTypesScanner with the provided ClassLoader
@@ -175,11 +183,58 @@ public class ClassGraphDomainTypesScanner {
                 domainTypes.addAll(buildNonDomainMirrors(scanResult, domainTypes, nonDomainScanPackages,
                     Objects.requireNonNull(nonDomainClassFilter, "A NonDomainClassFilter must be provided!")));
             }
+            this.derivedBoundedContexts = deriveBoundedContexts(scanResult);
             return domainTypes;
         } catch (Throwable t) {
             log.error("Scanning packages '{}' failed!", packages, t);
         }
         return Collections.emptyList();
+    }
+
+    /**
+     * The names of the package-level annotations recognized as marking the root package of a Bounded
+     * Context (see {@link #deriveBoundedContexts(ScanResult)}). Overridable to also recognize an
+     * equivalent annotation from a different framework (e.g. jMolecules' own {@code @BoundedContext}).
+     *
+     * @return the fully qualified class names of the recognized Bounded Context package annotations
+     */
+    protected List<String> boundedContextAnnotationClassNames() {
+        return List.of("io.domainlifecycles.domain.types.BoundedContext");
+    }
+
+    /**
+     * Derives Bounded Contexts from packages annotated (via their {@code package-info.java}) with one
+     * of {@link #boundedContextAnnotationClassNames()}, using the package info ClassGraph already
+     * collected for this scan ({@code enableAllInfo()} includes it) - no separate scan pass needed.
+     *
+     * @param scanResult the result of the ClassGraph scan
+     * @return the derived Bounded Context mirrors, empty if no package carries a recognized annotation
+     */
+    private List<BoundedContextMirror> deriveBoundedContexts(ScanResult scanResult) {
+        var annotationClassNames = boundedContextAnnotationClassNames();
+        List<BoundedContextMirror> derived = new ArrayList<>();
+        for (var packageInfo : scanResult.getPackageInfo()) {
+            for (var annotationClassName : annotationClassNames) {
+                if (packageInfo.hasAnnotation(annotationClassName)) {
+                    var annotationInfo = packageInfo.getAnnotationInfo(annotationClassName);
+                    var nameValue = annotationInfo == null
+                        ? null
+                        : annotationInfo.getParameterValues().getValue("value");
+                    var name = nameValue instanceof String s && !s.isBlank() ? s : null;
+                    derived.add(new BoundedContextModel(packageInfo.getName(), name));
+                    break;
+                }
+            }
+        }
+        return derived;
+    }
+
+    /**
+     * @return the Bounded Contexts derived from package annotations during the last {@link #scan} call,
+     * empty if none were found (or {@link #scan} has not been called yet)
+     */
+    public List<BoundedContextMirror> derivedBoundedContexts() {
+        return derivedBoundedContexts;
     }
 
     protected List<DomainTypeMirror> buildMirrorsFromScanResult(ScanResult scanResult){

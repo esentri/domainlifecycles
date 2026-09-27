@@ -57,9 +57,10 @@ public abstract class BoundedContextModelMixin {
      *
      *
      * @param packageName the name of the package that contains the bounded context.
+     * @param name the optional human-readable name of the bounded context, may be null.
      */
     @JsonCreator
-    public BoundedContextModelMixin(@JsonProperty("packageName") String packageName) {}
+    public BoundedContextModelMixin(@JsonProperty("packageName") String packageName, @JsonProperty("name") String name) {}
 
     /**
      * Mixin method declaration. Ignored for serialization purposes.

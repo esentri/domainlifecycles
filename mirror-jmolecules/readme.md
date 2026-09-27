@@ -41,6 +41,13 @@ Projects can freely mix DLC native types and jMolecules types in the same bounde
 `AggregateRoot` in the same package implements `org.jmolecules.ddd.types.AggregateRoot`. Both will be correctly
 recognized and included in the domain mirror.
 
+### Bounded Contexts
+
+In addition to DLC's own `@io.domainlifecycles.domain.types.BoundedContext` package annotation (see
+[mirror](../mirror/readme.md#bounded-contexts)), this extension also recognizes jMolecules' structurally
+equivalent `@org.jmolecules.ddd.annotation.BoundedContext` package annotation to derive Bounded Context
+boundaries - so projects that only use jMolecules' own annotations don't need to add a DLC-specific one.
+
 ## Key classes
 
 - **`ExtendedJMoleculesDomainMirrorFactory`** — drop-in replacement for `ReflectiveDomainMirrorFactory`; scans for both
