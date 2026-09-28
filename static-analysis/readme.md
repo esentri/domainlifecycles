@@ -238,6 +238,12 @@ off by `withMaxDepth(...)` while there was still something left to expand report
   not on the implementations it may dispatch to. That is the honest information about the code; the
   polymorphic continuation is added by the `FlowAnalyzer` as its own kind of edge instead of being
   merged into the call graph.
+- **Calls on types outside the domain.** A call on a JDK, library or framework type - `value.toString()` on an
+  `Object`, `ordinal()` on an `Enum`, `get()` on a `Supplier` - does not tell which domain type it reaches, so it is
+  not recorded. Expanding such a call to every domain type implementing the called method (as the SootUp analyzer
+  still does with `new SootupStaticAnalyzer(cacheSize, true)`) connected e.g. a single `obj.toString()` with the
+  `toString()` of every mirrored class; in a real world project such expansions made up 95 % of all call sites.
+  DLC's own types (`io.domainlifecycles.*`) are neither callers nor targets either.
 - **Anything not on the analyzed classpath.** Reported as a `Diagnostic` rather than guessed.
 
 ## Requirements

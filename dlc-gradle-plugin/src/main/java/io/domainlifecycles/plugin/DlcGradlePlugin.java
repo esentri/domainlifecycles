@@ -152,6 +152,8 @@ public class DlcGradlePlugin implements Plugin<Project> {
                 task.getNonDomainExcludedPackages().set(domainModelUploadTaskConfigurationExtension.getNonDomainExcludedPackages());
                 task.getUploadRequestTimeoutMinutes().set(domainModelUploadTaskConfigurationExtension.getUploadRequestTimeoutMinutes()
                     .convention(DomainModelUploaderImpl.DEFAULT_REQUEST_TIMEOUT_MINUTES));
+                task.getStaticAnalysisExpandNonDomainDispatch().set(domainModelUploadTaskConfigurationExtension
+                    .getStaticAnalysisExpandNonDomainDispatch().convention(false));
                 task.getClassesDirs().from(totalClassesDirs);
                 task.getClasspath().from(totalClasspath);
             });

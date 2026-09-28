@@ -173,6 +173,15 @@ public abstract class UploadDomainModelTask extends DefaultTask {
     @Input
     public abstract Property<Integer> getUploadRequestTimeoutMinutes();
 
+    /**
+     * Whether the static analysis expands calls on types outside the domain to the domain types implementing the
+     * called method. Defaults to {@code false}.
+     *
+     * @return a {@code Property<Boolean>} representing the flag
+     */
+    @Input
+    public abstract Property<Boolean> getStaticAnalysisExpandNonDomainDispatch();
+
     private final ConfigurableFileCollection classesDirs = getProject().getObjects().fileCollection();
     private final ConfigurableFileCollection classpath = getProject().getObjects().fileCollection();
 
@@ -235,7 +244,8 @@ public abstract class UploadDomainModelTask extends DefaultTask {
         domainModelUploader = new DomainModelUploaderImpl(
             getStaticAnalysisCacheSize().getOrElse(DomainCallsAnalyzerImpl.DEFAULT_CACHE_SIZE),
             getNonDomainExcludedSupertypePackages().getOrNull(), getNonDomainExcludedPackages().getOrNull(),
-            getUploadRequestTimeoutMinutes().getOrElse(DomainModelUploaderImpl.DEFAULT_REQUEST_TIMEOUT_MINUTES));
+            getUploadRequestTimeoutMinutes().getOrElse(DomainModelUploaderImpl.DEFAULT_REQUEST_TIMEOUT_MINUTES),
+            getStaticAnalysisExpandNonDomainDispatch().getOrElse(false));
         uploadDomainModel();
     }
 

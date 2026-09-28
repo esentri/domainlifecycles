@@ -149,4 +149,12 @@ public abstract class DomainModelUploadTaskConfigurationExtension {
      * @return a Property containing the timeout in minutes
      */
     public abstract Property<Integer> getUploadRequestTimeoutMinutes();
+
+    /**
+     * Whether the static analysis expands calls on types outside the domain (JDK, library and DLC types) to the domain
+     * types implementing the called method. Defaults to {@code false}: only calls on domain types are recorded.
+     *
+     * @return a Property containing the flag
+     */
+    public abstract Property<Boolean> getStaticAnalysisExpandNonDomainDispatch();
 }

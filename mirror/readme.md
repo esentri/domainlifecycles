@@ -147,3 +147,27 @@ The [DLC Domain Diagrammer](../domain-diagrammer/readme.md#showing-non-domain-cl
 this to optionally draw the non-domain classes referenced by a service in a diagram.
 
 
+
+## Event listeners of Spring and Spring Modulith
+
+A method listens to a domain event (`MethodMirror#getListenedEvent()`) if it is annotated with
+`@DomainEventListener` - or with one of the event listener annotations of Spring or Spring Modulith:
+
+- `@org.springframework.context.event.EventListener`
+- `@org.springframework.transaction.event.TransactionalEventListener`
+- `@org.springframework.modulith.events.ApplicationModuleListener`
+- an own annotation composed of one of them (meta-annotated with it)
+
+The listened event is the method's `DomainEvent` parameter or, if it has none, the single `DomainEvent` the annotation
+names by its `classes` or `value` attribute. The annotations are recognized by their name, so the mirror does not
+depend on Spring.
+
+```Java
+public class OrderNotificationService implements ApplicationService {
+
+    @ApplicationModuleListener
+    public void on(OrderPlaced event) {
+        ...
+    }
+}
+```

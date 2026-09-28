@@ -143,6 +143,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   compares without building the key. In a real world project a flow diagram of 700 classes allocated 1.8 instead of
   6.9 GB and rendered in 1.3 instead of 2.1 s
 
+- The SootUp based [static analysis](./static-analysis) records calls on domain types only. A call on a type outside
+  the domain (JDK, library or framework types) was expanded to every domain type implementing the called method:
+  a single `obj.toString()` on an `Object` became a call of the `toString()` of every mirrored class. In a real
+  world project such expansions made up 95 % of all 1.08 million call sites, and more than half of the command
+  flows reached over 1,200 types, mostly unrelated. DLC's own types are no callers or targets of the analysis
+  anymore either. The former behaviour is available via `new SootupStaticAnalyzer(cacheSize, true)` and the new
+  `staticAnalysisExpandNonDomainDispatch` option of the Diagram-Viewer upload of the
+  [Gradle and Maven plugins](./dlc-plugins/readme.md)
+
+- Fixed the SootUp based [static analysis](./static-analysis) dropping calls of generic methods a domain type
+  inherits, e.g. `findById`, `insert` or `update` of a repository extending DLC's `Repository<ID, A>` without
+  redeclaring them. The mirror resolves their type arguments (`findById(BoniNummer)`), while the bytecode invokes the
+  erased method (`findById(Identity)`), so no mirrored method matched. A method whose parameter types are subtypes of
+  the erased ones now matches as well, if it is the only one. Flows therefore reach the repositories loading and
+  saving an aggregate again
+
+- The [mirror](./mirror) module recognizes the event listeners of Spring and Spring Modulith as listeners of a
+  domain event, like `@DomainEventListener`: methods annotated with `@EventListener`,
+  `@TransactionalEventListener` or `@ApplicationModuleListener`, or with an own annotation composed of one of them.
+  The listened event is the method's `DomainEvent` parameter or, without one, the single `DomainEvent` named by the
+  annotation's `classes`/`value`. Flows of the [static analysis](./static-analysis) and flow diagrams therefore no
+  longer end at events only handled by such listeners. The annotations are recognized by name, so the mirror still
+  needs no Spring dependency
+
 ## [3.4.0] - 2026-09-11
 - Improved DLC persistence initialization performance
 - Fixed auto record mapping of array typed fields (e.g. `byte[]`): the mirror reports the component type for arrays, which made the mapper look up a converter (`[B` -> `java.lang.Byte`) that could never be served. Added `AssertedContainableTypeMirror#getBinaryTypeName()` and used it for type resolution in `AutoRecordMapper` and `AutoMapperNestedValueObjectAccessor`.

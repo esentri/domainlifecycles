@@ -39,14 +39,18 @@ import io.domainlifecycles.mirror.model.MethodModel;
 import io.domainlifecycles.mirror.model.ParamModel;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Builder to create {@link MethodMirror}. Uses Java reflection.
@@ -54,6 +58,15 @@ import java.util.Optional;
  * @author Mario Herb
  */
 public class MethodMirrorBuilder {
+
+    /**
+     * The event listener annotations of Spring and Spring Modulith, by name - see {@link #isFrameworkEventListener}.
+     */
+    static final Set<String> FRAMEWORK_EVENT_LISTENER_ANNOTATIONS = Set.of(
+        "org.springframework.context.event.EventListener",
+        "org.springframework.transaction.event.TransactionalEventListener",
+        "org.springframework.modulith.events.ApplicationModuleListener");
+
     private final Method m;
 
     private final Class<?> topLevelClass;
@@ -153,6 +166,61 @@ public class MethodMirrorBuilder {
         }
         if (listensAnnotation != null && domainEventTypeName != null) {
             return Optional.of(domainEventTypeName);
+        }
+        if (isFrameworkEventListener(m)) {
+            return domainEventTypeName != null
+                ? Optional.of(domainEventTypeName)
+                : domainEventTypeNamedByAnnotation(m);
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Whether the method is an event listener of Spring or Spring Modulith - {@code @EventListener},
+     * {@code @TransactionalEventListener}, {@code @ApplicationModuleListener} or an own annotation composed of one of
+     * them. The annotations are recognized by name, so DLC does not depend on Spring; annotations whose class is not on
+     * the classpath are not visible via reflection anyway.
+     */
+    static boolean isFrameworkEventListener(Method method) {
+        return Arrays.stream(method.getAnnotations())
+            .anyMatch(annotation -> isEventListenerAnnotation(annotation.annotationType(), new HashSet<>()));
+    }
+
+    private static boolean isEventListenerAnnotation(Class<? extends Annotation> annotationType,
+                                                     Set<Class<? extends Annotation>> visited) {
+        if (!visited.add(annotationType)) {
+            return false;
+        }
+        if (FRAMEWORK_EVENT_LISTENER_ANNOTATIONS.contains(annotationType.getName())) {
+            return true;
+        }
+        return Arrays.stream(annotationType.getAnnotations())
+            .map(Annotation::annotationType)
+            .filter(meta -> !meta.getName().startsWith("java.lang.annotation."))
+            .anyMatch(meta -> isEventListenerAnnotation(meta, visited));
+    }
+
+    /**
+     * Spring listeners may name the event in the annotation ({@code classes} or {@code value}) instead of taking it
+     * as a parameter. Only a single domain event is taken, since a mirrored method listens to one event.
+     */
+    private static Optional<String> domainEventTypeNamedByAnnotation(Method method) {
+        for (Annotation annotation : method.getAnnotations()) {
+            for (String attribute : List.of("classes", "value")) {
+                try {
+                    Object value = annotation.annotationType().getMethod(attribute).invoke(annotation);
+                    if (value instanceof Class<?>[] classes) {
+                        List<Class<?>> domainEvents = Arrays.stream(classes)
+                            .filter(DomainEvent.class::isAssignableFrom)
+                            .toList();
+                        if (domainEvents.size() == 1) {
+                            return Optional.of(domainEvents.get(0).getName());
+                        }
+                    }
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    // the annotation has no such attribute
+                }
+            }
         }
         return Optional.empty();
     }

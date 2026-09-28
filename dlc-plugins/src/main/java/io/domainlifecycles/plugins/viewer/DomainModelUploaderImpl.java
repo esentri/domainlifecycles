@@ -172,10 +172,28 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
                                    List<String> nonDomainExcludedSupertypePackages,
                                    List<String> nonDomainExcludedPackages,
                                    int requestTimeoutMinutes) {
+        this(staticAnalysisCacheSize, nonDomainExcludedSupertypePackages, nonDomainExcludedPackages,
+            requestTimeoutMinutes, false);
+    }
+
+    /**
+     * Like {@link #DomainModelUploaderImpl(int, List, List, int)}, choosing how the static analysis resolves calls on
+     * types outside the domain.
+     *
+     * @param staticAnalysisExpandNonDomainDispatch whether calls on types outside the domain are expanded to the domain
+     *                                              types implementing the called method; {@code false} records only
+     *                                              calls on domain types, see
+     *                                              {@link io.domainlifecycles.staticanalysis.SootupStaticAnalyzer#SootupStaticAnalyzer(int, boolean)}
+     */
+    public DomainModelUploaderImpl(int staticAnalysisCacheSize,
+                                   List<String> nonDomainExcludedSupertypePackages,
+                                   List<String> nonDomainExcludedPackages,
+                                   int requestTimeoutMinutes,
+                                   boolean staticAnalysisExpandNonDomainDispatch) {
         if (requestTimeoutMinutes <= 0) {
             throw DLCPluginsException.fail("The upload request timeout must be positive, but was %d minutes.", requestTimeoutMinutes);
         }
-        this.domainCallsAnalyzer = new DomainCallsAnalyzerImpl(staticAnalysisCacheSize);
+        this.domainCallsAnalyzer = new DomainCallsAnalyzerImpl(staticAnalysisCacheSize, staticAnalysisExpandNonDomainDispatch);
         this.nonDomainClassFilter = DLCUtils.nonDomainClassFilter(nonDomainExcludedSupertypePackages, nonDomainExcludedPackages);
         this.requestTimeout = Duration.ofMinutes(requestTimeoutMinutes);
     }

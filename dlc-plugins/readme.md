@@ -161,6 +161,11 @@ plugin also applies a 10 second connect timeout and an overall request timeout o
 unreachable or slow Diagram-Viewer fails the build instead of hanging it indefinitely. For very large domains
 raise the request timeout via `uploadRequestTimeoutMinutes`.
 
+The static analysis records calls on domain types only: a call on a type outside the domain (JDK, library or DLC
+types, e.g. `value.toString()` on an `Object`) does not tell which domain type it reaches and would otherwise
+connect the caller with every domain type implementing the called method. Set
+`staticAnalysisExpandNonDomainDispatch` to `true` to expand such calls anyway.
+
 By default, the (already gzip-compressed) request body is assembled completely in memory before being
 sent. Set `streamUpload = true` to instead stream it directly into the HTTP request as it is produced -
 this avoids ever holding the complete JSON in memory (and, since the compressed size is then not known
@@ -371,6 +376,11 @@ before being sent - your Diagram-Viewer endpoint needs to decompress the request
 plugin also applies a 10 second connect timeout and an overall request timeout of 5 minutes by default, so an
 unreachable or slow Diagram-Viewer fails the build instead of hanging it indefinitely. For very large domains
 raise the request timeout via `uploadRequestTimeoutMinutes`.
+
+The static analysis records calls on domain types only: a call on a type outside the domain (JDK, library or DLC
+types, e.g. `value.toString()` on an `Object`) does not tell which domain type it reaches and would otherwise
+connect the caller with every domain type implementing the called method. Set
+`staticAnalysisExpandNonDomainDispatch` to `true` to expand such calls anyway.
 
 By default, the (already gzip-compressed) request body is assembled completely in memory before being
 sent. Set `<streamUpload>true</streamUpload>` to instead stream it directly into the HTTP request as it
