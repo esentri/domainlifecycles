@@ -251,6 +251,15 @@ public class PluginDiagramConfiguration {
      @Parameter(property = "showNonDomainClassMethods", required = false)
      private Boolean showNonDomainClassMethods;
 
+     @Parameter(property = "maxInlinedValueObjectFields", required = false)
+     private Integer maxInlinedValueObjectFields;
+
+     @Parameter(property = "showOnlyFlowMethods", required = false)
+     private Boolean showOnlyFlowMethods;
+
+     @Parameter(property = "showFlowCallRelations", required = false)
+     private Boolean showFlowCallRelations;
+
      @Parameter(property = "callApplicationServiceDriver", required = false)
      private Boolean callApplicationServiceDriver;
 
@@ -924,6 +933,33 @@ public class PluginDiagramConfiguration {
      */
     public Boolean getShowNonDomainClassMethods() {
         return showNonDomainClassMethods;
+    }
+
+    /**
+     * Up to how many fields a value object is shown inline, as field of the class referencing it.
+     *
+     * @return the maximal number of fields of an inlined value object, 0 to inline none.
+     */
+    public Integer getMaxInlinedValueObjectFields() {
+        return maxInlinedValueObjectFields;
+    }
+
+    /**
+     * Whether the classes taking part in a flow show only the methods called in it.
+     *
+     * @return true if only the methods called in the flows are shown.
+     */
+    public Boolean getShowOnlyFlowMethods() {
+        return showOnlyFlowMethods;
+    }
+
+    /**
+     * Whether classes calling each other in a flow are connected, if nothing else connects them.
+     *
+     * @return true if the calls of the flows are drawn as relationships.
+     */
+    public Boolean getShowFlowCallRelations() {
+        return showFlowCallRelations;
     }
 
     /**

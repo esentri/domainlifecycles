@@ -258,7 +258,7 @@ public class DomainClassMapper {
                     if (!domainDiagramConfig.getDiagramTrimSettings().getClassesBlacklist().contains(domainTypeMirror.getTypeName())) {
                         if (DomainType.VALUE_OBJECT.equals(domainTypeMirror.getDomainType())) {
                             var voMirror = (ValueObjectMirror) domainTypeMirror;
-                            if (!voMirror.isSingledValued()) {
+                            if (!DomainMapperUtils.isShownInline(voMirror, domainDiagramConfig)) {
                                 aggregateMirrors.add(domainTypeMirror);
                             }
                         } else {
@@ -353,6 +353,7 @@ public class DomainClassMapper {
                         || m.getAccessLevel().equals(AccessLevel.PUBLIC)
                     )
                     .filter(m -> !m.isOverridden())
+                    .filter(m -> filteredDomainClasses == null || filteredDomainClasses.isShownRegardingFlows(domainTypeMirror, m))
                     .filter(m -> !domainDiagramConfig.getGeneralVisualSettings().getMethodBlacklist().contains(m.getName()))
                     .filter(m -> {
                         if (!domainDiagramConfig.getGeneralVisualSettings().isShowInheritedMembersInClasses()) {

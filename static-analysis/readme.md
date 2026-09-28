@@ -159,6 +159,12 @@ the repositories/query handlers structurally managing/providing it), and the sam
 supertype method", `EVENT_LISTEN` becomes "published by", `COMMAND_PROCESS` becomes "processed
 command" - so a `Flow` from `flowTo(...)` is read and rendered exactly like one from `flowFrom(...)`.
 
+A read model no query handler provides is provided by the methods returning it instead - of service
+kinds (query handlers aside) and non-domain classes, directly, as `Optional` or as collection, e.g. a
+driver computing it. In a backward flow into such a read model these methods precede it
+(`PROVIDES_READ_MODEL`) and the flow continues with their callers; in a forward flow the read model
+follows such a method, like it follows the method of a query handler.
+
 There is deliberately **no** `flowTo(DomainCommandMirror)`: nothing in the analyzed data models
 where a command originates, so a command can only ever appear as a reached leaf (via
 `COMMAND_PROCESS` reversal - "this service is reached because it processes command C"), never as a
@@ -243,7 +249,8 @@ off by `withMaxDepth(...)` while there was still something left to expand report
   not recorded. Expanding such a call to every domain type implementing the called method (as the SootUp analyzer
   still does with `new SootupStaticAnalyzer(cacheSize, true)`) connected e.g. a single `obj.toString()` with the
   `toString()` of every mirrored class; in a real world project such expansions made up 95 % of all call sites.
-  DLC's own types (`io.domainlifecycles.*`) are neither callers nor targets either.
+  The same holds for a method reference on such a type, e.g. `map(Object::toString)`: it is not followed into the
+  implementations either. DLC's own types (`io.domainlifecycles.*`) are neither callers nor targets either.
 - **Anything not on the analyzed classpath.** Reported as a `Diagnostic` rather than guessed.
 
 ## Requirements

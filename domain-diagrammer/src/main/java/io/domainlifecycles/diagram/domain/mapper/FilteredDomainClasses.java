@@ -36,6 +36,7 @@ import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
+import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.NonDomainTypeMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
@@ -48,6 +49,7 @@ import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -65,6 +67,7 @@ public class FilteredDomainClasses {
 
     private final Set<DomainTypeMirror> includedDomainTypes;
     private final GeneralVisualSettings generalVisualSettings;
+    private final DomainFlowFilter domainFlowFilter;
 
     /**
      * Constructs a new instance of FilteredDomainClasses with the given configuration and domain mirror.
@@ -83,7 +86,7 @@ public class FilteredDomainClasses {
         Objects.requireNonNull(diagramTrimSettings,"diagramTrimSettings must not be null");
         this.generalVisualSettings = Objects.requireNonNull(generalVisualSettings,"generalVisualSettings must not be null");
         Objects.requireNonNull(domainMirror,"domainMirror must not be null");
-        Objects.requireNonNull(domainFlowFilter,"domainFlowFilter must not be null");
+        this.domainFlowFilter = Objects.requireNonNull(domainFlowFilter,"domainFlowFilter must not be null");
 
         var diagramSettingsFilter = new DiagramSettingsFilter(
             domainMirror,
@@ -92,8 +95,7 @@ public class FilteredDomainClasses {
             domainFlowFilter
         );
 
-        includedDomainTypes = domainMirror.getAllDomainTypeMirrors().stream().filter(diagramSettingsFilter::filter)
-            .collect(Collectors.toCollection(HashSet::new));
+        includedDomainTypes = diagramSettingsFilter.filterAll(domainMirror.getAllDomainTypeMirrors());
         includeContainedReadModels(domainMirror, diagramSettingsFilter);
     }
 
@@ -179,6 +181,30 @@ public class FilteredDomainClasses {
             }
         }
         return this.includedDomainTypes.contains(domainTypeMirror);
+    }
+
+    /**
+     * @return the calls between the types of the flows the diagram is restricted to, see
+     *     {@link DomainFlowFilter#calls()}
+     */
+    public Map<String, Map<String, Set<String>>> getFlowCalls() {
+        return domainFlowFilter.calls();
+    }
+
+    /**
+     * Whether a method is shown in the class of a domain type, as far as the flows are concerned: with
+     * {@code showOnlyFlowMethods}, a type taking part in a flow shows only the methods called in it. A type shown for
+     * another reason - e.g. as part of an aggregate or read model - and a diagram without flow show all methods the
+     * other settings allow.
+     *
+     * @param domainTypeMirror the type the method is shown in
+     * @param methodMirror     the method
+     * @return {@code false} if the method is hidden because it is not called in the flows
+     */
+    public boolean isShownRegardingFlows(DomainTypeMirror domainTypeMirror, MethodMirror methodMirror) {
+        return !generalVisualSettings.isShowOnlyFlowMethods()
+            || !domainFlowFilter.isReachedByFlow(domainTypeMirror)
+            || domainFlowFilter.isCalledInFlow(domainTypeMirror, methodMirror);
     }
 
     /**

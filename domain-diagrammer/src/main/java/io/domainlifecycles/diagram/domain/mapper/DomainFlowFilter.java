@@ -35,11 +35,18 @@ import io.domainlifecycles.staticanalysis.DomainCallFlowAnalyzer;
 import io.domainlifecycles.staticanalysis.DomainCalls;
 import io.domainlifecycles.staticanalysis.DomainMethod;
 import io.domainlifecycles.staticanalysis.FlowAnalyzer;
+import io.domainlifecycles.staticanalysis.Flow;
 import io.domainlifecycles.staticanalysis.FlowConfig;
+import io.domainlifecycles.staticanalysis.Step;
+import io.domainlifecycles.staticanalysis.StepKind;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.stream.Collectors;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -76,10 +83,18 @@ public class DomainFlowFilter {
 
     private final Set<String> reachedTypeNames;
 
+    /** the methods called in the flows, see {@link #methodKey(String, MethodMirror)} */
+    private final Set<String> reachedMethodKeys;
+
+    /** see {@link #calls()} */
+    private final Map<String, Map<String, Set<String>>> calls;
+
     private final boolean active;
 
     private DomainFlowFilter() {
         this.reachedTypeNames = Collections.emptySet();
+        this.reachedMethodKeys = Collections.emptySet();
+        this.calls = Collections.emptyMap();
         this.active = false;
     }
 
@@ -111,6 +126,9 @@ public class DomainFlowFilter {
         FlowAnalyzer flowAnalyzer =
             new DomainCallFlowAnalyzer(domainMirror, domainCalls, flowConfig);
 
+        this.domainCalls = domainCalls;
+        this.collectedMethodKeys = new HashSet<>();
+        this.collectedCalls = new LinkedHashMap<>();
         Set<String> reached = new LinkedHashSet<>();
         for (String startingPoint : includeFlowsFrom) {
             reached.addAll(reachedFrom(domainMirror, flowAnalyzer, startingPoint));
@@ -119,7 +137,104 @@ public class DomainFlowFilter {
             reached.addAll(reachedTo(domainMirror, flowAnalyzer, targetPoint));
         }
         this.reachedTypeNames = Collections.unmodifiableSet(reached);
+        this.reachedMethodKeys = Collections.unmodifiableSet(collectedMethodKeys);
+        this.calls = Collections.unmodifiableMap(collectedCalls);
         this.active = true;
+        this.domainCalls = null;
+        this.collectedMethodKeys = null;
+        this.collectedCalls = null;
+    }
+
+    /** only needed while the flows are resolved */
+    private DomainCalls domainCalls;
+    private Set<String> collectedMethodKeys;
+    private Map<String, Map<String, Set<String>>> collectedCalls;
+
+    /**
+     * Collects the methods called in a flow, returning the types it reaches. A method step is a called method. A
+     * backward flow into a whole type records its callers only, so the methods of that type they call are added too.
+     */
+    private Set<String> collect(boolean backward, Flow flow) {
+        for (Step step : flow.steps()) {
+            if (step instanceof Step.MethodStep methodStep) {
+                collectedMethodKeys.add(methodKey(methodStep.method().typeName(), methodStep.method().mirror()));
+                if (step.kind() != StepKind.CALL) {
+                    continue;
+                }
+                Step from = step.from().orElse(null);
+                if (!backward && from instanceof Step.MethodStep caller) {
+                    collectCall(caller.method().typeName(), methodStep.method());
+                } else if (backward && from instanceof Step.MethodStep called) {
+                    collectCall(methodStep.method().typeName(), called.method());
+                } else if (backward && from instanceof Step.TypeStep typeStep) {
+                    domainCalls.callsFor(methodStep.method()).methods().stream()
+                        .filter(called -> called.typeName().equals(typeStep.typeName()))
+                        .forEach(called -> {
+                            collectedMethodKeys.add(methodKey(called.typeName(), called.mirror()));
+                            collectCall(methodStep.method().typeName(), called);
+                        });
+                }
+            }
+        }
+        return flow.reachedTypeNames();
+    }
+
+    private void collectCall(String callerTypeName, DomainMethod called) {
+        if (!callerTypeName.equals(called.typeName())) {
+            collectedCalls
+                .computeIfAbsent(callerTypeName, key -> new LinkedHashMap<>())
+                .computeIfAbsent(called.typeName(), key -> new LinkedHashSet<>())
+                .add(called.mirror().getName());
+        }
+    }
+
+    /**
+     * The calls between the types of the flows: by the calling type name, the called type names with the names of
+     * the called methods. Calls within one type are left out.
+     *
+     * @return the calls of the flows, empty if no flow is configured
+     */
+    public Map<String, Map<String, Set<String>>> calls() {
+        return calls;
+    }
+
+    /**
+     * Whether a domain type takes part in one of the flows - as opposed to being shown for another reason, e.g. as
+     * part of a shown aggregate or read model.
+     *
+     * @param domainTypeMirror the type to check, must not be {@code null}
+     * @return {@code true} if a flow reaches the type; {@code false} if not, or if no flow is configured
+     */
+    public boolean isReachedByFlow(DomainTypeMirror domainTypeMirror) {
+        return active && reachedTypeNames.contains(domainTypeMirror.getTypeName());
+    }
+
+    /**
+     * Whether a method of a domain type taking part in a flow is called in it: on the type itself, or on one of its
+     * super types or interfaces - a call through an interface is recorded on the interface.
+     *
+     * @param domainTypeMirror the type the method is shown in, must not be {@code null}
+     * @param methodMirror     the method, must not be {@code null}
+     * @return {@code true} if the method is called in one of the flows; {@code false} if not, or if no flow is
+     *     configured
+     */
+    public boolean isCalledInFlow(DomainTypeMirror domainTypeMirror, MethodMirror methodMirror) {
+        if (!active) {
+            return false;
+        }
+        if (reachedMethodKeys.contains(methodKey(domainTypeMirror.getTypeName(), methodMirror))) {
+            return true;
+        }
+        var superTypeNames = new LinkedHashSet<String>(domainTypeMirror.getAllInterfaceTypeNames());
+        superTypeNames.addAll(domainTypeMirror.getInheritanceHierarchyTypeNames());
+        return superTypeNames.stream()
+            .anyMatch(typeName -> reachedMethodKeys.contains(methodKey(typeName, methodMirror)));
+    }
+
+    private static String methodKey(String typeName, MethodMirror methodMirror) {
+        return typeName + METHOD_SEPARATOR + methodMirror.getName() + methodMirror.getParameters().stream()
+            .map(parameter -> parameter.getType().getTypeName())
+            .collect(Collectors.joining(",", "(", ")"));
     }
 
     /**
@@ -177,10 +292,10 @@ public class DomainFlowFilter {
                     + "', which is unknown to the mirror."));
 
         if (methodName == null && typeMirror instanceof DomainCommandMirror commandMirror) {
-            return flowAnalyzer.flowFrom(commandMirror).reachedTypeNames();
+            return collect(false, flowAnalyzer.flowFrom(commandMirror));
         }
         if (methodName == null && typeMirror instanceof DomainEventMirror eventMirror) {
-            return flowAnalyzer.flowFrom(eventMirror).reachedTypeNames();
+            return collect(false, flowAnalyzer.flowFrom(eventMirror));
         }
 
         // Resolving the methods here instead of using FlowAnalyzer.flowFrom(String, String):
@@ -196,9 +311,8 @@ public class DomainFlowFilter {
 
         Set<String> reached = new LinkedHashSet<>();
         for (MethodMirror startingMethod : startingMethods) {
-            reached.addAll(flowAnalyzer
-                .flowFrom(new DomainMethod(typeMirror.getTypeName(), startingMethod))
-                .reachedTypeNames());
+            reached.addAll(collect(false, flowAnalyzer
+                .flowFrom(new DomainMethod(typeMirror.getTypeName(), startingMethod))));
         }
         return reached;
     }
@@ -238,12 +352,12 @@ public class DomainFlowFilter {
                     + " appear as a reached node on the way to one.");
         }
         if (methodName == null && typeMirror instanceof DomainEventMirror eventMirror) {
-            return flowAnalyzer.flowTo(eventMirror).reachedTypeNames();
+            return collect(true, flowAnalyzer.flowTo(eventMirror));
         }
         if (methodName == null) {
             // any other domain type resolves to everything leading into any of its methods, plus
             // its structural MANAGES_AGGREGATE / PROVIDES_READ_MODEL counterpart, if applicable
-            return flowAnalyzer.flowTo(typeMirror).reachedTypeNames();
+            return collect(true, flowAnalyzer.flowTo(typeMirror));
         }
 
         List<MethodMirror> targetMethods = typeMirror.getMethods().stream()
@@ -257,9 +371,8 @@ public class DomainFlowFilter {
 
         Set<String> reached = new LinkedHashSet<>();
         for (MethodMirror targetMethod : targetMethods) {
-            reached.addAll(flowAnalyzer
-                .flowTo(new DomainMethod(typeMirror.getTypeName(), targetMethod))
-                .reachedTypeNames());
+            reached.addAll(collect(true, flowAnalyzer
+                .flowTo(new DomainMethod(typeMirror.getTypeName(), targetMethod))));
         }
         return reached;
     }

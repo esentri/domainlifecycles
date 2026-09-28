@@ -41,6 +41,7 @@ import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.ServiceKindMirror;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -203,6 +204,14 @@ public class DiagramSettingsFilter {
                             .toList()
                         )
                     );
+                    // without query handler, the service kinds and non-domain classes returning it provide it
+                    if (!DomainMapperUtils.isProvidedByAQueryHandler(readModelMirror, domainMirror)) {
+                        domainMirror.getAllDomainTypeMirrors().stream()
+                            .filter(provider -> DomainMapperUtils
+                                .readModelsProvidedWithoutQueryHandler(provider, domainMirror)
+                                .contains(readModelMirror))
+                            .forEach(ingoing::add);
+                    }
                 }
                 case AGGREGATE_ROOT -> {
                     var aggregateRootMirror = (AggregateRootMirror) dtm;
@@ -256,6 +265,7 @@ public class DiagramSettingsFilter {
                         var rep = (QueryHandlerMirror) dtm;
                         outgoing.addAll(rep.getProvidedReadModel().stream().toList());
                     }
+                    outgoing.addAll(DomainMapperUtils.readModelsProvidedWithoutQueryHandler(dtm, domainMirror));
                 }
                 case AGGREGATE_ROOT -> {
                     var aggregateRootMirror = (AggregateRootMirror) dtm;
@@ -293,7 +303,11 @@ public class DiagramSettingsFilter {
      *         {@code false} otherwise
      */
     public boolean filter(DomainTypeMirror dtm) {
-        boolean contained = !dtm.getTypeName().startsWith("io.domainlifecycles") && isIncludedByGeneralVisualSettings(dtm);
+        return isIncluded(dtm, false);
+    }
+
+    private boolean isIncluded(DomainTypeMirror dtm, boolean standingIn) {
+        boolean contained = !dtm.getTypeName().startsWith("io.domainlifecycles") && isIncludedByGeneralVisualSettings(dtm, standingIn);
         if(!contained){
             return false;
         }
@@ -334,43 +348,71 @@ public class DiagramSettingsFilter {
         );
     }
 
-    private boolean isIncludedByGeneralVisualSettings(DomainTypeMirror dtm) {
-        boolean included = (!dtm.isAbstract() || generalVisualSettings.isShowAllInheritanceStructures());
-        if (dtm.isAbstract()) {
+    /**
+     * Filters all given domain types. An abstract type standing in for its implementations (see
+     * {@link #standsInForItsImplementations(DomainTypeMirror)}) is only shown if none of its implementations is shown -
+     * after all other settings, the connections and flows included. That way an interface whose only implementation is
+     * left out, e.g. because the flow the diagram is restricted to reaches the interface only, is still shown.
+     *
+     * @param domainTypeMirrors the domain types to filter
+     * @return the domain types to show
+     */
+    public Set<DomainTypeMirror> filterAll(Collection<? extends DomainTypeMirror> domainTypeMirrors) {
+        Set<DomainTypeMirror> included = domainTypeMirrors.stream()
+            .filter(this::filter)
+            .collect(Collectors.toCollection(HashSet::new));
+        List<DomainTypeMirror> standingIn = domainTypeMirrors.stream()
+            .filter(this::standsInForItsImplementations)
+            .filter(dtm -> isIncluded(dtm, true))
+            .filter(dtm -> noImplementationShown(dtm, included))
+            .collect(Collectors.toList());
+        included.addAll(standingIn);
+        return included;
+    }
 
-            switch (dtm.getDomainType()) {
-                case SERVICE_KIND, QUERY_HANDLER, OUTBOUND_SERVICE, DOMAIN_SERVICE, REPOSITORY, APPLICATION_SERVICE -> {
-                    included = included
-                        || generalVisualSettings.isShowAllInheritanceStructures()
-                        || generalVisualSettings.isShowInheritanceStructuresForServiceKinds()
-                        || noConcreteTypeExists(dtm);
-                }
-                case AGGREGATE_ROOT, ENTITY, VALUE_OBJECT -> {
-                    included = included
-                        || generalVisualSettings.isShowAllInheritanceStructures()
-                        || generalVisualSettings.isShowInheritanceStructuresInAggregates()
-                        || noConcreteTypeExists(dtm);
-                }
-                case READ_MODEL -> {
-                    included = included
-                        || generalVisualSettings.isShowAllInheritanceStructures()
-                        || generalVisualSettings.isShowInheritanceStructuresForReadModels()
-                        || noConcreteTypeExists(dtm);
-                }
-                case DOMAIN_COMMAND -> {
-                    included = included
-                        || generalVisualSettings.isShowAllInheritanceStructures()
-                        || generalVisualSettings.isShowInheritanceStructuresForDomainCommands()
-                        || noConcreteTypeExists(dtm);
-                }
-                case DOMAIN_EVENT -> {
-                    included = included
-                        || generalVisualSettings.isShowAllInheritanceStructures()
-                        || generalVisualSettings.isShowInheritanceStructuresForDomainEvents()
-                        || noConcreteTypeExists(dtm);
-                }
-            }
+    /**
+     * Whether an abstract type is shown in place of its implementations rather than besides them: when the
+     * inheritance structures of its kind are not shown (neither {@code showAllInheritanceStructures} nor the setting of
+     * its kind, e.g. {@code showInheritanceStructuresForReadModels}). With the inheritance structures shown, abstract
+     * and concrete types are shown both.
+     */
+    private boolean standsInForItsImplementations(DomainTypeMirror dtm) {
+        return dtm.isAbstract() && !isShownByInheritanceSettings(dtm) && hasInheritanceSetting(dtm);
+    }
+
+    private boolean hasInheritanceSetting(DomainTypeMirror dtm) {
+        return switch (dtm.getDomainType()) {
+            case SERVICE_KIND, QUERY_HANDLER, OUTBOUND_SERVICE, DOMAIN_SERVICE, REPOSITORY, APPLICATION_SERVICE,
+                 AGGREGATE_ROOT, ENTITY, VALUE_OBJECT, READ_MODEL, DOMAIN_COMMAND, DOMAIN_EVENT -> true;
+            default -> false;
+        };
+    }
+
+    private boolean isShownByInheritanceSettings(DomainTypeMirror dtm) {
+        if (generalVisualSettings.isShowAllInheritanceStructures()) {
+            return true;
         }
+        return switch (dtm.getDomainType()) {
+            case SERVICE_KIND, QUERY_HANDLER, OUTBOUND_SERVICE, DOMAIN_SERVICE, REPOSITORY, APPLICATION_SERVICE ->
+                generalVisualSettings.isShowInheritanceStructuresForServiceKinds();
+            case AGGREGATE_ROOT, ENTITY, VALUE_OBJECT -> generalVisualSettings.isShowInheritanceStructuresInAggregates();
+            case READ_MODEL -> generalVisualSettings.isShowInheritanceStructuresForReadModels();
+            case DOMAIN_COMMAND -> generalVisualSettings.isShowInheritanceStructuresForDomainCommands();
+            case DOMAIN_EVENT -> generalVisualSettings.isShowInheritanceStructuresForDomainEvents();
+            default -> false;
+        };
+    }
+
+    private boolean isIncludedByGeneralVisualSettings(DomainTypeMirror dtm) {
+        return isIncludedByGeneralVisualSettings(dtm, false);
+    }
+
+    /**
+     * @param standingIn whether the type is checked as abstract type standing in for its implementations, which
+     *                   {@link #filterAll(Collection)} decides on separately
+     */
+    private boolean isIncludedByGeneralVisualSettings(DomainTypeMirror dtm, boolean standingIn) {
+        boolean included = !dtm.isAbstract() || isShownByInheritanceSettings(dtm) || standingIn;
         switch (dtm.getDomainType()) {
             case DOMAIN_EVENT -> included = included && generalVisualSettings.isShowDomainEvents();
             case DOMAIN_SERVICE -> included = included && generalVisualSettings.isShowDomainServices();
@@ -420,16 +462,22 @@ public class DiagramSettingsFilter {
             && !nonDomainTypeMirror.getReferencedServiceKinds().isEmpty();
     }
 
-    private boolean noConcreteTypeExists(DomainTypeMirror dtm) {
+    /**
+     * Whether no implementation of an abstract type - directly or via abstract types in between - is shown.
+     */
+    private boolean noImplementationShown(DomainTypeMirror dtm, Set<DomainTypeMirror> shown) {
         if(!dtm.isAbstract()){
             return false;
         }
-        var typesOfSameDomainType = this.includedDomainTypesByConnections.stream()
+        var typesOfSameDomainType = shown.stream()
             .filter(incl -> incl.getDomainType().equals(dtm.getDomainType()))
             .filter(incl -> !incl.getTypeName().equals(dtm.getTypeName()))
             .collect(Collectors.toSet());
-        var abstractTypesOfSameDomainType = typesOfSameDomainType
+        // the abstract types in between need not be shown themselves
+        var abstractTypesOfSameDomainType = domainMirror.getAllDomainTypeMirrors()
             .stream()
+            .filter(incl -> incl.getDomainType().equals(dtm.getDomainType()))
+            .filter(incl -> !incl.getTypeName().equals(dtm.getTypeName()))
             .filter(incl -> incl.isAbstract())
             .collect(Collectors.toSet());
         var abstractSubTypes = new HashSet<DomainTypeMirror>();

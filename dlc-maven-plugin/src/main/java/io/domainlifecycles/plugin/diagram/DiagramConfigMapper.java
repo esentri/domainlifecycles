@@ -109,6 +109,9 @@ public class DiagramConfigMapper {
         diagramConfig.setShowNonDomainClasses(mavenDiagramConfig.getShowNonDomainClasses());
         diagramConfig.setShowNonDomainClassFields(mavenDiagramConfig.getShowNonDomainClassFields());
         diagramConfig.setShowNonDomainClassMethods(mavenDiagramConfig.getShowNonDomainClassMethods());
+        diagramConfig.setMaxInlinedValueObjectFields(mavenDiagramConfig.getMaxInlinedValueObjectFields());
+        diagramConfig.setShowOnlyFlowMethods(mavenDiagramConfig.getShowOnlyFlowMethods());
+        diagramConfig.setShowFlowCallRelations(mavenDiagramConfig.getShowFlowCallRelations());
         diagramConfig.setCallApplicationServiceDriver(mavenDiagramConfig.getCallApplicationServiceDriver());
         diagramConfig.setFieldBlacklist(mavenDiagramConfig.getFieldBlacklist());
         diagramConfig.setMethodBlacklist(mavenDiagramConfig.getMethodBlacklist());

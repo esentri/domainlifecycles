@@ -118,6 +118,9 @@ public class DiagramConfigMapper {
         diagramConfig.setShowNonDomainClasses(extension.getShowNonDomainClasses().getOrNull());
         diagramConfig.setShowNonDomainClassFields(extension.getShowNonDomainClassFields().getOrNull());
         diagramConfig.setShowNonDomainClassMethods(extension.getShowNonDomainClassMethods().getOrNull());
+        diagramConfig.setMaxInlinedValueObjectFields(extension.getMaxInlinedValueObjectFields().getOrNull());
+        diagramConfig.setShowOnlyFlowMethods(extension.getShowOnlyFlowMethods().getOrNull());
+        diagramConfig.setShowFlowCallRelations(extension.getShowFlowCallRelations().getOrNull());
         diagramConfig.setCallApplicationServiceDriver(extension.getCallApplicationServiceDriver().getOrNull());
         diagramConfig.setFieldBlacklist(extension.getFieldBlacklist().getOrNull());
         diagramConfig.setMethodBlacklist(extension.getMethodBlacklist().getOrNull());

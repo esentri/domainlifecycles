@@ -32,9 +32,11 @@ import io.domainlifecycles.mirror.api.DomainEventMirror;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
+import io.domainlifecycles.mirror.api.NonDomainTypeMirror;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
+import io.domainlifecycles.mirror.api.ServiceKindMirror;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -88,6 +90,10 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
     private final Map<String, List<DomainMethod>> publishersByEventTypeName;
 
     private final Map<String, List<DomainTypeMirror>> implementationsBySupertypeName;
+    /** the methods returning a ReadModel no QueryHandler provides, by the ReadModel's type name */
+    private final Map<String, List<DomainMethod>> providersByReadModelTypeName;
+    /** the ReadModels no QueryHandler provides, by the node key of the method returning them */
+    private final Map<String, List<ReadModelMirror>> readModelsByProviderKey;
 
     /**
      * Creates an analyzer with {@link FlowConfig#defaults()}.
@@ -119,6 +125,46 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
         this.publishersByEventTypeName = Collections.unmodifiableMap(publishers);
         this.implementationsBySupertypeName =
             Collections.unmodifiableMap(indexImplementations());
+
+        Map<String, List<DomainMethod>> providers = new LinkedHashMap<>();
+        Map<String, List<ReadModelMirror>> readModels = new LinkedHashMap<>();
+        indexReadModelProviders(providers, readModels);
+        this.providersByReadModelTypeName = Collections.unmodifiableMap(providers);
+        this.readModelsByProviderKey = Collections.unmodifiableMap(readModels);
+    }
+
+    /**
+     * Indexes the methods providing a ReadModel no QueryHandler provides: the methods of service kinds (QueryHandlers
+     * aside) and non-domain classes returning it - directly, as {@code Optional} or as collection.
+     */
+    private void indexReadModelProviders(Map<String, List<DomainMethod>> providers,
+                                         Map<String, List<ReadModelMirror>> readModels) {
+        Map<String, ReadModelMirror> withoutQueryHandler = new LinkedHashMap<>();
+        for (ReadModelMirror readModel : domainMirror.getAllReadModelMirrors()) {
+            if (queryHandlersProviding(readModel.getTypeName()).isEmpty()) {
+                withoutQueryHandler.put(readModel.getTypeName(), readModel);
+            }
+        }
+        if (withoutQueryHandler.isEmpty()) {
+            return;
+        }
+        for (DomainTypeMirror type : domainMirror.getAllDomainTypeMirrors()) {
+            if (type instanceof QueryHandlerMirror
+                || !(type instanceof ServiceKindMirror || type instanceof NonDomainTypeMirror)) {
+                continue;
+            }
+            for (MethodMirror method : type.getMethods()) {
+                if (method.getReturnType() == null) {
+                    continue;
+                }
+                ReadModelMirror readModel = withoutQueryHandler.get(method.getReturnType().getTypeName());
+                if (readModel != null) {
+                    DomainMethod provider = new DomainMethod(type.getTypeName(), method);
+                    providers.computeIfAbsent(readModel.getTypeName(), key -> new ArrayList<>()).add(provider);
+                    readModels.computeIfAbsent(Step.nodeKeyOf(provider), key -> new ArrayList<>()).add(readModel);
+                }
+            }
+        }
     }
 
     /**
@@ -284,6 +330,12 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
             }
         }
 
+        for (ReadModelMirror readModel : readModelsByProviderKey.getOrDefault(
+            Step.nodeKeyOf(current.method()), List.of())) {
+            successors.add(Step.providingReadModel(current, readModel,
+                isOnPath(current, Step.nodeKeyOf(readModel))));
+        }
+
         domainMirror.getDomainTypeMirror(current.method().typeName())
             .filter(QueryHandlerMirror.class::isInstance)
             .map(QueryHandlerMirror.class::cast)
@@ -427,6 +479,13 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
             for (DomainTypeMirror queryHandler : queryHandlersProviding(type.getTypeName())) {
                 predecessors.add(Step.providedBy(current, queryHandler,
                     isOnPath(current, Step.nodeKeyOf(queryHandler))));
+            }
+            for (DomainMethod provider : providersByReadModelTypeName.getOrDefault(type.getTypeName(), List.of())) {
+                if (!config.methodFilter().test(provider)) {
+                    continue;
+                }
+                predecessors.add(Step.providedByMethod(current, provider,
+                    isOnPath(current, Step.nodeKeyOf(provider))));
             }
         }
 

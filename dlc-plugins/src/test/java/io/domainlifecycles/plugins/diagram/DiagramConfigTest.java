@@ -72,6 +72,39 @@ public class DiagramConfigTest {
     }
 
     @Test
+    void mapCopiesTheMaximalNumberOfFieldsOfInlinedValueObjects() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setMaxInlinedValueObjectFields(4);
+
+        assertThat(diagramConfig.map().getGeneralVisualSettings().getMaxInlinedValueObjectFields()).isEqualTo(4);
+        assertThat(new DiagramConfig().map().getGeneralVisualSettings().getMaxInlinedValueObjectFields())
+            .as("unset, the diagrammer's default applies")
+            .isEqualTo(2);
+    }
+
+    @Test
+    void mapCopiesWhetherOnlyTheMethodsCalledInFlowsAreShown() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setShowOnlyFlowMethods(false);
+
+        assertThat(diagramConfig.map().getGeneralVisualSettings().isShowOnlyFlowMethods()).isFalse();
+        assertThat(new DiagramConfig().map().getGeneralVisualSettings().isShowOnlyFlowMethods())
+            .as("unset, the diagrammer's default applies")
+            .isTrue();
+    }
+
+    @Test
+    void mapCopiesWhetherTheCallsOfTheFlowsAreDrawn() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setShowFlowCallRelations(false);
+
+        assertThat(diagramConfig.map().getGeneralVisualSettings().isShowFlowCallRelations()).isFalse();
+        assertThat(new DiagramConfig().map().getGeneralVisualSettings().isShowFlowCallRelations())
+            .as("unset, the diagrammer's default applies")
+            .isTrue();
+    }
+
+    @Test
     void mapCopiesFieldAndMethodBlacklistsIntoTheirOwnSettingsIndependently() {
         DiagramConfig diagramConfig = new DiagramConfig();
         diagramConfig.setFieldBlacklist(List.of("password", "secret"));

@@ -161,6 +161,35 @@ seed at once. The rendering direction of every edge is unaffected either way - i
 the structural direction of the mirror data (e.g. service → repository), regardless of which
 direction the flow search that kept a node visible ran in.
 
+### Only the methods called in the flows
+
+By default (`GeneralVisualSettings.isShowOnlyFlowMethods()`), a class taking part in a flow shows
+only the methods called in it - e.g. only `placeOrder` of an application service offering
+`placeOrder`, `cancelOrder` and `report`, if the flow starts at `placeOrder`. A method called through
+an interface counts for the implementation shown in its place. A backward flow into a whole type
+shows the methods of that type its callers call. Classes shown for another reason - an entity of a
+shown aggregate or a read model contained in a shown read model, which no flow reaches themselves -
+show their methods as in a diagram without flow. The other method settings (e.g.
+`showDomainServiceMethods`) still apply. To show all methods, switch it off:
+
+```Java
+var general = GeneralVisualSettings.builder()
+    .withShowOnlyFlowMethods(false)
+    .build();
+```
+
+### The calls of the flows
+
+The relationships of a diagram come from the structure of the domain model: fields, processed
+commands, published and listened events, managed aggregates, provided read models. A flow follows the
+method calls, though, which may connect two classes without any such structure - e.g. a class reading
+a read model it got from elsewhere, holding no field of it. By default
+(`GeneralVisualSettings.isShowFlowCallRelations()`), two classes calling each other in a flow are
+therefore connected by a `<<calls>>` relationship, labeled with the called methods (up to three,
+followed by `…`), if no other relationship connects them. A call into an aggregate connects to its
+frame; calls of entities, value objects, identities and enums are left out, they are mostly accessors
+of an aggregate's parts. Switch it off with `withShowFlowCallRelations(false)`.
+
 ## Showing non-domain classes
 
 The [mirror](../mirror/readme.md#mirroring-non-domain-classes) does not only mirror classes
@@ -192,12 +221,24 @@ DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
 To hide non-domain classes altogether, set `withShowNonDomainClasses(false)`. Their look can be
 adjusted like every other kind via `StyleSettings.builder().withNonDomainClassStyle(...)`.
 
+A non-domain class holding another shown non-domain class as field - e.g. a controller delegating to
+a helper - is connected to it as well.
+
 A domain command received by a non-domain class - e.g. a controller method taking it as parameter -
 is connected to it by an `is processed by` relationship, just like to an application service
 processing it. With `showOnlyTopLevelDomainCommandRelations` (the default), only the outermost of
 the classes processing a command is connected to it: a controller forwarding the command to an
 application service it holds gets the relationship, the application service does not. A hidden
 non-domain class does not count for that, so the application service keeps its relationship then.
+
+## Read models without query handler
+
+A read model is usually provided by a query handler, which the diagram connects to it. A read model no
+query handler provides is provided by the classes returning it instead - service kinds (query
+handlers aside) and non-domain classes with a method returning it, directly, as `Optional` or as
+collection, e.g. a driver computing it. They are connected to it by a `<<provides>>` relationship,
+labeled with the providing methods. The flows follow the same relation, see the
+[static analysis](../static-analysis/readme.md).
 
 ## Read models containing read models
 
@@ -217,6 +258,39 @@ they have in common, e.g. `OrderService (billing.domain)` and `OrderService (shi
 in that common package is followed by its full package. The hint only appears if the classes are
 shown in the same diagram, and not with `showFullQualifiedClassNames`. An implementation drawn as its
 interface (without inheritance structures shown) remains one node with it, whatever its name.
+
+## Value objects shown inline
+
+A value object with only a few fields is shown inline - as field of the class referencing it, e.g.
+`price:<VO> Money` - instead of as class of its own connected by a composition. By default that
+applies to value objects of up to two fields; `GeneralVisualSettings.withMaxInlinedValueObjectFields(int)`
+changes the number (`1` shows only value objects of a single field inline, `0` none):
+
+```Java
+var general = GeneralVisualSettings.builder()
+    .withMaxInlinedValueObjectFields(3)
+    .build();
+```
+
+A field holding a value object shown inline in turn counts as one field, while a value object
+containing one that is not shown inline is not shown inline itself - so no field ever disappears from
+the diagram. A value object on the classes blacklist is always shown inline.
+
+## Abstract types and inheritance structures
+
+Whether abstract types (interfaces and abstract classes) are shown depends on the inheritance
+settings of `GeneralVisualSettings`:
+
+- With `showAllInheritanceStructures`, or the setting of their kind -
+  `showInheritanceStructuresForServiceKinds`, `showInheritanceStructuresInAggregates`,
+  `showInheritanceStructuresForReadModels`, `showInheritanceStructuresForDomainEvents` or
+  `showInheritanceStructuresForDomainCommands` - abstract and concrete types are shown both, connected
+  by their inheritance relationships.
+- Otherwise (the default) an abstract type stands in for its implementations: it is hidden as long as
+  one of its implementations is shown in the diagram, and shown if none is. That covers an abstract type
+  without any implementation as well as one whose implementations are left out of the diagram - by the
+  package filter, the blacklist, or a flow reaching the abstract type only, e.g. a read model interface
+  that is implemented anonymously somewhere.
 
 ## Rendering from commandline to image
 

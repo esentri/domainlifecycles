@@ -34,6 +34,31 @@ public class TestNonDomainDispatch {
     }
 
     @Test
+    public void methodReferenceOnObjectIsNotExpandedByDefault() {
+        DomainCalls calls = new SootupStaticAnalyzer().analyze(domainMirror, DomainClasspath.ofMirroredTypes(domainMirror));
+
+        // expanded, the caller took over the calls of every toString of the domain, e.g. Tag.normalized
+        assertThat(calledBy(calls, "describeAll")).isEmpty();
+    }
+
+    @Test
+    public void methodReferenceOnADomainTypeIsFollowed() {
+        DomainCalls calls = new SootupStaticAnalyzer().analyze(domainMirror, DomainClasspath.ofMirroredTypes(domainMirror));
+
+        assertThat(calledBy(calls, "describeTags"))
+            .contains("test.objectdispatch.Tag.toString", "test.objectdispatch.Tag.normalized");
+    }
+
+    @Test
+    public void methodReferenceOnObjectIsExpandedToAllImplementingDomainTypes_When_AskedFor() {
+        DomainCalls calls = new SootupStaticAnalyzer(SootupStaticAnalyzer.DEFAULT_CACHE_SIZE, true)
+            .analyze(domainMirror, DomainClasspath.ofMirroredTypes(domainMirror));
+
+        assertThat(calledBy(calls, "describeAll"))
+            .contains("test.objectdispatch.Tag.toString", "test.objectdispatch.Tag.normalized");
+    }
+
+    @Test
     public void callOnObjectIsExpandedToAllImplementingDomainTypes_When_AskedFor() {
         DomainCalls calls = new SootupStaticAnalyzer(SootupStaticAnalyzer.DEFAULT_CACHE_SIZE, true)
             .analyze(domainMirror, DomainClasspath.ofMirroredTypes(domainMirror));

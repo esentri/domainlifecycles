@@ -30,10 +30,13 @@ import io.domainlifecycles.diagram.Diagram;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.diagram.domain.mapper.DomainMapper;
 import io.domainlifecycles.diagram.domain.notes.DomainClassNote;
+import io.domainlifecycles.diagram.nomnoml.NomnomlRelationship;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.staticanalysis.DomainCalls;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 /**
  * The DomainDiagramGenerator generates the Nomnoml diagram text
  * for a complete bounded contexts and the configuration specified by a given
@@ -277,9 +280,9 @@ public class DomainDiagramGenerator implements Diagram {
         domainMapper.getDomainEvents().forEach(f -> builder.append(f.getDiagramText()));
 
         domainMapper.getAggregateFrames().forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper()
-            .mapAllAggregateFrameRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
+        var relationshipMapper = domainMapper.getDomainRelationshipMapper();
+        var relationships = new ArrayList<NomnomlRelationship>();
+        appendRelationships(builder, relationships, relationshipMapper.mapAllAggregateFrameRelationships());
 
         domainMapper.getRepositories().forEach(f -> builder.append(f.getDiagramText()));
 
@@ -293,25 +296,26 @@ public class DomainDiagramGenerator implements Diagram {
 
         domainMapper.getNonDomainClasses().forEach(f -> builder.append(f.getDiagramText()));
 
-        domainMapper.getDomainRelationshipMapper().mapAllDomainCommandRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllDomainEventRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllServiceKindRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllNonDomainRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
+        appendRelationships(builder, relationships, relationshipMapper.mapAllDomainCommandRelationships());
+        appendRelationships(builder, relationships, relationshipMapper.mapAllDomainEventRelationships());
+        appendRelationships(builder, relationships, relationshipMapper.mapAllServiceKindRelationships());
+        appendRelationships(builder, relationships, relationshipMapper.mapAllNonDomainRelationships());
 
-        domainMapper.getDomainRelationshipMapper().mapAllAggregateRepositoryRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllQueryHandlerReadModelRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllReadModelRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
+        appendRelationships(builder, relationships, relationshipMapper.mapAllAggregateRepositoryRelationships());
+        appendRelationships(builder, relationships, relationshipMapper.mapAllQueryHandlerReadModelRelationships());
+        appendRelationships(builder, relationships, relationshipMapper.mapAllReadModelRelationships());
+        // last: only where no other relationship connects two classes
+        appendRelationships(builder, relationships, relationshipMapper.mapAllFlowCallRelationships(List.copyOf(relationships)));
 
         domainMapper.getNonAggregateNotes().forEach(f -> builder.append(f.getDiagramText()));
 
         return builder.toString();
+    }
+
+    private static void appendRelationships(StringBuilder builder, List<NomnomlRelationship> appended,
+                                            List<NomnomlRelationship> relationships) {
+        relationships.forEach(relationship -> builder.append(relationship.getDiagramText()));
+        appended.addAll(relationships);
     }
 
     private String aggregateFrameStyleDeclaration() {

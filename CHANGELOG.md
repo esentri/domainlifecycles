@@ -179,6 +179,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the multiplicity of the containing field, like value objects containing value objects, instead of listing it as
   field. A contained read model is shown together with the one containing it, also in diagrams restricted to a flow
   or to connected types that do not reach it
+- Fixed the SootUp based [static analysis](./static-analysis) expanding a method reference on a type outside the
+  domain, like `map(Object::toString)`, to every domain type implementing the method and attributing their calls to the
+  method containing the reference: in a real world project a single mapper method took over the calls of the
+  `toString` of 486 classes. Like a call on such a type, a method reference on it is no longer followed, unless
+  `staticAnalysisExpandNonDomainDispatch` is set. In that project, 60 % fewer call sites were attributed to a method of
+  another class
+- Fixed the SootUp based [static analysis](./static-analysis) dropping every method taking a container or array
+  parameter (`List<Order>`, `Optional<Order>`, `Order[]`, `byte[]`, varargs), as caller and as called method: the mirror
+  names the element or component type of such a parameter, the bytecode the container or array type, so no mirrored
+  method matched. In a real world project 554 instead of 19 of these methods are found as callers and 682 instead of
+  17 as called methods, so flows no longer end at them
+- Fixed the [domain diagrammer](./domain-diagrammer) hiding an abstract type whose implementations are not shown:
+  without the inheritance structures of its kind shown, an abstract type was hidden as soon as any implementation
+  existed in the domain, even one left out of the diagram. A read model interface implemented only anonymously was
+  therefore missing from the diagram of the backward flow to it. It is now hidden only if an implementation is shown
+  in the same diagram. With the inheritance structures shown, abstract and concrete types are shown both, as before
+- The [domain diagrammer](./domain-diagrammer) shows the methods of outbound services by default, like those of
+  domain services and repositories (`showOutboundServiceMethods`, now `true` by default; fields stay hidden by
+  default). The [Gradle and Maven plugins](./dlc-plugins/readme.md) follow, as long as the setting is not configured
+- The [domain diagrammer](./domain-diagrammer) shows value objects of up to two fields inline - as field of the class
+  referencing them, instead of as class of their own connected by a composition. Before, only value objects of a
+  single field were. The number is configurable via `GeneralVisualSettings.withMaxInlinedValueObjectFields(int)` and
+  the new `maxInlinedValueObjectFields` option of the [Gradle and Maven plugins](./dlc-plugins/readme.md); `1` restores
+  the previous behaviour, `0` inlines no value object. A field holding a value object shown inline counts as one
+  field, a value object containing one that is not shown inline is not shown inline itself
+- In a diagram restricted to flows, the [domain diagrammer](./domain-diagrammer) shows only the methods called in the
+  flows in the classes taking part in them (`GeneralVisualSettings.withShowOnlyFlowMethods(boolean)`, `true` by
+  default, and the new `showOnlyFlowMethods` option of the [Gradle and Maven plugins](./dlc-plugins/readme.md)).
+  Classes shown for another reason - an entity of a shown aggregate, a read model contained in a shown read model -
+  show their methods as without flow. A backward flow into a whole type shows the methods of it its callers call
+- The flows of the [static analysis](./static-analysis) treat the methods returning a read model no query handler
+  provides - of service kinds and non-domain classes, e.g. a driver computing it - like a query handler: in a
+  backward flow into the read model they precede it (`PROVIDES_READ_MODEL`), and the flow continues with their callers;
+  in a forward flow the read model follows them. Before, a backward flow into such a read model found only the classes
+  reading it
+- The [domain diagrammer](./domain-diagrammer) connects a service kind or non-domain class returning a read model no
+  query handler provides to it by a `<<provides>>` relationship, and a non-domain class holding another one as field
+  to it. The connection filters (`includeConnectedTo...`) follow the providing relationship as well
+- In a diagram restricted to flows, the [domain diagrammer](./domain-diagrammer) connects two classes calling each
+  other in a flow by a `<<calls>>` relationship, labeled with the called methods, if no other relationship connects
+  them (`GeneralVisualSettings.withShowFlowCallRelations(boolean)`, `true` by default, and the new
+  `showFlowCallRelations` option of the [Gradle and Maven plugins](./dlc-plugins/readme.md)). In a real world project
+  148 of the 161 classes shown without any relationship in its flow diagrams had such a call
 
 ## [3.4.0] - 2026-09-11
 - Improved DLC persistence initialization performance

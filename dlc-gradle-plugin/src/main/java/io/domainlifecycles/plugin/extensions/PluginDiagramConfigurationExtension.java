@@ -506,6 +506,27 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
     public abstract Property<Boolean> getShowNonDomainClassMethods();
 
     /**
+     * Up to how many fields a value object is shown inline, as field of the class referencing it.
+     *
+     * @return the maximal number of fields of an inlined value object, 0 to inline none
+     */
+    public abstract Property<Integer> getMaxInlinedValueObjectFields();
+
+    /**
+     * Whether the classes taking part in a flow show only the methods called in it.
+     *
+     * @return true if only the methods called in the flows are shown
+     */
+    public abstract Property<Boolean> getShowOnlyFlowMethods();
+
+    /**
+     * Whether classes calling each other in a flow are connected, if nothing else connects them.
+     *
+     * @return true if the calls of the flows are drawn as relationships
+     */
+    public abstract Property<Boolean> getShowFlowCallRelations();
+
+    /**
      * Indicates whether the application service should be called 'driver'.
      *
      * @return true if the application services should be call 'driver' as stereotype, false otherwise

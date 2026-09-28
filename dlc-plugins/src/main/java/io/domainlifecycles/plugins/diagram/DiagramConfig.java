@@ -124,6 +124,9 @@ public class DiagramConfig {
     private Boolean showNonDomainClasses;
     private Boolean showNonDomainClassFields;
     private Boolean showNonDomainClassMethods;
+    private Integer maxInlinedValueObjectFields;
+    private Boolean showOnlyFlowMethods;
+    private Boolean showFlowCallRelations;
     private Boolean callApplicationServiceDriver;
     private List<String> fieldBlacklist;
     private List<String> methodBlacklist;
@@ -1272,6 +1275,60 @@ public class DiagramConfig {
     }
 
     /**
+     * Gets up to how many fields a value object is shown inline, as field of the class referencing it
+     *
+     * @return The maximal number of fields of an inlined value object
+     */
+    public Integer getMaxInlinedValueObjectFields() {
+        return maxInlinedValueObjectFields;
+    }
+
+    /**
+     * Sets up to how many fields a value object is shown inline, as field of the class referencing it
+     *
+     * @param maxInlinedValueObjectFields The maximal number of fields of an inlined value object, 0 to inline none
+     */
+    public void setMaxInlinedValueObjectFields(Integer maxInlinedValueObjectFields) {
+        this.maxInlinedValueObjectFields = maxInlinedValueObjectFields;
+    }
+
+    /**
+     * Gets whether the classes taking part in a flow show only the methods called in it
+     *
+     * @return Whether only the methods called in the flows are shown
+     */
+    public Boolean getShowOnlyFlowMethods() {
+        return showOnlyFlowMethods;
+    }
+
+    /**
+     * Sets whether the classes taking part in a flow show only the methods called in it
+     *
+     * @param showOnlyFlowMethods Whether only the methods called in the flows are shown
+     */
+    public void setShowOnlyFlowMethods(Boolean showOnlyFlowMethods) {
+        this.showOnlyFlowMethods = showOnlyFlowMethods;
+    }
+
+    /**
+     * Gets whether classes calling each other in a flow are connected, if nothing else connects them
+     *
+     * @return Whether the calls of the flows are drawn as relationships
+     */
+    public Boolean getShowFlowCallRelations() {
+        return showFlowCallRelations;
+    }
+
+    /**
+     * Sets whether classes calling each other in a flow are connected, if nothing else connects them
+     *
+     * @param showFlowCallRelations Whether the calls of the flows are drawn as relationships
+     */
+    public void setShowFlowCallRelations(Boolean showFlowCallRelations) {
+        this.showFlowCallRelations = showFlowCallRelations;
+    }
+
+    /**
      * Gets whether to call application service driver
      *
      * @return Whether application service driver should be called
@@ -1892,6 +1949,9 @@ public class DiagramConfig {
         if(showNonDomainClasses != null) visualBuilder.withShowNonDomainClasses(showNonDomainClasses);
         if(showNonDomainClassFields != null) visualBuilder.withShowNonDomainClassFields(showNonDomainClassFields);
         if(showNonDomainClassMethods != null) visualBuilder.withShowNonDomainClassMethods(showNonDomainClassMethods);
+        if(maxInlinedValueObjectFields != null) visualBuilder.withMaxInlinedValueObjectFields(maxInlinedValueObjectFields);
+        if(showOnlyFlowMethods != null) visualBuilder.withShowOnlyFlowMethods(showOnlyFlowMethods);
+        if(showFlowCallRelations != null) visualBuilder.withShowFlowCallRelations(showFlowCallRelations);
         if(callApplicationServiceDriver != null) visualBuilder.withCallApplicationServiceDriver(callApplicationServiceDriver);
         if(fieldBlacklist != null && !fieldBlacklist.isEmpty()) visualBuilder.withFieldBlacklist(fieldBlacklist);
         if(methodBlacklist != null && !methodBlacklist.isEmpty()) visualBuilder.withMethodBlacklist(methodBlacklist);

@@ -468,13 +468,14 @@ Supported Diagram configuration options are
 - showQueryHandlerMethods: boolean, default false
 - showOutboundServices: boolean, default true
 - showOutboundServiceFields: boolean, default false
-- showOutboundServiceMethods: boolean, default false
+- showOutboundServiceMethods: boolean, default true
 - showUnspecifiedServiceKinds: boolean, default true
 - showUnspecifiedServiceKindFields: boolean, default false
 - showUnspecifiedServiceKindMethods: boolean, default false
 - showNonDomainClasses: boolean, default true (classes not implementing any domain marker interface are drawn too, but only when they have a relationship - in either direction - to a service kind)
 - showNonDomainClassFields: boolean, default false
 - showNonDomainClassMethods: boolean, default true
+- maxInlinedValueObjectFields: int, default 2 (value objects with at most this many fields are shown inline, as field of the class referencing them, instead of as class of their own connected by a composition; a field holding a value object shown inline counts as one field, 0 inlines none)
 - callApplicationServiceDriver: boolean, default false
 - fieldBlacklist: field names to be excluded in field list, default "concurrencyVersion"  
 - methodBlacklist: method names to be excluded in field list, default "builder", "validate", "concurrencyVersion", "id", "findResultById", "publish", "increaseVersion", "equals", "hashCode", "toString"
@@ -498,6 +499,8 @@ Supported Diagram configuration options are
 - showRelationshipStereotypes: boolean, default true
 - includeFlowsFrom: list of flow starting points (see [Restricting a diagram to a flow](#restricting-a-diagram-to-a-flow)), default none (flow-based filtering disabled)
 - includeFlowsTo: list of flow target points, the backward counterpart of `includeFlowsFrom` (see [Restricting a diagram to a flow](#restricting-a-diagram-to-a-flow)), default none (backward flow-based filtering disabled)
+- showFlowCallRelations: boolean, default true (with `includeFlowsFrom`/`includeFlowsTo`, two classes calling each other in a flow are connected by a `<<calls>>` relationship, labeled with the called methods, if no other relationship connects them)
+- showOnlyFlowMethods: boolean, default true (with `includeFlowsFrom`/`includeFlowsTo`, the classes taking part in a flow show only the methods called in it; classes shown for another reason, e.g. as part of an aggregate or read model, show their methods as without flow)
 - flowMaxDepth: integer, maximum depth a flow is followed to, default unlimited
 - flowFollowEvents: boolean, whether a flow follows published DomainEvents to their listening methods, default true
 - flowFollowImplementations: boolean, whether a flow follows the dispatch from an interface/abstract method into its implementations, default true

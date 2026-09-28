@@ -26,6 +26,7 @@
 
 package io.domainlifecycles.staticanalysis;
 
+import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
@@ -782,8 +783,14 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
             // implementation bodies. The reporting owner may be an interface (direct
             // hit), whose method has no body - so we explicitly resolve the concrete
             // implementations of the reporting type and descend into their loadable
-            // method with the same sub-signature.
-            descendInto.addAll(concreteDescentTargets(ctx, reportSignature));
+            // method with the same sub-signature. A reference to a method of a type outside
+            // the domain (e.g. Object::toString) does not tell which implementation runs,
+            // like a call on such a type, see #SootupStaticAnalyzer(int, boolean): descending
+            // into all of them attributed the calls of every toString of the domain.
+            if (expandNonDomainDispatch
+                || ctx.domainTypeNames().contains(reportSignature.getDeclClassType().getFullyQualifiedName())) {
+                descendInto.addAll(concreteDescentTargets(ctx, reportSignature));
+            }
             // also descend into the raw handle method, in case its body genuinely
             // lives on the declaring type (e.g. a static method or a default method)
             descendInto.add(descentOn(scannedBody, handleMethod));
@@ -1176,7 +1183,7 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
         }
         for (int i = 0; i < sootParams.size(); i++) {
             String erasedType = sootParams.get(i).toString();
-            String dlcParamType = dlcParams.get(i).getType().getTypeName();
+            String dlcParamType = bytecodeTypeName(dlcParams.get(i).getType());
             if (!erasedType.equals(dlcParamType) && !isSubtypeOf(domainMirror, dlcParamType, erasedType)) {
                 return false;
             }
@@ -1201,11 +1208,50 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
         }
         for (int i = 0; i < sootParams.size(); i++) {
             String sootParamType = sootParams.get(i).toString();
-            String dlcParamType = dlcParams.get(i).getType().getTypeName();
+            String dlcParamType = bytecodeTypeName(dlcParams.get(i).getType());
             if (!sootParamType.equals(dlcParamType)) {
                 return false;
             }
         }
         return true;
+    }
+
+    /**
+     * The type of a mirrored parameter the way the bytecode names it. The mirror names the element type of a container
+     * ({@code List<Order>}: {@code Order}) and the component type of an array ({@code byte[]}: {@code byte}); the
+     * bytecode names the container ({@code java.util.List}) and the array type ({@code byte[]}).
+     */
+    static String bytecodeTypeName(AssertedContainableTypeMirror type) {
+        if (type.isArray()) {
+            return sourceTypeName(type.getTypeName()) + "[]";
+        }
+        if (type.hasContainer()) {
+            return type.getContainerTypeName().orElse(type.getTypeName());
+        }
+        return type.getTypeName();
+    }
+
+    /**
+     * A type name in source notation: the component type of a multidimensional array may be given as binary name, e.g.
+     * {@code [B} for {@code byte[]} or {@code [Ljava.lang.String;} for {@code java.lang.String[]}.
+     */
+    private static String sourceTypeName(String typeName) {
+        if (!typeName.startsWith("[")) {
+            return typeName;
+        }
+        String component = typeName.substring(1);
+        String componentName = switch (component.charAt(0)) {
+            case 'B' -> "byte";
+            case 'S' -> "short";
+            case 'I' -> "int";
+            case 'J' -> "long";
+            case 'C' -> "char";
+            case 'F' -> "float";
+            case 'D' -> "double";
+            case 'Z' -> "boolean";
+            case 'L' -> component.substring(1, component.length() - 1);
+            default -> sourceTypeName(component);
+        };
+        return componentName + "[]";
     }
 }

@@ -55,8 +55,10 @@ import io.domainlifecycles.mirror.visitor.ContextDomainObjectVisitor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -151,7 +153,132 @@ public class DomainRelationshipMapper {
                 .filter(filteredDomainClasses::contains)
                 .forEach(s -> relationShips.add(mapNonDomainToServiceKindRelationship(nd, s)))
             );
+        filteredDomainClasses
+            .getNonDomainClasses()
+            .forEach(nd -> referencedNonDomainClasses(nd)
+                .forEach(target -> relationShips.add(mapAssociation(nd, target))));
         return relationShips;
+    }
+
+    /**
+     * The non-domain classes a non-domain class holds as field, e.g. a helper a controller delegates to.
+     */
+    private List<DomainTypeMirror> referencedNonDomainClasses(NonDomainTypeMirror nonDomainTypeMirror) {
+        return nonDomainTypeMirror.getAllFields().stream()
+            .filter(field -> !field.isStatic())
+            .map(field -> domainMirror.getDomainTypeMirror(field.getType().getTypeName()))
+            .flatMap(Optional::stream)
+            .filter(NonDomainTypeMirror.class::isInstance)
+            .filter(target -> !target.getTypeName().equals(nonDomainTypeMirror.getTypeName()))
+            .filter(filteredDomainClasses::contains)
+            .distinct()
+            .toList();
+    }
+
+    private NomnomlRelationship mapAssociation(DomainTypeMirror from, DomainTypeMirror to) {
+        return NomnomlRelationship
+            .builder()
+            .fromName(relationConnectorName(from))
+            .fromMultiplicity("")
+            .fromStyleClassifier(DomainMapperUtils.styleClassifier(from))
+            .label("")
+            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_ASSOCIATION)
+            .toName(relationConnectorName(to))
+            .toMultiplicity("")
+            .toStyleClassifier(DomainMapperUtils.styleClassifier(to))
+            .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+            .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
+            .build();
+    }
+
+    /**
+     * Derives a {@code <<calls>>} relationship for two shown classes calling each other in the flows the diagram is
+     * restricted to, if no other relationship connects them - e.g. a class reading a read model it got from elsewhere.
+     * A call into an aggregate connects to its frame; calls of value objects, identities, enums and entities are left
+     * out, they are mostly accessors of an aggregate's parts.
+     *
+     * @param otherRelationships all other relationships of the diagram
+     * @return the call relationships
+     */
+    public List<NomnomlRelationship> mapAllFlowCallRelationships(List<NomnomlRelationship> otherRelationships) {
+        if (!diagramConfig.getGeneralVisualSettings().isShowFlowCallRelations()) {
+            return List.of();
+        }
+        var connected = new HashSet<String>();
+        otherRelationships.forEach(relationship -> {
+            connected.add(relationship.getFromName() + "->" + relationship.getToName());
+            connected.add(relationship.getToName() + "->" + relationship.getFromName());
+        });
+        var relationShips = new ArrayList<NomnomlRelationship>();
+        filteredDomainClasses.getFlowCalls().forEach((callerTypeName, calledMethodsByType) -> {
+            var caller = callNode(callerTypeName);
+            if (caller.isEmpty()) {
+                return;
+            }
+            calledMethodsByType.forEach((calledTypeName, methodNames) -> {
+                var called = callNode(calledTypeName);
+                if (called.isEmpty() || caller.get().name().equals(called.get().name())) {
+                    return;
+                }
+                if (connected.add(caller.get().name() + "->" + called.get().name())) {
+                    connected.add(called.get().name() + "->" + caller.get().name());
+                    relationShips.add(mapCallRelationship(caller.get(), called.get(), calledTypeName, methodNames));
+                }
+            });
+        });
+        return relationShips;
+    }
+
+    private record CallNode(String name, String styleClassifier) {
+    }
+
+    /**
+     * The node a call starts or ends at: the frame of an aggregate, the class of any other shown type.
+     */
+    private Optional<CallNode> callNode(String typeName) {
+        var type = domainMirror.getDomainTypeMirror(typeName);
+        if (type.isEmpty()) {
+            return Optional.empty();
+        }
+        return switch (type.get().getDomainType()) {
+            case AGGREGATE_ROOT -> filteredDomainClasses.contains(type.get())
+                ? Optional.of(new CallNode(aggregateFrameName(typeName),
+                    "<" + DomainDiagramGenerator.AGGREGATE_FRAME_STYLE_TAG + "> "))
+                : Optional.empty();
+            case ENTITY, VALUE_OBJECT, IDENTITY, ENUM -> Optional.empty();
+            // a service kind is drawn by the name of its interface, any other type by its own name
+            default -> (type.get() instanceof ServiceKindMirror
+                    ? filteredDomainClasses.contains(type.get())
+                    : filteredDomainClasses.getContained(typeName).isPresent())
+                ? Optional.of(new CallNode(relationConnectorName(type.get()), DomainMapperUtils.styleClassifier(type.get())))
+                : Optional.empty();
+        };
+    }
+
+    private static final int MAX_CALLED_METHODS_IN_LABEL = 3;
+
+    private NomnomlRelationship mapCallRelationship(CallNode caller, CallNode called, String calledTypeName,
+                                                    Set<String> methodNames) {
+        String calledName = DomainMapperUtils.mapTypeName(calledTypeName, diagramConfig);
+        String label = methodNames.stream()
+            .limit(MAX_CALLED_METHODS_IN_LABEL)
+            .map(methodName -> calledName + "." + methodName)
+            .collect(Collectors.joining(", "))
+            + (methodNames.size() > MAX_CALLED_METHODS_IN_LABEL ? ", …" : "");
+        return NomnomlRelationship
+            .builder()
+            .fromName(caller.name())
+            .fromMultiplicity("")
+            .fromStyleClassifier(caller.styleClassifier())
+            .label(label)
+            .stereotype("calls")
+            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_DEPENDENCY)
+            .toName(called.name())
+            .toMultiplicity("")
+            .toStyleClassifier(called.styleClassifier())
+            .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+            .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
+            .build();
     }
 
     /**
@@ -192,7 +319,47 @@ public class DomainRelationshipMapper {
                 )
                 .forEach(r -> relationShips.add(mapQueryHandlerReadModelRelationship(r)));
         }
+        if (diagramConfig.getGeneralVisualSettings().isShowReadModels()) {
+            var providers = new ArrayList<DomainTypeMirror>(filteredDomainClasses.getServiceKinds());
+            providers.addAll(filteredDomainClasses.getNonDomainClasses());
+            var seen = new HashSet<String>();
+            // the read model itself must be shown: an interface stands in for its implementations only as long as none
+            // of them is shown, and a read model is always drawn by its own name
+            providers.forEach(provider -> DomainMapperUtils.readModelsProvidedWithoutQueryHandler(provider, domainMirror)
+                .stream()
+                .filter(readModel -> filteredDomainClasses.getContained(readModel.getTypeName()).isPresent())
+                .map(readModel -> mapReadModelProviderRelationship(provider, readModel))
+                .filter(relationship -> seen.add(relationship.getFromName() + "->" + relationship.getToName()))
+                .forEach(relationShips::add));
+        }
         return relationShips;
+    }
+
+    /**
+     * A service kind or non-domain class returning a read model no query handler provides - e.g. a driver computing
+     * it - is connected to it like a query handler.
+     */
+    private NomnomlRelationship mapReadModelProviderRelationship(DomainTypeMirror provider, DomainTypeMirror readModel) {
+        String label = provider.getMethods().stream()
+            .filter(method -> method.getReturnType() != null
+                && method.getReturnType().getTypeName().equals(readModel.getTypeName()))
+            .map(method -> DomainMapperUtils.mapTypeName(provider.getTypeName(), diagramConfig) + "." + method.getName())
+            .distinct()
+            .collect(Collectors.joining(", "));
+        return NomnomlRelationship
+            .builder()
+            .fromName(relationConnectorName(provider))
+            .fromMultiplicity("")
+            .fromStyleClassifier(DomainMapperUtils.styleClassifier(provider))
+            .label(label)
+            .stereotype("provides")
+            .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_DEPENDENCY)
+            .toName(relationConnectorName(readModel))
+            .toMultiplicity("")
+            .toStyleClassifier(DomainMapperUtils.styleClassifier(readModel))
+            .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+            .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
+            .build();
     }
 
     /**

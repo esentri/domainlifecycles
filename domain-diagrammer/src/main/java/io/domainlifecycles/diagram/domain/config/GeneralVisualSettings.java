@@ -69,13 +69,16 @@ public class GeneralVisualSettings {
     private static final boolean DEFAULT_SHOW_QUERY_HANDLER_METHODS = false;
     private static final boolean DEFAULT_SHOW_OUTBOUND_SERVICES = true;
     private static final boolean DEFAULT_SHOW_OUTBOUND_SERVICE_FIELDS = false;
-    private static final boolean DEFAULT_SHOW_OUTBOUND_SERVICE_METHODS = false;
+    private static final boolean DEFAULT_SHOW_OUTBOUND_SERVICE_METHODS = true;
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KINDS = true;
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_FIELDS = false;
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_METHODS = false;
     private static final boolean DEFAULT_SHOW_NON_DOMAIN_CLASSES = true;
     private static final boolean DEFAULT_SHOW_NON_DOMAIN_CLASS_FIELDS = false;
     private static final boolean DEFAULT_SHOW_NON_DOMAIN_CLASS_METHODS = true;
+    private static final int DEFAULT_MAX_INLINED_VALUE_OBJECT_FIELDS = 2;
+    private static final boolean DEFAULT_SHOW_ONLY_FLOW_METHODS = true;
+    private static final boolean DEFAULT_SHOW_FLOW_CALL_RELATIONS = true;
     private static final boolean DEFAULT_CALL_APPLICATION_SERVICE_DRIVER = false;
     private static final List<String> DEFAULT_FIELD_BLACKLIST = List.of("concurrencyVersion");
     private static final List<String> DEFAULT_METHOD_BLACKLIST = List.of(
@@ -143,6 +146,9 @@ public class GeneralVisualSettings {
     private final boolean showNonDomainClasses;
     private final boolean showNonDomainClassFields;
     private final boolean showNonDomainClassMethods;
+    private final int maxInlinedValueObjectFields;
+    private final boolean showOnlyFlowMethods;
+    private final boolean showFlowCallRelations;
     private final boolean callApplicationServiceDriver;
     private final List<String> fieldBlacklist;
     private final List<String> methodBlacklist;
@@ -200,6 +206,9 @@ public class GeneralVisualSettings {
         boolean showNonDomainClasses,
         boolean showNonDomainClassFields,
         boolean showNonDomainClassMethods,
+        int maxInlinedValueObjectFields,
+        boolean showOnlyFlowMethods,
+        boolean showFlowCallRelations,
         boolean callApplicationServiceDriver,
         List<String> fieldBlacklist,
         List<String> methodBlacklist,
@@ -256,6 +265,9 @@ public class GeneralVisualSettings {
         this.showNonDomainClasses = showNonDomainClasses;
         this.showNonDomainClassFields = showNonDomainClassFields;
         this.showNonDomainClassMethods = showNonDomainClassMethods;
+        this.maxInlinedValueObjectFields = maxInlinedValueObjectFields;
+        this.showOnlyFlowMethods = showOnlyFlowMethods;
+        this.showFlowCallRelations = showFlowCallRelations;
         this.callApplicationServiceDriver = callApplicationServiceDriver;
         this.fieldBlacklist = fieldBlacklist;
         this.methodBlacklist = methodBlacklist;
@@ -629,6 +641,38 @@ public class GeneralVisualSettings {
     }
 
     /**
+     * Returns up to how many fields a value object is shown inline: as field of the class referencing it, instead of
+     * as class of its own connected by a composition. Fields of a value object inlined in turn count as one field,
+     * a value object containing a value object that is not inlined is never inlined itself.
+     *
+     * @return the maximal number of fields of an inlined value object, {@code 0} to inline no value object
+     */
+    public int getMaxInlinedValueObjectFields() {
+        return maxInlinedValueObjectFields;
+    }
+
+    /**
+     * Returns whether, in a diagram restricted to flows, the classes taking part in a flow show only the methods called
+     * in it. Classes shown for another reason - e.g. as part of an aggregate or read model - show their methods as
+     * without flow.
+     *
+     * @return true if only the methods called in the flows are shown, false to show all methods
+     */
+    public boolean isShowOnlyFlowMethods() {
+        return showOnlyFlowMethods;
+    }
+
+    /**
+     * Returns whether, in a diagram restricted to flows, two classes calling each other in a flow are connected by a
+     * {@code <<calls>>} relationship, if no other relationship connects them.
+     *
+     * @return true if the calls of the flows are drawn as relationships
+     */
+    public boolean isShowFlowCallRelations() {
+        return showFlowCallRelations;
+    }
+
+    /**
      * Returns whether application service driver calls should be included in the diagram.
      *
      * @return true if application service driver calls should be included, false otherwise
@@ -839,6 +883,9 @@ public class GeneralVisualSettings {
         private boolean showNonDomainClasses$value = DEFAULT_SHOW_NON_DOMAIN_CLASSES;
         private boolean showNonDomainClassFields$value = DEFAULT_SHOW_NON_DOMAIN_CLASS_FIELDS;
         private boolean showNonDomainClassMethods$value = DEFAULT_SHOW_NON_DOMAIN_CLASS_METHODS;
+        private int maxInlinedValueObjectFields$value = DEFAULT_MAX_INLINED_VALUE_OBJECT_FIELDS;
+        private boolean showOnlyFlowMethods$value = DEFAULT_SHOW_ONLY_FLOW_METHODS;
+        private boolean showFlowCallRelations$value = DEFAULT_SHOW_FLOW_CALL_RELATIONS;
         private boolean callApplicationServiceDriver$value = DEFAULT_CALL_APPLICATION_SERVICE_DRIVER;
         private List<String> fieldBlacklist$value;
         private List<String> methodBlacklist$value;
@@ -1294,6 +1341,47 @@ public class GeneralVisualSettings {
         }
 
         /**
+         * Sets up to how many fields a value object is shown inline, as field of the class referencing it, instead of
+         * as class of its own connected by a composition (default 2).
+         *
+         * @param maxInlinedValueObjectFields the maximal number of fields of an inlined value object, {@code 0} to
+         *                                    inline no value object
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withMaxInlinedValueObjectFields(int maxInlinedValueObjectFields) {
+            if (maxInlinedValueObjectFields < 0) {
+                throw new IllegalArgumentException(
+                    "maxInlinedValueObjectFields must not be negative, but was " + maxInlinedValueObjectFields);
+            }
+            this.maxInlinedValueObjectFields$value = maxInlinedValueObjectFields;
+            return this;
+        }
+
+        /**
+         * Sets whether, in a diagram restricted to flows, the classes taking part in a flow show only the methods
+         * called in it (default true).
+         *
+         * @param showOnlyFlowMethods true to show only the methods called in the flows, false to show all methods
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowOnlyFlowMethods(boolean showOnlyFlowMethods) {
+            this.showOnlyFlowMethods$value = showOnlyFlowMethods;
+            return this;
+        }
+
+        /**
+         * Sets whether, in a diagram restricted to flows, two classes calling each other in a flow are connected by a
+         * {@code <<calls>>} relationship, if no other relationship connects them (default true).
+         *
+         * @param showFlowCallRelations true to draw the calls of the flows as relationships
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowFlowCallRelations(boolean showFlowCallRelations) {
+            this.showFlowCallRelations$value = showFlowCallRelations;
+            return this;
+        }
+
+        /**
          * Sets whether to call application service driver.
          *
          * @param callApplicationServiceDriver true to enable calling application service driver, false to disable
@@ -1518,6 +1606,9 @@ public class GeneralVisualSettings {
                 showNonDomainClasses$value,
                 showNonDomainClassFields$value,
                 showNonDomainClassMethods$value,
+                maxInlinedValueObjectFields$value,
+                showOnlyFlowMethods$value,
+                showFlowCallRelations$value,
                 callApplicationServiceDriver$value,
                 fieldBlacklist$value == null ? DEFAULT_FIELD_BLACKLIST : fieldBlacklist$value,
                 methodBlacklist$value == null ? DEFAULT_METHOD_BLACKLIST : methodBlacklist$value,

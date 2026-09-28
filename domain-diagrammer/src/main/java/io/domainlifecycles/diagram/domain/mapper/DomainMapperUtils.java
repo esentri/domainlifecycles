@@ -29,16 +29,25 @@ package io.domainlifecycles.diagram.domain.mapper;
 import io.domainlifecycles.diagram.domain.DomainDiagramGenerator;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
+import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.EntityReferenceMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
+import io.domainlifecycles.mirror.api.NonDomainTypeMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
+import io.domainlifecycles.mirror.api.ReadModelMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
+import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.mirror.api.ValueObjectMirror;
 import io.domainlifecycles.mirror.api.ValueReferenceMirror;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 
 /**
@@ -142,7 +151,7 @@ public class DomainMapperUtils {
                     return true;
                 } else {
                     var valueObjectMirror = (ValueObjectMirror) valueRef.getValue();
-                    return valueObjectMirror.isSingledValued() || domainDiagramConfig.getDiagramTrimSettings().getClassesBlacklist().contains(valueObjectMirror.getTypeName());
+                    return isShownInline(valueObjectMirror, domainDiagramConfig) || domainDiagramConfig.getDiagramTrimSettings().getClassesBlacklist().contains(valueObjectMirror.getTypeName());
                 }
             }
             return true;
@@ -150,6 +159,90 @@ public class DomainMapperUtils {
         }
         //for everything else we show no properties at all
         return false;
+    }
+
+    /**
+     * The read models a service kind or non-domain class provides, which no query handler provides: those returned by
+     * its methods - directly, as {@code Optional} or as collection. A query handler provides its read model itself.
+     *
+     * @param domainTypeMirror a mirrored domain type
+     * @param domainMirror     the domain it belongs to
+     * @return the provided read models without query handler, empty for any other kind of type
+     */
+    public static List<ReadModelMirror> readModelsProvidedWithoutQueryHandler(DomainTypeMirror domainTypeMirror,
+                                                                              DomainMirror domainMirror) {
+        if (domainTypeMirror instanceof QueryHandlerMirror
+            || !(domainTypeMirror instanceof ServiceKindMirror || domainTypeMirror instanceof NonDomainTypeMirror)) {
+            return List.of();
+        }
+        return domainTypeMirror.getMethods().stream()
+            .filter(method -> method.getReturnType() != null)
+            .map(method -> domainMirror.getDomainTypeMirror(method.getReturnType().getTypeName()))
+            .flatMap(Optional::stream)
+            .filter(ReadModelMirror.class::isInstance)
+            .map(ReadModelMirror.class::cast)
+            .distinct()
+            .filter(readModel -> !isProvidedByAQueryHandler(readModel, domainMirror))
+            .toList();
+    }
+
+    /**
+     * @param readModelMirror a mirrored read model
+     * @param domainMirror    the domain it belongs to
+     * @return whether a query handler provides the read model
+     */
+    public static boolean isProvidedByAQueryHandler(ReadModelMirror readModelMirror, DomainMirror domainMirror) {
+        return domainMirror.getAllQueryHandlerMirrors().stream()
+            .anyMatch(queryHandler -> queryHandler.getProvidedReadModel()
+                .filter(provided -> provided.getTypeName().equals(readModelMirror.getTypeName()))
+                .isPresent());
+    }
+
+    /**
+     * Whether a value object is shown inline - as field of the class referencing it - instead of as class of its own,
+     * connected by a composition: if it has at most {@code maxInlinedValueObjectFields} fields (see
+     * {@link io.domainlifecycles.diagram.domain.config.GeneralVisualSettings#getMaxInlinedValueObjectFields()}), and
+     * each of them is a basic value, an enum, an identity or a value object shown inline in turn.
+     *
+     * @param valueObjectMirror   mirrored value object
+     * @param domainDiagramConfig diagram configuration
+     * @return true if the value object is shown inline
+     */
+    public static boolean isShownInline(ValueObjectMirror valueObjectMirror, DomainDiagramConfig domainDiagramConfig) {
+        return isInlinable(valueObjectMirror,
+            domainDiagramConfig.getGeneralVisualSettings().getMaxInlinedValueObjectFields(), new HashSet<>());
+    }
+
+    private static boolean isInlinable(ValueObjectMirror valueObjectMirror, int maxFields, Set<String> enclosing) {
+        if (!enclosing.add(valueObjectMirror.getTypeName())) {
+            // containing itself
+            return false;
+        }
+        try {
+            List<FieldMirror> fields = valueObjectMirror.getAllFields().stream()
+                .filter(field -> !field.isStatic() && !field.isHidden())
+                .toList();
+            if (fields.isEmpty() || fields.size() > maxFields) {
+                return false;
+            }
+            for (FieldMirror field : fields) {
+                if (field instanceof EntityReferenceMirror) {
+                    return false;
+                }
+                if (field instanceof ValueReferenceMirror valueReference) {
+                    var value = valueReference.getValue();
+                    if (value.isEnum() || value.isIdentity()) {
+                        continue;
+                    }
+                    if (!(value instanceof ValueObjectMirror nested) || !isInlinable(nested, maxFields, enclosing)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        } finally {
+            enclosing.remove(valueObjectMirror.getTypeName());
+        }
     }
 
     /**

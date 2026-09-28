@@ -87,6 +87,10 @@ public enum StepKind {
      * provides. Taken from the mirror, not from {@link DomainCalls}: a query handler's contract
      * with its ReadModel holds regardless of which of its methods happens to be reached, and
      * regardless of whether that method's body literally names the ReadModel type.
+     * <p>
+     * A ReadModel provided by no QueryHandler is provided by the methods returning it instead - of a
+     * service kind or a non-domain class, e.g. a driver computing it. The predecessor is then such a
+     * method.
      */
     PROVIDES_READ_MODEL,
 

@@ -447,6 +447,20 @@ public sealed interface Step {
     }
 
     /**
+     * Creates a step for a method returning the ReadModel of the given predecessor, which no
+     * QueryHandler provides.
+     *
+     * @param from     the step holding the provided ReadModel, must not be {@code null}
+     * @param provider the method returning the ReadModel, must not be {@code null}
+     * @param cyclic   whether the method already occurs among the predecessors
+     * @return the step
+     */
+    static MethodStep providedByMethod(Step from, DomainMethod provider, boolean cyclic) {
+        return new MethodStep(Optional.of(from), StepKind.PROVIDES_READ_MODEL, from.depth() + 1,
+            cyclic, provider);
+    }
+
+    /**
      * A domain method reached by the flow, identified by its concrete owner type and the mirrored
      * method.
      *
