@@ -167,6 +167,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   longer end at events only handled by such listeners. The annotations are recognized by name, so the mirror still
   needs no Spring dependency
 
+- Fixed the [domain diagrammer](./domain-diagrammer) drawing classes sharing a simple name as one node, e.g. two
+  services of the same name in different Bounded Contexts, merging their members and relationships. Nomnoml identifies
+  a node by its name, so such classes are now named with a hint to their package, e.g.
+  `OrderService (billing.domain)` and `OrderService (shipping.domain)`
+- The [domain diagrammer](./domain-diagrammer) connects a domain command to the non-domain class receiving it (e.g. a
+  controller), like to an application service processing it. With `showOnlyTopLevelDomainCommandRelations` (default)
+  a shown non-domain class forwarding the command to a service is its outermost consumer and gets the relationship
+  instead of the service. Commands only received by a controller were drawn unconnected before
+- The [domain diagrammer](./domain-diagrammer) draws a read model containing another read model as composition with
+  the multiplicity of the containing field, like value objects containing value objects, instead of listing it as
+  field. A contained read model is shown together with the one containing it, also in diagrams restricted to a flow
+  or to connected types that do not reach it
+
 ## [3.4.0] - 2026-09-11
 - Improved DLC persistence initialization performance
 - Fixed auto record mapping of array typed fields (e.g. `byte[]`): the mirror reports the component type for arrays, which made the mapper look up a converter (`[B` -> `java.lang.Byte`) that could never be served. Added `AssertedContainableTypeMirror#getBinaryTypeName()` and used it for type resolution in `AutoRecordMapper` and `AutoMapperNestedValueObjectAccessor`.

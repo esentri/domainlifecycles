@@ -71,6 +71,7 @@ public class DomainRelationshipMapper {
     private final DomainMirror domainMirror;
 
     private final FilteredDomainClasses filteredDomainClasses;
+    private final NodeNames nodeNames;
 
 
     /**
@@ -82,9 +83,24 @@ public class DomainRelationshipMapper {
      * @param filteredDomainClasses filtered domain classes
      */
     public DomainRelationshipMapper(DomainDiagramConfig diagramConfig, DomainMirror domainMirror, FilteredDomainClasses filteredDomainClasses) {
+        this(diagramConfig, domainMirror, filteredDomainClasses, NodeNames.withoutPackageHints(diagramConfig));
+    }
+
+    /**
+     * Initializes the DomainRelationshipMapper with a given {@link DomainDiagramConfig}, the
+     * {@link FilteredDomainClasses} and the names of the diagram's nodes.
+     *
+     * @param diagramConfig         diagram configuration
+     * @param domainMirror           the domain model
+     * @param filteredDomainClasses filtered domain classes
+     * @param nodeNames             the names of the diagram's nodes, which the relationships connect
+     */
+    public DomainRelationshipMapper(DomainDiagramConfig diagramConfig, DomainMirror domainMirror,
+                                    FilteredDomainClasses filteredDomainClasses, NodeNames nodeNames) {
         this.diagramConfig = diagramConfig;
         this.domainMirror = domainMirror;
         this.filteredDomainClasses = filteredDomainClasses;
+        this.nodeNames = nodeNames;
     }
 
     /**
@@ -212,8 +228,8 @@ public class DomainRelationshipMapper {
     }
 
     /**
-     * Derives a {@link NomnomlRelationship} for all Aggregates
-     * or services processing Domain Commands.
+     * Derives a {@link NomnomlRelationship} for all Aggregates, services
+     * or non-domain classes processing Domain Commands.
      *
      * @return mapped domain command relationships
      */
@@ -248,7 +264,20 @@ public class DomainRelationshipMapper {
                                 if (ds.processes(c)) {
                                     if (!diagramConfig.getGeneralVisualSettings().isShowOnlyTopLevelDomainCommandRelations() || isTopLevelConsumerForCommand(
                                         ds, c)) {
-                                        relationShips.add(mapDomainCommandServiceKindRelationship(c, ds));
+                                        relationShips.add(mapDomainCommandProcessorRelationship(c, ds));
+                                    }
+                                }
+                            }
+                        );
+
+                    // e.g. a controller or message listener receiving the command, like an ApplicationService
+                    filteredDomainClasses.getNonDomainClasses()
+                        .forEach(
+                            nd -> {
+                                if (processes(nd, c)) {
+                                    if (!diagramConfig.getGeneralVisualSettings().isShowOnlyTopLevelDomainCommandRelations() || isTopLevelConsumerForCommand(
+                                        nd, c)) {
+                                        relationShips.add(mapDomainCommandProcessorRelationship(c, nd));
                                     }
                                 }
                             }
@@ -259,22 +288,31 @@ public class DomainRelationshipMapper {
     }
 
     /**
-     * Derives a {@link NomnomlRelationship} for all Aggregates
-     * or services processing Domain Commands.
+     * Derives a {@link NomnomlRelationship} for all ReadModels containing another ReadModel - like a ValueObject
+     * containing another one - and, if shown, their inheritance structures.
      *
-     * @return mapped domain command relationships
+     * @return mapped read model relationships
      */
     public List<NomnomlRelationship> mapAllReadModelRelationships() {
         var relationShips = new ArrayList<NomnomlRelationship>();
         if (diagramConfig.getGeneralVisualSettings().isShowReadModels()) {
-            if(diagramConfig.getGeneralVisualSettings().isShowAllInheritanceStructures()
-                || diagramConfig.getGeneralVisualSettings().isShowInheritanceStructuresForReadModels()) {
+            boolean inheritanceShown = diagramConfig.getGeneralVisualSettings().isShowAllInheritanceStructures()
+                || diagramConfig.getGeneralVisualSettings().isShowInheritanceStructuresForReadModels();
+            if(inheritanceShown) {
                 filteredDomainClasses
                     .getReadModels().forEach(s -> {
                         relationShips.addAll(mapImplementsInterface(s));
                         mapInheritance(s).ifPresent(relationShips::add);
                     });
             }
+            filteredDomainClasses.getReadModels()
+                .forEach(readModel -> readModel.getAllFields().stream()
+                    .filter(field -> !field.isStatic() && !field.isHidden())
+                    // with the inheritance shown, an inherited field is drawn from the super type already
+                    .filter(field -> !inheritanceShown || field.getDeclaredByTypeName().equals(readModel.getTypeName()))
+                    .filter(field -> DomainType.READ_MODEL.equals(field.getType().getDomainType()))
+                    .filter(field -> filteredDomainClasses.getContained(field.getType().getTypeName()).isPresent())
+                    .forEach(field -> relationShips.add(mapContainedReadModel(readModel, field))));
         }
         return relationShips;
     }
@@ -310,10 +348,22 @@ public class DomainRelationshipMapper {
         // command - a referencing type kept around for an unrelated purpose (e.g. a field of the
         // same service used just to call one of its other methods) must not by itself suppress the
         // relationship, so every referencing type is checked, not just the first one encountered.
+        // A non-domain class receiving the command counts only if it is shown: otherwise nothing in the diagram would be
+        // connected to the command.
         return typesReferencing.stream()
-            .filter(DomainCommandProcessingMirror.class::isInstance)
-            .map(DomainCommandProcessingMirror.class::cast)
-            .noneMatch(referencingType -> referencingType.processes(domainCommandMirror));
+            .filter(referencingType -> referencingType instanceof DomainCommandProcessingMirror
+                || referencingType instanceof NonDomainTypeMirror && filteredDomainClasses.contains(referencingType))
+            .noneMatch(referencingType -> processes(referencingType, domainCommandMirror));
+    }
+
+    /**
+     * Whether a domain type processes a command: for a non-domain class, whether one of its methods takes it.
+     */
+    private static boolean processes(DomainTypeMirror domainTypeMirror, DomainCommandMirror domainCommandMirror) {
+        if (domainTypeMirror instanceof DomainCommandProcessingMirror processingMirror) {
+            return processingMirror.processes(domainCommandMirror);
+        }
+        return domainTypeMirror.getMethods().stream().anyMatch(method -> method.processes(domainCommandMirror));
     }
 
     /**
@@ -370,9 +420,8 @@ public class DomainRelationshipMapper {
             .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_DEPENDENCY)
             .toStyleClassifier("<" + DomainDiagramGenerator.AGGREGATE_FRAME_STYLE_TAG + "> ")
             .toMultiplicity("")
-            .toName(DomainMapperUtils.mapTypeName(
-                repositoryMirror.getManagedAggregate().map(AggregateRootMirror::getTypeName).orElse("java.lang.Object"),
-                diagramConfig) + " <<Aggregate>>")
+            .toName(aggregateFrameName(
+                repositoryMirror.getManagedAggregate().map(AggregateRootMirror::getTypeName).orElse("java.lang.Object")))
             .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
             .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
             .build();
@@ -482,7 +531,7 @@ public class DomainRelationshipMapper {
             .label(notifiesLabel(aggregateRootMirror, domainEventMirror))
             .stereotype("notifies")
             .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_DEPENDENCY)
-            .toName(DomainMapperUtils.mapTypeName(aggregateRootMirror.getTypeName(), diagramConfig) + " <<Aggregate>>")
+            .toName(aggregateFrameName(aggregateRootMirror.getTypeName()))
             .toMultiplicity("")
             .toStyleClassifier(DomainMapperUtils.styleClassifier(null))
             .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
@@ -526,7 +575,7 @@ public class DomainRelationshipMapper {
         return NomnomlRelationship
             .builder()
             .fromName(
-                DomainMapperUtils.mapTypeName(aggregateRootMirror.getTypeName(), diagramConfig) + " <<Aggregate>>")
+                aggregateFrameName(aggregateRootMirror.getTypeName()))
             .fromMultiplicity("")
             .fromStyleClassifier("<" + DomainDiagramGenerator.AGGREGATE_FRAME_STYLE_TAG + "> ")
             .label(publishesLabel(aggregateRootMirror, domainEventMirror))
@@ -553,19 +602,19 @@ public class DomainRelationshipMapper {
             .collect(Collectors.joining(", "));
     }
 
-    private NomnomlRelationship mapDomainCommandServiceKindRelationship(DomainCommandMirror domainCommandMirror,
-                                                                        ServiceKindMirror serviceKindMirror) {
+    private NomnomlRelationship mapDomainCommandProcessorRelationship(DomainCommandMirror domainCommandMirror,
+                                                                      DomainTypeMirror processorMirror) {
         return NomnomlRelationship
             .builder()
             .fromName(relationConnectorName(domainCommandMirror))
             .fromMultiplicity("")
             .fromStyleClassifier(DomainMapperUtils.styleClassifier(domainCommandMirror))
-            .label(processorLabel(serviceKindMirror, domainCommandMirror))
+            .label(processorLabel(processorMirror, domainCommandMirror))
             .stereotype("is processed by")
             .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_DEPENDENCY)
-            .toName(relationConnectorName(serviceKindMirror))
+            .toName(relationConnectorName(processorMirror))
             .toMultiplicity("")
-            .toStyleClassifier(DomainMapperUtils.styleClassifier(serviceKindMirror))
+            .toStyleClassifier(DomainMapperUtils.styleClassifier(processorMirror))
             .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
             .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
             .build();
@@ -583,7 +632,7 @@ public class DomainRelationshipMapper {
             .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_DEPENDENCY)
             .toStyleClassifier("<" + DomainDiagramGenerator.AGGREGATE_FRAME_STYLE_TAG + "> ")
             .toMultiplicity("")
-            .toName(DomainMapperUtils.mapTypeName(aggregateRootMirror.getTypeName(), diagramConfig) + " <<Aggregate>>")
+            .toName(aggregateFrameName(aggregateRootMirror.getTypeName()))
             .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
             .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
             .build();
@@ -753,6 +802,30 @@ public class DomainRelationshipMapper {
             .build();
     }
 
+    private NomnomlRelationship mapContainedReadModel(DomainTypeMirror readModelMirror, FieldMirror fieldMirror) {
+
+        var toMultiplicity = toMultiplicity(fieldMirror);
+        var label = fieldMirror.getName();
+        if (diagramConfig.getGeneralVisualSettings().isMultiplicityInLabel()) {
+            label = label + " " + toMultiplicity;
+            toMultiplicity = "";
+        }
+
+        return NomnomlRelationship
+            .builder()
+            .fromName(relationConnectorName(readModelMirror))
+            .fromMultiplicity("")
+            .fromStyleClassifier(DomainMapperUtils.styleClassifier(readModelMirror))
+            .label(label)
+            .toStyleClassifier(DomainMapperUtils.styleClassifier(domainMirror.getDomainTypeMirror(fieldMirror.getType().getTypeName()).orElse(null)))
+            .toMultiplicity(toMultiplicity)
+            .toName(relationConnectorName(fieldMirror.getType().getTypeName()))
+            .relationshiptype(NomnomlRelationship.RelationshipType.COMPOSITION)
+            .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
+            .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
+            .build();
+    }
+
     private List<NomnomlRelationship> mapFrameIdReferences(ValueReferenceMirror idReferenceMirror) {
         var declaringAggregates = filteredDomainClasses
             .getAggregateRoots()
@@ -785,7 +858,7 @@ public class DomainRelationshipMapper {
                 .filter(decl -> !decl.getTypeName().equals(targetAggregate.get().getTypeName()))
                 .map(da -> NomnomlRelationship
                     .builder()
-                    .fromName(DomainMapperUtils.mapTypeName(da.getTypeName(), diagramConfig) + " <<Aggregate>>")
+                    .fromName(aggregateFrameName(da.getTypeName()))
                     .fromMultiplicity("")
                     .fromStyleClassifier("<" + DomainDiagramGenerator.AGGREGATE_FRAME_STYLE_TAG + "> ")
                     .label(DomainMapperUtils.mapTypeName(idReferenceMirror.getDeclaredByTypeName(),
@@ -793,8 +866,7 @@ public class DomainRelationshipMapper {
                     .stereotype("id-ref")
                     .toStyleClassifier("<" + DomainDiagramGenerator.AGGREGATE_FRAME_STYLE_TAG + "> ")
                     .toMultiplicity("")
-                    .toName(DomainMapperUtils.mapTypeName(targetAggregate.get().getTypeName(),
-                        diagramConfig) + " <<Aggregate>>")
+                    .toName(aggregateFrameName(targetAggregate.get().getTypeName()))
                     .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_DEPENDENCY)
                     .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
                     .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
@@ -805,13 +877,16 @@ public class DomainRelationshipMapper {
     }
 
     private String relationConnectorName(DomainTypeMirror domainTypeMirror) {
-        return DomainMapperUtils.domainTypeName(domainTypeMirror, diagramConfig) + connectorStereotype(
-            domainTypeMirror.getTypeName());
+        return nodeNames.name(domainTypeMirror) + connectorStereotype(domainTypeMirror.getTypeName());
 
     }
 
     private String relationConnectorName(String typeName) {
-        return DomainMapperUtils.mapTypeName(typeName, diagramConfig) + connectorStereotype(typeName);
+        return nodeNames.name(typeName) + connectorStereotype(typeName);
+    }
+
+    private String aggregateFrameName(String aggregateRootTypeName) {
+        return nodeNames.name(aggregateRootTypeName) + " <<Aggregate>>";
     }
 
     private String connectorStereotype(String typeName) {

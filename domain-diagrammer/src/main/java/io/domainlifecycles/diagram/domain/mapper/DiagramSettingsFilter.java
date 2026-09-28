@@ -300,19 +300,38 @@ public class DiagramSettingsFilter {
         if(trimSettings.hasIncludedConnectedTypeSettings() || trimSettings.hasExcludedConnectedTypeSettings()){
             contained = this.includedDomainTypesByConnections.contains(dtm);
         }
-        if(!this.trimSettings.getExplicitlyIncludedPackageNames().isEmpty()) {
-            contained = contained && this.trimSettings.getExplicitlyIncludedPackageNames().stream().anyMatch(
-                p -> dtm.getTypeName().startsWith(p)
-            );
-        }
-        contained = contained && !trimSettings.getClassesBlacklist().contains(dtm.getTypeName())
-            && dtm.getAllInterfaceTypeNames().stream().noneMatch(
-                it -> trimSettings.getClassesBlacklist().contains(it)
-        );
+        contained = contained && isIncludedByPackageAndBlacklist(dtm);
         // last, because restricting to a flow may only narrow what the other settings allowed,
         // never widen it
         contained = contained && domainFlowFilter.contains(dtm);
         return contained;
+    }
+
+    /**
+     * Whether a domain type may be shown as part of another shown one - like a ReadModel contained in a shown
+     * ReadModel. A part is shown together with the type containing it, so neither the connections nor the flows the
+     * diagram is restricted to apply to it, only the general visual settings, the packages and the blacklist.
+     *
+     * @param dtm the {@link DomainTypeMirror} to be evaluated
+     * @return {@code true} if it may be shown as part of another shown domain type
+     */
+    public boolean filterAsContainedPart(DomainTypeMirror dtm) {
+        return !dtm.getTypeName().startsWith("io.domainlifecycles")
+            && isIncludedByGeneralVisualSettings(dtm)
+            && isIncludedByPackageAndBlacklist(dtm);
+    }
+
+    private boolean isIncludedByPackageAndBlacklist(DomainTypeMirror dtm) {
+        boolean contained = true;
+        if(!this.trimSettings.getExplicitlyIncludedPackageNames().isEmpty()) {
+            contained = this.trimSettings.getExplicitlyIncludedPackageNames().stream().anyMatch(
+                p -> dtm.getTypeName().startsWith(p)
+            );
+        }
+        return contained && !trimSettings.getClassesBlacklist().contains(dtm.getTypeName())
+            && dtm.getAllInterfaceTypeNames().stream().noneMatch(
+                it -> trimSettings.getClassesBlacklist().contains(it)
+        );
     }
 
     private boolean isIncludedByGeneralVisualSettings(DomainTypeMirror dtm) {

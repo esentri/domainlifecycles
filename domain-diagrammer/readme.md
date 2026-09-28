@@ -192,6 +192,32 @@ DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
 To hide non-domain classes altogether, set `withShowNonDomainClasses(false)`. Their look can be
 adjusted like every other kind via `StyleSettings.builder().withNonDomainClassStyle(...)`.
 
+A domain command received by a non-domain class - e.g. a controller method taking it as parameter -
+is connected to it by an `is processed by` relationship, just like to an application service
+processing it. With `showOnlyTopLevelDomainCommandRelations` (the default), only the outermost of
+the classes processing a command is connected to it: a controller forwarding the command to an
+application service it holds gets the relationship, the application service does not. A hidden
+non-domain class does not count for that, so the application service keeps its relationship then.
+
+## Read models containing read models
+
+A read model containing another read model - as field, `Optional` or collection - is connected to it
+by a composition labeled with the field and its multiplicity (e.g. `lines 1..*` for a list annotated
+`@NotEmpty`), like a value object containing another value object. The field is then not listed in
+the box of the containing read model. A contained read model is shown together with the read model
+containing it - like the parts of an aggregate - even if the connections or flows the diagram is
+restricted to do not reach it. A blacklisted contained read model is not shown and stays a field.
+
+## Classes sharing a name
+
+Nomnoml identifies a node by its name. Classes sharing a simple name but living in different packages
+are still drawn as nodes of their own: their name is followed by their package below the package
+they have in common, e.g. `OrderService (billing.domain)` and `OrderService (shipping.domain)` for
+`com.example.billing.domain.OrderService` and `com.example.shipping.domain.OrderService`. A class right
+in that common package is followed by its full package. The hint only appears if the classes are
+shown in the same diagram, and not with `showFullQualifiedClassNames`. An implementation drawn as its
+interface (without inheritance structures shown) remains one node with it, whatever its name.
+
 ## Rendering from commandline to image
 
 First install `nomnom-cli` via `npm`.

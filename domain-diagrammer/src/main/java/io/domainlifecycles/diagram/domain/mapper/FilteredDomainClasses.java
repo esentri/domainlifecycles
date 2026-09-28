@@ -43,7 +43,10 @@ import io.domainlifecycles.mirror.api.ReadModelMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.ServiceKindMirror;
 
+import java.util.ArrayDeque;
 import java.util.Comparator;
+import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -89,7 +92,28 @@ public class FilteredDomainClasses {
             domainFlowFilter
         );
 
-        includedDomainTypes = domainMirror.getAllDomainTypeMirrors().stream().filter(diagramSettingsFilter::filter).collect(Collectors.toSet());
+        includedDomainTypes = domainMirror.getAllDomainTypeMirrors().stream().filter(diagramSettingsFilter::filter)
+            .collect(Collectors.toCollection(HashSet::new));
+        includeContainedReadModels(domainMirror, diagramSettingsFilter);
+    }
+
+    /**
+     * A ReadModel contained in a shown ReadModel is shown with it - like the parts of an Aggregate - even if the
+     * connections or flows the diagram is restricted to do not reach it themselves.
+     */
+    private void includeContainedReadModels(DomainMirror domainMirror, DiagramSettingsFilter diagramSettingsFilter) {
+        Deque<DomainTypeMirror> pending = includedDomainTypes.stream()
+            .filter(dtm -> DomainType.READ_MODEL.equals(dtm.getDomainType()))
+            .collect(Collectors.toCollection(ArrayDeque::new));
+        while (!pending.isEmpty()) {
+            pending.poll().getAllFields().stream()
+                .filter(field -> DomainType.READ_MODEL.equals(field.getType().getDomainType()))
+                .map(field -> domainMirror.getDomainTypeMirror(field.getType().getTypeName()))
+                .flatMap(Optional::stream)
+                .filter(diagramSettingsFilter::filterAsContainedPart)
+                .filter(includedDomainTypes::add)
+                .forEach(pending::add);
+        }
     }
 
     /**

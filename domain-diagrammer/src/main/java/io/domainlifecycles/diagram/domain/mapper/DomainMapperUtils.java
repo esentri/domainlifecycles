@@ -55,38 +55,43 @@ public class DomainMapperUtils {
      * used {@link DomainDiagramConfig}.
      */
     public static String domainTypeName(DomainTypeMirror domainTypeMirror, DomainDiagramConfig domainDiagramConfig) {
-        var name = DomainMapperUtils.mapTypeName(domainTypeMirror.getTypeName(), domainDiagramConfig);
+        return DomainMapperUtils.mapTypeName(shownTypeName(domainTypeMirror, domainDiagramConfig), domainDiagramConfig);
+    }
+
+    /**
+     * @param domainTypeMirror    mirrored domain type
+     * @param domainDiagramConfig diagram configuration
+     * @return the full qualified name a Domain Type is shown with: a service implementing an interface is shown as that
+     * interface, unless the inheritance structures of services are shown
+     */
+    public static String shownTypeName(DomainTypeMirror domainTypeMirror, DomainDiagramConfig domainDiagramConfig) {
+        var name = domainTypeMirror.getTypeName();
         if(!domainDiagramConfig.getGeneralVisualSettings().isShowAllInheritanceStructures()
             && !domainDiagramConfig.getGeneralVisualSettings().isShowInheritanceStructuresForServiceKinds()) {
             if (domainTypeMirror.getDomainType().equals(DomainType.REPOSITORY)) {
                 var repositoryMirror = (RepositoryMirror) domainTypeMirror;
                 if (!repositoryMirror.getRepositoryInterfaceTypeNames().isEmpty() && !repositoryMirror.isAbstract()) {
-                    name = DomainMapperUtils.mapTypeName(repositoryMirror.getRepositoryInterfaceTypeNames().get(0),
-                        domainDiagramConfig);
+                    name = repositoryMirror.getRepositoryInterfaceTypeNames().get(0);
                 }
             } else if (domainTypeMirror.getDomainType().equals(DomainType.DOMAIN_SERVICE)) {
                 var domainServiceMirror = (DomainServiceMirror) domainTypeMirror;
                 if (!domainServiceMirror.getDomainServiceInterfaceTypeNames().isEmpty() && !domainServiceMirror.isAbstract()) {
-                    name = DomainMapperUtils.mapTypeName(domainServiceMirror.getDomainServiceInterfaceTypeNames().get(0),
-                        domainDiagramConfig);
+                    name = domainServiceMirror.getDomainServiceInterfaceTypeNames().get(0);
                 }
             } else if (domainTypeMirror.getDomainType().equals(DomainType.APPLICATION_SERVICE)) {
                 var applicationServiceMirror = (ApplicationServiceMirror) domainTypeMirror;
                 if (!applicationServiceMirror.getApplicationServiceInterfaceTypeNames().isEmpty() && !applicationServiceMirror.isAbstract()) {
-                    name = DomainMapperUtils.mapTypeName(
-                        applicationServiceMirror.getApplicationServiceInterfaceTypeNames().get(0), domainDiagramConfig);
+                    name = applicationServiceMirror.getApplicationServiceInterfaceTypeNames().get(0);
                 }
             } else if (domainTypeMirror.getDomainType().equals(DomainType.OUTBOUND_SERVICE)) {
                 var outboundServiceMirror = (OutboundServiceMirror) domainTypeMirror;
                 if (!outboundServiceMirror.getOutboundServiceInterfaceTypeNames().isEmpty() && !outboundServiceMirror.isAbstract()) {
-                    name = DomainMapperUtils.mapTypeName(
-                        outboundServiceMirror.getOutboundServiceInterfaceTypeNames().get(0), domainDiagramConfig);
+                    name = outboundServiceMirror.getOutboundServiceInterfaceTypeNames().get(0);
                 }
             } else if (domainTypeMirror.getDomainType().equals(DomainType.QUERY_HANDLER)) {
                 var queryHandlerMirror = (QueryHandlerMirror) domainTypeMirror;
                 if (!queryHandlerMirror.getQueryHandlerInterfaceTypeNames().isEmpty() && !queryHandlerMirror.isAbstract()) {
-                    name = DomainMapperUtils.mapTypeName(queryHandlerMirror.getQueryHandlerInterfaceTypeNames().get(0),
-                        domainDiagramConfig);
+                    name = queryHandlerMirror.getQueryHandlerInterfaceTypeNames().get(0);
                 }
             }
         }

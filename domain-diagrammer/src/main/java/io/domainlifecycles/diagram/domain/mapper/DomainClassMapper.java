@@ -75,6 +75,8 @@ import java.util.stream.Collectors;
 public class DomainClassMapper {
 
     private final DomainDiagramConfig domainDiagramConfig;
+    private final NodeNames nodeNames;
+    private final FilteredDomainClasses filteredDomainClasses;
 
     /**
      * Initializes the DomainClassMapper with a given {@link DomainDiagramConfig}
@@ -82,7 +84,23 @@ public class DomainClassMapper {
      * @param domainDiagramConfig diagram configuration
      */
     public DomainClassMapper(DomainDiagramConfig domainDiagramConfig) {
+        this(domainDiagramConfig, NodeNames.withoutPackageHints(domainDiagramConfig), null);
+    }
+
+    /**
+     * Initializes the DomainClassMapper with a given {@link DomainDiagramConfig}, the names of the diagram's nodes
+     * and the classes shown in the diagram.
+     *
+     * @param domainDiagramConfig   diagram configuration
+     * @param nodeNames             the names of the diagram's nodes
+     * @param filteredDomainClasses the classes shown in the diagram, a ReadModel contained in another one is drawn
+     *                              as relationship instead of a field if it is one of them; may be {@code null}
+     */
+    public DomainClassMapper(DomainDiagramConfig domainDiagramConfig, NodeNames nodeNames,
+                             FilteredDomainClasses filteredDomainClasses) {
         this.domainDiagramConfig = domainDiagramConfig;
+        this.nodeNames = nodeNames;
+        this.filteredDomainClasses = filteredDomainClasses;
     }
 
     /**
@@ -222,6 +240,11 @@ public class DomainClassMapper {
      * @return all domaintype mirrors that should be rendered as contained classes in an aggregate frame
      */
     public List<DomainTypeMirror> getAllAggregateMirrors(AggregateRootMirror aggregateRootMirror) {
+        return aggregateMirrors(aggregateRootMirror, domainDiagramConfig);
+    }
+
+    static List<DomainTypeMirror> aggregateMirrors(AggregateRootMirror aggregateRootMirror,
+                                                   DomainDiagramConfig domainDiagramConfig) {
         var aggregateMirrors = new ArrayList<DomainTypeMirror>();
 
         var visitor = new ContextDomainObjectVisitor(aggregateRootMirror) {
@@ -260,7 +283,7 @@ public class DomainClassMapper {
     public NomnomlClass mapToNomnomlClass(DomainTypeMirror domainTypeMirror,
                                           boolean showFields,
                                           boolean showMethods) {
-        var className = DomainMapperUtils.domainTypeName(domainTypeMirror, domainDiagramConfig);
+        var className = nodeNames.name(domainTypeMirror);
         var nomnomlClassBuilder = NomnomlClass
             .builder()
             .styleClassifier(DomainMapperUtils.styleClassifier(domainTypeMirror))
@@ -291,6 +314,7 @@ public class DomainClassMapper {
                 .filter(p -> !p.getName().equals(inheritedIdentityNameFinal))
                 .filter(p -> !domainDiagramConfig.getGeneralVisualSettings().getFieldBlacklist().contains(p.getName()))
                 .filter(p -> DomainMapperUtils.showPropertyInline(p, domainTypeMirror, domainDiagramConfig))
+                .filter(p -> !isContainedReadModelShownAsNode(domainTypeMirror, p))
                 .filter(p -> {
                     if (!domainDiagramConfig.getGeneralVisualSettings().isShowInheritedMembersInClasses()) {
                         return p.getDeclaredByTypeName().equals(domainTypeMirror.getTypeName());
@@ -352,6 +376,16 @@ public class DomainClassMapper {
             nomnomlClassBuilder.methods(Collections.emptyList());
         }
         return nomnomlClassBuilder.build();
+    }
+
+    /**
+     * A ReadModel contained in a ReadModel is drawn as relationship between both, if it is shown in the diagram.
+     */
+    private boolean isContainedReadModelShownAsNode(DomainTypeMirror domainTypeMirror, FieldMirror fieldMirror) {
+        return filteredDomainClasses != null
+            && DomainType.READ_MODEL.equals(domainTypeMirror.getDomainType())
+            && DomainType.READ_MODEL.equals(fieldMirror.getType().getDomainType())
+            && filteredDomainClasses.getContained(fieldMirror.getType().getTypeName()).isPresent();
     }
 
     /**

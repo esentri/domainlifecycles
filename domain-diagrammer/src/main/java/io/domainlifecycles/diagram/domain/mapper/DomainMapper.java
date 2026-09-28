@@ -61,6 +61,7 @@ public class DomainMapper {
 
     private final DomainRelationshipMapper domainRelationshipMapper;
     private final FilteredDomainClasses filteredDomainClasses;
+    private final NodeNames nodeNames;
 
 
     /**
@@ -90,9 +91,26 @@ public class DomainMapper {
                 domainDiagramConfig.getDiagramTrimSettings().getIncludeFlowsFrom(),
                 domainDiagramConfig.getDiagramTrimSettings().getIncludeFlowsTo()));
 
-        this.domainClassMapper = new DomainClassMapper(domainDiagramConfig);
-        this.domainRelationshipMapper = new DomainRelationshipMapper(domainDiagramConfig, domainMirror, filteredDomainClasses);
+        this.nodeNames = NodeNames.of(nodes(filteredDomainClasses, domainDiagramConfig), domainMirror, domainDiagramConfig);
+        this.domainClassMapper = new DomainClassMapper(domainDiagramConfig, nodeNames, filteredDomainClasses);
+        this.domainRelationshipMapper = new DomainRelationshipMapper(domainDiagramConfig, domainMirror, filteredDomainClasses, nodeNames);
 
+    }
+
+    /**
+     * The classes drawn as nodes: the ones shown and the ones inside the frames of the shown Aggregates.
+     */
+    private static List<DomainTypeMirror> nodes(FilteredDomainClasses filteredDomainClasses,
+                                                DomainDiagramConfig domainDiagramConfig) {
+        var nodes = new ArrayList<DomainTypeMirror>();
+        nodes.addAll(filteredDomainClasses.getDomainCommands());
+        nodes.addAll(filteredDomainClasses.getDomainEvents());
+        nodes.addAll(filteredDomainClasses.getReadModels());
+        nodes.addAll(filteredDomainClasses.getServiceKinds());
+        nodes.addAll(filteredDomainClasses.getNonDomainClasses());
+        filteredDomainClasses.getAggregateRoots().forEach(aggregateRoot ->
+            nodes.addAll(DomainClassMapper.aggregateMirrors(aggregateRoot, domainDiagramConfig)));
+        return nodes;
     }
 
     /**
@@ -211,7 +229,7 @@ public class DomainMapper {
     private NomnomlNote mapNotePair(NotePair notePair) {
         return new NomnomlNote(
             notePair.note.text(),
-            DomainMapperUtils.mapTypeName(notePair.note.className(), domainDiagramConfig),
+            nodeNames.name(notePair.note.className()),
             DomainMapperUtils.styleClassifier(notePair.mirror.get()),
             List.of(new NomnomlStereotype(DomainMapperUtils.stereotype(notePair.mirror.get(), domainDiagramConfig)))
         );
@@ -273,7 +291,7 @@ public class DomainMapper {
         );
         return NomnomlFrame
             .builder()
-            .name(DomainMapperUtils.mapTypeName(aggregateRootMirror.getTypeName(), domainDiagramConfig))
+            .name(nodeNames.name(aggregateRootMirror))
             .comment("!!! {Frame} " + aggregateRootMirror.getTypeName() + " !!!")
             .type("<<Aggregate>>")
             .styleClassifier(DomainDiagramGenerator.AGGREGATE_FRAME_STYLE_TAG)
