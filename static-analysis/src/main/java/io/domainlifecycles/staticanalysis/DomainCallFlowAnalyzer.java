@@ -440,7 +440,7 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
     private boolean isOnPath(Step from, String nodeKey) {
         Optional<Step> current = Optional.of(from);
         while (current.isPresent()) {
-            if (current.get().nodeKey().equals(nodeKey)) {
+            if (current.get().hasNodeKey(nodeKey)) {
                 return true;
             }
             current = current.get().from();

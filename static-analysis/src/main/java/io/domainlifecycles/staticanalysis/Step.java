@@ -94,6 +94,16 @@ public sealed interface Step {
     String nodeKey();
 
     /**
+     * Whether this step's {@link #nodeKey()} equals the given key, without building the key. Checking a node
+     * against every step of a path is the hot path of a flow traversal; building each step's key again for every
+     * check allocated gigabytes for large flows.
+     *
+     * @param nodeKey the node key to compare with
+     * @return {@code true} if {@code nodeKey().equals(nodeKey)}
+     */
+    boolean hasNodeKey(String nodeKey);
+
+    /**
      * @return a short human readable description of the reached node
      */
     String describe();
@@ -158,6 +168,50 @@ public sealed interface Step {
      */
     static String nodeKeyOf(DomainTypeMirror type) {
         return "T:" + type.getTypeName();
+    }
+
+    /**
+     * @return whether {@code nodeKey} equals {@code prefix + typeName}
+     */
+    private static boolean isTypeKey(String nodeKey, String prefix, String typeName) {
+        return nodeKey.length() == prefix.length() + typeName.length()
+            && nodeKey.startsWith(prefix)
+            && nodeKey.startsWith(typeName, prefix.length());
+    }
+
+    /**
+     * @return whether {@code nodeKey} equals {@link #nodeKeyOf(DomainMethod)} of the given method
+     */
+    private static boolean isMethodKey(String nodeKey, DomainMethod method) {
+        if (!nodeKey.startsWith("M:") || !nodeKey.startsWith(method.typeName(), 2)) {
+            return false;
+        }
+        int position = 2 + method.typeName().length();
+        if (!nodeKey.startsWith("#", position)) {
+            return false;
+        }
+        position++;
+        String name = method.mirror().getName();
+        if (!nodeKey.startsWith(name, position) || !nodeKey.startsWith("(", position + name.length())) {
+            return false;
+        }
+        position += name.length() + 1;
+        boolean first = true;
+        for (var param : method.mirror().getParameters()) {
+            if (!first) {
+                if (!nodeKey.startsWith(", ", position)) {
+                    return false;
+                }
+                position += 2;
+            }
+            first = false;
+            String paramTypeName = param.getType().getTypeName();
+            if (!nodeKey.startsWith(paramTypeName, position)) {
+                return false;
+            }
+            position += paramTypeName.length();
+        }
+        return nodeKey.length() == position + 1 && nodeKey.charAt(position) == ')';
     }
 
     /**
@@ -422,6 +476,11 @@ public sealed interface Step {
         }
 
         @Override
+        public boolean hasNodeKey(String nodeKey) {
+            return isMethodKey(nodeKey, method);
+        }
+
+        @Override
         public String describe() {
             return method.typeName() + "." + method.signature();
         }
@@ -458,6 +517,11 @@ public sealed interface Step {
         @Override
         public String nodeKey() {
             return nodeKeyOf(event);
+        }
+
+        @Override
+        public boolean hasNodeKey(String nodeKey) {
+            return isTypeKey(nodeKey, "E:", event.getTypeName());
         }
 
         @Override
@@ -498,6 +562,11 @@ public sealed interface Step {
         @Override
         public String nodeKey() {
             return nodeKeyOf(command);
+        }
+
+        @Override
+        public boolean hasNodeKey(String nodeKey) {
+            return isTypeKey(nodeKey, "C:", command.getTypeName());
         }
 
         @Override
@@ -545,6 +614,11 @@ public sealed interface Step {
         @Override
         public String nodeKey() {
             return nodeKeyOf(type);
+        }
+
+        @Override
+        public boolean hasNodeKey(String nodeKey) {
+            return isTypeKey(nodeKey, "T:", type.getTypeName());
         }
 
         @Override

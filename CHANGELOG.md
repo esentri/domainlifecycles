@@ -137,6 +137,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   recognizes jMolecules' own, structurally equivalent `@org.jmolecules.ddd.annotation.BoundedContext`
   package annotation
 
+- Fixed flow traversals of the [static analysis](./static-analysis) (`DomainCallFlowAnalyzer`, used for the flow
+  filters of the domain diagrammer) allocating gigabytes for large flows: checking each reached node against its path
+  rebuilt the key of every step on the path, including a method's full signature. `Step#hasNodeKey(String)` now
+  compares without building the key. In a real world project a flow diagram of 700 classes allocated 1.8 instead of
+  6.9 GB and rendered in 1.3 instead of 2.1 s
+
 ## [3.4.0] - 2026-09-11
 - Improved DLC persistence initialization performance
 - Fixed auto record mapping of array typed fields (e.g. `byte[]`): the mirror reports the component type for arrays, which made the mapper look up a converter (`[B` -> `java.lang.Byte`) that could never be served. Added `AssertedContainableTypeMirror#getBinaryTypeName()` and used it for type resolution in `AutoRecordMapper` and `AutoMapperNestedValueObjectAccessor`.
