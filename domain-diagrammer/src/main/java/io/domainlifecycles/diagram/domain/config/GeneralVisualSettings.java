@@ -78,7 +78,7 @@ public class GeneralVisualSettings {
     private static final boolean DEFAULT_SHOW_NON_DOMAIN_CLASS_METHODS = true;
     private static final int DEFAULT_MAX_INLINED_VALUE_OBJECT_FIELDS = 2;
     private static final boolean DEFAULT_SHOW_ONLY_FLOW_METHODS = true;
-    private static final boolean DEFAULT_SHOW_FLOW_CALL_RELATIONS = true;
+    private static final boolean DEFAULT_SHOW_FLOW_CALL_RELATIONS = false;
     private static final boolean DEFAULT_CALL_APPLICATION_SERVICE_DRIVER = false;
     private static final List<String> DEFAULT_FIELD_BLACKLIST = List.of("concurrencyVersion");
     private static final List<String> DEFAULT_METHOD_BLACKLIST = List.of(
@@ -1371,7 +1371,7 @@ public class GeneralVisualSettings {
 
         /**
          * Sets whether, in a diagram restricted to flows, two classes calling each other in a flow are connected by a
-         * {@code <<calls>>} relationship, if no other relationship connects them (default true).
+         * {@code <<calls>>} relationship, if no other relationship connects them (default false).
          *
          * @param showFlowCallRelations true to draw the calls of the flows as relationships
          * @return this builder instance

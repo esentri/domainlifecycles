@@ -52,8 +52,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Relationships besides the service kinds': a non-domain class holding another one, a class providing a read model
- * no query handler provides, and - in a diagram restricted to flows - {@code <<calls>>} relationships between classes
- * calling each other in a flow, where nothing else connects them.
+ * no query handler provides, and - in a diagram restricted to flows, if switched on - {@code <<calls>>} relationships
+ * between classes calling each other in a flow, where nothing else connects them.
  * <p>
  * The fixture in {@code fixtures.flowcalls}, with hand-built calls:
  * <pre>
@@ -68,6 +68,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FlowCallRelationsDiagramTest {
 
     private static final String PACKAGE = "fixtures.flowcalls";
+
+    /** The calls of the flows are drawn only if switched on. */
+    private static final GeneralVisualSettings CALLS_SHOWN =
+        GeneralVisualSettings.builder().withShowFlowCallRelations(true).build();
 
     /** Each rendered class is preceded by a comment naming it in full. */
     private static final Pattern RENDERED_CLASS =
@@ -125,7 +129,7 @@ public class FlowCallRelationsDiagramTest {
 
     @Test
     void testClassesCallingEachOtherInAFlowAreConnected_When_NothingElseConnectsThem() {
-        var diagramText = generate(List.of(), List.of(Summary.class.getName()), GeneralVisualSettings.builder().build());
+        var diagramText = generate(List.of(), List.of(Summary.class.getName()), CALLS_SHOWN);
 
         assertThat(relationship(diagramText, "<ND>SummaryRule", "calls Summary.total, Summary.count, Summary.average, …",
             "<RM>Summary")).isTrue();
@@ -133,7 +137,7 @@ public class FlowCallRelationsDiagramTest {
 
     @Test
     void testNoCallRelationshipIsDrawn_When_AnotherRelationshipConnectsTheClasses() {
-        var diagramText = generate(List.of(), List.of(Summary.class.getName()), GeneralVisualSettings.builder().build());
+        var diagramText = generate(List.of(), List.of(Summary.class.getName()), CALLS_SHOWN);
 
         assertThat(relationship(diagramText, "<ND>ReportHelper", "calls", "<AS>SummaryDriver")).isFalse();
         assertThat(relationship(diagramText, "<ND>ReportController", "calls", "<ND>ReportHelper")).isFalse();
@@ -142,7 +146,7 @@ public class FlowCallRelationsDiagramTest {
     @Test
     void testACallIntoAnAggregateConnectsToItsFrame_And_CallsOfItsPartsAreLeftOut() {
         var diagramText = generate(List.of(SummaryRule.class.getName() + "#check"), List.of(),
-            GeneralVisualSettings.builder().build());
+            CALLS_SHOWN);
 
         assertThat(relationship(diagramText, "<AS>SummaryDriver", "calls Invoice.amount", "<AF> Invoice <<Aggregate>>"))
             .isTrue();
@@ -150,16 +154,15 @@ public class FlowCallRelationsDiagramTest {
     }
 
     @Test
-    void testNoCallRelationshipIsDrawn_When_SwitchedOff() {
-        var diagramText = generate(List.of(), List.of(Summary.class.getName()),
-            GeneralVisualSettings.builder().withShowFlowCallRelations(false).build());
+    void testNoCallRelationshipIsDrawnByDefault() {
+        var diagramText = generate(List.of(), List.of(Summary.class.getName()), GeneralVisualSettings.builder().build());
 
         assertThat(diagramText).doesNotContain("<<calls>>");
     }
 
     @Test
     void testNoCallRelationshipIsDrawn_When_NoFlowIsConfigured() {
-        var diagramText = generate(List.of(), List.of(), GeneralVisualSettings.builder().build());
+        var diagramText = generate(List.of(), List.of(), CALLS_SHOWN);
 
         assertThat(diagramText).doesNotContain("<<calls>>");
     }

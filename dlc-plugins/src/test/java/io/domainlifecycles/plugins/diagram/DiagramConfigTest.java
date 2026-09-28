@@ -96,12 +96,12 @@ public class DiagramConfigTest {
     @Test
     void mapCopiesWhetherTheCallsOfTheFlowsAreDrawn() {
         DiagramConfig diagramConfig = new DiagramConfig();
-        diagramConfig.setShowFlowCallRelations(false);
+        diagramConfig.setShowFlowCallRelations(true);
 
-        assertThat(diagramConfig.map().getGeneralVisualSettings().isShowFlowCallRelations()).isFalse();
+        assertThat(diagramConfig.map().getGeneralVisualSettings().isShowFlowCallRelations()).isTrue();
         assertThat(new DiagramConfig().map().getGeneralVisualSettings().isShowFlowCallRelations())
             .as("unset, the diagrammer's default applies")
-            .isTrue();
+            .isFalse();
     }
 
     @Test

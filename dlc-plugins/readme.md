@@ -499,7 +499,7 @@ Supported Diagram configuration options are
 - showRelationshipStereotypes: boolean, default true
 - includeFlowsFrom: list of flow starting points (see [Restricting a diagram to a flow](#restricting-a-diagram-to-a-flow)), default none (flow-based filtering disabled)
 - includeFlowsTo: list of flow target points, the backward counterpart of `includeFlowsFrom` (see [Restricting a diagram to a flow](#restricting-a-diagram-to-a-flow)), default none (backward flow-based filtering disabled)
-- showFlowCallRelations: boolean, default true (with `includeFlowsFrom`/`includeFlowsTo`, two classes calling each other in a flow are connected by a `<<calls>>` relationship, labeled with the called methods, if no other relationship connects them)
+- showFlowCallRelations: boolean, default false (with `includeFlowsFrom`/`includeFlowsTo`, two classes calling each other in a flow are connected by a `<<calls>>` relationship, labeled with the called methods, if no other relationship connects them)
 - showOnlyFlowMethods: boolean, default true (with `includeFlowsFrom`/`includeFlowsTo`, the classes taking part in a flow show only the methods called in it; classes shown for another reason, e.g. as part of an aggregate or read model, show their methods as without flow)
 - flowMaxDepth: integer, maximum depth a flow is followed to, default unlimited
 - flowFollowEvents: boolean, whether a flow follows published DomainEvents to their listening methods, default true

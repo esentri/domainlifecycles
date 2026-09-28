@@ -183,12 +183,12 @@ var general = GeneralVisualSettings.builder()
 The relationships of a diagram come from the structure of the domain model: fields, processed
 commands, published and listened events, managed aggregates, provided read models. A flow follows the
 method calls, though, which may connect two classes without any such structure - e.g. a class reading
-a read model it got from elsewhere, holding no field of it. By default
-(`GeneralVisualSettings.isShowFlowCallRelations()`), two classes calling each other in a flow are
-therefore connected by a `<<calls>>` relationship, labeled with the called methods (up to three,
-followed by `…`), if no other relationship connects them. A call into an aggregate connects to its
-frame; calls of entities, value objects, identities and enums are left out, they are mostly accessors
-of an aggregate's parts. Switch it off with `withShowFlowCallRelations(false)`.
+a read model it got from elsewhere, holding no field of it. Switched on with
+`GeneralVisualSettings.withShowFlowCallRelations(true)` (off by default), two classes calling each
+other in a flow are therefore connected by a `<<calls>>` relationship, labeled with the called methods
+(up to three, followed by `…`), if no other relationship connects them. A call into an aggregate
+connects to its frame; calls of entities, value objects, identities and enums are left out, they are
+mostly accessors of an aggregate's parts.
 
 ## Showing non-domain classes
 

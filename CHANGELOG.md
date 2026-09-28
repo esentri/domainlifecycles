@@ -217,9 +217,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The [domain diagrammer](./domain-diagrammer) connects a service kind or non-domain class returning a read model no
   query handler provides to it by a `<<provides>>` relationship, and a non-domain class holding another one as field
   to it. The connection filters (`includeConnectedTo...`) follow the providing relationship as well
-- In a diagram restricted to flows, the [domain diagrammer](./domain-diagrammer) connects two classes calling each
+- In a diagram restricted to flows, the [domain diagrammer](./domain-diagrammer) can connect two classes calling each
   other in a flow by a `<<calls>>` relationship, labeled with the called methods, if no other relationship connects
-  them (`GeneralVisualSettings.withShowFlowCallRelations(boolean)`, `true` by default, and the new
+  them (`GeneralVisualSettings.withShowFlowCallRelations(boolean)`, `false` by default, and the new
   `showFlowCallRelations` option of the [Gradle and Maven plugins](./dlc-plugins/readme.md)). In a real world project
   148 of the 161 classes shown without any relationship in its flow diagrams had such a call
 
