@@ -162,6 +162,36 @@ public class DomainMapperUtils {
     }
 
     /**
+     * Whether a class is never shown as node: an exception, or an anonymous class - an interface it implements is
+     * shown in its place, see {@link DiagramSettingsFilter#filterAll(java.util.Collection)}.
+     *
+     * @param domainTypeMirror a mirrored domain type
+     * @return true if the class is an exception or an anonymous class
+     */
+    public static boolean isNeverShown(DomainTypeMirror domainTypeMirror) {
+        return isException(domainTypeMirror) || isAnonymous(domainTypeMirror.getTypeName());
+    }
+
+    /**
+     * @param domainTypeMirror a mirrored domain type
+     * @return true if it is a {@link Throwable}
+     */
+    public static boolean isException(DomainTypeMirror domainTypeMirror) {
+        return domainTypeMirror.getInheritanceHierarchyTypeNames() != null
+            && domainTypeMirror.getInheritanceHierarchyTypeNames().contains(Throwable.class.getName());
+    }
+
+    /**
+     * @param typeName a full qualified type name
+     * @return true if it names an anonymous class, e.g. {@code com.example.Client$1}
+     */
+    public static boolean isAnonymous(String typeName) {
+        int separator = typeName.lastIndexOf('$');
+        return separator >= 0 && separator < typeName.length() - 1
+            && typeName.substring(separator + 1).chars().allMatch(Character::isDigit);
+    }
+
+    /**
      * The read models a service kind or non-domain class provides, which no query handler provides: those returned by
      * its methods - directly, as {@code Optional} or as collection. A query handler provides its read model itself.
      *

@@ -226,6 +226,7 @@ public class FlowFilteredDiagramTest {
     void testFlowSettingWithoutAnAnalysisResultIsRejected() {
         assertThatThrownBy(() -> generate(List.of(COMMAND), null))
             .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("includeFlowsFrom")
             .hasMessageContaining("needs the result of a static analysis");
     }
 

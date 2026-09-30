@@ -27,12 +27,15 @@
 package io.domainlifecycles.plugins.diagram;
 
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
+import io.domainlifecycles.plugins.exception.DLCPluginsException;
 import io.domainlifecycles.staticanalysis.FlowConfig;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class DiagramConfigTest {
 
@@ -305,5 +308,27 @@ public class DiagramConfigTest {
 
         assertThat(filter.excludedSupertypePackages()).containsExactly("org.jooq");
         assertThat(filter.excludedPackages()).isEmpty();
+    }
+
+    @Test
+    void callRelationsSwitchedOnWithoutAFlowAreRejected() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setShowFlowCallRelations(true);
+
+        assertThatThrownBy(() -> DiagramGeneratorImpl.requireFlowForCallRelations(diagramConfig, false))
+            .isInstanceOf(DLCPluginsException.class)
+            .hasMessageContaining("showFlowCallRelations")
+            .hasMessageContaining("includeFlowsFrom or includeFlowsTo");
+    }
+
+    @Test
+    void callRelationsWithAFlowOrSwitchedOffAreAccepted() {
+        DiagramConfig switchedOn = new DiagramConfig();
+        switchedOn.setShowFlowCallRelations(true);
+
+        assertThatCode(() -> DiagramGeneratorImpl.requireFlowForCallRelations(switchedOn, true))
+            .doesNotThrowAnyException();
+        assertThatCode(() -> DiagramGeneratorImpl.requireFlowForCallRelations(new DiagramConfig(), false))
+            .doesNotThrowAnyException();
     }
 }

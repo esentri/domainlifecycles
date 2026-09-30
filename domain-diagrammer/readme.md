@@ -91,6 +91,11 @@ DomainDiagramGenerator generator = new DomainDiagramGenerator(
 
 A `DomainCalls` is *created* by the analyzer from the `io.domainlifecycles:static-analysis-sootup`
 artifact, which has to be added next to the diagrammer.
+
+Settings that need the result of a static analysis are rejected with an `IllegalArgumentException`
+naming the setting, if the generator is created without a `DomainCalls`: `includeFlowsFrom`,
+`includeFlowsTo` and `showFlowCallRelations` switched on. `showOnlyFlowMethods`, on by default,
+only takes effect in a diagram restricted to a flow and is therefore never rejected.
 Gradle setup:
 
 ```Groovy
@@ -182,13 +187,22 @@ var general = GeneralVisualSettings.builder()
 
 The relationships of a diagram come from the structure of the domain model: fields, processed
 commands, published and listened events, managed aggregates, provided read models. A flow follows the
-method calls, though, which may connect two classes without any such structure - e.g. a class reading
-a read model it got from elsewhere, holding no field of it. Switched on with
-`GeneralVisualSettings.withShowFlowCallRelations(true)` (off by default), two classes calling each
-other in a flow are therefore connected by a `<<calls>>` relationship, labeled with the called methods
-(up to three, followed by `…`), if no other relationship connects them. A call into an aggregate
-connects to its frame; calls of entities, value objects, identities and enums are left out, they are
-mostly accessors of an aggregate's parts.
+method calls, though, which may connect two classes without any such structure - e.g. a service
+calling another one it gets from elsewhere, holding no field of it. Switched on with
+`GeneralVisualSettings.withShowFlowCallRelations(true)` (off by default), a service kind or non-domain
+class calling another service kind or non-domain class in a flow is therefore connected to it by a
+`<<calls>>` relationship, directed from the caller to the called class and labeled with the called
+methods (up to three, followed by `…`), if no other relationship connects them. Two classes calling
+each other get a relationship in each direction.
+
+A service kind or non-domain class calling a read model, or an aggregate - its root or one of its
+entities - is connected to the read model or the aggregate's frame as well, but only if no path of
+relationships leads from the caller there yet, also via other classes: a class using the query
+handler or the providing service of the read model, or the repository of the aggregate, directly or
+via other classes, gets no extra relationship. An aggregate - its root or one of its entities - calling
+a non-domain class, e.g. a helper collecting its errors, is connected to it from its frame, if no other
+relationship connects them. Calls of value objects, identities, enums, commands and events are left
+out, they are mostly accessors.
 
 ## Showing non-domain classes
 
@@ -202,6 +216,11 @@ unspecified service kind. That covers both directions: a service depending on a 
 class (e.g. a mapper it holds a field for), and a non-domain class that itself calls into a service
 (e.g. a REST controller or a message listener holding an application service). Classes that have no
 such relationship to any service kind never appear, even though the mirror knows about them.
+
+Exceptions and anonymous classes are never drawn as nodes. An anonymous class implementing an
+interface - e.g. a read model interface implemented anonymously by a client - is represented by that
+interface instead, which is shown in its place (see
+[Abstract types and inheritance structures](#abstract-types-and-inheritance-structures)).
 
 This is enabled by default via `GeneralVisualSettings.isShowNonDomainClasses()`. Methods of a
 non-domain class are shown by default too (e.g. so a controller's endpoint methods are visible),
@@ -222,14 +241,17 @@ To hide non-domain classes altogether, set `withShowNonDomainClasses(false)`. Th
 adjusted like every other kind via `StyleSettings.builder().withNonDomainClassStyle(...)`.
 
 A non-domain class holding another shown non-domain class as field - e.g. a controller delegating to
-a helper - is connected to it as well.
+a helper - is connected to it as well. A non-domain class listening to a domain event - e.g. a Spring
+event listener with a method annotated `@DomainEventListener` - is connected to the event by a
+`notifies` relationship, like a service listening to it.
 
 A domain command received by a non-domain class - e.g. a controller method taking it as parameter -
 is connected to it by an `is processed by` relationship, just like to an application service
 processing it. With `showOnlyTopLevelDomainCommandRelations` (the default), only the outermost of
-the classes processing a command is connected to it: a controller forwarding the command to an
-application service it holds gets the relationship, the application service does not. A hidden
-non-domain class does not count for that, so the application service keeps its relationship then.
+the classes processing a command shown in the diagram is connected to it: a controller forwarding the
+command to an application service it holds gets the relationship, the application service does not.
+A class the diagram does not show - e.g. left out by a flow or hidden - does not count for that, so the
+outermost of the shown ones keeps its relationship then.
 
 ## Read models without query handler
 

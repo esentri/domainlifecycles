@@ -26,10 +26,18 @@
 
 package io.domainlifecycles.diagram;
 
+import fixtures.flowcalls.AuditService;
+import fixtures.flowcalls.BillingController;
+import fixtures.flowcalls.BillingService;
+import fixtures.flowcalls.EscalationService;
 import fixtures.flowcalls.Invoice;
 import fixtures.flowcalls.InvoiceId;
+import fixtures.flowcalls.InvoiceLine;
+import fixtures.flowcalls.InvoiceRepository;
 import fixtures.flowcalls.ReportController;
 import fixtures.flowcalls.ReportHelper;
+import fixtures.flowcalls.ReportingService;
+import fixtures.flowcalls.ServiceLocator;
 import fixtures.flowcalls.Summary;
 import fixtures.flowcalls.SummaryDriver;
 import fixtures.flowcalls.SummaryRule;
@@ -49,11 +57,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Relationships besides the service kinds': a non-domain class holding another one, a class providing a read model
  * no query handler provides, and - in a diagram restricted to flows, if switched on - {@code <<calls>>} relationships
- * between classes calling each other in a flow, where nothing else connects them.
+ * from service kinds and non-domain classes to the service kinds and non-domain classes they call in a flow, where
+ * nothing else connects them, and to the read models and aggregates they call, where no path leads there yet.
  * <p>
  * The fixture in {@code fixtures.flowcalls}, with hand-built calls:
  * <pre>
@@ -61,6 +71,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  * SummaryRule.check      --&gt; SummaryDriver.compute (field), Summary.total, count, average, max (no field)
  * SummaryDriver.compute  --&gt; Invoice.amount, InvoiceId.value; returns Summary, provided by no query handler
  * SummaryDriver.stats    returns Stats, provided by StatsQueryHandler
+ * ReportingService.report --&gt; ServiceLocator.driver, SummaryDriver.compute, EscalationService.escalate (no fields)
+ * EscalationService.escalate --&gt; ReportingService.report (no field)
+ * AuditService.audit     --&gt; Summary.count (no path to Summary)
+ * BillingController.bill --&gt; BillingService.bill (field), Invoice.amount
+ * BillingService.bill    --&gt; InvoiceRepository.findInvoice (field), Invoice.amount
+ * SummaryDriver.compute  also --&gt; InvoiceLine.cancel, an entity of Invoice
  * </pre>
  *
  * @author Mario Herb
@@ -68,6 +84,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FlowCallRelationsDiagramTest {
 
     private static final String PACKAGE = "fixtures.flowcalls";
+
+    private static final String REPORT = "fixtures.flowcalls.ReportingService#report";
 
     /** The calls of the flows are drawn only if switched on. */
     private static final GeneralVisualSettings CALLS_SHOWN =
@@ -85,6 +103,22 @@ public class FlowCallRelationsDiagramTest {
     // ---------------------------------------------------------------------
     // Non-domain classes holding non-domain classes
     // ---------------------------------------------------------------------
+
+    @Test
+    void testAnExceptionIsNeverShown() {
+        var diagramText = generate(List.of(), List.of(), GeneralVisualSettings.builder().build());
+
+        assertThat(renderedClasses(diagramText)).doesNotContain(PACKAGE + ".BillingException");
+        assertThat(renderedClasses(diagramText)).contains(PACKAGE + ".BillingService");
+    }
+
+    @Test
+    void testAnEventNotifiesANonDomainClassListeningToIt() {
+        var diagramText = generate(List.of(), List.of(), GeneralVisualSettings.builder().build());
+
+        assertThat(relationship(diagramText, "<DE>InvoiceIssued", "notifies InvoiceMailer.onInvoiceIssued",
+            "<ND>InvoiceMailer")).isTrue();
+    }
 
     @Test
     void testANonDomainClassHoldingAnotherIsConnectedToIt() {
@@ -128,11 +162,91 @@ public class FlowCallRelationsDiagramTest {
     // ---------------------------------------------------------------------
 
     @Test
-    void testClassesCallingEachOtherInAFlowAreConnected_When_NothingElseConnectsThem() {
-        var diagramText = generate(List.of(), List.of(Summary.class.getName()), CALLS_SHOWN);
+    void testAServiceCallingANonDomainClassIsConnectedToIt_When_NothingElseConnectsThem() {
+        var diagramText = generate(List.of(REPORT), List.of(), CALLS_SHOWN);
 
-        assertThat(relationship(diagramText, "<ND>SummaryRule", "calls Summary.total, Summary.count, Summary.average, …",
-            "<RM>Summary")).isTrue();
+        assertThat(relationship(diagramText, "<DS>ReportingService", "calls ServiceLocator.driver", "<ND>ServiceLocator"))
+            .isTrue();
+    }
+
+    @Test
+    void testAServiceCallingAnotherServiceIsConnectedToIt_When_NothingElseConnectsThem() {
+        var diagramText = generate(List.of(REPORT), List.of(), CALLS_SHOWN);
+
+        assertThat(relationship(diagramText, "<DS>ReportingService", "calls SummaryDriver.compute", "<AS>SummaryDriver"))
+            .isTrue();
+    }
+
+    @Test
+    void testTheCallRelationshipPointsFromTheCallerToTheCalled() {
+        var diagramText = generate(List.of(REPORT), List.of(), CALLS_SHOWN);
+
+        assertThat(relationship(diagramText, "<ND>ServiceLocator", "calls", "<DS>ReportingService")).isFalse();
+        assertThat(relationship(diagramText, "<AS>SummaryDriver", "calls", "<DS>ReportingService")).isFalse();
+    }
+
+    @Test
+    void testTwoClassesCallingEachOtherGetARelationshipInEachDirection() {
+        var diagramText = generate(List.of(REPORT), List.of(), CALLS_SHOWN);
+
+        assertThat(relationship(diagramText, "<DS>ReportingService", "calls EscalationService.escalate",
+            "<DS>EscalationService")).isTrue();
+        assertThat(relationship(diagramText, "<DS>EscalationService", "calls ReportingService.report",
+            "<DS>ReportingService")).isTrue();
+    }
+
+    @Test
+    void testACallOfAReadModelIsConnected_When_NoPathLeadsToIt() {
+        var diagramText = generate(List.of(AuditService.class.getName() + "#audit"), List.of(), CALLS_SHOWN);
+
+        assertThat(relationship(diagramText, "<DS>AuditService", "calls Summary.count", "<RM>Summary")).isTrue();
+    }
+
+    @Test
+    void testACallOfAReadModelIsNotConnected_When_APathOverItsProviderLeadsToIt() {
+        // the rule holds the driver, which provides the summary it reads
+        var diagramText = generate(List.of(SummaryRule.class.getName() + "#check"), List.of(), CALLS_SHOWN);
+
+        assertThat(relationship(diagramText, "<AS>SummaryDriver", "provides", "<RM>Summary")).isTrue();
+        assertThat(relationship(diagramText, "<ND>SummaryRule", "calls", "<RM>Summary")).isFalse();
+    }
+
+    @Test
+    void testCallsOfAnAggregateRootAndItsEntitiesAreConnectedToItsFrame_When_NoRepositoryIsInBetween() {
+        var diagramText = generate(List.of(SummaryDriver.class.getName() + "#compute"), List.of(), CALLS_SHOWN);
+
+        assertThat(relationship(diagramText, "<AS>SummaryDriver", "calls Invoice.amount, InvoiceLine.cancel",
+            "<AF> Invoice <<Aggregate>>")).isTrue();
+        assertThat(diagramText)
+            .as("identities are no nodes to connect")
+            .doesNotContain("InvoiceId.value");
+    }
+
+    @Test
+    void testACallOfAnAggregateIsNotConnected_When_ItsRepositoryIsInBetween() {
+        var diagramText = generate(List.of(BillingController.class.getName() + "#bill"), List.of(), CALLS_SHOWN);
+
+        assertThat(relationship(diagramText, "<R>InvoiceRepository", null, "<AF> Invoice <<Aggregate>>")).isTrue();
+        assertThat(relationship(diagramText, "<DS>BillingService", "calls", "<AF> Invoice <<Aggregate>>"))
+            .as("holds the repository").isFalse();
+        assertThat(relationship(diagramText, "<ND>BillingController", "calls", "<AF> Invoice <<Aggregate>>"))
+            .as("holds the service holding the repository").isFalse();
+    }
+
+    @Test
+    void testAnAggregateCallingANonDomainClassIsConnectedToIt() {
+        var diagramText = generate(List.of(SummaryDriver.class.getName() + "#compute"), List.of(), CALLS_SHOWN);
+
+        assertThat(relationship(diagramText, "<AF> Invoice", "calls ServiceLocator.driver", "<ND>ServiceLocator")).isTrue();
+    }
+
+    @Test
+    void testCallsOfValueObjectsCommandsAndEventsAreNotConnected() {
+        var diagramText = generate(List.of(REPORT, SummaryDriver.class.getName() + "#compute"), List.of(), CALLS_SHOWN);
+
+        assertThat(diagramText.lines().filter(line -> line.contains("<<calls>>")))
+            .noneMatch(line -> line.contains("<ID>") || line.contains("<VO>") || line.contains("<DC>")
+                || line.contains("<DE>"));
     }
 
     @Test
@@ -141,21 +255,12 @@ public class FlowCallRelationsDiagramTest {
 
         assertThat(relationship(diagramText, "<ND>ReportHelper", "calls", "<AS>SummaryDriver")).isFalse();
         assertThat(relationship(diagramText, "<ND>ReportController", "calls", "<ND>ReportHelper")).isFalse();
-    }
-
-    @Test
-    void testACallIntoAnAggregateConnectsToItsFrame_And_CallsOfItsPartsAreLeftOut() {
-        var diagramText = generate(List.of(SummaryRule.class.getName() + "#check"), List.of(),
-            CALLS_SHOWN);
-
-        assertThat(relationship(diagramText, "<AS>SummaryDriver", "calls Invoice.amount", "<AF> Invoice <<Aggregate>>"))
-            .isTrue();
-        assertThat(diagramText).doesNotContain("InvoiceId.value");
+        assertThat(relationship(diagramText, "<ND>SummaryRule", "calls", "<AS>SummaryDriver")).isFalse();
     }
 
     @Test
     void testNoCallRelationshipIsDrawnByDefault() {
-        var diagramText = generate(List.of(), List.of(Summary.class.getName()), GeneralVisualSettings.builder().build());
+        var diagramText = generate(List.of(REPORT), List.of(), GeneralVisualSettings.builder().build());
 
         assertThat(diagramText).doesNotContain("<<calls>>");
     }
@@ -165,6 +270,32 @@ public class FlowCallRelationsDiagramTest {
         var diagramText = generate(List.of(), List.of(), CALLS_SHOWN);
 
         assertThat(diagramText).doesNotContain("<<calls>>");
+    }
+
+    @Test
+    void testCallRelationsSwitchedOnWithoutAnAnalysisResultAreRejected() {
+        var config = DomainDiagramConfig.builder()
+            .withDiagramTrimSettings(DiagramTrimSettings.builder()
+                .withExplicitlyIncludedPackageNames(List.of(PACKAGE)).build())
+            .withGeneralVisualSettings(CALLS_SHOWN)
+            .build();
+
+        assertThatThrownBy(() -> new DomainDiagramGenerator(config, Domain.getDomainMirror()))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("showFlowCallRelations")
+            .hasMessageContaining("needs the result of a static analysis");
+    }
+
+    @Test
+    void testDefaultSettingsNeedNoAnalysisResult() {
+        var config = DomainDiagramConfig.builder()
+            .withDiagramTrimSettings(DiagramTrimSettings.builder()
+                .withExplicitlyIncludedPackageNames(List.of(PACKAGE)).build())
+            .build();
+
+        assertThat(new DomainDiagramGenerator(config, Domain.getDomainMirror()).generateDiagramText())
+            .contains("ReportingService")
+            .doesNotContain("<<calls>>");
     }
 
     private static DomainCalls calls() {
@@ -179,9 +310,26 @@ public class FlowCallRelationsDiagramTest {
                 callSite(Summary.class, "count", SummaryRule.class),
                 callSite(Summary.class, "average", SummaryRule.class),
                 callSite(Summary.class, "max", SummaryRule.class)))
+            .add(method(ReportingService.class, "report"), List.of(
+                callSite(ServiceLocator.class, "driver", ReportingService.class),
+                callSite(SummaryDriver.class, "compute", ReportingService.class),
+                callSite(EscalationService.class, "escalate", ReportingService.class)))
+            .add(method(EscalationService.class, "escalate"), List.of(
+                callSite(ReportingService.class, "report", EscalationService.class)))
             .add(method(SummaryDriver.class, "compute"), List.of(
                 callSite(Invoice.class, "amount", SummaryDriver.class),
+                callSite(InvoiceLine.class, "cancel", SummaryDriver.class),
                 callSite(InvoiceId.class, "value", SummaryDriver.class)))
+            .add(method(Invoice.class, "amount"), List.of(
+                callSite(ServiceLocator.class, "driver", Invoice.class)))
+            .add(method(AuditService.class, "audit"), List.of(
+                callSite(Summary.class, "count", AuditService.class)))
+            .add(method(BillingController.class, "bill"), List.of(
+                callSite(BillingService.class, "bill", BillingController.class),
+                callSite(Invoice.class, "amount", BillingController.class)))
+            .add(method(BillingService.class, "bill"), List.of(
+                callSite(InvoiceRepository.class, "findInvoice", BillingService.class),
+                callSite(Invoice.class, "amount", BillingService.class)))
             .build();
     }
 

@@ -307,6 +307,9 @@ public class DiagramSettingsFilter {
     }
 
     private boolean isIncluded(DomainTypeMirror dtm, boolean standingIn) {
+        if (DomainMapperUtils.isNeverShown(dtm)) {
+            return false;
+        }
         boolean contained = !dtm.getTypeName().startsWith("io.domainlifecycles") && isIncludedByGeneralVisualSettings(dtm, standingIn);
         if(!contained){
             return false;
@@ -330,7 +333,8 @@ public class DiagramSettingsFilter {
      * @return {@code true} if it may be shown as part of another shown domain type
      */
     public boolean filterAsContainedPart(DomainTypeMirror dtm) {
-        return !dtm.getTypeName().startsWith("io.domainlifecycles")
+        return !DomainMapperUtils.isNeverShown(dtm)
+            && !dtm.getTypeName().startsWith("io.domainlifecycles")
             && isIncludedByGeneralVisualSettings(dtm)
             && isIncludedByPackageAndBlacklist(dtm);
     }

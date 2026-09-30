@@ -217,11 +217,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The [domain diagrammer](./domain-diagrammer) connects a service kind or non-domain class returning a read model no
   query handler provides to it by a `<<provides>>` relationship, and a non-domain class holding another one as field
   to it. The connection filters (`includeConnectedTo...`) follow the providing relationship as well
-- In a diagram restricted to flows, the [domain diagrammer](./domain-diagrammer) can connect two classes calling each
-  other in a flow by a `<<calls>>` relationship, labeled with the called methods, if no other relationship connects
+- In a diagram restricted to flows, the [domain diagrammer](./domain-diagrammer) can connect a service kind or
+  non-domain class calling another service kind or non-domain class in a flow to it by a `<<calls>>` relationship,
+  directed from the caller to the called class and labeled with the called methods, if no other relationship connects
   them (`GeneralVisualSettings.withShowFlowCallRelations(boolean)`, `false` by default, and the new
-  `showFlowCallRelations` option of the [Gradle and Maven plugins](./dlc-plugins/readme.md)). In a real world project
-  148 of the 161 classes shown without any relationship in its flow diagrams had such a call
+  `showFlowCallRelations` option of the [Gradle and Maven plugins](./dlc-plugins/readme.md)). A service kind or
+  non-domain class calling a read model or an aggregate (its root or an entity) is connected to it as well, if no path
+  of relationships leads from the caller there yet - e.g. over the query handler, the providing service or the
+  repository, also via other classes. Calls of value objects, identities, enums, commands and events get no such
+  relationship
+- The [domain diagrammer](./domain-diagrammer) connects a domain event to the non-domain classes listening to it by a
+  `notifies` relationship, and - with `showFlowCallRelations` - an aggregate calling a non-domain class to it
+- The [domain diagrammer](./domain-diagrammer) rejects `showFlowCallRelations` switched on without the result of a
+  static analysis with an `IllegalArgumentException` naming the setting, as it already did for `includeFlowsFrom` and
+  `includeFlowsTo`. The [Gradle and Maven plugins](./dlc-plugins/readme.md) fail with a `DLCPluginsException`, if
+  `showFlowCallRelations` is switched on for a diagram without `includeFlowsFrom` or `includeFlowsTo`, as only these
+  trigger the static analysis
+- The [domain diagrammer](./domain-diagrammer) never draws exceptions and anonymous classes as nodes. An anonymous
+  class implementing an interface is represented by that interface, which is shown in its place
+- Fixed the [domain diagrammer](./domain-diagrammer) connecting a domain command to none of its processors in a diagram
+  restricted to a flow: with `showOnlyTopLevelDomainCommandRelations`, the outermost processor was determined among all
+  classes of the domain, so a processor forwarded to by a class the diagram did not show got no relationship either.
+  The outermost processor is now determined among the classes shown
 
 ## [3.4.0] - 2026-09-11
 - Improved DLC persistence initialization performance

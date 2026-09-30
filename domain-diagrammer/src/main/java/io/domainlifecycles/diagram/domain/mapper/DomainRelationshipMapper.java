@@ -52,11 +52,16 @@ import io.domainlifecycles.mirror.api.ValueReferenceMirror;
 import io.domainlifecycles.mirror.model.AssertionType;
 import io.domainlifecycles.mirror.visitor.ContextDomainObjectVisitor;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -192,10 +197,16 @@ public class DomainRelationshipMapper {
     }
 
     /**
-     * Derives a {@code <<calls>>} relationship for two shown classes calling each other in the flows the diagram is
-     * restricted to, if no other relationship connects them - e.g. a class reading a read model it got from elsewhere.
-     * A call into an aggregate connects to its frame; calls of value objects, identities, enums and entities are left
-     * out, they are mostly accessors of an aggregate's parts.
+     * Derives a {@code <<calls>>} relationship, directed from the caller to the called node, for a shown service kind or
+     * non-domain class calling in the flows the diagram is restricted to
+     * <ul>
+     *     <li>another shown service kind or non-domain class, if no other relationship connects them,</li>
+     *     <li>a shown read model or aggregate (its root or one of its entities, connecting to its frame), if no path of
+     *     relationships leads from the caller to it yet - e.g. over the query handler or repository it uses, also via
+     *     other classes.</li>
+     * </ul>
+     * Calls of other types - value objects, identities, enums, commands, events - are left out, they are mostly
+     * accessors. Two classes calling each other get a relationship in each direction.
      *
      * @param otherRelationships all other relationships of the diagram
      * @return the call relationships
@@ -205,26 +216,57 @@ public class DomainRelationshipMapper {
             return List.of();
         }
         var connected = new HashSet<String>();
+        var paths = new HashMap<String, Set<String>>();
         otherRelationships.forEach(relationship -> {
             connected.add(relationship.getFromName() + "->" + relationship.getToName());
             connected.add(relationship.getToName() + "->" + relationship.getFromName());
+            paths.computeIfAbsent(relationship.getFromName(), key -> new LinkedHashSet<>()).add(relationship.getToName());
         });
-        var relationShips = new ArrayList<NomnomlRelationship>();
+
+        // by caller and called node, in the order of the flows: first the calls between classes, then the ones into
+        // read models and aggregates, which only need a relationship if no path leads there
+        var classCalls = new LinkedHashMap<String, PendingCall>();
+        var modelCalls = new LinkedHashMap<String, PendingCall>();
         filteredDomainClasses.getFlowCalls().forEach((callerTypeName, calledMethodsByType) -> {
-            var caller = callNode(callerTypeName);
+            var callerClass = classNode(callerTypeName);
+            // an aggregate calling a non-domain class, e.g. a helper collecting its errors
+            var callerAggregate = callerClass.isPresent() ? Optional.<CallNode>empty() : aggregateNode(callerTypeName);
+            var caller = callerClass.or(() -> callerAggregate);
             if (caller.isEmpty()) {
                 return;
             }
             calledMethodsByType.forEach((calledTypeName, methodNames) -> {
-                var called = callNode(calledTypeName);
+                var calledClass = classNode(calledTypeName)
+                    .filter(node -> callerClass.isPresent() || isNonDomainClass(calledTypeName));
+                var calledModel = calledClass.isPresent() || callerClass.isEmpty()
+                    ? Optional.<CallNode>empty() : modelNode(calledTypeName);
+                var called = calledClass.or(() -> calledModel);
                 if (called.isEmpty() || caller.get().name().equals(called.get().name())) {
                     return;
                 }
-                if (connected.add(caller.get().name() + "->" + called.get().name())) {
-                    connected.add(called.get().name() + "->" + caller.get().name());
-                    relationShips.add(mapCallRelationship(caller.get(), called.get(), calledTypeName, methodNames));
-                }
+                var pending = (calledClass.isPresent() ? classCalls : modelCalls).computeIfAbsent(
+                    caller.get().name() + "->" + called.get().name(),
+                    key -> new PendingCall(caller.get(), called.get(), new ArrayList<>()));
+                String calledName = DomainMapperUtils.mapTypeName(calledTypeName, diagramConfig);
+                methodNames.forEach(methodName -> pending.calledMethods().add(calledName + "." + methodName));
             });
+        });
+
+        var relationShips = new ArrayList<NomnomlRelationship>();
+        classCalls.values().forEach(call -> {
+            // another relationship connects them in either direction, a call relationship in its own direction only
+            if (connected.add(call.caller().name() + "->" + call.called().name())) {
+                relationShips.add(mapCallRelationship(call));
+                paths.computeIfAbsent(call.caller().name(), key -> new LinkedHashSet<>()).add(call.called().name());
+            }
+        });
+        modelCalls.values().forEach(call -> {
+            if (!connected.contains(call.caller().name() + "->" + call.called().name())
+                && !isReachable(paths, call.caller().name(), call.called().name())) {
+                connected.add(call.caller().name() + "->" + call.called().name());
+                relationShips.add(mapCallRelationship(call));
+                paths.computeIfAbsent(call.caller().name(), key -> new LinkedHashSet<>()).add(call.called().name());
+            }
         });
         return relationShips;
     }
@@ -232,39 +274,101 @@ public class DomainRelationshipMapper {
     private record CallNode(String name, String styleClassifier) {
     }
 
+    private record PendingCall(CallNode caller, CallNode called, List<String> calledMethods) {
+    }
+
     /**
-     * The node a call starts or ends at: the frame of an aggregate, the class of any other shown type.
+     * Whether a path of relationships leads from one node to another.
      */
-    private Optional<CallNode> callNode(String typeName) {
+    private static boolean isReachable(Map<String, Set<String>> paths, String from, String to) {
+        var visited = new HashSet<String>();
+        var pending = new ArrayDeque<String>(List.of(from));
+        while (!pending.isEmpty()) {
+            String node = pending.poll();
+            if (!visited.add(node)) {
+                continue;
+            }
+            for (String next : paths.getOrDefault(node, Set.of())) {
+                if (next.equals(to)) {
+                    return true;
+                }
+                pending.add(next);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * The node of a class calling or called: a shown service kind - drawn by the name of its interface - or a shown
+     * non-domain class.
+     */
+    private Optional<CallNode> classNode(String typeName) {
+        var type = domainMirror.getDomainTypeMirror(typeName);
+        if (type.isEmpty()) {
+            return Optional.empty();
+        }
+        boolean shown = type.get() instanceof ServiceKindMirror
+            ? filteredDomainClasses.contains(type.get())
+            : type.get() instanceof NonDomainTypeMirror && filteredDomainClasses.getContained(typeName).isPresent();
+        return shown
+            ? Optional.of(new CallNode(relationConnectorName(type.get()), DomainMapperUtils.styleClassifier(type.get())))
+            : Optional.empty();
+    }
+
+    private boolean isNonDomainClass(String typeName) {
+        return domainMirror.getDomainTypeMirror(typeName).filter(NonDomainTypeMirror.class::isInstance).isPresent();
+    }
+
+    /**
+     * The node of a called read model or aggregate: a shown read model, or the frame of a shown aggregate whose root
+     * or one of whose entities is called.
+     */
+    private Optional<CallNode> modelNode(String typeName) {
+        var type = domainMirror.getDomainTypeMirror(typeName);
+        if (type.isEmpty()) {
+            return Optional.empty();
+        }
+        if (type.get().getDomainType() == DomainType.READ_MODEL) {
+            return filteredDomainClasses.getContained(typeName)
+                .map(readModel -> new CallNode(relationConnectorName(readModel), DomainMapperUtils.styleClassifier(readModel)));
+        }
+        return aggregateNode(typeName);
+    }
+
+    /**
+     * The frame of a shown aggregate whose root or one of whose entities is the given type.
+     */
+    private Optional<CallNode> aggregateNode(String typeName) {
         var type = domainMirror.getDomainTypeMirror(typeName);
         if (type.isEmpty()) {
             return Optional.empty();
         }
         return switch (type.get().getDomainType()) {
-            case AGGREGATE_ROOT -> filteredDomainClasses.contains(type.get())
-                ? Optional.of(new CallNode(aggregateFrameName(typeName),
-                    "<" + DomainDiagramGenerator.AGGREGATE_FRAME_STYLE_TAG + "> "))
-                : Optional.empty();
-            case ENTITY, VALUE_OBJECT, IDENTITY, ENUM -> Optional.empty();
-            // a service kind is drawn by the name of its interface, any other type by its own name
-            default -> (type.get() instanceof ServiceKindMirror
-                    ? filteredDomainClasses.contains(type.get())
-                    : filteredDomainClasses.getContained(typeName).isPresent())
-                ? Optional.of(new CallNode(relationConnectorName(type.get()), DomainMapperUtils.styleClassifier(type.get())))
-                : Optional.empty();
+            case AGGREGATE_ROOT, ENTITY -> {
+                var aggregates = filteredDomainClasses.getAggregateRoots().stream()
+                    .filter(aggregateRoot -> DomainClassMapper.aggregateMirrors(aggregateRoot, diagramConfig).stream()
+                        .anyMatch(part -> part.getTypeName().equals(typeName)))
+                    .toList();
+                // an entity shared by several aggregates tells no single frame
+                yield aggregates.size() == 1
+                    ? Optional.of(new CallNode(aggregateFrameName(aggregates.get(0).getTypeName()),
+                        "<" + DomainDiagramGenerator.AGGREGATE_FRAME_STYLE_TAG + "> "))
+                    : Optional.empty();
+            }
+            default -> Optional.empty();
         };
     }
 
     private static final int MAX_CALLED_METHODS_IN_LABEL = 3;
 
-    private NomnomlRelationship mapCallRelationship(CallNode caller, CallNode called, String calledTypeName,
-                                                    Set<String> methodNames) {
-        String calledName = DomainMapperUtils.mapTypeName(calledTypeName, diagramConfig);
-        String label = methodNames.stream()
+    private NomnomlRelationship mapCallRelationship(PendingCall call) {
+        var caller = call.caller();
+        var called = call.called();
+        List<String> methods = call.calledMethods().stream().distinct().toList();
+        String label = methods.stream()
             .limit(MAX_CALLED_METHODS_IN_LABEL)
-            .map(methodName -> calledName + "." + methodName)
             .collect(Collectors.joining(", "))
-            + (methodNames.size() > MAX_CALLED_METHODS_IN_LABEL ? ", …" : "");
+            + (methods.size() > MAX_CALLED_METHODS_IN_LABEL ? ", …" : "");
         return NomnomlRelationship
             .builder()
             .fromName(caller.name())
@@ -484,10 +588,15 @@ public class DomainRelationshipMapper {
         return relationShips;
     }
 
+    /**
+     * Whether a class is the outermost consumer of a command among the classes shown: no shown class referencing it
+     * processes the same command - an outer consumer the diagram does not show leaves the relationship to it.
+     */
     private boolean isTopLevelConsumerForCommand(DomainTypeMirror domainTypeMirror,
                                                  DomainCommandMirror domainCommandMirror) {
         var typesReferencing = domainMirror.getAllDomainTypeMirrors()
             .stream()
+            .filter(filteredDomainClasses::contains)
             .filter(dt -> {
                     return dt.getAllFields()
                         .stream()
@@ -503,6 +612,7 @@ public class DomainRelationshipMapper {
             return domainMirror.getAllDomainTypeMirrors()
                 .stream()
                 .filter(dtm -> dtm instanceof DomainCommandProcessingMirror)
+                .filter(filteredDomainClasses::contains)
                 .filter(dtm ->
                     dtm.getDomainType().equals(DomainType.REPOSITORY)
                         || dtm.getDomainType().equals(DomainType.DOMAIN_SERVICE)
@@ -515,11 +625,9 @@ public class DomainRelationshipMapper {
         // command - a referencing type kept around for an unrelated purpose (e.g. a field of the
         // same service used just to call one of its other methods) must not by itself suppress the
         // relationship, so every referencing type is checked, not just the first one encountered.
-        // A non-domain class receiving the command counts only if it is shown: otherwise nothing in the diagram would be
-        // connected to the command.
         return typesReferencing.stream()
             .filter(referencingType -> referencingType instanceof DomainCommandProcessingMirror
-                || referencingType instanceof NonDomainTypeMirror && filteredDomainClasses.contains(referencingType))
+                || referencingType instanceof NonDomainTypeMirror)
             .noneMatch(referencingType -> processes(referencingType, domainCommandMirror));
     }
 
@@ -562,6 +670,14 @@ public class DomainRelationshipMapper {
                                 }
                             }
                         );
+
+                    // a non-domain class listening to the event, e.g. a Spring event listener
+                    filteredDomainClasses.getNonDomainClasses()
+                        .forEach(nd -> {
+                            if (nd.getMethods().stream().anyMatch(method -> method.listensTo(de))) {
+                                relationShips.add(mapListensToDomainEvent(nd, de));
+                            }
+                        });
 
                     filteredDomainClasses.getAggregateRoots()
                         .forEach(a -> {

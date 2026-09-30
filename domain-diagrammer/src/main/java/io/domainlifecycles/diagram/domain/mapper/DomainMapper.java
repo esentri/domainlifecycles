@@ -80,6 +80,7 @@ public class DomainMapper {
         DomainCalls domainCalls) {
         this.domainDiagramConfig = domainDiagramConfig;
         this.notes = notes;
+        requireStaticAnalysisForCallRelations(domainDiagramConfig, domainCalls);
         this.filteredDomainClasses = new FilteredDomainClasses(
             domainDiagramConfig.getDiagramTrimSettings(),
             domainDiagramConfig.getGeneralVisualSettings(),
@@ -95,6 +96,21 @@ public class DomainMapper {
         this.domainClassMapper = new DomainClassMapper(domainDiagramConfig, nodeNames, filteredDomainClasses);
         this.domainRelationshipMapper = new DomainRelationshipMapper(domainDiagramConfig, domainMirror, filteredDomainClasses, nodeNames);
 
+    }
+
+    /**
+     * The calls of the flows are known from the result of a static analysis only: switching them on without one is a
+     * configuration error, not a diagram without calls.
+     */
+    private static void requireStaticAnalysisForCallRelations(DomainDiagramConfig domainDiagramConfig,
+                                                              DomainCalls domainCalls) {
+        if (domainDiagramConfig.getGeneralVisualSettings().isShowFlowCallRelations() && domainCalls == null) {
+            throw new IllegalArgumentException(
+                "The setting showFlowCallRelations draws the calls of the flows a diagram is restricted to and"
+                    + " therefore needs the result of a static analysis. Hand a DomainCalls instance to the"
+                    + " DomainDiagramGenerator constructor and restrict the diagram to a flow (includeFlowsFrom or"
+                    + " includeFlowsTo), or switch showFlowCallRelations off.");
+        }
     }
 
     /**

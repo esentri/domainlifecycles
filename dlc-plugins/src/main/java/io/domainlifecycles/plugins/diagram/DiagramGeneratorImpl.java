@@ -137,6 +137,18 @@ public class DiagramGeneratorImpl implements DiagramGenerator {
     }
 
 
+    /**
+     * The static analysis runs only for a diagram restricted to a flow, which the calls of the flows need anyway.
+     */
+    static void requireFlowForCallRelations(DiagramConfig diagramConfig, boolean hasFlows) {
+        if (Boolean.TRUE.equals(diagramConfig.getShowFlowCallRelations()) && !hasFlows) {
+            throw DLCPluginsException.fail(
+                "showFlowCallRelations draws the calls of the flows a diagram is restricted to, which are known from"
+                    + " the static analysis only. Configure includeFlowsFrom or includeFlowsTo - the static analysis"
+                    + " then runs for the diagram - or switch showFlowCallRelations off.");
+        }
+    }
+
     private String generateRawNomnomlDiagramText(List<URL> classPathFiles, final DiagramConfig diagramConfig, final String... domainPackages) {
         DomainMirror dm;
         try {
@@ -147,6 +159,7 @@ public class DiagramGeneratorImpl implements DiagramGenerator {
 
         boolean hasFlowsFrom = diagramConfig.getIncludeFlowsFrom() != null && !diagramConfig.getIncludeFlowsFrom().isEmpty();
         boolean hasFlowsTo = diagramConfig.getIncludeFlowsTo() != null && !diagramConfig.getIncludeFlowsTo().isEmpty();
+        requireFlowForCallRelations(diagramConfig, hasFlowsFrom || hasFlowsTo);
 
         final DomainDiagramGenerator generator;
         if (hasFlowsFrom || hasFlowsTo) {

@@ -99,10 +99,17 @@ public class AbstractTypesDiagramTest {
     }
 
     @Test
+    void testAnAnonymousClassIsNeverShown() {
+        var rendered = rendered(DiagramTrimSettings.builder(), GeneralVisualSettings.builder().build(), null);
+
+        assertThat(rendered).doesNotContain(anonymousPerson());
+    }
+
+    @Test
     void testAnAbstractTypeIsShown_When_ItsImplementationsAreBlacklisted() {
+        // its other implementation is anonymous, which is never shown: the interface is shown in its place
         var rendered = rendered(
-            DiagramTrimSettings.builder().withClassesBlacklist(
-                List.of(PersonRecord.class.getName(), anonymousPerson())),
+            DiagramTrimSettings.builder().withClassesBlacklist(List.of(PersonRecord.class.getName())),
             GeneralVisualSettings.builder().build(), null);
 
         assertThat(rendered).contains(Person.class.getName()).doesNotContain(PersonRecord.class.getName());

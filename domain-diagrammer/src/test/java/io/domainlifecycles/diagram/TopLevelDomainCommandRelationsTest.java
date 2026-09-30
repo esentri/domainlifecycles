@@ -113,9 +113,29 @@ public class TopLevelDomainCommandRelationsTest {
             .isFalse();
     }
 
-    private static String generate(GeneralVisualSettings generalVisualSettings) {
+    @Test
+    void testTheOutermostConsumerIsDeterminedAmongTheShownClassesOnly() {
+        // the outer application service is not shown: the domain service it forwards to is the outermost one shown
+        var diagramText = generate(GeneralVisualSettings.builder().build(), OuterApplicationService.class.getName());
+
+        assertThat(hasProcessingRelationshipTo(diagramText, InnerDomainService.class.getSimpleName())).isTrue();
+        assertThat(hasProcessingRelationshipTo(diagramText, TopAggregate.class.getSimpleName()))
+            .as("the shown domain service still processes the command")
+            .isFalse();
+    }
+
+    @Test
+    void testAnAggregateIsTheOutermostConsumer_When_NoServiceProcessingTheCommandIsShown() {
+        var diagramText = generate(GeneralVisualSettings.builder().build(),
+            OuterApplicationService.class.getName(), InnerDomainService.class.getName());
+
+        assertThat(hasProcessingRelationshipTo(diagramText, TopAggregate.class.getSimpleName())).isTrue();
+    }
+
+    private static String generate(GeneralVisualSettings generalVisualSettings, String... blacklisted) {
         var trim = DiagramTrimSettings.builder()
             .withExplicitlyIncludedPackageNames(List.of("fixtures.topcommand"))
+            .withClassesBlacklist(List.of(blacklisted))
             .build();
         var config = DomainDiagramConfig.builder()
             .withDiagramTrimSettings(trim)

@@ -402,7 +402,7 @@ public class DomainFlowFilter {
         }
         if (domainCalls == null) {
             throw new IllegalArgumentException(
-                "Restricting a diagram to a flow (from " + includeFlowsFrom + ", to "
+                "Restricting a diagram to a flow (includeFlowsFrom " + includeFlowsFrom + ", includeFlowsTo "
                     + includeFlowsTo + ") needs the result of a static analysis. Hand a"
                     + " DomainCalls instance to the DomainDiagramGenerator constructor, or drop"
                     + " the includeFlowsFrom/includeFlowsTo setting.");
