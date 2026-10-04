@@ -27,7 +27,6 @@
 package io.domainlifecycles.jdbc.configuration;
 
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
-import io.domainlifecycles.jdbc.cache.TransactionCacheAwareConnectionProvider;
 import io.domainlifecycles.jdbc.configuration.def.JdbcRecordPropertyAccessor;
 import io.domainlifecycles.jdbc.configuration.def.JdbcRecordPropertyProvider;
 import io.domainlifecycles.jdbc.connection.JdbcConnectionProvider;
@@ -151,10 +150,11 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
 
     /**
      * Supplies the {@code TransactionCache} active for the currently running transaction, if any - see
-     * {@link DomainPersistenceConfiguration#transactionCacheEnabled}. Defaults to a
-     * {@link ThreadBoundTransactionCacheProvider} automatically bound to the connection's transaction
-     * boundary (via {@link #connectionProvider} being wrapped in a {@link TransactionCacheAwareConnectionProvider})
-     * when the feature is enabled, or to a {@link NoOpTransactionCacheProvider} when it is disabled.
+     * {@link DomainPersistenceConfiguration#transactionCacheEnabled}. Plain JDBC has no transaction listener of its
+     * own, so the cache is only used with a provider whose scopes follow the transaction boundaries reliably - see
+     * {@link JdbcPersistenceConfigurationBuilder#withTransactionCacheProvider(TransactionCacheProvider)}. Without
+     * one, or with the feature disabled, this is a {@link NoOpTransactionCacheProvider}: every write reads the
+     * current state of the aggregate.
      */
     public final TransactionCacheProvider<JdbcRecord> transactionCacheProvider;
 
@@ -215,7 +215,6 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
         private JdbcEntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider;
         private boolean transactionCacheEnabled = true;
         private TransactionCacheProvider<JdbcRecord> transactionCacheProvider;
-        private int transactionCacheMaxSize = 256;
 
         /**
          * Creates a new instance of {@code JdbcPersistenceConfigurationBuilder}.
@@ -402,9 +401,9 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
         }
 
         /**
-         * Enables or disables the transaction cache feature (enabled by default). When disabled, behavior is
-         * identical to a build without the feature at all - {@link #connectionProvider} is not wrapped and no
-         * additional memory is used.
+         * Enables or disables the transaction cache feature (enabled by default). It only takes effect with a
+         * provider set via {@link #withTransactionCacheProvider(TransactionCacheProvider)}; disabled, that provider
+         * is ignored.
          *
          * @param transactionCacheEnabled whether the transaction cache feature should be enabled
          * @return this builder
@@ -415,11 +414,15 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
         }
 
         /**
-         * Sets a custom {@code TransactionCacheProvider}, overriding the default
-         * {@link ThreadBoundTransactionCacheProvider}. Note that {@link #connectionProvider} is only
-         * automatically wrapped in a {@link TransactionCacheAwareConnectionProvider} for the default
-         * {@link ThreadBoundTransactionCacheProvider} - a custom provider must be wired to the connection's
-         * transaction boundary by the caller.
+         * Sets the provider of the transaction cache. Plain JDBC has no transaction listener of its own, so the
+         * cache is off unless a provider is set whose scopes follow the transaction boundaries reliably:
+         * <ul>
+         *     <li>with Spring, a {@code SpringTransactionCacheProvider} from {@code persistence-cache-spring-tx} - as
+         *     {@code DlcJdbcPersistenceAutoConfiguration} wires it,</li>
+         *     <li>with JTA, a {@code JtaTransactionCacheProvider} from {@code persistence-cache-jakarta-jta},</li>
+         *     <li>otherwise a {@link ThreadBoundTransactionCacheProvider} whose scope the application opens and
+         *     closes around each transaction itself, and clears after a rollback to a savepoint.</li>
+         * </ul>
          *
          * @param transactionCacheProvider the transaction cache provider to use
          * @return this builder
@@ -427,19 +430,6 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
         public JdbcPersistenceConfigurationBuilder withTransactionCacheProvider(
             TransactionCacheProvider<JdbcRecord> transactionCacheProvider) {
             this.transactionCacheProvider = transactionCacheProvider;
-            return this;
-        }
-
-        /**
-         * Sets the maximum number of aggregate roots held in the transaction cache per transaction (default
-         * 256). Only relevant for the default {@link ThreadBoundTransactionCacheProvider} - ignored if a
-         * custom provider was set via {@link #withTransactionCacheProvider(TransactionCacheProvider)}.
-         *
-         * @param transactionCacheMaxSize the maximum number of entries held per transaction
-         * @return this builder
-         */
-        public JdbcPersistenceConfigurationBuilder withTransactionCacheMaxSize(int transactionCacheMaxSize) {
-            this.transactionCacheMaxSize = transactionCacheMaxSize;
             return this;
         }
 
@@ -520,16 +510,8 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
                 this.recordPropertyAccessor = new JdbcRecordPropertyAccessor(schemaMetadata);
             }
 
-            if (this.transactionCacheProvider == null) {
-                if (this.transactionCacheEnabled) {
-                    var threadBoundProvider = new ThreadBoundTransactionCacheProvider<JdbcRecord>(
-                        this.transactionCacheMaxSize);
-                    this.transactionCacheProvider = threadBoundProvider;
-                    this.connectionProvider = new TransactionCacheAwareConnectionProvider(
-                        this.connectionProvider, threadBoundProvider);
-                } else {
-                    this.transactionCacheProvider = new NoOpTransactionCacheProvider<>();
-                }
+            if (this.transactionCacheProvider == null || !this.transactionCacheEnabled) {
+                this.transactionCacheProvider = new NoOpTransactionCacheProvider<>();
             }
 
             return new JdbcDomainPersistenceConfiguration(

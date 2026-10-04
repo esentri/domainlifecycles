@@ -110,7 +110,13 @@ public class JdbcValueObjectIdProvider extends BaseValueObjectIdProvider<JdbcRec
             newVoRecord.set(pkColumn.name(), toPhysicalValue(UUID.randomUUID(), pkColumn.javaType()));
         } else if (isLongCompatible(pkColumn.javaType())) {
             var sequenceName = table.name() + "_SEQ";
-            var newTechId = JdbcSequenceIdGenerator.nextValue(connectionProvider.getConnection(), dialect, sequenceName);
+            var connection = connectionProvider.getConnection();
+            long newTechId;
+            try {
+                newTechId = JdbcSequenceIdGenerator.nextValue(connection, dialect, sequenceName);
+            } finally {
+                connectionProvider.releaseConnection(connection);
+            }
             newVoRecord.set(pkColumn.name(), newTechId);
         } else {
             throw DLCPersistenceException.fail(

@@ -43,7 +43,6 @@ dependencies {
     api project(":builder")
     implementation project(":mirror")
     api project(":persistence")
-    api project(":persistence-spring-tx")
 
     testImplementation project(":test-shared-impl")
     testImplementation project(":type-utils")
@@ -58,6 +57,13 @@ dependencies {
     testImplementation libs.mockito.core
     testImplementation libs.h2
     testImplementation libs.spring.tx
+    testImplementation libs.spring.jdbc
+    testImplementation variantOf(libs.atomikos.transactions.jta) { classifier("jakarta") }
+    testImplementation variantOf(libs.atomikos.transactions.jdbc) { classifier("jakarta") }
+    testImplementation libs.jakarta.transaction.api
+    testImplementation libs.spring.context
+    testImplementation project(":persistence-cache-jakarta-jta")
+    testImplementation project(":persistence-cache-spring-tx")
 
     constraints {
         // :persistence -> :type-utils's type-resolver pulls in a log4j-api too old for commons-logging

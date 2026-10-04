@@ -110,6 +110,7 @@ assertj = { module = "org.assertj:assertj-core", version.ref = "assertj-version"
 awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility-version"}
 apache-active-mq-artemis-jms-server = { module = "org.apache.activemq:artemis-jakarta-server", version.ref = "active-mq-artemis-version"}
 atomikos-transactions-jta = { module = "com.atomikos:transactions-jta", version.ref = "atomikos-jta-version" }
+atomikos-transactions-jdbc = { module = "com.atomikos:transactions-jdbc", version.ref = "atomikos-jta-version" }
 classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraph-version" }
 commons-collections = { module = "org.apache.commons:commons-collections4", version.ref = "commons-collections4-version" }
 commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang3-version" }

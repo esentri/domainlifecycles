@@ -101,7 +101,8 @@ public final class JdbcRecordMapper {
     public static List<JdbcRecord> selectWithSql(
         JdbcConnectionProvider connectionProvider, TableMetadata table, String sql, Object... params
     ) {
-        try (PreparedStatement statement = connectionProvider.getConnection().prepareStatement(sql)) {
+        var connection = connectionProvider.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++) {
                 statement.setObject(i + 1, params[i]);
             }
@@ -114,6 +115,8 @@ public final class JdbcRecordMapper {
             }
         } catch (SQLException e) {
             throw DLCPersistenceException.fail("Query on '%s' failed.", e, table.name());
+        } finally {
+            connectionProvider.releaseConnection(connection);
         }
     }
 

@@ -35,7 +35,9 @@ import org.jooq.TransactionListenerProvider;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DefaultTransactionListenerProvider;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Deque;
 
 /**
  * Opens and closes a {@link ThreadBoundTransactionCacheProvider} scope around jOOQ's own, Spring-independent
@@ -43,10 +45,13 @@ import java.util.Arrays;
  * automatically - with or without Spring, since jOOQ's {@code SpringTransactionProvider} raises the very
  * same {@link TransactionListener} events.
  * <p>
- * A depth counter ensures that only the outermost transaction opens/closes the scope: nested
- * {@code dslContext.transaction(...)} calls (savepoints) must not tear down state that an outer transaction
- * is still relying on. {@link TransactionContext}/{@code Transaction} expose no public nesting flag of their
- * own to lean on instead, so this binder tracks nesting itself.
+ * Only the outermost transaction opens/closes the scope: nested {@code dslContext.transaction(...)} calls
+ * (savepoints) must not tear down state that an outer transaction is still relying on. jOOQ exposes no nesting flag
+ * of its own, so this binder follows the transactions running on the thread itself - each identified by the
+ * {@link TransactionContext} jOOQ passes to all events of one transaction, so that an end reported twice (a failing
+ * commit is reported as rolled back afterwards) never ends an outer transaction. A nested transaction that rolls
+ * back to its savepoint clears the scope, though: entries loaded since the savepoint may hold state that was never
+ * committed.
  *
  * @author Mario Herb
  */
@@ -54,7 +59,11 @@ public final class TransactionCacheJooqBinder implements TransactionListener {
 
     private final ThreadBoundTransactionCacheProvider<UpdatableRecord<?>> transactionCacheProvider;
 
-    private final ThreadLocal<Integer> depth = ThreadLocal.withInitial(() -> 0);
+    /**
+     * The transactions jOOQ runs on the current thread, innermost first - each identified by its
+     * {@link TransactionContext}, which jOOQ passes unchanged to every event of one transaction.
+     */
+    private final ThreadLocal<Deque<TransactionContext>> openTransactions = ThreadLocal.withInitial(ArrayDeque::new);
 
     private final ThreadLocal<TransactionCacheScope> openScope = new ThreadLocal<>();
 
@@ -95,11 +104,11 @@ public final class TransactionCacheJooqBinder implements TransactionListener {
      */
     @Override
     public void beginStart(TransactionContext ctx) {
-        int currentDepth = depth.get();
-        if (currentDepth == 0) {
+        var transactions = openTransactions.get();
+        if (transactions.isEmpty()) {
             openScope.set(transactionCacheProvider.open());
         }
-        depth.set(currentDepth + 1);
+        transactions.push(ctx);
     }
 
     /**
@@ -107,7 +116,7 @@ public final class TransactionCacheJooqBinder implements TransactionListener {
      */
     @Override
     public void commitEnd(TransactionContext ctx) {
-        closeIfOutermost();
+        end(ctx, false);
     }
 
     /**
@@ -115,20 +124,37 @@ public final class TransactionCacheJooqBinder implements TransactionListener {
      */
     @Override
     public void rollbackEnd(TransactionContext ctx) {
-        closeIfOutermost();
+        end(ctx, true);
     }
 
-    private void closeIfOutermost() {
-        int currentDepth = depth.get();
-        if (currentDepth <= 1) {
-            depth.set(0);
-            TransactionCacheScope scope = openScope.get();
-            if (scope != null) {
-                openScope.remove();
-                scope.close();
-            }
-        } else {
-            depth.set(currentDepth - 1);
+    /**
+     * Ends the given transaction: once none is left, the scope is closed; a nested transaction rolled back to its
+     * savepoint clears it, since entries loaded since may hold state that was never committed. jOOQ reports a
+     * transaction whose commit failed as rolled back afterwards - that second end leaves the transactions still
+     * running alone, but clears the scope as well.
+     */
+    private void end(TransactionContext ctx, boolean rolledBack) {
+        var transactions = openTransactions.get();
+        if (containsSame(transactions, ctx)) {
+            TransactionContext ended;
+            do {
+                ended = transactions.pop();
+            } while (ended != ctx);
         }
+        TransactionCacheScope scope = openScope.get();
+        if (scope == null) {
+            return;
+        }
+        if (transactions.isEmpty()) {
+            openScope.remove();
+            openTransactions.remove();
+            scope.close();
+        } else if (rolledBack) {
+            scope.clear();
+        }
+    }
+
+    private static boolean containsSame(Deque<TransactionContext> transactions, TransactionContext ctx) {
+        return transactions.stream().anyMatch(transaction -> transaction == ctx);
     }
 }

@@ -26,7 +26,7 @@ dependencies {
 	api project(":dlc-spring-boot-autoconfig")
 	api project(":bean-validations")
 	api project(":persistence")
-	api project(":persistence-spring-tx")
+	api project(":persistence-cache-spring-tx")
 	api project(":jooq-integration")
 	api project(":jdbc-integration")
 	api project(":jackson2-integration")

@@ -30,9 +30,10 @@ package io.domainlifecycles.persistence.cache;
  * A handle for one open {@link ThreadBoundTransactionCacheProvider} scope, bound to the transaction that
  * opened it.
  * <p>
- * Obtained from {@link ThreadBoundTransactionCacheProvider#open()} and always used through try-with-resources
- * by the persistence-technology-specific binders (jOOQ's {@code TransactionCacheJooqBinder}, plain JDBC's
- * {@code TransactionCacheAwareConnectionProvider}) - never directly by application code.
+ * Obtained from {@link ThreadBoundTransactionCacheProvider#open()} by a binder following the transaction boundaries
+ * (jOOQ's {@code TransactionCacheJooqBinder}) - or, for plain JDBC
+ * transactions the application drives itself, by the application around each transaction, closed once the
+ * transaction ends and {@link #clear() cleared} after a rollback to a savepoint.
  * <p>
  * {@link #close()} is idempotent: closing an already closed (or superseded, see
  * {@link ThreadBoundTransactionCacheProvider#open()}) scope is a no-op.
@@ -40,6 +41,12 @@ package io.domainlifecycles.persistence.cache;
  * @author Mario Herb
  */
 public interface TransactionCacheScope extends AutoCloseable {
+
+    /**
+     * Removes all cache entries collected so far, keeping the scope open - e.g. once its transaction rolled back to
+     * a savepoint, after which entries collected since may hold state that was never committed.
+     */
+    void clear();
 
     /**
      * Closes this scope, clearing the cache entries collected during the transaction it was opened for.

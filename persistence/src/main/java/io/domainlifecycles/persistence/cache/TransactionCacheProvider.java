@@ -34,6 +34,24 @@ import java.util.Optional;
  * Returns an empty {@link Optional} whenever no transaction cache scope is currently open on the calling
  * thread - this is the fail-safe default (never fail-open): callers that get an empty result simply fall
  * back to fetching from the database, exactly as if the transaction cache feature did not exist.
+ * <p>
+ * A write compares the aggregate against the state the cache holds for it. An implementation must therefore only
+ * ever hand out a cache holding what the running transaction itself loaded and what is still valid within it:
+ * <ul>
+ *     <li>one cache per transaction, never shared between two transactions - also not between transactions that
+ *     run one after the other on the same thread or on the same, pooled connection,</li>
+ *     <li>no cache outside an actual transaction,</li>
+ *     <li>the cache lives as long as its transaction, across all its reads and writes, and is emptied once the
+ *     transaction completes - committed or rolled back,</li>
+ *     <li>a rollback to a savepoint empties the cache, since entries loaded since may hold state that was never
+ *     committed,</li>
+ *     <li>a transaction suspended for another one keeps its cache apart from the other one's, and gets it back when
+ *     it resumes.</li>
+ * </ul>
+ * Where an implementation cannot learn these boundaries reliably, it must hand out no cache at all. The
+ * implementations DLC provides follow Spring's transactions ({@code SpringTransactionCacheProvider}), JTA transactions
+ * ({@code JtaTransactionCacheProvider}), and scopes opened explicitly around a transaction
+ * ({@link ThreadBoundTransactionCacheProvider}); {@link NoOpTransactionCacheProvider} hands out none.
  *
  * @param <BASE_RECORD_TYPE> the base record type of the persistence technology this provider is used with
  * @author Mario Herb

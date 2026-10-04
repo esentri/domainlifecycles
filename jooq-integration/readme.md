@@ -100,20 +100,21 @@ single-argument constructor is enough.
 
 `jooq-integration` shares the [Transaction Cache](../persistence/readme.md#transaction-cache) feature with
 `jdbc-integration` - enabled by default via `withTransactionCacheEnabled(...)`/`withTransactionCacheProvider(...)`/
-`withTransactionCacheMaxSize(...)` on `JooqPersistenceConfigurationBuilder`, identical to the JDBC side.
+`withTransactionCacheMaxSize(...)` on `JooqPersistenceConfigurationBuilder`.
 
 Activation is simpler here than for plain JDBC: passing your `DSLContext` to `JooqDomainPersistenceProvider`'s
 two-argument constructor (see above) registers `TransactionCacheJooqBinder` automatically, which reacts to jOOQ's
 own `TransactionListener` events (`dslContext.transaction(...)`) - no manual wrapping of anything is required for
-a plain jOOQ-driven transaction.
+a plain jOOQ-driven transaction. A nested `dslContext.transaction(...)` that rolls back to its savepoint - also
+because its commit failed - clears the cache, while the outer transaction keeps it. With the one-argument constructor, no scope is ever opened for jOOQ's own transactions, so the cache is
+off there. With JTA but without Spring, set a `JtaTransactionCacheProvider` (see
+[`persistence-cache-jakarta-jta`](../persistence-cache-jakarta-jta/readme.md)).
 
 In a Spring Boot application, [`DlcJooqPersistenceAutoConfiguration`](../dlc-spring-boot-autoconfig/readme.md#4-jooq-persistence-autoconfig-dlcjooqpersistenceautoconfiguration)
-wires the additional Spring-aware binder automatically - nothing to configure by hand. For a manual setup (no
-autoconfig) with Spring-managed (`@Transactional`) transactions, wrap your connection provider with
-`io.domainlifecycles.jooq.cache.SpringTransactionCacheAwareConnectionProvider`, using the same
-`ThreadBoundTransactionCacheProvider` instance passed to `JooqDomainPersistenceConfiguration` - see
-[`persistence-spring-tx`](../persistence-spring-tx/readme.md) for how the jOOQ-native and Spring-aware binders
-coexist on the same connection provider without conflict.
+sets a `SpringTransactionCacheProvider`, following Spring's transactions, automatically - nothing to configure by
+hand. For a manual setup (no autoconfig) with Spring-managed (`@Transactional`) transactions, set a
+`SpringTransactionCacheProvider` via `withTransactionCacheProvider(...)` - see
+[`persistence-cache-spring-tx`](../persistence-cache-spring-tx/readme.md).
 
 <a name="repositories"></a>
 

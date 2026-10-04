@@ -103,7 +103,8 @@ public class JdbcPersister extends BasePersister<JdbcRecord> implements Persiste
         var values = record.values();
         var columnNames = new ArrayList<>(values.keySet());
         var sql = dialect.insertSql(table, columnNames);
-        try (PreparedStatement statement = connectionProvider.getConnection().prepareStatement(sql)) {
+        var connection = connectionProvider.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
             int index = 1;
             for (var columnName : columnNames) {
                 bindValue(statement, index++, table.column(columnName), values.get(columnName));
@@ -111,6 +112,8 @@ public class JdbcPersister extends BasePersister<JdbcRecord> implements Persiste
             statement.executeUpdate();
         } catch (SQLException e) {
             throw DLCPersistenceException.fail("Insert into '%s' failed.", e, table.name());
+        } finally {
+            connectionProvider.releaseConnection(connection);
         }
     }
 
@@ -136,7 +139,8 @@ public class JdbcPersister extends BasePersister<JdbcRecord> implements Persiste
         var sql = dialect.deleteSql(
             table, pkColumn.name(), versionChecked ? concurrencyColumn.name() : null, versionChecked);
 
-        try (PreparedStatement statement = connectionProvider.getConnection().prepareStatement(sql)) {
+        var connection = connectionProvider.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setObject(1, values.get(pkColumn.name()));
             if (versionChecked) {
                 statement.setObject(2, values.get(concurrencyColumn.name()));
@@ -147,6 +151,8 @@ public class JdbcPersister extends BasePersister<JdbcRecord> implements Persiste
             }
         } catch (SQLException e) {
             throw DLCPersistenceException.fail("Delete from '%s' failed.", e, table.name());
+        } finally {
+            connectionProvider.releaseConnection(connection);
         }
     }
 
@@ -183,7 +189,8 @@ public class JdbcPersister extends BasePersister<JdbcRecord> implements Persiste
         var sql = dialect.updateSql(
             table, setColumns, pkColumn.name(), versionChecked ? concurrencyColumn.name() : null, versionChecked);
 
-        try (PreparedStatement statement = connectionProvider.getConnection().prepareStatement(sql)) {
+        var connection = connectionProvider.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
             int index = 1;
             for (var columnName : setColumns) {
                 bindValue(statement, index++, table.column(columnName), values.get(columnName));
@@ -204,6 +211,8 @@ public class JdbcPersister extends BasePersister<JdbcRecord> implements Persiste
             }
         } catch (SQLException e) {
             throw DLCPersistenceException.fail("Update of '%s' failed.", e, table.name());
+        } finally {
+            connectionProvider.releaseConnection(connection);
         }
     }
 

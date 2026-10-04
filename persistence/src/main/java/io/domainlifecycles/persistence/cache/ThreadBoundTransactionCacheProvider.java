@@ -36,13 +36,12 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * The one shared, persistence-technology-independent {@link TransactionCacheProvider} implementation used by
- * both the jOOQ and the plain JDBC integration.
- * <p>
- * Binds a {@link TransactionCache} to the calling thread for the duration of one transaction. A scope is
- * opened and closed by a persistence-technology-specific binder (jOOQ's {@code TransactionCacheJooqBinder},
- * plain JDBC's {@code TransactionCacheAwareConnectionProvider}) around the native transaction boundary of
- * that technology - never directly by application code.
+ * A {@link TransactionCacheProvider} binding a {@link TransactionCache} to the calling thread for the duration of
+ * one transaction, for transactions without a transaction manager of their own: a scope is opened and closed around
+ * the transaction by jOOQ's {@code TransactionCacheJooqBinder} for jOOQ's own transactions, or by the application for
+ * plain JDBC transactions it drives itself (see {@link TransactionCacheScope}). Spring-managed and JTA transactions
+ * keep their cache as a resource of the transaction instead ({@code SpringTransactionCacheProvider},
+ * {@code JtaTransactionCacheProvider}).
  * <p>
  * Each scope's entries are held in a size-bounded LRU map (see {@link #ThreadBoundTransactionCacheProvider(int)})
  * so that a transaction fetching a large number of aggregates (e.g. a batch job or report) cannot grow the
@@ -142,6 +141,11 @@ public final class ThreadBoundTransactionCacheProvider<BASE_RECORD_TYPE>
         @Override
         public void invalidate(AggregateCacheKey key) {
             entries.remove(key);
+        }
+
+        @Override
+        public void clear() {
+            entries.clear();
         }
 
         @Override

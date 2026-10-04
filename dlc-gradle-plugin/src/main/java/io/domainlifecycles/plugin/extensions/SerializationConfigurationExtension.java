@@ -32,6 +32,7 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
+import org.gradle.api.tasks.Optional;
 
 import javax.inject.Inject;
 
@@ -108,6 +109,8 @@ public abstract class SerializationConfigurationExtension implements Named {
      *
      * @return a ListProperty containing the excluded supertype packages
      */
+    @Input
+    @Optional
     public abstract ListProperty<String> getNonDomainExcludedSupertypePackages();
 
     /**
@@ -116,5 +119,7 @@ public abstract class SerializationConfigurationExtension implements Named {
      *
      * @return a ListProperty containing the excluded packages
      */
+    @Input
+    @Optional
     public abstract ListProperty<String> getNonDomainExcludedPackages();
 }

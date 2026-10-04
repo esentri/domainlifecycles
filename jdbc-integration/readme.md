@@ -176,8 +176,19 @@ public class MyJdbcConnectionProvider implements JdbcConnectionProvider {
     public Connection getConnection() {
         return DataSourceUtils.getConnection(dataSource); // e.g. Spring, to join the current transaction
     }
+
+    @Override
+    public void releaseConnection(Connection connection) {
+        DataSourceUtils.releaseConnection(connection, dataSource); // closes it, unless bound to a transaction
+    }
 }
 ```
+
+Every connection obtained via `getConnection()` is handed back via `releaseConnection(...)` once the operation
+is done - the plain JDBC counterpart of jOOQ's `ConnectionProvider.acquire()`/`release()`. Its default does
+nothing, which fits a provider managing its connection itself; a provider handing out a new connection per call
+(as the one above does outside a transaction) has to close it there, or every operation outside a transaction
+keeps a pooled connection.
 
 For simple, single-connection setups (and for this module's own tests), `SingleJdbcConnectionProvider` always
 returns one fixed `Connection` instance.
@@ -235,19 +246,17 @@ The resulting `JdbcDomainPersistenceProvider` instance is passed into every Repo
 #### Transaction Cache
 
 `jdbc-integration` shares the [Transaction Cache](../persistence/readme.md#transaction-cache) feature with
-`jooq-integration` - enabled by default via `withTransactionCacheEnabled(...)`/`withTransactionCacheProvider(...)`/
-`withTransactionCacheMaxSize(...)` on `JdbcPersistenceConfigurationBuilder`, identical to the jOOQ side.
+`jooq-integration`. Plain JDBC has no transaction listener of its own, though, so the cache is off unless
+`withTransactionCacheProvider(...)` on `JdbcPersistenceConfigurationBuilder` sets a provider whose scopes follow
+the transaction boundaries reliably (see [Activation](../persistence/readme.md#transaction-cache-activation)):
 
-In a Spring Boot application, [`DlcJdbcPersistenceAutoConfiguration`](../dlc-spring-boot-autoconfig/readme.md#5-jdbc-persistence-autoconfig-dlcjdbcpersistenceautoconfiguration)
-wires the Spring-aware binder automatically - nothing to configure by hand.
-
-For a manual setup (no autoconfig), both the native and the Spring-aware binder need to be wired by hand. For
-a plain JDBC transaction (driven via commit/rollback on the connection provider itself, no Spring involved),
-wrap your `JdbcConnectionProvider` with `TransactionCacheAwareConnectionProvider`. For a Spring-managed
-(`@Transactional`) transaction, wrap it with `io.domainlifecycles.jdbc.cache.SpringTransactionCacheAwareConnectionProvider`
-instead (or in addition - see [`persistence-spring-tx`](../persistence-spring-tx/readme.md) for how the two
-binders coexist), using the same `ThreadBoundTransactionCacheProvider` instance passed to
-`JdbcDomainPersistenceConfiguration`.
+- In a Spring Boot application, [`DlcJdbcPersistenceAutoConfiguration`](../dlc-spring-boot-autoconfig/readme.md#5-jdbc-persistence-autoconfig-dlcjdbcpersistenceautoconfiguration)
+  wires it for Spring's transactions automatically - nothing to configure by hand. Without the autoconfig, set a
+  `SpringTransactionCacheProvider` (see [`persistence-cache-spring-tx`](../persistence-cache-spring-tx/readme.md)).
+- With JTA but without Spring, set a `JtaTransactionCacheProvider` (see
+  [`persistence-cache-jakarta-jta`](../persistence-cache-jakarta-jta/readme.md)).
+- For plain JDBC transactions the application drives itself, set a `ThreadBoundTransactionCacheProvider` and open
+  its scope around each transaction, as shown in [Activation](../persistence/readme.md#transaction-cache-activation).
 
 <a name="repositories"></a>
 

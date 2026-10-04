@@ -7,6 +7,9 @@ import io.domainlifecycles.jdbc.configuration.JdbcDomainPersistenceConfiguration
 import io.domainlifecycles.jdbc.configuration.JdbcEntityValueObjectRecordTypeConfiguration;
 import io.domainlifecycles.jdbc.configuration.JdbcValueObjectColumnNameOverride;
 import io.domainlifecycles.jdbc.connection.JdbcConnectionProvider;
+import io.domainlifecycles.jdbc.records.JdbcRecord;
+import io.domainlifecycles.persistence.cache.ThreadBoundTransactionCacheProvider;
+import io.domainlifecycles.persistence.cache.TransactionCacheProvider;
 import io.domainlifecycles.jdbc.dialect.JdbcDialect;
 import io.domainlifecycles.jdbc.imp.matcher.JdbcRecordPropertyMatcher;
 import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
@@ -78,7 +81,8 @@ public class JdbcTestPersistenceConfiguration {
         dialect = testDatabaseDialect.jdbcDialect();
         schemaMetadata = readSchemaMetadata();
         connectionProvider = () -> currentConnection;
-        domainPersistenceProvider = initDomainPersistenceProvider();
+        // a provider no scope is opened for unless a test does so itself, around what it runs as one transaction
+        domainPersistenceProvider = newDomainPersistenceProvider(connectionProvider, new ThreadBoundTransactionCacheProvider<>());
     }
 
     private void initDomainMirror() {
@@ -98,7 +102,17 @@ public class JdbcTestPersistenceConfiguration {
         }
     }
 
-    private JdbcDomainPersistenceProvider initDomainPersistenceProvider() {
+    /**
+     * Builds a provider with this configuration's mapping, but the given connection provider - e.g. to verify how
+     * connections are obtained and released.
+     *
+     * @param connectionProvider       the connection provider
+     * @param transactionCacheProvider the transaction cache provider, or {@code null} for none, which leaves the cache
+     *                                 off
+     * @return the provider
+     */
+    public JdbcDomainPersistenceProvider newDomainPersistenceProvider(
+        JdbcConnectionProvider connectionProvider, TransactionCacheProvider<JdbcRecord> transactionCacheProvider) {
         Set<RecordMapper<?, ?, ?>> customRecordMappers = new HashSet<>();
         // custom mappers are only needed where the physical schema genuinely diverges from this module's
         // naming convention (single-table inheritance discriminators, abbreviated foreign key columns, ...) -
@@ -229,9 +243,11 @@ public class JdbcTestPersistenceConfiguration {
             .withIgnoredRecordProperties(p -> p.getName().equals("ignoredColumn"))
             .withRecordEntityPropertyMatcher(new JdbcRecordPropertyMatcher(columnNameOverrides))
             .withEntityValueObjectRecordTypeConfiguration(
-                voConfigs.toArray(new JdbcEntityValueObjectRecordTypeConfiguration[0]))
-            .make();
-        return new JdbcDomainPersistenceProvider(configuration);
+                voConfigs.toArray(new JdbcEntityValueObjectRecordTypeConfiguration[0]));
+        if (transactionCacheProvider != null) {
+            configuration.withTransactionCacheProvider(transactionCacheProvider);
+        }
+        return new JdbcDomainPersistenceProvider(configuration.make());
     }
 
     public void startTransaction() {

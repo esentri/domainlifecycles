@@ -29,7 +29,6 @@ package io.domainlifecycles.boot3.autoconfig.configurations;
 import io.domainlifecycles.boot3.autoconfig.configurations.persistence.SpringPersistenceEventPublisher;
 import io.domainlifecycles.boot3.autoconfig.exception.DLCAutoConfigException;
 import io.domainlifecycles.builder.DomainObjectBuilderProvider;
-import io.domainlifecycles.jdbc.cache.SpringTransactionCacheAwareConnectionProvider;
 import io.domainlifecycles.jdbc.configuration.JdbcDomainPersistenceConfiguration;
 import io.domainlifecycles.jdbc.connection.JdbcConnectionProvider;
 import io.domainlifecycles.jdbc.dialect.H2JdbcDialect;
@@ -43,14 +42,15 @@ import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.jdbc.schema.JdbcSchemaMetadata;
 import io.domainlifecycles.mirror.api.DomainMirror;
-import io.domainlifecycles.persistence.cache.ThreadBoundTransactionCacheProvider;
+import io.domainlifecycles.persistence.cache.TransactionCacheProvider;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
 import io.domainlifecycles.persistence.provider.DomainPersistenceProvider;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
 import io.domainlifecycles.persistence.repository.actions.PersistenceAction;
-import io.domainlifecycles.persistence.spring.cache.SpringTransactionCacheBinder;
+import io.domainlifecycles.persistence.spring.cache.SpringTransactionCacheProvider;
 import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -83,8 +83,11 @@ import java.util.Set;
  *   {@code jooqSqlDialect}) - a project only ever activates one of the two persistence backends, so the
  *   property name is shared rather than duplicated per backend.
  * - Reading the database schema once, via {@link JdbcSchemaMetadata}.
- * - Creating a {@link JdbcConnectionProvider} bean already wired to the DLC transaction cache for
- *   Spring-managed transactions - see {@link JdbcPersistenceConfiguration#jdbcConnectionProvider}.
+ * - Creating a {@link JdbcConnectionProvider} bean handing out the connection of the current Spring-managed
+ *   transaction - see {@link JdbcPersistenceConfiguration#jdbcConnectionProvider}.
+ * - Providing DLC's transaction cache for Spring-managed transactions, configurable via
+ *   {@code dlc.features.persistence.transaction-cache.enabled}/{@code .max-size} - see
+ *   {@link JdbcPersistenceConfiguration#dlcJdbcTransactionCacheProvider}.
  * - Providing a {@link JdbcDomainPersistenceProvider} for domain persistence if a {@link DomainMirror} is
  *   available.
  * - Setting up an {@link EntityIdentityProvider} for handling entity identities in JDBC operations.
@@ -142,39 +145,54 @@ public class DlcJdbcPersistenceAutoConfiguration {
         }
 
         /**
-         * Creates a {@link ThreadBoundTransactionCacheProvider} bean backing the transaction cache feature,
-         * shared between {@link #jdbcConnectionProvider} (which opens/closes a scope for it around the
-         * current Spring transaction) and {@link #domainPersistenceProvider} (which reads/writes it).
+         * Creates a {@link SpringTransactionCacheProvider} bean backing the transaction cache feature: one cache
+         * per Spring-managed transaction, kept as a resource of that transaction, read and written by
+         * {@link #domainPersistenceProvider}. Like the other beans of this configuration, it is not created if a
+         * {@link DomainPersistenceProvider} exists already - e.g. the one of
+         * {@link DlcJooqPersistenceAutoConfiguration}, if both integrations are on the classpath: nothing would
+         * use it, and a second cache provider bean would make injecting the one in use by type ambiguous. Holds at
+         * most {@code dlc.features.persistence.transaction-cache.max-size} aggregates per transaction (256 by
+         * default), and is not created if {@code dlc.features.persistence.transaction-cache.enabled} is
+         * {@code false}. Any bean of type {@link TransactionCacheProvider} replaces it, whatever its name.
          *
-         * @return a {@link ThreadBoundTransactionCacheProvider} instance
+         * @return a {@link SpringTransactionCacheProvider} instance
+         * @throws DLCAutoConfigException if the maximum number of aggregates is not greater than 0
          */
         @Bean
-        @ConditionalOnMissingBean(name = "dlcJdbcTransactionCacheProvider")
-        public ThreadBoundTransactionCacheProvider<JdbcRecord> dlcJdbcTransactionCacheProvider() {
-            return new ThreadBoundTransactionCacheProvider<>();
+        @ConditionalOnMissingBean({DomainPersistenceProvider.class, TransactionCacheProvider.class})
+        @ConditionalOnProperty(prefix = TransactionCacheProperties.PREFIX, name = "enabled", havingValue = "true",
+            matchIfMissing = true)
+        public SpringTransactionCacheProvider<JdbcRecord> dlcJdbcTransactionCacheProvider() {
+            return new SpringTransactionCacheProvider<>(TransactionCacheProperties.maxSize(environment));
         }
 
         /**
          * Creates a {@link JdbcConnectionProvider} bean handing out the connection bound to the currently
          * active Spring transaction (via {@code DataSourceUtils.getConnection(DataSource)}, the plain JDBC
-         * equivalent of jOOQ's {@code TransactionAwareDataSourceProxy}), wrapped so that a transaction cache
-         * scope opens for that same transaction on first use (see {@link SpringTransactionCacheAwareConnectionProvider}).
-         * This is the plain JDBC analogue of {@link DlcJooqPersistenceAutoConfiguration#connectionProvider} -
-         * by default, the DLC transaction cache is bound to Spring's own transaction management for both
-         * persistence backends, with nothing to configure by hand.
+         * equivalent of jOOQ's {@code TransactionAwareDataSourceProxy}). This is the plain JDBC analogue of
+         * {@link DlcJooqPersistenceAutoConfiguration#connectionProvider}. A connection obtained outside a
+         * transaction is closed again once the operation is done ({@code DataSourceUtils.releaseConnection}).
          *
          * @param dataSource               the data source to resolve the current transaction's connection from
-         * @param transactionCacheProvider the transaction cache provider to open/close a scope for
          * @return a {@link JdbcConnectionProvider} instance configured with the given data source
          */
         @Bean
         @ConditionalOnBean(DataSource.class)
         @ConditionalOnMissingBean({JdbcConnectionProvider.class, DomainPersistenceProvider.class})
         public JdbcConnectionProvider jdbcConnectionProvider(
-            DataSource dataSource, ThreadBoundTransactionCacheProvider<JdbcRecord> transactionCacheProvider) {
-            JdbcConnectionProvider dataSourceBackedProvider = () -> DataSourceUtils.getConnection(dataSource);
-            return new SpringTransactionCacheAwareConnectionProvider(
-                dataSourceBackedProvider, new SpringTransactionCacheBinder<>(transactionCacheProvider));
+            DataSource dataSource) {
+            return new JdbcConnectionProvider() {
+                @Override
+                public Connection getConnection() {
+                    return DataSourceUtils.getConnection(dataSource);
+                }
+
+                // closes a connection obtained outside a transaction, keeps one bound to a transaction open
+                @Override
+                public void releaseConnection(Connection connection) {
+                    DataSourceUtils.releaseConnection(connection, dataSource);
+                }
+            };
         }
 
         /**
@@ -210,8 +228,8 @@ public class DlcJdbcPersistenceAutoConfiguration {
 
         /**
          * Creates a {@link JdbcSchemaMetadata} bean, reading the database schema once via a short-lived
-         * connection obtained directly from the {@link DataSource} (not through {@link #jdbcConnectionProvider},
-         * which would unnecessarily involve the transaction cache for a one-off, startup-time read).
+         * connection obtained directly from the {@link DataSource} - a one-off, startup-time read, outside any
+         * transaction.
          * <p>
          * Reads all schemas visible through the connection by default; set
          * {@code dlc.features.persistence.jdbc.schema-pattern} to narrow the read to a single schema - see
@@ -245,9 +263,9 @@ public class DlcJdbcPersistenceAutoConfiguration {
          * @param customRecordMappers         a set of custom mappers for converting database records to domain objects
          * @param domainMirror                the domain mirror for reflection and metadata about domain types,
          *                                     needed for correct order of bean instantiation
-         * @param transactionCacheProvider     the same transaction cache provider {@link #jdbcConnectionProvider}
-         *                                     opens/closes a scope for, so that the two agree on what "the
-         *                                     current transaction's cache" is
+         * @param transactionCacheProvider     the provider of the transaction cache -
+         *                                     {@link #dlcJdbcTransactionCacheProvider} or a bean replacing it; none if
+         *                                     the cache is disabled
          * @param jdbcConnectionProvider       the connection provider every repository/fetcher built from the
          *                                     resulting provider reads directly
          * @param jdbcDialect                  the resolved SQL dialect
@@ -261,21 +279,32 @@ public class DlcJdbcPersistenceAutoConfiguration {
             DomainObjectBuilderProvider domainObjectBuilderProvider,
             Set<RecordMapper<?, ?, ?>> customRecordMappers,
             DomainMirror domainMirror,
-            ThreadBoundTransactionCacheProvider<JdbcRecord> transactionCacheProvider,
+            ObjectProvider<TransactionCacheProvider<JdbcRecord>> transactionCacheProvider,
             JdbcConnectionProvider jdbcConnectionProvider,
             JdbcDialect jdbcDialect,
             JdbcSchemaMetadata jdbcSchemaMetadata
         ) {
-            return new JdbcDomainPersistenceProvider(
-                JdbcDomainPersistenceConfiguration.JdbcPersistenceConfigurationBuilder
-                    .newConfig()
-                    .withDomainObjectBuilderProvider(domainObjectBuilderProvider)
-                    .withCustomRecordMappers(customRecordMappers)
-                    .withConnectionProvider(jdbcConnectionProvider)
-                    .withDialect(jdbcDialect)
-                    .withSchemaMetadata(jdbcSchemaMetadata)
-                    .withTransactionCacheProvider(transactionCacheProvider)
-                    .make());
+            var configuration = JdbcDomainPersistenceConfiguration.JdbcPersistenceConfigurationBuilder
+                .newConfig()
+                .withDomainObjectBuilderProvider(domainObjectBuilderProvider)
+                .withCustomRecordMappers(customRecordMappers)
+                .withConnectionProvider(jdbcConnectionProvider)
+                .withDialect(jdbcDialect)
+                .withSchemaMetadata(jdbcSchemaMetadata);
+            if (TransactionCacheProperties.enabled(environment)) {
+                var cacheProvider = transactionCacheProvider.getIfAvailable();
+                if (cacheProvider == null) {
+                    // the autoconfig's own provider is left out only for an existing one, which does not fit
+                    throw DLCAutoConfigException.fail(
+                        "A TransactionCacheProvider bean replaces the one of the JDBC persistence autoconfig, but "
+                            + "none is a TransactionCacheProvider<JdbcRecord>. Provide one of that type, or switch "
+                            + "the cache off via '%s=false'.", TransactionCacheProperties.ENABLED);
+                }
+                configuration.withTransactionCacheProvider(cacheProvider);
+            } else {
+                configuration.withTransactionCacheEnabled(false);
+            }
+            return new JdbcDomainPersistenceProvider(configuration.make());
         }
 
         /**

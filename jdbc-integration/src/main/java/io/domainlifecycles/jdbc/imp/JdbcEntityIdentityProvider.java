@@ -86,7 +86,13 @@ public class JdbcEntityIdentityProvider implements EntityIdentityProvider {
             return DlcAccess.newIdentityInstance(UUID.randomUUID(), identityTypeName);
         }
         var sequenceName = sequenceNameCache.computeIfAbsent(identityTypeName, JdbcEntityIdentityProvider::sequenceNameFor);
-        var idValue = JdbcSequenceIdGenerator.nextValue(connectionProvider.getConnection(), dialect, sequenceName);
+        var connection = connectionProvider.getConnection();
+        long idValue;
+        try {
+            idValue = JdbcSequenceIdGenerator.nextValue(connection, dialect, sequenceName);
+        } finally {
+            connectionProvider.releaseConnection(connection);
+        }
         return DlcAccess.newIdentityInstance(idValue, identityTypeName);
     }
 

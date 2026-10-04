@@ -52,6 +52,7 @@ Here is an overview of more details about DLC Persistence and some additional fe
     - [Queries via Fetcher](#fetcher)
     - [Transaction Cache](#transaction-cache)
         - [Activation: how the cache learns when a transaction begins and ends](#transaction-cache-activation)
+        - [Own transaction cache providers](#transaction-cache-own-provider)
     - [Object relational mapping](#or-mapping)
         - [AutoMapping](#automapping)
         - [RecordMapper](#recordmapper)
@@ -634,12 +635,17 @@ How it works:
   state again, if one is present; otherwise they fall back to a real fetch exactly as before. Either way, the
   entry is always removed from the cache once consumed - the next fetch of that Aggregate root within the same
   transaction fetches for real again.
-- The cache is scoped to exactly one transaction and is thread-bound: it is only ever visible on the thread the
-  transaction is running on, and is entirely discarded once the transaction ends (commit or rollback), regardless
-  of outcome.
+- The cache is scoped to exactly one transaction and lives as long as it, across all its reads and writes: it is
+  only ever visible to that transaction, and is entirely discarded once the transaction ends (commit or rollback),
+  regardless of outcome. Nested transactions are kept apart, and a rollback to a savepoint clears the cache, since
+  entries loaded since may hold state that was never committed.
 
-Configuration (identical builder methods on both `JooqPersistenceConfigurationBuilder` and
-`JdbcPersistenceConfigurationBuilder`):
+The cache is only correct if DLC learns reliably when a transaction begins and ends - otherwise a write could
+compare against a state that was rolled back, or belongs to another transaction. It is therefore only used where
+the transaction boundaries come from a reliable source (see the table below); everywhere else it is off, and every
+write reads the current state of the Aggregate, exactly as without the feature.
+
+Configuration:
 
 ```java
 JooqDomainPersistenceConfiguration.JooqPersistenceConfigurationBuilder
@@ -647,16 +653,15 @@ JooqDomainPersistenceConfiguration.JooqPersistenceConfigurationBuilder
     // ...
     .withTransactionCacheEnabled(true)     // default; false disables the feature entirely - no transaction
                                             // listener is registered and no additional memory is used
-    .withTransactionCacheMaxSize(256)      // default; the maximum number of Aggregate roots held per
-                                            // transaction, ignored if a custom provider is set below
+    .withTransactionCacheMaxSize(256)      // jOOQ only, default; the maximum number of Aggregate roots held
+                                            // per transaction, ignored if a custom provider is set below
+    .withTransactionCacheProvider(...)     // a provider following another transaction mechanism, e.g. JTA
     .make();
 ```
 
-A custom `io.domainlifecycles.persistence.cache.TransactionCacheProvider` can be supplied via
-`.withTransactionCacheProvider(...)` instead of the default `ThreadBoundTransactionCacheProvider` - for example
-to share a cache implementation across persistence technologies, or to back it with something other than an
-in-memory map. Note that only the default `ThreadBoundTransactionCacheProvider` is bound automatically to a
-transaction's lifecycle by the mechanisms described below; a custom provider must arrange for that itself.
+`JdbcPersistenceConfigurationBuilder` offers `withTransactionCacheEnabled(...)` and
+`withTransactionCacheProvider(...)` as well, but sets up no provider by default: plain JDBC has no transaction
+listener of its own, so the cache is off until a provider is set whose scopes follow the transaction boundaries.
 
 <a name="transaction-cache-activation"></a>
 
@@ -665,18 +670,64 @@ transaction's lifecycle by the mechanisms described below; a custom provider mus
 The cache itself has no idea when a transaction starts or ends - that part is technology-specific, and handled
 by a small binder class for each way a transaction can be driven:
 
-| Transaction driven by...                                    | Binder                                                                  | Wired automatically by                                                                        |
+| Transaction driven by...                                    | Source of the boundaries                                                | Wired by                                                                                      |
 |---------------------------------------------------------------|--------------------------------------------------------------------------|------------------------------------------------------------------------------------------------|
+| Spring (`@Transactional`, `TransactionTemplate`; with a `DataSourceTransactionManager` or a `JtaTransactionManager`) | `SpringTransactionCacheProvider` on Spring's `TransactionSynchronization`, the cache a resource of the transaction (see [`persistence-cache-spring-tx`](../persistence-cache-spring-tx/readme.md)) | `DlcJooqPersistenceAutoConfiguration`/`DlcJdbcPersistenceAutoConfiguration` (Spring Boot autoconfig), for both `jooq-integration` and `jdbc-integration`; configurable via `dlc.features.persistence.transaction-cache.enabled`/`.max-size` |
+| JTA without Spring (e.g. a Jakarta EE application server)    | `JtaTransactionCacheProvider` on the JTA `TransactionSynchronizationRegistry` (see [`persistence-cache-jakarta-jta`](../persistence-cache-jakarta-jta/readme.md)) | Manual - set it via `withTransactionCacheProvider(...)`, for both `jooq-integration` and `jdbc-integration` |
 | jOOQ itself (`dslContext.transaction(...)`, jOOQ's own `TransactionListener` events) | `TransactionCacheJooqBinder` (`jooq-integration`)                       | `JooqDomainPersistenceProvider`'s `DSLContext`-taking constructor, once, at provider construction time |
-| Plain JDBC, driven via commit/rollback on the connection provider's proxy | `TransactionCacheAwareConnectionProvider` (`jdbc-integration`)          | Manual - wrap your own `JdbcConnectionProvider` with it                                        |
-| Spring (`@Transactional`, `DataSourceTransactionManager`)      | `SpringTransactionCacheBinder` + a `SpringTransactionCacheAwareConnectionProvider` decorator (see [`persistence-spring-tx`](../persistence-spring-tx/readme.md)) | `DlcJooqPersistenceAutoConfiguration`/`DlcJdbcPersistenceAutoConfiguration` (Spring Boot autoconfig), for both `jooq-integration` and `jdbc-integration` |
+| Plain JDBC transactions the application drives itself       | the application, opening a `ThreadBoundTransactionCacheProvider` scope around each transaction | Manual - set the provider via `withTransactionCacheProvider(...)` and open/close/clear its scopes, see below |
 
-A purely Spring-managed transaction bypasses both jOOQ's own `TransactionListener` (never fires unless
-application code calls `dslContext.transaction(...)` itself) and plain JDBC's connection-proxy commit/rollback
-hooks (Spring's `DataSourceTransactionManager` commits/rolls back the physical `Connection` directly) - which is
-exactly the gap `persistence-spring-tx` closes. Both binders can be active on the same connection provider at
-once without conflict: the jOOQ-native binder handles a `dslContext.transaction(...)` call, the Spring binder
-handles an `@Transactional` method, and each is a no-op outside of the case it is meant for.
+Without one of these, there is no cache. Spring-managed and JTA transactions keep their cache as a resource of the
+transaction itself, so that the transaction manager keeps nested and suspended transactions apart; no connection
+needs to be decorated for any of the sources.
+
+Without Spring, a transaction has to reach the repositories on the same thread, and their connections have to be
+handed back:
+
+- jOOQ: the repositories run on the `DSLContext` they were created with, so they only take part in a
+  `dslContext.transaction(...)` if that `DSLContext` hands out the transaction's connection - e.g. with jOOQ's
+  `ThreadLocalTransactionProvider` - and jOOQ releases every connection it acquires.
+- Plain JDBC: within a transaction, the `JdbcConnectionProvider` hands out the transaction's connection, and
+  `releaseConnection(...)` leaves it open. Outside one, a connection handed out per call is closed there.
+
+Plain JDBC transactions the application drives itself only use the cache with a scope the application opens
+around each transaction - closed once the transaction ends, and cleared after a rollback to a savepoint:
+
+```java
+var cacheProvider = new ThreadBoundTransactionCacheProvider<JdbcRecord>();
+// ... JdbcPersistenceConfigurationBuilder.newConfig()...withTransactionCacheProvider(cacheProvider)...
+
+connection.setAutoCommit(false);
+try (var scope = cacheProvider.open()) {
+    // ... repository operations on this connection ...
+    connection.rollback(savepoint);
+    scope.clear();                   // after a rollback to a savepoint
+    // ...
+    connection.commit();
+}
+```
+
+<a name="transaction-cache-own-provider"></a>
+
+##### Own transaction cache providers
+
+Any implementation of `io.domainlifecycles.persistence.cache.TransactionCacheProvider` can be set via
+`withTransactionCacheProvider(...)` - with the Spring Boot autoconfig, any bean of that type replaces the provider
+the autoconfig sets up, whatever its name. Since a write compares the Aggregate against the state the cache holds
+for it, a provider must only ever hand out a cache holding what the running transaction itself loaded and what is
+still valid within it:
+
+- one cache per transaction, never shared between two transactions - also not between transactions that run one
+  after the other on the same thread or on the same, pooled connection,
+- no cache outside an actual transaction,
+- the cache lives as long as its transaction, across all its reads and writes, and is emptied once the transaction
+  completes - committed or rolled back,
+- a rollback to a savepoint empties the cache, since entries loaded since may hold state that was never committed,
+- a transaction suspended for another one keeps its cache apart from the other one's, and gets it back when it
+  resumes.
+
+Where a provider cannot learn these boundaries reliably, it must hand out no cache at all - the persistence then
+reads the current state before every write, exactly as without the feature.
 
 <a name="or-mapping"></a>
 

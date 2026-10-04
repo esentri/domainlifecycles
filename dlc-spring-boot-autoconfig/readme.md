@@ -208,8 +208,18 @@ Providing the 'dlcJooqRecordPackage' is mandatory for DLC persistence,
 'dlcJooqSqlDialect' is recommended.
 
 This autoconfig also wires DLC's [Transaction Cache](./../persistence/readme.md#transaction-cache) to Spring's
-own transaction management automatically (via [`persistence-spring-tx`](./../persistence-spring-tx/readme.md)),
-so it works correctly for `@Transactional` methods with no extra setup - nothing to configure by hand.
+own transaction management automatically (via [`persistence-cache-spring-tx`](./../persistence-cache-spring-tx/readme.md)),
+so it works correctly for `@Transactional` methods with no extra setup - nothing to configure by hand. It is
+configurable via (shared by the jOOQ and the JDBC persistence autoconfig):
+```properties
+# default true; false leaves out the cache - every write reads the current state of the aggregate
+dlc.features.persistence.transaction-cache.enabled=true
+# default 256; the maximum number of aggregates held per transaction
+dlc.features.persistence.transaction-cache.max-size=256
+```
+Any bean of type `TransactionCacheProvider` replaces the provider set up by the autoconfig, whatever its name -
+typed `TransactionCacheProvider<UpdatableRecord<?>>` for jOOQ, `TransactionCacheProvider<JdbcRecord>` for JDBC; see
+[Own transaction cache providers](./../persistence/readme.md#transaction-cache-own-provider) for what it has to fulfil.
 
 More information on [DLC Persistence](./../persistence/readme.md)
 
@@ -259,8 +269,18 @@ dlc.features.persistence.jdbc.schema-pattern=my_schema
 ```
 
 This autoconfig also wires DLC's [Transaction Cache](./../persistence/readme.md#transaction-cache) to Spring's
-own transaction management automatically (via [`persistence-spring-tx`](./../persistence-spring-tx/readme.md)),
-so it works correctly for `@Transactional` methods with no extra setup - nothing to configure by hand.
+own transaction management automatically (via [`persistence-cache-spring-tx`](./../persistence-cache-spring-tx/readme.md)),
+so it works correctly for `@Transactional` methods with no extra setup - nothing to configure by hand. It is
+configurable via (shared by the jOOQ and the JDBC persistence autoconfig):
+```properties
+# default true; false leaves out the cache - every write reads the current state of the aggregate
+dlc.features.persistence.transaction-cache.enabled=true
+# default 256; the maximum number of aggregates held per transaction
+dlc.features.persistence.transaction-cache.max-size=256
+```
+Any bean of type `TransactionCacheProvider` replaces the provider set up by the autoconfig, whatever its name -
+typed `TransactionCacheProvider<UpdatableRecord<?>>` for jOOQ, `TransactionCacheProvider<JdbcRecord>` for JDBC; see
+[Own transaction cache providers](./../persistence/readme.md#transaction-cache-own-provider) for what it has to fulfil.
 
 More information on [DLC JDBC Integration](./../jdbc-integration/readme.md)
 

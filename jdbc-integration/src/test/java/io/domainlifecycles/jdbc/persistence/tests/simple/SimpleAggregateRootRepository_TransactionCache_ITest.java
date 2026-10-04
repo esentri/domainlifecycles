@@ -24,16 +24,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * {@code jdbc-integration}'s independent repository/fetcher implementation, since the cache mechanics
  * themselves are shared, but the code paths exercising them are not.
  * <p>
- * Unlike jOOQ (whose native {@code TransactionCacheJooqBinder} only ever fires for a {@code
- * dslContext.transaction(...)} call, which {@code JdbcBasePersistence_ITest}'s directly-driven connection
- * never makes), plain JDBC's default-configured connection provider is itself already wrapped in a native
- * {@code TransactionCacheAwareConnectionProvider} (see that class's own test) that auto-opens a scope the
- * first time it ever sees a given physical connection - regardless of how that connection's transaction is
- * otherwise being driven. This test's own manual {@link ThreadBoundTransactionCacheProvider#open()}/{@code
- * close()} calls around each assertion take that into account (see the comment in {@code
- * findThenUpdateWithoutAnOpenScopeIssuesTwoSelects()}), so it still exercises the real repository/fetcher
- * code path (not mocks) for the invalidation rule and the SELECT-avoidance behavior with a precisely
- * controlled scope.
+ * Plain JDBC has no transaction listener of its own, so this test opens and closes the scopes itself, via
+ * {@link ThreadBoundTransactionCacheProvider#open()} - as an application driving its own JDBC transactions does. It
+ * exercises the real repository/fetcher code path (not mocks) for the invalidation rule and the SELECT-avoidance
+ * behavior with a precisely controlled scope.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SimpleAggregateRootRepository_TransactionCache_ITest extends JdbcBasePersistence_ITest {
@@ -181,17 +175,6 @@ public class SimpleAggregateRootRepository_TransactionCache_ITest extends JdbcBa
         try (var scope = cacheProvider().open()) {
             inserted = simpleAggregateRootRepository.insert(TestDataGenerator.buildTestRootSimple());
         }
-        //the repository's connection provider is (like any real, default-configured one) itself already
-        //wrapped in a native TransactionCacheAwareConnectionProvider (see that class's own test), which
-        //auto-opens a scope on its own the first time it ever sees this test method's physical connection -
-        //independently of, and superseding, the manual scope just opened/closed above (insert() was the
-        //first operation to acquire a connection this test method, so it is what triggered that native
-        //auto-open). An empty open/close here forces that leftover scope closed, so the section below
-        //genuinely starts with none bound.
-        try (var scope = cacheProvider().open()) {
-            // intentionally empty - see comment above
-        }
-
         //no scope open here - the transaction cache feature is dormant, exactly as if it did not exist
         selectCount.set(0);
 

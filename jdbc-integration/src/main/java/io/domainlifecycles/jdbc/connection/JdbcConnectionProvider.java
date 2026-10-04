@@ -38,6 +38,11 @@ import java.sql.Connection;
  * implementation backed by a transaction manager (e.g. Spring's {@code DataSourceUtils}, in a future
  * integration) can hand out the connection bound to the currently active transaction.
  * <p>
+ * Every connection obtained via {@link #getConnection()} is handed back via {@link #releaseConnection(Connection)}
+ * once the operation is done - the analogue of jOOQ's {@code ConnectionProvider.acquire()}/{@code release()}. An
+ * implementation handing out a new connection outside a transaction, e.g. one backed by Spring's
+ * {@code DataSourceUtils}, closes it there, while a connection bound to a running transaction stays open.
+ * <p>
  * For standalone use (and for this module's own tests), {@link SingleJdbcConnectionProvider} always returns
  * one fixed connection.
  *
@@ -51,4 +56,13 @@ public interface JdbcConnectionProvider {
      * @return the connection
      */
     Connection getConnection();
+
+    /**
+     * Hands back a connection obtained via {@link #getConnection()}, once the operation it was obtained for is
+     * done. Does nothing by default, for implementations handing out one connection they manage themselves.
+     *
+     * @param connection the connection obtained via {@link #getConnection()}
+     */
+    default void releaseConnection(Connection connection) {
+    }
 }

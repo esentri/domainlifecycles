@@ -1,11 +1,16 @@
 package io.domainlifecycles.jooq.cache;
 
+import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.persistence.cache.AggregateCacheKey;
 import io.domainlifecycles.persistence.cache.ThreadBoundTransactionCacheProvider;
+import io.domainlifecycles.persistence.cache.TransactionCacheScope;
+import io.domainlifecycles.persistence.fetcher.FetcherResult;
 import org.jooq.Configuration;
 import org.jooq.TransactionContext;
 import org.jooq.TransactionListenerProvider;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DefaultTransactionListenerProvider;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,15 +22,25 @@ import static org.mockito.Mockito.when;
 
 public class TransactionCacheJooqBinderTest {
 
+    private static final AggregateCacheKey KEY = new AggregateCacheKey("some.Aggregate", new TestId(1L));
+
+    // jOOQ passes one and the same context to all events of a transaction
     private static TransactionContext ctx() {
         return mock(TransactionContext.class);
     }
 
+    private final ThreadBoundTransactionCacheProvider<UpdatableRecord<?>> cacheProvider =
+        new ThreadBoundTransactionCacheProvider<>();
+
+    private final TransactionCacheJooqBinder binder = new TransactionCacheJooqBinder(cacheProvider);
+
+    @AfterEach
+    void closeAnyScopeLeftOpen() {
+        cacheProvider.currentTransactionCache().ifPresent(cache -> ((TransactionCacheScope) cache).close());
+    }
+
     @Test
     public void beginStartOpensAScope() {
-        var cacheProvider = new ThreadBoundTransactionCacheProvider<UpdatableRecord<?>>();
-        var binder = new TransactionCacheJooqBinder(cacheProvider);
-
         binder.beginStart(ctx());
 
         assertThat(cacheProvider.currentTransactionCache()).isPresent();
@@ -33,38 +48,127 @@ public class TransactionCacheJooqBinderTest {
 
     @Test
     public void commitEndClosesTheScope() {
-        var cacheProvider = new ThreadBoundTransactionCacheProvider<UpdatableRecord<?>>();
-        var binder = new TransactionCacheJooqBinder(cacheProvider);
+        var transaction = ctx();
 
-        binder.beginStart(ctx());
-        binder.commitEnd(ctx());
+        binder.beginStart(transaction);
+        binder.commitEnd(transaction);
 
         assertThat(cacheProvider.currentTransactionCache()).isEmpty();
     }
 
     @Test
     public void rollbackEndClosesTheScope() {
-        var cacheProvider = new ThreadBoundTransactionCacheProvider<UpdatableRecord<?>>();
-        var binder = new TransactionCacheJooqBinder(cacheProvider);
+        var transaction = ctx();
 
-        binder.beginStart(ctx());
-        binder.rollbackEnd(ctx());
+        binder.beginStart(transaction);
+        binder.rollbackEnd(transaction);
 
         assertThat(cacheProvider.currentTransactionCache()).isEmpty();
     }
 
     @Test
     public void onlyTheOutermostCommitEndClosesTheScope() {
-        var cacheProvider = new ThreadBoundTransactionCacheProvider<UpdatableRecord<?>>();
-        var binder = new TransactionCacheJooqBinder(cacheProvider);
+        var outer = ctx();
+        var nested = ctx();
 
-        binder.beginStart(ctx());
-        binder.beginStart(ctx());
-        binder.commitEnd(ctx());
+        binder.beginStart(outer);
+        binder.beginStart(nested);
+        binder.commitEnd(nested);
         assertThat(cacheProvider.currentTransactionCache()).isPresent();
 
-        binder.commitEnd(ctx());
+        binder.commitEnd(outer);
         assertThat(cacheProvider.currentTransactionCache()).isEmpty();
+    }
+
+    @Test
+    public void aNestedCommitKeepsTheEntries() {
+        var outer = ctx();
+        var nested = ctx();
+
+        binder.beginStart(outer);
+        binder.beginStart(nested);
+        var scope = cacheProvider.currentTransactionCache().orElseThrow();
+        scope.put(KEY, new FetcherResult<>(null, null));
+        binder.commitEnd(nested);
+
+        assertThat(scope.take(KEY)).isPresent();
+    }
+
+    @Test
+    public void aNestedRollbackClearsTheScopeButKeepsItOpen() {
+        var outer = ctx();
+        var nested = ctx();
+
+        binder.beginStart(outer);
+        binder.beginStart(nested);
+        var scope = cacheProvider.currentTransactionCache().orElseThrow();
+        scope.put(KEY, new FetcherResult<>(null, null));
+        binder.rollbackEnd(nested);
+
+        assertThat(cacheProvider.currentTransactionCache()).containsSame(scope);
+        assertThat(scope.take(KEY)).as("loaded since the savepoint").isEmpty();
+        binder.commitEnd(outer);
+        assertThat(cacheProvider.currentTransactionCache()).isEmpty();
+    }
+
+    @Test
+    public void aFailingCommitReportedAsRolledBackAfterwardsLeavesNoScope() {
+        var transaction = ctx();
+
+        binder.beginStart(transaction);
+        binder.commitEnd(transaction);
+        binder.rollbackEnd(transaction);
+
+        assertThat(cacheProvider.currentTransactionCache()).isEmpty();
+        var next = ctx();
+        binder.beginStart(next);
+        assertThat(cacheProvider.currentTransactionCache()).as("a scope of its own").isPresent();
+        binder.commitEnd(next);
+        assertThat(cacheProvider.currentTransactionCache()).isEmpty();
+    }
+
+    @Test
+    public void aNestedTransactionFailingToCommitKeepsTheScopeOfTheOuterOneButClearsIt() {
+        var outer = ctx();
+        var nested = ctx();
+
+        binder.beginStart(outer);
+        binder.beginStart(nested);
+        var scope = cacheProvider.currentTransactionCache().orElseThrow();
+        scope.put(KEY, new FetcherResult<>(null, null));
+        binder.commitEnd(nested);
+        binder.rollbackEnd(nested);
+
+        assertThat(cacheProvider.currentTransactionCache()).as("the outer transaction still runs").containsSame(scope);
+        assertThat(scope.take(KEY)).as("loaded in the rolled back nested transaction").isEmpty();
+        binder.commitEnd(outer);
+        assertThat(cacheProvider.currentTransactionCache()).isEmpty();
+    }
+
+    @Test
+    public void aTransactionFailingToBeginLeavesNoScope() {
+        var transaction = ctx();
+
+        // jOOQ reports a transaction it failed to begin as rolled back
+        binder.beginStart(transaction);
+        binder.rollbackEnd(transaction);
+
+        assertThat(cacheProvider.currentTransactionCache()).isEmpty();
+    }
+
+    @Test
+    public void anEndOfAnInnerTransactionNotReportedEndsItWithTheOuterOne() {
+        var outer = ctx();
+        var nested = ctx();
+
+        binder.beginStart(outer);
+        binder.beginStart(nested);
+        binder.commitEnd(outer);
+
+        assertThat(cacheProvider.currentTransactionCache()).isEmpty();
+    }
+
+    private record TestId(Long value) implements Identity<Long> {
     }
 
     @Test

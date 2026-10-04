@@ -1,10 +1,10 @@
 package io.domainlifecycles.jdbc.configuration;
 
 import io.domainlifecycles.builder.innerclass.InnerClassDomainObjectBuilderProvider;
-import io.domainlifecycles.jdbc.cache.TransactionCacheAwareConnectionProvider;
 import io.domainlifecycles.jdbc.connection.SingleJdbcConnectionProvider;
 import io.domainlifecycles.jdbc.dialect.H2JdbcDialect;
 import io.domainlifecycles.jdbc.schema.JdbcSchemaMetadata;
+import io.domainlifecycles.jdbc.records.JdbcRecord;
 import io.domainlifecycles.persistence.cache.NoOpTransactionCacheProvider;
 import io.domainlifecycles.persistence.cache.ThreadBoundTransactionCacheProvider;
 import org.junit.jupiter.api.AfterEach;
@@ -49,51 +49,39 @@ class JdbcDomainPersistenceConfigurationTransactionCacheTest {
     }
 
     @Test
-    void defaultsToAThreadBoundProviderAndWrapsTheConnectionProvider() throws SQLException {
-        var configuration = minimalConfig().make();
+    void withoutAProviderTheCacheIsOffAndTheConnectionProviderIsLeftAsItIs() throws SQLException {
+        var originalConnectionProvider = new SingleJdbcConnectionProvider(connection);
+
+        var configuration = minimalConfig().withConnectionProvider(originalConnectionProvider).make();
 
         assertThat(configuration.transactionCacheEnabled).isTrue();
-        assertThat(configuration.transactionCacheProvider).isInstanceOf(ThreadBoundTransactionCacheProvider.class);
-        assertThat(configuration.connectionProvider).isInstanceOf(TransactionCacheAwareConnectionProvider.class);
+        assertThat(configuration.transactionCacheProvider).isInstanceOf(NoOpTransactionCacheProvider.class);
+        assertThat(configuration.transactionCacheProvider.currentTransactionCache()).isEmpty();
+        assertThat(configuration.connectionProvider).isSameAs(originalConnectionProvider);
     }
 
     @Test
-    void disablingTheFeatureUsesTheNoOpProviderAndLeavesTheConnectionProviderUntouched() throws SQLException {
+    void aGivenProviderIsUsedAndTheConnectionProviderIsLeftAsItIs() throws SQLException {
         var originalConnectionProvider = new SingleJdbcConnectionProvider(connection);
+        var givenProvider = new ThreadBoundTransactionCacheProvider<JdbcRecord>();
 
-        var configuration = JdbcDomainPersistenceConfiguration.JdbcPersistenceConfigurationBuilder.newConfig()
-            .withDomainObjectBuilderProvider(new InnerClassDomainObjectBuilderProvider())
-            .withSchemaMetadata(JdbcSchemaMetadata.read(connection))
+        var configuration = minimalConfig()
             .withConnectionProvider(originalConnectionProvider)
-            .withDialect(new H2JdbcDialect())
+            .withTransactionCacheProvider(givenProvider)
+            .make();
+
+        assertThat(configuration.transactionCacheProvider).isSameAs(givenProvider);
+        assertThat(configuration.connectionProvider).isSameAs(originalConnectionProvider);
+    }
+
+    @Test
+    void disablingTheFeatureIgnoresAGivenProvider() throws SQLException {
+        var configuration = minimalConfig()
+            .withTransactionCacheProvider(new ThreadBoundTransactionCacheProvider<>())
             .withTransactionCacheEnabled(false)
             .make();
 
         assertThat(configuration.transactionCacheEnabled).isFalse();
         assertThat(configuration.transactionCacheProvider).isInstanceOf(NoOpTransactionCacheProvider.class);
-        assertThat(configuration.transactionCacheProvider.currentTransactionCache()).isEmpty();
-        assertThat(configuration.connectionProvider)
-            .as("a disabled feature must not wrap the connection provider at all")
-            .isSameAs(originalConnectionProvider);
-    }
-
-    @Test
-    void aCustomProviderOverridesTheDefaultAndDoesNotWrapTheConnectionProviderEither() throws SQLException {
-        var originalConnectionProvider = new SingleJdbcConnectionProvider(connection);
-        var customProvider = new NoOpTransactionCacheProvider<io.domainlifecycles.jdbc.records.JdbcRecord>();
-
-        var configuration = JdbcDomainPersistenceConfiguration.JdbcPersistenceConfigurationBuilder.newConfig()
-            .withDomainObjectBuilderProvider(new InnerClassDomainObjectBuilderProvider())
-            .withSchemaMetadata(JdbcSchemaMetadata.read(connection))
-            .withConnectionProvider(originalConnectionProvider)
-            .withDialect(new H2JdbcDialect())
-            .withTransactionCacheProvider(customProvider)
-            .make();
-
-        assertThat(configuration.transactionCacheProvider).isSameAs(customProvider);
-        assertThat(configuration.connectionProvider)
-            .as("only the default ThreadBoundTransactionCacheProvider is auto-wired to the connection's "
-                + "transaction boundary - a custom provider must be wired up by the caller")
-            .isSameAs(originalConnectionProvider);
     }
 }

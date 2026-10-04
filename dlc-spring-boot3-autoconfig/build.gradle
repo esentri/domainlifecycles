@@ -30,6 +30,7 @@ dependencies {
     api project(":jackson2-integration")
     api project(":builder")
     api project(":jooq-integration")
+    api project(":persistence-cache-spring-tx")
     compileOnly project(":jdbc-integration")
     api project(":spring-doc2-integration")
     api project(":spring-web6-integration")

@@ -326,3 +326,29 @@ Subklassen, wie z. B. bereits bei `recordPropertyAccessor`):
 - Eigene JDBC-Spring-Autoconfig (Abschnitt 6.4) — separates Thema.
 - Größenbasierte (statt anzahlbasierte) Cache-Begrenzung — als mögliche spätere Verfeinerung, für v1 reicht
   eine einfache anzahlbasierte LRU-Grenze.
+
+## 11. Nachtrag: Transaktionsgrenzen nur aus verlässlichen Quellen
+
+Tests gegen echte Transaktionsgrenzen (`JdbcTransactionCacheBoundaries_ITest`,
+`JooqTransactionCacheBoundaries_ITest`) haben gezeigt, dass der `Connection`-Decorator aus Abschnitt 6.2 die
+Grenzen nur rät: Endet eine Transaktion nicht über die Connection, die er ausgibt - unter JTA, bei einem Rollback
+direkt auf der Connection oder auf einen Savepoint -, bleibt ein Cache-Stand stehen, der zurückgerollt wurde. Ein
+späteres Schreiben vergleicht dann gegen diesen Stand, und z. B. das Entfernen einer Kind-Entity wird nie gelöscht.
+Dasselbe galt für eine verschachtelte jOOQ-Transaktion, die auf ihren Savepoint zurückrollt, und für verschachtelte
+Spring-Transaktionen (`REQUIRES_NEW`, `NESTED`).
+
+Daraus folgt: Der Cache wird nur genutzt, wo die Grenzen aus einer verlässlichen Quelle kommen, sonst ist er aus.
+
+- Spring (auch mit `JtaTransactionManager`): `SpringTransactionCacheProvider` - der Cache ist eine Ressource der
+  Spring-Transaktion, gebunden über eine `TransactionSynchronization` mit `suspend`/`resume`, `savepointRollback` und
+  `afterCompletion` (ersetzt Abschnitt 6.3). Kein Connection-Decorator: Den ersten Cache-Zugriff einer Transaktion
+  erkennt der Provider daran, dass noch keine Ressource gebunden ist.
+- JTA ohne Spring: neues Modul `persistence-cache-jakarta-jta` mit `JtaTransactionCacheProvider` - der Cache ist eine
+  Ressource der Transaktion in der `TransactionSynchronizationRegistry`.
+- jOOQ-eigene Transaktionen: `TransactionCacheJooqBinder`; der Rollback einer verschachtelten Transaktion leert den
+  Cache. Statt eines Tiefenzählers verfolgt der Binder die Transaktionen über den `TransactionContext`, den jOOQ allen
+  Ereignissen einer Transaktion unverändert mitgibt: Ein fehlschlagender Commit wird von jOOQ zusätzlich als Rollback
+  gemeldet, was beim Zähler das Ende der äußeren Transaktion vortäuschte.
+- Plain JDBC ohne Spring: kein Decorator mehr (Abschnitt 6.2 entfällt), der Builder legt standardmäßig keinen
+  Provider an. Die Anwendung kann einen `ThreadBoundTransactionCacheProvider` setzen und dessen Scope selbst um jede
+  Transaktion öffnen und schließen, nach einem Savepoint-Rollback mit `TransactionCacheScope.clear()`.
