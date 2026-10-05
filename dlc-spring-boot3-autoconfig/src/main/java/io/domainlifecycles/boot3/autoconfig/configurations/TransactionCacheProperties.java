@@ -33,7 +33,7 @@ import org.springframework.core.env.Environment;
  * The properties of DLC's Transaction Cache, shared by the jOOQ and the JDBC persistence autoconfig - a project only
  * ever activates one of the two persistence backends:
  * <ul>
- *     <li>{@value #ENABLED} - whether the cache is used, {@code true} by default,</li>
+ *     <li>{@value #ENABLED} - whether the cache is used, {@code false} by default,</li>
  *     <li>{@value #MAX_SIZE} - the maximum number of aggregates held per transaction, 256 by default.</li>
  * </ul>
  *
@@ -53,7 +53,7 @@ final class TransactionCacheProperties {
     }
 
     static boolean enabled(Environment environment) {
-        return environment.getProperty(ENABLED, Boolean.class, true);
+        return environment.getProperty(ENABLED, Boolean.class, false);
     }
 
     static int maxSize(Environment environment) {

@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * active, reusing the exact same database/migration/domain model as the jOOQ test - {@code jdbc-integration}
  * needs no generated record classes, so nothing else has to change to point it at the same schema.
  */
-@SpringBootTest(classes = TestApplicationJdbcPersistenceAndBuilderAutoConfig.class)
+@SpringBootTest(classes = TestApplicationJdbcPersistenceAndBuilderAutoConfig.class, properties = "dlc.features.persistence.transaction-cache.enabled=true")
 @ActiveProfiles({"test", "test-dlc-domain", "test-dlc-persistence"})
 class JdbcPersistenceAndBuilderAutoConfigTest {
 

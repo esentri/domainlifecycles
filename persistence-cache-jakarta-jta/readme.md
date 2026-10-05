@@ -45,10 +45,13 @@ var cacheProvider = new JtaTransactionCacheProvider<JdbcRecord>(transactionSynch
 
 JdbcDomainPersistenceConfiguration.JdbcPersistenceConfigurationBuilder.newConfig()
     // ...
+    .withTransactionCacheEnabled(true)     // the cache is off by default
     .withTransactionCacheProvider(cacheProvider)
     .make();
 ```
 
 For `jooq-integration`, the provider is typed `JtaTransactionCacheProvider<UpdatableRecord<?>>` and set via
 `JooqPersistenceConfigurationBuilder.withTransactionCacheProvider(...)`. A second constructor argument limits the
-number of aggregates held per transaction (256 by default).
+number of aggregates held per transaction (256 by default). After changing an aggregate the transaction already
+loaded bypassing DLC's repositories, empty the cache via `cacheProvider.clearCurrentTransactionCache()` - see
+[Failures, and emptying the cache](../persistence/readme.md#transaction-cache-clear).

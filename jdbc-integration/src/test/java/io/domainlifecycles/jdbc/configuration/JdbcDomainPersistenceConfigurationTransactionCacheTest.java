@@ -54,19 +54,29 @@ class JdbcDomainPersistenceConfigurationTransactionCacheTest {
 
         var configuration = minimalConfig().withConnectionProvider(originalConnectionProvider).make();
 
-        assertThat(configuration.transactionCacheEnabled).isTrue();
+        assertThat(configuration.transactionCacheEnabled).isFalse();
         assertThat(configuration.transactionCacheProvider).isInstanceOf(NoOpTransactionCacheProvider.class);
         assertThat(configuration.transactionCacheProvider.currentTransactionCache()).isEmpty();
         assertThat(configuration.connectionProvider).isSameAs(originalConnectionProvider);
     }
 
     @Test
-    void aGivenProviderIsUsedAndTheConnectionProviderIsLeftAsItIs() throws SQLException {
+    void aProviderSetIsIgnoredAsLongAsTheFeatureIsNotEnabled() throws SQLException {
+        var configuration = minimalConfig()
+            .withTransactionCacheProvider(new ThreadBoundTransactionCacheProvider<>())
+            .make();
+
+        assertThat(configuration.transactionCacheProvider).isInstanceOf(NoOpTransactionCacheProvider.class);
+    }
+
+    @Test
+    void aGivenProviderIsUsedOnceEnabledAndTheConnectionProviderIsLeftAsItIs() throws SQLException {
         var originalConnectionProvider = new SingleJdbcConnectionProvider(connection);
         var givenProvider = new ThreadBoundTransactionCacheProvider<JdbcRecord>();
 
         var configuration = minimalConfig()
             .withConnectionProvider(originalConnectionProvider)
+            .withTransactionCacheEnabled(true)
             .withTransactionCacheProvider(givenProvider)
             .make();
 

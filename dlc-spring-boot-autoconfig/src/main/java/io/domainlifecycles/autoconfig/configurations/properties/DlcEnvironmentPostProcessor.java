@@ -98,6 +98,12 @@ public class DlcEnvironmentPostProcessor implements EnvironmentPostProcessor {
             if(!ann.jooqSqlDialect().isBlank()) {
                 props.put("dlc.features.persistence.sql-dialect", ann.jooqSqlDialect());
             }
+            if (ann.transactionCacheEnabled()) {
+                props.put("dlc.features.persistence.transaction-cache.enabled", true);
+            }
+            if (ann.transactionCacheMaxSize() != 0) {
+                props.put("dlc.features.persistence.transaction-cache.max-size", ann.transactionCacheMaxSize());
+            }
         }
 
         if (props.isEmpty()) return;

@@ -80,8 +80,10 @@ public final class BoundedTransactionCache<BASE_RECORD_TYPE> implements Transact
     }
 
     /**
-     * Removes all entries - once the transaction completes, or rolls back to a savepoint.
+     * Removes all entries - once the transaction completes, rolls back to a savepoint, or wrote an aggregate bypassing
+     * DLC's repositories.
      */
+    @Override
     public synchronized void clear() {
         entries.clear();
     }

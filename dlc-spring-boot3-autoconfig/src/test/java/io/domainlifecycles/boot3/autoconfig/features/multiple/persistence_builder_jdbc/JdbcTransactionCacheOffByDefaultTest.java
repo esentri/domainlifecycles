@@ -1,4 +1,4 @@
-package io.domainlifecycles.autoconfig.features.multiple.persistence_builder_jdbc;
+package io.domainlifecycles.boot3.autoconfig.features.multiple.persistence_builder_jdbc;
 
 import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
 import io.domainlifecycles.persistence.cache.NoOpTransactionCacheProvider;
@@ -13,11 +13,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(
-    classes = TestApplicationJdbcPersistenceAndBuilderAutoConfig.class,
-    properties = "dlc.features.persistence.transaction-cache.enabled=false")
+@SpringBootTest(classes = TestApplicationJdbcPersistenceAndBuilderAutoConfig.class)
 @ActiveProfiles({"test", "test-dlc-domain", "test-dlc-persistence"})
-class JdbcTransactionCacheDisabledByPropertyTest {
+class JdbcTransactionCacheOffByDefaultTest {
 
     @Autowired
     private JdbcDomainPersistenceProvider jdbcDomainPersistenceProvider;

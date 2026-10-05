@@ -115,4 +115,21 @@ public final class JtaTransactionCacheProvider<BASE_RECORD_TYPE> implements Tran
         }
         return Optional.of(cache);
     }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Creates no cache for a transaction that has none yet - and empties the cache also of a transaction already
+     * marked for rollback.
+     */
+    @Override
+    public void clearCurrentTransactionCache() {
+        if (transactionSynchronizationRegistry.getTransactionKey() == null) {
+            return;
+        }
+        var cache = (BoundedTransactionCache<?>) transactionSynchronizationRegistry.getResource(this);
+        if (cache != null) {
+            cache.clear();
+        }
+    }
 }

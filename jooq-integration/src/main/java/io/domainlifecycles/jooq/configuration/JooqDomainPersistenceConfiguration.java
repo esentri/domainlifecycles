@@ -264,7 +264,7 @@ public class JooqDomainPersistenceConfiguration extends DomainPersistenceConfigu
         private IgnoredRecordPropertyProvider ignoredRecordProperties;
         private EntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider;
         private String recordPackage;
-        private boolean transactionCacheEnabled = true;
+        private boolean transactionCacheEnabled = false;
         private TransactionCacheProvider<UpdatableRecord<?>> transactionCacheProvider;
         private int transactionCacheMaxSize = 256;
 
@@ -466,9 +466,9 @@ public class JooqDomainPersistenceConfiguration extends DomainPersistenceConfigu
         }
 
         /**
-         * Enables or disables the transaction cache feature (enabled by default). When disabled, behavior is
-         * identical to a build without the feature at all - no transaction listener is registered and no
-         * additional memory is used.
+         * Enables or disables the transaction cache feature (disabled by default). When disabled, behavior is
+         * identical to a build without the feature at all - a provider set is ignored, no transaction listener is
+         * registered and no additional memory is used.
          *
          * @param transactionCacheEnabled whether the transaction cache feature should be enabled
          * @return the current instance of {@code JooqPersistenceConfigurationBuilder} for method chaining
@@ -557,10 +557,10 @@ public class JooqDomainPersistenceConfiguration extends DomainPersistenceConfigu
                 this.recordClassProvider = new JooqRecordClassProvider(this.recordPackage);
             }
 
-            if (this.transactionCacheProvider == null) {
-                this.transactionCacheProvider = this.transactionCacheEnabled
-                    ? new ThreadBoundTransactionCacheProvider<>(this.transactionCacheMaxSize)
-                    : new NoOpTransactionCacheProvider<>();
+            if (!this.transactionCacheEnabled) {
+                this.transactionCacheProvider = new NoOpTransactionCacheProvider<>();
+            } else if (this.transactionCacheProvider == null) {
+                this.transactionCacheProvider = new ThreadBoundTransactionCacheProvider<>(this.transactionCacheMaxSize);
             }
 
             JooqDomainPersistenceConfiguration configuration = new JooqDomainPersistenceConfiguration(

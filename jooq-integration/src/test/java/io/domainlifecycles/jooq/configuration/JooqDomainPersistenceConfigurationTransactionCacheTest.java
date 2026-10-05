@@ -26,11 +26,28 @@ class JooqDomainPersistenceConfigurationTransactionCacheTest {
     }
 
     @Test
-    void defaultsToAThreadBoundProvider() {
+    void theCacheIsOffByDefault() {
         var configuration = minimalConfig().make();
+
+        assertThat(configuration.transactionCacheEnabled).isFalse();
+        assertThat(configuration.transactionCacheProvider).isInstanceOf(NoOpTransactionCacheProvider.class);
+    }
+
+    @Test
+    void enablingTheFeatureUsesAThreadBoundProvider() {
+        var configuration = minimalConfig().withTransactionCacheEnabled(true).make();
 
         assertThat(configuration.transactionCacheEnabled).isTrue();
         assertThat(configuration.transactionCacheProvider).isInstanceOf(ThreadBoundTransactionCacheProvider.class);
+    }
+
+    @Test
+    void aProviderSetIsIgnoredAsLongAsTheFeatureIsNotEnabled() {
+        var configuration = minimalConfig()
+            .withTransactionCacheProvider(new ThreadBoundTransactionCacheProvider<>())
+            .make();
+
+        assertThat(configuration.transactionCacheProvider).isInstanceOf(NoOpTransactionCacheProvider.class);
     }
 
     @Test

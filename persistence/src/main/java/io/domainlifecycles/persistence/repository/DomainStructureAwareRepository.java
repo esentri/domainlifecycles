@@ -177,17 +177,20 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
     public A update(A root) {
         Objects.requireNonNull(root);
         var key = AggregateCacheSupport.keyFor(domainPersistenceProvider, root);
-        var rootCurrentDatabaseState = AggregateCacheSupport.<A, BASE_RECORD_TYPE>take(domainPersistenceProvider, key)
-            .orElseGet(() -> findResultById((I) domainPersistenceProvider.getId(root)));
-        if (rootCurrentDatabaseState.resultValue().isPresent()) {
-            processAggregates(root, rootCurrentDatabaseState);
-            //a cache-miss above would have re-populated the cache with the now stale, pre-write state via
-            //the fetch's own populate hook (see InternalAggregateFetcher) - invalidate unconditionally,
-            //whether the lookup above was a hit (already removed, so this is a no-op) or a miss
+        try {
+            var rootCurrentDatabaseState = AggregateCacheSupport.<A, BASE_RECORD_TYPE>take(domainPersistenceProvider, key)
+                .orElseGet(() -> findResultById((I) domainPersistenceProvider.getId(root)));
+            if (rootCurrentDatabaseState.resultValue().isPresent()) {
+                processAggregates(root, rootCurrentDatabaseState);
+                return root;
+            }
+            throw DLCPersistenceException.fail("The given root was not found in the database! Root:" + root);
+        } finally {
+            //a cache miss above fills the cache with the state before the write via the fetch's own populate hook
+            //(see InternalAggregateFetcher) - stale once anything is written, also if the write fails midway and the
+            //transaction goes on, so the entry is removed in any case
             AggregateCacheSupport.invalidate(domainPersistenceProvider, key);
-            return root;
         }
-        throw DLCPersistenceException.fail("The given root was not found in the database! Root:" + root);
     }
 
     /**
@@ -199,16 +202,19 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
     public A increaseVersion(A root) {
         Objects.requireNonNull(root);
         var key = AggregateCacheSupport.keyFor(domainPersistenceProvider, root);
-        var rootCurrentDatabaseState = AggregateCacheSupport.<A, BASE_RECORD_TYPE>take(domainPersistenceProvider, key)
-            .orElseGet(() -> findResultById((I) domainPersistenceProvider.getId(root)));
-        if (rootCurrentDatabaseState.resultValue().isPresent()) {
-            var pc = new PersistenceContext<>(domainPersistenceProvider, root, rootCurrentDatabaseState);
-            persister.increaseVersion(rootCurrentDatabaseState.resultValue().get(), pc);
-            //see the comment in update() above for why this must run unconditionally, hit or miss
+        try {
+            var rootCurrentDatabaseState = AggregateCacheSupport.<A, BASE_RECORD_TYPE>take(domainPersistenceProvider, key)
+                .orElseGet(() -> findResultById((I) domainPersistenceProvider.getId(root)));
+            if (rootCurrentDatabaseState.resultValue().isPresent()) {
+                var pc = new PersistenceContext<>(domainPersistenceProvider, root, rootCurrentDatabaseState);
+                persister.increaseVersion(rootCurrentDatabaseState.resultValue().get(), pc);
+                return root;
+            }
+            throw DLCPersistenceException.fail("The given root was not found in the database! Root:" + root);
+        } finally {
+            //see update(): the entry is removed in any case
             AggregateCacheSupport.invalidate(domainPersistenceProvider, key);
-            return root;
         }
-        throw DLCPersistenceException.fail("The given root was not found in the database! Root:" + root);
     }
 
     /**
@@ -221,15 +227,18 @@ public abstract class DomainStructureAwareRepository<I extends Identity<?>, A ex
     public Optional<A> deleteById(I id) {
         Objects.requireNonNull(id);
         var key = AggregateCacheSupport.keyFor(id);
-        var rootCurrentDatabaseState = AggregateCacheSupport.<A, BASE_RECORD_TYPE>take(domainPersistenceProvider, key)
-            .orElseGet(() -> findResultById(id));
-        if (rootCurrentDatabaseState.resultValue().isPresent()) {
-            processAggregates(null, rootCurrentDatabaseState);
-            //see the comment in update() above for why this must run unconditionally, hit or miss
+        try {
+            var rootCurrentDatabaseState = AggregateCacheSupport.<A, BASE_RECORD_TYPE>take(domainPersistenceProvider, key)
+                .orElseGet(() -> findResultById(id));
+            if (rootCurrentDatabaseState.resultValue().isPresent()) {
+                processAggregates(null, rootCurrentDatabaseState);
+                return rootCurrentDatabaseState.resultValue();
+            }
+            return Optional.empty();
+        } finally {
+            //see update(): the entry is removed in any case
             AggregateCacheSupport.invalidate(domainPersistenceProvider, key);
-            return rootCurrentDatabaseState.resultValue();
         }
-        return Optional.empty();
     }
 
     /**

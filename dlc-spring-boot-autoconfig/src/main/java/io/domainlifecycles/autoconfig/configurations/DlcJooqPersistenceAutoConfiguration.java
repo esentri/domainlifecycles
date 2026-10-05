@@ -149,8 +149,8 @@ public class DlcJooqPersistenceAutoConfiguration {
          * Creates a {@link SpringTransactionCacheProvider} bean backing the transaction cache feature: one cache
          * per Spring-managed transaction, kept as a resource of that transaction, read and written by
          * {@link #domainPersistenceProvider}. Holds at most {@code dlc.features.persistence.transaction-cache.max-size}
-         * aggregates per transaction (256 by default), and is not created if
-         * {@code dlc.features.persistence.transaction-cache.enabled} is {@code false}. Any bean of type
+         * aggregates per transaction (256 by default), and is only created if
+         * {@code dlc.features.persistence.transaction-cache.enabled} is {@code true} ({@code false} by default). Any bean of type
          * {@link TransactionCacheProvider} replaces it, whatever its name.
          *
          * @return a {@link SpringTransactionCacheProvider} instance
@@ -158,8 +158,7 @@ public class DlcJooqPersistenceAutoConfiguration {
          */
         @Bean
         @ConditionalOnMissingBean(TransactionCacheProvider.class)
-        @ConditionalOnProperty(prefix = TransactionCacheProperties.PREFIX, name = "enabled", havingValue = "true",
-            matchIfMissing = true)
+        @ConditionalOnProperty(prefix = TransactionCacheProperties.PREFIX, name = "enabled", havingValue = "true")
         public SpringTransactionCacheProvider<UpdatableRecord<?>> dlcTransactionCacheProvider() {
             return new SpringTransactionCacheProvider<>(TransactionCacheProperties.maxSize(environment));
         }
@@ -272,7 +271,7 @@ public class DlcJooqPersistenceAutoConfiguration {
                             + "none is a TransactionCacheProvider<UpdatableRecord<?>>. Provide one of that type, or switch "
                             + "the cache off via '%s=false'.", TransactionCacheProperties.ENABLED);
                 }
-                configuration.withTransactionCacheProvider(cacheProvider);
+                configuration.withTransactionCacheEnabled(true).withTransactionCacheProvider(cacheProvider);
             } else {
                 configuration.withTransactionCacheEnabled(false);
             }

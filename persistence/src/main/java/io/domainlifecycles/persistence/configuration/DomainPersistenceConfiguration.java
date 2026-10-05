@@ -65,7 +65,7 @@ public abstract class DomainPersistenceConfiguration {
     /**
      * Whether an aggregate root already fetched earlier within the same transaction may be reused by
      * {@code update()}/{@code deleteById()}/{@code increaseVersion()} instead of fetching it again from the
-     * database. Enabled by default; when disabled, behavior is identical to a build without the transaction
+     * database. Disabled by default; when disabled, behavior is identical to a build without the transaction
      * cache feature at all.
      */
     public final boolean transactionCacheEnabled;

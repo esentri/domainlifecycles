@@ -180,6 +180,32 @@ public class ThreadBoundTransactionCacheProviderTest {
     }
 
     @Test
+    public void clearingEmptiesTheOpenScopeAndKeepsItInUse() {
+        var provider = new ThreadBoundTransactionCacheProvider<Object>();
+        try (var scope = provider.open()) {
+            var cache = provider.currentTransactionCache().orElseThrow();
+            cache.put(new AggregateCacheKey("some.Aggregate", new TestClearId(1L)), new FetcherResult<>(null, null));
+
+            provider.clearCurrentTransactionCache();
+
+            assertThat(provider.currentTransactionCache()).containsSame(cache);
+            assertThat(cache.take(new AggregateCacheKey("some.Aggregate", new TestClearId(1L)))).isEmpty();
+        }
+    }
+
+    @Test
+    public void clearingDoesNothingWithoutAnOpenScope() {
+        var provider = new ThreadBoundTransactionCacheProvider<Object>();
+
+        provider.clearCurrentTransactionCache();
+
+        assertThat(provider.currentTransactionCache()).isEmpty();
+    }
+
+    private record TestClearId(Long value) implements Identity<Long> {
+    }
+
+    @Test
     public void constructorRejectsANonPositiveMaxSize() {
         assertThatThrownBy(() -> new ThreadBoundTransactionCacheProvider<String>(0))
             .isInstanceOf(DLCPersistenceException.class);

@@ -37,6 +37,7 @@ import io.domainlifecycles.jdbc.persistence.containers.TestDatabaseDialect;
 import io.domainlifecycles.jdbc.persistence.tests.oneToMany.OneToManyAggregateRootRepository;
 import io.domainlifecycles.jdbc.persistence.tests.simple.SimpleAggregateRootRepository;
 import io.domainlifecycles.jdbc.records.JdbcRecord;
+import io.domainlifecycles.persistence.cache.AggregateCacheSupport;
 import io.domainlifecycles.persistence.cache.NoOpTransactionCacheProvider;
 import io.domainlifecycles.persistence.cache.ThreadBoundTransactionCacheProvider;
 import io.domainlifecycles.persistence.cache.TransactionCacheProvider;
@@ -523,6 +524,30 @@ class JdbcTransactionCacheBoundaries_ITest {
         private final JdbcDomainPersistenceProvider provider = springProvider(dataSource, cacheProvider);
         private final TransactionTemplate transaction =
             new TransactionTemplate(new DataSourceTransactionManager(dataSource));
+
+        @Test
+        void aWriteFailingMidwayLeavesNoStateOfTheAggregateInTheCache() {
+            var id = insertedAggregate(provider);
+            // loaded outside the transaction: the update loads the current state itself, which fills the cache
+            var loadedBefore = aggregates(provider).findById(id).orElseThrow();
+            loadedBefore.setName("Changed");
+            var children = new ArrayList<>(loadedBefore.getTestEntityOneToManyList());
+            children.add(child(id, "x".repeat(201)));
+            loadedBefore.setTestEntityOneToManyList(children);
+
+            transaction.executeWithoutResult(status -> {
+                assertThatThrownBy(() -> aggregates(provider).update(loadedBefore)).as("the name is too long")
+                    .isInstanceOf(RuntimeException.class);
+
+                // the application goes on in the same transaction, the statements before the failing one written
+                assertThat(cacheProvider.currentTransactionCache().orElseThrow()
+                    .take(AggregateCacheSupport.keyFor(id))).as("state of the aggregate in the cache").isEmpty();
+                status.setRollbackOnly();
+            });
+
+            assertThat(cacheProvider.currentTransactionCache()).isEmpty();
+            assertThat(dataSource.openConnections()).isZero();
+        }
 
         @Test
         void aFailingCommitLeavesNeitherCacheNorConnectionBehind() {

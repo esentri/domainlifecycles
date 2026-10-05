@@ -10,20 +10,20 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class TransactionCachePropertiesTest {
 
     @Test
-    void theCacheIsEnabledAndHoldsAtMost256AggregatesByDefault() {
+    void theCacheIsOffAndHoldsAtMost256AggregatesByDefault() {
         var environment = new MockEnvironment();
 
-        assertThat(TransactionCacheProperties.enabled(environment)).isTrue();
+        assertThat(TransactionCacheProperties.enabled(environment)).isFalse();
         assertThat(TransactionCacheProperties.maxSize(environment)).isEqualTo(256);
     }
 
     @Test
     void theConfiguredValuesAreUsed() {
         var environment = new MockEnvironment()
-            .withProperty("dlc.features.persistence.transaction-cache.enabled", "false")
+            .withProperty("dlc.features.persistence.transaction-cache.enabled", "true")
             .withProperty("dlc.features.persistence.transaction-cache.max-size", "42");
 
-        assertThat(TransactionCacheProperties.enabled(environment)).isFalse();
+        assertThat(TransactionCacheProperties.enabled(environment)).isTrue();
         assertThat(TransactionCacheProperties.maxSize(environment)).isEqualTo(42);
     }
 

@@ -14,7 +14,9 @@ import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {TestApplicationPersistenceAndBuilderAutoConfig.class, JooqCustomTransactionCacheProviderTest.CustomProvider.class})
+@SpringBootTest(
+    classes = {TestApplicationPersistenceAndBuilderAutoConfig.class, JooqCustomTransactionCacheProviderTest.CustomProvider.class},
+    properties = "dlc.features.persistence.transaction-cache.enabled=true")
 @ActiveProfiles({"test", "test-dlc-domain", "test-dlc-persistence"})
 class JooqCustomTransactionCacheProviderTest {
 

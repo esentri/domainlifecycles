@@ -29,6 +29,8 @@ package io.domainlifecycles.persistence.spring.cache;
 import io.domainlifecycles.persistence.cache.BoundedTransactionCache;
 import io.domainlifecycles.persistence.cache.TransactionCache;
 import io.domainlifecycles.persistence.cache.TransactionCacheProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -54,6 +56,11 @@ import java.util.Optional;
  * <p>
  * Outside a transaction - none at all, or where Spring only activates transaction synchronization without one, e.g.
  * for {@code PROPAGATION_SUPPORTS} - there is no cache, so every write reads the current state of the aggregate.
+ * <p>
+ * A cache is only handed out to the transaction it was created for: one still bound to the thread although its
+ * transaction ended without completing it there - e.g. completed by a JTA transaction manager on another thread after
+ * a timeout - is dropped. Without the savepoint callbacks of Spring 6.2, a rollback to a savepoint could not be
+ * noticed, so there is no cache at all then.
  *
  * @param <BASE_RECORD_TYPE> the base record type of the persistence technology this provider is used with
  * @author Mario Herb
@@ -62,7 +69,13 @@ public final class SpringTransactionCacheProvider<BASE_RECORD_TYPE> implements T
 
     private static final int DEFAULT_MAX_SIZE = 256;
 
+    private static final Logger log = LoggerFactory.getLogger(SpringTransactionCacheProvider.class);
+
+    private static final boolean SAVEPOINT_CALLBACKS_SUPPORTED = savepointCallbacksSupported();
+
     private final int maxSize;
+
+    private final boolean savepointCallbacksSupported;
 
     /**
      * Creates a provider holding at most 256 aggregates per transaction.
@@ -77,10 +90,28 @@ public final class SpringTransactionCacheProvider<BASE_RECORD_TYPE> implements T
      * @param maxSize the maximum number of aggregates held per transaction
      */
     public SpringTransactionCacheProvider(int maxSize) {
+        this(maxSize, SAVEPOINT_CALLBACKS_SUPPORTED);
+    }
+
+    SpringTransactionCacheProvider(int maxSize, boolean savepointCallbacksSupported) {
         if (maxSize <= 0) {
             throw new IllegalArgumentException("maxSize must be greater than 0, but was " + maxSize);
         }
         this.maxSize = maxSize;
+        this.savepointCallbacksSupported = savepointCallbacksSupported;
+        if (!savepointCallbacksSupported) {
+            log.warn("The transaction cache is off: this Spring version does not report a rollback to a savepoint "
+                + "(TransactionSynchronization#savepointRollback, Spring 6.2 or later).");
+        }
+    }
+
+    private static boolean savepointCallbacksSupported() {
+        try {
+            TransactionSynchronization.class.getMethod("savepointRollback", Object.class);
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
     }
 
     /**
@@ -88,18 +119,41 @@ public final class SpringTransactionCacheProvider<BASE_RECORD_TYPE> implements T
      */
     @Override
     public Optional<TransactionCache<BASE_RECORD_TYPE>> currentTransactionCache() {
-        if (!TransactionSynchronizationManager.isSynchronizationActive()
+        if (!savepointCallbacksSupported
+            || !TransactionSynchronizationManager.isSynchronizationActive()
             || !TransactionSynchronizationManager.isActualTransactionActive()) {
             return Optional.empty();
         }
         @SuppressWarnings("unchecked")
         var synchronization = (CacheSynchronization<BASE_RECORD_TYPE>) TransactionSynchronizationManager.getResource(this);
+        if (synchronization != null && !synchronization.belongsToTheCurrentTransaction()) {
+            // left bound by a transaction that ended without completing it on this thread
+            TransactionSynchronizationManager.unbindResourceIfPossible(this);
+            synchronization = null;
+        }
         if (synchronization == null) {
             synchronization = new CacheSynchronization<>(this, new BoundedTransactionCache<>(maxSize));
             TransactionSynchronizationManager.bindResource(this, synchronization);
             TransactionSynchronizationManager.registerSynchronization(synchronization);
         }
         return Optional.of(synchronization.cache);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Creates no cache for a transaction that has none yet.
+     */
+    @Override
+    public void clearCurrentTransactionCache() {
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        var synchronization = (CacheSynchronization<BASE_RECORD_TYPE>) TransactionSynchronizationManager.getResource(this);
+        if (synchronization != null) {
+            synchronization.cache.clear();
+        }
     }
 
     /**
@@ -111,9 +165,20 @@ public final class SpringTransactionCacheProvider<BASE_RECORD_TYPE> implements T
 
         private final BoundedTransactionCache<BASE_RECORD_TYPE> cache;
 
+        private volatile boolean completed;
+
         private CacheSynchronization(Object resourceKey, BoundedTransactionCache<BASE_RECORD_TYPE> cache) {
             this.resourceKey = resourceKey;
             this.cache = cache;
+        }
+
+        /**
+         * Whether this synchronization is registered with the transaction running on the current thread, and that
+         * transaction has not completed yet.
+         */
+        private boolean belongsToTheCurrentTransaction() {
+            return !completed && TransactionSynchronizationManager.getSynchronizations().stream()
+                .anyMatch(registered -> registered == this);
         }
 
         @Override
@@ -133,6 +198,8 @@ public final class SpringTransactionCacheProvider<BASE_RECORD_TYPE> implements T
 
         @Override
         public void afterCompletion(int status) {
+            completed = true;
+            // a no-op if the transaction completes on another thread than the one it ran on
             TransactionSynchronizationManager.unbindResourceIfPossible(resourceKey);
             cache.clear();
         }

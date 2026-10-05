@@ -13,6 +13,13 @@ import org.jooq.impl.DefaultTransactionListenerProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -166,6 +173,51 @@ public class TransactionCacheJooqBinderTest {
         binder.commitEnd(outer);
 
         assertThat(cacheProvider.currentTransactionCache()).isEmpty();
+    }
+
+    @Test
+    public void transactionsRunningInParallelNeverShareAScope() throws Exception {
+        var scopes = new ConcurrentLinkedQueue<Object>();
+        var allInTheirTransaction = new CountDownLatch(4);
+        var executor = Executors.newFixedThreadPool(4);
+        try {
+            var runs = new ArrayList<Future<?>>();
+            for (int i = 0; i < 4; i++) {
+                runs.add(executor.submit(() -> {
+                    var transaction = ctx();
+                    binder.beginStart(transaction);
+                    var scope = cacheProvider.currentTransactionCache().orElseThrow();
+                    scopes.add(scope);
+                    allInTheirTransaction.countDown();
+                    allInTheirTransaction.await(10, TimeUnit.SECONDS);
+                    assertThat(cacheProvider.currentTransactionCache()).containsSame(scope);
+                    binder.commitEnd(transaction);
+                    assertThat(cacheProvider.currentTransactionCache()).isEmpty();
+                    return null;
+                }));
+            }
+            for (var run : runs) {
+                run.get(10, TimeUnit.SECONDS);
+            }
+        } finally {
+            executor.shutdownNow();
+        }
+
+        assertThat(scopes).hasSize(4).doesNotHaveDuplicates();
+    }
+
+    @Test
+    public void clearingEmptiesTheScopeOfTheTransactionAndKeepsItInUse() {
+        var transaction = ctx();
+        binder.beginStart(transaction);
+        var scope = cacheProvider.currentTransactionCache().orElseThrow();
+        scope.put(KEY, new FetcherResult<>(null, null));
+
+        cacheProvider.clearCurrentTransactionCache();
+
+        assertThat(cacheProvider.currentTransactionCache()).containsSame(scope);
+        assertThat(scope.take(KEY)).isEmpty();
+        binder.commitEnd(transaction);
     }
 
     private record TestId(Long value) implements Identity<Long> {

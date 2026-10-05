@@ -53,6 +53,7 @@ Here is an overview of more details about DLC Persistence and some additional fe
     - [Transaction Cache](#transaction-cache)
         - [Activation: how the cache learns when a transaction begins and ends](#transaction-cache-activation)
         - [Own transaction cache providers](#transaction-cache-own-provider)
+        - [Failures, and emptying the cache](#transaction-cache-clear)
     - [Object relational mapping](#or-mapping)
         - [AutoMapping](#automapping)
         - [RecordMapper](#recordmapper)
@@ -621,9 +622,11 @@ optimized alternative, is demonstrated here:
 DLC Persistence keeps a small, per-transaction read cache of previously fetched Aggregate roots, so that a
 write operation (`update()`, `deleteById()`) which needs the currently persisted state to detect changes does
 not have to issue a redundant `SELECT` if the same Aggregate was already loaded via the Fetcher earlier in the
-same transaction. It is enabled by default and requires no application code changes to benefit from - it only
-ever changes *how many* `SELECT`s a transaction issues, never the result of `insert()`/`update()`/`deleteById()`/
-`findById()`.
+same transaction. It is off by default: it is switched on via `withTransactionCacheEnabled(true)` on the
+persistence configuration builder, or with the Spring Boot autoconfig via `@EnableDlc(transactionCacheEnabled = true)`
+or `dlc.features.persistence.transaction-cache.enabled=true`. It requires no further application code changes to
+benefit from - it only ever changes *how many* `SELECT`s a transaction issues, never the result of
+`insert()`/`update()`/`deleteById()`/`findById()`.
 
 How it works:
 
@@ -651,8 +654,9 @@ Configuration:
 JooqDomainPersistenceConfiguration.JooqPersistenceConfigurationBuilder
     .newConfig()
     // ...
-    .withTransactionCacheEnabled(true)     // default; false disables the feature entirely - no transaction
-                                            // listener is registered and no additional memory is used
+    .withTransactionCacheEnabled(true)     // false by default - off, the feature is left out entirely: a provider
+                                            // set is ignored, no transaction listener is registered and no
+                                            // additional memory is used
     .withTransactionCacheMaxSize(256)      // jOOQ only, default; the maximum number of Aggregate roots held
                                             // per transaction, ignored if a custom provider is set below
     .withTransactionCacheProvider(...)     // a provider following another transaction mechanism, e.g. JTA
@@ -660,8 +664,9 @@ JooqDomainPersistenceConfiguration.JooqPersistenceConfigurationBuilder
 ```
 
 `JdbcPersistenceConfigurationBuilder` offers `withTransactionCacheEnabled(...)` and
-`withTransactionCacheProvider(...)` as well, but sets up no provider by default: plain JDBC has no transaction
-listener of its own, so the cache is off until a provider is set whose scopes follow the transaction boundaries.
+`withTransactionCacheProvider(...)` as well, but sets up no provider even when enabled: plain JDBC has no
+transaction listener of its own, so the cache stays off until a provider is set whose scopes follow the transaction
+boundaries.
 
 <a name="transaction-cache-activation"></a>
 
@@ -672,7 +677,7 @@ by a small binder class for each way a transaction can be driven:
 
 | Transaction driven by...                                    | Source of the boundaries                                                | Wired by                                                                                      |
 |---------------------------------------------------------------|--------------------------------------------------------------------------|------------------------------------------------------------------------------------------------|
-| Spring (`@Transactional`, `TransactionTemplate`; with a `DataSourceTransactionManager` or a `JtaTransactionManager`) | `SpringTransactionCacheProvider` on Spring's `TransactionSynchronization`, the cache a resource of the transaction (see [`persistence-cache-spring-tx`](../persistence-cache-spring-tx/readme.md)) | `DlcJooqPersistenceAutoConfiguration`/`DlcJdbcPersistenceAutoConfiguration` (Spring Boot autoconfig), for both `jooq-integration` and `jdbc-integration`; configurable via `dlc.features.persistence.transaction-cache.enabled`/`.max-size` |
+| Spring (`@Transactional`, `TransactionTemplate`; with a `DataSourceTransactionManager` or a `JtaTransactionManager`) | `SpringTransactionCacheProvider` on Spring's `TransactionSynchronization`, the cache a resource of the transaction (see [`persistence-cache-spring-tx`](../persistence-cache-spring-tx/readme.md)) | `DlcJooqPersistenceAutoConfiguration`/`DlcJdbcPersistenceAutoConfiguration` (Spring Boot autoconfig), for both `jooq-integration` and `jdbc-integration`, with `dlc.features.persistence.transaction-cache.enabled=true` (`false` by default); limited via `.max-size` |
 | JTA without Spring (e.g. a Jakarta EE application server)    | `JtaTransactionCacheProvider` on the JTA `TransactionSynchronizationRegistry` (see [`persistence-cache-jakarta-jta`](../persistence-cache-jakarta-jta/readme.md)) | Manual - set it via `withTransactionCacheProvider(...)`, for both `jooq-integration` and `jdbc-integration` |
 | jOOQ itself (`dslContext.transaction(...)`, jOOQ's own `TransactionListener` events) | `TransactionCacheJooqBinder` (`jooq-integration`)                       | `JooqDomainPersistenceProvider`'s `DSLContext`-taking constructor, once, at provider construction time |
 | Plain JDBC transactions the application drives itself       | the application, opening a `ThreadBoundTransactionCacheProvider` scope around each transaction | Manual - set the provider via `withTransactionCacheProvider(...)` and open/close/clear its scopes, see below |
@@ -695,7 +700,8 @@ around each transaction - closed once the transaction ends, and cleared after a 
 
 ```java
 var cacheProvider = new ThreadBoundTransactionCacheProvider<JdbcRecord>();
-// ... JdbcPersistenceConfigurationBuilder.newConfig()...withTransactionCacheProvider(cacheProvider)...
+// ... JdbcPersistenceConfigurationBuilder.newConfig()...withTransactionCacheEnabled(true)
+//         .withTransactionCacheProvider(cacheProvider)...
 
 connection.setAutoCommit(false);
 try (var scope = cacheProvider.open()) {
@@ -728,6 +734,33 @@ still valid within it:
 
 Where a provider cannot learn these boundaries reliably, it must hand out no cache at all - the persistence then
 reads the current state before every write, exactly as without the feature.
+
+<a name="transaction-cache-clear"></a>
+
+##### Failures, and emptying the cache
+
+A write of a repository removes the aggregate from the cache in any case - also if it fails midway and the
+application goes on in the same transaction, with the statements before the failing one written.
+
+The cache only knows about the writes of DLC's repositories, though. Whatever changes an aggregate the running
+transaction already loaded in another way leaves a stale state in the cache, and a later write of that aggregate
+would compare against it. Every `TransactionCacheProvider` therefore offers `clearCurrentTransactionCache()`, emptying
+the cache of the current transaction while keeping it in use for the rest of the transaction. An application calls
+it after
+
+- writing such an aggregate with its own SQL or jOOQ statements, e.g. a bulk update,
+- calling a stored procedure - or causing a trigger to fire - that changes it,
+- rolling back to a savepoint of a plain JDBC transaction it drives itself (the Spring, JTA and jOOQ bindings
+  notice that on their own).
+
+```java
+jdbcTemplate.update("UPDATE ORDER_ITEM SET PRICE = PRICE * 1.1 WHERE ORDER_ID = ?", orderId);
+domainPersistenceProvider.transactionCacheProvider.clearCurrentTransactionCache();
+```
+
+Emptying the cache never changes the result of a write: without a cache entry, a write reads the current state of
+the aggregate, exactly as without the feature. Outside a transaction, or with the cache switched off, the call does
+nothing.
 
 <a name="or-mapping"></a>
 

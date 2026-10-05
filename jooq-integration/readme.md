@@ -99,8 +99,9 @@ single-argument constructor is enough.
 #### Transaction Cache
 
 `jooq-integration` shares the [Transaction Cache](../persistence/readme.md#transaction-cache) feature with
-`jdbc-integration` - enabled by default via `withTransactionCacheEnabled(...)`/`withTransactionCacheProvider(...)`/
-`withTransactionCacheMaxSize(...)` on `JooqPersistenceConfigurationBuilder`.
+`jdbc-integration`. It is off by default and switched on via `withTransactionCacheEnabled(true)` on
+`JooqPersistenceConfigurationBuilder`, configurable further via `withTransactionCacheProvider(...)`/
+`withTransactionCacheMaxSize(...)`.
 
 Activation is simpler here than for plain JDBC: passing your `DSLContext` to `JooqDomainPersistenceProvider`'s
 two-argument constructor (see above) registers `TransactionCacheJooqBinder` automatically, which reacts to jOOQ's
@@ -111,9 +112,10 @@ off there. With JTA but without Spring, set a `JtaTransactionCacheProvider` (see
 [`persistence-cache-jakarta-jta`](../persistence-cache-jakarta-jta/readme.md)).
 
 In a Spring Boot application, [`DlcJooqPersistenceAutoConfiguration`](../dlc-spring-boot-autoconfig/readme.md#4-jooq-persistence-autoconfig-dlcjooqpersistenceautoconfiguration)
-sets a `SpringTransactionCacheProvider`, following Spring's transactions, automatically - nothing to configure by
-hand. For a manual setup (no autoconfig) with Spring-managed (`@Transactional`) transactions, set a
-`SpringTransactionCacheProvider` via `withTransactionCacheProvider(...)` - see
+sets a `SpringTransactionCacheProvider`, following Spring's transactions, with
+`dlc.features.persistence.transaction-cache.enabled=true`. For a manual setup (no autoconfig) with Spring-managed
+(`@Transactional`) transactions, switch the cache on and set a `SpringTransactionCacheProvider` via
+`withTransactionCacheProvider(...)` - see
 [`persistence-cache-spring-tx`](../persistence-cache-spring-tx/readme.md).
 
 <a name="repositories"></a>

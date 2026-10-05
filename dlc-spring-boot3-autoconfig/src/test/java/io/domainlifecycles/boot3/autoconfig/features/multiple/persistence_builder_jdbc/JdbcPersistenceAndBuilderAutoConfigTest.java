@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * needs no generated record classes, so nothing else has to change to point it at the same schema. Mirrors
  * {@code dlc-spring-boot-autoconfig}'s test of the same name.
  */
-@SpringBootTest(classes = TestApplicationJdbcPersistenceAndBuilderAutoConfig.class)
+@SpringBootTest(classes = TestApplicationJdbcPersistenceAndBuilderAutoConfig.class, properties = "dlc.features.persistence.transaction-cache.enabled=true")
 @ActiveProfiles({"test", "test-dlc-domain", "test-dlc-persistence"})
 class JdbcPersistenceAndBuilderAutoConfigTest {
 

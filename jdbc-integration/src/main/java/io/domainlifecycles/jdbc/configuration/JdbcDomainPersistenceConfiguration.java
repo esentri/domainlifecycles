@@ -213,7 +213,7 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
         private IgnoredFieldProvider ignoredDomainObjectFields;
         private IgnoredRecordPropertyProvider ignoredRecordProperties;
         private JdbcEntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider;
-        private boolean transactionCacheEnabled = true;
+        private boolean transactionCacheEnabled = false;
         private TransactionCacheProvider<JdbcRecord> transactionCacheProvider;
 
         /**
@@ -401,7 +401,7 @@ public class JdbcDomainPersistenceConfiguration extends DomainPersistenceConfigu
         }
 
         /**
-         * Enables or disables the transaction cache feature (enabled by default). It only takes effect with a
+         * Enables or disables the transaction cache feature (disabled by default). It only takes effect with a
          * provider set via {@link #withTransactionCacheProvider(TransactionCacheProvider)}; disabled, that provider
          * is ignored.
          *

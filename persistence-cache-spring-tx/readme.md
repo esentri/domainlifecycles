@@ -31,7 +31,12 @@ transaction by a `TransactionSynchronization`:
   rollbacks.
 - The cache is emptied and unbound once the transaction completes, whether committed or rolled back.
 - Outside a transaction - none at all, or where Spring only activates transaction synchronization without one, e.g.
-  for `PROPAGATION_SUPPORTS` - there is no cache.
+  for `PROPAGATION_SUPPORTS` or `PROPAGATION_NOT_SUPPORTED` - there is no cache.
+- A cache is only handed out to the transaction it was created for: one still bound to the thread although its
+  transaction ended without completing it there - e.g. completed by a JTA transaction manager on another thread after
+  a timeout - is dropped, and the next transaction gets a cache of its own.
+- It needs Spring 6.2 or later (Spring Boot 3.4 or later): before, Spring does not report a rollback to a savepoint,
+  so the provider hands out no cache and logs a warning once.
 
 Spring raises no event when a transaction begins - none is needed: the first access to the cache within a
 transaction, while loading or before writing an aggregate, always finds that transaction active. No connection
@@ -41,9 +46,9 @@ provider needs to be decorated.
 
 For both `jooq-integration` (via [`DlcJooqPersistenceAutoConfiguration`](../dlc-spring-boot-autoconfig/readme.md#4-jooq-persistence-autoconfig-dlcjooqpersistenceautoconfiguration))
 and `jdbc-integration` (via [`DlcJdbcPersistenceAutoConfiguration`](../dlc-spring-boot-autoconfig/readme.md#5-jdbc-persistence-autoconfig-dlcjdbcpersistenceautoconfiguration)),
-this is wired automatically - both the Spring Boot 3 and Spring Boot 4 autoconfig modules wire the Transaction
-Cache to Spring's own transaction management by default, with nothing to configure by hand in a Spring Boot
-application. `dlc.features.persistence.transaction-cache.enabled=false` switches it off,
+the Spring Boot 3 and Spring Boot 4 autoconfig modules - and so the DLC Spring Boot starters - set this up with
+`@EnableDlc(transactionCacheEnabled = true)` or `dlc.features.persistence.transaction-cache.enabled=true` - the
+cache is off by default.
 `dlc.features.persistence.transaction-cache.max-size` limits the number of aggregates held per transaction (256 by
 default).
 
@@ -53,6 +58,7 @@ For a manual setup (no autoconfig), set the provider on the persistence configur
 ```java
 var configuration = JooqDomainPersistenceConfiguration.JooqPersistenceConfigurationBuilder.newConfig()
     // ...
+    .withTransactionCacheEnabled(true)
     .withTransactionCacheProvider(new SpringTransactionCacheProvider<UpdatableRecord<?>>())
     .make();
 ```
@@ -60,7 +66,7 @@ var configuration = JooqDomainPersistenceConfiguration.JooqPersistenceConfigurat
 and for `jdbc-integration`, typed `SpringTransactionCacheProvider<JdbcRecord>`, via
 `JdbcPersistenceConfigurationBuilder.withTransactionCacheProvider(...)`. A constructor argument limits the number of
 aggregates held per transaction (256 by default). See [Transaction Cache](../persistence/readme.md#transaction-cache)
-for the full picture, including how to disable the feature entirely.
+for the full picture, including when to empty the cache via `clearCurrentTransactionCache()`.
 
 ### Dependency
 

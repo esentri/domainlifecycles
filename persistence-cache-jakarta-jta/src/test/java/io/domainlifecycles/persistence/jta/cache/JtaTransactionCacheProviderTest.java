@@ -37,6 +37,15 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import io.domainlifecycles.persistence.cache.TransactionCache;
+import jakarta.transaction.Synchronization;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -144,6 +153,153 @@ class JtaTransactionCacheProviderTest {
 
         assertThat(provider.currentTransactionCache()).isEmpty();
         transactionManager.rollback();
+    }
+
+    @Test
+    void transactionsSuspendedOverSeveralLevelsGetTheirOwnCachesBack() throws Exception {
+        transactionManager.begin();
+        var firstCache = provider.currentTransactionCache().orElseThrow();
+        var first = transactionManager.suspend();
+        transactionManager.begin();
+        var secondCache = provider.currentTransactionCache().orElseThrow();
+        var second = transactionManager.suspend();
+        transactionManager.begin();
+        var thirdCache = provider.currentTransactionCache().orElseThrow();
+        assertThat(thirdCache).isNotSameAs(secondCache).isNotSameAs(firstCache);
+        transactionManager.commit();
+
+        transactionManager.resume(second);
+        assertThat(provider.currentTransactionCache()).containsSame(secondCache);
+        transactionManager.commit();
+        transactionManager.resume(first);
+        assertThat(provider.currentTransactionCache()).containsSame(firstCache);
+        transactionManager.commit();
+        assertThat(provider.currentTransactionCache()).isEmpty();
+    }
+
+    @Test
+    void aTransactionSuspendedWithoutACacheYetGetsOneOfItsOwnAfterwards() throws Exception {
+        transactionManager.begin();
+        var outer = transactionManager.suspend();
+        transactionManager.begin();
+        var innerCache = provider.currentTransactionCache().orElseThrow();
+        innerCache.put(KEY, new FetcherResult<>(null, null));
+        transactionManager.commit();
+        transactionManager.resume(outer);
+
+        var outerCache = provider.currentTransactionCache().orElseThrow();
+        assertThat(outerCache).isNotSameAs(innerCache);
+        assertThat(outerCache.take(KEY)).isEmpty();
+        transactionManager.commit();
+    }
+
+    @Test
+    void aCommitFailingInAnotherSynchronizationLeavesNothingForTheNextOne() throws Exception {
+        transactionManager.begin();
+        var cache = provider.currentTransactionCache().orElseThrow();
+        cache.put(KEY, new FetcherResult<>(null, null));
+        transactionManager.getTransaction().registerSynchronization(new Synchronization() {
+            @Override
+            public void beforeCompletion() {
+                throw new IllegalStateException("commit fails");
+            }
+
+            @Override
+            public void afterCompletion(int status) {
+                // nothing to do
+            }
+        });
+
+        assertThatThrownBy(() -> transactionManager.commit()).isInstanceOf(Exception.class);
+
+        assertThat(cache.take(KEY)).as("emptied on the rollback").isEmpty();
+        assertThat(provider.currentTransactionCache()).isEmpty();
+    }
+
+    @Test
+    void aTransactionTimingOutLeavesNothingForTheNextOne() throws Exception {
+        transactionManager.setTransactionTimeout(1);
+        try {
+            transactionManager.begin();
+            var cache = provider.currentTransactionCache().orElseThrow();
+            cache.put(KEY, new FetcherResult<>(null, null));
+
+            // the transaction manager rolls the timed out transaction back - when exactly, and on which thread, is up
+            // to it: Atomikos reports it as active until the commit is attempted
+            Thread.sleep(2500);
+            assertThatThrownBy(() -> transactionManager.commit()).isInstanceOf(Exception.class);
+
+            assertThat(cache.take(KEY)).as("emptied on the rollback").isEmpty();
+        } finally {
+            transactionManager.setTransactionTimeout(0);
+        }
+        transactionManager.begin();
+        assertThat(provider.currentTransactionCache().orElseThrow().take(KEY)).isEmpty();
+        transactionManager.commit();
+    }
+
+    @Test
+    void aTransactionMarkedForRollbackAfterwardsHandsOutItsCacheNoMore() throws Exception {
+        transactionManager.begin();
+        provider.currentTransactionCache().orElseThrow().put(KEY, new FetcherResult<>(null, null));
+
+        transactionManager.setRollbackOnly();
+
+        assertThat(provider.currentTransactionCache()).isEmpty();
+        transactionManager.rollback();
+    }
+
+    @Test
+    void transactionsRunningInParallelNeverShareACache() throws Exception {
+        var caches = new ConcurrentLinkedQueue<TransactionCache<Object>>();
+        var allInTheirTransaction = new CountDownLatch(4);
+        var executor = Executors.newFixedThreadPool(4);
+        try {
+            var runs = new ArrayList<Future<?>>();
+            for (int i = 0; i < 4; i++) {
+                runs.add(executor.submit(() -> {
+                    transactionManager.begin();
+                    var cache = provider.currentTransactionCache().orElseThrow();
+                    caches.add(cache);
+                    allInTheirTransaction.countDown();
+                    allInTheirTransaction.await(10, TimeUnit.SECONDS);
+                    assertThat(provider.currentTransactionCache()).containsSame(cache);
+                    transactionManager.commit();
+                    return null;
+                }));
+            }
+            for (var run : runs) {
+                run.get(10, TimeUnit.SECONDS);
+            }
+        } finally {
+            executor.shutdownNow();
+        }
+
+        assertThat(caches).hasSize(4).doesNotHaveDuplicates();
+    }
+
+    @Test
+    void clearingEmptiesTheCacheOfTheTransactionAndKeepsItInUse() throws Exception {
+        transactionManager.begin();
+        var cache = provider.currentTransactionCache().orElseThrow();
+        cache.put(KEY, new FetcherResult<>(null, null));
+
+        provider.clearCurrentTransactionCache();
+
+        assertThat(provider.currentTransactionCache()).containsSame(cache);
+        assertThat(cache.take(KEY)).isEmpty();
+        transactionManager.commit();
+    }
+
+    @Test
+    void clearingCreatesNoCacheAndDoesNothingWithoutATransaction() throws Exception {
+        provider.clearCurrentTransactionCache();
+
+        transactionManager.begin();
+        var registry = new TransactionSynchronizationRegistryImp();
+        provider.clearCurrentTransactionCache();
+        assertThat(registry.getResource(provider)).as("no cache created by clearing").isNull();
+        transactionManager.commit();
     }
 
     @Test

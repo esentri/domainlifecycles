@@ -16,7 +16,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(
     classes = TestApplicationPersistenceAndBuilderAutoConfig.class,
-    properties = "dlc.features.persistence.transaction-cache.max-size=1")
+    properties = {"dlc.features.persistence.transaction-cache.enabled=true",
+        "dlc.features.persistence.transaction-cache.max-size=1"})
 @ActiveProfiles({"test", "test-dlc-domain", "test-dlc-persistence"})
 class JooqTransactionCacheMaxSizeByPropertyTest {
 

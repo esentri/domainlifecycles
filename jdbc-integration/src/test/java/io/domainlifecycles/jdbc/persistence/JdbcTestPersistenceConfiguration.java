@@ -245,7 +245,8 @@ public class JdbcTestPersistenceConfiguration {
             .withEntityValueObjectRecordTypeConfiguration(
                 voConfigs.toArray(new JdbcEntityValueObjectRecordTypeConfiguration[0]));
         if (transactionCacheProvider != null) {
-            configuration.withTransactionCacheProvider(transactionCacheProvider);
+            // the feature these tests cover is off by default
+            configuration.withTransactionCacheEnabled(true).withTransactionCacheProvider(transactionCacheProvider);
         }
         return new JdbcDomainPersistenceProvider(configuration.make());
     }

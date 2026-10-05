@@ -34,7 +34,20 @@ import org.springframework.transaction.SavepointManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionStatus;
+import org.springframework.transaction.support.SmartTransactionObject;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import io.domainlifecycles.persistence.cache.TransactionCache;
+import org.springframework.transaction.UnexpectedRollbackException;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -177,6 +190,213 @@ class SpringTransactionCacheProviderTest {
     }
 
     @Test
+    void thereIsNoCacheWhileATransactionIsSuspendedForCodeRunningWithoutOne() {
+        transaction().executeWithoutResult(outer -> {
+            var outerCache = provider.currentTransactionCache().orElseThrow();
+
+            transaction(TransactionDefinition.PROPAGATION_NOT_SUPPORTED)
+                .executeWithoutResult(none -> assertThat(provider.currentTransactionCache()).isEmpty());
+
+            assertThat(provider.currentTransactionCache()).containsSame(outerCache);
+        });
+    }
+
+    @Test
+    void transactionsSuspendedOverSeveralLevelsGetTheirOwnCachesBack() {
+        transaction().executeWithoutResult(first -> {
+            var firstCache = provider.currentTransactionCache().orElseThrow();
+            transaction(TransactionDefinition.PROPAGATION_REQUIRES_NEW).executeWithoutResult(second -> {
+                var secondCache = provider.currentTransactionCache().orElseThrow();
+                transaction(TransactionDefinition.PROPAGATION_REQUIRES_NEW).executeWithoutResult(third -> {
+                    var thirdCache = provider.currentTransactionCache().orElseThrow();
+                    assertThat(thirdCache).isNotSameAs(secondCache).isNotSameAs(firstCache);
+                });
+                assertThat(provider.currentTransactionCache()).containsSame(secondCache);
+            });
+            assertThat(provider.currentTransactionCache()).containsSame(firstCache);
+        });
+        assertThat(provider.currentTransactionCache()).isEmpty();
+    }
+
+    @Test
+    void aFailingParticipatingTransactionCaughtByTheOuterOneLeavesNothingForTheNextOne() {
+        var cache = new AtomicReference<TransactionCache<Object>>();
+
+        assertThatThrownBy(() -> transaction().executeWithoutResult(outer -> {
+            cache.set(provider.currentTransactionCache().orElseThrow());
+            assertThatThrownBy(() -> transaction().executeWithoutResult(participating -> {
+                assertThat(provider.currentTransactionCache()).as("the same transaction").containsSame(cache.get());
+                cache.get().put(KEY, new FetcherResult<>(null, null));
+                throw new IllegalStateException("fails");
+            })).isInstanceOf(IllegalStateException.class);
+            assertThat(provider.currentTransactionCache()).containsSame(cache.get());
+        })).isInstanceOf(UnexpectedRollbackException.class);
+
+        assertThat(cache.get().take(KEY)).as("emptied on the rollback").isEmpty();
+        transaction().executeWithoutResult(
+            next -> assertThat(provider.currentTransactionCache()).isPresent().get().isNotSameAs(cache.get()));
+    }
+
+    @Test
+    void aCommitFailingInAnotherSynchronizationLeavesNothingForTheNextOne() {
+        var cache = new AtomicReference<TransactionCache<Object>>();
+
+        assertThatThrownBy(() -> transaction().executeWithoutResult(status -> {
+            cache.set(provider.currentTransactionCache().orElseThrow());
+            cache.get().put(KEY, new FetcherResult<>(null, null));
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void beforeCommit(boolean readOnly) {
+                    throw new IllegalStateException("commit fails");
+                }
+            });
+        })).isInstanceOf(IllegalStateException.class);
+
+        assertThat(cache.get().take(KEY)).isEmpty();
+        assertThat(provider.currentTransactionCache()).isEmpty();
+    }
+
+    @Test
+    void aTransactionNeverReusesTheCacheOfOneThatEndedWithoutCompletingIt() {
+        // a transaction whose synchronizations are cleared without completing them, e.g. because the transaction
+        // manager completed it on another thread: the cache stays bound to this thread
+        TransactionSynchronizationManager.initSynchronization();
+        TransactionSynchronizationManager.setActualTransactionActive(true);
+        var stale = provider.currentTransactionCache().orElseThrow();
+        stale.put(KEY, new FetcherResult<>(null, null));
+        TransactionSynchronizationManager.clearSynchronization();
+        TransactionSynchronizationManager.setActualTransactionActive(false);
+
+        try {
+            assertThat(provider.currentTransactionCache()).as("no transaction").isEmpty();
+            transaction().executeWithoutResult(next -> {
+                var cache = provider.currentTransactionCache().orElseThrow();
+                assertThat(cache).isNotSameAs(stale);
+                assertThat(cache.take(KEY)).isEmpty();
+            });
+            assertThat(provider.currentTransactionCache()).isEmpty();
+        } finally {
+            TransactionSynchronizationManager.unbindResourceIfPossible(provider);
+        }
+    }
+
+    @Test
+    void aTransactionCompletedOnAnotherThreadLeavesNothingForTheNextOne() throws Exception {
+        TransactionSynchronizationManager.initSynchronization();
+        TransactionSynchronizationManager.setActualTransactionActive(true);
+        var cache = provider.currentTransactionCache().orElseThrow();
+        cache.put(KEY, new FetcherResult<>(null, null));
+        var synchronizations = TransactionSynchronizationManager.getSynchronizations();
+        TransactionSynchronizationManager.clearSynchronization();
+        TransactionSynchronizationManager.setActualTransactionActive(false);
+
+        // e.g. a JTA transaction manager rolling back on a timeout
+        var completion = new Thread(() -> synchronizations.forEach(
+            synchronization -> synchronization.afterCompletion(TransactionSynchronization.STATUS_ROLLED_BACK)));
+        completion.start();
+        completion.join();
+
+        try {
+            assertThat(cache.take(KEY)).as("emptied on completion").isEmpty();
+            transaction().executeWithoutResult(
+                next -> assertThat(provider.currentTransactionCache()).isPresent().get().isNotSameAs(cache));
+        } finally {
+            TransactionSynchronizationManager.unbindResourceIfPossible(provider);
+        }
+    }
+
+    @Test
+    void transactionsRunningInParallelNeverShareACache() throws Exception {
+        var caches = new ConcurrentLinkedQueue<TransactionCache<Object>>();
+        var allInTheirTransaction = new CountDownLatch(4);
+        var executor = Executors.newFixedThreadPool(4);
+        try {
+            var runs = new ArrayList<Future<?>>();
+            for (int i = 0; i < 4; i++) {
+                runs.add(executor.submit(() -> transaction().executeWithoutResult(status -> {
+                    var cache = provider.currentTransactionCache().orElseThrow();
+                    caches.add(cache);
+                    allInTheirTransaction.countDown();
+                    try {
+                        allInTheirTransaction.await(10, TimeUnit.SECONDS);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                    assertThat(provider.currentTransactionCache()).containsSame(cache);
+                })));
+            }
+            for (var run : runs) {
+                run.get(10, TimeUnit.SECONDS);
+            }
+        } finally {
+            executor.shutdownNow();
+        }
+
+        assertThat(caches).hasSize(4).doesNotHaveDuplicates();
+    }
+
+    @Test
+    void thereIsNoCacheWithoutTheSavepointCallbacksOfSpring6Dot2() {
+        // Spring before 6.2 does not report a rollback to a savepoint
+        var withoutSavepointCallbacks = new SpringTransactionCacheProvider<Object>(256, false);
+
+        transaction().executeWithoutResult(
+            status -> assertThat(withoutSavepointCallbacks.currentTransactionCache()).isEmpty());
+    }
+
+    @Test
+    void anApplicationWritingBypassingTheRepositoriesCanEmptyTheCache() {
+        transaction().executeWithoutResult(status -> {
+            var cache = provider.currentTransactionCache().orElseThrow();
+            cache.put(KEY, new FetcherResult<>(null, null));
+
+            provider.currentTransactionCache().ifPresent(TransactionCache::clear);
+
+            assertThat(provider.currentTransactionCache()).containsSame(cache);
+            assertThat(cache.take(KEY)).isEmpty();
+        });
+    }
+
+    @Test
+    void theLeastRecentlyUsedEntryIsEvictedBeyondTheMaximalSize() {
+        var small = new SpringTransactionCacheProvider<Object>(1);
+        var other = new AggregateCacheKey("some.Aggregate", new TestId(2L));
+
+        transaction().executeWithoutResult(status -> {
+            var cache = small.currentTransactionCache().orElseThrow();
+            cache.put(KEY, new FetcherResult<>(null, null));
+            cache.put(other, new FetcherResult<>(null, null));
+
+            assertThat(cache.take(KEY)).isEmpty();
+            assertThat(cache.take(other)).isPresent();
+        });
+    }
+
+    @Test
+    void clearingEmptiesTheCacheOfTheTransactionAndKeepsItInUse() {
+        transaction().executeWithoutResult(status -> {
+            var cache = provider.currentTransactionCache().orElseThrow();
+            cache.put(KEY, new FetcherResult<>(null, null));
+
+            provider.clearCurrentTransactionCache();
+
+            assertThat(provider.currentTransactionCache()).containsSame(cache);
+            assertThat(cache.take(KEY)).isEmpty();
+        });
+    }
+
+    @Test
+    void clearingCreatesNoCacheAndDoesNothingWithoutATransaction() {
+        provider.clearCurrentTransactionCache();
+
+        transaction().executeWithoutResult(status -> {
+            provider.clearCurrentTransactionCache();
+            assertThat(TransactionSynchronizationManager.getResource(provider)).as("no cache created by clearing")
+                .isNull();
+        });
+    }
+
+    @Test
     void theMaximalSizeMustBePositive() {
         assertThatThrownBy(() -> new SpringTransactionCacheProvider<>(0)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -238,7 +458,7 @@ class SpringTransactionCacheProviderTest {
 
         @Override
         protected void doSetRollbackOnly(DefaultTransactionStatus status) {
-            // the outermost transaction rolls back via the status
+            ((TransactionHandle) status.getTransaction()).existing.rollbackOnly = true;
         }
 
         @Override
@@ -247,7 +467,7 @@ class SpringTransactionCacheProviderTest {
         }
     }
 
-    private static final class TransactionHandle implements SavepointManager {
+    private static final class TransactionHandle implements SavepointManager, SmartTransactionObject {
 
         private InMemoryTransaction existing;
 
@@ -269,8 +489,20 @@ class SpringTransactionCacheProviderTest {
         public void releaseSavepoint(Object savepoint) {
             // nothing to release
         }
+
+        @Override
+        public boolean isRollbackOnly() {
+            return existing != null && existing.rollbackOnly;
+        }
+
+        @Override
+        public void flush() {
+            // nothing to flush
+        }
     }
 
     private static final class InMemoryTransaction {
+
+        private boolean rollbackOnly;
     }
 }

@@ -77,6 +77,9 @@ public class Application {
 }
 ```
 
+DLC's Transaction Cache is off by default; `@EnableDlc(transactionCacheEnabled = true)` switches it on - see the
+persistence autoconfig sections below.
+
 ## Available Autoconfig Modules
 
 ### 1. Domain Autoconfig (`DlcDomainAutoConfiguration`)
@@ -207,12 +210,19 @@ dlc.features.persistence.sql-dialect=POSTGRES
 Providing the 'dlcJooqRecordPackage' is mandatory for DLC persistence, 
 'dlcJooqSqlDialect' is recommended.
 
-This autoconfig also wires DLC's [Transaction Cache](./../persistence/readme.md#transaction-cache) to Spring's
-own transaction management automatically (via [`persistence-cache-spring-tx`](./../persistence-cache-spring-tx/readme.md)),
-so it works correctly for `@Transactional` methods with no extra setup - nothing to configure by hand. It is
-configurable via (shared by the jOOQ and the JDBC persistence autoconfig):
+This autoconfig can also set up DLC's [Transaction Cache](./../persistence/readme.md#transaction-cache) for Spring's
+own transaction management (via [`persistence-cache-spring-tx`](./../persistence-cache-spring-tx/readme.md)), so that
+it works correctly for `@Transactional` methods. It is off by default and switched on - shared by the jOOQ and the
+JDBC persistence autoconfig - either on the annotation:
+```java
+@EnableDlc(
+    transactionCacheEnabled = true,
+    transactionCacheMaxSize = 256 // optional, 256 by default
+)
+```
+or via properties, which take precedence over the annotation:
 ```properties
-# default true; false leaves out the cache - every write reads the current state of the aggregate
+# default false; true switches the cache on
 dlc.features.persistence.transaction-cache.enabled=true
 # default 256; the maximum number of aggregates held per transaction
 dlc.features.persistence.transaction-cache.max-size=256
@@ -268,12 +278,19 @@ dlc.features.persistence.sql-dialect=POSTGRES
 dlc.features.persistence.jdbc.schema-pattern=my_schema
 ```
 
-This autoconfig also wires DLC's [Transaction Cache](./../persistence/readme.md#transaction-cache) to Spring's
-own transaction management automatically (via [`persistence-cache-spring-tx`](./../persistence-cache-spring-tx/readme.md)),
-so it works correctly for `@Transactional` methods with no extra setup - nothing to configure by hand. It is
-configurable via (shared by the jOOQ and the JDBC persistence autoconfig):
+This autoconfig can also set up DLC's [Transaction Cache](./../persistence/readme.md#transaction-cache) for Spring's
+own transaction management (via [`persistence-cache-spring-tx`](./../persistence-cache-spring-tx/readme.md)), so that
+it works correctly for `@Transactional` methods. It is off by default and switched on - shared by the jOOQ and the
+JDBC persistence autoconfig - either on the annotation:
+```java
+@EnableDlc(
+    transactionCacheEnabled = true,
+    transactionCacheMaxSize = 256 // optional, 256 by default
+)
+```
+or via properties, which take precedence over the annotation:
 ```properties
-# default true; false leaves out the cache - every write reads the current state of the aggregate
+# default false; true switches the cache on
 dlc.features.persistence.transaction-cache.enabled=true
 # default 256; the maximum number of aggregates held per transaction
 dlc.features.persistence.transaction-cache.max-size=256

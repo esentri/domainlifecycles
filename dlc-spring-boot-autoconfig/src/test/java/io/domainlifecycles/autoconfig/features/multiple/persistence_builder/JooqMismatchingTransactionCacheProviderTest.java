@@ -26,7 +26,8 @@ class JooqMismatchingTransactionCacheProviderTest {
     void testAProviderNotFittingTheJooqPersistenceStopsTheStart() {
         var application = new SpringApplicationBuilder(TestApplicationPersistenceAndBuilderAutoConfig.class, JdbcProvider.class)
             .web(WebApplicationType.NONE)
-            .profiles("test", "test-dlc-domain", "test-dlc-persistence");
+            .profiles("test", "test-dlc-domain", "test-dlc-persistence")
+            .properties("dlc.features.persistence.transaction-cache.enabled=true");
 
         assertThatThrownBy(application::run)
             .rootCause()

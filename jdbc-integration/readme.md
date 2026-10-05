@@ -246,13 +246,14 @@ The resulting `JdbcDomainPersistenceProvider` instance is passed into every Repo
 #### Transaction Cache
 
 `jdbc-integration` shares the [Transaction Cache](../persistence/readme.md#transaction-cache) feature with
-`jooq-integration`. Plain JDBC has no transaction listener of its own, though, so the cache is off unless
-`withTransactionCacheProvider(...)` on `JdbcPersistenceConfigurationBuilder` sets a provider whose scopes follow
-the transaction boundaries reliably (see [Activation](../persistence/readme.md#transaction-cache-activation)):
+`jooq-integration`. It is off by default; plain JDBC has no transaction listener of its own, so even switched on
+via `withTransactionCacheEnabled(true)` on `JdbcPersistenceConfigurationBuilder`, the cache is only used with a
+provider set via `withTransactionCacheProvider(...)` whose scopes follow the transaction boundaries reliably (see
+[Activation](../persistence/readme.md#transaction-cache-activation)):
 
 - In a Spring Boot application, [`DlcJdbcPersistenceAutoConfiguration`](../dlc-spring-boot-autoconfig/readme.md#5-jdbc-persistence-autoconfig-dlcjdbcpersistenceautoconfiguration)
-  wires it for Spring's transactions automatically - nothing to configure by hand. Without the autoconfig, set a
-  `SpringTransactionCacheProvider` (see [`persistence-cache-spring-tx`](../persistence-cache-spring-tx/readme.md)).
+  sets it up for Spring's transactions with `dlc.features.persistence.transaction-cache.enabled=true`. Without the
+  autoconfig, set a `SpringTransactionCacheProvider` (see [`persistence-cache-spring-tx`](../persistence-cache-spring-tx/readme.md)).
 - With JTA but without Spring, set a `JtaTransactionCacheProvider` (see
   [`persistence-cache-jakarta-jta`](../persistence-cache-jakarta-jta/readme.md)).
 - For plain JDBC transactions the application drives itself, set a `ThreadBoundTransactionCacheProvider` and open

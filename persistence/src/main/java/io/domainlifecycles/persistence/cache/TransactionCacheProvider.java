@@ -64,4 +64,23 @@ public interface TransactionCacheProvider<BASE_RECORD_TYPE> {
      * @return the current transaction cache, or empty if no transaction cache scope is currently open
      */
     Optional<TransactionCache<BASE_RECORD_TYPE>> currentTransactionCache();
+
+    /**
+     * Empties the cache of the current transaction, if there is one - keeping it in use for the rest of the
+     * transaction.
+     * <p>
+     * The cache only knows about the writes of DLC's repositories. Whatever changes the state of an aggregate the
+     * running transaction already loaded in another way makes the cached state stale, and a later write of that
+     * aggregate would compare against it: an application calls this method after
+     * <ul>
+     *     <li>writing such an aggregate with its own SQL or jOOQ statements, e.g. a bulk update,</li>
+     *     <li>calling a stored procedure, or a trigger fired by another write, changing it,</li>
+     *     <li>rolling back to a savepoint of a transaction it drives itself, unless its provider notices that.</li>
+     * </ul>
+     * Emptying the cache never changes the result of a write: a write without a cache entry reads the current state
+     * of the aggregate, exactly as without the feature.
+     */
+    default void clearCurrentTransactionCache() {
+        currentTransactionCache().ifPresent(TransactionCache::clear);
+    }
 }

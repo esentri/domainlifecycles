@@ -1,6 +1,6 @@
-package io.domainlifecycles.boot3.autoconfig.features.multiple.persistence_builder_jdbc;
+package io.domainlifecycles.autoconfig.features.multiple.persistence_builder;
 
-import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
+import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.cache.NoOpTransactionCacheProvider;
 import io.domainlifecycles.persistence.cache.TransactionCacheProvider;
 import org.junit.jupiter.api.Test;
@@ -13,14 +13,12 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(
-    classes = TestApplicationJdbcPersistenceAndBuilderAutoConfig.class,
-    properties = "dlc.features.persistence.transaction-cache.enabled=false")
+@SpringBootTest(classes = TestApplicationPersistenceAndBuilderAutoConfig.class)
 @ActiveProfiles({"test", "test-dlc-domain", "test-dlc-persistence"})
-class JdbcTransactionCacheDisabledByPropertyTest {
+class JooqTransactionCacheOffByDefaultTest {
 
     @Autowired
-    private JdbcDomainPersistenceProvider jdbcDomainPersistenceProvider;
+    private JooqDomainPersistenceProvider jooqDomainPersistenceProvider;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -35,8 +33,8 @@ class JdbcTransactionCacheDisabledByPropertyTest {
 
     @Test
     void testThereIsNoCacheWithinATransaction() {
-        assertThat(jdbcDomainPersistenceProvider.transactionCacheProvider).isInstanceOf(NoOpTransactionCacheProvider.class);
+        assertThat(jooqDomainPersistenceProvider.transactionCacheProvider).isInstanceOf(NoOpTransactionCacheProvider.class);
         new TransactionTemplate(transactionManager).executeWithoutResult(status ->
-            assertThat(jdbcDomainPersistenceProvider.transactionCacheProvider.currentTransactionCache()).isEmpty());
+            assertThat(jooqDomainPersistenceProvider.transactionCacheProvider.currentTransactionCache()).isEmpty());
     }
 }

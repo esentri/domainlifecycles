@@ -267,6 +267,8 @@ public class BaseDLCTestPersistenceConfiguration {
                     }
                 }
             );
+        // the feature these tests cover is off by default
+        builder.withTransactionCacheEnabled(true);
         if (transactionCacheProvider != null) {
             builder.withTransactionCacheProvider(transactionCacheProvider);
         }

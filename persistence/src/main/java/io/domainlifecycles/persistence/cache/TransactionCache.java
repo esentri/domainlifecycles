@@ -67,4 +67,10 @@ public interface TransactionCache<BASE_RECORD_TYPE> {
      * @param key the key to remove
      */
     void invalidate(AggregateCacheKey key);
+
+    /**
+     * Removes all entries, keeping the cache in use - see {@link TransactionCacheProvider#clearCurrentTransactionCache()}
+     * for when an application does so.
+     */
+    void clear();
 }

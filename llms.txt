@@ -75,10 +75,11 @@ Key features:
    - Supports final fields and Java Optional
    - Full ValueObject persistence support
    - Persistence action event hooks
-   - Transaction Cache: an opt-out, per-transaction read cache avoiding redundant SELECTs when
+   - Transaction Cache: an opt-in, per-transaction read cache avoiding redundant SELECTs when
      `update()`/`deleteById()` need the currently persisted state right after a fetch in the same
-     transaction; wired automatically to Spring's own transaction management by the Spring autoconfig
-     (via the small `persistence-cache-spring-tx` module), for both backends, with nothing to configure by hand;
+     transaction; set up for Spring's own transaction management by the Spring autoconfig with
+     `dlc.features.persistence.transaction-cache.enabled=true` (via the small `persistence-cache-spring-tx`
+     module), for both backends;
      for JTA without Spring via `persistence-cache-jakarta-jta`. Without a reliable source of the transaction
      boundaries, the cache is off
 

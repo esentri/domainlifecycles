@@ -152,16 +152,15 @@ public class DlcJdbcPersistenceAutoConfiguration {
          * {@link DlcJooqPersistenceAutoConfiguration}, if both integrations are on the classpath: nothing would
          * use it, and a second cache provider bean would make injecting the one in use by type ambiguous. Holds at
          * most {@code dlc.features.persistence.transaction-cache.max-size} aggregates per transaction (256 by
-         * default), and is not created if {@code dlc.features.persistence.transaction-cache.enabled} is
-         * {@code false}. Any bean of type {@link TransactionCacheProvider} replaces it, whatever its name.
+         * default), and is only created if {@code dlc.features.persistence.transaction-cache.enabled} is
+         * {@code true} ({@code false} by default). Any bean of type {@link TransactionCacheProvider} replaces it, whatever its name.
          *
          * @return a {@link SpringTransactionCacheProvider} instance
          * @throws DLCAutoConfigException if the maximum number of aggregates is not greater than 0
          */
         @Bean
         @ConditionalOnMissingBean({DomainPersistenceProvider.class, TransactionCacheProvider.class})
-        @ConditionalOnProperty(prefix = TransactionCacheProperties.PREFIX, name = "enabled", havingValue = "true",
-            matchIfMissing = true)
+        @ConditionalOnProperty(prefix = TransactionCacheProperties.PREFIX, name = "enabled", havingValue = "true")
         public SpringTransactionCacheProvider<JdbcRecord> dlcJdbcTransactionCacheProvider() {
             return new SpringTransactionCacheProvider<>(TransactionCacheProperties.maxSize(environment));
         }
@@ -300,7 +299,7 @@ public class DlcJdbcPersistenceAutoConfiguration {
                             + "none is a TransactionCacheProvider<JdbcRecord>. Provide one of that type, or switch "
                             + "the cache off via '%s=false'.", TransactionCacheProperties.ENABLED);
                 }
-                configuration.withTransactionCacheProvider(cacheProvider);
+                configuration.withTransactionCacheEnabled(true).withTransactionCacheProvider(cacheProvider);
             } else {
                 configuration.withTransactionCacheEnabled(false);
             }

@@ -36,7 +36,7 @@ import tests.shared.persistence.PersistenceEventTestHelper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = TestApplicationPersistenceAndBuilderAutoConfig.class)
+@SpringBootTest(classes = TestApplicationPersistenceAndBuilderAutoConfig.class, properties = "dlc.features.persistence.transaction-cache.enabled=true")
 @ActiveProfiles({"test", "test-dlc-domain", "test-dlc-persistence"})
 public class PersistenceAndBuilderAutoConfigTest {
 
