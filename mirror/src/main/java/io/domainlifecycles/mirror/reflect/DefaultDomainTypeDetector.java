@@ -33,6 +33,7 @@ import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.domain.types.Factory;
 import io.domainlifecycles.domain.types.OutboundService;
 import io.domainlifecycles.domain.types.QueryHandler;
 import io.domainlifecycles.domain.types.ReadModel;
@@ -101,6 +102,8 @@ public class DefaultDomainTypeDetector implements DomainTypeDetector {
                 return DomainType.QUERY_HANDLER;
             } else if (OutboundService.class.isAssignableFrom(c)) {
                 return DomainType.OUTBOUND_SERVICE;
+            } else if (Factory.class.isAssignableFrom(c)) {
+                return DomainType.FACTORY;
             } else if (ServiceKind.class.isAssignableFrom(c)) {
                 return DomainType.SERVICE_KIND;
             }

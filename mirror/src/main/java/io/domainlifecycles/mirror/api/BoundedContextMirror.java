@@ -84,6 +84,11 @@ public interface BoundedContextMirror {
     List<OutboundServiceMirror> getOutboundServices();
 
     /**
+     * @return the list of {@link FactoryMirror} instances, associated with the BoundedContext.
+     */
+    List<FactoryMirror> getFactories();
+
+    /**
      * @return the list of {@link ServiceKindMirror} instances, associated with the BoundedContext.
      */
     List<ServiceKindMirror> getServiceKinds();

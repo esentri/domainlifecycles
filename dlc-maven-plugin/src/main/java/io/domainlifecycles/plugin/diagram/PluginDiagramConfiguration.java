@@ -113,6 +113,9 @@ public class PluginDiagramConfiguration {
      @Parameter(property = "outboundServiceStyle", required = false)
      private String outboundServiceStyle;
 
+     @Parameter(property = "factoryStyle", required = false)
+     private String factoryStyle;
+
      @Parameter(property = "nonDomainClassStyle", required = false)
      private String nonDomainClassStyle;
 
@@ -233,6 +236,15 @@ public class PluginDiagramConfiguration {
      @Parameter(property = "showOutboundServiceMethods", required = false)
      private Boolean showOutboundServiceMethods;
 
+     @Parameter(property = "showFactories", required = false)
+     private Boolean showFactories;
+
+     @Parameter(property = "showFactoryFields", required = false)
+     private Boolean showFactoryFields;
+
+     @Parameter(property = "showFactoryMethods", required = false)
+     private Boolean showFactoryMethods;
+
      @Parameter(property = "showUnspecifiedServiceKinds", required = false)
      private Boolean showUnspecifiedServiceKinds;
 
@@ -259,6 +271,9 @@ public class PluginDiagramConfiguration {
 
      @Parameter(property = "showFlowCallRelations", required = false)
      private Boolean showFlowCallRelations;
+
+     @Parameter(property = "showFactoryRelations", required = false)
+     private Boolean showFactoryRelations;
 
      @Parameter(property = "callApplicationServiceDriver", required = false)
      private Boolean callApplicationServiceDriver;
@@ -518,6 +533,15 @@ public class PluginDiagramConfiguration {
      */
     public String getOutboundServiceStyle() {
         return outboundServiceStyle;
+    }
+
+    /**
+     * Gets the style for factories.
+     *
+     * @return gets the style for factories.
+     */
+    public String getFactoryStyle() {
+        return factoryStyle;
     }
 
     /**
@@ -882,6 +906,33 @@ public class PluginDiagramConfiguration {
     }
 
     /**
+     * Whether factories are shown in the diagram.
+     *
+     * @return whether factories are shown in the diagram.
+     */
+    public Boolean getShowFactories() {
+        return showFactories;
+    }
+
+    /**
+     * Whether factory fields are shown in the diagram.
+     *
+     * @return whether factory fields are shown in the diagram.
+     */
+    public Boolean getShowFactoryFields() {
+        return showFactoryFields;
+    }
+
+    /**
+     * Whether factory methods are shown in the diagram.
+     *
+     * @return whether factory methods are shown in the diagram.
+     */
+    public Boolean getShowFactoryMethods() {
+        return showFactoryMethods;
+    }
+
+    /**
      * Checks if unspecified service kinds should be shown in the diagram.
      *
      * @return true if unspecified service kinds are shown, false otherwise.
@@ -960,6 +1011,15 @@ public class PluginDiagramConfiguration {
      */
     public Boolean getShowFlowCallRelations() {
         return showFlowCallRelations;
+    }
+
+    /**
+     * Whether a class is connected to the domain types its factory methods create.
+     *
+     * @return whether a class is connected to the domain types its factory methods create.
+     */
+    public Boolean getShowFactoryRelations() {
+        return showFactoryRelations;
     }
 
     /**

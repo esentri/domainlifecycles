@@ -28,10 +28,12 @@ package io.domainlifecycles.mirror.reflect;
 
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.domain.types.DomainEventListener;
+import io.domainlifecycles.domain.types.FactoryMethod;
 import io.domainlifecycles.domain.types.ListensTo;
 import io.domainlifecycles.domain.types.Publishes;
 import io.domainlifecycles.mirror.api.AccessLevel;
 import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
+import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.ParamMirror;
 import io.domainlifecycles.mirror.api.ResolvedGenericTypeMirror;
@@ -42,10 +44,12 @@ import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -77,6 +81,20 @@ public class MethodMirrorBuilder {
 
     private final DomainTypeDetector domainTypeDetector;
 
+    private final boolean declaredInFactory;
+
+    /**
+     * The domain types a factory creates.
+     */
+    private static final Set<DomainType> DOMAIN_OBJECT_TYPES = EnumSet.of(
+        DomainType.AGGREGATE_ROOT,
+        DomainType.ENTITY,
+        DomainType.VALUE_OBJECT,
+        DomainType.READ_MODEL,
+        DomainType.DOMAIN_COMMAND,
+        DomainType.DOMAIN_EVENT
+    );
+
     /**
      * Constructor
      *
@@ -88,6 +106,24 @@ public class MethodMirrorBuilder {
      */
     public MethodMirrorBuilder(Method m, Class<?> topLevelClass, boolean overridden,
                                GenericTypeResolver genericTypeResolver, DomainTypeDetector domainTypeDetector) {
+        this(m, topLevelClass, overridden, genericTypeResolver, domainTypeDetector, false);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param m                   the method to mirror
+     * @param topLevelClass       the class the method is mirrored for
+     * @param overridden          whether the method is overridden
+     * @param genericTypeResolver type resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector  domain type detector implementation, that detects domain types
+     * @param declaredInFactory   whether the class is a factory, whose public methods returning a domain object are
+     *                            factory methods
+     */
+    public MethodMirrorBuilder(Method m, Class<?> topLevelClass, boolean overridden,
+                               GenericTypeResolver genericTypeResolver, DomainTypeDetector domainTypeDetector,
+                               boolean declaredInFactory) {
+        this.declaredInFactory = declaredInFactory;
         this.m = Objects.requireNonNull(m);
         this.topLevelClass = Objects.requireNonNull(topLevelClass, "The corresponding top level class cannot be null!");
         this.overridden = overridden;
@@ -101,16 +137,32 @@ public class MethodMirrorBuilder {
      * @return new instance of method mirror
      */
     public MethodMirror build() {
+        var returnType = getReturnType();
         return new MethodModel(
             m.getName(),
             m.getDeclaringClass().getName(),
             AccessLevel.of(m),
             getParameters(),
-            getReturnType(),
+            returnType,
             overridden,
             publishedEventTypeNames(),
-            listenedEventTypeName()
+            listenedEventTypeName(),
+            isFactoryMethod(returnType)
         );
+    }
+
+    /**
+     * A method marked as {@link FactoryMethod}, or a public method of a factory returning a domain object - a builder
+     * is no factory method.
+     */
+    private boolean isFactoryMethod(AssertedContainableTypeMirror returnType) {
+        if (m.isAnnotationPresent(FactoryMethod.class)) {
+            return true;
+        }
+        return declaredInFactory
+            && Modifier.isPublic(m.getModifiers())
+            && m.getDeclaringClass() != Object.class
+            && DOMAIN_OBJECT_TYPES.contains(returnType.getDomainType());
     }
 
     private AssertedContainableTypeMirror getReturnType() {

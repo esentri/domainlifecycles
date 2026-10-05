@@ -63,6 +63,7 @@ public class DiagramConfigMapper {
         diagramConfig.setReadModelStyle(mavenDiagramConfig.getReadModelStyle());
         diagramConfig.setQueryHandlerStyle(mavenDiagramConfig.getQueryHandlerStyle());
         diagramConfig.setOutboundServiceStyle(mavenDiagramConfig.getOutboundServiceStyle());
+        diagramConfig.setFactoryStyle(mavenDiagramConfig.getFactoryStyle());
         diagramConfig.setNonDomainClassStyle(mavenDiagramConfig.getNonDomainClassStyle());
         diagramConfig.setFont(mavenDiagramConfig.getFont());
         diagramConfig.setDirection(mavenDiagramConfig.getDirection());
@@ -103,6 +104,9 @@ public class DiagramConfigMapper {
         diagramConfig.setShowOutboundServices(mavenDiagramConfig.getShowOutboundServices());
         diagramConfig.setShowOutboundServiceFields(mavenDiagramConfig.getShowOutboundServiceFields());
         diagramConfig.setShowOutboundServiceMethods(mavenDiagramConfig.getShowOutboundServiceMethods());
+        diagramConfig.setShowFactories(mavenDiagramConfig.getShowFactories());
+        diagramConfig.setShowFactoryFields(mavenDiagramConfig.getShowFactoryFields());
+        diagramConfig.setShowFactoryMethods(mavenDiagramConfig.getShowFactoryMethods());
         diagramConfig.setShowUnspecifiedServiceKinds(mavenDiagramConfig.getShowUnspecifiedServiceKinds());
         diagramConfig.setShowUnspecifiedServiceKindFields(mavenDiagramConfig.getShowUnspecifiedServiceKindFields());
         diagramConfig.setShowUnspecifiedServiceKindMethods(mavenDiagramConfig.getShowUnspecifiedServiceKindMethods());
@@ -112,6 +116,7 @@ public class DiagramConfigMapper {
         diagramConfig.setMaxInlinedValueObjectFields(mavenDiagramConfig.getMaxInlinedValueObjectFields());
         diagramConfig.setShowOnlyFlowMethods(mavenDiagramConfig.getShowOnlyFlowMethods());
         diagramConfig.setShowFlowCallRelations(mavenDiagramConfig.getShowFlowCallRelations());
+        diagramConfig.setShowFactoryRelations(mavenDiagramConfig.getShowFactoryRelations());
         diagramConfig.setCallApplicationServiceDriver(mavenDiagramConfig.getCallApplicationServiceDriver());
         diagramConfig.setFieldBlacklist(mavenDiagramConfig.getFieldBlacklist());
         diagramConfig.setMethodBlacklist(mavenDiagramConfig.getMethodBlacklist());

@@ -136,6 +136,10 @@ public class DomainFlowFilter {
         for (String targetPoint : includeFlowsTo) {
             reached.addAll(reachedTo(domainMirror, flowAnalyzer, targetPoint));
         }
+        // an aggregate is shown as a whole: a flow reaching one of its entities reaches its root too
+        reached.addAll(reached.stream()
+            .flatMap(typeName -> DomainMapperUtils.aggregateRootsContaining(typeName, domainMirror).stream())
+            .toList());
         this.reachedTypeNames = Collections.unmodifiableSet(reached);
         this.reachedMethodKeys = Collections.unmodifiableSet(collectedMethodKeys);
         this.calls = Collections.unmodifiableMap(collectedCalls);

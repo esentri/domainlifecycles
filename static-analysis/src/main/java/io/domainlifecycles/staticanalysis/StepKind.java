@@ -100,5 +100,15 @@ public enum StepKind {
      * its Aggregate holds regardless of which of its methods happens to be reached, and
      * regardless of whether that method's body literally names the Aggregate type.
      */
-    MANAGES_AGGREGATE
+    MANAGES_AGGREGATE,
+
+    /**
+     * The predecessor is a factory method - a creating method of a {@code Factory} or a method
+     * annotated with {@code @FactoryMethod} - and the step is the domain type it creates. Taken from
+     * the mirror, not from {@link DomainCalls}: the static analysis leaves out constructors, so the
+     * creation itself is no call. A factory method creating instances of its own type leads nowhere.
+     * <p>
+     * Backwards, the step is a factory method creating the predecessor's type.
+     */
+    CREATES
 }

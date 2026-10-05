@@ -45,6 +45,7 @@ import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.EntityMirror;
+import io.domainlifecycles.mirror.api.FactoryMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.NonDomainTypeMirror;
@@ -204,6 +205,19 @@ public class DomainClassMapper {
         return mapToNomnomlClass(outboundServiceMirror,
             domainDiagramConfig.getGeneralVisualSettings().isShowOutboundServiceFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
             domainDiagramConfig.getGeneralVisualSettings().isShowOutboundServiceMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()
+        );
+    }
+
+    /**
+     * Maps Factory structure to a {@link NomnomlClass} representation.
+     *
+     * @param factoryMirror mirrored factory
+     * @return mapped factory
+     */
+    public NomnomlClass mapFactoryClass(FactoryMirror factoryMirror) {
+        return mapToNomnomlClass(factoryMirror,
+            domainDiagramConfig.getGeneralVisualSettings().isShowFactoryFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
+            domainDiagramConfig.getGeneralVisualSettings().isShowFactoryMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()
         );
     }
 
@@ -369,7 +383,7 @@ public class DomainClassMapper {
                     })
                     .filter(m -> !m.isGetter() && !m.isSetter())
                     .sorted(new MethodComparator())
-                    .map(this::mapToNomnomlMethod)
+                    .map(m -> mapToNomnomlMethod(m, domainTypeMirror))
                     .distinct()
                     .collect(Collectors.toList())
             );
@@ -513,12 +527,13 @@ public class DomainClassMapper {
         return visibility;
     }
 
-    private NomnomlMethod mapToNomnomlMethod(MethodMirror methodMirror) {
+    private NomnomlMethod mapToNomnomlMethod(MethodMirror methodMirror, DomainTypeMirror owner) {
         return NomnomlMethod
             .builder()
             .name(methodMirror.getName())
             .returnType(mapToNomnomlType(methodMirror.getReturnType()))
             .visibility(methodVisibility(methodMirror))
+            .factoryMethod(isMarkedAsFactoryMethod(methodMirror, owner))
             .parameters(
                 methodMirror
                     .getParameters()
@@ -533,6 +548,14 @@ public class DomainClassMapper {
             .required(isTypeRequired(paramMirror.getType()))
             .type(mapToNomnomlType(paramMirror.getType()))
             .build();
+    }
+
+    /**
+     * A factory method is marked, unless it is shown in a factory - with the stereotype of the class, its creating
+     * methods are factory methods anyway.
+     */
+    private static boolean isMarkedAsFactoryMethod(MethodMirror methodMirror, DomainTypeMirror owner) {
+        return methodMirror.isFactoryMethod() && !DomainType.FACTORY.equals(owner.getDomainType());
     }
 
     private String methodVisibility(MethodMirror methodMirror) {

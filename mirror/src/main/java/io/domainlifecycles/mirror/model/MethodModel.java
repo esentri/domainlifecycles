@@ -66,6 +66,8 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
 
     private final boolean overridden;
 
+    private final boolean factoryMethod;
+
     /**
      * Constructs a MethodModel instance that represents metadata about a method, such as its name,
      * declaring type, access level, parameters, return type, and other characteristics including
@@ -89,6 +91,34 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
                        List<String> publishedEventTypeNames,
                        Optional<String> listenedEventTypeName
     ) {
+        this(name, declaredByTypeName, accessLevel, parameters, returnType, overridden, publishedEventTypeNames,
+            listenedEventTypeName, false);
+    }
+
+    /**
+     * Constructs a MethodModel instance, see
+     * {@link #MethodModel(String, String, AccessLevel, List, AssertedContainableTypeMirror, boolean, List, Optional)}.
+     *
+     * @param name the name of the method; must not be null
+     * @param declaredByTypeName the fully qualified name of the type declaring this method; must not be null
+     * @param accessLevel the access level of the method (e.g., PUBLIC, PROTECTED); must not be null
+     * @param parameters the list of parameters of the method, represented as {@link ParamMirror} instances; must not be null
+     * @param returnType the return type of the method, represented as an {@link AssertedContainableTypeMirror}; must not be null
+     * @param overridden a boolean indicating if this method overrides a method from a superclass or interface
+     * @param publishedEventTypeNames the list of names of events published by this method; must not be null
+     * @param listenedEventTypeName an {@link Optional} containing the name of the event type this method listens to; must not be null
+     * @param factoryMethod whether the method is a factory method, creating the domain object it returns
+     */
+    public MethodModel(String name,
+                       String declaredByTypeName,
+                       AccessLevel accessLevel,
+                       List<ParamMirror> parameters,
+                       AssertedContainableTypeMirror returnType,
+                       boolean overridden,
+                       List<String> publishedEventTypeNames,
+                       Optional<String> listenedEventTypeName,
+                       boolean factoryMethod
+    ) {
         this.name = Objects.requireNonNull(name);
         this.declaredByTypeName = Objects.requireNonNull(declaredByTypeName);
         this.accessLevel = Objects.requireNonNull(accessLevel);
@@ -99,6 +129,7 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
         Objects.requireNonNull(publishedEventTypeNames);
         this.publishedEventTypeNames = Collections.unmodifiableList(publishedEventTypeNames);
         this.listenedEventTypeName = Objects.requireNonNull(listenedEventTypeName);
+        this.factoryMethod = factoryMethod;
     }
 
     /**
@@ -291,6 +322,14 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
      * {@inheritDoc}
      */
     @Override
+    public boolean isFactoryMethod() {
+        return factoryMethod;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
         return "MethodModel{" +
             "name='" + name + '\'' +
@@ -299,6 +338,7 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
             ", parameters=" + parameters +
             ", returnType=" + returnType +
             ", overridden=" + overridden +
+            ", factoryMethod=" + factoryMethod +
             ", publishedEventTypeNames=" + publishedEventTypeNames +
             ", listenedEventTypeName=" + listenedEventTypeName +
             '}';

@@ -19,6 +19,7 @@ DLC is built around these guiding ideas:
   - ValueObject
   - DomainEvent
   - DomainService
+  - Factory (plus `@FactoryMethod` for creating methods of other types)
   - Repository
 - Extend DDD building blocks with additional explicit architectural types:
   - ApplicationServices

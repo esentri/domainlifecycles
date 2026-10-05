@@ -262,6 +262,25 @@ collection, e.g. a driver computing it. They are connected to it by a `<<provide
 labeled with the providing methods. The flows follow the same relation, see the
 [static analysis](../static-analysis/readme.md).
 
+## Factories and factory methods
+
+A class implementing `Factory` (or annotated with jMolecules' `@Factory`) is drawn with the stereotype
+`<<Factory>>` and a style of its own (`StyleSettings.withFactoryStyle`). Like domain services it shows its
+methods but not its fields by default (`showFactories`, `showFactoryFields`, `showFactoryMethods`).
+
+The factory methods of other classes - marked with `@FactoryMethod`, e.g. in an aggregate or a domain
+service - are marked with `«factory»` in their method list. A class creating another domain type by its
+factory methods is connected to it by a `<<creates>>` relationship, labeled with these methods, each
+qualified by the class declaring it (e.g. `Appointment.invite`, at most three, then `…`): a factory or domain service to the frame of the aggregate it creates, an aggregate - its
+root or one of its entities - from its frame to the frame of another aggregate it creates. Within an
+aggregate there is no such relationship, the composition already connects its classes, and neither is
+there one for a class creating instances of itself, e.g. by a static factory method. `GeneralVisualSettings.withShowFactoryRelations(false)` leaves the
+relationships out (on by default). Builders are never factories.
+
+The flows follow the factory methods to the domain types they create, and backwards from a domain type to the
+factory methods creating it, see the [static analysis](../static-analysis/readme.md). A flow reaching an entity
+shows its whole aggregate.
+
 ## Read models containing read models
 
 A read model containing another read model - as field, `Optional` or collection - is connected to it

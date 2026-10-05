@@ -21,6 +21,7 @@ interfaces are treated as first-class DLC domain types.
 | `@ValueObject` | `VALUE_OBJECT` |
 | `@Repository` | `REPOSITORY` |
 | `@Service` | `DOMAIN_SERVICE` |
+| `@Factory` | `FACTORY` (its public methods returning a domain object are its factory methods) |
 | `@DomainEvent` | `DOMAIN_EVENT` |
 
 **Interfaces** (`org.jmolecules.ddd.types.*` and `org.jmolecules.event.types.*`):

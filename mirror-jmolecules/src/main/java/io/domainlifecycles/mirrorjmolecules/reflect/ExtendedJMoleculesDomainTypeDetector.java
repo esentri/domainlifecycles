@@ -54,7 +54,7 @@ import java.lang.reflect.Type;
  * - Checking for the presence of JMolecules DDD annotations like
  *   {@link org.jmolecules.ddd.annotation.AggregateRoot}, {@link org.jmolecules.ddd.annotation.Entity},
  *   {@link org.jmolecules.ddd.annotation.ValueObject}, {@link org.jmolecules.ddd.annotation.Repository},
- *   and {@link org.jmolecules.ddd.annotation.Service}.
+ *   {@link org.jmolecules.ddd.annotation.Service} and {@link org.jmolecules.ddd.annotation.Factory}.
  *
  * If the domain type cannot be determined using the extended logic, it falls back to the default
  * detection logic provided by {@link DefaultDomainTypeDetector}.
@@ -62,7 +62,7 @@ import java.lang.reflect.Type;
  * The domain type classification results in one of the {@link DomainType} values, such as
  * {@link DomainType#AGGREGATE_ROOT}, {@link DomainType#ENTITY}, {@link DomainType#VALUE_OBJECT},
  * {@link DomainType#IDENTITY}, {@link DomainType#REPOSITORY}, {@link DomainType#DOMAIN_EVENT},
- * {@link DomainType#DOMAIN_SERVICE}, or the default {@link DomainType#NON_DOMAIN}.
+ * {@link DomainType#DOMAIN_SERVICE}, {@link DomainType#FACTORY}, or the default {@link DomainType#NON_DOMAIN}.
  *
  * @author Mario Herb
  */
@@ -110,6 +110,8 @@ public class ExtendedJMoleculesDomainTypeDetector extends DefaultDomainTypeDetec
                     return DomainType.REPOSITORY;
                 } else if (c.isAnnotationPresent(org.jmolecules.ddd.annotation.Service.class)){
                     return DomainType.DOMAIN_SERVICE;
+                } else if (c.isAnnotationPresent(org.jmolecules.ddd.annotation.Factory.class)){
+                    return DomainType.FACTORY;
                 }
             }
         }

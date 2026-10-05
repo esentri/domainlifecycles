@@ -348,6 +348,18 @@ public sealed interface Step {
             cyclic, aggregate);
     }
 
+    /**
+     * Creates a step for the domain type created by the factory method of the given predecessor.
+     *
+     * @param from    the step holding the factory method, must not be {@code null}
+     * @param created the created domain type, must not be {@code null}
+     * @param cyclic  whether the created type already occurs among the predecessors
+     * @return the step
+     */
+    static TypeStep creating(Step from, DomainTypeMirror created, boolean cyclic) {
+        return new TypeStep(Optional.of(from), StepKind.CREATES, from.depth() + 1, cyclic, created);
+    }
+
     // -----------------------------------------------------------------------------------------
     // Backward factories: same StepKinds, roles reversed - the step represents what leads INTO
     // the predecessor, not what it leads to. Kept distinct from the forward factories above so
@@ -458,6 +470,18 @@ public sealed interface Step {
     static MethodStep providedByMethod(Step from, DomainMethod provider, boolean cyclic) {
         return new MethodStep(Optional.of(from), StepKind.PROVIDES_READ_MODEL, from.depth() + 1,
             cyclic, provider);
+    }
+
+    /**
+     * Creates a step for a factory method creating the domain type of the given predecessor.
+     *
+     * @param from    the step holding the created domain type, must not be {@code null}
+     * @param creator the factory method creating it, must not be {@code null}
+     * @param cyclic  whether the factory method already occurs among the predecessors
+     * @return the step
+     */
+    static MethodStep createdBy(Step from, DomainMethod creator, boolean cyclic) {
+        return new MethodStep(Optional.of(from), StepKind.CREATES, from.depth() + 1, cyclic, creator);
     }
 
     /**

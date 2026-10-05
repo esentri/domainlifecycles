@@ -78,6 +78,7 @@ public class DiagramConfig {
     private String readModelStyle;
     private String queryHandlerStyle;
     private String outboundServiceStyle;
+    private String factoryStyle;
     private String nonDomainClassStyle;
     private String font;
     private String direction;
@@ -118,6 +119,9 @@ public class DiagramConfig {
     private Boolean showOutboundServices;
     private Boolean showOutboundServiceFields;
     private Boolean showOutboundServiceMethods;
+    private Boolean showFactories;
+    private Boolean showFactoryFields;
+    private Boolean showFactoryMethods;
     private Boolean showUnspecifiedServiceKinds;
     private Boolean showUnspecifiedServiceKindFields;
     private Boolean showUnspecifiedServiceKindMethods;
@@ -127,6 +131,7 @@ public class DiagramConfig {
     private Integer maxInlinedValueObjectFields;
     private Boolean showOnlyFlowMethods;
     private Boolean showFlowCallRelations;
+    private Boolean showFactoryRelations;
     private Boolean callApplicationServiceDriver;
     private List<String> fieldBlacklist;
     private List<String> methodBlacklist;
@@ -444,6 +449,24 @@ public class DiagramConfig {
      */
     public void setOutboundServiceStyle(String outboundServiceStyle) {
         this.outboundServiceStyle = outboundServiceStyle;
+    }
+
+    /**
+     * Gets the style configuration for factories
+     *
+     * @return The style configuration for factories
+     */
+    public String getFactoryStyle() {
+        return factoryStyle;
+    }
+
+    /**
+     * Sets the style configuration for factories
+     *
+     * @param factoryStyle The style configuration for factories
+     */
+    public void setFactoryStyle(String factoryStyle) {
+        this.factoryStyle = factoryStyle;
     }
 
     /**
@@ -1167,6 +1190,60 @@ public class DiagramConfig {
     }
 
     /**
+     * Gets whether to show factories
+     *
+     * @return Whether to show factories
+     */
+    public Boolean getShowFactories() {
+        return showFactories;
+    }
+
+    /**
+     * Sets whether to show factories
+     *
+     * @param showFactories Whether to show factories
+     */
+    public void setShowFactories(Boolean showFactories) {
+        this.showFactories = showFactories;
+    }
+
+    /**
+     * Gets whether to show factory fields
+     *
+     * @return Whether to show factory fields
+     */
+    public Boolean getShowFactoryFields() {
+        return showFactoryFields;
+    }
+
+    /**
+     * Sets whether to show factory fields
+     *
+     * @param showFactoryFields Whether to show factory fields
+     */
+    public void setShowFactoryFields(Boolean showFactoryFields) {
+        this.showFactoryFields = showFactoryFields;
+    }
+
+    /**
+     * Gets whether to show factory methods
+     *
+     * @return Whether to show factory methods
+     */
+    public Boolean getShowFactoryMethods() {
+        return showFactoryMethods;
+    }
+
+    /**
+     * Sets whether to show factory methods
+     *
+     * @param showFactoryMethods Whether to show factory methods
+     */
+    public void setShowFactoryMethods(Boolean showFactoryMethods) {
+        this.showFactoryMethods = showFactoryMethods;
+    }
+
+    /**
      * Gets whether to show unspecified service kinds in the diagram
      *
      * @return Whether unspecified services should be shown
@@ -1326,6 +1403,24 @@ public class DiagramConfig {
      */
     public void setShowFlowCallRelations(Boolean showFlowCallRelations) {
         this.showFlowCallRelations = showFlowCallRelations;
+    }
+
+    /**
+     * Gets whether a class is connected to the domain types its factory methods create
+     *
+     * @return Whether a class is connected to the domain types its factory methods create
+     */
+    public Boolean getShowFactoryRelations() {
+        return showFactoryRelations;
+    }
+
+    /**
+     * Sets whether a class is connected to the domain types its factory methods create
+     *
+     * @param showFactoryRelations Whether a class is connected to the domain types its factory methods create
+     */
+    public void setShowFactoryRelations(Boolean showFactoryRelations) {
+        this.showFactoryRelations = showFactoryRelations;
     }
 
     /**
@@ -1903,6 +1998,7 @@ public class DiagramConfig {
         if(readModelStyle != null) styleBuilder.withReadModelStyle(readModelStyle);
         if(queryHandlerStyle != null) styleBuilder.withQueryHandlerStyle(queryHandlerStyle);
         if(outboundServiceStyle != null) styleBuilder.withOutboundServiceStyle(outboundServiceStyle);
+        if(factoryStyle != null) styleBuilder.withFactoryStyle(factoryStyle);
         if(nonDomainClassStyle != null) styleBuilder.withNonDomainClassStyle(nonDomainClassStyle);
         if(font != null) styleBuilder.withFont(font);
         if(direction != null) layoutBuilder.withDirection(direction);
@@ -1943,6 +2039,9 @@ public class DiagramConfig {
         if(showOutboundServices != null) visualBuilder.withShowOutboundServices(showOutboundServices);
         if(showOutboundServiceFields != null) visualBuilder.withShowOutboundServiceFields(showOutboundServiceFields);
         if(showOutboundServiceMethods != null) visualBuilder.withShowOutboundServiceMethods(showOutboundServiceMethods);
+        if(showFactories != null) visualBuilder.withShowFactories(showFactories);
+        if(showFactoryFields != null) visualBuilder.withShowFactoryFields(showFactoryFields);
+        if(showFactoryMethods != null) visualBuilder.withShowFactoryMethods(showFactoryMethods);
         if(showUnspecifiedServiceKinds != null) visualBuilder.withShowUnspecifiedServiceKinds(showUnspecifiedServiceKinds);
         if(showUnspecifiedServiceKindFields != null) visualBuilder.withShowUnspecifiedServiceKindFields(showUnspecifiedServiceKindFields);
         if(showUnspecifiedServiceKindMethods != null) visualBuilder.withShowUnspecifiedServiceKindMethods(showUnspecifiedServiceKindMethods);
@@ -1952,6 +2051,7 @@ public class DiagramConfig {
         if(maxInlinedValueObjectFields != null) visualBuilder.withMaxInlinedValueObjectFields(maxInlinedValueObjectFields);
         if(showOnlyFlowMethods != null) visualBuilder.withShowOnlyFlowMethods(showOnlyFlowMethods);
         if(showFlowCallRelations != null) visualBuilder.withShowFlowCallRelations(showFlowCallRelations);
+        if(showFactoryRelations != null) visualBuilder.withShowFactoryRelations(showFactoryRelations);
         if(callApplicationServiceDriver != null) visualBuilder.withCallApplicationServiceDriver(callApplicationServiceDriver);
         if(fieldBlacklist != null && !fieldBlacklist.isEmpty()) visualBuilder.withFieldBlacklist(fieldBlacklist);
         if(methodBlacklist != null && !methodBlacklist.isEmpty()) visualBuilder.withMethodBlacklist(methodBlacklist);

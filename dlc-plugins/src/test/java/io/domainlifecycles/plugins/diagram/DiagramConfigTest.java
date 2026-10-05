@@ -97,6 +97,35 @@ public class DiagramConfigTest {
     }
 
     @Test
+    void mapCopiesTheFactorySettings() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setFactoryStyle("fill=#123456 bold");
+        diagramConfig.setShowFactories(false);
+        diagramConfig.setShowFactoryFields(true);
+        diagramConfig.setShowFactoryMethods(false);
+        diagramConfig.setShowFactoryRelations(false);
+
+        var mapped = diagramConfig.map();
+
+        assertThat(mapped.getStyleSettings().getFactoryStyle()).isEqualTo("fill=#123456 bold");
+        assertThat(mapped.getGeneralVisualSettings().isShowFactories()).isFalse();
+        assertThat(mapped.getGeneralVisualSettings().isShowFactoryFields()).isTrue();
+        assertThat(mapped.getGeneralVisualSettings().isShowFactoryMethods()).isFalse();
+        assertThat(mapped.getGeneralVisualSettings().isShowFactoryRelations()).isFalse();
+    }
+
+    @Test
+    void mapKeepsTheDiagrammersFactoryDefaults_When_TheFactorySettingsAreUnset() {
+        var mapped = new DiagramConfig().map();
+
+        assertThat(mapped.getGeneralVisualSettings().isShowFactories()).isTrue();
+        assertThat(mapped.getGeneralVisualSettings().isShowFactoryFields()).isFalse();
+        assertThat(mapped.getGeneralVisualSettings().isShowFactoryMethods()).isTrue();
+        assertThat(mapped.getGeneralVisualSettings().isShowFactoryRelations()).isTrue();
+        assertThat(mapped.getStyleSettings().getFactoryStyle()).isNotBlank();
+    }
+
+    @Test
     void mapCopiesWhetherTheCallsOfTheFlowsAreDrawn() {
         DiagramConfig diagramConfig = new DiagramConfig();
         diagramConfig.setShowFlowCallRelations(true);

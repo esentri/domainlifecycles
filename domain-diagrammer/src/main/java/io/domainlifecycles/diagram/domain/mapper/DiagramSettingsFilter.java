@@ -176,7 +176,7 @@ public class DiagramSettingsFilter {
                     ingoing.addAll(domainEventMirror.getPublishingAggregates());
                     ingoing.addAll(addConcreteServiceKinds(domainEventMirror.getPublishingServiceKinds()));
                 }
-                case DOMAIN_SERVICE, REPOSITORY, SERVICE_KIND, APPLICATION_SERVICE, QUERY_HANDLER, OUTBOUND_SERVICE -> {
+                case DOMAIN_SERVICE, REPOSITORY, SERVICE_KIND, APPLICATION_SERVICE, QUERY_HANDLER, OUTBOUND_SERVICE, FACTORY -> {
                     var serviceKindMirror = (ServiceKindMirror) dtm;
                     ingoing.addAll(
                         addConcreteServiceKinds(
@@ -215,6 +215,15 @@ public class DiagramSettingsFilter {
                 }
                 case AGGREGATE_ROOT -> {
                     var aggregateRootMirror = (AggregateRootMirror) dtm;
+                    // the service kinds creating it, and the aggregates whose root, entities or value objects do
+                    domainMirror.getAllServiceKindMirrors().stream()
+                        .filter(creator -> DomainMapperUtils.createdAggregateRoots(creator, domainMirror)
+                            .contains(aggregateRootMirror))
+                        .forEach(ingoing::add);
+                    domainMirror.getAllAggregateRootMirrors().stream()
+                        .filter(creator -> DomainMapperUtils.aggregateRootsCreatedByAggregate(creator, domainMirror)
+                            .contains(aggregateRootMirror))
+                        .forEach(ingoing::add);
                     ingoing.addAll(aggregateRootMirror.listenedDomainEvents());
                     ingoing.addAll(aggregateRootMirror.processedDomainCommands());
                     ingoing.addAll(addConcreteServiceKinds(
@@ -252,7 +261,7 @@ public class DiagramSettingsFilter {
                         )
                     );
                 }
-                case DOMAIN_SERVICE, REPOSITORY, SERVICE_KIND, APPLICATION_SERVICE, QUERY_HANDLER, OUTBOUND_SERVICE -> {
+                case DOMAIN_SERVICE, REPOSITORY, SERVICE_KIND, APPLICATION_SERVICE, QUERY_HANDLER, OUTBOUND_SERVICE, FACTORY -> {
                     var serviceKindMirror = (ServiceKindMirror) dtm;
                     var ref = serviceKindMirror.getReferencedServiceKinds();
                     outgoing.addAll(addConcreteServiceKinds(ref));
@@ -266,10 +275,12 @@ public class DiagramSettingsFilter {
                         outgoing.addAll(rep.getProvidedReadModel().stream().toList());
                     }
                     outgoing.addAll(DomainMapperUtils.readModelsProvidedWithoutQueryHandler(dtm, domainMirror));
+                    outgoing.addAll(DomainMapperUtils.createdAggregateRoots(dtm, domainMirror));
                 }
                 case AGGREGATE_ROOT -> {
                     var aggregateRootMirror = (AggregateRootMirror) dtm;
                     outgoing.addAll(aggregateRootMirror.publishedDomainEvents());
+                    outgoing.addAll(DomainMapperUtils.aggregateRootsCreatedByAggregate(aggregateRootMirror, domainMirror));
                 }
             }
 
@@ -386,7 +397,7 @@ public class DiagramSettingsFilter {
 
     private boolean hasInheritanceSetting(DomainTypeMirror dtm) {
         return switch (dtm.getDomainType()) {
-            case SERVICE_KIND, QUERY_HANDLER, OUTBOUND_SERVICE, DOMAIN_SERVICE, REPOSITORY, APPLICATION_SERVICE,
+            case SERVICE_KIND, QUERY_HANDLER, OUTBOUND_SERVICE, FACTORY, DOMAIN_SERVICE, REPOSITORY, APPLICATION_SERVICE,
                  AGGREGATE_ROOT, ENTITY, VALUE_OBJECT, READ_MODEL, DOMAIN_COMMAND, DOMAIN_EVENT -> true;
             default -> false;
         };
@@ -397,8 +408,8 @@ public class DiagramSettingsFilter {
             return true;
         }
         return switch (dtm.getDomainType()) {
-            case SERVICE_KIND, QUERY_HANDLER, OUTBOUND_SERVICE, DOMAIN_SERVICE, REPOSITORY, APPLICATION_SERVICE ->
-                generalVisualSettings.isShowInheritanceStructuresForServiceKinds();
+            case SERVICE_KIND, QUERY_HANDLER, OUTBOUND_SERVICE, FACTORY, DOMAIN_SERVICE, REPOSITORY,
+                 APPLICATION_SERVICE -> generalVisualSettings.isShowInheritanceStructuresForServiceKinds();
             case AGGREGATE_ROOT, ENTITY, VALUE_OBJECT -> generalVisualSettings.isShowInheritanceStructuresInAggregates();
             case READ_MODEL -> generalVisualSettings.isShowInheritanceStructuresForReadModels();
             case DOMAIN_COMMAND -> generalVisualSettings.isShowInheritanceStructuresForDomainCommands();
@@ -427,6 +438,7 @@ public class DiagramSettingsFilter {
                 && !dtm.getTypeName().equals("io.domainlifecycles.jooq.imp.JooqAggregateRepository");
             case APPLICATION_SERVICE -> included = included && generalVisualSettings.isShowApplicationServices();
             case OUTBOUND_SERVICE -> included = included && generalVisualSettings.isShowOutboundServices();
+            case FACTORY -> included = included && generalVisualSettings.isShowFactories();
             case DOMAIN_COMMAND -> {
                 included = included && generalVisualSettings.isShowDomainCommands();
             }

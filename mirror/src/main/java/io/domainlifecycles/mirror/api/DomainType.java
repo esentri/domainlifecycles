@@ -91,6 +91,11 @@ public enum DomainType {
      */
     OUTBOUND_SERVICE,
     /**
+     * Represents the domain type "factory" within a domain-driven design (DDD) context: a service kind whose only
+     * responsibility is to create domain objects.
+     */
+    FACTORY,
+    /**
      * Represents the domain type for non domain objects used within a domain-driven design (DDD) context.
      */
     NON_DOMAIN;

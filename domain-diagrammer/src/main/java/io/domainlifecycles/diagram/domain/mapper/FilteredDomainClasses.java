@@ -36,6 +36,7 @@ import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
+import io.domainlifecycles.mirror.api.FactoryMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.NonDomainTypeMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
@@ -133,6 +134,7 @@ public class FilteredDomainClasses {
                     DomainType.DOMAIN_SERVICE.equals(domainTypeMirror.getDomainType())
                     || DomainType.REPOSITORY.equals(domainTypeMirror.getDomainType())
                     || DomainType.OUTBOUND_SERVICE.equals(domainTypeMirror.getDomainType())
+                    || DomainType.FACTORY.equals(domainTypeMirror.getDomainType())
                     || DomainType.APPLICATION_SERVICE.equals(domainTypeMirror.getDomainType())
                     || DomainType.QUERY_HANDLER.equals(domainTypeMirror.getDomainType())
                 )
@@ -302,6 +304,7 @@ public class FilteredDomainClasses {
                 dtm.getDomainType().equals(DomainType.DOMAIN_SERVICE) ||
                 dtm.getDomainType().equals(DomainType.REPOSITORY) ||
                 dtm.getDomainType().equals(DomainType.OUTBOUND_SERVICE) ||
+                dtm.getDomainType().equals(DomainType.FACTORY) ||
                 dtm.getDomainType().equals(DomainType.QUERY_HANDLER)
             )
             .map(dtm -> (ServiceKindMirror) dtm)
@@ -387,6 +390,19 @@ public class FilteredDomainClasses {
         return this.includedDomainTypes.stream()
             .filter(dtm -> dtm.getDomainType().equals(DomainType.OUTBOUND_SERVICE))
             .map(dtm -> (OutboundServiceMirror) dtm)
+            .sorted(Comparator.comparing(DomainTypeMirror::getTypeName))
+            .toList();
+    }
+
+    /**
+     * Retrieves the list of filtered {@link FactoryMirror} instances.
+     *
+     * @return a list of {@link FactoryMirror} instances representing the filtered factories.
+     */
+    public List<FactoryMirror> getFactories() {
+        return this.includedDomainTypes.stream()
+            .filter(dtm -> dtm.getDomainType().equals(DomainType.FACTORY))
+            .map(dtm -> (FactoryMirror) dtm)
             .sorted(Comparator.comparing(DomainTypeMirror::getTypeName))
             .toList();
     }

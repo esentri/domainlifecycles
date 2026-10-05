@@ -35,6 +35,7 @@ import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.DomainServiceCommand;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.domain.types.Factory;
 import io.domainlifecycles.domain.types.OutboundService;
 import io.domainlifecycles.domain.types.QueryHandler;
 import io.domainlifecycles.domain.types.ReadModel;
@@ -367,17 +368,28 @@ public class ClassGraphDomainTypesScanner {
             .filter(Objects::nonNull)
             .forEach(domainTypes::add);
 
+        scanResult.getClassesImplementing(Factory.class)
+            .stream()
+            .filter(c -> !Factory.class.getName().equals(c.getName()))
+            .map(r -> (Class<? extends Factory>) loadClass(r))
+            .filter(Objects::nonNull)
+            .map(dt -> build(new FactoryMirrorBuilder(dt, genericTypeResolver, domainTypeDetector)))
+            .filter(Objects::nonNull)
+            .forEach(domainTypes::add);
+
         scanResult.getClassesImplementing(ServiceKind.class)
             .stream()
             .filter(c -> !ServiceKind.class.getName().equals(c.getName())
                 && !ApplicationService.class.getName().equals(c.getName())
                 && !DomainService.class.getName().equals(c.getName())
                 && !OutboundService.class.getName().equals(c.getName())
+                && !Factory.class.getName().equals(c.getName())
                 && !QueryHandler.class.getName().equals(c.getName())
                 && !Repository.class.getName().equals(c.getName()))
             .filter(c -> !(c.implementsInterface(ApplicationService.class))
                 && !(c.implementsInterface(DomainService.class))
                 && !(c.implementsInterface(OutboundService.class))
+                && !(c.implementsInterface(Factory.class))
                 && !(c.implementsInterface(QueryHandler.class))
                 && !(c.implementsInterface(Repository.class)))
             .map(r -> (Class<? extends ServiceKind>) loadClass(r))

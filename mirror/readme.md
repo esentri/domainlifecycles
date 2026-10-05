@@ -148,6 +148,31 @@ this to optionally draw the non-domain classes referenced by a service in a diag
 
 
 
+## Factories and factory methods
+
+A class implementing `io.domainlifecycles.domain.types.Factory` is mirrored as a `FactoryMirror`
+(`DomainType.FACTORY`). Its public methods returning a domain object are its factory methods. Other domain types
+mark their creating methods with `@FactoryMethod`, e.g. an Aggregate creating its Entities or a DomainService with
+further operations. `MethodMirror#isFactoryMethod()` and `DomainTypeMirror#getFactoryMethods()` provide them.
+
+```Java
+public class CalendarFactory implements Factory {
+
+    public Calendar create(CalendarId id) { ... }        // factory method
+}
+
+public class Calendar implements AggregateRoot<CalendarId> {
+
+    @FactoryMethod
+    public Appointment planAppointment(String title) { ... }
+
+    public Appointment firstAppointment() { ... }       // no factory method
+}
+```
+
+Builders are never factory methods. The mirror logs a warning for a Factory with public methods creating no
+domain object and for a DomainService whose public methods are all factory methods.
+
 ## Event listeners of Spring and Spring Modulith
 
 A method listens to a domain event (`MethodMirror#getListenedEvent()`) if it is annotated with

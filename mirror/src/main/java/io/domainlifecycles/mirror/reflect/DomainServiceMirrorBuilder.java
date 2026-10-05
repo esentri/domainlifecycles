@@ -27,9 +27,14 @@
 package io.domainlifecycles.mirror.reflect;
 
 import io.domainlifecycles.domain.types.DomainService;
+import io.domainlifecycles.mirror.api.AccessLevel;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
+import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.model.DomainServiceModel;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,6 +46,9 @@ import java.util.stream.Collectors;
  * @author Mario Herb
  */
 public class DomainServiceMirrorBuilder extends ServiceKindMirrorBuilder<DomainServiceMirror> {
+
+    private static final Logger log = LoggerFactory.getLogger(DomainServiceMirrorBuilder.class);
+
 
     private final Class<? extends DomainService> domainServiceClass;
 
@@ -67,11 +75,20 @@ public class DomainServiceMirrorBuilder extends ServiceKindMirrorBuilder<DomainS
      */
     @Override
     public DomainServiceMirror build() {
+        var methods = buildMethods();
+        var ownPublicMethods = methods.stream()
+            .filter(method -> AccessLevel.PUBLIC.equals(method.getAccessLevel())
+                && getTypeName().equals(method.getDeclaredByTypeName()))
+            .toList();
+        if (!ownPublicMethods.isEmpty() && ownPublicMethods.stream().allMatch(MethodMirror::isFactoryMethod)) {
+            log.warn("All public methods of the domain service {} are factory methods - it might be a Factory",
+                getTypeName());
+        }
         return new DomainServiceModel(
                 getTypeName(),
                 isAbstract(),
                 buildFields(),
-                buildMethods(),
+                methods,
                 domainServiceInterfaceTypeNames(),
                 buildInheritanceHierarchy(),
                 buildInterfaceTypes()

@@ -368,7 +368,7 @@ public class FeatureProperties {
 
         /**
          * Checks whether autowiring for service kind domain implementations
-         * (DomainServices, ApplicationServices, Repositories and OutboundServices) is enabled.
+         * (DomainServices, ApplicationServices, Repositories, OutboundServices and Factories) is enabled.
          *
          * @return {@code true} if the service kind is enabled; {@code false} otherwise.
          */
@@ -378,7 +378,7 @@ public class FeatureProperties {
 
         /**
          * Sets enabled status for autowiring of service kind domain implementations
-         * (DomainServices, ApplicationServices, Repositories and OutboundServices).
+         * (DomainServices, ApplicationServices, Repositories, OutboundServices and Factories).
          *
          * @param enabled a {@code boolean} value indicating whether the service kind
          *                should be enabled ({@code true}) or disabled ({@code false}).

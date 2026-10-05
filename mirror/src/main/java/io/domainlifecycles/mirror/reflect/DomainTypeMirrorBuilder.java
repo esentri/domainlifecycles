@@ -198,7 +198,7 @@ public abstract class DomainTypeMirrorBuilder<T extends DomainTypeMirror> {
                     try{
                         return new MethodMirrorBuilder(
                             m, domainClass, isOverridden(m, meth),
-                            genericTypeResolver, domainTypeDetector
+                            genericTypeResolver, domainTypeDetector, createsDomainObjectsOnly()
                         ).build();
                     }catch (Throwable t){
                         //ignore
@@ -209,6 +209,16 @@ public abstract class DomainTypeMirrorBuilder<T extends DomainTypeMirror> {
             )
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
+    }
+
+    /**
+     * Whether the mirrored class is a factory: its only responsibility is to create domain objects, so that its public
+     * methods returning a domain object are factory methods.
+     *
+     * @return {@code false}, unless overridden by the builder of a factory
+     */
+    protected boolean createsDomainObjectsOnly() {
+        return false;
     }
 
     private boolean isOverridden(Method m, List<Method> candidates) {

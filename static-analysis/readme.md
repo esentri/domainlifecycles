@@ -165,6 +165,13 @@ driver computing it. In a backward flow into such a read model these methods pre
 (`PROVIDES_READ_MODEL`) and the flow continues with their callers; in a forward flow the read model
 follows such a method, like it follows the method of a query handler.
 
+The analysis leaves out constructors, so creating a domain object is no call. A flow follows the
+factory methods instead - the creating methods of a `Factory` and the methods annotated with
+`@FactoryMethod`: in a forward flow the created domain type follows such a method (`CREATES`), in a
+backward flow into a domain type the factory methods creating it precede it, and the flow continues
+with their callers. A factory method creating instances of its own type leads nowhere, and one
+returning a read model it provides leads to it as `PROVIDES_READ_MODEL` only.
+
 There is deliberately **no** `flowTo(DomainCommandMirror)`: nothing in the analyzed data models
 where a command originates, so a command can only ever appear as a reached leaf (via
 `COMMAND_PROCESS` reversal - "this service is reached because it processes command C"), never as a

@@ -257,6 +257,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   restricted to a flow: with `showOnlyTopLevelDomainCommandRelations`, the outermost processor was determined among all
   classes of the domain, so a processor forwarded to by a class the diagram did not show got no relationship either.
   The outermost processor is now determined among the classes shown
+- Support for DDD factories: a class implementing the new marker interface `io.domainlifecycles.domain.types.Factory`
+  (a `ServiceKind`) is mirrored as `FactoryMirror` (`DomainType.FACTORY`, `DomainMirror#getAllFactoryMirrors()`,
+  `BoundedContextMirror#getFactories()`, `Domain#factoryMirrorFor`); its public methods returning a domain object are
+  its factory methods. Creating methods of other domain types - e.g. of an aggregate or of a domain service with
+  further operations - are marked with the new annotation `@FactoryMethod`. `MethodMirror#isFactoryMethod()` and
+  `DomainTypeMirror#getFactoryMethods()` provide them, builders are never factory methods. The
+  [mirror](./mirror/readme.md#factories-and-factory-methods) logs a warning for a factory with public methods creating
+  no domain object and for a domain service whose public methods are all factory methods. The
+  [jMolecules mirror](./mirror-jmolecules) maps `@org.jmolecules.ddd.annotation.Factory` to `FACTORY`,
+  `mirror-serialization-jackson2`/`jackson3` (de)serialize factories and factory methods, and the Spring Boot
+  autoconfiguration registers factories as beans like the other service kinds
+- The [domain diagrammer](./domain-diagrammer/readme.md#factories-and-factory-methods) draws factories with the
+  stereotype `<<Factory>>` and a style of their own (`StyleSettings.withFactoryStyle`, `GeneralVisualSettings`
+  `showFactories`, `showFactoryFields`, `showFactoryMethods`), marks the factory methods of other classes with
+  `«factory»` and connects a class to the domain types its factory methods create by a `<<creates>>` relationship
+  labeled with these methods, qualified by their class (e.g. `Appointment.invite`) (`showFactoryRelations`, on by default) - across the boundary of an aggregate from
+  frame to frame, not within an aggregate, whose composition already connects its classes, and not for a class
+  creating instances of itself.
+  The diagrams restricted to connected types follow these relationships - for an aggregate also the ones of its
+  entities.
+- The flows of the [static analysis](./static-analysis) follow the factory methods, as the analysis leaves out the
+  constructors creating the domain objects: in a forward flow the created domain type follows a factory method
+  (`CREATES`), in a backward flow into a domain type the factory methods creating it precede it, and the flow continues
+  with their callers. In the [domain diagrammer](./domain-diagrammer), a flow reaching an entity reaches its aggregate
+  as well The Gradle and Maven plugins expose
+  `factoryStyle`, `showFactories`, `showFactoryFields`, `showFactoryMethods` and `showFactoryRelations`
 
 ## [3.4.0] - 2026-09-11
 - Improved DLC persistence initialization performance

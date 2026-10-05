@@ -72,6 +72,7 @@ public class DiagramConfigMapper {
         diagramConfig.setReadModelStyle(extension.getReadModelStyle().getOrNull());
         diagramConfig.setQueryHandlerStyle(extension.getQueryHandlerStyle().getOrNull());
         diagramConfig.setOutboundServiceStyle(extension.getOutboundServiceStyle().getOrNull());
+        diagramConfig.setFactoryStyle(extension.getFactoryStyle().getOrNull());
         diagramConfig.setNonDomainClassStyle(extension.getNonDomainClassStyle().getOrNull());
         diagramConfig.setFont(extension.getFont().getOrNull());
         diagramConfig.setDirection(extension.getDirection().getOrNull());
@@ -112,6 +113,9 @@ public class DiagramConfigMapper {
         diagramConfig.setShowOutboundServices(extension.getShowOutboundServices().getOrNull());
         diagramConfig.setShowOutboundServiceFields(extension.getShowOutboundServiceFields().getOrNull());
         diagramConfig.setShowOutboundServiceMethods(extension.getShowOutboundServiceMethods().getOrNull());
+        diagramConfig.setShowFactories(extension.getShowFactories().getOrNull());
+        diagramConfig.setShowFactoryFields(extension.getShowFactoryFields().getOrNull());
+        diagramConfig.setShowFactoryMethods(extension.getShowFactoryMethods().getOrNull());
         diagramConfig.setShowUnspecifiedServiceKinds(extension.getShowUnspecifiedServiceKinds().getOrNull());
         diagramConfig.setShowUnspecifiedServiceKindFields(extension.getShowUnspecifiedServiceKindFields().getOrNull());
         diagramConfig.setShowUnspecifiedServiceKindMethods(extension.getShowUnspecifiedServiceKindMethods().getOrNull());
@@ -121,6 +125,7 @@ public class DiagramConfigMapper {
         diagramConfig.setMaxInlinedValueObjectFields(extension.getMaxInlinedValueObjectFields().getOrNull());
         diagramConfig.setShowOnlyFlowMethods(extension.getShowOnlyFlowMethods().getOrNull());
         diagramConfig.setShowFlowCallRelations(extension.getShowFlowCallRelations().getOrNull());
+        diagramConfig.setShowFactoryRelations(extension.getShowFactoryRelations().getOrNull());
         diagramConfig.setCallApplicationServiceDriver(extension.getCallApplicationServiceDriver().getOrNull());
         diagramConfig.setFieldBlacklist(extension.getFieldBlacklist().getOrNull());
         diagramConfig.setMethodBlacklist(extension.getMethodBlacklist().getOrNull());

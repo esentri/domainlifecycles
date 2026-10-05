@@ -56,6 +56,13 @@ public interface DomainTypeMirror extends Mirror {
     List<MethodMirror> getMethods();
 
     /**
+     * @return the mirrored factory methods - see {@link MethodMirror#isFactoryMethod()}
+     */
+    default List<MethodMirror> getFactoryMethods() {
+        return getMethods().stream().filter(MethodMirror::isFactoryMethod).toList();
+    }
+
+    /**
      * @param methodName the method's name
      * @return a mirrored method by the method name.
      */

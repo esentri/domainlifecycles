@@ -33,6 +33,7 @@ import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
+import io.domainlifecycles.mirror.api.FactoryMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
@@ -175,6 +176,18 @@ public class BoundedContextModel implements BoundedContextMirror, ProvidedDomain
     public List<OutboundServiceMirror> getOutboundServices() {
         return domainMirror
             .getAllOutboundServiceMirrors()
+            .stream()
+            .filter(dt -> dt.getTypeName().startsWith(packageName))
+            .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<FactoryMirror> getFactories() {
+        return domainMirror
+            .getAllFactoryMirrors()
             .stream()
             .filter(dt -> dt.getTypeName().startsWith(packageName))
             .toList();

@@ -432,6 +432,7 @@ Supported Diagram configuration options are
 - readModelStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
 - queryHandlerStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
 - outboundServiceStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
+- factoryStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
 - nonDomainClassStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
 - font: e.g. "Calibri", "Arial"
 - direction: "right" or "down"
@@ -469,6 +470,10 @@ Supported Diagram configuration options are
 - showOutboundServices: boolean, default true
 - showOutboundServiceFields: boolean, default false
 - showOutboundServiceMethods: boolean, default true
+- showFactories: boolean, default true
+- showFactoryFields: boolean, default false
+- showFactoryMethods: boolean, default true
+- showFactoryRelations: boolean, default true (a class creating another domain type by its factory methods - the creating methods of a `Factory` or the methods annotated with `@FactoryMethod` - is connected to it by a `<<creates>>` relationship labeled with these methods, qualified by their class (e.g. `Appointment.invite`); the factory methods of other classes than factories are marked with `«factory»`)
 - showUnspecifiedServiceKinds: boolean, default true
 - showUnspecifiedServiceKindFields: boolean, default false
 - showUnspecifiedServiceKindMethods: boolean, default false
@@ -719,6 +724,9 @@ A DomainService calls a QueryHandler.
 
 - DomainService → DomainEvent:
 A DomainService publishes a DomainEvent.
+
+- Factory → Aggregate, DomainService → Aggregate, Aggregate → Entity, ...:
+A class creates a domain type by its factory methods (`<<creates>>`).
 
 - Repository → Aggregate:
 A Repository provides access to an Aggregate.

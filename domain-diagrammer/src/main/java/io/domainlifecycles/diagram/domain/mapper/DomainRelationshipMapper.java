@@ -362,6 +362,13 @@ public class DomainRelationshipMapper {
     private static final int MAX_CALLED_METHODS_IN_LABEL = 3;
 
     private NomnomlRelationship mapCallRelationship(PendingCall call) {
+        return mapLabeledDependency(call, "calls");
+    }
+
+    /**
+     * A directed dependency with a stereotype, labeled with at most {@value #MAX_CALLED_METHODS_IN_LABEL} methods.
+     */
+    private NomnomlRelationship mapLabeledDependency(PendingCall call, String stereotype) {
         var caller = call.caller();
         var called = call.called();
         List<String> methods = call.calledMethods().stream().distinct().toList();
@@ -375,7 +382,7 @@ public class DomainRelationshipMapper {
             .fromMultiplicity("")
             .fromStyleClassifier(caller.styleClassifier())
             .label(label)
-            .stereotype("calls")
+            .stereotype(stereotype)
             .relationshiptype(NomnomlRelationship.RelationshipType.DIRECTED_DEPENDENCY)
             .toName(called.name())
             .toMultiplicity("")
@@ -383,6 +390,86 @@ public class DomainRelationshipMapper {
             .showLabel(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipLabels())
             .showStereotype(this.diagramConfig.getGeneralVisualSettings().isShowRelationshipStereotypes())
             .build();
+    }
+
+    /**
+     * Derives a {@code <<creates>>} relationship from a shown class to each shown domain type its factory methods
+     * create, labeled with these methods, each qualified by the class declaring it (e.g. {@code Calendar.open}). A class
+     * creating instances of itself, e.g. by a static factory method, gets
+     * none, and neither does a class creating another class of its own aggregate - the composition already connects
+     * them. Across the boundary of an aggregate, the relationship connects its frame.
+     *
+     * @return the factory relationships, none if {@link io.domainlifecycles.diagram.domain.config.GeneralVisualSettings#isShowFactoryRelations()} is off
+     */
+    public List<NomnomlRelationship> mapAllFactoryRelationships() {
+        if (!diagramConfig.getGeneralVisualSettings().isShowFactoryRelations()) {
+            return List.of();
+        }
+        var creators = new ArrayList<DomainTypeMirror>(filteredDomainClasses.getServiceKinds());
+        filteredDomainClasses.getAggregateRoots()
+            .forEach(aggregateRoot -> creators.addAll(DomainClassMapper.aggregateMirrors(aggregateRoot, diagramConfig)));
+        creators.addAll(filteredDomainClasses.getReadModels());
+        creators.addAll(filteredDomainClasses.getDomainCommands());
+        creators.addAll(filteredDomainClasses.getDomainEvents());
+
+        var creates = new LinkedHashMap<String, PendingCall>();
+        creators.stream().distinct().forEach(creator ->
+            DomainMapperUtils.createdDomainTypes(creator, domainMirror).forEach((created, methodNames) -> {
+                var creatorAggregate = aggregateOf(creator.getTypeName());
+                var createdAggregate = aggregateOf(created.getTypeName());
+                if (creatorAggregate.isPresent() && creatorAggregate.equals(createdAggregate)) {
+                    return;
+                }
+                var from = creatorAggregate.map(this::frameNode).or(() -> classNode(creator));
+                var to = createdAggregate.map(this::frameNode).or(() -> classNode(created));
+                if (from.isEmpty() || to.isEmpty() || from.get().name().equals(to.get().name())) {
+                    return;
+                }
+                String creatorName = DomainMapperUtils.domainTypeName(creator, diagramConfig);
+                var pending = creates.computeIfAbsent(from.get().name() + "->" + to.get().name(),
+                    key -> new PendingCall(from.get(), to.get(), new ArrayList<>()));
+                methodNames.forEach(methodName -> pending.calledMethods().add(creatorName + "." + methodName));
+            }));
+        return creates.values().stream()
+            .map(create -> mapLabeledDependency(create, "creates"))
+            .toList();
+    }
+
+    /**
+     * The shown aggregate a root, entity or value object drawn as class belongs to, by the type name of its root.
+     */
+    private Optional<String> aggregateOf(String typeName) {
+        var aggregates = filteredDomainClasses.getAggregateRoots().stream()
+            .filter(aggregateRoot -> DomainClassMapper.aggregateMirrors(aggregateRoot, diagramConfig).stream()
+                .anyMatch(part -> part.getTypeName().equals(typeName)))
+            .map(AggregateRootMirror::getTypeName)
+            .toList();
+        return aggregates.size() == 1 ? Optional.of(aggregates.get(0)) : Optional.empty();
+    }
+
+    private CallNode frameNode(String aggregateRootTypeName) {
+        return new CallNode(aggregateFrameName(aggregateRootTypeName),
+            "<" + DomainDiagramGenerator.AGGREGATE_FRAME_STYLE_TAG + "> ");
+    }
+
+    /**
+     * The node of a shown class, drawn by the name it is shown with.
+     */
+    private Optional<CallNode> classNode(DomainTypeMirror type) {
+        boolean shown = type instanceof ServiceKindMirror
+            ? filteredDomainClasses.contains(type)
+            : filteredDomainClasses.getContained(type.getTypeName()).isPresent()
+                && (aggregateOf(type.getTypeName()).isPresent() || isDrawnAsOwnClass(type));
+        return shown
+            ? Optional.of(new CallNode(relationConnectorName(type), DomainMapperUtils.styleClassifier(type)))
+            : Optional.empty();
+    }
+
+    private static boolean isDrawnAsOwnClass(DomainTypeMirror type) {
+        return switch (type.getDomainType()) {
+            case READ_MODEL, DOMAIN_COMMAND, DOMAIN_EVENT -> true;
+            default -> false;
+        };
     }
 
     /**

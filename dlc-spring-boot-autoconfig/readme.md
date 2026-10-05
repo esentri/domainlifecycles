@@ -324,6 +324,7 @@ Annotation-based excludes have priority over property toggles.
   - `ApplicationService` or `Driver`
   - `QueryHandler`
   - `OutboundService`
+  - `Factory`
   
 - If enabled, automatic bean instantiation is configured for all classes implementing `ServiceKind` being defined
   in the domain base packages ``dlc.features.mirror.base-packages``.

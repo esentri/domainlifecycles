@@ -202,6 +202,15 @@ public class DomainMapper {
     }
 
     /**
+     * @return all Factories in the diagram as {@link NomnomlClass}.
+     */
+    public List<NomnomlClass> getFactories() {
+        return filteredDomainClasses.getFactories().stream()
+            .map(domainClassMapper::mapFactoryClass)
+            .toList();
+    }
+
+    /**
      * @return all unspecified ServiceKinds in the diagram as {@link NomnomlClass}.
      */
     public List<NomnomlClass> getUnspecifiedServiceKinds() {

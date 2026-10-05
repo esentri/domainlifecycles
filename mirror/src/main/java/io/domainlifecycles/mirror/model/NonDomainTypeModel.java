@@ -50,6 +50,7 @@ public class NonDomainTypeModel extends DomainTypeModel implements NonDomainType
         DomainType.REPOSITORY,
         DomainType.DOMAIN_SERVICE,
         DomainType.OUTBOUND_SERVICE,
+        DomainType.FACTORY,
         DomainType.QUERY_HANDLER,
         DomainType.APPLICATION_SERVICE
     );

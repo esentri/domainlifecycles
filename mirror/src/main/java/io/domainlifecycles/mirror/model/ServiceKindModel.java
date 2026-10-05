@@ -121,6 +121,7 @@ public class ServiceKindModel extends DomainTypeModel implements ServiceKindMirr
                 || DomainType.REPOSITORY.equals(fieldMirror.getType().getDomainType())
                 || DomainType.DOMAIN_SERVICE.equals(fieldMirror.getType().getDomainType())
                 || DomainType.OUTBOUND_SERVICE.equals(fieldMirror.getType().getDomainType())
+                || DomainType.FACTORY.equals(fieldMirror.getType().getDomainType())
                 || DomainType.QUERY_HANDLER.equals(fieldMirror.getType().getDomainType())
                 || DomainType.APPLICATION_SERVICE.equals(fieldMirror.getType().getDomainType()))
             .map(this::mapToServiceKindMirror).collect(Collectors.toList());

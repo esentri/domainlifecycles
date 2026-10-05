@@ -48,6 +48,7 @@ import io.domainlifecycles.mirror.api.IdentityMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.NonDomainTypeMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
+import io.domainlifecycles.mirror.api.FactoryMirror;
 import io.domainlifecycles.mirror.api.ParamMirror;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
@@ -78,6 +79,7 @@ import io.domainlifecycles.mirror.model.IdentityModel;
 import io.domainlifecycles.mirror.model.MethodModel;
 import io.domainlifecycles.mirror.model.NonDomainTypeModel;
 import io.domainlifecycles.mirror.model.OutboundServiceModel;
+import io.domainlifecycles.mirror.model.FactoryModel;
 import io.domainlifecycles.mirror.model.ParamModel;
 import io.domainlifecycles.mirror.model.QueryHandlerModel;
 import io.domainlifecycles.mirror.model.ReadModelModel;
@@ -106,6 +108,7 @@ import io.domainlifecycles.mirror.serialize.jackson2.mirror.IdentityMirrorMixin;
 import io.domainlifecycles.mirror.serialize.jackson2.mirror.MethodMirrorMixin;
 import io.domainlifecycles.mirror.serialize.jackson2.mirror.NonDomainTypeMirrorMixin;
 import io.domainlifecycles.mirror.serialize.jackson2.mirror.OutboundServiceMirrorMixin;
+import io.domainlifecycles.mirror.serialize.jackson2.mirror.FactoryMirrorMixin;
 import io.domainlifecycles.mirror.serialize.jackson2.mirror.ParamMirrorMixin;
 import io.domainlifecycles.mirror.serialize.jackson2.mirror.QueryHandlerMirrorMixin;
 import io.domainlifecycles.mirror.serialize.jackson2.mirror.ReadModelMirrorMixin;
@@ -135,6 +138,7 @@ import io.domainlifecycles.mirror.serialize.jackson2.model.IdentityModelMixin;
 import io.domainlifecycles.mirror.serialize.jackson2.model.MethodModelMixin;
 import io.domainlifecycles.mirror.serialize.jackson2.model.NonDomainTypeModelMixin;
 import io.domainlifecycles.mirror.serialize.jackson2.model.OutboundServiceModelMixin;
+import io.domainlifecycles.mirror.serialize.jackson2.model.FactoryModelMixin;
 import io.domainlifecycles.mirror.serialize.jackson2.model.ParamModelMixin;
 import io.domainlifecycles.mirror.serialize.jackson2.model.QueryHandlerModelMixin;
 import io.domainlifecycles.mirror.serialize.jackson2.model.ReadModelModelMixin;
@@ -239,6 +243,8 @@ public class JacksonDomainSerializer implements DomainSerializer {
 
             .addMixIn(OutboundServiceMirror.class, OutboundServiceMirrorMixin.class)
             .addMixIn(OutboundServiceModel.class, OutboundServiceModelMixin.class)
+            .addMixIn(FactoryMirror.class, FactoryMirrorMixin.class)
+            .addMixIn(FactoryModel.class, FactoryModelMixin.class)
 
             .addMixIn(ParamMirror.class, ParamMirrorMixin.class)
             .addMixIn(ParamModel.class, ParamModelMixin.class)

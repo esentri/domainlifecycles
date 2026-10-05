@@ -28,12 +28,14 @@ package io.domainlifecycles.diagram.domain.mapper;
 
 import io.domainlifecycles.diagram.domain.DomainDiagramGenerator;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
+import io.domainlifecycles.mirror.api.AggregateRootMirror;
 import io.domainlifecycles.mirror.api.ApplicationServiceMirror;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.EntityReferenceMirror;
+import io.domainlifecycles.mirror.api.FactoryMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.NonDomainTypeMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
@@ -43,9 +45,14 @@ import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.ServiceKindMirror;
 import io.domainlifecycles.mirror.api.ValueObjectMirror;
 import io.domainlifecycles.mirror.api.ValueReferenceMirror;
+import io.domainlifecycles.mirror.visitor.ContextDomainObjectVisitor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -97,6 +104,11 @@ public class DomainMapperUtils {
                 if (!outboundServiceMirror.getOutboundServiceInterfaceTypeNames().isEmpty() && !outboundServiceMirror.isAbstract()) {
                     name = outboundServiceMirror.getOutboundServiceInterfaceTypeNames().get(0);
                 }
+            } else if (domainTypeMirror.getDomainType().equals(DomainType.FACTORY)) {
+                var factoryMirror = (FactoryMirror) domainTypeMirror;
+                if (!factoryMirror.getFactoryInterfaceTypeNames().isEmpty() && !factoryMirror.isAbstract()) {
+                    name = factoryMirror.getFactoryInterfaceTypeNames().get(0);
+                }
             } else if (domainTypeMirror.getDomainType().equals(DomainType.QUERY_HANDLER)) {
                 var queryHandlerMirror = (QueryHandlerMirror) domainTypeMirror;
                 if (!queryHandlerMirror.getQueryHandlerInterfaceTypeNames().isEmpty() && !queryHandlerMirror.isAbstract()) {
@@ -135,6 +147,7 @@ public class DomainMapperUtils {
                 || DomainType.QUERY_HANDLER.equals(domainTypeMirror.getDomainType())
                 || DomainType.DOMAIN_SERVICE.equals(domainTypeMirror.getDomainType())
                 || DomainType.OUTBOUND_SERVICE.equals(domainTypeMirror.getDomainType())
+                || DomainType.FACTORY.equals(domainTypeMirror.getDomainType())
                 || DomainType.SERVICE_KIND.equals(domainTypeMirror.getDomainType())
         ) {
             //for commands and domain events or unknown types we show all properties "inline"
@@ -214,6 +227,96 @@ public class DomainMapperUtils {
             .distinct()
             .filter(readModel -> !isProvidedByAQueryHandler(readModel, domainMirror))
             .toList();
+    }
+
+    /**
+     * The domain types created by the factory methods of a domain type, each with the names of the factory methods
+     * creating it. A type creating instances of itself (e.g. by a static factory method) is left out.
+     *
+     * @param creator      a mirrored domain type
+     * @param domainMirror the domain it belongs to
+     * @return the created domain types in the order of the factory methods, mapped to the names of the factory
+     * methods creating them
+     */
+    public static Map<DomainTypeMirror, List<String>> createdDomainTypes(DomainTypeMirror creator,
+                                                                       DomainMirror domainMirror) {
+        var created = new LinkedHashMap<DomainTypeMirror, List<String>>();
+        creator.getFactoryMethods().stream()
+            .filter(method -> method.getReturnType() != null)
+            .forEach(method -> domainMirror.getDomainTypeMirror(method.getReturnType().getTypeName())
+                .map(DomainTypeMirror.class::cast)
+                .filter(createdType -> !createdType.getTypeName().equals(creator.getTypeName()))
+                .ifPresent(createdType -> {
+                    var methodNames = created.computeIfAbsent(createdType, type -> new ArrayList<>());
+                    if (!methodNames.contains(method.getName())) {
+                        methodNames.add(method.getName());
+                    }
+                }));
+        return created;
+    }
+
+    /**
+     * @param creator      a mirrored domain type
+     * @param domainMirror the domain it belongs to
+     * @return the aggregate roots created by the factory methods of the domain type, see
+     * {@link #createdDomainTypes(DomainTypeMirror, DomainMirror)}
+     */
+    public static List<AggregateRootMirror> createdAggregateRoots(DomainTypeMirror creator, DomainMirror domainMirror) {
+        return createdDomainTypes(creator, domainMirror).keySet().stream()
+            .filter(AggregateRootMirror.class::isInstance)
+            .map(AggregateRootMirror.class::cast)
+            .toList();
+    }
+
+    /**
+     * @param entityTypeName the full qualified name of an entity
+     * @param domainMirror   the domain it belongs to
+     * @return the type names of the aggregate roots whose aggregate contains the entity, none for another type
+     */
+    public static List<String> aggregateRootsContaining(String entityTypeName, DomainMirror domainMirror) {
+        boolean entity = domainMirror.getDomainTypeMirror(entityTypeName)
+            .map(type -> DomainType.ENTITY.equals(((DomainTypeMirror) type).getDomainType()))
+            .orElse(false);
+        if (!entity) {
+            return List.of();
+        }
+        return domainMirror.getAllAggregateRootMirrors().stream()
+            .filter(aggregateRoot -> {
+                var contained = new boolean[1];
+                new ContextDomainObjectVisitor(aggregateRoot) {
+                    @Override
+                    public void visitEnterAnyDomainType(DomainTypeMirror domainTypeMirror) {
+                        contained[0] |= domainTypeMirror.getTypeName().equals(entityTypeName);
+                    }
+                }.start();
+                return contained[0];
+            })
+            .map(DomainTypeMirror::getTypeName)
+            .toList();
+    }
+
+    /**
+     * @param aggregateRootMirror a mirrored aggregate root
+     * @param domainMirror        the domain it belongs to
+     * @return the other aggregate roots created by the factory methods of the aggregate - of its root, its entities or
+     * its value objects
+     */
+    public static List<AggregateRootMirror> aggregateRootsCreatedByAggregate(AggregateRootMirror aggregateRootMirror,
+                                                                            DomainMirror domainMirror) {
+        var created = new LinkedHashSet<AggregateRootMirror>();
+        var visitor = new ContextDomainObjectVisitor(aggregateRootMirror) {
+            @Override
+            public void visitEnterAnyDomainType(DomainTypeMirror domainTypeMirror) {
+                if (DomainType.AGGREGATE_ROOT.equals(domainTypeMirror.getDomainType())
+                    || DomainType.ENTITY.equals(domainTypeMirror.getDomainType())
+                    || DomainType.VALUE_OBJECT.equals(domainTypeMirror.getDomainType())) {
+                    created.addAll(createdAggregateRoots(domainTypeMirror, domainMirror));
+                }
+            }
+        };
+        visitor.start();
+        created.removeIf(createdRoot -> createdRoot.getTypeName().equals(aggregateRootMirror.getTypeName()));
+        return List.copyOf(created);
     }
 
     /**
@@ -297,6 +400,7 @@ public class DomainMapperUtils {
             case APPLICATION_SERVICE -> "<" + DomainDiagramGenerator.APPLICATION_SERVICE_STYLE_TAG + ">";
             case QUERY_HANDLER -> "<" + DomainDiagramGenerator.QUERY_HANDLER_STYLE_TAG + ">";
             case OUTBOUND_SERVICE -> "<" + DomainDiagramGenerator.OUTBOUND_SERVICE_STYLE_TAG + ">";
+            case FACTORY -> "<" + DomainDiagramGenerator.FACTORY_STYLE_TAG + ">";
             case SERVICE_KIND -> "<" + DomainDiagramGenerator.SERVICE_KIND_STYLE_TAG + ">";
             case NON_DOMAIN -> "<" + DomainDiagramGenerator.NON_DOMAIN_CLASS_STYLE_TAG + ">";
             default -> "";
@@ -331,6 +435,7 @@ public class DomainMapperUtils {
             case READ_MODEL -> "ReadModel";
             case QUERY_HANDLER -> "QueryHandler";
             case OUTBOUND_SERVICE -> "OutboundService";
+            case FACTORY -> "Factory";
             case SERVICE_KIND -> "ServiceKind";
             case NON_DOMAIN -> "NonDomain";
             default -> "";

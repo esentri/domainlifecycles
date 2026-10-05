@@ -183,6 +183,13 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
     public abstract Property<String> getOutboundServiceStyle();
 
     /**
+     * Gets the style for factories in the diagram.
+     *
+     * @return the style for factories in the diagram
+     */
+    public abstract Property<String> getFactoryStyle();
+
+    /**
      * Gets the style for non-domain classes in the diagram.
      *
      * @return the style for non-domain classes in the diagram
@@ -464,6 +471,27 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
     public abstract Property<Boolean> getShowOutboundServiceMethods();
 
     /**
+     * Indicates whether factories should be shown in the diagram.
+     *
+     * @return true if factories should be shown, false otherwise
+     */
+    public abstract Property<Boolean> getShowFactories();
+
+    /**
+     * Indicates whether fields of factories should be shown in the diagram.
+     *
+     * @return true if fields of factories should be shown, false otherwise
+     */
+    public abstract Property<Boolean> getShowFactoryFields();
+
+    /**
+     * Indicates whether methods of factories should be shown in the diagram.
+     *
+     * @return true if methods of factories should be shown, false otherwise
+     */
+    public abstract Property<Boolean> getShowFactoryMethods();
+
+    /**
      * Indicates whether unspecified service kinds should be shown in the diagram.
      *
      * @return true if unspecified service kinds should be shown, false otherwise
@@ -525,6 +553,13 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
      * @return true if the calls of the flows are drawn as relationships
      */
     public abstract Property<Boolean> getShowFlowCallRelations();
+
+    /**
+     * Whether a class is connected to the domain types its factory methods create.
+     *
+     * @return true if the factory relations are drawn
+     */
+    public abstract Property<Boolean> getShowFactoryRelations();
 
     /**
      * Indicates whether the application service should be called 'driver'.

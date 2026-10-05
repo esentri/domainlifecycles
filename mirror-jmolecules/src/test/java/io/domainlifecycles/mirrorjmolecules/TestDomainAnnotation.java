@@ -33,6 +33,7 @@ import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.EntityMirror;
+import io.domainlifecycles.mirror.api.FactoryMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
 import io.domainlifecycles.mirror.api.ValueObjectMirror;
 import io.domainlifecycles.mirrorjmolecules.reflect.ExtendedJMoleculesDomainMirrorFactory;
@@ -42,6 +43,7 @@ import tests.mirror.annotation.AggregateRootJMoleculesAnnotation;
 import tests.mirror.annotation.DomainEventJMoleculesAnnotation;
 import tests.mirror.annotation.DomainServiceJMoleculesAnnotation;
 import tests.mirror.annotation.EntityJMoleculesAnnotation;
+import tests.mirror.annotation.FactoryJMoleculesAnnotation;
 import tests.mirror.annotation.RepositoryJMoleculesAnnotation;
 import tests.mirror.annotation.ValueObjectJMoleculesAnnotation;
 
@@ -58,7 +60,7 @@ public class TestDomainAnnotation {
     @Test
     void testDomainInitJMoleculesAnnotation() {
         DomainMirror dm = Domain.getDomainMirror();
-        assertThat(dm.getAllDomainTypeMirrors().stream().filter(m -> m.getTypeName().startsWith("tests.mirror.annotation")).toList()).hasSize(6);
+        assertThat(dm.getAllDomainTypeMirrors().stream().filter(m -> m.getTypeName().startsWith("tests.mirror.annotation")).toList()).hasSize(7);
     }
 
     @Test
@@ -105,6 +107,17 @@ public class TestDomainAnnotation {
         assertThat(domainServiceMirror.getTypeName()).isEqualTo(DomainServiceJMoleculesAnnotation.class.getName());
         assertThat(domainServiceMirror.getAllFields().get(0).getName()).isEqualTo("repository");
 
+    }
+
+    @Test
+    void testFactoryAnnotation() {
+        FactoryMirror factoryMirror = (FactoryMirror) Domain.typeMirror(
+            FactoryJMoleculesAnnotation.class.getName()).get();
+
+        assertThat(factoryMirror.getDomainType()).isEqualTo(DomainType.FACTORY);
+        assertThat(Domain.getDomainMirror().getAllFactoryMirrors()).containsExactly(factoryMirror);
+        assertThat(factoryMirror.methodByName("create").isFactoryMethod()).isTrue();
+        assertThat(factoryMirror.methodByName("describe").isFactoryMethod()).isFalse();
     }
 
     @Test

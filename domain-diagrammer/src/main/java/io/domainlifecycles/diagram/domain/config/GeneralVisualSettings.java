@@ -70,6 +70,9 @@ public class GeneralVisualSettings {
     private static final boolean DEFAULT_SHOW_OUTBOUND_SERVICES = true;
     private static final boolean DEFAULT_SHOW_OUTBOUND_SERVICE_FIELDS = false;
     private static final boolean DEFAULT_SHOW_OUTBOUND_SERVICE_METHODS = true;
+    private static final boolean DEFAULT_SHOW_FACTORIES = true;
+    private static final boolean DEFAULT_SHOW_FACTORY_FIELDS = false;
+    private static final boolean DEFAULT_SHOW_FACTORY_METHODS = true;
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KINDS = true;
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_FIELDS = false;
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_METHODS = false;
@@ -79,6 +82,7 @@ public class GeneralVisualSettings {
     private static final int DEFAULT_MAX_INLINED_VALUE_OBJECT_FIELDS = 2;
     private static final boolean DEFAULT_SHOW_ONLY_FLOW_METHODS = true;
     private static final boolean DEFAULT_SHOW_FLOW_CALL_RELATIONS = false;
+    private static final boolean DEFAULT_SHOW_FACTORY_RELATIONS = true;
     private static final boolean DEFAULT_CALL_APPLICATION_SERVICE_DRIVER = false;
     private static final List<String> DEFAULT_FIELD_BLACKLIST = List.of("concurrencyVersion");
     private static final List<String> DEFAULT_METHOD_BLACKLIST = List.of(
@@ -140,6 +144,9 @@ public class GeneralVisualSettings {
     private final boolean showOutboundServices;
     private final boolean showOutboundServiceFields;
     private final boolean showOutboundServiceMethods;
+    private final boolean showFactories;
+    private final boolean showFactoryFields;
+    private final boolean showFactoryMethods;
     private final boolean showUnspecifiedServiceKinds;
     private final boolean showUnspecifiedServiceKindFields;
     private final boolean showUnspecifiedServiceKindMethods;
@@ -149,6 +156,7 @@ public class GeneralVisualSettings {
     private final int maxInlinedValueObjectFields;
     private final boolean showOnlyFlowMethods;
     private final boolean showFlowCallRelations;
+    private final boolean showFactoryRelations;
     private final boolean callApplicationServiceDriver;
     private final List<String> fieldBlacklist;
     private final List<String> methodBlacklist;
@@ -200,6 +208,9 @@ public class GeneralVisualSettings {
         boolean showOutboundServices,
         boolean showOutboundServiceFields,
         boolean showOutboundServiceMethods,
+        boolean showFactories,
+        boolean showFactoryFields,
+        boolean showFactoryMethods,
         boolean showUnspecifiedServiceKinds,
         boolean showUnspecifiedServiceKindFields,
         boolean showUnspecifiedServiceKindMethods,
@@ -209,6 +220,7 @@ public class GeneralVisualSettings {
         int maxInlinedValueObjectFields,
         boolean showOnlyFlowMethods,
         boolean showFlowCallRelations,
+        boolean showFactoryRelations,
         boolean callApplicationServiceDriver,
         List<String> fieldBlacklist,
         List<String> methodBlacklist,
@@ -259,6 +271,9 @@ public class GeneralVisualSettings {
         this.showOutboundServices = showOutboundServices;
         this.showOutboundServiceFields = showOutboundServiceFields;
         this.showOutboundServiceMethods = showOutboundServiceMethods;
+        this.showFactories = showFactories;
+        this.showFactoryFields = showFactoryFields;
+        this.showFactoryMethods = showFactoryMethods;
         this.showUnspecifiedServiceKinds = showUnspecifiedServiceKinds;
         this.showUnspecifiedServiceKindFields = showUnspecifiedServiceKindFields;
         this.showUnspecifiedServiceKindMethods = showUnspecifiedServiceKindMethods;
@@ -268,6 +283,7 @@ public class GeneralVisualSettings {
         this.maxInlinedValueObjectFields = maxInlinedValueObjectFields;
         this.showOnlyFlowMethods = showOnlyFlowMethods;
         this.showFlowCallRelations = showFlowCallRelations;
+        this.showFactoryRelations = showFactoryRelations;
         this.callApplicationServiceDriver = callApplicationServiceDriver;
         this.fieldBlacklist = fieldBlacklist;
         this.methodBlacklist = methodBlacklist;
@@ -584,6 +600,33 @@ public class GeneralVisualSettings {
     }
 
     /**
+     * Returns whether factories should be shown in the diagram.
+     *
+     * @return true if factories should be shown, false otherwise
+     */
+    public boolean isShowFactories() {
+        return showFactories;
+    }
+
+    /**
+     * Returns whether factory fields should be shown in the diagram.
+     *
+     * @return true if factory fields should be shown, false otherwise
+     */
+    public boolean isShowFactoryFields() {
+        return showFactoryFields;
+    }
+
+    /**
+     * Returns whether factory methods should be shown in the diagram.
+     *
+     * @return true if factory methods should be shown, false otherwise
+     */
+    public boolean isShowFactoryMethods() {
+        return showFactoryMethods;
+    }
+
+    /**
      * Returns whether unspecified service kinds should be shown in the diagram.
      *
      * @return true if unspecified service kinds should be shown, false otherwise
@@ -670,6 +713,16 @@ public class GeneralVisualSettings {
      */
     public boolean isShowFlowCallRelations() {
         return showFlowCallRelations;
+    }
+
+    /**
+     * Returns whether a class creating instances of another domain type by its factory methods is connected to it by a
+     * {@code <<creates>>} relationship, labeled with the factory methods.
+     *
+     * @return true if the factory relations are drawn
+     */
+    public boolean isShowFactoryRelations() {
+        return showFactoryRelations;
     }
 
     /**
@@ -877,6 +930,9 @@ public class GeneralVisualSettings {
         private boolean showOutboundServices$value = DEFAULT_SHOW_OUTBOUND_SERVICES;
         private boolean showOutboundServiceFields$value = DEFAULT_SHOW_OUTBOUND_SERVICE_FIELDS;
         private boolean showOutboundServiceMethods$value = DEFAULT_SHOW_OUTBOUND_SERVICE_METHODS;
+        private boolean showFactories$value = DEFAULT_SHOW_FACTORIES;
+        private boolean showFactoryFields$value = DEFAULT_SHOW_FACTORY_FIELDS;
+        private boolean showFactoryMethods$value = DEFAULT_SHOW_FACTORY_METHODS;
         private boolean showUnspecifiedServiceKinds$value = DEFAULT_SHOW_UNSPECIFIED_SERVICE_KINDS;
         private boolean showUnspecifiedServiceKindFields$value = DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_FIELDS;
         private boolean showUnspecifiedServiceKindMethods$value = DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_METHODS;
@@ -886,6 +942,7 @@ public class GeneralVisualSettings {
         private int maxInlinedValueObjectFields$value = DEFAULT_MAX_INLINED_VALUE_OBJECT_FIELDS;
         private boolean showOnlyFlowMethods$value = DEFAULT_SHOW_ONLY_FLOW_METHODS;
         private boolean showFlowCallRelations$value = DEFAULT_SHOW_FLOW_CALL_RELATIONS;
+        private boolean showFactoryRelations$value = DEFAULT_SHOW_FACTORY_RELATIONS;
         private boolean callApplicationServiceDriver$value = DEFAULT_CALL_APPLICATION_SERVICE_DRIVER;
         private List<String> fieldBlacklist$value;
         private List<String> methodBlacklist$value;
@@ -1273,6 +1330,39 @@ public class GeneralVisualSettings {
         }
 
         /**
+         * Sets whether to show factories in the diagram.
+         *
+         * @param showFactories true to show factories, false to hide
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowFactories(boolean showFactories) {
+            this.showFactories$value = showFactories;
+            return this;
+        }
+
+        /**
+         * Sets whether to show factory fields in the diagram.
+         *
+         * @param showFactoryFields true to show factory fields, false to hide
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowFactoryFields(boolean showFactoryFields) {
+            this.showFactoryFields$value = showFactoryFields;
+            return this;
+        }
+
+        /**
+         * Sets whether to show factory methods in the diagram.
+         *
+         * @param showFactoryMethods true to show factory methods, false to hide
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowFactoryMethods(boolean showFactoryMethods) {
+            this.showFactoryMethods$value = showFactoryMethods;
+            return this;
+        }
+
+        /**
          * Sets whether to show unspecified service kinds in the diagram.
          *
          * @param showUnspecifiedServiceKinds true to show unspecified service kinds, false to hide
@@ -1378,6 +1468,18 @@ public class GeneralVisualSettings {
          */
         public GeneralVisualSettingsBuilder withShowFlowCallRelations(boolean showFlowCallRelations) {
             this.showFlowCallRelations$value = showFlowCallRelations;
+            return this;
+        }
+
+        /**
+         * Sets whether a class creating instances of another domain type by its factory methods is connected to it
+         * by a {@code <<creates>>} relationship, labeled with the factory methods (default true).
+         *
+         * @param showFactoryRelations true to draw the factory relations
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowFactoryRelations(boolean showFactoryRelations) {
+            this.showFactoryRelations$value = showFactoryRelations;
             return this;
         }
 
@@ -1600,6 +1702,9 @@ public class GeneralVisualSettings {
                 showOutboundServices$value,
                 showOutboundServiceFields$value,
                 showOutboundServiceMethods$value,
+                showFactories$value,
+                showFactoryFields$value,
+                showFactoryMethods$value,
                 showUnspecifiedServiceKinds$value,
                 showUnspecifiedServiceKindFields$value,
                 showUnspecifiedServiceKindMethods$value,
@@ -1609,6 +1714,7 @@ public class GeneralVisualSettings {
                 maxInlinedValueObjectFields$value,
                 showOnlyFlowMethods$value,
                 showFlowCallRelations$value,
+                showFactoryRelations$value,
                 callApplicationServiceDriver$value,
                 fieldBlacklist$value == null ? DEFAULT_FIELD_BLACKLIST : fieldBlacklist$value,
                 methodBlacklist$value == null ? DEFAULT_METHOD_BLACKLIST : methodBlacklist$value,

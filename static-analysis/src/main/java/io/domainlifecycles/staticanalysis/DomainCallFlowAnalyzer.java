@@ -94,6 +94,10 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
     private final Map<String, List<DomainMethod>> providersByReadModelTypeName;
     /** the ReadModels no QueryHandler provides, by the node key of the method returning them */
     private final Map<String, List<ReadModelMirror>> readModelsByProviderKey;
+    /** the factory methods creating a domain type, by the created type's name */
+    private final Map<String, List<DomainMethod>> creatorsByCreatedTypeName;
+    /** the domain types created by a factory method, by the node key of the factory method */
+    private final Map<String, List<DomainTypeMirror>> createdTypesByCreatorKey;
 
     /**
      * Creates an analyzer with {@link FlowConfig#defaults()}.
@@ -131,6 +135,42 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
         indexReadModelProviders(providers, readModels);
         this.providersByReadModelTypeName = Collections.unmodifiableMap(providers);
         this.readModelsByProviderKey = Collections.unmodifiableMap(readModels);
+
+        Map<String, List<DomainMethod>> creators = new LinkedHashMap<>();
+        Map<String, List<DomainTypeMirror>> createdTypes = new LinkedHashMap<>();
+        indexCreators(creators, createdTypes);
+        this.creatorsByCreatedTypeName = Collections.unmodifiableMap(creators);
+        this.createdTypesByCreatorKey = Collections.unmodifiableMap(createdTypes);
+    }
+
+    /**
+     * Indexes the factory methods and the domain types they create. A factory method creating instances of its own
+     * type is left out, and so is one returning a ReadModel it provides - that one already leads to it as
+     * {@link StepKind#PROVIDES_READ_MODEL}.
+     */
+    private void indexCreators(Map<String, List<DomainMethod>> creators,
+                               Map<String, List<DomainTypeMirror>> createdTypes) {
+        for (DomainTypeMirror type : domainMirror.getAllDomainTypeMirrors()) {
+            for (MethodMirror method : type.getFactoryMethods()) {
+                if (method.getReturnType() == null) {
+                    continue;
+                }
+                DomainMethod creator = new DomainMethod(type.getTypeName(), method);
+                String createdTypeName = method.getReturnType().getTypeName();
+                if (createdTypeName.equals(type.getTypeName())
+                    || readModelsByProviderKey.getOrDefault(Step.nodeKeyOf(creator), List.of()).stream()
+                        .anyMatch(readModel -> readModel.getTypeName().equals(createdTypeName))) {
+                    continue;
+                }
+                domainMirror.<DomainTypeMirror>getDomainTypeMirror(createdTypeName).ifPresent(created -> {
+                    List<DomainMethod> creatorsOfType = creators.computeIfAbsent(createdTypeName, key -> new ArrayList<>());
+                    if (!creatorsOfType.contains(creator)) {
+                        creatorsOfType.add(creator);
+                        createdTypes.computeIfAbsent(Step.nodeKeyOf(creator), key -> new ArrayList<>()).add(created);
+                    }
+                });
+            }
+        }
     }
 
     /**
@@ -336,6 +376,11 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
                 isOnPath(current, Step.nodeKeyOf(readModel))));
         }
 
+        for (DomainTypeMirror created : createdTypesByCreatorKey.getOrDefault(
+            Step.nodeKeyOf(current.method()), List.of())) {
+            successors.add(Step.creating(current, created, isOnPath(current, Step.nodeKeyOf(created))));
+        }
+
         domainMirror.getDomainTypeMirror(current.method().typeName())
             .filter(QueryHandlerMirror.class::isInstance)
             .map(QueryHandlerMirror.class::cast)
@@ -487,6 +532,13 @@ public class DomainCallFlowAnalyzer implements FlowAnalyzer {
                 predecessors.add(Step.providedByMethod(current, provider,
                     isOnPath(current, Step.nodeKeyOf(provider))));
             }
+        }
+
+        for (DomainMethod creator : creatorsByCreatedTypeName.getOrDefault(type.getTypeName(), List.of())) {
+            if (!config.methodFilter().test(creator)) {
+                continue;
+            }
+            predecessors.add(Step.createdBy(current, creator, isOnPath(current, Step.nodeKeyOf(creator))));
         }
 
         return predecessors;

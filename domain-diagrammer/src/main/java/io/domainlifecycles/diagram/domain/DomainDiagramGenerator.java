@@ -152,6 +152,11 @@ public class DomainDiagramGenerator implements Diagram {
     public static final String OUTBOUND_SERVICE_STYLE_TAG = "OS";
 
     /**
+     * Represents the style tag identifier for factories in the domain diagram.
+     */
+    public static final String FACTORY_STYLE_TAG = "F";
+
+    /**
      * A constant representing the style tag for the identity model element in a domain diagram.
      * Used to apply specific styling rules for identity elements within the generated diagram.
      */
@@ -258,6 +263,7 @@ public class DomainDiagramGenerator implements Diagram {
         builder.append(domainServiceStyleDeclaration());
         builder.append(repositoryStyleDeclaration());
         builder.append(outboundServiceStyleDeclaration());
+        builder.append(factoryStyleDeclaration());
         builder.append(unspecifiedServiceKindStyleDeclaration());
         builder.append(nonDomainClassStyleDeclaration());
         builder.append(queryHandlerStyleDeclaration());
@@ -276,6 +282,8 @@ public class DomainDiagramGenerator implements Diagram {
         domainMapper.getApplicationServices().forEach(f -> builder.append(f.getDiagramText()));
 
         domainMapper.getDomainServices().forEach(f -> builder.append(f.getDiagramText()));
+
+        domainMapper.getFactories().forEach(f -> builder.append(f.getDiagramText()));
 
         domainMapper.getDomainEvents().forEach(f -> builder.append(f.getDiagramText()));
 
@@ -304,6 +312,7 @@ public class DomainDiagramGenerator implements Diagram {
         appendRelationships(builder, relationships, relationshipMapper.mapAllAggregateRepositoryRelationships());
         appendRelationships(builder, relationships, relationshipMapper.mapAllQueryHandlerReadModelRelationships());
         appendRelationships(builder, relationships, relationshipMapper.mapAllReadModelRelationships());
+        appendRelationships(builder, relationships, relationshipMapper.mapAllFactoryRelationships());
         // last: only where no other relationship connects two classes
         appendRelationships(builder, relationships, relationshipMapper.mapAllFlowCallRelationships(List.copyOf(relationships)));
 
@@ -398,6 +407,13 @@ public class DomainDiagramGenerator implements Diagram {
     private String outboundServiceStyleDeclaration() {
         if (diagramConfig.getStyleSettings().getOutboundServiceStyle() != null) {
             return completeStyleDeclaration(diagramConfig.getStyleSettings().getOutboundServiceStyle(), OUTBOUND_SERVICE_STYLE_TAG);
+        }
+        return "";
+    }
+
+    private String factoryStyleDeclaration() {
+        if (diagramConfig.getStyleSettings().getFactoryStyle() != null) {
+            return completeStyleDeclaration(diagramConfig.getStyleSettings().getFactoryStyle(), FACTORY_STYLE_TAG);
         }
         return "";
     }

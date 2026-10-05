@@ -35,6 +35,7 @@ import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
+import io.domainlifecycles.mirror.api.FactoryMirror;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
@@ -160,6 +161,13 @@ public abstract class BoundedContextModelMixin {
      */
     @JsonIgnore
     public abstract List<OutboundServiceMirror> getOutboundServices();
+
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return list of factories in the bounded context
+     */
+    @JsonIgnore
+    public abstract List<FactoryMirror> getFactories();
 
     /**
      * Retrieves the list of service kind mirrors associated with the bounded context model.
