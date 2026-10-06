@@ -96,9 +96,11 @@ public class NomnomlFrame implements DiagramElement {
         builder.append(name);
         builder.append(" ");
         builder.append(type);
-        builder.append("|");
-        builder.append(System.lineSeparator());
-        innerElements.forEach(ie -> builder.append(ie.getDiagramText()));
+        if (!innerElements.isEmpty()) {
+            builder.append("|");
+            builder.append(System.lineSeparator());
+            innerElements.forEach(ie -> builder.append(ie.getDiagramText()));
+        }
         builder.append("]");
         builder.append(System.lineSeparator());
         return builder.toString();

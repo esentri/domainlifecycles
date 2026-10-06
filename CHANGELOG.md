@@ -283,6 +283,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   with their callers. In the [domain diagrammer](./domain-diagrammer), a flow reaching an entity reaches its aggregate
   as well The Gradle and Maven plugins expose
   `factoryStyle`, `showFactories`, `showFactoryFields`, `showFactoryMethods` and `showFactoryRelations`
+- The [domain diagrammer](./domain-diagrammer/readme.md#aggregates-shown-as-frames-only) can draw the aggregates as
+  their frame only, without the classes, relationships and notes inside: `GeneralVisualSettings.showOnlyAggregateFrames`
+  (off by default) is a central switch for all aggregates of a diagram. The relationships from outside an aggregate
+  connect its frame and are still drawn. The Gradle and Maven plugins expose it as `showOnlyAggregateFrames`
 
 ## [3.4.0] - 2026-09-11
 - Improved DLC persistence initialization performance

@@ -295,6 +295,18 @@ public class DomainMapper {
     }
 
     private NomnomlFrame getAggregateFrame(AggregateRootMirror aggregateRootMirror) {
+        var frameBuilder = NomnomlFrame
+            .builder()
+            .name(nodeNames.name(aggregateRootMirror))
+            .comment("!!! {Frame} " + aggregateRootMirror.getTypeName() + " !!!")
+            .type("<<Aggregate>>")
+            .styleClassifier(DomainDiagramGenerator.AGGREGATE_FRAME_STYLE_TAG);
+        if (domainDiagramConfig.getGeneralVisualSettings().isShowOnlyAggregateFrames()) {
+            // relationships from outside connect the frame, not the classes inside
+            return frameBuilder
+                .innerElements(List.of())
+                .build();
+        }
         var mirrors = domainClassMapper.getAllAggregateMirrors(aggregateRootMirror);
         var aggregateRelationShips = domainRelationshipMapper.mapAllAggregateRelationships(aggregateRootMirror);
         var allElements = new ArrayList<DiagramElement>(
@@ -314,12 +326,7 @@ public class DomainMapper {
                 mirrors.stream().map(DomainTypeMirror::getTypeName).toList()
             )
         );
-        return NomnomlFrame
-            .builder()
-            .name(nodeNames.name(aggregateRootMirror))
-            .comment("!!! {Frame} " + aggregateRootMirror.getTypeName() + " !!!")
-            .type("<<Aggregate>>")
-            .styleClassifier(DomainDiagramGenerator.AGGREGATE_FRAME_STYLE_TAG)
+        return frameBuilder
             .innerElements(allElements)
             .build();
     }

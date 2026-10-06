@@ -126,6 +126,17 @@ public class DiagramConfigTest {
     }
 
     @Test
+    void mapCopiesWhetherOnlyTheFramesOfTheAggregatesAreShown() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setShowOnlyAggregateFrames(true);
+
+        assertThat(diagramConfig.map().getGeneralVisualSettings().isShowOnlyAggregateFrames()).isTrue();
+        assertThat(new DiagramConfig().map().getGeneralVisualSettings().isShowOnlyAggregateFrames())
+            .as("unset, the diagrammer's default applies")
+            .isFalse();
+    }
+
+    @Test
     void mapCopiesWhetherTheCallsOfTheFlowsAreDrawn() {
         DiagramConfig diagramConfig = new DiagramConfig();
         diagramConfig.setShowFlowCallRelations(true);

@@ -161,6 +161,9 @@ public class PluginDiagramConfiguration {
     @Parameter(property = "showAggregateMethods", required = false)
     private Boolean showAggregateMethods;
 
+    @Parameter(property = "showOnlyAggregateFrames", required = false)
+    private Boolean showOnlyAggregateFrames;
+
      @Parameter(property = "showDomainEvents", required = false)
      private Boolean showDomainEvents;
 
@@ -677,6 +680,15 @@ public class PluginDiagramConfiguration {
      */
     public Boolean getShowAggregateMethods() {
         return showAggregateMethods;
+    }
+
+    /**
+     * Checks if Aggregates are drawn as their frame only, without the classes, relationships and notes inside.
+     *
+     * @return a Boolean value; true if only the frames of the Aggregates should be shown, false otherwise.
+     */
+    public Boolean getShowOnlyAggregateFrames() {
+        return showOnlyAggregateFrames;
     }
 
     /**

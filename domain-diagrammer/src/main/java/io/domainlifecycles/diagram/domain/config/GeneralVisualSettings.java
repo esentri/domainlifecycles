@@ -45,6 +45,7 @@ public class GeneralVisualSettings {
     private static final boolean DEFAULT_SHOW_AGGREGATES = true;
     private static final boolean DEFAULT_SHOW_AGGREGATE_FIELDS = true;
     private static final boolean DEFAULT_SHOW_AGGREGATE_METHODS = true;
+    private static final boolean DEFAULT_SHOW_ONLY_AGGREGATE_FRAMES = false;
     private static final boolean DEFAULT_SHOW_DOMAIN_EVENTS = true;
     private static final boolean DEFAULT_SHOW_DOMAIN_EVENT_FIELDS = false;
     private static final boolean DEFAULT_SHOW_DOMAIN_EVENT_METHODS = false;
@@ -119,6 +120,7 @@ public class GeneralVisualSettings {
     private final boolean showAggregates;
     private final boolean showAggregateFields;
     private final boolean showAggregateMethods;
+    private final boolean showOnlyAggregateFrames;
     private final boolean showDomainEvents;
     private final boolean showDomainEventFields;
     private final boolean showDomainEventMethods;
@@ -183,6 +185,7 @@ public class GeneralVisualSettings {
         boolean showAggregates,
         boolean showAggregateFields,
         boolean showAggregateMethods,
+        boolean showOnlyAggregateFrames,
         boolean showDomainEvents,
         boolean showDomainEventFields,
         boolean showDomainEventMethods,
@@ -246,6 +249,7 @@ public class GeneralVisualSettings {
         this.showAggregates = showAggregates;
         this.showAggregateFields = showAggregateFields;
         this.showAggregateMethods = showAggregateMethods;
+        this.showOnlyAggregateFrames = showOnlyAggregateFrames;
         this.showDomainEvents = showDomainEvents;
         this.showDomainEventFields = showDomainEventFields;
         this.showDomainEventMethods = showDomainEventMethods;
@@ -372,6 +376,17 @@ public class GeneralVisualSettings {
      */
     public boolean isShowAggregateMethods() {
         return showAggregateMethods;
+    }
+
+    /**
+     * Returns whether Aggregates are drawn as their frame only: without the classes inside (AggregateRoot, Entities,
+     * ValueObjects, Enums, Identities), without the relationships between them and without their notes. All
+     * relationships from outside the Aggregate connect its frame anyway, so they are still drawn.
+     *
+     * @return true if only the frames of the Aggregates are drawn, false otherwise
+     */
+    public boolean isShowOnlyAggregateFrames() {
+        return showOnlyAggregateFrames;
     }
 
     /**
@@ -905,6 +920,7 @@ public class GeneralVisualSettings {
         private boolean showAggregates$value = DEFAULT_SHOW_AGGREGATES;
         private boolean showAggregateFields$value = DEFAULT_SHOW_AGGREGATE_FIELDS;
         private boolean showAggregateMethods$value = DEFAULT_SHOW_AGGREGATE_METHODS;
+        private boolean showOnlyAggregateFrames$value = DEFAULT_SHOW_ONLY_AGGREGATE_FRAMES;
         private boolean showDomainEvents$value = DEFAULT_SHOW_DOMAIN_EVENTS;
         private boolean showDomainEventFields$value = DEFAULT_SHOW_DOMAIN_EVENT_FIELDS;
         private boolean showDomainEventMethods$value = DEFAULT_SHOW_DOMAIN_EVENT_METHODS;
@@ -1051,6 +1067,18 @@ public class GeneralVisualSettings {
          */
         public GeneralVisualSettingsBuilder withShowAggregateMethods(boolean showAggregateMethods) {
             this.showAggregateMethods$value = showAggregateMethods;
+            return this;
+        }
+
+        /**
+         * Sets whether Aggregates are drawn as their frame only, without the classes, relationships and notes inside.
+         * This is a central switch for all Aggregates of the diagram.
+         *
+         * @param showOnlyAggregateFrames true to draw only the frames of the Aggregates, false to draw their content
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowOnlyAggregateFrames(boolean showOnlyAggregateFrames) {
+            this.showOnlyAggregateFrames$value = showOnlyAggregateFrames;
             return this;
         }
 
@@ -1677,6 +1705,7 @@ public class GeneralVisualSettings {
                 showAggregates$value,
                 showAggregateFields$value,
                 showAggregateMethods$value,
+                showOnlyAggregateFrames$value,
                 showDomainEvents$value,
                 showDomainEventFields$value,
                 showDomainEventMethods$value,

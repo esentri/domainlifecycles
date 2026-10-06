@@ -94,6 +94,7 @@ public class DiagramConfig {
     private Boolean showAggregates;
     private Boolean showAggregateFields;
     private Boolean showAggregateMethods;
+    private Boolean showOnlyAggregateFrames;
     private Boolean showDomainEvents;
     private Boolean showDomainEventFields;
     private Boolean showDomainEventMethods;
@@ -737,6 +738,25 @@ public class DiagramConfig {
      */
     public void setShowAggregateMethods(Boolean showAggregateMethods) {
         this.showAggregateMethods = showAggregateMethods;
+    }
+
+    /**
+     * Gets whether Aggregates are drawn as their frame only, without the classes, relationships and notes inside
+     *
+     * @return Whether only the frames of the Aggregates should be shown
+     */
+    public Boolean getShowOnlyAggregateFrames() {
+        return showOnlyAggregateFrames;
+    }
+
+    /**
+     * Sets whether Aggregates are drawn as their frame only, without the classes, relationships and notes inside.
+     * A central switch for all Aggregates of the diagram.
+     *
+     * @param showOnlyAggregateFrames Whether only the frames of the Aggregates should be shown
+     */
+    public void setShowOnlyAggregateFrames(Boolean showOnlyAggregateFrames) {
+        this.showOnlyAggregateFrames = showOnlyAggregateFrames;
     }
 
     /**
@@ -2014,6 +2034,7 @@ public class DiagramConfig {
         if(showAggregates != null) visualBuilder.withShowAggregates(showAggregates);
         if(showAggregateFields != null) visualBuilder.withShowAggregateFields(showAggregateFields);
         if(showAggregateMethods != null) visualBuilder.withShowAggregateMethods(showAggregateMethods);
+        if(showOnlyAggregateFrames != null) visualBuilder.withShowOnlyAggregateFrames(showOnlyAggregateFrames);
         if(showDomainEvents != null) visualBuilder.withShowDomainEvents(showDomainEvents);
         if(showDomainEventFields != null) visualBuilder.withShowDomainEventFields(showDomainEventFields);
         if(showDomainEventMethods != null) visualBuilder.withShowDomainEventMethods(showDomainEventMethods);

@@ -445,6 +445,10 @@ Supported Diagram configuration options are
 - showAssertions: boolean, default true
 - showMethods: boolean, default true
 - showOnlyPublicMethods: boolean, default true
+- showAggregates: boolean, default true
+- showAggregateFields: boolean, default true
+- showAggregateMethods: boolean, default true
+- showOnlyAggregateFrames: boolean, default false (a central switch for all aggregates: each aggregate is drawn as its frame only, without the classes, relationships and notes inside; the relationships from outside connect the frame and are still drawn)
 - showDomainEvents: boolean, default true
 - showDomainEventFields: boolean, default false
 - showDomainEventMethods: boolean, default false

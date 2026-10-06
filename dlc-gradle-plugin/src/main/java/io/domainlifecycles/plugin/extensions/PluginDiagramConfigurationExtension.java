@@ -295,6 +295,13 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
     public abstract Property<Boolean> getShowAggregateMethods();
 
     /**
+     * Indicates whether Aggregates are drawn as their frame only, without the classes, relationships and notes inside.
+     *
+     * @return true if only the frames of the Aggregates should be shown, false otherwise
+     */
+    public abstract Property<Boolean> getShowOnlyAggregateFrames();
+
+    /**
      * Indicates whether domain events should be shown in the diagram.
      *
      * @return true if domain events should be shown, false otherwise

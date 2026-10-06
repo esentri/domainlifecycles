@@ -300,6 +300,23 @@ in that common package is followed by its full package. The hint only appears if
 shown in the same diagram, and not with `showFullQualifiedClassNames`. An implementation drawn as its
 interface (without inheritance structures shown) remains one node with it, whatever its name.
 
+## Aggregates shown as frames only
+
+For an overview of a larger domain the content of the aggregates is often more detail than needed.
+`GeneralVisualSettings.withShowOnlyAggregateFrames(true)` - a central switch for all aggregates of the
+diagram - draws each aggregate as its frame only, without the classes inside (aggregate root, entities,
+value objects, enums, identities), the relationships between them and their notes (off by default):
+
+```Java
+var general = GeneralVisualSettings.builder()
+    .withShowOnlyAggregateFrames(true)
+    .build();
+```
+
+All relationships from outside an aggregate - from its repository, the domain commands it processes, the
+domain events it publishes or listens to, the factories creating it, the id references from other
+aggregates or the calls of the flows - connect its frame anyway, so they are still drawn.
+
 ## Value objects shown inline
 
 A value object with only a few fields is shown inline - as field of the class referencing it, e.g.

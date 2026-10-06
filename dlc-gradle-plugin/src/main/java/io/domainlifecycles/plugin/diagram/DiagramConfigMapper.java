@@ -88,6 +88,7 @@ public class DiagramConfigMapper {
         diagramConfig.setShowAggregates(extension.getShowAggregates().getOrNull());
         diagramConfig.setShowAggregateFields(extension.getShowAggregateFields().getOrNull());
         diagramConfig.setShowAggregateMethods(extension.getShowAggregateMethods().getOrNull());
+        diagramConfig.setShowOnlyAggregateFrames(extension.getShowOnlyAggregateFrames().getOrNull());
         diagramConfig.setShowDomainEvents(extension.getShowDomainEvents().getOrNull());
         diagramConfig.setShowDomainEventFields(extension.getShowDomainEventFields().getOrNull());
         diagramConfig.setShowDomainEventMethods(extension.getShowDomainEventMethods().getOrNull());
