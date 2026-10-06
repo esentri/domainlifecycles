@@ -180,9 +180,9 @@ public class PersistenceContext<BASE_RECORD_TYPE> {
                             throw DLCPersistenceException.fail("""
                                     Inconsistent aggregate. The same entity is contained with different values.
 
-                                    Entity 1: {0}\s
+                                    Entity 1: %s\s
 
-                                    Entity 2: {1}""", a.instanceAccessModel.domainObject(),
+                                    Entity 2: %s""", a.instanceAccessModel.domainObject(),
                                 aq.instanceAccessModel.domainObject());
                         } else {
                             //this domain object instance is contained multiple times in the aggregate

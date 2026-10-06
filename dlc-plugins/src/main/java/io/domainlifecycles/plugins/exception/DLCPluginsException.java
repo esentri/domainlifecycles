@@ -60,7 +60,7 @@ public class DLCPluginsException extends RuntimeException {
      * @return a new DLCPluginException with a detail message formatted to include with given message parameters.
      */
     public static DLCPluginsException fail(final String detail, final Object... args) {
-        return new DLCPluginsException(requireNonNull(detail), requireNonNull(args));
+        return new DLCPluginsException(format(requireNonNull(detail), requireNonNull(args)));
     }
 
     /**
@@ -71,18 +71,18 @@ public class DLCPluginsException extends RuntimeException {
      * containing a cause.
      */
     public static DLCPluginsException fail(final String detail, final Throwable cause, final Object... args) {
-        return new DLCPluginsException(requireNonNull(detail), requireNonNull(cause), requireNonNull(args));
+        return new DLCPluginsException(format(requireNonNull(detail), requireNonNull(args)), requireNonNull(cause));
     }
 
     private static String format(final String detail, final Object[] args) {
         return args.length > 0 ? String.format(detail, args) : detail;
     }
 
-    private DLCPluginsException(String detail, final Object... args) {
-        super(format(detail, args));
+    private DLCPluginsException(final String message) {
+        super(message);
     }
 
-    private DLCPluginsException(String detail, Throwable cause, Object... args) {
-        super(format(detail, args), cause);
+    private DLCPluginsException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 }

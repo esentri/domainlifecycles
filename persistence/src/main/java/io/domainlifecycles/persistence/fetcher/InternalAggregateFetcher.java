@@ -262,7 +262,7 @@ public abstract class InternalAggregateFetcher<A extends AggregateRoot<I>, I ext
         var b = rm.recordToDomainObjectBuilder(baseEntityRecord);
         if (b == null) {
             throw DLCPersistenceException.fail(
-                String.format("Was not able to get DomainObjectBuilder for record: %s", baseEntityRecord));
+                "Was not able to get DomainObjectBuilder for record: %s", baseEntityRecord);
         }
 
         var em = Domain.entityMirrorFor(b.instanceType().getName());

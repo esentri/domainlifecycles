@@ -70,7 +70,7 @@ public class FileIOUtils {
         try {
             Files.write(path, fileContent);
         } catch (IOException e) {
-            throw DLCGradlePluginException.fail(String.format("Error occurred while trying to save file to %s.", path), e);
+            throw DLCGradlePluginException.fail("Error occurred while trying to save file to %s.", e, path);
         }
     }
 }

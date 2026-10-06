@@ -118,8 +118,8 @@ public class DiagramGeneratorImpl implements DiagramGenerator {
             return krokiClient.convertTo(rawNomnomlDiagramText, diagramConfig.getFileType());
         } catch (Exception e) {
             throw DLCPluginsException.fail(
-                String.format("Error occurred while generating diagram '%s' (Of type: %s)",
-                    diagramConfig.getFileName(), diagramConfig.getFileType().name()), e);
+                "Error occurred while generating diagram '%s' (Of type: %s)", e,
+                diagramConfig.getFileName(), diagramConfig.getFileType().name());
         }
     }
 

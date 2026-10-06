@@ -74,7 +74,7 @@ public class JooqRecordPropertyProvider implements RecordPropertyProvider {
         try {
             recordClass = Class.forName(recordClassName);
         } catch (ClassNotFoundException e) {
-            throw DLCPersistenceException.fail(String.format("RecordClass %s not found", recordClassName), e);
+            throw DLCPersistenceException.fail("RecordClass %s not found", e, recordClassName);
         }
         return Arrays.stream(recordClass.getDeclaredMethods())
             .filter(m -> m.getName().startsWith("get"))

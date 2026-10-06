@@ -109,8 +109,7 @@ public class DeserializingDomainMirrorFactory implements DomainMirrorFactory {
 
             if (inputStream == null) {
                 throw MirrorException.fail(
-                    String.format("Could not find mirror file for serializing. Make sure file %s is present.",
-                        path));
+                    "Could not find mirror file for serializing. Make sure file %s is present.", path);
             }
 
             return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);

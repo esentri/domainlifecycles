@@ -68,7 +68,7 @@ public class ServiceRegistryException extends RuntimeException {
      * @return new exception
      */
     public static ServiceRegistryException fail(final String detail, final Object... args) {
-        return new ServiceRegistryException(requireNonNull(detail), requireNonNull(args));
+        return new ServiceRegistryException(format(requireNonNull(detail), requireNonNull(args)));
     }
 
     /**
@@ -80,7 +80,7 @@ public class ServiceRegistryException extends RuntimeException {
      * @return new exception
      */
     public static ServiceRegistryException fail(final String detail, final Throwable cause, final Object... args) {
-        return new ServiceRegistryException(requireNonNull(detail), requireNonNull(cause), requireNonNull(args));
+        return new ServiceRegistryException(format(requireNonNull(detail), requireNonNull(args)), requireNonNull(cause));
     }
 
     // ----------------------------------------------------------
@@ -89,12 +89,11 @@ public class ServiceRegistryException extends RuntimeException {
         return args.length > 0 ? String.format(detail, args) : detail;
     }
 
-
-    private ServiceRegistryException(String detail, final Object... args) {
-        super(format(detail, args));
+    private ServiceRegistryException(final String message) {
+        super(message);
     }
 
-    private ServiceRegistryException(String detail, Throwable cause, Object... args) {
-        super(format(detail, args), cause);
+    private ServiceRegistryException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 }

@@ -591,7 +591,7 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
         }
 
         throw DLCPluginsException.fail(
-            String.format("Diagram-Viewer returned failure while processing Domain-Model. Status-Code: '%s'. Error-Message: '%s'.",
-                response.statusCode(), response.body()));
+            "Diagram-Viewer returned failure while processing Domain-Model. Status-Code: '%s'. Error-Message: '%s'.",
+            response.statusCode(), response.body());
     }
 }

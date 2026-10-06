@@ -114,7 +114,7 @@ public class DomainCallsAnalyzerImpl implements DomainCallsAnalyzer {
         try {
             return Path.of(url.toURI());
         } catch (URISyntaxException e) {
-            throw DLCPluginsException.fail(String.format("Could not resolve classpath entry '%s'.", url), e);
+            throw DLCPluginsException.fail("Could not resolve classpath entry '%s'.", e, url);
         }
     }
 }

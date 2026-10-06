@@ -179,7 +179,7 @@ public abstract class DomainTypeModel implements DomainTypeMirror, ProvidedDomai
         return methods.stream().filter(m -> m.getName().equals(methodName))
             .findFirst()
             .orElseThrow(() -> MirrorException.fail(
-                String.format("MethodMirror not found for method name '%s' within '%s'", methodName, typeName)));
+                "MethodMirror not found for method name '%s' within '%s'", methodName, typeName));
     }
 
     /**
@@ -190,7 +190,7 @@ public abstract class DomainTypeModel implements DomainTypeMirror, ProvidedDomai
         return allFields.stream()
             .filter(f -> f.getName().equals(fieldName) && !f.isHidden()).findFirst()
             .orElseThrow(() -> MirrorException.fail(
-                String.format("FieldMirror not found for field name '%s' within '%s'", fieldName, typeName)));
+                "FieldMirror not found for field name '%s' within '%s'", fieldName, typeName));
 
     }
 

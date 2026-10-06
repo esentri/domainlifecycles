@@ -78,7 +78,7 @@ public class FileIOUtils {
             Files.createDirectories(path.getParent());
             Files.write(path, fileContent);
         } catch (IOException e) {
-            throw DLCPluginsException.fail(String.format("Error occurred while trying to save file to %s.", path), e);
+            throw DLCPluginsException.fail("Error occurred while trying to save file to %s.", e, path);
         }
     }
 }

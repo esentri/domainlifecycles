@@ -68,7 +68,7 @@ public class DLCTypesException extends RuntimeException {
      * @return new exception
      */
     public static DLCTypesException fail(final String detail, final Object... args) {
-        return new DLCTypesException(requireNonNull(detail), requireNonNull(args));
+        return new DLCTypesException(format(requireNonNull(detail), requireNonNull(args)));
     }
 
     /**
@@ -81,7 +81,7 @@ public class DLCTypesException extends RuntimeException {
      * @return new exception
      */
     public static DLCTypesException fail(final String detail, final Throwable cause, final Object... args) {
-        return new DLCTypesException(requireNonNull(detail), requireNonNull(cause), requireNonNull(args));
+        return new DLCTypesException(format(requireNonNull(detail), requireNonNull(args)), requireNonNull(cause));
     }
 
     // ----------------------------------------------------------
@@ -90,12 +90,11 @@ public class DLCTypesException extends RuntimeException {
         return args.length > 0 ? String.format(detail, args) : detail;
     }
 
-
-    private DLCTypesException(String detail, final Object... args) {
-        super(format(detail, args));
+    private DLCTypesException(final String message) {
+        super(message);
     }
 
-    private DLCTypesException(String detail, Throwable cause, Object... args) {
-        super(format(detail, args), cause);
+    private DLCTypesException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 }

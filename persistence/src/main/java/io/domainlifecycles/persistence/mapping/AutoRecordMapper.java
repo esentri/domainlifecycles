@@ -612,12 +612,12 @@ public class AutoRecordMapper<R, DO extends DomainObject, A extends AggregateRoo
                 rp -> this.ignoredRecordPropertyProvider == null || !this.ignoredRecordPropertyProvider.isIgnored(rp))
             .toList();
         if(!nonMappedRecordProperties.isEmpty()){
-            throw DLCPersistenceException.fail(String.format("The record properties '%s' of '%s' were not matched within the DomainObject" +
+            throw DLCPersistenceException.fail("The record properties '%s' of '%s' were not matched within the DomainObject" +
                 "'%s' for auto mapping!",
                 nonMappedRecordProperties.stream().map(RecordProperty::getName).collect(Collectors.joining(", ")),
                 this.recordTypeName,
                 this.typeName
-                ));
+                );
         }
     }
 

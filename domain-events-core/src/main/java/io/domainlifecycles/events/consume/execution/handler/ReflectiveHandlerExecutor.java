@@ -122,7 +122,7 @@ public class ReflectiveHandlerExecutor implements HandlerExecutor {
                     && m.getParameters()[0].getType().getName().equals(
                     aggregateExecutionContext.domainEvent().getClass().getName()))
                 .findFirst()
-                .orElseThrow(() -> DLCEventsException.fail("Method '{}' not found on '{}'",
+                .orElseThrow(() -> DLCEventsException.fail("Method '%s' not found on '%s'",
                     aggregateExecutionContext.aggregateHandlerMethodName(),
                     root.getClass().getName()
                 ));

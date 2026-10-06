@@ -66,8 +66,7 @@ public class ReflectiveDomainObjectAccessor implements DynamicDomainObjectAccess
             return (T)field.get(domainObject);
         } catch (IllegalAccessException illegalAccessException) {
             throw DLCAccessException.fail(
-                String.format("Failed to read '%s' from '%s'!", fieldName, domainObjectClass.getName()),
-                illegalAccessException);
+                "Failed to read '%s' from '%s'!", illegalAccessException, fieldName, domainObjectClass.getName());
         }
     }
 
@@ -81,8 +80,7 @@ public class ReflectiveDomainObjectAccessor implements DynamicDomainObjectAccess
             field.set(domainObject, argument);
         } catch (IllegalAccessException illegalAccessException) {
             throw DLCAccessException.fail(
-                String.format("Failed to write '%s' in '%s'!", fieldName, domainObjectClass.getName()),
-                illegalAccessException);
+                "Failed to write '%s' in '%s'!", illegalAccessException, fieldName, domainObjectClass.getName());
         }
     }
 
@@ -112,7 +110,7 @@ public class ReflectiveDomainObjectAccessor implements DynamicDomainObjectAccess
         var field = JavaReflect
             .findField(domainObjectClass, MemberSelect.HIERARCHY, fieldName)
             .orElseThrow(() -> DLCAccessException.fail(
-                String.format("Field '%s' not found in '%s'!", fieldName, domainObjectClass.getName())));
+                "Field '%s' not found in '%s'!", fieldName, domainObjectClass.getName()));
         field.trySetAccessible();
         var key = fieldKey(fieldName);
         fieldMap.put(key, field);
