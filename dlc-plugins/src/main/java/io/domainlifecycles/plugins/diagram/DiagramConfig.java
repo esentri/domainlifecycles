@@ -143,6 +143,8 @@ public class DiagramConfig {
     private List<String> includeConnectedTo;
     private List<String> includeConnectedToIngoing;
     private List<String> includeConnectedToOutgoing;
+    private Integer includeConnectedToIngoingDepth;
+    private Integer includeConnectedToOutgoingDepth;
     private List<String> excludeConnectedToIngoing;
     private List<String> excludeConnectedToOutgoing;
     private List<String> explicitlyIncludedPackageNames;
@@ -1624,6 +1626,44 @@ public class DiagramConfig {
     }
 
     /**
+     * Gets up to how many steps the ingoing connections of {@link #getIncludeConnectedToIngoing()} are followed
+     *
+     * @return The number of steps, 0 or negative for the complete path, null for the diagrammer's default
+     */
+    public Integer getIncludeConnectedToIngoingDepth() {
+        return includeConnectedToIngoingDepth;
+    }
+
+    /**
+     * Sets up to how many steps the ingoing connections of {@link #getIncludeConnectedToIngoing()} are followed -
+     * "what leads to it"
+     *
+     * @param includeConnectedToIngoingDepth The number of steps, 0 or negative for the complete path
+     */
+    public void setIncludeConnectedToIngoingDepth(Integer includeConnectedToIngoingDepth) {
+        this.includeConnectedToIngoingDepth = includeConnectedToIngoingDepth;
+    }
+
+    /**
+     * Gets up to how many steps the outgoing connections of {@link #getIncludeConnectedToOutgoing()} are followed
+     *
+     * @return The number of steps, 0 or negative for the complete path, null for the diagrammer's default
+     */
+    public Integer getIncludeConnectedToOutgoingDepth() {
+        return includeConnectedToOutgoingDepth;
+    }
+
+    /**
+     * Sets up to how many steps the outgoing connections of {@link #getIncludeConnectedToOutgoing()} are followed -
+     * "what does it lead to"
+     *
+     * @param includeConnectedToOutgoingDepth The number of steps, 0 or negative for the complete path
+     */
+    public void setIncludeConnectedToOutgoingDepth(Integer includeConnectedToOutgoingDepth) {
+        this.includeConnectedToOutgoingDepth = includeConnectedToOutgoingDepth;
+    }
+
+    /**
      * Gets the list of classes to exclude ingoing connections for
      *
      * @return The class names to exclude ingoing connections for
@@ -2083,6 +2123,8 @@ public class DiagramConfig {
         if(includeConnectedTo != null && !includeConnectedTo.isEmpty()) trimBuilder.withIncludeConnectedTo(includeConnectedTo);
         if(includeConnectedToIngoing != null && !includeConnectedToIngoing.isEmpty()) trimBuilder.withIncludeConnectedToIngoing(includeConnectedToIngoing);
         if(includeConnectedToOutgoing != null && !includeConnectedToOutgoing.isEmpty()) trimBuilder.withIncludeConnectedToOutgoing(includeConnectedToOutgoing);
+        if(includeConnectedToIngoingDepth != null) trimBuilder.withIncludeConnectedToIngoingDepth(includeConnectedToIngoingDepth);
+        if(includeConnectedToOutgoingDepth != null) trimBuilder.withIncludeConnectedToOutgoingDepth(includeConnectedToOutgoingDepth);
         if(excludeConnectedToIngoing != null && !excludeConnectedToIngoing.isEmpty()) trimBuilder.withExcludeConnectedToIngoing(excludeConnectedToIngoing);
         if(excludeConnectedToOutgoing != null && !excludeConnectedToOutgoing.isEmpty()) trimBuilder.withExcludeConnectedToOutgoing(excludeConnectedToOutgoing);
         if(explicitlyIncludedPackageNames != null && !explicitlyIncludedPackageNames.isEmpty()) trimBuilder.withExplicitlyIncludedPackageNames(explicitlyIncludedPackageNames);

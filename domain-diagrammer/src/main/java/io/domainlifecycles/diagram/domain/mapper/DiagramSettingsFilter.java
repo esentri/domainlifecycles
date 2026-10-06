@@ -46,6 +46,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -93,8 +94,10 @@ public class DiagramSettingsFilter {
         this.domainFlowFilter = Objects.requireNonNull(domainFlowFilter, "A DomainFlowFilter must be provided!");
 
         this.includedDomainTypesByConnections = new HashSet<>();
-        this.includedDomainTypesByConnections.addAll(calculateConnectedIngoing(diagramTrimSettings.getIncludeConnectedToIngoing()));
-        this.includedDomainTypesByConnections.addAll(calculateConnectedOutgoing(diagramTrimSettings.getIncludeConnectedToOutgoing()));
+        this.includedDomainTypesByConnections.addAll(calculateConnectedIngoing(
+            diagramTrimSettings.getIncludeConnectedToIngoing(), diagramTrimSettings.getIncludeConnectedToIngoingDepth()));
+        this.includedDomainTypesByConnections.addAll(calculateConnectedOutgoing(
+            diagramTrimSettings.getIncludeConnectedToOutgoing(), diagramTrimSettings.getIncludeConnectedToOutgoingDepth()));
         this.includedDomainTypesByConnections.addAll(calculateConnected(diagramTrimSettings.getIncludeConnectedTo()));
         if( this.trimSettings.getIncludeConnectedTo().isEmpty() &&
             this.trimSettings.getIncludeConnectedToIngoing().isEmpty() &&
@@ -102,8 +105,9 @@ public class DiagramSettingsFilter {
         ){
             this.includedDomainTypesByConnections.addAll(domainMirror.getAllDomainTypeMirrors());
         }
-        this.includedDomainTypesByConnections.removeAll(calculateConnectedIngoing(diagramTrimSettings.getExcludeConnectedToIngoing()));
-        this.includedDomainTypesByConnections.removeAll(calculateConnectedOutgoing(diagramTrimSettings.getExcludeConnectedToOutgoing()));
+        // the excluded connections are always followed completely
+        this.includedDomainTypesByConnections.removeAll(calculateConnectedIngoing(diagramTrimSettings.getExcludeConnectedToIngoing(), 0));
+        this.includedDomainTypesByConnections.removeAll(calculateConnectedOutgoing(diagramTrimSettings.getExcludeConnectedToOutgoing(), 0));
     }
 
     private Set<DomainTypeMirror> calculateConnected(List<String> typeNames){
@@ -117,25 +121,36 @@ public class DiagramSettingsFilter {
         return connectedTypes;
     }
 
-    private Set<DomainTypeMirror> calculateConnectedOutgoing(List<String> typeNames){
-        var connectedTypes = new HashSet<>(getTypeMirrors(typeNames));
-        var size = 0;
-        while (connectedTypes.size() != size){
-            size = connectedTypes.size();
-            connectedTypes.addAll(getOutgoingTypeMirrors(connectedTypes));
+    private Set<DomainTypeMirror> calculateConnectedOutgoing(List<String> typeNames, int depth){
+        return calculateConnectedUpTo(typeNames, depth, this::getOutgoingTypeMirrors);
+    }
+
+    private Set<DomainTypeMirror> calculateConnectedIngoing(List<String> typeNames, int depth){
+        return calculateConnectedUpTo(typeNames, depth, this::getIngoingTypeMirrors);
+    }
+
+    /**
+     * The seed types and the types connected to them in one direction, step by step: each step follows the connections
+     * of the types reached by the step before - up to the given depth, or until no further type is reached for a depth
+     * of {@code 0} or less (the complete path). A step reaches the interfaces and implementations of the service
+     * kinds it reaches as well, so they take no step of their own.
+     */
+    private Set<DomainTypeMirror> calculateConnectedUpTo(
+        List<String> typeNames,
+        int depth,
+        Function<Set<DomainTypeMirror>, List<DomainTypeMirror>> connectedTypesOf
+    ){
+        var connectedTypes = new HashSet<DomainTypeMirror>(getTypeMirrors(typeNames));
+        Set<DomainTypeMirror> reachedLastStep = new HashSet<>(connectedTypes);
+        for (int step = 1; !reachedLastStep.isEmpty() && (depth <= 0 || step <= depth); step++) {
+            var reached = new HashSet<DomainTypeMirror>(connectedTypesOf.apply(reachedLastStep));
+            reached.removeAll(connectedTypes);
+            connectedTypes.addAll(reached);
+            reachedLastStep = reached;
         }
         return connectedTypes;
     }
 
-    private Set<DomainTypeMirror> calculateConnectedIngoing(List<String> typeNames){
-        var connectedTypes = new HashSet<>(getTypeMirrors(typeNames));
-        var size = 0;
-        while (connectedTypes.size() != size){
-            size = connectedTypes.size();
-            connectedTypes.addAll(getIngoingTypeMirrors(connectedTypes));
-        }
-        return connectedTypes;
-    }
 
     private List<DomainTypeMirror> getTypeMirrors(List<String> seedTypeNames) {
         List<DomainTypeMirror> seedTypes = new ArrayList<>();

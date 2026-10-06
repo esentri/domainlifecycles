@@ -287,6 +287,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   their frame only, without the classes, relationships and notes inside: `GeneralVisualSettings.showOnlyAggregateFrames`
   (off by default) is a central switch for all aggregates of a diagram. The relationships from outside an aggregate
   connect its frame and are still drawn. The Gradle and Maven plugins expose it as `showOnlyAggregateFrames`
+- The structural filters of the [domain diagrammer](./domain-diagrammer/readme.md#restricting-a-diagram-to-connected-classes)
+  can be limited in depth: `DiagramTrimSettings.includeConnectedToIngoingDepth` ("what leads to it") and
+  `includeConnectedToOutgoingDepth` ("what does it lead to") follow the connections up to the given number of steps -
+  `1` includes the classes directly connected. `0` or a negative depth follows the complete path, as before (the
+  default). An interface and its implementations count as one step. The Gradle and Maven plugins expose them as
+  `includeConnectedToIngoingDepth` and `includeConnectedToOutgoingDepth`
+- A class can now be named in `includeConnectedToIngoing` and `includeConnectedToOutgoing` at once - what leads to it
+  and what it leads to, each direction with its own depth - and likewise in `excludeConnectedToIngoing` and
+  `excludeConnectedToOutgoing`. `DiagramTrimSettings` still rejects a class that is included and excluded at once, or
+  named in `includeConnectedTo` and a directed include setting, now naming the conflicting settings
 
 ## [3.4.0] - 2026-09-11
 - Improved DLC persistence initialization performance

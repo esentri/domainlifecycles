@@ -126,6 +126,26 @@ public class DiagramConfigTest {
     }
 
     @Test
+    void mapCopiesTheDepthsOfTheConnectionsFollowed() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setIncludeConnectedToIngoingDepth(2);
+        diagramConfig.setIncludeConnectedToOutgoingDepth(-1);
+
+        var trimSettings = diagramConfig.map().getDiagramTrimSettings();
+
+        assertThat(trimSettings.getIncludeConnectedToIngoingDepth()).isEqualTo(2);
+        assertThat(trimSettings.getIncludeConnectedToOutgoingDepth()).isEqualTo(-1);
+    }
+
+    @Test
+    void mapFollowsTheCompletePathOfTheConnections_When_TheDepthsAreUnset() {
+        var trimSettings = new DiagramConfig().map().getDiagramTrimSettings();
+
+        assertThat(trimSettings.getIncludeConnectedToIngoingDepth()).isZero();
+        assertThat(trimSettings.getIncludeConnectedToOutgoingDepth()).isZero();
+    }
+
+    @Test
     void mapCopiesWhetherOnlyTheFramesOfTheAggregatesAreShown() {
         DiagramConfig diagramConfig = new DiagramConfig();
         diagramConfig.setShowOnlyAggregateFrames(true);

@@ -128,6 +128,8 @@ public class DiagramConfigMapper {
         diagramConfig.setIncludeConnectedTo(mavenDiagramConfig.getIncludeConnectedTo());
         diagramConfig.setIncludeConnectedToIngoing(mavenDiagramConfig.getIncludeConnectedToIngoing());
         diagramConfig.setIncludeConnectedToOutgoing(mavenDiagramConfig.getIncludeConnectedToOutgoing());
+        diagramConfig.setIncludeConnectedToIngoingDepth(mavenDiagramConfig.getIncludeConnectedToIngoingDepth());
+        diagramConfig.setIncludeConnectedToOutgoingDepth(mavenDiagramConfig.getIncludeConnectedToOutgoingDepth());
         diagramConfig.setExcludeConnectedToIngoing(mavenDiagramConfig.getExcludeConnectedToIngoing());
         diagramConfig.setExcludeConnectedToOutgoing(mavenDiagramConfig.getExcludeConnectedToOutgoing());
         diagramConfig.setShowAllInheritanceStructures(mavenDiagramConfig.getShowAllInheritanceStructures());

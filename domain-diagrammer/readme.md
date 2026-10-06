@@ -68,6 +68,38 @@ class NomnomlDomainDiagramGeneratorTest {
 
 ![What a pity you cannot see it](../documentation/resources/images/sample_diagram.png "Nomnoml based DDD class diagram")
 
+## Restricting a diagram to connected classes
+
+Without a static analysis, a diagram can be reduced along the structural relations of the mirror -
+a service referencing another one, a command processed, an event published or listened to, a repository
+managing an aggregate, a query handler providing a read model, a class creating an aggregate.
+`DiagramTrimSettings` offers:
+
+- `includeConnectedToIngoing`: the given classes and everything leading to them ("what leads to it"),
+- `includeConnectedToOutgoing`: the given classes and everything they lead to ("what does it lead to"),
+- `includeConnectedTo`: both directions,
+- `excludeConnectedToIngoing` / `excludeConnectedToOutgoing`: leave the given classes and what leads to them,
+  respectively what they lead to, out.
+
+A class may be named for both directions - in `includeConnectedToIngoing` and `includeConnectedToOutgoing` to show
+what leads to it and what it leads to, each with its own depth, or in both exclude settings. Unlike
+`includeConnectedTo`, which changes direction on the way and thereby also reaches e.g. the other callers of a
+repository the class uses, this follows each direction from the class only. A class must not be included and
+excluded at once, nor be named in `includeConnectedTo` and in one of the directed include settings.
+
+By default the connections are followed along the complete path. `withIncludeConnectedToIngoingDepth(int)` and
+`withIncludeConnectedToOutgoingDepth(int)` limit how many steps they are followed: `1` includes the classes
+directly connected, `2` also the classes connected to these, and so on. `0` or a negative depth follows the
+complete path (the default). An interface and its implementations count as one step, and the classes drawn
+together with a class - the entities and value objects of an aggregate - take no step:
+
+```Java
+var trim = DiagramTrimSettings.builder()
+    .withIncludeConnectedToOutgoing(List.of("com.example.order.PlaceOrder"))
+    .withIncludeConnectedToOutgoingDepth(2)
+    .build();
+```
+
 ## Restricting a diagram to a flow
 
 A diagram can be reduced to the classes taking part in one concrete flow — everything a domain

@@ -639,6 +639,22 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
     public abstract ListProperty<String> getIncludeConnectedToOutgoing();
 
     /**
+     * Gets up to how many steps the ingoing connections of {@link #getIncludeConnectedToIngoing()} are followed -
+     * "what leads to it". 0 or negative follows the complete path.
+     *
+     * @return Property of the number of steps
+     */
+    public abstract Property<Integer> getIncludeConnectedToIngoingDepth();
+
+    /**
+     * Gets up to how many steps the outgoing connections of {@link #getIncludeConnectedToOutgoing()} are followed -
+     * "what does it lead to". 0 or negative follows the complete path.
+     *
+     * @return Property of the number of steps
+     */
+    public abstract Property<Integer> getIncludeConnectedToOutgoingDepth();
+
+    /**
      * Gets the list of classes to exclude from the diagram based on their ingoing connections.
      *
      * @return ListProperty of class names to exclude based on ingoing connections

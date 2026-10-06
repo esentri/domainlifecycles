@@ -308,6 +308,12 @@ public class PluginDiagramConfiguration {
     @Parameter(property = "includeConnectedToOutgoing", required = false)
     private List<String> includeConnectedToOutgoing;
 
+    @Parameter(property = "includeConnectedToIngoingDepth", required = false)
+    private Integer includeConnectedToIngoingDepth;
+
+    @Parameter(property = "includeConnectedToOutgoingDepth", required = false)
+    private Integer includeConnectedToOutgoingDepth;
+
     @Parameter(property = "excludeConnectedToIngoing", required = false)
     private List<String> excludeConnectedToIngoing;
 
@@ -1126,6 +1132,26 @@ public class PluginDiagramConfiguration {
      */
     public List<String> getIncludeConnectedToOutgoing() {
         return includeConnectedToOutgoing;
+    }
+
+    /**
+     * Gets up to how many steps the ingoing connections of {@link #getIncludeConnectedToIngoing()} are followed -
+     * "what leads to it".
+     *
+     * @return the number of steps, 0 or negative for the complete path, null for the diagrammer's default
+     */
+    public Integer getIncludeConnectedToIngoingDepth() {
+        return includeConnectedToIngoingDepth;
+    }
+
+    /**
+     * Gets up to how many steps the outgoing connections of {@link #getIncludeConnectedToOutgoing()} are followed -
+     * "what does it lead to".
+     *
+     * @return the number of steps, 0 or negative for the complete path, null for the diagrammer's default
+     */
+    public Integer getIncludeConnectedToOutgoingDepth() {
+        return includeConnectedToOutgoingDepth;
     }
 
     /**

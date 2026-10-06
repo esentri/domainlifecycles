@@ -136,6 +136,8 @@ public class DiagramConfigMapper {
         diagramConfig.setFieldStereotypes(extension.getFieldStereotypes().getOrNull());
         diagramConfig.setIncludeConnectedToIngoing(extension.getIncludeConnectedToIngoing().getOrNull());
         diagramConfig.setIncludeConnectedToOutgoing(extension.getIncludeConnectedToOutgoing().getOrNull());
+        diagramConfig.setIncludeConnectedToIngoingDepth(extension.getIncludeConnectedToIngoingDepth().getOrNull());
+        diagramConfig.setIncludeConnectedToOutgoingDepth(extension.getIncludeConnectedToOutgoingDepth().getOrNull());
         diagramConfig.setIncludeConnectedTo(extension.getIncludeConnectedTo().getOrNull());
         diagramConfig.setExcludeConnectedToIngoing(extension.getExcludeConnectedToIngoing().getOrNull());
         diagramConfig.setExcludeConnectedToOutgoing(extension.getExcludeConnectedToOutgoing().getOrNull());

@@ -495,6 +495,9 @@ Supported Diagram configuration options are
 - includeConnectedTo: list of full qualified classnames (all classes connected are included)
 - includeConnectedToIngoing: list of full qualified classnames (classes and ingoing connected classes are included)
 - includeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are included)
+- includeConnectedToIngoingDepth: int, default 0 (up to how many steps the ingoing connections of `includeConnectedToIngoing` are followed - "what leads to it"; `1` includes the classes directly connected; `0` or negative follows the complete path)
+- includeConnectedToOutgoingDepth: int, default 0 (up to how many steps the outgoing connections of `includeConnectedToOutgoing` are followed - "what does it lead to"; `0` or negative follows the complete path)
+  - a class may be named in `includeConnectedToIngoing` and `includeConnectedToOutgoing` at once (what leads to it and what it leads to), as well as in `excludeConnectedToIngoing` and `excludeConnectedToOutgoing`; it must not be included and excluded at once, nor named in `includeConnectedTo` and a directed include option
 - excludeConnectedToIngoing: : list of full qualified classnames (classes and ingoing connected classes are excluded)
 - excludeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are excluded)
 - explicitlyIncludedPackages: list of packages explicitly included in the diagram
