@@ -35,16 +35,26 @@ import io.domainlifecycles.staticanalysis.DomainCallFlowAnalyzer;
 import io.domainlifecycles.staticanalysis.DomainCalls;
 import io.domainlifecycles.staticanalysis.DomainMethod;
 import io.domainlifecycles.staticanalysis.FlowAnalyzer;
+import io.domainlifecycles.staticanalysis.Flow;
 import io.domainlifecycles.staticanalysis.FlowConfig;
+import io.domainlifecycles.staticanalysis.Step;
+import io.domainlifecycles.staticanalysis.StepKind;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.stream.Collectors;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 /**
- * Restricts a diagram to the domain types taking part in one or more flows.
+ * Restricts a diagram to the domain types taking part in one or more flows, forward
+ * ({@code includeFlowsFrom} - "what does this lead to") and/or backward ({@code includeFlowsTo} -
+ * "what leads into this"). If both are configured, their reached types are united: a type survives
+ * if reached by either direction.
  * <p>
  * The other trim settings walk the structural relations the mirror knows. A flow instead follows
  * the method calls of the analyzed domain, joined with the events and commands of the mirror -
@@ -52,7 +62,10 @@ import java.util.Set;
  * handed to the diagram generator for this filter to work.
  * <p>
  * This is a pure restriction: it can only remove types from a diagram, never add any. It is
- * therefore applied last, after all other settings had their say.
+ * therefore applied last, after all other settings had their say. The edges a diagram draws come
+ * entirely from the mirror's structural data ({@link DomainRelationshipMapper}), regardless of
+ * which direction caused a type to be included, so this filter never changes how a relationship is
+ * drawn - only whether the types it connects are shown at all.
  *
  * @author Mario Herb
  */
@@ -70,41 +83,162 @@ public class DomainFlowFilter {
 
     private final Set<String> reachedTypeNames;
 
+    /** the methods called in the flows, see {@link #methodKey(String, MethodMirror)} */
+    private final Set<String> reachedMethodKeys;
+
+    /** see {@link #calls()} */
+    private final Map<String, Map<String, Set<String>>> calls;
+
     private final boolean active;
 
     private DomainFlowFilter() {
         this.reachedTypeNames = Collections.emptySet();
+        this.reachedMethodKeys = Collections.emptySet();
+        this.calls = Collections.emptyMap();
         this.active = false;
     }
 
     /**
-     * Computes the domain types reached by the flows starting at the given points.
+     * Computes the domain types reached by the flows starting at, and/or leading into, the given
+     * points.
      *
      * @param domainMirror     the mirror of the diagrammed domain, must not be {@code null}
      * @param domainCalls      the result of the static analysis of that domain, must not be
      *                         {@code null}
      * @param flowConfig       how the flows are traversed, must not be {@code null}
-     * @param includeFlowsFrom the starting points, must not be {@code null} or empty
+     * @param includeFlowsFrom the forward starting points, must not be {@code null}; may be empty
+     *                         if {@code includeFlowsTo} is not
+     * @param includeFlowsTo   the backward target points, must not be {@code null}; may be empty
+     *                         if {@code includeFlowsFrom} is not
      */
     public DomainFlowFilter(DomainMirror domainMirror,
                             DomainCalls domainCalls,
                             FlowConfig flowConfig,
-                            List<String> includeFlowsFrom) {
+                            List<String> includeFlowsFrom,
+                            List<String> includeFlowsTo) {
 
         Objects.requireNonNull(domainMirror, "A DomainMirror must be given!");
         Objects.requireNonNull(domainCalls, "DomainCalls must be given!");
         Objects.requireNonNull(flowConfig, "A FlowConfig must be given!");
         Objects.requireNonNull(includeFlowsFrom, "The flow starting points must be given!");
+        Objects.requireNonNull(includeFlowsTo, "The flow target points must be given!");
 
         FlowAnalyzer flowAnalyzer =
             new DomainCallFlowAnalyzer(domainMirror, domainCalls, flowConfig);
 
+        this.domainCalls = domainCalls;
+        this.collectedMethodKeys = new HashSet<>();
+        this.collectedCalls = new LinkedHashMap<>();
         Set<String> reached = new LinkedHashSet<>();
         for (String startingPoint : includeFlowsFrom) {
             reached.addAll(reachedFrom(domainMirror, flowAnalyzer, startingPoint));
         }
+        for (String targetPoint : includeFlowsTo) {
+            reached.addAll(reachedTo(domainMirror, flowAnalyzer, targetPoint));
+        }
+        // an aggregate is shown as a whole: a flow reaching one of its entities reaches its root too
+        reached.addAll(reached.stream()
+            .flatMap(typeName -> DomainMapperUtils.aggregateRootsContaining(typeName, domainMirror).stream())
+            .toList());
         this.reachedTypeNames = Collections.unmodifiableSet(reached);
+        this.reachedMethodKeys = Collections.unmodifiableSet(collectedMethodKeys);
+        this.calls = Collections.unmodifiableMap(collectedCalls);
         this.active = true;
+        this.domainCalls = null;
+        this.collectedMethodKeys = null;
+        this.collectedCalls = null;
+    }
+
+    /** only needed while the flows are resolved */
+    private DomainCalls domainCalls;
+    private Set<String> collectedMethodKeys;
+    private Map<String, Map<String, Set<String>>> collectedCalls;
+
+    /**
+     * Collects the methods called in a flow, returning the types it reaches. A method step is a called method. A
+     * backward flow into a whole type records its callers only, so the methods of that type they call are added too.
+     */
+    private Set<String> collect(boolean backward, Flow flow) {
+        for (Step step : flow.steps()) {
+            if (step instanceof Step.MethodStep methodStep) {
+                collectedMethodKeys.add(methodKey(methodStep.method().typeName(), methodStep.method().mirror()));
+                if (step.kind() != StepKind.CALL) {
+                    continue;
+                }
+                Step from = step.from().orElse(null);
+                if (!backward && from instanceof Step.MethodStep caller) {
+                    collectCall(caller.method().typeName(), methodStep.method());
+                } else if (backward && from instanceof Step.MethodStep called) {
+                    collectCall(methodStep.method().typeName(), called.method());
+                } else if (backward && from instanceof Step.TypeStep typeStep) {
+                    domainCalls.callsFor(methodStep.method()).methods().stream()
+                        .filter(called -> called.typeName().equals(typeStep.typeName()))
+                        .forEach(called -> {
+                            collectedMethodKeys.add(methodKey(called.typeName(), called.mirror()));
+                            collectCall(methodStep.method().typeName(), called);
+                        });
+                }
+            }
+        }
+        return flow.reachedTypeNames();
+    }
+
+    private void collectCall(String callerTypeName, DomainMethod called) {
+        if (!callerTypeName.equals(called.typeName())) {
+            collectedCalls
+                .computeIfAbsent(callerTypeName, key -> new LinkedHashMap<>())
+                .computeIfAbsent(called.typeName(), key -> new LinkedHashSet<>())
+                .add(called.mirror().getName());
+        }
+    }
+
+    /**
+     * The calls between the types of the flows: by the calling type name, the called type names with the names of
+     * the called methods. Calls within one type are left out.
+     *
+     * @return the calls of the flows, empty if no flow is configured
+     */
+    public Map<String, Map<String, Set<String>>> calls() {
+        return calls;
+    }
+
+    /**
+     * Whether a domain type takes part in one of the flows - as opposed to being shown for another reason, e.g. as
+     * part of a shown aggregate or read model.
+     *
+     * @param domainTypeMirror the type to check, must not be {@code null}
+     * @return {@code true} if a flow reaches the type; {@code false} if not, or if no flow is configured
+     */
+    public boolean isReachedByFlow(DomainTypeMirror domainTypeMirror) {
+        return active && reachedTypeNames.contains(domainTypeMirror.getTypeName());
+    }
+
+    /**
+     * Whether a method of a domain type taking part in a flow is called in it: on the type itself, or on one of its
+     * super types or interfaces - a call through an interface is recorded on the interface.
+     *
+     * @param domainTypeMirror the type the method is shown in, must not be {@code null}
+     * @param methodMirror     the method, must not be {@code null}
+     * @return {@code true} if the method is called in one of the flows; {@code false} if not, or if no flow is
+     *     configured
+     */
+    public boolean isCalledInFlow(DomainTypeMirror domainTypeMirror, MethodMirror methodMirror) {
+        if (!active) {
+            return false;
+        }
+        if (reachedMethodKeys.contains(methodKey(domainTypeMirror.getTypeName(), methodMirror))) {
+            return true;
+        }
+        var superTypeNames = new LinkedHashSet<String>(domainTypeMirror.getAllInterfaceTypeNames());
+        superTypeNames.addAll(domainTypeMirror.getInheritanceHierarchyTypeNames());
+        return superTypeNames.stream()
+            .anyMatch(typeName -> reachedMethodKeys.contains(methodKey(typeName, methodMirror)));
+    }
+
+    private static String methodKey(String typeName, MethodMirror methodMirror) {
+        return typeName + METHOD_SEPARATOR + methodMirror.getName() + methodMirror.getParameters().stream()
+            .map(parameter -> parameter.getType().getTypeName())
+            .collect(Collectors.joining(",", "(", ")"));
     }
 
     /**
@@ -162,10 +296,10 @@ public class DomainFlowFilter {
                     + "', which is unknown to the mirror."));
 
         if (methodName == null && typeMirror instanceof DomainCommandMirror commandMirror) {
-            return flowAnalyzer.flowFrom(commandMirror).reachedTypeNames();
+            return collect(false, flowAnalyzer.flowFrom(commandMirror));
         }
         if (methodName == null && typeMirror instanceof DomainEventMirror eventMirror) {
-            return flowAnalyzer.flowFrom(eventMirror).reachedTypeNames();
+            return collect(false, flowAnalyzer.flowFrom(eventMirror));
         }
 
         // Resolving the methods here instead of using FlowAnalyzer.flowFrom(String, String):
@@ -181,9 +315,68 @@ public class DomainFlowFilter {
 
         Set<String> reached = new LinkedHashSet<>();
         for (MethodMirror startingMethod : startingMethods) {
-            reached.addAll(flowAnalyzer
-                .flowFrom(new DomainMethod(typeMirror.getTypeName(), startingMethod))
-                .reachedTypeNames());
+            reached.addAll(collect(false, flowAnalyzer
+                .flowFrom(new DomainMethod(typeMirror.getTypeName(), startingMethod))));
+        }
+        return reached;
+    }
+
+    /**
+     * Resolves one target point against the mirror and returns the types its backward flow
+     * reaches - the entry channels through which the target is reached.
+     * <p>
+     * A domain event resolves to the methods publishing it. Any other domain type resolves to
+     * everything leading into any of its methods, plus - for an Aggregate or ReadModel - the
+     * Repository or QueryHandler exposing it. Appending {@code #methodName} narrows that down to
+     * the overloads of one method. A domain command cannot be a target: nothing in the analyzed
+     * data models where a command originates.
+     */
+    private Set<String> reachedTo(DomainMirror domainMirror,
+                                  FlowAnalyzer flowAnalyzer,
+                                  String targetPoint) {
+
+        int separatorIndex = targetPoint.indexOf(METHOD_SEPARATOR);
+        String typeName = separatorIndex < 0
+            ? targetPoint
+            : targetPoint.substring(0, separatorIndex);
+        String methodName = separatorIndex < 0
+            ? null
+            : targetPoint.substring(separatorIndex + METHOD_SEPARATOR.length());
+
+        DomainTypeMirror typeMirror = domainMirror.getDomainTypeMirror(typeName)
+            .orElseThrow(() -> new IllegalArgumentException(
+                "The flow target point '" + targetPoint + "' names the type '" + typeName
+                    + "', which is unknown to the mirror."));
+
+        if (methodName == null && typeMirror instanceof DomainCommandMirror) {
+            throw new IllegalArgumentException(
+                "The flow target point '" + targetPoint + "' names the domain command '"
+                    + typeName + "'. Nothing in the analyzed data models where a command"
+                    + " originates, so a command cannot be a backward flow target - it can only"
+                    + " appear as a reached node on the way to one.");
+        }
+        if (methodName == null && typeMirror instanceof DomainEventMirror eventMirror) {
+            return collect(true, flowAnalyzer.flowTo(eventMirror));
+        }
+        if (methodName == null) {
+            // any other domain type resolves to everything leading into any of its methods, plus
+            // its structural MANAGES_AGGREGATE / PROVIDES_READ_MODEL counterpart, if applicable
+            return collect(true, flowAnalyzer.flowTo(typeMirror));
+        }
+
+        List<MethodMirror> targetMethods = typeMirror.getMethods().stream()
+            .filter(method -> method.getName().equals(methodName))
+            .toList();
+        if (targetMethods.isEmpty()) {
+            throw new IllegalArgumentException(
+                "The flow target point '" + targetPoint + "' names no method of the type '"
+                    + typeName + "'.");
+        }
+
+        Set<String> reached = new LinkedHashSet<>();
+        for (MethodMirror targetMethod : targetMethods) {
+            reached.addAll(collect(true, flowAnalyzer
+                .flowTo(new DomainMethod(typeMirror.getTypeName(), targetMethod))));
         }
         return reached;
     }
@@ -195,24 +388,31 @@ public class DomainFlowFilter {
      * @param domainCalls      the result of the static analysis, may be {@code null} as long as no
      *                         flow is configured
      * @param flowConfig       how the flows are traversed
-     * @param includeFlowsFrom the configured starting points, possibly empty
+     * @param includeFlowsFrom the configured forward starting points, possibly empty
+     * @param includeFlowsTo   the configured backward target points, possibly empty
      * @return the filter to apply
      * @throws IllegalArgumentException if flows are configured without a {@link DomainCalls}
      */
     static DomainFlowFilter of(DomainMirror domainMirror,
                                DomainCalls domainCalls,
                                FlowConfig flowConfig,
-                               List<String> includeFlowsFrom) {
+                               List<String> includeFlowsFrom,
+                               List<String> includeFlowsTo) {
 
-        if (includeFlowsFrom == null || includeFlowsFrom.isEmpty()) {
+        boolean hasFrom = includeFlowsFrom != null && !includeFlowsFrom.isEmpty();
+        boolean hasTo = includeFlowsTo != null && !includeFlowsTo.isEmpty();
+        if (!hasFrom && !hasTo) {
             return INACTIVE;
         }
         if (domainCalls == null) {
             throw new IllegalArgumentException(
-                "Restricting a diagram to the flows from " + includeFlowsFrom
-                    + " needs the result of a static analysis. Hand a DomainCalls instance to the"
-                    + " DomainDiagramGenerator constructor, or drop the includeFlowsFrom setting.");
+                "Restricting a diagram to a flow (includeFlowsFrom " + includeFlowsFrom + ", includeFlowsTo "
+                    + includeFlowsTo + ") needs the result of a static analysis. Hand a"
+                    + " DomainCalls instance to the DomainDiagramGenerator constructor, or drop"
+                    + " the includeFlowsFrom/includeFlowsTo setting.");
         }
-        return new DomainFlowFilter(domainMirror, domainCalls, flowConfig, includeFlowsFrom);
+        return new DomainFlowFilter(domainMirror, domainCalls, flowConfig,
+            hasFrom ? includeFlowsFrom : List.of(),
+            hasTo ? includeFlowsTo : List.of());
     }
 }

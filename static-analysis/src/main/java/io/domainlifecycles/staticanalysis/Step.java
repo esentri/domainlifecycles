@@ -28,6 +28,7 @@ package io.domainlifecycles.staticanalysis;
 
 import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
+import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
 
 import java.util.ArrayList;
@@ -93,6 +94,16 @@ public sealed interface Step {
     String nodeKey();
 
     /**
+     * Whether this step's {@link #nodeKey()} equals the given key, without building the key. Checking a node
+     * against every step of a path is the hot path of a flow traversal; building each step's key again for every
+     * check allocated gigabytes for large flows.
+     *
+     * @param nodeKey the node key to compare with
+     * @return {@code true} if {@code nodeKey().equals(nodeKey)}
+     */
+    boolean hasNodeKey(String nodeKey);
+
+    /**
      * @return a short human readable description of the reached node
      */
     String describe();
@@ -150,6 +161,60 @@ public sealed interface Step {
     }
 
     /**
+     * The {@link #nodeKey()} a {@link TypeStep} for the given domain type would have.
+     *
+     * @param type the domain type, must not be {@code null}
+     * @return the node key
+     */
+    static String nodeKeyOf(DomainTypeMirror type) {
+        return "T:" + type.getTypeName();
+    }
+
+    /**
+     * @return whether {@code nodeKey} equals {@code prefix + typeName}
+     */
+    private static boolean isTypeKey(String nodeKey, String prefix, String typeName) {
+        return nodeKey.length() == prefix.length() + typeName.length()
+            && nodeKey.startsWith(prefix)
+            && nodeKey.startsWith(typeName, prefix.length());
+    }
+
+    /**
+     * @return whether {@code nodeKey} equals {@link #nodeKeyOf(DomainMethod)} of the given method
+     */
+    private static boolean isMethodKey(String nodeKey, DomainMethod method) {
+        if (!nodeKey.startsWith("M:") || !nodeKey.startsWith(method.typeName(), 2)) {
+            return false;
+        }
+        int position = 2 + method.typeName().length();
+        if (!nodeKey.startsWith("#", position)) {
+            return false;
+        }
+        position++;
+        String name = method.mirror().getName();
+        if (!nodeKey.startsWith(name, position) || !nodeKey.startsWith("(", position + name.length())) {
+            return false;
+        }
+        position += name.length() + 1;
+        boolean first = true;
+        for (var param : method.mirror().getParameters()) {
+            if (!first) {
+                if (!nodeKey.startsWith(", ", position)) {
+                    return false;
+                }
+                position += 2;
+            }
+            first = false;
+            String paramTypeName = param.getType().getTypeName();
+            if (!nodeKey.startsWith(paramTypeName, position)) {
+                return false;
+            }
+            position += paramTypeName.length();
+        }
+        return nodeKey.length() == position + 1 && nodeKey.charAt(position) == ')';
+    }
+
+    /**
      * Creates the starting step of a flow beginning at a domain method.
      *
      * @param method the method to start from, must not be {@code null}
@@ -177,6 +242,17 @@ public sealed interface Step {
      */
     static CommandStep start(DomainCommandMirror command) {
         return new CommandStep(Optional.empty(), StepKind.START, 0, false, command);
+    }
+
+    /**
+     * Creates the starting step of a flow beginning at a plain domain type, e.g. for a backward
+     * flow answering "what leads into this Aggregate/DomainService/...".
+     *
+     * @param type the domain type to start from, must not be {@code null}
+     * @return the starting step
+     */
+    static TypeStep start(DomainTypeMirror type) {
+        return new TypeStep(Optional.empty(), StepKind.START, 0, false, type);
     }
 
     /**
@@ -246,6 +322,169 @@ public sealed interface Step {
     }
 
     /**
+     * Creates a step for the ReadModel provided by the QueryHandler method of the given
+     * predecessor.
+     *
+     * @param from      the step holding the QueryHandler method, must not be {@code null}
+     * @param readModel the provided ReadModel, must not be {@code null}
+     * @param cyclic    whether the ReadModel already occurs among the predecessors
+     * @return the step
+     */
+    static TypeStep providingReadModel(Step from, DomainTypeMirror readModel, boolean cyclic) {
+        return new TypeStep(Optional.of(from), StepKind.PROVIDES_READ_MODEL, from.depth() + 1,
+            cyclic, readModel);
+    }
+
+    /**
+     * Creates a step for the Aggregate managed by the Repository method of the given predecessor.
+     *
+     * @param from      the step holding the Repository method, must not be {@code null}
+     * @param aggregate the managed Aggregate, must not be {@code null}
+     * @param cyclic    whether the Aggregate already occurs among the predecessors
+     * @return the step
+     */
+    static TypeStep managingAggregate(Step from, DomainTypeMirror aggregate, boolean cyclic) {
+        return new TypeStep(Optional.of(from), StepKind.MANAGES_AGGREGATE, from.depth() + 1,
+            cyclic, aggregate);
+    }
+
+    /**
+     * Creates a step for the domain type created by the factory method of the given predecessor.
+     *
+     * @param from    the step holding the factory method, must not be {@code null}
+     * @param created the created domain type, must not be {@code null}
+     * @param cyclic  whether the created type already occurs among the predecessors
+     * @return the step
+     */
+    static TypeStep creating(Step from, DomainTypeMirror created, boolean cyclic) {
+        return new TypeStep(Optional.of(from), StepKind.CREATES, from.depth() + 1, cyclic, created);
+    }
+
+    // -----------------------------------------------------------------------------------------
+    // Backward factories: same StepKinds, roles reversed - the step represents what leads INTO
+    // the predecessor, not what it leads to. Kept distinct from the forward factories above so
+    // that the resulting Step always carries the semantically correct StepKind.
+    // -----------------------------------------------------------------------------------------
+
+    /**
+     * Creates a step for a method that calls into the given predecessor.
+     *
+     * @param from   the called step, must not be {@code null}
+     * @param caller the calling method, must not be {@code null}
+     * @param cyclic whether the calling method already occurs among the predecessors
+     * @return the step
+     */
+    static MethodStep calledBy(Step from, DomainMethod caller, boolean cyclic) {
+        return new MethodStep(Optional.of(from), StepKind.CALL, from.depth() + 1, cyclic, caller);
+    }
+
+    /**
+     * Creates a step for the abstract or interface method the given predecessor implements, i.e.
+     * the method a caller would have to call to dispatch to the predecessor at runtime.
+     *
+     * @param from             the step holding the implementing method, must not be {@code null}
+     * @param supertypeMethod  the overridden abstract or interface method, must not be {@code null}
+     * @param cyclic           whether the method already occurs among the predecessors
+     * @return the step
+     */
+    static MethodStep implementedBy(Step from, DomainMethod supertypeMethod, boolean cyclic) {
+        return new MethodStep(Optional.of(from), StepKind.IMPLEMENTATION, from.depth() + 1,
+            cyclic, supertypeMethod);
+    }
+
+    /**
+     * Creates a step for the event the given predecessor listens to.
+     *
+     * @param from   the listening step, must not be {@code null}
+     * @param event  the listened-to event, must not be {@code null}
+     * @param cyclic whether the event already occurs among the predecessors
+     * @return the step
+     */
+    static EventStep listenedTo(Step from, DomainEventMirror event, boolean cyclic) {
+        return new EventStep(Optional.of(from), StepKind.EVENT_LISTEN, from.depth() + 1, cyclic,
+            event);
+    }
+
+    /**
+     * Creates a step for a method that publishes the event of the given predecessor.
+     *
+     * @param from      the event step, must not be {@code null}
+     * @param publisher the publishing method, must not be {@code null}
+     * @param cyclic    whether the publishing method already occurs among the predecessors
+     * @return the step
+     */
+    static MethodStep publishedBy(Step from, DomainMethod publisher, boolean cyclic) {
+        return new MethodStep(Optional.of(from), StepKind.EVENT_PUBLISH, from.depth() + 1, cyclic,
+            publisher);
+    }
+
+    /**
+     * Creates a step for the command the given predecessor processes. The flow does not continue
+     * past such a step: nothing in the analyzed data models where a command originates.
+     *
+     * @param from    the processing step, must not be {@code null}
+     * @param command the processed command, must not be {@code null}
+     * @param cyclic  whether the command already occurs among the predecessors
+     * @return the step
+     */
+    static CommandStep processedCommand(Step from, DomainCommandMirror command, boolean cyclic) {
+        return new CommandStep(Optional.of(from), StepKind.COMMAND_PROCESS, from.depth() + 1,
+            cyclic, command);
+    }
+
+    /**
+     * Creates a step for the Repository managing the Aggregate of the given predecessor.
+     *
+     * @param from       the step holding the managed Aggregate, must not be {@code null}
+     * @param repository the managing Repository, must not be {@code null}
+     * @param cyclic     whether the Repository already occurs among the predecessors
+     * @return the step
+     */
+    static TypeStep managedBy(Step from, DomainTypeMirror repository, boolean cyclic) {
+        return new TypeStep(Optional.of(from), StepKind.MANAGES_AGGREGATE, from.depth() + 1,
+            cyclic, repository);
+    }
+
+    /**
+     * Creates a step for the QueryHandler providing the ReadModel of the given predecessor.
+     *
+     * @param from         the step holding the provided ReadModel, must not be {@code null}
+     * @param queryHandler the providing QueryHandler, must not be {@code null}
+     * @param cyclic       whether the QueryHandler already occurs among the predecessors
+     * @return the step
+     */
+    static TypeStep providedBy(Step from, DomainTypeMirror queryHandler, boolean cyclic) {
+        return new TypeStep(Optional.of(from), StepKind.PROVIDES_READ_MODEL, from.depth() + 1,
+            cyclic, queryHandler);
+    }
+
+    /**
+     * Creates a step for a method returning the ReadModel of the given predecessor, which no
+     * QueryHandler provides.
+     *
+     * @param from     the step holding the provided ReadModel, must not be {@code null}
+     * @param provider the method returning the ReadModel, must not be {@code null}
+     * @param cyclic   whether the method already occurs among the predecessors
+     * @return the step
+     */
+    static MethodStep providedByMethod(Step from, DomainMethod provider, boolean cyclic) {
+        return new MethodStep(Optional.of(from), StepKind.PROVIDES_READ_MODEL, from.depth() + 1,
+            cyclic, provider);
+    }
+
+    /**
+     * Creates a step for a factory method creating the domain type of the given predecessor.
+     *
+     * @param from    the step holding the created domain type, must not be {@code null}
+     * @param creator the factory method creating it, must not be {@code null}
+     * @param cyclic  whether the factory method already occurs among the predecessors
+     * @return the step
+     */
+    static MethodStep createdBy(Step from, DomainMethod creator, boolean cyclic) {
+        return new MethodStep(Optional.of(from), StepKind.CREATES, from.depth() + 1, cyclic, creator);
+    }
+
+    /**
      * A domain method reached by the flow, identified by its concrete owner type and the mirrored
      * method.
      *
@@ -272,6 +511,11 @@ public sealed interface Step {
         @Override
         public String nodeKey() {
             return nodeKeyOf(method);
+        }
+
+        @Override
+        public boolean hasNodeKey(String nodeKey) {
+            return isMethodKey(nodeKey, method);
         }
 
         @Override
@@ -311,6 +555,11 @@ public sealed interface Step {
         @Override
         public String nodeKey() {
             return nodeKeyOf(event);
+        }
+
+        @Override
+        public boolean hasNodeKey(String nodeKey) {
+            return isTypeKey(nodeKey, "E:", event.getTypeName());
         }
 
         @Override
@@ -354,8 +603,65 @@ public sealed interface Step {
         }
 
         @Override
+        public boolean hasNodeKey(String nodeKey) {
+            return isTypeKey(nodeKey, "C:", command.getTypeName());
+        }
+
+        @Override
         public String describe() {
             return command.getTypeName();
+        }
+
+        @Override
+        public String toString() {
+            return renderStep(this);
+        }
+    }
+
+    /**
+     * A plain domain type reached by the flow, because it is the ReadModel provided by a
+     * QueryHandler method, or the Aggregate managed by a Repository method, of the preceding step.
+     * <p>
+     * Unlike a {@link MethodStep}, this is not a callable: it carries no method, and the flow does
+     * not continue past it. A repository's or query handler's contract with its Aggregate/ReadModel
+     * is a structural fact of the domain, not a call - the same relationship {@link
+     * io.domainlifecycles.mirror.api.RepositoryMirror#getManagedAggregate()} and {@link
+     * io.domainlifecycles.mirror.api.QueryHandlerMirror#getProvidedReadModel()} already expose on
+     * the mirror.
+     *
+     * @param from   the step this one was reached from, empty for the start of the flow
+     * @param kind   the mechanism that carried the flow to this step
+     * @param depth  the distance from the start of the flow
+     * @param cyclic whether this step closes a cycle
+     * @param type   the reached domain type
+     */
+    record TypeStep(Optional<Step> from, StepKind kind, int depth, boolean cyclic,
+                    DomainTypeMirror type) implements Step {
+
+        public TypeStep {
+            Objects.requireNonNull(from, "A from Optional must be given!");
+            Objects.requireNonNull(kind, "A StepKind must be given!");
+            Objects.requireNonNull(type, "A DomainTypeMirror must be given!");
+        }
+
+        @Override
+        public String typeName() {
+            return type.getTypeName();
+        }
+
+        @Override
+        public String nodeKey() {
+            return nodeKeyOf(type);
+        }
+
+        @Override
+        public boolean hasNodeKey(String nodeKey) {
+            return isTypeKey(nodeKey, "T:", type.getTypeName());
+        }
+
+        @Override
+        public String describe() {
+            return type.getTypeName();
         }
 
         @Override

@@ -125,4 +125,13 @@ public interface MethodMirror {
      * @return whether the method is overridden
      */
     boolean isOverridden();
+
+    /**
+     * A factory method creates the domain object it returns: a method marked with
+     * {@link io.domainlifecycles.domain.types.FactoryMethod}, or a public method of a
+     * {@link io.domainlifecycles.domain.types.Factory} returning a domain object.
+     *
+     * @return whether the mirrored method is a factory method
+     */
+    boolean isFactoryMethod();
 }

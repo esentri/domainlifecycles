@@ -22,7 +22,7 @@ dependencies {
     implementation libs.byte.buddy
     testImplementation platform(libs.spring.boot.dependencies)
     testImplementation libs.spring.boot.starter.test
-    testImplementation("org.springframework.boot:spring-boot-starter-jdbc:4.0.2")
+    testImplementation libs.spring.boot.starter.jdbc
     testImplementation libs.h2
     testImplementation libs.lombok
     testAnnotationProcessor libs.lombok

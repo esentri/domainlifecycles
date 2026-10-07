@@ -26,7 +26,9 @@
 
 package io.domainlifecycles.staticanalysis;
 
+import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
 import io.domainlifecycles.mirror.api.DomainMirror;
+import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.ParamMirror;
 import org.slf4j.Logger;
@@ -34,9 +36,9 @@ import org.slf4j.LoggerFactory;
 import sootup.core.cache.provider.LRUCacheProvider;
 import sootup.core.frontend.SootClassSource;
 import sootup.core.inputlocation.AnalysisInputLocation;
-import sootup.core.jimple.basic.Immediate;
-import sootup.core.jimple.basic.Local;
-import sootup.core.jimple.basic.Value;
+import sootup.core.jimple.common.Immediate;
+import sootup.core.jimple.common.Local;
+import sootup.core.jimple.common.Value;
 import sootup.core.jimple.common.constant.MethodHandle;
 import sootup.core.jimple.common.expr.AbstractInstanceInvokeExpr;
 import sootup.core.jimple.common.expr.AbstractInvokeExpr;
@@ -50,7 +52,7 @@ import sootup.core.model.SootClass;
 import sootup.core.model.SootMethod;
 import sootup.core.model.SourceType;
 import sootup.core.signatures.MethodSignature;
-import sootup.core.transform.BodyInterceptor;
+import sootup.core.interceptor.BodyInterceptor;
 import sootup.core.typehierarchy.TypeHierarchy;
 import sootup.core.types.ClassType;
 import sootup.core.types.Type;
@@ -117,13 +119,28 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
      * {@link #SootupStaticAnalyzer(int)}. SootUp itself defaults to an unbounded cache, which lets
      * memory usage grow with the number of distinct classes touched while resolving method bodies
      * (including JDK and library classes, not just mirrored domain types) - for large projects this
-     * can exhaust the heap. 500 is chosen to comfortably hold the classes of a mid-sized domain
-     * model plus its immediate dependencies without evicting on every lookup; projects with a much
-     * larger or smaller class footprint should size this explicitly.
+     * can exhaust the heap. The cache only ever holds the classes actually parsed, so a smaller
+     * project does not pay for a large bound. 5000 avoids most re-parsing even for large domain
+     * models: in a real world project (4,771 mirrored types) it shortened the analysis by about 13 %
+     * compared to the former default of 500, without a measurable increase of the heap needed;
+     * beyond 5000 the gain levels off.
      */
-    public static final int DEFAULT_CACHE_SIZE = 500;
+    public static final int DEFAULT_CACHE_SIZE = 5000;
+
+    /**
+     * The package of DLC itself. Its types (base classes, repository and mirror types, ...) may be mirrored along
+     * with a domain, but are no part of it: they are neither callers nor targets of the analysis.
+     */
+    static final String DLC_PACKAGE_PREFIX = "io.domainlifecycles.";
+
+    private static final String OBJECT_TYPE_NAME = "java.lang.Object";
+
+    private static final Set<String> PRIMITIVE_TYPE_NAMES =
+        Set.of("boolean", "byte", "char", "short", "int", "long", "float", "double");
 
     private final int cacheSize;
+
+    private final boolean expandNonDomainDispatch;
 
     /**
      * Creates a new analyzer whose {@link JavaView} is backed by a bounded LRU cache sized
@@ -143,7 +160,32 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
      *                  must be at least 1
      */
     public SootupStaticAnalyzer(int cacheSize) {
+        this(cacheSize, false);
+    }
+
+    /**
+     * Creates a new analyzer with a class cache of the given size, see {@link #SootupStaticAnalyzer(int)}, choosing
+     * how calls are resolved whose static target type lies outside the domain.
+     * <p>
+     * By default ({@code expandNonDomainDispatch = false}) only calls on domain types are recorded. A call on a type
+     * outside the domain - a JDK type like {@code Object} or {@code Enum}, a library or framework type - says nothing
+     * about which domain type it reaches: expanding it to every domain type implementing the called method turned
+     * e.g. a single {@code obj.toString()} into calls of the {@code toString()} of every mirrored class. In a real
+     * world project, such expansions made up 95 % of all recorded call sites and blew up flows through the domain.
+     * Polymorphism within the domain is not affected: calls on domain interfaces and base classes are recorded, and
+     * flows follow them to their implementations.
+     * <p>
+     * With {@code expandNonDomainDispatch = true}, such a call is expanded to all concrete domain types implementing
+     * the called method, as before.
+     *
+     * @param cacheSize               the maximum number of {@code SootClass} instances held in the cache at once, must
+     *                                be at least 1
+     * @param expandNonDomainDispatch whether calls on types outside the domain are expanded to the domain types
+     *                                implementing the called method
+     */
+    public SootupStaticAnalyzer(int cacheSize, boolean expandNonDomainDispatch) {
         this.cacheSize = cacheSize;
+        this.expandNonDomainDispatch = expandNonDomainDispatch;
     }
 
     /**
@@ -273,6 +315,7 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
             buildView(classpath, effectiveAnalyzedPackages(domainMirror, analyzedPackages)),
             domainMirror.getAllDomainTypeMirrors().stream()
                 .map(dtm -> dtm.getTypeName())
+                .filter(SootupStaticAnalyzer::isDomainTypeName)
                 .collect(Collectors.toCollection(HashSet::new)));
 
         // Signature -> set of concrete owner classes.
@@ -287,6 +330,10 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
             // diagnostic that is indistinguishable from a type that simply calls nothing.
             if (ctx.view().getClass(domainClassType).isEmpty()) {
                 ctx.report(Diagnostic.typeNotOnClasspath(domainTypeMirror.getTypeName()));
+                return;
+            }
+            // mirrored DLC types count for the classpath check above, but are no callers of the domain
+            if (!isDomainTypeName(domainTypeMirror.getTypeName())) {
                 return;
             }
 
@@ -542,6 +589,10 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
         return result;
     }
 
+    private static boolean isDomainTypeName(String typeName) {
+        return !typeName.startsWith(DLC_PACKAGE_PREFIX);
+    }
+
     /**
      * Resolves one invoke instruction against the domain, for the concrete owner the containing
      * body runs on.
@@ -732,8 +783,14 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
             // implementation bodies. The reporting owner may be an interface (direct
             // hit), whose method has no body - so we explicitly resolve the concrete
             // implementations of the reporting type and descend into their loadable
-            // method with the same sub-signature.
-            descendInto.addAll(concreteDescentTargets(ctx, reportSignature));
+            // method with the same sub-signature. A reference to a method of a type outside
+            // the domain (e.g. Object::toString) does not tell which implementation runs,
+            // like a call on such a type, see #SootupStaticAnalyzer(int, boolean): descending
+            // into all of them attributed the calls of every toString of the domain.
+            if (expandNonDomainDispatch
+                || ctx.domainTypeNames().contains(reportSignature.getDeclClassType().getFullyQualifiedName())) {
+                descendInto.addAll(concreteDescentTargets(ctx, reportSignature));
+            }
             // also descend into the raw handle method, in case its body genuinely
             // lives on the declaring type (e.g. a static method or a default method)
             descendInto.add(descentOn(scannedBody, handleMethod));
@@ -824,6 +881,12 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
         if (ctx.domainTypeNames().contains(declName)) {
             return Collections.singleton(
                 new ResolvedTarget(declName, target, callSiteTypeName, lineNumber));
+        }
+
+        // a call on a type outside the domain does not tell which domain type it reaches, see
+        // #SootupStaticAnalyzer(int, boolean)
+        if (!expandNonDomainDispatch) {
+            return Collections.emptySet();
         }
 
         // otherwise expand to concrete implementations that are domain types
@@ -1059,16 +1122,32 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
      * Maps a method to the CONCRETE owner type (not the declaring class of the
      * signature). Finds the method by name + parameters, independent of the
      * declaring class, so inherited methods are attributed to the concrete owner.
+     * <p>
+     * An inherited generic method is mirrored with its type arguments resolved for the owner, while the bytecode
+     * carries the erased signature: {@code BonitaetsAnfrageRepository extends Repository<BoniNummer, ...>} mirrors
+     * {@code findById(BoniNummer)}, the call site invokes {@code findById(Identity)}. If no method matches exactly,
+     * a method is therefore also taken whose parameter types are subtypes of the erased ones - if there is exactly one
+     * such method, so that overloads are never confused.
      */
     private Optional<DomainMethod> mapToOwner(
         DomainMirror domainMirror, MethodSignature methodSignature, String ownerTypeName) {
 
         return domainMirror.getDomainTypeMirror(ownerTypeName)
-            .flatMap(domainTypeMirror -> domainTypeMirror.getMethods()
-                .stream()
-                .filter(m -> areSemanticallyEqualIgnoringDeclaringClass(methodSignature, m))
-                .map(m -> new DomainMethod(domainTypeMirror.getTypeName(), m))
-                .findFirst());
+            .flatMap(domainTypeMirror -> {
+                Optional<MethodMirror> exact = domainTypeMirror.getMethods().stream()
+                    .filter(m -> areSemanticallyEqualIgnoringDeclaringClass(methodSignature, m))
+                    .findFirst();
+                if (exact.isPresent()) {
+                    return exact.map(m -> new DomainMethod(domainTypeMirror.getTypeName(), m));
+                }
+                List<MethodMirror> erasureMatches = domainTypeMirror.getMethods().stream()
+                    .filter(m -> m.getName().equals(methodSignature.getName()))
+                    .filter(m -> parametersMatchErasure(domainMirror, methodSignature, m))
+                    .toList();
+                return erasureMatches.size() == 1
+                    ? Optional.of(new DomainMethod(domainTypeMirror.getTypeName(), erasureMatches.get(0)))
+                    : Optional.empty();
+            });
     }
 
     // ---------------------------------------------------------------------
@@ -1091,6 +1170,36 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
         return parametersMatch(sootSignature, dlcMirror);
     }
 
+    /**
+     * Whether each parameter type of the mirror method equals the one of the (erased) Soot signature or is a subtype of
+     * it - the erasure of a type variable is its bound, {@code Object} if unbounded.
+     */
+    private static boolean parametersMatchErasure(
+        DomainMirror domainMirror, MethodSignature sootSignature, MethodMirror dlcMirror) {
+        List<Type> sootParams = sootSignature.getParameterTypes();
+        List<ParamMirror> dlcParams = dlcMirror.getParameters();
+        if (sootParams.size() != dlcParams.size()) {
+            return false;
+        }
+        for (int i = 0; i < sootParams.size(); i++) {
+            String erasedType = sootParams.get(i).toString();
+            String dlcParamType = bytecodeTypeName(dlcParams.get(i).getType());
+            if (!erasedType.equals(dlcParamType) && !isSubtypeOf(domainMirror, dlcParamType, erasedType)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean isSubtypeOf(DomainMirror domainMirror, String typeName, String supertypeName) {
+        if (OBJECT_TYPE_NAME.equals(supertypeName)) {
+            return !PRIMITIVE_TYPE_NAMES.contains(typeName);
+        }
+        return domainMirror.<DomainTypeMirror>getDomainTypeMirror(typeName)
+            .map(type -> type.implementsInterface(supertypeName) || type.isSubClassOf(supertypeName))
+            .orElse(false);
+    }
+
     private static boolean parametersMatch(MethodSignature sootSignature, MethodMirror dlcMirror) {
         List<Type> sootParams = sootSignature.getParameterTypes();
         List<ParamMirror> dlcParams = dlcMirror.getParameters();
@@ -1099,11 +1208,50 @@ public class SootupStaticAnalyzer implements StaticAnalyzer {
         }
         for (int i = 0; i < sootParams.size(); i++) {
             String sootParamType = sootParams.get(i).toString();
-            String dlcParamType = dlcParams.get(i).getType().getTypeName();
+            String dlcParamType = bytecodeTypeName(dlcParams.get(i).getType());
             if (!sootParamType.equals(dlcParamType)) {
                 return false;
             }
         }
         return true;
+    }
+
+    /**
+     * The type of a mirrored parameter the way the bytecode names it. The mirror names the element type of a container
+     * ({@code List<Order>}: {@code Order}) and the component type of an array ({@code byte[]}: {@code byte}); the
+     * bytecode names the container ({@code java.util.List}) and the array type ({@code byte[]}).
+     */
+    static String bytecodeTypeName(AssertedContainableTypeMirror type) {
+        if (type.isArray()) {
+            return sourceTypeName(type.getTypeName()) + "[]";
+        }
+        if (type.hasContainer()) {
+            return type.getContainerTypeName().orElse(type.getTypeName());
+        }
+        return type.getTypeName();
+    }
+
+    /**
+     * A type name in source notation: the component type of a multidimensional array may be given as binary name, e.g.
+     * {@code [B} for {@code byte[]} or {@code [Ljava.lang.String;} for {@code java.lang.String[]}.
+     */
+    private static String sourceTypeName(String typeName) {
+        if (!typeName.startsWith("[")) {
+            return typeName;
+        }
+        String component = typeName.substring(1);
+        String componentName = switch (component.charAt(0)) {
+            case 'B' -> "byte";
+            case 'S' -> "short";
+            case 'I' -> "int";
+            case 'J' -> "long";
+            case 'C' -> "char";
+            case 'F' -> "float";
+            case 'D' -> "double";
+            case 'Z' -> "boolean";
+            case 'L' -> component.substring(1, component.length() - 1);
+            default -> sourceTypeName(component);
+        };
+        return componentName + "[]";
     }
 }

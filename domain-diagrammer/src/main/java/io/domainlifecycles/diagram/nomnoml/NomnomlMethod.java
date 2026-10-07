@@ -43,6 +43,7 @@ public class NomnomlMethod implements DiagramElement {
     private final String name;
     private final NomnomlType returnType;
     private final List<NomnomlParameter> parameters;
+    private final boolean factoryMethod;
 
     /**
      * Initializes the method.
@@ -56,10 +57,28 @@ public class NomnomlMethod implements DiagramElement {
                          String name,
                          NomnomlType returnType,
                          List<NomnomlParameter> parameters) {
+        this(visibility, name, returnType, parameters, false);
+    }
+
+    /**
+     * Creates a method.
+     *
+     * @param visibility    the visibility of the method
+     * @param name          the name of the method
+     * @param returnType    the return type of the method
+     * @param parameters    the parameters of the method
+     * @param factoryMethod whether the method is marked as factory method
+     */
+    public NomnomlMethod(String visibility,
+                         String name,
+                         NomnomlType returnType,
+                         List<NomnomlParameter> parameters,
+                         boolean factoryMethod) {
         this.visibility = Objects.requireNonNull(visibility);
         this.name = Objects.requireNonNull(name);
         this.returnType = Objects.requireNonNull(returnType);
         this.parameters = Objects.requireNonNull(parameters);
+        this.factoryMethod = factoryMethod;
     }
 
     /**
@@ -81,6 +100,9 @@ public class NomnomlMethod implements DiagramElement {
         StringBuilder builder = new StringBuilder();
         builder.append(visibility);
         builder.append(" ");
+        if (factoryMethod) {
+            builder.append("«factory» ");
+        }
         builder.append(returnType.getDiagramText());
         builder.append(" ");
         builder.append(name);
@@ -137,6 +159,13 @@ public class NomnomlMethod implements DiagramElement {
     }
 
     /**
+     * @return whether the method is marked as factory method
+     */
+    public boolean isFactoryMethod() {
+        return this.factoryMethod;
+    }
+
+    /**
      * Compares this object with the specified object for equality. The comparison
      * is based on the values of the fields: visibility, name, returnType, and parameters.
      *
@@ -163,7 +192,7 @@ public class NomnomlMethod implements DiagramElement {
         final Object other$parameters = other.getParameters();
         if (!Objects.equals(this$parameters, other$parameters))
             return false;
-        return true;
+        return this.isFactoryMethod() == other.isFactoryMethod();
     }
 
     /**
@@ -193,6 +222,7 @@ public class NomnomlMethod implements DiagramElement {
         result = result * PRIME + ($returnType == null ? 43 : $returnType.hashCode());
         final Object $parameters = this.getParameters();
         result = result * PRIME + ($parameters == null ? 43 : $parameters.hashCode());
+        result = result * PRIME + (this.isFactoryMethod() ? 79 : 97);
         return result;
     }
 
@@ -207,6 +237,7 @@ public class NomnomlMethod implements DiagramElement {
         private String name;
         private NomnomlType returnType;
         private List<NomnomlParameter> parameters;
+        private boolean factoryMethod;
 
         NomnomlMethodBuilder() {
         }
@@ -261,8 +292,13 @@ public class NomnomlMethod implements DiagramElement {
          *
          * @return a new instance of the NomnomlMethod class
          */
+        public NomnomlMethodBuilder factoryMethod(boolean factoryMethod) {
+            this.factoryMethod = factoryMethod;
+            return this;
+        }
+
         public NomnomlMethod build() {
-            return new NomnomlMethod(this.visibility, this.name, this.returnType, this.parameters);
+            return new NomnomlMethod(this.visibility, this.name, this.returnType, this.parameters, this.factoryMethod);
         }
 
         /**
@@ -272,7 +308,7 @@ public class NomnomlMethod implements DiagramElement {
          * @return a string representation of the NomnomlMethodBuilder instance
          */
         public String toString() {
-            return "NomnomlMethod.NomnomlMethodBuilder(visibility=" + this.visibility + ", name=" + this.name + ", returnType=" + this.returnType + ", parameters=" + this.parameters + ")";
+            return "NomnomlMethod.NomnomlMethodBuilder(visibility=" + this.visibility + ", name=" + this.name + ", returnType=" + this.returnType + ", parameters=" + this.parameters + ", factoryMethod=" + this.factoryMethod + ")";
         }
     }
 }

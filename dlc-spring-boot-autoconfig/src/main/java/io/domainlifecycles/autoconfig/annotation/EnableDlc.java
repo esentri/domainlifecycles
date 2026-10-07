@@ -49,7 +49,8 @@ import java.lang.annotation.Target;
  * @EnableDlc(
  *     dlcDomainBasePackages = "com.example.domain",
  *     jooqRecordPackage = "com.example.jooq.tables.records",
- *     jooqSqlDialect = "POSTGRES"
+ *     jooqSqlDialect = "POSTGRES",
+ *     transactionCacheEnabled = true
  * )
  * @SpringBootApplication
  * public class Application {
@@ -83,6 +84,23 @@ public @interface EnableDlc {
      * @return mirror base packages
      * **/
     String[] dlcMirrorBasePackages() default {};
+
+    /**
+     * Switches DLC's Transaction Cache on - the same as {@code dlc.features.persistence.transaction-cache.enabled=true}.
+     * A property set in the configuration takes precedence over this attribute.
+     *
+     * @return whether the Transaction Cache is used, {@code false} by default
+     */
+    boolean transactionCacheEnabled() default false;
+
+    /**
+     * The maximum number of aggregates the Transaction Cache holds per transaction - the same as
+     * {@code dlc.features.persistence.transaction-cache.max-size}. A property set in the configuration takes
+     * precedence over this attribute.
+     *
+     * @return the maximum number of aggregates, {@code 0} for the default of 256
+     */
+    int transactionCacheMaxSize() default 0;
 
     /**
      * Optionally specify AutoConfigurations to be excluded

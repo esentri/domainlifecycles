@@ -35,6 +35,8 @@ import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
+import io.domainlifecycles.persistence.mapping.ScalarListElement;
+import io.domainlifecycles.persistence.mirror.api.RecordMirror;
 import io.domainlifecycles.persistence.provider.DomainObjectInstanceAccessModel;
 import io.domainlifecycles.persistence.provider.DomainPersistenceProvider;
 import io.domainlifecycles.persistence.repository.actions.PersistenceAction;
@@ -130,7 +132,7 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
             return record;
         } else {
             final BASE_RECORD_TYPE record = deleteRecordMappedValueObject(
-                deleteAction.instanceAccessModel.domainObject(), pc);
+                deleteAction.instanceAccessModel.domainObject(), deleteAction.instanceAccessModel.recordMirror, pc);
             deleteAction.setActionRecord(record);
             return record;
         }
@@ -208,15 +210,19 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
      * and returns the deleted record.
      *
      * @param domainObject the domain object for which the corresponding database record will be deleted
+     * @param recordMirror the record mirror of {@code domainObject}, passed as a lookup scope to
+     *                     disambiguate equal-valued scalar list elements (e.g. a {@code List<Identity>}/
+     *                     {@code List<Enum>} element) belonging to different lists
      * @param pc the persistence context used to fetch the database record and execute the deletion operation
      * @return the record that was deleted from the persistence layer
      */
     protected BASE_RECORD_TYPE deleteRecordMappedValueObject(final DomainObject domainObject,
+                                                             final RecordMirror<BASE_RECORD_TYPE> recordMirror,
                                                              final PersistenceContext<BASE_RECORD_TYPE> pc) {
         Objects.requireNonNull(domainObject);
         Objects.requireNonNull(pc);
         BASE_RECORD_TYPE record = pc.getDatabaseStateRootFetched().fetchedContext().getRecordFor(
-            domainObject).orElseThrow();
+            domainObject, recordMirror).orElseThrow();
         doDelete(record);
         return record;
     }
@@ -248,10 +254,15 @@ public abstract class BasePersister<BASE_RECORD_TYPE> implements Persister<BASE_
                     .orElseThrow(
                         () -> DLCPersistenceException.fail("DomainTypeMirror not found for '%s'", builderTypeName));
                 var fm = dtm.fieldByName(accessorField);
+                //a ScalarListElement is only an internal carrier for a single List<Identity>/List<Enum>
+                //element; the owning domain object's field expects the raw wrapped value, not the wrapper
+                Object valueToAttach = child.domainObject() instanceof ScalarListElement<?> scalarListElement
+                    ? scalarListElement.value()
+                    : child.domainObject();
                 if (fm.getType().hasCollectionContainer()) {
-                    builder.addValueToCollection(child.domainObject(), accessorField);
+                    builder.addValueToCollection(valueToAttach, accessorField);
                 } else {
-                    builder.setFieldValue(child.domainObject(), accessorField);
+                    builder.setFieldValue(valueToAttach, accessorField);
                 }
             });
         var mappedResult = builder.build();

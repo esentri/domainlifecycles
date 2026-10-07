@@ -6,15 +6,22 @@
 
 Das Persistence-Modul von DLC ermöglicht ein vereinfachtes Mapping für in der Datenbank persistierten DomainObjects.
 Zu den Funktionen gehören unter anderem:
+-   Typsichere Queries basierend auf jOOQ
+-   Unterstützung und Abstraktion vieler Datenbank-Engines mittels jOOQ
 -   Vereinfachte Aggregate Queries (DLC Fetcher)
 -   Vereinfachte Aggregate CRUD Unterstützung (DLC Repositories)
 -   Object relationales Auto Mapping
 -   Persistenz Action Event Hooks
 -   Vollumfänglicher ValueObject support bezüglich Persistenz
 -   Unterstützt Java  `final`  Keywords und Java-Optionals innerhalb persistierter Strukturen
+-   Optionaler Transaction Cache pro Transaktion, der redundante `SELECT`s bei `update()`/`deleteById()`
+    vermeidet - funktioniert bei Spring-verwalteten Transaktionen ohne weitere Konfiguration
 
 ## Configuration
-Sobald jOOQ als Depencency eingebunden ist, wird DLC jOOQ Persistence automatisch konfiguriert.
+Sobald jOOQ als Depencency eingebunden ist, wird DLC jOOQ Persistence automatisch konfiguriert. Alternativ bietet DLC
+auch eine reine JDBC-basierte Persistenz-Implementierung (`jdbc-integration`) für Projekte, die weder von jOOQ
+abhängig sein noch einen Code-Generierungsschritt ausführen möchten - Details dazu im zugehörigen
+[readme](./../../../jdbc-integration/readme.md).
 Mehr dazu unter [DLC Spring Boot AutoConfig](./../../../dlc-spring-boot-autoconfig/readme.md).
 
 Bevor die DLC/JOOQ Integration genutzt werden kann, muss JOOQ auf Build Management Ebene konfiguriert werden. Im Speziellen 
@@ -26,7 +33,7 @@ wird hierfür der JOOQ Code-Generator benötigt, sodass die von DLC benötigten 
 
 ```groovy
 plugins {
-    id 'org.jooq.jooq-codegen-gradle' version '3.20.6'
+    id 'org.jooq.jooq-codegen-gradle' version '3.19.39'
 }
 
 jooq {
@@ -55,7 +62,7 @@ jooq {
 }
 
 dependencies {
-    jooqCodegen 'com.h2database:h2:2.4.240'
+    jooqCodegen 'com.h2database:h2:2.5.252'
 }
 ```
 </details>
@@ -113,7 +120,7 @@ dependencies {
 @EnableDlc(
         dlcMirrorBasePackages = "com.example.domain", 
         jooqRecordPackage = "com.example.records",
-        jooqSqlDialect = SQLDialect.H2
+        jooqSqlDialect = "H2"
 )
 public class Application {
     public static void main(String[] args) {

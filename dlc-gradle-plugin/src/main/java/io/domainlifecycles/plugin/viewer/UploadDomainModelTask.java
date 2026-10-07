@@ -144,6 +144,44 @@ public abstract class UploadDomainModelTask extends DefaultTask {
     @Input
     public abstract ListProperty<String> getStaticAnalysisPackages();
 
+    /**
+     * Packages whose types, as superclass or interface (direct or inherited), exclude a class from being
+     * mirrored as non-domain class. Defaults to {@code org.jooq}, which leaves out the code jOOQ generates
+     * for tables, records, schemas and catalogs; an empty list also means this default. Switching the
+     * exclusion off is only possible via the mirror API.
+     *
+     * @return a ListProperty containing the excluded supertype packages
+     */
+    @Input
+    public abstract ListProperty<String> getNonDomainExcludedSupertypePackages();
+
+    /**
+     * Packages whose classes are not mirrored as non-domain classes, e.g. generated code without a common
+     * supertype. Defaults to none.
+     *
+     * @return a ListProperty containing the excluded packages
+     */
+    @Input
+    public abstract ListProperty<String> getNonDomainExcludedPackages();
+
+    /**
+     * How long to wait for the whole upload (request body plus response), in minutes. Defaults to
+     * {@link DomainModelUploaderImpl#DEFAULT_REQUEST_TIMEOUT_MINUTES}.
+     *
+     * @return a {@code Property<Integer>} representing the timeout in minutes
+     */
+    @Input
+    public abstract Property<Integer> getUploadRequestTimeoutMinutes();
+
+    /**
+     * Whether the static analysis expands calls on types outside the domain to the domain types implementing the
+     * called method. Defaults to {@code false}.
+     *
+     * @return a {@code Property<Boolean>} representing the flag
+     */
+    @Input
+    public abstract Property<Boolean> getStaticAnalysisExpandNonDomainDispatch();
+
     private final ConfigurableFileCollection classesDirs = getProject().getObjects().fileCollection();
     private final ConfigurableFileCollection classpath = getProject().getObjects().fileCollection();
 
@@ -204,7 +242,10 @@ public abstract class UploadDomainModelTask extends DefaultTask {
     public void action() {
         LOGGER.info("Running Upload Domain Model Goal...");
         domainModelUploader = new DomainModelUploaderImpl(
-            getStaticAnalysisCacheSize().getOrElse(DomainCallsAnalyzerImpl.DEFAULT_CACHE_SIZE));
+            getStaticAnalysisCacheSize().getOrElse(DomainCallsAnalyzerImpl.DEFAULT_CACHE_SIZE),
+            getNonDomainExcludedSupertypePackages().getOrNull(), getNonDomainExcludedPackages().getOrNull(),
+            getUploadRequestTimeoutMinutes().getOrElse(DomainModelUploaderImpl.DEFAULT_REQUEST_TIMEOUT_MINUTES),
+            getStaticAnalysisExpandNonDomainDispatch().getOrElse(false));
         uploadDomainModel();
     }
 

@@ -36,6 +36,7 @@ import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
+import io.domainlifecycles.mirror.api.NonDomainTypeMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
@@ -145,6 +146,16 @@ public abstract class ServiceKindModelMixin extends DomainTypeModelMixin {
      */
     @JsonIgnore
     public abstract List<ApplicationServiceMirror> getReferencedApplicationServices();
+
+    /**
+     * Retrieves a list of {@link NonDomainTypeMirror} instances referenced by the current model.
+     * This method is ignored during JSON serialization or deserialization.
+     *
+     * @return a list of {@link NonDomainTypeMirror} objects representing the non-domain types
+     *         that are referenced by the model.
+     */
+    @JsonIgnore
+    public abstract List<NonDomainTypeMirror> getReferencedNonDomainTypes();
 
     /**
      * Retrieves a list of {@link DomainCommandMirror} instances that represent

@@ -8,13 +8,13 @@ import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.persistence.records.EntityValueObjectRecordTypeConfiguration;
-import io.domainlifecycles.test.springboot.tables.records.AktionsCodeBv3Record;
+import io.domainlifecycles.test.springboot.tables.records.PromoCodeBv3Record;
 import org.jooq.DSLContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import tests.shared.complete.onlinehandel.bestellung.AktionsCodeBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
+import tests.shared.complete.ecommerce.order.PromoCodeBv3;
+import tests.shared.complete.ecommerce.order.OrderBv3;
 import tests.shared.persistence.domain.simpleUuid.TestRootSimpleUuid;
 import tests.shared.persistence.domain.simpleUuid.TestRootSimpleUuidId;
 
@@ -27,7 +27,8 @@ public class PersistenceConfig {
     @Bean
     @DependsOn("initializedDomain")
     public JooqDomainPersistenceProvider domainPersistenceProvider(DomainObjectBuilderProvider domainObjectBuilderProvider,
-                                                                   Set<RecordMapper<?,?,?>> customRecordMappers) {
+                                                                   Set<RecordMapper<?,?,?>> customRecordMappers,
+                                                                   DSLContext dslContext) {
 
         JooqDomainPersistenceConfiguration jooqDomainPersistenceConfiguration = JooqDomainPersistenceConfiguration
             .JooqPersistenceConfigurationBuilder
@@ -37,16 +38,16 @@ public class PersistenceConfig {
             .withCustomRecordMappers(customRecordMappers)
             .withEntityValueObjectRecordTypeConfiguration(
                 new EntityValueObjectRecordTypeConfiguration(
-                    BestellungBv3.class,
-                    AktionsCodeBv3.class,
-                    AktionsCodeBv3Record.class,
-                    "aktionsCodes"
+                    OrderBv3.class,
+                    PromoCodeBv3.class,
+                    PromoCodeBv3Record.class,
+                    "promoCodes"
                 )
             )
             .make();
 
         return new JooqDomainPersistenceProvider(
-            jooqDomainPersistenceConfiguration);
+            jooqDomainPersistenceConfiguration, dslContext);
     }
 
     @Bean

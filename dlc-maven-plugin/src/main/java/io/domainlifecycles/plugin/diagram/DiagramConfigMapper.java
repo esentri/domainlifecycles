@@ -63,6 +63,8 @@ public class DiagramConfigMapper {
         diagramConfig.setReadModelStyle(mavenDiagramConfig.getReadModelStyle());
         diagramConfig.setQueryHandlerStyle(mavenDiagramConfig.getQueryHandlerStyle());
         diagramConfig.setOutboundServiceStyle(mavenDiagramConfig.getOutboundServiceStyle());
+        diagramConfig.setFactoryStyle(mavenDiagramConfig.getFactoryStyle());
+        diagramConfig.setNonDomainClassStyle(mavenDiagramConfig.getNonDomainClassStyle());
         diagramConfig.setFont(mavenDiagramConfig.getFont());
         diagramConfig.setDirection(mavenDiagramConfig.getDirection());
         diagramConfig.setRanker(mavenDiagramConfig.getRanker());
@@ -77,6 +79,7 @@ public class DiagramConfigMapper {
         diagramConfig.setShowAggregates(mavenDiagramConfig.getShowAggregates());
         diagramConfig.setShowAggregateFields(mavenDiagramConfig.getShowAggregateFields());
         diagramConfig.setShowAggregateMethods(mavenDiagramConfig.getShowAggregateMethods());
+        diagramConfig.setShowOnlyAggregateFrames(mavenDiagramConfig.getShowOnlyAggregateFrames());
         diagramConfig.setShowDomainEvents(mavenDiagramConfig.getShowDomainEvents());
         diagramConfig.setShowDomainEventFields(mavenDiagramConfig.getShowDomainEventFields());
         diagramConfig.setShowDomainEventMethods(mavenDiagramConfig.getShowDomainEventMethods());
@@ -102,9 +105,19 @@ public class DiagramConfigMapper {
         diagramConfig.setShowOutboundServices(mavenDiagramConfig.getShowOutboundServices());
         diagramConfig.setShowOutboundServiceFields(mavenDiagramConfig.getShowOutboundServiceFields());
         diagramConfig.setShowOutboundServiceMethods(mavenDiagramConfig.getShowOutboundServiceMethods());
+        diagramConfig.setShowFactories(mavenDiagramConfig.getShowFactories());
+        diagramConfig.setShowFactoryFields(mavenDiagramConfig.getShowFactoryFields());
+        diagramConfig.setShowFactoryMethods(mavenDiagramConfig.getShowFactoryMethods());
         diagramConfig.setShowUnspecifiedServiceKinds(mavenDiagramConfig.getShowUnspecifiedServiceKinds());
         diagramConfig.setShowUnspecifiedServiceKindFields(mavenDiagramConfig.getShowUnspecifiedServiceKindFields());
         diagramConfig.setShowUnspecifiedServiceKindMethods(mavenDiagramConfig.getShowUnspecifiedServiceKindMethods());
+        diagramConfig.setShowNonDomainClasses(mavenDiagramConfig.getShowNonDomainClasses());
+        diagramConfig.setShowNonDomainClassFields(mavenDiagramConfig.getShowNonDomainClassFields());
+        diagramConfig.setShowNonDomainClassMethods(mavenDiagramConfig.getShowNonDomainClassMethods());
+        diagramConfig.setMaxInlinedValueObjectFields(mavenDiagramConfig.getMaxInlinedValueObjectFields());
+        diagramConfig.setShowOnlyFlowMethods(mavenDiagramConfig.getShowOnlyFlowMethods());
+        diagramConfig.setShowFlowCallRelations(mavenDiagramConfig.getShowFlowCallRelations());
+        diagramConfig.setShowFactoryRelations(mavenDiagramConfig.getShowFactoryRelations());
         diagramConfig.setCallApplicationServiceDriver(mavenDiagramConfig.getCallApplicationServiceDriver());
         diagramConfig.setFieldBlacklist(mavenDiagramConfig.getFieldBlacklist());
         diagramConfig.setMethodBlacklist(mavenDiagramConfig.getMethodBlacklist());
@@ -115,6 +128,8 @@ public class DiagramConfigMapper {
         diagramConfig.setIncludeConnectedTo(mavenDiagramConfig.getIncludeConnectedTo());
         diagramConfig.setIncludeConnectedToIngoing(mavenDiagramConfig.getIncludeConnectedToIngoing());
         diagramConfig.setIncludeConnectedToOutgoing(mavenDiagramConfig.getIncludeConnectedToOutgoing());
+        diagramConfig.setIncludeConnectedToIngoingDepth(mavenDiagramConfig.getIncludeConnectedToIngoingDepth());
+        diagramConfig.setIncludeConnectedToOutgoingDepth(mavenDiagramConfig.getIncludeConnectedToOutgoingDepth());
         diagramConfig.setExcludeConnectedToIngoing(mavenDiagramConfig.getExcludeConnectedToIngoing());
         diagramConfig.setExcludeConnectedToOutgoing(mavenDiagramConfig.getExcludeConnectedToOutgoing());
         diagramConfig.setShowAllInheritanceStructures(mavenDiagramConfig.getShowAllInheritanceStructures());
@@ -126,11 +141,14 @@ public class DiagramConfigMapper {
         diagramConfig.setShowRelationshipLabels(mavenDiagramConfig.getShowRelationshipLabels());
         diagramConfig.setShowRelationshipStereotypes(mavenDiagramConfig.getShowRelationshipStereotypes());
         diagramConfig.setIncludeFlowsFrom(mavenDiagramConfig.getIncludeFlowsFrom());
+        diagramConfig.setIncludeFlowsTo(mavenDiagramConfig.getIncludeFlowsTo());
         diagramConfig.setFlowMaxDepth(mavenDiagramConfig.getFlowMaxDepth());
         diagramConfig.setFlowFollowEvents(mavenDiagramConfig.getFlowFollowEvents());
         diagramConfig.setFlowFollowImplementations(mavenDiagramConfig.getFlowFollowImplementations());
         diagramConfig.setFlowExcludeAccessors(mavenDiagramConfig.getFlowExcludeAccessors());
         diagramConfig.setStaticAnalysisPackages(mavenDiagramConfig.getStaticAnalysisPackages());
+        diagramConfig.setNonDomainExcludedSupertypePackages(mavenDiagramConfig.getNonDomainExcludedSupertypePackages());
+        diagramConfig.setNonDomainExcludedPackages(mavenDiagramConfig.getNonDomainExcludedPackages());
         return diagramConfig;
     }
 }

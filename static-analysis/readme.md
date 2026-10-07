@@ -28,7 +28,7 @@ at application runtime. Gradle setup:
 
 ```Groovy
 dependencies{
-    testImplementation 'io.domainlifecycles:static-analysis-sootup:3.4.0'
+    testImplementation 'io.domainlifecycles:static-analysis-sootup:3.5.0'
 }
 ```
 
@@ -38,7 +38,7 @@ Maven setup:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>static-analysis-sootup</artifactId>
-    <version>3.4.0</version>
+    <version>3.5.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -52,7 +52,7 @@ module alone. Gradle setup:
 
 ```Groovy
 dependencies{
-    implementation 'io.domainlifecycles:static-analysis:3.4.0'
+    implementation 'io.domainlifecycles:static-analysis:3.5.0'
 }
 ```
 
@@ -62,7 +62,7 @@ Maven setup:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>static-analysis</artifactId>
-    <version>3.4.0</version>
+    <version>3.5.0</version>
 </dependency>
 ```
 
@@ -141,6 +141,42 @@ A flow can start at a domain command (beginning with the methods processing it),
 `analyzer.flowFrom("yourdomain.order.OrderService", "placeOrder")` resolves the starting method in
 the mirror and returns an empty `Optional` if the type or the method is unknown.
 
+### The backward direction: "what leads into this"
+
+`flowFrom(...)` answers "what does this trigger". The mirrored counterpart, `flowTo(...)`, answers
+"what leads into this" - the entry channels through which a type or method is reached:
+
+```Java
+var target = domainMirror.getDomainTypeMirror("yourdomain.order.OrderService").orElseThrow();
+Flow flow = analyzer.flowTo(target);
+```
+
+`flowTo` accepts a `DomainMethod`, a `DomainEventMirror` or any other `DomainTypeMirror` (reporting
+the union of all its methods' predecessors, plus, for an `AggregateRootMirror`/`ReadModelMirror`,
+the repositories/query handlers structurally managing/providing it), and the same
+`flowTo(String typeName, String methodName)` lookup-by-name convenience as `flowFrom`. Every
+`StepKind` is mirrored in reverse - `CALL` becomes "called by", `IMPLEMENTATION` becomes "overridden
+supertype method", `EVENT_LISTEN` becomes "published by", `COMMAND_PROCESS` becomes "processed
+command" - so a `Flow` from `flowTo(...)` is read and rendered exactly like one from `flowFrom(...)`.
+
+A read model no query handler provides is provided by the methods returning it instead - of service
+kinds (query handlers aside) and non-domain classes, directly, as `Optional` or as collection, e.g. a
+driver computing it. In a backward flow into such a read model these methods precede it
+(`PROVIDES_READ_MODEL`) and the flow continues with their callers; in a forward flow the read model
+follows such a method, like it follows the method of a query handler.
+
+The analysis leaves out constructors, so creating a domain object is no call. A flow follows the
+factory methods instead - the creating methods of a `Factory` and the methods annotated with
+`@FactoryMethod`: in a forward flow the created domain type follows such a method (`CREATES`), in a
+backward flow into a domain type the factory methods creating it precede it, and the flow continues
+with their callers. A factory method creating instances of its own type leads nowhere, and one
+returning a read model it provides leads to it as `PROVIDES_READ_MODEL` only.
+
+There is deliberately **no** `flowTo(DomainCommandMirror)`: nothing in the analyzed data models
+where a command originates, so a command can only ever appear as a reached leaf (via
+`COMMAND_PROCESS` reversal - "this service is reached because it processes command C"), never as a
+backward search's own starting point.
+
 A flow is a graph, not a sequence: a method may call several others, each of which continues on its
 own. It is represented as a flat list of `Step`s, each linking back to the step it was reached from
 (`Step#from()`), so the branching structure is preserved while staying easy to iterate, filter and
@@ -215,6 +251,13 @@ off by `withMaxDepth(...)` while there was still something left to expand report
   not on the implementations it may dispatch to. That is the honest information about the code; the
   polymorphic continuation is added by the `FlowAnalyzer` as its own kind of edge instead of being
   merged into the call graph.
+- **Calls on types outside the domain.** A call on a JDK, library or framework type - `value.toString()` on an
+  `Object`, `ordinal()` on an `Enum`, `get()` on a `Supplier` - does not tell which domain type it reaches, so it is
+  not recorded. Expanding such a call to every domain type implementing the called method (as the SootUp analyzer
+  still does with `new SootupStaticAnalyzer(cacheSize, true)`) connected e.g. a single `obj.toString()` with the
+  `toString()` of every mirrored class; in a real world project such expansions made up 95 % of all call sites.
+  The same holds for a method reference on such a type, e.g. `map(Object::toString)`: it is not followed into the
+  implementations either. DLC's own types (`io.domainlifecycles.*`) are neither callers nor targets either.
 - **Anything not on the analyzed classpath.** Reported as a `Diagnostic` rather than guessed.
 
 ## Requirements
@@ -239,7 +282,7 @@ holding a `JacksonDomainCallsSerializer`. Gradle setup:
 
 ```Groovy
 dependencies{
-    implementation 'io.domainlifecycles:static-analysis-serialization-jackson3:3.4.0'
+    implementation 'io.domainlifecycles:static-analysis-serialization-jackson3:3.5.0'
 }
 ```
 
@@ -249,7 +292,7 @@ Maven setup:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>static-analysis-serialization-jackson3</artifactId>
-    <version>3.4.0</version>
+    <version>3.5.0</version>
 </dependency>
 ```
 

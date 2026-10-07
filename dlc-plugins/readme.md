@@ -19,7 +19,7 @@ The plugin is able to create class diagrams in various formats of your implement
 An example configuration in your project could look like the following:
 ```groovy
 plugins {
-    id 'io.domainlifecycles.dlc-gradle-plugin' version '3.4.0'
+    id 'io.domainlifecycles.dlc-gradle-plugin' version '3.5.0'
 }
 
 dlcGradlePlugin {
@@ -61,7 +61,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "io.domainlifecycles.dlc-gradle-plugin") {
-                useModule("io.domainlifecycles:dlc-gradle-plugin:3.4.0")
+                useModule("io.domainlifecycles:dlc-gradle-plugin:3.5.0")
             }
         }
     }
@@ -137,8 +137,9 @@ dlcGradlePlugin {
         diagramViewerBaseUrl = "http://localhost:8090"
         runStaticAnalysis = true
         streamUpload = false
-        staticAnalysisCacheSize = 500
+        staticAnalysisCacheSize = 5000
         staticAnalysisPackages = ["io.domainlifecycles.test"]
+        uploadRequestTimeoutMinutes = 5
     }
 }
 ```
@@ -156,8 +157,14 @@ Set `runStaticAnalysis = false` to upload only the domain model, skipping the an
 For a domain of a few hundred types the uploaded JSON (domain model plus static analysis result) can
 already reach the tens of megabytes, so the upload request is gzip-compressed (`Content-Encoding: gzip`)
 before being sent - your Diagram-Viewer endpoint needs to decompress the request body accordingly. The
-plugin also applies a 10 second connect timeout and an overall 5 minute request timeout, so an
-unreachable or slow Diagram-Viewer fails the build instead of hanging it indefinitely.
+plugin also applies a 10 second connect timeout and an overall request timeout of 5 minutes by default, so an
+unreachable or slow Diagram-Viewer fails the build instead of hanging it indefinitely. For very large domains
+raise the request timeout via `uploadRequestTimeoutMinutes`.
+
+The static analysis records calls on domain types only: a call on a type outside the domain (JDK, library or DLC
+types, e.g. `value.toString()` on an `Object`) does not tell which domain type it reaches and would otherwise
+connect the caller with every domain type implementing the called method. Set
+`staticAnalysisExpandNonDomainDispatch` to `true` to expand such calls anyway.
 
 By default, the (already gzip-compressed) request body is assembled completely in memory before being
 sent. Set `streamUpload = true` to instead stream it directly into the HTTP request as it is produced -
@@ -170,10 +177,11 @@ simpler and sufficiently efficient.
 
 The static analysis itself keeps memory bounded by caching only up to `staticAnalysisCacheSize` classes
 (domain, JDK and library classes alike) at a time while resolving method bodies; classes evicted from
-the cache are simply re-parsed from the classpath on the next access. The default, `500`, comfortably
-holds a mid-sized domain plus its immediate dependencies without evicting on every lookup. Lower it to
-cap memory usage further for very large projects (at the cost of more re-parsing), or raise it if you
-have memory to spare and want to avoid re-parsing.
+the cache are simply re-parsed from the classpath on the next access. The default, `5000`, avoids most
+re-parsing even for large domains; since the cache only holds the classes actually parsed, smaller projects do
+not pay for it. In a real world project (about 4,800 mirrored types) it made the analysis about 13 % faster than
+the former default of `500`, with no measurable increase of the heap needed. Lower it to cap memory usage
+further (at the cost of more re-parsing).
 
 By default, the static analysis also considers only classes in `domainModelPackages` (and their
 sub-packages) - not the project's entire classpath, which for a large multi-module project can be
@@ -206,7 +214,7 @@ An example configuration in your project's build plugins could look like the fol
         <plugin>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>dlc-maven-plugin</artifactId>
-            <version>3.4.0</version>
+            <version>3.5.0</version>
             <executions>
                 <execution>
                     <id>createDiagramNomnoml</id>
@@ -271,7 +279,7 @@ An example configuration in your project could look like the following:
         <plugin>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>dlc-maven-plugin</artifactId>
-            <version>3.4.0</version>
+            <version>3.5.0</version>
             <executions>
                 <execution>
                     <id>serializeMirror</id>
@@ -322,7 +330,7 @@ An example configuration in your project could look like the following:
         <plugin>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>dlc-maven-plugin</artifactId>
-            <version>3.4.0</version>
+            <version>3.5.0</version>
             <executions>
                 <execution>
                     <id>upload</id>
@@ -339,10 +347,11 @@ An example configuration in your project could look like the following:
                     <projectName>test-project</projectName>
                     <runStaticAnalysis>true</runStaticAnalysis>
                     <streamUpload>false</streamUpload>
-                    <staticAnalysisCacheSize>500</staticAnalysisCacheSize>
+                    <staticAnalysisCacheSize>5000</staticAnalysisCacheSize>
                     <staticAnalysisPackages>
                         <staticAnalysisPackage>io.domainlifecycles.test</staticAnalysisPackage>
                     </staticAnalysisPackages>
+                    <uploadRequestTimeoutMinutes>5</uploadRequestTimeoutMinutes>
                     </configuration>
                 </execution>
             </executions>
@@ -364,8 +373,14 @@ Set `<runStaticAnalysis>false</runStaticAnalysis>` to upload only the domain mod
 For a domain of a few hundred types the uploaded JSON (domain model plus static analysis result) can
 already reach the tens of megabytes, so the upload request is gzip-compressed (`Content-Encoding: gzip`)
 before being sent - your Diagram-Viewer endpoint needs to decompress the request body accordingly. The
-plugin also applies a 10 second connect timeout and an overall 5 minute request timeout, so an
-unreachable or slow Diagram-Viewer fails the build instead of hanging it indefinitely.
+plugin also applies a 10 second connect timeout and an overall request timeout of 5 minutes by default, so an
+unreachable or slow Diagram-Viewer fails the build instead of hanging it indefinitely. For very large domains
+raise the request timeout via `uploadRequestTimeoutMinutes`.
+
+The static analysis records calls on domain types only: a call on a type outside the domain (JDK, library or DLC
+types, e.g. `value.toString()` on an `Object`) does not tell which domain type it reaches and would otherwise
+connect the caller with every domain type implementing the called method. Set
+`staticAnalysisExpandNonDomainDispatch` to `true` to expand such calls anyway.
 
 By default, the (already gzip-compressed) request body is assembled completely in memory before being
 sent. Set `<streamUpload>true</streamUpload>` to instead stream it directly into the HTTP request as it
@@ -378,10 +393,11 @@ domains the default is simpler and sufficiently efficient.
 
 The static analysis itself keeps memory bounded by caching only up to `staticAnalysisCacheSize` classes
 (domain, JDK and library classes alike) at a time while resolving method bodies; classes evicted from
-the cache are simply re-parsed from the classpath on the next access. The default, `500`, comfortably
-holds a mid-sized domain plus its immediate dependencies without evicting on every lookup. Lower it to
-cap memory usage further for very large projects (at the cost of more re-parsing), or raise it if you
-have memory to spare and want to avoid re-parsing.
+the cache are simply re-parsed from the classpath on the next access. The default, `5000`, avoids most
+re-parsing even for large domains; since the cache only holds the classes actually parsed, smaller projects do
+not pay for it. In a real world project (about 4,800 mirrored types) it made the analysis about 13 % faster than
+the former default of `500`, with no measurable increase of the heap needed. Lower it to cap memory usage
+further (at the cost of more re-parsing).
 
 By default, the static analysis also considers only classes in `domainModelPackages` (and their
 sub-packages) - not the project's entire classpath, which for a large multi-module project can be
@@ -416,6 +432,8 @@ Supported Diagram configuration options are
 - readModelStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
 - queryHandlerStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
 - outboundServiceStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
+- factoryStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
+- nonDomainClassStyle: e.g "fill=#333333 bold" (see [Nomnoml](https://www.nomnoml.com/) style definitions)
 - font: e.g. "Calibri", "Arial"
 - direction: "right" or "down"
 - ranker: network-simplex | tight-tree | longest-path, see [Nomnoml](https://www.nomnoml.com/)
@@ -427,6 +445,10 @@ Supported Diagram configuration options are
 - showAssertions: boolean, default true
 - showMethods: boolean, default true
 - showOnlyPublicMethods: boolean, default true
+- showAggregates: boolean, default true
+- showAggregateFields: boolean, default true
+- showAggregateMethods: boolean, default true
+- showOnlyAggregateFrames: boolean, default false (a central switch for all aggregates: each aggregate is drawn as its frame only, without the classes, relationships and notes inside; the relationships from outside connect the frame and are still drawn)
 - showDomainEvents: boolean, default true
 - showDomainEventFields: boolean, default false
 - showDomainEventMethods: boolean, default false
@@ -451,10 +473,18 @@ Supported Diagram configuration options are
 - showQueryHandlerMethods: boolean, default false
 - showOutboundServices: boolean, default true
 - showOutboundServiceFields: boolean, default false
-- showOutboundServiceMethods: boolean, default false
+- showOutboundServiceMethods: boolean, default true
+- showFactories: boolean, default true
+- showFactoryFields: boolean, default false
+- showFactoryMethods: boolean, default true
+- showFactoryRelations: boolean, default true (a class creating another domain type by its factory methods - the creating methods of a `Factory` or the methods annotated with `@FactoryMethod` - is connected to it by a `<<creates>>` relationship labeled with these methods, qualified by their class (e.g. `Appointment.invite`); the factory methods of other classes than factories are marked with `«factory»`)
 - showUnspecifiedServiceKinds: boolean, default true
 - showUnspecifiedServiceKindFields: boolean, default false
 - showUnspecifiedServiceKindMethods: boolean, default false
+- showNonDomainClasses: boolean, default true (classes not implementing any domain marker interface are drawn too, but only when they have a relationship - in either direction - to a service kind)
+- showNonDomainClassFields: boolean, default false
+- showNonDomainClassMethods: boolean, default true
+- maxInlinedValueObjectFields: int, default 2 (value objects with at most this many fields are shown inline, as field of the class referencing them, instead of as class of their own connected by a composition; a field holding a value object shown inline counts as one field, 0 inlines none)
 - callApplicationServiceDriver: boolean, default false
 - fieldBlacklist: field names to be excluded in field list, default "concurrencyVersion"  
 - methodBlacklist: method names to be excluded in field list, default "builder", "validate", "concurrencyVersion", "id", "findResultById", "publish", "increaseVersion", "equals", "hashCode", "toString"
@@ -465,6 +495,9 @@ Supported Diagram configuration options are
 - includeConnectedTo: list of full qualified classnames (all classes connected are included)
 - includeConnectedToIngoing: list of full qualified classnames (classes and ingoing connected classes are included)
 - includeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are included)
+- includeConnectedToIngoingDepth: int, default 0 (up to how many steps the ingoing connections of `includeConnectedToIngoing` are followed - "what leads to it"; `1` includes the classes directly connected; `0` or negative follows the complete path)
+- includeConnectedToOutgoingDepth: int, default 0 (up to how many steps the outgoing connections of `includeConnectedToOutgoing` are followed - "what does it lead to"; `0` or negative follows the complete path)
+  - a class may be named in `includeConnectedToIngoing` and `includeConnectedToOutgoing` at once (what leads to it and what it leads to), as well as in `excludeConnectedToIngoing` and `excludeConnectedToOutgoing`; it must not be included and excluded at once, nor named in `includeConnectedTo` and a directed include option
 - excludeConnectedToIngoing: : list of full qualified classnames (classes and ingoing connected classes are excluded)
 - excludeConnectedToOutgoing: : list of full qualified classnames (classes and outgoing connected classes are excluded)
 - explicitlyIncludedPackages: list of packages explicitly included in the diagram
@@ -477,11 +510,16 @@ Supported Diagram configuration options are
 - showRelationshipLabels: boolean, default true
 - showRelationshipStereotypes: boolean, default true
 - includeFlowsFrom: list of flow starting points (see [Restricting a diagram to a flow](#restricting-a-diagram-to-a-flow)), default none (flow-based filtering disabled)
+- includeFlowsTo: list of flow target points, the backward counterpart of `includeFlowsFrom` (see [Restricting a diagram to a flow](#restricting-a-diagram-to-a-flow)), default none (backward flow-based filtering disabled)
+- showFlowCallRelations: boolean, default false (with `includeFlowsFrom`/`includeFlowsTo`, a service kind or non-domain class calling another service kind or non-domain class in a flow is connected to it by a `<<calls>>` relationship, directed from the caller to the called class and labeled with the called methods, if no other relationship connects them; one calling a read model or aggregate is connected to it, if no path of relationships - e.g. over its query handler or repository - leads there yet; switched on without `includeFlowsFrom`/`includeFlowsTo`, the build fails, as only these trigger the static analysis the calls are taken from)
+- showOnlyFlowMethods: boolean, default true (with `includeFlowsFrom`/`includeFlowsTo`, the classes taking part in a flow show only the methods called in it; classes shown for another reason, e.g. as part of an aggregate or read model, show their methods as without flow)
 - flowMaxDepth: integer, maximum depth a flow is followed to, default unlimited
 - flowFollowEvents: boolean, whether a flow follows published DomainEvents to their listening methods, default true
 - flowFollowImplementations: boolean, whether a flow follows the dispatch from an interface/abstract method into its implementations, default true
 - flowExcludeAccessors: boolean, whether simple accessor methods (getters/setters) are excluded from a followed flow, default false
 - staticAnalysisPackages: list of packages the static analysis (triggered by `includeFlowsFrom`) restricts itself to, default `domainModelPackages` (see [Restricting a diagram to a flow](#restricting-a-diagram-to-a-flow))
+- nonDomainExcludedSupertypePackages: list of packages whose types, as superclass or interface, exclude a class from the mirrored non-domain classes, default `["org.jooq"]` (leaves out the code jOOQ generates); an empty list also means this default (see [Leaving generated code out](#leaving-generated-code-out))
+- nonDomainExcludedPackages: list of packages whose classes are not mirrored as non-domain classes, default none (see [Leaving generated code out](#leaving-generated-code-out))
 
 ## Restricting a diagram to a flow
 
@@ -500,11 +538,20 @@ Several entries are combined (their reached classes are unioned). The restrictio
 configured diagram: a class outside `domainModelPackages`/`explicitlyIncludedPackages` or on the `classesBlacklist`
 stays out, even when the flow reaches it.
 
+`includeFlowsTo` is the backward counterpart of `includeFlowsFrom`: instead of "what does this lead
+to", it restricts the diagram to "what leads into this" - the entry channels (callers, event
+publishers, and, for an aggregate/read model, its managing repository/providing query handler)
+through which a type or method is reached. It uses the same entry syntax, except a domain command
+can never be a target (nothing leads *into* a command in the analyzed data - it can still appear as
+a reached node when a target is found to process it). `includeFlowsFrom` and `includeFlowsTo` can be
+set together; their reached classes are united.
+
 Since determining which classes take part in a flow requires analyzing the compiled domain classes, configuring
-`includeFlowsFrom` makes the plugin run a static (bytecode) analysis of your domain classes as part of diagram
-generation. This is skipped whenever `includeFlowsFrom` is not configured for a diagram. `flowMaxDepth`,
+`includeFlowsFrom` and/or `includeFlowsTo` makes the plugin run a static (bytecode) analysis of your domain classes
+as part of diagram generation. This is skipped whenever neither is configured for a diagram. `flowMaxDepth`,
 `flowFollowEvents`, `flowFollowImplementations` and `flowExcludeAccessors` further tune how far/what such a flow
-traversal follows; they have no effect unless `includeFlowsFrom` is also set.
+traversal follows, in either direction; they have no effect unless `includeFlowsFrom` or `includeFlowsTo` is also
+set.
 
 The static analysis keeps memory bounded by caching only up to a fixed number of classes at a time while
 resolving method bodies; classes evicted from the cache are simply re-parsed from the classpath on the
@@ -527,7 +574,7 @@ Gradle example, restricted to the flow of the `PlaceOrder` domain command:
 dlcGradlePlugin {
     diagram {
         fileOutputDir = layout.buildDirectory
-        staticAnalysisCacheSize = 500
+        staticAnalysisCacheSize = 5000
         diagrams {
             placeOrderFlow {
                 domainModelPackages = ["io.domainlifecycles.test"]
@@ -562,9 +609,83 @@ Maven example (`<staticAnalysisCacheSize>` goes into the surrounding `<configura
 </diagram>
 ```
 
-For the full semantics of `includeFlowsFrom` and the flow traversal settings, see the domain-diagrammer's
+Gradle example, restricted to the entry channels into the `OrderService` domain service:
+```groovy
+dlcGradlePlugin {
+    diagram {
+        fileOutputDir = layout.buildDirectory
+        diagrams {
+            orderServiceEntryPoints {
+                domainModelPackages = ["io.domainlifecycles.test"]
+                format = "svg"
+                fileName = "order-service-entry-points"
+                includeFlowsTo = ["io.domainlifecycles.test.order.OrderService"]
+            }
+        }
+    }
+}
+```
+
+Maven example:
+```xml
+<diagram>
+    <domainModelPackages>
+        <domainModelPackage>io.domainlifecycles.test</domainModelPackage>
+    </domainModelPackages>
+    <format>svg</format>
+    <fileName>order-service-entry-points</fileName>
+    <includeFlowsTo>
+        <includeFlowTo>io.domainlifecycles.test.order.OrderService</includeFlowTo>
+    </includeFlowsTo>
+</diagram>
+```
+
+For the full semantics of `includeFlowsFrom`/`includeFlowsTo` and the flow traversal settings, see the domain-diagrammer's
 ["Restricting a diagram to a flow"](../domain-diagrammer/readme.md#restricting-a-diagram-to-a-flow) section, and for
 background on the underlying static analysis, see the [static-analysis readme](../static-analysis/readme.md).
+
+## Leaving generated code out
+
+Classes in the domain model packages that implement no domain marker interface are mirrored as
+non-domain classes (see the [mirror](../mirror/readme.md#mirroring-non-domain-classes)). Generated code
+is left out of these by default: every class whose superclass or interfaces - direct or inherited - lie
+within `org.jooq`, i.e. the table, record, schema and catalog classes jOOQ generates. In a real world
+project these made up 95 % of the mirrored non-domain classes' size. Leaving them out also shrinks the
+static analysis result considerably, since calls from and to classes that are not mirrored are not
+recorded (there: 87 % of all call sites).
+
+All goals/tasks building a domain mirror - the diagram, the mirror serialization and the Diagram-Viewer
+upload - accept the same two options:
+
+- `nonDomainExcludedSupertypePackages`: packages whose types, as supertypes, exclude a class; default
+  `["org.jooq"]`. Setting it replaces the default, so add `org.jooq` again to keep excluding jOOQ code.
+  An empty list also means the default: Maven cannot tell an unconfigured list parameter from an empty
+  one. Switching the exclusion off entirely is only possible via the
+  [mirror API](../mirror/readme.md#leaving-generated-code-out).
+- `nonDomainExcludedPackages`: packages whose classes are not mirrored as non-domain classes (e.g.
+  generated code without a common supertype, like jOOQ's `Keys`/`Tables`); default none
+
+```groovy
+dlcGradlePlugin {
+    domainModelUpload {
+        domainModelPackages = ["com.example"]
+        nonDomainExcludedPackages = ["com.example.persistence.generated"]
+        // ...
+    }
+}
+```
+
+```xml
+<configuration>
+    <domainModelPackages>
+        <domainModelPackage>com.example</domainModelPackage>
+    </domainModelPackages>
+    <nonDomainExcludedPackages>
+        <nonDomainExcludedPackage>com.example.persistence.generated</nonDomainExcludedPackage>
+    </nonDomainExcludedPackages>
+    <!-- ... -->
+</configuration>
+```
 
 ## How to read DLC Domain Diagrams?
 
@@ -610,6 +731,9 @@ A DomainService calls a QueryHandler.
 
 - DomainService → DomainEvent:
 A DomainService publishes a DomainEvent.
+
+- Factory → Aggregate, DomainService → Aggregate, Aggregate → Entity, ...:
+A class creates a domain type by its factory methods (`<<creates>>`).
 
 - Repository → Aggregate:
 A Repository provides access to an Aggregate.

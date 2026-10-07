@@ -62,7 +62,7 @@ public class DomainCallsSerializationException extends RuntimeException {
      * given message parameters.
      */
     public static DomainCallsSerializationException fail(final String detail, final Object... args) {
-        return new DomainCallsSerializationException(requireNonNull(detail), requireNonNull(args));
+        return new DomainCallsSerializationException(format(requireNonNull(detail), requireNonNull(args)));
     }
 
     /**
@@ -74,18 +74,18 @@ public class DomainCallsSerializationException extends RuntimeException {
      */
     public static DomainCallsSerializationException fail(final String detail, final Throwable cause,
                                                           final Object... args) {
-        return new DomainCallsSerializationException(requireNonNull(detail), requireNonNull(cause), requireNonNull(args));
+        return new DomainCallsSerializationException(format(requireNonNull(detail), requireNonNull(args)), requireNonNull(cause));
     }
 
     private static String format(final String detail, final Object[] args) {
         return args.length > 0 ? String.format(detail, args) : detail;
     }
 
-    private DomainCallsSerializationException(String detail, final Object... args) {
-        super(format(detail, args));
+    private DomainCallsSerializationException(final String message) {
+        super(message);
     }
 
-    private DomainCallsSerializationException(String detail, Throwable cause, Object... args) {
-        super(format(detail, args), cause);
+    private DomainCallsSerializationException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 }

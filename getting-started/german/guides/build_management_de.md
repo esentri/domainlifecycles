@@ -1,4 +1,4 @@
-[Getting Started](../index_de.md) / [Build Management](build_management_de)
+[Getting Started](../index_de.md) / [Build Management](build_management_de.md)
 
 ---
 
@@ -16,7 +16,7 @@ Den Ausgangspunkt bildet in diesem Guide ein Build-Setup für ein minimales Spri
 ```groovy
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '4.1.0'
+    id 'org.springframework.boot' version '4.1.1'
 
 }
 
@@ -50,7 +50,7 @@ dependencies {
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.0</version>
+        <version>4.1.1</version>
         <relativePath/>
     </parent>
     <groupId>com.example</groupId>
@@ -63,7 +63,7 @@ dependencies {
         <dependency>
             <groupId>io.domainlifecycles</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <version>3.4.0</version>
+            <version>3.5.0</version>
         </dependency>
     </dependencies>
 
@@ -91,7 +91,7 @@ welches die wichtigsten DLC-Funktionen bündelt:
 
 ```groovy
 dependencies {
-    implementation 'io.domainlifecycles:spring-boot-starter:3.4.0'
+    implementation 'io.domainlifecycles:spring-boot-starter:3.5.0'
 }
 ```
 </details>
@@ -104,11 +104,16 @@ dependencies {
     <dependency>
         <groupId>io.domainlifecycles</groupId>
         <artifactId>spring-boot-starter</artifactId>
-        <version>3.4.0</version>
+        <version>3.5.0</version>
     </dependency>
 </dependencies>
 ```
 </details>
+
+**Hinweis:** `spring-boot-starter` richtet sich, wie oben gezeigt, an Spring Boot 4.x. Falls dein Projekt noch auf
+Spring Boot 3.x setzt, verwende stattdessen `io.domainlifecycles:spring-boot3-starter` - es bündelt dieselben
+DLC-Funktionen auf Basis der Spring Boot 3 Autoconfiguration (`dlc-spring-boot3-autoconfig`). Die
+Dependency-Koordinaten beider Starter finden sich im [Haupt-Readme](../../../readme.md#dlc-project-setup).
 
 ---
 

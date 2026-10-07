@@ -113,6 +113,12 @@ public class PluginDiagramConfiguration {
      @Parameter(property = "outboundServiceStyle", required = false)
      private String outboundServiceStyle;
 
+     @Parameter(property = "factoryStyle", required = false)
+     private String factoryStyle;
+
+     @Parameter(property = "nonDomainClassStyle", required = false)
+     private String nonDomainClassStyle;
+
      @Parameter(property = "font", required = false)
      private String font;
 
@@ -154,6 +160,9 @@ public class PluginDiagramConfiguration {
 
     @Parameter(property = "showAggregateMethods", required = false)
     private Boolean showAggregateMethods;
+
+    @Parameter(property = "showOnlyAggregateFrames", required = false)
+    private Boolean showOnlyAggregateFrames;
 
      @Parameter(property = "showDomainEvents", required = false)
      private Boolean showDomainEvents;
@@ -230,6 +239,15 @@ public class PluginDiagramConfiguration {
      @Parameter(property = "showOutboundServiceMethods", required = false)
      private Boolean showOutboundServiceMethods;
 
+     @Parameter(property = "showFactories", required = false)
+     private Boolean showFactories;
+
+     @Parameter(property = "showFactoryFields", required = false)
+     private Boolean showFactoryFields;
+
+     @Parameter(property = "showFactoryMethods", required = false)
+     private Boolean showFactoryMethods;
+
      @Parameter(property = "showUnspecifiedServiceKinds", required = false)
      private Boolean showUnspecifiedServiceKinds;
 
@@ -238,6 +256,27 @@ public class PluginDiagramConfiguration {
 
      @Parameter(property = "showUnspecifiedServiceKindMethods", required = false)
      private Boolean showUnspecifiedServiceKindMethods;
+
+     @Parameter(property = "showNonDomainClasses", required = false)
+     private Boolean showNonDomainClasses;
+
+     @Parameter(property = "showNonDomainClassFields", required = false)
+     private Boolean showNonDomainClassFields;
+
+     @Parameter(property = "showNonDomainClassMethods", required = false)
+     private Boolean showNonDomainClassMethods;
+
+     @Parameter(property = "maxInlinedValueObjectFields", required = false)
+     private Integer maxInlinedValueObjectFields;
+
+     @Parameter(property = "showOnlyFlowMethods", required = false)
+     private Boolean showOnlyFlowMethods;
+
+     @Parameter(property = "showFlowCallRelations", required = false)
+     private Boolean showFlowCallRelations;
+
+     @Parameter(property = "showFactoryRelations", required = false)
+     private Boolean showFactoryRelations;
 
      @Parameter(property = "callApplicationServiceDriver", required = false)
      private Boolean callApplicationServiceDriver;
@@ -268,6 +307,12 @@ public class PluginDiagramConfiguration {
 
     @Parameter(property = "includeConnectedToOutgoing", required = false)
     private List<String> includeConnectedToOutgoing;
+
+    @Parameter(property = "includeConnectedToIngoingDepth", required = false)
+    private Integer includeConnectedToIngoingDepth;
+
+    @Parameter(property = "includeConnectedToOutgoingDepth", required = false)
+    private Integer includeConnectedToOutgoingDepth;
 
     @Parameter(property = "excludeConnectedToIngoing", required = false)
     private List<String> excludeConnectedToIngoing;
@@ -302,6 +347,9 @@ public class PluginDiagramConfiguration {
     @Parameter(property = "includeFlowsFrom", required = false)
     private List<String> includeFlowsFrom;
 
+    @Parameter(property = "includeFlowsTo", required = false)
+    private List<String> includeFlowsTo;
+
     @Parameter(property = "flowMaxDepth", required = false)
     private Integer flowMaxDepth;
 
@@ -316,6 +364,22 @@ public class PluginDiagramConfiguration {
 
     @Parameter(property = "staticAnalysisPackages", required = false)
     private List<String> staticAnalysisPackages;
+
+    /**
+     * Packages whose types, as superclass or interface (direct or inherited), exclude a class from being
+     * mirrored as non-domain class. Unset means the default {@code org.jooq}, which leaves out the code
+     * jOOQ generates for tables, records, schemas and catalogs; an empty list also means this default
+     * (Maven cannot distinguish an unset list parameter from an empty one).
+     */
+    @Parameter(property = "nonDomainExcludedSupertypePackages", required = false)
+    private List<String> nonDomainExcludedSupertypePackages;
+
+    /**
+     * Packages whose classes are not mirrored as non-domain classes, e.g. generated code without a common
+     * supertype. Unset means none.
+     */
+    @Parameter(property = "nonDomainExcludedPackages", required = false)
+    private List<String> nonDomainExcludedPackages;
 
 
     /**
@@ -481,6 +545,24 @@ public class PluginDiagramConfiguration {
     }
 
     /**
+     * Gets the style for factories.
+     *
+     * @return gets the style for factories.
+     */
+    public String getFactoryStyle() {
+        return factoryStyle;
+    }
+
+    /**
+     * Gets the style for non-domain classes.
+     *
+     * @return the non-domain class style.
+     */
+    public String getNonDomainClassStyle() {
+        return nonDomainClassStyle;
+    }
+
+    /**
      * Gets the font used in the diagram.
      *
      * @return the font.
@@ -604,6 +686,15 @@ public class PluginDiagramConfiguration {
      */
     public Boolean getShowAggregateMethods() {
         return showAggregateMethods;
+    }
+
+    /**
+     * Checks if Aggregates are drawn as their frame only, without the classes, relationships and notes inside.
+     *
+     * @return a Boolean value; true if only the frames of the Aggregates should be shown, false otherwise.
+     */
+    public Boolean getShowOnlyAggregateFrames() {
+        return showOnlyAggregateFrames;
     }
 
     /**
@@ -833,6 +924,33 @@ public class PluginDiagramConfiguration {
     }
 
     /**
+     * Whether factories are shown in the diagram.
+     *
+     * @return whether factories are shown in the diagram.
+     */
+    public Boolean getShowFactories() {
+        return showFactories;
+    }
+
+    /**
+     * Whether factory fields are shown in the diagram.
+     *
+     * @return whether factory fields are shown in the diagram.
+     */
+    public Boolean getShowFactoryFields() {
+        return showFactoryFields;
+    }
+
+    /**
+     * Whether factory methods are shown in the diagram.
+     *
+     * @return whether factory methods are shown in the diagram.
+     */
+    public Boolean getShowFactoryMethods() {
+        return showFactoryMethods;
+    }
+
+    /**
      * Checks if unspecified service kinds should be shown in the diagram.
      *
      * @return true if unspecified service kinds are shown, false otherwise.
@@ -857,6 +975,69 @@ public class PluginDiagramConfiguration {
      */
     public Boolean getShowUnspecifiedServiceKindMethods() {
         return showUnspecifiedServiceKindMethods;
+    }
+
+    /**
+     * Checks if non-domain classes should be shown in the diagram.
+     *
+     * @return true if non-domain classes are shown, false otherwise.
+     */
+    public Boolean getShowNonDomainClasses() {
+        return showNonDomainClasses;
+    }
+
+    /**
+     * Checks if non-domain class fields should be shown in the diagram.
+     *
+     * @return true if non-domain class fields are shown, false otherwise.
+     */
+    public Boolean getShowNonDomainClassFields() {
+        return showNonDomainClassFields;
+    }
+
+    /**
+     * Checks if non-domain class methods should be shown in the diagram.
+     *
+     * @return true if non-domain class methods are shown, false otherwise.
+     */
+    public Boolean getShowNonDomainClassMethods() {
+        return showNonDomainClassMethods;
+    }
+
+    /**
+     * Up to how many fields a value object is shown inline, as field of the class referencing it.
+     *
+     * @return the maximal number of fields of an inlined value object, 0 to inline none.
+     */
+    public Integer getMaxInlinedValueObjectFields() {
+        return maxInlinedValueObjectFields;
+    }
+
+    /**
+     * Whether the classes taking part in a flow show only the methods called in it.
+     *
+     * @return true if only the methods called in the flows are shown.
+     */
+    public Boolean getShowOnlyFlowMethods() {
+        return showOnlyFlowMethods;
+    }
+
+    /**
+     * Whether classes calling each other in a flow are connected, if nothing else connects them.
+     *
+     * @return true if the calls of the flows are drawn as relationships.
+     */
+    public Boolean getShowFlowCallRelations() {
+        return showFlowCallRelations;
+    }
+
+    /**
+     * Whether a class is connected to the domain types its factory methods create.
+     *
+     * @return whether a class is connected to the domain types its factory methods create.
+     */
+    public Boolean getShowFactoryRelations() {
+        return showFactoryRelations;
     }
 
     /**
@@ -951,6 +1132,26 @@ public class PluginDiagramConfiguration {
      */
     public List<String> getIncludeConnectedToOutgoing() {
         return includeConnectedToOutgoing;
+    }
+
+    /**
+     * Gets up to how many steps the ingoing connections of {@link #getIncludeConnectedToIngoing()} are followed -
+     * "what leads to it".
+     *
+     * @return the number of steps, 0 or negative for the complete path, null for the diagrammer's default
+     */
+    public Integer getIncludeConnectedToIngoingDepth() {
+        return includeConnectedToIngoingDepth;
+    }
+
+    /**
+     * Gets up to how many steps the outgoing connections of {@link #getIncludeConnectedToOutgoing()} are followed -
+     * "what does it lead to".
+     *
+     * @return the number of steps, 0 or negative for the complete path, null for the diagrammer's default
+     */
+    public Integer getIncludeConnectedToOutgoingDepth() {
+        return includeConnectedToOutgoingDepth;
     }
 
     /**
@@ -1064,6 +1265,20 @@ public class PluginDiagramConfiguration {
     }
 
     /**
+     * Gets the flow target points the diagram is restricted to - the backward counterpart of
+     * {@link #getIncludeFlowsFrom()}: instead of "what does this lead to", it restricts the diagram
+     * to "what leads into this", the entry channels through which a type or method is reached. Same
+     * entry syntax and requirements as {@link #getIncludeFlowsFrom()}, except a domain command can
+     * never be a target. If both are configured, their reached types are united. Configuring this
+     * triggers a static analysis of the compiled domain classes during diagram generation.
+     *
+     * @return the flow target points.
+     */
+    public List<String> getIncludeFlowsTo() {
+        return includeFlowsTo;
+    }
+
+    /**
      * Gets the maximum depth a flow is followed to, when flow-based filtering is enabled.
      *
      * @return the maximum flow depth, unlimited if unset.
@@ -1108,5 +1323,23 @@ public class PluginDiagramConfiguration {
      */
     public List<String> getStaticAnalysisPackages() {
         return staticAnalysisPackages;
+    }
+
+    /**
+     * Gets the packages whose types, as supertypes, exclude a class from the mirrored non-domain classes.
+     *
+     * @return the excluded supertype packages, {@code null} or empty for the default ({@code org.jooq})
+     */
+    public List<String> getNonDomainExcludedSupertypePackages() {
+        return nonDomainExcludedSupertypePackages;
+    }
+
+    /**
+     * Gets the packages whose classes are not mirrored as non-domain classes.
+     *
+     * @return the excluded packages, or {@code null} for none
+     */
+    public List<String> getNonDomainExcludedPackages() {
+        return nonDomainExcludedPackages;
     }
 }

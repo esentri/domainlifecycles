@@ -21,6 +21,7 @@ interfaces are treated as first-class DLC domain types.
 | `@ValueObject` | `VALUE_OBJECT` |
 | `@Repository` | `REPOSITORY` |
 | `@Service` | `DOMAIN_SERVICE` |
+| `@Factory` | `FACTORY` (its public methods returning a domain object are its factory methods) |
 | `@DomainEvent` | `DOMAIN_EVENT` |
 
 **Interfaces** (`org.jmolecules.ddd.types.*` and `org.jmolecules.event.types.*`):
@@ -41,10 +42,18 @@ Projects can freely mix DLC native types and jMolecules types in the same bounde
 `AggregateRoot` in the same package implements `org.jmolecules.ddd.types.AggregateRoot`. Both will be correctly
 recognized and included in the domain mirror.
 
+### Bounded Contexts
+
+In addition to DLC's own `@io.domainlifecycles.domain.types.BoundedContext` package annotation (see
+[mirror](../mirror/readme.md#bounded-contexts)), this extension also recognizes jMolecules' structurally
+equivalent `@org.jmolecules.ddd.annotation.BoundedContext` package annotation to derive Bounded Context
+boundaries - so projects that only use jMolecules' own annotations don't need to add a DLC-specific one.
+
 ## Key classes
 
 - **`ExtendedJMoleculesDomainMirrorFactory`** — drop-in replacement for `ReflectiveDomainMirrorFactory`; scans for both
-  DLC and jMolecules domain types.
+  DLC and jMolecules domain types. Also honors `setIncludeNonDomainClasses` (see [mirror](../mirror/readme.md#mirroring-non-domain-classes)),
+  since this is the factory the Gradle/Maven diagram plugins use internally.
 - **`ExtendedJMoleculesDomainTypeDetector`** — extends the default detector with jMolecules interface and annotation checks.
 - **`ExtendedJMoleculesDomainTypesScanner`** — extends the classpath scanner to also pick up classes identified via
   jMolecules annotations and interfaces.

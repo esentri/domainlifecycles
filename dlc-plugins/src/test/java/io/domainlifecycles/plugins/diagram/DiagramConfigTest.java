@@ -27,12 +27,15 @@
 package io.domainlifecycles.plugins.diagram;
 
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
+import io.domainlifecycles.plugins.exception.DLCPluginsException;
 import io.domainlifecycles.staticanalysis.FlowConfig;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class DiagramConfigTest {
 
@@ -69,6 +72,99 @@ public class DiagramConfigTest {
         assertThat(mapped.getLayoutSettings().getDirection()).isEqualTo("TB");
         assertThat(mapped.getLayoutSettings().getRanker()).isEqualTo("network-simplex");
         assertThat(mapped.getLayoutSettings().getAcycler()).isEqualTo("greedy");
+    }
+
+    @Test
+    void mapCopiesTheMaximalNumberOfFieldsOfInlinedValueObjects() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setMaxInlinedValueObjectFields(4);
+
+        assertThat(diagramConfig.map().getGeneralVisualSettings().getMaxInlinedValueObjectFields()).isEqualTo(4);
+        assertThat(new DiagramConfig().map().getGeneralVisualSettings().getMaxInlinedValueObjectFields())
+            .as("unset, the diagrammer's default applies")
+            .isEqualTo(2);
+    }
+
+    @Test
+    void mapCopiesWhetherOnlyTheMethodsCalledInFlowsAreShown() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setShowOnlyFlowMethods(false);
+
+        assertThat(diagramConfig.map().getGeneralVisualSettings().isShowOnlyFlowMethods()).isFalse();
+        assertThat(new DiagramConfig().map().getGeneralVisualSettings().isShowOnlyFlowMethods())
+            .as("unset, the diagrammer's default applies")
+            .isTrue();
+    }
+
+    @Test
+    void mapCopiesTheFactorySettings() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setFactoryStyle("fill=#123456 bold");
+        diagramConfig.setShowFactories(false);
+        diagramConfig.setShowFactoryFields(true);
+        diagramConfig.setShowFactoryMethods(false);
+        diagramConfig.setShowFactoryRelations(false);
+
+        var mapped = diagramConfig.map();
+
+        assertThat(mapped.getStyleSettings().getFactoryStyle()).isEqualTo("fill=#123456 bold");
+        assertThat(mapped.getGeneralVisualSettings().isShowFactories()).isFalse();
+        assertThat(mapped.getGeneralVisualSettings().isShowFactoryFields()).isTrue();
+        assertThat(mapped.getGeneralVisualSettings().isShowFactoryMethods()).isFalse();
+        assertThat(mapped.getGeneralVisualSettings().isShowFactoryRelations()).isFalse();
+    }
+
+    @Test
+    void mapKeepsTheDiagrammersFactoryDefaults_When_TheFactorySettingsAreUnset() {
+        var mapped = new DiagramConfig().map();
+
+        assertThat(mapped.getGeneralVisualSettings().isShowFactories()).isTrue();
+        assertThat(mapped.getGeneralVisualSettings().isShowFactoryFields()).isFalse();
+        assertThat(mapped.getGeneralVisualSettings().isShowFactoryMethods()).isTrue();
+        assertThat(mapped.getGeneralVisualSettings().isShowFactoryRelations()).isTrue();
+        assertThat(mapped.getStyleSettings().getFactoryStyle()).isNotBlank();
+    }
+
+    @Test
+    void mapCopiesTheDepthsOfTheConnectionsFollowed() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setIncludeConnectedToIngoingDepth(2);
+        diagramConfig.setIncludeConnectedToOutgoingDepth(-1);
+
+        var trimSettings = diagramConfig.map().getDiagramTrimSettings();
+
+        assertThat(trimSettings.getIncludeConnectedToIngoingDepth()).isEqualTo(2);
+        assertThat(trimSettings.getIncludeConnectedToOutgoingDepth()).isEqualTo(-1);
+    }
+
+    @Test
+    void mapFollowsTheCompletePathOfTheConnections_When_TheDepthsAreUnset() {
+        var trimSettings = new DiagramConfig().map().getDiagramTrimSettings();
+
+        assertThat(trimSettings.getIncludeConnectedToIngoingDepth()).isZero();
+        assertThat(trimSettings.getIncludeConnectedToOutgoingDepth()).isZero();
+    }
+
+    @Test
+    void mapCopiesWhetherOnlyTheFramesOfTheAggregatesAreShown() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setShowOnlyAggregateFrames(true);
+
+        assertThat(diagramConfig.map().getGeneralVisualSettings().isShowOnlyAggregateFrames()).isTrue();
+        assertThat(new DiagramConfig().map().getGeneralVisualSettings().isShowOnlyAggregateFrames())
+            .as("unset, the diagrammer's default applies")
+            .isFalse();
+    }
+
+    @Test
+    void mapCopiesWhetherTheCallsOfTheFlowsAreDrawn() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setShowFlowCallRelations(true);
+
+        assertThat(diagramConfig.map().getGeneralVisualSettings().isShowFlowCallRelations()).isTrue();
+        assertThat(new DiagramConfig().map().getGeneralVisualSettings().isShowFlowCallRelations())
+            .as("unset, the diagrammer's default applies")
+            .isFalse();
     }
 
     @Test
@@ -176,6 +272,16 @@ public class DiagramConfigTest {
     }
 
     @Test
+    void mapCopiesIncludeFlowsToIntoTrimSettings() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setIncludeFlowsTo(List.of("com.example.order.OrderPlaced"));
+
+        DomainDiagramConfig mapped = diagramConfig.map();
+
+        assertThat(mapped.getDiagramTrimSettings().getIncludeFlowsTo()).containsExactly("com.example.order.OrderPlaced");
+    }
+
+    @Test
     void mapWithoutAnyFlowSettingKeepsDefaultFlowConfig() {
         FlowConfig defaults = FlowConfig.defaults();
 
@@ -226,5 +332,63 @@ public class DiagramConfigTest {
 
         assertThat(diagramConfig.getFileType()).isEqualTo(FileType.SVG);
         assertThat(diagramConfig.getFileName()).isEqualTo("myDiagram");
+    }
+
+    @Test
+    void nonDomainClassFilterExcludesJooqGeneratedClassesByDefault() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+
+        var filter = diagramConfig.nonDomainClassFilter();
+
+        assertThat(filter.excludedSupertypePackages()).containsExactly("org.jooq");
+        assertThat(filter.excludedPackages()).isEmpty();
+    }
+
+    @Test
+    void nonDomainClassFilterUsesConfiguredExclusions() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setNonDomainExcludedSupertypePackages(List.of("com.example.codegen"));
+        diagramConfig.setNonDomainExcludedPackages(List.of("com.example.generated"));
+
+        var filter = diagramConfig.nonDomainClassFilter();
+
+        assertThat(filter.excludedSupertypePackages()).containsExactly("com.example.codegen");
+        assertThat(filter.excludedPackages()).containsExactly("com.example.generated");
+    }
+
+    @Test
+    void nonDomainClassFilterTreatsEmptySupertypePackagesAsDefault() {
+        // Maven injects an empty list for an unconfigured list parameter (verified with -X), Gradle
+        // list properties default to an empty list - both must keep the default exclusion of jOOQ code
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setNonDomainExcludedSupertypePackages(List.of());
+        diagramConfig.setNonDomainExcludedPackages(List.of());
+
+        var filter = diagramConfig.nonDomainClassFilter();
+
+        assertThat(filter.excludedSupertypePackages()).containsExactly("org.jooq");
+        assertThat(filter.excludedPackages()).isEmpty();
+    }
+
+    @Test
+    void callRelationsSwitchedOnWithoutAFlowAreRejected() {
+        DiagramConfig diagramConfig = new DiagramConfig();
+        diagramConfig.setShowFlowCallRelations(true);
+
+        assertThatThrownBy(() -> DiagramGeneratorImpl.requireFlowForCallRelations(diagramConfig, false))
+            .isInstanceOf(DLCPluginsException.class)
+            .hasMessageContaining("showFlowCallRelations")
+            .hasMessageContaining("includeFlowsFrom or includeFlowsTo");
+    }
+
+    @Test
+    void callRelationsWithAFlowOrSwitchedOffAreAccepted() {
+        DiagramConfig switchedOn = new DiagramConfig();
+        switchedOn.setShowFlowCallRelations(true);
+
+        assertThatCode(() -> DiagramGeneratorImpl.requireFlowForCallRelations(switchedOn, true))
+            .doesNotThrowAnyException();
+        assertThatCode(() -> DiagramGeneratorImpl.requireFlowForCallRelations(new DiagramConfig(), false))
+            .doesNotThrowAnyException();
     }
 }

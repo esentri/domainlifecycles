@@ -183,6 +183,20 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
     public abstract Property<String> getOutboundServiceStyle();
 
     /**
+     * Gets the style for factories in the diagram.
+     *
+     * @return the style for factories in the diagram
+     */
+    public abstract Property<String> getFactoryStyle();
+
+    /**
+     * Gets the style for non-domain classes in the diagram.
+     *
+     * @return the style for non-domain classes in the diagram
+     */
+    public abstract Property<String> getNonDomainClassStyle();
+
+    /**
      * Gets the font style for the diagram.
      *
      * @return the font style for the diagram
@@ -279,6 +293,13 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
      * @return true if methods of aggregates should be shown, false otherwise
      */
     public abstract Property<Boolean> getShowAggregateMethods();
+
+    /**
+     * Indicates whether Aggregates are drawn as their frame only, without the classes, relationships and notes inside.
+     *
+     * @return true if only the frames of the Aggregates should be shown, false otherwise
+     */
+    public abstract Property<Boolean> getShowOnlyAggregateFrames();
 
     /**
      * Indicates whether domain events should be shown in the diagram.
@@ -457,6 +478,27 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
     public abstract Property<Boolean> getShowOutboundServiceMethods();
 
     /**
+     * Indicates whether factories should be shown in the diagram.
+     *
+     * @return true if factories should be shown, false otherwise
+     */
+    public abstract Property<Boolean> getShowFactories();
+
+    /**
+     * Indicates whether fields of factories should be shown in the diagram.
+     *
+     * @return true if fields of factories should be shown, false otherwise
+     */
+    public abstract Property<Boolean> getShowFactoryFields();
+
+    /**
+     * Indicates whether methods of factories should be shown in the diagram.
+     *
+     * @return true if methods of factories should be shown, false otherwise
+     */
+    public abstract Property<Boolean> getShowFactoryMethods();
+
+    /**
      * Indicates whether unspecified service kinds should be shown in the diagram.
      *
      * @return true if unspecified service kinds should be shown, false otherwise
@@ -476,6 +518,55 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
      * @return true if methods of unspecified service kinds should be shown, false otherwise
      */
     public abstract Property<Boolean> getShowUnspecifiedServiceKindMethods();
+
+    /**
+     * Indicates whether non-domain classes should be shown in the diagram.
+     *
+     * @return true if non-domain classes should be shown, false otherwise
+     */
+    public abstract Property<Boolean> getShowNonDomainClasses();
+
+    /**
+     * Indicates whether fields of non-domain classes should be shown in the diagram.
+     *
+     * @return true if fields of non-domain classes should be shown, false otherwise
+     */
+    public abstract Property<Boolean> getShowNonDomainClassFields();
+
+    /**
+     * Indicates whether methods of non-domain classes should be shown in the diagram.
+     *
+     * @return true if methods of non-domain classes should be shown, false otherwise
+     */
+    public abstract Property<Boolean> getShowNonDomainClassMethods();
+
+    /**
+     * Up to how many fields a value object is shown inline, as field of the class referencing it.
+     *
+     * @return the maximal number of fields of an inlined value object, 0 to inline none
+     */
+    public abstract Property<Integer> getMaxInlinedValueObjectFields();
+
+    /**
+     * Whether the classes taking part in a flow show only the methods called in it.
+     *
+     * @return true if only the methods called in the flows are shown
+     */
+    public abstract Property<Boolean> getShowOnlyFlowMethods();
+
+    /**
+     * Whether classes calling each other in a flow are connected, if nothing else connects them.
+     *
+     * @return true if the calls of the flows are drawn as relationships
+     */
+    public abstract Property<Boolean> getShowFlowCallRelations();
+
+    /**
+     * Whether a class is connected to the domain types its factory methods create.
+     *
+     * @return true if the factory relations are drawn
+     */
+    public abstract Property<Boolean> getShowFactoryRelations();
 
     /**
      * Indicates whether the application service should be called 'driver'.
@@ -546,6 +637,22 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
      * @return ListProperty of class names to include based on outgoing connections
      */
     public abstract ListProperty<String> getIncludeConnectedToOutgoing();
+
+    /**
+     * Gets up to how many steps the ingoing connections of {@link #getIncludeConnectedToIngoing()} are followed -
+     * "what leads to it". 0 or negative follows the complete path.
+     *
+     * @return Property of the number of steps
+     */
+    public abstract Property<Integer> getIncludeConnectedToIngoingDepth();
+
+    /**
+     * Gets up to how many steps the outgoing connections of {@link #getIncludeConnectedToOutgoing()} are followed -
+     * "what does it lead to". 0 or negative follows the complete path.
+     *
+     * @return Property of the number of steps
+     */
+    public abstract Property<Integer> getIncludeConnectedToOutgoingDepth();
 
     /**
      * Gets the list of classes to exclude from the diagram based on their ingoing connections.
@@ -634,8 +741,20 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
     public abstract ListProperty<String> getIncludeFlowsFrom();
 
     /**
+     * Retrieves the flow target points the diagram is restricted to - the backward counterpart of
+     * {@link #getIncludeFlowsFrom()}: instead of "what does this lead to", it restricts the diagram
+     * to "what leads into this", the entry channels through which a type or method is reached. Same
+     * entry syntax and requirements as {@link #getIncludeFlowsFrom()}, except a domain command can
+     * never be a target. If both are configured, their reached types are united. Configuring this
+     * triggers a static analysis of the compiled domain classes during diagram generation.
+     *
+     * @return a ListProperty containing the flow target points.
+     */
+    public abstract ListProperty<String> getIncludeFlowsTo();
+
+    /**
      * Retrieves the maximum depth a flow is followed to, when flow-based filtering is enabled via
-     * {@link #getIncludeFlowsFrom()}.
+     * {@link #getIncludeFlowsFrom()} or {@link #getIncludeFlowsTo()}.
      *
      * @return a Property containing the maximum flow depth, unlimited if unset.
      */
@@ -671,4 +790,22 @@ public abstract class PluginDiagramConfigurationExtension implements Named {
      * @return a ListProperty containing the packages to restrict the static analysis to.
      */
     public abstract ListProperty<String> getStaticAnalysisPackages();
+
+    /**
+     * Packages whose types, as superclass or interface (direct or inherited), exclude a class from being
+     * mirrored as non-domain class. Defaults to {@code org.jooq}, which leaves out the code jOOQ generates
+     * for tables, records, schemas and catalogs; an empty list also means this default. Switching the
+     * exclusion off is only possible via the mirror API.
+     *
+     * @return a ListProperty containing the excluded supertype packages
+     */
+    public abstract ListProperty<String> getNonDomainExcludedSupertypePackages();
+
+    /**
+     * Packages whose classes are not mirrored as non-domain classes, e.g. generated code without a common
+     * supertype. Defaults to none.
+     *
+     * @return a ListProperty containing the excluded packages
+     */
+    public abstract ListProperty<String> getNonDomainExcludedPackages();
 }

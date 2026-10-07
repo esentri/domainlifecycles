@@ -72,6 +72,8 @@ public class DiagramConfigMapper {
         diagramConfig.setReadModelStyle(extension.getReadModelStyle().getOrNull());
         diagramConfig.setQueryHandlerStyle(extension.getQueryHandlerStyle().getOrNull());
         diagramConfig.setOutboundServiceStyle(extension.getOutboundServiceStyle().getOrNull());
+        diagramConfig.setFactoryStyle(extension.getFactoryStyle().getOrNull());
+        diagramConfig.setNonDomainClassStyle(extension.getNonDomainClassStyle().getOrNull());
         diagramConfig.setFont(extension.getFont().getOrNull());
         diagramConfig.setDirection(extension.getDirection().getOrNull());
         diagramConfig.setRanker(extension.getRanker().getOrNull());
@@ -86,6 +88,7 @@ public class DiagramConfigMapper {
         diagramConfig.setShowAggregates(extension.getShowAggregates().getOrNull());
         diagramConfig.setShowAggregateFields(extension.getShowAggregateFields().getOrNull());
         diagramConfig.setShowAggregateMethods(extension.getShowAggregateMethods().getOrNull());
+        diagramConfig.setShowOnlyAggregateFrames(extension.getShowOnlyAggregateFrames().getOrNull());
         diagramConfig.setShowDomainEvents(extension.getShowDomainEvents().getOrNull());
         diagramConfig.setShowDomainEventFields(extension.getShowDomainEventFields().getOrNull());
         diagramConfig.setShowDomainEventMethods(extension.getShowDomainEventMethods().getOrNull());
@@ -111,9 +114,19 @@ public class DiagramConfigMapper {
         diagramConfig.setShowOutboundServices(extension.getShowOutboundServices().getOrNull());
         diagramConfig.setShowOutboundServiceFields(extension.getShowOutboundServiceFields().getOrNull());
         diagramConfig.setShowOutboundServiceMethods(extension.getShowOutboundServiceMethods().getOrNull());
+        diagramConfig.setShowFactories(extension.getShowFactories().getOrNull());
+        diagramConfig.setShowFactoryFields(extension.getShowFactoryFields().getOrNull());
+        diagramConfig.setShowFactoryMethods(extension.getShowFactoryMethods().getOrNull());
         diagramConfig.setShowUnspecifiedServiceKinds(extension.getShowUnspecifiedServiceKinds().getOrNull());
         diagramConfig.setShowUnspecifiedServiceKindFields(extension.getShowUnspecifiedServiceKindFields().getOrNull());
         diagramConfig.setShowUnspecifiedServiceKindMethods(extension.getShowUnspecifiedServiceKindMethods().getOrNull());
+        diagramConfig.setShowNonDomainClasses(extension.getShowNonDomainClasses().getOrNull());
+        diagramConfig.setShowNonDomainClassFields(extension.getShowNonDomainClassFields().getOrNull());
+        diagramConfig.setShowNonDomainClassMethods(extension.getShowNonDomainClassMethods().getOrNull());
+        diagramConfig.setMaxInlinedValueObjectFields(extension.getMaxInlinedValueObjectFields().getOrNull());
+        diagramConfig.setShowOnlyFlowMethods(extension.getShowOnlyFlowMethods().getOrNull());
+        diagramConfig.setShowFlowCallRelations(extension.getShowFlowCallRelations().getOrNull());
+        diagramConfig.setShowFactoryRelations(extension.getShowFactoryRelations().getOrNull());
         diagramConfig.setCallApplicationServiceDriver(extension.getCallApplicationServiceDriver().getOrNull());
         diagramConfig.setFieldBlacklist(extension.getFieldBlacklist().getOrNull());
         diagramConfig.setMethodBlacklist(extension.getMethodBlacklist().getOrNull());
@@ -123,6 +136,8 @@ public class DiagramConfigMapper {
         diagramConfig.setFieldStereotypes(extension.getFieldStereotypes().getOrNull());
         diagramConfig.setIncludeConnectedToIngoing(extension.getIncludeConnectedToIngoing().getOrNull());
         diagramConfig.setIncludeConnectedToOutgoing(extension.getIncludeConnectedToOutgoing().getOrNull());
+        diagramConfig.setIncludeConnectedToIngoingDepth(extension.getIncludeConnectedToIngoingDepth().getOrNull());
+        diagramConfig.setIncludeConnectedToOutgoingDepth(extension.getIncludeConnectedToOutgoingDepth().getOrNull());
         diagramConfig.setIncludeConnectedTo(extension.getIncludeConnectedTo().getOrNull());
         diagramConfig.setExcludeConnectedToIngoing(extension.getExcludeConnectedToIngoing().getOrNull());
         diagramConfig.setExcludeConnectedToOutgoing(extension.getExcludeConnectedToOutgoing().getOrNull());
@@ -135,11 +150,14 @@ public class DiagramConfigMapper {
         diagramConfig.setShowRelationshipLabels(extension.getShowRelationshipLabels().getOrNull());
         diagramConfig.setShowRelationshipStereotypes(extension.getShowRelationshipStereotypes().getOrNull());
         diagramConfig.setIncludeFlowsFrom(extension.getIncludeFlowsFrom().getOrNull());
+        diagramConfig.setIncludeFlowsTo(extension.getIncludeFlowsTo().getOrNull());
         diagramConfig.setFlowMaxDepth(extension.getFlowMaxDepth().getOrNull());
         diagramConfig.setFlowFollowEvents(extension.getFlowFollowEvents().getOrNull());
         diagramConfig.setFlowFollowImplementations(extension.getFlowFollowImplementations().getOrNull());
         diagramConfig.setFlowExcludeAccessors(extension.getFlowExcludeAccessors().getOrNull());
         diagramConfig.setStaticAnalysisPackages(extension.getStaticAnalysisPackages().getOrNull());
+        diagramConfig.setNonDomainExcludedSupertypePackages(extension.getNonDomainExcludedSupertypePackages().getOrNull());
+        diagramConfig.setNonDomainExcludedPackages(extension.getNonDomainExcludedPackages().getOrNull());
         return diagramConfig;
     }
 }

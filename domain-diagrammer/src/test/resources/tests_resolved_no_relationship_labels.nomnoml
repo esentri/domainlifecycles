@@ -32,9 +32,15 @@
 #.OS:fill=#C0C0C0 bold
 #.OS_R:fill=#C0C0C0 bold;stroke=#FF0000
 #.OS_N:fill=#C0C0C0 bold;stroke=#108738
+#.F:fill=#E0F0E0 bold
+#.F_R:fill=#E0F0E0 bold;stroke=#FF0000
+#.F_N:fill=#E0F0E0 bold;stroke=#108738
 #.SK:fill=#C0C0C0 bold
 #.SK_R:fill=#C0C0C0 bold;stroke=#FF0000
 #.SK_N:fill=#C0C0C0 bold;stroke=#108738
+#.ND:fill=#EAEAEA
+#.ND_R:fill=#EAEAEA;stroke=#FF0000
+#.ND_N:fill=#EAEAEA;stroke=#108738
 #.QH:fill=#C0C0C0 bold
 #.QH_R:fill=#C0C0C0 bold;stroke=#FF0000
 #.QH_N:fill=#C0C0C0 bold;stroke=#108738
@@ -48,81 +54,75 @@
 #background: transparent
 #.note: fill=#ffffff italic
 
-// !!! tests.shared.complete.onlinehandel.zustellung.StarteAuslieferung !!!
-[<DC> StarteAuslieferung <<DomainCommand>> ]
+// !!! tests.shared.complete.ecommerce.delivery.StartDelivery !!!
+[<DC> StartDelivery <<DomainCommand>> ]
 // !!! tests.shared.inheritance.ConcreteDomainCommand !!!
 [<DC> ConcreteDomainCommand <<DomainCommand>> ]
-// !!! tests.shared.complete.onlinehandel.benachrichtigung.BenachrichtigungService !!!
-[<DS> BenachrichtigungService <<DomainService>> |
-+ void benachrichtige(\# AuslieferungGestartet)
+// !!! tests.shared.complete.ecommerce.delivery.DeliveryService !!!
+[<DS> DeliveryService <<DomainService>> |
++ void deliver(StartDelivery)
 ]
-// !!! tests.shared.complete.onlinehandel.zustellung.ZustellungsService !!!
-[<DS> ZustellungsService <<DomainService>> |
-+ void liefereAus(StarteAuslieferung)
+// !!! tests.shared.complete.ecommerce.notification.NotificationService !!!
+[<DS> NotificationService <<DomainService>> |
++ void notifyCustomer(\# DeliveryStarted)
 ]
-// !!! tests.shared.complete.onlinehandel.bestellung.NeueBestellung !!!
-[<DE> NeueBestellung <<DomainEvent>> ]
-// !!! tests.shared.complete.onlinehandel.zustellung.AuslieferungGestartet !!!
-[<DE> AuslieferungGestartet <<DomainEvent>> ]
+// !!! tests.shared.complete.ecommerce.delivery.DeliveryStarted !!!
+[<DE> DeliveryStarted <<DomainEvent>> ]
+// !!! tests.shared.complete.ecommerce.order.NewOrder !!!
+[<DE> NewOrder <<DomainEvent>> ]
 // !!! tests.shared.inheritance.ConcreteDomainEvent !!!
 [<DE> ConcreteDomainEvent <<DomainEvent>> ]
-// !!! {Frame} tests.shared.complete.onlinehandel.bestellung.BestellungBv3 !!!
-[<AF> BestellungBv3 <<Aggregate>>|
-// !!! tests.shared.complete.onlinehandel.bestellung.BestellungBv3 !!!
-[<AR> BestellungBv3 <<AggregateRoot>> |
-\# +- id:<ID> BestellungIdBv3
-o +- aktionsCodes:<VO> List<AktionsCodeBv3>
-\# +- kundennummer:<IDREF> KundennummerBv3
-\# +- prioritaet:Byte{>=1.0}{<=3.0}
+// !!! {Frame} tests.shared.complete.ecommerce.order.OrderBv3 !!!
+[<AF> OrderBv3 <<Aggregate>>|
+// !!! tests.shared.complete.ecommerce.order.OrderBv3 !!!
+[<AR> OrderBv3 <<AggregateRoot>> |
+\# +- id:<ID> OrderIdBv3
+\# +- customerNumber:<IDREF> CustomerNumberBv3
+\# +- priority:Byte{>=1.0}{<=3.0}
+o +- promoCodes:<VO> List<PromoCodeBv3>
+\# +- totalPrice:<VO> PriceBv3
 |
-+ void addBestellKommentar(BestellKommentarBv3)
-+ void addBestellPosition(BestellPositionBv3)
-+ void removeBestellKommentar(BestellKommentarBv3)
-+ void removeBestellPosition(BestellPositionBv3)
-+ void starteLieferung()
++ void addOrderComment(OrderCommentBv3)
++ void addOrderItem(OrderItemBv3)
++ void removeOrderComment(OrderCommentBv3)
++ void removeOrderItem(OrderItemBv3)
++ void startDelivery()
 ]
-// !!! tests.shared.complete.onlinehandel.bestellung.LieferadresseBv3 !!!
-[<E> LieferadresseBv3 <<Entity>> |
-\# +- id:<ID> LieferadresseIdBv3
+// !!! tests.shared.complete.ecommerce.order.DeliveryAddressBv3 !!!
+[<E> DeliveryAddressBv3 <<Entity>> |
+\# +- id:<ID> DeliveryAddressIdBv3
+\# +- city:String\[0,200\]
 \# +- name:String\[0,200\]
-\# +- ort:String\[0,200\]
-\# +- postleitzahl:String\[0,200\]
-\# +- strasse:String\[0,200\]
+\# +- postalCode:String\[0,200\]
+\# +- street:String\[0,200\]
 |
 ]
-// !!! tests.shared.complete.onlinehandel.bestellung.BestellPositionBv3 !!!
-[<E> BestellPositionBv3 <<Entity>> |
-\# +- id:<ID> BestellPositionIdBv3
-\# +- artikelId:<IDREF> ArtikelIdBv3
-o +- stueckzahl:int{>0}
+// !!! tests.shared.complete.ecommerce.order.OrderItemBv3 !!!
+[<E> OrderItemBv3 <<Entity>> |
+\# +- id:<ID> OrderItemIdBv3
+\# +- articleId:<IDREF> ArticleIdBv3
+o +- quantity:int{>0}
+\# +- unitPrice:<VO> PriceBv3
 |
 ]
-// !!! tests.shared.complete.onlinehandel.bestellung.PreisBv3 !!!
-[<VO> PreisBv3 <<ValueObject>> |
-\# +- betrag:BigDecimal{>0}
-\# +- waehrung:<ENUM> WaehrungEnumBv3
+// !!! tests.shared.complete.ecommerce.order.OrderStatusBv3 !!!
+[<E> OrderStatusBv3 <<Entity>> |
+\# +- id:<ID> OrderStatusIdBv3
+\# +- statusChangedAt:LocalDateTime
+\# +- statusCode:<ENUM> OrderStatusCodeEnumBv3
 |
 ]
-// !!! tests.shared.complete.onlinehandel.bestellung.BestellStatusBv3 !!!
-[<E> BestellStatusBv3 <<Entity>> |
-\# +- id:<ID> BestellStatusIdBv3
-\# +- statusAenderungAm:LocalDateTime
-\# +- statusCode:<ENUM> BestellStatusCodeEnumBv3
+// !!! tests.shared.complete.ecommerce.order.OrderCommentBv3 !!!
+[<E> OrderCommentBv3 <<Entity>> |
+\# +- id:<ID> OrderCommentIdBv3
+\# +- commentText:String\[0,1000\]{notEmpty}
+\# +- commentedAt:LocalDateTime{past}
 |
 ]
-// !!! tests.shared.complete.onlinehandel.bestellung.BestellKommentarBv3 !!!
-[<E> BestellKommentarBv3 <<Entity>> |
-\# +- id:<ID> BestellKommentarIdBv3
-\# +- kommentarAm:LocalDateTime{past}
-\# +- kommentarText:String\[0,1000\]{notEmpty}
-|
-]
-[<AR>BestellungBv3 <<AggregateRoot>>]  +- [<E>LieferadresseBv3 <<Entity>>]
-[<AR>BestellungBv3 <<AggregateRoot>>]  +- [<E>BestellPositionBv3 <<Entity>>]
-[<E>BestellPositionBv3 <<Entity>>]  +- [<VO>PreisBv3 <<ValueObject>>]
-[<AR>BestellungBv3 <<AggregateRoot>>]  +- [<E>BestellStatusBv3 <<Entity>>]
-[<AR>BestellungBv3 <<AggregateRoot>>]  +- [<VO>PreisBv3 <<ValueObject>>]
-[<AR>BestellungBv3 <<AggregateRoot>>]  +- [<E>BestellKommentarBv3 <<Entity>>]
+[<AR>OrderBv3 <<AggregateRoot>>]  +- [<E>DeliveryAddressBv3 <<Entity>>]
+[<AR>OrderBv3 <<AggregateRoot>>]  +- [<E>OrderItemBv3 <<Entity>>]
+[<AR>OrderBv3 <<AggregateRoot>>]  +- [<E>OrderStatusBv3 <<Entity>>]
+[<AR>OrderBv3 <<AggregateRoot>>]  +- [<E>OrderCommentBv3 <<Entity>>]
 ]
 // !!! {Frame} tests.shared.persistence.domain.arrays.TestRootArray !!!
 [<AF> TestRootArray <<Aggregate>>|
@@ -136,8 +136,8 @@ o +- payload:byte\[\]
 // !!! tests.shared.persistence.domain.arrays.CryptoVo !!!
 [<VO> CryptoVo <<ValueObject>> |
 o +- chiffrat:byte\[\]
+o +- keyVersion:long
 o +- salt:byte\[\]
-o +- schluesselVersion:long
 |
 ]
 [<AR>TestRootArray <<AggregateRoot>>]  +- [<VO>CryptoVo <<ValueObject>>]
@@ -272,19 +272,13 @@ o +- brand:<ENUM> Car$Brand
 // !!! tests.shared.persistence.domain.inheritanceExtended.BikeWithComponents !!!
 [<AR> BikeWithComponents <<AggregateRoot>> |
 \# +- id:<ID> VehicleExtendedId
+o +- bikeComponents:<VO> List<BikeComponent>
 o +- gears:int
 \# +- lengthCm:Integer{<=1000}
 o +- type:String
 |
 ]
-// !!! tests.shared.persistence.domain.inheritanceExtended.BikeComponent !!!
-[<VO> BikeComponent <<ValueObject>> |
-o +- manufacturer:String
-o +- type:<ENUM> BikeComponent$BikeComponentType
-|
-]
 [<AR>VehicleExtended <<AggregateRoot>>]  <:- [<AR>BikeWithComponents <<AggregateRoot>>]
-[<AR>BikeWithComponents <<AggregateRoot>>]  +- [<VO>BikeComponent <<ValueObject>>]
 ]
 // !!! {Frame} tests.shared.persistence.domain.inheritanceExtended.CarWithEngine !!!
 [<AF> CarWithEngine <<Aggregate>>|
@@ -320,7 +314,7 @@ o +- type:String
 [<AF> AbstractRoot <<Aggregate>>|
 // !!! tests.shared.persistence.domain.inheritanceGenericId.AbstractRoot !!!
 [<AR> AbstractRoot <<AggregateRoot>> |
-\# -- myId:<ID> Object
+\# -- myId:<ID> Identity
 o -- name:String
 |
 ]
@@ -370,38 +364,20 @@ o +- name:String
 [<AF> VoAggregateThreeLevel <<Aggregate>>|
 // !!! tests.shared.persistence.domain.multilevelvo.VoAggregateThreeLevel !!!
 [<AR> VoAggregateThreeLevel <<AggregateRoot>> |
-\# +- identifikationsNummer:<ID> VoAggregateThreeLevelId
+\# +- identificationNumber:<ID> VoAggregateThreeLevelId
 o +- info:String
+o +- myComplexVo:<VO> ComplexVo
 |
 + void setComplexVo(ComplexVo)
 ]
 // !!! tests.shared.persistence.domain.multilevelvo.ThreeLevelVo !!!
 [<VO> ThreeLevelVo <<ValueObject>> |
+o +- levelTwoA:<VO> ThreeLevelVoLevelTwo
+o +- levelTwoB:<VO> ThreeLevelVoLevelTwo
 o +- ownValue:long
 |
 ]
-// !!! tests.shared.persistence.domain.multilevelvo.ThreeLevelVoLevelTwo !!!
-[<VO> ThreeLevelVoLevelTwo <<ValueObject>> |
-|
-]
-// !!! tests.shared.persistence.domain.multilevelvo.ThreeLevelVoLevelThree !!!
-[<VO> ThreeLevelVoLevelThree <<ValueObject>> |
-o +- another:String
-o +- text:String
-|
-]
-// !!! tests.shared.persistence.domain.valueobjects.ComplexVo !!!
-[<VO> ComplexVo <<ValueObject>> |
-o +- valueA:String
-o +- valueB:<VO> SimpleVo
-|
-]
 [<AR>VoAggregateThreeLevel <<AggregateRoot>>]  +- [<VO>ThreeLevelVo <<ValueObject>>]
-[<VO>ThreeLevelVo <<ValueObject>>]  +- [<VO>ThreeLevelVoLevelTwo <<ValueObject>>]
-[<VO>ThreeLevelVoLevelTwo <<ValueObject>>]  +- [<VO>ThreeLevelVoLevelThree <<ValueObject>>]
-[<VO>ThreeLevelVoLevelTwo <<ValueObject>>]  +- [<VO>ThreeLevelVoLevelThree <<ValueObject>>]
-[<VO>ThreeLevelVo <<ValueObject>>]  +- [<VO>ThreeLevelVoLevelTwo <<ValueObject>>]
-[<AR>VoAggregateThreeLevel <<AggregateRoot>>]  +- [<VO>ComplexVo <<ValueObject>>]
 ]
 // !!! {Frame} tests.shared.persistence.domain.oneToMany.TestRootOneToMany !!!
 [<AF> TestRootOneToMany <<Aggregate>>|
@@ -419,6 +395,28 @@ o +- testRootId:<IDREF> TestRootOneToManyId
 |
 ]
 [<AR>TestRootOneToMany <<AggregateRoot>>]  +- [<E>TestEntityOneToMany <<Entity>>]
+]
+// !!! {Frame} tests.shared.persistence.domain.oneToManyIdentityEnum.RootIdEnumList !!!
+[<AF> RootIdEnumList <<Aggregate>>|
+// !!! tests.shared.persistence.domain.oneToManyIdentityEnum.RootIdEnumList !!!
+[<AR> RootIdEnumList <<AggregateRoot>> |
+\# +- id:<ID> RootIdEnumListId
+o +- enumList:<ENUM> List<MyEnum>
+o +- idList:<IDREF> List<MyId>
+o +- name:String
+o +- uuidIdList:<IDREF> List<MyUuidId>
+o +- valueWithListsList:<VO> List<ValueWithLists>
+|
+]
+// !!! tests.shared.persistence.domain.oneToManyIdentityEnum.EntityIdEnumList !!!
+[<E> EntityIdEnumList <<Entity>> |
+\# +- id:<ID> EntityIdEnumList$EntityIdEnumListId
+o +- enumList:<ENUM> List<MyEnum>
+o +- idList:<IDREF> List<MyId>
+o +- valueWithLists:<VO> ValueWithLists
+|
+]
+[<AR>RootIdEnumList <<AggregateRoot>>]  +- [<E>EntityIdEnumList <<Entity>>]
 ]
 // !!! {Frame} tests.shared.persistence.domain.oneToOneFollowingFK.TestRootOneToOneFollowing !!!
 [<AF> TestRootOneToOneFollowing <<Aggregate>>|
@@ -499,6 +497,8 @@ o +- optionalLong:Optional<Long>
 o +- optionalRefId:<IDREF> Optional<RefAggId>
 o +- optionalSimpleValueObject:<VO> Optional<MySimpleValueObject>
 o +- optionalText:Optional<String>
+o +- refValueObject:<VO> RefValueObject
+o +- refValueObjectList:<VO> List<RefValueObject>
 |
 ]
 // !!! tests.shared.persistence.domain.optional.MyComplexValueObject !!!
@@ -519,20 +519,12 @@ o +- optionalSimpleValueObject:<VO> Optional<MySimpleValueObject>
 o +- optionalText:Optional<String>
 |
 ]
-// !!! tests.shared.persistence.domain.optional.RefValueObject !!!
-[<VO> RefValueObject <<ValueObject>> |
-o +- mandatoryText:String
-o +- optionalRef:<IDREF> Optional<RefAggId>
-|
-]
 [<AR>OptionalAggregate <<AggregateRoot>>]  +- [<VO>MyComplexValueObject <<ValueObject>>]
 [<AR>OptionalAggregate <<AggregateRoot>>]  +- [<VO>MyComplexValueObject <<ValueObject>>]
 [<AR>OptionalAggregate <<AggregateRoot>>]  +- [<E>OptionalEntity <<Entity>>]
 [<E>OptionalEntity <<Entity>>]  +- [<VO>MyComplexValueObject <<ValueObject>>]
 [<E>OptionalEntity <<Entity>>]  +- [<VO>MyComplexValueObject <<ValueObject>>]
 [<E>OptionalEntity <<Entity>>]  +- [<VO>MyComplexValueObject <<ValueObject>>]
-[<AR>OptionalAggregate <<AggregateRoot>>]  +- [<VO>RefValueObject <<ValueObject>>]
-[<AR>OptionalAggregate <<AggregateRoot>>]  +- [<VO>RefValueObject <<ValueObject>>]
 ]
 // !!! {Frame} tests.shared.persistence.domain.optional.RefAgg !!!
 [<AF> RefAgg <<Aggregate>>|
@@ -550,17 +542,11 @@ o +- optionalText:Optional<String>
 [<AR> RecordTest <<AggregateRoot>> |
 \# +- id:<ID> RecordTestId
 o +- myValue:String
+o +- myVo:<VO> RecordVo
+o +- myVoList:<VO> List<RecordVo>
+o +- myVoSet:<VO> Set<RecordVo>
 |
 ]
-// !!! tests.shared.persistence.domain.records.RecordVo !!!
-[<VO> RecordVo <<ValueObject>> |
-\# +- value1:String{notEmpty}
-o +- value2:Long
-|
-]
-[<AR>RecordTest <<AggregateRoot>>]  +- [<VO>RecordVo <<ValueObject>>]
-[<AR>RecordTest <<AggregateRoot>>]  +- [<VO>RecordVo <<ValueObject>>]
-[<AR>RecordTest <<AggregateRoot>>]  +- [<VO>RecordVo <<ValueObject>>]
 ]
 // !!! {Frame} tests.shared.persistence.domain.shared.another.AnotherConfiguration !!!
 [<AF> AnotherConfiguration <<Aggregate>>|
@@ -670,51 +656,27 @@ o +- voList:<VO> List<TestVoUuid>
 // !!! tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedVoAggregateRoot !!!
 [<AR> AutoMappedVoAggregateRoot <<AggregateRoot>> |
 \# +- id:<ID> AutoMappedVoAggregateRootId
+o +- myComplexVo:<VO> AutoMappedComplexVo
 o +- mySimpleVo:<VO> AutoMappedSimpleVo
 o +- text:String
 o +- valueObjectsOneToMany:<VO> List<AutoMappedSimpleVoOneToMany>
+o +- valueObjectsOneToMany2:<VO> List<AutoMappedSimpleVoOneToMany2>
+o +- voIdentityRef:<VO> AutoMappedVoIdentityRef
 |
 + void setComplexVo(AutoMappedComplexVo)
 + void setSimpleVo(AutoMappedSimpleVo)
 ]
-// !!! tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedComplexVo !!!
-[<VO> AutoMappedComplexVo <<ValueObject>> |
-o +- valueA:String
-o +- valueB:<VO> AutoMappedSimpleVo
-|
-]
-// !!! tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedSimpleVoOneToMany2 !!!
-[<VO> AutoMappedSimpleVoOneToMany2 <<ValueObject>> |
-o +- oneToMany3Set:<VO> Set<AutoMappedSimpleVoOneToMany3>
-o +- value:String
-|
-]
 // !!! tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedVoEntity !!!
 [<E> AutoMappedVoEntity <<Entity>> |
 \# +- id:<ID> AutoMappedVoEntityId
+o +- myComplexVo:<VO> AutoMappedComplexVo
 o +- rootId:<IDREF> AutoMappedVoAggregateRootId
 o +- text:String
+o +- valueObjectsOneToMany:<VO> Set<AutoMappedVoOneToManyEntity>
 |
 + void setComplexVo(AutoMappedComplexVo)
 ]
-// !!! tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedVoOneToManyEntity !!!
-[<VO> AutoMappedVoOneToManyEntity <<ValueObject>> |
-o +- oneToManySet:<VO> Set<AutoMappedVoOneToManyEntity2>
-o +- value:String
-|
-]
-// !!! tests.shared.persistence.domain.valueobjectAutoMapping.AutoMappedVoIdentityRef !!!
-[<VO> AutoMappedVoIdentityRef <<ValueObject>> |
-o +- idRef:<IDREF> AutoMappedVoEntityId
-o +- value:String
-|
-]
-[<AR>AutoMappedVoAggregateRoot <<AggregateRoot>>]  +- [<VO>AutoMappedComplexVo <<ValueObject>>]
-[<AR>AutoMappedVoAggregateRoot <<AggregateRoot>>]  +- [<VO>AutoMappedSimpleVoOneToMany2 <<ValueObject>>]
 [<AR>AutoMappedVoAggregateRoot <<AggregateRoot>>]  +- [<E>AutoMappedVoEntity <<Entity>>]
-[<E>AutoMappedVoEntity <<Entity>>]  +- [<VO>AutoMappedVoOneToManyEntity <<ValueObject>>]
-[<E>AutoMappedVoEntity <<Entity>>]  +- [<VO>AutoMappedComplexVo <<ValueObject>>]
-[<AR>AutoMappedVoAggregateRoot <<AggregateRoot>>]  +- [<VO>AutoMappedVoIdentityRef <<ValueObject>>]
 ]
 // !!! {Frame} tests.shared.persistence.domain.valueobjectTwoLevel.VoAggregateTwoLevel !!!
 [<AF> VoAggregateTwoLevel <<Aggregate>>|
@@ -737,51 +699,27 @@ o +- third:<VO> VoLevelTwoB
 // !!! tests.shared.persistence.domain.valueobjects.VoAggregateRoot !!!
 [<AR> VoAggregateRoot <<AggregateRoot>> |
 \# +- id:<ID> VoAggregateRootId
+o +- myComplexVo:<VO> ComplexVo
 o +- mySimpleVo:<VO> SimpleVo
 o +- text:String
 o +- valueObjectsOneToMany:<VO> List<SimpleVoOneToMany>
+o +- valueObjectsOneToMany2:<VO> List<SimpleVoOneToMany2>
+o +- voIdentityRef:<VO> VoIdentityRef
 |
 + void setComplexVo(ComplexVo)
 + void setSimpleVo(SimpleVo)
 ]
-// !!! tests.shared.persistence.domain.valueobjects.ComplexVo !!!
-[<VO> ComplexVo <<ValueObject>> |
-o +- valueA:String
-o +- valueB:<VO> SimpleVo
-|
-]
-// !!! tests.shared.persistence.domain.valueobjects.SimpleVoOneToMany2 !!!
-[<VO> SimpleVoOneToMany2 <<ValueObject>> |
-o +- oneToMany3Set:<VO> Set<SimpleVoOneToMany3>
-o +- value:String
-|
-]
 // !!! tests.shared.persistence.domain.valueobjects.VoEntity !!!
 [<E> VoEntity <<Entity>> |
 \# +- id:<ID> VoEntityId
+o +- myComplexVo:<VO> ComplexVo
 o +- rootId:<IDREF> VoAggregateRootId
 o +- text:String
+o +- valueObjectsOneToMany:<VO> Set<VoOneToManyEntity>
 |
 + void setComplexVo(ComplexVo)
 ]
-// !!! tests.shared.persistence.domain.valueobjects.VoOneToManyEntity !!!
-[<VO> VoOneToManyEntity <<ValueObject>> |
-o +- oneToManySet:<VO> Set<VoOneToManyEntity2>
-o +- value:String
-|
-]
-// !!! tests.shared.persistence.domain.valueobjects.VoIdentityRef !!!
-[<VO> VoIdentityRef <<ValueObject>> |
-o +- idRef:<IDREF> VoEntityId
-o +- value:String
-|
-]
-[<AR>VoAggregateRoot <<AggregateRoot>>]  +- [<VO>ComplexVo <<ValueObject>>]
-[<AR>VoAggregateRoot <<AggregateRoot>>]  +- [<VO>SimpleVoOneToMany2 <<ValueObject>>]
 [<AR>VoAggregateRoot <<AggregateRoot>>]  +- [<E>VoEntity <<Entity>>]
-[<E>VoEntity <<Entity>>]  +- [<VO>VoOneToManyEntity <<ValueObject>>]
-[<E>VoEntity <<Entity>>]  +- [<VO>ComplexVo <<ValueObject>>]
-[<AR>VoAggregateRoot <<AggregateRoot>>]  +- [<VO>VoIdentityRef <<ValueObject>>]
 ]
 // !!! {Frame} tests.shared.persistence.domain.valueobjectsNested.VoAggregateNested !!!
 [<AF> VoAggregateNested <<Aggregate>>|
@@ -802,29 +740,17 @@ o +- nestedSimpleVoList:<VO> List<NestedSimpleVo>
 // !!! tests.shared.persistence.domain.valueobjectsPrimitive.VoAggregatePrimitive !!!
 [<AR> VoAggregatePrimitive <<AggregateRoot>> |
 \# +- id:<ID> VoAggregatePrimitiveId
+o +- complex:<VO> ComplexVoPrimitive
+o +- nested:<VO> NestedVoPrimitive
+o +- optionalComplex:<VO> Optional<ComplexVoPrimitive>
+o +- optionalNested:<VO> Optional<NestedVoPrimitive>
 o +- optionalSimple:<VO> Optional<SimpleVoPrimitive>
+o +- recordMappedComplex:<VO> ComplexVoPrimitive
+o +- recordMappedNested:<VO> NestedVoPrimitive
 o +- recordMappedSimple:<VO> SimpleVoPrimitive
 o +- simple:<VO> SimpleVoPrimitive
 |
 ]
-// !!! tests.shared.persistence.domain.valueobjectsPrimitive.ComplexVoPrimitive !!!
-[<VO> ComplexVoPrimitive <<ValueObject>> |
-o +- num:Long
-o +- val:long
-|
-]
-// !!! tests.shared.persistence.domain.valueobjectsPrimitive.NestedVoPrimitive !!!
-[<VO> NestedVoPrimitive <<ValueObject>> |
-o +- simple:<VO> SimpleVoPrimitive
-|
-]
-[<AR>VoAggregatePrimitive <<AggregateRoot>>]  +- [<VO>ComplexVoPrimitive <<ValueObject>>]
-[<AR>VoAggregatePrimitive <<AggregateRoot>>]  +- [<VO>NestedVoPrimitive <<ValueObject>>]
-[<VO>NestedVoPrimitive <<ValueObject>>]  +- [<VO>ComplexVoPrimitive <<ValueObject>>]
-[<AR>VoAggregatePrimitive <<AggregateRoot>>]  +- [<VO>ComplexVoPrimitive <<ValueObject>>]
-[<AR>VoAggregatePrimitive <<AggregateRoot>>]  +- [<VO>NestedVoPrimitive <<ValueObject>>]
-[<AR>VoAggregatePrimitive <<AggregateRoot>>]  +- [<VO>ComplexVoPrimitive <<ValueObject>>]
-[<AR>VoAggregatePrimitive <<AggregateRoot>>]  +- [<VO>NestedVoPrimitive <<ValueObject>>]
 ]
 // !!! {Frame} tests.shared.validation.jakarta.ValidatedAggregateRoot !!!
 [<AF> ValidatedAggregateRoot <<Aggregate>>|
@@ -834,31 +760,31 @@ o +- simple:<VO> SimpleVoPrimitive
 o +- optionalText:Optional<String\[0,10\]>
 \# +- text:String\[0,100\]{notEmpty}
 |
-+ void komischeBerechnungMitValidationError()
-+ ValidatedAggregateRoot optionalTextSetzenMitReturn(Optional<String{notBlank}>)
-+ ValidatedAggregateRoot textSetzenMitReturn(String)
-+ void textSetzenPrecondition(String{notBlank})
-+ String{notBlank} textSetzenReturnVal(String)
++ ValidatedAggregateRoot setOptionalTextWithReturn(Optional<String{notBlank}>)
++ void setTextPrecondition(String{notBlank})
++ String{notBlank} setTextReturnVal(String)
++ ValidatedAggregateRoot setTextWithReturn(String)
++ void strangeCalculationWithValidationError()
 ]
 ]
 [<AF> OptionalAggregate <<Aggregate>>]  --[<label> <<id-ref>> ] --> [<AF> RefAgg <<Aggregate>>]
 [<AF> OptionalAggregate <<Aggregate>>]  --[<label> <<id-ref>> ] --> [<AF> RefAgg <<Aggregate>>]
-// !!! tests.shared.complete.onlinehandel.bestellung.BestellungRepository !!!
-[<R> BestellungRepository <<Repository>> |
-+ BestellungIdBv3 create(\# BestellungBv3)
-+ Optional<BestellungBv3> deleteById(BestellungIdBv3)
-+ Optional<BestellungBv3> findById(\# BestellungIdBv3)
-+ Stream<BestellungBv3> findByStatus(\# BestellStatusCodeEnumBv3)
-+ BestellungBv3 insert(BestellungBv3)
-+ BestellungBv3 update(BestellungBv3)
+// !!! tests.shared.complete.ecommerce.order.OrderRepository !!!
+[<R> OrderRepository <<Repository>> |
++ OrderIdBv3 create(\# OrderBv3)
++ Optional<OrderBv3> deleteById(OrderIdBv3)
++ Optional<OrderBv3> findById(\# OrderIdBv3)
++ Stream<OrderBv3> findByStatus(\# OrderStatusCodeEnumBv3)
++ OrderBv3 insert(OrderBv3)
++ OrderBv3 update(OrderBv3)
 ]
 // !!! tests.shared.inheritance.ConcreteReadModel !!!
 [<RM> ConcreteReadModel <<ReadModel>> |
 o +- msg:String
 ]
-[<DC>StarteAuslieferung <<DomainCommand>>]  --[<label> <<is processed by>> ] --> [<DS>ZustellungsService <<DomainService>>]
-[<R>BestellungRepository <<Repository>>]  --[<label> <<publishes>> ] --> [<DE>NeueBestellung <<DomainEvent>>]
-[<DE>AuslieferungGestartet <<DomainEvent>>]  --[<label> <<notifies>> ] --> [<DS>BenachrichtigungService <<DomainService>>]
-[<AF> BestellungBv3 <<Aggregate>>]  --[<label> <<publishes>> ] --> [<DE>AuslieferungGestartet <<DomainEvent>>]
-[<DS>ZustellungsService <<DomainService>>]  -> [<R>BestellungRepository <<Repository>>]
-[<R>BestellungRepository <<Repository>>]  --> [<AF> BestellungBv3 <<Aggregate>>]
+[<DC>StartDelivery <<DomainCommand>>]  --[<label> <<is processed by>> ] --> [<DS>DeliveryService <<DomainService>>]
+[<DE>DeliveryStarted <<DomainEvent>>]  --[<label> <<notifies>> ] --> [<DS>NotificationService <<DomainService>>]
+[<AF> OrderBv3 <<Aggregate>>]  --[<label> <<publishes>> ] --> [<DE>DeliveryStarted <<DomainEvent>>]
+[<R>OrderRepository <<Repository>>]  --[<label> <<publishes>> ] --> [<DE>NewOrder <<DomainEvent>>]
+[<DS>DeliveryService <<DomainService>>]  -> [<R>OrderRepository <<Repository>>]
+[<R>OrderRepository <<Repository>>]  --> [<AF> OrderBv3 <<Aggregate>>]

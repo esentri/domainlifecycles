@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -53,6 +54,8 @@ import java.util.stream.Collectors;
 public abstract class DomainTypeMirrorBuilder<T extends DomainTypeMirror> {
 
     private static final Logger log = LoggerFactory.getLogger(DomainTypeMirrorBuilder.class);
+
+    private static final int PACKAGE_PRIVATE_RANK = 1;
 
     /**
      * Represents the class being mirrored. This variable holds the domain class type
@@ -117,7 +120,7 @@ public abstract class DomainTypeMirrorBuilder<T extends DomainTypeMirror> {
         try {
             theFields = JavaReflect.fields(domainClass, MemberSelect.HIERARCHY);
         }catch (Throwable t){
-            log.error("Accessing fields for {} failed!", domainClass.getName(), t);
+            logReflectionFailure("Accessing fields for " + domainClass.getName(), t);
         }
         this.fields = theFields;
     }
@@ -144,7 +147,7 @@ public abstract class DomainTypeMirrorBuilder<T extends DomainTypeMirror> {
                         ).build();
                     }catch (Throwable t) {
                         //ignore
-                        log.error("Building FieldMirror failed {}.{}", domainClass.getName(), f.getName(), t);
+                        logReflectionFailure("Building FieldMirror for " + domainClass.getName() + "." + f.getName(), t);
                         return null;
                     }
                 }
@@ -198,17 +201,40 @@ public abstract class DomainTypeMirrorBuilder<T extends DomainTypeMirror> {
                     try{
                         return new MethodMirrorBuilder(
                             m, domainClass, isOverridden(m, meth),
-                            genericTypeResolver, domainTypeDetector
+                            genericTypeResolver, domainTypeDetector, createsDomainObjectsOnly()
                         ).build();
                     }catch (Throwable t){
                         //ignore
-                        log.error("Building MethodMirror failed {}.{}", domainClass.getName(), m.getName(), t);
+                        logReflectionFailure("Building MethodMirror for " + domainClass.getName() + "." + m.getName(), t);
                         return null;
                     }
                 }
             )
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
+    }
+
+    /**
+     * A failure while mirroring a non-domain class is only a warning: such a class is no part of the domain model
+     * itself, the failing member is just not mirrored. For a domain type it is an error.
+     */
+    private void logReflectionFailure(String action, Throwable t) {
+        if (this instanceof NonDomainTypeMirrorBuilder) {
+            log.warn("{} failed, it is not mirrored: {}", action, t.toString());
+            log.debug("{} failed!", action, t);
+        } else {
+            log.error("{} failed!", action, t);
+        }
+    }
+
+    /**
+     * Whether the mirrored class is a factory: its only responsibility is to create domain objects, so that its public
+     * methods returning a domain object are factory methods.
+     *
+     * @return {@code false}, unless overridden by the builder of a factory
+     */
+    protected boolean createsDomainObjectsOnly() {
+        return false;
     }
 
     private boolean isOverridden(Method m, List<Method> candidates) {
@@ -223,7 +249,11 @@ public abstract class DomainTypeMirrorBuilder<T extends DomainTypeMirror> {
         if (!m.getName().equals(candidate.getName())) {
             return false;
         }
-        if (!candidate.getReturnType().equals(m.getReturnType())) {
+        if (!isOverridable(m, candidate)) {
+            return false;
+        }
+        // covariant return types are allowed: the overriding method may narrow the return type
+        if (!m.getReturnType().isAssignableFrom(candidate.getReturnType())) {
             return false;
         }
         if (!candidateIsAsOrLessRestrictive(m, candidate)) {
@@ -243,10 +273,40 @@ public abstract class DomainTypeMirrorBuilder<T extends DomainTypeMirror> {
         return true;
     }
 
-    private boolean candidateIsAsOrLessRestrictive(Method m, Method candidate) {
-        int subclassModifiers = m.getModifiers();
-        int superclassModifiers = candidate.getModifiers();
-        return subclassModifiers <= superclassModifiers;
+    /**
+     * Private and static methods are never overridden, a package-private method only by a method of a class in the
+     * same package.
+     */
+    private static boolean isOverridable(Method m, Method candidate) {
+        int modifiers = m.getModifiers();
+        if (Modifier.isPrivate(modifiers) || Modifier.isStatic(modifiers)) {
+            return false;
+        }
+        if (accessRank(modifiers) == PACKAGE_PRIVATE_RANK) {
+            return m.getDeclaringClass().getPackageName().equals(candidate.getDeclaringClass().getPackageName());
+        }
+        return true;
+    }
+
+    /**
+     * Compares the visibility only - other modifiers like {@code abstract} or {@code final} do not matter: the
+     * overriding method must be at least as visible as the overridden one.
+     */
+    private static boolean candidateIsAsOrLessRestrictive(Method m, Method candidate) {
+        return accessRank(candidate.getModifiers()) >= accessRank(m.getModifiers());
+    }
+
+    private static int accessRank(int modifiers) {
+        if (Modifier.isPublic(modifiers)) {
+            return 3;
+        }
+        if (Modifier.isProtected(modifiers)) {
+            return 2;
+        }
+        if (Modifier.isPrivate(modifiers)) {
+            return 0;
+        }
+        return PACKAGE_PRIVATE_RANK;
     }
 
     /**

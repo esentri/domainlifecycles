@@ -30,10 +30,13 @@ import io.domainlifecycles.diagram.Diagram;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.diagram.domain.mapper.DomainMapper;
 import io.domainlifecycles.diagram.domain.notes.DomainClassNote;
+import io.domainlifecycles.diagram.nomnoml.NomnomlRelationship;
 import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.staticanalysis.DomainCalls;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 /**
  * The DomainDiagramGenerator generates the Nomnoml diagram text
  * for a complete bounded contexts and the configuration specified by a given
@@ -149,10 +152,22 @@ public class DomainDiagramGenerator implements Diagram {
     public static final String OUTBOUND_SERVICE_STYLE_TAG = "OS";
 
     /**
+     * Represents the style tag identifier for factories in the domain diagram.
+     */
+    public static final String FACTORY_STYLE_TAG = "F";
+
+    /**
      * A constant representing the style tag for the identity model element in a domain diagram.
      * Used to apply specific styling rules for identity elements within the generated diagram.
      */
     public static final String IDENTITY_STYLE_TAG = "I";
+
+    /**
+     * Represents the style tag identifier for non-domain classes in the domain diagram.
+     * This tag is used to define visual styles specifically for classes not classified as any
+     * recognized domain type, when generating domain diagrams within the system.
+     */
+    public static final String NON_DOMAIN_CLASS_STYLE_TAG = "ND";
 
 
     /**
@@ -248,7 +263,9 @@ public class DomainDiagramGenerator implements Diagram {
         builder.append(domainServiceStyleDeclaration());
         builder.append(repositoryStyleDeclaration());
         builder.append(outboundServiceStyleDeclaration());
+        builder.append(factoryStyleDeclaration());
         builder.append(unspecifiedServiceKindStyleDeclaration());
+        builder.append(nonDomainClassStyleDeclaration());
         builder.append(queryHandlerStyleDeclaration());
         builder.append(readModelStyleDeclaration());
         builder.append(fontStyleDeclaration());
@@ -266,12 +283,14 @@ public class DomainDiagramGenerator implements Diagram {
 
         domainMapper.getDomainServices().forEach(f -> builder.append(f.getDiagramText()));
 
+        domainMapper.getFactories().forEach(f -> builder.append(f.getDiagramText()));
+
         domainMapper.getDomainEvents().forEach(f -> builder.append(f.getDiagramText()));
 
         domainMapper.getAggregateFrames().forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper()
-            .mapAllAggregateFrameRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
+        var relationshipMapper = domainMapper.getDomainRelationshipMapper();
+        var relationships = new ArrayList<NomnomlRelationship>();
+        appendRelationships(builder, relationships, relationshipMapper.mapAllAggregateFrameRelationships());
 
         domainMapper.getRepositories().forEach(f -> builder.append(f.getDiagramText()));
 
@@ -283,23 +302,29 @@ public class DomainDiagramGenerator implements Diagram {
 
         domainMapper.getUnspecifiedServiceKinds().forEach(f -> builder.append(f.getDiagramText()));
 
-        domainMapper.getDomainRelationshipMapper().mapAllDomainCommandRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllDomainEventRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllServiceKindRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
+        domainMapper.getNonDomainClasses().forEach(f -> builder.append(f.getDiagramText()));
 
-        domainMapper.getDomainRelationshipMapper().mapAllAggregateRepositoryRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllQueryHandlerReadModelRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
-        domainMapper.getDomainRelationshipMapper().mapAllReadModelRelationships()
-            .forEach(f -> builder.append(f.getDiagramText()));
+        appendRelationships(builder, relationships, relationshipMapper.mapAllDomainCommandRelationships());
+        appendRelationships(builder, relationships, relationshipMapper.mapAllDomainEventRelationships());
+        appendRelationships(builder, relationships, relationshipMapper.mapAllServiceKindRelationships());
+        appendRelationships(builder, relationships, relationshipMapper.mapAllNonDomainRelationships());
+
+        appendRelationships(builder, relationships, relationshipMapper.mapAllAggregateRepositoryRelationships());
+        appendRelationships(builder, relationships, relationshipMapper.mapAllQueryHandlerReadModelRelationships());
+        appendRelationships(builder, relationships, relationshipMapper.mapAllReadModelRelationships());
+        appendRelationships(builder, relationships, relationshipMapper.mapAllFactoryRelationships());
+        // last: only where no other relationship connects two classes
+        appendRelationships(builder, relationships, relationshipMapper.mapAllFlowCallRelationships(List.copyOf(relationships)));
 
         domainMapper.getNonAggregateNotes().forEach(f -> builder.append(f.getDiagramText()));
 
         return builder.toString();
+    }
+
+    private static void appendRelationships(StringBuilder builder, List<NomnomlRelationship> appended,
+                                            List<NomnomlRelationship> relationships) {
+        relationships.forEach(relationship -> builder.append(relationship.getDiagramText()));
+        appended.addAll(relationships);
     }
 
     private String aggregateFrameStyleDeclaration() {
@@ -386,6 +411,13 @@ public class DomainDiagramGenerator implements Diagram {
         return "";
     }
 
+    private String factoryStyleDeclaration() {
+        if (diagramConfig.getStyleSettings().getFactoryStyle() != null) {
+            return completeStyleDeclaration(diagramConfig.getStyleSettings().getFactoryStyle(), FACTORY_STYLE_TAG);
+        }
+        return "";
+    }
+
     private String queryHandlerStyleDeclaration() {
         if (diagramConfig.getStyleSettings().getQueryHandlerStyle() != null) {
             return completeStyleDeclaration(diagramConfig.getStyleSettings().getQueryHandlerStyle(), QUERY_HANDLER_STYLE_TAG);
@@ -396,6 +428,13 @@ public class DomainDiagramGenerator implements Diagram {
     private String unspecifiedServiceKindStyleDeclaration() {
         if (diagramConfig.getStyleSettings().getUnspecifiedServiceKindStyle() != null) {
             return completeStyleDeclaration(diagramConfig.getStyleSettings().getUnspecifiedServiceKindStyle(), SERVICE_KIND_STYLE_TAG);
+        }
+        return "";
+    }
+
+    private String nonDomainClassStyleDeclaration() {
+        if (diagramConfig.getStyleSettings().getNonDomainClassStyle() != null) {
+            return completeStyleDeclaration(diagramConfig.getStyleSettings().getNonDomainClassStyle(), NON_DOMAIN_CLASS_STYLE_TAG);
         }
         return "";
     }

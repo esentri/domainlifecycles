@@ -32,6 +32,7 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
+import org.gradle.api.tasks.Optional;
 
 import javax.inject.Inject;
 
@@ -99,4 +100,26 @@ public abstract class SerializationConfigurationExtension implements Named {
      */
     @Input
     public abstract Property<String> getFileName();
+
+    /**
+     * Packages whose types, as superclass or interface (direct or inherited), exclude a class from being
+     * mirrored as non-domain class. Defaults to {@code org.jooq}, which leaves out the code jOOQ generates
+     * for tables, records, schemas and catalogs; an empty list also means this default. Switching the
+     * exclusion off is only possible via the mirror API.
+     *
+     * @return a ListProperty containing the excluded supertype packages
+     */
+    @Input
+    @Optional
+    public abstract ListProperty<String> getNonDomainExcludedSupertypePackages();
+
+    /**
+     * Packages whose classes are not mirrored as non-domain classes, e.g. generated code without a common
+     * supertype. Defaults to none.
+     *
+     * @return a ListProperty containing the excluded packages
+     */
+    @Input
+    @Optional
+    public abstract ListProperty<String> getNonDomainExcludedPackages();
 }

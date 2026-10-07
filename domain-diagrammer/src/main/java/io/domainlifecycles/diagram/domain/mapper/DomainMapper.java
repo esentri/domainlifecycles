@@ -61,6 +61,7 @@ public class DomainMapper {
 
     private final DomainRelationshipMapper domainRelationshipMapper;
     private final FilteredDomainClasses filteredDomainClasses;
+    private final NodeNames nodeNames;
 
 
     /**
@@ -79,6 +80,7 @@ public class DomainMapper {
         DomainCalls domainCalls) {
         this.domainDiagramConfig = domainDiagramConfig;
         this.notes = notes;
+        requireStaticAnalysisForCallRelations(domainDiagramConfig, domainCalls);
         this.filteredDomainClasses = new FilteredDomainClasses(
             domainDiagramConfig.getDiagramTrimSettings(),
             domainDiagramConfig.getGeneralVisualSettings(),
@@ -87,11 +89,44 @@ public class DomainMapper {
                 domainMirror,
                 domainCalls,
                 domainDiagramConfig.getFlowConfig(),
-                domainDiagramConfig.getDiagramTrimSettings().getIncludeFlowsFrom()));
+                domainDiagramConfig.getDiagramTrimSettings().getIncludeFlowsFrom(),
+                domainDiagramConfig.getDiagramTrimSettings().getIncludeFlowsTo()));
 
-        this.domainClassMapper = new DomainClassMapper(domainDiagramConfig);
-        this.domainRelationshipMapper = new DomainRelationshipMapper(domainDiagramConfig, domainMirror, filteredDomainClasses);
+        this.nodeNames = NodeNames.of(nodes(filteredDomainClasses, domainDiagramConfig), domainMirror, domainDiagramConfig);
+        this.domainClassMapper = new DomainClassMapper(domainDiagramConfig, nodeNames, filteredDomainClasses);
+        this.domainRelationshipMapper = new DomainRelationshipMapper(domainDiagramConfig, domainMirror, filteredDomainClasses, nodeNames);
 
+    }
+
+    /**
+     * The calls of the flows are known from the result of a static analysis only: switching them on without one is a
+     * configuration error, not a diagram without calls.
+     */
+    private static void requireStaticAnalysisForCallRelations(DomainDiagramConfig domainDiagramConfig,
+                                                              DomainCalls domainCalls) {
+        if (domainDiagramConfig.getGeneralVisualSettings().isShowFlowCallRelations() && domainCalls == null) {
+            throw new IllegalArgumentException(
+                "The setting showFlowCallRelations draws the calls of the flows a diagram is restricted to and"
+                    + " therefore needs the result of a static analysis. Hand a DomainCalls instance to the"
+                    + " DomainDiagramGenerator constructor and restrict the diagram to a flow (includeFlowsFrom or"
+                    + " includeFlowsTo), or switch showFlowCallRelations off.");
+        }
+    }
+
+    /**
+     * The classes drawn as nodes: the ones shown and the ones inside the frames of the shown Aggregates.
+     */
+    private static List<DomainTypeMirror> nodes(FilteredDomainClasses filteredDomainClasses,
+                                                DomainDiagramConfig domainDiagramConfig) {
+        var nodes = new ArrayList<DomainTypeMirror>();
+        nodes.addAll(filteredDomainClasses.getDomainCommands());
+        nodes.addAll(filteredDomainClasses.getDomainEvents());
+        nodes.addAll(filteredDomainClasses.getReadModels());
+        nodes.addAll(filteredDomainClasses.getServiceKinds());
+        nodes.addAll(filteredDomainClasses.getNonDomainClasses());
+        filteredDomainClasses.getAggregateRoots().forEach(aggregateRoot ->
+            nodes.addAll(DomainClassMapper.aggregateMirrors(aggregateRoot, domainDiagramConfig)));
+        return nodes;
     }
 
     /**
@@ -167,11 +202,29 @@ public class DomainMapper {
     }
 
     /**
+     * @return all Factories in the diagram as {@link NomnomlClass}.
+     */
+    public List<NomnomlClass> getFactories() {
+        return filteredDomainClasses.getFactories().stream()
+            .map(domainClassMapper::mapFactoryClass)
+            .toList();
+    }
+
+    /**
      * @return all unspecified ServiceKinds in the diagram as {@link NomnomlClass}.
      */
     public List<NomnomlClass> getUnspecifiedServiceKinds() {
         return filteredDomainClasses.getUnspecifiedServiceKinds().stream()
             .map(domainClassMapper::mapUnspecifiedServiceKindClass)
+            .toList();
+    }
+
+    /**
+     * @return all non-domain classes referenced by a service kind in the diagram as {@link NomnomlClass}.
+     */
+    public List<NomnomlClass> getNonDomainClasses() {
+        return filteredDomainClasses.getNonDomainClasses().stream()
+            .map(domainClassMapper::mapNonDomainClass)
             .toList();
     }
 
@@ -201,7 +254,7 @@ public class DomainMapper {
     private NomnomlNote mapNotePair(NotePair notePair) {
         return new NomnomlNote(
             notePair.note.text(),
-            DomainMapperUtils.mapTypeName(notePair.note.className(), domainDiagramConfig),
+            nodeNames.name(notePair.note.className()),
             DomainMapperUtils.styleClassifier(notePair.mirror.get()),
             List.of(new NomnomlStereotype(DomainMapperUtils.stereotype(notePair.mirror.get(), domainDiagramConfig)))
         );
@@ -242,6 +295,18 @@ public class DomainMapper {
     }
 
     private NomnomlFrame getAggregateFrame(AggregateRootMirror aggregateRootMirror) {
+        var frameBuilder = NomnomlFrame
+            .builder()
+            .name(nodeNames.name(aggregateRootMirror))
+            .comment("!!! {Frame} " + aggregateRootMirror.getTypeName() + " !!!")
+            .type("<<Aggregate>>")
+            .styleClassifier(DomainDiagramGenerator.AGGREGATE_FRAME_STYLE_TAG);
+        if (domainDiagramConfig.getGeneralVisualSettings().isShowOnlyAggregateFrames()) {
+            // relationships from outside connect the frame, not the classes inside
+            return frameBuilder
+                .innerElements(List.of())
+                .build();
+        }
         var mirrors = domainClassMapper.getAllAggregateMirrors(aggregateRootMirror);
         var aggregateRelationShips = domainRelationshipMapper.mapAllAggregateRelationships(aggregateRootMirror);
         var allElements = new ArrayList<DiagramElement>(
@@ -261,12 +326,7 @@ public class DomainMapper {
                 mirrors.stream().map(DomainTypeMirror::getTypeName).toList()
             )
         );
-        return NomnomlFrame
-            .builder()
-            .name(DomainMapperUtils.mapTypeName(aggregateRootMirror.getTypeName(), domainDiagramConfig))
-            .comment("!!! {Frame} " + aggregateRootMirror.getTypeName() + " !!!")
-            .type("<<Aggregate>>")
-            .styleClassifier(DomainDiagramGenerator.AGGREGATE_FRAME_STYLE_TAG)
+        return frameBuilder
             .innerElements(allElements)
             .build();
     }

@@ -68,7 +68,7 @@ public class MirrorException extends RuntimeException {
      * @return new exception
      */
     public static MirrorException fail(final String detail, final Object... args) {
-        return new MirrorException(requireNonNull(detail), requireNonNull(args));
+        return new MirrorException(format(requireNonNull(detail), requireNonNull(args)));
     }
 
     /**
@@ -81,7 +81,7 @@ public class MirrorException extends RuntimeException {
      * @return new exception
      */
     public static MirrorException fail(final String detail, final Throwable cause, final Object... args) {
-        return new MirrorException(requireNonNull(detail), requireNonNull(cause), requireNonNull(args));
+        return new MirrorException(format(requireNonNull(detail), requireNonNull(args)), requireNonNull(cause));
     }
 
     // ----------------------------------------------------------
@@ -90,12 +90,11 @@ public class MirrorException extends RuntimeException {
         return args.length > 0 ? String.format(detail, args) : detail;
     }
 
-
-    private MirrorException(String detail, final Object... args) {
-        super(format(detail, args));
+    private MirrorException(final String message) {
+        super(message);
     }
 
-    private MirrorException(String detail, Throwable cause, Object... args) {
-        super(format(detail, args), cause);
+    private MirrorException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 }

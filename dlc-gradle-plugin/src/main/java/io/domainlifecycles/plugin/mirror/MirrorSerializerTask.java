@@ -145,12 +145,14 @@ public abstract class MirrorSerializerTask extends DefaultTask {
      */
     @TaskAction
     public void action() {
-        mirrorSerializer = new MirrorSerializerImpl(true);
         getSerializations().forEach(this::renderAndSaveModelAsJson);
     }
 
     private void renderAndSaveModelAsJson(final SerializationConfigurationExtension serializationConfigurationExtension) {
         var urls = ClassLoaderUtils.getClasspathFiles(this.getClasspath(), this.getClassesDirs());
+        mirrorSerializer = new MirrorSerializerImpl(true,
+            serializationConfigurationExtension.getNonDomainExcludedSupertypePackages().getOrNull(),
+            serializationConfigurationExtension.getNonDomainExcludedPackages().getOrNull());
         String jsonContent = mirrorSerializer.serialize(urls, serializationConfigurationExtension.getDomainModelPackages().getOrNull());
         Path filePath = getFileOutputDir()
             .file(serializationConfigurationExtension.getFileName().get())

@@ -35,15 +35,20 @@ import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.DomainServiceCommand;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.domain.types.Factory;
 import io.domainlifecycles.domain.types.OutboundService;
 import io.domainlifecycles.domain.types.QueryHandler;
 import io.domainlifecycles.domain.types.ReadModel;
 import io.domainlifecycles.domain.types.Repository;
 import io.domainlifecycles.domain.types.ServiceKind;
 import io.domainlifecycles.domain.types.ValueObject;
+import io.domainlifecycles.mirror.api.BoundedContextMirror;
+import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.EntityMirror;
+import io.domainlifecycles.mirror.api.NonDomainTypeMirror;
 import io.domainlifecycles.mirror.api.ServiceKindMirror;
+import io.domainlifecycles.mirror.model.BoundedContextModel;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
@@ -55,6 +60,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 /**
@@ -69,6 +75,12 @@ public class ClassGraphDomainTypesScanner {
     protected final ClassLoader classLoader;
     protected final GenericTypeResolver genericTypeResolver;
     protected final DomainTypeDetector domainTypeDetector;
+
+    /**
+     * The Bounded Contexts derived from {@code @BoundedContext}-annotated packages (see {@link
+     * #boundedContextAnnotationClassNames()}) during the last {@link #scan} call, empty until then.
+     */
+    private List<BoundedContextMirror> derivedBoundedContexts = List.of();
 
     /**
      * Constructs a new instance of the ClassGraphDomainTypesScanner with the provided ClassLoader
@@ -102,13 +114,54 @@ public class ClassGraphDomainTypesScanner {
     /**
      * Scans the specified package(s) to discover domain types, including enums, interfaces,
      * and classes implementing or extending various domain-related interfaces and types.
-     * This method uses ClassGraph to perform the scanning.
+     * This method uses ClassGraph to perform the scanning. Non-domain classes are not scanned.
      *
      * @param packages the array of package names to scan. If no packages are provided, the scan will include all available packages.
      * @return a list of discovered domain types represented as {@code DomainTypeMirror} instances.
      */
-    @SuppressWarnings("unchecked")
     public List<DomainTypeMirror> scan(String... packages) {
+        return scan(packages, new String[0], false);
+    }
+
+    /**
+     * Scans the specified package(s) to discover domain types, including enums, interfaces,
+     * and classes implementing or extending various domain-related interfaces and types.
+     * This method uses ClassGraph to perform the scanning.
+     *
+     * @param packages the array of package names to scan. If no packages are provided, the scan will include all available packages.
+     * @param nonDomainScanPackages the array of package names within which classes not implementing any
+     *                              domain marker interface are also turned into {@link NonDomainTypeMirror}
+     *                              instances, if {@code includeNonDomainClasses} is {@code true}. This is
+     *                              typically a subset of {@code packages} (excluding internally appended
+     *                              framework packages).
+     * @param includeNonDomainClasses whether classes within {@code nonDomainScanPackages} that do not
+     *                                 implement any domain marker interface should also be mirrored, tagged
+     *                                 with {@link io.domainlifecycles.mirror.api.DomainType#NON_DOMAIN}.
+     * @return a list of discovered domain types represented as {@code DomainTypeMirror} instances.
+     */
+    public List<DomainTypeMirror> scan(String[] packages, String[] nonDomainScanPackages, boolean includeNonDomainClasses) {
+        return scan(packages, nonDomainScanPackages, includeNonDomainClasses, NonDomainClassFilter.DEFAULT);
+    }
+
+    /**
+     * Scans the specified package(s) to discover domain types, including enums, interfaces,
+     * and classes implementing or extending various domain-related interfaces and types.
+     * This method uses ClassGraph to perform the scanning.
+     *
+     * @param packages the array of package names to scan. If no packages are provided, the scan will include all available packages.
+     * @param nonDomainScanPackages the array of package names within which classes not implementing any
+     *                              domain marker interface are also turned into {@link NonDomainTypeMirror}
+     *                              instances, if {@code includeNonDomainClasses} is {@code true}.
+     * @param includeNonDomainClasses whether classes within {@code nonDomainScanPackages} that do not
+     *                                 implement any domain marker interface should also be mirrored.
+     * @param nonDomainClassFilter which of those non-domain classes to leave out, e.g. generated code
+     * @return a list of discovered domain types represented as {@code DomainTypeMirror} instances.
+     */
+    @SuppressWarnings("unchecked")
+    public List<DomainTypeMirror> scan(String[] packages,
+                                       String[] nonDomainScanPackages,
+                                       boolean includeNonDomainClasses,
+                                       NonDomainClassFilter nonDomainClassFilter) {
 
         if(packages.length>0) {
             var packageNames = String.join(", ", packages);
@@ -127,11 +180,62 @@ public class ClassGraphDomainTypesScanner {
 
         try (ScanResult scanResult = classGraph.scan()) {  // Start the scan
             var domainTypes = buildMirrorsFromScanResult(scanResult);
+            if (includeNonDomainClasses) {
+                domainTypes.addAll(buildNonDomainMirrors(scanResult, domainTypes, nonDomainScanPackages,
+                    Objects.requireNonNull(nonDomainClassFilter, "A NonDomainClassFilter must be provided!")));
+            }
+            this.derivedBoundedContexts = deriveBoundedContexts(scanResult);
             return domainTypes;
         } catch (Throwable t) {
             log.error("Scanning packages '{}' failed!", packages, t);
         }
         return Collections.emptyList();
+    }
+
+    /**
+     * The names of the package-level annotations recognized as marking the root package of a Bounded
+     * Context (see {@link #deriveBoundedContexts(ScanResult)}). Overridable to also recognize an
+     * equivalent annotation from a different framework (e.g. jMolecules' own {@code @BoundedContext}).
+     *
+     * @return the fully qualified class names of the recognized Bounded Context package annotations
+     */
+    protected List<String> boundedContextAnnotationClassNames() {
+        return List.of("io.domainlifecycles.domain.types.BoundedContext");
+    }
+
+    /**
+     * Derives Bounded Contexts from packages annotated (via their {@code package-info.java}) with one
+     * of {@link #boundedContextAnnotationClassNames()}, using the package info ClassGraph already
+     * collected for this scan ({@code enableAllInfo()} includes it) - no separate scan pass needed.
+     *
+     * @param scanResult the result of the ClassGraph scan
+     * @return the derived Bounded Context mirrors, empty if no package carries a recognized annotation
+     */
+    private List<BoundedContextMirror> deriveBoundedContexts(ScanResult scanResult) {
+        var annotationClassNames = boundedContextAnnotationClassNames();
+        List<BoundedContextMirror> derived = new ArrayList<>();
+        for (var packageInfo : scanResult.getPackageInfo()) {
+            for (var annotationClassName : annotationClassNames) {
+                if (packageInfo.hasAnnotation(annotationClassName)) {
+                    var annotationInfo = packageInfo.getAnnotationInfo(annotationClassName);
+                    var nameValue = annotationInfo == null
+                        ? null
+                        : annotationInfo.getParameterValues().getValue("value");
+                    var name = nameValue instanceof String s && !s.isBlank() ? s : null;
+                    derived.add(new BoundedContextModel(packageInfo.getName(), name));
+                    break;
+                }
+            }
+        }
+        return derived;
+    }
+
+    /**
+     * @return the Bounded Contexts derived from package annotations during the last {@link #scan} call,
+     * empty if none were found (or {@link #scan} has not been called yet)
+     */
+    public List<BoundedContextMirror> derivedBoundedContexts() {
+        return derivedBoundedContexts;
     }
 
     protected List<DomainTypeMirror> buildMirrorsFromScanResult(ScanResult scanResult){
@@ -264,17 +368,28 @@ public class ClassGraphDomainTypesScanner {
             .filter(Objects::nonNull)
             .forEach(domainTypes::add);
 
+        scanResult.getClassesImplementing(Factory.class)
+            .stream()
+            .filter(c -> !Factory.class.getName().equals(c.getName()))
+            .map(r -> (Class<? extends Factory>) loadClass(r))
+            .filter(Objects::nonNull)
+            .map(dt -> build(new FactoryMirrorBuilder(dt, genericTypeResolver, domainTypeDetector)))
+            .filter(Objects::nonNull)
+            .forEach(domainTypes::add);
+
         scanResult.getClassesImplementing(ServiceKind.class)
             .stream()
             .filter(c -> !ServiceKind.class.getName().equals(c.getName())
                 && !ApplicationService.class.getName().equals(c.getName())
                 && !DomainService.class.getName().equals(c.getName())
                 && !OutboundService.class.getName().equals(c.getName())
+                && !Factory.class.getName().equals(c.getName())
                 && !QueryHandler.class.getName().equals(c.getName())
                 && !Repository.class.getName().equals(c.getName()))
             .filter(c -> !(c.implementsInterface(ApplicationService.class))
                 && !(c.implementsInterface(DomainService.class))
                 && !(c.implementsInterface(OutboundService.class))
+                && !(c.implementsInterface(Factory.class))
                 && !(c.implementsInterface(QueryHandler.class))
                 && !(c.implementsInterface(Repository.class)))
             .map(r -> (Class<? extends ServiceKind>) loadClass(r))
@@ -284,6 +399,87 @@ public class ClassGraphDomainTypesScanner {
             .forEach(domainTypes::add);
 
         return domainTypes;
+    }
+
+    /**
+     * Builds {@link NonDomainTypeMirror} instances for classes that are not classified as any
+     * recognized {@link DomainType} by the configured {@link DomainTypeDetector}, restricted to
+     * classes whose type name lies within one of {@code nonDomainScanPackages}, and that were not
+     * already mirrored by {@link #buildMirrorsFromScanResult(ScanResult)}.
+     *
+     * @param scanResult the result of the ClassGraph scan
+     * @param alreadyBuilt the domain type mirrors already built for this scan
+     * @param nonDomainScanPackages the packages within which non-domain classes should be mirrored
+     * @return a list of newly built {@link NonDomainTypeMirror} instances
+     */
+    protected List<DomainTypeMirror> buildNonDomainMirrors(ScanResult scanResult,
+                                                           List<DomainTypeMirror> alreadyBuilt,
+                                                           String[] nonDomainScanPackages) {
+        return buildNonDomainMirrors(scanResult, alreadyBuilt, nonDomainScanPackages, NonDomainClassFilter.DEFAULT);
+    }
+
+    /**
+     * Same as {@link #buildNonDomainMirrors(ScanResult, List, String[])}, leaving out the classes the
+     * given filter excludes. Package based exclusion is checked before a class is loaded, supertype based
+     * exclusion right after loading - in both cases before its (possibly large) mirror is built.
+     *
+     * @param scanResult            the ClassGraph scan result
+     * @param alreadyBuilt          the domain type mirrors already built from the scan result
+     * @param nonDomainScanPackages the packages within which non-domain classes should be mirrored
+     * @param nonDomainClassFilter  which non-domain classes to leave out
+     * @return the built non-domain type mirrors
+     */
+    protected List<DomainTypeMirror> buildNonDomainMirrors(ScanResult scanResult,
+                                                           List<DomainTypeMirror> alreadyBuilt,
+                                                           String[] nonDomainScanPackages,
+                                                           NonDomainClassFilter nonDomainClassFilter) {
+        if (nonDomainScanPackages == null || nonDomainScanPackages.length == 0) {
+            return Collections.emptyList();
+        }
+        var alreadyClassifiedNames = alreadyBuilt
+            .stream()
+            .map(DomainTypeMirror::getTypeName)
+            .collect(Collectors.toSet());
+
+        List<DomainTypeMirror> nonDomainTypes = new ArrayList<>();
+        scanResult.getAllStandardClasses()
+            .stream()
+            .filter(ci -> !ci.isEnum())
+            .filter(ci -> !alreadyClassifiedNames.contains(ci.getName()))
+            .filter(ci -> isWithinPackages(ci.getName(), nonDomainScanPackages))
+            .filter(ci -> !nonDomainClassFilter.isExcludedByName(ci.getName()))
+            .map(this::loadNonDomainClass)
+            .filter(Objects::nonNull)
+            .filter(c -> !c.isAnonymousClass() && !c.isLocalClass() && !c.isSynthetic())
+            .filter(c -> DomainType.NON_DOMAIN.equals(domainTypeDetector.detectDomainType(c)))
+            .filter(c -> !nonDomainClassFilter.isExcludedBySupertype(c))
+            .map(dt -> build(new NonDomainTypeMirrorBuilder(dt, genericTypeResolver, domainTypeDetector)))
+            .filter(Objects::nonNull)
+            .forEach(nonDomainTypes::add);
+        return nonDomainTypes;
+    }
+
+    private boolean isWithinPackages(String typeName, String[] packages) {
+        for (String p : packages) {
+            if (typeName.equals(p) || typeName.startsWith(p + ".")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * A non-domain class that cannot be loaded (e.g. because a class it depends on is missing on the classpath) is
+     * only a warning: such a class is no part of the domain model itself, it is just not mirrored.
+     */
+    private Class<?> loadNonDomainClass(ClassInfo classInfo) {
+        try {
+            return classInfo.loadClass();
+        } catch (Throwable t) {
+            log.warn("Loading non-domain class '{}' failed, it is not mirrored: {}", classInfo.getName(), t.toString());
+            log.debug("Loading non-domain class '{}' failed!", classInfo.getName(), t);
+        }
+        return null;
     }
 
     protected Class<?> loadClass(ClassInfo classInfo) {

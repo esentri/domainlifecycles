@@ -32,9 +32,15 @@
 #.OS:fill=#C0C0C0 bold
 #.OS_R:fill=#C0C0C0 bold;stroke=#FF0000
 #.OS_N:fill=#C0C0C0 bold;stroke=#108738
+#.F:fill=#E0F0E0 bold
+#.F_R:fill=#E0F0E0 bold;stroke=#FF0000
+#.F_N:fill=#E0F0E0 bold;stroke=#108738
 #.SK:fill=#C0C0C0 bold
 #.SK_R:fill=#C0C0C0 bold;stroke=#FF0000
 #.SK_N:fill=#C0C0C0 bold;stroke=#108738
+#.ND:fill=#EAEAEA
+#.ND_R:fill=#EAEAEA;stroke=#FF0000
+#.ND_N:fill=#EAEAEA;stroke=#108738
 #.QH:fill=#C0C0C0 bold
 #.QH_R:fill=#C0C0C0 bold;stroke=#FF0000
 #.QH_N:fill=#C0C0C0 bold;stroke=#108738
@@ -220,12 +226,43 @@ o +- shippedOrders:int
 // !!! sampleshop.outbound.JooqOrdersByCustomerQueryHandler !!!
 [<QH> OrdersByCustomerQueryHandler <<QueryHandler>> ]
 // !!! sampleshop.outbound.EmailNotifierImpl !!!
-[<OS> EmailNotifierService <<OutboundService>> ]
-[<DC>AddNewCustomer <<DomainCommand>>]  --[<label> <<is processed by>> CustomerService.add] --> [<AS>CustomerDriver <<ApplicationService>>]
+[<OS> EmailNotifierService <<OutboundService>> |
++ void notify(String,String)
+]
+// !!! sampleshop.DefaultTests !!!
+[<ND> DefaultTests <<NonDomain>> |
++ void applicationStarted()
++ void fraudDetected()
++ void newOrder()
++ void report()
++ void validation()
+]
+// !!! sampleshop.inbound.rest.CustomerController !!!
+[<ND> CustomerController <<NonDomain>> |
++ ResponseEntity<ResponseObject> addNewCustomer(AddNewCustomer)
++ ResponseEntity<ResponseObject> changeAddress(Customer$CustomerId,Address)
++ ResponseEntity<ResponseObject> changeCreditCard(Customer$CustomerId,CreditCard)
++ ResponseEntity<ResponseObject> find(int,int)
++ ResponseEntity<ResponseObject> reportOrders(String,int,int)
+]
+// !!! sampleshop.inbound.rest.OrderController !!!
+[<ND> OrderController <<NonDomain>> |
++ ResponseEntity<ResponseObject> cancel(Order$OrderId)
++ ResponseEntity<ResponseObject> find(int,int,OrderStatus\[\])
++ ResponseEntity<ResponseObject> place(PlaceOrder)
++ ResponseEntity<ResponseObject> ship(Order$OrderId)
+]
+// !!! sampleshop.inbound.rest.ProductController !!!
+[<ND> ProductController <<NonDomain>> |
++ ResponseEntity<ResponseObject> create(\# Product)
++ ResponseEntity<ResponseObject> find(Product$ProductId)
++ void removeAll()
+]
+[<DC>AddNewCustomer <<DomainCommand>>]  --[<label> <<is processed by>> CustomerController.addNewCustomer] --> [<ND>CustomerController <<NonDomain>>]
 [<DC>ChangeCreditCard <<DomainCommand>>]  --[<label> <<is processed by>> CustomerService.changeCreditCard] --> [<AS>CustomerDriver <<ApplicationService>>]
 [<DC>ChangeCustomerAddress <<DomainCommand>>]  --[<label> <<is processed by>> CustomerService.changeAddress] --> [<AS>CustomerDriver <<ApplicationService>>]
 [<DC>CancelOrder <<DomainCommand>>]  --[<label> <<is processed by>> OrderService.cancel] --> [<AS>OrderDriver <<ApplicationService>>]
-[<DC>PlaceOrder <<DomainCommand>>]  --[<label> <<is processed by>> OrderService.place] --> [<AS>OrderDriver <<ApplicationService>>]
+[<DC>PlaceOrder <<DomainCommand>>]  --[<label> <<is processed by>> OrderController.place] --> [<ND>OrderController <<NonDomain>>]
 [<DC>ShipOrder <<DomainCommand>>]  --[<label> <<is processed by>> OrderService.ship] --> [<AS>OrderDriver <<ApplicationService>>]
 [<AF> Customer <<Aggregate>>]  --[<label> <<publishes>> Customer.setAddress] --> [<DE>CustomerAdressChanged <<DomainEvent>>]
 [<AF> Customer <<Aggregate>>]  --[<label> <<publishes>> Customer.setCreditCard] --> [<DE>CustomerCreditCardChanged <<DomainEvent>>]
@@ -246,6 +283,11 @@ o +- shippedOrders:int
 [<AS>OrderDriver <<ApplicationService>>]  -> [<DS>OrderPlacementService <<DomainService>>]
 [<AS>OrderDriver <<ApplicationService>>]  -> [<R>OrderRepository <<Repository>>]
 [<AS>ProductDriver <<ApplicationService>>]  -> [<R>ProductRepository <<Repository>>]
+[<ND>DefaultTests <<NonDomain>>]  -> [<R>CustomerRepository <<Repository>>]
+[<ND>DefaultTests <<NonDomain>>]  -> [<R>OrderRepository <<Repository>>]
+[<ND>CustomerController <<NonDomain>>]  -> [<AS>CustomerDriver <<ApplicationService>>]
+[<ND>OrderController <<NonDomain>>]  -> [<AS>OrderDriver <<ApplicationService>>]
+[<ND>ProductController <<NonDomain>>]  -> [<AS>ProductDriver <<ApplicationService>>]
 [<R>CustomerRepository <<Repository>>]  --> [<AF> Customer <<Aggregate>>]
 [<R>OrderRepository <<Repository>>]  --> [<AF> Order <<Aggregate>>]
 [<R>ProductRepository <<Repository>>]  --> [<AF> Product <<Aggregate>>]

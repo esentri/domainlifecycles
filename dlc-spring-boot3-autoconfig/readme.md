@@ -15,7 +15,7 @@ Add the DLC Spring Boot Autoconfig dependency to your `build.gradle` or `pom.xml
 **Gradle:**
 ```groovy
 dependencies {
-    implementation 'io.domainlifecycles:dlc-spring-boot3-autoconfig:3.4.0'
+    implementation 'io.domainlifecycles:dlc-spring-boot3-autoconfig:3.5.0'
 }
 ```
 
@@ -24,17 +24,17 @@ dependencies {
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>dlc-spring-boot3-autoconfig</artifactId>
-    <version>3.4.0</version>
+    <version>3.5.0</version>
 </dependency>
 ```
 
-Or for an even simpler setup, you can use `dlc-spring-boot3-starter`, which is fully compatible with Autoconfig and 
+Or for an even simpler setup, you can use `spring-boot3-starter`, which is fully compatible with Autoconfig and 
 includes all needed dependencies:
 
 **Gradle:**
 ```groovy
 dependencies {
-  implementation 'io.domainlifecycles:dlc-spring-boot3-starter:3.4.0'
+  implementation 'io.domainlifecycles:spring-boot3-starter:3.5.0'
   // Autoconfig is already included
 }
 ```
@@ -43,8 +43,8 @@ dependencies {
 ```xml
 <dependency>
     <groupId>io.domainlifecycles</groupId>
-    <artifactId>dlc-spring-boot3-starter</artifactId>
-    <version>3.4.0</version>
+    <artifactId>spring-boot3-starter</artifactId>
+    <version>3.5.0</version>
 </dependency>
 ```
 
@@ -76,6 +76,9 @@ public class Application {
     }
 }
 ```
+
+DLC's Transaction Cache is off by default; `@EnableDlc(transactionCacheEnabled = true)` switches it on - see the
+persistence autoconfig sections below.
 
 ## Available Autoconfig Modules
 
@@ -170,6 +173,13 @@ dlc.features.persistence.enabled=false
 ```
 Annotation-based excludes have priority over property toggles.
 
+If both jOOQ and `jdbc-integration` happen to be on the classpath at the same time (e.g. a migration in
+progress), jOOQ wins by default - see the JDBC Persistence Autoconfig section below. To force jOOQ off
+specifically in that case, without excluding the whole autoconfiguration class:
+```properties
+dlc.features.persistence.jooq.enabled=false
+```
+
 **Configuration:**
 ```java
 @EnableDlc(
@@ -187,9 +197,102 @@ dlc.features.persistence.sql-dialect=POSTGRES
 Providing the 'dlcJooqRecordPackage' is mandatory for DLC persistence, 
 'dlcJooqSqlDialect' is recommended.
 
+This autoconfig can also set up DLC's [Transaction Cache](./../persistence/readme.md#transaction-cache) for Spring's
+own transaction management (via [`persistence-cache-spring-tx`](./../persistence-cache-spring-tx/readme.md)), so that
+it works correctly for `@Transactional` methods. It is off by default and switched on - shared by the jOOQ and the
+JDBC persistence autoconfig - either on the annotation:
+```java
+@EnableDlc(
+    transactionCacheEnabled = true,
+    transactionCacheMaxSize = 256 // optional, 256 by default
+)
+```
+or via properties, which take precedence over the annotation:
+```properties
+# default false; true switches the cache on
+dlc.features.persistence.transaction-cache.enabled=true
+# default 256; the maximum number of aggregates held per transaction
+dlc.features.persistence.transaction-cache.max-size=256
+```
+The cache needs Spring 6.2 or later (Spring Boot 3.4 or later); with an older version it stays off and a warning is
+logged once.
+Any bean of type `TransactionCacheProvider` replaces the provider set up by the autoconfig, whatever its name -
+typed `TransactionCacheProvider<UpdatableRecord<?>>` for jOOQ, `TransactionCacheProvider<JdbcRecord>` for JDBC; see
+[Own transaction cache providers](./../persistence/readme.md#transaction-cache-own-provider) for what it has to fulfil.
+
 More information on [DLC Persistence](./../persistence/readme.md)
 
-### 5. ServiceKind Autoconfig (`DlcServiceKindAutoConfiguration`)
+### 5. JDBC Persistence Autoconfig (`DlcJdbcPersistenceAutoConfiguration`)
+
+**Purpose:** Automatic configuration of plain JDBC based persistence (`jdbc-integration`) - the
+code-generation-free alternative to the jOOQ Persistence Autoconfig above, reading the database schema once at
+startup instead of relying on generated record classes.
+
+**Activation:** Automatically active when `@EnableDlc` annotation is set
+and `jdbc-integration` is provided on the classpath.
+Could be deactivated by:
+```java
+@EnableDlc(exclude = DlcJdbcPersistenceAutoConfiguration.class)
+```
+or by:
+```properties
+dlc.features.persistence.enabled=false
+```
+Annotation-based excludes have priority over property toggles.
+
+If both jOOQ and `jdbc-integration` happen to be on the classpath at the same time, this autoconfig is
+deliberately ordered after the jOOQ Persistence Autoconfig, so jOOQ wins the shared persistence-provider slot
+deterministically - a project normally only ever has one of the two integrations on its classpath at all, so
+this only matters in that edge case. To force JDBC off specifically instead, without excluding the whole
+autoconfiguration class:
+```properties
+dlc.features.persistence.jdbc.enabled=false
+```
+
+**Configuration:**
+```java
+@EnableDlc(
+    jooqSqlDialect = "POSTGRES"
+)
+```
+The same `jooqSqlDialect` attribute/property jOOQ uses selects the `JdbcDialect` implementation here too -
+no separate attribute, since a project only ever activates one of the two persistence backends. No
+record-package equivalent is needed, since `jdbc-integration` reads the schema at runtime.
+
+**Properties:**
+```properties
+dlc.features.persistence.sql-dialect=POSTGRES
+# Optional: narrow the schema read to one schema (see JdbcSchemaMetadata's class javadoc for when this is
+# required - a same-named table visible in more than one schema)
+dlc.features.persistence.jdbc.schema-pattern=my_schema
+```
+
+This autoconfig can also set up DLC's [Transaction Cache](./../persistence/readme.md#transaction-cache) for Spring's
+own transaction management (via [`persistence-cache-spring-tx`](./../persistence-cache-spring-tx/readme.md)), so that
+it works correctly for `@Transactional` methods. It is off by default and switched on - shared by the jOOQ and the
+JDBC persistence autoconfig - either on the annotation:
+```java
+@EnableDlc(
+    transactionCacheEnabled = true,
+    transactionCacheMaxSize = 256 // optional, 256 by default
+)
+```
+or via properties, which take precedence over the annotation:
+```properties
+# default false; true switches the cache on
+dlc.features.persistence.transaction-cache.enabled=true
+# default 256; the maximum number of aggregates held per transaction
+dlc.features.persistence.transaction-cache.max-size=256
+```
+The cache needs Spring 6.2 or later (Spring Boot 3.4 or later); with an older version it stays off and a warning is
+logged once.
+Any bean of type `TransactionCacheProvider` replaces the provider set up by the autoconfig, whatever its name -
+typed `TransactionCacheProvider<UpdatableRecord<?>>` for jOOQ, `TransactionCacheProvider<JdbcRecord>` for JDBC; see
+[Own transaction cache providers](./../persistence/readme.md#transaction-cache-own-provider) for what it has to fulfil.
+
+More information on [DLC JDBC Integration](./../jdbc-integration/readme.md)
+
+### 6. ServiceKind Autoconfig (`DlcServiceKindAutoConfiguration`)
 
 **Purpose:** Automatic registration of ServiceKind beans
 
@@ -212,6 +315,7 @@ Annotation-based excludes have priority over property toggles.
     - `ApplicationService` or `Driver`
     - `QueryHandler`
     - `OutboundService`
+    - `Factory`
 
 - If enabled, automatic bean instantiation is configured for all classes implementing `ServiceKind` being defined
   in the domain base packages ``dlc.features.mirror.base-packages``.
@@ -222,7 +326,7 @@ Annotation-based excludes have priority over property toggles.
   - If there is a possible conflict, which means that a bean of the same interface type is already present,
   the autoconfig will log a warning and skip the registration of the conflicting bean.
 
-### 6. Domain Events Autoconfig 
+### 7. Domain Events Autoconfig 
 
 **Purpose:** Automatic configuration of DomainEvent handling
 
@@ -292,7 +396,7 @@ More information on [DLC DomainEvents](./../domain-events-core/readme.md)
 
 More information on [DLC DomainEvents Spring integration](./../domain-events-spring-bus/readme.md)
 
-### 7. Spring Web Autoconfig (`DlcSpringWebAutoConfiguration`)
+### 8. Spring Web Autoconfig (`DlcSpringWebAutoConfiguration`)
 
 **Purpose:** REST/Web integration for DLC Domain Objects
 
@@ -314,7 +418,7 @@ Annotation-based excludes have priority over property toggles.
 - Parameter converters for ValueObjects and Identities
 - `ResponseEntityBuilder` for consistent API responses
 
-### 8. OpenAPI Autoconfig (`DlcSpringOpenApiAutoConfiguration`)
+### 9. OpenAPI Autoconfig (`DlcSpringOpenApiAutoConfiguration`)
 
 **Purpose:** Automatic OpenAPI/Swagger documentation for DLC Types
 
@@ -351,7 +455,7 @@ dlc.features.mirror.base-packages=com.example.domain,com.example.shared
 
 # jOOQ Configuration
 dlc.features.persistence.jooq-record-package=com.example.jooq.tables.records
-dlc.features.persistence..sql-dialect=POSTGRES
+dlc.features.persistence.sql-dialect=POSTGRES
 ```
 
 ### Important Note

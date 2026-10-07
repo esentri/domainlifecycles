@@ -51,6 +51,9 @@ public class DiagramTrimSettings {
     private final List<String> excludeConnectedToIngoing;
     private final List<String> excludeConnectedToOutgoing;
     private final List<String> includeFlowsFrom;
+    private final List<String> includeFlowsTo;
+    private final int includeConnectedToIngoingDepth;
+    private final int includeConnectedToOutgoingDepth;
 
     /**
      * Gets the starting points of the flows the diagram is restricted to.
@@ -74,12 +77,32 @@ public class DiagramTrimSettings {
     }
 
     /**
-     * Determines whether the diagram is restricted to one or more flows.
+     * Gets the target points of the flows the diagram is restricted to - the backward counterpart
+     * of {@link #getIncludeFlowsFrom()}: instead of "what does this lead to", it answers "what
+     * leads into this", i.e. the entry channels through which a type or method is reached.
+     * <p>
+     * Same entry syntax and requirements as {@link #getIncludeFlowsFrom()} (a full qualified type
+     * name, optionally followed by {@code #} and a method name; requires the result of a static
+     * analysis). There is one difference: a domain command can never be a target, since nothing in
+     * the analyzed data models where a command originates - a command can still appear as a
+     * reached node on the way to a target, just never as a target itself.
+     * <p>
+     * If both {@link #getIncludeFlowsFrom()} and this are configured, their reached types are
+     * united: a type survives if reached by either direction.
      *
-     * @return {@code true} if at least one flow starting point is configured
+     * @return List of flow target points, empty if the diagram is not restricted to a backward flow
+     */
+    public List<String> getIncludeFlowsTo() {
+        return includeFlowsTo;
+    }
+
+    /**
+     * Determines whether the diagram is restricted to one or more flows, forward or backward.
+     *
+     * @return {@code true} if at least one flow starting or target point is configured
      */
     public boolean hasFlowSettings() {
-        return !this.getIncludeFlowsFrom().isEmpty();
+        return !this.getIncludeFlowsFrom().isEmpty() || !this.getIncludeFlowsTo().isEmpty();
     }
 
     /**
@@ -102,6 +125,8 @@ public class DiagramTrimSettings {
 
     /**
      * Gets the list of class names that should be included in the diagram along with nodes that have ingoing connections to them.
+     * A class may be named in {@link #getIncludeConnectedToOutgoing()} as well, to show what leads to it and what it
+     * leads to.
      *
      * @return List of fully qualified class names whose ingoing connected nodes should be included
      */
@@ -116,6 +141,32 @@ public class DiagramTrimSettings {
      */
     public List<String> getIncludeConnectedToOutgoing() {
         return includeConnectedToOutgoing;
+    }
+
+    /**
+     * Gets up to how many steps the nodes with ingoing connections to the classes of
+     * {@link #getIncludeConnectedToIngoing()} are followed - "what leads to them". {@code 1} includes the nodes directly
+     * connected to them, {@code 2} also the nodes connected to these, and so on. {@code 0} or a negative value
+     * follows the complete path.
+     * <p>
+     * An interface and its implementations count as one step, and the classes drawn together with a class - e.g. the
+     * entities of an aggregate - take no step.
+     *
+     * @return the depth of the ingoing connections, {@code 0} or negative for the complete path
+     */
+    public int getIncludeConnectedToIngoingDepth() {
+        return includeConnectedToIngoingDepth;
+    }
+
+    /**
+     * Gets up to how many steps the nodes with outgoing connections from the classes of
+     * {@link #getIncludeConnectedToOutgoing()} are followed - "what they lead to". Counted like
+     * {@link #getIncludeConnectedToIngoingDepth()}; {@code 0} or a negative value follows the complete path.
+     *
+     * @return the depth of the outgoing connections, {@code 0} or negative for the complete path
+     */
+    public int getIncludeConnectedToOutgoingDepth() {
+        return includeConnectedToOutgoingDepth;
     }
 
     /**
@@ -179,7 +230,10 @@ public class DiagramTrimSettings {
         List<String> includeConnectedToOutgoing, 
         List<String> excludeConnectedToIngoing,
         List<String> excludeConnectedToOutgoing,
-        List<String> includeFlowsFrom
+        List<String> includeFlowsFrom,
+        List<String> includeFlowsTo,
+        int includeConnectedToIngoingDepth,
+        int includeConnectedToOutgoingDepth
     ) {
         this.classesBlacklist = classesBlacklist;
         this.explicitlyIncludedPackageNames = explicitlyIncludedPackageNames;
@@ -189,6 +243,9 @@ public class DiagramTrimSettings {
         this.excludeConnectedToIngoing = excludeConnectedToIngoing;
         this.excludeConnectedToOutgoing = excludeConnectedToOutgoing;
         this.includeFlowsFrom = includeFlowsFrom;
+        this.includeFlowsTo = includeFlowsTo;
+        this.includeConnectedToIngoingDepth = includeConnectedToIngoingDepth;
+        this.includeConnectedToOutgoingDepth = includeConnectedToOutgoingDepth;
     }
 
     /**
@@ -212,6 +269,9 @@ public class DiagramTrimSettings {
         private List<String> excludeConnectedToIngoing$value;
         private List<String> excludeConnectedToOutgoing$value;
         private List<String> includeFlowsFrom$value;
+        private List<String> includeFlowsTo$value;
+        private int includeConnectedToIngoingDepth$value;
+        private int includeConnectedToOutgoingDepth$value;
 
         /**
          * Sets the list of blacklisted classes.
@@ -269,6 +329,32 @@ public class DiagramTrimSettings {
         }
 
         /**
+         * Limits how many steps the ingoing connections of {@link #withIncludeConnectedToIngoing(List)} are followed,
+         * see {@link DiagramTrimSettings#getIncludeConnectedToIngoingDepth()}.
+         *
+         * @param includeConnectedToIngoingDepth the number of steps, {@code 0} or negative for the complete path (the
+         *                                       default)
+         * @return This builder instance
+         */
+        public DiagramTrimSettingsBuilder withIncludeConnectedToIngoingDepth(int includeConnectedToIngoingDepth) {
+            this.includeConnectedToIngoingDepth$value = includeConnectedToIngoingDepth;
+            return this;
+        }
+
+        /**
+         * Limits how many steps the outgoing connections of {@link #withIncludeConnectedToOutgoing(List)} are followed,
+         * see {@link DiagramTrimSettings#getIncludeConnectedToOutgoingDepth()}.
+         *
+         * @param includeConnectedToOutgoingDepth the number of steps, {@code 0} or negative for the complete path (the
+         *                                        default)
+         * @return This builder instance
+         */
+        public DiagramTrimSettingsBuilder withIncludeConnectedToOutgoingDepth(int includeConnectedToOutgoingDepth) {
+            this.includeConnectedToOutgoingDepth$value = includeConnectedToOutgoingDepth;
+            return this;
+        }
+
+        /**
          * Sets the list of class names whose ingoing connections should be excluded from the diagram.
          *
          * @param excludeConnectedToIngoing List of fully qualified class names whose ingoing connections should be excluded
@@ -305,17 +391,36 @@ public class DiagramTrimSettings {
         }
 
         /**
+         * Restricts the diagram to the domain types leading into the given target points - the
+         * backward counterpart of {@link #withIncludeFlowsFrom(List)}. Requires the result of a
+         * static analysis to be handed to the generator, see
+         * {@link DiagramTrimSettings#getIncludeFlowsTo()} for the entry syntax and how it combines
+         * with {@link #withIncludeFlowsFrom(List)}.
+         *
+         * @param includeFlowsTo List of flow target points, a full qualified type name each,
+         *                       optionally followed by {@code #} and a method name
+         * @return This builder instance
+         */
+        public DiagramTrimSettingsBuilder withIncludeFlowsTo(List<String> includeFlowsTo) {
+            this.includeFlowsTo$value = includeFlowsTo;
+            return this;
+        }
+
+        /**
          * Builds and returns a new DiagramTrimSettings instance.
          *
          * @return A new DiagramTrimSettings instance with the configured settings
          */
         public DiagramTrimSettings build() {
+            // a class may be followed in both directions - "what leads to it" and "what does it lead to" - but must
+            // not be included and excluded at once, nor followed in both directions completely (includeConnectedTo)
+            // and in one of them
             checkNoOverlap(
-                includeConnectedTo$value,
-                includeConnectedToIngoing$value,
-                includeConnectedToOutgoing$value,
-                excludeConnectedToIngoing$value,
-                excludeConnectedToOutgoing$value
+                "includeConnectedTo", union(includeConnectedTo$value),
+                "includeConnectedToIngoing/includeConnectedToOutgoing",
+                union(includeConnectedToIngoing$value, includeConnectedToOutgoing$value),
+                "excludeConnectedToIngoing/excludeConnectedToOutgoing",
+                union(excludeConnectedToIngoing$value, excludeConnectedToOutgoing$value)
             );
 
 
@@ -327,24 +432,42 @@ public class DiagramTrimSettings {
                 includeConnectedToOutgoing$value == null ? Collections.emptyList() : includeConnectedToOutgoing$value,
                 excludeConnectedToIngoing$value == null ? Collections.emptyList() : excludeConnectedToIngoing$value,
                 excludeConnectedToOutgoing$value == null ? Collections.emptyList() : excludeConnectedToOutgoing$value,
-                // deliberately not part of checkNoOverlap: a flow starting point may well also be
-                // named in a connection setting, the two mechanisms are independent
-                includeFlowsFrom$value == null ? Collections.emptyList() : includeFlowsFrom$value);
+                // deliberately not part of checkNoOverlap: a flow starting/target point may well
+                // also be named in a connection setting, the mechanisms are independent
+                includeFlowsFrom$value == null ? Collections.emptyList() : includeFlowsFrom$value,
+                includeFlowsTo$value == null ? Collections.emptyList() : includeFlowsTo$value,
+                includeConnectedToIngoingDepth$value,
+                includeConnectedToOutgoingDepth$value);
         }
     }
 
     @SafeVarargs
-    private static void checkNoOverlap(Collection<String>... collections) {
-        Set<String> seen = new HashSet<>();
+    private static Set<String> union(Collection<String>... collections) {
+        Set<String> union = new HashSet<>();
         for (Collection<String> collection : collections) {
             if (collection != null) {
-                for (String element : collection) {
-                    if (!seen.add(element)) {
-                        throw new IllegalArgumentException("The same class found was found across different include / exclude trim settings: " + element);
-                    }
-                }
+                union.addAll(collection);
             }
         }
+        return union;
+    }
+
+    private static void checkNoOverlap(String firstName, Set<String> first,
+                                       String secondName, Set<String> second,
+                                       String thirdName, Set<String> third) {
+        checkNoOverlap(firstName, first, secondName, second);
+        checkNoOverlap(firstName, first, thirdName, third);
+        checkNoOverlap(secondName, second, thirdName, third);
+    }
+
+    private static void checkNoOverlap(String firstName, Set<String> first, String secondName, Set<String> second) {
+        first.stream()
+            .filter(second::contains)
+            .findFirst()
+            .ifPresent(element -> {
+                throw new IllegalArgumentException("The class " + element + " was found in the trim settings "
+                    + firstName + " and " + secondName + " at once, which exclude each other.");
+            });
     }
 
 }

@@ -29,6 +29,7 @@ package io.domainlifecycles.plugins.viewer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.domainlifecycles.mirror.api.DomainMirror;
+import io.domainlifecycles.mirror.reflect.NonDomainClassFilter;
 import io.domainlifecycles.mirror.serialize.DomainSerializer;
 import io.domainlifecycles.mirror.serialize.jackson3.JacksonDomainSerializer;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
@@ -98,8 +99,11 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
     /** How long to wait for the connection to the Diagram Viewer to be established. */
     private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(10);
 
-    /** How long to wait for the whole upload (request body, most importantly) plus response. */
-    private static final Duration REQUEST_TIMEOUT = Duration.ofMinutes(5);
+    /**
+     * Default of how long to wait for the whole upload (request body, most importantly) plus response, in minutes.
+     * Very large models may need longer, see {@link #DomainModelUploaderImpl(int, List, List, int)}.
+     */
+    public static final int DEFAULT_REQUEST_TIMEOUT_MINUTES = 5;
 
     /**
      * Number of not-yet-consumed chunks {@link #uploadDomainModelStreaming} buffers between the
@@ -112,6 +116,8 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
     private final DomainSerializer domainSerializer = new JacksonDomainSerializer(true);
     private final DomainCallsSerializer domainCallsSerializer = new JacksonDomainCallsSerializer(true);
     private final DomainCallsAnalyzer domainCallsAnalyzer;
+    private final NonDomainClassFilter nonDomainClassFilter;
+    private final Duration requestTimeout;
 
     /**
      * Creates a new uploader whose static analysis (run when {@code runStaticAnalysis} is passed to
@@ -130,7 +136,73 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
      *                                cache at once
      */
     public DomainModelUploaderImpl(int staticAnalysisCacheSize) {
-        this.domainCallsAnalyzer = new DomainCallsAnalyzerImpl(staticAnalysisCacheSize);
+        this(staticAnalysisCacheSize, null, null);
+    }
+
+    /**
+     * Creates a new uploader whose static analysis is backed by a bounded cache of the given size, and
+     * whose domain mirror leaves out the non-domain classes the given filter excludes (by default the
+     * code jOOQ generates, see {@link NonDomainClassFilter}). Leaving generated code out also shrinks the
+     * static analysis result, since calls from and to classes that are not mirrored are not recorded.
+     *
+     * @param staticAnalysisCacheSize            the maximum number of classes held in the static analysis cache
+     * @param nonDomainExcludedSupertypePackages packages whose types, as supertypes, exclude a class from the
+     *                                           mirrored non-domain classes; {@code null} or empty for the
+     *                                           default ({@code org.jooq})
+     * @param nonDomainExcludedPackages          packages whose classes are not mirrored as non-domain classes;
+     *                                           {@code null} for none
+     */
+    public DomainModelUploaderImpl(int staticAnalysisCacheSize,
+                                   List<String> nonDomainExcludedSupertypePackages,
+                                   List<String> nonDomainExcludedPackages) {
+        this(staticAnalysisCacheSize, nonDomainExcludedSupertypePackages, nonDomainExcludedPackages,
+            DEFAULT_REQUEST_TIMEOUT_MINUTES);
+    }
+
+    /**
+     * Like {@link #DomainModelUploaderImpl(int, List, List)}, with a configurable timeout for the upload request.
+     *
+     * @param staticAnalysisCacheSize            the maximum number of classes held in the static analysis cache
+     * @param nonDomainExcludedSupertypePackages see {@link #DomainModelUploaderImpl(int, List, List)}
+     * @param nonDomainExcludedPackages          see {@link #DomainModelUploaderImpl(int, List, List)}
+     * @param requestTimeoutMinutes              how long to wait for the whole upload (request body plus response),
+     *                                           in minutes; must be positive
+     */
+    public DomainModelUploaderImpl(int staticAnalysisCacheSize,
+                                   List<String> nonDomainExcludedSupertypePackages,
+                                   List<String> nonDomainExcludedPackages,
+                                   int requestTimeoutMinutes) {
+        this(staticAnalysisCacheSize, nonDomainExcludedSupertypePackages, nonDomainExcludedPackages,
+            requestTimeoutMinutes, false);
+    }
+
+    /**
+     * Like {@link #DomainModelUploaderImpl(int, List, List, int)}, choosing how the static analysis resolves calls on
+     * types outside the domain.
+     *
+     * @param staticAnalysisExpandNonDomainDispatch whether calls on types outside the domain are expanded to the domain
+     *                                              types implementing the called method; {@code false} records only
+     *                                              calls on domain types, see
+     *                                              {@link io.domainlifecycles.staticanalysis.SootupStaticAnalyzer#SootupStaticAnalyzer(int, boolean)}
+     */
+    public DomainModelUploaderImpl(int staticAnalysisCacheSize,
+                                   List<String> nonDomainExcludedSupertypePackages,
+                                   List<String> nonDomainExcludedPackages,
+                                   int requestTimeoutMinutes,
+                                   boolean staticAnalysisExpandNonDomainDispatch) {
+        if (requestTimeoutMinutes <= 0) {
+            throw DLCPluginsException.fail("The upload request timeout must be positive, but was %d minutes.", requestTimeoutMinutes);
+        }
+        this.domainCallsAnalyzer = new DomainCallsAnalyzerImpl(staticAnalysisCacheSize, staticAnalysisExpandNonDomainDispatch);
+        this.nonDomainClassFilter = DLCUtils.nonDomainClassFilter(nonDomainExcludedSupertypePackages, nonDomainExcludedPackages);
+        this.requestTimeout = Duration.ofMinutes(requestTimeoutMinutes);
+    }
+
+    /**
+     * @return how long this uploader waits for the whole upload request plus response
+     */
+    Duration requestTimeout() {
+        return requestTimeout;
     }
 
     /**
@@ -271,7 +343,7 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
 
     private DomainMirror buildDomainMirror(List<URL> classPathFiles, List<String> domainModelPackages) {
         try {
-            return DLCUtils.initializeDomainMirrorFromClassPath(classPathFiles, domainModelPackages.toArray(String[]::new));
+            return DLCUtils.initializeDomainMirrorFromClassPath(classPathFiles, nonDomainClassFilter, domainModelPackages.toArray(String[]::new));
         } catch (RuntimeException e) {
             throw DLCPluginsException.fail("DomainMirror couldn't be initialized.", e);
         }
@@ -294,7 +366,7 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
             .header("Content-Type", "application/json")
             .header("Content-Encoding", "gzip")
             .header(API_KEY_HEADER_NAME, apiKey)
-            .timeout(REQUEST_TIMEOUT)
+            .timeout(requestTimeout)
             .PUT(BodyPublishers.ofByteArray(compressedBody))
             .build();
     }
@@ -330,7 +402,7 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
             .header("Content-Type", "application/json")
             .header("Content-Encoding", "gzip")
             .header(API_KEY_HEADER_NAME, apiKey)
-            .timeout(REQUEST_TIMEOUT)
+            .timeout(requestTimeout)
             .PUT(BodyPublishers.ofInputStream(
                 () -> queuedRequestBody(domainMirror, domainCalls, domainModelPackages, writerFailure)))
             .build();
@@ -519,7 +591,7 @@ public class DomainModelUploaderImpl implements DomainModelUploader {
         }
 
         throw DLCPluginsException.fail(
-            String.format("Diagram-Viewer returned failure while processing Domain-Model. Status-Code: '%s'. Error-Message: '%s'.",
-                response.statusCode(), response.body()));
+            "Diagram-Viewer returned failure while processing Domain-Model. Status-Code: '%s'. Error-Message: '%s'.",
+            response.statusCode(), response.body());
     }
 }

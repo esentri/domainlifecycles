@@ -76,7 +76,7 @@ public enum FileType {
                 return fileType;
             }
         }
-        throw DLCPluginsException.fail(String.format("Could not find matching FileType for file-name %s.", name));
+        throw DLCPluginsException.fail("Could not find matching FileType for file-name %s.", name);
     }
 
     /**

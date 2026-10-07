@@ -35,6 +35,7 @@ import io.domainlifecycles.mirror.api.DomainCommandMirror;
 import io.domainlifecycles.mirror.api.DomainEventMirror;
 import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
+import io.domainlifecycles.mirror.api.FactoryMirror;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
@@ -57,9 +58,10 @@ public abstract class BoundedContextModelMixin {
      *
      *
      * @param packageName the name of the package that contains the bounded context.
+     * @param name the optional human-readable name of the bounded context, may be null.
      */
     @JsonCreator
-    public BoundedContextModelMixin(@JsonProperty("packageName") String packageName) {}
+    public BoundedContextModelMixin(@JsonProperty("packageName") String packageName, @JsonProperty("name") String name) {}
 
     /**
      * Mixin method declaration. Ignored for serialization purposes.
@@ -123,6 +125,13 @@ public abstract class BoundedContextModelMixin {
      */
     @JsonIgnore
     public abstract List<OutboundServiceMirror> getOutboundServices();
+
+    /**
+     * Mixin method declaration. Ignored for serialization purposes.
+     * @return list of factories in the bounded context
+     */
+    @JsonIgnore
+    public abstract List<FactoryMirror> getFactories();
 
     /**
      * Mixin method declaration. Ignored for serialization purposes.

@@ -57,6 +57,7 @@ DLC supports:
 - ValueObject (yellow): Immutable and defined by its attributes.
 - Identity: Used by entities and aggregate roots for unique identification.
 - DomainService (gray): Encapsulates domain logic that doesn't naturally fit within entities or value objects.
+- Factory (light green): Encapsulates the creation of complex domain objects, typically Aggregates.
 - Repository (gray): Abstracts data access to aggregates.
 
 In terms of Ports and Adapters the repository interface is a port. 
@@ -80,6 +81,21 @@ In terms of DDD, it is perfectly acceptable for an Application Service to call a
 as it orchestrates the application’s workflow. Refer to the explanations below to distinguish between [ApplicationServices](#ApplicationService) and [DomainServices](#DomainService). 
 
 ![What a pity you cannot see it](../documentation/resources/images/applicationservice_call_domainservice_repository.png "ApplicationServices callouts")
+
+### Factories
+
+A Factory (light green) encapsulates the creation of complex domain objects, typically Aggregates, when creating them
+needs more knowledge than a constructor should have. It creates valid domain objects and has no further
+responsibilities.
+
+![What a pity you cannot see it](../documentation/resources/images/factories.png "Factories")
+
+ApplicationServices and DomainServices call a Factory to create an Aggregate, before they store it via its Repository.
+Not every creation needs a Factory of its own: an Aggregate can create its own instances or the Entities it is
+responsible for, and a DomainService can create domain objects besides its other operations. Such creating methods are
+marked as [factory methods](#Factory).
+
+![What a pity you cannot see it](../documentation/resources/images/factory_access.png "Factory access")
 
 ### DomainEvents
 
@@ -140,7 +156,7 @@ In this architecture, a QueryHandler acts as an outbound port to access a ReadMo
 access to Aggregates for write operations. The QueryHandler abstracts the details of querying the ReadModel, allowing the application to retrieve data efficiently.
 In DLC, the ReadModel is considered part of the domain logic, as it represents domain-specific read concerns.
 
-![What a pity you cannot see it](../documentation/resources/images/read_models_query_handlers.png "QueryHandler access")
+![What a pity you cannot see it](../documentation/resources/images/query_handler_domain_service_application_service.png "QueryHandler access")
 
 Additionally, ApplicationServices can call QueryHandlers directly in cases where special or complex read use cases require optimized data access. 
 There are also scenarios where a DomainService may need to read information that is more easily provided by a dedicated ReadModel. 
@@ -197,6 +213,7 @@ The classic DDD Building Blocks supported by DLC are:
 - [Identity](#Identity)
 - [Repository](#Repository)
 - [DomainService](#DomainService)
+- [Factory](#Factory)
 - [DomainEvent](#DomainEvent)
 
 Parts of the structures defined by those type interfaces are inspired by the JMolecules
@@ -654,6 +671,65 @@ public final class OrderPlacementService implements OrderPlacementOperations {
         return placed;
     }
 
+}
+```
+
+<a name="Factory"></a>
+
+## Factory
+
+### Pattern description
+
+A Factory encapsulates the creation of complex domain objects, typically Aggregates, when creating them requires
+more knowledge than a constructor should have, e.g. to establish invariants spanning several objects or to pick the
+concrete type to create. A Factory has no further responsibilities beyond creating.
+
+Not every creation needs a separate Factory: an Aggregate can create its own instances (static factory method) or
+the Entities and other Aggregates it is responsible for (e.g. a `Calendar` planning an `Appointment`).
+
+Further
+Information:
+
+- [Design Reference - Factories](https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf)
+
+### Implementation suggestions with DLC
+
++ A dedicated Factory implements `io.domainlifecycles.domain.types.Factory`. Its public methods returning a domain
+  object (Aggregate, Entity, ValueObject, ReadModel, DomainCommand or DomainEvent) are its factory methods.
++ Creating methods of other domain types, e.g. of an Aggregate or of a DomainService that also has other operations,
+  are marked by `@io.domainlifecycles.domain.types.FactoryMethod`.
++ The Domain Mirror logs a warning, if a Factory has public methods creating no domain object, or if all public
+  methods of a DomainService are factory methods (it might be a Factory).
++ Builders are no factories: they are a technical means to construct an object and never treated as factory methods.
+
+### Example
+
+```Java
+public class OrderFactory implements Factory {
+
+    private final OrderRepository orderRepository;
+
+    public OrderFactory(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+
+    public Order createFor(PlaceOrder placeOrder) {
+        return Order.builder()
+            .setId(orderRepository.newOrderId())
+            .setCustomerId(placeOrder.customerId())
+            .setStatus(OrderStatus.PENDING)
+            .build();
+    }
+}
+```
+
+```Java
+public class Calendar extends AggregateRootBase<CalendarId> {
+
+    @FactoryMethod
+    public Appointment planAppointment(String title) {
+        ...
+    }
 }
 ```
 

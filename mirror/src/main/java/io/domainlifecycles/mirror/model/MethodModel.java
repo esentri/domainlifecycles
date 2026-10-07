@@ -34,7 +34,8 @@ import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.ParamMirror;
-import io.domainlifecycles.mirror.exception.MirrorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -49,6 +50,8 @@ import java.util.stream.Collectors;
  */
 public class MethodModel implements MethodMirror, ProvidedDomain {
 
+    private static final Logger log = LoggerFactory.getLogger(MethodModel.class);
+
     private final String name;
     private final String declaredByTypeName;
     private final AccessLevel accessLevel;
@@ -62,6 +65,8 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
     private final Optional<String> listenedEventTypeName;
 
     private final boolean overridden;
+
+    private final boolean factoryMethod;
 
     /**
      * Constructs a MethodModel instance that represents metadata about a method, such as its name,
@@ -86,6 +91,34 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
                        List<String> publishedEventTypeNames,
                        Optional<String> listenedEventTypeName
     ) {
+        this(name, declaredByTypeName, accessLevel, parameters, returnType, overridden, publishedEventTypeNames,
+            listenedEventTypeName, false);
+    }
+
+    /**
+     * Constructs a MethodModel instance, see
+     * {@link #MethodModel(String, String, AccessLevel, List, AssertedContainableTypeMirror, boolean, List, Optional)}.
+     *
+     * @param name the name of the method; must not be null
+     * @param declaredByTypeName the fully qualified name of the type declaring this method; must not be null
+     * @param accessLevel the access level of the method (e.g., PUBLIC, PROTECTED); must not be null
+     * @param parameters the list of parameters of the method, represented as {@link ParamMirror} instances; must not be null
+     * @param returnType the return type of the method, represented as an {@link AssertedContainableTypeMirror}; must not be null
+     * @param overridden a boolean indicating if this method overrides a method from a superclass or interface
+     * @param publishedEventTypeNames the list of names of events published by this method; must not be null
+     * @param listenedEventTypeName an {@link Optional} containing the name of the event type this method listens to; must not be null
+     * @param factoryMethod whether the method is a factory method, creating the domain object it returns
+     */
+    public MethodModel(String name,
+                       String declaredByTypeName,
+                       AccessLevel accessLevel,
+                       List<ParamMirror> parameters,
+                       AssertedContainableTypeMirror returnType,
+                       boolean overridden,
+                       List<String> publishedEventTypeNames,
+                       Optional<String> listenedEventTypeName,
+                       boolean factoryMethod
+    ) {
         this.name = Objects.requireNonNull(name);
         this.declaredByTypeName = Objects.requireNonNull(declaredByTypeName);
         this.accessLevel = Objects.requireNonNull(accessLevel);
@@ -96,6 +129,7 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
         Objects.requireNonNull(publishedEventTypeNames);
         this.publishedEventTypeNames = Collections.unmodifiableList(publishedEventTypeNames);
         this.listenedEventTypeName = Objects.requireNonNull(listenedEventTypeName);
+        this.factoryMethod = factoryMethod;
     }
 
     /**
@@ -145,8 +179,9 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
     public List<DomainEventMirror> getPublishedEvents() {
         return this.publishedEventTypeNames
             .stream()
-            .map(n -> (DomainEventMirror) domainMirror.getDomainTypeMirror(n).orElseThrow(
-                () -> MirrorException.fail("DomainEventMirror not found for '%s'", n)))
+            .map(n -> resolveOrWarn(n, "DomainEventMirror"))
+            .filter(Objects::nonNull)
+            .map(DomainEventMirror.class::cast)
             .distinct()
             .collect(Collectors.toList());
     }
@@ -157,8 +192,9 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
     @Override
     public Optional<DomainEventMirror> getListenedEvent() {
         return listenedEventTypeName
-            .map(n -> (DomainEventMirror) domainMirror.getDomainTypeMirror(n).orElseThrow(
-                () -> MirrorException.fail("DomainEventMirror not found for '%s'", n)));
+            .map(n -> resolveOrWarn(n, "DomainEventMirror"))
+            .filter(Objects::nonNull)
+            .map(DomainEventMirror.class::cast);
     }
 
     /**
@@ -168,10 +204,29 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
     public List<DomainCommandMirror> getProcessedCommands() {
         return parameters.stream()
             .filter(p -> p.getType().getDomainType().equals(DomainType.DOMAIN_COMMAND))
-            .map(p -> (DomainCommandMirror) domainMirror.getDomainTypeMirror(p.getType().getTypeName()).orElseThrow(
-                () -> MirrorException.fail("DomainCommandMirror not found for '%s'", p.getType().getTypeName())))
+            .map(p -> resolveOrWarn(p.getType().getTypeName(), "DomainCommandMirror"))
+            .filter(Objects::nonNull)
+            .map(DomainCommandMirror.class::cast)
             .distinct()
             .toList();
+    }
+
+    /**
+     * Resolves a mirrored type name recorded as an event/command reference of this method, tolerating a
+     * name that doesn't resolve to anything in the domain mirror instead of failing the whole lookup. Such
+     * a name is itself a mirror data inconsistency (e.g. a generic type resolver falling back to
+     * {@code Object} for an unresolvable, self-referential type variable, as in a Lombok
+     * {@code @SuperBuilder}'s own builder class), not a reason to also break every well-formed method
+     * reachable from the same domain model - it is logged instead so the cause remains diagnosable.
+     */
+    private Object resolveOrWarn(String typeName, String mirrorKind) {
+        var resolved = domainMirror.getDomainTypeMirror(typeName);
+        if (resolved.isEmpty()) {
+            log.warn("{} not found for '{}', referenced by {}.{} - skipping this reference",
+                mirrorKind, typeName, declaredByTypeName, name);
+            return null;
+        }
+        return resolved.get();
     }
 
     /**
@@ -267,6 +322,14 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
      * {@inheritDoc}
      */
     @Override
+    public boolean isFactoryMethod() {
+        return factoryMethod;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
         return "MethodModel{" +
             "name='" + name + '\'' +
@@ -275,6 +338,7 @@ public class MethodModel implements MethodMirror, ProvidedDomain {
             ", parameters=" + parameters +
             ", returnType=" + returnType +
             ", overridden=" + overridden +
+            ", factoryMethod=" + factoryMethod +
             ", publishedEventTypeNames=" + publishedEventTypeNames +
             ", listenedEventTypeName=" + listenedEventTypeName +
             '}';

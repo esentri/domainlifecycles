@@ -76,7 +76,9 @@ public class StyleSettings {
     private static final String DEFAULT_READ_MODEL_STYLE = "fill=#FFCCE5 bold";
     private static final String DEFAULT_QUERY_HANDLER_STYLE = "fill=#C0C0C0 bold";
     private static final String DEFAULT_OUTBOUND_SERVICE_STYLE = "fill=#C0C0C0 bold";
+    private static final String DEFAULT_FACTORY_STYLE = "fill=#E0F0E0 bold";
     private static final String DEFAULT_UNSPECIFIED_SERVICE_KIND_STYLE = "fill=#C0C0C0 bold";
+    private static final String DEFAULT_NON_DOMAIN_CLASS_STYLE = "fill=#EAEAEA";
     private static final String DEFAULT_FONT = "Helvetica";
     private static final String DEFAULT_BACKGROUND_COLOR = "transparent";
 
@@ -95,7 +97,9 @@ public class StyleSettings {
     private final String readModelStyle;
     private final String queryHandlerStyle;
     private final String outboundServiceStyle;
+    private final String factoryStyle;
     private final String unspecifiedServiceKindStyle;
+    private final String nonDomainClassStyle;
     private final String font;
     private final String backgroundColor;
 
@@ -115,7 +119,9 @@ public class StyleSettings {
         String readModelStyle,
         String queryHandlerStyle,
         String outboundServiceStyle,
+        String factoryStyle,
         String unspecifiedServiceKindStyle,
+        String nonDomainClassStyle,
         String font,
         String backgroundColor
     ) {
@@ -134,7 +140,9 @@ public class StyleSettings {
         this.readModelStyle = readModelStyle;
         this.queryHandlerStyle = queryHandlerStyle;
         this.outboundServiceStyle = outboundServiceStyle;
+        this.factoryStyle = factoryStyle;
         this.unspecifiedServiceKindStyle = unspecifiedServiceKindStyle;
+        this.nonDomainClassStyle = nonDomainClassStyle;
         this.font = font;
         this.backgroundColor = backgroundColor;
     }
@@ -275,12 +283,30 @@ public class StyleSettings {
     }
 
     /**
+     * Gets the style configuration for factory elements.
+     *
+     * @return the style string for factories
+     */
+    public String getFactoryStyle() {
+        return factoryStyle;
+    }
+
+    /**
      * Gets the style configuration for unspecified service kind elements.
      *
      * @return the style string for unspecified service kinds
      */
     public String getUnspecifiedServiceKindStyle() {
         return unspecifiedServiceKindStyle;
+    }
+
+    /**
+     * Gets the style configuration for non-domain class elements.
+     *
+     * @return the style string for non-domain classes
+     */
+    public String getNonDomainClassStyle() {
+        return nonDomainClassStyle;
     }
 
     /**
@@ -335,7 +361,9 @@ public class StyleSettings {
         private String readModelStyle$value;
         private String queryHandlerStyle$value;
         private String outboundServiceStyle$value;
+        private String factoryStyle$value;
         private String unspecifiedServiceKindStyle$value;
+        private String nonDomainClassStyle$value;
         private String font$value;
         private String backgroundColor$value;
 
@@ -505,6 +533,17 @@ public class StyleSettings {
         }
 
         /**
+         * Sets the style configuration for a factory element in the domain diagram.
+         *
+         * @param value the style to be applied to the factory
+         * @return the current instance of {@code StyleSettingsBuilder} for method chaining
+         */
+        public StyleSettingsBuilder withFactoryStyle(String value) {
+            this.factoryStyle$value = value;
+            return this;
+        }
+
+        /**
          * Sets the style configuration for services with unspecified kind in the domain diagram.
          *
          * @param value the style to be applied to unspecified service kinds
@@ -512,6 +551,17 @@ public class StyleSettings {
          */
         public StyleSettingsBuilder withUnspecifiedServiceKindStyle(String value) {
             this.unspecifiedServiceKindStyle$value = value;
+            return this;
+        }
+
+        /**
+         * Sets the style configuration for non-domain class elements in the domain diagram.
+         *
+         * @param value the style to be applied to non-domain classes
+         * @return the current instance of {@code StyleSettingsBuilder} for method chaining
+         */
+        public StyleSettingsBuilder withNonDomainClassStyle(String value) {
+            this.nonDomainClassStyle$value = value;
             return this;
         }
 
@@ -560,7 +610,9 @@ public class StyleSettings {
                 readModelStyle$value == null ? DEFAULT_READ_MODEL_STYLE : readModelStyle$value,
                 queryHandlerStyle$value == null ? DEFAULT_QUERY_HANDLER_STYLE : queryHandlerStyle$value,
                 outboundServiceStyle$value == null ? DEFAULT_OUTBOUND_SERVICE_STYLE : outboundServiceStyle$value,
+                factoryStyle$value == null ? DEFAULT_FACTORY_STYLE : factoryStyle$value,
                 unspecifiedServiceKindStyle$value == null ? DEFAULT_UNSPECIFIED_SERVICE_KIND_STYLE : unspecifiedServiceKindStyle$value,
+                nonDomainClassStyle$value == null ? DEFAULT_NON_DOMAIN_CLASS_STYLE : nonDomainClassStyle$value,
                 font$value == null ? DEFAULT_FONT : font$value,
                 backgroundColor$value == null ? DEFAULT_BACKGROUND_COLOR : backgroundColor$value
             );

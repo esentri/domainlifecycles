@@ -32,6 +32,8 @@ import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig.DomainDiagr
 import io.domainlifecycles.diagram.domain.config.GeneralVisualSettings;
 import io.domainlifecycles.diagram.domain.config.LayoutSettings;
 import io.domainlifecycles.diagram.domain.config.StyleSettings;
+import io.domainlifecycles.mirror.reflect.NonDomainClassFilter;
+import io.domainlifecycles.plugins.util.DLCUtils;
 import io.domainlifecycles.staticanalysis.FlowConfig;
 
 import java.util.List;
@@ -76,6 +78,8 @@ public class DiagramConfig {
     private String readModelStyle;
     private String queryHandlerStyle;
     private String outboundServiceStyle;
+    private String factoryStyle;
+    private String nonDomainClassStyle;
     private String font;
     private String direction;
     private String ranker;
@@ -90,6 +94,7 @@ public class DiagramConfig {
     private Boolean showAggregates;
     private Boolean showAggregateFields;
     private Boolean showAggregateMethods;
+    private Boolean showOnlyAggregateFrames;
     private Boolean showDomainEvents;
     private Boolean showDomainEventFields;
     private Boolean showDomainEventMethods;
@@ -115,9 +120,19 @@ public class DiagramConfig {
     private Boolean showOutboundServices;
     private Boolean showOutboundServiceFields;
     private Boolean showOutboundServiceMethods;
+    private Boolean showFactories;
+    private Boolean showFactoryFields;
+    private Boolean showFactoryMethods;
     private Boolean showUnspecifiedServiceKinds;
     private Boolean showUnspecifiedServiceKindFields;
     private Boolean showUnspecifiedServiceKindMethods;
+    private Boolean showNonDomainClasses;
+    private Boolean showNonDomainClassFields;
+    private Boolean showNonDomainClassMethods;
+    private Integer maxInlinedValueObjectFields;
+    private Boolean showOnlyFlowMethods;
+    private Boolean showFlowCallRelations;
+    private Boolean showFactoryRelations;
     private Boolean callApplicationServiceDriver;
     private List<String> fieldBlacklist;
     private List<String> methodBlacklist;
@@ -128,6 +143,8 @@ public class DiagramConfig {
     private List<String> includeConnectedTo;
     private List<String> includeConnectedToIngoing;
     private List<String> includeConnectedToOutgoing;
+    private Integer includeConnectedToIngoingDepth;
+    private Integer includeConnectedToOutgoingDepth;
     private List<String> excludeConnectedToIngoing;
     private List<String> excludeConnectedToOutgoing;
     private List<String> explicitlyIncludedPackageNames;
@@ -140,11 +157,14 @@ public class DiagramConfig {
     private Boolean showRelationshipLabels;
     private Boolean showRelationshipStereotypes;
     private List<String> includeFlowsFrom;
+    private List<String> includeFlowsTo;
     private Integer flowMaxDepth;
     private Boolean flowFollowEvents;
     private Boolean flowFollowImplementations;
     private Boolean flowExcludeAccessors;
     private List<String> staticAnalysisPackages;
+    private List<String> nonDomainExcludedSupertypePackages;
+    private List<String> nonDomainExcludedPackages;
 
     /**
      * Gets the file type for the diagram output
@@ -435,6 +455,42 @@ public class DiagramConfig {
     }
 
     /**
+     * Gets the style configuration for factories
+     *
+     * @return The style configuration for factories
+     */
+    public String getFactoryStyle() {
+        return factoryStyle;
+    }
+
+    /**
+     * Sets the style configuration for factories
+     *
+     * @param factoryStyle The style configuration for factories
+     */
+    public void setFactoryStyle(String factoryStyle) {
+        this.factoryStyle = factoryStyle;
+    }
+
+    /**
+     * Gets the style configuration for non-domain classes
+     *
+     * @return The non-domain class style configuration
+     */
+    public String getNonDomainClassStyle() {
+        return nonDomainClassStyle;
+    }
+
+    /**
+     * Sets the style configuration for non-domain classes
+     *
+     * @param nonDomainClassStyle The style configuration to set
+     */
+    public void setNonDomainClassStyle(String nonDomainClassStyle) {
+        this.nonDomainClassStyle = nonDomainClassStyle;
+    }
+
+    /**
      * Gets the font setting for the diagram
      *
      * @return The font name
@@ -684,6 +740,25 @@ public class DiagramConfig {
      */
     public void setShowAggregateMethods(Boolean showAggregateMethods) {
         this.showAggregateMethods = showAggregateMethods;
+    }
+
+    /**
+     * Gets whether Aggregates are drawn as their frame only, without the classes, relationships and notes inside
+     *
+     * @return Whether only the frames of the Aggregates should be shown
+     */
+    public Boolean getShowOnlyAggregateFrames() {
+        return showOnlyAggregateFrames;
+    }
+
+    /**
+     * Sets whether Aggregates are drawn as their frame only, without the classes, relationships and notes inside.
+     * A central switch for all Aggregates of the diagram.
+     *
+     * @param showOnlyAggregateFrames Whether only the frames of the Aggregates should be shown
+     */
+    public void setShowOnlyAggregateFrames(Boolean showOnlyAggregateFrames) {
+        this.showOnlyAggregateFrames = showOnlyAggregateFrames;
     }
 
     /**
@@ -1137,6 +1212,60 @@ public class DiagramConfig {
     }
 
     /**
+     * Gets whether to show factories
+     *
+     * @return Whether to show factories
+     */
+    public Boolean getShowFactories() {
+        return showFactories;
+    }
+
+    /**
+     * Sets whether to show factories
+     *
+     * @param showFactories Whether to show factories
+     */
+    public void setShowFactories(Boolean showFactories) {
+        this.showFactories = showFactories;
+    }
+
+    /**
+     * Gets whether to show factory fields
+     *
+     * @return Whether to show factory fields
+     */
+    public Boolean getShowFactoryFields() {
+        return showFactoryFields;
+    }
+
+    /**
+     * Sets whether to show factory fields
+     *
+     * @param showFactoryFields Whether to show factory fields
+     */
+    public void setShowFactoryFields(Boolean showFactoryFields) {
+        this.showFactoryFields = showFactoryFields;
+    }
+
+    /**
+     * Gets whether to show factory methods
+     *
+     * @return Whether to show factory methods
+     */
+    public Boolean getShowFactoryMethods() {
+        return showFactoryMethods;
+    }
+
+    /**
+     * Sets whether to show factory methods
+     *
+     * @param showFactoryMethods Whether to show factory methods
+     */
+    public void setShowFactoryMethods(Boolean showFactoryMethods) {
+        this.showFactoryMethods = showFactoryMethods;
+    }
+
+    /**
      * Gets whether to show unspecified service kinds in the diagram
      *
      * @return Whether unspecified services should be shown
@@ -1188,6 +1317,132 @@ public class DiagramConfig {
      */
     public void setShowUnspecifiedServiceKindMethods(Boolean showUnspecifiedServiceKindMethods) {
         this.showUnspecifiedServiceKindMethods = showUnspecifiedServiceKindMethods;
+    }
+
+    /**
+     * Gets whether to show non-domain classes in the diagram
+     *
+     * @return Whether non-domain classes should be shown
+     */
+    public Boolean getShowNonDomainClasses() {
+        return showNonDomainClasses;
+    }
+
+    /**
+     * Sets whether to show non-domain classes in the diagram
+     *
+     * @param showNonDomainClasses Whether non-domain classes should be shown
+     */
+    public void setShowNonDomainClasses(Boolean showNonDomainClasses) {
+        this.showNonDomainClasses = showNonDomainClasses;
+    }
+
+    /**
+     * Gets whether to show non-domain class fields
+     *
+     * @return Whether non-domain class fields should be shown
+     */
+    public Boolean getShowNonDomainClassFields() {
+        return showNonDomainClassFields;
+    }
+
+    /**
+     * Sets whether to show non-domain class fields
+     *
+     * @param showNonDomainClassFields Whether non-domain class fields should be shown
+     */
+    public void setShowNonDomainClassFields(Boolean showNonDomainClassFields) {
+        this.showNonDomainClassFields = showNonDomainClassFields;
+    }
+
+    /**
+     * Gets whether to show non-domain class methods
+     *
+     * @return Whether non-domain class methods should be shown
+     */
+    public Boolean getShowNonDomainClassMethods() {
+        return showNonDomainClassMethods;
+    }
+
+    /**
+     * Sets whether to show non-domain class methods
+     *
+     * @param showNonDomainClassMethods Whether non-domain class methods should be shown
+     */
+    public void setShowNonDomainClassMethods(Boolean showNonDomainClassMethods) {
+        this.showNonDomainClassMethods = showNonDomainClassMethods;
+    }
+
+    /**
+     * Gets up to how many fields a value object is shown inline, as field of the class referencing it
+     *
+     * @return The maximal number of fields of an inlined value object
+     */
+    public Integer getMaxInlinedValueObjectFields() {
+        return maxInlinedValueObjectFields;
+    }
+
+    /**
+     * Sets up to how many fields a value object is shown inline, as field of the class referencing it
+     *
+     * @param maxInlinedValueObjectFields The maximal number of fields of an inlined value object, 0 to inline none
+     */
+    public void setMaxInlinedValueObjectFields(Integer maxInlinedValueObjectFields) {
+        this.maxInlinedValueObjectFields = maxInlinedValueObjectFields;
+    }
+
+    /**
+     * Gets whether the classes taking part in a flow show only the methods called in it
+     *
+     * @return Whether only the methods called in the flows are shown
+     */
+    public Boolean getShowOnlyFlowMethods() {
+        return showOnlyFlowMethods;
+    }
+
+    /**
+     * Sets whether the classes taking part in a flow show only the methods called in it
+     *
+     * @param showOnlyFlowMethods Whether only the methods called in the flows are shown
+     */
+    public void setShowOnlyFlowMethods(Boolean showOnlyFlowMethods) {
+        this.showOnlyFlowMethods = showOnlyFlowMethods;
+    }
+
+    /**
+     * Gets whether classes calling each other in a flow are connected, if nothing else connects them
+     *
+     * @return Whether the calls of the flows are drawn as relationships
+     */
+    public Boolean getShowFlowCallRelations() {
+        return showFlowCallRelations;
+    }
+
+    /**
+     * Sets whether classes calling each other in a flow are connected, if nothing else connects them
+     *
+     * @param showFlowCallRelations Whether the calls of the flows are drawn as relationships
+     */
+    public void setShowFlowCallRelations(Boolean showFlowCallRelations) {
+        this.showFlowCallRelations = showFlowCallRelations;
+    }
+
+    /**
+     * Gets whether a class is connected to the domain types its factory methods create
+     *
+     * @return Whether a class is connected to the domain types its factory methods create
+     */
+    public Boolean getShowFactoryRelations() {
+        return showFactoryRelations;
+    }
+
+    /**
+     * Sets whether a class is connected to the domain types its factory methods create
+     *
+     * @param showFactoryRelations Whether a class is connected to the domain types its factory methods create
+     */
+    public void setShowFactoryRelations(Boolean showFactoryRelations) {
+        this.showFactoryRelations = showFactoryRelations;
     }
 
     /**
@@ -1368,6 +1623,44 @@ public class DiagramConfig {
      */
     public void setIncludeConnectedToOutgoing(List<String> includeConnectedToOutgoing) {
         this.includeConnectedToOutgoing = includeConnectedToOutgoing;
+    }
+
+    /**
+     * Gets up to how many steps the ingoing connections of {@link #getIncludeConnectedToIngoing()} are followed
+     *
+     * @return The number of steps, 0 or negative for the complete path, null for the diagrammer's default
+     */
+    public Integer getIncludeConnectedToIngoingDepth() {
+        return includeConnectedToIngoingDepth;
+    }
+
+    /**
+     * Sets up to how many steps the ingoing connections of {@link #getIncludeConnectedToIngoing()} are followed -
+     * "what leads to it"
+     *
+     * @param includeConnectedToIngoingDepth The number of steps, 0 or negative for the complete path
+     */
+    public void setIncludeConnectedToIngoingDepth(Integer includeConnectedToIngoingDepth) {
+        this.includeConnectedToIngoingDepth = includeConnectedToIngoingDepth;
+    }
+
+    /**
+     * Gets up to how many steps the outgoing connections of {@link #getIncludeConnectedToOutgoing()} are followed
+     *
+     * @return The number of steps, 0 or negative for the complete path, null for the diagrammer's default
+     */
+    public Integer getIncludeConnectedToOutgoingDepth() {
+        return includeConnectedToOutgoingDepth;
+    }
+
+    /**
+     * Sets up to how many steps the outgoing connections of {@link #getIncludeConnectedToOutgoing()} are followed -
+     * "what does it lead to"
+     *
+     * @param includeConnectedToOutgoingDepth The number of steps, 0 or negative for the complete path
+     */
+    public void setIncludeConnectedToOutgoingDepth(Integer includeConnectedToOutgoingDepth) {
+        this.includeConnectedToOutgoingDepth = includeConnectedToOutgoingDepth;
     }
 
     /**
@@ -1575,6 +1868,29 @@ public class DiagramConfig {
     }
 
     /**
+     * Gets the flow target points the diagram is restricted to - the backward counterpart of
+     * {@link #getIncludeFlowsFrom()}: instead of "what does this lead to", it restricts the
+     * diagram to "what leads into this", the entry channels through which a type or method is
+     * reached. Same entry syntax and requirements as {@link #getIncludeFlowsFrom()}, except a
+     * domain command can never be a target. If both are configured, their reached types are
+     * united.
+     *
+     * @return the flow target points, or {@code null}/empty if backward flow-based filtering is disabled
+     */
+    public List<String> getIncludeFlowsTo() {
+        return includeFlowsTo;
+    }
+
+    /**
+     * Sets the flow target points the diagram should be restricted to.
+     *
+     * @param includeFlowsTo the flow target points to set
+     */
+    public void setIncludeFlowsTo(List<String> includeFlowsTo) {
+        this.includeFlowsTo = includeFlowsTo;
+    }
+
+    /**
      * Gets the maximum depth a flow is followed to, when flow-based filtering is enabled.
      *
      * @return the maximum flow depth, or {@code null} for the default (unlimited)
@@ -1668,6 +1984,52 @@ public class DiagramConfig {
     }
 
     /**
+     * Gets the packages whose types, as superclass or interface, exclude a class from being mirrored as
+     * non-domain class. {@code null} or empty means the default {@code org.jooq} (leaves out the code
+     * jOOQ generates). See {@link NonDomainClassFilter} and {@link DLCUtils#nonDomainClassFilter}.
+     *
+     * @return the excluded supertype packages, or {@code null} for the default
+     */
+    public List<String> getNonDomainExcludedSupertypePackages() {
+        return nonDomainExcludedSupertypePackages;
+    }
+
+    /**
+     * Sets the packages whose types, as superclass or interface, exclude a class from being mirrored as
+     * non-domain class.
+     *
+     * @param nonDomainExcludedSupertypePackages the excluded supertype packages, or {@code null} for the default
+     */
+    public void setNonDomainExcludedSupertypePackages(List<String> nonDomainExcludedSupertypePackages) {
+        this.nonDomainExcludedSupertypePackages = nonDomainExcludedSupertypePackages;
+    }
+
+    /**
+     * Gets the packages whose classes are not mirrored as non-domain classes. {@code null} means none.
+     *
+     * @return the excluded packages, or {@code null} for none
+     */
+    public List<String> getNonDomainExcludedPackages() {
+        return nonDomainExcludedPackages;
+    }
+
+    /**
+     * Sets the packages whose classes are not mirrored as non-domain classes.
+     *
+     * @param nonDomainExcludedPackages the excluded packages, or {@code null} for none
+     */
+    public void setNonDomainExcludedPackages(List<String> nonDomainExcludedPackages) {
+        this.nonDomainExcludedPackages = nonDomainExcludedPackages;
+    }
+
+    /**
+     * @return the filter for non-domain classes built from the configured exclusions
+     */
+    NonDomainClassFilter nonDomainClassFilter() {
+        return DLCUtils.nonDomainClassFilter(nonDomainExcludedSupertypePackages, nonDomainExcludedPackages);
+    }
+
+    /**
      * Maps various configuration styles, filters, and properties into a {@link DomainDiagramConfig} object
      * by utilizing a builder pattern. This method processes multiple optional style configurations,
      * filtering options, and display preferences to generate a comprehensive domain diagram configuration.
@@ -1696,6 +2058,8 @@ public class DiagramConfig {
         if(readModelStyle != null) styleBuilder.withReadModelStyle(readModelStyle);
         if(queryHandlerStyle != null) styleBuilder.withQueryHandlerStyle(queryHandlerStyle);
         if(outboundServiceStyle != null) styleBuilder.withOutboundServiceStyle(outboundServiceStyle);
+        if(factoryStyle != null) styleBuilder.withFactoryStyle(factoryStyle);
+        if(nonDomainClassStyle != null) styleBuilder.withNonDomainClassStyle(nonDomainClassStyle);
         if(font != null) styleBuilder.withFont(font);
         if(direction != null) layoutBuilder.withDirection(direction);
         if(ranker != null) layoutBuilder.withRanker(ranker);
@@ -1710,6 +2074,7 @@ public class DiagramConfig {
         if(showAggregates != null) visualBuilder.withShowAggregates(showAggregates);
         if(showAggregateFields != null) visualBuilder.withShowAggregateFields(showAggregateFields);
         if(showAggregateMethods != null) visualBuilder.withShowAggregateMethods(showAggregateMethods);
+        if(showOnlyAggregateFrames != null) visualBuilder.withShowOnlyAggregateFrames(showOnlyAggregateFrames);
         if(showDomainEvents != null) visualBuilder.withShowDomainEvents(showDomainEvents);
         if(showDomainEventFields != null) visualBuilder.withShowDomainEventFields(showDomainEventFields);
         if(showDomainEventMethods != null) visualBuilder.withShowDomainEventMethods(showDomainEventMethods);
@@ -1735,9 +2100,19 @@ public class DiagramConfig {
         if(showOutboundServices != null) visualBuilder.withShowOutboundServices(showOutboundServices);
         if(showOutboundServiceFields != null) visualBuilder.withShowOutboundServiceFields(showOutboundServiceFields);
         if(showOutboundServiceMethods != null) visualBuilder.withShowOutboundServiceMethods(showOutboundServiceMethods);
+        if(showFactories != null) visualBuilder.withShowFactories(showFactories);
+        if(showFactoryFields != null) visualBuilder.withShowFactoryFields(showFactoryFields);
+        if(showFactoryMethods != null) visualBuilder.withShowFactoryMethods(showFactoryMethods);
         if(showUnspecifiedServiceKinds != null) visualBuilder.withShowUnspecifiedServiceKinds(showUnspecifiedServiceKinds);
         if(showUnspecifiedServiceKindFields != null) visualBuilder.withShowUnspecifiedServiceKindFields(showUnspecifiedServiceKindFields);
         if(showUnspecifiedServiceKindMethods != null) visualBuilder.withShowUnspecifiedServiceKindMethods(showUnspecifiedServiceKindMethods);
+        if(showNonDomainClasses != null) visualBuilder.withShowNonDomainClasses(showNonDomainClasses);
+        if(showNonDomainClassFields != null) visualBuilder.withShowNonDomainClassFields(showNonDomainClassFields);
+        if(showNonDomainClassMethods != null) visualBuilder.withShowNonDomainClassMethods(showNonDomainClassMethods);
+        if(maxInlinedValueObjectFields != null) visualBuilder.withMaxInlinedValueObjectFields(maxInlinedValueObjectFields);
+        if(showOnlyFlowMethods != null) visualBuilder.withShowOnlyFlowMethods(showOnlyFlowMethods);
+        if(showFlowCallRelations != null) visualBuilder.withShowFlowCallRelations(showFlowCallRelations);
+        if(showFactoryRelations != null) visualBuilder.withShowFactoryRelations(showFactoryRelations);
         if(callApplicationServiceDriver != null) visualBuilder.withCallApplicationServiceDriver(callApplicationServiceDriver);
         if(fieldBlacklist != null && !fieldBlacklist.isEmpty()) visualBuilder.withFieldBlacklist(fieldBlacklist);
         if(methodBlacklist != null && !methodBlacklist.isEmpty()) visualBuilder.withMethodBlacklist(methodBlacklist);
@@ -1748,6 +2123,8 @@ public class DiagramConfig {
         if(includeConnectedTo != null && !includeConnectedTo.isEmpty()) trimBuilder.withIncludeConnectedTo(includeConnectedTo);
         if(includeConnectedToIngoing != null && !includeConnectedToIngoing.isEmpty()) trimBuilder.withIncludeConnectedToIngoing(includeConnectedToIngoing);
         if(includeConnectedToOutgoing != null && !includeConnectedToOutgoing.isEmpty()) trimBuilder.withIncludeConnectedToOutgoing(includeConnectedToOutgoing);
+        if(includeConnectedToIngoingDepth != null) trimBuilder.withIncludeConnectedToIngoingDepth(includeConnectedToIngoingDepth);
+        if(includeConnectedToOutgoingDepth != null) trimBuilder.withIncludeConnectedToOutgoingDepth(includeConnectedToOutgoingDepth);
         if(excludeConnectedToIngoing != null && !excludeConnectedToIngoing.isEmpty()) trimBuilder.withExcludeConnectedToIngoing(excludeConnectedToIngoing);
         if(excludeConnectedToOutgoing != null && !excludeConnectedToOutgoing.isEmpty()) trimBuilder.withExcludeConnectedToOutgoing(excludeConnectedToOutgoing);
         if(explicitlyIncludedPackageNames != null && !explicitlyIncludedPackageNames.isEmpty()) trimBuilder.withExplicitlyIncludedPackageNames(explicitlyIncludedPackageNames);
@@ -1760,6 +2137,7 @@ public class DiagramConfig {
         if(showRelationshipLabels != null) visualBuilder.withShowRelationshipLabels(showRelationshipLabels);
         if(showRelationshipStereotypes != null) visualBuilder.withShowRelationshipStereotypes(showRelationshipStereotypes);
         if(includeFlowsFrom != null && !includeFlowsFrom.isEmpty()) trimBuilder.withIncludeFlowsFrom(includeFlowsFrom);
+        if(includeFlowsTo != null && !includeFlowsTo.isEmpty()) trimBuilder.withIncludeFlowsTo(includeFlowsTo);
 
         FlowConfig flowConfig = FlowConfig.defaults();
         boolean flowConfigured = false;

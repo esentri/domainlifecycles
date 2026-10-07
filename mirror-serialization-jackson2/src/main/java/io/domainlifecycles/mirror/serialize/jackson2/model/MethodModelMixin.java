@@ -78,6 +78,7 @@ public abstract class MethodModelMixin {
      * @param publishedEventTypeNames A list of names representing the types of events published by the method.
      * @param listenedEventTypeName An {@code Optional} containing the name of a single event type that
      *                              this method listens for, if applicable.
+     * @param factoryMethod Indicates whether the method is a factory method creating domain objects.
      */
     @JsonCreator
     public MethodModelMixin(
@@ -88,7 +89,8 @@ public abstract class MethodModelMixin {
         @JsonProperty("returnType") AssertedContainableTypeMirror returnType,
         @JsonProperty("overridden") boolean overridden,
         @JsonProperty("publishedEventTypeNames") List<String> publishedEventTypeNames,
-        @JsonProperty("listenedEventTypeName") Optional<String> listenedEventTypeName
+        @JsonProperty("listenedEventTypeName") Optional<String> listenedEventTypeName,
+        @JsonProperty("factoryMethod") boolean factoryMethod
     ) {}
 
     /**

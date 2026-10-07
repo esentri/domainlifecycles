@@ -80,5 +80,35 @@ public enum StepKind {
      * The step's method processes the predecessor's domain command, i.e. it takes the command as
      * a parameter. Taken from the mirror.
      */
-    COMMAND_PROCESS
+    COMMAND_PROCESS,
+
+    /**
+     * The predecessor is a method of a {@code QueryHandler}, and the step is the ReadModel it
+     * provides. Taken from the mirror, not from {@link DomainCalls}: a query handler's contract
+     * with its ReadModel holds regardless of which of its methods happens to be reached, and
+     * regardless of whether that method's body literally names the ReadModel type.
+     * <p>
+     * A ReadModel provided by no QueryHandler is provided by the methods returning it instead - of a
+     * service kind or a non-domain class, e.g. a driver computing it. The predecessor is then such a
+     * method.
+     */
+    PROVIDES_READ_MODEL,
+
+    /**
+     * The predecessor is a method of a {@code Repository}, and the step is the Aggregate it
+     * manages. Taken from the mirror, not from {@link DomainCalls}: a repository's contract with
+     * its Aggregate holds regardless of which of its methods happens to be reached, and
+     * regardless of whether that method's body literally names the Aggregate type.
+     */
+    MANAGES_AGGREGATE,
+
+    /**
+     * The predecessor is a factory method - a creating method of a {@code Factory} or a method
+     * annotated with {@code @FactoryMethod} - and the step is the domain type it creates. Taken from
+     * the mirror, not from {@link DomainCalls}: the static analysis leaves out constructors, so the
+     * creation itself is no call. A factory method creating instances of its own type leads nowhere.
+     * <p>
+     * Backwards, the step is a factory method creating the predecessor's type.
+     */
+    CREATES
 }

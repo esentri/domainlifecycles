@@ -18,8 +18,8 @@ see [DLC Spring Boot AutoConfig](./../../../dlc-spring-boot-autoconfig/readme.md
 ## Implementation 
 
 ### Define new domain events
-Ein neues Domain-Event lässt sich ganz einfach definieren, indem eine Klasse das `DomainEvent` Interface implementiert.
-Idealerweise werden hierfür Java-Records genutzt:
+A new domain event can be defined easily by having a class implement the `DomainEvent` interface.
+Java records are ideally suited for this:
 
 ```Java
 public record NewCustomerAdded(@NotNull Customer customer) implements DomainEvent {}

@@ -122,4 +122,39 @@ public abstract class DomainModelUploadTaskConfigurationExtension {
      * @return a ListProperty containing the packages to restrict the static analysis to.
      */
     public abstract ListProperty<String> getStaticAnalysisPackages();
+
+    /**
+     * Packages whose types, as superclass or interface (direct or inherited), exclude a class from being
+     * mirrored as non-domain class. Defaults to {@code org.jooq}, which leaves out the code jOOQ generates
+     * for tables, records, schemas and catalogs; an empty list also means this default. Switching the
+     * exclusion off is only possible via the mirror API.
+     *
+     * @return a ListProperty containing the excluded supertype packages
+     */
+    public abstract ListProperty<String> getNonDomainExcludedSupertypePackages();
+
+    /**
+     * Packages whose classes are not mirrored as non-domain classes, e.g. generated code without a common
+     * supertype. Defaults to none.
+     *
+     * @return a ListProperty containing the excluded packages
+     */
+    public abstract ListProperty<String> getNonDomainExcludedPackages();
+
+    /**
+     * How long to wait for the whole upload (request body plus response of the Diagram Viewer), in minutes. Very
+     * large models may need longer than the default of
+     * {@link io.domainlifecycles.plugins.viewer.DomainModelUploaderImpl#DEFAULT_REQUEST_TIMEOUT_MINUTES}.
+     *
+     * @return a Property containing the timeout in minutes
+     */
+    public abstract Property<Integer> getUploadRequestTimeoutMinutes();
+
+    /**
+     * Whether the static analysis expands calls on types outside the domain (JDK, library and DLC types) to the domain
+     * types implementing the called method. Defaults to {@code false}: only calls on domain types are recorded.
+     *
+     * @return a Property containing the flag
+     */
+    public abstract Property<Boolean> getStaticAnalysisExpandNonDomainDispatch();
 }

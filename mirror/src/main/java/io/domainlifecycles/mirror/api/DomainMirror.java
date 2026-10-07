@@ -184,6 +184,14 @@ public interface DomainMirror {
     List<OutboundServiceMirror> getAllOutboundServiceMirrors();
 
     /**
+     * Retrieves a list of all FactoryMirror instances - the mirrored service kinds whose only responsibility is to
+     * create domain objects.
+     *
+     * @return a list of FactoryMirror instances
+     */
+    List<FactoryMirror> getAllFactoryMirrors();
+
+    /**
      * Retrieves a list of all IdentityMirror instances.
      * Each IdentityMirror represents a mirrored Identity within the domain,
      * providing access to its metadata and structural details.

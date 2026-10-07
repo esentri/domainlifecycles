@@ -63,14 +63,36 @@ public abstract class DomainPersistenceConfiguration {
     public final Set<RecordMapper<?, ?, ?>> customRecordMappers;
 
     /**
-     * Creates a new DomainPersistenceConfiguration.
+     * Whether an aggregate root already fetched earlier within the same transaction may be reused by
+     * {@code update()}/{@code deleteById()}/{@code increaseVersion()} instead of fetching it again from the
+     * database. Disabled by default; when disabled, behavior is identical to a build without the transaction
+     * cache feature at all.
+     */
+    public final boolean transactionCacheEnabled;
+
+    /**
+     * Creates a new DomainPersistenceConfiguration with the transaction cache feature enabled.
      *
      * @param domainObjectBuilderProvider the domain object builder provider to use
      * @param customRecordMappers         custom record mappers to use
      */
     public DomainPersistenceConfiguration(DomainObjectBuilderProvider domainObjectBuilderProvider,
                                           Set<RecordMapper<?, ?, ?>> customRecordMappers) {
+        this(domainObjectBuilderProvider, customRecordMappers, true);
+    }
+
+    /**
+     * Creates a new DomainPersistenceConfiguration.
+     *
+     * @param domainObjectBuilderProvider the domain object builder provider to use
+     * @param customRecordMappers         custom record mappers to use
+     * @param transactionCacheEnabled     whether the transaction cache feature is enabled
+     */
+    public DomainPersistenceConfiguration(DomainObjectBuilderProvider domainObjectBuilderProvider,
+                                          Set<RecordMapper<?, ?, ?>> customRecordMappers,
+                                          boolean transactionCacheEnabled) {
         this.domainObjectBuilderProvider = Objects.requireNonNull(domainObjectBuilderProvider);
         this.customRecordMappers = customRecordMappers;
+        this.transactionCacheEnabled = transactionCacheEnabled;
     }
 }

@@ -57,10 +57,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * <p>
  * The flow modelled below is the one the shared test domain already contains:
  * <pre>
- * StarteAuslieferung --processed by--&gt; ZustellungsService.liefereAus
- *      --calls--&gt; BestellungRepository.findById / update
- *      --calls--&gt; BestellungBv3.starteLieferung --publishes--&gt; AuslieferungGestartet
- *                                                --listened by--&gt; BenachrichtigungService
+ * StartDelivery --processed by--&gt; DeliveryService.deliver
+ *      --calls--&gt; OrderRepository.findById / update
+ *      --calls--&gt; OrderBv3.startDelivery --publishes--&gt; DeliveryStarted
+ *                                                --listened by--&gt; NotificationService
  * </pre>
  * Only the call edges have to be supplied, the command and event edges come from the mirror.
  *
@@ -69,17 +69,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class FlowFilteredDiagramTest {
 
     private static final String COMMAND =
-        "tests.shared.complete.onlinehandel.zustellung.StarteAuslieferung";
+        "tests.shared.complete.ecommerce.delivery.StartDelivery";
     private static final String EVENT =
-        "tests.shared.complete.onlinehandel.zustellung.AuslieferungGestartet";
+        "tests.shared.complete.ecommerce.delivery.DeliveryStarted";
     private static final String ZUSTELLUNGS_SERVICE =
-        "tests.shared.complete.onlinehandel.zustellung.ZustellungsService";
+        "tests.shared.complete.ecommerce.delivery.DeliveryService";
     private static final String BENACHRICHTIGUNGS_SERVICE =
-        "tests.shared.complete.onlinehandel.benachrichtigung.BenachrichtigungService";
+        "tests.shared.complete.ecommerce.notification.NotificationService";
     private static final String REPOSITORY =
-        "tests.shared.complete.onlinehandel.bestellung.BestellungRepository";
+        "tests.shared.complete.ecommerce.order.OrderRepository";
     private static final String AGGREGATE =
-        "tests.shared.complete.onlinehandel.bestellung.BestellungBv3";
+        "tests.shared.complete.ecommerce.order.OrderBv3";
 
     /** Each rendered class is preceded by a comment naming it in full. */
     private static final Pattern RENDERED_CLASS =
@@ -113,7 +113,7 @@ public class FlowFilteredDiagramTest {
 
     @Test
     void testFlowFromAMethodStartsBelowTheCommand() {
-        var diagramText = generate(List.of(ZUSTELLUNGS_SERVICE + "#liefereAus"), analyzedCalls());
+        var diagramText = generate(List.of(ZUSTELLUNGS_SERVICE + "#deliver"), analyzedCalls());
 
         assertThat(renderedClasses(diagramText))
             .contains(ZUSTELLUNGS_SERVICE, REPOSITORY, AGGREGATE, EVENT, BENACHRICHTIGUNGS_SERVICE);
@@ -136,9 +136,9 @@ public class FlowFilteredDiagramTest {
     @Test
     void testTypeWithoutMethodNameStartsFromAllOfItsMethods() {
         var fromType = generate(List.of(ZUSTELLUNGS_SERVICE), analyzedCalls());
-        var fromMethod = generate(List.of(ZUSTELLUNGS_SERVICE + "#liefereAus"), analyzedCalls());
+        var fromMethod = generate(List.of(ZUSTELLUNGS_SERVICE + "#deliver"), analyzedCalls());
 
-        // liefereAus is the only method of the service that calls anything
+        // deliver is the only method of the service that calls anything
         assertThat(renderedClasses(fromType)).isEqualTo(renderedClasses(fromMethod));
     }
 
@@ -174,7 +174,7 @@ public class FlowFilteredDiagramTest {
     void testFlowRestrictionCannotWidenAPackageRestriction() {
         var trim = DiagramTrimSettings.builder()
             .withExplicitlyIncludedPackageNames(
-                List.of("tests.shared.complete.onlinehandel.zustellung"))
+                List.of("tests.shared.complete.ecommerce.delivery"))
             .withIncludeFlowsFrom(List.of(COMMAND))
             .build();
 
@@ -226,6 +226,7 @@ public class FlowFilteredDiagramTest {
     void testFlowSettingWithoutAnAnalysisResultIsRejected() {
         assertThatThrownBy(() -> generate(List.of(COMMAND), null))
             .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("includeFlowsFrom")
             .hasMessageContaining("needs the result of a static analysis");
     }
 
@@ -246,17 +247,17 @@ public class FlowFilteredDiagramTest {
     // ---------------------------------------------------------------------
 
     /**
-     * The calls {@code ZustellungsService.liefereAus} makes, as a real static analysis would
+     * The calls {@code DeliveryService.deliver} makes, as a real static analysis would
      * report them.
      */
     private static DomainCalls analyzedCalls() {
-        var caller = domainMethod(ZUSTELLUNGS_SERVICE, "liefereAus");
+        var caller = domainMethod(ZUSTELLUNGS_SERVICE, "deliver");
         return DomainCalls.builder()
             .add(caller, List.of(
                 new DomainCalls.CallSite(
                     domainMethod(REPOSITORY, "findById"), ZUSTELLUNGS_SERVICE, 42),
                 new DomainCalls.CallSite(
-                    domainMethod(AGGREGATE, "starteLieferung"), ZUSTELLUNGS_SERVICE, 44),
+                    domainMethod(AGGREGATE, "startDelivery"), ZUSTELLUNGS_SERVICE, 44),
                 new DomainCalls.CallSite(
                     domainMethod(REPOSITORY, "update"), ZUSTELLUNGS_SERVICE, 45)))
             .build();

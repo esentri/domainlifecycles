@@ -1,6 +1,7 @@
 package io.domainlifecycles.boot3.autoconfig.features.multiple.jackson_builder;
 
 import io.domainlifecycles.boot3.autoconfig.annotation.EnableDlc;
+import io.domainlifecycles.boot3.autoconfig.configurations.DlcJdbcPersistenceAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcJooqPersistenceAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcNoTxInMemoryDomainEventsAutoConfiguration;
 import io.domainlifecycles.boot3.autoconfig.configurations.DlcSpringBusDomainEventsAutoConfiguration;
@@ -16,6 +17,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
     DlcSpringWebAutoConfiguration.class,
     DlcSpringOpenApiAutoConfiguration.class,
     DlcJooqPersistenceAutoConfiguration.class,
+    DlcJdbcPersistenceAutoConfiguration.class,
     DlcSpringBusDomainEventsAutoConfiguration.class,
     DlcNoTxInMemoryDomainEventsAutoConfiguration.class,
     DlcServiceKindAutoConfiguration.class

@@ -45,8 +45,10 @@ import io.domainlifecycles.mirror.api.DomainServiceMirror;
 import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.EntityMirror;
+import io.domainlifecycles.mirror.api.FactoryMirror;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
+import io.domainlifecycles.mirror.api.NonDomainTypeMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.mirror.api.ParamMirror;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
@@ -74,6 +76,8 @@ import java.util.stream.Collectors;
 public class DomainClassMapper {
 
     private final DomainDiagramConfig domainDiagramConfig;
+    private final NodeNames nodeNames;
+    private final FilteredDomainClasses filteredDomainClasses;
 
     /**
      * Initializes the DomainClassMapper with a given {@link DomainDiagramConfig}
@@ -81,7 +85,23 @@ public class DomainClassMapper {
      * @param domainDiagramConfig diagram configuration
      */
     public DomainClassMapper(DomainDiagramConfig domainDiagramConfig) {
+        this(domainDiagramConfig, NodeNames.withoutPackageHints(domainDiagramConfig), null);
+    }
+
+    /**
+     * Initializes the DomainClassMapper with a given {@link DomainDiagramConfig}, the names of the diagram's nodes
+     * and the classes shown in the diagram.
+     *
+     * @param domainDiagramConfig   diagram configuration
+     * @param nodeNames             the names of the diagram's nodes
+     * @param filteredDomainClasses the classes shown in the diagram, a ReadModel contained in another one is drawn
+     *                              as relationship instead of a field if it is one of them; may be {@code null}
+     */
+    public DomainClassMapper(DomainDiagramConfig domainDiagramConfig, NodeNames nodeNames,
+                             FilteredDomainClasses filteredDomainClasses) {
         this.domainDiagramConfig = domainDiagramConfig;
+        this.nodeNames = nodeNames;
+        this.filteredDomainClasses = filteredDomainClasses;
     }
 
     /**
@@ -189,6 +209,19 @@ public class DomainClassMapper {
     }
 
     /**
+     * Maps Factory structure to a {@link NomnomlClass} representation.
+     *
+     * @param factoryMirror mirrored factory
+     * @return mapped factory
+     */
+    public NomnomlClass mapFactoryClass(FactoryMirror factoryMirror) {
+        return mapToNomnomlClass(factoryMirror,
+            domainDiagramConfig.getGeneralVisualSettings().isShowFactoryFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
+            domainDiagramConfig.getGeneralVisualSettings().isShowFactoryMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()
+        );
+    }
+
+    /**
      * Maps ServiceKind structure to a {@link NomnomlClass} representation.
      *
      * @param serviceKindMirror mirrored service kind
@@ -202,11 +235,30 @@ public class DomainClassMapper {
     }
 
     /**
+     * Maps a non-domain class (a class referenced by a service kind that is not classified as any
+     * recognized domain type) to a {@link NomnomlClass} representation.
+     *
+     * @param nonDomainTypeMirror mirrored non-domain class
+     * @return mapped non-domain class
+     */
+    public NomnomlClass mapNonDomainClass(NonDomainTypeMirror nonDomainTypeMirror) {
+        return mapToNomnomlClass(nonDomainTypeMirror,
+            domainDiagramConfig.getGeneralVisualSettings().isShowNonDomainClassFields() && domainDiagramConfig.getGeneralVisualSettings().isShowFields(),
+            domainDiagramConfig.getGeneralVisualSettings().isShowNonDomainClassMethods() && domainDiagramConfig.getGeneralVisualSettings().isShowMethods()
+        );
+    }
+
+    /**
      * Get all mirrors contained in an aggregate root
      * @param aggregateRootMirror the root for which to get all contained elements
      * @return all domaintype mirrors that should be rendered as contained classes in an aggregate frame
      */
     public List<DomainTypeMirror> getAllAggregateMirrors(AggregateRootMirror aggregateRootMirror) {
+        return aggregateMirrors(aggregateRootMirror, domainDiagramConfig);
+    }
+
+    static List<DomainTypeMirror> aggregateMirrors(AggregateRootMirror aggregateRootMirror,
+                                                   DomainDiagramConfig domainDiagramConfig) {
         var aggregateMirrors = new ArrayList<DomainTypeMirror>();
 
         var visitor = new ContextDomainObjectVisitor(aggregateRootMirror) {
@@ -220,7 +272,7 @@ public class DomainClassMapper {
                     if (!domainDiagramConfig.getDiagramTrimSettings().getClassesBlacklist().contains(domainTypeMirror.getTypeName())) {
                         if (DomainType.VALUE_OBJECT.equals(domainTypeMirror.getDomainType())) {
                             var voMirror = (ValueObjectMirror) domainTypeMirror;
-                            if (!voMirror.isSingledValued()) {
+                            if (!DomainMapperUtils.isShownInline(voMirror, domainDiagramConfig)) {
                                 aggregateMirrors.add(domainTypeMirror);
                             }
                         } else {
@@ -245,7 +297,7 @@ public class DomainClassMapper {
     public NomnomlClass mapToNomnomlClass(DomainTypeMirror domainTypeMirror,
                                           boolean showFields,
                                           boolean showMethods) {
-        var className = DomainMapperUtils.domainTypeName(domainTypeMirror, domainDiagramConfig);
+        var className = nodeNames.name(domainTypeMirror);
         var nomnomlClassBuilder = NomnomlClass
             .builder()
             .styleClassifier(DomainMapperUtils.styleClassifier(domainTypeMirror))
@@ -276,6 +328,7 @@ public class DomainClassMapper {
                 .filter(p -> !p.getName().equals(inheritedIdentityNameFinal))
                 .filter(p -> !domainDiagramConfig.getGeneralVisualSettings().getFieldBlacklist().contains(p.getName()))
                 .filter(p -> DomainMapperUtils.showPropertyInline(p, domainTypeMirror, domainDiagramConfig))
+                .filter(p -> !isContainedReadModelShownAsNode(domainTypeMirror, p))
                 .filter(p -> {
                     if (!domainDiagramConfig.getGeneralVisualSettings().isShowInheritedMembersInClasses()) {
                         return p.getDeclaredByTypeName().equals(domainTypeMirror.getTypeName());
@@ -314,6 +367,7 @@ public class DomainClassMapper {
                         || m.getAccessLevel().equals(AccessLevel.PUBLIC)
                     )
                     .filter(m -> !m.isOverridden())
+                    .filter(m -> filteredDomainClasses == null || filteredDomainClasses.isShownRegardingFlows(domainTypeMirror, m))
                     .filter(m -> !domainDiagramConfig.getGeneralVisualSettings().getMethodBlacklist().contains(m.getName()))
                     .filter(m -> {
                         if (!domainDiagramConfig.getGeneralVisualSettings().isShowInheritedMembersInClasses()) {
@@ -329,7 +383,7 @@ public class DomainClassMapper {
                     })
                     .filter(m -> !m.isGetter() && !m.isSetter())
                     .sorted(new MethodComparator())
-                    .map(this::mapToNomnomlMethod)
+                    .map(m -> mapToNomnomlMethod(m, domainTypeMirror))
                     .distinct()
                     .collect(Collectors.toList())
             );
@@ -337,6 +391,16 @@ public class DomainClassMapper {
             nomnomlClassBuilder.methods(Collections.emptyList());
         }
         return nomnomlClassBuilder.build();
+    }
+
+    /**
+     * A ReadModel contained in a ReadModel is drawn as relationship between both, if it is shown in the diagram.
+     */
+    private boolean isContainedReadModelShownAsNode(DomainTypeMirror domainTypeMirror, FieldMirror fieldMirror) {
+        return filteredDomainClasses != null
+            && DomainType.READ_MODEL.equals(domainTypeMirror.getDomainType())
+            && DomainType.READ_MODEL.equals(fieldMirror.getType().getDomainType())
+            && filteredDomainClasses.getContained(fieldMirror.getType().getTypeName()).isPresent();
     }
 
     /**
@@ -463,12 +527,13 @@ public class DomainClassMapper {
         return visibility;
     }
 
-    private NomnomlMethod mapToNomnomlMethod(MethodMirror methodMirror) {
+    private NomnomlMethod mapToNomnomlMethod(MethodMirror methodMirror, DomainTypeMirror owner) {
         return NomnomlMethod
             .builder()
             .name(methodMirror.getName())
             .returnType(mapToNomnomlType(methodMirror.getReturnType()))
             .visibility(methodVisibility(methodMirror))
+            .factoryMethod(isMarkedAsFactoryMethod(methodMirror, owner))
             .parameters(
                 methodMirror
                     .getParameters()
@@ -483,6 +548,14 @@ public class DomainClassMapper {
             .required(isTypeRequired(paramMirror.getType()))
             .type(mapToNomnomlType(paramMirror.getType()))
             .build();
+    }
+
+    /**
+     * A factory method is marked, unless it is shown in a factory - with the stereotype of the class, its creating
+     * methods are factory methods anyway.
+     */
+    private static boolean isMarkedAsFactoryMethod(MethodMirror methodMirror, DomainTypeMirror owner) {
+        return methodMirror.isFactoryMethod() && !DomainType.FACTORY.equals(owner.getDomainType());
     }
 
     private String methodVisibility(MethodMirror methodMirror) {

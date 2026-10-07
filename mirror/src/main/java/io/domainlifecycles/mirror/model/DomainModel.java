@@ -38,6 +38,7 @@ import io.domainlifecycles.mirror.api.DomainTypeMirror;
 import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.EnumMirror;
 import io.domainlifecycles.mirror.api.IdentityMirror;
+import io.domainlifecycles.mirror.api.FactoryMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
@@ -330,6 +331,18 @@ public class DomainModel implements DomainMirror {
      * {@inheritDoc}
      */
     @Override
+    public List<FactoryMirror> getAllFactoryMirrors() {
+        return getAllDomainTypeMirrors()
+            .stream()
+            .filter(dt -> dt.getDomainType().equals(DomainType.FACTORY))
+            .map(dt -> (FactoryMirror)dt)
+            .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<IdentityMirror> getAllIdentityMirrors() {
         return getAllDomainTypeMirrors()
             .stream()
@@ -363,6 +376,7 @@ public class DomainModel implements DomainMirror {
                 || dt.getDomainType().equals(DomainType.REPOSITORY)
                 || dt.getDomainType().equals(DomainType.QUERY_HANDLER)
                 || dt.getDomainType().equals(DomainType.OUTBOUND_SERVICE)
+                || dt.getDomainType().equals(DomainType.FACTORY)
             )
             .map(dt -> (ServiceKindMirror)dt)
             .toList();

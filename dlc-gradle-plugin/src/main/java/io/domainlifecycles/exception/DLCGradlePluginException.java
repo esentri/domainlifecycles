@@ -61,7 +61,7 @@ public class DLCGradlePluginException extends RuntimeException {
      * @return a new DLCPluginException with a detail message formatted to include with given message parameters.
      */
     public static DLCGradlePluginException fail(final String detail, final Object... args) {
-        return new DLCGradlePluginException(requireNonNull(detail), requireNonNull(args));
+        return new DLCGradlePluginException(format(requireNonNull(detail), requireNonNull(args)));
     }
 
     /**
@@ -72,18 +72,18 @@ public class DLCGradlePluginException extends RuntimeException {
      * containing a cause.
      */
     public static DLCGradlePluginException fail(final String detail, final Throwable cause, final Object... args) {
-        return new DLCGradlePluginException(requireNonNull(detail), requireNonNull(cause), requireNonNull(args));
+        return new DLCGradlePluginException(format(requireNonNull(detail), requireNonNull(args)), requireNonNull(cause));
     }
 
     private static String format(final String detail, final Object[] args) {
         return args.length > 0 ? String.format(detail, args) : detail;
     }
 
-    private DLCGradlePluginException(String detail, final Object... args) {
-        super(format(detail, args));
+    private DLCGradlePluginException(final String message) {
+        super(message);
     }
 
-    private DLCGradlePluginException(String detail, Throwable cause, Object... args) {
-        super(format(detail, args), cause);
+    private DLCGradlePluginException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 }

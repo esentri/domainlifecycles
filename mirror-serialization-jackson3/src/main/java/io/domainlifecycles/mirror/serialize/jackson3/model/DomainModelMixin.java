@@ -40,6 +40,7 @@ import io.domainlifecycles.mirror.api.EntityMirror;
 import io.domainlifecycles.mirror.api.EnumMirror;
 import io.domainlifecycles.mirror.api.IdentityMirror;
 import io.domainlifecycles.mirror.api.OutboundServiceMirror;
+import io.domainlifecycles.mirror.api.FactoryMirror;
 import io.domainlifecycles.mirror.api.QueryHandlerMirror;
 import io.domainlifecycles.mirror.api.ReadModelMirror;
 import io.domainlifecycles.mirror.api.RepositoryMirror;
@@ -240,6 +241,13 @@ public abstract class DomainModelMixin {
      */
     @JsonIgnore
     public abstract List<OutboundServiceMirror> getAllOutboundServiceMirrors();
+
+    /**
+     * Mixin method declaration. Ignored for serialization.
+     * @return list of {@link FactoryMirror} instances
+     */
+    @JsonIgnore
+    public abstract List<FactoryMirror> getAllFactoryMirrors();
 
     /**
      * Retrieves a list of all IdentityMirror objects associated with this instance.

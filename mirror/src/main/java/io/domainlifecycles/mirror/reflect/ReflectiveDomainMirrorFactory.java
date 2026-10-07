@@ -77,7 +77,7 @@ public class ReflectiveDomainMirrorFactory extends AbstractDomainMirrorFactory i
 
         Map<String, ? extends DomainTypeMirror> builtTypeMirrors =
             classGraphDomainTypesScanner
-                .scan(domainModelPackagesExtended)
+                .scan(domainModelPackagesExtended, domainModelPackages, includeNonDomainClasses, nonDomainClassFilter())
                 .stream()
                 .collect(
                     Collectors.toMap(
@@ -93,7 +93,8 @@ public class ReflectiveDomainMirrorFactory extends AbstractDomainMirrorFactory i
 
             });
 
-        var dm = new DomainModel(builtTypeMirrors, boundedContextPackages);
+        var resolvedBoundedContexts = resolveBoundedContexts(classGraphDomainTypesScanner.derivedBoundedContexts());
+        var dm = new DomainModel(builtTypeMirrors, resolvedBoundedContexts);
         var c = new CompletenessChecker(dm);
         c.checkForCompleteness();
 
@@ -112,9 +113,8 @@ public class ReflectiveDomainMirrorFactory extends AbstractDomainMirrorFactory i
         }else{
             this.classGraphDomainTypesScanner = new ClassGraphDomainTypesScanner(externalClassLoader, genericTypeResolver, domainTypeDetector);
         }
-        if(boundedContextPackages == null){
-            this.boundedContextPackages = domainModelPackages;
+        if(boundedContextPackages != null){
+            validatePackages(boundedContextPackages);
         }
-        validatePackages(boundedContextPackages);
     }
 }

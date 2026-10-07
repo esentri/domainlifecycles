@@ -15,4 +15,7 @@ java {
 dependencies {
     api libs.slf4j.api
     api project(":mirror")
+
+    testImplementation project(":type-utils")
+    testImplementation libs.assertj
 }

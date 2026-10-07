@@ -50,10 +50,15 @@ Here is an overview of more details about DLC Persistence and some additional fe
     - [Optimistic Locking](#optimistic-locking)
     - [Change Tracking with Persistence Actions](#change-tracking)
     - [Queries via Fetcher](#fetcher)
+    - [Transaction Cache](#transaction-cache)
+        - [Activation: how the cache learns when a transaction begins and ends](#transaction-cache-activation)
+        - [Own transaction cache providers](#transaction-cache-own-provider)
+        - [Failures, and emptying the cache](#transaction-cache-clear)
     - [Object relational mapping](#or-mapping)
         - [AutoMapping](#automapping)
         - [RecordMapper](#recordmapper)
         - [record mapped ValueObjects](#record-mapped-valueobjects)
+        - [List&lt;Identity&gt; and List&lt;Enum&gt; fields (scalar lists)](#scalar-lists)
         - [EntityValueObjectRecordTypeConfiguration](#entityvalueobjectrecordtypeconfiguration)
         - [TypeConverter](#typeconverter)
         - [Working with inheritance](#inheritance)
@@ -183,8 +188,9 @@ A similar example for Gradle can be found in our [sample project](../sample-proj
 
 #### Flyway
 
-To use be able to use DLC Persistence currently only jOOQ is available as persistence provider.
-Therefore, it is necessary to generate jOOQ classes representing the database tables and other database objects.
+To use DLC Persistence via jOOQ (see [jdbc-integration](../jdbc-integration/readme.md) for a plain JDBC based
+alternative that needs no code generation step), it is necessary to generate jOOQ classes representing the
+database tables and other database objects.
 
 The build setup of jOOQ in connection with Flyway is our recommended setup. As it's a bit tricky, you can refer to the
 sample project linked below,
@@ -245,7 +251,8 @@ A minimal configuration example of a `io.domainlifecycles.persistence.provider.D
 @Bean
 public JooqDomainPersistenceProvider domainPersistenceProvider(
         DomainObjectBuilderProvider domainObjectBuilderProvider,
-        Set<RecordMapper<?, ?, ?>> customRecordMappers
+        Set<RecordMapper<?, ?, ?>> customRecordMappers,
+        DSLContext dslContext
         ) {
           return new JooqDomainPersistenceProvider(
           JooqDomainPersistenceConfiguration.JooqPersistenceConfigurationBuilder
@@ -253,7 +260,8 @@ public JooqDomainPersistenceProvider domainPersistenceProvider(
           .withDomainObjectBuilderProvider(domainObjectBuilderProvider)
           .withCustomRecordMappers(customRecordMappers)
           .withRecordPackage(JOOQ_RECORD_PKG)
-          .make());
+          .make(),
+          dslContext);
         }
         
 ```
@@ -264,6 +272,9 @@ For a minimal setup:
 - We can add a list of custom RecordMappers (optionally).
 - Also, the full qualified package name where DLC persistence can expect to find all corresponding jOOQ record classes
   must be defined.
+- Passing the same `DSLContext` your Repositories are built with lets `JooqDomainPersistenceProvider` wire the
+  [Transaction Cache](#transaction-cache) to it centrally, once, here - see that section for when this can be
+  omitted (falling back to the single-argument constructor).
 
 The DomainPersistenceProvider instance must finally be injected into all repository instances.
 
@@ -604,6 +615,153 @@ optimized alternative, is demonstrated here:
     }
 ```
 
+<a name="transaction-cache"></a>
+
+#### Transaction Cache
+
+DLC Persistence keeps a small, per-transaction read cache of previously fetched Aggregate roots, so that a
+write operation (`update()`, `deleteById()`) which needs the currently persisted state to detect changes does
+not have to issue a redundant `SELECT` if the same Aggregate was already loaded via the Fetcher earlier in the
+same transaction. It is off by default: it is switched on via `withTransactionCacheEnabled(true)` on the
+persistence configuration builder, or with the Spring Boot autoconfig via `@EnableDlc(transactionCacheEnabled = true)`
+or `dlc.features.persistence.transaction-cache.enabled=true`. It requires no further application code changes to
+benefit from - it only ever changes *how many* `SELECT`s a transaction issues, never the result of
+`insert()`/`update()`/`deleteById()`/`findById()`.
+
+How it works:
+
+- Every real fetch of a complete Aggregate root (`getFetcher().fetchDeep(...)`, `findById(...)`) puts a cloned
+  copy of the result into the cache, keyed by the Aggregate root's type and id. Only Entities are cloned
+  (`io.domainlifecycles.domain.types.clone.EntityCloner`) - ValueObject instances are immutable in DLC and are
+  reused by reference, never duplicated.
+- `update()`/`deleteById()` take (and remove) a matching cache entry instead of fetching the currently persisted
+  state again, if one is present; otherwise they fall back to a real fetch exactly as before. Either way, the
+  entry is always removed from the cache once consumed - the next fetch of that Aggregate root within the same
+  transaction fetches for real again.
+- The cache is scoped to exactly one transaction and lives as long as it, across all its reads and writes: it is
+  only ever visible to that transaction, and is entirely discarded once the transaction ends (commit or rollback),
+  regardless of outcome. Nested transactions are kept apart, and a rollback to a savepoint clears the cache, since
+  entries loaded since may hold state that was never committed.
+
+The cache is only correct if DLC learns reliably when a transaction begins and ends - otherwise a write could
+compare against a state that was rolled back, or belongs to another transaction. It is therefore only used where
+the transaction boundaries come from a reliable source (see the table below); everywhere else it is off, and every
+write reads the current state of the Aggregate, exactly as without the feature.
+
+Configuration:
+
+```java
+JooqDomainPersistenceConfiguration.JooqPersistenceConfigurationBuilder
+    .newConfig()
+    // ...
+    .withTransactionCacheEnabled(true)     // false by default - off, the feature is left out entirely: a provider
+                                            // set is ignored, no transaction listener is registered and no
+                                            // additional memory is used
+    .withTransactionCacheMaxSize(256)      // jOOQ only, default; the maximum number of Aggregate roots held
+                                            // per transaction, ignored if a custom provider is set below
+    .withTransactionCacheProvider(...)     // a provider following another transaction mechanism, e.g. JTA
+    .make();
+```
+
+`JdbcPersistenceConfigurationBuilder` offers `withTransactionCacheEnabled(...)` and
+`withTransactionCacheProvider(...)` as well, but sets up no provider even when enabled: plain JDBC has no
+transaction listener of its own, so the cache stays off until a provider is set whose scopes follow the transaction
+boundaries.
+
+<a name="transaction-cache-activation"></a>
+
+##### Activation: how the cache learns when a transaction begins and ends
+
+The cache itself has no idea when a transaction starts or ends - that part is technology-specific, and handled
+by a small binder class for each way a transaction can be driven:
+
+| Transaction driven by...                                    | Source of the boundaries                                                | Wired by                                                                                      |
+|---------------------------------------------------------------|--------------------------------------------------------------------------|------------------------------------------------------------------------------------------------|
+| Spring (`@Transactional`, `TransactionTemplate`; with a `DataSourceTransactionManager` or a `JtaTransactionManager`) | `SpringTransactionCacheProvider` on Spring's `TransactionSynchronization`, the cache a resource of the transaction (see [`persistence-cache-spring-tx`](../persistence-cache-spring-tx/readme.md)) | `DlcJooqPersistenceAutoConfiguration`/`DlcJdbcPersistenceAutoConfiguration` (Spring Boot autoconfig), for both `jooq-integration` and `jdbc-integration`, with `dlc.features.persistence.transaction-cache.enabled=true` (`false` by default); limited via `.max-size` |
+| JTA without Spring (e.g. a Jakarta EE application server)    | `JtaTransactionCacheProvider` on the JTA `TransactionSynchronizationRegistry` (see [`persistence-cache-jakarta-jta`](../persistence-cache-jakarta-jta/readme.md)) | Manual - set it via `withTransactionCacheProvider(...)`, for both `jooq-integration` and `jdbc-integration` |
+| jOOQ itself (`dslContext.transaction(...)`, jOOQ's own `TransactionListener` events) | `TransactionCacheJooqBinder` (`jooq-integration`)                       | `JooqDomainPersistenceProvider`'s `DSLContext`-taking constructor, once, at provider construction time |
+| Plain JDBC transactions the application drives itself       | the application, opening a `ThreadBoundTransactionCacheProvider` scope around each transaction | Manual - set the provider via `withTransactionCacheProvider(...)` and open/close/clear its scopes, see below |
+
+Without one of these, there is no cache. Spring-managed and JTA transactions keep their cache as a resource of the
+transaction itself, so that the transaction manager keeps nested and suspended transactions apart; no connection
+needs to be decorated for any of the sources.
+
+Without Spring, a transaction has to reach the repositories on the same thread, and their connections have to be
+handed back:
+
+- jOOQ: the repositories run on the `DSLContext` they were created with, so they only take part in a
+  `dslContext.transaction(...)` if that `DSLContext` hands out the transaction's connection - e.g. with jOOQ's
+  `ThreadLocalTransactionProvider` - and jOOQ releases every connection it acquires.
+- Plain JDBC: within a transaction, the `JdbcConnectionProvider` hands out the transaction's connection, and
+  `releaseConnection(...)` leaves it open. Outside one, a connection handed out per call is closed there.
+
+Plain JDBC transactions the application drives itself only use the cache with a scope the application opens
+around each transaction - closed once the transaction ends, and cleared after a rollback to a savepoint:
+
+```java
+var cacheProvider = new ThreadBoundTransactionCacheProvider<JdbcRecord>();
+// ... JdbcPersistenceConfigurationBuilder.newConfig()...withTransactionCacheEnabled(true)
+//         .withTransactionCacheProvider(cacheProvider)...
+
+connection.setAutoCommit(false);
+try (var scope = cacheProvider.open()) {
+    // ... repository operations on this connection ...
+    connection.rollback(savepoint);
+    scope.clear();                   // after a rollback to a savepoint
+    // ...
+    connection.commit();
+}
+```
+
+<a name="transaction-cache-own-provider"></a>
+
+##### Own transaction cache providers
+
+Any implementation of `io.domainlifecycles.persistence.cache.TransactionCacheProvider` can be set via
+`withTransactionCacheProvider(...)` - with the Spring Boot autoconfig, any bean of that type replaces the provider
+the autoconfig sets up, whatever its name. Since a write compares the Aggregate against the state the cache holds
+for it, a provider must only ever hand out a cache holding what the running transaction itself loaded and what is
+still valid within it:
+
+- one cache per transaction, never shared between two transactions - also not between transactions that run one
+  after the other on the same thread or on the same, pooled connection,
+- no cache outside an actual transaction,
+- the cache lives as long as its transaction, across all its reads and writes, and is emptied once the transaction
+  completes - committed or rolled back,
+- a rollback to a savepoint empties the cache, since entries loaded since may hold state that was never committed,
+- a transaction suspended for another one keeps its cache apart from the other one's, and gets it back when it
+  resumes.
+
+Where a provider cannot learn these boundaries reliably, it must hand out no cache at all - the persistence then
+reads the current state before every write, exactly as without the feature.
+
+<a name="transaction-cache-clear"></a>
+
+##### Failures, and emptying the cache
+
+A write of a repository removes the aggregate from the cache in any case - also if it fails midway and the
+application goes on in the same transaction, with the statements before the failing one written.
+
+The cache only knows about the writes of DLC's repositories, though. Whatever changes an aggregate the running
+transaction already loaded in another way leaves a stale state in the cache, and a later write of that aggregate
+would compare against it. Every `TransactionCacheProvider` therefore offers `clearCurrentTransactionCache()`, emptying
+the cache of the current transaction while keeping it in use for the rest of the transaction. An application calls
+it after
+
+- writing such an aggregate with its own SQL or jOOQ statements, e.g. a bulk update,
+- calling a stored procedure - or causing a trigger to fire - that changes it,
+- rolling back to a savepoint of a plain JDBC transaction it drives itself (the Spring, JTA and jOOQ bindings
+  notice that on their own).
+
+```java
+jdbcTemplate.update("UPDATE ORDER_ITEM SET PRICE = PRICE * 1.1 WHERE ORDER_ID = ?", orderId);
+domainPersistenceProvider.transactionCacheProvider.clearCurrentTransactionCache();
+```
+
+Emptying the cache never changes the result of a write: without a cache entry, a write reads the current state of
+the aggregate, exactly as without the feature. Outside a transaction, or with the cache switched off, the call does
+nothing.
+
 <a name="or-mapping"></a>
 
 #### Object relational mapping
@@ -828,6 +986,39 @@ CREATE TABLE test_domain.action_code (
 
 CREATE SEQUENCE test_domain.action_code_seq  MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000 CACHE 20;
 ```
+
+<a name="scalar-lists"></a>
+
+##### List&lt;Identity&gt; and List&lt;Enum&gt; fields (scalar lists)
+
+A `List<Identity>` or `List<Enum>` field on an AggregateRoot, Entity or ValueObject (a "scalar list", as opposed
+to a `List<ValueObject>`) is persisted the same way as a 'record mapped' ValueObject: one child table per field,
+named `<containing table>_<field name>` by AutoMapping convention, with a technical `id` `PRIMARY KEY`, a
+`container_id` `FOREIGN KEY` back to the containing row, and a `<name>_seq` `SEQUENCE` for the technical id -
+exactly the requirements described above for 'record mapped' ValueObjects. The only structural difference is the
+value column itself: instead of one column per ValueObject property, a scalar list child table has a single
+`value` column holding the raw `Identity`/`Enum` value directly (no technical id/type discriminator column
+beyond what any other `Identity`/`Enum` column would need elsewhere).
+
+```SQL
+CREATE TABLE test_domain.root_id_enum_list_enum_list (
+    id NUMBER(18) PRIMARY KEY,
+    container_id NUMBER(18) NOT NULL,
+    value VARCHAR2(20),
+    FOREIGN KEY (container_id) REFERENCES test_domain.root_id_enum_list(id)
+);
+
+CREATE SEQUENCE test_domain.root_id_enum_list_enum_list_seq MINVALUE 1000 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1000;
+```
+
+Internally, each raw `Identity`/`Enum` element is wrapped in a framework-only `ScalarListElement` carrier
+(implementing `ValueObject`, so equality delegates to the wrapped value) while an Aggregate is being saved or
+loaded - this lets a scalar list reuse the exact same insert/update/delete diffing and `RecordMapper` machinery
+already used for `List<ValueObject>` fields, with duplicate values and arbitrary `Identity` value types (including
+`UUID`) supported the same way. `ScalarListElement` is never part of your domain model and is never returned from
+a repository; it is unwrapped back to the raw value before being attached to the rebuilt domain object's
+`List<Identity>`/`List<Enum>` field. Deviating from the naming convention works the same way as for 'record
+mapped' ValueObjects, via `EntityValueObjectRecordTypeConfiguration` (see below).
 
 <a name="entityvalueobjectrecordtypeconfiguration"></a>
 

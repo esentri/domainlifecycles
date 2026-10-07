@@ -34,19 +34,23 @@ import io.domainlifecycles.jooq.configuration.def.JooqRecordClassProvider;
 import io.domainlifecycles.jooq.imp.JooqEntityIdentityProvider;
 import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
 import io.domainlifecycles.mirror.api.DomainMirror;
+import io.domainlifecycles.persistence.cache.TransactionCacheProvider;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
 import io.domainlifecycles.persistence.provider.DomainPersistenceProvider;
 import io.domainlifecycles.persistence.provider.EntityIdentityProvider;
 import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
 import io.domainlifecycles.persistence.repository.actions.PersistenceAction;
+import io.domainlifecycles.persistence.spring.cache.SpringTransactionCacheProvider;
 import org.jooq.Configuration;
 import org.jooq.ConnectionProvider;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
+import org.jooq.UpdatableRecord;
 import org.jooq.impl.DataSourceConnectionProvider;
 import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.DefaultDSLContext;
 import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -90,7 +94,7 @@ import java.util.Set;
     beforeName = "org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration"
 )
 @ConditionalOnClass(name = "org.jooq.DSLContext")
-@ConditionalOnProperty(prefix = "dlc.features.peristence", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "dlc.features.persistence", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Deprecated
 public class DlcJooqPersistenceAutoConfiguration {
 
@@ -100,11 +104,16 @@ public class DlcJooqPersistenceAutoConfiguration {
      * the application’s data source and domain persistence layer.
      *
      * The configuration is conditional on the presence of the JOOQ library in the classpath
-     * and sets up beans only if required dependencies are available.
+     * and sets up beans only if required dependencies are available. Additionally gated by
+     * {@code dlc.features.persistence.jooq.enabled} (default {@code true}), independent of
+     * {@code dlc.features.persistence.jdbc.enabled} - see {@link DlcJdbcPersistenceAutoConfiguration}'s
+     * class javadoc for when to use one over the other, e.g. to force jOOQ off while both integrations
+     * are on the classpath, without excluding this whole autoconfiguration class.
      *
      */
     @org.springframework.context.annotation.Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(name = "org.jooq.DSLContext")
+    @ConditionalOnProperty(prefix = "dlc.features.persistence.jooq", name = "enabled", havingValue = "true", matchIfMissing = true)
     static class JooqPersistenceConfiguration implements EnvironmentAware{
 
         private Environment environment;
@@ -125,17 +134,36 @@ public class DlcJooqPersistenceAutoConfiguration {
         }
 
         /**
+         * Creates a {@link SpringTransactionCacheProvider} bean backing the transaction cache feature: one cache
+         * per Spring-managed transaction, kept as a resource of that transaction, read and written by
+         * {@link #domainPersistenceProvider}. Holds at most {@code dlc.features.persistence.transaction-cache.max-size}
+         * aggregates per transaction (256 by default), and is only created if
+         * {@code dlc.features.persistence.transaction-cache.enabled} is {@code true} ({@code false} by default). Any bean of type
+         * {@link TransactionCacheProvider} replaces it, whatever its name.
+         *
+         * @return a {@link SpringTransactionCacheProvider} instance
+         * @throws DLCAutoConfigException if the maximum number of aggregates is not greater than 0
+         */
+        @Bean
+        @ConditionalOnMissingBean(TransactionCacheProvider.class)
+        @ConditionalOnProperty(prefix = TransactionCacheProperties.PREFIX, name = "enabled", havingValue = "true")
+        public SpringTransactionCacheProvider<UpdatableRecord<?>> dlcTransactionCacheProvider() {
+            return new SpringTransactionCacheProvider<>(TransactionCacheProperties.maxSize(environment));
+        }
+
+        /**
          * Creates a {@link DataSourceConnectionProvider} bean for providing database connections.
+         * <p>
          * This method wraps the given {@link DataSource} with a {@link TransactionAwareDataSourceProxy}
          * to ensure transaction-aware behavior.
          *
          * @param dataSource the data source to be wrapped by the connection provider
-         * @return a {@link DataSourceConnectionProvider} instance configured with the given data source
+         * @return a {@link ConnectionProvider} instance configured with the given data source
          */
         @Bean
         @ConditionalOnBean(DataSource.class)
         @ConditionalOnMissingBean(name = "org.jooq.impl.DataSourceConnectionProvider")
-        public DataSourceConnectionProvider connectionProvider(DataSource dataSource) {
+        public ConnectionProvider connectionProvider(DataSource dataSource) {
             return new DataSourceConnectionProvider(new TransactionAwareDataSourceProxy(dataSource));
         }
 
@@ -163,7 +191,7 @@ public class DlcJooqPersistenceAutoConfiguration {
                 }
                 sqlDialect = SQLDialect.valueOf(property);
             } catch (IllegalArgumentException e) {
-                throw DLCAutoConfigException.fail("Property 'sqlDialect' is missing. Specify 'dlc.features-persistence.sql-dialect' or 'jooqSqlDialect' on '@EnableDlc'.");
+                throw DLCAutoConfigException.fail("Property 'sqlDialect' is missing. Specify 'dlc.features.persistence.sql-dialect' or 'jooqSqlDialect' on '@EnableDlc'.");
             }
             jooqConfig.set(sqlDialect);
             return jooqConfig;
@@ -194,6 +222,8 @@ public class DlcJooqPersistenceAutoConfiguration {
          * @param customRecordMappers a set of custom mappers for converting database records to domain objects
          * @param domainMirror the domain mirror for reflection and metadata about domain types,
          *                     needed for correct order of bean instantiation
+         * @param transactionCacheProvider the provider of the transaction cache - {@link #dlcTransactionCacheProvider}
+         *                                 or a bean replacing it; none if the cache is disabled
          * @return a configured {@link JooqDomainPersistenceProvider} instance
          * @throws DLCAutoConfigException if the required JOOQ record package property is missing or invalid
          */
@@ -203,20 +233,37 @@ public class DlcJooqPersistenceAutoConfiguration {
         public JooqDomainPersistenceProvider domainPersistenceProvider(
             DomainObjectBuilderProvider domainObjectBuilderProvider,
             Set<RecordMapper<?, ?, ?>> customRecordMappers,
-            DomainMirror domainMirror
+            DomainMirror domainMirror,
+            ObjectProvider<TransactionCacheProvider<UpdatableRecord<?>>> transactionCacheProvider
         ) {
             String recordPackage = environment.getProperty("dlc.features.persistence.jooq-record-package");
             if(recordPackage == null) {
                 throw DLCAutoConfigException.fail("Property 'jooqRecordPackage' is missing. Specify 'dlc.features.persistence.jooq-record-package' or 'jooqRecordPackage' on '@EnableDlc'.");
             }
 
-            return new JooqDomainPersistenceProvider(
-                JooqDomainPersistenceConfiguration.JooqPersistenceConfigurationBuilder
-                    .newConfig()
-                    .withDomainObjectBuilderProvider(domainObjectBuilderProvider)
-                    .withCustomRecordMappers(customRecordMappers)
-                    .withRecordClassProvider(new JooqRecordClassProvider(recordPackage))
-                    .make());
+            // the single-argument constructor is used deliberately here, not the one that also registers
+            // jOOQ's own TransactionCacheJooqBinder (a native org.jooq.TransactionListener) on the DSLContext:
+            // this autoconfig only ever runs under Spring, whose transactions the SpringTransactionCacheProvider
+            // follows - the jOOQ-native binder only works with a ThreadBoundTransactionCacheProvider anyway.
+            var configuration = JooqDomainPersistenceConfiguration.JooqPersistenceConfigurationBuilder
+                .newConfig()
+                .withDomainObjectBuilderProvider(domainObjectBuilderProvider)
+                .withCustomRecordMappers(customRecordMappers)
+                .withRecordClassProvider(new JooqRecordClassProvider(recordPackage));
+            if (TransactionCacheProperties.enabled(environment)) {
+                var cacheProvider = transactionCacheProvider.getIfAvailable();
+                if (cacheProvider == null) {
+                    // the autoconfig's own provider is left out only for an existing one, which does not fit
+                    throw DLCAutoConfigException.fail(
+                        "A TransactionCacheProvider bean replaces the one of the jOOQ persistence autoconfig, but "
+                            + "none is a TransactionCacheProvider<UpdatableRecord<?>>. Provide one of that type, or switch "
+                            + "the cache off via '%s=false'.", TransactionCacheProperties.ENABLED);
+                }
+                configuration.withTransactionCacheEnabled(true).withTransactionCacheProvider(cacheProvider);
+            } else {
+                configuration.withTransactionCacheEnabled(false);
+            }
+            return new JooqDomainPersistenceProvider(configuration.make());
         }
 
         /**

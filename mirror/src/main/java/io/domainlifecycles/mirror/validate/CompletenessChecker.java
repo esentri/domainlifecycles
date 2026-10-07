@@ -34,6 +34,8 @@ import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.ParamMirror;
 import io.domainlifecycles.mirror.exception.MirrorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,10 +47,15 @@ import java.util.Objects;
  * within the DomainModel are correctly modeled and do not reference unknown or invalid domain types.
  *
  * If any incompleteness is found during the checks, a {@link MirrorException} is thrown with an appropriate message.
+ * Unknown domain types referenced by a {@link DomainType#NON_DOMAIN} class are only logged as a warning: such a
+ * class is no part of the domain model itself, so it must not make the model incomplete.
  */
 public class CompletenessChecker {
 
+    private static final Logger log = LoggerFactory.getLogger(CompletenessChecker.class);
+
     private final List<String> messages = new ArrayList<>();
+    private final List<String> warnings = new ArrayList<>();
     private final DomainMirror domainMirror;
     private final List<String> ignoredPackages;
 
@@ -92,6 +99,9 @@ public class CompletenessChecker {
                 ignoredPackages.stream().noneMatch(p -> t.getTypeName().startsWith(p))
             )
             .forEach(this::checkMirror);
+        if(!warnings.isEmpty()){
+            log.warn("Non-domain classes reference unknown domain types: \n{}", String.join(",\n", warnings));
+        }
         if(!messages.isEmpty()){
             throw MirrorException.fail("Domain Model is not complete: \n%s", String.join(",\n", messages));
         }
@@ -113,11 +123,12 @@ public class CompletenessChecker {
     }
 
     private void checkMirror(DomainTypeMirror mirror) {
-        mirror.getAllFields().forEach(this::checkField);
-        mirror.getMethods().forEach(this::checkMethod);
+        var findings = DomainType.NON_DOMAIN.equals(mirror.getDomainType()) ? warnings : messages;
+        mirror.getAllFields().forEach(field -> checkField(field, findings));
+        mirror.getMethods().forEach(method -> checkMethod(method, findings));
     }
 
-    private void checkField(FieldMirror field) {
+    private void checkField(FieldMirror field, List<String> findings) {
         if( ignoredPackages.stream().noneMatch(p -> field.getDeclaredByTypeName().startsWith(p)) ){
             check(
                 field.getType(),
@@ -126,19 +137,20 @@ public class CompletenessChecker {
                     field.getDeclaredByTypeName(),
                     field.getType().getTypeName(),
                     field.getName()
-                )
+                ),
+                findings
             );
         }
     }
 
-    private void checkMethod(MethodMirror method) {
+    private void checkMethod(MethodMirror method, List<String> findings) {
         if( ignoredPackages.stream().noneMatch(p -> method.getDeclaredByTypeName().startsWith(p)) ){
-            checkReturnType(method);
-            method.getParameters().forEach(param -> checkMethodParam(method, param));
+            checkReturnType(method, findings);
+            method.getParameters().forEach(param -> checkMethodParam(method, param, findings));
         }
     }
 
-    private void checkReturnType(MethodMirror method) {
+    private void checkReturnType(MethodMirror method, List<String> findings) {
         check(
             method.getReturnType(),
             String.format(
@@ -146,11 +158,12 @@ public class CompletenessChecker {
                 method.getDeclaredByTypeName(),
                 method.getReturnType().getTypeName(),
                 method.getName()
-            )
+            ),
+            findings
         );
     }
 
-    private void checkMethodParam(MethodMirror method, ParamMirror param) {
+    private void checkMethodParam(MethodMirror method, ParamMirror param, List<String> findings) {
         check(
             param.getType(),
             String.format(
@@ -158,11 +171,12 @@ public class CompletenessChecker {
                 method.getDeclaredByTypeName(),
                 param.getType().getTypeName(),
                 method.getName()
-            )
+            ),
+            findings
         );
     }
 
-    private void check(AssertedContainableTypeMirror typeToCheck, String message){
+    private void check(AssertedContainableTypeMirror typeToCheck, String message, List<String> findings){
         if(DomainType.NON_DOMAIN.equals(typeToCheck.getDomainType())
             || DomainType.ENUM.equals(typeToCheck.getDomainType())){
             return;
@@ -170,7 +184,7 @@ public class CompletenessChecker {
         if (domainMirror.getDomainTypeMirror(typeToCheck.getTypeName()).isEmpty()
             && ignoredPackages.stream().noneMatch(p -> typeToCheck.getTypeName().startsWith(p))
         ) {
-            messages.add(
+            findings.add(
                 message
             );
         }

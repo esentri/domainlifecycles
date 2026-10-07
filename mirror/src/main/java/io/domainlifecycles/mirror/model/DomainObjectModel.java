@@ -104,7 +104,7 @@ public abstract class DomainObjectModel extends DomainTypeModel implements Domai
             .map(p -> (ValueReferenceMirror) p)
             .findFirst()
             .orElseThrow(() -> MirrorException.fail(
-                String.format("ValueReferenceMirror not found for name '%s' within '%s'!", name, typeName)));
+                "ValueReferenceMirror not found for name '%s' within '%s'!", name, typeName));
     }
 
 

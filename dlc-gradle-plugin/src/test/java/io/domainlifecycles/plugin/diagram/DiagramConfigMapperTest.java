@@ -61,10 +61,13 @@ public class DiagramConfigMapperTest {
         extension.getShowFields().set(true);
         extension.getMethodBlacklist().set(List.of("internalHelper"));
         extension.getIncludeFlowsFrom().set(List.of("com.example.order.PlaceOrder"));
+        extension.getIncludeFlowsTo().set(List.of("com.example.order.OrderPlaced"));
         extension.getFlowMaxDepth().set(2);
         extension.getFlowFollowEvents().set(false);
         extension.getFlowFollowImplementations().set(false);
         extension.getFlowExcludeAccessors().set(true);
+        extension.getNonDomainExcludedSupertypePackages().set(List.of("com.example.codegen"));
+        extension.getNonDomainExcludedPackages().set(List.of("com.example.generated"));
 
         DiagramConfig diagramConfig = DiagramConfigMapper.map(extension);
 
@@ -75,10 +78,25 @@ public class DiagramConfigMapperTest {
         assertThat(diagramConfig.getShowFields()).isTrue();
         assertThat(diagramConfig.getMethodBlacklist()).containsExactly("internalHelper");
         assertThat(diagramConfig.getIncludeFlowsFrom()).containsExactly("com.example.order.PlaceOrder");
+        assertThat(diagramConfig.getIncludeFlowsTo()).containsExactly("com.example.order.OrderPlaced");
         assertThat(diagramConfig.getFlowMaxDepth()).isEqualTo(2);
         assertThat(diagramConfig.getFlowFollowEvents()).isFalse();
         assertThat(diagramConfig.getFlowFollowImplementations()).isFalse();
         assertThat(diagramConfig.getFlowExcludeAccessors()).isTrue();
+        assertThat(diagramConfig.getNonDomainExcludedSupertypePackages()).containsExactly("com.example.codegen");
+        assertThat(diagramConfig.getNonDomainExcludedPackages()).containsExactly("com.example.generated");
+    }
+
+    @Test
+    void unsetNonDomainExclusionsAreMappedAsEmpty() {
+        PluginDiagramConfigurationExtension unset = diagrams.create("unsetExclusions");
+        unset.getFormat().set("svg");
+
+        DiagramConfig diagramConfig = DiagramConfigMapper.map(unset);
+
+        // Gradle's empty-list convention; dlc-plugins treats an empty list as the default (org.jooq)
+        assertThat(diagramConfig.getNonDomainExcludedSupertypePackages()).isEmpty();
+        assertThat(diagramConfig.getNonDomainExcludedPackages()).isEmpty();
     }
 
     @Test
@@ -95,6 +113,7 @@ public class DiagramConfigMapperTest {
         // ListProperty falls back to Gradle's built-in empty-list convention rather than null when unset
         assertThat(diagramConfig.getExplicitlyIncludedPackageNames()).isEmpty();
         assertThat(diagramConfig.getIncludeFlowsFrom()).isEmpty();
+        assertThat(diagramConfig.getIncludeFlowsTo()).isEmpty();
         assertThat(diagramConfig.getFlowMaxDepth()).isNull();
         assertThat(diagramConfig.getFlowFollowEvents()).isNull();
         assertThat(diagramConfig.getFlowFollowImplementations()).isNull();

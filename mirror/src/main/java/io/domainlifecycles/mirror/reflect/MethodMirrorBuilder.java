@@ -28,10 +28,12 @@ package io.domainlifecycles.mirror.reflect;
 
 import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.domain.types.DomainEventListener;
+import io.domainlifecycles.domain.types.FactoryMethod;
 import io.domainlifecycles.domain.types.ListensTo;
 import io.domainlifecycles.domain.types.Publishes;
 import io.domainlifecycles.mirror.api.AccessLevel;
 import io.domainlifecycles.mirror.api.AssertedContainableTypeMirror;
+import io.domainlifecycles.mirror.api.DomainType;
 import io.domainlifecycles.mirror.api.MethodMirror;
 import io.domainlifecycles.mirror.api.ParamMirror;
 import io.domainlifecycles.mirror.api.ResolvedGenericTypeMirror;
@@ -39,14 +41,20 @@ import io.domainlifecycles.mirror.model.MethodModel;
 import io.domainlifecycles.mirror.model.ParamModel;
 import io.domainlifecycles.mirror.resolver.GenericTypeResolver;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Builder to create {@link MethodMirror}. Uses Java reflection.
@@ -54,6 +62,15 @@ import java.util.Optional;
  * @author Mario Herb
  */
 public class MethodMirrorBuilder {
+
+    /**
+     * The event listener annotations of Spring and Spring Modulith, by name - see {@link #isFrameworkEventListener}.
+     */
+    static final Set<String> FRAMEWORK_EVENT_LISTENER_ANNOTATIONS = Set.of(
+        "org.springframework.context.event.EventListener",
+        "org.springframework.transaction.event.TransactionalEventListener",
+        "org.springframework.modulith.events.ApplicationModuleListener");
+
     private final Method m;
 
     private final Class<?> topLevelClass;
@@ -63,6 +80,20 @@ public class MethodMirrorBuilder {
     private final GenericTypeResolver genericTypeResolver;
 
     private final DomainTypeDetector domainTypeDetector;
+
+    private final boolean declaredInFactory;
+
+    /**
+     * The domain types a factory creates.
+     */
+    private static final Set<DomainType> DOMAIN_OBJECT_TYPES = EnumSet.of(
+        DomainType.AGGREGATE_ROOT,
+        DomainType.ENTITY,
+        DomainType.VALUE_OBJECT,
+        DomainType.READ_MODEL,
+        DomainType.DOMAIN_COMMAND,
+        DomainType.DOMAIN_EVENT
+    );
 
     /**
      * Constructor
@@ -75,6 +106,24 @@ public class MethodMirrorBuilder {
      */
     public MethodMirrorBuilder(Method m, Class<?> topLevelClass, boolean overridden,
                                GenericTypeResolver genericTypeResolver, DomainTypeDetector domainTypeDetector) {
+        this(m, topLevelClass, overridden, genericTypeResolver, domainTypeDetector, false);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param m                   the method to mirror
+     * @param topLevelClass       the class the method is mirrored for
+     * @param overridden          whether the method is overridden
+     * @param genericTypeResolver type resolver implementation, that resolves generics and type arguments
+     * @param domainTypeDetector  domain type detector implementation, that detects domain types
+     * @param declaredInFactory   whether the class is a factory, whose public methods returning a domain object are
+     *                            factory methods
+     */
+    public MethodMirrorBuilder(Method m, Class<?> topLevelClass, boolean overridden,
+                               GenericTypeResolver genericTypeResolver, DomainTypeDetector domainTypeDetector,
+                               boolean declaredInFactory) {
+        this.declaredInFactory = declaredInFactory;
         this.m = Objects.requireNonNull(m);
         this.topLevelClass = Objects.requireNonNull(topLevelClass, "The corresponding top level class cannot be null!");
         this.overridden = overridden;
@@ -88,16 +137,32 @@ public class MethodMirrorBuilder {
      * @return new instance of method mirror
      */
     public MethodMirror build() {
+        var returnType = getReturnType();
         return new MethodModel(
             m.getName(),
             m.getDeclaringClass().getName(),
             AccessLevel.of(m),
             getParameters(),
-            getReturnType(),
+            returnType,
             overridden,
             publishedEventTypeNames(),
-            listenedEventTypeName()
+            listenedEventTypeName(),
+            isFactoryMethod(returnType)
         );
+    }
+
+    /**
+     * A method marked as {@link FactoryMethod}, or a public method of a factory returning a domain object - a builder
+     * is no factory method.
+     */
+    private boolean isFactoryMethod(AssertedContainableTypeMirror returnType) {
+        if (m.isAnnotationPresent(FactoryMethod.class)) {
+            return true;
+        }
+        return declaredInFactory
+            && Modifier.isPublic(m.getModifiers())
+            && m.getDeclaringClass() != Object.class
+            && DOMAIN_OBJECT_TYPES.contains(returnType.getDomainType());
     }
 
     private AssertedContainableTypeMirror getReturnType() {
@@ -153,6 +218,61 @@ public class MethodMirrorBuilder {
         }
         if (listensAnnotation != null && domainEventTypeName != null) {
             return Optional.of(domainEventTypeName);
+        }
+        if (isFrameworkEventListener(m)) {
+            return domainEventTypeName != null
+                ? Optional.of(domainEventTypeName)
+                : domainEventTypeNamedByAnnotation(m);
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Whether the method is an event listener of Spring or Spring Modulith - {@code @EventListener},
+     * {@code @TransactionalEventListener}, {@code @ApplicationModuleListener} or an own annotation composed of one of
+     * them. The annotations are recognized by name, so DLC does not depend on Spring; annotations whose class is not on
+     * the classpath are not visible via reflection anyway.
+     */
+    static boolean isFrameworkEventListener(Method method) {
+        return Arrays.stream(method.getAnnotations())
+            .anyMatch(annotation -> isEventListenerAnnotation(annotation.annotationType(), new HashSet<>()));
+    }
+
+    private static boolean isEventListenerAnnotation(Class<? extends Annotation> annotationType,
+                                                     Set<Class<? extends Annotation>> visited) {
+        if (!visited.add(annotationType)) {
+            return false;
+        }
+        if (FRAMEWORK_EVENT_LISTENER_ANNOTATIONS.contains(annotationType.getName())) {
+            return true;
+        }
+        return Arrays.stream(annotationType.getAnnotations())
+            .map(Annotation::annotationType)
+            .filter(meta -> !meta.getName().startsWith("java.lang.annotation."))
+            .anyMatch(meta -> isEventListenerAnnotation(meta, visited));
+    }
+
+    /**
+     * Spring listeners may name the event in the annotation ({@code classes} or {@code value}) instead of taking it
+     * as a parameter. Only a single domain event is taken, since a mirrored method listens to one event.
+     */
+    private static Optional<String> domainEventTypeNamedByAnnotation(Method method) {
+        for (Annotation annotation : method.getAnnotations()) {
+            for (String attribute : List.of("classes", "value")) {
+                try {
+                    Object value = annotation.annotationType().getMethod(attribute).invoke(annotation);
+                    if (value instanceof Class<?>[] classes) {
+                        List<Class<?>> domainEvents = Arrays.stream(classes)
+                            .filter(DomainEvent.class::isAssignableFrom)
+                            .toList();
+                        if (domainEvents.size() == 1) {
+                            return Optional.of(domainEvents.get(0).getName());
+                        }
+                    }
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    // the annotation has no such attribute
+                }
+            }
         }
         return Optional.empty();
     }

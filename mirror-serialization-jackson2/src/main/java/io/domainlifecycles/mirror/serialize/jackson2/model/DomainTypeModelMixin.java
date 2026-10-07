@@ -27,6 +27,7 @@
 package io.domainlifecycles.mirror.serialize.jackson2.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.domainlifecycles.mirror.api.FieldMirror;
 import io.domainlifecycles.mirror.api.MethodMirror;
@@ -64,4 +65,11 @@ public abstract class DomainTypeModelMixin {
         @JsonProperty("inheritanceHierarchyTypeNames") List<String> inheritanceHierarchyTypeNames,
         @JsonProperty("allInterfaceTypeNames") List<String> allInterfaceTypeNames
     ) {}
+
+    /**
+     * Mixin method declaration. Ignored for serialization, derived from the methods.
+     * @return the factory methods of the domain type
+     */
+    @JsonIgnore
+    public abstract List<MethodMirror> getFactoryMethods();
 }

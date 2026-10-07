@@ -95,6 +95,8 @@ DLC provides following core features:
     * Persistence Action Event hooks
     * Full ValueObject support regarding persistence
     * Supports `final` Keywords and Java-Optionals within persisted structures
+    * Optional per-transaction Transaction Cache, reducing redundant `SELECT`s on `update()`/`deleteById()` -
+      works out of the box with Spring-managed transactions
 
 - [`Domain Events`](domain-events-core/readme.md): Simplifies some technical concerns about publishing and listening to 
   DomainEvents
@@ -161,16 +163,20 @@ DLC provides several JARs which enable the DLC features independently
 | Domain mirror                                                       | only internally used   | io.domainlifecycles:mirror                                                                                                                        |
 | Domain mirror serialization (Jackson 2)                             | only internally used   | io.domainlifecycles:mirror-serialization-jackson2                                                                                                 |
 | Domain mirror serialization (Jackson 3)                             | only internally used   | io.domainlifecycles:mirror-serialization-jackson3                                                                                                 |
-| Domain event support                                                | application developers | io.domainlifecycles:domain-events-{active-mq-classic, core, gruelbox, jakarta-jms, jakarta-jta, mq, serialization-jackson, spring-tx, spring-bus} |  
+| jMolecules DDD annotation/interface support for the Domain Mirror   | application developers | io.domainlifecycles:mirror-jmolecules                                                                                                             |
+| Domain event support                                                | application developers | io.domainlifecycles:domain-events-{activemq-classic5, core, gruelbox, jakarta-jms, jakarta-jta, mq, spring-tx, spring-bus} |  
 | Domain event serialization (Jackson 2)                              | only internally used   | io.domainlifecycles:domain-events-serialization-jackson2                                                                                          |
 | Domain event serialization (Jackson 3)                              | only internally used   | io.domainlifecycles:domain-events-serialization-jackson3                                                                                          |
 | Jackson 2 based JSON mapping                                        | application developers | io.domainlifecycles:jackson2-integration                                                                                                          |                         
 | Jackson 3 based JSON mapping                                        | application developers | io.domainlifecycles:jackson3-integration                                                                                                          |
 | Service registry                                                    | only internally used   | io.domainlifecycles:service-registry                                                                                                              |
 | Persistence interfaces and general persistence management           | only internally used   | io.domainlifecycles:persistence                                                                                                                   | 
+| Spring transaction binding for the DLC Transaction Cache             | application developers (without the Spring Boot autoconfig) | io.domainlifecycles:persistence-cache-spring-tx                                                                                                         |
+| JTA transaction binding for the DLC Transaction Cache (without Spring) | application developers | io.domainlifecycles:persistence-cache-jakarta-jta                                                                                                     |
 | Spring Boot 3 Autoconfig                                            | application developers | io.domainlifecycles:dlc-spring-boot3-autoconfig                                                                                                   |
 | Spring Boot 4 Autoconfig                                            | application developers | io.domainlifecycles:dlc-spring-boot-autoconfig                                                                                                    |
 | jOOQ based implementation for persistence management                | application developers | io.domainlifecycles:jooq-integration                                                                                                              |
+| Plain JDBC based implementation for persistence management (no jOOQ / code generation required) | application developers | io.domainlifecycles:jdbc-integration                                                                                         |
 | Bean Validation support (jakarta)                                   | application developers | io.domainlifecycles:bean-validations                                                                                                              |
 | Byte Buddy based auto validation extension                          | application developers | io.domainlifecycles:validation-extender                                                                                                           |
 | Spring Doc 2 Open API support                                       | application developers | io.domainlifecycles:spring-doc2-integration                                                                                                       | 
@@ -183,6 +189,7 @@ DLC provides several JARs which enable the DLC features independently
 | Static analysis result (DomainCalls) serialization (Jackson 2)      | application developers | io.domainlifecycles:static-analysis-serialization-jackson2                                                                                        |
 | Static analysis result (DomainCalls) serialization (Jackson 3)      | application developers | io.domainlifecycles:static-analysis-serialization-jackson3                                                                                        |
 | Domain Diagrams                                                     | application developers | io.domainlifecycles:domain-diagrammer                                                                                                             | 
+| Shared support code for the DLC Gradle/Maven build plugins          | only internally used   | io.domainlifecycles:dlc-plugins                                                                                                                    |
 
 To simplify the dependency management using all features in a Spring Boot 4.x app using jOOQ for the relational
 database persistence management, we provide a Spring Boot 4 starter:
@@ -194,7 +201,7 @@ database persistence management, we provide a Spring Boot 4 starter:
 Gradle setup for a Spring Boot 4.x app:
 ```Groovy
 dependencies{
-    implementation 'io.domainlifecycles:spring-boot-starter:3.4.0'
+    implementation 'io.domainlifecycles:spring-boot-starter:3.5.0'
 }
 ```
 
@@ -203,7 +210,7 @@ Maven setup for a Spring Boot 4 app:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>spring-boot-starter</artifactId>
-    <version>3.4.0</version>
+    <version>3.5.0</version>
 </dependency>
 ```
 
@@ -215,7 +222,7 @@ We also support Spring Boot 3.x:
 Gradle setup for a Spring Boot 3.x app:
 ```Groovy
 dependencies{
-    implementation 'io.domainlifecycles:spring-boot3-starter:3.4.0'
+    implementation 'io.domainlifecycles:spring-boot3-starter:3.5.0'
 }
 ```
 
@@ -224,7 +231,7 @@ Maven setup for a Spring Boot 3.x app:
 <dependency>
     <groupId>io.domainlifecycles</groupId>
     <artifactId>spring-boot3-starter</artifactId>
-    <version>3.4.0</version>
+    <version>3.5.0</version>
 </dependency>
 ```
 
@@ -242,25 +249,25 @@ Here's an overview of the most important external dependencies:
 
 | Feature                                                             | External dependency                                                                            | Supported versions                 |
 |---------------------------------------------------------------------|------------------------------------------------------------------------------------------------|------------------------------------|
-| Optional Object Builders Lombok Support                             | org.projectlombok:lombok                                                                       | tested with 1.18.46                |     
+| Optional Object Builders Lombok Support                             | org.projectlombok:lombok                                                                       | tested with 1.18.48                |     
 | Optional fine grained type resolving in the DLC mirror              | com.github.vladislavsevruk:type-resolver                                                       | tested with 1.0.3                  |
-| Runtime class loading in the DLC mirror and DLC persistence         | io.github.classgraph:classgraph                                                                | tested with 4.8.184                |
-| Validation - Jakarta Bean Validation Support                        | (Bean Validation Provider implementation) e.g.: org.hibernate.validator:hibernate-validator    | tested with 9.1.0.Final            |
-| Validation extension via Byte Buddy                                 | net.bytebuddy:byte-buddy                                                                       | tested with 1.18.10                |
-| Persistence                                                         | org.jooq:jooq                                                                                  | tested with 3.19.29                |
-| JSON Mapping via Jackson 3                                          | tools.jackson.core:jackson-core <b>and</b> tools.jackson.core:jackson-databind                 | tested with 3.2.0                  |
-| JSON Mapping via Jackson 2                                          | com.fasterxml.jackson.core:jackson-core <b>and</b> com.fasterxml.jackson.core:jackson-databind | tested with 2.22.0                 |
-| Open API Support (Spring Doc 2)                                     | org.springdoc:springdoc-openapi-starter-webmvc-ui                                              | tested with 2.8.17                 |
-| Open API Support (Spring Doc 3)                                     | org.springdoc:springdoc-openapi-starter-webmvc-ui                                              | tested with 3.0.3                  |
-| Domain Events, Spring based Transaction Support (Spring Boot 3 & 4) | org.springframework:spring-tx                                                                  | tested with 7.0.8                  |
+| Runtime class loading in the DLC mirror and DLC persistence         | io.github.classgraph:classgraph                                                                | tested with 4.8.196                |
+| Validation - Jakarta Bean Validation Support                        | (Bean Validation Provider implementation) e.g.: org.hibernate.validator:hibernate-validator    | tested with 9.1.4.Final            |
+| Validation extension via Byte Buddy                                 | net.bytebuddy:byte-buddy                                                                       | tested with 1.18.14                |
+| Persistence                                                         | org.jooq:jooq                                                                                  | tested with 3.19.39                |
+| JSON Mapping via Jackson 3                                          | tools.jackson.core:jackson-core <b>and</b> tools.jackson.core:jackson-databind                 | tested with 3.2.3                  |
+| JSON Mapping via Jackson 2                                          | com.fasterxml.jackson.core:jackson-core <b>and</b> com.fasterxml.jackson.core:jackson-databind | tested with 2.22.3                 |
+| Open API Support (Spring Doc 2)                                     | org.springdoc:springdoc-openapi-starter-webmvc-ui                                              | tested with 2.9.1                  |
+| Open API Support (Spring Doc 3)                                     | org.springdoc:springdoc-openapi-starter-webmvc-ui                                              | tested with 3.1.1                  |
+| Domain Events, Spring based Transaction Support (Spring Boot 3 & 4) | org.springframework:spring-tx                                                                  | tested with 7.0.9                  |
 | Domain Events, Jakarta JTA Support                                  | (JTA Provider implementation) e.g.: Atomikos com.atomikos:transactions-jta                     | tested with 6.0.1                  |
-| Domain Events Gruelbox Transactional Outbox                         | com.gruelbox:transactionoutbox-core                                                            | tested with 7.0.707                |
-| Domain Events ActiveMq Classic                                      | org.apache.activemq:activemq-client                                                            | tested with 5.18.4                 |
-| Domain Events serialization via Jackson 3                           | tools.jackson.core:jackson-core <b>and</b> tools.jackson.core:jackson-databind                 | tested with 3.2.0                  |
-| Domain Events serialization via Jackson 2                           | com.fasterxml.jackson.core:jackson-core <b>and</b> com.fasterxml.jackson.core:jackson-databind | tested with 2.22.0                 |
-| Logging                                                             | (SLF4J Provider) e.g.: ch.qos.logback:logback-classic                                          | tested with Logback Classic 1.5.34 |      
-| Spring Boot 4.x dependencies                                        | Spring Boot 4                                                                                  | tested with 4.1.0                  |      
-| Spring Boot 3.x dependencies                                        | Spring Boot 3                                                                                  | tested with 3.5.15                 |      
+| Domain Events Gruelbox Transactional Outbox                         | com.gruelbox:transactionoutbox-core                                                            | tested with 7.1.769                |
+| Domain Events ActiveMq Classic                                      | org.apache.activemq:activemq-client                                                            | tested with 5.19.11                |
+| Domain Events serialization via Jackson 3                           | tools.jackson.core:jackson-core <b>and</b> tools.jackson.core:jackson-databind                 | tested with 3.2.3                  |
+| Domain Events serialization via Jackson 2                           | com.fasterxml.jackson.core:jackson-core <b>and</b> com.fasterxml.jackson.core:jackson-databind | tested with 2.22.3                 |
+| Logging                                                             | (SLF4J Provider) e.g.: ch.qos.logback:logback-classic                                          | tested with Logback Classic 1.6.5  |      
+| Spring Boot 4.x dependencies                                        | Spring Boot 4                                                                                  | tested with 4.1.1                  |      
+| Spring Boot 3.x dependencies                                        | Spring Boot 3                                                                                  | tested with 3.5.16                 |      
 
 Run `./gradle dependencies` on the main project or any of the submodules to get a complete overview of the dependencies
 that must be provided on the target applications runtime classpath.
@@ -276,6 +283,17 @@ A Gradle based sample project that demonstrates all DLC features can be found [h
 
 Just clone the repository, then `cd sample-project`
 and run `./gradlew bootRun` to start the application.
+
+### Gradle and Maven Plugins
+
+DLC provides Gradle (`dlc-gradle-plugin`) and Maven (`dlc-maven-plugin`) build plugins that generate visual domain
+diagrams (SVG, PNG or plain Nomnoml) directly from your compiled domain model, without depending on any DLC library
+at runtime. Diagrams can be restricted to structural filters (packages, blacklists, connection filters) or to the
+classes taking part in a concrete call flow, forward (`includeFlowsFrom`, "what does this lead to") or backward
+(`includeFlowsTo`, "what leads into this"), and can optionally render non-domain classes (e.g. controllers) that
+reference or are referenced by a service kind. The plugins also support exporting the domain model as JSON and
+uploading it to an external diagram viewer. See [dlc-plugins/readme.md](./dlc-plugins/readme.md) for full
+configuration options and Gradle/Maven examples.
 
 The DLC plugin is configured to generate domain model diagrams. 
 Within the sample projects directory, run `./gradlew createDiagram` to generate the diagrams.

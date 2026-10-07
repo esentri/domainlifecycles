@@ -27,6 +27,7 @@
 package io.domainlifecycles.plugins.diagram.kroki;
 
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.command.PullImageResultCallback;
 import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.Ports;
@@ -41,6 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.github.dockerjava.api.model.HostConfig.newHostConfig;
@@ -132,6 +134,8 @@ class KrokiDockerAdapter {
     }
 
     private String createKrokiDockerContainer() {
+        ensureImagePulled();
+
         final ExposedPort tcpExp = ExposedPort.tcp(KROKI_PORT_INTERNAL);
         final Ports portBindings = new Ports();
         portBindings.bind(tcpExp, Ports.Binding.bindPort(KROKI_PORT_EXTERNAL));
@@ -147,6 +151,32 @@ class KrokiDockerAdapter {
         } catch(Throwable t) {
             throw DLCPluginsException.fail(
                 "Could not create Kroki Docker container. Please check whether your Docker engine is up and running.", t);
+        }
+    }
+
+    /**
+     * Pulls the Kroki image if it is not already present locally. The Docker engine does not do
+     * this implicitly when creating a container, so without it, {@code createContainerCmd} fails
+     * with a 404 "image not known" the first time a machine runs this.
+     */
+    private void ensureImagePulled() {
+        try {
+            final boolean imagePresent = !dockerClient.listImagesCmd()
+                .withImageNameFilter(KROKI_CONTAINER_IMAGE_NAME)
+                .exec()
+                .isEmpty();
+            if (imagePresent) {
+                return;
+            }
+            log.debug("Kroki Docker image '{}' not found locally. Pulling it...", KROKI_CONTAINER_IMAGE_NAME);
+            dockerClient.pullImageCmd(KROKI_CONTAINER_IMAGE_NAME)
+                .exec(new PullImageResultCallback())
+                .awaitCompletion(5, TimeUnit.MINUTES);
+            log.debug("Kroki Docker image '{}' pulled.", KROKI_CONTAINER_IMAGE_NAME);
+        } catch(Throwable t) {
+            throw DLCPluginsException.fail(
+                "Could not pull the Kroki Docker image '" + KROKI_CONTAINER_IMAGE_NAME
+                    + "'. Please check whether your Docker engine is up and running and can reach Docker Hub.", t);
         }
     }
 

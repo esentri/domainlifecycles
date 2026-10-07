@@ -23,7 +23,7 @@ Spring Boot Application class with `@PostConstruct` call:
 @EnableDlc(
         dlcMirrorBasePackages = "com.example.domain",
         jooqRecordPackage = "com.example.records",
-        jooqSqlDialect = SQLDialect.H2)
+        jooqSqlDialect = "H2")
 public class ShopApplication {
     
     public static void main(String[] args) {
@@ -64,12 +64,12 @@ public class Customer extends AggregateRootBase<CustomerId> {
     @Override
     public void validate() {
         DomainAssertions.isPast(
-            numberOfCurrenciesUsed,
+            birthDate,
             "BirthDate has to be in the past!"
         );
         
         DomainAssertions.isBefore(
-            numberOfCurrenciesUsed,
+            birthDate,
             LocalDate.now().minusYears(18),
             "Customer has to be at least 18 years old!"
         );

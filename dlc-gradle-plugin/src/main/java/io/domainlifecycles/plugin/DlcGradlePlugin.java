@@ -33,6 +33,7 @@ import io.domainlifecycles.plugin.extensions.DomainModelUploadTaskConfigurationE
 import io.domainlifecycles.plugin.extensions.MirrorSerializerTaskConfigurationExtension;
 import io.domainlifecycles.plugin.mirror.MirrorSerializerTask;
 import io.domainlifecycles.plugin.viewer.UploadDomainModelTask;
+import io.domainlifecycles.plugins.viewer.DomainModelUploaderImpl;
 import io.domainlifecycles.plugins.exception.DLCPluginsException;
 import io.domainlifecycles.plugins.staticanalysis.DomainCallsAnalyzerImpl;
 import org.gradle.api.Plugin;
@@ -147,6 +148,12 @@ public class DlcGradlePlugin implements Plugin<Project> {
                 task.getStaticAnalysisCacheSize().set(domainModelUploadTaskConfigurationExtension.getStaticAnalysisCacheSize()
                     .convention(DomainCallsAnalyzerImpl.DEFAULT_CACHE_SIZE));
                 task.getStaticAnalysisPackages().set(domainModelUploadTaskConfigurationExtension.getStaticAnalysisPackages());
+                task.getNonDomainExcludedSupertypePackages().set(domainModelUploadTaskConfigurationExtension.getNonDomainExcludedSupertypePackages());
+                task.getNonDomainExcludedPackages().set(domainModelUploadTaskConfigurationExtension.getNonDomainExcludedPackages());
+                task.getUploadRequestTimeoutMinutes().set(domainModelUploadTaskConfigurationExtension.getUploadRequestTimeoutMinutes()
+                    .convention(DomainModelUploaderImpl.DEFAULT_REQUEST_TIMEOUT_MINUTES));
+                task.getStaticAnalysisExpandNonDomainDispatch().set(domainModelUploadTaskConfigurationExtension
+                    .getStaticAnalysisExpandNonDomainDispatch().convention(false));
                 task.getClassesDirs().from(totalClassesDirs);
                 task.getClasspath().from(totalClasspath);
             });

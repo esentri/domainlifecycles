@@ -68,7 +68,7 @@ public class DLCAutoConfigException extends RuntimeException {
      * @return new exception
      */
     public static DLCAutoConfigException fail(final String detail, final Object... args) {
-        return new DLCAutoConfigException(requireNonNull(detail), requireNonNull(args));
+        return new DLCAutoConfigException(format(requireNonNull(detail), requireNonNull(args)));
     }
 
     /**
@@ -81,7 +81,7 @@ public class DLCAutoConfigException extends RuntimeException {
      * @return new exception
      */
     public static DLCAutoConfigException fail(final String detail, final Throwable cause, final Object... args) {
-        return new DLCAutoConfigException(requireNonNull(detail), requireNonNull(cause), requireNonNull(args));
+        return new DLCAutoConfigException(format(requireNonNull(detail), requireNonNull(args)), requireNonNull(cause));
     }
 
     // ----------------------------------------------------------
@@ -90,12 +90,11 @@ public class DLCAutoConfigException extends RuntimeException {
         return args.length > 0 ? String.format(detail, args) : detail;
     }
 
-
-    private DLCAutoConfigException(String detail, final Object... args) {
-        super(format(detail, args));
+    private DLCAutoConfigException(final String message) {
+        super(message);
     }
 
-    private DLCAutoConfigException(String detail, Throwable cause, Object... args) {
-        super(format(detail, args), cause);
+    private DLCAutoConfigException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 }

@@ -124,8 +124,8 @@ public class KrokiClient {
                     return response.body();
                 }
                 if (response.statusCode() >= 400) {
-                    throw DLCPluginsException.fail(String.format("Kroki Docker container returned error for conversion: %s",
-                        new String(response.body(), StandardCharsets.UTF_8)));
+                    throw DLCPluginsException.fail("Kroki Docker container returned error for conversion: %s",
+                        new String(response.body(), StandardCharsets.UTF_8));
                 }
             } catch (IOException | InterruptedException e) {
                 try {
@@ -133,14 +133,14 @@ public class KrokiClient {
                 } catch (InterruptedException ignored) { }
             }
         }
-        throw DLCPluginsException.fail(String.format("Kroki server couldn't be reached in specified retry limit (Retries: %s, Timeout: %s)", MAX_RETRIES, WAIT_TIMEOUT_MS));
+        throw DLCPluginsException.fail("Kroki server couldn't be reached in specified retry limit (Retries: %s, Timeout: %s)", MAX_RETRIES, WAIT_TIMEOUT_MS);
     }
 
     private String getKrokiPath(final FileType fileType) {
         String krokiPath;
         switch (fileType) {
             case SVG -> krokiPath = KROKI_NOMNOML_SVG_PATH;
-            default -> throw DLCPluginsException.fail(String.format("Filetype %s not allowed for Kroki conversion", fileType));
+            default -> throw DLCPluginsException.fail("Filetype %s not allowed for Kroki conversion", fileType);
         }
         return krokiPath;
     }

@@ -45,13 +45,13 @@ public class CryptoVo implements ValueObject {
 
     private final byte[] chiffrat;
     private final byte[] salt;
-    private final long schluesselVersion;
+    private final long keyVersion;
 
     @Builder(setterPrefix = "set")
-    public CryptoVo(byte[] chiffrat, byte[] salt, long schluesselVersion) {
+    public CryptoVo(byte[] chiffrat, byte[] salt, long keyVersion) {
         this.chiffrat = chiffrat;
         this.salt = salt;
-        this.schluesselVersion = schluesselVersion;
+        this.keyVersion = keyVersion;
     }
 
     @Override
@@ -62,14 +62,14 @@ public class CryptoVo implements ValueObject {
         if (!(o instanceof CryptoVo other)) {
             return false;
         }
-        return schluesselVersion == other.schluesselVersion
+        return keyVersion == other.keyVersion
             && Arrays.equals(chiffrat, other.chiffrat)
             && Arrays.equals(salt, other.salt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Arrays.hashCode(chiffrat), Arrays.hashCode(salt), schluesselVersion);
+        return Objects.hash(Arrays.hashCode(chiffrat), Arrays.hashCode(salt), keyVersion);
     }
 
 }

@@ -37,10 +37,11 @@ import io.domainlifecycles.jooq.persistence.mapper.valueobjects.VoOneToManyEntit
 import io.domainlifecycles.jooq.persistence.mapper.valueobjects.VoOneToManyEntityJooqRecordMapper;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
+import io.domainlifecycles.persistence.cache.TransactionCacheProvider;
 import io.domainlifecycles.persistence.mapping.RecordMapper;
 import io.domainlifecycles.persistence.records.EntityValueObjectRecordClassProvider;
 import io.domainlifecycles.persistence.records.EntityValueObjectRecordTypeConfiguration;
-import io.domainlifecycles.test.jooq.tables.records.AktionsCodeBv3Record;
+import io.domainlifecycles.test.jooq.tables.records.PromoCodeBv3Record;
 import io.domainlifecycles.test.jooq.tables.records.SimpleVoOneToManyRecord;
 import io.domainlifecycles.test.jooq.tables.records.SimpleVoOneToMany_2Record;
 import io.domainlifecycles.test.jooq.tables.records.SimpleVoOneToMany_3Record;
@@ -54,11 +55,12 @@ import org.h2.jdbcx.JdbcDataSource;
 import org.jooq.ConnectionProvider;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
+import org.jooq.UpdatableRecord;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.DefaultDSLContext;
-import tests.shared.complete.onlinehandel.bestellung.AktionsCodeBv3;
-import tests.shared.complete.onlinehandel.bestellung.BestellungBv3;
+import tests.shared.complete.ecommerce.order.PromoCodeBv3;
+import tests.shared.complete.ecommerce.order.OrderBv3;
 import tests.shared.persistence.domain.oneToOneVoDedicatedTable.TestRootOneToOneVoDedicated;
 import tests.shared.persistence.domain.oneToOneVoDedicatedTable.VoDedicated;
 import tests.shared.persistence.domain.valueobjects.SimpleVoOneToMany;
@@ -138,6 +140,17 @@ public class BaseDLCTestPersistenceConfiguration {
     }
 
     private JooqDomainPersistenceProvider initDomainPersistenceProvider() {
+        return new JooqDomainPersistenceProvider(newDomainPersistenceConfiguration(null), dslContext);
+    }
+
+    /**
+     * This configuration's mapping, e.g. for a provider on a different {@link DSLContext}.
+     *
+     * @param transactionCacheProvider the transaction cache provider, or {@code null} for the default one
+     * @return the configuration
+     */
+    public JooqDomainPersistenceConfiguration newDomainPersistenceConfiguration(
+        TransactionCacheProvider<UpdatableRecord<?>> transactionCacheProvider) {
         Set<RecordMapper<?, ?, ?>> customRecordMappers = new HashSet<>();
         customRecordMappers.add(new Test1JooqRecordMapper());
         customRecordMappers.add(new Test2JooqRecordMapper());
@@ -171,14 +184,14 @@ public class BaseDLCTestPersistenceConfiguration {
         customRecordMappers.add(new VoOneToManyEntity2JooqRecordMapper());
         customRecordMappers.add(new VoOneToManyEntityJooqRecordMapper());
 
-        JooqDomainPersistenceConfiguration jooqDomainPersistenceConfiguration = JooqDomainPersistenceConfiguration
+        var builder = JooqDomainPersistenceConfiguration
             .JooqPersistenceConfigurationBuilder
             .newConfig()
             .withDomainObjectBuilderProvider(domainObjectBuilderProvider)
             .withCustomRecordMappers(customRecordMappers)
             .withRecordPackage("io.domainlifecycles.test.jooq.tables.records")
             .withIgnoredDomainObjectFields(f -> {
-                if (f.getName().equals("gesamtPreis")) return true;
+                if (f.getName().equals("totalPrice")) return true;
                 if (f.getName().equals("ignoredField")) return true;
                 return false;
             })
@@ -221,10 +234,10 @@ public class BaseDLCTestPersistenceConfiguration {
                                 "valueObjectsOneToMany", "oneToManySet"
                             ),
                             new EntityValueObjectRecordTypeConfiguration(
-                                BestellungBv3.class,
-                                AktionsCodeBv3.class,
-                                AktionsCodeBv3Record.class,
-                                "aktionsCodes"
+                                OrderBv3.class,
+                                PromoCodeBv3.class,
+                                PromoCodeBv3Record.class,
+                                "promoCodes"
                             ),
                             new EntityValueObjectRecordTypeConfiguration(
                                 TestRootOneToOneVoDedicated.class,
@@ -253,9 +266,13 @@ public class BaseDLCTestPersistenceConfiguration {
                         );
                     }
                 }
-            )
-            .make();
-        return new JooqDomainPersistenceProvider(jooqDomainPersistenceConfiguration);
+            );
+        // the feature these tests cover is off by default
+        builder.withTransactionCacheEnabled(true);
+        if (transactionCacheProvider != null) {
+            builder.withTransactionCacheProvider(transactionCacheProvider);
+        }
+        return builder.make();
     }
 
     public void startTransaction() {

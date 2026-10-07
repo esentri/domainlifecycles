@@ -26,7 +26,6 @@
 
 package io.domainlifecycles.staticanalysis;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -174,7 +173,12 @@ public class DomainCalls {
      */
     public static final class Builder {
 
-        private final Map<DomainMethod, List<CallSite>> collected = new LinkedHashMap<>();
+        /**
+         * The call sites per caller, deduplicated via hashing: a large domain has millions of call sites, and
+         * callers with thousands of them (e.g. generated mappers), so a linear {@code List.contains} per added
+         * call site - each a deep {@code MethodMirror} comparison - made building quadratic per caller.
+         */
+        private final Map<DomainMethod, Set<CallSite>> collected = new LinkedHashMap<>();
 
         private final Set<Diagnostic> diagnostics = new LinkedHashSet<>();
 
@@ -192,10 +196,7 @@ public class DomainCalls {
         public Builder add(DomainMethod caller, List<CallSite> callSites) {
             Objects.requireNonNull(caller, "A calling DomainMethod must be given!");
             Objects.requireNonNull(callSites, "The call sites must be given!");
-            List<CallSite> target = collected.computeIfAbsent(caller, k -> new ArrayList<>());
-            callSites.stream()
-                .filter(callSite -> !target.contains(callSite))
-                .forEach(target::add);
+            collected.computeIfAbsent(caller, k -> new LinkedHashSet<>()).addAll(callSites);
             return this;
         }
 
@@ -229,7 +230,7 @@ public class DomainCalls {
         public DomainCalls build() {
             Map<DomainMethod, CalledMethods> result = new LinkedHashMap<>();
             collected.forEach((caller, callSites) ->
-                result.put(caller, new CalledMethods(callSites)));
+                result.put(caller, new CalledMethods(List.copyOf(callSites))));
             return new DomainCalls(result, diagnostics);
         }
     }

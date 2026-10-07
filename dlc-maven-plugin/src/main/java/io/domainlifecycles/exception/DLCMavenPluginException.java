@@ -61,7 +61,7 @@ public class DLCMavenPluginException extends RuntimeException {
      * @return a new DLCPluginException with a detail message formatted to include with given message parameters.
      */
     public static DLCMavenPluginException fail(final String detail, final Object... args) {
-        return new DLCMavenPluginException(requireNonNull(detail), requireNonNull(args));
+        return new DLCMavenPluginException(format(requireNonNull(detail), requireNonNull(args)));
     }
 
     /**
@@ -72,18 +72,18 @@ public class DLCMavenPluginException extends RuntimeException {
      * containing a cause.
      */
     public static DLCMavenPluginException fail(final String detail, final Throwable cause, final Object... args) {
-        return new DLCMavenPluginException(requireNonNull(detail), requireNonNull(cause), requireNonNull(args));
+        return new DLCMavenPluginException(format(requireNonNull(detail), requireNonNull(args)), requireNonNull(cause));
     }
 
     private static String format(final String detail, final Object[] args) {
         return args.length > 0 ? String.format(detail, args) : detail;
     }
 
-    private DLCMavenPluginException(String detail, final Object... args) {
-        super(format(detail, args));
+    private DLCMavenPluginException(final String message) {
+        super(message);
     }
 
-    private DLCMavenPluginException(String detail, Throwable cause, Object... args) {
-        super(format(detail, args), cause);
+    private DLCMavenPluginException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 }

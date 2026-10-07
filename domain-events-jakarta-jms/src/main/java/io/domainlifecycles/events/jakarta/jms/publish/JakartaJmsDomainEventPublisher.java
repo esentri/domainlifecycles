@@ -124,7 +124,7 @@ public class JakartaJmsDomainEventPublisher extends AbstractMqDomainEventPublish
         try {
             return session.createTopic(topicName);
         } catch (JMSException e) {
-            throw DLCEventsException.fail("Creating topic '{}' failed!", topicName, e);
+            throw DLCEventsException.fail("Creating topic '%s' failed!", e, topicName);
         }
     }
 

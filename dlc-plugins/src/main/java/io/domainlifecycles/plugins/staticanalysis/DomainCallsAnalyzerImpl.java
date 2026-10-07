@@ -77,7 +77,17 @@ public class DomainCallsAnalyzerImpl implements DomainCallsAnalyzer {
      * @param cacheSize the maximum number of classes held in the analyzer's cache at once
      */
     public DomainCallsAnalyzerImpl(int cacheSize) {
-        this.staticAnalyzer = new SootupStaticAnalyzer(cacheSize);
+        this(cacheSize, false);
+    }
+
+    /**
+     * @param cacheSize               the maximum number of classes held in the static analysis cache
+     * @param expandNonDomainDispatch whether calls on types outside the domain are expanded to the domain types
+     *                                implementing the called method, see
+     *                                {@link SootupStaticAnalyzer#SootupStaticAnalyzer(int, boolean)}
+     */
+    public DomainCallsAnalyzerImpl(int cacheSize, boolean expandNonDomainDispatch) {
+        this.staticAnalyzer = new SootupStaticAnalyzer(cacheSize, expandNonDomainDispatch);
     }
 
     /**
@@ -104,7 +114,7 @@ public class DomainCallsAnalyzerImpl implements DomainCallsAnalyzer {
         try {
             return Path.of(url.toURI());
         } catch (URISyntaxException e) {
-            throw DLCPluginsException.fail(String.format("Could not resolve classpath entry '%s'.", url), e);
+            throw DLCPluginsException.fail("Could not resolve classpath entry '%s'.", e, url);
         }
     }
 }

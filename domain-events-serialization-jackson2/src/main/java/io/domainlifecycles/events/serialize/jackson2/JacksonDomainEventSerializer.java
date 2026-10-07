@@ -116,7 +116,7 @@ public class JacksonDomainEventSerializer implements DomainEventSerializer {
         try {
             return objectMapper.writeValueAsString(event);
         } catch (JsonProcessingException e) {
-            throw DLCJacksonException.fail("Serializing DomainEvent: {} failed!", e, event.getClass().getName());
+            throw DLCJacksonException.fail("Serializing DomainEvent: %s failed!", e, event.getClass().getName());
         }
     }
 
@@ -134,7 +134,7 @@ public class JacksonDomainEventSerializer implements DomainEventSerializer {
         try {
             return objectMapper.readValue(serializedEvent, cls);
         } catch (JsonProcessingException e) {
-            throw DLCJacksonException.fail("Deserializing DomainEvent: {} failed!", e, serializedEvent);
+            throw DLCJacksonException.fail("Deserializing DomainEvent: %s failed!", e, serializedEvent);
         }
     }
 }

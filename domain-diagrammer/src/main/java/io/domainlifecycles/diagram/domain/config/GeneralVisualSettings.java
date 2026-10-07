@@ -45,6 +45,7 @@ public class GeneralVisualSettings {
     private static final boolean DEFAULT_SHOW_AGGREGATES = true;
     private static final boolean DEFAULT_SHOW_AGGREGATE_FIELDS = true;
     private static final boolean DEFAULT_SHOW_AGGREGATE_METHODS = true;
+    private static final boolean DEFAULT_SHOW_ONLY_AGGREGATE_FRAMES = false;
     private static final boolean DEFAULT_SHOW_DOMAIN_EVENTS = true;
     private static final boolean DEFAULT_SHOW_DOMAIN_EVENT_FIELDS = false;
     private static final boolean DEFAULT_SHOW_DOMAIN_EVENT_METHODS = false;
@@ -69,10 +70,20 @@ public class GeneralVisualSettings {
     private static final boolean DEFAULT_SHOW_QUERY_HANDLER_METHODS = false;
     private static final boolean DEFAULT_SHOW_OUTBOUND_SERVICES = true;
     private static final boolean DEFAULT_SHOW_OUTBOUND_SERVICE_FIELDS = false;
-    private static final boolean DEFAULT_SHOW_OUTBOUND_SERVICE_METHODS = false;
+    private static final boolean DEFAULT_SHOW_OUTBOUND_SERVICE_METHODS = true;
+    private static final boolean DEFAULT_SHOW_FACTORIES = true;
+    private static final boolean DEFAULT_SHOW_FACTORY_FIELDS = false;
+    private static final boolean DEFAULT_SHOW_FACTORY_METHODS = true;
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KINDS = true;
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_FIELDS = false;
     private static final boolean DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_METHODS = false;
+    private static final boolean DEFAULT_SHOW_NON_DOMAIN_CLASSES = true;
+    private static final boolean DEFAULT_SHOW_NON_DOMAIN_CLASS_FIELDS = false;
+    private static final boolean DEFAULT_SHOW_NON_DOMAIN_CLASS_METHODS = true;
+    private static final int DEFAULT_MAX_INLINED_VALUE_OBJECT_FIELDS = 2;
+    private static final boolean DEFAULT_SHOW_ONLY_FLOW_METHODS = true;
+    private static final boolean DEFAULT_SHOW_FLOW_CALL_RELATIONS = false;
+    private static final boolean DEFAULT_SHOW_FACTORY_RELATIONS = true;
     private static final boolean DEFAULT_CALL_APPLICATION_SERVICE_DRIVER = false;
     private static final List<String> DEFAULT_FIELD_BLACKLIST = List.of("concurrencyVersion");
     private static final List<String> DEFAULT_METHOD_BLACKLIST = List.of(
@@ -109,6 +120,7 @@ public class GeneralVisualSettings {
     private final boolean showAggregates;
     private final boolean showAggregateFields;
     private final boolean showAggregateMethods;
+    private final boolean showOnlyAggregateFrames;
     private final boolean showDomainEvents;
     private final boolean showDomainEventFields;
     private final boolean showDomainEventMethods;
@@ -134,9 +146,19 @@ public class GeneralVisualSettings {
     private final boolean showOutboundServices;
     private final boolean showOutboundServiceFields;
     private final boolean showOutboundServiceMethods;
+    private final boolean showFactories;
+    private final boolean showFactoryFields;
+    private final boolean showFactoryMethods;
     private final boolean showUnspecifiedServiceKinds;
     private final boolean showUnspecifiedServiceKindFields;
     private final boolean showUnspecifiedServiceKindMethods;
+    private final boolean showNonDomainClasses;
+    private final boolean showNonDomainClassFields;
+    private final boolean showNonDomainClassMethods;
+    private final int maxInlinedValueObjectFields;
+    private final boolean showOnlyFlowMethods;
+    private final boolean showFlowCallRelations;
+    private final boolean showFactoryRelations;
     private final boolean callApplicationServiceDriver;
     private final List<String> fieldBlacklist;
     private final List<String> methodBlacklist;
@@ -163,6 +185,7 @@ public class GeneralVisualSettings {
         boolean showAggregates,
         boolean showAggregateFields,
         boolean showAggregateMethods,
+        boolean showOnlyAggregateFrames,
         boolean showDomainEvents,
         boolean showDomainEventFields,
         boolean showDomainEventMethods,
@@ -188,9 +211,19 @@ public class GeneralVisualSettings {
         boolean showOutboundServices,
         boolean showOutboundServiceFields,
         boolean showOutboundServiceMethods,
+        boolean showFactories,
+        boolean showFactoryFields,
+        boolean showFactoryMethods,
         boolean showUnspecifiedServiceKinds,
         boolean showUnspecifiedServiceKindFields,
         boolean showUnspecifiedServiceKindMethods,
+        boolean showNonDomainClasses,
+        boolean showNonDomainClassFields,
+        boolean showNonDomainClassMethods,
+        int maxInlinedValueObjectFields,
+        boolean showOnlyFlowMethods,
+        boolean showFlowCallRelations,
+        boolean showFactoryRelations,
         boolean callApplicationServiceDriver,
         List<String> fieldBlacklist,
         List<String> methodBlacklist,
@@ -216,6 +249,7 @@ public class GeneralVisualSettings {
         this.showAggregates = showAggregates;
         this.showAggregateFields = showAggregateFields;
         this.showAggregateMethods = showAggregateMethods;
+        this.showOnlyAggregateFrames = showOnlyAggregateFrames;
         this.showDomainEvents = showDomainEvents;
         this.showDomainEventFields = showDomainEventFields;
         this.showDomainEventMethods = showDomainEventMethods;
@@ -241,9 +275,19 @@ public class GeneralVisualSettings {
         this.showOutboundServices = showOutboundServices;
         this.showOutboundServiceFields = showOutboundServiceFields;
         this.showOutboundServiceMethods = showOutboundServiceMethods;
+        this.showFactories = showFactories;
+        this.showFactoryFields = showFactoryFields;
+        this.showFactoryMethods = showFactoryMethods;
         this.showUnspecifiedServiceKinds = showUnspecifiedServiceKinds;
         this.showUnspecifiedServiceKindFields = showUnspecifiedServiceKindFields;
         this.showUnspecifiedServiceKindMethods = showUnspecifiedServiceKindMethods;
+        this.showNonDomainClasses = showNonDomainClasses;
+        this.showNonDomainClassFields = showNonDomainClassFields;
+        this.showNonDomainClassMethods = showNonDomainClassMethods;
+        this.maxInlinedValueObjectFields = maxInlinedValueObjectFields;
+        this.showOnlyFlowMethods = showOnlyFlowMethods;
+        this.showFlowCallRelations = showFlowCallRelations;
+        this.showFactoryRelations = showFactoryRelations;
         this.callApplicationServiceDriver = callApplicationServiceDriver;
         this.fieldBlacklist = fieldBlacklist;
         this.methodBlacklist = methodBlacklist;
@@ -332,6 +376,17 @@ public class GeneralVisualSettings {
      */
     public boolean isShowAggregateMethods() {
         return showAggregateMethods;
+    }
+
+    /**
+     * Returns whether Aggregates are drawn as their frame only: without the classes inside (AggregateRoot, Entities,
+     * ValueObjects, Enums, Identities), without the relationships between them and without their notes. All
+     * relationships from outside the Aggregate connect its frame anyway, so they are still drawn.
+     *
+     * @return true if only the frames of the Aggregates are drawn, false otherwise
+     */
+    public boolean isShowOnlyAggregateFrames() {
+        return showOnlyAggregateFrames;
     }
 
     /**
@@ -560,6 +615,33 @@ public class GeneralVisualSettings {
     }
 
     /**
+     * Returns whether factories should be shown in the diagram.
+     *
+     * @return true if factories should be shown, false otherwise
+     */
+    public boolean isShowFactories() {
+        return showFactories;
+    }
+
+    /**
+     * Returns whether factory fields should be shown in the diagram.
+     *
+     * @return true if factory fields should be shown, false otherwise
+     */
+    public boolean isShowFactoryFields() {
+        return showFactoryFields;
+    }
+
+    /**
+     * Returns whether factory methods should be shown in the diagram.
+     *
+     * @return true if factory methods should be shown, false otherwise
+     */
+    public boolean isShowFactoryMethods() {
+        return showFactoryMethods;
+    }
+
+    /**
      * Returns whether unspecified service kinds should be shown in the diagram.
      *
      * @return true if unspecified service kinds should be shown, false otherwise
@@ -584,6 +666,78 @@ public class GeneralVisualSettings {
      */
     public boolean isShowUnspecifiedServiceKindMethods() {
         return showUnspecifiedServiceKindMethods;
+    }
+
+    /**
+     * Returns whether non-domain classes (classes not classified as any recognized domain type)
+     * should be shown in the diagram. Such classes are only ever shown when they are referenced by
+     * a service kind (domain service, application service, repository, query handler or outbound
+     * service).
+     *
+     * @return true if non-domain classes should be shown, false otherwise
+     */
+    public boolean isShowNonDomainClasses() {
+        return showNonDomainClasses;
+    }
+
+    /**
+     * Returns whether fields of non-domain classes should be shown in the diagram.
+     *
+     * @return true if non-domain class fields should be shown, false otherwise
+     */
+    public boolean isShowNonDomainClassFields() {
+        return showNonDomainClassFields;
+    }
+
+    /**
+     * Returns whether methods of non-domain classes should be shown in the diagram.
+     *
+     * @return true if non-domain class methods should be shown, false otherwise
+     */
+    public boolean isShowNonDomainClassMethods() {
+        return showNonDomainClassMethods;
+    }
+
+    /**
+     * Returns up to how many fields a value object is shown inline: as field of the class referencing it, instead of
+     * as class of its own connected by a composition. Fields of a value object inlined in turn count as one field,
+     * a value object containing a value object that is not inlined is never inlined itself.
+     *
+     * @return the maximal number of fields of an inlined value object, {@code 0} to inline no value object
+     */
+    public int getMaxInlinedValueObjectFields() {
+        return maxInlinedValueObjectFields;
+    }
+
+    /**
+     * Returns whether, in a diagram restricted to flows, the classes taking part in a flow show only the methods called
+     * in it. Classes shown for another reason - e.g. as part of an aggregate or read model - show their methods as
+     * without flow.
+     *
+     * @return true if only the methods called in the flows are shown, false to show all methods
+     */
+    public boolean isShowOnlyFlowMethods() {
+        return showOnlyFlowMethods;
+    }
+
+    /**
+     * Returns whether, in a diagram restricted to flows, two classes calling each other in a flow are connected by a
+     * {@code <<calls>>} relationship, if no other relationship connects them.
+     *
+     * @return true if the calls of the flows are drawn as relationships
+     */
+    public boolean isShowFlowCallRelations() {
+        return showFlowCallRelations;
+    }
+
+    /**
+     * Returns whether a class creating instances of another domain type by its factory methods is connected to it by a
+     * {@code <<creates>>} relationship, labeled with the factory methods.
+     *
+     * @return true if the factory relations are drawn
+     */
+    public boolean isShowFactoryRelations() {
+        return showFactoryRelations;
     }
 
     /**
@@ -766,6 +920,7 @@ public class GeneralVisualSettings {
         private boolean showAggregates$value = DEFAULT_SHOW_AGGREGATES;
         private boolean showAggregateFields$value = DEFAULT_SHOW_AGGREGATE_FIELDS;
         private boolean showAggregateMethods$value = DEFAULT_SHOW_AGGREGATE_METHODS;
+        private boolean showOnlyAggregateFrames$value = DEFAULT_SHOW_ONLY_AGGREGATE_FRAMES;
         private boolean showDomainEvents$value = DEFAULT_SHOW_DOMAIN_EVENTS;
         private boolean showDomainEventFields$value = DEFAULT_SHOW_DOMAIN_EVENT_FIELDS;
         private boolean showDomainEventMethods$value = DEFAULT_SHOW_DOMAIN_EVENT_METHODS;
@@ -791,9 +946,19 @@ public class GeneralVisualSettings {
         private boolean showOutboundServices$value = DEFAULT_SHOW_OUTBOUND_SERVICES;
         private boolean showOutboundServiceFields$value = DEFAULT_SHOW_OUTBOUND_SERVICE_FIELDS;
         private boolean showOutboundServiceMethods$value = DEFAULT_SHOW_OUTBOUND_SERVICE_METHODS;
+        private boolean showFactories$value = DEFAULT_SHOW_FACTORIES;
+        private boolean showFactoryFields$value = DEFAULT_SHOW_FACTORY_FIELDS;
+        private boolean showFactoryMethods$value = DEFAULT_SHOW_FACTORY_METHODS;
         private boolean showUnspecifiedServiceKinds$value = DEFAULT_SHOW_UNSPECIFIED_SERVICE_KINDS;
         private boolean showUnspecifiedServiceKindFields$value = DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_FIELDS;
         private boolean showUnspecifiedServiceKindMethods$value = DEFAULT_SHOW_UNSPECIFIED_SERVICE_KIND_METHODS;
+        private boolean showNonDomainClasses$value = DEFAULT_SHOW_NON_DOMAIN_CLASSES;
+        private boolean showNonDomainClassFields$value = DEFAULT_SHOW_NON_DOMAIN_CLASS_FIELDS;
+        private boolean showNonDomainClassMethods$value = DEFAULT_SHOW_NON_DOMAIN_CLASS_METHODS;
+        private int maxInlinedValueObjectFields$value = DEFAULT_MAX_INLINED_VALUE_OBJECT_FIELDS;
+        private boolean showOnlyFlowMethods$value = DEFAULT_SHOW_ONLY_FLOW_METHODS;
+        private boolean showFlowCallRelations$value = DEFAULT_SHOW_FLOW_CALL_RELATIONS;
+        private boolean showFactoryRelations$value = DEFAULT_SHOW_FACTORY_RELATIONS;
         private boolean callApplicationServiceDriver$value = DEFAULT_CALL_APPLICATION_SERVICE_DRIVER;
         private List<String> fieldBlacklist$value;
         private List<String> methodBlacklist$value;
@@ -902,6 +1067,18 @@ public class GeneralVisualSettings {
          */
         public GeneralVisualSettingsBuilder withShowAggregateMethods(boolean showAggregateMethods) {
             this.showAggregateMethods$value = showAggregateMethods;
+            return this;
+        }
+
+        /**
+         * Sets whether Aggregates are drawn as their frame only, without the classes, relationships and notes inside.
+         * This is a central switch for all Aggregates of the diagram.
+         *
+         * @param showOnlyAggregateFrames true to draw only the frames of the Aggregates, false to draw their content
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowOnlyAggregateFrames(boolean showOnlyAggregateFrames) {
+            this.showOnlyAggregateFrames$value = showOnlyAggregateFrames;
             return this;
         }
 
@@ -1181,6 +1358,39 @@ public class GeneralVisualSettings {
         }
 
         /**
+         * Sets whether to show factories in the diagram.
+         *
+         * @param showFactories true to show factories, false to hide
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowFactories(boolean showFactories) {
+            this.showFactories$value = showFactories;
+            return this;
+        }
+
+        /**
+         * Sets whether to show factory fields in the diagram.
+         *
+         * @param showFactoryFields true to show factory fields, false to hide
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowFactoryFields(boolean showFactoryFields) {
+            this.showFactoryFields$value = showFactoryFields;
+            return this;
+        }
+
+        /**
+         * Sets whether to show factory methods in the diagram.
+         *
+         * @param showFactoryMethods true to show factory methods, false to hide
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowFactoryMethods(boolean showFactoryMethods) {
+            this.showFactoryMethods$value = showFactoryMethods;
+            return this;
+        }
+
+        /**
          * Sets whether to show unspecified service kinds in the diagram.
          *
          * @param showUnspecifiedServiceKinds true to show unspecified service kinds, false to hide
@@ -1210,6 +1420,94 @@ public class GeneralVisualSettings {
          */
         public GeneralVisualSettingsBuilder withShowUnspecifiedServiceKindMethods(boolean showUnspecifiedServiceKindMethods) {
             this.showUnspecifiedServiceKindMethods$value = showUnspecifiedServiceKindMethods;
+            return this;
+        }
+
+        /**
+         * Sets whether to show non-domain classes (classes not classified as any recognized domain
+         * type) in the diagram. Such classes are only ever shown when they are referenced by a
+         * service kind.
+         *
+         * @param showNonDomainClasses true to show non-domain classes, false to hide
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowNonDomainClasses(boolean showNonDomainClasses) {
+            this.showNonDomainClasses$value = showNonDomainClasses;
+            return this;
+        }
+
+        /**
+         * Sets whether to show fields of non-domain classes in the diagram.
+         *
+         * @param showNonDomainClassFields true to show non-domain class fields, false to hide
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowNonDomainClassFields(boolean showNonDomainClassFields) {
+            this.showNonDomainClassFields$value = showNonDomainClassFields;
+            return this;
+        }
+
+        /**
+         * Sets whether to show methods of non-domain classes in the diagram.
+         *
+         * @param showNonDomainClassMethods true to show non-domain class methods, false to hide
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowNonDomainClassMethods(boolean showNonDomainClassMethods) {
+            this.showNonDomainClassMethods$value = showNonDomainClassMethods;
+            return this;
+        }
+
+        /**
+         * Sets up to how many fields a value object is shown inline, as field of the class referencing it, instead of
+         * as class of its own connected by a composition (default 2).
+         *
+         * @param maxInlinedValueObjectFields the maximal number of fields of an inlined value object, {@code 0} to
+         *                                    inline no value object
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withMaxInlinedValueObjectFields(int maxInlinedValueObjectFields) {
+            if (maxInlinedValueObjectFields < 0) {
+                throw new IllegalArgumentException(
+                    "maxInlinedValueObjectFields must not be negative, but was " + maxInlinedValueObjectFields);
+            }
+            this.maxInlinedValueObjectFields$value = maxInlinedValueObjectFields;
+            return this;
+        }
+
+        /**
+         * Sets whether, in a diagram restricted to flows, the classes taking part in a flow show only the methods
+         * called in it (default true).
+         *
+         * @param showOnlyFlowMethods true to show only the methods called in the flows, false to show all methods
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowOnlyFlowMethods(boolean showOnlyFlowMethods) {
+            this.showOnlyFlowMethods$value = showOnlyFlowMethods;
+            return this;
+        }
+
+        /**
+         * Sets whether, in a diagram restricted to flows, two classes calling each other in a flow are connected by a
+         * {@code <<calls>>} relationship, if no other relationship connects them (default false).
+         *
+         * @param showFlowCallRelations true to draw the calls of the flows as relationships
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowFlowCallRelations(boolean showFlowCallRelations) {
+            this.showFlowCallRelations$value = showFlowCallRelations;
+            return this;
+        }
+
+        /**
+         * Sets whether a class creating instances of another domain type by its factory methods is connected to it
+         * by a {@code <<creates>>} relationship, labeled with the factory methods (default true).
+         *
+         * @param showFactoryRelations true to draw the factory relations
+         * @return this builder instance
+         */
+        public GeneralVisualSettingsBuilder withShowFactoryRelations(boolean showFactoryRelations) {
+            this.showFactoryRelations$value = showFactoryRelations;
             return this;
         }
 
@@ -1407,6 +1705,7 @@ public class GeneralVisualSettings {
                 showAggregates$value,
                 showAggregateFields$value,
                 showAggregateMethods$value,
+                showOnlyAggregateFrames$value,
                 showDomainEvents$value,
                 showDomainEventFields$value,
                 showDomainEventMethods$value,
@@ -1432,9 +1731,19 @@ public class GeneralVisualSettings {
                 showOutboundServices$value,
                 showOutboundServiceFields$value,
                 showOutboundServiceMethods$value,
+                showFactories$value,
+                showFactoryFields$value,
+                showFactoryMethods$value,
                 showUnspecifiedServiceKinds$value,
                 showUnspecifiedServiceKindFields$value,
                 showUnspecifiedServiceKindMethods$value,
+                showNonDomainClasses$value,
+                showNonDomainClassFields$value,
+                showNonDomainClassMethods$value,
+                maxInlinedValueObjectFields$value,
+                showOnlyFlowMethods$value,
+                showFlowCallRelations$value,
+                showFactoryRelations$value,
                 callApplicationServiceDriver$value,
                 fieldBlacklist$value == null ? DEFAULT_FIELD_BLACKLIST : fieldBlacklist$value,
                 methodBlacklist$value == null ? DEFAULT_METHOD_BLACKLIST : methodBlacklist$value,

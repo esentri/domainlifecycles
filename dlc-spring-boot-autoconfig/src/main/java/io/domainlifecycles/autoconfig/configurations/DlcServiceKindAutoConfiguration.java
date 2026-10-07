@@ -29,6 +29,7 @@ package io.domainlifecycles.autoconfig.configurations;
 import io.domainlifecycles.domain.types.ApplicationService;
 import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.Driver;
+import io.domainlifecycles.domain.types.Factory;
 import io.domainlifecycles.domain.types.OutboundService;
 import io.domainlifecycles.domain.types.QueryHandler;
 import io.domainlifecycles.domain.types.Repository;
@@ -199,6 +200,7 @@ public class DlcServiceKindAutoConfiguration {
                         && !itf.equals(ApplicationService.class)
                         && !itf.equals(DomainService.class)
                         && !itf.equals(Driver.class)
+                        && !itf.equals(Factory.class)
                         && !itf.equals(QueryHandler.class)
                     ) {
                         if (beanFactory.getBeanNamesForType(itf, true, false).length > 0) {

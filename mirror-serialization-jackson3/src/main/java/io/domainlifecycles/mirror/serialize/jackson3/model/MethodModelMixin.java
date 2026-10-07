@@ -64,6 +64,7 @@ public abstract class MethodModelMixin {
      * @param overridden a flag indicating whether this method overrides a method in a superclass.
      * @param publishedEventTypeNames the list of event type names published by the method.
      * @param listenedEventTypeName an optional event type name listened to by the method.
+     * @param factoryMethod a flag indicating whether the method is a factory method creating domain objects.
      */
     @JsonCreator
     public MethodModelMixin(
@@ -74,7 +75,8 @@ public abstract class MethodModelMixin {
         @JsonProperty("returnType") AssertedContainableTypeMirror returnType,
         @JsonProperty("overridden") boolean overridden,
         @JsonProperty("publishedEventTypeNames") List<String> publishedEventTypeNames,
-        @JsonProperty("listenedEventTypeName") Optional<String> listenedEventTypeName
+        @JsonProperty("listenedEventTypeName") Optional<String> listenedEventTypeName,
+        @JsonProperty("factoryMethod") boolean factoryMethod
     ) {}
 
     /**

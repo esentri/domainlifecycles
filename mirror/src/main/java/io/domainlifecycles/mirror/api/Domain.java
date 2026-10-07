@@ -32,6 +32,7 @@ import io.domainlifecycles.domain.types.DomainEvent;
 import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.domain.types.Factory;
 import io.domainlifecycles.domain.types.OutboundService;
 import io.domainlifecycles.domain.types.QueryHandler;
 import io.domainlifecycles.domain.types.Repository;
@@ -334,6 +335,28 @@ public class Domain {
     public static <V extends OutboundServiceMirror>  V outboundServiceMirrorFor(String outboundServiceTypeName){
         return (V)typeMirror(outboundServiceTypeName)
             .orElseThrow(()-> MirrorException.fail("No OutboundServiceMirror found for %s", outboundServiceTypeName));
+    }
+
+    /**
+     * @param <V>     type of FactoryMirror
+     * @param factory the Factory to return the mirror for
+     * @return the {@link FactoryMirror} for the given Factory instance.
+     */
+    @SuppressWarnings("unchecked")
+    public static <V extends FactoryMirror> V factoryMirrorFor(Factory factory){
+        return (V)typeMirror(factory.getClass().getName())
+            .orElseThrow(()-> MirrorException.fail("No FactoryMirror found for %s", factory.getClass().getName()));
+    }
+
+    /**
+     * @param <V>             type of FactoryMirror
+     * @param factoryTypeName name of the Factory type
+     * @return the {@link FactoryMirror} for the given full qualified Factory type name.
+     */
+    @SuppressWarnings("unchecked")
+    public static <V extends FactoryMirror> V factoryMirrorFor(String factoryTypeName){
+        return (V)typeMirror(factoryTypeName)
+            .orElseThrow(()-> MirrorException.fail("No FactoryMirror found for %s", factoryTypeName));
     }
 
     /**

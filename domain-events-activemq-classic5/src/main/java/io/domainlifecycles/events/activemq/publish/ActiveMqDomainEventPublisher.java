@@ -127,7 +127,7 @@ public class ActiveMqDomainEventPublisher extends AbstractMqDomainEventPublisher
         try {
             return session.createTopic(this.virtualTopicPrefix + topicName.replaceAll("\\.", "-"));
         } catch (JMSException e) {
-            throw DLCEventsException.fail("Creating topic '{}' failed!", topicName, e);
+            throw DLCEventsException.fail("Creating topic '%s' failed!", e, topicName);
         }
     }
 

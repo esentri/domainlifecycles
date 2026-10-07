@@ -56,12 +56,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SuppressWarnings("deprecation")
 public class JacksonDomainCallsSerializerTest {
 
-    private static final String ZUSTELLUNGS_SERVICE =
-        "tests.shared.complete.onlinehandel.zustellung.ZustellungsService";
+    private static final String DELIVERY_SERVICE =
+        "tests.shared.complete.ecommerce.delivery.DeliveryService";
     private static final String REPOSITORY =
-        "tests.shared.complete.onlinehandel.bestellung.BestellungRepository";
+        "tests.shared.complete.ecommerce.order.OrderRepository";
     private static final String AGGREGATE =
-        "tests.shared.complete.onlinehandel.bestellung.BestellungBv3";
+        "tests.shared.complete.ecommerce.order.OrderBv3";
 
     private final JacksonDomainCallsSerializer serializer = new JacksonDomainCallsSerializer(true);
 
@@ -74,12 +74,12 @@ public class JacksonDomainCallsSerializerTest {
 
     @Test
     void roundTripsCallsAndDiagnostics() {
-        var caller = domainMethod(ZUSTELLUNGS_SERVICE, "liefereAus");
+        var caller = domainMethod(DELIVERY_SERVICE, "deliver");
         var original = DomainCalls.builder()
             .add(caller, List.of(
-                new DomainCalls.CallSite(domainMethod(REPOSITORY, "findById"), ZUSTELLUNGS_SERVICE, 42),
-                new DomainCalls.CallSite(domainMethod(AGGREGATE, "starteLieferung"), ZUSTELLUNGS_SERVICE, 44),
-                new DomainCalls.CallSite(domainMethod(REPOSITORY, "update"), ZUSTELLUNGS_SERVICE, 45)))
+                new DomainCalls.CallSite(domainMethod(REPOSITORY, "findById"), DELIVERY_SERVICE, 42),
+                new DomainCalls.CallSite(domainMethod(AGGREGATE, "startDelivery"), DELIVERY_SERVICE, 44),
+                new DomainCalls.CallSite(domainMethod(REPOSITORY, "update"), DELIVERY_SERVICE, 45)))
             .add(Diagnostic.typeNotOnClasspath("does.not.Exist"))
             .build();
 
@@ -100,10 +100,10 @@ public class JacksonDomainCallsSerializerTest {
 
     @Test
     void roundTripsCallsAndDiagnosticsViaStreams() {
-        var caller = domainMethod(ZUSTELLUNGS_SERVICE, "liefereAus");
+        var caller = domainMethod(DELIVERY_SERVICE, "deliver");
         var original = DomainCalls.builder()
             .add(caller, List.of(
-                new DomainCalls.CallSite(domainMethod(REPOSITORY, "findById"), ZUSTELLUNGS_SERVICE, 42)))
+                new DomainCalls.CallSite(domainMethod(REPOSITORY, "findById"), DELIVERY_SERVICE, 42)))
             .add(Diagnostic.typeNotOnClasspath("does.not.Exist"))
             .build();
 
@@ -127,10 +127,10 @@ public class JacksonDomainCallsSerializerTest {
      */
     @Test
     void streamsAreNotClosedByTheSerializer() throws IOException {
-        var caller = domainMethod(ZUSTELLUNGS_SERVICE, "liefereAus");
+        var caller = domainMethod(DELIVERY_SERVICE, "deliver");
         var original = DomainCalls.builder()
             .add(caller, List.of(
-                new DomainCalls.CallSite(domainMethod(REPOSITORY, "findById"), ZUSTELLUNGS_SERVICE, 42)))
+                new DomainCalls.CallSite(domainMethod(REPOSITORY, "findById"), DELIVERY_SERVICE, 42)))
             .build();
 
         var byteStream = new ByteArrayOutputStream();
@@ -156,10 +156,10 @@ public class JacksonDomainCallsSerializerTest {
 
     @Test
     void doesNotSerializeTheDerivedCallersIndex() {
-        var caller = domainMethod(ZUSTELLUNGS_SERVICE, "liefereAus");
+        var caller = domainMethod(DELIVERY_SERVICE, "deliver");
         var domainCalls = DomainCalls.builder()
             .add(caller, List.of(
-                new DomainCalls.CallSite(domainMethod(REPOSITORY, "findById"), ZUSTELLUNGS_SERVICE, 42)))
+                new DomainCalls.CallSite(domainMethod(REPOSITORY, "findById"), DELIVERY_SERVICE, 42)))
             .build();
 
         var json = serializer.serialize(domainCalls);
@@ -181,12 +181,34 @@ public class JacksonDomainCallsSerializerTest {
     void deserializationFailsForAnUnresolvableMethodReference() {
         var json = """
             {"callsByCaller":[{"caller":{"typeName":"%s","methodName":"doesNotExist","parameterTypeNames":[]},"callSites":[]}],"diagnostics":[]}"""
-            .formatted(ZUSTELLUNGS_SERVICE);
+            .formatted(DELIVERY_SERVICE);
 
         assertThatThrownBy(() -> serializer.deserialize(json, Domain.getDomainMirror()))
             .isInstanceOf(DomainCallsSerializationException.class)
             .hasMessageContaining("doesNotExist")
-            .hasMessageContaining(ZUSTELLUNGS_SERVICE);
+            .hasMessageContaining(DELIVERY_SERVICE);
+    }
+
+    @Test
+    void deserializedCallSitesShareOneDomainMethodInstancePerMethod() {
+        var original = DomainCalls.builder()
+            .add(domainMethod(DELIVERY_SERVICE, "deliver"), List.of(
+                new DomainCalls.CallSite(domainMethod(REPOSITORY, "findById"), DELIVERY_SERVICE, 42),
+                new DomainCalls.CallSite(domainMethod(REPOSITORY, "findById"), DELIVERY_SERVICE, 43)))
+            .add(domainMethod(AGGREGATE, "startDelivery"), List.of(
+                new DomainCalls.CallSite(domainMethod(REPOSITORY, "findById"), AGGREGATE, 7)))
+            .build();
+
+        var deserialized = serializer.deserialize(serializer.serialize(original), Domain.getDomainMirror());
+
+        // a method is resolved once and shared by all call sites referring to it, instead of a new
+        // DomainMethod per call site (millions of them for a large domain)
+        var firstCallSites = deserialized.callsFor(domainMethod(DELIVERY_SERVICE, "deliver")).callSites();
+        var secondCallSites = deserialized.callsFor(domainMethod(AGGREGATE, "startDelivery")).callSites();
+        assertThat(firstCallSites.get(0).called())
+            .isEqualTo(domainMethod(REPOSITORY, "findById"))
+            .isSameAs(firstCallSites.get(1).called())
+            .isSameAs(secondCallSites.get(0).called());
     }
 
     private static DomainMethod domainMethod(String typeName, String methodName) {

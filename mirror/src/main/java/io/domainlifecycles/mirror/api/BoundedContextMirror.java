@@ -27,6 +27,7 @@
 package io.domainlifecycles.mirror.api;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * A BoundedContextMirror mirrors a BoundedContext.
@@ -40,6 +41,12 @@ public interface BoundedContextMirror {
      * @return the full qualified package name of this mirrored BoundedContext
      */
     String getPackageName();
+
+    /**
+     * @return an optional human-readable name of this BoundedContext, in addition to its package name -
+     * present when derived from a {@code @BoundedContext} package annotation carrying one, empty otherwise
+     */
+    Optional<String> getName();
 
     /**
      * @return the list of {@link AggregateRootMirror} instances, contained in the BoundedContext.
@@ -75,6 +82,11 @@ public interface BoundedContextMirror {
      * @return the list of {@link OutboundServiceMirror} instances, associated with the BoundedContext.
      */
     List<OutboundServiceMirror> getOutboundServices();
+
+    /**
+     * @return the list of {@link FactoryMirror} instances, associated with the BoundedContext.
+     */
+    List<FactoryMirror> getFactories();
 
     /**
      * @return the list of {@link ServiceKindMirror} instances, associated with the BoundedContext.

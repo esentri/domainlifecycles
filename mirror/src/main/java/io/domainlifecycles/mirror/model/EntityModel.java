@@ -123,7 +123,7 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
             .map(p -> (EntityReferenceMirror) p)
             .findFirst()
             .orElseThrow(() -> MirrorException.fail(
-                String.format("EntityReferenceMirror not found for name '%s' within '%s'!", name, typeName)));
+                "EntityReferenceMirror not found for name '%s' within '%s'!", name, typeName));
     }
 
     /**
@@ -149,7 +149,7 @@ public class EntityModel extends DomainObjectModel implements EntityMirror, Doma
             .map(p -> (AggregateRootReferenceMirror) p)
             .findFirst()
             .orElseThrow(() -> MirrorException.fail(
-                String.format("AggregateRootReferenceMirror not found for name '%s' within '%s'!", name, typeName)));
+                "AggregateRootReferenceMirror not found for name '%s' within '%s'!", name, typeName));
     }
 
     /**

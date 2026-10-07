@@ -69,7 +69,7 @@ public class DLCJacksonException extends RuntimeException {
      * @return new exception
      */
     public static DLCJacksonException fail(final String detail, final Object... args) {
-        return new DLCJacksonException(requireNonNull(detail), requireNonNull(args));
+        return new DLCJacksonException(format(requireNonNull(detail), requireNonNull(args)));
     }
 
     /**
@@ -82,7 +82,7 @@ public class DLCJacksonException extends RuntimeException {
      * @return new exception
      */
     public static DLCJacksonException fail(final String detail, final Throwable cause, final Object... args) {
-        return new DLCJacksonException(requireNonNull(detail), requireNonNull(cause), requireNonNull(args));
+        return new DLCJacksonException(format(requireNonNull(detail), requireNonNull(args)), requireNonNull(cause));
     }
 
     // ----------------------------------------------------------
@@ -91,12 +91,11 @@ public class DLCJacksonException extends RuntimeException {
         return args.length > 0 ? String.format(detail, args) : detail;
     }
 
-
-    private DLCJacksonException(String detail, final Object... args) {
-        super(format(detail, args));
+    private DLCJacksonException(final String message) {
+        super(message);
     }
 
-    private DLCJacksonException(String detail, Throwable cause, Object... args) {
-        super(format(detail, args), cause);
+    private DLCJacksonException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 }

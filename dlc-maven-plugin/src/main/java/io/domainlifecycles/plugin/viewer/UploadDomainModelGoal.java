@@ -73,6 +73,11 @@ import java.util.List;
  * - staticAnalysisPackages: Restricts the static analysis (when runStaticAnalysis is enabled) to
  *   classes in these packages instead of the whole classpath. Falls back to domainModelPackages
  *   when unset.
+ * - staticAnalysisExpandNonDomainDispatch: Whether the static analysis expands calls on types outside the domain
+ *   (JDK, library and DLC types) to the domain types implementing the called method. Defaults to {@code false}:
+ *   only calls on domain types are recorded.
+ * - uploadRequestTimeoutMinutes: How long to wait for the whole upload (request body plus response), in
+ *   minutes. Defaults to DomainModelUploaderImpl.DEFAULT_REQUEST_TIMEOUT_MINUTES (5).
  *
  * @author Leon Völlinger
  */
@@ -113,6 +118,35 @@ public class UploadDomainModelGoal extends AbstractMojo {
     @Parameter(property = "staticAnalysisPackages", required = false)
     private List<String> staticAnalysisPackages;
 
+    /**
+     * Packages whose types, as superclass or interface (direct or inherited), exclude a class from being
+     * mirrored as non-domain class. Unset means the default {@code org.jooq}, which leaves out the code
+     * jOOQ generates for tables, records, schemas and catalogs; an empty list also means this default
+     * (Maven cannot distinguish an unset list parameter from an empty one).
+     */
+    @Parameter(property = "nonDomainExcludedSupertypePackages", required = false)
+    private List<String> nonDomainExcludedSupertypePackages;
+
+    /**
+     * Packages whose classes are not mirrored as non-domain classes, e.g. generated code without a common
+     * supertype. Unset means none.
+     */
+    @Parameter(property = "nonDomainExcludedPackages", required = false)
+    private List<String> nonDomainExcludedPackages;
+
+    /**
+     * How long to wait for the whole upload (request body plus response of the Diagram Viewer), in minutes.
+     */
+    /**
+     * Whether the static analysis expands calls on types outside the domain to the domain types implementing the
+     * called method. Off by default: such calls say nothing about the domain type they reach.
+     */
+    @Parameter(property = "staticAnalysisExpandNonDomainDispatch", defaultValue = "false")
+    private boolean staticAnalysisExpandNonDomainDispatch;
+
+    @Parameter(property = "uploadRequestTimeoutMinutes", defaultValue = "" + DomainModelUploaderImpl.DEFAULT_REQUEST_TIMEOUT_MINUTES)
+    private int uploadRequestTimeoutMinutes;
+
     private DomainModelUploader domainModelUploader;
 
     /**
@@ -131,7 +165,9 @@ public class UploadDomainModelGoal extends AbstractMojo {
     @Override
     public void execute() {
         LOGGER.info("Running Upload Domain Model Goal...");
-        domainModelUploader = new DomainModelUploaderImpl(staticAnalysisCacheSize);
+        domainModelUploader = new DomainModelUploaderImpl(
+            staticAnalysisCacheSize, nonDomainExcludedSupertypePackages, nonDomainExcludedPackages,
+            uploadRequestTimeoutMinutes, staticAnalysisExpandNonDomainDispatch);
         uploadDomainModel();
     }
 

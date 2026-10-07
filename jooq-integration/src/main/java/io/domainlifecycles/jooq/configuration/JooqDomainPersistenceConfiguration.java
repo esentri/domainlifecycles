@@ -33,6 +33,9 @@ import io.domainlifecycles.jooq.configuration.def.JooqRecordPropertyAccessor;
 import io.domainlifecycles.jooq.configuration.def.JooqRecordPropertyProvider;
 import io.domainlifecycles.jooq.imp.matcher.JooqRecordPropertyMatcher;
 import io.domainlifecycles.jooq.imp.matcher.JooqRecordTypeToEntityTypeMatcher;
+import io.domainlifecycles.persistence.cache.NoOpTransactionCacheProvider;
+import io.domainlifecycles.persistence.cache.ThreadBoundTransactionCacheProvider;
+import io.domainlifecycles.persistence.cache.TransactionCacheProvider;
 import io.domainlifecycles.persistence.configuration.DomainPersistenceConfiguration;
 import io.domainlifecycles.persistence.exception.DLCPersistenceException;
 import io.domainlifecycles.persistence.mapping.IgnoredFieldProvider;
@@ -202,9 +205,19 @@ public class JooqDomainPersistenceConfiguration extends DomainPersistenceConfigu
      */
     public final EntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider;
 
+    /**
+     * Supplies the {@code TransactionCache} active for the currently running transaction, if any - see
+     * {@link DomainPersistenceConfiguration#transactionCacheEnabled}. Defaults to a
+     * {@link ThreadBoundTransactionCacheProvider} automatically bound to the jOOQ transaction lifecycle
+     * (see {@code JooqAggregateRepository}) when the feature is enabled, or to a
+     * {@link NoOpTransactionCacheProvider} when it is disabled.
+     */
+    public final TransactionCacheProvider<UpdatableRecord<?>> transactionCacheProvider;
+
 
     private JooqDomainPersistenceConfiguration(DomainObjectBuilderProvider domainObjectBuilderProvider,
                                                Set<RecordMapper<?, ?, ?>> customRecordMappers,
+                                               boolean transactionCacheEnabled,
                                                RecordClassProvider<UpdatableRecord<?>> recordClassProvider,
                                                RecordTypeToEntityTypeMatcher<UpdatableRecord<?>> recordTypeToEntityTypeMatcher,
                                                RecordMirrorInstanceProvider<UpdatableRecord<?>> recordMirrorInstanceProvider,
@@ -215,9 +228,10 @@ public class JooqDomainPersistenceConfiguration extends DomainPersistenceConfigu
                                                RecordPropertyAccessor<UpdatableRecord<?>> recordPropertyAccessor,
                                                IgnoredFieldProvider ignoredDomainObjectFields,
                                                IgnoredRecordPropertyProvider ignoredRecordProperties,
-                                               EntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider
+                                               EntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider,
+                                               TransactionCacheProvider<UpdatableRecord<?>> transactionCacheProvider
     ) {
-        super(domainObjectBuilderProvider, customRecordMappers);
+        super(domainObjectBuilderProvider, customRecordMappers, transactionCacheEnabled);
         this.recordClassProvider = Objects.requireNonNull(recordClassProvider);
         this.recordTypeToEntityTypeMatcher = Objects.requireNonNull(recordTypeToEntityTypeMatcher);
         this.recordMirrorInstanceProvider = Objects.requireNonNull(recordMirrorInstanceProvider);
@@ -229,6 +243,7 @@ public class JooqDomainPersistenceConfiguration extends DomainPersistenceConfigu
         this.ignoredDomainObjectFields = ignoredDomainObjectFields;
         this.ignoredRecordProperties = ignoredRecordProperties;
         this.entityValueObjectRecordClassProvider = entityValueObjectRecordClassProvider;
+        this.transactionCacheProvider = Objects.requireNonNull(transactionCacheProvider);
     }
 
     /**
@@ -249,6 +264,9 @@ public class JooqDomainPersistenceConfiguration extends DomainPersistenceConfigu
         private IgnoredRecordPropertyProvider ignoredRecordProperties;
         private EntityValueObjectRecordClassProvider entityValueObjectRecordClassProvider;
         private String recordPackage;
+        private boolean transactionCacheEnabled = false;
+        private TransactionCacheProvider<UpdatableRecord<?>> transactionCacheProvider;
+        private int transactionCacheMaxSize = 256;
 
         /**
          * Creates a new instance of {@code JooqPersistenceConfigurationBuilder}.
@@ -448,6 +466,47 @@ public class JooqDomainPersistenceConfiguration extends DomainPersistenceConfigu
         }
 
         /**
+         * Enables or disables the transaction cache feature (disabled by default). When disabled, behavior is
+         * identical to a build without the feature at all - a provider set is ignored, no transaction listener is
+         * registered and no additional memory is used.
+         *
+         * @param transactionCacheEnabled whether the transaction cache feature should be enabled
+         * @return the current instance of {@code JooqPersistenceConfigurationBuilder} for method chaining
+         */
+        public JooqPersistenceConfigurationBuilder withTransactionCacheEnabled(boolean transactionCacheEnabled) {
+            this.transactionCacheEnabled = transactionCacheEnabled;
+            return this;
+        }
+
+        /**
+         * Sets a custom {@code TransactionCacheProvider}, overriding the default
+         * {@link ThreadBoundTransactionCacheProvider}. Note that a custom provider is not automatically bound
+         * to jOOQ's transaction lifecycle by {@code JooqAggregateRepository} - only a
+         * {@link ThreadBoundTransactionCacheProvider} is, since the binder needs to open/close its scope.
+         *
+         * @param transactionCacheProvider the transaction cache provider to use
+         * @return the current instance of {@code JooqPersistenceConfigurationBuilder} for method chaining
+         */
+        public JooqPersistenceConfigurationBuilder withTransactionCacheProvider(
+            TransactionCacheProvider<UpdatableRecord<?>> transactionCacheProvider) {
+            this.transactionCacheProvider = transactionCacheProvider;
+            return this;
+        }
+
+        /**
+         * Sets the maximum number of aggregate roots held in the transaction cache per transaction (default
+         * 256). Only relevant for the default {@link ThreadBoundTransactionCacheProvider} - ignored if a
+         * custom provider was set via {@link #withTransactionCacheProvider(TransactionCacheProvider)}.
+         *
+         * @param transactionCacheMaxSize the maximum number of entries held per transaction
+         * @return the current instance of {@code JooqPersistenceConfigurationBuilder} for method chaining
+         */
+        public JooqPersistenceConfigurationBuilder withTransactionCacheMaxSize(int transactionCacheMaxSize) {
+            this.transactionCacheMaxSize = transactionCacheMaxSize;
+            return this;
+        }
+
+        /**
          * Builds and returns a configured instance of {@link JooqDomainPersistenceConfiguration}.
          * This method ensures that all required components for the configuration are properly initialized.
          * If any mandatory component is not explicitly set, default implementations or values are used.
@@ -498,9 +557,16 @@ public class JooqDomainPersistenceConfiguration extends DomainPersistenceConfigu
                 this.recordClassProvider = new JooqRecordClassProvider(this.recordPackage);
             }
 
+            if (!this.transactionCacheEnabled) {
+                this.transactionCacheProvider = new NoOpTransactionCacheProvider<>();
+            } else if (this.transactionCacheProvider == null) {
+                this.transactionCacheProvider = new ThreadBoundTransactionCacheProvider<>(this.transactionCacheMaxSize);
+            }
+
             JooqDomainPersistenceConfiguration configuration = new JooqDomainPersistenceConfiguration(
                 this.domainObjectBuilderProvider,
                 this.customRecordMappers,
+                this.transactionCacheEnabled,
                 this.recordClassProvider,
                 this.recordTypeToEntityTypeMatcher,
                 this.recordMirrorInstanceProvider,
@@ -511,7 +577,8 @@ public class JooqDomainPersistenceConfiguration extends DomainPersistenceConfigu
                 this.recordPropertyAccessor,
                 this.ignoredDomainObjectFields,
                 this.ignoredRecordProperties,
-                this.entityValueObjectRecordClassProvider
+                this.entityValueObjectRecordClassProvider,
+                this.transactionCacheProvider
             );
             return configuration;
         }
