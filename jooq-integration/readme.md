@@ -169,7 +169,9 @@ last code generation run is still found without regenerating anything:
 
 - A `UUID`-valued `Identity` is generated in memory, without a database round-trip.
 - Any other `Identity` value is generated from a database sequence named after the identity type's simple name in
-  snake case, e.g. `OrderId` &rarr; sequence `ORDER_ID_SEQ` (matched case-insensitively).
+  snake case, e.g. `OrderId` &rarr; sequence `ORDER_ID_SEQ` (matched case-insensitively). An identity declared as an
+  inner class is prefixed with its enclosing class(es): `Order.Id` &rarr; `ORDER_ID_SEQ`, `Order.OrderId` &rarr;
+  `ORDER_ORDER_ID_SEQ`.
 - The technical, non-domain-visible primary key of a "record mapped" ValueObject table (or a scalar list's child
   table, see [DLC Persistence](../persistence/readme.md#scalar-lists)) is generated from a sequence named after
   the table, e.g. table `ACTION_CODE` &rarr; sequence `ACTION_CODE_SEQ`.

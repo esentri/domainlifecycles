@@ -26,6 +26,9 @@
 
 package io.domainlifecycles.jdbc.util;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 /**
  * Helper naming utilities to transform snake case String into camel case and the other way round.
  * <p>
@@ -101,5 +104,24 @@ public final class NamingUtil {
             returnVal = returnVal.substring(1);
         }
         return returnVal;
+    }
+
+    /**
+     * Derive the name of the database sequence an {@code Identity} type's values are drawn from: the
+     * identity's simple name in snake case plus {@code _SEQ}. For an identity declared as an inner class,
+     * every enclosing class name is prefixed, so {@code Order.OrderId} becomes {@code ORDER_ORDER_ID_SEQ}
+     * and {@code Room.Id} becomes {@code ROOM_ID_SEQ}; a top-level {@code OrderId} stays {@code ORDER_ID_SEQ}.
+     *
+     * @param identityTypeName binary name of the identity type, as reported by the domain mirror
+     *                         (e.g. {@code com.example.Room$Id})
+     * @return upper case sequence name
+     */
+    public static String identitySequenceName(String identityTypeName) {
+        var binarySimpleName = identityTypeName.substring(identityTypeName.lastIndexOf('.') + 1);
+        // each '$'-separated segment is converted on its own, so "Room$Id" yields "room_id", not "room$_id"
+        return Arrays.stream(binarySimpleName.split("\\$"))
+            .map(NamingUtil::camelCaseToSnakeCase)
+            .collect(Collectors.joining("_"))
+            .toUpperCase() + "_SEQ";
     }
 }

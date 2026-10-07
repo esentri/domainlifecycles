@@ -72,4 +72,18 @@ public class NamingUtilTest {
         var snake = NamingUtil.camelCaseToSnakeCase(camel);
         Assertions.assertThat(snake).isEqualTo("test_entity2_id");
     }
+
+    @Test
+    public void testIdentitySequenceNameOfTopLevelIdentity() {
+        Assertions.assertThat(NamingUtil.identitySequenceName("com.example.OrderIdBv3")).isEqualTo("ORDER_ID_BV3_SEQ");
+    }
+
+    @Test
+    public void testIdentitySequenceNameOfInnerIdentityIsPrefixedByEnclosingClass() {
+        Assertions.assertThat(NamingUtil.identitySequenceName("com.example.Room$Id")).isEqualTo("ROOM_ID_SEQ");
+        Assertions.assertThat(NamingUtil.identitySequenceName("com.example.Room$RoomNumber"))
+            .isEqualTo("ROOM_ROOM_NUMBER_SEQ");
+        Assertions.assertThat(NamingUtil.identitySequenceName("com.example.Hotel$Room$Id"))
+            .isEqualTo("HOTEL_ROOM_ID_SEQ");
+    }
 }

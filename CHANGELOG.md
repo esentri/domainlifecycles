@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+- Fixed `JooqEntityIdentityProvider` and `JdbcEntityIdentityProvider` resolving a nonsensical sequence name for an
+  `Identity` declared as an inner class: the mirror reports the binary name (`Order$OrderId`), and the `$` ended up in
+  the name (`ORDER$_ORDER_ID_SEQ`), so no sequence was ever found. An inner identity's sequence is now prefixed with
+  its enclosing class(es) - `Order.Id` &rarr; `ORDER_ID_SEQ`, `Order.OrderId` &rarr; `ORDER_ORDER_ID_SEQ` - which keeps
+  the commonly used inner `Id` class unique per entity. Top-level identities are unchanged (`OrderId` &rarr;
+  `ORDER_ID_SEQ`).
+
 ## [3.5.0] - 2026-10-07
 - Extended the [mirror](./mirror) module to optionally also mirror classes in the scanned domain
   model packages that implement no domain marker interface, as `NonDomainTypeMirror`/

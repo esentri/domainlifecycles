@@ -53,8 +53,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class JdbcEntityIdentityProvider implements EntityIdentityProvider {
 
-    private static final String SEQUENCE_SUFFIX = "_SEQ";
-
     private final JdbcConnectionProvider connectionProvider;
     private final JdbcDialect dialect;
     private final Map<String, String> sequenceNameCache = new ConcurrentHashMap<>();
@@ -97,7 +95,6 @@ public class JdbcEntityIdentityProvider implements EntityIdentityProvider {
     }
 
     private static String sequenceNameFor(String identityTypeName) {
-        var simpleName = identityTypeName.substring(identityTypeName.lastIndexOf(".") + 1);
-        return NamingUtil.camelCaseToSnakeCase(simpleName).toUpperCase() + SEQUENCE_SUFFIX;
+        return NamingUtil.identitySequenceName(identityTypeName);
     }
 }

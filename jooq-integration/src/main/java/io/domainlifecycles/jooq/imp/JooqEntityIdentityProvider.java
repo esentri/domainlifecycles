@@ -49,8 +49,6 @@ public class JooqEntityIdentityProvider implements EntityIdentityProvider {
 
     private final DSLContext dslContext;
 
-    private final String seqSuffix = "_SEQ";
-
     private final Map<String, Sequence<?>> sequenceCache = new ConcurrentHashMap<>();
 
     /**
@@ -85,9 +83,8 @@ public class JooqEntityIdentityProvider implements EntityIdentityProvider {
 
     private Sequence<?> getSequence(String entityIdentityTypeName) {
         var seq = sequenceCache.get(entityIdentityTypeName);
-        var simpleName = entityIdentityTypeName.substring(entityIdentityTypeName.lastIndexOf(".") + 1);
         if (seq == null) {
-            var sequenceName = NamingUtil.camelCaseToSnakeCase(simpleName).toUpperCase() + seqSuffix;
+            var sequenceName = NamingUtil.identitySequenceName(entityIdentityTypeName);
             seq = dslContext
                 .meta()
                 .getSequences(sequenceName)

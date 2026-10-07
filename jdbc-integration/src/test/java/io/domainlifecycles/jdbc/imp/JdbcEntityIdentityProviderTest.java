@@ -2,6 +2,7 @@ package io.domainlifecycles.jdbc.imp;
 
 import io.domainlifecycles.jdbc.connection.SingleJdbcConnectionProvider;
 import io.domainlifecycles.jdbc.dialect.H2JdbcDialect;
+import io.domainlifecycles.jdbc.nestedidentity.NestedIdentityRoot;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import org.junit.jupiter.api.AfterEach;
@@ -26,7 +27,8 @@ class JdbcEntityIdentityProviderTest {
 
     @BeforeAll
     static void initDomain() {
-        Domain.initialize(new ReflectiveDomainMirrorFactory("tests.shared.persistence.domain"));
+        Domain.initialize(new ReflectiveDomainMirrorFactory(
+            "tests.shared.persistence.domain", "io.domainlifecycles.jdbc.nestedidentity"));
     }
 
     @BeforeEach
@@ -35,6 +37,7 @@ class JdbcEntityIdentityProviderTest {
             "jdbc:h2:mem:jdbc_entity_identity_provider_test_" + UUID.randomUUID());
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("CREATE SEQUENCE TEST_ROOT_SIMPLE_ID_SEQ START WITH 1000");
+            stmt.execute("CREATE SEQUENCE NESTED_IDENTITY_ROOT_NESTED_IDENTITY_ROOT_ID_SEQ START WITH 2000");
         }
         provider = new JdbcEntityIdentityProvider(new SingleJdbcConnectionProvider(connection), new H2JdbcDialect());
     }
@@ -51,6 +54,14 @@ class JdbcEntityIdentityProviderTest {
 
         assertThat(first.value()).isEqualTo(1000L);
         assertThat(second.value()).isEqualTo(1001L);
+    }
+
+    @Test
+    void resolvesSequenceOfNestedIdentityPrefixedByEnclosingClass() {
+        var id = provider.provideFor(NestedIdentityRoot.class.getName());
+
+        assertThat(id).isInstanceOf(NestedIdentityRoot.NestedIdentityRootId.class);
+        assertThat(id.value()).isEqualTo(2000L);
     }
 
     @Test
