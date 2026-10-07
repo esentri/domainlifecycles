@@ -1,6 +1,6 @@
 package io.domainlifecycles.jdbc.persistence.containers;
 
-import org.testcontainers.containers.MSSQLServerContainer;
+import org.testcontainers.mssqlserver.MSSQLServerContainer;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -25,8 +25,8 @@ final class SqlServerTestDatabase {
 
     private static final String APP_PASSWORD = "dlc_test";
 
-    private static final MSSQLServerContainer<?> CONTAINER =
-        new MSSQLServerContainer<>("mcr.microsoft.com/mssql/server:2022-latest")
+    private static final MSSQLServerContainer CONTAINER =
+        new MSSQLServerContainer("mcr.microsoft.com/mssql/server:2022-latest")
             .acceptLicense();
 
     private static volatile boolean migrated = false;

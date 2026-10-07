@@ -98,7 +98,7 @@ allprojects {
 
     plugins.withId('checkstyle') {
         checkstyle {
-            toolVersion = '10.12.4'
+            toolVersion = '10.26.1'
             configFile = rootProject.file('./checkstyle/checkstyle.xml')
             ignoreFailures = true
             showViolations = true

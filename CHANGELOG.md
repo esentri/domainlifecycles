@@ -101,16 +101,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     `JooqDomainPersistenceProvider(JooqDomainPersistenceConfiguration, DSLContext)` constructor),
   - plain JDBC transactions the application drives itself, with a `ThreadBoundTransactionCacheProvider` scope opened
     around each transaction and cleared via `TransactionCacheScope.clear()` after a rollback to a savepoint.
-
-  The cache lives as long as its transaction, across all its reads and writes, and is emptied once it completes;
-  nested and suspended transactions are kept apart, and a rollback to a savepoint clears it. A write removes the
-  aggregate from the cache in any case, also if it fails midway; after changing an aggregate the transaction already
-  loaded bypassing DLC's repositories - own SQL or jOOQ statements, stored procedures, triggers - an application
-  empties the cache via `TransactionCacheProvider.clearCurrentTransactionCache()`, offered by every provider. Configurable via
-  `withTransactionCacheEnabled(...)`/`withTransactionCacheProvider(...)` on the persistence configuration builders,
-  and `withTransactionCacheMaxSize(...)` for jOOQ; `jdbc-integration` uses the cache only with a provider set. The
-  contract an own `TransactionCacheProvider` has to fulfil is documented on the interface and in the
-  [persistence readme](./persistence/readme.md#transaction-cache-own-provider)
+    The cache lives as long as its transaction, across all its reads and writes, and is emptied once it completes;
+    nested and suspended transactions are kept apart, and a rollback to a savepoint clears it. A write removes the
+    aggregate from the cache in any case, also if it fails midway; after changing an aggregate the transaction already
+    loaded bypassing DLC's repositories - own SQL or jOOQ statements, stored procedures, triggers - an application
+    empties the cache via `TransactionCacheProvider.clearCurrentTransactionCache()`, offered by every provider. Configurable via
+    `withTransactionCacheEnabled(...)`/`withTransactionCacheProvider(...)` on the persistence configuration builders,
+    and `withTransactionCacheMaxSize(...)` for jOOQ; `jdbc-integration` uses the cache only with a provider set. The
+    contract an own `TransactionCacheProvider` has to fulfil is documented on the interface and in the
+    [persistence readme](./persistence/readme.md#transaction-cache-own-provider)
 - Added new [`persistence-cache-spring-tx`](./persistence-cache-spring-tx/readme.md) module with `SpringTransactionCacheProvider`, binding the Transaction Cache to Spring-managed transactions (`@Transactional`, `TransactionTemplate`; with a `DataSourceTransactionManager` or a `JtaTransactionManager`) - jOOQ's own `TransactionListener` is bypassed by a transaction Spring itself began and commits/rolls back, and plain JDBC has no such events at all. The cache of a transaction is a resource of that transaction, tied to it by a `TransactionSynchronization`: kept apart for a transaction suspended for another one (`PROPAGATION_REQUIRES_NEW`), cleared on a rollback to a savepoint (`PROPAGATION_NESTED`), emptied once the transaction completes, and absent without a transaction (also for `PROPAGATION_SUPPORTS`). A cache left bound to a thread by a transaction completed elsewhere, e.g. by a JTA transaction manager after a timeout, is never handed to the next transaction. No connection provider is decorated. Needs Spring 6.2 or later (Spring Boot 3.4 or later) - before, Spring does not report a rollback to a savepoint, so the cache stays off. Set up by `DlcJooqPersistenceAutoConfiguration` and `DlcJdbcPersistenceAutoConfiguration` (Spring Boot 3 and 4) with `dlc.features.persistence.transaction-cache.enabled=true`.
 - Added `DlcJdbcPersistenceAutoConfiguration` (Spring Boot 3 and 4 autoconfig modules), the plain-JDBC (`jdbc-integration`) counterpart of `DlcJooqPersistenceAutoConfiguration` - reads the database schema once at startup instead of relying on generated record classes, resolves a `JdbcDialect` from the same SQL dialect property/attribute jOOQ uses, and sets up the Transaction Cache for Spring's own transaction management via the same `persistence-cache-spring-tx` module, if switched on. Deliberately ordered after `DlcJooqPersistenceAutoConfiguration`, so that if both integrations are ever on the classpath at once, jOOQ deterministically wins the shared persistence-provider slot rather than leaving that to an accident of autoconfiguration sorting.
 - Fixed `EntityCloner.cloneEntityProperties()` sharing a mutable basic-typed collection/array field with the original entity instead of deep-copying it - could silently corrupt the Transaction Cache's cloned snapshot (or any other code cloning an entity) if the original's field was later mutated in place.
@@ -135,7 +134,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed two copy-pasted typos in the missing-SQL-dialect error message thrown by `DlcJooqPersistenceAutoConfiguration` (`dlc-spring-boot-autoconfig`/`dlc-spring-boot3-autoconfig`), each module carrying a different wrong property name (`dlc.persistence.sql-dialect` / `dlc.features-persistence.sql-dialect` instead of `dlc.features.persistence.sql-dialect`), misleading a developer debugging exactly the misconfiguration this message is meant to explain.
 - Added `dlc-spring-boot3-autoconfig` test coverage for `DlcJdbcPersistenceAutoConfiguration` and for disabling either persistence backend by property (`dlc.features.persistence.jooq.enabled=false`/`dlc.features.persistence.jdbc.enabled=false`) - this Spring Boot 3 variant had none, unlike its Spring Boot 4 counterpart.
 - Added further Transaction Cache test coverage: unit tests for `SpringTransactionCacheProvider` running Spring's real propagation handling (suspension, savepoints) and for `JtaTransactionCacheProvider` against a real JTA transaction manager; integration tests checking the cache against the transaction boundaries of every setup - with and without Spring, with JTA, nested, rolled back, with a failing commit - and that every connection is handed back to the pool; a `jdbc-integration` counterpart of `jooq-integration`'s `SimpleAggregateRootRepository_TransactionCache_ITest`, exercising the cache-miss/cache-hit invalidation rule and the SELECT-avoidance behavior through `jdbc-integration`'s own, independent repository/fetcher code path; and a genuine multi-threaded concurrency test for `ThreadBoundTransactionCacheProvider`, proving its `ThreadLocal`-based isolation under real concurrent access rather than only sequential single-thread calls.
-
 - Fixed building and deserializing `DomainCalls` (static analysis result) scaling quadratically with the
   number of call sites per calling method: `DomainCalls.Builder` deduplicated call sites with a linear
   `List.contains` per added call site - each a deep `MethodMirror` comparison - and is hash based now;
@@ -161,13 +159,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   are now rejected with a `MirrorException`. [mirror-jmolecules](./mirror-jmolecules) additionally
   recognizes jMolecules' own, structurally equivalent `@org.jmolecules.ddd.annotation.BoundedContext`
   package annotation
-
 - Fixed flow traversals of the [static analysis](./static-analysis) (`DomainCallFlowAnalyzer`, used for the flow
   filters of the domain diagrammer) allocating gigabytes for large flows: checking each reached node against its path
   rebuilt the key of every step on the path, including a method's full signature. `Step#hasNodeKey(String)` now
   compares without building the key. In a real world project a flow diagram of 700 classes allocated 1.8 instead of
   6.9 GB and rendered in 1.3 instead of 2.1 s
-
 - The SootUp based [static analysis](./static-analysis) records calls on domain types only. A call on a type outside
   the domain (JDK, library or framework types) was expanded to every domain type implementing the called method:
   a single `obj.toString()` on an `Object` became a call of the `toString()` of every mirrored class. In a real
@@ -179,22 +175,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   is available via `new SootupStaticAnalyzer(cacheSize, true)` and the new
   `staticAnalysisExpandNonDomainDispatch` option of the Diagram-Viewer upload of the
   [Gradle and Maven plugins](./dlc-plugins/readme.md)
-
 - Fixed the SootUp based [static analysis](./static-analysis) dropping calls of generic methods a domain type
   inherits, e.g. `findById`, `insert` or `update` of a repository extending DLC's `Repository<ID, A>` without
   redeclaring them. The mirror resolves their type arguments (`findById(BoniNummer)`), while the bytecode invokes the
   erased method (`findById(Identity)`), so no mirrored method matched. A method whose parameter types are subtypes of
   the erased ones now matches as well, if it is the only one. Flows therefore reach the repositories loading and
   saving an aggregate again
-
 - The [mirror](./mirror) module recognizes the event listeners of Spring and Spring Modulith as listeners of a
   domain event, like `@DomainEventListener`: methods annotated with `@EventListener`,
   `@TransactionalEventListener` or `@ApplicationModuleListener`, or with an own annotation composed of one of them.
   The listened event is the method's `DomainEvent` parameter or, without one, the single `DomainEvent` named by the
   annotation's `classes`/`value`. Flows of the [static analysis](./static-analysis) and flow diagrams therefore no
   longer end at events only handled by such listeners. The annotations are recognized by name, so the mirror still
-  needs no Spring dependency
-
+  needs no Spring dependencyja 
 - Fixed the [domain diagrammer](./domain-diagrammer) drawing classes sharing a simple name as one node, e.g. two
   services of the same name in different Bounded Contexts, merging their members and relationships. Nomnoml identifies
   a node by its name, so such classes are now named with a hint to their package, e.g.
@@ -297,6 +290,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and what it leads to, each direction with its own depth - and likewise in `excludeConnectedToIngoing` and
   `excludeConnectedToOutgoing`. `DiagramTrimSettings` still rejects a class that is included and excluded at once, or
   named in `includeConnectedTo` and a directed include setting, now naming the conflicting settings
+- Problems with the non-domain classes mirrored since this version no longer make the mirror initialization
+  fail or log errors, since such classes are no part of the domain model itself: a non-domain class referencing
+  a domain type outside the scanned packages is only logged as a warning by the `CompletenessChecker` (for a domain
+  type it still fails the check), and a non-domain class that cannot be loaded, or a field or method of it that
+  cannot be mirrored (e.g. because a class it depends on is missing on the classpath), is logged as a warning
+  instead of an error, with the stack trace on debug level. See [mirror](./mirror/readme.md#mirroring-non-domain-classes)
+- Fixed the [mirror](./mirror) not recognizing overridden methods in several cases, so that the domain diagrammer
+  showed such a method twice when both declarations rendered differently (e.g. an interface method implemented with
+  an additional `@NotNull` parameter annotation). `MethodMirror#isOverridden()` compared the raw modifier bit masks
+  of both methods, so an `abstract` interface or base class method, or a method overridden by a `final` or
+  `synchronized` one, never counted as overridden. Now only the visibility is compared, covariant return types are
+  accepted, and private, static and package-private methods of another package are no longer treated as overridable
+- Upgraded dependencies to their latest versions: Spring Boot 4.1.1 / 3.5.16, Spring Framework 7.0.9, Jackson 3.2.3 /
+  2.22.3, jOOQ 3.19.39, SpringDoc 3.1.1 / 2.9.1, Byte Buddy 1.18.14, ClassGraph 4.8.196, Hibernate Validator
+  9.1.4.Final, Gruelbox Transaction Outbox 7.1.769, ActiveMQ Classic 5.19.11, SootUp 3.0.1, Maven 3.10.0 (plugin API),
+  Logback 1.6.5, SLF4J 2.0.20, JUnit 6.1.3, Testcontainers 2.0.5, Flyway 13.9.0, H2 2.5.252 and Gradle 9.8.0.
+  jOOQ stays on 3.19.x, since jOOQ 3.21 (managed by Spring Boot 4.1) requires Java 21, while DLC still supports
+  Java 17. Spring Framework 6 and Spring Boot 3 stay on their latest 6.2.x/3.5.x releases, ActiveMQ Classic on 5.x
 
 ## [3.4.0] - 2026-09-11
 - Improved DLC persistence initialization performance

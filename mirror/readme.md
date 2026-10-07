@@ -101,6 +101,14 @@ The inverse also holds: any `NonDomainTypeMirror` exposes the service kinds it i
 via `getReferencedServiceKinds()` - useful for classes that call *into* a service kind rather than
 being called by it, e.g. a controller or a message listener that holds an application service.
 
+Since non-domain classes are no part of the domain model itself, problems with them never make the
+mirror initialization fail - they are logged as a warning instead:
+- A non-domain class referencing a domain type outside the scanned packages (by a field, a method parameter
+  or a return type). For a domain type this still fails the completeness check, since the domain model
+  is incomplete then.
+- A non-domain class that cannot be loaded, or a field or method of it that cannot be mirrored, e.g. because
+  a class it depends on is missing on the classpath. The class or member is just left out of the mirror.
+
 This behaviour is enabled by default and can be switched off, e.g. to keep the mirror initialization
 faster on very large codebases, or to preserve the previous, marker-interface-only behaviour:
 

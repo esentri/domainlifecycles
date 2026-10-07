@@ -136,10 +136,10 @@ For a full working example:
 
 ## Recommended dependency setup
 For Spring Boot 4.x apps:
-- io.domainlifecycles:spring-boot-starter:3.4.0
+- io.domainlifecycles:spring-boot-starter:3.5.0
 
 For Spring Boot 3.x apps:
-- io.domainlifecycles:spring-boot3-starter:3.4.0
+- io.domainlifecycles:spring-boot3-starter:3.5.0
 
 These starters pull in the appropriate DLC modules and integrations, including both persistence backends
 (`jooq-integration` and `jdbc-integration`) - the Spring autoconfig picks the right one automatically: jOOQ

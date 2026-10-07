@@ -1,6 +1,6 @@
 package io.domainlifecycles.jdbc.persistence.containers;
 
-import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.mysql.MySQLContainer;
 
 import javax.sql.DataSource;
 
@@ -17,7 +17,7 @@ final class MySqlTestDatabase {
 
     static final String SCHEMA = "test_domain";
 
-    private static final MySQLContainer<?> CONTAINER = new MySQLContainer<>("mysql:8.0")
+    private static final MySQLContainer CONTAINER = new MySQLContainer("mysql:8.0")
         .withDatabaseName(SCHEMA)
         .withUsername("dlc_test")
         .withPassword("dlc_test");

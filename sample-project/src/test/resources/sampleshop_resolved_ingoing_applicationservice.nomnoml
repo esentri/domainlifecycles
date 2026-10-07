@@ -32,9 +32,15 @@
 #.OS:fill=#C0C0C0 bold
 #.OS_R:fill=#C0C0C0 bold;stroke=#FF0000
 #.OS_N:fill=#C0C0C0 bold;stroke=#108738
+#.F:fill=#E0F0E0 bold
+#.F_R:fill=#E0F0E0 bold;stroke=#FF0000
+#.F_N:fill=#E0F0E0 bold;stroke=#108738
 #.SK:fill=#C0C0C0 bold
 #.SK_R:fill=#C0C0C0 bold;stroke=#FF0000
 #.SK_N:fill=#C0C0C0 bold;stroke=#108738
+#.ND:fill=#EAEAEA
+#.ND_R:fill=#EAEAEA;stroke=#FF0000
+#.ND_N:fill=#EAEAEA;stroke=#108738
 #.QH:fill=#C0C0C0 bold
 #.QH_R:fill=#C0C0C0 bold;stroke=#FF0000
 #.QH_N:fill=#C0C0C0 bold;stroke=#108738

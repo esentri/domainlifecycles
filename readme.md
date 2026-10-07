@@ -249,25 +249,25 @@ Here's an overview of the most important external dependencies:
 
 | Feature                                                             | External dependency                                                                            | Supported versions                 |
 |---------------------------------------------------------------------|------------------------------------------------------------------------------------------------|------------------------------------|
-| Optional Object Builders Lombok Support                             | org.projectlombok:lombok                                                                       | tested with 1.18.46                |     
+| Optional Object Builders Lombok Support                             | org.projectlombok:lombok                                                                       | tested with 1.18.48                |     
 | Optional fine grained type resolving in the DLC mirror              | com.github.vladislavsevruk:type-resolver                                                       | tested with 1.0.3                  |
-| Runtime class loading in the DLC mirror and DLC persistence         | io.github.classgraph:classgraph                                                                | tested with 4.8.184                |
-| Validation - Jakarta Bean Validation Support                        | (Bean Validation Provider implementation) e.g.: org.hibernate.validator:hibernate-validator    | tested with 9.1.0.Final            |
-| Validation extension via Byte Buddy                                 | net.bytebuddy:byte-buddy                                                                       | tested with 1.18.10                |
-| Persistence                                                         | org.jooq:jooq                                                                                  | tested with 3.19.29                |
-| JSON Mapping via Jackson 3                                          | tools.jackson.core:jackson-core <b>and</b> tools.jackson.core:jackson-databind                 | tested with 3.2.0                  |
-| JSON Mapping via Jackson 2                                          | com.fasterxml.jackson.core:jackson-core <b>and</b> com.fasterxml.jackson.core:jackson-databind | tested with 2.22.0                 |
-| Open API Support (Spring Doc 2)                                     | org.springdoc:springdoc-openapi-starter-webmvc-ui                                              | tested with 2.8.17                 |
-| Open API Support (Spring Doc 3)                                     | org.springdoc:springdoc-openapi-starter-webmvc-ui                                              | tested with 3.0.3                  |
-| Domain Events, Spring based Transaction Support (Spring Boot 3 & 4) | org.springframework:spring-tx                                                                  | tested with 7.0.8                  |
+| Runtime class loading in the DLC mirror and DLC persistence         | io.github.classgraph:classgraph                                                                | tested with 4.8.196                |
+| Validation - Jakarta Bean Validation Support                        | (Bean Validation Provider implementation) e.g.: org.hibernate.validator:hibernate-validator    | tested with 9.1.4.Final            |
+| Validation extension via Byte Buddy                                 | net.bytebuddy:byte-buddy                                                                       | tested with 1.18.14                |
+| Persistence                                                         | org.jooq:jooq                                                                                  | tested with 3.19.39                |
+| JSON Mapping via Jackson 3                                          | tools.jackson.core:jackson-core <b>and</b> tools.jackson.core:jackson-databind                 | tested with 3.2.3                  |
+| JSON Mapping via Jackson 2                                          | com.fasterxml.jackson.core:jackson-core <b>and</b> com.fasterxml.jackson.core:jackson-databind | tested with 2.22.3                 |
+| Open API Support (Spring Doc 2)                                     | org.springdoc:springdoc-openapi-starter-webmvc-ui                                              | tested with 2.9.1                  |
+| Open API Support (Spring Doc 3)                                     | org.springdoc:springdoc-openapi-starter-webmvc-ui                                              | tested with 3.1.1                  |
+| Domain Events, Spring based Transaction Support (Spring Boot 3 & 4) | org.springframework:spring-tx                                                                  | tested with 7.0.9                  |
 | Domain Events, Jakarta JTA Support                                  | (JTA Provider implementation) e.g.: Atomikos com.atomikos:transactions-jta                     | tested with 6.0.1                  |
-| Domain Events Gruelbox Transactional Outbox                         | com.gruelbox:transactionoutbox-core                                                            | tested with 7.0.707                |
-| Domain Events ActiveMq Classic                                      | org.apache.activemq:activemq-client                                                            | tested with 5.18.4                 |
-| Domain Events serialization via Jackson 3                           | tools.jackson.core:jackson-core <b>and</b> tools.jackson.core:jackson-databind                 | tested with 3.2.0                  |
-| Domain Events serialization via Jackson 2                           | com.fasterxml.jackson.core:jackson-core <b>and</b> com.fasterxml.jackson.core:jackson-databind | tested with 2.22.0                 |
-| Logging                                                             | (SLF4J Provider) e.g.: ch.qos.logback:logback-classic                                          | tested with Logback Classic 1.5.34 |      
-| Spring Boot 4.x dependencies                                        | Spring Boot 4                                                                                  | tested with 4.1.0                  |      
-| Spring Boot 3.x dependencies                                        | Spring Boot 3                                                                                  | tested with 3.5.15                 |      
+| Domain Events Gruelbox Transactional Outbox                         | com.gruelbox:transactionoutbox-core                                                            | tested with 7.1.769                |
+| Domain Events ActiveMq Classic                                      | org.apache.activemq:activemq-client                                                            | tested with 5.19.11                |
+| Domain Events serialization via Jackson 3                           | tools.jackson.core:jackson-core <b>and</b> tools.jackson.core:jackson-databind                 | tested with 3.2.3                  |
+| Domain Events serialization via Jackson 2                           | com.fasterxml.jackson.core:jackson-core <b>and</b> com.fasterxml.jackson.core:jackson-databind | tested with 2.22.3                 |
+| Logging                                                             | (SLF4J Provider) e.g.: ch.qos.logback:logback-classic                                          | tested with Logback Classic 1.6.5  |      
+| Spring Boot 4.x dependencies                                        | Spring Boot 4                                                                                  | tested with 4.1.1                  |      
+| Spring Boot 3.x dependencies                                        | Spring Boot 3                                                                                  | tested with 3.5.16                 |      
 
 Run `./gradle dependencies` on the main project or any of the submodules to get a complete overview of the dependencies
 that must be provided on the target applications runtime classpath.

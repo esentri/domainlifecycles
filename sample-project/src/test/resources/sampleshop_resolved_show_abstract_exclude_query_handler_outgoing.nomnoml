@@ -32,9 +32,15 @@
 #.OS:fill=#C0C0C0 bold
 #.OS_R:fill=#C0C0C0 bold;stroke=#FF0000
 #.OS_N:fill=#C0C0C0 bold;stroke=#108738
+#.F:fill=#E0F0E0 bold
+#.F_R:fill=#E0F0E0 bold;stroke=#FF0000
+#.F_N:fill=#E0F0E0 bold;stroke=#108738
 #.SK:fill=#C0C0C0 bold
 #.SK_R:fill=#C0C0C0 bold;stroke=#FF0000
 #.SK_N:fill=#C0C0C0 bold;stroke=#108738
+#.ND:fill=#EAEAEA
+#.ND_R:fill=#EAEAEA;stroke=#FF0000
+#.ND_N:fill=#EAEAEA;stroke=#108738
 #.QH:fill=#C0C0C0 bold
 #.QH_R:fill=#C0C0C0 bold;stroke=#FF0000
 #.QH_N:fill=#C0C0C0 bold;stroke=#108738
@@ -258,11 +264,44 @@ o +- image:Optional<URI>
 + Product update(Product)
 ]
 // !!! sampleshop.core.outport.EmailNotifierService !!!
-[<OS> EmailNotifierService <<OutboundService>> ]
+[<OS> EmailNotifierService <<OutboundService>> |
++ void notify(String,String)
+]
 // !!! sampleshop.outbound.EmailNotifierImpl !!!
-[<OS> EmailNotifierImpl <<OutboundService>> ]
+[<OS> EmailNotifierImpl <<OutboundService>> |
++ void notify(String,String)
+]
+// !!! sampleshop.DefaultTests !!!
+[<ND> DefaultTests <<NonDomain>> |
++ void applicationStarted()
++ void fraudDetected()
++ void newOrder()
++ void report()
++ void validation()
+]
+// !!! sampleshop.inbound.rest.CustomerController !!!
+[<ND> CustomerController <<NonDomain>> |
++ ResponseEntity<ResponseObject> addNewCustomer(AddNewCustomer)
++ ResponseEntity<ResponseObject> changeAddress(Customer$CustomerId,Address)
++ ResponseEntity<ResponseObject> changeCreditCard(Customer$CustomerId,CreditCard)
++ ResponseEntity<ResponseObject> find(int,int)
++ ResponseEntity<ResponseObject> reportOrders(String,int,int)
+]
+// !!! sampleshop.inbound.rest.OrderController !!!
+[<ND> OrderController <<NonDomain>> |
++ ResponseEntity<ResponseObject> cancel(Order$OrderId)
++ ResponseEntity<ResponseObject> find(int,int,OrderStatus\[\])
++ ResponseEntity<ResponseObject> place(PlaceOrder)
++ ResponseEntity<ResponseObject> ship(Order$OrderId)
+]
+// !!! sampleshop.inbound.rest.ProductController !!!
+[<ND> ProductController <<NonDomain>> |
++ ResponseEntity<ResponseObject> create(\# Product)
++ ResponseEntity<ResponseObject> find(Product$ProductId)
++ void removeAll()
+]
 [<DC>AddNewCustomer <<DomainCommand>>]  --[<label> <<is processed by>> CustomerDriver.add] --> [<AS>CustomerDriver <<ApplicationService>>]
-[<DC>AddNewCustomer <<DomainCommand>>]  --[<label> <<is processed by>> CustomerService.add] --> [<AS>CustomerService <<ApplicationService>>]
+[<DC>AddNewCustomer <<DomainCommand>>]  --[<label> <<is processed by>> CustomerController.addNewCustomer] --> [<ND>CustomerController <<NonDomain>>]
 [<DC>ChangeCreditCard <<DomainCommand>>]  --[<label> <<is processed by>> CustomerDriver.changeCreditCard] --> [<AS>CustomerDriver <<ApplicationService>>]
 [<DC>ChangeCreditCard <<DomainCommand>>]  --[<label> <<is processed by>> CustomerService.changeCreditCard] --> [<AS>CustomerService <<ApplicationService>>]
 [<DC>ChangeCustomerAddress <<DomainCommand>>]  --[<label> <<is processed by>> CustomerDriver.changeAddress] --> [<AS>CustomerDriver <<ApplicationService>>]
@@ -270,7 +309,7 @@ o +- image:Optional<URI>
 [<DC>CancelOrder <<DomainCommand>>]  --[<label> <<is processed by>> OrderDriver.cancel] --> [<AS>OrderDriver <<ApplicationService>>]
 [<DC>CancelOrder <<DomainCommand>>]  --[<label> <<is processed by>> OrderService.cancel] --> [<AS>OrderService <<ApplicationService>>]
 [<DC>PlaceOrder <<DomainCommand>>]  --[<label> <<is processed by>> OrderDriver.place] --> [<AS>OrderDriver <<ApplicationService>>]
-[<DC>PlaceOrder <<DomainCommand>>]  --[<label> <<is processed by>> OrderService.place] --> [<AS>OrderService <<ApplicationService>>]
+[<DC>PlaceOrder <<DomainCommand>>]  --[<label> <<is processed by>> OrderController.place] --> [<ND>OrderController <<NonDomain>>]
 [<DC>ShipOrder <<DomainCommand>>]  --[<label> <<is processed by>> OrderDriver.ship] --> [<AS>OrderDriver <<ApplicationService>>]
 [<DC>ShipOrder <<DomainCommand>>]  --[<label> <<is processed by>> OrderService.ship] --> [<AS>OrderService <<ApplicationService>>]
 [<AF> Customer <<Aggregate>>]  --[<label> <<publishes>> Customer.setAddress] --> [<DE>CustomerAdressChanged <<DomainEvent>>]
@@ -298,6 +337,11 @@ o +- image:Optional<URI>
 [<R>CustomerRepository <<Repository>>]  <:- [<R>JooqCustomerRepository <<Repository>>]
 [<R>OrderRepository <<Repository>>]  <:- [<R>JooqOrderRepository <<Repository>>]
 [<R>ProductRepository <<Repository>>]  <:- [<R>JooqProductRepository <<Repository>>]
+[<ND>DefaultTests <<NonDomain>>]  -> [<R>CustomerRepository <<Repository>>]
+[<ND>DefaultTests <<NonDomain>>]  -> [<R>OrderRepository <<Repository>>]
+[<ND>CustomerController <<NonDomain>>]  -> [<AS>CustomerService <<ApplicationService>>]
+[<ND>OrderController <<NonDomain>>]  -> [<AS>OrderService <<ApplicationService>>]
+[<ND>ProductController <<NonDomain>>]  -> [<AS>ProductService <<ApplicationService>>]
 [<R>CustomerRepository <<Repository>>]  --> [<AF> Customer <<Aggregate>>]
 [<R>OrderRepository <<Repository>>]  --> [<AF> Order <<Aggregate>>]
 [<R>ProductRepository <<Repository>>]  --> [<AF> Product <<Aggregate>>]

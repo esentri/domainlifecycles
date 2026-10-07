@@ -30,75 +30,75 @@
 
 [versions]
 # productive code versions
-active-mq-classic-version = '5.18.4'
-bytebuddy-version = '1.18.10'
-classgraph-version = '4.8.184'
-commons-collections4-version = '4.5.0'
-commons-validator-version = '1.10.1'
-commons-lang3-version = '3.20.0'
-gruelbox-version = '7.0.707'
+active-mq-classic-version = '5.19.11'
+bytebuddy-version = '1.18.14'
+classgraph-version = '4.8.196'
+commons-collections4-version = '4.6.0'
+commons-validator-version = '1.11.0'
+commons-lang3-version = '3.21.0'
+gruelbox-version = '7.1.769'
 jakarta-jms-api-version = '3.1.0'
 jakarta-transaction-api-version = '2.0.1'
-jackson-3-version = '3.2.0'
-jackson-2-version = '2.22.0'
+jackson-3-version = '3.2.3'
+jackson-2-version = '2.22.3'
 jakarta-validation-api-version = '3.1.1'
-jooq-version = '3.19.29'
-slf4j-version = '2.0.18'
-spring-doc-open-api2-version = '2.8.17'
-spring-doc-open-api3-version = '3.0.3'
-spring-jdbc-version = '7.0.8'
-spring-tx-version = '7.0.8'
-spring-web-version = '7.0.8'
-spring-context-version = '7.0.8'
+jooq-version = '3.19.39'
+slf4j-version = '2.0.20'
+spring-doc-open-api2-version = '2.9.1'
+spring-doc-open-api3-version = '3.1.1'
+spring-jdbc-version = '7.0.9'
+spring-tx-version = '7.0.9'
+spring-web-version = '7.0.9'
+spring-context-version = '7.0.9'
 
 spring6-jdbc-version = '6.2.19'
 spring6-tx-version = '6.2.19'
 spring6-web-version = '6.2.19'
 spring6-context-version = '6.2.19'
 
-swagger-version = '2.2.49'
+swagger-version = '2.2.55'
 type-resolver-version = '1.0.3'
 docker-java-version = '3.7.1'
 maven-plugin-development-plugin-version = '1.0.3'
-maven-core-version = '3.9.16'
-maven-artifact-version = '3.9.16'
-maven-plugin-api-version = '3.9.16'
-maven-plugin-tools-annotations-version = '3.15.2'
+maven-core-version = '3.10.0'
+maven-artifact-version = '3.10.0'
+maven-plugin-api-version = '3.10.0'
+maven-plugin-tools-annotations-version = '3.16.0'
 
 # test-versions
-active-mq-artemis-version = '2.54.0'
+active-mq-artemis-version = '2.57.0'
 assertj-version = '3.27.7'
 atomikos-jta-version = '6.0.1'
 awaitility-version = '4.3.0'
 commons-io-version = '2.22.0'
 glassfish-jakarta-version = '4.0.2'
-h2-version = '2.4.240'
-hibernate-validator-jakarta-version = '9.1.0.Final'
+h2-version = '2.5.252'
+hibernate-validator-jakarta-version = '9.1.4.Final'
 jakarta-el-version = '6.0.1'
 javax-jms-api-version = '2.0.1'
 jmolecules-ddd-version = '2.0.1'
 jmolecules-events-version = '2.0.1'
-junit-jupiter-params-version = '6.1.0'
-junit-jupiter-version = '6.1.0'
-junit-platform-version = '1.14.4'
-kryo-version = '5.6.2'
-logback-classic-version = '1.5.34'
-lombok-version = '1.18.46'
-mockito-core-version = '5.23.0'
-mssql-jdbc-version = '12.10.0.jre11'
-mysql-connector-j-version = '9.3.0'
-oracle-jdbc-version = '21.18.0.0'
-postgresql-jdbc-version = '42.7.7'
-spring-boot-platform-version = '4.1.0'
-spring-boot3-platform-version = '3.5.15'
-testcontainers-version = '1.21.3'
+junit-jupiter-params-version = '6.1.3'
+junit-jupiter-version = '6.1.3'
+junit-platform-version = '6.1.3'
+kryo-version = '5.7.0'
+logback-classic-version = '1.6.5'
+lombok-version = '1.18.48'
+mockito-core-version = '5.24.0'
+mssql-jdbc-version = '13.6.0.jre11'
+mysql-connector-j-version = '26.7.0'
+oracle-jdbc-version = '23.26.3.0.0'
+postgresql-jdbc-version = '42.7.13'
+spring-boot-platform-version = '4.1.1'
+spring-boot3-platform-version = '3.5.16'
+testcontainers-version = '2.0.5'
 
 # plugin versions
-flyway-version = '11.20.0'
-yumi-gradle-licenser-version = '2.2.2'
-jareds-burrows-license-version = '0.9.8'
-jreleaser-version = '1.22.0'
-researchgate-release-version = '3.1.0'
+flyway-version = '13.9.0'
+yumi-gradle-licenser-version = '4.0.0'
+jareds-burrows-license-version = '0.9.91'
+jreleaser-version = '1.26.0'
+researchgate-release-version = '3.2.0'
 
 [libraries]
 byte-buddy = { module = "net.bytebuddy:byte-buddy", version.ref = "bytebuddy-version" }
@@ -198,11 +198,11 @@ spring6-tx = { module = "org.springframework:spring-tx", version.ref = "spring6-
 
 swagger = { module = "io.swagger.core.v3:swagger-core-jakarta", version.ref = "swagger-version" }
 testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers-version" }
-testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers-version" }
-testcontainers-mssqlserver = { module = "org.testcontainers:mssqlserver", version.ref = "testcontainers-version" }
-testcontainers-mysql = { module = "org.testcontainers:mysql", version.ref = "testcontainers-version" }
-testcontainers-oracle-free = { module = "org.testcontainers:oracle-free", version.ref = "testcontainers-version" }
-testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers-version" }
+testcontainers-junit-jupiter = { module = "org.testcontainers:testcontainers-junit-jupiter", version.ref = "testcontainers-version" }
+testcontainers-mssqlserver = { module = "org.testcontainers:testcontainers-mssqlserver", version.ref = "testcontainers-version" }
+testcontainers-mysql = { module = "org.testcontainers:testcontainers-mysql", version.ref = "testcontainers-version" }
+testcontainers-oracle-free = { module = "org.testcontainers:testcontainers-oracle-free", version.ref = "testcontainers-version" }
+testcontainers-postgresql = { module = "org.testcontainers:testcontainers-postgresql", version.ref = "testcontainers-version" }
 type-resolver = { module = "com.github.vladislavsevruk:type-resolver", version.ref = "type-resolver-version" }
 docker-java-core = { module = "com.github.docker-java:docker-java-core", version.ref = "docker-java-version" }
 docker-java-transport-httpclient5 = { module = "com.github.docker-java:docker-java-transport-httpclient5", version.ref = "docker-java-version" }

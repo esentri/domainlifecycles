@@ -1,6 +1,6 @@
 package io.domainlifecycles.jdbc.persistence.containers;
 
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 import javax.sql.DataSource;
 
@@ -13,7 +13,7 @@ final class PostgresTestDatabase {
 
     static final String SCHEMA = "test_domain";
 
-    private static final PostgreSQLContainer<?> CONTAINER = new PostgreSQLContainer<>("postgres:16-alpine")
+    private static final PostgreSQLContainer CONTAINER = new PostgreSQLContainer("postgres:16-alpine")
         .withDatabaseName("dlc_test")
         .withUsername("dlc_test")
         .withPassword("dlc_test");

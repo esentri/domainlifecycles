@@ -31,7 +31,7 @@ Specifically, you need to use JOOQ's code generator so that the required tables 
 
 ```groovy
 plugins {
-    id 'org.jooq.jooq-codegen-gradle' version '3.20.6'
+    id 'org.jooq.jooq-codegen-gradle' version '3.19.39'
 }
 
 jooq {
@@ -60,7 +60,7 @@ jooq {
 }
 
 dependencies {
-    jooqCodegen 'com.h2database:h2:2.4.240'
+    jooqCodegen 'com.h2database:h2:2.5.252'
 }
 ```
 </details>

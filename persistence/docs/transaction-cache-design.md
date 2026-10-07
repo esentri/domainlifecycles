@@ -62,7 +62,7 @@ gemeinsamen `persistence`-Implementierung, per Default aktiv, aber abschaltbar.
   `JdbcDomainPersistenceConfiguration` erweitert, beide mit eigenem Builder nach identischem Muster
   (typisierte Felder pro Modul, Defaults im `.make()`). Genau dieses Muster wird für die neue Konfiguration
   fortgeführt.
-- jOOQ-Version im Projekt: **3.19.29** (verifiziert). Bringt ein natives, Spring-unabhängiges
+- jOOQ-Version im Projekt: **3.19.39** (verifiziert). Bringt ein natives, Spring-unabhängiges
   Transaktions-SPI mit (`org.jooq.TransactionListener`, siehe Abschnitt 5).
 - Für plain JDBC existiert noch keine Spring-Autoconfig (nur jOOQ hat
   `DlcJooqPersistenceAutoConfiguration`). Das bleibt außerhalb des Scopes dieses Features.

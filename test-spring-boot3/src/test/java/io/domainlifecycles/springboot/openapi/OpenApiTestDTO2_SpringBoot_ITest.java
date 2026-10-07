@@ -688,8 +688,13 @@ public class OpenApiTestDTO2_SpringBoot_ITest {
         Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "anIntDecimalMaxExclusive", SCHEMA_TYPE_INTEGER,
             FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "anIntDecimalMaxExclusive", false);
-        assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue().toString()).isEqualTo(desc.getAttributes().get("value"));
+        }
         assertPropertyRequired(TestDTO2.class, "anIntDecimalMaxExclusive");
     }
 
@@ -699,8 +704,13 @@ public class OpenApiTestDTO2_SpringBoot_ITest {
             SCHEMA_TYPE_INTEGER, FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalIntegerDecimalMaxExclusive",
             true);
-        assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue().toString()).isEqualTo(desc.getAttributes().get("value"));
+        }
         assertOptional(schema);
     }
 
@@ -725,8 +735,13 @@ public class OpenApiTestDTO2_SpringBoot_ITest {
             SCHEMA_TYPE_INTEGER, FORMAT_TYPE_INT32, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalShortDecimalMaxExclusive",
             true);
-        assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue().toString()).isEqualTo(desc.getAttributes().get("value"));
+        }
         assertOptional(schema);
     }
 
@@ -780,8 +795,13 @@ public class OpenApiTestDTO2_SpringBoot_ITest {
         Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "optionalLongDecimalMaxExclusive",
             SCHEMA_TYPE_INTEGER, FORMAT_TYPE_INT64, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalLongDecimalMaxExclusive", true);
-        assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue().toString()).isEqualTo(desc.getAttributes().get("value"));
+        }
         assertOptional(schema);
     }
 
@@ -790,8 +810,13 @@ public class OpenApiTestDTO2_SpringBoot_ITest {
         Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigDecimalDecimalMaxExclusive",
             SCHEMA_TYPE_NUMBER, null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "bigDecimalDecimalMaxExclusive", false);
-        assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue().toString()).isEqualTo(desc.getAttributes().get("value"));
+        }
     }
 
     @Test
@@ -800,8 +825,13 @@ public class OpenApiTestDTO2_SpringBoot_ITest {
             SCHEMA_TYPE_NUMBER, null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalBigDecimalDecimalMaxExclusive",
             true);
-        assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue().toString()).isEqualTo(desc.getAttributes().get("value"));
+        }
         assertOptional(schema);
     }
 
@@ -810,8 +840,13 @@ public class OpenApiTestDTO2_SpringBoot_ITest {
         Schema<?> schema = assertPropertyTypeAndGetSchema(TestDTO2.class, "bigIntegerDecimalMaxExclusive",
             SCHEMA_TYPE_INTEGER, null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "bigIntegerDecimalMaxExclusive", false);
-        assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue().toString()).isEqualTo(desc.getAttributes().get("value"));
+        }
     }
 
     @Test
@@ -820,8 +855,13 @@ public class OpenApiTestDTO2_SpringBoot_ITest {
             SCHEMA_TYPE_INTEGER, null, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalBigIntegerDecimalMaxExclusive",
             true);
-        assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue().toString()).isEqualTo(desc.getAttributes().get("value"));
+        }
         assertOptional(schema);
     }
 
@@ -846,8 +886,13 @@ public class OpenApiTestDTO2_SpringBoot_ITest {
             SCHEMA_TYPE_NUMBER, FORMAT_TYPE_FLOAT, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalFloatDecimalMaxExclusive",
             true);
-        assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue().toString()).isEqualTo(desc.getAttributes().get("value"));
+        }
         assertOptional(schema);
     }
 
@@ -872,8 +917,13 @@ public class OpenApiTestDTO2_SpringBoot_ITest {
             SCHEMA_TYPE_NUMBER, FORMAT_TYPE_DOUBLE, null);
         ConstraintDescriptor<?> desc = getAnnotationDescriptor(TestDTO2.class, "optionalDoubleDecimalMaxExclusive",
             true);
-        assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
-        assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        if(schema.getSpecVersion().equals(SpecVersion.V30)){
+            assertThat(schema.getMaximum().toString()).isEqualTo(desc.getAttributes().get("value"));
+            assertThat(schema.getExclusiveMaximum()).isEqualTo(true);
+        }
+        if(schema.getSpecVersion().equals(SpecVersion.V31)){
+            assertThat(schema.getExclusiveMaximumValue().toString()).isEqualTo(desc.getAttributes().get("value"));
+        }
         assertOptional(schema);
     }
 

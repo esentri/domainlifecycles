@@ -448,7 +448,7 @@ public class ClassGraphDomainTypesScanner {
             .filter(ci -> !alreadyClassifiedNames.contains(ci.getName()))
             .filter(ci -> isWithinPackages(ci.getName(), nonDomainScanPackages))
             .filter(ci -> !nonDomainClassFilter.isExcludedByName(ci.getName()))
-            .map(this::loadClass)
+            .map(this::loadNonDomainClass)
             .filter(Objects::nonNull)
             .filter(c -> !c.isAnonymousClass() && !c.isLocalClass() && !c.isSynthetic())
             .filter(c -> DomainType.NON_DOMAIN.equals(domainTypeDetector.detectDomainType(c)))
@@ -466,6 +466,20 @@ public class ClassGraphDomainTypesScanner {
             }
         }
         return false;
+    }
+
+    /**
+     * A non-domain class that cannot be loaded (e.g. because a class it depends on is missing on the classpath) is
+     * only a warning: such a class is no part of the domain model itself, it is just not mirrored.
+     */
+    private Class<?> loadNonDomainClass(ClassInfo classInfo) {
+        try {
+            return classInfo.loadClass();
+        } catch (Throwable t) {
+            log.warn("Loading non-domain class '{}' failed, it is not mirrored: {}", classInfo.getName(), t.toString());
+            log.debug("Loading non-domain class '{}' failed!", classInfo.getName(), t);
+        }
+        return null;
     }
 
     protected Class<?> loadClass(ClassInfo classInfo) {

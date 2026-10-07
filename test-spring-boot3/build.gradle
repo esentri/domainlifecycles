@@ -101,6 +101,10 @@ tasks.named("compileJava") {
     dependsOn(tasks.named("jooqCodegen"))
 }
 
+tasks.named("checkLicenseMain") {
+    dependsOn(tasks.named("jooqCodegen"))
+}
+
 tasks.named("jooqCodegen") {
     dependsOn(tasks.named("flywayMigrate"))
     inputs.files(fileTree("src/main/resources/db/migration"))
